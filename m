@@ -1,152 +1,270 @@
 Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB00ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BC5ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6AE020843
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:18:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KK53kii+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6AE020843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 8026320843
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:21:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8026320843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbeGMGbY (ORCPT
+        id S1727454AbeGMGeE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 02:31:24 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52450 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbeGMGbY (ORCPT
+        Fri, 13 Jul 2018 02:34:04 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61143 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726917AbeGMGeE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 02:31:24 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o11-v6so1723550wmh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 23:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/CS0Fkk/noTpzGPwzbGyBpdxWu8D/VK+euQ9/V0rAKs=;
-        b=KK53kii+QzV/yf3/xsMcpc26i+CYUSrQ2lwoRQQK3Zan72A8eKk6uatVfOeOCGDTJt
-         jig9qt/A6Rh8e/LTsZNLE0rZwlrT1K7naGEHDAPbJL7IpzpJ0t84jHJhXKsEN5e/2H3j
-         Iwv2kxz7+X/XoXlqPULrvciyCWimC5vLwzxsgmlvN4vgHI2DBsnxvKualtaJlrgNtLq0
-         IdT0E+mRFvOSbKWqH6oRgjSd24u3n6Gx5rGb6FJgSJze4E+l+/FEtwRMR7gpqERcHyq+
-         5LfqecEiWGH2boRkZT4JJqw3fgMCi7I1XH0tOWgcb/aGjtHjbOG0fmM5IJdvtxjJn5tx
-         LnTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/CS0Fkk/noTpzGPwzbGyBpdxWu8D/VK+euQ9/V0rAKs=;
-        b=IdJzBGi6a4NN+/uwQp/aLy/2mfWep1TxcXj8hVes3r2/Zj1UQAbKqKuvjy2cI7ZHZK
-         e47Y2PS1afdz8N6aA4lPwYswkp8WxHqwFQWbh8y9BsuDLSpCUdGOl7SFZb4Wt0ZIysEg
-         fjej5HY/lT+I18FuiF/CyttcD0LMLP99np2rVlULdPLOPorl+9uCd1vcBtbpvpEwc0Ga
-         F7kZ31aHsjFkgUkureHmky0mkfcc4kqOVOei3CKyod2ywBGW5BZypZXcbL5KBsQpmx9s
-         yJXf4f7aA6i3/9GC8UZsftT28N1nUo/stdEEZLiO4aVLgk2kTefb8n8JqgZEpsCcRI0N
-         oF3Q==
-X-Gm-Message-State: AOUpUlE8EsaGKIxmCDmGsZecNdPitnyfrJdNhCwPiYdAHXjSpQX1H5Ju
-        kjitZZRK6HgHrKWweKrYKcVANPQRw0jspsd5Ss0YUg==
-X-Google-Smtp-Source: AAOMgpcdSPEBcCmh/UpUzoacDlxx1gIaDnWeOICdIh/H1/nOseLyvvWhUr3JkyBinOqSIKWvCD8hG/NdcXAd14LyreI=
-X-Received: by 2002:a1c:6c14:: with SMTP id h20-v6mr3199195wmc.138.1531462696498;
- Thu, 12 Jul 2018 23:18:16 -0700 (PDT)
+        Fri, 13 Jul 2018 02:34:04 -0400
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6D6KjIJ093016;
+        Fri, 13 Jul 2018 15:20:45 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
+ Fri, 13 Jul 2018 15:20:45 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6D6Kiq4093011;
+        Fri, 13 Jul 2018 15:20:44 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w6D6KiAJ093010;
+        Fri, 13 Jul 2018 15:20:44 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201807130620.w6D6KiAJ093010@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [patch -mm] mm, oom: remove =?ISO-2022-JP?B?b29tX2xvY2sgZnJvbSBleGl0?=
+ =?ISO-2022-JP?B?X21tYXA=?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-References: <20180712135202.14774-1-jolsa@kernel.org> <CABPqkBQsecn6Tp3q5fG1KgqF49Js0cA7KPY=dRkWV37jsqDXmg@mail.gmail.com>
- <20180712164941.GA8420@krava>
-In-Reply-To: <20180712164941.GA8420@krava>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Thu, 12 Jul 2018 23:18:05 -0700
-Message-ID: <CABPqkBRObtG6ODH4N9psNKsknGYAJxgEKXGU3h84qyUvOB5iWw@mail.gmail.com>
-Subject: Re: [PATCH] perf tools: Synthesize GROUP_DESC feature in pipe mode
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Fri, 13 Jul 2018 15:20:44 +0900
+References: <alpine.DEB.2.21.1807121432370.170100@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.1807121432370.170100@chino.kir.corp.google.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
-On Thu, Jul 12, 2018 at 9:49 AM Jiri Olsa <jolsa@redhat.com> wrote:
->
-> On Thu, Jul 12, 2018 at 09:34:45AM -0700, Stephane Eranian wrote:
-> > Hi Jiri,
-> > On Thu, Jul 12, 2018 at 6:52 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> > >
-> > > Stephan reported, that pipe mode does not carry the group
-> > > information and thus the piped report won't display the
-> > > grouped output for following command:
-> > >
-> > Thanks for fixing this quickly.
->
-> could I have your tested/acked by?
->
-Acked-by: Stephane Eranian <eranian@google.com>
+What a simplified description of oom_lock...
 
-> > I think we should have more testing on the pipe mode, in general.
->
-> yea, we should
->
-> jirka
->
-> >
-> > >   # perf record -e '{cycles,instructions,branches}' -a sleep 4 | perf report
-> > >
-> > > It has no idea about the group setup, so it will display
-> > > events separately:
-> > >
-> > >   # Overhead  Command          Shared Object             ...
-> > >   # ........  ...............  .......................
-> > >   #
-> > >        6.71%  swapper          [kernel.kallsyms]
-> > >        2.28%  offlineimap      libpython2.7.so.1.0
-> > >        0.78%  perf             [kernel.kallsyms]
-> > >   ...
-> > >
-> > > Fixing GROUP_DESC feature record to be synthesized in pipe mode,
-> > > so the report output is grouped if there's group defined in record:
-> > >
-> > >   #                 Overhead  Command          Shared    ...
-> > >   # ........................  ...............  .......
-> > >   #
-> > >        7.57%   0.16%   0.30%  swapper          [kernel
-> > >        1.87%   3.15%   2.46%  offlineimap      libpyth
-> > >        1.33%   0.00%   0.00%  perf             [kernel
-> > >   ...
-> > >
-> > > Cc: David Carrillo-Cisneros <davidcc@google.com>
-> > > Reported-by: Stephane Eranian <eranian@google.com>
-> > > Link: http://lkml.kernel.org/n/tip-ybqyh8ac4g173iy3xt4pxnlo@git.kernel.org
-> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > ---
-> > >  tools/perf/util/header.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> > > index 59fcc790c865..af9aaf28f976 100644
-> > > --- a/tools/perf/util/header.c
-> > > +++ b/tools/perf/util/header.c
-> > > @@ -2587,7 +2587,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
-> > >         FEAT_OPR(NUMA_TOPOLOGY, numa_topology,  true),
-> > >         FEAT_OPN(BRANCH_STACK,  branch_stack,   false),
-> > >         FEAT_OPR(PMU_MAPPINGS,  pmu_mappings,   false),
-> > > -       FEAT_OPN(GROUP_DESC,    group_desc,     false),
-> > > +       FEAT_OPR(GROUP_DESC,    group_desc,     false),
-> > >         FEAT_OPN(AUXTRACE,      auxtrace,       false),
-> > >         FEAT_OPN(STAT,          stat,           false),
-> > >         FEAT_OPN(CACHE,         cache,          true),
-> > > --
-> > > 2.17.1
-> > >
+Positive effects
+
+(1) Serialize "setting TIF_MEMDIE and calling __thaw_task()/atomic_inc() from
+    mark_oom_victim()" and "setting oom_killer_disabled = true from
+    oom_killer_disable()".
+
+(2) Serialize all printk() messages from out_of_memory().
+
+(3) Prevent from selecting new OOM victim when there is an !MMF_OOM_SKIP mm
+    which current thread should wait for.
+
+(4) Mutex blocking_notifier_call_chain() from out_of_memory() because some of
+    callbacks might not be thread-safe and/or serialized call might release
+    more memory than needed.
+
+Negative effects
+
+(A) Threads which called mutex_lock(&oom_lock) before calling out_of_memory()
+    are blocked waiting for "__oom_reap_task_mm() from exit_mmap()" and/or
+    "__oom_reap_task_mm() from oom_reap_task_mm()".
+
+(B) Threads which do not call out_of_memory() because mutex_trylock(&oom_lock)
+    failed continue consuming CPU resources pointlessly.
+
+Regarding (A), we can reduce the range oom_lock serializes from
+"__oom_reap_task_mm()" to "setting MMF_OOM_SKIP", for oom_lock is useful for (3).
+Therefore, we can apply below change on top of your patch. But I don't like
+sharing MMF_UNSBALE for two purposes (reason is explained below).
+
+Regarding (B), we can do direct OOM reaping (like my proposal does).
+
+---
+ kernel/fork.c |  5 +++++
+ mm/mmap.c     | 21 +++++++++------------
+ mm/oom_kill.c | 57 ++++++++++++++++++++++-----------------------------------
+ 3 files changed, 36 insertions(+), 47 deletions(-)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 6747298..f37d481 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -984,6 +984,11 @@ static inline void __mmput(struct mm_struct *mm)
+ 	}
+ 	if (mm->binfmt)
+ 		module_put(mm->binfmt->module);
++	if (unlikely(mm_is_oom_victim(mm))) {
++		mutex_lock(&oom_lock);
++		set_bit(MMF_OOM_SKIP, &mm->flags);
++		mutex_unlock(&oom_lock);
++	}
+ 	mmdrop(mm);
+ }
+ 
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 7f918eb..203061f 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3075,19 +3075,17 @@ void exit_mmap(struct mm_struct *mm)
+ 		__oom_reap_task_mm(mm);
+ 
+ 		/*
+-		 * Now, set MMF_UNSTABLE to avoid racing with the oom reaper.
+-		 * This needs to be done before calling munlock_vma_pages_all(),
+-		 * which clears VM_LOCKED, otherwise the oom reaper cannot
+-		 * reliably test for it.  If the oom reaper races with
+-		 * munlock_vma_pages_all(), this can result in a kernel oops if
+-		 * a pmd is zapped, for example, after follow_page_mask() has
+-		 * checked pmd_none().
++		 * Wait for the oom reaper to complete. This needs to be done
++		 * before calling munlock_vma_pages_all(), which clears
++		 * VM_LOCKED, otherwise the oom reaper cannot reliably test for
++		 * it. If the oom reaper races with munlock_vma_pages_all(),
++		 * this can result in a kernel oops if a pmd is zapped, for
++		 * example, after follow_page_mask() has checked pmd_none().
+ 		 *
+-		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
+-		 * guarantee that the oom reaper will not run on this mm again
+-		 * after mmap_sem is dropped.
++		 * Taking mm->mmap_sem for write will guarantee that the oom
++		 * reaper will not run on this mm again after mmap_sem is
++		 * dropped.
+ 		 */
+-		set_bit(MMF_UNSTABLE, &mm->flags);
+ 		down_write(&mm->mmap_sem);
+ 		up_write(&mm->mmap_sem);
+ 	}
+@@ -3115,7 +3113,6 @@ void exit_mmap(struct mm_struct *mm)
+ 	unmap_vmas(&tlb, vma, 0, -1);
+ 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 	tlb_finish_mmu(&tlb, 0, -1);
+-	set_bit(MMF_OOM_SKIP, &mm->flags);
+ 
+ 	/*
+ 	 * Walk the list again, actually closing and freeing it,
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index e6328ce..7ed4ed0 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -488,11 +488,9 @@ void __oom_reap_task_mm(struct mm_struct *mm)
+ 	 * Tell all users of get_user/copy_from_user etc... that the content
+ 	 * is no longer stable. No barriers really needed because unmapping
+ 	 * should imply barriers already and the reader would hit a page fault
+-	 * if it stumbled over a reaped memory. If MMF_UNSTABLE is already set,
+-	 * reaping as already occurred so nothing left to do.
++	 * if it stumbled over a reaped memory.
+ 	 */
+-	if (test_and_set_bit(MMF_UNSTABLE, &mm->flags))
+-		return;
++	set_bit(MMF_UNSTABLE, &mm->flags);
+ 
+ 	for (vma = mm->mmap ; vma; vma = vma->vm_next) {
+ 		if (!can_madv_dontneed_vma(vma))
+@@ -524,25 +522,9 @@ void __oom_reap_task_mm(struct mm_struct *mm)
+ 
+ static void oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ {
+-	/*
+-	 * We have to make sure to not race with the victim exit path
+-	 * and cause premature new oom victim selection:
+-	 * oom_reap_task_mm		exit_mm
+-	 *   mmget_not_zero
+-	 *				  mmput
+-	 *				    atomic_dec_and_test
+-	 *				  exit_oom_victim
+-	 *				[...]
+-	 *				out_of_memory
+-	 *				  select_bad_process
+-	 *				    # no TIF_MEMDIE task selects new victim
+-	 *  unmap_page_range # frees some memory
+-	 */
+-	mutex_lock(&oom_lock);
+-
+ 	if (!down_read_trylock(&mm->mmap_sem)) {
+ 		trace_skip_task_reaping(tsk->pid);
+-		goto out_oom;
++		return;
+ 	}
+ 
+ 	/*
+@@ -555,10 +537,18 @@ static void oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 		goto out_mm;
+ 
+ 	/*
+-	 * MMF_UNSTABLE is set by exit_mmap when the OOM reaper can't
+-	 * work on the mm anymore. The check for MMF_UNSTABLE must run
+-	 * under mmap_sem for reading because it serializes against the
+-	 * down_write();up_write() cycle in exit_mmap().
++	 * MMF_UNSTABLE is set by the time exit_mmap() calls
++	 * munlock_vma_pages_all() in order to avoid race condition. The check
++	 * for MMF_UNSTABLE must run under mmap_sem for reading because it
++	 * serializes against the down_write();up_write() cycle in exit_mmap().
++	 *
++	 * However, since MMF_UNSTABLE is set by __oom_reap_task_mm() from
++	 * exit_mmap() before start reaping (because the purpose of
++	 * MMF_UNSTABLE is to "tell all users of get_user/copy_from_user etc...
++	 * that the content is no longer stable"), it cannot be used for a flag
++	 * for indicating that the OOM reaper can't work on the mm anymore.
++	 * The OOM reaper will give up after (by default) 1 second even if
++	 * exit_mmap() is doing __oom_reap_task_mm().
+ 	 */
+ 	if (test_bit(MMF_UNSTABLE, &mm->flags)) {
+ 		trace_skip_task_reaping(tsk->pid);
+@@ -576,8 +566,6 @@ static void oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 			K(get_mm_counter(mm, MM_SHMEMPAGES)));
+ out_mm:
+ 	up_read(&mm->mmap_sem);
+-out_oom:
+-	mutex_unlock(&oom_lock);
+ }
+ 
+ static void oom_reap_task(struct task_struct *tsk)
+@@ -591,12 +579,7 @@ static void oom_reap_task(struct task_struct *tsk)
+ 	if (test_bit(MMF_OOM_SKIP, &mm->flags))
+ 		goto drop;
+ 
+-	/*
+-	 * If this mm has already been reaped, doing so again will not likely
+-	 * free additional memory.
+-	 */
+-	if (!test_bit(MMF_UNSTABLE, &mm->flags))
+-		oom_reap_task_mm(tsk, mm);
++	oom_reap_task_mm(tsk, mm);
+ 
+ 	if (time_after_eq(jiffies, mm->oom_free_expire)) {
+ 		if (!test_bit(MMF_OOM_SKIP, &mm->flags)) {
+@@ -658,12 +641,16 @@ static int oom_reaper(void *unused)
+ static u64 oom_free_timeout_ms = 1000;
+ static void wake_oom_reaper(struct task_struct *tsk)
+ {
++	unsigned long expire = jiffies + msecs_to_jiffies(oom_free_timeout_ms);
++
++	/* expire must not be 0 in order to avoid double list_add(). */
++	if (!expire)
++		expire++;
+ 	/*
+ 	 * Set the reap timeout; if it's already set, the mm is enqueued and
+ 	 * this tsk can be ignored.
+ 	 */
+-	if (cmpxchg(&tsk->signal->oom_mm->oom_free_expire, 0UL,
+-			jiffies + msecs_to_jiffies(oom_free_timeout_ms)))
++	if (cmpxchg(&tsk->signal->oom_mm->oom_free_expire, 0UL, expire))
+ 		return;
+ 
+ 	get_task_struct(tsk);
+-- 
+1.8.3.1
+
