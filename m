@@ -3,136 +3,194 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA531ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E23FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8947D2075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:35:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8947D2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E30CA2075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E30CA2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731948AbeGMUwA (ORCPT
+        id S1731967AbeGMUw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 16:52:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59768 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730730AbeGMUv7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 16:51:59 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73DFCAE0;
-        Fri, 13 Jul 2018 20:35:46 +0000 (UTC)
-Date:   Fri, 13 Jul 2018 13:35:45 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>,
-        xishi.qiuxishi@alibaba-inc.com, zy.zhengyi@alibaba-inc.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] mm: fix race on soft-offlining free huge pages
-Message-Id: <20180713133545.658173ca953e7d2a8a4ee6bd@linux-foundation.org>
-In-Reply-To: <1531452366-11661-2-git-send-email-n-horiguchi@ah.jp.nec.com>
-References: <1531452366-11661-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-        <1531452366-11661-2-git-send-email-n-horiguchi@ah.jp.nec.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Fri, 13 Jul 2018 16:52:27 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52788 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731883AbeGMUw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 16:52:27 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7009E40122CF;
+        Fri, 13 Jul 2018 20:36:13 +0000 (UTC)
+Received: from doriath (ovpn-117-239.phx2.redhat.com [10.3.117.239])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7F824112C268;
+        Fri, 13 Jul 2018 20:36:00 +0000 (UTC)
+Date:   Fri, 13 Jul 2018 16:35:59 -0400
+From:   Luiz Capitulino <lcapitulino@redhat.com>
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, jack@suse.cz,
+        stefanha@redhat.com, dan.j.williams@intel.com, riel@surriel.com,
+        haozhong.zhang@intel.com, nilal@redhat.com, kwolf@redhat.com,
+        pbonzini@redhat.com, ross.zwisler@intel.com, david@redhat.com,
+        xiaoguangrong.eric@gmail.com, hch@infradead.org, mst@redhat.com,
+        niteshnarayanlal@hotmail.com, imammedo@redhat.com,
+        eblake@redhat.com
+Subject: Re: [RFC v3 1/2] libnvdimm: Add flush callback for virtio pmem
+Message-ID: <20180713163559.692aca30@doriath>
+In-Reply-To: <20180713075232.9575-2-pagupta@redhat.com>
+References: <20180713075232.9575-1-pagupta@redhat.com>
+ <20180713075232.9575-2-pagupta@redhat.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 13 Jul 2018 20:36:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 13 Jul 2018 20:36:13 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Jul 2018 12:26:05 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
+On Fri, 13 Jul 2018 13:22:30 +0530
+Pankaj Gupta <pagupta@redhat.com> wrote:
 
-> There's a race condition between soft offline and hugetlb_fault which
-> causes unexpected process killing and/or hugetlb allocation failure.
-> 
-> The process killing is caused by the following flow:
-> 
->   CPU 0               CPU 1              CPU 2
-> 
->   soft offline
->     get_any_page
->     // find the hugetlb is free
->                       mmap a hugetlb file
->                       page fault
->                         ...
->                           hugetlb_fault
->                             hugetlb_no_page
->                               alloc_huge_page
->                               // succeed
->       soft_offline_free_page
->       // set hwpoison flag
->                                          mmap the hugetlb file
->                                          page fault
->                                            ...
->                                              hugetlb_fault
->                                                hugetlb_no_page
->                                                  find_lock_page
->                                                    return VM_FAULT_HWPOISON
->                                            mm_fault_error
->                                              do_sigbus
->                                              // kill the process
-> 
-> 
-> The hugetlb allocation failure comes from the following flow:
-> 
->   CPU 0                          CPU 1
-> 
->                                  mmap a hugetlb file
->                                  // reserve all free page but don't fault-in
->   soft offline
->     get_any_page
->     // find the hugetlb is free
->       soft_offline_free_page
->       // set hwpoison flag
->         dissolve_free_huge_page
->         // fail because all free hugepages are reserved
->                                  page fault
->                                    ...
->                                      hugetlb_fault
->                                        hugetlb_no_page
->                                          alloc_huge_page
->                                            ...
->                                              dequeue_huge_page_node_exact
->                                              // ignore hwpoisoned hugepage
->                                              // and finally fail due to no-mem
-> 
-> The root cause of this is that current soft-offline code is written
-> based on an assumption that PageHWPoison flag should beset at first to
-> avoid accessing the corrupted data.  This makes sense for memory_failure()
-> or hard offline, but does not for soft offline because soft offline is
-> about corrected (not uncorrected) error and is safe from data lost.
-> This patch changes soft offline semantics where it sets PageHWPoison flag
-> only after containment of the error page completes successfully.
-> 
-> ...
->
-> --- v4.18-rc4-mmotm-2018-07-10-16-50/mm/memory-failure.c
-> +++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/memory-failure.c
-> @@ -1598,8 +1598,18 @@ static int soft_offline_huge_page(struct page *page, int flags)
->  		if (ret > 0)
->  			ret = -EIO;
->  	} else {
-> -		if (PageHuge(page))
-> -			dissolve_free_huge_page(page);
-> +		/*
-> +		 * We set PG_hwpoison only when the migration source hugepage
-> +		 * was successfully dissolved, because otherwise hwpoisoned
-> +		 * hugepage remains on free hugepage list, then userspace will
-> +		 * find it as SIGBUS by allocation failure. That's not expected
-> +		 * in soft-offlining.
-> +		 */
+> This patch adds functionality to perform flush from guest to host
+> over VIRTIO. We are registering a callback based on 'nd_region' type.
+> As virtio_pmem driver requires this special flush interface, for rest
+> of the region types we are registering existing flush function.
+> Also report the error returned by virtio flush interface.
 
-This comment is unclear.  What happens if there's a hwpoisoned page on
-the freelist?  The allocator just skips it and looks for another page? 
-Or does the allocator return the poisoned page, it gets mapped and
-userspace gets a SIGBUS when accessing it?  If the latter (or the
-former!), why does the comment mention allocation failure?
+This patch doesn't apply against latest upstream. A few more comments
+below.
 
+> 
+> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> ---
+>  drivers/nvdimm/nd.h          |  1 +
+>  drivers/nvdimm/pmem.c        |  4 ++--
+>  drivers/nvdimm/region_devs.c | 24 ++++++++++++++++++------
+>  include/linux/libnvdimm.h    |  5 ++++-
+>  4 files changed, 25 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
+> index 32e0364..1b62f79 100644
+> --- a/drivers/nvdimm/nd.h
+> +++ b/drivers/nvdimm/nd.h
+> @@ -159,6 +159,7 @@ struct nd_region {
+>  	struct badblocks bb;
+>  	struct nd_interleave_set *nd_set;
+>  	struct nd_percpu_lane __percpu *lane;
+> +	int (*flush)(struct device *dev);
+>  	struct nd_mapping mapping[0];
+>  };
+>  
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 9d71492..29fd2cd 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -180,7 +180,7 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
+>  	struct nd_region *nd_region = to_region(pmem);
+>  
+>  	if (bio->bi_opf & REQ_FLUSH)
+> -		nvdimm_flush(nd_region);
+> +		bio->bi_status = nvdimm_flush(nd_region);
+>  
+>  	do_acct = nd_iostat_start(bio, &start);
+>  	bio_for_each_segment(bvec, bio, iter) {
+> @@ -196,7 +196,7 @@ static blk_qc_t pmem_make_request(struct request_queue *q, struct bio *bio)
+>  		nd_iostat_end(bio, start);
+>  
+>  	if (bio->bi_opf & REQ_FUA)
+> -		nvdimm_flush(nd_region);
+> +		bio->bi_status = nvdimm_flush(nd_region);
+>  
+>  	bio_endio(bio);
+>  	return BLK_QC_T_NONE;
+> diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+> index a612be6..124aae7 100644
+> --- a/drivers/nvdimm/region_devs.c
+> +++ b/drivers/nvdimm/region_devs.c
+> @@ -1025,6 +1025,7 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
+>  	dev->of_node = ndr_desc->of_node;
+>  	nd_region->ndr_size = resource_size(ndr_desc->res);
+>  	nd_region->ndr_start = ndr_desc->res->start;
+> +	nd_region->flush = ndr_desc->flush;
+>  	nd_device_register(dev);
+>  
+>  	return nd_region;
+> @@ -1065,13 +1066,10 @@ struct nd_region *nvdimm_volatile_region_create(struct nvdimm_bus *nvdimm_bus,
+>  }
+>  EXPORT_SYMBOL_GPL(nvdimm_volatile_region_create);
+>  
+> -/**
+> - * nvdimm_flush - flush any posted write queues between the cpu and pmem media
+> - * @nd_region: blk or interleaved pmem region
+> - */
+> -void nvdimm_flush(struct nd_region *nd_region)
+> +void pmem_flush(struct device *dev)
+>  {
+> -	struct nd_region_data *ndrd = dev_get_drvdata(&nd_region->dev);
+> +	struct nd_region_data *ndrd = dev_get_drvdata(dev);
+> +	struct nd_region *nd_region = to_nd_region(dev);
+>  	int i, idx;
+>  
+>  	/*
+> @@ -1094,6 +1092,20 @@ void nvdimm_flush(struct nd_region *nd_region)
+>  			writeq(1, ndrd_get_flush_wpq(ndrd, i, idx));
+>  	wmb();
+>  }
+> +
+> +/**
+> + * nvdimm_flush - flush any posted write queues between the cpu and pmem media
+> + * @nd_region: blk or interleaved pmem region
+> + */
+> +int nvdimm_flush(struct nd_region *nd_region)
+> +{
+> +	if (nd_region->flush)
+> +		return(nd_region->flush(&nd_region->dev));
+> +
+> +	pmem_flush(&nd_region->dev);
 
+IMHO, a better way of doing this would be to allow nvdimm_flush() to
+be overridden. That is, in nd_region_create() you set nd_region->flush
+to the original nvdimm_flush() if ndr_desc->flush is NULL. And then
+always call nd_region->flush() where nvdimm_flush() is called today.
+
+> +
+> +	return 0;
+> +}
+>  EXPORT_SYMBOL_GPL(nvdimm_flush);
+>  
+>  /**
+> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+> index 097072c..33b617f 100644
+> --- a/include/linux/libnvdimm.h
+> +++ b/include/linux/libnvdimm.h
+> @@ -126,6 +126,7 @@ struct nd_region_desc {
+>  	int numa_node;
+>  	unsigned long flags;
+>  	struct device_node *of_node;
+> +	int (*flush)(struct device *dev);
+>  };
+>  
+>  struct device;
+> @@ -201,7 +202,9 @@ unsigned long nd_blk_memremap_flags(struct nd_blk_region *ndbr);
+>  unsigned int nd_region_acquire_lane(struct nd_region *nd_region);
+>  void nd_region_release_lane(struct nd_region *nd_region, unsigned int lane);
+>  u64 nd_fletcher64(void *addr, size_t len, bool le);
+> -void nvdimm_flush(struct nd_region *nd_region);
+> +int nvdimm_flush(struct nd_region *nd_region);
+> +void pmem_set_flush(struct nd_region *nd_region, void (*flush)
+> +					(struct device *));
+
+It seems pmem_set_flush() doesn't exist.
+
+>  int nvdimm_has_flush(struct nd_region *nd_region);
+>  int nvdimm_has_cache(struct nd_region *nd_region);
+>  
 
