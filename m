@@ -2,120 +2,102 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8610CECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5037ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F40E2083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B6842083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:43:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rhXTGAl9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F40E2083B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aRiEFt6O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B6842083B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387732AbeGMQ6S (ORCPT
+        id S2387796AbeGMQ6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:58:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39432 "EHLO
+        Fri, 13 Jul 2018 12:58:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40012 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731972AbeGMQ6S (ORCPT
+        with ESMTP id S1729626AbeGMQ6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:58:18 -0400
+        Fri, 13 Jul 2018 12:58:32 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gy8pDiKzZTUCeNJYIlT1RtKr2J6ltkl0oC11SnsZcbA=; b=rhXTGAl9KpvajFikYYMyZu8Mj
-        t3r7QDqM/pFy7vcad5xklklsLHLHQRVnwY26CJl36g21uWjD4ceyMNzgvu0KDLyZ5tO2Y/XtbUm2T
-        xdrKyQdI2qQmOVpzljkPbW7qSJZmbgDIopbT+PSYQFoILaqhpKSbSxY80Cn/xn5GrU7Shazf9iJKK
-        cX3JTMeY1PJQO1uflp4B3L4PYLmUEq1QXKtmusxBuJ4RE4UjT1TeV4GFPRHJhMki1rW0ihKCl4VvQ
-        p6ZG9JQirfBk8CIXYhMbV7d2FCBSaj8P1ZJE2prHq2xqYLj5NawFvnP5Ck1U+TKn7H5Jj6JGndQyF
-        TuZVIevhA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+         bh=6Nm04pnDekcA+lc3AskuXThditEW148sN/pMoikKjFE=; b=aRiEFt6OWlllsepPLaJWId1ua
+        I/jgn7m2S+fNj58Qk+aAp/E+mDKevkc5CvhudfcGErY84aN38QHJUvsAbDL1ZPo0CtMtIyykXVvjL
+        iGjAb9xBmPS+bSP1qkf2qBOPfExRZVAE+Z+ShCDgPzFJui5b/GqLut6wimM8oXUvbH/KSMn98dcew
+        0m9Q377EQ40ZNotJnxgDniBAu6aOtjDLSGLiJJvmJ2HVjZ9+p5kQ7k+42VZM7Sz72q9wrxWhVDcHB
+        EOUBVTENwP4sJue4tBwqv4Bq7oVhaHsKqXyZxuCEd/ySn37qXXzXiW0WXIIaJZ1gLlADlwhcaB/Ub
+        BvRGoZ2Kg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fe19V-0005V1-Mr; Fri, 13 Jul 2018 16:42:41 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8E78720289CB2; Fri, 13 Jul 2018 18:42:39 +0200 (CEST)
-Date:   Fri, 13 Jul 2018 18:42:39 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        andrea.parri@amarulasolutions.com,
-        Will Deacon <will.deacon@arm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nick Piggin <npiggin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
-References: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
- <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
- <20180712172838.GU3593@linux.vnet.ibm.com>
- <20180712180511.GP2476@hirez.programming.kicks-ass.net>
- <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
- <20180713110851.GY2494@hirez.programming.kicks-ass.net>
- <87tvp3xonl.fsf@concordia.ellerman.id.au>
+        id 1fe19u-0005ah-0o; Fri, 13 Jul 2018 16:43:06 +0000
+Subject: Re: [PATCH] hostap: hide unused procfs helpers
+To:     Arend van Spriel <arend.vanspriel@broadcom.com>,
+        YueHaibing <yuehaibing@huawei.com>, j@w1.fi, kvalo@codeaurora.org
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, davem@davemloft.net
+References: <20180713070317.6724-1-yuehaibing@huawei.com>
+ <5B485441.1080305@broadcom.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <7a2dee6c-eca3-ca0f-8af6-2ecc14f6d0a9@infradead.org>
+Date:   Fri, 13 Jul 2018 09:43:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87tvp3xonl.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <5B485441.1080305@broadcom.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/13/2018 12:26 AM, Arend van Spriel wrote:
+> + Randy
+> 
+> On 7/13/2018 9:03 AM, YueHaibing wrote:
+>> When CONFIG_PROC_FS isn't set, gcc warning this:
+>>
+>> drivers/net/wireless/intersil/hostap/hostap_hw.c:2901:12: warning: ‘prism2_registers_proc_show’ defined but not used [-Wunused-function]
+>>   static int prism2_registers_proc_show(struct seq_file *m, void *v)
+>>
+>> drivers/net/wireless/intersil/hostap/hostap_proc.c:16:12: warning: ‘prism2_debug_proc_show’ defined but not used [-Wunused-function]
+>>   static int prism2_debug_proc_show(struct seq_file *m, void *v)
+>>              ^
+>> drivers/net/wireless/intersil/hostap/hostap_proc.c:49:12: warning: ‘prism2_stats_proc_show’ defined but not used [-Wunused-function]
+>>   static int prism2_stats_proc_show(struct seq_file *m, void *v)
+>>              ^
+>> drivers/net/wireless/intersil/hostap/hostap_proc.c:177:12: warning: ‘prism2_crypt_proc_show’ defined but not used [-Wunused-function]
+>>   static int prism2_crypt_proc_show(struct seq_file *m, void *v)
+>>              ^
+>>
+>> fix this by adding #ifdef around them.
+>> hfa384x_read_reg is only used by prism2_registers_proc_show,so move it
+>> into #ifdef.
+> 
+> There was already a fix for this posted by Randy Dunlap taking a different approach, ie. use __maybe_unused classifier. To be honest I prefer the ifdef approach as it is more explicit and does not feel like a cheat.
 
-Hi Michael,
+Hi,
+You are welcome to merge (or ack or have someone else merge) either of them.
+I'm not counting patches, just trying to help out (in this case by reducing noise).
 
-On Fri, Jul 13, 2018 at 11:15:26PM +1000, Michael Ellerman wrote:
-> I reran some numbers today with some slightly updated tests.
-> 
-> It varies quite a bit across machines and CPU revisions.
-> 
-> On one I get:
-> 
-> Lock/Unlock    Time             Time %    Total Cycles     Cycles  Cycles Delta
-> lwsync/lwsync   79,290,859,955  100.0 %   290,160,065,087  145     -
-> lwsync/sync    104,903,703,237  132.3 %   383,966,199,430  192     47
-> 
-> Another:
-> 
-> Lock/Unlock    Time             Time %    Total Cycles     Cycles  Cycles Delta
-> lwsync/lwsync  71,662,395,722   100.0 %   252,403,777,715  126     -
-> lwsync/sync    84,932,987,977   118.5 %   299,141,951,285  150     23
-> 
-> 
-> So 18-32% slower, or 23-47 cycles.
 
-Very good info. Note that another option is to put the SYNC in lock() it
-doesn't really matter which of the two primitives gets it. I don't
-suppose it really matters for timing either way around.
 
-> Next week I can do some macro benchmarks, to see if it's actually
-> detectable at all.
+> Actually some of the functions are between a flag already PRISM2_NO_PROCFS_DEBUG which is in a private header file hostap_config.h. Seems like this would be better placed in Kconfig and depend on CONFIG_PROCFS. Anyway, this driver is old cruft. Maybe some people are still running it, but it is probably not worth the effort so fine with either fix.
 > 
-> The other question is how they behave on a heavily loaded system.
-> 
-> 
-> My personal preference would be to switch to sync, we don't want to be
-> the only arch finding (or not finding!) exotic ordering bugs.
-> 
-> But we'd also rather not make our slow locks any slower than they have
-> to be.
+> Regards,
+> Arend
 
-I completely understand, but I'll get you beer (lots) if you do manage
-to make SYNC happen :-) :-)
+
+-- 
+~Randy
