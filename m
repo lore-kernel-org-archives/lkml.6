@@ -2,112 +2,86 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29AFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2DAECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6227120858
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:21:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hlf2vxXU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6227120858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 53FE320858
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:23:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FE320858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbeGMKfO (ORCPT
+        id S1727495AbeGMKhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 06:35:14 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37822 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727015AbeGMKfN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:35:13 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a26-v6so325639pfo.4
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 03:21:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aXhjnJjyxGwGBQNBVIUc3v+UOGe7/rz+EZPaPaMDsVg=;
-        b=Hlf2vxXUu2zfHijJ59myu6FZyEr+73ReJbu5etoEU+q4UiI41W8mN2Ua3RX721Oak9
-         q0+n7kAVKZYtIDaDbyEnYMR01wm9+C/kMbNEuJbXVlZMkY5+QArA4cTLVto9wKKkuS8w
-         8AStlH2niUqhSQc+Hr45DDJQdaTWN1mYOqrRxq8EWgk6nX2A+n6iVYjq3i4r9nHUmuYY
-         HNFpmG6jctKN94LL2ITW7nYn2PhYmX7n+qQ1PAdKylcQnlhG9L6kCF2FaGrx9LWoOBzh
-         mYsQolEjEKgc01MU0S6zYyBFq3Xqtx5e6ptnGzHLGqZjv5UngOSczP+Z38+w9NMWkBGf
-         7gFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aXhjnJjyxGwGBQNBVIUc3v+UOGe7/rz+EZPaPaMDsVg=;
-        b=DAoqFJepAEsCIzth/iRgTGXyZHXn9n3+HAamFBHeGwajBXv9Xr1cQ5Uc5H4JRJcaoT
-         OuSQi2QUrqCm0f27B865G8/O/NNXcShnbFE+oJ7MWmDBcW4XNCX3lWqoc3hFdFFnbzxp
-         7qMgsLOlOJfKw5/vGJYwz/hEYAgG7Z+qkvhShYA7K4yGL9V0JuPZb0CI7ew3v8/uOWhG
-         iDjKb1m5xjao5x/zbBzs+9HuZ3zUlAo838bQeQr2/LGUSwam4yVI+IJ8EbjjHGFbGxBr
-         c2hl4vBKsKveR2YIUxwJNlqfIJNA26UD7tLr8+EJRgNdsvUX2oiVMaqzXT31Lvbnu31c
-         SbLQ==
-X-Gm-Message-State: AOUpUlFmkrewED3bWNH/2iU7b11Or1Bg88Ns2mv6ngElnQqqFyUiwuup
-        ET3tZ4jWk+E5RlJ1mRenw/g=
-X-Google-Smtp-Source: AAOMgpeKZwuHflBE6kTuuki4vcdWQo7uIzPtcVBBhrkHSlf3pKIN2VL0fS3NOkc8r4zlWSl4iPuwJw==
-X-Received: by 2002:aa7:8298:: with SMTP id s24-v6mr6388270pfm.136.1531477271944;
-        Fri, 13 Jul 2018 03:21:11 -0700 (PDT)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id u17-v6sm84352022pfa.176.2018.07.13.03.21.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 03:21:11 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 15:51:03 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        linux-kernel@vger.kernel.org,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>, yamada.masahiro@socionext.com,
-        cocci@systeme.lip6.fr
-Subject: Re: [Cocci] [PATCH 01/18] coccinelle: change strncpy+truncation to
- strlcpy
-Message-ID: <20180713102103.GA12972@himanshu-Vostro-3559>
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
- <20180713074455.GA6859@himanshu-Vostro-3559>
- <20180713080023.GB9638@nautica>
- <20180713091412.GA11250@himanshu-Vostro-3559>
- <alpine.DEB.2.20.1807130540270.3044@hadrien>
+        Fri, 13 Jul 2018 06:37:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34068 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727071AbeGMKhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 06:37:17 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 31363406F8A3;
+        Fri, 13 Jul 2018 10:23:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C5C1D2026D6B;
+        Fri, 13 Jul 2018 10:23:12 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <5731b5c4-e29d-30f6-095f-4a74f52cb72d@codesourcery.com>
+References: <5731b5c4-e29d-30f6-095f-4a74f52cb72d@codesourcery.com> <cover.1530465325.git.ren_guo@c-sky.com> <27030.1531302693@warthog.procyon.org.uk> <20180712125152.GA5226@guoren>
+To:     Sandra Loosemore <sandra@codesourcery.com>
+Cc:     dhowells@redhat.com, Guo Ren <ren_guo@c-sky.com>,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        jason@lakedaemon.net, arnd@arndb.de, c-sky_gcc_upstream@c-sky.com,
+        gnu-csky@mentor.com, thomas.petazzoni@bootlin.com,
+        wbx@uclibc-ng.org, green.hu@gmail.com
+Subject: Re: [PATCH V2 00/19] C-SKY(csky) Linux Kernel Port
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1807130540270.3044@hadrien>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <11102.1531477392.1@warthog.procyon.org.uk>
+Date:   Fri, 13 Jul 2018 11:23:12 +0100
+Message-ID: <11103.1531477392@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 10:23:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 10:23:15 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Thanks Himanshu for the suggestions.
-> 
-> However, I'm not sure to follow the discussion.  The original problem was
-> that Coccinelle was removing a comment that should be preserved.  I think
-> that this occurs because the line just below the comment is completely
-> removed.  Coccinelle considers that the comment belongs with that line and
-> if the line is removed the comment won't make much sense.
-> 
-> In Himanshu's solution, the code is just not transformed at all, so as a
-> side effect the comment stays too.  Is that what is wanted in this case?
+Sandra Loosemore <sandra@codesourcery.com> wrote:
 
-Yes, there is no transformation with my solution which I advised to
-prevent comment removal(which i thought was useful).
+> I'm not familiar with the Fedora tools, but to build a complete toolchain
+> you'll need library support as well and I'm not sure what the submission
+> status/plans for that are.
 
-My rule is more narrower approach than the regular ones which used
-"expression" metavariable.
+The idea behind the cross-gcc package in Fedora is that it's for kernel builds
+and bootloader-type things only.  It builds libgcc, but doesn't use kernel
+headers or a C library[*] as this enormously simplifies things.
 
-Rest upto Dominique to choose whatever suits better :)
+The reasons being:
 
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+ (1) Not all arches can use the same set of C libraries (some can't use glibc
+     and some don't have a uClibc port).
+
+ (2) I can only build each individual compiler against a single C library - so
+     if you have two or more incompatible environments, you're out of luck -
+     I can only use one.
+
+ (3) Building lots more compilers for individual environments would massively
+     increase the build size and time.  A full cross-gcc build now takes the
+     best part of a day to build.
+
+[*] Yes, there's one exception: it builds the arm compiler against an arm
+    cross-glibc - not my idea.
+
+David
