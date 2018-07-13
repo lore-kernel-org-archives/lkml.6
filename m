@@ -2,132 +2,103 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DB3ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D44ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C461208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:28:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C461208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E34DA208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34DA208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbeGMIl4 (ORCPT
+        id S1727261AbeGMIoW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 04:41:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52129 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726161AbeGMIl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 04:41:56 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 281F020731; Fri, 13 Jul 2018 10:28:19 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 66314206F6;
-        Fri, 13 Jul 2018 10:28:18 +0200 (CEST)
-Message-ID: <d9cc498c058b34b46eaf910de2f6ba4dd4ca4838.camel@bootlin.com>
-Subject: Re: [PATCH v5 20/22] ARM: dts: sun7i-a20: Add Video Engine and
- reserved memory nodes
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Date:   Fri, 13 Jul 2018 10:28:17 +0200
-In-Reply-To: <20180710092310.2hzoc7shmfykr3n5@flea>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
-         <20180710080114.31469-21-paul.kocialkowski@bootlin.com>
-         <20180710092310.2hzoc7shmfykr3n5@flea>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-mUToiGCHY1cIrP6GveCh"
-X-Mailer: Evolution 3.28.2 
-Mime-Version: 1.0
+        Fri, 13 Jul 2018 04:44:22 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51957 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbeGMIoW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 04:44:22 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1fdtTM-0000aG-Tl; Fri, 13 Jul 2018 10:30:40 +0200
+Received: from mfe by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1fdtTL-0003LM-SU; Fri, 13 Jul 2018 10:30:39 +0200
+Date:   Fri, 13 Jul 2018 10:30:39 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        fabio.estevam@nxp.com, Anson.Huang@nxp.com, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pfuze100: add optional pfuze-disable-sw
+ binding
+Message-ID: <20180713083039.4z3ulwtg2ekx5n23@pengutronix.de>
+References: <20180712110240.3006-1-m.felsch@pengutronix.de>
+ <20180712110240.3006-2-m.felsch@pengutronix.de>
+ <20180712153121.GF10369@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712153121.GF10369@sirena.org.uk>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 10:01:31 up 203 days, 20:39, 58 users,  load average: 0.05, 0.06,
+ 0.02
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Mark,
 
---=-mUToiGCHY1cIrP6GveCh
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 18-07-12 16:31, Mark Brown wrote:
+> On Thu, Jul 12, 2018 at 01:02:39PM +0200, Marco Felsch wrote:
+> 
+> > +Optional properties:
+> > +- pfuze-disable-sw: Disable all unused switch regulators to save power
+> > +  consumption. Attention, some platforms are using the switch regulators as DDR
+> > +  ref or supply voltage. Mark these regulators as "regulator-always-on" to skip
+> > +  disabling these regulators. If not specified, the driver simualtes the
+> > +  disabling. This means the state of the regulator is set to 'disabled' but the
+> > +  driver don't disable the regulator.
+> 
+> This is a bit of a confused way of specifying things that depends on the
+> Linux implementation, and the property sounds like a double negative
+> too.  I'd say something like "pfuze-support-disable" and then explicitly
+> say that this is a workaround for backwards compatibility.
 
-Hi,
+I can't find the double negative. Anyway your binding sounds better. So
+I will use yours. Should we add a vendor prefix too to be clear? I will
+also add some more informations to mark it as workaround.
 
-On Tue, 2018-07-10 at 11:23 +0200, Maxime Ripard wrote:
-> On Tue, Jul 10, 2018 at 10:01:12AM +0200, Paul Kocialkowski wrote:
-> > +		vpu: video-codec@1c0e000 {
-> > +			compatible =3D "allwinner,sun7i-a20-video-engine";
-> > +			reg =3D <0x01c0e000 0x1000>;
-> > +
->=20
-> The issue is here with all your patches, but you should drop the node
-> label and the extra new line.
+> I'd also recommend changing the implementation patch to just register a
+> different version of the desc and ops that just doesn't have the disable
+> operation so that the framework knows what's going on.  While the
+> current implementation works now there's the possibility that at some
+> point in the future we might start relying on the disable actually
+> having taken effect somehow and will get confused.  There's some
+> existing drivers that optimize their resume paths if they know power
+> wasn't removed.
 
-Noted, this will be fixed in the next revision.
+Okay I will change that too. I didn't know that there are drivers with
+optimized resume paths.
 
-Cheers,
+Thanks for your feedback.
 
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-mUToiGCHY1cIrP6GveCh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltIYqEACgkQ3cLmz3+f
-v9GeIwgAhY9paW0UIC3+V24nTHQH8+8lA/opmAUTwA+Gz60Gvant9jsvI439XAuH
-uHCtrFeuNQ7e8xeZA2le+ecCqaKSc4z3iP3lnxJolxgeX9y7TBl5fAaayhfYEdz3
-jdB4kGUpneQnHFxfzfhma2gaQoSfSNUhd/kSED/z41PZOugQYe4Nau1D1xzSL/fh
-kj10peBit3e0+XSYUKEErbjLMzXv1QUZhY1gNp1mMhxH5N0/o4fCYXjHBT8Y2Bzg
-idE+bKRnr3V677yKk+tTw7iSAthtkETlkRqxfcvOhKoQztSlW6dDRAJumnDrI3g/
-/3kBKyUCZEr2B/K0SklRj5qZ40itbg==
-=L+cQ
------END PGP SIGNATURE-----
-
---=-mUToiGCHY1cIrP6GveCh--
-
+Regards,
+Marco
