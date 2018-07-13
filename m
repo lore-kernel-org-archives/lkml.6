@@ -2,121 +2,145 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0002AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9A3ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A21D720843
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:16:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Ln1VBrE2";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BeqzG5bq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A21D720843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 2365520843
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:16:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2365520843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbeGMG3g (ORCPT
+        id S1728321AbeGMG3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 02:29:36 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:36297 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbeGMG3g (ORCPT
+        Fri, 13 Jul 2018 02:29:43 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37235 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbeGMG3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 02:29:36 -0400
-Received: by mail-yb0-f194.google.com with SMTP id s1-v6so12344184ybk.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 23:16:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=GzZeGfuL4DflS+9uKKdn08BhyPocXR6tIudCfDgUhEQ=;
-        b=Ln1VBrE2HJHarvFB/G9ml4lHDvGeATjbzfIkb23DCGzYjgq3lY28QMMo8CL6uS8AGe
-         qerE+CBQmabXgWUYe6KUUqE4QNJ5KxOhjtswK5JunXTzFSemgu5gyrAAeBjOsG0U1kUn
-         xp5JqvOI7zqSKwjzqahCzxqhsB5Nu4LESwynYz7Ui5onGXnF/2mz1eMNkSBJqioY/2c+
-         FO2ePC2Yw2hUNVsyZMC5Q6dHi4Xs2VoW7emDR/HdJMGuAXj4JZ8SbS89Y/pdwCrfb6Ts
-         LLoeoZw6bqSpky46K3ayqe+UNhGm61pTMoaoDZVR/S9hF9nSoZ0xj8xdpN7UOxFOyBA3
-         Yj4w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=GzZeGfuL4DflS+9uKKdn08BhyPocXR6tIudCfDgUhEQ=;
-        b=BeqzG5bqCtMsHTtbWLGZZYPjTUtM44C4u68Zzkp8biTkMz0EbwxVKZd3kPEGH3/0VQ
-         rhe6CJaE5s7/kVlgWwnQ1z/zNNdcNxf0LJIRSPz+Srxm+whP39gm32Xeo7VtIT54AqJj
-         B5aE0mxsz61kUTfQ86vd3rXf8e4oexnWJBenY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=GzZeGfuL4DflS+9uKKdn08BhyPocXR6tIudCfDgUhEQ=;
-        b=QWZizyxQ4mAxF6W/8f86lbYZ1dXRuO/svs5ycv+CUMIQteoASV8Tmv6hfdAl2woTxb
-         XDbLXxeTFK5wY8jRcWzdWonYslkRzk2ELSoVwFzePsxuMlyllHCExMVwkpzdz8o2v72p
-         baBsMn8kqSdbdBQebufG1L6AAM0AIYIjjwLO6r/gHP8MqT/BeNAyOnkXbWFcacz081ll
-         gApuXLFKQ0joKaScXH9FURTAn3eUN0q5jMhpD0eBjs8w2mdmOj/b3NzHZS5Yycq5Kinr
-         dswBvWjxSWdmEin4l0xH5L3sf0tO9E8laJs1oumx7C+ZSODH0u8jxSd7e+72IgI+vUrR
-         p8kg==
-X-Gm-Message-State: AOUpUlEIz+4+ozUIEGgMd73+GquMJAy4zwVJfkdcqk18TK1+Hi1K2rOo
-        WyAPoQkTnyz4+hR6oLhIpr/SBfvQTfkyNQrhJOYVUA==
-X-Google-Smtp-Source: AAOMgpdg0P4o3eLEmwKqxBb2B+Ww4lO9bQ5gwfuKveqWC6QwZ6YQLnEbG2ShYuaStmmxh9t3wpi4mkBO7aKvQVP2Ues=
-X-Received: by 2002:a25:afce:: with SMTP id d14-v6mr2562083ybj.343.1531462589307;
- Thu, 12 Jul 2018 23:16:29 -0700 (PDT)
+        Fri, 13 Jul 2018 02:29:42 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fdrNH-0003Xl-HQ; Fri, 13 Jul 2018 08:16:15 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fdrN6-000625-Rs; Fri, 13 Jul 2018 08:16:04 +0200
+Date:   Fri, 13 Jul 2018 08:16:04 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     vkoul@kernel.org, dan.j.williams@intel.com, shawnguo@kernel.org,
+        fabio.estevam@nxp.com, linux@armlinux.org.uk,
+        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com
+Subject: Re: [PATCH v2 2/3] dmaengine: imx-sdma: add memcpy interface
+Message-ID: <20180713061604.tza3udckmyaoq5wh@pengutronix.de>
+References: <1531487327-21879-1-git-send-email-yibin.gong@nxp.com>
+ <1531487327-21879-3-git-send-email-yibin.gong@nxp.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 23:16:28
- -0700 (PDT)
-In-Reply-To: <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
-References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com> <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 12 Jul 2018 23:16:28 -0700
-X-Google-Sender-Auth: U7ioNlkGKxxGI5DFsAOqJ-kLAEw
-Message-ID: <CAGXu5jJOZ3u1BTf8U20wErphfjKzaGK+m1sdhA89LqVP3MDYZA@mail.gmail.com>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531487327-21879-3-git-send-email-yibin.gong@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 07:52:20 up 30 days, 15:01, 46 users,  load average: 0.04, 0.08,
+ 0.08
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 5:40 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> On Thu, Jul 12, 2018 at 06:02:26PM +0200, Arnd Bergmann wrote:
->>
->> Looking through some of the drivers, I found this interesting one:
->
-> As I said before these patches are fundamentally broken.  Users
-> of AHASH_REQUEST_ON_STACK can only use sync algorithm providers
-> and therefore drivers are irrelevant.
+On Fri, Jul 13, 2018 at 09:08:46PM +0800, Robin Gong wrote:
+> Add MEMCPY capability for imx-sdma driver.
+> 
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> ---
+>  drivers/dma/imx-sdma.c | 95 ++++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 92 insertions(+), 3 deletions(-)
+> 
+> @@ -1318,6 +1347,63 @@ static struct sdma_desc *sdma_transfer_init(struct sdma_channel *sdmac,
+>  	return NULL;
+>  }
+>  
+> +static struct dma_async_tx_descriptor *sdma_prep_memcpy(
+> +		struct dma_chan *chan, dma_addr_t dma_dst,
+> +		dma_addr_t dma_src, size_t len, unsigned long flags)
+> +{
+> +	struct sdma_channel *sdmac = to_sdma_chan(chan);
+> +	struct sdma_engine *sdma = sdmac->sdma;
+> +	int channel = sdmac->channel;
+> +	size_t count;
+> +	int i = 0, param;
+> +	struct sdma_buffer_descriptor *bd;
+> +	struct sdma_desc *desc;
+> +
+> +	if (!chan || !len)
+> +		return NULL;
+> +
+> +	dev_dbg(sdma->dev, "memcpy: %pad->%pad, len=%zu, channel=%d.\n",
+> +		&dma_src, &dma_dst, len, channel);
+> +
+> +	desc = sdma_transfer_init(sdmac, DMA_MEM_TO_MEM,
+> +					len / SDMA_BD_MAX_CNT + 1);
+> +	if (!desc)
+> +		return NULL;
+> +
+> +	do {
+> +		count = min_t(size_t, len, SDMA_BD_MAX_CNT);
+> +		bd = &desc->bd[i];
+> +		bd->buffer_addr = dma_src;
+> +		bd->ext_buffer_addr = dma_dst;
+> +		bd->mode.count = count;
+> +		desc->chn_count += count;
+> +		/* align with sdma->dma_device.copy_align: 4bytes */
+> +		bd->mode.command = 0;
+> +
+> +		dma_src += count;
+> +		dma_dst += count;
+> +		len -= count;
+> +		i++;
 
-I've also now gone to look at the few users of AHASH_REQUEST_ON_STACK,
-and it seems like they come in two flavors:
+NACK.
 
-- ones that can be trivially converts to shash (hibernate)
-- things that use scatter/gather
+Please actually look at your code and find out where you do unaligned DMA
+accesses. Hint: What happens when this loop body is executed more than once?
 
-Is this correct? It seems like you did the bulk of
-AHASH_REQUEST_ON_STACK conversions in 2016. Can shash grow an sg
-interface?
+Sascha
 
--Kees
+> +
+> +		param = BD_DONE | BD_EXTD | BD_CONT;
+> +		/* last bd */
+> +		if (!len) {
+> +			param |= BD_INTR;
+> +			param |= BD_LAST;
+> +			param &= ~BD_CONT;
+> +		}
+> +
+> +		dev_dbg(sdma->dev, "entry %d: count: %zd dma: 0x%x %s%s\n",
+> +				i, count, bd->buffer_addr,
+> +				param & BD_WRAP ? "wrap" : "",
+> +				param & BD_INTR ? " intr" : "");
+> +
+> +		bd->mode.status = param;
+> +	} while (len);
+> +
 
 -- 
-Kees Cook
-Pixel Security
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
