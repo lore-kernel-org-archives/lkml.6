@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60EAECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9698CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F83208A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:57:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34889208A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:57:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="IuKqYK3l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F83208A6
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="S+IVGMfh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34889208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387808AbeGMQNA (ORCPT
+        id S2387828AbeGMQNJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:13:00 -0400
-Received: from smtprelay.synopsys.com ([198.182.47.9]:57991 "EHLO
+        Fri, 13 Jul 2018 12:13:09 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:57993 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730644AbeGMQME (ORCPT
+        with ESMTP id S1730822AbeGMQME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Jul 2018 12:12:04 -0400
 Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 5308424E23CB;
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6913E24E23E3;
         Fri, 13 Jul 2018 08:56:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531497411; bh=8o/d08cxoFJFy0WbOcYWScnSy2oYJmEhjHEf8QG3rRY=;
+        t=1531497411; bh=ehkaiHzxqzj3X0frGz1XFFt9dOpOvUvrybjch26b/tI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=IuKqYK3lSOsxluZVmIcdmaE8miCjlLLBW+AVCVgnUfxoR1n0C2jGps9k4vb/z3Qm6
-         O4uB7ccNAt5aGMNRc3XNJxsgBWbE1L3Yc3Khq158p3fGNmbcHsKuY4Y6Of85GxmZYB
-         LqQtBMYCPrBTcccslsV4ecO034yWFg0/Tx0v4OVUDODTo7wikDUvbDpuUukX1bIU3g
-         Oz+vQZjaTKGnSyuT45jxKMYWHwM3MmMWbuUc1M1kFsSsxDJIbchnJ99awtQjwwPT0P
-         OJcWcvvR2dDrsm18+WgxkBSYfFTkQ8MM8F2JohwJuneDYF2CzXfyjc9tBMdSg1aJ7u
-         jx9+hiSRUBA8A==
+        b=S+IVGMfh/SFS0doW8lFUymcZFfliIt6Ca79Ilid3Z4Qf1W242Kq59bukoo/sZhsJu
+         4G6L71Ty13h9VQfH2WZ/KfQY8O7pAD0IstIIVgzz7/Tcc+qSGTD9TQo1D7xRB2yrLp
+         oz0QfaUQkDS67pYPUV+WJu4Wzsetfn/jIrjQsnU8fOlOVmkJrNpRmwLt5IzdAdB4yB
+         2Sdbhoh0bbRUF82BRlb+ZI+p6Csdj8nhQiO95Lu160Xl+vn6vtAh69hlxBf0BUnh80
+         RCl/Ktkhq0oDr2ijfF1pfAbWh7Y7c+nFhsj+EU8F+qyWEDMeJ3s0pZ9nQTNXyTL5/0
+         TNcuTK5NR8Uzg==
 Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 0F01D30DE;
+        by mailhost.synopsys.com (Postfix) with ESMTP id 1D3D430E0;
         Fri, 13 Jul 2018 08:56:51 -0700 (PDT)
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 445413E8E8;
+        by de02.synopsys.com (Postfix) with ESMTP id 8F59D3E8F8;
         Fri, 13 Jul 2018 17:56:49 +0200 (CEST)
 From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
@@ -52,9 +52,9 @@ To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
 Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v10 07/12] pci-epf-test/pci_endpoint_test: Cleanup PCI_ENDPOINT_TEST memspace
-Date:   Fri, 13 Jul 2018 17:56:39 +0200
-Message-Id: <39856616807ce6c3c76028ec0b39f77d44f0c202.1531496321.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v10 12/12] PCI: endpoint: Add MSI set maximum restriction
+Date:   Fri, 13 Jul 2018 17:56:44 +0200
+Message-Id: <9dfb92025894fa5c7bc8f08ae43a58c2001319d6.1531496321.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1531496321.git.gustavo.pimentel@synopsys.com>
 References: <cover.1531496321.git.gustavo.pimentel@synopsys.com>
@@ -65,375 +65,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup PCI_ENDPOINT_TEST memspace (by moving the interrupt number away
-from command section).
-
-Add IRQ_TYPE register to identify the triggered ID interrupt required
-for the READ/WRITE/COPY tests and raise IRQ test commands.
-
-Update documentation accordingly.
+Add pci_epc_set_msi() maximum 32 interrupts validation.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
-Change v2->v3:
- - New patch file created base on the previous patch
-"misc: pci_endpoint_test: Add MSI-X support" patch file following
-Kishon's suggestion.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
 Change v4->v5:
- - Reverted irq_num rename to msi_num.
- - Added comment about the MSI-X bit reservation for future implementation.
+ - New patch file.
 Change v5->v6:
  - Nothing changed, just to follow the patch set version.
 Change v6->v7:
- - Updated documentation.
+ - Nothing changed, just to follow the patch set version.
 Change v7->v8:
  - Re-sending the patch series.
 Change v8->v9:
  - Nothing changed, just to follow the patch set version.
 Change v9->v10:
- - Update documentation and patch description.
+ - Nothing changed, just to follow the patch set version.
 
- Documentation/PCI/endpoint/pci-test-function.txt |  8 +--
- Documentation/PCI/endpoint/pci-test-function.txt | 27 ++++++--
- drivers/misc/pci_endpoint_test.c                 | 81 +++++++++++++++---------
- drivers/pci/endpoint/functions/pci-epf-test.c    | 61 ++++++++++++------
- 3 files changed, 114 insertions(+), 55 deletions(-)
+ drivers/pci/endpoint/pci-epc-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/PCI/endpoint/pci-test-function.txt b/Documentation/PCI/endpoint/pci-test-function.txt
-index 0c519c9..bf4b5cf 100644
---- a/Documentation/PCI/endpoint/pci-test-function.txt
-+++ b/Documentation/PCI/endpoint/pci-test-function.txt
-@@ -20,6 +20,8 @@ The PCI endpoint test device has the following registers:
- 	5) PCI_ENDPOINT_TEST_DST_ADDR
- 	6) PCI_ENDPOINT_TEST_SIZE
- 	7) PCI_ENDPOINT_TEST_CHECKSUM
-+	8) PCI_ENDPOINT_TEST_IRQ_TYPE
-+	9) PCI_ENDPOINT_TEST_IRQ_NUMBER
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index c72e656..094dcc3 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ 	u8 encode_int;
+ 	unsigned long flags;
  
- *) PCI_ENDPOINT_TEST_MAGIC
+-	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
++	    interrupts > 32)
+ 		return -EINVAL;
  
-@@ -34,10 +36,10 @@ that the endpoint device must perform.
- Bitfield Description:
-   Bit 0		: raise legacy IRQ
-   Bit 1		: raise MSI IRQ
--  Bit 2 - 7	: MSI interrupt number
--  Bit 8		: read command (read data from RC buffer)
--  Bit 9		: write command (write data to RC buffer)
--  Bit 10	: copy command (copy data from one RC buffer to another
-+  Bit 2		: raise MSI-X IRQ (reserved for future implementation)
-+  Bit 3		: read command (read data from RC buffer)
-+  Bit 4		: write command (write data to RC buffer)
-+  Bit 5		: copy command (copy data from one RC buffer to another
- 		  RC buffer)
- 
- *) PCI_ENDPOINT_TEST_STATUS
-@@ -64,3 +66,20 @@ COPY/READ command.
- 
- This register contains the destination address (RC buffer address) for
- the COPY/WRITE command.
-+
-+*) PCI_ENDPOINT_TEST_IRQ_TYPE
-+
-+This register contains the interrupt type (Legacy/MSI) triggered
-+for the READ/WRITE/COPY and raise IRQ (Legacy/MSI) commands.
-+
-+Possible types:
-+ - Legacy	: 0
-+ - MSI		: 1
-+
-+*) PCI_ENDPOINT_TEST_IRQ_NUMBER
-+
-+This register contains the triggered ID interrupt.
-+
-+Admissible values:
-+ - Legacy	: 0
-+ - MSI		: [1 .. 32]
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 7b37046..35fbfbd 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -35,38 +35,43 @@
- 
- #include <uapi/linux/pcitest.h>
- 
--#define DRV_MODULE_NAME			"pci-endpoint-test"
--
--#define PCI_ENDPOINT_TEST_MAGIC		0x0
--
--#define PCI_ENDPOINT_TEST_COMMAND	0x4
--#define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
--#define COMMAND_RAISE_MSI_IRQ		BIT(1)
--#define MSI_NUMBER_SHIFT		2
--/* 6 bits for MSI number */
--#define COMMAND_READ                    BIT(8)
--#define COMMAND_WRITE                   BIT(9)
--#define COMMAND_COPY                    BIT(10)
--
--#define PCI_ENDPOINT_TEST_STATUS	0x8
--#define STATUS_READ_SUCCESS             BIT(0)
--#define STATUS_READ_FAIL                BIT(1)
--#define STATUS_WRITE_SUCCESS            BIT(2)
--#define STATUS_WRITE_FAIL               BIT(3)
--#define STATUS_COPY_SUCCESS             BIT(4)
--#define STATUS_COPY_FAIL                BIT(5)
--#define STATUS_IRQ_RAISED               BIT(6)
--#define STATUS_SRC_ADDR_INVALID         BIT(7)
--#define STATUS_DST_ADDR_INVALID         BIT(8)
--
--#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
-+#define DRV_MODULE_NAME				"pci-endpoint-test"
-+
-+#define IRQ_TYPE_LEGACY				0
-+#define IRQ_TYPE_MSI				1
-+
-+#define PCI_ENDPOINT_TEST_MAGIC			0x0
-+
-+#define PCI_ENDPOINT_TEST_COMMAND		0x4
-+#define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
-+#define COMMAND_RAISE_MSI_IRQ			BIT(1)
-+/* BIT(2) is reserved for raising MSI-X IRQ command */
-+#define COMMAND_READ				BIT(3)
-+#define COMMAND_WRITE				BIT(4)
-+#define COMMAND_COPY				BIT(5)
-+
-+#define PCI_ENDPOINT_TEST_STATUS		0x8
-+#define STATUS_READ_SUCCESS			BIT(0)
-+#define STATUS_READ_FAIL			BIT(1)
-+#define STATUS_WRITE_SUCCESS			BIT(2)
-+#define STATUS_WRITE_FAIL			BIT(3)
-+#define STATUS_COPY_SUCCESS			BIT(4)
-+#define STATUS_COPY_FAIL			BIT(5)
-+#define STATUS_IRQ_RAISED			BIT(6)
-+#define STATUS_SRC_ADDR_INVALID			BIT(7)
-+#define STATUS_DST_ADDR_INVALID			BIT(8)
-+
-+#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
- #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
- 
- #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
- #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
- 
--#define PCI_ENDPOINT_TEST_SIZE		0x1c
--#define PCI_ENDPOINT_TEST_CHECKSUM	0x20
-+#define PCI_ENDPOINT_TEST_SIZE			0x1c
-+#define PCI_ENDPOINT_TEST_CHECKSUM		0x20
-+
-+#define PCI_ENDPOINT_TEST_IRQ_TYPE		0x24
-+#define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
- 
- static DEFINE_IDA(pci_endpoint_test_ida);
- 
-@@ -179,6 +184,9 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
- {
- 	u32 val;
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 IRQ_TYPE_LEGACY);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 0);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_RAISE_LEGACY_IRQ);
- 	val = wait_for_completion_timeout(&test->irq_raised,
-@@ -195,8 +203,10 @@ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
- 	u32 val;
- 	struct pci_dev *pdev = test->pdev;
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, msi_num);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 msi_num << MSI_NUMBER_SHIFT |
- 				 COMMAND_RAISE_MSI_IRQ);
- 	val = wait_for_completion_timeout(&test->irq_raised,
- 					  msecs_to_jiffies(1000));
-@@ -281,8 +291,11 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
- 				 size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_COPY);
-+				 COMMAND_COPY);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-@@ -348,8 +361,11 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_READ);
-+				 COMMAND_READ);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-@@ -403,8 +419,11 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_WRITE);
-+				 COMMAND_WRITE);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 63ed706..eb9cd00 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -18,13 +18,15 @@
- #include <linux/pci-epf.h>
- #include <linux/pci_regs.h>
- 
-+#define IRQ_TYPE_LEGACY			0
-+#define IRQ_TYPE_MSI			1
-+
- #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
- #define COMMAND_RAISE_MSI_IRQ		BIT(1)
--#define MSI_NUMBER_SHIFT		2
--#define MSI_NUMBER_MASK			(0x3f << MSI_NUMBER_SHIFT)
--#define COMMAND_READ			BIT(8)
--#define COMMAND_WRITE			BIT(9)
--#define COMMAND_COPY			BIT(10)
-+/* BIT(2) is reserved for raising MSI-X IRQ command */
-+#define COMMAND_READ			BIT(3)
-+#define COMMAND_WRITE			BIT(4)
-+#define COMMAND_COPY			BIT(5)
- 
- #define STATUS_READ_SUCCESS		BIT(0)
- #define STATUS_READ_FAIL		BIT(1)
-@@ -56,6 +58,8 @@ struct pci_epf_test_reg {
- 	u64	dst_addr;
- 	u32	size;
- 	u32	checksum;
-+	u32	irq_type;
-+	u32	irq_number;
- } __packed;
- 
- static struct pci_epf_header test_header = {
-@@ -244,31 +248,39 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
- 	return ret;
- }
- 
--static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq)
-+static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq_type,
-+				   u16 irq)
- {
--	u8 msi_count;
- 	struct pci_epf *epf = epf_test->epf;
-+	struct device *dev = &epf->dev;
- 	struct pci_epc *epc = epf->epc;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
- 
- 	reg->status |= STATUS_IRQ_RAISED;
--	msi_count = pci_epc_get_msi(epc, epf->func_no);
--	if (irq > msi_count || msi_count <= 0)
-+
-+	switch (irq_type) {
-+	case IRQ_TYPE_LEGACY:
- 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_LEGACY, 0);
--	else
-+		break;
-+	case IRQ_TYPE_MSI:
- 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-+		break;
-+	default:
-+		dev_err(dev, "Failed to raise IRQ, unknown type\n");
-+		break;
-+	}
- }
- 
- static void pci_epf_test_cmd_handler(struct work_struct *work)
- {
- 	int ret;
--	u8 irq;
--	u8 msi_count;
-+	u16 count;
- 	u32 command;
- 	struct pci_epf_test *epf_test = container_of(work, struct pci_epf_test,
- 						     cmd_handler.work);
- 	struct pci_epf *epf = epf_test->epf;
-+	struct device *dev = &epf->dev;
- 	struct pci_epc *epc = epf->epc;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-@@ -280,7 +292,10 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 	reg->command = 0;
- 	reg->status = 0;
- 
--	irq = (command & MSI_NUMBER_MASK) >> MSI_NUMBER_SHIFT;
-+	if (reg->irq_type > IRQ_TYPE_MSI) {
-+		dev_err(dev, "Failed to detect IRQ type\n");
-+		goto reset_handler;
-+	}
- 
- 	if (command & COMMAND_RAISE_LEGACY_IRQ) {
- 		reg->status = STATUS_IRQ_RAISED;
-@@ -294,7 +309,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_WRITE_FAIL;
- 		else
- 			reg->status |= STATUS_WRITE_SUCCESS;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -304,7 +320,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_READ_SUCCESS;
- 		else
- 			reg->status |= STATUS_READ_FAIL;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -314,16 +331,18 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_COPY_SUCCESS;
- 		else
- 			reg->status |= STATUS_COPY_FAIL;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
- 	if (command & COMMAND_RAISE_MSI_IRQ) {
--		msi_count = pci_epc_get_msi(epc, epf->func_no);
--		if (irq > msi_count || msi_count <= 0)
-+		count = pci_epc_get_msi(epc, epf->func_no);
-+		if (reg->irq_number > count || count <= 0)
- 			goto reset_handler;
- 		reg->status = STATUS_IRQ_RAISED;
--		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-+		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI,
-+				  reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -457,8 +476,10 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 		return ret;
- 
- 	ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
--	if (ret)
-+	if (ret) {
-+		dev_err(dev, "MSI configuration failed\n");
- 		return ret;
-+	}
- 
- 	if (!epf_test->linkup_notifier)
- 		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
+ 	if (!epc->ops->set_msi)
 -- 
 2.7.4
 
