@@ -2,122 +2,128 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC05ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 099E9ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 436012148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:01:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A722F2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:03:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R32XDzNs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 436012148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLp7AaOc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A722F2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387776AbeGMANO (ORCPT
+        id S2387802AbeGMAPA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 20:13:14 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:53411 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387719AbeGMANO (ORCPT
+        Thu, 12 Jul 2018 20:15:00 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:45234 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387733AbeGMAPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 20:13:14 -0400
-Received: by mail-it0-f66.google.com with SMTP id a195-v6so9276570itd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 17:01:18 -0700 (PDT)
+        Thu, 12 Jul 2018 20:15:00 -0400
+Received: by mail-pf0-f193.google.com with SMTP id i26-v6so10102895pfo.12;
+        Thu, 12 Jul 2018 17:03:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=floiBXgg12C4kqU5VTrJdbAukqagbECpPMk7AGzr8YI=;
-        b=R32XDzNs0gxEj/n+dRwJjUr1NutBy6Ihxn3V7WXAB9o7cp2dYtrCWD3GBR24rUlIfq
-         yLqg7VLeHgyGdc2FFyd8LHQt248NLGYGnif9c6rMB8452MLMLv01Qawvi+PKna9nhY/8
-         XCiUssIQZJl6AW0hZs82TThTPHz//WObZpt+UK9clgck9ilSnlokjtyozdL31LTQDf/h
-         vAu2psHRXNz54SIVTEK0NUeLhb41yHHsjmuIP36DpGjWRqwmBjs62rPWCSPekKvmJdRf
-         YvwNlUCa48CoqwPVeubkSrQSQjovTHPobMQhfbPgHDC3miDZJTFcTg8+p4Z2MaznTu9s
-         ZudQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=UlnLBq3OMUeir439IFNBYgEOZjYSe38xuIY4a7lzsY8=;
+        b=ZLp7AaOcoFR342gi1TbRKXEbLYAMBmAHpz+44ZiwXWsQnQCDf3BRsU+UX3S2tkijZt
+         GxMwBR2BtYgAuPVaQq3nbZjCywYAr8R1OjmZ5YvqBjPCqcjnl6knhceoUfaLADgapX/t
+         2GWI76habEN3hhObNOrVzva7RwKxlQDyE2TTY1vmW4TuyfNSeKaL6v6F4QB8dhjJJgpD
+         +sdOEOMKESWuXKZ1QCrAKk+Hrtwsxg6zfJhAc/V8e5GiSfWLOy+AiXXi4AyhXc3rLfN1
+         1uDPgBeEPChmBb/mwpUsNBgd1cUADdJT20miVQ7NSwI/EsKe9nzw+zkQiGoqmwCPx4Lp
+         RMag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=floiBXgg12C4kqU5VTrJdbAukqagbECpPMk7AGzr8YI=;
-        b=Fj2T8Z3YgY3b3Nhle7abPbe9W77e2b9NfpRk7XB+Lnp+4m3hEOE8iEJTt5MPSRZ0XT
-         +jt8OyD66tBM88isuF4rQXpAv+sfHlcfO1nIq2TFAJaEeO5GJPj2LA6WMYlhifkxXykp
-         c/YyTV10qoVjNv1a1tSInY9GJwfIOZ+h0E8j3FZty/0REcW9ONAtltCpE31J0Fo19lFB
-         m2AzTk2m0UD+sx3wnpz4579/irtT1v7zTX9LPzDJgppokjvZK9TKgVV+aOjer83TDteG
-         rMOeO0cUznQld5/le5oK9/aZKhhc5JAwCJVgEmA4Ze3HLWlLawNUOkyFcYveSfCLgz8L
-         qyjQ==
-X-Gm-Message-State: AOUpUlEYS7t2i6JdUiEeyRtKJBmT87lh64sd55T4FaR4T1bXJ4C66E+1
-        9AXD4FkTtxuVuQvJ7B77YShbuR9c15aYhS7/gPnEv4C4
-X-Google-Smtp-Source: AAOMgpcUFuB/fqSvAgt1iE6fyiJQLhZ5g4dGFcl/8v0HQfaXMWZwq6nThMH77cj/KMsXmGvnT76khKlysWJceKnyuDA=
-X-Received: by 2002:a24:7a84:: with SMTP id a126-v6mr3021211itc.111.1531440078163;
- Thu, 12 Jul 2018 17:01:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180712201032.156997-1-astrachan@google.com> <47d4b24e-8c60-fb3b-3377-62d20c5f3dd1@zytor.com>
- <CANDihLEz3_fZ4r4g=VcxWps5DWSjMJdbJZKZWsLFKVp_c7FscA@mail.gmail.com>
- <1432bfde-41b4-e8aa-037b-fca41a149cb8@zytor.com> <5AB78E47-BC62-4DA5-920B-00E9731AAE04@amacapital.net>
-In-Reply-To: <5AB78E47-BC62-4DA5-920B-00E9731AAE04@amacapital.net>
-From:   Alistair Strachan <astrachan@google.com>
-Date:   Thu, 12 Jul 2018 17:01:06 -0700
-Message-ID: <CANDihLFWXKd1ijdTFCdZSa4yiQLMP=PhUpws41DYfOP-zLOpng@mail.gmail.com>
-Subject: Re: [PATCH] x86: vdso: Fix leaky vdso link with CC=clang
-To:     luto@amacapital.net
-Cc:     hpa@zytor.com, linux-kernel@vger.kernel.org, luto@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UlnLBq3OMUeir439IFNBYgEOZjYSe38xuIY4a7lzsY8=;
+        b=Fc4GKZLTrxgAYeB0buBVKj2Lrnyd2IP6JbKGPoVB+ICbWl6O+5PW3fPlk2r1J2u9ML
+         LITLNlHrlw+D8IMtbD1WTikvbKNjyBzw7MSr8Zy6zP3vFZFoawbmQsJMYfRQA5VaLzuV
+         Y0WQVOgr/lwqXQyjtl5ddIoFBXLq4SItfEsD2rGU1LCsvOO+ZMFOlCbhkCSTqQDJ0PB8
+         WQQ2mp4rAt6abVbXv9VK8xFMpz1JTeXFm+qywpbI7pYCLTmyJMAMrhuzN38gmoX51kLv
+         h+vJrjLKtHK8WaiCAS7NuiSkxoUfozfUjCF8bwHVk/SRshrvRoSCjN7zD8gcOPImO1mm
+         IIYg==
+X-Gm-Message-State: AOUpUlFMuod8SwHsqe3ax01PAXJoIEWrZ9KlLz/NoXbQNBj9RWnzJE9s
+        Ym2LvCU3lCM3I7DLK7BWGpI=
+X-Google-Smtp-Source: AAOMgpfRv8mTNBYc4Jkh654sFfvMrRhVLvEi7HfylOwhYk3hLK/ZKLw7b460KiD1CXeWWpeQxRK/jQ==
+X-Received: by 2002:a62:843:: with SMTP id c64-v6mr4547521pfd.14.1531440184292;
+        Thu, 12 Jul 2018 17:03:04 -0700 (PDT)
+Received: from 192-168-1-101.tpgi.com.com ([61.68.54.151])
+        by smtp.gmail.com with ESMTPSA id t21-v6sm13813083pfh.45.2018.07.12.17.03.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 17:03:03 -0700 (PDT)
+From:   Jon Maxwell <jmaxwell37@gmail.com>
+To:     davem@davemloft.net
+Cc:     edumazet@google.com, ncardwell@google.com, David.Laight@aculab.com,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmaxwell@redhat.com
+Subject: [net-next, 2/3] tcp: convert icsk_user_timeout from jiffies to msecs
+Date:   Fri, 13 Jul 2018 10:02:41 +1000
+Message-Id: <20180713000241.17608-1-jmaxwell37@gmail.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 4:20 PM Andy Lutomirski <luto@amacapital.net> wrote:
->
-> > On Jul 12, 2018, at 3:06 PM, H. Peter Anvin <hpa@zytor.com> wrote:
-> >
-> >> On 07/12/18 13:37, Alistair Strachan wrote:
-> >>> On Thu, Jul 12, 2018 at 1:25 PM H. Peter Anvin <hpa@zytor.com> wrote:
-> >>>> On 07/12/18 13:10, Alistair Strachan wrote:
-> >>>> The vdso{32,64}.so can fail to link with CC=clang when clang tries to
-> >>>> find a suitable GCC toolchain to link these libraries with.
-> >>>>
-> >>>> /usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
-> >>>>  access beyond end of merged section (782)
-> >>>>
-> >>>> This happens because the host environment leaked into the cross
-> >>>> compiler environment due to the way clang searches for suitable GCC
-> >>>> toolchains.
-> >>>>
-> >>>
-> >>> Is this another clang bug that you want a workaround for in the kernel?
-> >>
-> >> Clang is a retargetable compiler (specified with --target=<something>)
-> >> and so it has a mechanism for searching for suitable binutils (from
-> >> another "GCC toolchain") to perform assembly and linkage. This
-> >> mechanism relies on both --target and --gcc-toolchain when
-> >> cross-compiling, otherwise it will fall back to searching /usr.
-> >>
-> >> The --target and --gcc-toolchain flags are already specified correctly
-> >> in the top level Makefile, but the vdso Makefile rolls its own linker
-> >> flags and doesn't use KBUILD_CFLAGS. Therefore, these flags get
-> >> incorrectly dropped from the vdso $CC link command line, and an
-> >> inconsistency is created between the "GCC toolchain" used to generate
-> >> the objects for the vdso, and the linker used to link them.
-> >>
-> >
-> > It sounds like there needs to be a more fundamental symbol than
-> > KBUILD_CFLAGS to contain these kinds of things.
->
-> How about $(CC)?
+Create a seperate helper routine called tcp_retransmit_stamp() as per Neal 
+Cardwells suggestion. To be used by the final commit in this series and 
+retransmits_timed_out().
 
-I'm guessing, but I think this wasn't done originally because CC is
-something the user might reasonably specify on the command line (the
-other bit comes from CROSS_COMPILE), so doing this via CC would
-require us to override the CC passed in on the command line. Not sure
-how to do that, since the vdso makefile is executed with a submake, so
-the usual "override CC := $(CC) something else" followed by "export
-CC" doesn't work.
+Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
+---
+ net/ipv4/tcp_timer.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
+index fa34984d0b12..8ab8c9645294 100644
+--- a/net/ipv4/tcp_timer.c
++++ b/net/ipv4/tcp_timer.c
+@@ -22,6 +22,20 @@
+ #include <linux/gfp.h>
+ #include <net/tcp.h>
+ 
++u32 tcp_retransmit_stamp(const struct sock *sk)
++{
++	u32 start_ts = tcp_sk(sk)->retrans_stamp;
++
++	if (unlikely(!start_ts)) {
++		struct sk_buff *head = tcp_rtx_queue_head(sk);
++
++	if (!head)
++		return 0;
++	start_ts = tcp_skb_timestamp(head);
++	}
++	return start_ts;
++}
++
+ /**
+  *  tcp_write_err() - close socket and save error info
+  *  @sk:  The socket the error has appeared on.
+@@ -166,14 +180,9 @@ static bool retransmits_timed_out(struct sock *sk,
+ 	if (!inet_csk(sk)->icsk_retransmits)
+ 		return false;
+ 
+-	start_ts = tcp_sk(sk)->retrans_stamp;
+-	if (unlikely(!start_ts)) {
+-		struct sk_buff *head = tcp_rtx_queue_head(sk);
+-
+-		if (!head)
+-			return false;
+-		start_ts = tcp_skb_timestamp(head);
+-	}
++	start_ts = tcp_retransmit_stamp(sk);
++	if (!start_ts)
++		return false;
+ 
+ 	if (likely(timeout == 0)) {
+ 		linear_backoff_thresh = ilog2(TCP_RTO_MAX/rto_base);
+-- 
+2.13.6
+
