@@ -6,32 +6,33 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C95CBECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 04:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05EC5ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 04:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82A2A20878
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 04:16:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82A2A20878
+	by mail.kernel.org (Postfix) with ESMTP id BAA5C20878
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 04:18:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAA5C20878
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbeGME3c (ORCPT
+        id S1727071AbeGMEbA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 00:29:32 -0400
-Received: from mga06.intel.com ([134.134.136.31]:16945 "EHLO mga06.intel.com"
+        Fri, 13 Jul 2018 00:31:00 -0400
+Received: from mga17.intel.com ([192.55.52.151]:38243 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725924AbeGME3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 00:29:32 -0400
+        id S1725916AbeGMEa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 00:30:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2018 21:16:46 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2018 21:18:14 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,346,1526367600"; 
-   d="scan'208";a="66591481"
+   d="scan'208";a="66591679"
 Received: from andreser-mobl.amr.corp.intel.com (HELO [10.252.137.224]) ([10.252.137.224])
-  by orsmga003.jf.intel.com with ESMTP; 12 Jul 2018 21:16:46 -0700
+  by orsmga003.jf.intel.com with ESMTP; 12 Jul 2018 21:18:02 -0700
 Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
+From:   Dave Hansen <dave.hansen@intel.com>
 To:     Andy Lutomirski <luto@amacapital.net>
 References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
  <20180710222639.8241-19-yu-cheng.yu@intel.com>
@@ -40,8 +41,8 @@ References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
  <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com>
  <167645aa-f1c7-bd6a-c7e0-2da317cbbaba@intel.com>
  <55A0592D-0E8D-4BC5-BA4B-E82E92EEA36A@amacapital.net>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+ <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
@@ -60,7 +61,6 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
@@ -105,12 +105,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
-Date:   Thu, 12 Jul 2018 21:16:46 -0700
+Message-ID: <8bd46e0e-5418-0b22-d471-092d31c78320@intel.com>
+Date:   Thu, 12 Jul 2018 21:18:01 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <55A0592D-0E8D-4BC5-BA4B-E82E92EEA36A@amacapital.net>
+In-Reply-To: <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -119,10 +119,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 07:21 PM, Andy Lutomirski wrote:
-> I am tempted to suggest that the whole series not be merged until
-> there are actual docs. It’s not a fantastic precedent.
+On 07/12/2018 09:16 PM, Dave Hansen wrote:
+> On 07/12/2018 07:21 PM, Andy Lutomirski wrote:
+>> I am tempted to suggest that the whole series not be merged until
+>> there are actual docs. It’s not a fantastic precedent.
+> 
+> Do you mean Documentation or manpages, or are you talking about hardware
+> documentation?
+> https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-enforcement-technology-preview.pdf
 
-Do you mean Documentation or manpages, or are you talking about hardware
-documentation?
-https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-enforcement-technology-preview.pdf
+Hit send too soon...
+
+We do need manpages a well.  If I had to do it for protection keys,
+everyone else has to suffer too. :)
+
+Yu-cheng, I really do think selftests are a necessity before this gets
+merged.
+
