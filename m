@@ -2,117 +2,192 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313ACECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83470ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE8D20843
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:04:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JPNp+r7Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE8D20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CB5920835
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:08:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB5920835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbeGMLR0 (ORCPT
+        id S1728321AbeGMLWK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 07:17:26 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34100 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729617AbeGMLRZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 07:17:25 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c13-v6so24664198wrt.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=Qk6hnKwUWLm/H05hoCAYAeoi5TcRpEM5YmryPa+Opgk=;
-        b=JPNp+r7QNkJuK/Vmb9tpXBdnnFsV1dZagccIFdpbM5Z43VbNVVIImhfjWCZWIWsTx2
-         IJZTJ4iEajeDajbWMOSPQ6z2LtvtkPvOv8UBt/UuLqzlrEaF0hfKTpRVZ6XQrsQC1d/S
-         /YWQmutlL4AX5AhuApf8mOsE6CNolHKIiwj12TgJk0xKUM/zDjJCX2YC+MQwkHQ4hJr3
-         qZ70jRHWPuU1T/RXM5+FoJ82NvaGp4boZklc8a1ykJ8/+Q1shzXASJoASPhFG+JpB178
-         v7X7g7LcLA6UgHG74O8tiCVgeAwxb+pVb1Ru85uCUY+QKiSSMLMN/O2zz+kxLfv9Oat3
-         Bvjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Qk6hnKwUWLm/H05hoCAYAeoi5TcRpEM5YmryPa+Opgk=;
-        b=Y+0haP223G29I2zNjyxa41qwOOz3oyeG8p5U1PJRp/MmhatuQ0EyJ6l5H9iSNqCNR5
-         6hUkGMFFm8n76+9cvZCDX51ypkP0po6gTvvdtWipdRY/WQLPtu57hPgX6ilkJI33K2eq
-         IiHtbtOlGqi6Rc2g42vPSNRLm3nK7GsX13H66Xo1Euhsbwj2o6F8hmvT0xSuosvdPO9G
-         X/LgjaaUPXoIXDIUBt0VM76+GDeSsrlxbZUhRjgtrX+8a+kCUVJqfFj1PQ3tOAMR3LJG
-         fJZEkR0qdHwxiDhwxxEe+Ze62Bd8Sh9fUa9r7RD/2kEY/7sUny6yEr3pSAt6RGY8EA1K
-         cyXw==
-X-Gm-Message-State: AOUpUlEwg3hd0nvtDqHYw88aCf+faZHsCVwT4Kq1/CdjPTqh/bpYh6b5
-        uVQNsLLxDEuycOJdE3QEny0K1A==
-X-Google-Smtp-Source: AAOMgpfXlM7pLO9syZL28CDh/gnDBp7wcx+AU17+XXl8vLHkoOhcgZzzRr5i4piDpCKy4IhzRewZ4w==
-X-Received: by 2002:a5d:6401:: with SMTP id z1-v6mr4471676wru.64.1531479793990;
-        Fri, 13 Jul 2018 04:03:13 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id y14-v6sm4598045wrq.45.2018.07.13.04.03.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 13 Jul 2018 04:03:13 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     hdegoede@redhat.com, linux@armlinux.org.uk, mark.rutland@arm.com,
+        Fri, 13 Jul 2018 07:22:10 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:55072 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727306AbeGMLWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 07:22:10 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 02CBA64B5C;
+        Fri, 13 Jul 2018 11:07:49 +0000 (UTC)
+Date:   Fri, 13 Jul 2018 19:07:38 +0800
+In-Reply-To: <1531479786-4911-7-git-send-email-clabbe@baylibre.com>
+References: <1531479786-4911-1-git-send-email-clabbe@baylibre.com> <1531479786-4911-7-git-send-email-clabbe@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v3 6/9] ata: ahci_platform: add support for port regulator
+To:     Corentin Labbe <clabbe@baylibre.com>, hdegoede@redhat.com,
+        linux@armlinux.org.uk, mark.rutland@arm.com,
         maxime.ripard@free-electrons.com, robh+dt@kernel.org,
         tj@kernel.org, wens@csie.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+CC:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, thierry.reding@gmail.com,
-        icenowy@aosc.io, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v3 0/9] ata: ahci_platform: support allwinner R40 AHCI
-Date:   Fri, 13 Jul 2018 11:02:57 +0000
-Message-Id: <1531479786-4911-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        linux-sunxi@googlegroups.com, thierry.reding@gmail.com
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <E8988FD2-335C-4BB9-87C3-2DE439784976@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
 
-This patchset add support for allwinner R40 AHCI controller.
 
-This controller need two regulator and one reset which is unsupported
-for the moment on ahci_platform.
+于 2018年7月13日 GMT+08:00 下午7:03:03, Corentin Labbe <clabbe@baylibre.com> 写到:
+>The SoC R40 AHCI controller need a port regulator to work.
 
-So this patchset add support for reset and regulator for AHCI
-controller.
-It add also support for non-target regulator per SATA port.
+In fact it should be a PHY regulator.
 
-The whole patchset is tested on sun8i-r40-bananapi-m2-ultra and
-on sun7i-a20-cubieboard2 which doesnt have any of the ressources added
-by this serie, so no regression should come with it.
-
-Since just before sending this patchset, I discovered the revert of
-f0f56716fc3e ("ata: ahci-platform: add reset control support")
-I have also tested this serie on a tegra124-jetson-tk1.
-
-Changes since V2
-- Moved all ressources management to ahci_platform
-
-Corentin Labbe (9):
-  ata: ahci_platform: add support for AHCI controller regulator
-  dt-bindings: ata: ahci-platform: document ahci-supply
-  ata: ahci_platform: add support for AHCI controller reset
-  dt-bindings: ata: ahci-platform: document AHCI reset
-  dt-bindings: ata: ahci-platform: fix indentation of target-supply
-  ata: ahci_platform: add support for port regulator
-  dt-bindings: ata: ahci-platform: document port-supply
-  ARM: dts: sun8i: r40: add sata node
-  ARM: dts: sun8i: sun8i-r40-bananapi-m2-ultra: enable AHCI
-
- .../devicetree/bindings/ata/ahci-platform.txt      |   7 +-
- arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  21 +++++
- arch/arm/boot/dts/sun8i-r40.dtsi                   |  16 ++++
- drivers/ata/ahci.h                                 |   4 +
- drivers/ata/libahci_platform.c                     | 102 ++++++++++++++++++---
- 5 files changed, 138 insertions(+), 12 deletions(-)
-
--- 
-2.16.4
-
+>We cannot use the "target-supply" since it's not a target power
+>regulator.
+>So this patch add a way to add an optional port regulator.
+>
+>Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+>---
+> drivers/ata/ahci.h             |  1 +
+>drivers/ata/libahci_platform.c | 47
+>+++++++++++++++++++++++++++++++++++++-----
+> 2 files changed, 43 insertions(+), 5 deletions(-)
+>
+>diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
+>index 274c1885a5ad..716fd679dd3e 100644
+>--- a/drivers/ata/ahci.h
+>+++ b/drivers/ata/ahci.h
+>@@ -352,6 +352,7 @@ struct ahci_host_priv {
+> 	bool			got_runtime_pm; /* Did we do pm_runtime_get? */
+> 	struct clk		*clks[AHCI_MAX_CLKS]; /* Optional */
+> 	struct regulator	**target_pwrs;	/* Optional */
+>+	struct regulator	**port_regulators;/* Optional */
+> 	struct regulator	*ahci_regulator;/* Optional */
+> 	struct reset_control	*ahci_reset;	/* Optional */
+> 	/*
+>diff --git a/drivers/ata/libahci_platform.c
+>b/drivers/ata/libahci_platform.c
+>index 1199ba411c15..d7574b3e1f6a 100644
+>--- a/drivers/ata/libahci_platform.c
+>+++ b/drivers/ata/libahci_platform.c
+>@@ -148,7 +148,7 @@ EXPORT_SYMBOL_GPL(ahci_platform_disable_clks);
+>  */
+> int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
+> {
+>-	int rc, i;
+>+	int rc, i, j;
+> 
+> 	if (hpriv->ahci_regulator) {
+> 		rc = regulator_enable(hpriv->ahci_regulator);
+>@@ -164,9 +164,21 @@ int ahci_platform_enable_regulators(struct
+>ahci_host_priv *hpriv)
+> 		if (rc)
+> 			goto disable_target_pwrs;
+> 	}
+>+	for (j = 0; j < hpriv->nports; j++) {
+>+		if (!hpriv->port_regulators[j])
+>+			continue;
+>+
+>+		rc = regulator_enable(hpriv->port_regulators[j]);
+>+		if (rc)
+>+			goto disable_port_regulators;
+>+	}
+> 
+> 	return 0;
+> 
+>+disable_port_regulators:
+>+	while (--j >= 0)
+>+		if (hpriv->port_regulators[j])
+>+			regulator_disable(hpriv->port_regulators[j]);
+> disable_target_pwrs:
+> 	while (--i >= 0)
+> 		if (hpriv->target_pwrs[i])
+>@@ -190,9 +202,10 @@ void ahci_platform_disable_regulators(struct
+>ahci_host_priv *hpriv)
+> 	int i;
+> 
+> 	for (i = 0; i < hpriv->nports; i++) {
+>-		if (!hpriv->target_pwrs[i])
+>-			continue;
+>-		regulator_disable(hpriv->target_pwrs[i]);
+>+		if (hpriv->target_pwrs[i])
+>+			regulator_disable(hpriv->target_pwrs[i]);
+>+		if (hpriv->port_regulators[i])
+>+			regulator_disable(hpriv->port_regulators[i]);
+> 	}
+> 
+> 	if (hpriv->ahci_regulator)
+>@@ -291,9 +304,12 @@ static void ahci_platform_put_resources(struct
+>device *dev, void *res)
+> 	 * SATA device itself. So we can't use devm for automatically
+> 	 * releasing them. We have to do it manually here.
+> 	 */
+>-	for (c = 0; c < hpriv->nports; c++)
+>+	for (c = 0; c < hpriv->nports; c++) {
+> 		if (hpriv->target_pwrs && hpriv->target_pwrs[c])
+> 			regulator_put(hpriv->target_pwrs[c]);
+>+		if (hpriv->port_regulators && hpriv->port_regulators[c])
+>+			regulator_put(hpriv->port_regulators[c]);
+>+	}
+> }
+> 
+>static int ahci_platform_get_phy(struct ahci_host_priv *hpriv, u32
+>port,
+>@@ -338,6 +354,7 @@ static int ahci_platform_get_regulator(struct
+>ahci_host_priv *hpriv, u32 port,
+> 				struct device *dev)
+> {
+> 	struct regulator *target_pwr;
+>+	struct regulator *port_regulator;
+> 	int rc = 0;
+> 
+> 	target_pwr = regulator_get_optional(dev, "target");
+>@@ -346,6 +363,21 @@ static int ahci_platform_get_regulator(struct
+>ahci_host_priv *hpriv, u32 port,
+> 		hpriv->target_pwrs[port] = target_pwr;
+> 	else
+> 		rc = PTR_ERR(target_pwr);
+>+	/* Only EPROBE_DEFER is important since it's an optional regulator */
+>+	if (rc != -EPROBE_DEFER)
+>+		rc = 0;
+>+	else
+>+		return rc;
+>+
+>+	port_regulator = regulator_get_optional(dev, "port");
+>+
+>+	if (!IS_ERR(port_regulator))
+>+		hpriv->port_regulators[port] = port_regulator;
+>+	else
+>+		rc = PTR_ERR(port_regulator);
+>+	/* Only EPROBE_DEFER is important since it's an optional regulator */
+>+	if (rc != -EPROBE_DEFER)
+>+		rc = 0;
+> 
+> 	return rc;
+> }
+>@@ -454,6 +486,11 @@ struct ahci_host_priv
+>*ahci_platform_get_resources(struct platform_device *pdev)
+> 		rc = -ENOMEM;
+> 		goto err_out;
+> 	}
+>+	hpriv->port_regulators = devm_kcalloc(dev, hpriv->nports,
+>sizeof(*hpriv->port_regulators), GFP_KERNEL);
+>+	if (!hpriv->port_regulators) {
+>+		rc = -ENOMEM;
+>+		goto err_out;
+>+	}
+> 
+> 	if (child_nodes) {
+> 		for_each_child_of_node(dev->of_node, child) {
