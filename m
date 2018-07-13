@@ -2,157 +2,228 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 437BEECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56653ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB337208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:42:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02F80208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:43:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="rcOr+bkU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB337208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s4gp/bvZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F80208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeGMP5v (ORCPT
+        id S1731042AbeGMP6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 11:57:51 -0400
-Received: from mail-eopbgr10101.outbound.protection.outlook.com ([40.107.1.101]:6896
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729725AbeGMP5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 11:57:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pvjggsgZJL82kBPPZlAilhNeGCHK6g7Eu21T7gVFiQY=;
- b=rcOr+bkU0SWT2STWFhPs1neJgg3UJMMaAKFBFcM0swbiB/ebjtXBzVoxgeF/xemON7wM268l5ToOEllj22UQ3+tGexTgvOn5l9mn/2A9Xf2+bNkw1vn+YLgTzUUE4vFIi/YoavqQByvwYUq1qlPkfYL1ZubpIYpx04nmVt5jDFg=
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
- VI1PR0501MB2383.eurprd05.prod.outlook.com (10.168.135.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.20; Fri, 13 Jul 2018 15:42:37 +0000
-Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::5570:f225:bd5b:1aa3]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
- ([fe80::5570:f225:bd5b:1aa3%10]) with mapi id 15.20.0930.022; Fri, 13 Jul
- 2018 15:42:36 +0000
-From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "avienamo@nvidia.com" <avienamo@nvidia.com>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>
-CC:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Stefan Agner <stefan.agner@toradex.com>
-Subject: Re: [PATCH] mmc: tegra: Add and use tegra_sdhci_get_max_clock()
-Thread-Topic: [PATCH] mmc: tegra: Add and use tegra_sdhci_get_max_clock()
-Thread-Index: AQHUGqvsd0jEo9zEdEWjel39VayzlKSNSuQA
-Date:   Fri, 13 Jul 2018 15:42:36 +0000
-Message-ID: <1531496554.5479.37.camel@toradex.com>
-References: <1531487865-17427-1-git-send-email-avienamo@nvidia.com>
-In-Reply-To: <1531487865-17427-1-git-send-email-avienamo@nvidia.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marcel.ziswiler@toradex.com; 
-x-originating-ip: [89.217.215.226]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2383;7:uBR0/mcTJzYMYZXuKrdu4r0tEgxDcKXJ600MhOi3Om/ospHGoDUxOrUzMgXN5gl8XYR1vD/sBfBhstYkr4WPZMh91kn4j9s5R/PszKPxO3r5sbCZc036SirWCO7cxuEJOvIy5mXbUNhhgEsspguYMQ5fyFw8DaJgslQnhZITENY4g3R58uyspQiIhHNHKg6LQ+v+AXTUBms5ISKViJ52twnxlvcnryDrRsz5xR+sAdzRXjr9RPnIiHwtrojEP/Yf
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(136003)(346002)(376002)(39850400004)(366004)(396003)(189003)(199004)(316002)(5250100002)(6486002)(25786009)(2900100001)(2906002)(6506007)(256004)(53936002)(54906003)(2201001)(6436002)(3846002)(11346002)(81156014)(6512007)(81166006)(110136005)(36756003)(6116002)(106356001)(8936002)(102836004)(6246003)(229853002)(305945005)(6306002)(966005)(8676002)(26005)(7736002)(86362001)(14454004)(2501003)(66066001)(99286004)(446003)(476003)(478600001)(2616005)(103116003)(5660300001)(486006)(107886003)(44832011)(68736007)(97736004)(4326008)(186003)(105586002)(76176011)(39060400002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2383;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 39baa300-7c92-416c-8be4-08d5e8d74217
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2383;
-x-ms-traffictypediagnostic: VI1PR0501MB2383:
-x-microsoft-antispam-prvs: <VI1PR0501MB238383024CB35CF529E1E1D2FB580@VI1PR0501MB2383.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(18589796830644);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:VI1PR0501MB2383;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2383;
-x-forefront-prvs: 07326CFBC4
-received-spf: None (protection.outlook.com: toradex.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: RgfzaYTeESLok61WKRsb+I6kfENF2ISivkrbUMK7pDs/BndnnrtJTVnbxoepqLeprLCvWyIrEwHO61uLSAr2S244+UVzAN5JglMgNYqbWG8H3KkbMDprdJN+YU1WyTlpLtnMK/Rr528DlcFN7Qu5RXdZtkTBfI9RokYZmc93l7rcAom6Pu5F8u2SfuUWejALHDdUT+Oq33k67amGlSGN9eoMSDEuj1XZtRISEHG3hGioISBHQ/uT3gUTmJV6AjH5ys/0Ef8UDCqKZ4WWammMKpqQq2d5qCx0U4OwcNfrGb4WLSra1CCrjtisip4/7amePfQXWbXOnrs1g3NkFn0bxoWsfpRiBiBOM1s873U0C9g=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <70698C4AA526F74D8CE98F940EB91637@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 13 Jul 2018 11:58:16 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40890 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729899AbeGMP6Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 11:58:16 -0400
+Received: by mail-pf0-f194.google.com with SMTP id e13-v6so9484434pff.7
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 08:43:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=55VIPYdmpU3WYjpptCzXvaZGLE1/NgKMXcB7ty3jIpY=;
+        b=s4gp/bvZWGQL1pbsaeVkOkmpj9CWtJlAvg7nSgbGJ2SK11VFYsjjixzFC/lPMiWKvz
+         pssQCvXMCHk6M5McA+V15PX34CoML3cJTOB1E0JLj7J+3QsrnGAdUar+pg0yhlMND64R
+         U422zrv6VMxEbouPhS71nu9hEl8SsaLee2NFvOEzgZx57Ej0a2Ja/o41fq/qIbhxyrLx
+         Kn45XkhVcAbn9CeoDFjhPLDRh+Ns0DhfRb6FELon9lbFciasPlMupoaKA4ZqPCyLUiRv
+         nHGDIij0rm7ZxG7i7cnXaxi81hznEHG9gCHb52pmlDTXgPF2xA8IJPm/EEu1eWPIhSrk
+         YEHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=55VIPYdmpU3WYjpptCzXvaZGLE1/NgKMXcB7ty3jIpY=;
+        b=tRvKHSYd+w8bl61m3IYeEaL/sqhnXedZdGDefFZs81bi6awzCPn5K7JbfSE3N/Dqix
+         X3nZybi12UcplBAxRGhkIefFKnwVsUPJensFEWgmVxMKy2Wmh5ErG4VEb6mQhj65DKUx
+         tBOFrrt30Gx0nG8T9n3z1+F2HaFhHZnwjdZRXmc8pYN8dkoFwidfHg+88HYrB1aD7DQl
+         YiusWgLgc71nmP2dCWFE5Kst67u/WL3fJSVHkwBveAoRDOVwNBA7jcLD6UY0zwjpSGK2
+         ilvM2Hn76NDmNov/eBy4KrM7KGR06fPbRy0iLkFc/7fWBlLCdMqlu7rSXLsbKXi6QmL/
+         PLKw==
+X-Gm-Message-State: AOUpUlGC/0quUjrIwObihkjrdQdswHBO6AQaKv3BYk98u6ch0aWcrvqb
+        jhbBWl8fQvyb2E9pzHGrF/qQVA==
+X-Google-Smtp-Source: AAOMgpdEAcUg6kCDrthMbM9Ss4SsUN+U2DA4V+wKeIiASiI4kZ68VrBXF6E3fRdQ7EH24M8hecdqsA==
+X-Received: by 2002:a62:11c4:: with SMTP id 65-v6mr7657896pfr.54.1531496586233;
+        Fri, 13 Jul 2018 08:43:06 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([183.82.16.217])
+        by smtp.gmail.com with ESMTPSA id s27-v6sm24738487pfk.133.2018.07.13.08.43.04
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 13 Jul 2018 08:43:05 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 21:15:41 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     patrik.r.jakobsson@gmail.com, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: [PATCH v3] gpu: drm: gma500: Change return type to vm_fault_t
+Message-ID: <20180713154541.GA3345@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39baa300-7c92-416c-8be4-08d5e8d74217
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jul 2018 15:42:36.6144
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2383
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTA3LTEzIGF0IDE2OjE3ICswMzAwLCBBYXBvIFZpZW5hbW8gd3JvdGU6DQo+
-IEltcGxlbWVudCBhbmQgdXNlIHRlZ3JhX3NkaGNpX2dldF9tYXhfY2xvY2soKSB3aGljaCByZXR1
-cm5zIHRoZSB0cnVlDQo+IG1heGltdW0gaG9zdCBjbG9jayByYXRlLiBUaGUgaXNzdWUgd2l0aCB0
-ZWdyYV9zZGhjaV9nZXRfbWF4X2Nsb2NrKCkNCj4gaXMNCj4gdGhhdCBpdCByZXR1cm5zIHRoZSBj
-dXJyZW50IGNsb2NrIHJhdGUgb2YgdGhlIGhvc3QgaW5zdGVhZCBvZiB0aGUNCj4gbWF4aW11bSBv
-bmUsIHdoaWNoIGNhbiBsZWFkIHRvIHVubmVjZXNzYXJpbHkgc21hbGwgY2xvY2sgcmF0ZXMuDQo+
-IA0KPiBUaGlzIGRpZmZlcnMgZnJvbSB0aGUgcHJldmlvdXMgaW1wbGVtZW50YXRpb24gb2YNCj4g
-dGVncmFfc2RoY2lfZ2V0X21heF9jbG9jaygpIGluIHRoYXQgaXQgZG9lc24ndCBkaXZpZGUgdGhl
-IHJlc3VsdCBieQ0KPiB0d28uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBYXBvIFZpZW5hbW8gPGF2
-aWVuYW1vQG52aWRpYS5jb20+DQoNClRoZSB3aG9sZSBzZXJpZXMgc3RyZXNzLXRlc3RlZCBvbiB2
-YXJpb3VzIEFwYWxpcyBUMzAgYXMgd2VsbCBhcyBDb2xpYnJpDQpUMzAgbW9kdWxlczoNCg0KVGVz
-dGVkLWJ5OiBNYXJjZWwgWmlzd2lsZXIgPG1hcmNlbC56aXN3aWxlckB0b3JhZGV4LmNvbT4NCg0K
-PiAtLS0NCj4gIGRyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktdGVncmEuYyB8IDExICsrKysrKysrKy0t
-DQo+ICAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktdGVncmEuYyBiL2RyaXZlcnMv
-bW1jL2hvc3Qvc2RoY2ktDQo+IHRlZ3JhLmMNCj4gaW5kZXggMjhiOThlMi4uZGRmMDAxNjYgMTAw
-NjQ0DQo+IC0tLSBhL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktdGVncmEuYw0KPiArKysgYi9kcml2
-ZXJzL21tYy9ob3N0L3NkaGNpLXRlZ3JhLmMNCj4gQEAgLTIzNSw2ICsyMzUsMTMgQEAgc3RhdGlj
-IHZvaWQgdGVncmFfc2RoY2lfc2V0X3Voc19zaWduYWxpbmcoc3RydWN0DQo+IHNkaGNpX2hvc3Qg
-Kmhvc3QsDQo+ICAJc2RoY2lfc2V0X3Voc19zaWduYWxpbmcoaG9zdCwgdGltaW5nKTsNCj4gIH0N
-Cj4gIA0KPiArc3RhdGljIHVuc2lnbmVkIGludCB0ZWdyYV9zZGhjaV9nZXRfbWF4X2Nsb2NrKHN0
-cnVjdCBzZGhjaV9ob3N0DQo+ICpob3N0KQ0KPiArew0KPiArCXN0cnVjdCBzZGhjaV9wbHRmbV9o
-b3N0ICpwbHRmbV9ob3N0ID0gc2RoY2lfcHJpdihob3N0KTsNCj4gKw0KPiArCXJldHVybiBjbGtf
-cm91bmRfcmF0ZShwbHRmbV9ob3N0LT5jbGssIFVJTlRfTUFYKTsNCj4gK30NCj4gKw0KPiAgc3Rh
-dGljIHZvaWQgdGVncmFfc2RoY2lfc2V0X3RhcChzdHJ1Y3Qgc2RoY2lfaG9zdCAqaG9zdCwgdW5z
-aWduZWQNCj4gaW50IHRhcCkNCj4gIHsNCj4gIAl1MzIgcmVnOw0KPiBAQCAtMjk5LDcgKzMwNiw3
-IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc2RoY2lfb3BzIHRlZ3JhX3NkaGNpX29wcyA9IHsNCj4g
-IAkucGxhdGZvcm1fZXhlY3V0ZV90dW5pbmcgPSB0ZWdyYV9zZGhjaV9leGVjdXRlX3R1bmluZywN
-Cj4gIAkuc2V0X3Voc19zaWduYWxpbmcgPSB0ZWdyYV9zZGhjaV9zZXRfdWhzX3NpZ25hbGluZywN
-Cj4gIAkudm9sdGFnZV9zd2l0Y2ggPSB0ZWdyYV9zZGhjaV92b2x0YWdlX3N3aXRjaCwNCj4gLQku
-Z2V0X21heF9jbG9jayA9IHNkaGNpX3BsdGZtX2Nsa19nZXRfbWF4X2Nsb2NrLA0KPiArCS5nZXRf
-bWF4X2Nsb2NrID0gdGVncmFfc2RoY2lfZ2V0X21heF9jbG9jaywNCj4gIH07DQo+ICANCj4gIHN0
-YXRpYyBjb25zdCBzdHJ1Y3Qgc2RoY2lfcGx0Zm1fZGF0YSBzZGhjaV90ZWdyYTIwX3BkYXRhID0g
-ew0KPiBAQCAtMzU2LDcgKzM2Myw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc2RoY2lfb3BzIHRl
-Z3JhMTE0X3NkaGNpX29wcw0KPiA9IHsNCj4gIAkucGxhdGZvcm1fZXhlY3V0ZV90dW5pbmcgPSB0
-ZWdyYV9zZGhjaV9leGVjdXRlX3R1bmluZywNCj4gIAkuc2V0X3Voc19zaWduYWxpbmcgPSB0ZWdy
-YV9zZGhjaV9zZXRfdWhzX3NpZ25hbGluZywNCj4gIAkudm9sdGFnZV9zd2l0Y2ggPSB0ZWdyYV9z
-ZGhjaV92b2x0YWdlX3N3aXRjaCwNCj4gLQkuZ2V0X21heF9jbG9jayA9IHNkaGNpX3BsdGZtX2Ns
-a19nZXRfbWF4X2Nsb2NrLA0KPiArCS5nZXRfbWF4X2Nsb2NrID0gdGVncmFfc2RoY2lfZ2V0X21h
-eF9jbG9jaywNCj4gIH07DQo+ICANCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgc2RoY2lfcGx0Zm1f
-ZGF0YSBzZGhjaV90ZWdyYTExNF9wZGF0YSA9IHsNCg0KV29ya3MgcXVpdGUgbmljZWx5IG9uIHRv
-ZGF5J3MgbmV4dCB0b2dldGhlciB3aXRoIFN0ZWZhbidzIHBhdGNoIHNldCBbMV06DQoNCnJvb3RA
-YXBhbGlzLXQzMDp+IyBjYXQgL3N5cy9rZXJuZWwvZGVidWcvbW1jMS9pb3MgDQpjbG9jazogICAg
-ICAgICAgNTIwMDAwMDAgSHoNCmFjdHVhbCBjbG9jazogICA1MTAwMDAwMCBIeg0KdmRkOiAgICAg
-ICAgICAgIDIxICgzLjMgfiAzLjQgVikNCmJ1cyBtb2RlOiAgICAgICAyIChwdXNoLXB1bGwpDQpj
-aGlwIHNlbGVjdDogICAgMCAoZG9uJ3QgY2FyZSkNCnBvd2VyIG1vZGU6ICAgICAyIChvbikNCmJ1
-cyB3aWR0aDogICAgICAzICg4IGJpdHMpDQp0aW1pbmcgc3BlYzogICAgOCAobW1jIEREUjUyKQ0K
-c2lnbmFsIHZvbHRhZ2U6IDEgKDEuODAgVikNCmRyaXZlciB0eXBlOiAgICAwIChkcml2ZXIgdHlw
-ZSBCKQ0Kcm9vdEBhcGFsaXMtdDMwOn4jIGhkcGFybSAtdCAvZGV2L21tY2JsazENCg0KL2Rldi9t
-bWNibGsxOg0KIFRpbWluZyBidWZmZXJlZCBkaXNrIHJlYWRzOiAyMzYgTUIgaW4gIDMuMDEgc2Vj
-b25kcyA9ICA3OC40MiBNQi9zZWMNCg0Kcm9vdEBjb2xpYnJpLXQzMDp+IyBjYXQgL3N5cy9rZXJu
-ZWwvZGVidWcvbW1jMC9pb3MgDQpjbG9jazogICAgICAgICAgNTIwMDAwMDAgSHoNCmFjdHVhbCBj
-bG9jazogICA1MTAwMDAwMCBIeg0KdmRkOiAgICAgICAgICAgIDIxICgzLjMgfiAzLjQgVikNCmJ1
-cyBtb2RlOiAgICAgICAyIChwdXNoLXB1bGwpDQpjaGlwIHNlbGVjdDogICAgMCAoZG9uJ3QgY2Fy
-ZSkNCnBvd2VyIG1vZGU6ICAgICAyIChvbikNCmJ1cyB3aWR0aDogICAgICAzICg4IGJpdHMpDQp0
-aW1pbmcgc3BlYzogICAgOCAobW1jIEREUjUyKQ0Kc2lnbmFsIHZvbHRhZ2U6IDEgKDEuODAgVikN
-CmRyaXZlciB0eXBlOiAgICAwIChkcml2ZXIgdHlwZSBCKQ0Kcm9vdEBjb2xpYnJpLXQzMDp+IyBo
-ZHBhcm0gLXQgL2Rldi9tbWNibGswDQoNCi9kZXYvbW1jYmxrMDoNCiBUaW1pbmcgYnVmZmVyZWQg
-ZGlzayByZWFkczogMTY4IE1CIGluICAzLjAwIHNlY29uZHMgPSAgNTUuOTkgTUIvc2VjDQoNClsx
-XSBodHRwczovL2xvcmUua2VybmVsLm9yZy9sa21sLzIwMTgwNzEyMDczOTA0LjQ3MDUtMS1zdGVm
-YW5AYWduZXIuY2g=
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
+
+Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+
+Previously vm_insert_{pfn,mixed} returns err which driver
+mapped into VM_FAULT_* type. The new function
+vmf_insert_{pfn,mixed} will replace this inefficiency by
+returning VM_FAULT_* type.
+
+vmf_error() is the newly introduce inline function
+in 4.17-rc6.
+
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+---
+v2: updated the change log
+
+v3: Fixed kbuild error
+
+ drivers/gpu/drm/gma500/framebuffer.c | 14 +++++---------
+ drivers/gpu/drm/gma500/gem.c         | 27 ++++++++++-----------------
+ drivers/gpu/drm/gma500/psb_drv.h     |  3 ++-
+ 3 files changed, 17 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+index cb0a2ae..632aadb 100644
+--- a/drivers/gpu/drm/gma500/framebuffer.c
++++ b/drivers/gpu/drm/gma500/framebuffer.c
+@@ -111,7 +111,7 @@ static int psbfb_pan(struct fb_var_screeninfo *var, struct fb_info *info)
+         return 0;
+ }
+ 
+-static int psbfb_vm_fault(struct vm_fault *vmf)
++static vm_fault_t psbfb_vm_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct psb_framebuffer *psbfb = vma->vm_private_data;
+@@ -120,7 +120,7 @@ static int psbfb_vm_fault(struct vm_fault *vmf)
+ 	int page_num;
+ 	int i;
+ 	unsigned long address;
+-	int ret;
++	vm_fault_t ret = VM_FAULT_SIGBUS;
+ 	unsigned long pfn;
+ 	unsigned long phys_addr = (unsigned long)dev_priv->stolen_base +
+ 				  psbfb->gtt->offset;
+@@ -133,18 +133,14 @@ static int psbfb_vm_fault(struct vm_fault *vmf)
+ 	for (i = 0; i < page_num; i++) {
+ 		pfn = (phys_addr >> PAGE_SHIFT);
+ 
+-		ret = vm_insert_mixed(vma, address,
++		ret = vmf_insert_mixed(vma, address,
+ 				__pfn_to_pfn_t(pfn, PFN_DEV));
+-		if (unlikely((ret == -EBUSY) || (ret != 0 && i > 0)))
++		if (unlikely(ret & VM_FAULT_ERROR))
+ 			break;
+-		else if (unlikely(ret != 0)) {
+-			ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
+-			return ret;
+-		}
+ 		address += PAGE_SIZE;
+ 		phys_addr += PAGE_SIZE;
+ 	}
+-	return VM_FAULT_NOPAGE;
++	return ret;
+ }
+ 
+ static void psbfb_vm_open(struct vm_area_struct *vma)
+diff --git a/drivers/gpu/drm/gma500/gem.c b/drivers/gpu/drm/gma500/gem.c
+index 1312397..e7be5c9 100644
+--- a/drivers/gpu/drm/gma500/gem.c
++++ b/drivers/gpu/drm/gma500/gem.c
+@@ -134,12 +134,13 @@ int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+  *	vma->vm_private_data points to the GEM object that is backing this
+  *	mapping.
+  */
+-int psb_gem_fault(struct vm_fault *vmf)
++vm_fault_t psb_gem_fault(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct drm_gem_object *obj;
+ 	struct gtt_range *r;
+-	int ret;
++	int err;
++	vm_fault_t ret;
+ 	unsigned long pfn;
+ 	pgoff_t page_offset;
+ 	struct drm_device *dev;
+@@ -158,9 +159,10 @@ int psb_gem_fault(struct vm_fault *vmf)
+ 	/* For now the mmap pins the object and it stays pinned. As things
+ 	   stand that will do us no harm */
+ 	if (r->mmapping == 0) {
+-		ret = psb_gtt_pin(r);
+-		if (ret < 0) {
+-			dev_err(dev->dev, "gma500: pin failed: %d\n", ret);
++		err = psb_gtt_pin(r);
++		if (err < 0) {
++			dev_err(dev->dev, "gma500: pin failed: %d\n", err);
++			ret = vmf_error(err);
+ 			goto fail;
+ 		}
+ 		r->mmapping = 1;
+@@ -175,18 +177,9 @@ int psb_gem_fault(struct vm_fault *vmf)
+ 		pfn = (dev_priv->stolen_base + r->offset) >> PAGE_SHIFT;
+ 	else
+ 		pfn = page_to_pfn(r->pages[page_offset]);
+-	ret = vm_insert_pfn(vma, vmf->address, pfn);
+-
++	ret = vmf_insert_pfn(vma, vmf->address, pfn);
+ fail:
+ 	mutex_unlock(&dev_priv->mmap_mutex);
+-	switch (ret) {
+-	case 0:
+-	case -ERESTARTSYS:
+-	case -EINTR:
+-		return VM_FAULT_NOPAGE;
+-	case -ENOMEM:
+-		return VM_FAULT_OOM;
+-	default:
+-		return VM_FAULT_SIGBUS;
+-	}
++
++	return ret;
+ }
+diff --git a/drivers/gpu/drm/gma500/psb_drv.h b/drivers/gpu/drm/gma500/psb_drv.h
+index e8300f5..93d2f40 100644
+--- a/drivers/gpu/drm/gma500/psb_drv.h
++++ b/drivers/gpu/drm/gma500/psb_drv.h
+@@ -21,6 +21,7 @@
+ #define _PSB_DRV_H_
+ 
+ #include <linux/kref.h>
++#include <linux/mm_types.h>
+ 
+ #include <drm/drmP.h>
+ #include <drm/drm_global.h>
+@@ -749,7 +750,7 @@ extern int psb_gem_get_aperture(struct drm_device *dev, void *data,
+ 			struct drm_file *file);
+ extern int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+ 			struct drm_mode_create_dumb *args);
+-extern int psb_gem_fault(struct vm_fault *vmf);
++extern vm_fault_t psb_gem_fault(struct vm_fault *vmf);
+ 
+ /* psb_device.c */
+ extern const struct psb_ops psb_chip_ops;
+-- 
+1.9.1
+
