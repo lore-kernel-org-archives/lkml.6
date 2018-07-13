@@ -2,205 +2,154 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AD9ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14291ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9314A208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:45:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asRpaNAp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9314A208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C9DE1208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:45:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9DE1208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbeGMH62 (ORCPT
+        id S1730730AbeGMH7S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 03:58:28 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:37454 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727582AbeGMH62 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 03:58:28 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a26-v6so91334pfo.4
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 00:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+fUhs1UPGwhlu61NEreLBTKrzD+cqQJaqAbjn3fRy0o=;
-        b=asRpaNApEPN8bEOz2UEqsyshIIoyjaa1B5+L/zsM1WKnSHbSnxfgyiwAPK/US4T2lh
-         B466XNAPNNxbl/rz5RBeinBd4V5T0bGpDERGJTymt56JaQYI51QAdj87t+XkxHkVu+z3
-         h9R+qKOC1T9NRmn3zb+MBRNnfzmXnn4unZ6fFv8NCfzdkWsgrHDA4RhIijf7yI35b8Et
-         VinYYDl3lM1OJ3bG7UxgnG3VsTVb6y7GWK1NeCRo9M+B1UBpNMOuxXTzWQuG6R2s0eS9
-         vIyNLaVh1r9nbFWepmaS2UvcUxGpbOZQNIORI5WA552ahWPH/miad+k9xpNAilQxwOES
-         Tm1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+fUhs1UPGwhlu61NEreLBTKrzD+cqQJaqAbjn3fRy0o=;
-        b=aVt4gyO87yW7zoDaT92SuEds8fJD7SIvzSNIIU5jPFzuiBpQyJuBX2kZC2ms/RpaP3
-         W0GMUBnKAxkJBkoiWTA+uOfO7UKENXmMrl6EljrR5YT7iEesqadAuoW1fKqjtUKaPsgh
-         dOtP9osvdNv+aWABE34uLkcLIxqYbqU5WGbq15P/czHBkdpIhkY22tInI4T+ZB3qts+C
-         9tmvdnA3jLkyGSvYNKnZJmS7MtsRjJKwTnJRlXFZNro9Knc31EWddq9QKQBKKsGzpmmy
-         JxruT37OLL59XcUyR7/irVvWp9FOP0idfz5YgdRuDIa3da4uLsqXeHYbalUIA4deYvT5
-         cCIg==
-X-Gm-Message-State: AOUpUlGOo7pkgXxpXDcx/9YOxKWRiBqASmqA7JJe3E/36tFxBnMJUTpA
-        48sq7SrprEBrPeegkBjfpXo=
-X-Google-Smtp-Source: AAOMgpfd3SdyOlk5PZbKn1Jkl+nviXDEfQNBqM8ofsC8LKOZgIOjdoSZPhGA8wZEkhINh04mF/ehsA==
-X-Received: by 2002:a63:8648:: with SMTP id x69-v6mr5066834pgd.172.1531467902745;
-        Fri, 13 Jul 2018 00:45:02 -0700 (PDT)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id 10-v6sm52951460pfs.111.2018.07.13.00.44.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 00:45:02 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 13:14:55 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>
-Subject: Re: [Cocci] [PATCH 01/18] coccinelle: change strncpy+truncation to
- strlcpy
-Message-ID: <20180713074455.GA6859@himanshu-Vostro-3559>
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
+        Fri, 13 Jul 2018 03:59:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50323 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727582AbeGMH7S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 03:59:18 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E64DF20731; Fri, 13 Jul 2018 09:45:50 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B94EB206ED;
+        Fri, 13 Jul 2018 09:45:50 +0200 (CEST)
+Date:   Fri, 13 Jul 2018 09:45:50 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH 1/2] ARM: sun8i: h3: enable HDMI output
+ on Banana Pi M2 Zero
+Message-ID: <20180713074550.mna4nqbjringf2xn@flea.home>
+References: <20180711132233.42301-1-icenowy@aosc.io>
+ <20180711132233.42301-2-icenowy@aosc.io>
+ <20180711150532.6gzm7krouriddreh@flea>
+ <8F6CDF5C-2AC1-43EC-858A-5C6345CF279A@aosc.io>
+ <20180712064601.m3bdd46wzac5fpgh@flea>
+ <A7CA2831-7117-415C-BC59-3FB4AE425598@aosc.io>
+ <20180712145306.ootqt7dfh3nxsamy@flea>
+ <82CD0BCE-9DE4-45D7-8DF4-FCCFBC70BECF@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="m4qdj5cmxwskf2b4"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <82CD0BCE-9DE4-45D7-8DF4-FCCFBC70BECF@aosc.io>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 03:14:43AM +0200, Dominique Martinet wrote:
-> Besides being simpler, using strlcpy instead of strncpy+truncation
-> fixes part of the following class of new gcc warnings:
-> 
->     drivers/gpu/drm/i915/intel_tv.c: In function ‘intel_tv_get_modes’:
->     drivers/gpu/drm/i915/intel_tv.c:1358:3: error: ‘strncpy’ specified bound 32 equals
->     destination size [-Werror=stringop-truncation]
->        strncpy(mode_ptr->name, input->name, DRM_DISPLAY_MODE_LEN);
->        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     cc1: all warnings being treated as errors
-> 
-> Note that this is not a proper fix for this warning (and not all of the
-> occurences give the warning either - the strings are not always static).
-> The warning was intended to have developers check the return code of
-> strncpy and act in case of truncation (print a warning, abort the
-> function or something similar if the original string was not nul
-> terminated); the change to strlcpy only works because gcc does not
-> handle the function the same way.
-> 
-> Suggested-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> ---
-> 
-> Running this fixes 30 occurences of the problem in 17 different
-> components of the kernel, and while the produced patches are fairly
-> straight-forward I'm not sure who I should expect to pick this up as
-> it is sent as a series.
-> I expect each maintainer will pick their share of the patchs if they
-> agree with it and the rest will just be dropped?
 
-Masahiro Yamada <yamada.masahiro@socionext.com> takes coccinelle patches,
-so please cc him or your patch would be lost.
+--m4qdj5cmxwskf2b4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  .../coccinelle/misc/strncpy_truncation.cocci  | 41 +++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 scripts/coccinelle/misc/strncpy_truncation.cocci
-> 
-> diff --git a/scripts/coccinelle/misc/strncpy_truncation.cocci b/scripts/coccinelle/misc/strncpy_truncation.cocci
-> new file mode 100644
-> index 000000000000..28b5c2a290ac
-> --- /dev/null
-> +++ b/scripts/coccinelle/misc/strncpy_truncation.cocci
-> @@ -0,0 +1,41 @@
-> +/// Use strlcpy rather than strncpy(dest,..,sz) + dest[sz-1] = '\0'
-> +///
-> +// Confidence: High
-> +// Comments:
-> +// Options: --no-includes --include-headers
-> +
-> +virtual patch
-> +virtual context
+On Fri, Jul 13, 2018 at 10:28:08AM +0800, Icenowy Zheng wrote:
+>=20
+>=20
+> =E4=BA=8E 2018=E5=B9=B47=E6=9C=8812=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=88=
+10:53:06, Maxime Ripard <maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
+> >On Thu, Jul 12, 2018 at 03:09:55PM +0800, Icenowy Zheng wrote:
+> >> =E4=BA=8E 2018=E5=B9=B47=E6=9C=8812=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
+=882:46:01, Maxime Ripard
+> ><maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
+> >> >On Wed, Jul 11, 2018 at 11:15:50PM +0800, Icenowy Zheng wrote:
+> >> >>=20
+> >> >>=20
+> >> >> =E4=BA=8E 2018=E5=B9=B47=E6=9C=8811=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=
+=8D=8811:05:32, Maxime Ripard
+> >> ><maxime.ripard@bootlin.com> =E5=86=99=E5=88=B0:
+> >> >> >Hi,
+> >> >> >
+> >> >> >On Wed, Jul 11, 2018 at 09:22:32PM +0800, Icenowy Zheng wrote:
+> >> >> >> Banana Pi M2 Zero board has a miniHDMI port connected to the
+> >HDMI
+> >> >> >> controller of Allwinner H3 SoC.
+> >> >> >>=20
+> >> >> >> Enable the HDMI output in Banana Pi M2 Zero device tree.
+> >> >> >>=20
+> >> >> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> >> >> ---
+> >> >> >>  .../dts/sun8i-h2-plus-bananapi-m2-zero.dts    | 25
+> >> >> >+++++++++++++++++++
+> >> >> >>  1 file changed, 25 insertions(+)
+> >> >> >>=20
+> >> >> >> diff --git
+> >a/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
+> >> >> >b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
+> >> >> >> index 7d01f9322658..eb61dcf32797 100644
+> >> >> >> --- a/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
+> >> >> >> +++ b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
+> >> >> >> @@ -26,6 +26,17 @@
+> >> >> >>  		stdout-path =3D "serial0:115200n8";
+> >> >> >>  	};
+> >> >> >> =20
+> >> >> >> +	hdmi-connector {
+> >> >> >> +		compatible =3D "hdmi-connector";
+> >> >> >> +		type =3D "c";
+> >> >> >
+> >> >> >This is not one of the connector type declared in DRM, how is it
+> >> >> >exposed to the userspace?
+> >> >>=20
+> >> >> So just use "A" here (because of single link)?
+> >> >
+> >> >If the connector type is C, it should be C, and DRM / driver
+> >adjusted
+> >> >to handle it.
+> >>=20
+> >> Okay I won't change this property, if there's any further revisions.
+> >>=20
+> >> For DRM driver, I think it can be an independent patchset.
+> >
+> >Not really, since it's going to break userspace as soon as you merge
+> >that other patchset.
+>=20
+> Should we bother the DRM maintainer to ask for any advice?
 
-You might consider adding context rule or remove this line perhaps ?
+You can if you want.
 
-> +virtual report
-> +virtual org
-> +
-> +@r@
-> +expression dest, src, sz;
-> +position p;
-> +@@
-> +
-> +strncpy@p(dest, src, sz);
-> +dest[sz - 1] = '\0';
-> +
-> +@script:python depends on org@
-> +p << r.p;
-> +@@
-> +
-> +cocci.print_main("strncpy followed by truncation can be strlcpy",p)
-> +
-> +@script:python depends on report@
-> +p << r.p;
-> +@@
-> +
-> +msg = "SUGGESTION: strncpy followed by truncation can be strlcpy"
-> +coccilib.report.print_report(p[0],msg)
-> +
-> +@ok depends on patch@
-> +expression r.dest, r.src, r.sz;
-> +position r.p;
-> +@@
-> +
-> +-strncpy@p(
-> ++strlcpy(
-> +  dest, src, sz);
-> +-dest[sz - 1] = '\0';
+Maxime
 
-The above rule produces an output that I think is not correct:
---------------------------------------------------------------
-diff = 
-diff -u -p a//ti/wl1251/acx.c b//ti/wl1251/acx.c
---- a//ti/wl1251/acx.c
-+++ b//ti/wl1251/acx.c
-@@ -150,14 +150,7 @@ int wl1251_acx_fw_version(struct wl1251
- 	}
- 
- 	/* be careful with the buffer sizes */
--	strncpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
--
--	/*
--	 * if the firmware version string is exactly
--	 * sizeof(rev->fw_version) long or fw_len is less than
--	 * sizeof(rev->fw_version) it won't be null terminated
--	 */
--	buf[min(len, sizeof(rev->fw_version)) - 1] = '\0';
-+	strlcpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
------------------------------------------------------------------
+--m4qdj5cmxwskf2b4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I think the comment is useful and should not be removed. Also, consider
-changing Confidence level appropriately.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks.
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltIWK0ACgkQ0rTAlCFN
+r3RzMw/+NOkagve5cYYwxlSLdNY9jj3qM5FjCUr/TmXaI0Nt6pTkex/h/leNZzQn
++sudTr+MqPSsvvlHFSJYHPBB/rvWLbIm2VJmv6dZityvXag24GPN0B+yz1V0fjs2
+Z9pNembUi6dc09AjqPU9JJOG5pDok2ve4xMk9l4wOKkLUIiWiyCm31zWuivBGpmN
+KkvbzDtRIsmUX6ECusEtBQbmaSlqr7HoAdfepahqo6Be7IeGuL6RyFip7ys4VHAR
+VZ0eWogahg0tFAXGGCtfjuG5CojTuw92AF89LzbXq/5YzEuJoyZJ1l547qn+fhVH
+TCSTAwvBmRPyQAprwGndcmHSiYeBp1bdIcBUVncLHBiRbtaC+y8xd72d3OAHMd81
+4QF5SNXuFmegY3EelXCbfoZaMXewZEwvBYKRKbHUS/NRpf5s1P7+5y5RKDRQtFq7
+VwDCb2NW1Z4ettMyELMgVi1ubt3essug701dg3BpwEiG/mROb/TDC5cNo9Ob2BwN
+Nu70XyNZ4prVjYEPLuwjmivniJGndj8R1CHBPYYt7l/zE6qQEDnGZ60NCPn6ISWU
+5FIfi1oveUX5a0iiFBjeq3tPg0hc9Ehy8mVdd3EH7C/hzFBpZRROTWfYx83fTOEe
++cn4IQG8MM2ZPXw0By77wGaiX8IGuul5yb7pUoVXc0z74gFnoF4=
+=rPGU
+-----END PGP SIGNATURE-----
 
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+--m4qdj5cmxwskf2b4--
