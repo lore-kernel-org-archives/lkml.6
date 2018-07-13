@@ -5,33 +5,33 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8D4DECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 414D2ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84F9C2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F9C2087A
+	by mail.kernel.org (Postfix) with ESMTP id F21702087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:54:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21702087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=supermicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731929AbeGMUKL (ORCPT
+        id S1731952AbeGMUKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 16:10:11 -0400
-Received: from mga.supermicro.com ([207.212.57.84]:44859 "EHLO
-        mga.supermicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730017AbeGMUKL (ORCPT
+        Fri, 13 Jul 2018 16:10:55 -0400
+Received: from mgb.supermicro.com ([207.212.57.85]:35524 "EHLO
+        mgb.supermicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730017AbeGMUKz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 16:10:11 -0400
-Received: from pps.filterd (MGA.supermicro.com [127.0.0.1])
-        by MGA.supermicro.com (8.16.0.22/8.16.0.22) with SMTP id w6DJs4Tk002693;
-        Fri, 13 Jul 2018 12:54:04 -0700
+        Fri, 13 Jul 2018 16:10:55 -0400
+Received: from pps.filterd (MGB.supermicro.com [127.0.0.1])
+        by MGB.supermicro.com (8.16.0.22/8.16.0.22) with SMTP id w6DJnmZh000826;
+        Fri, 13 Jul 2018 12:54:49 -0700
 Received: from ex2013-mbx2.supermicro.com ([10.2.1.38])
-        by MGA.supermicro.com with ESMTP id 2k2w4sh19m-1
+        by MGB.supermicro.com with ESMTP id 2k2w4s8tf1-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 13 Jul 2018 12:54:04 -0700
+        Fri, 13 Jul 2018 12:54:49 -0700
 Received: from [172.16.95.100] (10.2.0.41) by Ex2013-MBX2.supermicro.com
  (10.2.1.38) with Microsoft SMTP Server (TLS) id 15.0.1236.3; Fri, 13 Jul 2018
- 12:53:11 -0700
+ 12:53:56 -0700
 Subject: Re: [RFC] x86, tsc: Add kcmdline args for skipping tsc calibration
  sequences
 To:     Arjan van de Ven <arjan@linux.intel.com>, <len.brown@intel.com>,
@@ -40,8 +40,8 @@ CC:     <mingo@kernel.org>, <alek.du@intel.com>, <feng.tang@intel.com>
 References: <fdf96605-a4a0-049b-51c9-1e68cc2a9b93@supermicro.com>
  <9cdcf3bb-4d01-19cc-536f-4745ecb058c6@linux.intel.com>
 From:   patrickg <patrickg@supermicro.com>
-Message-ID: <c9d3b393-12ad-7b40-bac0-fd8a645ad0e5@supermicro.com>
-Date:   Fri, 13 Jul 2018 12:54:03 -0700
+Message-ID: <3987740c-44b4-72fa-3b3e-ebccecc32b00@supermicro.com>
+Date:   Fri, 13 Jul 2018 12:54:48 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
