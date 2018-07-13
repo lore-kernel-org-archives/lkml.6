@@ -6,115 +6,91 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E61ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E54ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04235214C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:29:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04235214C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D2013214AB
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:31:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2013214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387828AbeGMAlU (ORCPT
+        id S2387837AbeGMAnM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 20:41:20 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40079 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387768AbeGMAlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 20:41:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2018 17:29:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,345,1526367600"; 
-   d="scan'208";a="245306317"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by fmsmga006.fm.intel.com with ESMTP; 12 Jul 2018 17:29:16 -0700
-Message-ID: <5B47F357.7020202@intel.com>
-Date:   Fri, 13 Jul 2018 08:33:27 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
-MIME-Version: 1.0
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        virtio-dev@lists.oasis-open.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com,
-        Rik van Riel <riel@redhat.com>, peterx@redhat.com
-Subject: Re: [PATCH v35 1/5] mm: support to get hints of free page blocks
-References: <CA+55aFz9a=D-kquM=sG5uhV_HrBAw+VAhcJmtPNz+howy4j9ow@mail.gmail.com> <5B455D50.90902@intel.com> <CA+55aFzqj8wxXnHAdUTiOomipgFONVbqKMjL_tfk7e5ar1FziQ@mail.gmail.com> <20180711092152.GE20050@dhcp22.suse.cz> <CA+55aFwku2tDH4+rfaC67xc4-cEwSrXgnQaci=e2id5ZCRE9JQ@mail.gmail.com> <5B46BB46.2080802@intel.com> <CA+55aFxyv=EUAJFUSio=k+pm3ddteojshP7Radjia5ZRgm53zQ@mail.gmail.com> <5B46C258.40601@intel.com> <20180712081317.GD32648@dhcp22.suse.cz> <5B473CB8.1050306@intel.com> <20180712114946.GI32648@dhcp22.suse.cz>
-In-Reply-To: <20180712114946.GI32648@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+        Thu, 12 Jul 2018 20:43:12 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:45828 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387774AbeGMAnL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 20:43:11 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id CEFF114019AE3;
+        Thu, 12 Jul 2018 17:31:09 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 17:31:07 -0700 (PDT)
+Message-Id: <20180712.173107.1123272614896683104.davem@davemloft.net>
+To:     maxime.chevallier@bootlin.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next 00/18] net: mvpp2: add RSS support
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
+References: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 12 Jul 2018 17:31:10 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 07:49 PM, Michal Hocko wrote:
-> On Thu 12-07-18 19:34:16, Wei Wang wrote:
->> On 07/12/2018 04:13 PM, Michal Hocko wrote:
->>> On Thu 12-07-18 10:52:08, Wei Wang wrote:
->>>> On 07/12/2018 10:30 AM, Linus Torvalds wrote:
->>>>> On Wed, Jul 11, 2018 at 7:17 PM Wei Wang <wei.w.wang@intel.com> wrote:
->>>>>> Would it be better to remove __GFP_THISNODE? We actually want to get all
->>>>>> the guest free pages (from all the nodes).
->>>>> Maybe. Or maybe it would be better to have the memory balloon logic be
->>>>> per-node? Maybe you don't want to remove too much memory from one
->>>>> node? I think it's one of those "play with it" things.
->>>>>
->>>>> I don't think that's the big issue, actually. I think the real issue
->>>>> is how to react quickly and gracefully to "oops, I'm trying to give
->>>>> memory away, but now the guest wants it back" while you're in the
->>>>> middle of trying to create that 2TB list of pages.
->>>> OK. virtio-balloon has already registered an oom notifier
->>>> (virtballoon_oom_notify). I plan to add some control there. If oom happens,
->>>> - stop the page allocation;
->>>> - immediately give back the allocated pages to mm.
->>> Please don't. Oom notifier is an absolutely hideous interface which
->>> should go away sooner or later (I would much rather like the former) so
->>> do not build a new logic on top of it. I would appreciate if you
->>> actually remove the notifier much more.
->>>
->>> You can give memory back from the standard shrinker interface. If we are
->>> reaching low reclaim priorities then we are struggling to reclaim memory
->>> and then you can start returning pages back.
->> OK. Just curious why oom notifier is thought to be hideous, and has it been
->> a consensus?
-> Because it is a completely non-transparent callout from the OOM context
-> which is really subtle on its own. It is just too easy to end up in
-> weird corner cases. We really have to be careful and be as swift as
-> possible. Any potential sleep would make the OOM situation much worse
-> because nobody would be able to make a forward progress or (in)direct
-> dependency on MM subsystem can easily deadlock. Those are really hard
-> to track down and defining the notifier as blockable by design which
-> just asks for bad implementations because most people simply do not
-> realize how subtle the oom context is.
->
-> Another thing is that it happens way too late when we have basically
-> reclaimed the world and didn't get out of the memory pressure so you can
-> expect any workload is suffering already. Anybody sitting on a large
-> amount of reclaimable memory should have released that memory by that
-> time. Proportionally to the reclaim pressure ideally.
->
-> The notifier API is completely unaware of oom constrains. Just imagine
-> you are OOM in a subset of numa nodes. Callback doesn't have any idea
-> about that.
->
-> Moreover we do have proper reclaim mechanism that has a feedback
-> loop and that should be always preferable to an abrupt reclaim.
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Date: Thu, 12 Jul 2018 13:54:09 +0200
 
-Sounds very reasonable, thanks for the elaboration. I'll try with shrinker.
+> This series adds support for RSS on PPv2. There already was some code to
+> handle the RSS tables, but the driver was missing all the classification
+> steps required to actually use these tables.
+> 
+> RSS is used through the classifier, using at least 2 lookups :
+>  - One using the C2 engine, a TCAM engine that match the packet based on
+>    some header extracted fields, assigns the default rx queue for that
+>    packet and tag it for RSS
+>  - One using the C3Hx engine, which computes the hash that's used to perform
+>    the lookup in the RSS table.
+> 
+> Since RSS spreads the load across CPUs, we need to make sure that packets
+> from the same flow are always assigned the same rx queue, to prevent
+> re-ordering.
+> 
+> This series therefore adds a classification step based on the Header Parser,
+> that separate ingress traffic into 52 flows, based on some L2, L3 and L4
+> parameters.
+> 
+> Patches 1 and 2 fix some header issues, from the driver splitting
+> 
+> Patches 3 to 7 make sure the correct receive queue setup is used for RSS
+> 
+> Patches 8 to 14 deal with the way we handle the RSS tables
+> 
+> Patch 15 implement basic classifier configuration, by using it to assign the
+> default receive queue
+> 
+> Patch 16 implement the ingress traffic splitting into multiple flows
+> 
+> Patch 17 adds RSS support, by using the needed classification steps
+> 
+> Patch 18 adds the required ethtool ops to configure the flow hash parameters
+> 
+> This was tested on MacchiatoBin, giving some nice performance improvements
+> using ip forwarding (going from 5Gbps to 9.6Gbps total throughput).
+> 
+> RSS is disabled by default.
 
-Best,
-Wei
-
-
-
+Series applied, thank you.
