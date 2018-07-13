@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82BEECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8755ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF262087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF262087A
+	by mail.kernel.org (Postfix) with ESMTP id 5BF412087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF412087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387828AbeGMO3h (ORCPT
+        id S2387846AbeGMO3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:29:37 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41348 "EHLO mx1.redhat.com"
+        Fri, 13 Jul 2018 10:29:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41094 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729783AbeGMO3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:29:02 -0400
+        id S1729778AbeGMO27 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 10:28:59 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C73CA40122CF;
-        Fri, 13 Jul 2018 14:14:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 67BCF4000B74;
+        Fri, 13 Jul 2018 14:14:09 +0000 (UTC)
 Received: from plouf.banquise.eu.com (ovpn-116-134.ams2.redhat.com [10.36.116.134])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C3941C719;
-        Fri, 13 Jul 2018 14:14:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E5C51C67D;
+        Fri, 13 Jul 2018 14:14:07 +0000 (UTC)
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
@@ -37,37 +37,22 @@ Cc:     Mario.Limonciello@dell.com,
         Peter Hutterer <peter.hutterer@who-t.net>,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v4 07/12] HID: input: enable Totem on the Dell Canvas 27
-Date:   Fri, 13 Jul 2018 16:13:49 +0200
-Message-Id: <20180713141354.7286-8-benjamin.tissoires@redhat.com>
+Subject: [PATCH v4 05/12] HID: multitouch: ditch mt_report_id
+Date:   Fri, 13 Jul 2018 16:13:47 +0200
+Message-Id: <20180713141354.7286-6-benjamin.tissoires@redhat.com>
 In-Reply-To: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
 References: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 13 Jul 2018 14:14:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 13 Jul 2018 14:14:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 14:14:09 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 14:14:09 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Dell Canvas 27 has a tool that can be put on the surface and acts
-as a dial. The firmware processes the detection of the tool and forward
-regular HID reports with X, Y, Azimuth, rotation, width/height.
-
-The firmware also exports Contact ID, Countact Count which may hint that
-several totems can be used at the same time (the FW only supports one).
-
-We can tell that MT_TOOL_DIAL will be reported by setting the min/max
-of ABS_MT_TOOL_TYPE to MT_TOOL_DIAL.
-
-This tool is aimed at being used by the system and not the applications,
-so the user space processing should not go through the regular touch
-inputs.
-We set INPUT_PROP_DIRECT which applies ID_INPUT_TOUCHSCREEN to this new
-type of devices, but we will counter this for the time being with the
-special udev hwdb entry mentioned above.
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1511846
+Now that the driver can handle more than one multitouch collection in
+a single HID device, ditch the last bit that contains us to use only
+one mt collection.
 
 Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
@@ -76,171 +61,249 @@ Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
 no changes in v4
 no changes in v3
-
-changes in v2:
-- manually declare ABS_MT_TOOL_TYPE and set its min/max to MT_TOOL_DIAL
-  to explain which tool it will set
+no changes in v2
 ---
- drivers/hid/hid-input.c      |  3 +++
- drivers/hid/hid-multitouch.c | 48 +++++++++++++++++++++++++++++++-------------
- include/linux/hid.h          |  6 ++++++
- 3 files changed, 43 insertions(+), 14 deletions(-)
+ drivers/hid/hid-multitouch.c | 126 ++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 94 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index ab93dd5927c3..4e94ea3e280a 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -1550,6 +1550,9 @@ static struct hid_input *hidinput_allocate(struct hid_device *hid,
- 		case HID_GD_WIRELESS_RADIO_CTLS:
- 			suffix = "Wireless Radio Control";
- 			break;
-+		case HID_GD_SYSTEM_MULTIAXIS:
-+			suffix = "System Multi Axis";
-+			break;
- 		default:
- 			break;
- 		}
 diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 346e9caef6f3..a4a274ebfbef 100644
+index beaac36f61a7..a2c10fc62ef2 100644
 --- a/drivers/hid/hid-multitouch.c
 +++ b/drivers/hid/hid-multitouch.c
-@@ -665,7 +665,8 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	/*
- 	 * Model touchscreens providing buttons as touchpads.
- 	 */
--	if ((usage->hid & HID_USAGE_PAGE) == HID_UP_BUTTON) {
-+	if (field->application == HID_DG_TOUCHSCREEN &&
-+	    (usage->hid & HID_USAGE_PAGE) == HID_UP_BUTTON) {
- 		app->mt_flags |= INPUT_MT_POINTER;
- 		td->inputmode_value = MT_INPUTMODE_TOUCHPAD;
- 	}
-@@ -692,6 +693,19 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+@@ -147,6 +147,13 @@ struct mt_fields {
+ 	unsigned int length;
+ };
  
- 			set_abs(hi->input, code, field, cls->sn_move);
- 
-+			/*
-+			 * A system multi-axis that exports X and Y has a high
-+			 * chance of being used directly on a surface
-+			 */
-+			if (field->application == HID_GD_SYSTEM_MULTIAXIS) {
-+				__set_bit(INPUT_PROP_DIRECT,
-+					  hi->input->propbit);
-+				input_set_abs_params(hi->input,
-+						     ABS_MT_TOOL_TYPE,
-+						     MT_TOOL_DIAL,
-+						     MT_TOOL_DIAL, 0, 0);
-+			}
++struct mt_report_data {
++	struct list_head list;
++	struct hid_report *report;
++	struct mt_application *application;
++	bool is_mt_collection;
++};
 +
- 			return 1;
- 		case HID_GD_Y:
- 			if (prev_usage && (prev_usage->hid == usage->hid)) {
-@@ -725,7 +739,9 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 			MT_STORE_FIELD(confidence_state);
- 			return 1;
- 		case HID_DG_TIPSWITCH:
--			input_set_capability(hi->input, EV_KEY, BTN_TOUCH);
-+			if (field->application != HID_GD_SYSTEM_MULTIAXIS)
-+				input_set_capability(hi->input,
-+						     EV_KEY, BTN_TOUCH);
- 			MT_STORE_FIELD(tip_state);
- 			return 1;
- 		case HID_DG_CONTACTID:
-@@ -802,6 +818,10 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		    field->application == HID_DG_TOUCHPAD &&
- 		    (usage->hid & HID_USAGE) > 1)
- 			code--;
+ struct mt_device {
+ 	struct mt_class mtclass;	/* our mt device class */
+ 	struct timer_list release_timer;	/* to release sticky fingers */
+@@ -154,13 +161,13 @@ struct mt_device {
+ 	struct mt_fields *fields;	/* temporary placeholder for storing the
+ 					   multitouch fields */
+ 	unsigned long mt_io_flags;	/* mt flags (MT_IO_FLAGS_*) */
+-	unsigned mt_report_id;	/* the report ID of the multitouch device */
+ 	__u8 inputmode_value;	/* InputMode HID feature value */
+ 	__u8 maxcontacts;
+ 	bool is_buttonpad;	/* is this device a button pad? */
+ 	bool serial_maybe;	/* need to check for serial protocol */
+ 
+ 	struct list_head applications;
++	struct list_head reports;
+ };
+ 
+ static void mt_post_parse_default_settings(struct mt_device *td,
+@@ -526,6 +533,60 @@ static struct mt_application *mt_find_application(struct mt_device *td,
+ 	return mt_application;
+ }
+ 
++static struct mt_report_data *mt_allocate_report_data(struct mt_device *td,
++						      struct hid_report *report)
++{
++	struct mt_report_data *rdata;
++	struct hid_field *field;
++	int r, n;
 +
-+		if (field->application == HID_GD_SYSTEM_MULTIAXIS)
-+			code = BTN_0  + ((usage->hid - 1) & HID_USAGE);
++	rdata = devm_kzalloc(&td->hdev->dev, sizeof(*rdata), GFP_KERNEL);
++	if (!rdata)
++		return NULL;
 +
- 		hid_map_usage(hi, usage, bit, max, EV_KEY, code);
- 		input_set_capability(hi->input, EV_KEY, code);
- 		return 1;
-@@ -899,6 +919,7 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
- 	bool inrange_state = false;
- 	int active;
- 	int slotnum;
-+	int tool = MT_TOOL_FINGER;
- 
- 	if (!slot)
- 		return -EINVAL;
-@@ -939,8 +960,11 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
- 
- 	active = (*slot->tip_state || inrange_state) && confidence_state;
- 
-+	if (app->application == HID_GD_SYSTEM_MULTIAXIS)
-+		tool = MT_TOOL_DIAL;
++	rdata->report = report;
++	rdata->application = mt_find_application(td, report->application);
 +
- 	input_mt_slot(input, slotnum);
--	input_mt_report_slot_state(input, MT_TOOL_FINGER, active);
-+	input_mt_report_slot_state(input, tool, active);
- 	if (active) {
- 		/* this finger is in proximity of the sensor */
- 		int wide = (*slot->w > *slot->h);
-@@ -1203,6 +1227,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 	    field->application != HID_GD_SYSTEM_CONTROL &&
- 	    field->application != HID_CP_CONSUMER_CONTROL &&
- 	    field->application != HID_GD_WIRELESS_RADIO_CTLS &&
-+	    field->application != HID_GD_SYSTEM_MULTIAXIS &&
- 	    !(field->application == HID_VD_ASUS_CUSTOM_MEDIA_KEYS &&
- 	      application->quirks & MT_QUIRK_ASUS_CUSTOM_UP))
- 		return -1;
-@@ -1230,9 +1255,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		return 1;
- 	}
- 
--	if (rdata->is_mt_collection &&
--	    (field->application == HID_DG_TOUCHSCREEN ||
--	     field->application == HID_DG_TOUCHPAD))
-+	if (rdata->is_mt_collection)
- 		return mt_touch_input_mapping(hdev, hi, field, usage, bit, max,
- 					      application);
- 
-@@ -1244,15 +1267,11 @@ static int mt_input_mapped(struct hid_device *hdev, struct hid_input *hi,
- 		struct hid_field *field, struct hid_usage *usage,
- 		unsigned long **bit, int *max)
++	if (!rdata->application) {
++		devm_kfree(&td->hdev->dev, rdata);
++		return NULL;
++	}
++
++	for (r = 0; r < report->maxfield; r++) {
++		field = report->field[r];
++
++		if (!(HID_MAIN_ITEM_VARIABLE & field->flags))
++			continue;
++
++		for (n = 0; n < field->report_count; n++) {
++			if (field->usage[n].hid == HID_DG_CONTACTID)
++				rdata->is_mt_collection = true;
++		}
++	}
++
++	list_add_tail(&rdata->list, &td->reports);
++
++	return rdata;
++}
++
++static struct mt_report_data *mt_find_report_data(struct mt_device *td,
++						  struct hid_report *report)
++{
++	struct mt_report_data *tmp, *rdata = NULL;
++
++	list_for_each_entry(tmp, &td->reports, list) {
++		if (report == tmp->report) {
++			rdata = tmp;
++			break;
++		}
++	}
++
++	if (!rdata)
++		rdata = mt_allocate_report_data(td, report);
++
++	return rdata;
++}
++
+ static void mt_store_field(struct hid_usage *usage, struct mt_device *td,
+ 		struct hid_input *hi)
  {
+@@ -614,7 +675,6 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		case HID_DG_CONTACTID:
+ 			mt_store_field(usage, td, hi);
+ 			app->touches_by_report++;
+-			td->mt_report_id = field->report->id;
+ 			return 1;
+ 		case HID_DG_WIDTH:
+ 			hid_map_usage(hi, usage, bit, max,
+@@ -979,10 +1039,12 @@ static void mt_process_mt_event(struct hid_device *hid, struct hid_field *field,
+ 	}
+ }
+ 
+-static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
++static void mt_touch_report(struct hid_device *hid,
++			    struct mt_report_data *rdata)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hid);
+-	struct mt_application *app;
++	struct hid_report *report = rdata->report;
++	struct mt_application *app = rdata->application;
+ 	struct hid_field *field;
+ 	bool first_packet;
+ 	unsigned count;
+@@ -994,11 +1056,6 @@ static void mt_touch_report(struct hid_device *hid, struct hid_report *report)
+ 	if (test_and_set_bit(MT_IO_FLAGS_RUNNING, &td->mt_io_flags))
+ 		return;
+ 
+-	app = mt_find_application(td, report->application);
+-
+-	if (!app)
+-		return;
+-
+ 	/*
+ 	 * Includes multi-packet support where subsequent
+ 	 * packets are sent with zero contactcount.
+@@ -1119,8 +1176,15 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ {
+ 	struct mt_device *td = hid_get_drvdata(hdev);
+ 	struct mt_application *application;
++	struct mt_report_data *rdata;
++
++	rdata = mt_find_report_data(td, field->report);
++	if (!rdata) {
++		hid_err(hdev, "failed to allocate data for report\n");
++		return 0;
++	}
+ 
+-	application = mt_find_application(td, field->application);
++	application = rdata->application;
+ 
+ 	/*
+ 	 * If mtclass.export_all_inputs is not set, only map fields from
+@@ -1163,22 +1227,9 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		return 1;
+ 	}
+ 
 -	/*
 -	 * some egalax touchscreens have "application == HID_DG_TOUCHSCREEN"
 -	 * for the stylus.
+-	 * The check for mt_report_id ensures we don't process
+-	 * HID_DG_CONTACTCOUNT from the pen report as it is outside the physical
+-	 * collection, but within the report ID.
 -	 */
 -	if (field->physical == HID_DG_STYLUS)
 -		return 0;
-+	struct mt_device *td = hid_get_drvdata(hdev);
+-	else if ((field->physical == 0) &&
+-		 (field->report->id != td->mt_report_id) &&
+-		 (td->mt_report_id != -1))
+-		return 0;
+-
+-	if (field->application == HID_DG_TOUCHSCREEN ||
+-	    field->application == HID_DG_TOUCHPAD)
++	if (rdata->is_mt_collection &&
++	    (field->application == HID_DG_TOUCHSCREEN ||
++	     field->application == HID_DG_TOUCHPAD))
+ 		return mt_touch_input_mapping(hdev, hi, field, usage, bit, max,
+ 					      application);
+ 
+@@ -1211,8 +1262,10 @@ static int mt_event(struct hid_device *hid, struct hid_field *field,
+ 				struct hid_usage *usage, __s32 value)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hid);
 +	struct mt_report_data *rdata;
  
--	if (field->application == HID_DG_TOUCHSCREEN ||
--	    field->application == HID_DG_TOUCHPAD) {
+-	if (field->report->id == td->mt_report_id)
 +	rdata = mt_find_report_data(td, field->report);
-+	if (rdata && rdata->is_mt_collection) {
- 		/* We own these mappings, tell hid-input to ignore them */
- 		return -1;
- 	}
-@@ -1460,6 +1479,7 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 		case HID_GD_SYSTEM_CONTROL:
- 		case HID_CP_CONSUMER_CONTROL:
- 		case HID_GD_WIRELESS_RADIO_CTLS:
-+		case HID_GD_SYSTEM_MULTIAXIS:
- 			/* already handled by hid core */
- 			break;
- 		case HID_DG_TOUCHSCREEN:
-diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 773bcb1d4044..2e4498d52a2f 100644
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -190,6 +190,12 @@ struct hid_item {
-  * http://www.usb.org/developers/hidpage/HUTRR40RadioHIDUsagesFinal.pdf
-  */
- #define HID_GD_WIRELESS_RADIO_CTLS	0x0001000c
-+/*
-+ * System Multi-Axis, see:
-+ * http://www.usb.org/developers/hidpage/HUTRR62_-_Generic_Desktop_CA_for_System_Multi-Axis_Controllers.txt
-+ */
-+#define HID_GD_SYSTEM_MULTIAXIS	0x0001000e
++	if (rdata && rdata->is_mt_collection)
+ 		return mt_touch_event(hid, field, usage, value);
+ 
+ 	return 0;
+@@ -1222,12 +1275,14 @@ static void mt_report(struct hid_device *hid, struct hid_report *report)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hid);
+ 	struct hid_field *field = report->field[0];
++	struct mt_report_data *rdata;
+ 
+ 	if (!(hid->claimed & HID_CLAIMED_INPUT))
+ 		return;
+ 
+-	if (report->id == td->mt_report_id)
+-		return mt_touch_report(hid, report);
++	rdata = mt_find_report_data(td, report);
++	if (rdata && rdata->is_mt_collection)
++		return mt_touch_report(hid, rdata);
+ 
+ 	if (field && field->hidinput && field->hidinput->input)
+ 		input_sync(field->hidinput->input);
+@@ -1368,15 +1423,22 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
+ 	char *name;
+ 	const char *suffix = NULL;
+ 	unsigned int application = 0;
++	struct mt_report_data *rdata;
+ 	struct mt_application *mt_application = NULL;
+ 	struct hid_report *report;
+ 	int ret;
+ 
+ 	list_for_each_entry(report, &hi->reports, hidinput_list) {
+ 		application = report->application;
+-		mt_application = mt_find_application(td, application);
++		rdata = mt_find_report_data(td, report);
++		if (!rdata) {
++			hid_err(hdev, "failed to allocate data for report\n");
++			return -ENOMEM;
++		}
 +
- #define HID_GD_X		0x00010030
- #define HID_GD_Y		0x00010031
- #define HID_GD_Z		0x00010032
++		mt_application = rdata->application;
+ 
+-		if (report->id == td->mt_report_id) {
++		if (rdata->is_mt_collection) {
+ 			ret = mt_touch_input_configured(hdev, hi,
+ 							mt_application);
+ 			if (ret)
+@@ -1529,10 +1591,10 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 	td->hdev = hdev;
+ 	td->mtclass = *mtclass;
+ 	td->inputmode_value = MT_INPUTMODE_TOUCHSCREEN;
+-	td->mt_report_id = -1;
+ 	hid_set_drvdata(hdev, td);
+ 
+ 	INIT_LIST_HEAD(&td->applications);
++	INIT_LIST_HEAD(&td->reports);
+ 
+ 	td->fields = devm_kzalloc(&hdev->dev, sizeof(struct mt_fields),
+ 				  GFP_KERNEL);
 -- 
 2.14.3
 
