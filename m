@@ -2,236 +2,182 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C29ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55802ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF332089C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:56:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBF332089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EE1D12089C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:58:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE1D12089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbeGMEJK (ORCPT
+        id S1726171AbeGMELT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 00:09:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59634 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725763AbeGMEJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 00:09:10 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6D3rddm133734
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 23:56:28 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k6kx1s4js-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 23:56:27 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 12 Jul 2018 23:56:27 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Jul 2018 23:56:23 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6D3uMio15139188
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Jul 2018 03:56:22 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE940B2067;
-        Thu, 12 Jul 2018 23:56:19 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96DB3B2064;
-        Thu, 12 Jul 2018 23:56:19 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.159.34])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Jul 2018 23:56:19 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 67CD416CA298; Thu, 12 Jul 2018 20:58:42 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 20:58:42 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Lai Jiangshan <jiangshanlai@gmail.com>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, oleg@redhat.com,
-        Eric Dumazet <edumazet@google.com>, davem@davemloft.net,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: Consolidating RCU-bh, RCU-preempt, and RCU-sched
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180713000249.GA16907@linux.vnet.ibm.com>
- <CAJhGHyCYxPNSM9fZgUHW7jFR0M3DFGn4HdQGfpRnzfnrL2yyYA@mail.gmail.com>
+        Fri, 13 Jul 2018 00:11:19 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9232 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725862AbeGMELS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 00:11:18 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6A8D2E737E0B6;
+        Fri, 13 Jul 2018 11:52:38 +0800 (CST)
+Received: from [127.0.0.1] (10.111.220.140) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
+ 11:52:32 +0800
+Subject: Re: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
+To:     Chao Yu <yuchao0@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
+ <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
+ <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
+ <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
+ <12f3c3d2-6586-ca73-8770-8f97b436d643@huawei.com>
+From:   Yunlong Song <yunlong.song@huawei.com>
+Message-ID: <52acc420-2a08-c5e9-f63e-74d63fb11126@huawei.com>
+Date:   Fri, 13 Jul 2018 11:51:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJhGHyCYxPNSM9fZgUHW7jFR0M3DFGn4HdQGfpRnzfnrL2yyYA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071303-2213-0000-0000-000002CA2FDF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009360; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01060564; UDB=6.00544406; IPR=6.00838482;
- MB=3.00022125; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-13 03:56:26
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071303-2214-0000-0000-00005AD1B863
-Message-Id: <20180713035842.GQ12945@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807130008
+In-Reply-To: <12f3c3d2-6586-ca73-8770-8f97b436d643@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.111.220.140]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 11:47:18AM +0800, Lai Jiangshan wrote:
-> On Fri, Jul 13, 2018 at 8:02 AM, Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> > Hello!
-> >
-> > I now have a semi-reasonable prototype of changes consolidating the
-> > RCU-bh, RCU-preempt, and RCU-sched update-side APIs in my -rcu tree.
-> > There are likely still bugs to be fixed and probably other issues as well,
-> > but a prototype does exist.
-> >
-> > Assuming continued good rcutorture results and no objections, I am
-> > thinking in terms of this timeline:
-> >
-> > o       Preparatory work and cleanups are slated for the v4.19 merge window.
-> >
-> > o       The actual consolidation and post-consolidation cleanup is slated
-> >         for the merge window after v4.19 (v5.0?).  These cleanups include
-> >         the replacements called out below within the RCU implementation
-> >         itself (but excluding kernel/rcu/sync.c, see question below).
-> >
-> > o       Replacement of now-obsolete update APIs is slated for the second
-> >         merge window after v4.19 (v5.1?).  The replacements are currently
-> >         expected to be as follows:
-> >
-> >         synchronize_rcu_bh() -> synchronize_rcu()
-> >         synchronize_rcu_bh_expedited() -> synchronize_rcu_expedited()
-> >         call_rcu_bh() -> call_rcu()
-> >         rcu_barrier_bh() -> rcu_barrier()
-> >         synchronize_sched() -> synchronize_rcu()
-> >         synchronize_sched_expedited() -> synchronize_rcu_expedited()
-> >         call_rcu_sched() -> call_rcu()
-> >         rcu_barrier_sched() -> rcu_barrier()
-> >         get_state_synchronize_sched() -> get_state_synchronize_rcu()
-> >         cond_synchronize_sched() -> cond_synchronize_rcu()
-> >         synchronize_rcu_mult() -> synchronize_rcu()
-> >
-> >         I have done light testing of these replacements with good results.
-> >
-> > Any objections to this timeline?
-> >
-> > I also have some questions on the ultimate end point.  I have default
-> > choices, which I will likely take if there is no discussion.
-> >
-> > o
-> >         Currently, I am thinking in terms of keeping the per-flavor
-> >         read-side functions.  For example, rcu_read_lock_bh() would
-> >         continue to disable softirq, and would also continue to tell
-> >         lockdep about the RCU-bh read-side critical section.  However,
-> >         synchronize_rcu() will wait for all flavors of read-side critical
-> >         sections, including those introduced by (say) preempt_disable(),
-> >         so there will no longer be any possibility of mismatching (say)
-> >         RCU-bh readers with RCU-sched updaters.
-> >
-> >         I could imagine other ways of handling this, including:
-> >
-> >         a.      Eliminate rcu_read_lock_bh() in favor of
-> >                 local_bh_disable() and so on.  Rely on lockdep
-> >                 instrumentation of these other functions to identify RCU
-> >                 readers, introducing such instrumentation as needed.  I am
-> >                 not a fan of this approach because of the large number of
-> >                 places in the Linux kernel where interrupts, preemption,
-> >                 and softirqs are enabled or disabled "behind the scenes".
-> >
-> >         b.      Eliminate rcu_read_lock_bh() in favor of rcu_read_lock(),
-> >                 and required callers to also disable softirqs, preemption,
-> >                 or whatever as needed.  I am not a fan of this approach
-> >                 because it seems a lot less convenient to users of RCU-bh
-> >                 and RCU-sched.
-> >
-> >         At the moment, I therefore favor keeping the RCU-bh and RCU-sched
-> >         read-side APIs.  But are there better approaches?
-> 
-> Hello, Paul
-> 
-> Since local_bh_disable() will be guaranteed to be protected by RCU
-> and more general. I'm afraid it will be preferred over
-> rcu_read_lock_bh() which will be gradually being phased out.
-> 
-> In other words, keeping the RCU-bh read-side APIs will be a slower
-> version of the option A. So will the same approach for the RCU-sched.
-> But it'll still be better than the hurrying option A, IMHO.
+Because in f2fs_clear_prefree_segments, the codes:
+...
+     while (1) {
+         int i;
+         start = find_next_bit(prefree_map, MAIN_SEGS(sbi), end + 1);
+         if (start >= MAIN_SEGS(sbi))
+             break;
+         end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
+                                 start + 1);
 
-I am OK with the read-side RCU-bh and RCU-sched interfaces going away,
-it is just that I am not willing to put all that much effort into
-it myself.  ;-)
+         for (i = start; i < end; i++)
+             clear_bit(i, prefree_map);
+...
+next:
+         secno = GET_SEC_FROM_SEG(sbi, start);
+         start_segno = GET_SEG_FROM_SEC(sbi, secno);
+         if (!IS_CURSEC(sbi, secno) &&
+             !get_valid_blocks(sbi, start, true))
+             f2fs_issue_discard(sbi, START_BLOCK(sbi, start_segno),
+                 sbi->segs_per_sec << sbi->log_blocks_per_seg);
 
-Unless there is a good reason for me to hurry it along, of course.
+         start = start_segno + sbi->segs_per_sec;
+         if (start < end)
+             goto next;
+         else
+             end = start - 1;
+...
+In round 2, for prefree_map: 1 1 0 1 1, start = 0, end = 2, then
 
-							Thanx, Paul
+start = start_segno + sbi->segs_per_sec makes start = 5
 
+if (start < end)  --> start = 5, end = 2
+
+so end = start -1  --> end = 4, then return to while again, this time skips
+prefree bit 3 and 4.
+
+On 2018/7/13 11:42, Chao Yu wrote:
+> On 2018/7/13 11:28, Yunlong Song wrote:
+>> round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+>> then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+>> write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
+>> prefree of NO.2 is cleared, and no discard issued
+>>
+>> round2: rm data block NO.0, NO.1, NO.3, NO.4
+>> all invalid, but prefree bit of NO.2 is set and cleared in round1, then
+>> prefree_map: 1 1 0 1 1
+>> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
+> Why prefree_map is not 0 0 0 0 0?
+>
 > Thanks,
-> Lai
-> 
-> >
-> > o       How should kernel/rcu/sync.c be handled?  Here are some
-> >         possibilities:
-> >
-> >         a.      Leave the full gp_ops[] array and simply translate
-> >                 the obsolete update-side functions to their RCU
-> >                 equivalents.
-> >
-> >         b.      Leave the current gp_ops[] array, but only have
-> >                 the RCU_SYNC entry.  The __INIT_HELD field would
-> >                 be set to a function that was OK with being in an
-> >                 RCU read-side critical section, an interrupt-disabled
-> >                 section, etc.
-> >
-> >                 This allows for possible addition of SRCU functionality.
-> >                 It is also a trivial change.  Note that the sole user
-> >                 of sync.c uses RCU_SCHED_SYNC, and this would need to
-> >                 be changed to RCU_SYNC.
-> >
-> >                 But is it likely that we will ever add SRCU?
-> >
-> >         c.      Eliminate that gp_ops[] array, hard-coding the function
-> >                 pointers into their call sites.
-> >
-> >         I don't really have a preference.  Left to myself, I will be lazy
-> >         and take option #a.  Are there better approaches?
-> >
-> > o       Currently, if a lock related to the scheduler's rq or pi locks is
-> >         held across rcu_read_unlock(), that lock must be held across the
-> >         entire read-side critical section in order to avoid deadlock.
-> >         Now that the end of the RCU read-side critical section is
-> >         deferred until sometime after interrupts are re-enabled, this
-> >         requirement could be lifted.  However, because the end of the RCU
-> >         read-side critical section is detected sometime after interrupts
-> >         are re-enabled, this means that a low-priority RCU reader might
-> >         remain priority-boosted longer than need be, which could be a
-> >         problem when running real-time workloads.
-> >
-> >         My current thought is therefore to leave this constraint in
-> >         place.  Thoughts?
-> >
-> > Anything else that I should be worried about?  ;-)
-> >
-> >                                                         Thanx, Paul
-> >
-> 
+>
+>> valid blocks of this section, so discard issued
+>> but this time prefree bit of NO.3 and NO.4 is skipped...
+>>
+>> round3:
+>> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 - >
+>> 0 0 0 0 0, no valid blocks of this section, so discard issued
+>> this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
+>> this section is sent again...
+>>
+>> On 2018/7/13 11:13, Chao Yu wrote:
+>>> On 2018/7/12 23:09, Yunlong Song wrote:
+>>>> For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
+>>>> example, if the section prefree_map is ...previous section | current
+>>>> section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
+>>>> after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
+>>>> will skip x + 3 and x + 4, but their bitmap is still set, which will
+>>>> cause duplicated f2fs_issue_discard of this same section in the next
+>>>> write_checkpoint, so fix it.
+>>> I didn't get it, if # 2 segment is not prefree state, so it still has valid
+>>> blocks there, so we won't issue discard due to below condition, right?
+>>>
+>>> 		if (!IS_CURSEC(sbi, secno) &&
+>>> 			!get_valid_blocks(sbi, start, true))
+>>>
+>>> Thanks,
+>>>
+>>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>>> ---
+>>>>    fs/f2fs/segment.c | 19 +++++++++++++++++--
+>>>>    1 file changed, 17 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index 47b6595..fd38b61 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+>>>>    		start = start_segno + sbi->segs_per_sec;
+>>>>    		if (start < end)
+>>>>    			goto next;
+>>>> -		else
+>>>> -			end = start - 1;
+>>>> +		else {
+>>>> +			start_segno = start;
+>>>> +
+>>>> +			while (1) {
+>>>> +				start = find_next_bit(prefree_map, start_segno,
+>>>> +									end + 1);
+>>>> +				if (start >= start_segno)
+>>>> +					break;
+>>>> +				end = find_next_zero_bit(prefree_map, start_segno,
+>>>> +										start + 1);
+>>>> +				for (i = start; i < end; i++)
+>>>> +					clear_bit(i, prefree_map);
+>>>> +				dirty_i->nr_dirty[PRE] -= end - start;
+>>>> +			}
+>>>> +
+>>>> +			end = start_segno - 1;
+>>>> +		}
+>>>>    	}
+>>>>    	mutex_unlock(&dirty_i->seglist_lock);
+>>>>    
+>>>>
+>>> .
+>>>
+>
+> .
+>
+
+-- 
+Thanks,
+Yunlong Song
+
 
