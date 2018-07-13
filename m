@@ -2,171 +2,98 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BE5ECDFB2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8F8ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F063120873
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F063120873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 402D6208E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aMhZcoc2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402D6208E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729926AbeGMNEv (ORCPT
+        id S1730339AbeGMNFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 09:04:51 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54559 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729778AbeGMNEu (ORCPT
+        Fri, 13 Jul 2018 09:05:21 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38961 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728187AbeGMNFV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:04:50 -0400
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1fdxWW-0003em-TE; Fri, 13 Jul 2018 14:50:12 +0200
-Received: from mfe by dude.hi.pengutronix.de with local (Exim 4.91)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1fdxWW-0007t2-I3; Fri, 13 Jul 2018 14:50:12 +0200
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     fabio.estevam@nxp.com, Anson.Huang@nxp.com, kernel@pengutronix.de,
+        Fri, 13 Jul 2018 09:05:21 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h10-v6so25012582wre.6
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 05:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=2qE17HPTdG7g2tPmHe7x9j8zRBWCmIEP0yjLKyX/0ik=;
+        b=aMhZcoc2eQS6XMoGvfBt9IkZ/P03stSztv0LSTt4tdT1BXcHJN1LCgjGfheJnrm9QT
+         T2l/cqTDEA574umT+7WAPJWyAuyr/EMXna7kUeF+7jivDLVWNYagq1LAC91GO9ucl3WN
+         FRof35OTF+hTYiux5eHZ9HbdAHdgyckZgmvhnqqvn6mwgmZuKgFwHDTF9kywRIOzj68m
+         vwd1mFXuWC2sg/AXMM9EA599aWkwHEu6gu7QAIS5EBnb5F2Fhr5BsZrMlC8UWGGz3jRh
+         cNscyjYXfA7uxtvquReOmb8XpMxVy0oXBo8aeXCGc0b8sbRyuohIZ6EOwtvTRLvWgujN
+         eMXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2qE17HPTdG7g2tPmHe7x9j8zRBWCmIEP0yjLKyX/0ik=;
+        b=iS+3lPOnhxPFDcRfRE7X7ppNOGzY65IKUblj/9PsOtwJBup1juclFaUisRwk82vuE6
+         nNajNO4PlcZt5VyqhgE8T3d6vP7GQhiHMsp2XgzsXLfHCWfZm4JmnR718lYdeOKeio80
+         n7mWxI2W1PGImPWG4QFLR+xAvNEv/YxRsP7jw3h9LTcxBCTGD8tUDveM8ekGKH13eaP5
+         kjTcZBG/lYBxHhgc14MO3O8OuBFgYk6avf1jXH85OKwiAntlTAohrb9RAfHgvXQUQWzY
+         ftr4tKG1itsT3Nke4xSOTgE8Bx7tk1ZyL7EIYm60vgM35wO3juMCv9yxI77oy9gVY2Aa
+         bOkg==
+X-Gm-Message-State: AOUpUlHD5LGSwXB9GP9SM6oD7JULtHAUYcYEOYM5ZtETniW3pwW9KnO2
+        nXD8UhvYWcafaqOavOgyJtJf8g==
+X-Google-Smtp-Source: AAOMgpeoc1OpFCzELybiJmc+X/CLxrFH4pWunlypstB16CePqKP4qceJ9HumYR7P+feNn7darX3PlQ==
+X-Received: by 2002:adf:9226:: with SMTP id 35-v6mr4509741wrj.44.1531486248417;
+        Fri, 13 Jul 2018 05:50:48 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id f76-v6sm8541524wme.30.2018.07.13.05.50.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Jul 2018 05:50:47 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] regulator: pfuze100: add support to en-/disable switch regulators
-Date:   Fri, 13 Jul 2018 14:50:02 +0200
-Message-Id: <20180713125002.24331-3-m.felsch@pengutronix.de>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180713125002.24331-1-m.felsch@pengutronix.de>
-References: <20180713125002.24331-1-m.felsch@pengutronix.de>
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] ASoC: add sound-name-prefix property
+Date:   Fri, 13 Jul 2018 14:50:41 +0200
+Message-Id: <20180713125043.13242-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add enable/disable support for switch regulators on pfuze100.
+This patchset add support in ASoC to pick up name prefix from the
+component nodes when the component does not match the configuration
+table provided to the card.
 
-Based on commit 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for
-switch") which is reverted due to boot regressions by commit 464a5686e6c9
-("regulator: Revert "regulator: pfuze100: add enable/disable for switch"").
-Disabling the switch regulators will only be done if the user specifies
-"fsl,pfuze-support-disable" in its device tree to keep backward
-compatibility with current dtb's [1].
+The need for this feature came from the platform I'm working on
+(Amlogic A113). On this platform, the card is made of several instances
+of each components. It relies heavily on prefixes to describe the
+routing between these components.
 
-[1] https://patchwork.kernel.org/patch/10490381/
+The proposed solution benefits every other DT based sound cards, such as
+the simple card family. It allows to express the routing easily even when
+the card uses several instances of the same component, or different
+components with the same sink/source names (Playback, Capture,
+Output, etc ...)
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Jerome Brunet (2):
+  ASoC: add DT documentation for the sound-name-prefix property
+  ASoC: allow soc-core to pick up name prefixes from component nodes
 
----
-Changes in v2:
-  - Don't trick the framework, use a seperate ops struct
-    to register the correct callbacks.
-  - Set the desc en/disable_val and enable_time only if it necessary
-  - Change the dt property binding
+ .../devicetree/bindings/sound/name-prefix.txt      | 24 +++++++++++++++++++
+ sound/soc/soc-core.c                               | 28 ++++++++++++++++++----
+ 2 files changed, 47 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/name-prefix.txt
 
-Changes since https://patchwork.kernel.org/patch/10405723/
-  - Use DT property to keep backward compatibility
-  - Use the default register val 0x8 as enable_val
-
- drivers/regulator/pfuze100-regulator.c | 36 ++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
-index cde6eda1d283..b70d16d5a2ff 100644
---- a/drivers/regulator/pfuze100-regulator.c
-+++ b/drivers/regulator/pfuze100-regulator.c
-@@ -17,6 +17,8 @@
- #include <linux/slab.h>
- #include <linux/regmap.h>
- 
-+#define PFUZE_FLAG_DISABLE_SW	BIT(1)
-+
- #define PFUZE_NUMREGS		128
- #define PFUZE100_VOL_OFFSET	0
- #define PFUZE100_STANDBY_OFFSET	1
-@@ -50,10 +52,12 @@ struct pfuze_regulator {
- 	struct regulator_desc desc;
- 	unsigned char stby_reg;
- 	unsigned char stby_mask;
-+	bool sw_reg;
- };
- 
- struct pfuze_chip {
- 	int	chip_id;
-+	int     flags;
- 	struct regmap *regmap;
- 	struct device *dev;
- 	struct pfuze_regulator regulator_descs[PFUZE100_MAX_REGULATOR];
-@@ -170,6 +174,17 @@ static const struct regulator_ops pfuze100_sw_regulator_ops = {
- 	.set_ramp_delay = pfuze100_set_ramp_delay,
- };
- 
-+static const struct regulator_ops pfuze100_sw_disable_regulator_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = regulator_list_voltage_linear,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.set_ramp_delay = pfuze100_set_ramp_delay,
-+};
-+
- static const struct regulator_ops pfuze100_swb_regulator_ops = {
- 	.enable = regulator_enable_regmap,
- 	.disable = regulator_disable_regmap,
-@@ -209,9 +224,12 @@ static const struct regulator_ops pfuze100_swb_regulator_ops = {
- 			.uV_step = (step),	\
- 			.vsel_reg = (base) + PFUZE100_VOL_OFFSET,	\
- 			.vsel_mask = 0x3f,	\
-+			.enable_reg = (base) + PFUZE100_MODE_OFFSET,	\
-+			.enable_mask = 0xf,	\
- 		},	\
- 		.stby_reg = (base) + PFUZE100_STANDBY_OFFSET,	\
- 		.stby_mask = 0x3f,	\
-+		.sw_reg = true,		\
- 	}
- 
- #define PFUZE100_SWB_REG(_chip, _name, base, mask, voltages)	\
-@@ -471,6 +489,9 @@ static int pfuze_parse_regulators_dt(struct pfuze_chip *chip)
- 	if (!np)
- 		return -EINVAL;
- 
-+	if (of_property_read_bool(np, "fsl,pfuze-support-disable"))
-+		chip->flags |= PFUZE_FLAG_DISABLE_SW;
-+
- 	parent = of_get_child_by_name(np, "regulators");
- 	if (!parent) {
- 		dev_err(dev, "regulators node not found\n");
-@@ -703,6 +724,21 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
- 			}
- 		}
- 
-+		/*
-+		 * Allow SW regulators to turn off. Checking it trough a flag is
-+		 * a workaround to keep the backward compatibility with existing
-+		 * old dtb's which may relay on the fact that we didn't disable
-+		 * the switched regulator till yet.
-+		 */
-+		if (pfuze_chip->flags & PFUZE_FLAG_DISABLE_SW) {
-+			if (pfuze_chip->regulator_descs[i].sw_reg) {
-+				desc->ops = &pfuze100_sw_disable_regulator_ops;
-+				desc->enable_val = 0x8;
-+				desc->disable_val = 0x0;
-+				desc->enable_time = 500;
-+			}
-+		}
-+
- 		config.dev = &client->dev;
- 		config.init_data = init_data;
- 		config.driver_data = pfuze_chip;
 -- 
-2.18.0
+2.14.4
 
