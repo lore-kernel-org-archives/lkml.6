@@ -6,273 +6,145 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7931EECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CDCECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E92C20873
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:11:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E92C20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F73A20873
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:12:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F73A20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729628AbeGMJZf (ORCPT
+        id S1728226AbeGMJ0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 05:25:35 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:33353 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726364AbeGMJZf (ORCPT
+        Fri, 13 Jul 2018 05:26:39 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:57130 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbeGMJ0j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 05:25:35 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="42210806"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 13 Jul 2018 17:11:41 +0800
-Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
-        by cn.fujitsu.com (Postfix) with ESMTP id A6D2C4B5CBE2;
-        Fri, 13 Jul 2018 17:11:41 +0800 (CST)
-Received: from localhost.localdomain (10.167.226.106) by
- G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Fri, 13 Jul 2018 17:11:40 +0800
-Subject: Re: [PATCH v13 14/18] x86/tsc: initialize cyc2ns when tsc freq. is
- determined
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        <steven.sistare@oracle.com>, <daniel.m.jordan@oracle.com>,
-        <linux@armlinux.org.uk>, <schwidefsky@de.ibm.com>,
-        <heiko.carstens@de.ibm.com>, <john.stultz@linaro.org>,
-        <sboyd@codeaurora.org>, <x86@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-        <tglx@linutronix.de>, <hpa@zytor.com>, <peterz@infradead.org>,
-        <prarit@redhat.com>, <feng.tang@intel.com>, <pmladek@suse.com>,
-        <gnomes@lxorguk.ukuu.org.uk>, <linux-s390@vger.kernel.org>,
-        <boris.ostrovsky@oracle.com>, <jgross@suse.com>
-References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
- <20180712000419.5165-15-pasha.tatashin@oracle.com>
-From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
-Message-ID: <dfd0e8d4-0020-d07c-2570-c1e1652875c5@cn.fujitsu.com>
-Date:   Fri, 13 Jul 2018 17:11:39 +0800
+        Fri, 13 Jul 2018 05:26:39 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41RnC66rNQz1qxDD;
+        Fri, 13 Jul 2018 11:12:50 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41RnC65xqTz1wj80;
+        Fri, 13 Jul 2018 11:12:50 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id nNigbCoDp03G; Fri, 13 Jul 2018 11:12:49 +0200 (CEST)
+X-Auth-Info: sbtMl29f1Tj+haHQNqtX68tcR5nsmbUH9gm86/TBdI8=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 13 Jul 2018 11:12:49 +0200 (CEST)
+Subject: Re: [PATCH] drm: mxsfb: fix runtime PM handling
+To:     Anson Huang <anson.huang@nxp.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     dl-linux-imx <linux-imx@nxp.com>, Stefan Agner <stefan@agner.ch>
+References: <1531472085-25174-1-git-send-email-Anson.Huang@nxp.com>
+ <ea029b69-f853-4a5f-e798-70a04b02ac1d@denx.de>
+ <AM3PR04MB1315E2F345752D0A64A0E2C8F5580@AM3PR04MB1315.eurprd04.prod.outlook.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <90d16681-2a7a-4826-0411-478353d2afe3@denx.de>
+Date:   Fri, 13 Jul 2018 11:12:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180712000419.5165-15-pasha.tatashin@oracle.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
+In-Reply-To: <AM3PR04MB1315E2F345752D0A64A0E2C8F5580@AM3PR04MB1315.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.167.226.106]
-X-yoursite-MailScanner-ID: A6D2C4B5CBE2.AD858
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/13/2018 11:06 AM, Anson Huang wrote:
+[...]
+>>
+>> On 07/13/2018 10:54 AM, Anson Huang wrote:
+>>> As display power domain is combined with lcdif node on some i.MX
+>>> platforms like i.MX6SL, when lcdif driver is enabled, the mxsfb_load
+>>> is called to enable runtime pm, and a pair of pm_runtime_get_sync and
+>>> pm_runtime_put_sync are also called, that will cause generic power
+>>> domain driver to disable lcdif power domain and lcdif is no longer
+>>> working, the lcdif power should ONLY be turned off when display is
+>>> disabled, so move the pm_runtime_put_sync to mxsfb_unload and remove
+>>> the pm_runtime_get_sync in mxsfb_unload as well, in this way, when
+>>> display is enabled, the lcdif power will be always ON until the
+>>> display is disabled.
+>>>
+>>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>>
+>> Doesn't this also mean the block will always be on, thus wasting power ?
+>  
+> I think drm driver should have somewhere to implement the display
+> disable case, like when fb0 is blank (echo 1 > /sys/class/graphics/fb0/blank),
 
+Isn't this just the fbdev emulation on top of drm/kms ?
+I think this stuff can be compiled out completely.
 
-At 07/12/2018 08:04 AM, Pavel Tatashin wrote:
-> cyc2ns converts tsc to nanoseconds, and it is handled in a per-cpu data
-> structure.
+> then lcdif can be powered gated, and
+> when display is back on (unblank), lcdif needs to be re-initialization and display will
+> be on, current implementation is incorrect, with kernel booting up, lcdif
+> is NOT working at all.
+
+It works fine on MX6SX , so I think this is isolated to MX6SL ?
+I'm CCing Stefan, he might have some valuable feedback here.
+
+> The runtime power gating case can be implemented later to save power,
+> need lcdif experts to do it. Thanks.
 > 
-> Currently, the setup code for c2ns data for every possible CPU goes through
-> the same sequence of calculations as for the boot CPU, but is based on the
-> same tsc frequency as the boot CPU, and thus this is not necessary.
+> Anson.
 > 
-> Initialize the boot cpu when tsc frequency is determined. Copy the
-> calculated data from the boot CPU to the other CPUs in tsc_init().
-> 
-> In addition do the following:
-> 
-> - Remove unnecessary zeroing of c2ns data by removing cyc2ns_data_init()
-> - Split set_cyc2ns_scale() into two functions, so set_cyc2ns_scale() can be
->    called when system is up, and wraps around __set_cyc2ns_scale() that can
->    be called directly when system is booting but avoids saving restoring
->    IRQs and going and waking up from idle.
-> 
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> ---
->   arch/x86/kernel/tsc.c | 94 ++++++++++++++++++++++++-------------------
->   1 file changed, 53 insertions(+), 41 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-> index bc8eb82050a3..0b1abe7fdd8e 100644
-> --- a/arch/x86/kernel/tsc.c
-> +++ b/arch/x86/kernel/tsc.c
-> @@ -103,23 +103,6 @@ void cyc2ns_read_end(void)
->    *                      -johnstul@us.ibm.com "math is hard, lets go shopping!"
->    */
->   
-> -static void cyc2ns_data_init(struct cyc2ns_data *data)
-> -{
-> -	data->cyc2ns_mul = 0;
-> -	data->cyc2ns_shift = 0;
-> -	data->cyc2ns_offset = 0;
-> -}
-> -
-> -static void __init cyc2ns_init(int cpu)
-> -{
-> -	struct cyc2ns *c2n = &per_cpu(cyc2ns, cpu);
-> -
-> -	cyc2ns_data_init(&c2n->data[0]);
-> -	cyc2ns_data_init(&c2n->data[1]);
-> -
-> -	seqcount_init(&c2n->seq);
-> -}
-> -
->   static inline unsigned long long cycles_2_ns(unsigned long long cyc)
->   {
->   	struct cyc2ns_data data;
-> @@ -135,18 +118,11 @@ static inline unsigned long long cycles_2_ns(unsigned long long cyc)
->   	return ns;
->   }
->   
-> -static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
-> +static void __set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
->   {
->   	unsigned long long ns_now;
->   	struct cyc2ns_data data;
->   	struct cyc2ns *c2n;
-> -	unsigned long flags;
-> -
-> -	local_irq_save(flags);
-> -	sched_clock_idle_sleep_event();
-> -
-> -	if (!khz)
-> -		goto done;
->   
->   	ns_now = cycles_2_ns(tsc_now);
->   
-> @@ -178,12 +154,55 @@ static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_
->   	c2n->data[0] = data;
->   	raw_write_seqcount_latch(&c2n->seq);
->   	c2n->data[1] = data;
-> +}
-> +
-> +static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
-> +{
-> +	unsigned long flags;
-> +
-> +	local_irq_save(flags);
-> +	sched_clock_idle_sleep_event();
-> +
-> +	if (khz)
-> +		__set_cyc2ns_scale(khz, cpu, tsc_now);
->   
-> -done:
->   	sched_clock_idle_wakeup_event();
->   	local_irq_restore(flags);
->   } >
-> +/*
-> + * Initialize cyc2ns for boot cpu
-> + */
-> +static void __init cyc2ns_init_boot_cpu(void)
-> +{
-> +	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
-> +
-> +	seqcount_init(&c2n->seq);
-> +	__set_cyc2ns_scale(tsc_khz, smp_processor_id(), rdtsc());
-> +}
-Hi Paval,
-
-Here we didn't protect it with local_irq_save()/local_irq_restore()
-
-> +
-> +/*
-> + * Secondary CPUs do not run through cyc2ns_init(), so set up
-> + * all the scale factors for all CPUs, assuming the same
-> + * speed as the bootup CPU. (cpufreq notifiers will fix this
-> + * up if their speed diverges)
-> + */
-> +static void __init cyc2ns_init_secondary_cpus(void)
-> +{
-> +	unsigned int cpu, this_cpu = smp_processor_id();
-> +	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
-> +	struct cyc2ns_data *data = c2n->data;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		if (cpu != this_cpu) {
-> +			seqcount_init(&c2n->seq);
-> +			c2n = per_cpu_ptr(&cyc2ns, cpu);
-> +			c2n->data[0] = data[0];
-> +			c2n->data[1] = data[1];
-> +		}
-> +	}
-> +}
-> +
->   /*
->    * Scheduler clock - returns current time in nanosec units.
->    */
-> @@ -1385,6 +1404,10 @@ void __init tsc_early_init(void)
->   	if (!determine_cpu_tsc_frequncies())
->   		return;
->   	loops_per_jiffy = get_loops_per_jiffy();
-> +
-> +	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
-> +	tsc_store_and_check_tsc_adjust(true);
-> +	cyc2ns_init_boot_cpu();
->   }
->   
->   void __init tsc_init(void)
-> @@ -1400,23 +1423,12 @@ void __init tsc_init(void)
->   			mark_tsc_unstable("could not calculate TSC khz");
->   			return;
->   		}
-> +		/* Sanitize TSC ADJUST before cyc2ns gets initialized */
-> +		tsc_store_and_check_tsc_adjust(true);
-> +		cyc2ns_init_boot_cpu();
-
-In tsc_init(), the timer interrupt has worked, Is that OK?
-
-IMO, no need to change so much, just use the original code,
-eg:
-
-+static void __init cyc2ns_init_bsp(void)
-+{
-+       cyc2ns_init(0);
-+       set_cyc2ns_scale(tsc_khz, 0, rdtsc());
-+}
-+
-+static void __init cyc2ns_init_cpus(void)
-+{
-+       struct cyc2ns *c2n0 = &per_cpu(cyc2ns, 0);
-+       struct cyc2ns *c2n;
-+       unsigned int cpu;
-+
-+       for_each_possible_cpu(cpu) {
-+               if (cpu != 0) {
-+                       cyc2ns_init(cpu);
-+                       c2n = &per_cpu(cyc2ns, cpu);
-+                       c2n->data[0] = c2n0->data[0];
-+                       c2n->data[1] = c2n0->data[1];
-+               }
-+       }
-+}
-+
+>>
+>>> ---
+>>>  drivers/gpu/drm/mxsfb/mxsfb_drv.c | 3 +--
+>>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+>>> b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+>>> index ffe5137..1ba179b 100644
+>>> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+>>> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+>>> @@ -235,7 +235,6 @@ static int mxsfb_load(struct drm_device *drm,
+>>> unsigned long flags)
+>>>
+>>>  	pm_runtime_get_sync(drm->dev);
+>>>  	ret = drm_irq_install(drm, platform_get_irq(pdev, 0));
+>>> -	pm_runtime_put_sync(drm->dev);
+>>>
+>>>  	if (ret < 0) {
+>>>  		dev_err(drm->dev, "Failed to install IRQ handler\n"); @@ -264,6
+>>> +263,7 @@ static int mxsfb_load(struct drm_device *drm, unsigned long
+>>> flags)
+>>>  err_irq:
+>>>  	drm_panel_detach(mxsfb->panel);
+>>>  err_vblank:
+>>> +	pm_runtime_put_sync(drm->dev);
+>>>  	pm_runtime_disable(drm->dev);
+>>>
+>>>  	return ret;
+>>> @@ -279,7 +279,6 @@ static void mxsfb_unload(struct drm_device *drm)
+>>>  	drm_kms_helper_poll_fini(drm);
+>>>  	drm_mode_config_cleanup(drm);
+>>>
+>>> -	pm_runtime_get_sync(drm->dev);
+>>>  	drm_irq_uninstall(drm);
+>>>  	pm_runtime_put_sync(drm->dev);
+>>>
+>>>
+>>
+>>
+>> --
+>> Best regards,
+>> Marek Vasut
 
 
-Thanks,
-	dou
-
->   	}
->   
-> -	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
-> -	tsc_store_and_check_tsc_adjust(true);
-> -
-> -	/*
-> -	 * Secondary CPUs do not run through tsc_init(), so set up
-> -	 * all the scale factors for all CPUs, assuming the same
-> -	 * speed as the bootup CPU. (cpufreq notifiers will fix this
-> -	 * up if their speed diverges)
-> -	 */
-> -	cyc = rdtsc();
-> -	for_each_possible_cpu(cpu) {
-> -		cyc2ns_init(cpu);
-> -		set_cyc2ns_scale(tsc_khz, cpu, cyc);
-> -	}
-> -
-> +	cyc2ns_init_secondary_cpus();
->   	static_branch_enable(&__use_tsc);
->   
->   	if (!no_sched_irq_time)
-> 
-
-
+-- 
+Best regards,
+Marek Vasut
