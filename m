@@ -2,124 +2,137 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24454ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 555B8ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE8F2087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1FE20883
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:17:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pZUWZ4rJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE8F2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NuXVq/GT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1FE20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbeGMLa1 (ORCPT
+        id S1729634AbeGMLcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 07:30:27 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56434 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbeGMLa0 (ORCPT
+        Fri, 13 Jul 2018 07:32:04 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:42937 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727283AbeGMLcD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 07:30:26 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6DB3nhD138997
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 11:16:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=wbNbtvvIQV1t8e3EsQSmIXWWBY9bUFqK5Qxtm3raHvI=;
- b=pZUWZ4rJ8XncwPYnRwFGaFlmCIPMNq5KuQIpdaGfHfesUj+w90bdF+uiVnpAge0UuYO5
- RywPxWdZhpfT3B3m+NkJ/EVYch9R7ultV/Ad9Pd501vbxMrtZkTZSnLTttvzLwCZ6cSx
- bZQHmoxUbvmhsYLDrH1NtrJxKbiefN1FlQhpeMoa+WBMiLv6SoObE6L23DSxEdPudFB+
- XShWUQmQyekuv71PnJFVz0LW6yEwaUBD2ucVK97DE+Qhaya4SB4tHowT56+HOepkfL9i
- 1/vvd15QW7utrm1shRWkcWfYQUmgVYb+I56WlpNdNQa+gwKeeICBFoOdwB7l0pHBna0L sA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2k2p7vq9r1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 11:16:12 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6DBGBhq029396
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 11:16:11 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6DBGA2X014697
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 11:16:10 GMT
-Received: from mail-oi0-f45.google.com (/209.85.218.45)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 13 Jul 2018 04:16:10 -0700
-Received: by mail-oi0-f45.google.com with SMTP id d189-v6so61519641oib.6
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:16:10 -0700 (PDT)
-X-Gm-Message-State: AOUpUlE6EMFD/1LdNCkd59IP8jf+IvQYMrVIlNc6EiEsYpr2SiZhYMlJ
-        aZpnDMZniNvjKQpavIf18IZH3YiJF0Bhm9hI0Vo=
-X-Google-Smtp-Source: AAOMgpckE/oSkHQ+18vCN/VZRMdD6Nw+80FZgGYG3OjaGtwKVYseDxmf42mUfqhLyQAGERyFYxzUe+OkDStpqg1IrgU=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr6788094oia.229.1531480570291;
- Fri, 13 Jul 2018 04:16:10 -0700 (PDT)
+        Fri, 13 Jul 2018 07:32:03 -0400
+Received: by mail-io0-f195.google.com with SMTP id r24-v6so30980076ioh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=NMlsZM3ysw/cOF3r/wFkFGCV4kUI9hWIOd7QpGBD9A0=;
+        b=NuXVq/GTZoMXPgCSvTH7zYu2y0zDRjGBq2R6C865g970+62EhEIyMCzTan7cNb+rqG
+         3xxaCEwfioJbHX6zgpiRIG8iCpfHchQK4OL20EdC6PcTNmUWj1jS6SCBteeqtbWHo2yU
+         D9YXEFwmes1a47/7dj7Ks6uAoVXxf7cmXQHPE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=NMlsZM3ysw/cOF3r/wFkFGCV4kUI9hWIOd7QpGBD9A0=;
+        b=H8nhLW3+1gMbsvezp//7Wwmg3M9KbH7MEFnXl28Ezv5lJ9Axja8CskiLRPCTfIBlAh
+         bvcBg13pWMU3/wgAULS3tnktFq693++2DwzklX3O9U+7AeC/1zQp9Q0kcoEZZeE6P7gC
+         552QJN6fdkxRXCjcmbby3AD0/aEdfIDJQOe2itiO34Q6kXIRjUXqJKCNS8vumClmsWN2
+         AX51usneTfcswQwzIVItW/Uk1YyYqK0wioDHJbxwOyBOsgINNF+0smWVRD2QPDEu6ecb
+         Gro2hr1CyT8Uxy1mO028ecnPYXNtOefPDSYaxtn8yoAOaDBWES5sJLPhHdyfzH+vlWO7
+         f60Q==
+X-Gm-Message-State: APt69E2vtt5wBWNoSnCoe6SYMjha7Ifjs4dKQEUqdUTsqVeBoekCJIcp
+        NTWDE9Aa4nkSogAqiNpv/xrFx/kVF93oUKmqHj4iiA==
+X-Google-Smtp-Source: AAOMgpfZnn1ofw23DQa0DKbw+Gya5BgdErVf70Ib4pXX8/CZNKYlU0wOdXX6mbsx1qTfN8ZWIQJ+PPUNT5p2e4YSdtw=
+X-Received: by 2002:a6b:e403:: with SMTP id u3-v6mr29645605iog.131.1531480669863;
+ Fri, 13 Jul 2018 04:17:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180712203730.8703-1-pasha.tatashin@oracle.com>
- <20180712203730.8703-6-pasha.tatashin@oracle.com> <20180713090949.GA15039@techadventures.net>
-In-Reply-To: <20180713090949.GA15039@techadventures.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Fri, 13 Jul 2018 07:15:34 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZs_jvgCXfu7Rd6bmQiRhYZQQC18oAFxe5j0jA+Ndt2rQ@mail.gmail.com>
-Message-ID: <CAGM2reZs_jvgCXfu7Rd6bmQiRhYZQQC18oAFxe5j0jA+Ndt2rQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] mm/sparse: delete old sprase_init and enable new one
-To:     osalvador@techadventures.net
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kirill.shutemov@linux.intel.com, Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        dan.j.williams@intel.com, jack@suse.cz, jglisse@redhat.com,
-        Souptick Joarder <jrdr.linux@gmail.com>, bhe@redhat.com,
-        gregkh@linuxfoundation.org, Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org, abdhalee@linux.vnet.ibm.com,
-        mpe@ellerman.id.au
+Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 04:17:49
+ -0700 (PDT)
+In-Reply-To: <c09e8f7a-3bf7-abb3-b49c-011ae29f8d67@st.com>
+References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
+ <1528809280-31116-3-git-send-email-ludovic.Barre@st.com> <CAPDyKFqOOvbNc79hdWhdS4pxkYrh48At-BLuGmX0jDMER3Akdw@mail.gmail.com>
+ <c09e8f7a-3bf7-abb3-b49c-011ae29f8d67@st.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 13 Jul 2018 13:17:49 +0200
+Message-ID: <CAPDyKFrN3GMez1vyc6xQUH_Qp7UrDj88rG9pAP_oTLHOB6k91g@mail.gmail.com>
+Subject: Re: [PATCH 02/19] mmc: mmci: merge qcom dml feature into mmci dma
+To:     Ludovic BARRE <ludovic.barre@st.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8952 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807130089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 5:09 AM Oscar Salvador
-<osalvador@techadventures.net> wrote:
+On 11 July 2018 at 17:19, Ludovic BARRE <ludovic.barre@st.com> wrote:
 >
 >
-> > -#ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-> > -static void __init sparse_early_mem_maps_alloc_node(void *data,
-> > -                              unsigned long pnum_begin,
-> > -                              unsigned long pnum_end,
-> > -                              unsigned long map_count, int nodeid)
-> > -{
-> > -     struct page **map_map = (struct page **)data;
-> > -
-> > -     sparse_buffer_init(section_map_size() * map_count, nodeid);
-> > -     sparse_mem_maps_populate_node(map_map, pnum_begin, pnum_end,
-> > -                                      map_count, nodeid);
-> > -     sparse_buffer_fini();
-> > -}
+> On 07/05/2018 05:26 PM, Ulf Hansson wrote:
+>>
+>> On 12 June 2018 at 15:14, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>>>
+>>> From: Ludovic Barre <ludovic.barre@st.com>
+>>>
+>>> This patch integrates qcom dml feature into mmci_dma file.
+>>> Qualcomm Data Mover lite/local is already a variant of mmci dmaengine.
+>>>
+>>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>>> ---
+>>>   drivers/mmc/host/Makefile        |   1 -
+>>>   drivers/mmc/host/mmci.c          |   1 -
+>>>   drivers/mmc/host/mmci.h          |  35 ++++++++
+>>>   drivers/mmc/host/mmci_dma.c      | 135 ++++++++++++++++++++++++++++-
+>>>   drivers/mmc/host/mmci_qcom_dml.c | 177
+>>> ---------------------------------------
+>>>   drivers/mmc/host/mmci_qcom_dml.h |  31 -------
+>>>   6 files changed, 169 insertions(+), 211 deletions(-)
+>>>   delete mode 100644 drivers/mmc/host/mmci_qcom_dml.c
+>>>   delete mode 100644 drivers/mmc/host/mmci_qcom_dml.h
+>>
+>>
+>> No, this is not the way to go. Instead I I think there are two options.
+>>
+>> 1) Keep mmci_qcom_dml.c|h and thus add new files for the stm32 dma
+>> variant.
+>>
+>> 2) Start by renaming mmci_qcom_dml.* to mmc_dma.* and then in the next
+>> step add the code for stm32 dma into the renamed files.
+>>
+>> I guess if there is some overlap in functionality, 2) may be best as
+>> it could easier avoid open coding. However, I am fine with whatever
+>> option and I expect that you knows what is best.
 >
-> From now on, sparse_mem_maps_populate_node() is not being used anymore, so I guess we can just
-> remove it from sparse.c, right? (as it is done in sparse-vmemmap.c).
+>
+> After patch 01 & 05 comments:
+> I will try to define a mmci_ops which contain some functions pointer
+> called by mmci.c (core).
+> A variant defines its mmci_ops.
+> where do you define the specific function:
+> -in a single file, mmci-ops.c or other (for the name, I'm not inspirated)
+> -or in specific file for each variant mmci-qcom.c or mmci-stm32.c
+>
+> following the comment (above), I think we define a single file?
 
-Missed this one, even more code can be deleted! :) I will include this
-in updated patches, after review comments.
+If I understand the question, the problem is how we should assign the
+mmc host ops, which corresponds to the probed variant data!?
 
-Thank you,
-Pavel
+I took a stub at it and posted two patches which I think you should be
+able to build upon. Please have a look.
 
-> --
-> Oscar Salvador
-> SUSE L3
->
+[...]
+
+Kind regards
+Uffe
