@@ -6,76 +6,73 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD8DECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0002AECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1232124D
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A21D720843
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:16:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="vdxgq0L/";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bcV5jRZl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1232124D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Ln1VBrE2";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BeqzG5bq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A21D720843
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbeGMGNI (ORCPT
+        id S1727435AbeGMG3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 02:13:08 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:37292 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbeGMGNI (ORCPT
+        Fri, 13 Jul 2018 02:29:36 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:36297 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbeGMG3g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 02:13:08 -0400
-Received: by mail-yw0-f193.google.com with SMTP id w76-v6so11345884ywg.4
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 23:00:04 -0700 (PDT)
+        Fri, 13 Jul 2018 02:29:36 -0400
+Received: by mail-yb0-f194.google.com with SMTP id s1-v6so12344184ybk.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 23:16:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=zDPTvady3hGJuubgbaW82Z4ZxgnJXZxjC6mQHcULwIw=;
-        b=vdxgq0L/u4a9KdhMsim9aFqPmupFGmI0b3kAhPKTHu6E68RR1EkGnjPxlpaLNRVgn4
-         Sr99Hu9mO3BwryBAIULq/0FykMRdCrUSdiUUUHaIEJU3fFJfxZvjzkmfyrObuC9dZc7R
-         uTS4yov5alAfO9i0qmzY5ChIWoUVK6jmihJspKJSpnur6uEvkrLElJlUUyudFLXeZc+x
-         JVlDl7CeiC4HyHsP37ibt2j76XjX9W+B/PAkX9Siu+RlY9A9cFLegHlPZ0SRGuLg/x8E
-         3894+DkNyrnN8c+BwAN55m9IbyOwHuF2cq75GZWOAF3vGusVjfZbLSDVhwmvPl+1LE4Y
-         oGpA==
+        bh=GzZeGfuL4DflS+9uKKdn08BhyPocXR6tIudCfDgUhEQ=;
+        b=Ln1VBrE2HJHarvFB/G9ml4lHDvGeATjbzfIkb23DCGzYjgq3lY28QMMo8CL6uS8AGe
+         qerE+CBQmabXgWUYe6KUUqE4QNJ5KxOhjtswK5JunXTzFSemgu5gyrAAeBjOsG0U1kUn
+         xp5JqvOI7zqSKwjzqahCzxqhsB5Nu4LESwynYz7Ui5onGXnF/2mz1eMNkSBJqioY/2c+
+         FO2ePC2Yw2hUNVsyZMC5Q6dHi4Xs2VoW7emDR/HdJMGuAXj4JZ8SbS89Y/pdwCrfb6Ts
+         LLoeoZw6bqSpky46K3ayqe+UNhGm61pTMoaoDZVR/S9hF9nSoZ0xj8xdpN7UOxFOyBA3
+         Yj4w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=zDPTvady3hGJuubgbaW82Z4ZxgnJXZxjC6mQHcULwIw=;
-        b=bcV5jRZlAAMmHkS3LN1KV+kqPDv6NlvX4cQ3/Iwu9RXsZufZquf7/6kUZGkFq1xRbG
-         9zgP+s//h5jKTtj4seVSvfJzDLvNMOda4mXqrHpstP1V205pvA/6xC1k3nJOt9Oa2eU5
-         wnkObmhnsnq3leCBgOKHmnLppel4hr4A6RNU0=
+        bh=GzZeGfuL4DflS+9uKKdn08BhyPocXR6tIudCfDgUhEQ=;
+        b=BeqzG5bqCtMsHTtbWLGZZYPjTUtM44C4u68Zzkp8biTkMz0EbwxVKZd3kPEGH3/0VQ
+         rhe6CJaE5s7/kVlgWwnQ1z/zNNdcNxf0LJIRSPz+Srxm+whP39gm32Xeo7VtIT54AqJj
+         B5aE0mxsz61kUTfQ86vd3rXf8e4oexnWJBenY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=zDPTvady3hGJuubgbaW82Z4ZxgnJXZxjC6mQHcULwIw=;
-        b=BAPuRDjrrnYyWowwZ0j46Ewj5pedOsTjz7UlkeOEiWOajPuLG0S9nof2CZ7aZKkElx
-         h5YMOy+EuqKkAUC96TkmFAiJu3KIghEPDa1rIydc0/FiZ5ujLq79wB2df3zKA1JQVnn6
-         Uq2XQxU2/1TUCUfpoYlKQdeQUsj35oO621iErg4J+8BxWmxUX+JZUGePcxMuTxodFukw
-         1ocSdEnflfTf99Dgus1vb5tBBV5VzGz6j5ufTVqIukXz+ojfEsdSC1f7CNxoCAWDMI1s
-         ZwD7foNw9Y75FytXpiPXPHQMk613BgyFjk5q3IscAUBYAlqZXT/aN/NcXydDCS0EO8ec
-         5gfA==
-X-Gm-Message-State: AOUpUlFbCrJYfaAn1CbDL50B4dMgKt4hgmBLDZVAEBoFA/3bLdqRKGsV
-        Mfb/T+redMZp6q6lldC412VBVMKEQ12LW+OBtRc3SQ==
-X-Google-Smtp-Source: AAOMgpcWRrFn0lL+exJ4dFVRFboXnxotYmDYCA+DU5+EyX70QpvnWZ3R6yZCk0s4M/lcq9MFqlag/GtnNP99QZVpg7o=
-X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr2531893ywn.88.1531461604333;
- Thu, 12 Jul 2018 23:00:04 -0700 (PDT)
+        bh=GzZeGfuL4DflS+9uKKdn08BhyPocXR6tIudCfDgUhEQ=;
+        b=QWZizyxQ4mAxF6W/8f86lbYZ1dXRuO/svs5ycv+CUMIQteoASV8Tmv6hfdAl2woTxb
+         XDbLXxeTFK5wY8jRcWzdWonYslkRzk2ELSoVwFzePsxuMlyllHCExMVwkpzdz8o2v72p
+         baBsMn8kqSdbdBQebufG1L6AAM0AIYIjjwLO6r/gHP8MqT/BeNAyOnkXbWFcacz081ll
+         gApuXLFKQ0joKaScXH9FURTAn3eUN0q5jMhpD0eBjs8w2mdmOj/b3NzHZS5Yycq5Kinr
+         dswBvWjxSWdmEin4l0xH5L3sf0tO9E8laJs1oumx7C+ZSODH0u8jxSd7e+72IgI+vUrR
+         p8kg==
+X-Gm-Message-State: AOUpUlEIz+4+ozUIEGgMd73+GquMJAy4zwVJfkdcqk18TK1+Hi1K2rOo
+        WyAPoQkTnyz4+hR6oLhIpr/SBfvQTfkyNQrhJOYVUA==
+X-Google-Smtp-Source: AAOMgpdg0P4o3eLEmwKqxBb2B+Ww4lO9bQ5gwfuKveqWC6QwZ6YQLnEbG2ShYuaStmmxh9t3wpi4mkBO7aKvQVP2Ues=
+X-Received: by 2002:a25:afce:: with SMTP id d14-v6mr2562083ybj.343.1531462589307;
+ Thu, 12 Jul 2018 23:16:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 23:00:03
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 23:16:28
  -0700 (PDT)
-In-Reply-To: <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au>
+In-Reply-To: <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
 References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
- <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
- <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
- <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com> <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 12 Jul 2018 23:00:03 -0700
-X-Google-Sender-Auth: mEbHzL_Doy8uz-9G1Roqdvz9xrs
-Message-ID: <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
+Date:   Thu, 12 Jul 2018 23:16:28 -0700
+X-Google-Sender-Auth: U7ioNlkGKxxGI5DFsAOqJ-kLAEw
+Message-ID: <CAGXu5jJOZ3u1BTf8U20wErphfjKzaGK+m1sdhA89LqVP3MDYZA@mail.gmail.com>
 Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -99,56 +96,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 10:20 PM, Herbert Xu
-<herbert@gondor.apana.org.au> wrote:
-> On Thu, Jul 12, 2018 at 10:17:29PM -0700, Kees Cook wrote:
+On Thu, Jul 12, 2018 at 5:40 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Thu, Jul 12, 2018 at 06:02:26PM +0200, Arnd Bergmann wrote:
 >>
->> Then why does the instrumented tcrypt output show the huge size? Is
->> tcrypt doing something incorrectly?
+>> Looking through some of the drivers, I found this interesting one:
 >
-> tcrypt doesn't even use AHASH_REQUEST_ON_STACK so I don't understand
-> your point.
+> As I said before these patches are fundamentally broken.  Users
+> of AHASH_REQUEST_ON_STACK can only use sync algorithm providers
+> and therefore drivers are irrelevant.
 
-It's using crypto_ahash_set_reqsize(), which is what
-AHASH_REQUEST_ON_STACK() reads back via crypto_ahash_reqsize() (i.e.
-tfm->reqsize). It sounds like you're saying that there are cases where
-an ahash is constructed (and will call crypto_ahash_set_reqsize()) but
-where it cannot be used with AHASH_REQUEST_ON_STACK()? What actually
-enforces this, since there will be a difference between
-crypto_ahash_set_reqsize() (as seen with sha512-mb) and the actually
-allowed stack usage. (i.e. where should I perform a check against the
-new fixed value?)
+I've also now gone to look at the few users of AHASH_REQUEST_ON_STACK,
+and it seems like they come in two flavors:
 
->> What is the correct value to use for AHASH_REQUEST_ON_STACK?
->
-> As I said to arrive at a fixed value you should examine all sync
-> ahash algorithms (e.g., all shash ones plus ahash ones marked as
-> sync if there are any).
+- ones that can be trivially converts to shash (hibernate)
+- things that use scatter/gather
 
-The "value" for the ahash I understand: it has a request size
-(tfm->reqsize, as set by crypto_ahash_set_reqsize()) what should be
-used to measure the shash value? (And how does this relate to the
-value returned by crypto_ahash_reqsize()?) The closest clue I can find
-is this:
-
-crypto_init_shash_ops_async() does:
-        crt->reqsize = sizeof(struct shash_desc) + crypto_shash_descsize(shash);
-
-and that gets called from crypto_ahash_init_tfm(), so if it starts
-with the above reqsize and adds to it with a call to
-crypto_ahash_set_reqsize() later, we'll have that maximum?
-
-So, do I want to calculate this answer as:
-
-sizeof(struct shash_desc) + max(shash descsize) + max(ahash-sync reqsize) ?
-16 + 360 + 0
-
-It's 0 above because if I look at all the callers of
-crypto_ahash_set_reqsize() that do wrapping, all are ASYNC.
-
-So, should this really just be 376? Where is best to validate this
-size, as it seems checking in crypto_ahash_set_reqsize() is
-inappropriate?
+Is this correct? It seems like you did the bulk of
+AHASH_REQUEST_ON_STACK conversions in 2016. Can shash grow an sg
+interface?
 
 -Kees
 
