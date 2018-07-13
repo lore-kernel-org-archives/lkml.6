@@ -2,114 +2,384 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,TVD_SUBJ_WIPE_DEBT,
-	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610A1ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EAAECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E775A208A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C21A9208A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:56:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=edited-us.20150623.gappssmtp.com header.i=@edited-us.20150623.gappssmtp.com header.b="xfqq0hJb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E775A208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=edited.us
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ejhe59V9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C21A9208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbeGMQJ0 (ORCPT
+        id S1731968AbeGMQMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:09:26 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:41282 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729765AbeGMQJ0 (ORCPT
+        Fri, 13 Jul 2018 12:12:05 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:35050 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731443AbeGMQME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:09:26 -0400
-Received: by mail-io0-f196.google.com with SMTP id q9-v6so31738917ioj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 08:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=edited-us.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=uaT4Ou8Ds511lDR3q+LHM8xEK42mLmUsgMTWDyjAL88=;
-        b=xfqq0hJbg5s5tdeKim71D8uKhfhzc09FTQt+tdE0hhqtik2qd4avHowTsAKfm1jdXb
-         nviksUsrLfwS3OijTMuMpjfO3ql1Q/l7MKnKEJf1usGz+6ibFZeq/9dRXM7XC+MSs/hX
-         IvMjzjotnpx8TbhxZog8Hw7H+rTC2DO66Ypk5yLaIs1OS6N+edDhm1kumfF6ors/a0RA
-         pab4I6cNV4X51skkqEOkADe9/FvHEZNwYfdNzf/yrsMQvQ8IUZnFNPuaJmiR9JhtL/Yf
-         /fK4lUUUTioxhCNPn0ZyTe4sgcu+OZ17EE8EP3UuA8wcA85nNtb3npfDVw5KnlJAjVBc
-         rYqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=uaT4Ou8Ds511lDR3q+LHM8xEK42mLmUsgMTWDyjAL88=;
-        b=ptEXjA9FMD8NschziwXJBiOxOrum2zbTWKbEFOaPf3PunPDKDgEzSZwFf/7bQK/1CK
-         WVCkuy03a9LQF24CbS5JjcFNFWrEuQ4ep99FiyKD4VioyxPp0LobQ+2rBUBjdk+CyhCq
-         Qmrd04ocC03iMCBXS1XZaV06+wHFkmgs4euO3JheKwj17VZXEuN9e6fGN7GPtnhHaDc7
-         Esz2mCphOSfeE7pJkX4PHR5JQMhiY2a/mo98fPNjRaVOwif661Iv5OxJeeezzBeHEAGB
-         X1PY/yr9iLXavSQFkU6vSIhkMOpoHtz+NH9JMU98SQJEMWyHVD2ldX1AKzkTPrsG740t
-         DqcQ==
-X-Gm-Message-State: APt69E2zekIayXQTpJt4kkih+4aoWniF1pUq76z2luwYglSmt9260UXk
-        ktmZxHVpoLqhhSEyCGjRHG2I9S9pceE=
-X-Google-Smtp-Source: AAOMgpdUej8clNa6mynviESM+SHIr2zBGQwtAFl8YV67lsUf0PEia2EUrbk42aJpVq8L9vazSPirxQ==
-X-Received: by 2002:a5e:950d:: with SMTP id r13-v6mr29737567ioj.224.1531497252952;
-        Fri, 13 Jul 2018 08:54:12 -0700 (PDT)
-Received: from debian.hanksspec.com (ip-98-240-239-173.midwest.us.northamericancoax.com. [173.239.240.98])
-        by smtp.googlemail.com with ESMTPSA id r20-v6sm7781066iog.85.2018.07.13.08.54.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 08:54:11 -0700 (PDT)
-From:   Ryan Grachek <ryan@edited.us>
-Cc:     john.stultz@linaro.org, Ryan Grachek <ryan@edited.us>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: hikey960: Remove keep-power-in-suspend property
-Date:   Fri, 13 Jul 2018 10:53:48 -0500
-Message-Id: <20180713155348.24343-1-ryan@edited.us>
-X-Mailer: git-send-email 2.11.0
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 13 Jul 2018 12:12:04 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 1819F10C12C9;
+        Fri, 13 Jul 2018 08:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531497412; bh=YoqSqtmLcobmo9VaT3QaIs6Nk0S5Yc8fI3QuweiB1WI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=ejhe59V9E44MqRqbDPF+uzdhQgQO+z2I8FvFg2oNDu7OFKpuQq6wxi494egT1k7Zb
+         20djVlDhAdTHJ+Y3DXrGwikTMLjaJgII64Zxtl1mEoucldTxGCpToCT9VK/ZaSEWP4
+         JUCgmndXXeoBArwwy0AEQEV0UmsFy6/ekmKwRaUjXscbrL1Ek9nKRbt97blXuudRLr
+         m6DlmeTovs62v94q59Own9jwDXdh5nBOTPTryEY9+et9H1R4nMBkWz4wnmY9UHY2dr
+         JYh0SGyunNhT/N2BPBEUTrJowmc18I3Mfe2ikaTRaTXSOxjDSzya4RwNz6L27PDcTP
+         XqfLgBfDsE+4g==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C5F143BD0;
+        Fri, 13 Jul 2018 08:56:51 -0700 (PDT)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 796A23E8F2;
+        Fri, 13 Jul 2018 17:56:49 +0200 (CEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com,
+        shawn.lin@rock-chips.com
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v10 10/12] pci_endpoint_test: Add 2 ioctl commands
+Date:   Fri, 13 Jul 2018 17:56:42 +0200
+Message-Id: <8de3a474a84bc649dc88d494b38a5f764a931a05.1531496321.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1531496321.git.gustavo.pimentel@synopsys.com>
+References: <cover.1531496321.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1531496321.git.gustavo.pimentel@synopsys.com>
+References: <cover.1531496321.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the keep-power-in-suspend property because it keeps wifi power
-on during suspend. This property is only required when enabling WoWLAN
-and should only be enabled based on need. Also remove dupplicate property
+Add MSI-X support and update driver documentation accordingly.
 
-Signed-off-by: Ryan Grachek <ryan@edited.us>
+Add 2 new IOCTL commands:
+ - Allow to reconfigure driver IRQ type in runtime.
+ - Allow to retrieve current driver IRQ type configured.
+
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 ---
- arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 1 -
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi         | 1 -
- 2 files changed, 2 deletions(-)
+Change v2->v3:
+ - New patch file created base on the previous patch
+"misc: pci_endpoint_test: Add MSI-X support" patch file following
+Kishon's suggestion.
+Change v3->v4:
+ - Rebased to Lorenzo's master branch v4.18-rc1.
+Change v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Change v5->v6:
+ - Moved PCITEST_SET_IRQTYPE and PCITEST_GET_IRQTYPE ioctl entries
+from patch #10 to here.
+ - Increased ioctl parameters range associated to
+drivers/misc/pci_endpoint_test.c driver.
+Change v6->v7:
+ - irq_type variable update just before returning the function.
+Change v7->v8:
+ - Re-sending the patch series.
+Change v8->v9:
+ - Added a extra parameter to pci_endpoint_test_alloc_irq_vectors,
+that specifies which irq type should be allocated.
+Change v9->v10:
+ - Nothing changed, just to follow the patch set version.
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-index 68c5a6c819ae..a927ce4ec40b 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-@@ -586,7 +586,6 @@
- 	ti,non-removable;
- 	non-removable;
- 	cap-power-off-card;
--	keep-power-in-suspend;
- 	#address-cells = <0x1>;
- 	#size-cells = <0x0>;
- 	status = "ok";
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 8d477dcbfa58..4588fe4e00a8 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -1050,7 +1050,6 @@
- 			reset-names = "reset";
- 			card-detect-delay = <200>;
- 			supports-highspeed;
--			keep-power-in-suspend;
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&sdio_pmx_func
- 				     &sdio_clk_cfg_func
+ Documentation/ioctl/ioctl-number.txt             |   2 +-
+ Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+ drivers/misc/pci_endpoint_test.c                 | 176 +++++++++++++++++------
+ include/uapi/linux/pcitest.h                     |   2 +
+ 4 files changed, 136 insertions(+), 47 deletions(-)
+
+diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+index 65259d4..c15c4f3 100644
+--- a/Documentation/ioctl/ioctl-number.txt
++++ b/Documentation/ioctl/ioctl-number.txt
+@@ -166,7 +166,7 @@ Code  Seq#(hex)	Include File		Comments
+ 'P'	all	linux/soundcard.h	conflict!
+ 'P'	60-6F	sound/sscape_ioctl.h	conflict!
+ 'P'	00-0F	drivers/usb/class/usblp.c	conflict!
+-'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
++'P'	01-09	drivers/misc/pci_endpoint_test.c	conflict!
+ 'Q'	all	linux/soundcard.h
+ 'R'	00-1F	linux/random.h		conflict!
+ 'R'	01	linux/rfkill.h		conflict!
+diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+index fdfa0f6..58ccca4 100644
+--- a/Documentation/misc-devices/pci-endpoint-test.txt
++++ b/Documentation/misc-devices/pci-endpoint-test.txt
+@@ -28,6 +28,9 @@ ioctl
+ 	      to be tested should be passed as argument.
+  PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+ 	      to be tested should be passed as argument.
++ PCITEST_SET_IRQTYPE: Changes driver IRQ type configuration. The IRQ type
++	      should be passed as argument (0: Legacy, 1:MSI, 2:MSI-X).
++ PCITEST_GET_IRQTYPE: Gets driver IRQ type configuration.
+  PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+ 		as argument.
+  PCITEST_READ: Perform read tests. The size of the buffer should be passed
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index f4fef10..ce4b79a 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -157,6 +157,88 @@ static irqreturn_t pci_endpoint_test_irqhandler(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
+ 
++static void pci_endpoint_test_free_irq_vectors(struct pci_endpoint_test *test)
++{
++	int i;
++	struct pci_dev *pdev = test->pdev;
++	struct device *dev = &pdev->dev;
++
++	for (i = 0; i < test->num_irqs; i++)
++		devm_free_irq(dev, pci_irq_vector(pdev, i), test);
++
++	test->num_irqs = 0;
++}
++
++static bool pci_endpoint_test_alloc_irq_vectors(struct pci_endpoint_test *test,
++						int type)
++{
++	int irq = -1;
++	struct pci_dev *pdev = test->pdev;
++	struct device *dev = &pdev->dev;
++	bool res = true;
++
++	switch (type) {
++	case IRQ_TYPE_LEGACY:
++		irq = 0;
++		break;
++	case IRQ_TYPE_MSI:
++		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
++		if (irq < 0)
++			dev_err(dev, "Failed to get MSI interrupts\n");
++		break;
++	case IRQ_TYPE_MSIX:
++		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
++		if (irq < 0)
++			dev_err(dev, "Failed to get MSI-X interrupts\n");
++		break;
++	default:
++		dev_err(dev, "Invalid IRQ type selected\n");
++	}
++
++	if (irq < 0) {
++		irq = 0;
++		res = false;
++	}
++	test->num_irqs = irq;
++
++	return res;
++}
++
++static void pci_endpoint_test_release_irq(struct pci_endpoint_test *test)
++{
++	struct pci_dev *pdev = test->pdev;
++
++	pci_disable_msi(pdev);
++	pci_disable_msix(pdev);
++}
++
++static bool pci_endpoint_test_request_irq(struct pci_endpoint_test *test)
++{
++	int i;
++	int err;
++	struct pci_dev *pdev = test->pdev;
++	struct device *dev = &pdev->dev;
++
++	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
++			       IRQF_SHARED, DRV_MODULE_NAME, test);
++	if (err) {
++		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
++		return false;
++	}
++
++	for (i = 1; i < test->num_irqs; i++) {
++		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
++				       pci_endpoint_test_irqhandler,
++				       IRQF_SHARED, DRV_MODULE_NAME, test);
++		if (err)
++			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
++				pci_irq_vector(pdev, i),
++				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
++	}
++
++	return true;
++}
++
+ static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
+ 				  enum pci_barno barno)
+ {
+@@ -440,6 +522,38 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
+ 	return ret;
+ }
+ 
++static bool pci_endpoint_test_set_irq(struct pci_endpoint_test *test,
++				      int req_irq_type)
++{
++	struct pci_dev *pdev = test->pdev;
++	struct device *dev = &pdev->dev;
++
++	if (req_irq_type < IRQ_TYPE_LEGACY || req_irq_type > IRQ_TYPE_MSIX) {
++		dev_err(dev, "Invalid IRQ type option\n");
++		return false;
++	}
++
++	if (irq_type == req_irq_type)
++		return true;
++
++	pci_endpoint_test_free_irq_vectors(test);
++	pci_endpoint_test_release_irq(test);
++
++	if (!pci_endpoint_test_alloc_irq_vectors(test, req_irq_type)) {
++		pci_endpoint_test_release_irq(test);
++		return false;
++	}
++
++	if (!pci_endpoint_test_request_irq(test)) {
++		pci_endpoint_test_release_irq(test);
++		return false;
++	}
++
++	irq_type = req_irq_type;
++
++	return true;
++}
++
+ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+ 				    unsigned long arg)
+ {
+@@ -471,6 +585,12 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+ 	case PCITEST_COPY:
+ 		ret = pci_endpoint_test_copy(test, arg);
+ 		break;
++	case PCITEST_SET_IRQTYPE:
++		ret = pci_endpoint_test_set_irq(test, arg);
++		break;
++	case PCITEST_GET_IRQTYPE:
++		ret = irq_type;
++		break;
+ 	}
+ 
+ ret:
+@@ -486,9 +606,7 @@ static const struct file_operations pci_endpoint_test_fops = {
+ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 				   const struct pci_device_id *ent)
+ {
+-	int i;
+ 	int err;
+-	int irq = 0;
+ 	int id;
+ 	char name[20];
+ 	enum pci_barno bar;
+@@ -537,41 +655,11 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 
+ 	pci_set_master(pdev);
+ 
+-	switch (irq_type) {
+-	case IRQ_TYPE_LEGACY:
+-		break;
+-	case IRQ_TYPE_MSI:
+-		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
+-		if (irq < 0)
+-			dev_err(dev, "Failed to get MSI interrupts\n");
+-		test->num_irqs = irq;
+-		break;
+-	case IRQ_TYPE_MSIX:
+-		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
+-		if (irq < 0)
+-			dev_err(dev, "Failed to get MSI-X interrupts\n");
+-		test->num_irqs = irq;
+-		break;
+-	default:
+-		dev_err(dev, "Invalid IRQ type selected\n");
+-	}
+-
+-	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
+-			       IRQF_SHARED, DRV_MODULE_NAME, test);
+-	if (err) {
+-		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
+-		goto err_disable_msi;
+-	}
++	if (!pci_endpoint_test_alloc_irq_vectors(test, irq_type))
++		goto err_disable_irq;
+ 
+-	for (i = 1; i < irq; i++) {
+-		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
+-				       pci_endpoint_test_irqhandler,
+-				       IRQF_SHARED, DRV_MODULE_NAME, test);
+-		if (err)
+-			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
+-				pci_irq_vector(pdev, i),
+-				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
+-	}
++	if (!pci_endpoint_test_request_irq(test))
++		goto err_disable_irq;
+ 
+ 	for (bar = BAR_0; bar <= BAR_5; bar++) {
+ 		if (pci_resource_flags(pdev, bar) & IORESOURCE_MEM) {
+@@ -631,12 +719,10 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ 			pci_iounmap(pdev, test->bar[bar]);
+ 	}
+ 
+-	for (i = 0; i < irq; i++)
+-		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
++	pci_endpoint_test_free_irq_vectors(test);
+ 
+-err_disable_msi:
+-	pci_disable_msi(pdev);
+-	pci_disable_msix(pdev);
++err_disable_irq:
++	pci_endpoint_test_release_irq(test);
+ 	pci_release_regions(pdev);
+ 
+ err_disable_pdev:
+@@ -648,7 +734,6 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+ {
+ 	int id;
+-	int i;
+ 	enum pci_barno bar;
+ 	struct pci_endpoint_test *test = pci_get_drvdata(pdev);
+ 	struct miscdevice *misc_device = &test->miscdev;
+@@ -665,10 +750,9 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+ 		if (test->bar[bar])
+ 			pci_iounmap(pdev, test->bar[bar]);
+ 	}
+-	for (i = 0; i < test->num_irqs; i++)
+-		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
+-	pci_disable_msi(pdev);
+-	pci_disable_msix(pdev);
++	pci_endpoint_test_free_irq_vectors(test);
++
++	pci_endpoint_test_release_irq(test);
+ 	pci_release_regions(pdev);
+ 	pci_disable_device(pdev);
+ }
+diff --git a/include/uapi/linux/pcitest.h b/include/uapi/linux/pcitest.h
+index d746fb1..cbf422e 100644
+--- a/include/uapi/linux/pcitest.h
++++ b/include/uapi/linux/pcitest.h
+@@ -17,5 +17,7 @@
+ #define PCITEST_READ		_IOW('P', 0x5, unsigned long)
+ #define PCITEST_COPY		_IOW('P', 0x6, unsigned long)
+ #define PCITEST_MSIX		_IOW('P', 0x7, int)
++#define PCITEST_SET_IRQTYPE	_IOW('P', 0x8, int)
++#define PCITEST_GET_IRQTYPE	_IO('P', 0x9)
+ 
+ #endif /* __UAPI_LINUX_PCITEST_H */
 -- 
-2.11.0
+2.7.4
 
