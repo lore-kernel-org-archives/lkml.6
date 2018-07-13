@@ -2,126 +2,130 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DATE_IN_PAST_24_48,
+	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D889DECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DF6ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FF9520854
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:40:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0832089F
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:44:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vM9lfvbg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF9520854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ieee.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bPH6dfyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E0832089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeGNXBX (ORCPT
+        id S1731898AbeGNXFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 19:01:23 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:39037 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731403AbeGNXBW (ORCPT
+        Sat, 14 Jul 2018 19:05:02 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58060 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731583AbeGNXFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 19:01:22 -0400
-Received: by mail-qk0-f193.google.com with SMTP id b5-v6so16920487qkg.6;
-        Sat, 14 Jul 2018 15:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=i4nJanCEFfNN8OzNVDIpNaJr661azqsAjvATH0xfuWY=;
-        b=vM9lfvbgkGYimSHdgmvrmNCM5BO+YqBqXW8jswH0d1A4ElzxWDDteNKStZTWV4aZkV
-         ukowSAKdFJgGOyJcT54wLRfwIGDz9E/+2u51yFgpHC3eW+CdciLN1If+sX0h6H4ylk6R
-         4MvgNGm/R4JF/wDo9z8YwtnyU7CU1twrQsYgfas2pRAwRr7PlnrPxQ2i4q3y8LTk52Vj
-         BA7qsHq0pvqkyKOM2NHMS+O2t6YEaKRLKziiHS4Uf2oZYycR2dfmt+LuBZpQTejU/yaT
-         k4pdyVl0ZfcoW3gOD79fQlzJicNWDYP+eQRCpR9aVCaoTOr/fy7RUbvCf6DZjT15A1TM
-         7TmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=i4nJanCEFfNN8OzNVDIpNaJr661azqsAjvATH0xfuWY=;
-        b=Q3Z8OWHXsT2nPbI6Me3xvAmjHbfPec45G35nf/NiQVAD4VH+nHwpSG6R3ktg2yN1cj
-         IHXpSPD7Zkz0YZbN95TFAU93Vlc9DO51OGrg/STQMqcHK2geTtGeXICUaH5Ve5rf+Zt5
-         REO3BdfEafgJphN17cds7+AyuONY0L7isQ9BoW59iijx9eA9EPdrnOBkxkTly8GvKoZj
-         KQrt2PfmCF0yXn9yqQW7P2DXg3drSTzz4B0tz2KzOnjswocPLPU2KzzTANzQb9hA/J2C
-         AC5lv4c4o935onWW3WAerIzm69Cy82J9f+74qHe46PIp6ShfLJde7fkQmYxB6SSf+SRT
-         cROw==
-X-Gm-Message-State: AOUpUlHAf4TGlchEihEWGhyj55uuxcQ0Ote0baGJKFH695R05JrLZB91
-        3koIbHSYCHcrpgcGTp8cJKF7zQ==
-X-Google-Smtp-Source: AAOMgpd7YojVDryNOg1+adjdDq8TKw+46yDZFhHYsFriMDTZiVsnpO9A4nHM5b+vBLV0Ce+dpCH7sA==
-X-Received: by 2002:a37:d60f:: with SMTP id t15-v6mr9811629qki.316.1531608046965;
-        Sat, 14 Jul 2018 15:40:46 -0700 (PDT)
-Received: from localhost.localdomain ([38.82.195.110])
-        by smtp.gmail.com with ESMTPSA id h38-v6sm5634190qtc.5.2018.07.14.15.40.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 14 Jul 2018 15:40:46 -0700 (PDT)
-From:   Lucas Magasweran <lucas.magasweran@ieee.org>
-To:     linux-acpi@vger.kernel.org
-Cc:     Alexey Starikovskiy <astarikovskiy@suse.de>,
-        Lucas Rangit Magasweran <lucas.magasweran@ieee.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] ACPI: battery: remove redundant old_present check on insertion
-Date:   Sat, 14 Jul 2018 15:40:18 -0700
-Message-Id: <1531608019-5785-1-git-send-email-lucas.magasweran@ieee.org>
-X-Mailer: git-send-email 2.7.4
+        Sat, 14 Jul 2018 19:05:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=9x1M5WQv3SyAHzK7h2NknWEhK5RucskrhUB6iXnsxeA=; b=bPH6dfyixRnX
+        /ckUGL54znTtlG/YBQOz7uDx5Vpuu44PY70SD1wFgp1U4UEV3hX0/5Pzgu3VlOHI9PgEe6as3yclG
+        va0YWknRDFLSiU/l1UiccD14qwmQgRudp8U4/7XlRvsqecMCvlFSdQYaEYBBM8THDtiba3WT/N7rS
+        SM6mQ=;
+Received: from host86-174-189-173.range86-174.btcentralplus.com ([86.174.189.173] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1feTH5-0006hq-7Y; Sat, 14 Jul 2018 22:44:23 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id D9E5444007E; Fri, 13 Jul 2018 16:10:14 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: add DT documentation for the sound-name-prefix property" to the asoc tree
+In-Reply-To:  <20180713125043.13242-2-jbrunet@baylibre.com>
+Message-Id: <20180713151014.D9E5444007E@finisterre.ee.mobilebroadband>
+Date:   Fri, 13 Jul 2018 16:10:14 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Rangit Magasweran <lucas.magasweran@ieee.org>
+The patch
 
-On removal battery_present changes from 1 to 0 after calling
-acpi_battery_get_statu() and battery->update_time is set to 0
-before returning.
+   ASoC: add DT documentation for the sound-name-prefix property
 
-On insertion battery_present changes from 0 to 1 after calling
-acpi_battery_get_status() and acpi_battery_get_info() is called
-because battery->update_time is 0.
+has been applied to the asoc tree at
 
-The old_present condition is therefore redundant.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-This was added in the commit below when there was a path without
-sysfs that would skip getting the newly inserted battery info.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-commit 50b178512b7d ("Newly inserted battery might differ from one
-just removed, so update of battery info fields is required.")
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Signed-off-by: Lucas Rangit Magasweran <lucas.magasweran@ieee.org>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From d5418ae3f9443f911d4324c0cade988ced39cfbe Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 13 Jul 2018 14:50:42 +0200
+Subject: [PATCH] ASoC: add DT documentation for the sound-name-prefix property
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/acpi/battery.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/sound/name-prefix.txt | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/name-prefix.txt
 
-diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-index f88bc9f..c280e8e 100644
---- a/drivers/acpi/battery.c
-+++ b/drivers/acpi/battery.c
-@@ -918,10 +918,11 @@ static void acpi_battery_quirks(struct acpi_battery *battery)
- 
- static int acpi_battery_update(struct acpi_battery *battery, bool resume)
- {
--	int result, old_present = acpi_battery_present(battery);
--	result = acpi_battery_get_status(battery);
-+	int result = acpi_battery_get_status(battery);
+diff --git a/Documentation/devicetree/bindings/sound/name-prefix.txt b/Documentation/devicetree/bindings/sound/name-prefix.txt
+new file mode 100644
+index 000000000000..645775908657
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/name-prefix.txt
+@@ -0,0 +1,24 @@
++Name prefix:
 +
- 	if (result)
- 		return result;
++Card implementing the routing property define the connection between
++audio components as list of string pair. Component using the same
++sink/source names may use the name prefix property to prepend the
++name of their sinks/sources with the provided string.
 +
- 	if (!acpi_battery_present(battery)) {
- 		sysfs_remove_battery(battery);
- 		battery->update_time = 0;
-@@ -931,8 +932,7 @@ static int acpi_battery_update(struct acpi_battery *battery, bool resume)
- 	if (resume)
- 		return 0;
- 
--	if (!battery->update_time ||
--	    old_present != acpi_battery_present(battery)) {
-+	if (!battery->update_time) {
- 		result = acpi_battery_get_info(battery);
- 		if (result)
- 			return result;
++Optional name prefix property:
++- sound-name-prefix : string using as prefix for the sink/source names of
++		      the component.
++
++Example: Two instances of the same component.
++
++amp0: analog-amplifier@0 {
++	compatible = "simple-audio-amplifier";
++	enable-gpios = <&gpio GPIOH_3 0>;
++	sound-name-prefix = "FRONT";
++};
++
++amp1: analog-amplifier@1 {
++	compatible = "simple-audio-amplifier";
++	enable-gpios = <&gpio GPIOH_4 0>;
++	sound-name-prefix = "BACK";
++};
 -- 
-2.7.4
+2.18.0
 
