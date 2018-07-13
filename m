@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA94ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC5FECDFB2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F11D214C3
+	by mail.kernel.org (Postfix) with ESMTP id D05E7214AB
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s5PKq+1F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F11D214C3
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjHJVLKq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05E7214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387972AbeGMDi6 (ORCPT
+        id S2388002AbeGMDjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 23:38:58 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38771 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387615AbeGMDi5 (ORCPT
+        Thu, 12 Jul 2018 23:39:01 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:41325 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387615AbeGMDjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 23:38:57 -0400
-Received: by mail-pf0-f193.google.com with SMTP id v15-v6so1779212pff.5
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 20:26:22 -0700 (PDT)
+        Thu, 12 Jul 2018 23:39:00 -0400
+Received: by mail-pf0-f196.google.com with SMTP id c21-v6so17171990pfn.8
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 20:26:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5fXt0fl+qc7hqJ8oDMdCmzsKVv7p1HlWSqloKSeYltY=;
-        b=s5PKq+1F6Gje2S1bJEfGVv2c7OcZP0V33S8jsckpOYAFuZMCBTHKuEskSJAt2JyoLj
-         Pmaieu5J5JJoudDiMews7MRurDbnOcgDEP8mtrE5XfC0s2bL7sj8iaxUUZjYfQv08XBv
-         j6LxYdCIbFS9lpdw3he33viz149oXlDk/2IpRinUUGrCXbR2q3+Es5WIiY0/nUcmsxqf
-         +xjNLrWeAH/n6QjJ9VfnsXeopkyaR5d0RRKv+wECY4rETyobz3bygCa7FKqn9VmRkOhK
-         vgB2UH+GCYSJp7qEonz2iEgoHqy/rA9/DmYCzZJEo3wokOBDwX3XydILIPAFER/9+MVE
-         AqMw==
+        bh=gc/9xeTOIbw53F6nYP89sY5reU1DoIfxCKRmupl9mxU=;
+        b=YjHJVLKqS55fOsiVgjemOD4Wrk4FwWz0KMIChBKWZ9vlx5jQSijHM6b6M6a3K30vmv
+         pIXstIdYq1ci85VO0Dvxtp6De1Tqimn+qxHz2UF9tBrDm6K968azdwwZMz76/RoLITYa
+         dCmoRQtyHgekyWidk5u2xfXZxoiKCCLl2IpqzenwKjpuz69Va/UpwKWovp6l5DLoWaoR
+         0hduLLnIJbTwdsirWjGWQlqVTTSF10IQrtTes3Vt6eerDd9SpbULdV62QQ771o2Pkt7E
+         OQW47TUIPjzz2TjRrdzJptGiVCMvNpXzgy7ymyfB7mdVFApS1ArEQqAoj7FcsN0d26kc
+         CdzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=5fXt0fl+qc7hqJ8oDMdCmzsKVv7p1HlWSqloKSeYltY=;
-        b=Z7TpCJbJLjaq1LiRPLxtfQJYqUSO6HZTpcgsrTJPeCCeEmsLbTJIy301iFh0Be71wT
-         2mb9H9SZFyTVHwNyYHbeDK+4hLA5e0Ifxj1Difod9qSMusbpsBZL/A/b43ahKdJJBb6H
-         Ft4wQ4jgxopEkQn3mKORORiY/pl4JQyM3NuEMjVpYCkC9dVT4npWDyTrUcU0KCgd0P89
-         KxfwFDCCU3eZJv4B9A2YBlUdL4QQSDkiRrgxqqhlDTMU7w+lrBOJxTIhVH61Z77d06w0
-         JjSk4ReSLHhQUEXsj2MKQs6aIx6uEim6SJY3XK3J/hdBgpl8g7sG/vGSSFYNrpV/xcYI
-         aM+Q==
-X-Gm-Message-State: AOUpUlFGZwxT8v7jUQ1u1rltxFgftHH9GFB/GISZYFZs/Xy3ZImps+VP
-        UQvn/NEMn3+b1ExB27m+YQ==
-X-Google-Smtp-Source: AAOMgpdIH6JZjGOut4k9s0b1IRS689VymubaD4ejXurmyO5TOwWSzB2MTIAsi2+hdfTGHlPLyMI+1A==
-X-Received: by 2002:a62:98d6:: with SMTP id d83-v6mr5194408pfk.186.1531452381856;
-        Thu, 12 Jul 2018 20:26:21 -0700 (PDT)
+        bh=gc/9xeTOIbw53F6nYP89sY5reU1DoIfxCKRmupl9mxU=;
+        b=BSNSnadwkYZtoYOA6AZ4WHgzbvA6mOgBb+nHIOI6orHUzSJT33YwnmdvSsD7u7xiai
+         CpQ5yLUxjESbXnsjkYCETNUf53m3JzbHZcYmVCtAYz25ljMA1BQMxpsYxa8jFYujMZak
+         Pg6i4fsZQ49P+SivKkuNgE/PaNtNY9zpwli0v+oeksI47/K3F9ReEDN9o1BMamQZV0P7
+         1cUi5DAbXXNs6SB3chMJrg7WVEChI0TAWCqAtCv+fqnApeVItDUMLPV87NI/+YtYfwRY
+         cuNTYdKPFvmUDxAxxBT305EHpd4p3p6mu5+gQAmhA4yIlqJ7CWp6RmcMazisj6edd0XV
+         L8cA==
+X-Gm-Message-State: AOUpUlHD14qSxPOdSCb6MmJrJ/oVbhNnNcVOew8XiI75xSClYMFIOngz
+        9d+G4EftdZ1Mh5b7ppQYpw==
+X-Google-Smtp-Source: AAOMgpd69noVRezXFSpuNk8AuGo4WPydicOwcnjAoqVpyGifKrRw8VQrUQiUGfdKsLLbpqUvT/95Xg==
+X-Received: by 2002:a62:5290:: with SMTP id g138-v6mr5218677pfb.46.1531452384669;
+        Thu, 12 Jul 2018 20:26:24 -0700 (PDT)
 Received: from www9186uo.sakura.ne.jp (www9186uo.sakura.ne.jp. [153.121.56.200])
-        by smtp.gmail.com with ESMTPSA id b66-v6sm8867241pgc.15.2018.07.12.20.26.19
+        by smtp.gmail.com with ESMTPSA id b66-v6sm8867241pgc.15.2018.07.12.20.26.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 20:26:20 -0700 (PDT)
+        Thu, 12 Jul 2018 20:26:23 -0700 (PDT)
 From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 To:     linux-mm@kvack.org
 Cc:     Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         xishi.qiuxishi@alibaba-inc.com, zy.zhengyi@alibaba-inc.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 1/2] mm: fix race on soft-offlining free huge pages
-Date:   Fri, 13 Jul 2018 12:26:05 +0900
-Message-Id: <1531452366-11661-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+Subject: [PATCH v1 2/2] mm: soft-offline: close the race against page allocation
+Date:   Fri, 13 Jul 2018 12:26:06 +0900
+Message-Id: <1531452366-11661-3-git-send-email-n-horiguchi@ah.jp.nec.com>
 X-Mailer: git-send-email 2.7.0
 In-Reply-To: <1531452366-11661-1-git-send-email-n-horiguchi@ah.jp.nec.com>
 References: <1531452366-11661-1-git-send-email-n-horiguchi@ah.jp.nec.com>
@@ -74,172 +74,201 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a race condition between soft offline and hugetlb_fault which
-causes unexpected process killing and/or hugetlb allocation failure.
+A process can be killed with SIGBUS(BUS_MCEERR_AR) when it tries to
+allocate a page that was just freed on the way of soft-offline.
+This is undesirable because soft-offline (which is about corrected error)
+is less aggressive than hard-offline (which is about uncorrected error),
+and we can make soft-offline fail and keep using the page for good reason
+like "system is busy."
 
-The process killing is caused by the following flow:
+Two main changes of this patch are:
 
-  CPU 0               CPU 1              CPU 2
+- setting migrate type of the target page to MIGRATE_ISOLATE. As done
+  in free_unref_page_commit(), this makes kernel bypass pcplist when
+  freeing the page. So we can assume that the page is in freelist just
+  after put_page() returns,
 
-  soft offline
-    get_any_page
-    // find the hugetlb is free
-                      mmap a hugetlb file
-                      page fault
-                        ...
-                          hugetlb_fault
-                            hugetlb_no_page
-                              alloc_huge_page
-                              // succeed
-      soft_offline_free_page
-      // set hwpoison flag
-                                         mmap the hugetlb file
-                                         page fault
-                                           ...
-                                             hugetlb_fault
-                                               hugetlb_no_page
-                                                 find_lock_page
-                                                   return VM_FAULT_HWPOISON
-                                           mm_fault_error
-                                             do_sigbus
-                                             // kill the process
-
-
-The hugetlb allocation failure comes from the following flow:
-
-  CPU 0                          CPU 1
-
-                                 mmap a hugetlb file
-                                 // reserve all free page but don't fault-in
-  soft offline
-    get_any_page
-    // find the hugetlb is free
-      soft_offline_free_page
-      // set hwpoison flag
-        dissolve_free_huge_page
-        // fail because all free hugepages are reserved
-                                 page fault
-                                   ...
-                                     hugetlb_fault
-                                       hugetlb_no_page
-                                         alloc_huge_page
-                                           ...
-                                             dequeue_huge_page_node_exact
-                                             // ignore hwpoisoned hugepage
-                                             // and finally fail due to no-mem
-
-The root cause of this is that current soft-offline code is written
-based on an assumption that PageHWPoison flag should beset at first to
-avoid accessing the corrupted data.  This makes sense for memory_failure()
-or hard offline, but does not for soft offline because soft offline is
-about corrected (not uncorrected) error and is safe from data lost.
-This patch changes soft offline semantics where it sets PageHWPoison flag
-only after containment of the error page completes successfully.
+- setting PG_hwpoison on free page under zone->lock which protects
+  freelists, so this allows us to avoid setting PG_hwpoison on a page
+  that is decided to be allocated soon.
 
 Reported-by: Xishi Qiu <xishi.qiuxishi@alibaba-inc.com>
-Suggested-by: Xishi Qiu <xishi.qiuxishi@alibaba-inc.com>
 Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 ---
- mm/hugetlb.c        | 11 +++++------
- mm/memory-failure.c | 22 ++++++++++++++++------
- mm/migrate.c        |  2 --
- 3 files changed, 21 insertions(+), 14 deletions(-)
+ include/linux/page-flags.h |  5 +++++
+ include/linux/swapops.h    | 10 ----------
+ mm/memory-failure.c        | 26 +++++++++++++++++++++-----
+ mm/migrate.c               |  2 +-
+ mm/page_alloc.c            | 29 +++++++++++++++++++++++++++++
+ 5 files changed, 56 insertions(+), 16 deletions(-)
 
-diff --git v4.18-rc4-mmotm-2018-07-10-16-50/mm/hugetlb.c v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/hugetlb.c
-index 430be42..937c142 100644
---- v4.18-rc4-mmotm-2018-07-10-16-50/mm/hugetlb.c
-+++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/hugetlb.c
-@@ -1479,22 +1479,20 @@ static int free_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
- /*
-  * Dissolve a given free hugepage into free buddy pages. This function does
-  * nothing for in-use (including surplus) hugepages. Returns -EBUSY if the
-- * number of free hugepages would be reduced below the number of reserved
-- * hugepages.
-+ * dissolution fails because a give page is not a free hugepage, or because
-+ * free hugepages are fully reserved.
-  */
- int dissolve_free_huge_page(struct page *page)
- {
--	int rc = 0;
-+	int rc = -EBUSY;
+diff --git v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/page-flags.h v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/page-flags.h
+index 901943e..74bee8c 100644
+--- v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/page-flags.h
++++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/page-flags.h
+@@ -369,8 +369,13 @@ PAGEFLAG_FALSE(Uncached)
+ PAGEFLAG(HWPoison, hwpoison, PF_ANY)
+ TESTSCFLAG(HWPoison, hwpoison, PF_ANY)
+ #define __PG_HWPOISON (1UL << PG_hwpoison)
++extern bool set_hwpoison_free_buddy_page(struct page *page);
+ #else
+ PAGEFLAG_FALSE(HWPoison)
++static inline bool set_hwpoison_free_buddy_page(struct page *page)
++{
++	return 0;
++}
+ #define __PG_HWPOISON 0
+ #endif
  
- 	spin_lock(&hugetlb_lock);
- 	if (PageHuge(page) && !page_count(page)) {
- 		struct page *head = compound_head(page);
- 		struct hstate *h = page_hstate(head);
- 		int nid = page_to_nid(head);
--		if (h->free_huge_pages - h->resv_huge_pages == 0) {
--			rc = -EBUSY;
-+		if (h->free_huge_pages - h->resv_huge_pages == 0)
- 			goto out;
--		}
- 		/*
- 		 * Move PageHWPoison flag from head page to the raw error page,
- 		 * which makes any subpages rather than the error page reusable.
-@@ -1508,6 +1506,7 @@ int dissolve_free_huge_page(struct page *page)
- 		h->free_huge_pages_node[nid]--;
- 		h->max_huge_pages--;
- 		update_and_free_page(h, head);
-+		rc = 0;
- 	}
- out:
- 	spin_unlock(&hugetlb_lock);
+diff --git v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/swapops.h v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/swapops.h
+index 9c0eb4d..fe8e08b 100644
+--- v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/swapops.h
++++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/swapops.h
+@@ -335,11 +335,6 @@ static inline int is_hwpoison_entry(swp_entry_t entry)
+ 	return swp_type(entry) == SWP_HWPOISON;
+ }
+ 
+-static inline bool test_set_page_hwpoison(struct page *page)
+-{
+-	return TestSetPageHWPoison(page);
+-}
+-
+ static inline void num_poisoned_pages_inc(void)
+ {
+ 	atomic_long_inc(&num_poisoned_pages);
+@@ -362,11 +357,6 @@ static inline int is_hwpoison_entry(swp_entry_t swp)
+ 	return 0;
+ }
+ 
+-static inline bool test_set_page_hwpoison(struct page *page)
+-{
+-	return false;
+-}
+-
+ static inline void num_poisoned_pages_inc(void)
+ {
+ }
 diff --git v4.18-rc4-mmotm-2018-07-10-16-50/mm/memory-failure.c v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/memory-failure.c
-index 9d142b9..c63d982 100644
+index c63d982..794687a 100644
 --- v4.18-rc4-mmotm-2018-07-10-16-50/mm/memory-failure.c
 +++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/memory-failure.c
-@@ -1598,8 +1598,18 @@ static int soft_offline_huge_page(struct page *page, int flags)
- 		if (ret > 0)
- 			ret = -EIO;
- 	} else {
--		if (PageHuge(page))
--			dissolve_free_huge_page(page);
-+		/*
-+		 * We set PG_hwpoison only when the migration source hugepage
-+		 * was successfully dissolved, because otherwise hwpoisoned
-+		 * hugepage remains on free hugepage list, then userspace will
-+		 * find it as SIGBUS by allocation failure. That's not expected
-+		 * in soft-offlining.
-+		 */
-+		ret = dissolve_free_huge_page(page);
-+		if (!ret) {
-+			if (set_hwpoison_free_buddy_page(page))
-+				num_poisoned_pages_inc();
-+		}
+@@ -57,6 +57,7 @@
+ #include <linux/mm_inline.h>
+ #include <linux/kfifo.h>
+ #include <linux/ratelimit.h>
++#include <linux/page-isolation.h>
+ #include "internal.h"
+ #include "ras/ras_event.h"
+ 
+@@ -1697,6 +1698,7 @@ static int __soft_offline_page(struct page *page, int flags)
+ static int soft_offline_in_use_page(struct page *page, int flags)
+ {
+ 	int ret;
++	int mt;
+ 	struct page *hpage = compound_head(page);
+ 
+ 	if (!PageHuge(page) && PageTransHuge(hpage)) {
+@@ -1715,23 +1717,37 @@ static int soft_offline_in_use_page(struct page *page, int flags)
+ 		put_hwpoison_page(hpage);
  	}
+ 
++	/*
++	 * Setting MIGRATE_ISOLATE here ensures that the page will be linked
++	 * to free list immediately (not via pcplist) when released after
++	 * successful page migration. Otherwise we can't guarantee that the
++	 * page is really free after put_page() returns, so
++	 * set_hwpoison_free_buddy_page() highly likely fails.
++	 */
++	mt = get_pageblock_migratetype(page);
++	set_pageblock_migratetype(page, MIGRATE_ISOLATE);
+ 	if (PageHuge(page))
+ 		ret = soft_offline_huge_page(page, flags);
+ 	else
+ 		ret = __soft_offline_page(page, flags);
+-
++	set_pageblock_migratetype(page, mt);
  	return ret;
  }
-@@ -1715,13 +1725,13 @@ static int soft_offline_in_use_page(struct page *page, int flags)
  
- static void soft_offline_free_page(struct page *page)
+-static void soft_offline_free_page(struct page *page)
++static int soft_offline_free_page(struct page *page)
  {
-+	int rc = 0;
+ 	int rc = 0;
  	struct page *head = compound_head(page);
  
--	if (!TestSetPageHWPoison(head)) {
-+	if (PageHuge(head))
-+		rc = dissolve_free_huge_page(page);
-+	if (!rc && !TestSetPageHWPoison(page))
- 		num_poisoned_pages_inc();
--		if (PageHuge(head))
--			dissolve_free_huge_page(page);
--	}
+ 	if (PageHuge(head))
+ 		rc = dissolve_free_huge_page(page);
+-	if (!rc && !TestSetPageHWPoison(page))
+-		num_poisoned_pages_inc();
++	if (!rc) {
++		if (set_hwpoison_free_buddy_page(page))
++			num_poisoned_pages_inc();
++		else
++			rc = -EBUSY;
++	}
++	return rc;
  }
  
  /**
+@@ -1775,7 +1791,7 @@ int soft_offline_page(struct page *page, int flags)
+ 	if (ret > 0)
+ 		ret = soft_offline_in_use_page(page, flags);
+ 	else if (ret == 0)
+-		soft_offline_free_page(page);
++		ret = soft_offline_free_page(page);
+ 
+ 	return ret;
+ }
 diff --git v4.18-rc4-mmotm-2018-07-10-16-50/mm/migrate.c v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/migrate.c
-index 198af42..3ae213b 100644
+index 3ae213b..e772323 100644
 --- v4.18-rc4-mmotm-2018-07-10-16-50/mm/migrate.c
 +++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/migrate.c
-@@ -1318,8 +1318,6 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
- out:
- 	if (rc != -EAGAIN)
- 		putback_active_hugepage(hpage);
--	if (reason == MR_MEMORY_FAILURE && !test_set_page_hwpoison(hpage))
--		num_poisoned_pages_inc();
+@@ -1199,7 +1199,7 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
+ 			 * intentionally. Although it's rather weird,
+ 			 * it's how HWPoison flag works at the moment.
+ 			 */
+-			if (!test_set_page_hwpoison(page))
++			if (set_hwpoison_free_buddy_page(page))
+ 				num_poisoned_pages_inc();
+ 		}
+ 	} else {
+diff --git v4.18-rc4-mmotm-2018-07-10-16-50/mm/page_alloc.c v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/page_alloc.c
+index 607deff..3c76d40 100644
+--- v4.18-rc4-mmotm-2018-07-10-16-50/mm/page_alloc.c
++++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/page_alloc.c
+@@ -8027,3 +8027,32 @@ bool is_free_buddy_page(struct page *page)
  
- 	/*
- 	 * If migration was not successful and there's a freeing callback, use
+ 	return order < MAX_ORDER;
+ }
++
++#ifdef CONFIG_MEMORY_FAILURE
++/*
++ * Set PG_hwpoison flag if a given page is confirmed to be a free page
++ * within zone lock, which prevents the race against page allocation.
++ */
++bool set_hwpoison_free_buddy_page(struct page *page)
++{
++	struct zone *zone = page_zone(page);
++	unsigned long pfn = page_to_pfn(page);
++	unsigned long flags;
++	unsigned int order;
++	bool hwpoisoned = false;
++
++	spin_lock_irqsave(&zone->lock, flags);
++	for (order = 0; order < MAX_ORDER; order++) {
++		struct page *page_head = page - (pfn & ((1 << order) - 1));
++
++		if (PageBuddy(page_head) && page_order(page_head) >= order) {
++			if (!TestSetPageHWPoison(page))
++				hwpoisoned = true;
++			break;
++		}
++	}
++	spin_unlock_irqrestore(&zone->lock, flags);
++
++	return hwpoisoned;
++}
++#endif
 -- 
 2.7.0
 
