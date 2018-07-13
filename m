@@ -4,59 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2370ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:03:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 313ACECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7526720843
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFE8D20843
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UPiDDMdw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7526720843
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JPNp+r7Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE8D20843
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729926AbeGMLR3 (ORCPT
+        id S1729674AbeGMLR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 07:17:29 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37817 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729628AbeGMLR2 (ORCPT
+        Fri, 13 Jul 2018 07:17:26 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34100 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbeGMLRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 07:17:28 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n17-v6so9029400wmh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:03:17 -0700 (PDT)
+        Fri, 13 Jul 2018 07:17:25 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c13-v6so24664198wrt.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8N17TUv2hsESNkx+Cax5KPCXmGDz3bBQAuV4+ifEOls=;
-        b=UPiDDMdwwisjWbFptcD7wMvpO4rpaX9GJpiXihlJa/leVosGuqvzxHECySKr1roFCA
-         8yxKz5LigOqZAb7auOJplzz2t2s3wNajJXTsoFScY8XyoD0nOZr93Gc7+NhTkAhhidLM
-         rcQ+Rcx2mdPslTKu05p9U4aonJMOVuRHDYGCsicAp8B4EhMtHDtI9iuEL+cU9Gjm9H/7
-         cuOhXX5xgi+JRTosxC5rYYc4c4Dh38hz66dGZW07jgcLvIOmFo5BU4WiUN5BmHptF1Ld
-         tPfWttP5IwMT/gVu8fUAsKtAEVkKJv15IEloHsob8CcpAoyzxH73CVqA55Xet6WC1AoE
-         dgYw==
+        h=from:to:cc:subject:date:message-id;
+        bh=Qk6hnKwUWLm/H05hoCAYAeoi5TcRpEM5YmryPa+Opgk=;
+        b=JPNp+r7QNkJuK/Vmb9tpXBdnnFsV1dZagccIFdpbM5Z43VbNVVIImhfjWCZWIWsTx2
+         IJZTJ4iEajeDajbWMOSPQ6z2LtvtkPvOv8UBt/UuLqzlrEaF0hfKTpRVZ6XQrsQC1d/S
+         /YWQmutlL4AX5AhuApf8mOsE6CNolHKIiwj12TgJk0xKUM/zDjJCX2YC+MQwkHQ4hJr3
+         qZ70jRHWPuU1T/RXM5+FoJ82NvaGp4boZklc8a1ykJ8/+Q1shzXASJoASPhFG+JpB178
+         v7X7g7LcLA6UgHG74O8tiCVgeAwxb+pVb1Ru85uCUY+QKiSSMLMN/O2zz+kxLfv9Oat3
+         Bvjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8N17TUv2hsESNkx+Cax5KPCXmGDz3bBQAuV4+ifEOls=;
-        b=DQ/L8b25QFvvasywsZAhcW50HgwtwqdFuNYKa3GZJpNzV8wJHl5sBScJYRDzOzCDZo
-         ekwut/lA1+Wg3zud2rbdX0Tb/y8OpyycvMYn1SeekyVNOSf3WO0OZORVLI1WrfRXLI1t
-         cRf7/KKh6lOaegM2yGHu/8xGkZnr5I8Rn12Ujwx2GGOkJSAlWsnijTIGNQe8Uzq1+0lR
-         KCqdqGLbAgF7Jes7eZ2NWjNDmvxVQqDzyfgcHNmzJ1AgQa6PjTXOv5tkmeNbVRJ6L9Bq
-         dqraoU1jA10MQRcClVJyGcagtALKl/sSR6PYRXk3s8RwDBv9ZEwUh8vPvjUH1nu4DFOU
-         KE3w==
-X-Gm-Message-State: AOUpUlG/rD0QET+Ql94HQXeIjKOHVpfwHkWRegB9/tERMlG8mGtUvFgN
-        OfZIjrUZrVO7yguU/HlwmGel6g==
-X-Google-Smtp-Source: AAOMgpfceD8wgllGeLora+iAMfI4WgNaZbkS083h7AN41AH07yVtf9OTL+kXCKDncba73+qgSkuPYg==
-X-Received: by 2002:a1c:ed4:: with SMTP id 203-v6mr3771055wmo.96.1531479797060;
-        Fri, 13 Jul 2018 04:03:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Qk6hnKwUWLm/H05hoCAYAeoi5TcRpEM5YmryPa+Opgk=;
+        b=Y+0haP223G29I2zNjyxa41qwOOz3oyeG8p5U1PJRp/MmhatuQ0EyJ6l5H9iSNqCNR5
+         6hUkGMFFm8n76+9cvZCDX51ypkP0po6gTvvdtWipdRY/WQLPtu57hPgX6ilkJI33K2eq
+         IiHtbtOlGqi6Rc2g42vPSNRLm3nK7GsX13H66Xo1Euhsbwj2o6F8hmvT0xSuosvdPO9G
+         X/LgjaaUPXoIXDIUBt0VM76+GDeSsrlxbZUhRjgtrX+8a+kCUVJqfFj1PQ3tOAMR3LJG
+         fJZEkR0qdHwxiDhwxxEe+Ze62Bd8Sh9fUa9r7RD/2kEY/7sUny6yEr3pSAt6RGY8EA1K
+         cyXw==
+X-Gm-Message-State: AOUpUlEwg3hd0nvtDqHYw88aCf+faZHsCVwT4Kq1/CdjPTqh/bpYh6b5
+        uVQNsLLxDEuycOJdE3QEny0K1A==
+X-Google-Smtp-Source: AAOMgpfXlM7pLO9syZL28CDh/gnDBp7wcx+AU17+XXl8vLHkoOhcgZzzRr5i4piDpCKy4IhzRewZ4w==
+X-Received: by 2002:a5d:6401:: with SMTP id z1-v6mr4471676wru.64.1531479793990;
+        Fri, 13 Jul 2018 04:03:13 -0700 (PDT)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id y14-v6sm4598045wrq.45.2018.07.13.04.03.15
+        by smtp.googlemail.com with ESMTPSA id y14-v6sm4598045wrq.45.2018.07.13.04.03.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 13 Jul 2018 04:03:16 -0700 (PDT)
+        Fri, 13 Jul 2018 04:03:13 -0700 (PDT)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     hdegoede@redhat.com, linux@armlinux.org.uk, mark.rutland@arm.com,
         maxime.ripard@free-electrons.com, robh+dt@kernel.org,
@@ -65,116 +64,55 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, thierry.reding@gmail.com,
         icenowy@aosc.io, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v3 3/9] ata: ahci_platform: add support for AHCI controller reset
-Date:   Fri, 13 Jul 2018 11:03:00 +0000
-Message-Id: <1531479786-4911-4-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH v3 0/9] ata: ahci_platform: support allwinner R40 AHCI
+Date:   Fri, 13 Jul 2018 11:02:57 +0000
+Message-Id: <1531479786-4911-1-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531479786-4911-1-git-send-email-clabbe@baylibre.com>
-References: <1531479786-4911-1-git-send-email-clabbe@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SoC R40 AHCI controller need a reset to work.
-So this patch add a way to add an optional reset on AHCI controller.
+Hello
 
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/ata/ahci.h             |  2 ++
- drivers/ata/libahci_platform.c | 28 ++++++++++++++++++++++++----
- 2 files changed, 26 insertions(+), 4 deletions(-)
+This patchset add support for allwinner R40 AHCI controller.
 
-diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
-index 633d3ec5c1df..274c1885a5ad 100644
---- a/drivers/ata/ahci.h
-+++ b/drivers/ata/ahci.h
-@@ -40,6 +40,7 @@
- #include <linux/libata.h>
- #include <linux/phy/phy.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/reset.h>
- 
- /* Enclosure Management Control */
- #define EM_CTRL_MSG_TYPE              0x000f0000
-@@ -352,6 +353,7 @@ struct ahci_host_priv {
- 	struct clk		*clks[AHCI_MAX_CLKS]; /* Optional */
- 	struct regulator	**target_pwrs;	/* Optional */
- 	struct regulator	*ahci_regulator;/* Optional */
-+	struct reset_control	*ahci_reset;	/* Optional */
- 	/*
- 	 * If platform uses PHYs. There is a 1:1 relation between the port number and
- 	 * the PHY position in this array.
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index d997a30ce793..1199ba411c15 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -207,7 +207,8 @@ EXPORT_SYMBOL_GPL(ahci_platform_disable_regulators);
-  * following order:
-  * 1) Regulator
-  * 2) Clocks (through ahci_platform_enable_clks)
-- * 3) Phys
-+ * 3) reset
-+ * 4) Phys
-  *
-  * If resource enabling fails at any point the previous enabled resources
-  * are disabled in reverse order.
-@@ -227,12 +228,19 @@ int ahci_platform_enable_resources(struct ahci_host_priv *hpriv)
- 	if (rc)
- 		goto disable_regulator;
- 
--	rc = ahci_platform_enable_phys(hpriv);
-+	rc = reset_control_assert(hpriv->ahci_reset);
- 	if (rc)
- 		goto disable_clks;
- 
-+	rc = ahci_platform_enable_phys(hpriv);
-+	if (rc)
-+		goto disable_reset;
-+
- 	return 0;
- 
-+disable_reset:
-+	reset_control_deassert(hpriv->ahci_reset);
-+
- disable_clks:
- 	ahci_platform_disable_clks(hpriv);
- 
-@@ -250,13 +258,16 @@ EXPORT_SYMBOL_GPL(ahci_platform_enable_resources);
-  * This function disables all ahci_platform managed resources in the
-  * following order:
-  * 1) Phys
-- * 2) Clocks (through ahci_platform_disable_clks)
-- * 3) Regulator
-+ * 2) reset
-+ * 3) Clocks (through ahci_platform_disable_clks)
-+ * 4) Regulator
-  */
- void ahci_platform_disable_resources(struct ahci_host_priv *hpriv)
- {
- 	ahci_platform_disable_phys(hpriv);
- 
-+	reset_control_deassert(hpriv->ahci_reset);
-+
- 	ahci_platform_disable_clks(hpriv);
- 
- 	ahci_platform_disable_regulators(hpriv);
-@@ -414,6 +425,15 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
- 		hpriv->ahci_regulator = NULL;
- 	}
- 
-+	hpriv->ahci_reset = devm_reset_control_get_optional(dev, "ahci");
-+	if (IS_ERR(hpriv->ahci_reset)) {
-+		rc = PTR_ERR(hpriv->ahci_reset);
-+		if (rc == -EPROBE_DEFER)
-+			goto err_out;
-+		rc = 0;
-+		hpriv->ahci_reset = NULL;
-+	}
-+
- 	hpriv->nports = child_nodes = of_get_child_count(dev->of_node);
- 
- 	/*
+This controller need two regulator and one reset which is unsupported
+for the moment on ahci_platform.
+
+So this patchset add support for reset and regulator for AHCI
+controller.
+It add also support for non-target regulator per SATA port.
+
+The whole patchset is tested on sun8i-r40-bananapi-m2-ultra and
+on sun7i-a20-cubieboard2 which doesnt have any of the ressources added
+by this serie, so no regression should come with it.
+
+Since just before sending this patchset, I discovered the revert of
+f0f56716fc3e ("ata: ahci-platform: add reset control support")
+I have also tested this serie on a tegra124-jetson-tk1.
+
+Changes since V2
+- Moved all ressources management to ahci_platform
+
+Corentin Labbe (9):
+  ata: ahci_platform: add support for AHCI controller regulator
+  dt-bindings: ata: ahci-platform: document ahci-supply
+  ata: ahci_platform: add support for AHCI controller reset
+  dt-bindings: ata: ahci-platform: document AHCI reset
+  dt-bindings: ata: ahci-platform: fix indentation of target-supply
+  ata: ahci_platform: add support for port regulator
+  dt-bindings: ata: ahci-platform: document port-supply
+  ARM: dts: sun8i: r40: add sata node
+  ARM: dts: sun8i: sun8i-r40-bananapi-m2-ultra: enable AHCI
+
+ .../devicetree/bindings/ata/ahci-platform.txt      |   7 +-
+ arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts  |  21 +++++
+ arch/arm/boot/dts/sun8i-r40.dtsi                   |  16 ++++
+ drivers/ata/ahci.h                                 |   4 +
+ drivers/ata/libahci_platform.c                     | 102 ++++++++++++++++++---
+ 5 files changed, 138 insertions(+), 12 deletions(-)
+
 -- 
 2.16.4
 
