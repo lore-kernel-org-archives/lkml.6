@@ -2,211 +2,106 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AE8ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E94ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9217B2087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5856208C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:56:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MD9TmxyS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9217B2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bZrZFvb5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5856208C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbeGMMKZ (ORCPT
+        id S1729974AbeGMMK3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 08:10:25 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39212 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728227AbeGMMKZ (ORCPT
+        Fri, 13 Jul 2018 08:10:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55750 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728227AbeGMMK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 08:10:25 -0400
-Received: by mail-pf0-f196.google.com with SMTP id s21-v6so22541008pfm.6
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:56:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=iY9vtiCUoNjcIBjXS93SLPG9IVxANB8ZjhPGf1wvAus=;
-        b=MD9TmxyS2dy8NaW3NtsgHBLYhFW1s8xB21vKONdou5jH8tsZrTOuQvKq5fbr4UR50r
-         IC0HM48WybX2UiVhoY1GH3zX+f94c1YEZVHTmoIVylOu3a9m/gFaofrfQ/NQApZQPh5V
-         Uh0149TFFmoqS6Fwp/k/8fuDxnfMafYOHoqD2WQqHirkh00HKrXbXALXaXTcseHejFtg
-         m2puR+MysOiwNImeTnSikWdbywZkgrIy0qVPMrCKBloehqGq/ARX1/MBTqcO/uO2ahYh
-         A69Z/TKOoTs8Iz6B0DhVdnG9yNhT33357U1Uy8jVLTrc4m7+BrcFgyP8M0Pcvui4ksb9
-         L8xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iY9vtiCUoNjcIBjXS93SLPG9IVxANB8ZjhPGf1wvAus=;
-        b=EfPDtf+aMTlujTxjAHM5CaKQf437UaEEfHULWgHIomlZvi3/vPMYYQCPm/Qe0hC0Ag
-         f3V2W4euAcu0YLxc+BPnn2+zmythMlZOTl8QEAis/sEq/vTtuEULPZvcIOcqbla28N1j
-         ytCYjfjJoPZRNxNdZSyR4gMhQwO7xks1wb0I7O0Ghz44h2DkwvBHHrE/no3yEEuGjbhT
-         t9ZOzHL9e0LoxqlTYhAk0CZmEDg6C+KTAojU0OMbmLfZvr4Dy+FT5C4+zWLKJ0QQs3BJ
-         2tH+gnWJZ5F5MugocAiFlmyhjYn9N5LVQJpgnvv/dAfrpkD1MYj9ztBivZHsndz8DzxO
-         w0Wg==
-X-Gm-Message-State: AOUpUlFke4UKxKE3Rc1X8I73aCnzWml2YummtHg5VOgzwXLni3QAvk35
-        MnyXjHG6JoQ/KFEIG8uiH0Y=
-X-Google-Smtp-Source: AAOMgpdnUm64OvF+WH0mfMN5fcUDjwOpSU5BSCM5lb3/v3koGuxkKIh0hkFkXlf5GDZfUsSoUoTtcg==
-X-Received: by 2002:a65:608c:: with SMTP id t12-v6mr5938950pgu.159.1531482963736;
-        Fri, 13 Jul 2018 04:56:03 -0700 (PDT)
-Received: from dest.didichuxing.com ([168.63.150.120])
-        by smtp.gmail.com with ESMTPSA id z8-v6sm3650447pfe.163.2018.07.13.04.56.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 04:56:02 -0700 (PDT)
-From:   ufo19890607@gmail.com
-To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        yuzhoujian@didichuxing.com
-Subject: [PATCH v13 2/2] Add oom victim's memcg to the oom context information
-Date:   Fri, 13 Jul 2018 19:55:52 +0800
-Message-Id: <1531482952-4595-1-git-send-email-ufo19890607@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 13 Jul 2018 08:10:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hM+srReUTrP3D6iuwF3E0O0nR5yeFhLTMbx07e9asQ4=; b=bZrZFvb5Wk3lvlLFLK6jNzEOA
+        oISS0G7YhK7NnFVYyEXGqh0EvndX6DtYy7h9wUonU/TT+C3IF2NUjkoR/uboAltxKd0Le9blWW7ZH
+        6M64Sm+YG3hUeoTi/RFXwh78GRv+dnEDlaun0rnIk4UHu8od0dgUssD1fL0ZZlJofkDAA=;
+Received: from 94.197.120.189.threembb.co.uk ([94.197.120.189] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fdwfp-00052M-1S; Fri, 13 Jul 2018 11:55:45 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 99352440078; Fri, 13 Jul 2018 12:55:43 +0100 (BST)
+Date:   Fri, 13 Jul 2018 12:55:43 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        jacopo <jacopo@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH v4] regulator: fixed: Convert to use GPIO descriptor only
+Message-ID: <20180713115543.GB16228@sirena.org.uk>
+References: <20180710061112.28736-1-linus.walleij@linaro.org>
+ <5893595.ygSzo8aE2W@z50>
+ <CACRpkdZbT-CpvaG4ZG76T0vkU_uyt20W_=vD-n9T3=Xy_5WqOg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qcHopEYAB45HaUaB"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZbT-CpvaG4ZG76T0vkU_uyt20W_=vD-n9T3=Xy_5WqOg@mail.gmail.com>
+X-Cookie: Reactor error - core dumped!
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuzhoujian <yuzhoujian@didichuxing.com>
 
-The current oom report doesn't display victim's memcg context during the
-global OOM situation. While this information is not strictly needed, it
-can be really helpful for containerized environments to locate which
-container has lost a process. Now that we have a single line for the oom
-context, we can trivially add both the oom memcg (this can be either
-global_oom or a specific memcg which hits its hard limits) and task_memcg
-which is the victim's memcg.
+--qcHopEYAB45HaUaB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Below is the single line output in the oom report after this patch.
-- global oom context information:
-oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,global_oom,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
-- memcg oom context information:
-oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
+On Fri, Jul 13, 2018 at 09:35:06AM +0200, Linus Walleij wrote:
 
-Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
----
-Changes since v12
-- print cpuset information before memcg info.
+> 4. An immutable branch with the ARM SoC change for Mark to pull
+>   before applying this so I can rebase this patch on that.
 
- include/linux/memcontrol.h | 14 +++++++++++---
- mm/memcontrol.c            | 36 ++++++++++++++++++++++--------------
- mm/oom_kill.c              |  3 ++-
- 3 files changed, 35 insertions(+), 18 deletions(-)
+That'd be ideal, though just waiting till after the merge window when
+all these cleanups are in works too - like you say I'm not sure we're in
+any hurry here.
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6c6fb116e925..96a73f989101 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -491,8 +491,10 @@ void mem_cgroup_handle_over_high(void);
- 
- unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
- 
--void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
--				struct task_struct *p);
-+void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-+		struct task_struct *p);
-+
-+void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
- 
- static inline void mem_cgroup_oom_enable(void)
- {
-@@ -903,7 +905,13 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
- }
- 
- static inline void
--mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-+mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-+				struct task_struct *p)
-+{
-+}
-+
-+static inline void
-+mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
- {
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e6f0d5ef320a..18deea974cfd 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1119,32 +1119,40 @@ static const char *const memcg1_stat_names[] = {
- 
- #define K(x) ((x) << (PAGE_SHIFT-10))
- /**
-- * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
-- * @memcg: The memory cgroup that went over limit
-+ * mem_cgroup_print_oom_context: Print OOM context information relevant to
-+ * memory controller.
-+ * @memcg: The origin memory cgroup that went over limit
-  * @p: Task that is going to be killed
-  *
-  * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
-  * enabled
-  */
--void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-+void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
- {
--	struct mem_cgroup *iter;
--	unsigned int i;
-+	struct cgroup *origin_cgrp, *kill_cgrp;
- 
- 	rcu_read_lock();
--
-+	if (memcg) {
-+		pr_cont(",oom_memcg=");
-+		pr_cont_cgroup_path(memcg->css.cgroup);
-+	} else
-+		pr_cont(",global_oom");
- 	if (p) {
--		pr_info("Task in ");
-+		pr_cont(",task_memcg=");
- 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
--		pr_cont(" killed as a result of limit of ");
--	} else {
--		pr_info("Memory limit reached of cgroup ");
- 	}
--
--	pr_cont_cgroup_path(memcg->css.cgroup);
--	pr_cont("\n");
--
- 	rcu_read_unlock();
-+}
-+
-+/**
-+ * mem_cgroup_print_oom_meminfo: Print OOM memory information relevant to
-+ * memory controller.
-+ * @memcg: The memory cgroup that went over limit
-+ */
-+void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *iter;
-+	unsigned int i;
- 
- 	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
- 		K((u64)page_counter_read(&memcg->memory)),
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 531b2c86d4db..7fbd389ea779 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -434,10 +434,11 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 			oom_constraint_text[oc->constraint],
- 			nodemask_pr_args(oc->nodemask));
- 	cpuset_print_current_mems_allowed();
-+	mem_cgroup_print_oom_context(oc->memcg, p);
- 	pr_cont(",task=%s,pid=%5d,uid=%5d\n", p->comm, p->pid,
- 		from_kuid(&init_user_ns, task_uid(p)));
- 	if (is_memcg_oom(oc))
--		mem_cgroup_print_oom_info(oc->memcg, p);
-+		mem_cgroup_print_oom_meminfo(oc->memcg);
- 	else {
- 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
- 		if (is_dump_unreclaim_slabs())
--- 
-2.14.1
+--qcHopEYAB45HaUaB
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltIkz4ACgkQJNaLcl1U
+h9CwSgf9Hp/WSxylxaioLXw1GziQ+XAchHnbl/IKjx9JTuU2KzNc+pGSHsDxS/Ga
+pDPI/WnithM4Fi1JUTzPu/feKXrVDvaHcyie21fZp172M8gK1sAzndmyDp0qDAzs
+4AvK2zPmRQcMzdT08N6NPmNjhHEwufnqARSvbHGQWNrC9llsWEzLSU59G/xvcxD+
+sygpGvrQpdItomrdMz5YwbE0GGMcKoEUJPAXGZXxW7P+OScdEI//XX6RwhDHK3EL
+Bi9pDY9ivgJLf4lG3gqrjhPCmSFyx7W3lYyCyADm74OKIE1gYmX4hhWsMuZb6uvs
+/nLnU8G4VrIzs/5h2jgf3ML6yF+MIg==
+=K2Di
+-----END PGP SIGNATURE-----
+
+--qcHopEYAB45HaUaB--
