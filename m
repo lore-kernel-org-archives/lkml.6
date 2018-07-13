@@ -6,92 +6,88 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0277ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD2BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93B4B2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:35:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93B4B2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 7C4622084E
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:45:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4622084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729769AbeGMWvx (ORCPT
+        id S1729761AbeGMXCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 18:51:53 -0400
-Received: from www62.your-server.de ([213.133.104.62]:39498 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbeGMWvw (ORCPT
+        Fri, 13 Jul 2018 19:02:16 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:48784 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbeGMXCQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 18:51:52 -0400
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fe6eW-0002ws-HU; Sat, 14 Jul 2018 00:35:04 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fe6eW-00055K-Au; Sat, 14 Jul 2018 00:35:04 +0200
-Subject: Re: [PATCH bpf-next v5 0/3] bpf: btf: print bpftool map data with btf
-To:     Okash Khawaja <osk@fb.com>
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org
-References: <20180712030803.875913594@fb.com>
- <20180711203010.51bab0cf@cakuba.lan>
- <e938c861-b341-22f0-7e82-215a27e2b74f@iogearbox.net>
- <20180713213550.GA5667@w1t1fb>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <1e80f262-9b3f-e4ff-0e89-7a07098d1b50@iogearbox.net>
-Date:   Sat, 14 Jul 2018 00:35:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Fri, 13 Jul 2018 19:02:16 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fe6of-00029l-28; Sat, 14 Jul 2018 00:45:33 +0200
+Date:   Sat, 14 Jul 2018 00:45:32 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+Subject: Re: [PATCH 1/3] clocksource: drivers: set clockevent device cpumask
+ to cpu_possible_mask
+In-Reply-To: <f58d0930-19fc-bb5f-960f-56aa48ced79a@linaro.org>
+Message-ID: <alpine.DEB.2.21.1807140045060.2644@nanos.tec.linutronix.de>
+References: <1531308264-24220-1-git-send-email-sudeep.holla@arm.com> <2009eeb1-e925-fe5c-ac4a-9f3e41945127@linaro.org> <229f0ac1-16b5-3fcf-3d0d-60ad59ea40f8@arm.com> <f58d0930-19fc-bb5f-960f-56aa48ced79a@linaro.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180713213550.GA5667@w1t1fb>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24750/Fri Jul 13 22:58:14 2018)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/13/2018 11:35 PM, Okash Khawaja wrote:
-> On Fri, Jul 13, 2018 at 10:49:01PM +0200, Daniel Borkmann wrote:
->> On 07/12/2018 05:30 AM, Jakub Kicinski wrote:
->>> On Wed, 11 Jul 2018 20:08:03 -0700, Okash Khawaja wrote:
->>>> Hi,
->>>>
->>>> Here are the changes from v4:
->>>>
->>>> patch 2:
->>>>
->>>> - sort headers in btf_dumper.c
->>>> - remove extra parentheses
->>>> - include asm/byteorder.h
->>>> - compile error when big and small endian bitfields macro undefined
->>>
->>> Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
->>
->> Hmm, strange, by accident I just noticed that only your bpf fix ever made
->> it to patchwork, Okash.
->>
->>   https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.ozlabs.org_project_netdev_list_-3Fsubmitter-3D74458-26state-3D-2A&d=DwICaQ&c=5VD0RTtNlTh3ycd41b3MUw&r=4wHrS7MHHFLZe_WCJwRVhA&m=wkiBQFYWPyiN9WONHLY0WiZxcOwNRhXaMMLIE551mCA&s=RggQzClRdkwawboGLPgPXHOdUtYffxeOwlcBlFru-P4&e=
->>
->> Potentially because you've sent with attachments which got dropped on
->> the list?
-> interesting because i send all patches using quilt mail, the same way i
-> sent bpf fix. i can try git-send-email.
-> 
-> also i dropped Acked-by as i changed patch versions. is it common thing
-> to do? or should i keep the Acked-by?
+On Wed, 11 Jul 2018, Daniel Lezcano wrote:
 
-Depends on whether the pieces that have been ACKed changed in the
-meantime or not.
+> On 11/07/2018 15:42, Sudeep Holla wrote:
+> > Hi Daniel,
+> > 
+> > On 11/07/18 12:36, Daniel Lezcano wrote:
+> >> On 11/07/2018 13:24, Sudeep Holla wrote:
+> >>> Currently, quite a few clockevent devices have cpumask set to
+> >>> cpu_all_mask which should be fine. However, cpu_possible_mask is more
+> >>> accurate and if there are any other clockevent devices in the system
+> >>> which have cpumask set to cpu_possible_mask, then having cpu_all_mask
+> >>> may result in issues (mostly boot hang with forever loops in
+> >>> clockevents_notify_released).
+> >>>
+> >>> So, lets replace all the clockevent device cpu_all_mask to
+> >>> cpu_possible_mask in order to prevent above mentioned possible issue.
+> >>>
+> >>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> >>> Cc: Thomas Gleixner <tglx@linutronix.de>
+> >>> Cc: Thierry Reding <thierry.reding@gmail.com>
+> >>> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> >>> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+> >>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> >>> ---
+> >>
+> >> Applied, thanks for the fix.
+> >>
+> > 
+> > Thomas was planning to take this, see [1]
+> 
+> Thomas ?
+> 
+> Do you want to take all the series ? Or shall I take this one ?
+
+Take it, it's ok for this to go into 4.19
+
+Thanks,
+
+	tglx
