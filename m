@@ -2,89 +2,98 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C8AECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAA9ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D54A2147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D54A2147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E0A3B2124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:19:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MGFiOmWy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0A3B2124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731385AbeGMH35 (ORCPT
+        id S1731379AbeGMHc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 03:29:57 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9620 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729764AbeGMH35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 03:29:57 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1B09C394F1564;
-        Fri, 13 Jul 2018 15:16:22 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
- 15:16:15 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <axboe@kernel.dk>
-CC:     <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] DAC960: hide unused procfs helpers
-Date:   Fri, 13 Jul 2018 15:16:10 +0800
-Message-ID: <20180713071610.14276-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Fri, 13 Jul 2018 03:32:57 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37044 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729764AbeGMHc4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 03:32:56 -0400
+Received: by mail-wm0-f65.google.com with SMTP id n17-v6so8385995wmh.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 00:19:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=I2cREey5FIKG4Fa5HZ/9cIvCQ2df3NNYcNUZ+XISqJk=;
+        b=MGFiOmWyhvsKz2JWAoY9tqOQJiiHroOSa6h8v8QHh88PcOKyKUVmfYfR0mLQrPidjj
+         ktfw0nkPP3CuxNEjHJDe4JHGZTY6fwIZyoEJyJIbo7A1EPkK/aPwb2LGXo32oPD122LT
+         E+vWL6J0zPzMA2xvUfzCdxwu7YWepT39/aNs8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=I2cREey5FIKG4Fa5HZ/9cIvCQ2df3NNYcNUZ+XISqJk=;
+        b=Wa0bQVSWkmdnFFhJ/0dCYwRqEHE5K2KuvjJ8LMZFpGTNLT0T2ewIpubQydUWw+xPnb
+         CNVsX3Inc41mHNzrlnxSX869CsWsffSeAd6S0PkvnN+IAL4zStp/j8C24woSeils9tWC
+         JGQSw6vuvhh4iqmrXUvMsUerTpdCR2VFwbhMC0kH90S86X7Ocee4xtiRCYomb/oz7IA5
+         fdZCCwhn/4EPf0IpubjLZWvpFwSY1ogHJmYNIMAZrMLYiBhTjo9ecqoU0/+icq8TBuW/
+         RgNzj8pZWeQHKCcOGIer1w6M/CCz1ScFTsRJENh83uBXsvpshYTF0O2QGE3jo9YZZz1I
+         oBJA==
+X-Gm-Message-State: AOUpUlGpsLqg83p3hNsiAEiayz3mr5oeUNteKa8/Eezj4oPBbnXKWdn3
+        C5OGAUoM+jFgjgpHgU6zQ1MVFVul
+X-Google-Smtp-Source: AAOMgpfiGnHPaZuHjgOEyPUV3EIBVrKTQmRkIE/4oGMv1peIDvM3qLbXiUALddfP/kTk7WI/0QNR2A==
+X-Received: by 2002:a1c:9290:: with SMTP id u138-v6mr3363362wmd.52.1531466375683;
+        Fri, 13 Jul 2018 00:19:35 -0700 (PDT)
+Received: from [10.176.68.125] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id d18-v6sm1914775wrq.71.2018.07.13.00.19.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Jul 2018 00:19:34 -0700 (PDT)
+Subject: Re: [PATCH 10/18] brcmsmac: change strncpy+truncation to strlcpy
+To:     Dominique Martinet <asmadeus@codewreck.org>
+References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
+ <1531445147-19566-1-git-send-email-asmadeus@codewreck.org>
+Cc:     Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Arend van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <5B485285.7050603@broadcom.com>
+Date:   Fri, 13 Jul 2018 09:19:33 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+In-Reply-To: <1531445147-19566-1-git-send-email-asmadeus@codewreck.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_PROC_FS isn't set, gcc warning this:
+On 7/13/2018 3:25 AM, Dominique Martinet wrote:
+> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
 
-drivers/block/DAC960.c:6429:12: warning: ‘dac960_proc_show’ defined but not used [-Wunused-function]
- static int dac960_proc_show(struct seq_file *m, void *v)
-            ^
-drivers/block/DAC960.c:6449:12: warning: ‘dac960_initial_status_proc_show’ defined but not used [-Wunused-function]
- static int dac960_initial_status_proc_show(struct seq_file *m, void *v)
-            ^
-drivers/block/DAC960.c:6456:12: warning: ‘dac960_current_status_proc_show’ defined but not used [-Wunused-function]
- static int dac960_current_status_proc_show(struct seq_file *m, void *v)
-            ^
-fix this by adding #ifdef around them.
+Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> ---
+>
+> Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
+> first patch of the serie) for the motivation behind this patch
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/block/DAC960.c | 2 ++
- 1 file changed, 2 insertions(+)
+I would prefer to have the motivation in the commit message of this patch.
 
-diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
-index f651806..7a05831 100644
---- a/drivers/block/DAC960.c
-+++ b/drivers/block/DAC960.c
-@@ -6426,6 +6426,7 @@ static bool DAC960_V2_ExecuteUserCommand(DAC960_Controller_T *Controller,
-   return true;
- }
- 
-+#ifdef CONFIG_PROC_FS
- static int dac960_proc_show(struct seq_file *m, void *v)
- {
-   unsigned char *StatusMessage = "OK\n";
-@@ -6485,6 +6486,7 @@ static int dac960_current_status_proc_show(struct seq_file *m, void *v)
- 	seq_printf(m, "%.*s", Controller->CurrentStatusLength, Controller->CurrentStatusBuffer);
- 	return 0;
- }
-+#endif
- 
- static int dac960_user_command_proc_show(struct seq_file *m, void *v)
- {
--- 
-2.7.0
-
-
+Regards,
+Arend
