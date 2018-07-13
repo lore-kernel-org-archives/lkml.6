@@ -2,111 +2,156 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C2CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD8DECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBD9214C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E1232124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 06:00:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="X0a1xj2U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBD9214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="vdxgq0L/";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bcV5jRZl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1232124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbeGMGIh (ORCPT
+        id S1727269AbeGMGNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 02:08:37 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36758 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbeGMGIh (ORCPT
+        Fri, 13 Jul 2018 02:13:08 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:37292 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbeGMGNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 02:08:37 -0400
-Received: by mail-pf0-f195.google.com with SMTP id u16-v6so21985030pfh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 22:55:34 -0700 (PDT)
+        Fri, 13 Jul 2018 02:13:08 -0400
+Received: by mail-yw0-f193.google.com with SMTP id w76-v6so11345884ywg.4
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 23:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=wkm3bfzar6t14Nsc7DBsW/R43uGmUJ6STeuCrttpST0=;
-        b=X0a1xj2UntRht/r+ZXDyH0uPVGBXhW/VtFs3sIeHqlmrl0kAVtwXxKqCcAK6pLh+56
-         5bmv3i3XTqfxLlXhJAGyt3fJ5gYTv8aicqUkklOwgla4fh1qVLIULGG8ji+wZplyZngi
-         ngJNbFX+zLsGwr2S+8NocmggEl13ThRr9qyhWafM+KUav/8dPJx/pcJ2kZuJfTmVtCar
-         lYxyCz1UGm521jk1OsLeX8iXK7/eFS4lkS+35vtVuVtw+JxUuw1yzbHs3Bdjfq3dMPEM
-         rlBbXmVhv2Hnj+bKyVf+HkBdeXmCHlnmK6cDIXeJKWJKInyaMny9HUaz3xcenFf+E9a3
-         R+Hg==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=zDPTvady3hGJuubgbaW82Z4ZxgnJXZxjC6mQHcULwIw=;
+        b=vdxgq0L/u4a9KdhMsim9aFqPmupFGmI0b3kAhPKTHu6E68RR1EkGnjPxlpaLNRVgn4
+         Sr99Hu9mO3BwryBAIULq/0FykMRdCrUSdiUUUHaIEJU3fFJfxZvjzkmfyrObuC9dZc7R
+         uTS4yov5alAfO9i0qmzY5ChIWoUVK6jmihJspKJSpnur6uEvkrLElJlUUyudFLXeZc+x
+         JVlDl7CeiC4HyHsP37ibt2j76XjX9W+B/PAkX9Siu+RlY9A9cFLegHlPZ0SRGuLg/x8E
+         3894+DkNyrnN8c+BwAN55m9IbyOwHuF2cq75GZWOAF3vGusVjfZbLSDVhwmvPl+1LE4Y
+         oGpA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=zDPTvady3hGJuubgbaW82Z4ZxgnJXZxjC6mQHcULwIw=;
+        b=bcV5jRZlAAMmHkS3LN1KV+kqPDv6NlvX4cQ3/Iwu9RXsZufZquf7/6kUZGkFq1xRbG
+         9zgP+s//h5jKTtj4seVSvfJzDLvNMOda4mXqrHpstP1V205pvA/6xC1k3nJOt9Oa2eU5
+         wnkObmhnsnq3leCBgOKHmnLppel4hr4A6RNU0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=wkm3bfzar6t14Nsc7DBsW/R43uGmUJ6STeuCrttpST0=;
-        b=cp779Tn5hSXAeixd0nBImMr6hMGabR5O28xK6qeX3I13SW/6+lYBU/jQ7Gc6+b//q2
-         7FwbOj1cqQ2o8FzxNI29yASmL+4fRccUceyW7JUnsH7ahG3xkHvva16WfbUjPArTnGNn
-         +cDxGHz1TIPLNwYwCpwTrREB9/G97FSPK0gi3qwn08fGlceJj6sD7W3yzaJ8ync9ME2r
-         JMMcpGXoB67JXGVgA8wwHSIS4/uvo3Hg8cQlQJY/Q6ISi5yl7U3686sJH9kqpwruiPXv
-         4zQZ9Zd0ezxpmkGxUsugjMs4X2zZzbrdaHsjOoZeX8EwF3Fltj6e/Y9W+6iL9L/RKIg7
-         /7NQ==
-X-Gm-Message-State: AOUpUlGaVoEpzVeytqHahrUMKOwy7yzoJxB7bGRJgEQuitrFV4d3jUbX
-        ubZ6qqTVxccjdlml9Am5RoAKyg==
-X-Google-Smtp-Source: AAOMgpfKvk7f5PiZrazdyTcde4MHLo2S/RsYsWkVrGRemzosyBByLh+QeI90VLCK3p55DrHNSpRMhg==
-X-Received: by 2002:a62:1016:: with SMTP id y22-v6mr5558534pfi.109.1531461334352;
-        Thu, 12 Jul 2018 22:55:34 -0700 (PDT)
-Received: from ?IPv6:2600:1011:b009:487e:8936:3ba4:5f0d:c82e? ([2600:1011:b009:487e:8936:3ba4:5f0d:c82e])
-        by smtp.gmail.com with ESMTPSA id r16-v6sm45739335pfe.173.2018.07.12.22.55.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 22:55:32 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
-Date:   Thu, 12 Jul 2018 22:55:30 -0700
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7E04B6EB-8EEE-4A09-9C41-017D31A1A748@amacapital.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com> <20180710222639.8241-19-yu-cheng.yu@intel.com> <bbb487cc-ac1c-f734-eee3-2463a0ba7efc@linux.intel.com> <1531436398.2965.18.camel@intel.com> <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com> <167645aa-f1c7-bd6a-c7e0-2da317cbbaba@intel.com> <55A0592D-0E8D-4BC5-BA4B-E82E92EEA36A@amacapital.net> <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=zDPTvady3hGJuubgbaW82Z4ZxgnJXZxjC6mQHcULwIw=;
+        b=BAPuRDjrrnYyWowwZ0j46Ewj5pedOsTjz7UlkeOEiWOajPuLG0S9nof2CZ7aZKkElx
+         h5YMOy+EuqKkAUC96TkmFAiJu3KIghEPDa1rIydc0/FiZ5ujLq79wB2df3zKA1JQVnn6
+         Uq2XQxU2/1TUCUfpoYlKQdeQUsj35oO621iErg4J+8BxWmxUX+JZUGePcxMuTxodFukw
+         1ocSdEnflfTf99Dgus1vb5tBBV5VzGz6j5ufTVqIukXz+ojfEsdSC1f7CNxoCAWDMI1s
+         ZwD7foNw9Y75FytXpiPXPHQMk613BgyFjk5q3IscAUBYAlqZXT/aN/NcXydDCS0EO8ec
+         5gfA==
+X-Gm-Message-State: AOUpUlFbCrJYfaAn1CbDL50B4dMgKt4hgmBLDZVAEBoFA/3bLdqRKGsV
+        Mfb/T+redMZp6q6lldC412VBVMKEQ12LW+OBtRc3SQ==
+X-Google-Smtp-Source: AAOMgpcWRrFn0lL+exJ4dFVRFboXnxotYmDYCA+DU5+EyX70QpvnWZ3R6yZCk0s4M/lcq9MFqlag/GtnNP99QZVpg7o=
+X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr2531893ywn.88.1531461604333;
+ Thu, 12 Jul 2018 23:00:04 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 23:00:03
+ -0700 (PDT)
+In-Reply-To: <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
+ <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
+ <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
+ <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 12 Jul 2018 23:00:03 -0700
+X-Google-Sender-Auth: mEbHzL_Doy8uz-9G1Roqdvz9xrs
+Message-ID: <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
+Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 12, 2018 at 10:20 PM, Herbert Xu
+<herbert@gondor.apana.org.au> wrote:
+> On Thu, Jul 12, 2018 at 10:17:29PM -0700, Kees Cook wrote:
+>>
+>> Then why does the instrumented tcrypt output show the huge size? Is
+>> tcrypt doing something incorrectly?
+>
+> tcrypt doesn't even use AHASH_REQUEST_ON_STACK so I don't understand
+> your point.
 
+It's using crypto_ahash_set_reqsize(), which is what
+AHASH_REQUEST_ON_STACK() reads back via crypto_ahash_reqsize() (i.e.
+tfm->reqsize). It sounds like you're saying that there are cases where
+an ahash is constructed (and will call crypto_ahash_set_reqsize()) but
+where it cannot be used with AHASH_REQUEST_ON_STACK()? What actually
+enforces this, since there will be a difference between
+crypto_ahash_set_reqsize() (as seen with sha512-mb) and the actually
+allowed stack usage. (i.e. where should I perform a check against the
+new fixed value?)
 
-> On Jul 12, 2018, at 9:16 PM, Dave Hansen <dave.hansen@intel.com> wrote:
->=20
->> On 07/12/2018 07:21 PM, Andy Lutomirski wrote:
->> I am tempted to suggest that the whole series not be merged until
->> there are actual docs. It=E2=80=99s not a fantastic precedent.
->=20
-> Do you mean Documentation or manpages, or are you talking about hardware
-> documentation?
-> https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-=
-enforcement-technology-preview.pdf
+>> What is the correct value to use for AHASH_REQUEST_ON_STACK?
+>
+> As I said to arrive at a fixed value you should examine all sync
+> ahash algorithms (e.g., all shash ones plus ahash ones marked as
+> sync if there are any).
 
-I mean hardware docs. The =E2=80=9Cpreview=E2=80=9D is a little bit dubious I=
-MO.=
+The "value" for the ahash I understand: it has a request size
+(tfm->reqsize, as set by crypto_ahash_set_reqsize()) what should be
+used to measure the shash value? (And how does this relate to the
+value returned by crypto_ahash_reqsize()?) The closest clue I can find
+is this:
+
+crypto_init_shash_ops_async() does:
+        crt->reqsize = sizeof(struct shash_desc) + crypto_shash_descsize(shash);
+
+and that gets called from crypto_ahash_init_tfm(), so if it starts
+with the above reqsize and adds to it with a call to
+crypto_ahash_set_reqsize() later, we'll have that maximum?
+
+So, do I want to calculate this answer as:
+
+sizeof(struct shash_desc) + max(shash descsize) + max(ahash-sync reqsize) ?
+16 + 360 + 0
+
+It's 0 above because if I look at all the callers of
+crypto_ahash_set_reqsize() that do wrapping, all are ASYNC.
+
+So, should this really just be 376? Where is best to validate this
+size, as it seems checking in crypto_ahash_set_reqsize() is
+inappropriate?
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
