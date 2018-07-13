@@ -2,126 +2,178 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB747ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D694ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76F5D2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79C4208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="lJAqj9XU";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O/HWoP8d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76F5D2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPp38Mwd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79C4208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387845AbeGMQXw (ORCPT
+        id S1731383AbeGMQZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:23:52 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:43515 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730110AbeGMQXw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:23:52 -0400
-Received: by mail-vk0-f67.google.com with SMTP id d74-v6so18468606vke.10
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 09:08:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=tC4o0HYJWq/jiNmYhxXIvLIllksvu1gVAL8vJ6b9qdE=;
-        b=lJAqj9XUn2DP3tBKWifHZSWWLpcDZgT5pd4H0uaX+DTrdHFiRk2gZmLHIAsPMfD12b
-         6666QZQE30HOOS6VBff7uuUUDLBkdHeri5tOQiJhFHCIinuFPVqAzfVwtTk+odjhwkvz
-         eXvTxvFDvbdLPmjt5fYbM8A5flGUQx6GPsLY1qS/hZSojwDMV/MR3kCdbBR/8VV6A4K1
-         Q+XNGt6zGFY7xtWcyN3upQ0A0MMYltsJECzrPulJMLrv1zD5vniF77LhioxgSPHeylmN
-         ft3azwL5JHasNu//jxIhb4yq8ZgkWw/3ZlDScKYdvF2tjt6N8VRm1XwiQDoWnQ+HaXZ0
-         bhaA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=tC4o0HYJWq/jiNmYhxXIvLIllksvu1gVAL8vJ6b9qdE=;
-        b=O/HWoP8dmt9iZvLMUvHkGtcWG3WR4CUQMFF+pX4h1w3lv2GWnTYhFbzlDVv9d2Qx8R
-         RydutPzC9FbhCxT3YI7LOBggQz4ZxLoYzH5OTRH2CzFuYfQ/MJi10kIzwhug7oaT3EHt
-         YQNhuFYeJdYTeM88j48daUfAjPV7T2/bxTdnw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=tC4o0HYJWq/jiNmYhxXIvLIllksvu1gVAL8vJ6b9qdE=;
-        b=cpC+/8hHJ0ZH05ZtGlO+clWKbkpN7BIe+AOk2MF1hrtBbIQJoYWDuaZiTZjnH0BnFu
-         ubT3Sepa0gX762rRJtS+RqOJDyyM+sYHHnhQ9ztxraWIts6HFFnFi9u6QF2VrTp5Ww6t
-         N4j9MsWcKfhgLYvr4f3D3R3OXTkuvzTUtiRbZqXxxgkTGSW920ukuMvENCLZcrWPMR3R
-         ZbxJlEKmp1+T0OM9UGN0o5ZYDhGmm4VosXmzIWMhCPYhX6Gb+QO6CYuPlHTTG0JdKOu5
-         vL7YobhIGBWwvLpnCXEJOBsapmXjjo4fwKEIXFfQXaKV+UreY7SomuI7LZsEwG0U2reJ
-         VT1g==
-X-Gm-Message-State: AOUpUlHnIWW7Os9iTpXak7ri0ex5bupknUpoyR5n0H+0MfqCWtPCZsef
-        181jOFgfuU2o4GwTuoSNyVjC5bdlTv/cKZ55XjMNAQ==
-X-Google-Smtp-Source: AAOMgpdQr/aKzry6BzBuAJB34JbMLWDH4TBCFsI7eUFLyqQ857u0zTyCQ1N1prMDdQPPjaI5kzdOpP+WenpxX90GXCo=
-X-Received: by 2002:a1f:d744:: with SMTP id o65-v6mr4061849vkg.101.1531498115476;
- Fri, 13 Jul 2018 09:08:35 -0700 (PDT)
+        Fri, 13 Jul 2018 12:25:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729736AbeGMQZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 12:25:28 -0400
+Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60E742089F;
+        Fri, 13 Jul 2018 16:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531498211;
+        bh=Y2qT/KR3/3R0GO5dBFwzCtQ9NYc/k2FS3qwswaqB4nE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VPp38MwdvtBBGBkHFfliHY9yVnZ5o0DJEDri4ukBaFp5n9hCHvDXPS6ar/zHjiIwb
+         sxwXz0mweHZKrSx0AucyU44W0IjW8wpFIbWZ/AHxtxLOyA9svW6CXQVCx7kJlSuBdV
+         Y+wYkxk6D6VqmCRYdyHsx6QxOei9A5m3P01tJYDI=
+Date:   Fri, 13 Jul 2018 09:10:06 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Chao Yu <yuchao0@huawei.com>, y2038@lists.linaro.org,
+        Sheng Yong <shengyong1@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Eric Biggers <ebiggers@google.com>,
+        Yunlei He <heyunlei@huawei.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Yunlong Song <yunlong.song@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [RESEND] f2fs: use timespec64 for inode timestamps
+Message-ID: <20180713161006.GA40688@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180713143800.3146610-1-arnd@arndb.de>
 MIME-Version: 1.0
-Received: by 2002:a1f:4d02:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 09:08:34
- -0700 (PDT)
-In-Reply-To: <153149761947.48062.16210609862063613310@swboyd.mtv.corp.google.com>
-References: <20180709212522.187257-1-mka@chromium.org> <153149761947.48062.16210609862063613310@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 13 Jul 2018 09:08:34 -0700
-X-Google-Sender-Auth: OqjUwJrIA_djz4smm3UWprHW7X8
-Message-ID: <CAD=FV=UVUO+xhTxET_MHuk6CsSfsfRFr_ZUzM0AKW5zzMfk98A@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: pm8998: Add spmi-temp-alarm node
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        David Collins <collinsd@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180713143800.3146610-1-arnd@arndb.de>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Arnd,
 
-On Fri, Jul 13, 2018 at 9:00 AM, Stephen Boyd <swboyd@chromium.org> wrote:
-> Quoting Matthias Kaehlcke (2018-07-09 14:25:21)
->> diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
->> index 92bed1e7d4bb..7eea94701b23 100644
->> --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
->> @@ -11,6 +11,13 @@
->>                 #address-cells = <1>;
->>                 #size-cells = <0>;
->>
->> +               pm8998_temp: temp-alarm@2400 {
->
-> Are we sorting this file based on node name or unit address? Otherwise
-> patch looks good.
+I queued in the testing branch, since I'm trying to fix another issue in -next.
 
-My preference would be:
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev-test&id=2cdbbf025aac9f3dd54b9dec0a6603839a3171d3
 
-* Anything where we're defining a new node with an address: sort by the address.
+Allow me to merge it in -next sooner or later.
 
-* If we are defining nodes without addresses: sort by node name (not by label!)
+Thanks,
 
-* In general I'd prefer to see addressless things before things with addresses.
-
-* If we are overriding nodes that were defined in a parent makefile:
-sort by the name of the parent label we refer to.
-
-
-...so I think Matthias's sort order in this case is correct / consistent.
-
-
--Doug
+On 07/13, Arnd Bergmann wrote:
+> The on-disk representation and the vfs both use 64-bit tv_sec values,
+> so let's change the last missing piece in the middle.
+> 
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> I sent this on Jun 20 and got an Ack, but nobody picked up the patch
+> into linux-next.
+> 
+> Could you merge this for 4.19?
+> ---
+>  fs/f2fs/f2fs.h  | 16 ++++++----------
+>  fs/f2fs/inode.c | 12 ++++++------
+>  fs/f2fs/namei.c |  2 +-
+>  3 files changed, 13 insertions(+), 17 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 6fe7db8d914c..1e49b896e211 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -669,8 +669,8 @@ struct f2fs_inode_info {
+>  	int i_extra_isize;		/* size of extra space located in i_addr */
+>  	kprojid_t i_projid;		/* id for project quota */
+>  	int i_inline_xattr_size;	/* inline xattr size */
+> -	struct timespec i_crtime;	/* inode creation time */
+> -	struct timespec i_disk_time[4];	/* inode disk times */
+> +	struct timespec64 i_crtime;	/* inode creation time */
+> +	struct timespec64 i_disk_time[4];/* inode disk times */
+>  };
+>  
+>  static inline void get_extent_info(struct extent_info *ext,
+> @@ -2519,7 +2519,6 @@ static inline void clear_file(struct inode *inode, int type)
+>  
+>  static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>  {
+> -	struct timespec ts;
+>  	bool ret;
+>  
+>  	if (dsync) {
+> @@ -2535,16 +2534,13 @@ static inline bool f2fs_skip_inode_update(struct inode *inode, int dsync)
+>  			i_size_read(inode) & ~PAGE_MASK)
+>  		return false;
+>  
+> -	ts = timespec64_to_timespec(inode->i_atime);
+> -	if (!timespec_equal(F2FS_I(inode)->i_disk_time, &ts))
+> +	if (!timespec64_equal(F2FS_I(inode)->i_disk_time, &inode->i_atime))
+>  		return false;
+> -	ts = timespec64_to_timespec(inode->i_ctime);
+> -	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 1, &ts))
+> +	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 1, &inode->i_ctime))
+>  		return false;
+> -	ts = timespec64_to_timespec(inode->i_mtime);
+> -	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 2, &ts))
+> +	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 2, &inode->i_mtime))
+>  		return false;
+> -	if (!timespec_equal(F2FS_I(inode)->i_disk_time + 3,
+> +	if (!timespec64_equal(F2FS_I(inode)->i_disk_time + 3,
+>  						&F2FS_I(inode)->i_crtime))
+>  		return false;
+>  
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index f91dd017a65c..f9d1bccebcb6 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -300,9 +300,9 @@ static int do_read_inode(struct inode *inode)
+>  		fi->i_crtime.tv_nsec = le32_to_cpu(ri->i_crtime_nsec);
+>  	}
+>  
+> -	F2FS_I(inode)->i_disk_time[0] = timespec64_to_timespec(inode->i_atime);
+> -	F2FS_I(inode)->i_disk_time[1] = timespec64_to_timespec(inode->i_ctime);
+> -	F2FS_I(inode)->i_disk_time[2] = timespec64_to_timespec(inode->i_mtime);
+> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
+> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
+> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+>  	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+>  	f2fs_put_page(node_page, 1);
+>  
+> @@ -473,9 +473,9 @@ void f2fs_update_inode(struct inode *inode, struct page *node_page)
+>  	if (inode->i_nlink == 0)
+>  		clear_inline_node(node_page);
+>  
+> -	F2FS_I(inode)->i_disk_time[0] = timespec64_to_timespec(inode->i_atime);
+> -	F2FS_I(inode)->i_disk_time[1] = timespec64_to_timespec(inode->i_ctime);
+> -	F2FS_I(inode)->i_disk_time[2] = timespec64_to_timespec(inode->i_mtime);
+> +	F2FS_I(inode)->i_disk_time[0] = inode->i_atime;
+> +	F2FS_I(inode)->i_disk_time[1] = inode->i_ctime;
+> +	F2FS_I(inode)->i_disk_time[2] = inode->i_mtime;
+>  	F2FS_I(inode)->i_disk_time[3] = F2FS_I(inode)->i_crtime;
+>  }
+>  
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 231b7f3ea7d3..2ea0de4cbe76 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -51,7 +51,7 @@ static struct inode *f2fs_new_inode(struct inode *dir, umode_t mode)
+>  	inode->i_ino = ino;
+>  	inode->i_blocks = 0;
+>  	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
+> -	F2FS_I(inode)->i_crtime = timespec64_to_timespec(inode->i_mtime);
+> +	F2FS_I(inode)->i_crtime = inode->i_mtime;
+>  	inode->i_generation = sbi->s_next_generation++;
+>  
+>  	if (S_ISDIR(inode->i_mode))
+> -- 
+> 2.9.0
