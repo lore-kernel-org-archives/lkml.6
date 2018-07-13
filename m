@@ -2,136 +2,114 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBE6ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:29:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21230ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E79A620870
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:28:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79A620870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B9F27214AB
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:33:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="sSVumybA";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WIA5zbP7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F27214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387888AbeGMDld (ORCPT
+        id S2387854AbeGMDqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 23:41:33 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:55779 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387722AbeGMDld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 23:41:33 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8CD5B7C89A07E;
-        Fri, 13 Jul 2018 11:28:53 +0800 (CST)
-Received: from [127.0.0.1] (10.111.220.140) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
- 11:28:48 +0800
-Subject: Re: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
-To:     Chao Yu <yuchao0@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yunlong.song@icloud.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
- <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
- <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
-From:   Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
-Date:   Fri, 13 Jul 2018 11:28:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 12 Jul 2018 23:46:03 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:40470 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387722AbeGMDqD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 23:46:03 -0400
+Received: by mail-yw0-f194.google.com with SMTP id p129-v6so11257419ywg.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 20:33:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=DM2fmXR+ohtz0SYzXSbChnxJiFkYc87L/bi897U8t4o=;
+        b=sSVumybAMTdnmfx1XvzslUw86jOHwdOm3Jp374A9oK4fgNaaGjuYYMnKZLnerXoME5
+         jbDcgGhX527GMJC64ehDG4QEWES0/Pk9xWscpYLKEtZ30WrTfHoPwtBARChqtk20u8ZN
+         3+PP323rvAh0+vHXnm1pwofa8W909/8Ys0gqhupZ3FgCJ9UQzEUnuJ1WSTqtyxddr24T
+         VRNu0WEdxW6efeaQQULYvA6wF4HLxjWhjCN748yN5IwWQOMeeU/oUGPwyoxP87rNpnVs
+         YN0yEjTDXZZUtn/0aYOIm2PHRylDfMoL308Xx1jYHoCDyvVBMswhv+sxQ8ZWNTRjtAj+
+         oO/Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=DM2fmXR+ohtz0SYzXSbChnxJiFkYc87L/bi897U8t4o=;
+        b=WIA5zbP7Z3yYGSqhoXk39+EsURl9+sniodswcOXVH2D4YA6NR57xsoAi72Qqxx3Ccs
+         1dXDunY4zF/dQKZn08k4cYAf1qpBCCCdWFnb/r10mtG0MqfhjZYAG/uOsD8J/sq+M4zO
+         Fhqlip93nMNdWJn/BLb8WO8opGhZaAKbullHk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=DM2fmXR+ohtz0SYzXSbChnxJiFkYc87L/bi897U8t4o=;
+        b=KpN5BQ5lYycaS+BYRGYetDX12jAoOSw66ijIu6qGezVptsVDIVcJGuhLXtIG8rmupE
+         QB80QmLSw2yh8NWiKcG1yKKYV4w0cCoaZWCtiHI1JNbiYQzRx9mdKBjlgQgL5Hx2AxqF
+         NHXHyBqLgrLnoyDjkoC5ANycoHCJrTXiPR50peekD7ZYPCHHMcPPSqzDvfZGnz8SuBci
+         LJC7MTnnadfsgNVrs1jcTVL744oLaJ46UssDKpWHk3nRKaTyuji2fPsOIvMJipnJdpdP
+         gqDCfdtwtvuWFICTkwOqKyoLVVLpbz1pvhs9g4Nc+quH6xdAzBfmhBtQS+49QRmaVAEc
+         r5Wg==
+X-Gm-Message-State: AOUpUlExtlP23W3ZJhRMel55qholloVS8PjD5QGdYQu/z3mtEWa1Yz4X
+        n89+zEm/lemMV3wHedURxo5xYNlEsEMvAo27w3tIxw==
+X-Google-Smtp-Source: AAOMgpf1dNvwe177BUhKW1hebaMCBvIQgqvzqMSenraeWT2l01+1/1PXfflZao6D3gMcnc6QbWBXEni4YJSeVEXTtYc=
+X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr2510000ywf.53.1531452805608;
+ Thu, 12 Jul 2018 20:33:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 20:33:24
+ -0700 (PDT)
+In-Reply-To: <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com> <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 12 Jul 2018 20:33:24 -0700
+X-Google-Sender-Auth: ZWf-SFEhbzxAROCoRX4m_xHb3z4
+Message-ID: <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
+Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
-then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
-write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0, 
-prefree of NO.2 is cleared, and no discard issued
-
-round2: rm data block NO.0, NO.1, NO.3, NO.4
-all invalid, but prefree bit of NO.2 is set and cleared in round1, then 
-prefree_map: 1 1 0 1 1
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no 
-valid blocks of this section, so discard issued
-but this time prefree bit of NO.3 and NO.4 is skipped...
-
-round3:
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 - > 
-0 0 0 0 0, no valid blocks of this section, so discard issued
-this time prefree bit of NO.3 and NO.4 is cleared, but the discard of 
-this section is sent again...
-
-On 2018/7/13 11:13, Chao Yu wrote:
-> On 2018/7/12 23:09, Yunlong Song wrote:
->> For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
->> example, if the section prefree_map is ...previous section | current
->> section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
->> after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
->> will skip x + 3 and x + 4, but their bitmap is still set, which will
->> cause duplicated f2fs_issue_discard of this same section in the next
->> write_checkpoint, so fix it.
-> I didn't get it, if # 2 segment is not prefree state, so it still has valid
-> blocks there, so we won't issue discard due to below condition, right?
->
-> 		if (!IS_CURSEC(sbi, secno) &&
-> 			!get_valid_blocks(sbi, start, true))
->
-> Thanks,
->
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/segment.c | 19 +++++++++++++++++--
->>   1 file changed, 17 insertions(+), 2 deletions(-)
+On Thu, Jul 12, 2018 at 5:40 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> On Thu, Jul 12, 2018 at 06:02:26PM +0200, Arnd Bergmann wrote:
 >>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index 47b6595..fd38b61 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
->>   		start = start_segno + sbi->segs_per_sec;
->>   		if (start < end)
->>   			goto next;
->> -		else
->> -			end = start - 1;
->> +		else {
->> +			start_segno = start;
->> +
->> +			while (1) {
->> +				start = find_next_bit(prefree_map, start_segno,
->> +									end + 1);
->> +				if (start >= start_segno)
->> +					break;
->> +				end = find_next_zero_bit(prefree_map, start_segno,
->> +										start + 1);
->> +				for (i = start; i < end; i++)
->> +					clear_bit(i, prefree_map);
->> +				dirty_i->nr_dirty[PRE] -= end - start;
->> +			}
->> +
->> +			end = start_segno - 1;
->> +		}
->>   	}
->>   	mutex_unlock(&dirty_i->seglist_lock);
->>   
->>
+>> Looking through some of the drivers, I found this interesting one:
 >
-> .
->
+> As I said before these patches are fundamentally broken.  Users
+> of AHASH_REQUEST_ON_STACK can only use sync algorithm providers
+> and therefore drivers are irrelevant.
+
+I don't understand what this means. Can you give an example of what
+you want to see happen that will accomplish the VLA removals?
+
+-Kees
 
 -- 
-Thanks,
-Yunlong Song
-
-
+Kees Cook
+Pixel Security
