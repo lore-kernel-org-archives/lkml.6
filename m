@@ -2,101 +2,193 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAEFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:40:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D413ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F109208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:40:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F109208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id E5DE9208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:41:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DE9208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeGMIxh (ORCPT
+        id S1727482AbeGMIyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 04:53:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58518 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbeGMIxh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 04:53:37 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fdtcI-0000z1-Ty; Fri, 13 Jul 2018 08:39:54 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] scsi: lpfc: remove null check on nvmebuf
-Date:   Fri, 13 Jul 2018 09:39:54 +0100
-Message-Id: <20180713083954.26877-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Fri, 13 Jul 2018 04:54:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52481 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbeGMIyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 04:54:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5E4E22074F; Fri, 13 Jul 2018 10:41:00 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9F0D5203EC;
+        Fri, 13 Jul 2018 10:40:59 +0200 (CEST)
+Message-ID: <2a64aec733392cd15d87b53a268fb8328af0a82c.camel@bootlin.com>
+Subject: Re: [PATCH v5 18/22] media: platform: Add Sunxi-Cedrus VPU decoder
+ driver
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Ezequiel Garcia <ezequiel@collabora.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Date:   Fri, 13 Jul 2018 10:40:58 +0200
+In-Reply-To: <e31090c371ae7f7999b0aa983a20f33451cc89fb.camel@collabora.com>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+         <20180710080114.31469-19-paul.kocialkowski@bootlin.com>
+         <e31090c371ae7f7999b0aa983a20f33451cc89fb.camel@collabora.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Hb1cmEa3+oOsZx1t5cjo"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The null checks on nvmebuf are redundant as nvmebuf is always obtained
-from a container_of() and hence can never be null. Remove all the
-redundant null checks. This also cleans up a static analysis warning.
+--=-Hb1cmEa3+oOsZx1t5cjo
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Detected by CoverityScan, CID#1471753 ("Dereference before null check")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
+Hi,
 
-V2: Remove null pointer checks thanks to James Bottomley for spotting
-that the caller obtains nvmebuf from container_of().
+On Tue, 2018-07-10 at 16:57 -0300, Ezequiel Garcia wrote:
+> Hey Paul,
+>=20
+> My comments on v4 of course apply here as well.
 
----
- drivers/scsi/lpfc/lpfc_nvmet.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Yes, it seems that most of your comments were not already adressed by
+this v5. I will answer your remarks and suggestions on the v4 thread.
 
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-index 22f8a204b69f..b766afe10d3d 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -1745,7 +1745,7 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
- 	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
- 	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
- 
--	if (!nvmebuf || !phba->targetport) {
-+	if (!phba->targetport) {
- 		lpfc_printf_log(phba, KERN_ERR, LOG_NVME_IOERR,
- 				"6154 LS Drop IO x%x\n", oxid);
- 		oxid = 0;
-@@ -1770,8 +1770,7 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
- 		lpfc_nvmeio_data(phba, "NVMET LS  DROP: "
- 				 "xri x%x sz %d from %06x\n",
- 				 oxid, size, sid);
--		if (nvmebuf)
--			lpfc_in_buf_free(phba, &nvmebuf->dbuf);
-+		lpfc_in_buf_free(phba, &nvmebuf->dbuf);
- 		return;
- 	}
- 	ctxp->phba = phba;
-@@ -1814,8 +1813,7 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
- 			ctxp->oxid, rc);
- 
- 	/* We assume a rcv'ed cmd ALWAYs fits into 1 buffer */
--	if (nvmebuf)
--		lpfc_in_buf_free(phba, &nvmebuf->dbuf);
-+	lpfc_in_buf_free(phba, &nvmebuf->dbuf);
- 
- 	atomic_inc(&tgtp->xmt_ls_abort);
- 	lpfc_nvmet_unsol_ls_issue_abort(phba, ctxp, sid, oxid);
--- 
-2.17.1
+> One other thing...
+>=20
+> On Tue, 2018-07-10 at 10:01 +0200, Paul Kocialkowski wrote:
+> > This introduces the Sunxi-Cedrus VPU driver that supports the VPU
+> > found
+> > in Allwinner SoCs, also known as Video Engine. It is implemented
+> > through
+> > a v4l2 m2m decoder device and a media device (used for media
+> > requests).
+> > So far, it only supports MPEG2 decoding.
+> >=20
+> > Since this VPU is stateless, synchronization with media requests is
+> > required in order to ensure consistency between frame headers that
+> > contain metadata about the frame to process and the raw slice data
+> > that
+> > is used to generate the frame.
+> >=20
+> > This driver was made possible thanks to the long-standing effort
+> > carried out by the linux-sunxi community in the interest of reverse
+> > engineering, documenting and implementing support for Allwinner VPU.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> >=20
+>=20
+> [..]
+> > +
+> > +static irqreturn_t cedrus_bh(int irq, void *data)
+> > +{
+> > +	struct cedrus_dev *dev =3D data;
+> > +	struct cedrus_ctx *ctx;
+> > +
+> > +	ctx =3D v4l2_m2m_get_curr_priv(dev->m2m_dev);
+> > +	if (!ctx) {
+> > +		v4l2_err(&dev->v4l2_dev,
+> > +			 "Instance released before the end of
+> > transaction\n");
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	v4l2_m2m_job_finish(ctx->dev->m2m_dev, ctx->fh.m2m_ctx);
+> > +
+>=20
+> I don't like the fact that v4l2_m2m_job_finish calls .device_run
+> reentrantly. Let me try to make v4l2_m2m_job_finish() safe to be called
+> in atomic context, so hopefully drivers can just call it in the top-
+> half.
+
+Thanks for your patches in this direction, I will try them and hopefully
+base our next Sunxi-Cedrus version on them, if it seems that this
+framework change will be picked-up by maintainers.
+
+> You are returning the buffers in the top-half, so this is just a matter
+> or better design, not a performance improvement.
+
+This is definitely a nice design improvement IMO (if not only for
+avoiding reentrancy)!=20
+
+And this reduces our code path between starting decoding and userspace
+notification that decoding finished. Starting the worker thread is no
+longer required before notifying userspace, so I think we are going to
+see performance improvements from this. Hopefully, the worker thread
+will run while userspace is busy preparing the next frame, so this
+should work a lot better for us!
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-Hb1cmEa3+oOsZx1t5cjo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltIZZsACgkQ3cLmz3+f
+v9GZSwgAll0CoEb3HEWeSrmcIyD2zGldqS9lJIg6saOKi3kCp/yUuGFJcYUocGcM
+VOkqt0HbnMJUH8aCTATD6YqusYV+x6UTZtDK6VjCk6a1m4vXG7ZEtE5LhRvY1pT9
+XEjj3BNxdJfPAagdLcz9NNxwOuvW32h52qxJPnb3TS7mhsTa6dK23JMbA0WtDTMl
+k8jGSOWza0ZhRQf6repdmxFlhYJuKRXTGuuN1pOnqPznK/HDqutni8STajBb/wZH
+Oi9gVJ9aL6PkRTRHuaP9pRSn8D4LgE2cixsZIIdrw2q/+t6BgcJKR2A365hyno91
+13OtXD6jkny5A81ymYVzAO6SAcji8g==
+=ZMyy
+-----END PGP SIGNATURE-----
+
+--=-Hb1cmEa3+oOsZx1t5cjo--
 
