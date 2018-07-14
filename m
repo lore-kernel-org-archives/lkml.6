@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E706AECDFB2
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF78ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1E0208A3
+	by mail.kernel.org (Postfix) with ESMTP id D7A5B208CE
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1E0208A3
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7A5B208CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbeGNIP1 (ORCPT
+        id S1727394AbeGNIP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 04:15:27 -0400
+        Sat, 14 Jul 2018 04:15:28 -0400
 Received: from mga02.intel.com ([134.134.136.20]:11973 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726412AbeGNIP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 04:15:26 -0400
+        id S1727252AbeGNIP2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 04:15:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2018 00:57:14 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2018 00:57:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,351,1526367600"; 
-   d="scan'208";a="54966335"
+   d="scan'208";a="54966341"
 Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by fmsmga008.fm.intel.com with ESMTP; 14 Jul 2018 00:57:12 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 14 Jul 2018 00:57:14 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>
@@ -40,9 +40,9 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v5 4/9] iommu/vt-d: Move device_domain_info to header
-Date:   Sat, 14 Jul 2018 15:46:57 +0800
-Message-Id: <1531554422-6874-5-git-send-email-baolu.lu@linux.intel.com>
+Subject: [PATCH v5 5/9] iommu/vt-d: Add for_each_device_domain() helper
+Date:   Sat, 14 Jul 2018 15:46:58 +0800
+Message-Id: <1531554422-6874-6-git-send-email-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
 References: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
@@ -51,8 +51,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows the per device iommu data and some helpers to be
-used in other files.
+This adds a helper named for_each_device_domain() to iterate
+over the elements in device_domain_list and invoke a callback
+against each element. This allows to search the device_domain
+list in other source files.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -61,205 +63,55 @@ Cc: Liu Yi L <yi.l.liu@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
 ---
- drivers/iommu/intel-iommu.c | 63 +++------------------------------------------
- include/linux/intel-iommu.h | 61 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+), 59 deletions(-)
+ drivers/iommu/intel-iommu.c | 21 +++++++++++++++++++++
+ include/linux/intel-iommu.h |  2 ++
+ 2 files changed, 23 insertions(+)
 
 diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index dd5a617..d7d2ff9 100644
+index d7d2ff9..3d802c5 100644
 --- a/drivers/iommu/intel-iommu.c
 +++ b/drivers/iommu/intel-iommu.c
-@@ -380,61 +380,6 @@ static int hw_pass_through = 1;
- 	for (idx = 0; idx < g_num_of_iommus; idx++)		\
- 		if (domain->iommu_refcnt[idx])
+@@ -447,6 +447,27 @@ EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
+ static DEFINE_SPINLOCK(device_domain_lock);
+ static LIST_HEAD(device_domain_list);
  
--struct dmar_domain {
--	int	nid;			/* node id */
--
--	unsigned	iommu_refcnt[DMAR_UNITS_SUPPORTED];
--					/* Refcount of devices per iommu */
--
--
--	u16		iommu_did[DMAR_UNITS_SUPPORTED];
--					/* Domain ids per IOMMU. Use u16 since
--					 * domain ids are 16 bit wide according
--					 * to VT-d spec, section 9.3 */
--
--	bool has_iotlb_device;
--	struct list_head devices;	/* all devices' list */
--	struct iova_domain iovad;	/* iova's that belong to this domain */
--
--	struct dma_pte	*pgd;		/* virtual address */
--	int		gaw;		/* max guest address width */
--
--	/* adjusted guest address width, 0 is level 2 30-bit */
--	int		agaw;
--
--	int		flags;		/* flags to find out type of domain */
--
--	int		iommu_coherency;/* indicate coherency of iommu access */
--	int		iommu_snooping; /* indicate snooping control feature*/
--	int		iommu_count;	/* reference count of iommu */
--	int		iommu_superpage;/* Level of superpages supported:
--					   0 == 4KiB (no superpages), 1 == 2MiB,
--					   2 == 1GiB, 3 == 512GiB, 4 == 1TiB */
--	u64		max_addr;	/* maximum mapped address */
--
--	struct iommu_domain domain;	/* generic domain data structure for
--					   iommu core */
--};
--
--/* PCI domain-device relationship */
--struct device_domain_info {
--	struct list_head link;	/* link to domain siblings */
--	struct list_head global; /* link to global list */
--	u8 bus;			/* PCI bus number */
--	u8 devfn;		/* PCI devfn number */
--	u16 pfsid;		/* SRIOV physical function source ID */
--	u8 pasid_supported:3;
--	u8 pasid_enabled:1;
--	u8 pri_supported:1;
--	u8 pri_enabled:1;
--	u8 ats_supported:1;
--	u8 ats_enabled:1;
--	u8 ats_qdep;
--	struct device *dev; /* it's NULL for PCIe-to-PCI bridge */
--	struct intel_iommu *iommu; /* IOMMU used by this device */
--	struct dmar_domain *domain; /* pointer to domain */
--};
--
- struct dmar_rmrr_unit {
- 	struct list_head list;		/* list of rmrr units	*/
- 	struct acpi_dmar_header *hdr;	/* ACPI header		*/
-@@ -603,7 +548,7 @@ static void set_iommu_domain(struct intel_iommu *iommu, u16 did,
- 		domains[did & 0xff] = domain;
- }
++/*
++ * Iterate over elements in device_domain_list and call the specified
++ * callback @fn against each element. This helper should only be used
++ * in the context where the device_domain_lock has already been holden.
++ */
++int for_each_device_domain(int (*fn)(struct device_domain_info *info,
++				     void *data), void *data)
++{
++	int ret = 0;
++	struct device_domain_info *info;
++
++	assert_spin_locked(&device_domain_lock);
++	list_for_each_entry(info, &device_domain_list, global) {
++		ret = fn(info, data);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ const struct iommu_ops intel_iommu_ops;
  
--static inline void *alloc_pgtable_page(int node)
-+void *alloc_pgtable_page(int node)
- {
- 	struct page *page;
- 	void *vaddr = NULL;
-@@ -614,7 +559,7 @@ static inline void *alloc_pgtable_page(int node)
- 	return vaddr;
- }
- 
--static inline void free_pgtable_page(void *vaddr)
-+void free_pgtable_page(void *vaddr)
- {
- 	free_page((unsigned long)vaddr);
- }
-@@ -697,7 +642,7 @@ int iommu_calculate_agaw(struct intel_iommu *iommu)
- }
- 
- /* This functionin only returns single iommu in a domain */
--static struct intel_iommu *domain_get_iommu(struct dmar_domain *domain)
-+struct intel_iommu *domain_get_iommu(struct dmar_domain *domain)
- {
- 	int iommu_id;
- 
-@@ -3527,7 +3472,7 @@ static unsigned long intel_alloc_iova(struct device *dev,
- 	return iova_pfn;
- }
- 
--static struct dmar_domain *get_valid_domain_for_dev(struct device *dev)
-+struct dmar_domain *get_valid_domain_for_dev(struct device *dev)
- {
- 	struct dmar_domain *domain, *tmp;
- 	struct dmar_rmrr_unit *rmrr;
+ static bool translation_pre_enabled(struct intel_iommu *iommu)
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 2ff1519..2e1fbde 100644
+index 2e1fbde..4fd4c6f 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -31,6 +31,7 @@
- #include <linux/list.h>
- #include <linux/iommu.h>
- #include <linux/io-64-nonatomic-lo-hi.h>
-+#include <linux/dmar.h>
+@@ -520,6 +520,8 @@ struct dmar_domain *get_valid_domain_for_dev(struct device *dev);
+ void *alloc_pgtable_page(int node);
+ void free_pgtable_page(void *vaddr);
+ struct intel_iommu *domain_get_iommu(struct dmar_domain *domain);
++int for_each_device_domain(int (*fn)(struct device_domain_info *info,
++				     void *data), void *data);
  
- #include <asm/cacheflush.h>
- #include <asm/iommu.h>
-@@ -387,6 +388,42 @@ struct pasid_entry;
- struct pasid_state_entry;
- struct page_req_dsc;
- 
-+struct dmar_domain {
-+	int	nid;			/* node id */
-+
-+	unsigned	iommu_refcnt[DMAR_UNITS_SUPPORTED];
-+					/* Refcount of devices per iommu */
-+
-+
-+	u16		iommu_did[DMAR_UNITS_SUPPORTED];
-+					/* Domain ids per IOMMU. Use u16 since
-+					 * domain ids are 16 bit wide according
-+					 * to VT-d spec, section 9.3 */
-+
-+	bool has_iotlb_device;
-+	struct list_head devices;	/* all devices' list */
-+	struct iova_domain iovad;	/* iova's that belong to this domain */
-+
-+	struct dma_pte	*pgd;		/* virtual address */
-+	int		gaw;		/* max guest address width */
-+
-+	/* adjusted guest address width, 0 is level 2 30-bit */
-+	int		agaw;
-+
-+	int		flags;		/* flags to find out type of domain */
-+
-+	int		iommu_coherency;/* indicate coherency of iommu access */
-+	int		iommu_snooping; /* indicate snooping control feature*/
-+	int		iommu_count;	/* reference count of iommu */
-+	int		iommu_superpage;/* Level of superpages supported:
-+					   0 == 4KiB (no superpages), 1 == 2MiB,
-+					   2 == 1GiB, 3 == 512GiB, 4 == 1TiB */
-+	u64		max_addr;	/* maximum mapped address */
-+
-+	struct iommu_domain domain;	/* generic domain data structure for
-+					   iommu core */
-+};
-+
- struct intel_iommu {
- 	void __iomem	*reg; /* Pointer to hardware regs, virtual addr */
- 	u64 		reg_phys; /* physical address of hw register set */
-@@ -435,6 +472,25 @@ struct intel_iommu {
- 	u32		flags;      /* Software defined flags */
- };
- 
-+/* PCI domain-device relationship */
-+struct device_domain_info {
-+	struct list_head link;	/* link to domain siblings */
-+	struct list_head global; /* link to global list */
-+	u8 bus;			/* PCI bus number */
-+	u8 devfn;		/* PCI devfn number */
-+	u16 pfsid;		/* SRIOV physical function source ID */
-+	u8 pasid_supported:3;
-+	u8 pasid_enabled:1;
-+	u8 pri_supported:1;
-+	u8 pri_enabled:1;
-+	u8 ats_supported:1;
-+	u8 ats_enabled:1;
-+	u8 ats_qdep;
-+	struct device *dev; /* it's NULL for PCIe-to-PCI bridge */
-+	struct intel_iommu *iommu; /* IOMMU used by this device */
-+	struct dmar_domain *domain; /* pointer to domain */
-+};
-+
- static inline void __iommu_flush_cache(
- 	struct intel_iommu *iommu, void *addr, int size)
- {
-@@ -460,6 +516,11 @@ extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu *iommu);
- 
- extern int dmar_ir_support(void);
- 
-+struct dmar_domain *get_valid_domain_for_dev(struct device *dev);
-+void *alloc_pgtable_page(int node);
-+void free_pgtable_page(void *vaddr);
-+struct intel_iommu *domain_get_iommu(struct dmar_domain *domain);
-+
  #ifdef CONFIG_INTEL_IOMMU_SVM
  extern int intel_svm_alloc_pasid_tables(struct intel_iommu *iommu);
- extern int intel_svm_free_pasid_tables(struct intel_iommu *iommu);
 -- 
 2.7.4
 
