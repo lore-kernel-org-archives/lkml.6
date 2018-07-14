@@ -2,86 +2,113 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9580ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 16:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C87BECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 16:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7740B2086E
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 16:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7740B2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 5184A2086E
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 16:26:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5184A2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbeGNQpy (ORCPT
+        id S1731090AbeGNQqD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 12:45:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50965 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbeGNQpx (ORCPT
+        Sat, 14 Jul 2018 12:46:03 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:39199 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbeGNQqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 12:45:53 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1feNN8-00084x-5m; Sat, 14 Jul 2018 16:26:14 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     James Bottomley <jejb@linux.vnet.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] keys: trusted: remove redundant variable keyhndl
-Date:   Sat, 14 Jul 2018 17:26:11 +0100
-Message-Id: <20180714162611.8381-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Sat, 14 Jul 2018 12:46:02 -0400
+Received: from [192.168.0.117] (188.146.224.185.nat.umts.dynamic.t-mobile.pl [188.146.224.185])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 2D0ADCF163;
+        Sat, 14 Jul 2018 18:33:19 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH v5 1/7] dt-bindings: net: bluetooth: Add
+ mediatek-bluetooth
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <d8a5b34513cf2187a2b23a513feaa358d719bc14.1531150733.git.sean.wang@mediatek.com>
+Date:   Sat, 14 Jul 2018 18:26:24 +0200
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <7E55939D-7F8A-4832-9DD5-EFB3B19ACF0B@holtmann.org>
+References: <cover.1531150733.git.sean.wang@mediatek.com>
+ <d8a5b34513cf2187a2b23a513feaa358d719bc14.1531150733.git.sean.wang@mediatek.com>
+To:     sean.wang@mediatek.com
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi Sean,
 
-Variable keyhndl is being assigned but is never used hence it is
-redundant and can be removed.
+> Add binding document for a SoC built-in device using MediaTek protocol.
+> Which could be found on MT7622 SoC or other similar MediaTek SoCs.
+> 
+> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
+> 1 file changed, 35 insertions(+)
+> create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+> new file mode 100644
+> index 0000000..1335429
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
+> @@ -0,0 +1,35 @@
+> +MediaTek SoC built-in Bluetooth Devices
+> +==================================
+> +
+> +This device is a serial attached device to BTIF device and thus it must be a
+> +child node of the serial node with BTIF. The dt-bindings details for BTIF
+> +device can be known via Documentation/devicetree/bindings/serial/8250.txt.
+> +
+> +Required properties:
+> +
+> +- compatible:	Must be one of
+> +		  "mediatek,mt7622-bluetooth"": for MT7622 SoC
 
-Cleans up clang warning:
-warning: variable 'keyhndl' set but not used [-Wunused-but-set-variable]
+this does not match with the example below. And one of, should be normally be a list.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- security/keys/trusted.c | 2 --
- 1 file changed, 2 deletions(-)
+> +- clocks:	Should be the clock specifiers corresponding to the entry in
+> +		clock-names property.
+> +- clock-names:	Should contain "ref" entries.
+> +- power-domains: Phandle to the power domain that the device is part of
+> +
+> +Example:
+> +
+> +	btif: serial@1100c000 {
+> +		compatible = "mediatek,mt7622-btif",
+> +			     "mediatek,mtk-btif";
+> +		reg = <0 0x1100c000 0 0x1000>;
+> +		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
+> +		clocks = <&pericfg CLK_PERI_BTIF_PD>;
+> +		clock-names = "main";
+> +		reg-shift = <2>;
+> +		reg-io-width = <4>;
+> +
+> +		bluetooth {
+> +			compatible = "mediatek,mt7622-bluetooth";
+> +			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
+> +			clocks = <&clk25m>;
+> +			clock-names = "ref";
+> +		};
+> +	};
 
-diff --git a/security/keys/trusted.c b/security/keys/trusted.c
-index b69d3b1777c2..0400c1a00467 100644
---- a/security/keys/trusted.c
-+++ b/security/keys/trusted.c
-@@ -585,7 +585,6 @@ static int tpm_unseal(struct tpm_buf *tb,
- 	uint32_t authhandle2 = 0;
- 	unsigned char cont = 0;
- 	uint32_t ordinal;
--	uint32_t keyhndl;
- 	int ret;
- 
- 	/* sessions for unsealing key and data */
-@@ -601,7 +600,6 @@ static int tpm_unseal(struct tpm_buf *tb,
- 	}
- 
- 	ordinal = htonl(TPM_ORD_UNSEAL);
--	keyhndl = htonl(SRKHANDLE);
- 	ret = tpm_get_random(NULL, nonceodd, TPM_NONCE_SIZE);
- 	if (ret != TPM_NONCE_SIZE) {
- 		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
--- 
-2.17.1
+Regards
+
+Marcel
 
