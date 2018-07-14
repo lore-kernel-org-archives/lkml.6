@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A02F9ECDFAA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D347DECDFB0
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E6C208A4
+	by mail.kernel.org (Postfix) with ESMTP id 8D2BC208DC
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:58:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rgs+GXf9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E6C208A4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i83OitsB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2BC208DC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbeGNGQg (ORCPT
+        id S1726794AbeGNGQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 02:16:36 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38554 "EHLO
+        Sat, 14 Jul 2018 02:16:37 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:39440 "EHLO
         mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbeGNGQg (ORCPT
+        with ESMTP id S1726539AbeGNGQh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 02:16:36 -0400
-Received: by mail-pf0-f193.google.com with SMTP id v15-v6so3748006pff.5
+        Sat, 14 Jul 2018 02:16:37 -0400
+Received: by mail-pf0-f193.google.com with SMTP id s21-v6so23773254pfm.6
         for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 22:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oTIwZvp6fRaz4OInkzkeU1SS9J6FDLKbetb9RuRxzDc=;
-        b=Rgs+GXf9ROmhAkC8uu4rThvwc0Q1A5MA0FBx40dNatEEL+Fu7ksTB4Sd0VTxRJhyuL
-         g0ipswgSIalX6OzqatYpxTG9+tWTcT/2ZbMzYawQDw098Dr601D/NyOcGqTio7DyV5re
-         6Uks937Ulm8USYlvlYx0/RtLDumHl578dvtTYifVzls1Cllluoil3tsOCFCk8fKCAJBq
-         00rAgWy2uePkYZ0uy1OGNJDf3T8x5vOp8U3ST3DyvwUKmCDzCfgni2uGwjvj9jeKP/Gl
-         QgDeqJF5WQUVafrZXxGhxviikU6BK+o/r4GrUkHc6GH8r7dWK73YZC+9nrM8AhD/SLhG
-         9ukw==
+        bh=9K2sF/3Jk6ncSRVLrzbeb5yBbFxpwj4A9/nCOf1KMo4=;
+        b=i83OitsBogmQktXUjOtFXqzLKA1UcR79jjF6Jep/TuYk17USz/S86gqfJYh8lpSqII
+         taGGIohAYPExCltLCu2WWy/Zj5ClFwGBrdkzghRkpk/rCvQkK3Qy5KXNxI0gAuFtuial
+         DOYYVz8Vg1ceDhvdgxoFb3O6kWlqaAgNY8YF8lFueYgt7o/zxds2qi94UNnNjMUbWcDG
+         +C8/JuocBgiGBdlbFpOl6H0fWmmFSYok5eUpbCoccDR+ZU7dNIWejO29Ywc69PYovwdp
+         xv63kR2fzNI5RlAJ0UMGsC+0pZzT9gPHWdRGwjCeb4nzMgdz1KJic75nTc9ODDz8GrDp
+         5h6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=oTIwZvp6fRaz4OInkzkeU1SS9J6FDLKbetb9RuRxzDc=;
-        b=YWF5jbSh9LzabY3Bah/5Xyqypf048r2r6jahysBsrxPL4QKlcNyYmXzoAqYUE4miYA
-         m/0/3KgTGbhiRageL844dbfpmuO9G566HJ51ILk/WEipiMtw30mFKNZycyW8GefLK0cI
-         y8W+vUdJ/x1+867D22xedRAOrkmPWB8k/6NbB/rnXo4rDvZav+GzUKFStOWbq+Hvyf//
-         In2Xgc7wqRYNBXxK3Ii/q69WNp/XY71/ACo/eLIGiGBcKysTDU5VPx6BRSlA6vi0D8wq
-         8EdcYKxsP4nDdW9HZvCgFNrbfEySOB0+9GBqCcqwpYk6hJPICEbwKJzRCAKNV69wpN4s
-         uclg==
-X-Gm-Message-State: AOUpUlGG7mgL9oHoYhut/ucIeefxE8Eajq0yzyYVnBPo9ByhJ1dH0+uk
-        29FOBMp+Oxm617Xp0w3Wj1g=
-X-Google-Smtp-Source: AAOMgpfjMiyGPSySB8Ob6KuxlENN3X5+Yv2ag4FA9a8sDeunf0Ju0SAMrkQ3u7BnWivFmcNhhgLLhg==
-X-Received: by 2002:a63:1f20:: with SMTP id f32-v6mr8262013pgf.84.1531547926630;
-        Fri, 13 Jul 2018 22:58:46 -0700 (PDT)
+        bh=9K2sF/3Jk6ncSRVLrzbeb5yBbFxpwj4A9/nCOf1KMo4=;
+        b=L3W9yBW5yuUBZxQvPxuLTW3rxpA5ixUu33YBPr/c9Z6VvF8MPSD2A6z0DuvgUrr9MA
+         TeSvydQ1PfjJicEmcmNRF73IimIqnJGH3Io5NpUR5eCwTAzDZsK/hmBxpJtGkJVo52pm
+         p2Kp8oqLyzyKopNKcYIChqngCDoVl3yP+bmCR4Jj0I3xkMFUnCOscpSNJJIYqWrbN96H
+         0mrV//D/nuip6No1b7EWK7IigbEZUqFPHopobhSRKhTM3AD40TZ5tjt6W51Cf/qRv7S+
+         939W5KyGZLLrY2qHZrjKRU6kQI2nVyGd5VmYo6N2Yx5vcBxuXXwQbTCaKqX7ICnIRhFU
+         bckQ==
+X-Gm-Message-State: AOUpUlE91WUgQaR+cnaqvHz3Mb1Jp/qqX/s4hYecuAWwS0ingfne9r+S
+        uq5e3IQd2GP4Al09PZ1JTuw=
+X-Google-Smtp-Source: AAOMgpfnKtSDhbpaQ9DPHEE+HQgB0XiziYKt4cG6MxO4+oMAZixZV67VTuR+RioNJWK3CkdYSiwXWA==
+X-Received: by 2002:a63:c114:: with SMTP id w20-v6mr8464298pgf.234.1531547927535;
+        Fri, 13 Jul 2018 22:58:47 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.45
+        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 22:58:46 -0700 (PDT)
+        Fri, 13 Jul 2018 22:58:47 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 02/18] MAINTAINERS: Add maintainer for drivers/staging/gasket
-Date:   Fri, 13 Jul 2018 22:58:00 -0700
-Message-Id: <20180714055816.223754-3-toddpoynor@gmail.com>
+Subject: [PATCH 03/18] staging: gasket: typo and whitespace cleanups
+Date:   Fri, 13 Jul 2018 22:58:01 -0700
+Message-Id: <20180714055816.223754-4-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180714055816.223754-1-toddpoynor@gmail.com>
 References: <20180714055816.223754-1-toddpoynor@gmail.com>
@@ -81,26 +81,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Todd Poynor <toddpoynor@google.com> will be a maintainer of the Gasket
-and Apex drivers.
+Trivial typo and whitespace fixes.
 
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/gasket/apex_driver.c       | 2 +-
+ drivers/staging/gasket/gasket_core.h       | 2 +-
+ drivers/staging/gasket/gasket_page_table.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 562ee1e1cfd6..8f44e7bed49e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5968,6 +5968,7 @@ GASKET DRIVER FRAMEWORK
- M:	Rob Springer <rspringer@google.com>
- M:	John Joseph <jnjoseph@google.com>
- M:	Ben Chan <benchan@chromium.org>
-+M:	Todd Poynor <toddpoynor@mgail.com>
- S:	Maintained
- F:	drivers/staging/gasket/
+diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+index 395256704428..f2d082c06c98 100644
+--- a/drivers/staging/gasket/apex_driver.c
++++ b/drivers/staging/gasket/apex_driver.c
+@@ -500,7 +500,7 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type)
+ 					APEX_BAR2_REG_USER_HIB_DMA_PAUSED, 1, 1,
+ 					APEX_RESET_DELAY, APEX_RESET_RETRY)) {
+ 		gasket_log_error(gasket_dev,
+-				 "DMAs did not quiece within timeout (%d ms)",
++				 "DMAs did not quiesce within timeout (%d ms)",
+ 				 APEX_RESET_RETRY * APEX_RESET_DELAY);
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index 5d6535a0f254..77d08c1265ca 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -63,7 +63,7 @@ enum gasket_interrupt_type {
  
+ /* Used to describe a Gasket interrupt. Contains an interrupt index, a register,
+  * and packing data for that interrupt. The register and packing data
+- * fields is relevant only for PCI_MSIX interrupt type and can be
++ * fields are relevant only for PCI_MSIX interrupt type and can be
+  * set to 0 for everything else.
+  */
+ struct gasket_interrupt_desc {
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index 5d3d33cac12f..d7600d8e385f 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -354,7 +354,7 @@ int gasket_page_table_init(
+ 	    pg_tbl->config.mode == GASKET_PAGE_TABLE_MODE_SIMPLE) {
+ 		pg_tbl->num_simple_entries = total_entries;
+ 		pg_tbl->num_extended_entries = 0;
+-		pg_tbl->extended_flag =	1ull << page_table_config->extended_bit;
++		pg_tbl->extended_flag = 1ull << page_table_config->extended_bit;
+ 	} else {
+ 		pg_tbl->num_simple_entries = 0;
+ 		pg_tbl->num_extended_entries = total_entries;
 -- 
 2.18.0.203.gfac676dfb9-goog
 
