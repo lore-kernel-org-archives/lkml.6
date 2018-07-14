@@ -6,38 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E83ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EA8ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A44208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A44208CC
+	by mail.kernel.org (Postfix) with ESMTP id 9ED7A208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED7A208CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeGNFRY (ORCPT
+        id S1727001AbeGNFR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:17:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:43162 "EHLO mga02.intel.com"
+        Sat, 14 Jul 2018 01:17:28 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53599 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeGNFRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:17:23 -0400
+        id S1725880AbeGNFR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:17:27 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 21:59:43 -0700
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 21:59:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,350,1526367600"; 
-   d="scan'208";a="64603295"
+   d="scan'208";a="71297877"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by FMSMGA003.fm.intel.com with ESMTP; 13 Jul 2018 21:59:43 -0700
-Subject: [PATCH v6 03/13] device-dax: Set page->index
+  by fmsmga004.fm.intel.com with ESMTP; 13 Jul 2018 21:59:48 -0700
+Subject: [PATCH v6 04/13] filesystem-dax: Set page->index
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     Jan Kara <jack@suse.cz>, hch@lst.de, linux-fsdevel@vger.kernel.org,
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Fri, 13 Jul 2018 21:49:45 -0700
-Message-ID: <153154378540.34503.13530001843688931438.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Fri, 13 Jul 2018 21:49:50 -0700
+Message-ID: <153154379074.34503.9610948190338126460.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -49,48 +52,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In support of enabling memory_failure() handling for device-dax
+In support of enabling memory_failure() handling for filesystem-dax
 mappings, set ->index to the pgoff of the page. The rmap implementation
-requires ->index to bound the search through the vma interval tree.
+requires ->index to bound the search through the vma interval tree. The
+index is set and cleared at dax_associate_entry() and
+dax_disassociate_entry() time respectively.
 
-The ->index value is never cleared. There is no possibility for the
-page to become associated with another pgoff while the device is
-enabled. When the device is disabled the 'struct page' array for the
-device is destroyed and ->index is reinitialized to zero.
-
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/device.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/dax.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index 95cfcfd612df..361a11089591 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -416,6 +416,7 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
+diff --git a/fs/dax.c b/fs/dax.c
+index 641192808bb6..4de11ed463ce 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -319,18 +319,27 @@ static unsigned long dax_radix_end_pfn(void *entry)
+ 	for (pfn = dax_radix_pfn(entry); \
+ 			pfn < dax_radix_end_pfn(entry); pfn++)
  
- 	if (rc == VM_FAULT_NOPAGE) {
- 		unsigned long i;
-+		pgoff_t pgoff;
+-static void dax_associate_entry(void *entry, struct address_space *mapping)
++/*
++ * TODO: for reflink+dax we need a way to associate a single page with
++ * multiple address_space instances at different linear_page_index()
++ * offsets.
++ */
++static void dax_associate_entry(void *entry, struct address_space *mapping,
++		struct vm_area_struct *vma, unsigned long address)
+ {
+-	unsigned long pfn;
++	unsigned long size = dax_entry_size(entry), pfn, index;
++	int i = 0;
  
- 		/*
- 		 * In the device-dax case the only possibility for a
-@@ -423,6 +424,8 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- 		 * mapped. No need to consider the zero page, or racing
- 		 * conflicting mappings.
- 		 */
-+		pgoff = linear_page_index(vmf->vma, vmf->address
-+				& ~(fault_size - 1));
- 		for (i = 0; i < fault_size / PAGE_SIZE; i++) {
- 			struct page *page;
+ 	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED))
+ 		return;
  
-@@ -430,6 +433,7 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- 			if (page->mapping)
- 				continue;
- 			page->mapping = filp->f_mapping;
-+			page->index = pgoff + i;
- 		}
++	index = linear_page_index(vma, address & ~(size - 1));
+ 	for_each_mapped_pfn(entry, pfn) {
+ 		struct page *page = pfn_to_page(pfn);
+ 
+ 		WARN_ON_ONCE(page->mapping);
+ 		page->mapping = mapping;
++		page->index = index + i++;
  	}
- 	dax_read_unlock(id);
+ }
+ 
+@@ -348,6 +357,7 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+ 		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
+ 		WARN_ON_ONCE(page->mapping && page->mapping != mapping);
+ 		page->mapping = NULL;
++		page->index = 0;
+ 	}
+ }
+ 
+@@ -701,7 +711,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+ 	new_entry = dax_radix_locked_entry(pfn, flags);
+ 	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
+ 		dax_disassociate_entry(entry, mapping, false);
+-		dax_associate_entry(new_entry, mapping);
++		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address);
+ 	}
+ 
+ 	if (dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
 
