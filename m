@@ -6,117 +6,68 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A6AECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 11:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333E3ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 11:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DD3208A3
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 11:18:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8DD3208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D7DCB2083C
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 11:20:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DCB2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbeGNLb3 (ORCPT
+        id S1726984AbeGNLje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 07:31:29 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45806 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725978AbeGNLb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 07:31:29 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id AC88692BE3564;
-        Sat, 14 Jul 2018 19:12:42 +0800 (CST)
-Received: from [127.0.0.1] (10.177.16.168) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Sat, 14 Jul 2018
- 19:12:38 +0800
-Subject: Re: [V9fs-developer] [PATCH] net/9p: Fix a deadlock case in the
- virtio transport
-To:     Dominique Martinet <asmadeus@codewreck.org>
-References: <5B49B8CF.40709@huawei.com> <20180714090502.GA16186@nautica>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5B49DAA5.3020600@huawei.com>
-Date:   Sat, 14 Jul 2018 19:12:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Sat, 14 Jul 2018 07:39:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51812 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726412AbeGNLjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 07:39:33 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B9AC2207AB; Sat, 14 Jul 2018 13:20:47 +0200 (CEST)
+Received: from bootlin.com (ABordeaux-654-1-198-104.w90-55.abo.wanadoo.fr [90.55.201.104])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6791B203EC;
+        Sat, 14 Jul 2018 13:20:47 +0200 (CEST)
+Date:   Sat, 14 Jul 2018 13:20:47 +0200
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net-next 4/5] net: mvpp2: debugfs: add entries for
+ classifier flows
+Message-ID: <20180714132047.43a03fab@bootlin.com>
+In-Reply-To: <20180713161344.19872-5-maxime.chevallier@bootlin.com>
+References: <20180713161344.19872-1-maxime.chevallier@bootlin.com>
+        <20180713161344.19872-5-maxime.chevallier@bootlin.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180714090502.GA16186@nautica>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/14 17:05, Dominique Martinet wrote:
-> jiangyiwen wrote on Sat, Jul 14, 2018:
->> When client has multiple threads that issue io requests all the
->> time, and the server has a very good performance, it may cause
->> cpu is running in the irq context for a long time because it can
->> check virtqueue has buf in the *while* loop.
->>
->> So we should keep chan->lock in the whole loop.
-> 
-> Hmm, this is generally bad practice to hold a spin lock for long.
-> In general, spin locks are meant to protect data, not code.
-> 
-> I'd want some numbers to decide on this one, even if I think this
-> particular case is safe (e.g. this cannot dead-lock)
-> 
+On Fri, 13 Jul 2018 18:13:43 +0200
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-Actually, the loop will not hold a spin lock for long, because other
-threads will not issue new requests in this case. In addition,
-virtio-blk or virtio-scsi also use this solution, I guess it may also
-encounter this problem before.
 
->> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
->> ---
->>  net/9p/trans_virtio.c | 8 +++-----
->>  1 file changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
->> index 05006cb..9b0f5f2 100644
->> --- a/net/9p/trans_virtio.c
->> +++ b/net/9p/trans_virtio.c
->> @@ -148,20 +148,18 @@ static void req_done(struct virtqueue *vq)
->>
->>  	p9_debug(P9_DEBUG_TRANS, ": request done\n");
->>
->> +	spin_lock_irqsave(&chan->lock, flags);
->>  	while (1) {
->> -		spin_lock_irqsave(&chan->lock, flags);
->>  		req = virtqueue_get_buf(chan->vq, &len);
->> -		if (req == NULL) {
->> -			spin_unlock_irqrestore(&chan->lock, flags);
->> +		if (req == NULL)
->>  			break;
->> -		}
->>  		chan->ring_bufs_avail = 1;
->> -		spin_unlock_irqrestore(&chan->lock, flags);
->>  		/* Wakeup if anyone waiting for VirtIO ring space. */
->>  		wake_up(chan->vc_wq);
-> 
-> In particular, the wake up here echoes to wait events that will
-> immediately try to grab the lock, and will needlessly spin on it until
-> this thread is done.
-> If we do go this way I'd want setting chan->ring_bufs_avail to be done
-> just before unlocking and the wakeup to be done just after unlocking out
-> of the loop iff we processed at least one iteration here.
-> 
+>+static int mvpp2_dbgfs_flow_id_show(struct seq_file *s, void *unused)
+>+{
+>+	struct mvpp2_dbgfs_flow_entry *entry = s->private;
+>+	struct mvpp2_cls_flow *f;
+>+
+>+	f = mvpp2_cls_flow_get(entry->flow);
 
-I can move the wakeup operation after the unlocking. Like what I said
-above, I think this loop will not execute for long.
+This won't compile with commit
+9cee8c437543 ("net: mvpp2: mvpp2_cls_flow_get() can be static")
+
+I should have seen that missing static in the RSS series, now that
+it's fixed I'll send a V2 of that debugfs series, to make that function
+non static for the right reason this time.
 
 Thanks,
-Yiwen.
 
-> That should also save you precious cpu cycles while under lock :)
-> 
-
-
+Maxime
