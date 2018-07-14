@@ -2,145 +2,99 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BDFECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 669BAECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEFC2208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:01:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEFC2208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1512320873
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:04:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1512320873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727616AbeGNFSU (ORCPT
+        id S1726081AbeGNFWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:18:20 -0400
-Received: from mga09.intel.com ([134.134.136.24]:7998 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725986AbeGNFSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:18:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 22:00:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,350,1526367600"; 
-   d="scan'208";a="66888740"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Jul 2018 22:00:35 -0700
-Subject: [PATCH v6 13/13] libnvdimm,
- pmem: Restore page attributes when clearing errors
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     hch@lst.de, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 13 Jul 2018 21:50:37 -0700
-Message-ID: <153154383784.34503.6412760695151314711.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Sat, 14 Jul 2018 01:22:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34538 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725863AbeGNFWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:22:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E8D33AE77;
+        Sat, 14 Jul 2018 05:04:39 +0000 (UTC)
+Date:   Sat, 14 Jul 2018 07:04:37 +0200
+From:   Joerg Roedel <jroedel@suse.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>
+Subject: Re: [PATCH 30/39] x86/mm/pti: Clone entry-text again in
+ pti_finalize()
+Message-ID: <20180714050437.b4lztahdehaom6el@suse.de>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+ <1531308586-29340-31-git-send-email-joro@8bytes.org>
+ <CALCETrU9pe03cW2d+=nXy_iLbiYWzX1dU2wYCfHEN4gb69Q_EA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrU9pe03cW2d+=nXy_iLbiYWzX1dU2wYCfHEN4gb69Q_EA@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use clear_mce_nospec() to restore WB mode for the kernel linear mapping
-of a pmem page that was marked 'HWPoison'. A page with 'HWPoison' set
-has also been marked UC in PAT (page attribute table) via
-set_mce_nospec() to prevent speculative retrievals of poison.
+On Fri, Jul 13, 2018 at 04:21:45PM -0700, Andy Lutomirski wrote:
+> On Wed, Jul 11, 2018 at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> > From: Joerg Roedel <jroedel@suse.de>
+> >
+> > The mapping for entry-text might have changed in the kernel
+> > after it was cloned to the user page-table. Clone again
+> > to update the user page-table to bring the mapping in sync
+> > with the kernel again.
+> 
+> Can't we just defer pti_init() until after mark_readonly()?  What am I missing?
 
-The 'HWPoison' flag is only cleared when overwriting an entire page.
+I tried that:
 
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/nvdimm/pmem.c |   26 ++++++++++++++++++++++++++
- drivers/nvdimm/pmem.h |   13 +++++++++++++
- 2 files changed, 39 insertions(+)
+	https://lore.kernel.org/lkml/1530618746-23116-1-git-send-email-joro@8bytes.org/
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 68940356cad3..bdaaa7ed49fd 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -20,6 +20,7 @@
- #include <linux/hdreg.h>
- #include <linux/init.h>
- #include <linux/platform_device.h>
-+#include <linux/set_memory.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/badblocks.h>
-@@ -51,6 +52,30 @@ static struct nd_region *to_region(struct pmem_device *pmem)
- 	return to_nd_region(to_dev(pmem)->parent);
- }
- 
-+static void hwpoison_clear(struct pmem_device *pmem,
-+		phys_addr_t phys, unsigned int len)
-+{
-+	unsigned long pfn_start, pfn_end, pfn;
-+
-+	/* only pmem in the linear map supports HWPoison */
-+	if (is_vmalloc_addr(pmem->virt_addr))
-+		return;
-+
-+	pfn_start = PHYS_PFN(phys);
-+	pfn_end = pfn_start + PHYS_PFN(len);
-+	for (pfn = pfn_start; pfn < pfn_end; pfn++) {
-+		struct page *page = pfn_to_page(pfn);
-+
-+		/*
-+		 * Note, no need to hold a get_dev_pagemap() reference
-+		 * here since we're in the driver I/O path and
-+		 * outstanding I/O requests pin the dev_pagemap.
-+		 */
-+		if (test_and_clear_pmem_poison(page))
-+			clear_mce_nospec(pfn);
-+	}
-+}
-+
- static blk_status_t pmem_clear_poison(struct pmem_device *pmem,
- 		phys_addr_t offset, unsigned int len)
- {
-@@ -65,6 +90,7 @@ static blk_status_t pmem_clear_poison(struct pmem_device *pmem,
- 	if (cleared < len)
- 		rc = BLK_STS_IOERR;
- 	if (cleared > 0 && cleared / 512) {
-+		hwpoison_clear(pmem, pmem->phys_addr + offset, cleared);
- 		cleared /= 512;
- 		dev_dbg(dev, "%#llx clear %ld sector%s\n",
- 				(unsigned long long) sector, cleared,
-diff --git a/drivers/nvdimm/pmem.h b/drivers/nvdimm/pmem.h
-index a64ebc78b5df..59cfe13ea8a8 100644
---- a/drivers/nvdimm/pmem.h
-+++ b/drivers/nvdimm/pmem.h
-@@ -1,6 +1,7 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #ifndef __NVDIMM_PMEM_H__
- #define __NVDIMM_PMEM_H__
-+#include <linux/page-flags.h>
- #include <linux/badblocks.h>
- #include <linux/types.h>
- #include <linux/pfn_t.h>
-@@ -27,4 +28,16 @@ struct pmem_device {
- 
- long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
- 		long nr_pages, void **kaddr, pfn_t *pfn);
-+
-+#ifdef CONFIG_MEMORY_FAILURE
-+static inline bool test_and_clear_pmem_poison(struct page *page)
-+{
-+	return TestClearPageHWPoison(page);
-+}
-+#else
-+static inline bool test_and_clear_pmem_poison(struct page *page)
-+{
-+	return false;
-+}
-+#endif
- #endif /* __NVDIMM_PMEM_H__ */
+But while testing it turned out that the kernel potentially executes
+user-space code already before mark_readonly() has ran. This happens
+when some initcall requests a module and the initrd is already
+populated. Then usermode-helper kicks in and runs a userspace binary
+already. When pti_init() has not run yet the user-space page-table is
+completly empty, causing a triple fault when we switch to the user cr3
+on the way to user-space.
 
+
+Regards,
+
+	Joerg
