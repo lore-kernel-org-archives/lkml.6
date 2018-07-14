@@ -6,385 +6,156 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6515ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 02:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9184ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 02:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A99208A4
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 02:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63538208A4
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 02:47:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GRinNfCD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A99208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HzJeyr4m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63538208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731946AbeGNDCB (ORCPT
+        id S1731960AbeGNDEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 23:02:01 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39109 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731264AbeGNDCA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 23:02:00 -0400
-Received: by mail-oi0-f67.google.com with SMTP id d189-v6so65620768oib.6
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 19:44:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=lYFHG7jLvOP6tXZKfN123EYVMJ9x0ccr6x1NZiIDe+k=;
-        b=GRinNfCDfX+/ny7RHb0w5vFgIeo+e2LqWGvRsT0fROUkA9Urf7ia557EJhgEZGUvbx
-         iqnyC2dzaR6+dF959k65DQhygRpo7R9ZnO1HM3tAGBbH9UNn2X4pvKdCfpKLKbfOFwYt
-         R+iE8ZmOOk1ffzZfLLx1CSVVo+hHNnA1vRKD8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=lYFHG7jLvOP6tXZKfN123EYVMJ9x0ccr6x1NZiIDe+k=;
-        b=WIx1hWFp1qNFk9QPz8/YhNBTjspBthoFg2lPJ7sJQ+FpOjZtxTuX1H8xPAuJ1pKgu8
-         8BJk1GFYwfXA6YxfcEyIlCffCPpVruU8n9+oc9Y9+iTGd025RllyljBbHusfQU0LkR3S
-         fZae5F9nGf7jZZYRp5NWwC93CF2GFhwpeo3tS3p5c4Xkw+9thUrSNieDhmjMfXCLbF3t
-         kv2f125OsO00pR8hCNG2kHvm0CTD5FKcsesK8R/+kBF+PTwaySC24wM1X0AdYgQTtHuv
-         hRMPU0Bx1sr4zFRcM/lujOgAABLetcumoG+dFWON5aNWzm2VmzUdLwT/JKAgmjHGpLv2
-         ychw==
-X-Gm-Message-State: AOUpUlFKMbFm1FIW3+60qMs+bzUxKA/kv3K9KDVMON+Y4vYYjCgLeZ4e
-        nFOzKTJxp55yI1oL/ajBjf/k50tP33LT5WvvVZ3YeA==
-X-Google-Smtp-Source: AAOMgpdbNYP1GlD9pzufzAuNMQo8IIOhNLfAG0DELCETdwEAOneCkOI+i0u4Mq6x8f2Sgb5Nyu94kVRQSkOJZq1egMI=
-X-Received: by 2002:aca:7c2:: with SMTP id 185-v6mr9775335oih.31.1531536281079;
- Fri, 13 Jul 2018 19:44:41 -0700 (PDT)
+        Fri, 13 Jul 2018 23:04:55 -0400
+Received: from ozlabs.org ([203.11.71.1]:39417 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731526AbeGNDEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 23:04:55 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41SDc13jkLz9s29;
+        Sat, 14 Jul 2018 12:47:29 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531536452;
+        bh=bfvhLVNmxCMflu9cNNv3CmZB2N9k8z24ofsnjfUz11s=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=HzJeyr4m/iNf4/l4rjf3/qW3LgIGTpZ+SLYkUppXnXTch6dv8jvXSyjUvbxoVGr3J
+         s6yohZcGedHWPyf6YRgzcubFTxlCfgyKT8uFhVn9/lLGo/Rdwzm4Ckb86LD8fBf+/g
+         BtRmX6/OIEgQtD/AghX5brADPiJs7OlS3rz0zRIc7uqFtdwR8xhlzvljUnRCwI4RyN
+         D4J2AN59mVhqtHbQemLChIzafjuzO3in3IZdJl++3POEsDdEzY1D7oJTAtED9TIkbh
+         HPZ+W0q9YWwrIcV6+34P3zcPArl1ThOW/rZsgACEoZKOEfHbbDlbX+MI53FgaSHfx1
+         RbDcH8jSHTd+A==
+Date:   Sat, 14 Jul 2018 12:47:28 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     akpm@linux-foundation.org, Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
+        mhocko@suse.cz, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+Subject: Re: mmotm 2018-07-13-16-51 uploaded (PSI)
+Message-ID: <20180714124728.562ff3af@canb.auug.org.au>
+In-Reply-To: <cf4f5b65-6333-a1f0-6118-16fc0e5bc221@infradead.org>
+References: <20180713235138.HoxHd%akpm@linux-foundation.org>
+        <cf4f5b65-6333-a1f0-6118-16fc0e5bc221@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 19:44:40
- -0700 (PDT)
-In-Reply-To: <7263fcd3-4bd0-d3b1-5468-5bd6234fbd53@gmail.com>
-References: <a0b874372f9ccd0491b54c79ac63b41812efef56.1531460834.git.baolin.wang@linaro.org>
- <7263fcd3-4bd0-d3b1-5468-5bd6234fbd53@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Sat, 14 Jul 2018 10:44:40 +0800
-Message-ID: <CAMz4kuLAJuK-eok6vJFLt4=S_9rnF3JniNVexXLbNTuHvbXsCA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] leds: core: Introduce generic pattern interface
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cSnV=4v+WpvU7pDVBd56S1W"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+--Sig_/cSnV=4v+WpvU7pDVBd56S1W
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 14 July 2018 at 04:07, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin,
->
-> Thank you for the update.
->
->
-> On 07/13/2018 08:21 AM, Baolin Wang wrote:
->>
->> From: Bjorn Andersson <bjorn.andersson@linaro.org>
->>
->> Some LED controllers have support for autonomously controlling
->> brightness over time, according to some preprogrammed pattern or
->> function.
->>
->> This adds a new optional operator that LED class drivers can implement
->> if they support such functionality as well as a new device attribute to
->> configure the pattern for a given LED.
->>
->> [Baolin Wang did some improvements.]
->>
->> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->> ---
->> Changes from v3:
->>   - Move the check in pattern_show() to of_led_classdev_register().
->>   - Add more documentation to explain how to set/clear one pattern.
->>
->> Changes from v2:
->>   - Change kernel version to 4.19.
->>   - Force user to return error pointer if failed to issue pattern_get().
->>   - Use strstrip() to trim trailing newline.
->>   - Other optimization.
->>
->> Changes from v1:
->>   - Add some comments suggested by Pavel.
->>   - Change 'delta_t' can be 0.
->>
->> Note: I removed the pattern repeat check and will get the repeat number by
->> adding
->> one extra file named 'pattern_repeat' according to previous discussion.
->> ---
->>   Documentation/ABI/testing/sysfs-class-led |   20 +++++
->>   drivers/leds/led-class.c                  |  118
->> +++++++++++++++++++++++++++++
->>   include/linux/leds.h                      |   19 +++++
->>   3 files changed, 157 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-led
->> b/Documentation/ABI/testing/sysfs-class-led
->> index 5f67f7a..f4b73ad 100644
->> --- a/Documentation/ABI/testing/sysfs-class-led
->> +++ b/Documentation/ABI/testing/sysfs-class-led
->> @@ -61,3 +61,23 @@ Description:
->>                 gpio and backlight triggers. In case of the backlight
->> trigger,
->>                 it is useful when driving a LED which is intended to
->> indicate
->>                 a device in a standby like state.
->> +
->> +What: /sys/class/leds/<led>/pattern
->> +Date:          July 2018
->> +KernelVersion: 4.19
->> +Description:
->> +               Specify a pattern for the LED, for LED hardware that
->> support
->> +               altering the brightness as a function of time.
->> +
->> +               The pattern is given by a series of tuples, of brightness
->> and
->> +               duration (ms). The LED is expected to traverse the series
->> and
->> +               each brightness value for the specified duration. Duration
->> of
->> +               0 means brightness should immediately change to new value.
->> +
->> +               As LED hardware might have different capabilities and
->> precision
->> +               the requested pattern might be slighly adjusted by the
->> driver
->> +               and the resulting pattern of such operation should be
->> returned
->> +               when this file is read.
->> +
->> +               Writing non-empty string to this file will active the
->> pattern,
->
->
-> s/active/activate/
+Hi all,
 
-Will fix the typo.
+On Fri, 13 Jul 2018 18:41:40 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
+>
+> On 07/13/2018 04:51 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2018-07-13-16-51 has been uploaded to
+> >=20
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> >=20
+> > mmotm-readme.txt says
+> >=20
+> > README for mm-of-the-moment:
+> >=20
+> > http://www.ozlabs.org/~akpm/mmotm/
+> >=20
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> >=20
+> > You will need quilt to apply these patches to the latest Linus release =
+(4.x
+> > or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated=
+ in
+> > http://ozlabs.org/~akpm/mmotm/series
+> >=20
+> > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > followed by the base kernel version against which this patch series is =
+to
+> > be applied. =20
+>=20
+>=20
+> ../include/linux/psi.h:12:13: error: conflicting types for 'psi_disabled'
+> extern bool psi_disabled;
+>=20
+>=20
+> choose one:)
+>=20
+> kernel/sched/psi.c:
+> bool psi_disabled __read_mostly;
+>=20
+>=20
+> include/linux/sched/stat.h:
+> 	extern int psi_disabled;
 
->
->
->> +               and empty string will disable the pattern.
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index 3c7e348..0992a0e 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -74,6 +74,119 @@ static ssize_t max_brightness_show(struct device *dev,
->>   }
->>   static DEVICE_ATTR_RO(max_brightness);
->>   +static ssize_t pattern_show(struct device *dev,
->> +                           struct device_attribute *attr, char *buf)
->> +{
->> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->> +       struct led_pattern *pattern;
->> +       size_t offset = 0;
->> +       int count, n, i;
->> +
->> +       pattern = led_cdev->pattern_get(led_cdev, &count);
->> +       if (IS_ERR(pattern))
->> +               return PTR_ERR(pattern);
->> +
->> +       for (i = 0; i < count; i++) {
->> +               n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
->> +                            pattern[i].brightness, pattern[i].delta_t);
->> +
->> +               if (offset + n >= PAGE_SIZE)
->> +                       goto err_nospc;
->> +
->> +               offset += n;
->> +       }
->> +
->> +       buf[offset - 1] = '\n';
->> +
->> +       kfree(pattern);
->> +       return offset;
->> +
->> +err_nospc:
->> +       kfree(pattern);
->> +       return -ENOSPC;
->> +}
->> +
->> +static ssize_t pattern_store(struct device *dev,
->> +                            struct device_attribute *attr,
->> +                            const char *buf, size_t size)
->> +{
->> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->> +       struct led_pattern *pattern = NULL;
->> +       char *sbegin, *elem, *s;
->> +       unsigned long val;
->> +       int ret = 0, len = 0;
->> +       bool odd = true;
->> +
->> +       sbegin = kstrndup(buf, size, GFP_KERNEL);
->> +       if (!sbegin)
->> +               return -ENOMEM;
->> +
->> +       /*
->> +        * Trim trailing newline, if the remaining string is empty,
->> +        * clear the pattern.
->> +        */
->> +       s = strstrip(sbegin);
->> +       if (!*s) {
->> +               if (led_cdev->pattern_clear)
->> +                       ret = led_cdev->pattern_clear(led_cdev);
->
->
-> Why you don't require pattern_clear op to be initialized?
-> Without it there seems to be no other way to disable the pattern.
->
-> Please fail in led_classdev_register() if it is NULL, similarly
-> as when pattern_get is NULL.
+I have added this to linux-next (in case Andrew doesn't have time to
+revise mmotm):
 
-Ah, I misunderstood your previous comments. Yes, we can ceck it in
-led_classdev_register().
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Sat, 14 Jul 2018 12:35:19 +1000
+Subject: [PATCH]  psi-pressure-stall-information-for-cpu-memory-and-io-fix-=
+fix-fix
 
->
->
->> +               goto out;
->> +       }
->> +
->> +       pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
->> +       if (!pattern) {
->> +               ret = -ENOMEM;
->> +               goto out;
->> +       }
->> +
->> +       /* Parse out the brightness & delta_t touples */
->> +       while ((elem = strsep(&s, " ")) != NULL) {
->> +               ret = kstrtoul(elem, 10, &val);
->> +               if (ret)
->> +                       goto out;
->> +
->> +               if (odd) {
->> +                       pattern[len].brightness = val;
->> +               } else {
->> +                       pattern[len].delta_t = val;
->> +                       len++;
->> +               }
->> +
->> +               odd = !odd;
->> +       }
->> +
->> +       /*
->> +        * Fail if we didn't find any data points or last data point was
->> partial
->> +        */
->> +       if (!len || !odd) {
->> +               ret = -EINVAL;
->> +               goto out;
->> +       }
->> +
->> +       ret = led_cdev->pattern_set(led_cdev, pattern, len);
->> +
->> +out:
->> +       kfree(pattern);
->> +       kfree(sbegin);
->> +       return ret < 0 ? ret : size;
->> +}
->> +static DEVICE_ATTR_RW(pattern);
->> +
->> +static umode_t led_class_attrs_mode(struct kobject *kobj,
->> +                                   struct attribute *attr, int index)
->> +{
->> +       struct device *dev = container_of(kobj, struct device, kobj);
->> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->> +
->> +       if (attr == &dev_attr_brightness.attr)
->> +               return attr->mode;
->> +       if (attr == &dev_attr_max_brightness.attr)
->> +               return attr->mode;
->> +       if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
->> +               return attr->mode;
->> +
->> +       return 0;
->> +}
->> +
->>   #ifdef CONFIG_LEDS_TRIGGERS
->>   static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
->>   static struct attribute *led_trigger_attrs[] = {
->> @@ -88,11 +201,13 @@ static ssize_t max_brightness_show(struct device
->> *dev,
->>   static struct attribute *led_class_attrs[] = {
->>         &dev_attr_brightness.attr,
->>         &dev_attr_max_brightness.attr,
->> +       &dev_attr_pattern.attr,
->>         NULL,
->>   };
->>     static const struct attribute_group led_group = {
->>         .attrs = led_class_attrs,
->> +       .is_visible = led_class_attrs_mode,
->>   };
->>     static const struct attribute_group *led_groups[] = {
->> @@ -256,6 +371,9 @@ int of_led_classdev_register(struct device *parent,
->> struct device_node *np,
->>         char name[LED_MAX_NAME_SIZE];
->>         int ret;
->>   +     if (led_cdev->pattern_set && !led_cdev->pattern_get)
->
->
-> if (led_cdev->pattern_set && (!led_cdev->pattern_get ||
->                               !led_cdev->pattern_clear)
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/sched/stat.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure. Thanks for your help.
+diff --git a/include/linux/sched/stat.h b/include/linux/sched/stat.h
+index ac39435d1521..bd477b819237 100644
+--- a/include/linux/sched/stat.h
++++ b/include/linux/sched/stat.h
+@@ -31,7 +31,7 @@ static inline int sched_info_on(void)
+ 	if (delayacct_on)
+ 		return 1;
+ #elif defined(CONFIG_PSI)
+-	extern int psi_disabled;
++	extern bool psi_disabled;
+ 	if (!psi_disabled)
+ 		return 1;
+ #endif
+--=20
+2.18.0
 
->
->
->> +               return -EINVAL;
->> +
->>         ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
->>         if (ret < 0)
->>                 return ret;
->> diff --git a/include/linux/leds.h b/include/linux/leds.h
->> index b7e8255..acdbb2f 100644
->> --- a/include/linux/leds.h
->> +++ b/include/linux/leds.h
->> @@ -22,6 +22,7 @@
->>   #include <linux/workqueue.h>
->>     struct device;
->> +struct led_pattern;
->>   /*
->>    * LED Core
->>    */
->> @@ -88,6 +89,14 @@ struct led_classdev {
->>                                      unsigned long *delay_on,
->>                                      unsigned long *delay_off);
->>   +     int (*pattern_set)(struct led_classdev *led_cdev,
->> +                          struct led_pattern *pattern, int len);
->> +
->> +       int (*pattern_clear)(struct led_classdev *led_cdev);
->> +
->> +       struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
->> +                                          int *len);
->> +
->>         struct device           *dev;
->>         const struct attribute_group    **groups;
->>   @@ -446,4 +455,14 @@ static inline void
->> led_classdev_notify_brightness_hw_changed(
->>         struct led_classdev *led_cdev, enum led_brightness brightness) { }
->>   #endif
->>   +/**
->> + * struct led_pattern - brigheness value in a pattern
->> + * @delta_t: delay until next entry, in milliseconds
->> + * @brightness: brightness at time = 0
->> + */
->> +struct led_pattern {
->> +       int delta_t;
->> +       int brightness;
->> +};
->> +
->>   #endif                /* __LINUX_LEDS_H_INCLUDED */
->>
->
-> --
-> Best regards,
-> Jacek Anaszewski
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/cSnV=4v+WpvU7pDVBd56S1W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Baolin Wang
-Best Regards
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltJZEAACgkQAVBC80lX
+0GwK3wf+Os6pRMdZfpbKSD5a2x0xR30Pin0lr8kdsqUFegBcfJyZXbVOZO7j6KKX
+ft08/CzR1yk/rVQ3VI4s3mX0VgzzrzSBnkGf4NCSyrQjHsPR2ZebjVBxPIav8Rfl
+HQ94nNJ3HwuQtZDkSJfMljpA7LTUHzKFYazZQ3X825JtDLsaSM2HF2KT8t69wCTI
+UDHBs8GJ1ZSQe6ug11fL41i5rnU8FiH7fTaIiAHVixgZ+KSAqFVJeUiFYULgAW4+
+FRdfV8NVNqznNb/xZJJTWD5jzp8Bu9C/uMXsrTZW3EVPhZesaHFhYh03wqNyWa+W
+93+ps8XDP04xptRpvFh0CE2h8ZpQqQ==
+=xWxi
+-----END PGP SIGNATURE-----
+
+--Sig_/cSnV=4v+WpvU7pDVBd56S1W--
