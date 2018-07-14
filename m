@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA717ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 01:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B9FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 01:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64A56208A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 01:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B4B2089F
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 01:51:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KG1zpX0Q";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K1i3Se9H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A56208A6
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lANB1iEO";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h8MeS1O1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B4B2089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731954AbeGNCIZ (ORCPT
+        id S1731910AbeGNCIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 22:08:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47486 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729771AbeGNCIY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Jul 2018 22:08:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47422 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729935AbeGNCIX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 22:08:23 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 05BB960BDF; Sat, 14 Jul 2018 01:51:12 +0000 (UTC)
+        id 9648A60B83; Sat, 14 Jul 2018 01:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531533073;
-        bh=bbNbzbixZbP3eeYia12m+L0JaGiIbzl7tzd+ZErAXMg=;
+        s=default; t=1531533071;
+        bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=KG1zpX0Q0LANvVTgnFqgzgpq5lxYME0bRuofTQjpIrMeosN9OvrvFV+ufujE6Jmwr
-         WhB20RL2I0tafKsgrm4cjGznkntXtf8q5uPOrqZ7ZxHGVFQM7NPVLcatfG+6fn9Bx3
-         KyqTX5tq4lE7te3vDtRgR/kE2b3eNRdYHITKth3U=
+        b=lANB1iEOZBMCGQ7HbQNl2IBoI9Huo9tVibUJmI07oI+T1KuRCz8dPLgK0ewXVZQU7
+         cFeHZCHhjdxMSyl8Jjhm1wfTg5lg6GLujhQimvTtdiYpmPCkj45nw16EuAPkU/qn8X
+         wCRf8NodzNmcwJfY8u3QjKcv/MHlwyoeJ/VIP25I=
 Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: collinsd@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A51EE60B6B;
-        Sat, 14 Jul 2018 01:51:10 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F0B8D60541;
+        Sat, 14 Jul 2018 01:51:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531533071;
-        bh=bbNbzbixZbP3eeYia12m+L0JaGiIbzl7tzd+ZErAXMg=;
+        s=default; t=1531533070;
+        bh=X0/1GiKzpCR28Vnanq698e1V/dc7Xt7aLWgU/YBdV/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=K1i3Se9HdJmE2bg+Q3moibU3vvzT6zRUQM+7YScO5P6Cl5tFVWuz/JPmSCde9DGjq
-         tEgcG+vK+jD9cxEZdERq0QIHaeSPq2Pgprsj8ItMsPDMO0vNP4W6zZLn9xScLkns8h
-         Tko0RHcRx//Uk6wH5iwOoByFtnHAmOLOBGmTNYTQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A51EE60B6B
+        b=h8MeS1O1p65tZ92gfUhp8i28XmymVZsxKism8WFmf0GHTvY60ZMJHZDfLYtsCUGr8
+         zlZ1wsnjqcCDsVwp74yFOo7cWPvvjvZ7obJOxwPwf0bShIE1TjFIKxJjDSOVYr8fJm
+         oDGk1+wFv2fDzpTXINASo4f+94+HGj4NtdSyg25E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0B8D60541
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
 From:   David Collins <collinsd@codeaurora.org>
@@ -61,9 +61,9 @@ Cc:     David Collins <collinsd@codeaurora.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
         sboyd@kernel.org, dianders@chromium.org, mka@chromium.org
-Subject: [PATCH v9 2/2] regulator: add QCOM RPMh regulator driver
-Date:   Fri, 13 Jul 2018 18:50:59 -0700
-Message-Id: <acfc014f3ae3d7feea30be6beaec3e64d96a2723.1531531808.git.collinsd@codeaurora.org>
+Subject: [PATCH v9 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
+Date:   Fri, 13 Jul 2018 18:50:58 -0700
+Message-Id: <56b9d5c38cfe46da1228c54f001a49773c3e31dc.1531531808.git.collinsd@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1531531808.git.collinsd@codeaurora.org>
 References: <cover.1531531808.git.collinsd@codeaurora.org>
@@ -74,837 +74,231 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the QCOM RPMh regulator driver to manage PMIC regulators
-which are controlled via RPMh on some Qualcomm Technologies, Inc.
-SoCs.  RPMh is a hardware block which contains several
-accelerators which are used to manage various hardware resources
-that are shared between the processors of the SoC.  The final
-hardware state of a regulator is determined within RPMh by
-performing max aggregation of the requests made by all of the
-processors.
-
-Add support for PMIC regulator control via the voltage regulator
-manager (VRM) and oscillator buffer (XOB) RPMh accelerators.
-VRM supports manipulation of enable state, voltage, and mode.
-XOB supports manipulation of enable state.
+Introduce bindings for RPMh regulator devices found on some
+Qualcomm Technlogies, Inc. SoCs.  These devices allow a given
+processor within the SoC to make PMIC regulator requests which
+are aggregated within the RPMh hardware block along with requests
+from other processors in the SoC to determine the final PMIC
+regulator hardware state.
 
 Signed-off-by: David Collins <collinsd@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/regulator/Kconfig               |   9 +
- drivers/regulator/Makefile              |   1 +
- drivers/regulator/qcom-rpmh-regulator.c | 769 ++++++++++++++++++++++++++++++++
- 3 files changed, 779 insertions(+)
- create mode 100644 drivers/regulator/qcom-rpmh-regulator.c
+ .../bindings/regulator/qcom,rpmh-regulator.txt     | 160 +++++++++++++++++++++
+ .../dt-bindings/regulator/qcom,rpmh-regulator.h    |  36 +++++
+ 2 files changed, 196 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+ create mode 100644 include/dt-bindings/regulator/qcom,rpmh-regulator.h
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 8233dc7..c5154b8 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -682,6 +682,15 @@ config REGULATOR_QCOM_RPM
- 	  Qualcomm RPM as a module. The module will be named
- 	  "qcom_rpm-regulator".
- 
-+config REGULATOR_QCOM_RPMH
-+	tristate "Qualcomm Technologies, Inc. RPMh regulator driver"
-+	depends on QCOM_RPMH || COMPILE_TEST
-+	help
-+	  This driver supports control of PMIC regulators via the RPMh hardware
-+	  block found on Qualcomm Technologies Inc. SoCs.  RPMh regulator
-+	  control allows for voting on regulator state between multiple
-+	  processors within the SoC.
-+
- config REGULATOR_QCOM_SMD_RPM
- 	tristate "Qualcomm SMD based RPM regulator driver"
- 	depends on QCOM_SMD_RPM
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index b7839f4..8d115e3 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -78,6 +78,7 @@ obj-$(CONFIG_REGULATOR_MT6323)	+= mt6323-regulator.o
- obj-$(CONFIG_REGULATOR_MT6380)	+= mt6380-regulator.o
- obj-$(CONFIG_REGULATOR_MT6397)	+= mt6397-regulator.o
- obj-$(CONFIG_REGULATOR_QCOM_RPM) += qcom_rpm-regulator.o
-+obj-$(CONFIG_REGULATOR_QCOM_RPMH) += qcom-rpmh-regulator.o
- obj-$(CONFIG_REGULATOR_QCOM_SMD_RPM) += qcom_smd-regulator.o
- obj-$(CONFIG_REGULATOR_QCOM_SPMI) += qcom_spmi-regulator.o
- obj-$(CONFIG_REGULATOR_PALMAS) += palmas-regulator.o
-diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
+diff --git a/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
 new file mode 100644
-index 0000000..9f27dae
+index 0000000..7ef2dbe
 --- /dev/null
-+++ b/drivers/regulator/qcom-rpmh-regulator.c
-@@ -0,0 +1,769 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2018, The Linux Foundation. All rights reserved.
++++ b/Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.txt
+@@ -0,0 +1,160 @@
++Qualcomm Technologies, Inc. RPMh Regulators
 +
-+#define pr_fmt(fmt) "%s: " fmt, __func__
++rpmh-regulator devices support PMIC regulator management via the Voltage
++Regulator Manager (VRM) and Oscillator Buffer (XOB) RPMh accelerators.  The APPS
++processor communicates with these hardware blocks via a Resource State
++Coordinator (RSC) using command packets.  The VRM allows changing three
++parameters for a given regulator: enable state, output voltage, and operating
++mode.  The XOB allows changing only a single parameter for a given regulator:
++its enable state.  Despite its name, the XOB is capable of controlling the
++enable state of any PMIC peripheral.  It is used for clock buffers, low-voltage
++switches, and LDO/SMPS regulators which have a fixed voltage and mode.
 +
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/string.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/of_regulator.h>
++=======================
++Required Node Structure
++=======================
 +
-+#include <soc/qcom/cmd-db.h>
-+#include <soc/qcom/rpmh.h>
++RPMh regulators must be described in two levels of device nodes.  The first
++level describes the PMIC containing the regulators and must reside within an
++RPMh device node.  The second level describes each regulator within the PMIC
++which is to be used on the board.  Each of these regulators maps to a single
++RPMh resource.
++
++The names used for regulator nodes must match those supported by a given PMIC.
++Supported regulator node names:
++	PM8998:		smps1 - smps13, ldo1 - ldo28, lvs1 - lvs2
++	PMI8998:	bob
++	PM8005:		smps1 - smps4
++
++========================
++First Level Nodes - PMIC
++========================
++
++- compatible
++	Usage:      required
++	Value type: <string>
++	Definition: Must be one of: "qcom,pm8998-rpmh-regulators",
++		    "qcom,pmi8998-rpmh-regulators" or
++		    "qcom,pm8005-rpmh-regulators".
++
++- qcom,pmic-id
++	Usage:      required
++	Value type: <string>
++	Definition: RPMh resource name suffix used for the regulators found on
++		    this PMIC.  Typical values: "a", "b", "c", "d", "e", "f".
++
++- vdd-s1-supply
++- vdd-s2-supply
++- vdd-s3-supply
++- vdd-s4-supply
++	Usage:      optional (PM8998 and PM8005 only)
++	Value type: <phandle>
++	Definition: phandle of the parent supply regulator of one or more of the
++		    regulators for this PMIC.
++
++- vdd-s5-supply
++- vdd-s6-supply
++- vdd-s7-supply
++- vdd-s8-supply
++- vdd-s9-supply
++- vdd-s10-supply
++- vdd-s11-supply
++- vdd-s12-supply
++- vdd-s13-supply
++- vdd-l1-l27-supply
++- vdd-l2-l8-l17-supply
++- vdd-l3-l11-supply
++- vdd-l4-l5-supply
++- vdd-l6-supply
++- vdd-l7-l12-l14-l15-supply
++- vdd-l9-supply
++- vdd-l10-l23-l25-supply
++- vdd-l13-l19-l21-supply
++- vdd-l16-l28-supply
++- vdd-l18-l22-supply
++- vdd-l20-l24-supply
++- vdd-l26-supply
++- vin-lvs-1-2-supply
++	Usage:      optional (PM8998 only)
++	Value type: <phandle>
++	Definition: phandle of the parent supply regulator of one or more of the
++		    regulators for this PMIC.
++
++- vdd-bob-supply
++	Usage:      optional (PMI8998 only)
++	Value type: <phandle>
++	Definition: BOB regulator parent supply phandle
++
++===============================
++Second Level Nodes - Regulators
++===============================
++
++- qcom,always-wait-for-ack
++	Usage:      optional
++	Value type: <empty>
++	Definition: Boolean flag which indicates that the application processor
++		    must wait for an ACK or a NACK from RPMh for every request
++		    sent for this regulator including those which are for a
++		    strictly lower power state.
++
++Other properties defined in Documentation/devicetree/bindings/regulator.txt
++may also be used.  regulator-initial-mode and regulator-allowed-modes may be
++specified for VRM regulators using mode values from
++include/dt-bindings/regulator/qcom,rpmh-regulator.h.  regulator-allow-bypass
++may be specified for BOB type regulators managed via VRM.
++regulator-allow-set-load may be specified for LDO type regulators managed via
++VRM.
++
++========
++Examples
++========
 +
 +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
 +
-+/**
-+ * enum rpmh_regulator_type - supported RPMh accelerator types
-+ * %VRM:	RPMh VRM accelerator which supports voting on enable, voltage,
-+ *		and mode of LDO, SMPS, and BOB type PMIC regulators.
-+ * %XOB:	RPMh XOB accelerator which supports voting on the enable state
-+ *		of PMIC regulators.
-+ */
-+enum rpmh_regulator_type {
-+	VRM,
-+	XOB,
-+};
++&apps_rsc {
++	pm8998-rpmh-regulators {
++		compatible = "qcom,pm8998-rpmh-regulators";
++		qcom,pmic-id = "a";
 +
-+#define RPMH_REGULATOR_REG_VRM_VOLTAGE		0x0
-+#define RPMH_REGULATOR_REG_ENABLE		0x4
-+#define RPMH_REGULATOR_REG_VRM_MODE		0x8
++		vdd-l7-l12-l14-l15-supply = <&pm8998_s5>;
 +
-+#define PMIC4_LDO_MODE_RETENTION		4
-+#define PMIC4_LDO_MODE_LPM			5
-+#define PMIC4_LDO_MODE_HPM			7
++		smps2 {
++			regulator-min-microvolt = <1100000>;
++			regulator-max-microvolt = <1100000>;
++		};
 +
-+#define PMIC4_SMPS_MODE_RETENTION		4
-+#define PMIC4_SMPS_MODE_PFM			5
-+#define PMIC4_SMPS_MODE_AUTO			6
-+#define PMIC4_SMPS_MODE_PWM			7
++		pm8998_s5: smps5 {
++			regulator-min-microvolt = <1904000>;
++			regulator-max-microvolt = <2040000>;
++		};
 +
-+#define PMIC4_BOB_MODE_PASS			0
-+#define PMIC4_BOB_MODE_PFM			1
-+#define PMIC4_BOB_MODE_AUTO			2
-+#define PMIC4_BOB_MODE_PWM			3
++		ldo7 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
++			regulator-allowed-modes =
++				<RPMH_REGULATOR_MODE_LPM
++				 RPMH_REGULATOR_MODE_HPM>;
++			regulator-allow-set-load;
++		};
 +
-+/**
-+ * struct rpmh_vreg_hw_data - RPMh regulator hardware configurations
-+ * @regulator_type:		RPMh accelerator type used to manage this
-+ *				regulator
-+ * @ops:			Pointer to regulator ops callback structure
-+ * @voltage_range:		The single range of voltages supported by this
-+ *				PMIC regulator type
-+ * @n_voltages:			The number of unique voltage set points defined
-+ *				by voltage_range
-+ * @hpm_min_load_uA:		Minimum load current in microamps that requires
-+ *				high power mode (HPM) operation.  This is used
-+ *				for LDO hardware type regulators only.
-+ * @pmic_mode_map:		Array indexed by regulator framework mode
-+ *				containing PMIC hardware modes.  Must be large
-+ *				enough to index all framework modes supported
-+ *				by this regulator hardware type.
-+ * @of_map_mode:		Maps an RPMH_REGULATOR_MODE_* mode value defined
-+ *				in device tree to a regulator framework mode
-+ */
-+struct rpmh_vreg_hw_data {
-+	enum rpmh_regulator_type		regulator_type;
-+	const struct regulator_ops		*ops;
-+	const struct regulator_linear_range	voltage_range;
-+	int					n_voltages;
-+	int					hpm_min_load_uA;
-+	const int				*pmic_mode_map;
-+	unsigned int			      (*of_map_mode)(unsigned int mode);
-+};
-+
-+/**
-+ * struct rpmh_vreg - individual RPMh regulator data structure encapsulating a
-+ *		single regulator device
-+ * @dev:			Device pointer for the top-level PMIC RPMh
-+ *				regulator parent device.  This is used as a
-+ *				handle in RPMh write requests.
-+ * @addr:			Base address of the regulator resource within
-+ *				an RPMh accelerator
-+ * @rdesc:			Regulator descriptor
-+ * @hw_data:			PMIC regulator configuration data for this RPMh
-+ *				regulator
-+ * @always_wait_for_ack:	Boolean flag indicating if a request must always
-+ *				wait for an ACK from RPMh before continuing even
-+ *				if it corresponds to a strictly lower power
-+ *				state (e.g. enabled --> disabled).
-+ * @enabled:			Flag indicating if the regulator is enabled or
-+ *				not
-+ * @bypassed:			Boolean indicating if the regulator is in
-+ *				bypass (pass-through) mode or not.  This is
-+ *				only used by BOB rpmh-regulator resources.
-+ * @voltage_selector:		Selector used for get_voltage_sel() and
-+ *				set_voltage_sel() callbacks
-+ * @mode:			RPMh VRM regulator current framework mode
-+ */
-+struct rpmh_vreg {
-+	struct device			*dev;
-+	u32				addr;
-+	struct regulator_desc		rdesc;
-+	const struct rpmh_vreg_hw_data	*hw_data;
-+	bool				always_wait_for_ack;
-+
-+	int				enabled;
-+	bool				bypassed;
-+	int				voltage_selector;
-+	unsigned int			mode;
-+};
-+
-+/**
-+ * struct rpmh_vreg_init_data - initialization data for an RPMh regulator
-+ * @name:			Name for the regulator which also corresponds
-+ *				to the device tree subnode name of the regulator
-+ * @resource_name:		RPMh regulator resource name format string.
-+ *				This must include exactly one field: '%s' which
-+ *				is filled at run-time with the PMIC ID provided
-+ *				by device tree property qcom,pmic-id.  Example:
-+ *				"ldo%s1" for RPMh resource "ldoa1".
-+ * @supply_name:		Parent supply regulator name
-+ * @hw_data:			Configuration data for this PMIC regulator type
-+ */
-+struct rpmh_vreg_init_data {
-+	const char			*name;
-+	const char			*resource_name;
-+	const char			*supply_name;
-+	const struct rpmh_vreg_hw_data	*hw_data;
-+};
-+
-+/**
-+ * rpmh_regulator_send_request() - send the request to RPMh
-+ * @vreg:		Pointer to the RPMh regulator
-+ * @cmd:		Pointer to the RPMh command to send
-+ * @wait_for_ack:	Boolean indicating if execution must wait until the
-+ *			request has been acknowledged as complete
-+ *
-+ * Return: 0 on success, errno on failure
-+ */
-+static int rpmh_regulator_send_request(struct rpmh_vreg *vreg,
-+			struct tcs_cmd *cmd, bool wait_for_ack)
-+{
-+	int ret;
-+
-+	if (wait_for_ack || vreg->always_wait_for_ack)
-+		ret = rpmh_write(vreg->dev, RPMH_ACTIVE_ONLY_STATE, cmd, 1);
-+	else
-+		ret = rpmh_write_async(vreg->dev, RPMH_ACTIVE_ONLY_STATE, cmd,
-+					1);
-+
-+	return ret;
-+}
-+
-+static int _rpmh_regulator_vrm_set_voltage_sel(struct regulator_dev *rdev,
-+				unsigned int selector, bool wait_for_ack)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+	struct tcs_cmd cmd = {
-+		.addr = vreg->addr + RPMH_REGULATOR_REG_VRM_VOLTAGE,
++		lvs1 {
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++		};
 +	};
-+	int ret;
 +
-+	/* VRM voltage control register is set with voltage in millivolts. */
-+	cmd.data = DIV_ROUND_UP(regulator_list_voltage_linear_range(rdev,
-+							selector), 1000);
++	pmi8998-rpmh-regulators {
++		compatible = "qcom,pmi8998-rpmh-regulators";
++		qcom,pmic-id = "b";
 +
-+	ret = rpmh_regulator_send_request(vreg, &cmd, wait_for_ack);
-+	if (!ret)
-+		vreg->voltage_selector = selector;
-+
-+	return ret;
-+}
-+
-+static int rpmh_regulator_vrm_set_voltage_sel(struct regulator_dev *rdev,
-+					unsigned int selector)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+
-+	if (vreg->enabled == -EINVAL) {
-+		/*
-+		 * Cache the voltage and send it later when the regulator is
-+		 * enabled or disabled.
-+		 */
-+		vreg->voltage_selector = selector;
-+		return 0;
-+	}
-+
-+	return _rpmh_regulator_vrm_set_voltage_sel(rdev, selector,
-+					selector > vreg->voltage_selector);
-+}
-+
-+static int rpmh_regulator_vrm_get_voltage_sel(struct regulator_dev *rdev)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+
-+	return vreg->voltage_selector;
-+}
-+
-+static int rpmh_regulator_is_enabled(struct regulator_dev *rdev)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+
-+	return vreg->enabled;
-+}
-+
-+static int rpmh_regulator_set_enable_state(struct regulator_dev *rdev,
-+					bool enable)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+	struct tcs_cmd cmd = {
-+		.addr = vreg->addr + RPMH_REGULATOR_REG_ENABLE,
-+		.data = enable,
++		bob {
++			regulator-min-microvolt = <3312000>;
++			regulator-max-microvolt = <3600000>;
++			regulator-allowed-modes =
++				<RPMH_REGULATOR_MODE_AUTO
++				 RPMH_REGULATOR_MODE_HPM>;
++			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
++		};
 +	};
-+	int ret;
++};
+diff --git a/include/dt-bindings/regulator/qcom,rpmh-regulator.h b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
+new file mode 100644
+index 0000000..86713dc
+--- /dev/null
++++ b/include/dt-bindings/regulator/qcom,rpmh-regulator.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
 +
-+	if (vreg->enabled == -EINVAL &&
-+	    vreg->voltage_selector != -ENOTRECOVERABLE) {
-+		ret = _rpmh_regulator_vrm_set_voltage_sel(rdev,
-+						vreg->voltage_selector, true);
-+		if (ret < 0)
-+			return ret;
-+	}
++#ifndef __QCOM_RPMH_REGULATOR_H
++#define __QCOM_RPMH_REGULATOR_H
 +
-+	ret = rpmh_regulator_send_request(vreg, &cmd, enable);
-+	if (!ret)
-+		vreg->enabled = enable;
-+
-+	return ret;
-+}
-+
-+static int rpmh_regulator_enable(struct regulator_dev *rdev)
-+{
-+	return rpmh_regulator_set_enable_state(rdev, true);
-+}
-+
-+static int rpmh_regulator_disable(struct regulator_dev *rdev)
-+{
-+	return rpmh_regulator_set_enable_state(rdev, false);
-+}
-+
-+static int rpmh_regulator_vrm_set_mode_bypass(struct rpmh_vreg *vreg,
-+					unsigned int mode, bool bypassed)
-+{
-+	struct tcs_cmd cmd = {
-+		.addr = vreg->addr + RPMH_REGULATOR_REG_VRM_MODE,
-+	};
-+	int pmic_mode;
-+
-+	if (mode > REGULATOR_MODE_STANDBY)
-+		return -EINVAL;
-+
-+	pmic_mode = vreg->hw_data->pmic_mode_map[mode];
-+	if (pmic_mode < 0)
-+		return pmic_mode;
-+
-+	if (bypassed)
-+		cmd.data = PMIC4_BOB_MODE_PASS;
-+	else
-+		cmd.data = pmic_mode;
-+
-+	return rpmh_regulator_send_request(vreg, &cmd, true);
-+}
-+
-+static int rpmh_regulator_vrm_set_mode(struct regulator_dev *rdev,
-+					unsigned int mode)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+	int ret;
-+
-+	if (mode == vreg->mode)
-+		return 0;
-+
-+	ret = rpmh_regulator_vrm_set_mode_bypass(vreg, mode, vreg->bypassed);
-+	if (!ret)
-+		vreg->mode = mode;
-+
-+	return ret;
-+}
-+
-+static unsigned int rpmh_regulator_vrm_get_mode(struct regulator_dev *rdev)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+
-+	return vreg->mode;
-+}
-+
-+/**
-+ * rpmh_regulator_vrm_set_load() - set the regulator mode based upon the load
-+ *		current requested
-+ * @rdev:		Regulator device pointer for the rpmh-regulator
-+ * @load_uA:		Aggregated load current in microamps
++/*
++ * These mode constants may be used to specify modes for various RPMh regulator
++ * device tree properties (e.g. regulator-initial-mode).  Each type of regulator
++ * supports a subset of the possible modes.
 + *
-+ * This function is used in the regulator_ops for VRM type RPMh regulator
-+ * devices.
-+ *
-+ * Return: 0 on success, errno on failure
++ * %RPMH_REGULATOR_MODE_RET:	Retention mode in which only an extremely small
++ *				load current is allowed.  This mode is supported
++ *				by LDO and SMPS type regulators.
++ * %RPMH_REGULATOR_MODE_LPM:	Low power mode in which a small load current is
++ *				allowed.  This mode corresponds to PFM for SMPS
++ *				and BOB type regulators.  This mode is supported
++ *				by LDO, HFSMPS, BOB, and PMIC4 FTSMPS type
++ *				regulators.
++ * %RPMH_REGULATOR_MODE_AUTO:	Auto mode in which the regulator hardware
++ *				automatically switches between LPM and HPM based
++ *				upon the real-time load current.  This mode is
++ *				supported by HFSMPS, BOB, and PMIC4 FTSMPS type
++ *				regulators.
++ * %RPMH_REGULATOR_MODE_HPM:	High power mode in which the full rated current
++ *				of the regulator is allowed.  This mode
++ *				corresponds to PWM for SMPS and BOB type
++ *				regulators.  This mode is supported by all types
++ *				of regulators.
 + */
-+static int rpmh_regulator_vrm_set_load(struct regulator_dev *rdev, int load_uA)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+	unsigned int mode;
++#define RPMH_REGULATOR_MODE_RET		0
++#define RPMH_REGULATOR_MODE_LPM		1
++#define RPMH_REGULATOR_MODE_AUTO	2
++#define RPMH_REGULATOR_MODE_HPM		3
 +
-+	if (load_uA >= vreg->hw_data->hpm_min_load_uA)
-+		mode = REGULATOR_MODE_NORMAL;
-+	else
-+		mode = REGULATOR_MODE_IDLE;
-+
-+	return rpmh_regulator_vrm_set_mode(rdev, mode);
-+}
-+
-+static int rpmh_regulator_vrm_set_bypass(struct regulator_dev *rdev,
-+				bool enable)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+	int ret;
-+
-+	if (vreg->bypassed == enable)
-+		return 0;
-+
-+	ret = rpmh_regulator_vrm_set_mode_bypass(vreg, vreg->mode, enable);
-+	if (!ret)
-+		vreg->bypassed = enable;
-+
-+	return ret;
-+}
-+
-+static int rpmh_regulator_vrm_get_bypass(struct regulator_dev *rdev,
-+				bool *enable)
-+{
-+	struct rpmh_vreg *vreg = rdev_get_drvdata(rdev);
-+
-+	*enable = vreg->bypassed;
-+
-+	return 0;
-+}
-+
-+static const struct regulator_ops rpmh_regulator_vrm_ops = {
-+	.enable			= rpmh_regulator_enable,
-+	.disable		= rpmh_regulator_disable,
-+	.is_enabled		= rpmh_regulator_is_enabled,
-+	.set_voltage_sel	= rpmh_regulator_vrm_set_voltage_sel,
-+	.get_voltage_sel	= rpmh_regulator_vrm_get_voltage_sel,
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.set_mode		= rpmh_regulator_vrm_set_mode,
-+	.get_mode		= rpmh_regulator_vrm_get_mode,
-+};
-+
-+static const struct regulator_ops rpmh_regulator_vrm_drms_ops = {
-+	.enable			= rpmh_regulator_enable,
-+	.disable		= rpmh_regulator_disable,
-+	.is_enabled		= rpmh_regulator_is_enabled,
-+	.set_voltage_sel	= rpmh_regulator_vrm_set_voltage_sel,
-+	.get_voltage_sel	= rpmh_regulator_vrm_get_voltage_sel,
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.set_mode		= rpmh_regulator_vrm_set_mode,
-+	.get_mode		= rpmh_regulator_vrm_get_mode,
-+	.set_load		= rpmh_regulator_vrm_set_load,
-+};
-+
-+static const struct regulator_ops rpmh_regulator_vrm_bypass_ops = {
-+	.enable			= rpmh_regulator_enable,
-+	.disable		= rpmh_regulator_disable,
-+	.is_enabled		= rpmh_regulator_is_enabled,
-+	.set_voltage_sel	= rpmh_regulator_vrm_set_voltage_sel,
-+	.get_voltage_sel	= rpmh_regulator_vrm_get_voltage_sel,
-+	.list_voltage		= regulator_list_voltage_linear_range,
-+	.set_mode		= rpmh_regulator_vrm_set_mode,
-+	.get_mode		= rpmh_regulator_vrm_get_mode,
-+	.set_bypass		= rpmh_regulator_vrm_set_bypass,
-+	.get_bypass		= rpmh_regulator_vrm_get_bypass,
-+};
-+
-+static const struct regulator_ops rpmh_regulator_xob_ops = {
-+	.enable			= rpmh_regulator_enable,
-+	.disable		= rpmh_regulator_disable,
-+	.is_enabled		= rpmh_regulator_is_enabled,
-+};
-+
-+/**
-+ * rpmh_regulator_init_vreg() - initialize all attributes of an rpmh-regulator
-+ * vreg:		Pointer to the individual rpmh-regulator resource
-+ * dev:			Pointer to the top level rpmh-regulator PMIC device
-+ * node:		Pointer to the individual rpmh-regulator resource
-+ *			device node
-+ * pmic_id:		String used to identify the top level rpmh-regulator
-+ *			PMIC device on the board
-+ * pmic_rpmh_data:	Pointer to a null-terminated array of rpmh-regulator
-+ *			resources defined for the top level PMIC device
-+ *
-+ * Return: 0 on success, errno on failure
-+ */
-+static int rpmh_regulator_init_vreg(struct rpmh_vreg *vreg, struct device *dev,
-+			struct device_node *node, const char *pmic_id,
-+			const struct rpmh_vreg_init_data *pmic_rpmh_data)
-+{
-+	struct regulator_config reg_config = {};
-+	char rpmh_resource_name[20] = "";
-+	const struct rpmh_vreg_init_data *rpmh_data;
-+	struct regulator_init_data *init_data;
-+	struct regulator_dev *rdev;
-+	int ret;
-+
-+	vreg->dev = dev;
-+
-+	for (rpmh_data = pmic_rpmh_data; rpmh_data->name; rpmh_data++)
-+		if (!strcmp(rpmh_data->name, node->name))
-+			break;
-+
-+	if (!rpmh_data->name) {
-+		dev_err(dev, "Unknown regulator %s\n", node->name);
-+		return -EINVAL;
-+	}
-+
-+	scnprintf(rpmh_resource_name, sizeof(rpmh_resource_name),
-+		rpmh_data->resource_name, pmic_id);
-+
-+	vreg->addr = cmd_db_read_addr(rpmh_resource_name);
-+	if (!vreg->addr) {
-+		dev_err(dev, "%s: could not find RPMh address for resource %s\n",
-+			node->name, rpmh_resource_name);
-+		return -ENODEV;
-+	}
-+
-+	vreg->rdesc.name = rpmh_data->name;
-+	vreg->rdesc.supply_name = rpmh_data->supply_name;
-+	vreg->hw_data = rpmh_data->hw_data;
-+
-+	vreg->enabled = -EINVAL;
-+	vreg->voltage_selector = -ENOTRECOVERABLE;
-+	vreg->mode = REGULATOR_MODE_INVALID;
-+
-+	if (rpmh_data->hw_data->n_voltages) {
-+		vreg->rdesc.linear_ranges = &rpmh_data->hw_data->voltage_range;
-+		vreg->rdesc.n_linear_ranges = 1;
-+		vreg->rdesc.n_voltages = rpmh_data->hw_data->n_voltages;
-+	}
-+
-+	vreg->always_wait_for_ack = of_property_read_bool(node,
-+						"qcom,always-wait-for-ack");
-+
-+	vreg->rdesc.owner	= THIS_MODULE;
-+	vreg->rdesc.type	= REGULATOR_VOLTAGE;
-+	vreg->rdesc.ops		= vreg->hw_data->ops;
-+	vreg->rdesc.of_map_mode	= vreg->hw_data->of_map_mode;
-+
-+	init_data = of_get_regulator_init_data(dev, node, &vreg->rdesc);
-+	if (!init_data)
-+		return -ENOMEM;
-+
-+	if (rpmh_data->hw_data->regulator_type == XOB &&
-+	    init_data->constraints.min_uV &&
-+	    init_data->constraints.min_uV == init_data->constraints.max_uV) {
-+		vreg->rdesc.fixed_uV = init_data->constraints.min_uV;
-+		vreg->rdesc.n_voltages = 1;
-+	}
-+
-+	reg_config.dev		= dev;
-+	reg_config.init_data	= init_data;
-+	reg_config.of_node	= node;
-+	reg_config.driver_data	= vreg;
-+
-+	rdev = devm_regulator_register(dev, &vreg->rdesc, &reg_config);
-+	if (IS_ERR(rdev)) {
-+		ret = PTR_ERR(rdev);
-+		dev_err(dev, "%s: devm_regulator_register() failed, ret=%d\n",
-+			node->name, ret);
-+		return ret;
-+	}
-+
-+	dev_dbg(dev, "%s regulator registered for RPMh resource %s @ 0x%05X\n",
-+		node->name, rpmh_resource_name, vreg->addr);
-+
-+	return 0;
-+}
-+
-+static const int pmic_mode_map_pmic4_ldo[REGULATOR_MODE_STANDBY + 1] = {
-+	[REGULATOR_MODE_INVALID] = -EINVAL,
-+	[REGULATOR_MODE_STANDBY] = PMIC4_LDO_MODE_RETENTION,
-+	[REGULATOR_MODE_IDLE]    = PMIC4_LDO_MODE_LPM,
-+	[REGULATOR_MODE_NORMAL]  = PMIC4_LDO_MODE_HPM,
-+	[REGULATOR_MODE_FAST]    = -EINVAL,
-+};
-+
-+static unsigned int rpmh_regulator_pmic4_ldo_of_map_mode(unsigned int rpmh_mode)
-+{
-+	unsigned int mode;
-+
-+	switch (rpmh_mode) {
-+	case RPMH_REGULATOR_MODE_HPM:
-+		mode = REGULATOR_MODE_NORMAL;
-+		break;
-+	case RPMH_REGULATOR_MODE_LPM:
-+		mode = REGULATOR_MODE_IDLE;
-+		break;
-+	case RPMH_REGULATOR_MODE_RET:
-+		mode = REGULATOR_MODE_STANDBY;
-+		break;
-+	default:
-+		mode = REGULATOR_MODE_INVALID;
-+	}
-+
-+	return mode;
-+}
-+
-+static const int pmic_mode_map_pmic4_smps[REGULATOR_MODE_STANDBY + 1] = {
-+	[REGULATOR_MODE_INVALID] = -EINVAL,
-+	[REGULATOR_MODE_STANDBY] = PMIC4_SMPS_MODE_RETENTION,
-+	[REGULATOR_MODE_IDLE]    = PMIC4_SMPS_MODE_PFM,
-+	[REGULATOR_MODE_NORMAL]  = PMIC4_SMPS_MODE_AUTO,
-+	[REGULATOR_MODE_FAST]    = PMIC4_SMPS_MODE_PWM,
-+};
-+
-+static unsigned int
-+rpmh_regulator_pmic4_smps_of_map_mode(unsigned int rpmh_mode)
-+{
-+	unsigned int mode;
-+
-+	switch (rpmh_mode) {
-+	case RPMH_REGULATOR_MODE_HPM:
-+		mode = REGULATOR_MODE_FAST;
-+		break;
-+	case RPMH_REGULATOR_MODE_AUTO:
-+		mode = REGULATOR_MODE_NORMAL;
-+		break;
-+	case RPMH_REGULATOR_MODE_LPM:
-+		mode = REGULATOR_MODE_IDLE;
-+		break;
-+	case RPMH_REGULATOR_MODE_RET:
-+		mode = REGULATOR_MODE_STANDBY;
-+		break;
-+	default:
-+		mode = REGULATOR_MODE_INVALID;
-+	}
-+
-+	return mode;
-+}
-+
-+static const int pmic_mode_map_pmic4_bob[REGULATOR_MODE_STANDBY + 1] = {
-+	[REGULATOR_MODE_INVALID] = -EINVAL,
-+	[REGULATOR_MODE_STANDBY] = -EINVAL,
-+	[REGULATOR_MODE_IDLE]    = PMIC4_BOB_MODE_PFM,
-+	[REGULATOR_MODE_NORMAL]  = PMIC4_BOB_MODE_AUTO,
-+	[REGULATOR_MODE_FAST]    = PMIC4_BOB_MODE_PWM,
-+};
-+
-+static unsigned int rpmh_regulator_pmic4_bob_of_map_mode(unsigned int rpmh_mode)
-+{
-+	unsigned int mode;
-+
-+	switch (rpmh_mode) {
-+	case RPMH_REGULATOR_MODE_HPM:
-+		mode = REGULATOR_MODE_FAST;
-+		break;
-+	case RPMH_REGULATOR_MODE_AUTO:
-+		mode = REGULATOR_MODE_NORMAL;
-+		break;
-+	case RPMH_REGULATOR_MODE_LPM:
-+		mode = REGULATOR_MODE_IDLE;
-+		break;
-+	default:
-+		mode = REGULATOR_MODE_INVALID;
-+	}
-+
-+	return mode;
-+}
-+
-+static const struct rpmh_vreg_hw_data pmic4_pldo = {
-+	.regulator_type = VRM,
-+	.ops = &rpmh_regulator_vrm_drms_ops,
-+	.voltage_range = REGULATOR_LINEAR_RANGE(1664000, 0, 255, 8000),
-+	.n_voltages = 256,
-+	.hpm_min_load_uA = 10000,
-+	.pmic_mode_map = pmic_mode_map_pmic4_ldo,
-+	.of_map_mode = rpmh_regulator_pmic4_ldo_of_map_mode,
-+};
-+
-+static const struct rpmh_vreg_hw_data pmic4_pldo_lv = {
-+	.regulator_type = VRM,
-+	.ops = &rpmh_regulator_vrm_drms_ops,
-+	.voltage_range = REGULATOR_LINEAR_RANGE(1256000, 0, 127, 8000),
-+	.n_voltages = 128,
-+	.hpm_min_load_uA = 10000,
-+	.pmic_mode_map = pmic_mode_map_pmic4_ldo,
-+	.of_map_mode = rpmh_regulator_pmic4_ldo_of_map_mode,
-+};
-+
-+static const struct rpmh_vreg_hw_data pmic4_nldo = {
-+	.regulator_type = VRM,
-+	.ops = &rpmh_regulator_vrm_drms_ops,
-+	.voltage_range = REGULATOR_LINEAR_RANGE(312000, 0, 127, 8000),
-+	.n_voltages = 128,
-+	.hpm_min_load_uA = 30000,
-+	.pmic_mode_map = pmic_mode_map_pmic4_ldo,
-+	.of_map_mode = rpmh_regulator_pmic4_ldo_of_map_mode,
-+};
-+
-+static const struct rpmh_vreg_hw_data pmic4_hfsmps3 = {
-+	.regulator_type = VRM,
-+	.ops = &rpmh_regulator_vrm_ops,
-+	.voltage_range = REGULATOR_LINEAR_RANGE(320000, 0, 215, 8000),
-+	.n_voltages = 216,
-+	.pmic_mode_map = pmic_mode_map_pmic4_smps,
-+	.of_map_mode = rpmh_regulator_pmic4_smps_of_map_mode,
-+};
-+
-+static const struct rpmh_vreg_hw_data pmic4_ftsmps426 = {
-+	.regulator_type = VRM,
-+	.ops = &rpmh_regulator_vrm_ops,
-+	.voltage_range = REGULATOR_LINEAR_RANGE(320000, 0, 258, 4000),
-+	.n_voltages = 259,
-+	.pmic_mode_map = pmic_mode_map_pmic4_smps,
-+	.of_map_mode = rpmh_regulator_pmic4_smps_of_map_mode,
-+};
-+
-+static const struct rpmh_vreg_hw_data pmic4_bob = {
-+	.regulator_type = VRM,
-+	.ops = &rpmh_regulator_vrm_bypass_ops,
-+	.voltage_range = REGULATOR_LINEAR_RANGE(1824000, 0, 83, 32000),
-+	.n_voltages = 84,
-+	.pmic_mode_map = pmic_mode_map_pmic4_bob,
-+	.of_map_mode = rpmh_regulator_pmic4_bob_of_map_mode,
-+};
-+
-+static const struct rpmh_vreg_hw_data pmic4_lvs = {
-+	.regulator_type = XOB,
-+	.ops = &rpmh_regulator_xob_ops,
-+	/* LVS hardware does not support voltage or mode configuration. */
-+};
-+
-+#define RPMH_VREG(_name, _resource_name, _hw_data, _supply_name) \
-+{ \
-+	.name		= _name, \
-+	.resource_name	= _resource_name, \
-+	.hw_data	= _hw_data, \
-+	.supply_name	= _supply_name, \
-+}
-+
-+static const struct rpmh_vreg_init_data pm8998_vreg_data[] = {
-+	RPMH_VREG("smps1",  "smp%s1",  &pmic4_ftsmps426, "vdd-s1"),
-+	RPMH_VREG("smps2",  "smp%s2",  &pmic4_ftsmps426, "vdd-s2"),
-+	RPMH_VREG("smps3",  "smp%s3",  &pmic4_hfsmps3,   "vdd-s3"),
-+	RPMH_VREG("smps4",  "smp%s4",  &pmic4_hfsmps3,   "vdd-s4"),
-+	RPMH_VREG("smps5",  "smp%s5",  &pmic4_hfsmps3,   "vdd-s5"),
-+	RPMH_VREG("smps6",  "smp%s6",  &pmic4_ftsmps426, "vdd-s6"),
-+	RPMH_VREG("smps7",  "smp%s7",  &pmic4_ftsmps426, "vdd-s7"),
-+	RPMH_VREG("smps8",  "smp%s8",  &pmic4_ftsmps426, "vdd-s8"),
-+	RPMH_VREG("smps9",  "smp%s9",  &pmic4_ftsmps426, "vdd-s9"),
-+	RPMH_VREG("smps10", "smp%s10", &pmic4_ftsmps426, "vdd-s10"),
-+	RPMH_VREG("smps11", "smp%s11", &pmic4_ftsmps426, "vdd-s11"),
-+	RPMH_VREG("smps12", "smp%s12", &pmic4_ftsmps426, "vdd-s12"),
-+	RPMH_VREG("smps13", "smp%s13", &pmic4_ftsmps426, "vdd-s13"),
-+	RPMH_VREG("ldo1",   "ldo%s1",  &pmic4_nldo,      "vdd-l1-l27"),
-+	RPMH_VREG("ldo2",   "ldo%s2",  &pmic4_nldo,      "vdd-l2-l8-l17"),
-+	RPMH_VREG("ldo3",   "ldo%s3",  &pmic4_nldo,      "vdd-l3-l11"),
-+	RPMH_VREG("ldo4",   "ldo%s4",  &pmic4_nldo,      "vdd-l4-l5"),
-+	RPMH_VREG("ldo5",   "ldo%s5",  &pmic4_nldo,      "vdd-l4-l5"),
-+	RPMH_VREG("ldo6",   "ldo%s6",  &pmic4_pldo,      "vdd-l6"),
-+	RPMH_VREG("ldo7",   "ldo%s7",  &pmic4_pldo_lv,   "vdd-l7-l12-l14-l15"),
-+	RPMH_VREG("ldo8",   "ldo%s8",  &pmic4_nldo,      "vdd-l2-l8-l17"),
-+	RPMH_VREG("ldo9",   "ldo%s9",  &pmic4_pldo,      "vdd-l9"),
-+	RPMH_VREG("ldo10",  "ldo%s10", &pmic4_pldo,      "vdd-l10-l23-l25"),
-+	RPMH_VREG("ldo11",  "ldo%s11", &pmic4_nldo,      "vdd-l3-l11"),
-+	RPMH_VREG("ldo12",  "ldo%s12", &pmic4_pldo_lv,   "vdd-l7-l12-l14-l15"),
-+	RPMH_VREG("ldo13",  "ldo%s13", &pmic4_pldo,      "vdd-l13-l19-l21"),
-+	RPMH_VREG("ldo14",  "ldo%s14", &pmic4_pldo_lv,   "vdd-l7-l12-l14-l15"),
-+	RPMH_VREG("ldo15",  "ldo%s15", &pmic4_pldo_lv,   "vdd-l7-l12-l14-l15"),
-+	RPMH_VREG("ldo16",  "ldo%s16", &pmic4_pldo,      "vdd-l16-l28"),
-+	RPMH_VREG("ldo17",  "ldo%s17", &pmic4_nldo,      "vdd-l2-l8-l17"),
-+	RPMH_VREG("ldo18",  "ldo%s18", &pmic4_pldo,      "vdd-l18-l22"),
-+	RPMH_VREG("ldo19",  "ldo%s19", &pmic4_pldo,      "vdd-l13-l19-l21"),
-+	RPMH_VREG("ldo20",  "ldo%s20", &pmic4_pldo,      "vdd-l20-l24"),
-+	RPMH_VREG("ldo21",  "ldo%s21", &pmic4_pldo,      "vdd-l13-l19-l21"),
-+	RPMH_VREG("ldo22",  "ldo%s22", &pmic4_pldo,      "vdd-l18-l22"),
-+	RPMH_VREG("ldo23",  "ldo%s23", &pmic4_pldo,      "vdd-l10-l23-l25"),
-+	RPMH_VREG("ldo24",  "ldo%s24", &pmic4_pldo,      "vdd-l20-l24"),
-+	RPMH_VREG("ldo25",  "ldo%s25", &pmic4_pldo,      "vdd-l10-l23-l25"),
-+	RPMH_VREG("ldo26",  "ldo%s26", &pmic4_nldo,      "vdd-l26"),
-+	RPMH_VREG("ldo27",  "ldo%s27", &pmic4_nldo,      "vdd-l1-l27"),
-+	RPMH_VREG("ldo28",  "ldo%s28", &pmic4_pldo,      "vdd-l16-l28"),
-+	RPMH_VREG("lvs1",   "vs%s1",   &pmic4_lvs,       "vin-lvs-1-2"),
-+	RPMH_VREG("lvs2",   "vs%s2",   &pmic4_lvs,       "vin-lvs-1-2"),
-+	{},
-+};
-+
-+static const struct rpmh_vreg_init_data pmi8998_vreg_data[] = {
-+	RPMH_VREG("bob",    "bob%s1",  &pmic4_bob,       "vdd-bob"),
-+	{},
-+};
-+
-+static const struct rpmh_vreg_init_data pm8005_vreg_data[] = {
-+	RPMH_VREG("smps1",  "smp%s1",  &pmic4_ftsmps426, "vdd-s1"),
-+	RPMH_VREG("smps2",  "smp%s2",  &pmic4_ftsmps426, "vdd-s2"),
-+	RPMH_VREG("smps3",  "smp%s3",  &pmic4_ftsmps426, "vdd-s3"),
-+	RPMH_VREG("smps4",  "smp%s4",  &pmic4_ftsmps426, "vdd-s4"),
-+	{},
-+};
-+
-+static int rpmh_regulator_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct rpmh_vreg_init_data *vreg_data;
-+	struct device_node *node;
-+	struct rpmh_vreg *vreg;
-+	const char *pmic_id;
-+	int ret;
-+
-+	vreg_data = of_device_get_match_data(dev);
-+	if (!vreg_data)
-+		return -ENODEV;
-+
-+	ret = of_property_read_string(dev->of_node, "qcom,pmic-id", &pmic_id);
-+	if (ret < 0) {
-+		dev_err(dev, "qcom,pmic-id missing in DT node\n");
-+		return ret;
-+	}
-+
-+	for_each_available_child_of_node(dev->of_node, node) {
-+		vreg = devm_kzalloc(dev, sizeof(*vreg), GFP_KERNEL);
-+		if (!vreg) {
-+			of_node_put(node);
-+			return -ENOMEM;
-+		}
-+
-+		ret = rpmh_regulator_init_vreg(vreg, dev, node, pmic_id,
-+						vreg_data);
-+		if (ret < 0) {
-+			of_node_put(node);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rpmh_regulator_match_table[] = {
-+	{
-+		.compatible = "qcom,pm8998-rpmh-regulators",
-+		.data = pm8998_vreg_data,
-+	},
-+	{
-+		.compatible = "qcom,pmi8998-rpmh-regulators",
-+		.data = pmi8998_vreg_data,
-+	},
-+	{
-+		.compatible = "qcom,pm8005-rpmh-regulators",
-+		.data = pm8005_vreg_data,
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, rpmh_regulator_match_table);
-+
-+static struct platform_driver rpmh_regulator_driver = {
-+	.driver = {
-+		.name = "qcom-rpmh-regulator",
-+		.of_match_table	= of_match_ptr(rpmh_regulator_match_table),
-+	},
-+	.probe = rpmh_regulator_probe,
-+};
-+module_platform_driver(rpmh_regulator_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm RPMh regulator driver");
-+MODULE_LICENSE("GPL v2");
++#endif
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
