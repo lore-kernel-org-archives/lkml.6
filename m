@@ -2,128 +2,108 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5A1ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA86BECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 312CA20854
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312CA20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 645CE20854
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:39:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQU/mTjb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645CE20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ieee.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731889AbeGNW7o (ORCPT
+        id S1731963AbeGNW7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 18:59:44 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46544 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731403AbeGNW7o (ORCPT
+        Sat, 14 Jul 2018 18:59:47 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:38589 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731403AbeGNW7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 18:59:44 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D05CF80544; Sun, 15 Jul 2018 00:39:07 +0200 (CEST)
-Date:   Sun, 15 Jul 2018 00:39:07 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Message-ID: <20180714223907.GB2776@amd>
-References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
- <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
- <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
- <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd>
- <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
-Content-Disposition: inline
-In-Reply-To: <20180714222924.GA2776@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 14 Jul 2018 18:59:46 -0400
+Received: by mail-qk0-f194.google.com with SMTP id y4-v6so18911551qka.5;
+        Sat, 14 Jul 2018 15:39:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=V4t8xCZbaMrcVF77zdK4BT5UQqL05PHE5e150afrJoc=;
+        b=PQU/mTjbPylEn5aaselyoLwgsc4k/KK/2xA3gul951gTMb0dyghAlFPpYEm58lCQS9
+         LPzRBz6Z7Phi8Z9XEmRidWMRjWLFk6lPKVxuCzic9tn1/4eXx54OERpXOvrPJevbMx7i
+         sTx0n+vwSIyTlpbq0z+X/Xr1kUdx0VPMSEeP0I096rxH+KobOBTmU/FXr2fhlhUyRnK2
+         b1rwsGdANu0qaeXMqxihQ/r9Mdp5ZeTNEPPoreQq6/O3tIsZ5a8lP77Vj5oOIqpz7654
+         Izb91sWR1fF0kakRPuzwkckgBg9k3uIqzSz1TsS5XD3LpnFKp79ryQr+WLjCKGSTPyiG
+         H/pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=V4t8xCZbaMrcVF77zdK4BT5UQqL05PHE5e150afrJoc=;
+        b=ESHV/znM8HlnVvQ6JyCGhKA3FpILOAXJLLzixy2hVe0JGQV4dxIpWY9ZDiH+pGiJk8
+         NItZRyE5bh0c1NvfM9zUt1SW9+ejH8ya97bDVhmpX8EMTLb4XOKCZLK1ZLX3zAQp6KxB
+         y4/tb17xsVAVtTOaX4vkdTFO78qOV8DzYGpZpnEKz6Au5DTJ/kWoenYpbZ+v0mnrZApl
+         OpEYN5XqKVhQ8NtJNe+oqGmCk2hdgHv/QqJrXuoyTbCP+ieLUGWUVBDwZxGlnP7mC27/
+         QB54UrVV6126tVFA3tmjIBbWIRCEP/HXvRw/rQ6VOey/vcov71wOp3aC21vrY/3EMmmS
+         GyjA==
+X-Gm-Message-State: AOUpUlFOkiCUZ9zL0p4iwOWEWVXFYrxfUCdQffijmC3MbcBbuZE/jRmt
+        a3k6yv/Bl+jxQ4PKw9iFWBXRsg==
+X-Google-Smtp-Source: AAOMgpfrOIguHfvKSAM2l4kw9MCg2Dmj/C59/o+7LQMExzukPOeSqU3bYVP4cFeXk4+SGZmOg0W2JA==
+X-Received: by 2002:a37:9242:: with SMTP id u63-v6mr9489629qkd.189.1531607951676;
+        Sat, 14 Jul 2018 15:39:11 -0700 (PDT)
+Received: from localhost.localdomain ([38.82.195.110])
+        by smtp.gmail.com with ESMTPSA id v88-v6sm23691873qkv.63.2018.07.14.15.39.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 14 Jul 2018 15:39:10 -0700 (PDT)
+From:   Lucas Magasweran <lucas.magasweran@ieee.org>
+To:     linux-acpi@vger.kernel.org
+Cc:     Vladimir Lebedev <vladimir.p.lebedev@intel.com>,
+        Lucas Rangit Magasweran <lucas.magasweran@ieee.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] ACPI: battery: use cache_time as cache "enabled"
+Date:   Sat, 14 Jul 2018 15:38:29 -0700
+Message-Id: <1531607910-4975-1-git-send-email-lucas.magasweran@ieee.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Lucas Rangit Magasweran <lucas.magasweran@ieee.org>
 
---l76fUT7nc3MelDdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When battery state is not cached the module parameter cache_time is 0
+and battery->update_time starts at 0. However, it set to jiffies in
+each call to acpi_battery_get_state() and should not be used to
+determine if a cache time is used.
 
-On Sun 2018-07-15 00:29:25, Pavel Machek wrote:
-> On Sun 2018-07-15 00:02:57, Jacek Anaszewski wrote:
-> > Hi Pavel,
-> >=20
-> > On 07/14/2018 11:20 PM, Pavel Machek wrote:
-> > >Hi!
-> > >
-> > >>>It also drew my attention to the issue of desired pattern sysfs
-> > >>>interface semantics on uninitialized pattern. In your implementation
-> > >>>user seems to be unable to determine if the pattern is activated
-> > >>>or not. We should define the semantics for this use case and
-> > >>>describe it in the documentation. Possibly pattern could
-> > >>>return alone new line character then.
-> > >
-> > >Let me take a step back: we have triggers.. like LED blinking.
-> > >
-> > >How is that going to interact with patterns? We probably want the
-> > >patterns to be ignored in that case...?
-> > >
-> > >Which suggest to me that we should treat patterns as a trigger. I
-> > >believe we do something similar with blinking already.
-> > >
-> > >Then it is easy to determine if pattern is active, and pattern
-> > >vs. trigger issue is solved automatically.
-> >=20
-> > I'm all for it. I proposed this approach during the previous
-> > discussions related to possible pattern interface implementations,
-> > but you seemed not to be so enthusiastic in [0].
-> >=20
-> > [0] https://lkml.org/lkml/2017/4/7/350
->=20
-> Hmm. Reading my own email now, I can't decipher it.
->=20
-> I believe I meant "changing patterns from kernel in response to events
-> is probably overkill"... or something like that.
+Using battery->update_time causes the evaluation of time_before()
+even though cache_time is 0.
 
-Anyway -- to clean up the confusion -- I'd like to see
+This is a minor issue as the behavior is still as expected.
+Even if kernel HZ was very slow and jiffies remained equal, the
+expected branch (false) would be taken because time_before() is
+used instead of time_before_eq().
 
-echo pattern > trigger
-echo "1 2 3 4 5 6 7 8" > somewhere
+Signed-off-by: Lucas Rangit Magasweran <lucas.magasweran@ieee.org>
+---
+ drivers/acpi/battery.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-to activate pattern, and
+diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+index d79ad84..f88bc9f 100644
+--- a/drivers/acpi/battery.c
++++ b/drivers/acpi/battery.c
+@@ -549,7 +549,7 @@ static int acpi_battery_get_state(struct acpi_battery *battery)
+ 	if (!acpi_battery_present(battery))
+ 		return 0;
+ 
+-	if (battery->update_time &&
++	if (cache_time &&
+ 	    time_before(jiffies, battery->update_time +
+ 			msecs_to_jiffies(cache_time)))
+ 		return 0;
+-- 
+2.7.4
 
-echo none > trigger
-
-to stop it.
-
-Best regards,
-								Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---l76fUT7nc3MelDdI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltKe4sACgkQMOfwapXb+vLw8QCfVp+7875oW8KueBC08iu6m7E8
-67YAn0WI3E8AfTf/AsXV/at5HDHp9i5g
-=KhLX
------END PGP SIGNATURE-----
-
---l76fUT7nc3MelDdI--
