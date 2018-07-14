@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F128ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E83ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DB0A208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DB0A208CC
+	by mail.kernel.org (Postfix) with ESMTP id B5A44208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A44208CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbeGNFRR (ORCPT
+        id S1726949AbeGNFRY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:17:17 -0400
-Received: from mga14.intel.com ([192.55.52.115]:63249 "EHLO mga14.intel.com"
+        Sat, 14 Jul 2018 01:17:24 -0400
+Received: from mga02.intel.com ([134.134.136.20]:43162 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeGNFRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:17:17 -0400
+        id S1725880AbeGNFRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:17:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 21:59:37 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 21:59:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,350,1526367600"; 
-   d="scan'208";a="54947310"
+   d="scan'208";a="64603295"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga008.fm.intel.com with ESMTP; 13 Jul 2018 21:59:37 -0700
-Subject: [PATCH v6 02/13] device-dax: Enable page_mapping()
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Jul 2018 21:59:43 -0700
+Subject: [PATCH v6 03/13] device-dax: Set page->index
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
 Cc:     Jan Kara <jack@suse.cz>, hch@lst.de, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Fri, 13 Jul 2018 21:49:40 -0700
-Message-ID: <153154377993.34503.14114016873062907260.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Fri, 13 Jul 2018 21:49:45 -0700
+Message-ID: <153154378540.34503.13530001843688931438.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -50,160 +50,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 In support of enabling memory_failure() handling for device-dax
-mappings, set the ->mapping association of pages backing device-dax
-mappings. The rmap implementation requires page_mapping() to return the
-address_space hosting the vmas that map the page.
+mappings, set ->index to the pgoff of the page. The rmap implementation
+requires ->index to bound the search through the vma interval tree.
 
-The ->mapping pointer is never cleared. There is no possibility for the
-page to become associated with another address_space while the device is
+The ->index value is never cleared. There is no possibility for the
+page to become associated with another pgoff while the device is
 enabled. When the device is disabled the 'struct page' array for the
-device is destroyed / later reinitialized to zero.
+device is destroyed and ->index is reinitialized to zero.
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/device.c |   55 +++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 38 insertions(+), 17 deletions(-)
+ drivers/dax/device.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index ad5e7b4a15dc..95cfcfd612df 100644
+index 95cfcfd612df..361a11089591 100644
 --- a/drivers/dax/device.c
 +++ b/drivers/dax/device.c
-@@ -245,12 +245,11 @@ __weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
- }
+@@ -416,6 +416,7 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
  
- static vm_fault_t __dev_dax_pte_fault(struct dev_dax *dev_dax,
--				struct vm_fault *vmf)
-+				struct vm_fault *vmf, pfn_t *pfn)
- {
- 	struct device *dev = &dev_dax->dev;
- 	struct dax_region *dax_region;
- 	phys_addr_t phys;
--	pfn_t pfn;
- 	unsigned int fault_size = PAGE_SIZE;
+ 	if (rc == VM_FAULT_NOPAGE) {
+ 		unsigned long i;
++		pgoff_t pgoff;
  
- 	if (check_vma(dev_dax, vmf->vma, __func__))
-@@ -272,20 +271,19 @@ static vm_fault_t __dev_dax_pte_fault(struct dev_dax *dev_dax,
- 		return VM_FAULT_SIGBUS;
+ 		/*
+ 		 * In the device-dax case the only possibility for a
+@@ -423,6 +424,8 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
+ 		 * mapped. No need to consider the zero page, or racing
+ 		 * conflicting mappings.
+ 		 */
++		pgoff = linear_page_index(vmf->vma, vmf->address
++				& ~(fault_size - 1));
+ 		for (i = 0; i < fault_size / PAGE_SIZE; i++) {
+ 			struct page *page;
+ 
+@@ -430,6 +433,7 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
+ 			if (page->mapping)
+ 				continue;
+ 			page->mapping = filp->f_mapping;
++			page->index = pgoff + i;
+ 		}
  	}
- 
--	pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
-+	*pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
- 
--	return vmf_insert_mixed(vmf->vma, vmf->address, pfn);
-+	return vmf_insert_mixed(vmf->vma, vmf->address, *pfn);
- }
- 
- static vm_fault_t __dev_dax_pmd_fault(struct dev_dax *dev_dax,
--				struct vm_fault *vmf)
-+				struct vm_fault *vmf, pfn_t *pfn)
- {
- 	unsigned long pmd_addr = vmf->address & PMD_MASK;
- 	struct device *dev = &dev_dax->dev;
- 	struct dax_region *dax_region;
- 	phys_addr_t phys;
- 	pgoff_t pgoff;
--	pfn_t pfn;
- 	unsigned int fault_size = PMD_SIZE;
- 
- 	if (check_vma(dev_dax, vmf->vma, __func__))
-@@ -321,22 +319,21 @@ static vm_fault_t __dev_dax_pmd_fault(struct dev_dax *dev_dax,
- 		return VM_FAULT_SIGBUS;
- 	}
- 
--	pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
-+	*pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
- 
--	return vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd, pfn,
-+	return vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd, *pfn,
- 			vmf->flags & FAULT_FLAG_WRITE);
- }
- 
- #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
- static vm_fault_t __dev_dax_pud_fault(struct dev_dax *dev_dax,
--				struct vm_fault *vmf)
-+				struct vm_fault *vmf, pfn_t *pfn)
- {
- 	unsigned long pud_addr = vmf->address & PUD_MASK;
- 	struct device *dev = &dev_dax->dev;
- 	struct dax_region *dax_region;
- 	phys_addr_t phys;
- 	pgoff_t pgoff;
--	pfn_t pfn;
- 	unsigned int fault_size = PUD_SIZE;
- 
- 
-@@ -373,14 +370,14 @@ static vm_fault_t __dev_dax_pud_fault(struct dev_dax *dev_dax,
- 		return VM_FAULT_SIGBUS;
- 	}
- 
--	pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
-+	*pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
- 
--	return vmf_insert_pfn_pud(vmf->vma, vmf->address, vmf->pud, pfn,
-+	return vmf_insert_pfn_pud(vmf->vma, vmf->address, vmf->pud, *pfn,
- 			vmf->flags & FAULT_FLAG_WRITE);
- }
- #else
- static vm_fault_t __dev_dax_pud_fault(struct dev_dax *dev_dax,
--				struct vm_fault *vmf)
-+				struct vm_fault *vmf, pfn_t *pfn)
- {
- 	return VM_FAULT_FALLBACK;
- }
-@@ -389,8 +386,10 @@ static vm_fault_t __dev_dax_pud_fault(struct dev_dax *dev_dax,
- static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- 		enum page_entry_size pe_size)
- {
--	int rc, id;
- 	struct file *filp = vmf->vma->vm_file;
-+	unsigned long fault_size;
-+	int rc, id;
-+	pfn_t pfn;
- 	struct dev_dax *dev_dax = filp->private_data;
- 
- 	dev_dbg(&dev_dax->dev, "%s: %s (%#lx - %#lx) size = %d\n", current->comm,
-@@ -400,17 +399,39 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf,
- 	id = dax_read_lock();
- 	switch (pe_size) {
- 	case PE_SIZE_PTE:
--		rc = __dev_dax_pte_fault(dev_dax, vmf);
-+		fault_size = PAGE_SIZE;
-+		rc = __dev_dax_pte_fault(dev_dax, vmf, &pfn);
- 		break;
- 	case PE_SIZE_PMD:
--		rc = __dev_dax_pmd_fault(dev_dax, vmf);
-+		fault_size = PMD_SIZE;
-+		rc = __dev_dax_pmd_fault(dev_dax, vmf, &pfn);
- 		break;
- 	case PE_SIZE_PUD:
--		rc = __dev_dax_pud_fault(dev_dax, vmf);
-+		fault_size = PUD_SIZE;
-+		rc = __dev_dax_pud_fault(dev_dax, vmf, &pfn);
- 		break;
- 	default:
- 		rc = VM_FAULT_SIGBUS;
- 	}
-+
-+	if (rc == VM_FAULT_NOPAGE) {
-+		unsigned long i;
-+
-+		/*
-+		 * In the device-dax case the only possibility for a
-+		 * VM_FAULT_NOPAGE result is when device-dax capacity is
-+		 * mapped. No need to consider the zero page, or racing
-+		 * conflicting mappings.
-+		 */
-+		for (i = 0; i < fault_size / PAGE_SIZE; i++) {
-+			struct page *page;
-+
-+			page = pfn_to_page(pfn_t_to_pfn(pfn) + i);
-+			if (page->mapping)
-+				continue;
-+			page->mapping = filp->f_mapping;
-+		}
-+	}
  	dax_read_unlock(id);
- 
- 	return rc;
 
