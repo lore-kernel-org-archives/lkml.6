@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 669BAECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12418ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1512320873
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:04:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1512320873
+	by mail.kernel.org (Postfix) with ESMTP id A93472083C
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:08:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A93472083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726081AbeGNFWX (ORCPT
+        id S1726083AbeGNF0N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:22:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34538 "EHLO mx1.suse.de"
+        Sat, 14 Jul 2018 01:26:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34830 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725863AbeGNFWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:22:22 -0400
+        id S1725863AbeGNF0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:26:13 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E8D33AE77;
-        Sat, 14 Jul 2018 05:04:39 +0000 (UTC)
-Date:   Sat, 14 Jul 2018 07:04:37 +0200
+        by mx1.suse.de (Postfix) with ESMTP id B876CAEDB;
+        Sat, 14 Jul 2018 05:08:29 +0000 (UTC)
+Date:   Sat, 14 Jul 2018 07:08:28 +0200
 From:   Joerg Roedel <jroedel@suse.de>
 To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Joerg Roedel <joro@8bytes.org>,
+Cc:     Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
@@ -40,7 +40,7 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Juergen Gross <jgross@suse.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Jiri Kosina <jkosina@suse.cz>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
         Brian Gerst <brgerst@gmail.com>,
         David Laight <David.Laight@aculab.com>,
@@ -55,46 +55,48 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         Andrea Arcangeli <aarcange@redhat.com>,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Subject: Re: [PATCH 30/39] x86/mm/pti: Clone entry-text again in
- pti_finalize()
-Message-ID: <20180714050437.b4lztahdehaom6el@suse.de>
+Subject: Re: [PATCH 38/39] x86/mm/pti: Add Warning when booting on a PCID
+ capable CPU
+Message-ID: <20180714050828.wl44vgwa7kzptsws@suse.de>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <1531308586-29340-31-git-send-email-joro@8bytes.org>
- <CALCETrU9pe03cW2d+=nXy_iLbiYWzX1dU2wYCfHEN4gb69Q_EA@mail.gmail.com>
+ <1531308586-29340-39-git-send-email-joro@8bytes.org>
+ <CALCETrUTMwwKW6b3dubyC62Rk-_BTQN1zjFOYuLvS13EQ80p9A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrU9pe03cW2d+=nXy_iLbiYWzX1dU2wYCfHEN4gb69Q_EA@mail.gmail.com>
+In-Reply-To: <CALCETrUTMwwKW6b3dubyC62Rk-_BTQN1zjFOYuLvS13EQ80p9A@mail.gmail.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 04:21:45PM -0700, Andy Lutomirski wrote:
+On Fri, Jul 13, 2018 at 11:59:44AM -0700, Andy Lutomirski wrote:
 > On Wed, Jul 11, 2018 at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
 > > From: Joerg Roedel <jroedel@suse.de>
 > >
-> > The mapping for entry-text might have changed in the kernel
-> > after it was cloned to the user page-table. Clone again
-> > to update the user page-table to bring the mapping in sync
-> > with the kernel again.
+> > Warn the user in case the performance can be significantly
+> > improved by switching to a 64-bit kernel.
 > 
-> Can't we just defer pti_init() until after mark_readonly()?  What am I missing?
+> ...
+> 
+> > +#ifdef CONFIG_X86_32
+> > +       if (boot_cpu_has(X86_FEATURE_PCID)) {
+> 
+> I'm a bit confused. Wouldn't the setup_clear_cpu_cap() call in
+> early_identify_cpu() prevent this from working?
 
-I tried that:
+Right you are, I don't have a PCID capable system at hand for testing,
+so I didn't catch this...
 
-	https://lore.kernel.org/lkml/1530618746-23116-1-git-send-email-joro@8bytes.org/
+> Boris, do we have a straightforward way to ask "does the CPU advertise
+> this feature in CPUID regardless of whether we have it enabled right
+> now"?
 
-But while testing it turned out that the kernel potentially executes
-user-space code already before mark_readonly() has ran. This happens
-when some initcall requests a module and the initrd is already
-populated. Then usermode-helper kicks in and runs a userspace binary
-already. When pti_init() has not run yet the user-space page-table is
-completly empty, causing a triple fault when we switch to the user cr3
-on the way to user-space.
+I guess we need to call cpuid again.
 
 
 Regards,
 
 	Joerg
+
