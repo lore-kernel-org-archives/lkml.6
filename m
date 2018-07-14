@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F6BECDFB3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB23ECDFB2
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:57:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F143208D4
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB210208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:57:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="EGJAiCAl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F143208D4
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="eOvrczUi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB210208CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeGNFPD (ORCPT
+        id S1726197AbeGNFPA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:15:03 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:42694 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725851AbeGNFPC (ORCPT
+        Sat, 14 Jul 2018 01:15:00 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:53820 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725851AbeGNFO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:15:02 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6E4qiud023281
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:23 -0700
+        Sat, 14 Jul 2018 01:14:58 -0400
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6E4vHXs031860
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:18 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=CXnTOraIabDKL+Zy8Zj4bQVbeSa8xYxd+OawgjtG+Mw=;
- b=EGJAiCAlLdDpwo6tooYmckyeBsTpAQREgPotQR+OHAye1JJgnocqfpL2bqoD9A4NnoGM
- 2MmygCnXkjL/n2Ko9aZLqNt2kKrJNlVaNPM2vT1ktjOFDHEuHNjataSDGhus+nih5/zu
- S7LYod3b968LJwo3CU2n+T/BxrovuRFUpkU= 
+ content-type; s=facebook; bh=sq7AT4jnNLOd7etFKroukW8vxdHzTuvxWfk+dJ24ww8=;
+ b=eOvrczUiEZUIZ1hXT+pDRExvQ/VGgkKVfxR7ARitCzYlsQY+f+sAJK5entJ5KMqxZIdU
+ s6lzje1B0HkxaDA4mDW4WfFWj5ST78iJbkVtzEfxR9vg68xBofcLpQ588rqvpZL17dVb
+ MVOVhQyfeGC6LT3raDGsFx0tw4HExcEBuZ0= 
 Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2k7a3ag16h-5
+        by mx0b-00082601.pphosted.com with ESMTP id 2k7a3er167-4
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:23 -0700
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:18 -0700
 Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.16) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 13 Jul
- 2018 21:57:22 -0700
+ (192.168.16.22) with Microsoft SMTP Server (TLS) id 14.3.319.2; Fri, 13 Jul
+ 2018 21:57:16 -0700
 Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
- 34D9A8A443B; Fri, 13 Jul 2018 21:57:14 -0700 (PDT)
+ 56C5F8A46D6; Fri, 13 Jul 2018 21:57:14 -0700 (PDT)
 Smtp-Origin-Hostprefix: dev
 From:   Okash Khawaja <osk@fb.com>
 Smtp-Origin-Hostname: dev026.lla1.facebook.com
@@ -57,9 +57,9 @@ To:     Daniel Borkmann <daniel@iogearbox.net>,
 CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-kernel@vger.kernel.org>
 Smtp-Origin-Cluster: lla1c22
-Subject: [PATCH bpf-next v5 1/3] bpf: btf: export btf types and name by offset from lib
-Date:   Fri, 13 Jul 2018 21:57:02 -0700
-Message-ID: <20180714045704.3779427-2-osk@fb.com>
+Subject: [PATCH bpf-next v5 3/3] bpf: btf: print map dump and lookup with btf info
+Date:   Fri, 13 Jul 2018 21:57:04 -0700
+Message-ID: <20180714045704.3779427-4-osk@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180714045704.3779427-1-osk@fb.com>
 References: <20180714045704.3779427-1-osk@fb.com>
@@ -75,156 +75,358 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces btf__resolve_type() function and exports two
-existing functions from libbpf. btf__resolve_type follows modifier
-types like const and typedef until it hits a type which actually takes
-up memory, and then returns it. This function follows similar pattern
-to btf__resolve_size but instead of computing size, it just returns
-the type.
+This patch augments the output of bpftool's map dump and map lookup
+commands to print data along side btf info, if the correspondin btf
+info is available. The outputs for each of  map dump and map lookup
+commands are augmented in two ways:
 
-These  functions will be used in the followig patch which parses
-information inside array of `struct btf_type *`. btf_name_by_offset is
-used for printing variable names.
+1. when neither of -j and -p are supplied, btf-ful map data is printed
+whose aim is human readability. This means no commitments for json- or
+backward- compatibility.
+
+2. when either -j or -p are supplied, a new json object named
+"formatted" is added for each key-value pair. This object contains the
+same data as the key-value pair, but with btf info. "formatted" object
+promises json- and backward- compatibility. Below is a sample output.
+
+$ bpftool map dump -p id 8
+[{
+        "key": ["0x0f","0x00","0x00","0x00"
+        ],
+        "value": ["0x03", "0x00", "0x00", "0x00", ...
+        ],
+        "formatted": {
+                "key": 15,
+                "value": {
+                        "int_field":  3,
+                        ...
+                }
+        }
+}
+]
+
+This patch calls btf_dumper introduced in previous patch to accomplish
+the above. Indeed, btf-ful info is only displayed if btf data for the
+given map is available. Otherwise existing output is displayed as-is.
 
 Signed-off-by: Okash Khawaja <osk@fb.com>
 Acked-by: Martin KaFai Lau <kafai@fb.com>
-Acked-by: Song Liu <songliubraving@fb.com>
 Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 
 ---
- tools/lib/bpf/btf.c |   65 ++++++++++++++++++++++++++++++++++++----------------
- tools/lib/bpf/btf.h |    3 ++
- 2 files changed, 48 insertions(+), 20 deletions(-)
+ tools/bpf/bpftool/map.c |  217 ++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 201 insertions(+), 16 deletions(-)
 
---- a/tools/lib/bpf/btf.c
-+++ b/tools/lib/bpf/btf.c
-@@ -17,6 +17,11 @@
+--- a/tools/bpf/bpftool/map.c
++++ b/tools/bpf/bpftool/map.c
+@@ -34,6 +34,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <fcntl.h>
++#include <linux/err.h>
+ #include <stdbool.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+@@ -44,6 +45,8 @@
  
- #define BTF_MAX_NR_TYPES 65535
+ #include <bpf.h>
  
-+#define IS_MODIFIER(k) (((k) == BTF_KIND_TYPEDEF) || \
-+		((k) == BTF_KIND_VOLATILE) || \
-+		((k) == BTF_KIND_CONST) || \
-+		((k) == BTF_KIND_RESTRICT))
-+
- static struct btf_type btf_void;
++#include "btf.h"
++#include "json_writer.h"
+ #include "main.h"
  
- struct btf {
-@@ -33,14 +38,6 @@ struct btf {
- 	int fd;
- };
- 
--static const char *btf_name_by_offset(const struct btf *btf, uint32_t offset)
--{
--	if (offset < btf->hdr->str_len)
--		return &btf->strings[offset];
--	else
--		return NULL;
--}
--
- static int btf_add_type(struct btf *btf, struct btf_type *t)
- {
- 	if (btf->types_size - btf->nr_types < 2) {
-@@ -190,15 +187,6 @@ static int btf_parse_type_sec(struct btf
- 	return 0;
+ static const char * const map_type_name[] = {
+@@ -148,8 +151,109 @@ int map_parse_fd_and_info(int *argc, cha
+ 	return fd;
  }
  
--static const struct btf_type *btf_type_by_id(const struct btf *btf,
--					     uint32_t type_id)
--{
--	if (type_id > btf->nr_types)
--		return NULL;
--
--	return btf->types[type_id];
--}
--
- static bool btf_type_is_void(const struct btf_type *t)
- {
- 	return t == &btf_void || BTF_INFO_KIND(t->info) == BTF_KIND_FWD;
-@@ -234,7 +222,7 @@ int64_t btf__resolve_size(const struct b
- 	int64_t size = -1;
- 	int i;
- 
--	t = btf_type_by_id(btf, type_id);
-+	t = btf__type_by_id(btf, type_id);
- 	for (i = 0; i < MAX_RESOLVE_DEPTH && !btf_type_is_void_or_null(t);
- 	     i++) {
- 		size = btf_type_size(t);
-@@ -259,7 +247,7 @@ int64_t btf__resolve_size(const struct b
- 			return -EINVAL;
- 		}
- 
--		t = btf_type_by_id(btf, type_id);
-+		t = btf__type_by_id(btf, type_id);
- 	}
- 
- 	if (size < 0)
-@@ -271,6 +259,26 @@ int64_t btf__resolve_size(const struct b
- 	return nelems * size;
- }
- 
-+int btf__resolve_type(const struct btf *btf, __u32 type_id)
++static int do_dump_btf(const struct btf_dumper *d,
++		       struct bpf_map_info *map_info, void *key,
++		       void *value)
 +{
-+	const struct btf_type *t;
-+	int depth = 0;
++	int ret;
 +
-+	t = btf__type_by_id(btf, type_id);
-+	while (depth < MAX_RESOLVE_DEPTH &&
-+	       !btf_type_is_void_or_null(t) &&
-+	       IS_MODIFIER(BTF_INFO_KIND(t->info))) {
-+		type_id = t->type;
-+		t = btf__type_by_id(btf, type_id);
-+		depth++;
++	/* start of key-value pair */
++	jsonw_start_object(d->jw);
++
++	jsonw_name(d->jw, "key");
++
++	ret = btf_dumper_type(d, map_info->btf_key_type_id, key);
++	if (ret)
++		goto err_end_obj;
++
++	jsonw_name(d->jw, "value");
++
++	ret = btf_dumper_type(d, map_info->btf_value_type_id, value);
++
++err_end_obj:
++	/* end of key-value pair */
++	jsonw_end_object(d->jw);
++
++	return ret;
++}
++
++static int get_btf(struct bpf_map_info *map_info, struct btf **btf)
++{
++	struct bpf_btf_info btf_info = { 0 };
++	__u32 len = sizeof(btf_info);
++	__u32 last_size;
++	int btf_fd;
++	void *ptr;
++	int err;
++
++	err = 0;
++	*btf = NULL;
++	btf_fd = bpf_btf_get_fd_by_id(map_info->btf_id);
++	if (btf_fd < 0)
++		return 0;
++
++	/* we won't know btf_size until we call bpf_obj_get_info_by_fd(). so
++	 * let's start with a sane default - 4KiB here - and resize it only if
++	 * bpf_obj_get_info_by_fd() needs a bigger buffer.
++	 */
++	btf_info.btf_size = 4096;
++	last_size = btf_info.btf_size;
++	ptr = malloc(last_size);
++	if (!ptr) {
++		err = -ENOMEM;
++		goto exit_free;
 +	}
 +
-+	if (depth == MAX_RESOLVE_DEPTH || btf_type_is_void_or_null(t))
-+		return -EINVAL;
++	bzero(ptr, last_size);
++	btf_info.btf = ptr_to_u64(ptr);
++	err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
 +
-+	return type_id;
++	if (!err && btf_info.btf_size > last_size) {
++		void *temp_ptr;
++
++		last_size = btf_info.btf_size;
++		temp_ptr = realloc(ptr, last_size);
++		if (!temp_ptr) {
++			err = -ENOMEM;
++			goto exit_free;
++		}
++		ptr = temp_ptr;
++		bzero(ptr, last_size);
++		btf_info.btf = ptr_to_u64(ptr);
++		err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
++	}
++
++	if (err || btf_info.btf_size > last_size) {
++		err = errno;
++		goto exit_free;
++	}
++
++	*btf = btf__new((__u8 *)btf_info.btf, btf_info.btf_size, NULL);
++	if (IS_ERR(*btf)) {
++		err = PTR_ERR(btf);
++		*btf = NULL;
++	}
++
++exit_free:
++	close(btf_fd);
++	free(ptr);
++
++	return err;
 +}
 +
- int32_t btf__find_by_name(const struct btf *btf, const char *type_name)
- {
- 	uint32_t i;
-@@ -280,7 +288,7 @@ int32_t btf__find_by_name(const struct b
- 
- 	for (i = 1; i <= btf->nr_types; i++) {
- 		const struct btf_type *t = btf->types[i];
--		const char *name = btf_name_by_offset(btf, t->name_off);
-+		const char *name = btf__name_by_offset(btf, t->name_off);
- 
- 		if (name && !strcmp(type_name, name))
- 			return i;
-@@ -371,3 +379,20 @@ int btf__fd(const struct btf *btf)
- {
- 	return btf->fd;
- }
-+
-+const char *btf__name_by_offset(const struct btf *btf, __u32 offset)
++static json_writer_t *get_btf_writer(void)
 +{
-+	if (offset < btf->hdr->str_len)
-+		return &btf->strings[offset];
++	json_writer_t *jw = jsonw_new(stdout);
++
++	if (!jw)
++		return NULL;
++	jsonw_pretty(jw, true);
++
++	return jw;
++}
++
+ static void print_entry_json(struct bpf_map_info *info, unsigned char *key,
+-			     unsigned char *value)
++			     unsigned char *value, struct btf *btf)
+ {
+ 	jsonw_start_object(json_wtr);
+ 
+@@ -158,6 +262,16 @@ static void print_entry_json(struct bpf_
+ 		print_hex_data_json(key, info->key_size);
+ 		jsonw_name(json_wtr, "value");
+ 		print_hex_data_json(value, info->value_size);
++		if (btf) {
++			struct btf_dumper d = {
++				.btf = btf,
++				.jw = json_wtr,
++				.is_plain_text = false,
++			};
++
++			jsonw_name(json_wtr, "formatted");
++			do_dump_btf(&d, info, key, value);
++		}
+ 	} else {
+ 		unsigned int i, n;
+ 
+@@ -508,10 +622,12 @@ static int do_show(int argc, char **argv
+ 
+ static int do_dump(int argc, char **argv)
+ {
++	struct bpf_map_info info = {};
+ 	void *key, *value, *prev_key;
+ 	unsigned int num_elems = 0;
+-	struct bpf_map_info info = {};
+ 	__u32 len = sizeof(info);
++	json_writer_t *btf_wtr;
++	struct btf *btf = NULL;
+ 	int err;
+ 	int fd;
+ 
+@@ -537,8 +653,27 @@ static int do_dump(int argc, char **argv
+ 	}
+ 
+ 	prev_key = NULL;
++
++	err = get_btf(&info, &btf);
++	if (err) {
++		p_err("failed to get btf");
++		goto exit_free;
++	}
++
+ 	if (json_output)
+ 		jsonw_start_array(json_wtr);
 +	else
-+		return NULL;
-+}
++		if (btf) {
++			btf_wtr = get_btf_writer();
++			if (!btf_wtr) {
++				p_info("failed to create json writer for btf. falling back to plain output");
++				btf__free(btf);
++				btf = NULL;
++			} else {
++				jsonw_start_array(btf_wtr);
++			}
++		}
 +
-+const struct btf_type *btf__type_by_id(const struct btf *btf,
-+				       __u32 type_id)
-+{
-+	if (type_id > btf->nr_types)
-+		return NULL;
-+
-+	return btf->types[type_id];
-+}
---- a/tools/lib/bpf/btf.h
-+++ b/tools/lib/bpf/btf.h
-@@ -17,6 +17,9 @@ void btf__free(struct btf *btf);
- struct btf *btf__new(uint8_t *data, uint32_t size, btf_print_fn_t err_log);
- int32_t btf__find_by_name(const struct btf *btf, const char *type_name);
- int64_t btf__resolve_size(const struct btf *btf, uint32_t type_id);
-+int btf__resolve_type(const struct btf *btf, __u32 type_id);
- int btf__fd(const struct btf *btf);
-+const char *btf__name_by_offset(const struct btf *btf, __u32 offset);
-+const struct btf_type *btf__type_by_id(const struct btf *btf, __u32 type_id);
+ 	while (true) {
+ 		err = bpf_map_get_next_key(fd, prev_key, key);
+ 		if (err) {
+@@ -549,9 +684,19 @@ static int do_dump(int argc, char **argv
  
- #endif
+ 		if (!bpf_map_lookup_elem(fd, key, value)) {
+ 			if (json_output)
+-				print_entry_json(&info, key, value);
++				print_entry_json(&info, key, value, btf);
+ 			else
+-				print_entry_plain(&info, key, value);
++				if (btf) {
++					struct btf_dumper d = {
++						.btf = btf,
++						.jw = btf_wtr,
++						.is_plain_text = true,
++					};
++
++					do_dump_btf(&d, &info, key, value);
++				} else {
++					print_entry_plain(&info, key, value);
++				}
+ 		} else {
+ 			if (json_output) {
+ 				jsonw_name(json_wtr, "key");
+@@ -574,14 +719,19 @@ static int do_dump(int argc, char **argv
+ 
+ 	if (json_output)
+ 		jsonw_end_array(json_wtr);
+-	else
++	else if (btf) {
++		jsonw_end_array(btf_wtr);
++		jsonw_destroy(&btf_wtr);
++	} else {
+ 		printf("Found %u element%s\n", num_elems,
+ 		       num_elems != 1 ? "s" : "");
++	}
+ 
+ exit_free:
+ 	free(key);
+ 	free(value);
+ 	close(fd);
++	btf__free(btf);
+ 
+ 	return err;
+ }
+@@ -637,6 +787,8 @@ static int do_lookup(int argc, char **ar
+ {
+ 	struct bpf_map_info info = {};
+ 	__u32 len = sizeof(info);
++	json_writer_t *btf_wtr;
++	struct btf *btf = NULL;
+ 	void *key, *value;
+ 	int err;
+ 	int fd;
+@@ -661,27 +813,60 @@ static int do_lookup(int argc, char **ar
+ 		goto exit_free;
+ 
+ 	err = bpf_map_lookup_elem(fd, key, value);
+-	if (!err) {
+-		if (json_output)
+-			print_entry_json(&info, key, value);
+-		else
++	if (err) {
++		if (errno == ENOENT) {
++			if (json_output) {
++				jsonw_null(json_wtr);
++			} else {
++				printf("key:\n");
++				fprint_hex(stdout, key, info.key_size, " ");
++				printf("\n\nNot found\n");
++			}
++		} else {
++			p_err("lookup failed: %s", strerror(errno));
++		}
++
++		goto exit_free;
++	}
++
++	/* here means bpf_map_lookup_elem() succeeded */
++	err = get_btf(&info, &btf);
++	if (err) {
++		p_err("failed to get btf");
++		goto exit_free;
++	}
++
++	if (json_output) {
++		print_entry_json(&info, key, value, btf);
++	} else if (btf) {
++		/* if here json_wtr wouldn't have been initialised,
++		 * so let's create separate writer for btf
++		 */
++		btf_wtr = get_btf_writer();
++		if (!btf_wtr) {
++			p_info("failed to create json writer for btf. falling back to plain output");
++			btf__free(btf);
++			btf = NULL;
+ 			print_entry_plain(&info, key, value);
+-	} else if (errno == ENOENT) {
+-		if (json_output) {
+-			jsonw_null(json_wtr);
+ 		} else {
+-			printf("key:\n");
+-			fprint_hex(stdout, key, info.key_size, " ");
+-			printf("\n\nNot found\n");
++			struct btf_dumper d = {
++				.btf = btf,
++				.jw = btf_wtr,
++				.is_plain_text = true,
++			};
++
++			do_dump_btf(&d, &info, key, value);
++			jsonw_destroy(&btf_wtr);
+ 		}
+ 	} else {
+-		p_err("lookup failed: %s", strerror(errno));
++		print_entry_plain(&info, key, value);
+ 	}
+ 
+ exit_free:
+ 	free(key);
+ 	free(value);
+ 	close(fd);
++	btf__free(btf);
+ 
+ 	return err;
+ }
