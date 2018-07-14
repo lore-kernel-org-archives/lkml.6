@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0E0ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD71ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5E7C208A4
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:09:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5E7C208A4
+	by mail.kernel.org (Postfix) with ESMTP id AD721208CE
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:28:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD721208CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbeGNF0z (ORCPT
+        id S1726005AbeGNFi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:26:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34914 "EHLO mx1.suse.de"
+        Sat, 14 Jul 2018 01:38:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35884 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725863AbeGNF0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:26:55 -0400
+        id S1725880AbeGNFi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:38:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7974EAEDB;
-        Sat, 14 Jul 2018 05:09:10 +0000 (UTC)
-Date:   Sat, 14 Jul 2018 07:09:09 +0200
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 13FE4AE07;
+        Sat, 14 Jul 2018 05:21:14 +0000 (UTC)
+Date:   Sat, 14 Jul 2018 07:21:10 +0200
 From:   Joerg Roedel <jroedel@suse.de>
 To:     Andy Lutomirski <luto@kernel.org>
 Cc:     Joerg Roedel <joro@8bytes.org>,
@@ -55,38 +55,65 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         Andrea Arcangeli <aarcange@redhat.com>,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Subject: Re: [PATCH 39/39] x86/entry/32: Add debug code to check entry/exit
- cr3
-Message-ID: <20180714050909.z4wohvvlbpaksbd5@suse.de>
+Subject: Re: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on
+ Entry-Stack
+Message-ID: <20180714052110.cobtew6rms23ih37@suse.de>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <1531308586-29340-40-git-send-email-joro@8bytes.org>
- <CALCETrUw5DTnPtDK5TUNv4z50rrmcxwPA-KqtBHcWRcazJXy6Q@mail.gmail.com>
+ <1531308586-29340-11-git-send-email-joro@8bytes.org>
+ <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrUw5DTnPtDK5TUNv4z50rrmcxwPA-KqtBHcWRcazJXy6Q@mail.gmail.com>
+In-Reply-To: <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 10:28:50AM -0700, Andy Lutomirski wrote:
-> On Wed, Jul 11, 2018 at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> > From: Joerg Roedel <jroedel@suse.de>
-> >
-> > Add a config option that enabled code to check that we enter
-> > and leave the kernel with the correct cr3. This is needed
-> > because we have no NX protection of user-addresses in the
-> > kernel-cr3 on x86-32 and wouldn't notice that type of bug
-> > otherwise.
-> >
-> 
-> I like this, but could you make it just use CONFIG_DEBUG_ENTRY?
+On Fri, Jul 13, 2018 at 04:31:02PM -0700, Andy Lutomirski wrote:
+> What you're really doing is keeping it available for an extra flag.
+> Please update the comment as such.  But see below.
 
-Makes sense, I'll change it.
+Thanks, will do.
+
+> > +.macro PARANOID_EXIT_TO_KERNEL_MODE
+> > +
+> > +       /*
+> > +        * Test if we entered the kernel with the entry-stack. Most
+> > +        * likely we did not, because this code only runs on the
+> > +        * return-to-kernel path.
+> > +        */
+> > +       testl   $CS_FROM_ENTRY_STACK, PT_CS(%esp)
+> > +       jz      .Lend_\@
+> > +
+> > +       /* Unlikely slow-path */
+> > +
+> > +       /* Clear marker from stack-frame */
+> > +       andl    $(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
+> > +
+> > +       /* Copy the remaining task-stack contents to entry-stack */
+> > +       movl    %esp, %esi
+> > +       movl    PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
+> 
+> I'm confused.  Why do we need any special handling here at all?  How
+> could we end up with the contents of the stack frame we interrupted in
+> a corrupt state?
+> 
+> I guess I don't understand why this patch is needed.
+
+The patch is needed because we can get exceptions in kernel-mode while
+we are already on user-cr3 and entry-stack. In this case we need to
+return with user-cr3 and entry-stack to the kernel too, otherwise we
+would go to user-space with kernel-cr3.
+
+So based on that, I did the above because the entry-stack is a per-cpu
+data structure and I am not sure that we always return from the exception
+on the same CPU where we got it. Therefore the path is called
+PARANOID_... :)
 
 
 Regards,
 
 	Joerg
+
