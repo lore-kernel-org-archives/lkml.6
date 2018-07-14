@@ -7,68 +7,70 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7368AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:27:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F168ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7882089F
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:27:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF1332087C
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:27:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rx1UnMrk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E7882089F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uKrJDdUS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF1332087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeGNMp5 (ORCPT
+        id S1727561AbeGNMp7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 08:45:57 -0400
-Received: from mail-lj1-f174.google.com ([209.85.208.174]:46984 "EHLO
-        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbeGNMp5 (ORCPT
+        Sat, 14 Jul 2018 08:45:59 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33979 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeGNMp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 08:45:57 -0400
-Received: by mail-lj1-f174.google.com with SMTP id 203-v6so15335881ljj.13;
-        Sat, 14 Jul 2018 05:27:00 -0700 (PDT)
+        Sat, 14 Jul 2018 08:45:58 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f8-v6so8675763ljk.1;
+        Sat, 14 Jul 2018 05:27:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sRacs/0sUk8Brhz/EZ6vg8kcRACVqEmifaDYBaSj0So=;
-        b=rx1UnMrkGJCUWjv1P0TxlHnEPu/TT193gchHC5L/SutKueFdWUonc7uRlKoELdNvqL
-         demXLb/6zFqXc5y3EIbaEMMy5nqD2bVLOm96VgaR5N0F9Dnph0swk6GrLtFEqwhNBgg6
-         bpawwHcApqrtxgRlXyZOmTBoaCUG9rwMnX/PrQyLcFjzGZsPa/TvU1iFy5QDg4ym8mzb
-         q/g+IMKZolI/Ykx8opohgiCMHzd5vXiTNfTVUeO1MVbvJCj50MvN+qybGjOOh37EOT7L
-         3p+GZXiltk+k07H9W/pyY9zvs19/k93KMPNPLSBFgvlx+eqOrt0XqlFfiuPPBJKHFXFa
-         BgPA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=rmGc4y2imt1ExYPAjKYiMse/xhDh77VC3NOODiIkSdg=;
+        b=uKrJDdUSDYGZwNX4HKJvB6NJt+Ny0jyu1AiWwX3kExZIkfu3hVBYF+l+gO1/zMPif2
+         X6KpmXVSrw8v30NdUMRwArliNzLz/XR/i4gZLYP5cjhhxjIs73jIRqsW2814iyM8xYio
+         LBVWWtfSAw7k+jCWTvtmKjxgLHYR9sPWLTQhKtAkjtkauP0bioc3Jkt/ORhek12jB9RS
+         Cy2HQCr1ikitzQp9dnyXp7zGOxq+ko+x/2mOrg1iGLjgfVmeC7h+FBbzBMII1GKjeXRl
+         AGoELsQ2Lzm1Kx2wBxK72n8yWGbJuv4rVwkcXgS+YIXmut310UvCRyz7GSM+ls3PaMvC
+         ezkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=sRacs/0sUk8Brhz/EZ6vg8kcRACVqEmifaDYBaSj0So=;
-        b=Q7mgx5Oui+iM8qRlWaU1vn/to2k80i1QNY3PltYgrr9fwd93wLgtkPtXQU4GARr7KJ
-         w3WqW1K1jnrVOWJx4tpyGiTgG+afvL2ey2iX7GsYVJBOpO56Z44XrETcURvCcQU+nuJs
-         VY8Ub9tur6ZOQr7iC/VZ+F1F8IjnFV+5RZbZgWT+Qp5T0V5+P9d6Lyg/1QiyVQGVBDB4
-         8w7a/SF9xH2IliwYHhv4GCtsKh2oo4ZbdW6LrWuSvWFGTpMDvLhrHWu8e1Hlr7sU7XSN
-         g2tLG8tCvWRgy8q0bXh3hInTz4CXbjz5QWnYf3xvrgqepDnhvXObDzHW6gTr/tFnPfx4
-         vd2Q==
-X-Gm-Message-State: AOUpUlEaWPpdWnD5/OcMRtMSw7SpybQyIT/zMLdFLiF8GlteSJFJY2YH
-        t7WVMn+CmAb9nohJR50Gq8Y=
-X-Google-Smtp-Source: AAOMgpcbPvZwl0LLoqT/yTTS4oMtGAVfMKMZO2ZBc895r6onLBtxfmR8leTYNaRelCiRD4zan2AlUQ==
-X-Received: by 2002:a2e:2ac3:: with SMTP id q186-v6mr5384498ljq.123.1531571219596;
-        Sat, 14 Jul 2018 05:26:59 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=rmGc4y2imt1ExYPAjKYiMse/xhDh77VC3NOODiIkSdg=;
+        b=dWmng6N/nm5P5I4z9RbGXtb65awX0ouCbZN9HBecQYvHgZ9aeBCHJcLA+vpx1ebfae
+         ffyM7bh04VLVGA2esTfSyKDyudp6mXSNs/G09WrCInJf6DfaZ2hJyfdQ3tYvRmwOgxKv
+         v8+dyfJM/mdyc7hUfQ5lAJas9QLsd4jN+v6AiEBkvVgZVA9F5yNRhqBnjZrX+cUL7bLh
+         I78XSn/Kk7Fmlg0BZoH7t2jcFA1dQeSwIfXBfW7Gl72oK8pRv1wdjb1rnWggAvmqjcWF
+         cdbqHbYK8WsJFpWNPKOPxNsdMvCYyC8EF9S4F2+iNKkwjuv1bE8fRDH4ty0W70AW1LCq
+         +Lxg==
+X-Gm-Message-State: AOUpUlE4QBvkPcvkNK0IZebmV/R3JMz+gsF4QQXvAollXDUdsfE/3cIm
+        KbfgS5/utVo1TZBEEoX4WDU=
+X-Google-Smtp-Source: AAOMgpcRo6HE5BehfGw2cpES4Ehtg/cAA53f8X3T1KkMfI5eYTWeX+erBzcgD1fq28XltGYStRBnFw==
+X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr5306530ljj.139.1531571220893;
+        Sat, 14 Jul 2018 05:27:00 -0700 (PDT)
 Received: from localhost.localdomain (user-94-254-174-73.play-internet.pl. [94.254.174.73])
-        by smtp.googlemail.com with ESMTPSA id l3-v6sm5860732lfi.36.2018.07.14.05.26.58
+        by smtp.googlemail.com with ESMTPSA id l3-v6sm5860732lfi.36.2018.07.14.05.26.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 14 Jul 2018 05:26:58 -0700 (PDT)
+        Sat, 14 Jul 2018 05:27:00 -0700 (PDT)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     lgirdwood@gmail.com, broonie@kernel.org, sre@kernel.org,
         lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
+        devicetree@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>,
         =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 0/3] power: supply: max8998-charger:
-Date:   Sat, 14 Jul 2018 14:26:50 +0200
-Message-Id: <1531571213-30593-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 1/3] power: supply: max8998-charger: Fix platform data retrieval
+Date:   Sat, 14 Jul 2018 14:26:51 +0200
+Message-Id: <1531571213-30593-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531571213-30593-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+References: <1531571213-30593-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -77,36 +79,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series compose of 3 patches.
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
-First patch, fixes platform data retrieval issue in max8998 charger
-driver, which could cause NULL pointer dereference.
+Since the max8998 MFD driver supports instantiation by DT, platform data
+retrieval is handled in MFD probe and cell drivers should get use
+the pdata field of max8998_dev struct to obtain them.
 
-Second patch, updates max8998 charger driver, so it's possible to parse
-devicetree for configuration.
+Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ drivers/power/supply/max8998_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Third patch, updates max8998 documentation, so it includes new node 
-and properties, needed for charger.
-
-All patches has been tested on, Samsung Galaxy S (i9000) phone.
-
-Changes from v1:
-  - Removed unneeded Fixes tag
-  - Correct description of all charger values
-  - Added missing property unit for charger properties
-  - Removed already applied patch
-
-Paweł Chmiel (2):
-  power: supply: max8998-charger: Parse device tree for required data.
-  dt-bindings: mfd: max8998: Add charger subnode binding
-
-Tomasz Figa (1):
-  power: supply: max8998-charger: Fix platform data retrieval
-
- Documentation/devicetree/bindings/mfd/max8998.txt | 24 +++++++++++
- drivers/power/supply/max8998_charger.c            | 52 ++++++++++++++++++++++-
- 2 files changed, 75 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/power/supply/max8998_charger.c b/drivers/power/supply/max8998_charger.c
+index b64cf0f14142..66438029bdd0 100644
+--- a/drivers/power/supply/max8998_charger.c
++++ b/drivers/power/supply/max8998_charger.c
+@@ -85,7 +85,7 @@ static const struct power_supply_desc max8998_battery_desc = {
+ static int max8998_battery_probe(struct platform_device *pdev)
+ {
+ 	struct max8998_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct max8998_platform_data *pdata = dev_get_platdata(iodev->dev);
++	struct max8998_platform_data *pdata = iodev->pdata;
+ 	struct power_supply_config psy_cfg = {};
+ 	struct max8998_battery_data *max8998;
+ 	struct i2c_client *i2c;
 -- 
 2.7.4
 
