@@ -2,114 +2,81 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167A5ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6E9ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C758D2087C
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:29:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C758D2087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id A99E32089F
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:35:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=tsunix.de header.i=@tsunix.de header.b="Fm+KKmqM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A99E32089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=tsunix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731913AbeGNWuA (ORCPT
+        id S1731948AbeGNW4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 18:50:00 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46395 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731454AbeGNWuA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 18:50:00 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id BC08C8049F; Sun, 15 Jul 2018 00:29:25 +0200 (CEST)
-Date:   Sun, 15 Jul 2018 00:29:25 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Message-ID: <20180714222924.GA2776@amd>
-References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
- <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
- <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
- <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd>
- <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
-Content-Disposition: inline
-In-Reply-To: <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sat, 14 Jul 2018 18:56:06 -0400
+Received: from mail.tsunix.de ([45.77.140.229]:42757 "EHLO mail.tsunix.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731483AbeGNW4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 18:56:06 -0400
+Received: from railgun.de (i59F5AC05.versanet.de [89.245.172.5])
+        by mail.tsunix.de (Postfix) with ESMTPSA id 79F003EDBF;
+        Sun, 15 Jul 2018 00:26:42 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.tsunix.de 79F003EDBF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tsunix.de;
+        s=default; t=1531607202;
+        bh=gBi87n4qEKGo6on6LesSMiAj9TagnGBxY2nktLk7HO0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Fm+KKmqMqYOqTRHnMkKKsI8++kJvyyDCzbvdPBKs3lyutnOGsibOp+GjafeHcMbwc
+         oTyFpC/bJ1fJg46oyb6LgApTyu+o0gPHMCR+2xA+nKwlfgUHVX9Pzzccm6vkhXwwiw
+         gl5527++KCkqvT+RKceNPkQ/+rOxxI4Cboo1lbis=
+From:   Cristian Kubis <cristian.kubis@tsunix.de>
+Cc:     jfrederich@gmail.com, dsd@laptop.org, gregkh@linuxfoundation.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        cristian.kubis@tsunix.de
+Subject: [PATCH 2/2] staging: olpc_dcon: add missing identifier names
+Date:   Sun, 15 Jul 2018 00:25:41 +0200
+Message-Id: <20180714222541.2564-3-cristian.kubis@tsunix.de>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180714222541.2564-1-cristian.kubis@tsunix.de>
+References: <20180714222541.2564-1-cristian.kubis@tsunix.de>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add missing function argument identifier names as suggested by
+checkpatch.pl.
 
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Cristian Kubis <cristian.kubis@tsunix.de>
+---
+ drivers/staging/olpc_dcon/olpc_dcon.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Sun 2018-07-15 00:02:57, Jacek Anaszewski wrote:
-> Hi Pavel,
->=20
-> On 07/14/2018 11:20 PM, Pavel Machek wrote:
-> >Hi!
-> >
-> >>>It also drew my attention to the issue of desired pattern sysfs
-> >>>interface semantics on uninitialized pattern. In your implementation
-> >>>user seems to be unable to determine if the pattern is activated
-> >>>or not. We should define the semantics for this use case and
-> >>>describe it in the documentation. Possibly pattern could
-> >>>return alone new line character then.
-> >
-> >Let me take a step back: we have triggers.. like LED blinking.
-> >
-> >How is that going to interact with patterns? We probably want the
-> >patterns to be ignored in that case...?
-> >
-> >Which suggest to me that we should treat patterns as a trigger. I
-> >believe we do something similar with blinking already.
-> >
-> >Then it is easy to determine if pattern is active, and pattern
-> >vs. trigger issue is solved automatically.
->=20
-> I'm all for it. I proposed this approach during the previous
-> discussions related to possible pattern interface implementations,
-> but you seemed not to be so enthusiastic in [0].
->=20
-> [0] https://lkml.org/lkml/2017/4/7/350
+diff --git a/drivers/staging/olpc_dcon/olpc_dcon.h b/drivers/staging/olpc_dcon/olpc_dcon.h
+index fa89bb97c7b0..c987aaf894e7 100644
+--- a/drivers/staging/olpc_dcon/olpc_dcon.h
++++ b/drivers/staging/olpc_dcon/olpc_dcon.h
+@@ -91,10 +91,10 @@ struct dcon_priv {
+ };
+ 
+ struct dcon_platform_data {
+-	int (*init)(struct dcon_priv *);
++	int (*init)(struct dcon_priv *dcon);
+ 	void (*bus_stabilize_wiggle)(void);
+-	void (*set_dconload)(int);
+-	int (*read_status)(u8 *);
++	void (*set_dconload)(int load);
++	int (*read_status)(u8 *status);
+ };
+ 
+ #include <linux/interrupt.h>
+-- 
+2.18.0
 
-Hmm. Reading my own email now, I can't decipher it.
-
-I believe I meant "changing patterns from kernel in response to events
-is probably overkill"... or something like that.
-
-Sorry about confusion,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltKeUQACgkQMOfwapXb+vIwGwCdGSEWCtTrqnALWtu/u3PaXpkp
-nyMAniy/PdfB/SjZFi/V93NsCT/Lybcs
-=l8Lc
------END PGP SIGNATURE-----
-
---Q68bSM7Ycu6FN28Q--
