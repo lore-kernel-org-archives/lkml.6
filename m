@@ -6,98 +6,257 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D89C8ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DF0ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B23D208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:00:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B23D208CC
+	by mail.kernel.org (Postfix) with ESMTP id BDD71208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:00:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDD71208CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbeGNFSW (ORCPT
+        id S1729841AbeGNFSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:18:22 -0400
-Received: from mga11.intel.com ([192.55.52.93]:40757 "EHLO mga11.intel.com"
+        Sat, 14 Jul 2018 01:18:24 -0400
+Received: from mga05.intel.com ([192.55.52.43]:36407 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeGNFSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:18:21 -0400
+        id S1725880AbeGNFSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:18:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 22:00:10 -0700
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 22:00:43 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,350,1526367600"; 
-   d="scan'208";a="72663942"
+   d="scan'208";a="240228665"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga001.jf.intel.com with ESMTP; 13 Jul 2018 21:59:59 -0700
-Subject: [PATCH v6 06/13] mm,
- dev_pagemap: Do not clear ->mapping on final put
+  by orsmga005.jf.intel.com with ESMTP; 13 Jul 2018 22:00:14 -0700
+Subject: [PATCH v6 09/13] filesystem-dax: Introduce dax_lock_mapping_entry()
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>, hch@lst.de,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 13 Jul 2018 21:50:01 -0700
-Message-ID: <153154380137.34503.3754023882460956800.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date:   Fri, 13 Jul 2018 21:50:16 -0700
+Message-ID: <153154381675.34503.4471648812866312162.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MEMORY_DEVICE_FS_DAX relies on typical page semantics whereby ->mapping
-is only ever cleared by truncation, not final put.
+In preparation for implementing support for memory poison (media error)
+handling via dax mappings, implement a lock_page() equivalent. Poison
+error handling requires rmap and needs guarantees that the page->mapping
+association is maintained / valid (inode not freed) for the duration of
+the lookup.
 
-Without this fix dax pages may forget their mapping association at the
-end of every page pin event.
+In the device-dax case it is sufficient to simply hold a dev_pagemap
+reference. In the filesystem-dax case we need to use the entry lock.
 
-Move this atypical behavior that HMM wants into the HMM ->page_free()
-callback.
+Export the entry lock via dax_lock_mapping_entry() that uses
+rcu_read_lock() to protect against the inode being freed, and
+revalidates the page->mapping association under xa_lock().
 
-Cc: <stable@vger.kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Jérôme Glisse <jglisse@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Fixes: d2c997c0f145 ("fs, dax: use page->mapping...")
+Cc: Jan Kara <jack@suse.cz>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- kernel/memremap.c |    1 -
- mm/hmm.c          |    2 ++
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ fs/dax.c            |  109 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/dax.h |   13 ++++++
+ 2 files changed, 116 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index 5857267a4af5..62603634a1d2 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -339,7 +339,6 @@ void __put_devmap_managed_page(struct page *page)
- 		__ClearPageActive(page);
- 		__ClearPageWaiters(page);
- 
--		page->mapping = NULL;
- 		mem_cgroup_uncharge(page);
- 
- 		page->pgmap->page_free(page, page->pgmap->data);
-diff --git a/mm/hmm.c b/mm/hmm.c
-index de7b6bf77201..f9d1d89dec4d 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -963,6 +963,8 @@ static void hmm_devmem_free(struct page *page, void *data)
+diff --git a/fs/dax.c b/fs/dax.c
+index 4de11ed463ce..57ec272038da 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -226,8 +226,8 @@ static inline void *unlock_slot(struct address_space *mapping, void **slot)
+  *
+  * Must be called with the i_pages lock held.
+  */
+-static void *get_unlocked_mapping_entry(struct address_space *mapping,
+-					pgoff_t index, void ***slotp)
++static void *__get_unlocked_mapping_entry(struct address_space *mapping,
++		pgoff_t index, void ***slotp, bool (*wait_fn)(void))
  {
- 	struct hmm_devmem *devmem = data;
+ 	void *entry, **slot;
+ 	struct wait_exceptional_entry_queue ewait;
+@@ -237,6 +237,8 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
+ 	ewait.wait.func = wake_exceptional_entry_func;
  
-+	page->mapping = NULL;
+ 	for (;;) {
++		bool revalidate;
 +
- 	devmem->ops->free(devmem, page);
+ 		entry = __radix_tree_lookup(&mapping->i_pages, index, NULL,
+ 					  &slot);
+ 		if (!entry ||
+@@ -251,14 +253,31 @@ static void *get_unlocked_mapping_entry(struct address_space *mapping,
+ 		prepare_to_wait_exclusive(wq, &ewait.wait,
+ 					  TASK_UNINTERRUPTIBLE);
+ 		xa_unlock_irq(&mapping->i_pages);
+-		schedule();
++		revalidate = wait_fn();
+ 		finish_wait(wq, &ewait.wait);
+ 		xa_lock_irq(&mapping->i_pages);
++		if (revalidate)
++			return ERR_PTR(-EAGAIN);
+ 	}
  }
  
+-static void dax_unlock_mapping_entry(struct address_space *mapping,
+-				     pgoff_t index)
++static bool entry_wait(void)
++{
++	schedule();
++	/*
++	 * Never return an ERR_PTR() from
++	 * __get_unlocked_mapping_entry(), just keep looping.
++	 */
++	return false;
++}
++
++static void *get_unlocked_mapping_entry(struct address_space *mapping,
++		pgoff_t index, void ***slotp)
++{
++	return __get_unlocked_mapping_entry(mapping, index, slotp, entry_wait);
++}
++
++static void unlock_mapping_entry(struct address_space *mapping, pgoff_t index)
+ {
+ 	void *entry, **slot;
+ 
+@@ -277,7 +296,7 @@ static void dax_unlock_mapping_entry(struct address_space *mapping,
+ static void put_locked_mapping_entry(struct address_space *mapping,
+ 		pgoff_t index)
+ {
+-	dax_unlock_mapping_entry(mapping, index);
++	unlock_mapping_entry(mapping, index);
+ }
+ 
+ /*
+@@ -374,6 +393,84 @@ static struct page *dax_busy_page(void *entry)
+ 	return NULL;
+ }
+ 
++static bool entry_wait_revalidate(void)
++{
++	rcu_read_unlock();
++	schedule();
++	rcu_read_lock();
++
++	/*
++	 * Tell __get_unlocked_mapping_entry() to take a break, we need
++	 * to revalidate page->mapping after dropping locks
++	 */
++	return true;
++}
++
++bool dax_lock_mapping_entry(struct page *page)
++{
++	pgoff_t index;
++	struct inode *inode;
++	bool did_lock = false;
++	void *entry = NULL, **slot;
++	struct address_space *mapping;
++
++	rcu_read_lock();
++	for (;;) {
++		mapping = READ_ONCE(page->mapping);
++
++		if (!dax_mapping(mapping))
++			break;
++
++		/*
++		 * In the device-dax case there's no need to lock, a
++		 * struct dev_pagemap pin is sufficient to keep the
++		 * inode alive, and we assume we have dev_pagemap pin
++		 * otherwise we would not have a valid pfn_to_page()
++		 * translation.
++		 */
++		inode = mapping->host;
++		if (S_ISCHR(inode->i_mode)) {
++			did_lock = true;
++			break;
++		}
++
++		xa_lock_irq(&mapping->i_pages);
++		if (mapping != page->mapping) {
++			xa_unlock_irq(&mapping->i_pages);
++			continue;
++		}
++		index = page->index;
++
++		entry = __get_unlocked_mapping_entry(mapping, index, &slot,
++				entry_wait_revalidate);
++		if (!entry) {
++			xa_unlock_irq(&mapping->i_pages);
++			break;
++		} else if (IS_ERR(entry)) {
++			WARN_ON_ONCE(PTR_ERR(entry) != -EAGAIN);
++			continue;
++		}
++		lock_slot(mapping, slot);
++		did_lock = true;
++		xa_unlock_irq(&mapping->i_pages);
++		break;
++	}
++	rcu_read_unlock();
++
++	return did_lock;
++}
++
++void dax_unlock_mapping_entry(struct page *page)
++{
++	struct address_space *mapping = page->mapping;
++	struct inode *inode = mapping->host;
++
++	if (S_ISCHR(inode->i_mode))
++		return;
++
++	unlock_mapping_entry(mapping, page->index);
++}
++
+ /*
+  * Find radix tree entry at given index. If it points to an exceptional entry,
+  * return it with the radix tree entry locked. If the radix tree doesn't
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 3855e3800f48..cf8ac51cf0d7 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -88,6 +88,8 @@ int dax_writeback_mapping_range(struct address_space *mapping,
+ 		struct block_device *bdev, struct writeback_control *wbc);
+ 
+ struct page *dax_layout_busy_page(struct address_space *mapping);
++bool dax_lock_mapping_entry(struct page *page);
++void dax_unlock_mapping_entry(struct page *page);
+ #else
+ static inline bool bdev_dax_supported(struct block_device *bdev,
+ 		int blocksize)
+@@ -119,6 +121,17 @@ static inline int dax_writeback_mapping_range(struct address_space *mapping,
+ {
+ 	return -EOPNOTSUPP;
+ }
++
++static inline bool dax_lock_mapping_entry(struct page *page)
++{
++	if (IS_DAX(page->mapping->host))
++		return true;
++	return false;
++}
++
++static inline void dax_unlock_mapping_entry(struct page *page)
++{
++}
+ #endif
+ 
+ int dax_read_lock(void);
 
