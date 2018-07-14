@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C89ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C41AECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C00FD208A4
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:59:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8DF5208A4
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:59:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQU4wLvY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C00FD208A4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdbZKufp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8DF5208A4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731372AbeGNGRJ (ORCPT
+        id S1731556AbeGNGRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 02:17:09 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40814 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbeGNGQt (ORCPT
+        Sat, 14 Jul 2018 02:17:18 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:47020 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727843AbeGNGQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 02:16:49 -0400
-Received: by mail-pf0-f196.google.com with SMTP id e13-v6so10380037pff.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 22:59:00 -0700 (PDT)
+        Sat, 14 Jul 2018 02:16:48 -0400
+Received: by mail-pg1-f194.google.com with SMTP id p23-v6so5510309pgv.13
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 22:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bzV7JNi1B0YB6I8xMD9DgtX/J5F56rHwvBuY6Ka1GOA=;
-        b=cQU4wLvYINtyVOz4eyoaQhix28Phg5CQMqUR12PK5MpMmmJOwFKbZuZ3DDKpSWRfKH
-         gWHAmiffHDhjffTllrFVnViqVhXem14GYYWxrTlOFbsmVBJqnuYWvukfgSfbmTu9i8cs
-         h0/ZpX0uDHILzLcXAzK0wt3E2WYHhoakc4PWGYREKDf6iGpJdzcychOLN4W896Y2sM1D
-         YMNNt5m+5O2R9IO9WpzhV1TT4MdNy1+7wqqBp+OEJ74sYUpDzTHHzoPN06rv1S0cBG3Q
-         249JlmbhsCDwY/9VYN/le3NMnbI54UpEqoqaMyANnxq8cuWgX/kLXBoXiHeJwpcvI+k/
-         xwqA==
+        bh=l32dPLtYO3WbvspdL6qjUP255oOR+zZC+SxzDkRVYaY=;
+        b=UdbZKufpWia3f8HCL4Ez4+08ddCco9p76kqMlvGd/bwnc0TC3zXybTtdAp/JpntQvq
+         i7EjKMlp7Z2hj452PGxUi5thrAOG9xvz0ltk2q6aKxvZEqy4ZmxXbNHUq+D8HTsV57py
+         xvUYjExbsC8/5cWr65sA63NhWuK2BQxf6mJczzgirglaEa0ZeR6Hhv+gX/R+Iy0hc1hN
+         uyMrzpRt+Q7T7K+dSuy4Ii5glFQFIRpPbryyuRjP6BfcoW1pByBn+BDgSF4tyW934/q5
+         hu2IT3/T3JyNgRR9v4PyIUQm44yM2fTjv+wQtZFHu7iIUeC5koUxC7YP3r7Qv3DvSyTj
+         BW2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=bzV7JNi1B0YB6I8xMD9DgtX/J5F56rHwvBuY6Ka1GOA=;
-        b=DP64hZ/QhESSWslTZAWKahe5usi5TN+flZlo99Sf4LHHk9vDDRwNILbUKqXsm9yuFE
-         cLyjIdMRAO5gyoYJNz5dYJmMTjayMnC2AATPgVF4xeM8c0/7k0irVFBiyNu7k+k7BYCx
-         aUXerIbx1vpkg8/UBwko8j/sA4DX1JZmQDeWW8Yj9HXrJkG2mqhiqtHYj1ZmC6FbrPFu
-         cyfMjc2toPaqATkxfCbbffZ22bbjn5q+G924U24AaXfoQ7EAegKLIOpTjfRt1H4zXGO4
-         EMqKTXYcR8Czbc/ROEdELcqKr96oMQqJHiKQIcUNMQWvQjHMAAV90rk5JKajK2n/zPyj
-         qQpg==
-X-Gm-Message-State: AOUpUlFVRa2dA8nH42GOxGFuLAoiMGoUfAuaONdAeVV9P5WS73VNMhAq
-        b26bExUwOmRThJ7TtGKpi/I=
-X-Google-Smtp-Source: AAOMgpcV99Cdnhjglzh8UtVglfptMElthn9GtHJP2Otiru7vrfw6BLTZLlIL9SITNwHrMgCpwWqn6g==
-X-Received: by 2002:a62:6d42:: with SMTP id i63-v6mr9920884pfc.41.1531547939999;
-        Fri, 13 Jul 2018 22:58:59 -0700 (PDT)
+        bh=l32dPLtYO3WbvspdL6qjUP255oOR+zZC+SxzDkRVYaY=;
+        b=lXrltvMn78oellRkqg72Rppgl/vwTPN3cDA3pGGvtFAlvvJ3+8yTQiLFxnN+rqf8Qa
+         d8wN+rYEkYUk/0n6cgioZv3KTXRhGTJG3j7S6SjT3YEln+fGsbnWDr5N6fWsyR6hSnkv
+         8goHkA8fqqjAeL3ZEREIQVNGTBAcGg21MsPmw1uv+7I3yj9Ws5aWDhqVWoYJpnfBPQho
+         FviJli/rp9Z81sw+UdmT5eCWxbANyZ0iyUJoI06NSuTr/ZLwFyprI0FKg6I21EYo35uu
+         FFIYjIyi5bU6zml3BEYJvr/1rhSGcWfb56td0CoyoxvRZldwPzHdoSgaljDlw8ncCY9s
+         WwsA==
+X-Gm-Message-State: AOUpUlF3jQyqzflaOJpHIY7WIyVrbwBHbXg8NMKxZ+3q3JBSkwbb7i8/
+        ySDX63X9gxpNnDPBdI/7Rf4=
+X-Google-Smtp-Source: AAOMgpepjabrsmEYyFihkuWNan0VPNQMrtKs2NNKM5Tas1/OlGpW/K0aCodexMqp5AaVI6xjUnDzlw==
+X-Received: by 2002:a62:4dc5:: with SMTP id a188-v6mr9993092pfb.217.1531547938101;
+        Fri, 13 Jul 2018 22:58:58 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.59
+        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 22:58:59 -0700 (PDT)
+        Fri, 13 Jul 2018 22:58:57 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 16/18] staging: gasket: gasket core error handling fixups
-Date:   Fri, 13 Jul 2018 22:58:14 -0700
-Message-Id: <20180714055816.223754-17-toddpoynor@gmail.com>
+Subject: [PATCH 14/18] staging: gasket: fix class create bug handling
+Date:   Fri, 13 Jul 2018 22:58:12 -0700
+Message-Id: <20180714055816.223754-15-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180714055816.223754-1-toddpoynor@gmail.com>
 References: <20180714055816.223754-1-toddpoynor@gmail.com>
@@ -81,61 +81,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Minor fixups to error codes and error handling in gasket core.
+class_create() never returns NULL, and this driver should never return
+PTR_ERR(NULL) anyway.
 
-No device reset callback registered is not an error condition.
-
-Signed-off-by: Simon Que <sque@chromium.org>
+Reported-by: Dmitry Torokhov <dtor@chromium.org>
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 0ef37667e0f1..65780d4dffbf 100644
+index f7d8f66e8746..0ef37667e0f1 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -814,7 +814,7 @@ static int gasket_map_pci_bar(struct gasket_dev *gasket_dev, int bar_num)
- 			gasket_dev,
- 			"Cannot get BAR %d memory region %p",
- 			bar_num, &gasket_dev->pci_dev->resource[bar_num]);
--		return -EINVAL;
-+		return -EBUSY;
- 	}
+@@ -341,7 +341,7 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
+ 	internal->class =
+ 		class_create(driver_desc->module, driver_desc->name);
  
- 	gasket_dev->bar_data[bar_num].virt_base =
-@@ -1655,7 +1655,7 @@ static int gasket_mmap(struct file *filp, struct vm_area_struct *vma)
- 			"0x%lx",
- 			raw_offset);
- 		trace_gasket_mmap_exit(bar_index);
--		return bar_index;
-+		return -EINVAL;
- 	}
- 
- 	vma->vm_private_data = gasket_dev;
-@@ -1865,11 +1865,8 @@ int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
- 	const struct gasket_driver_desc *driver_desc;
- 
- 	driver_desc = gasket_dev->internal_desc->driver_desc;
--	if (!driver_desc->device_reset_cb) {
--		gasket_log_error(
--			gasket_dev, "No device reset callback was registered.");
--		return -EINVAL;
--	}
-+	if (!driver_desc->device_reset_cb)
-+		return 0;
- 
- 	/* Perform a device reset of the requested type. */
- 	ret = driver_desc->device_reset_cb(gasket_dev, reset_type);
-@@ -1894,7 +1891,7 @@ int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
- 	gasket_dev->status = gasket_get_hw_status(gasket_dev);
- 	if (gasket_dev->status == GASKET_STATUS_DEAD) {
- 		gasket_log_error(gasket_dev, "Device reported as dead.");
--		return -EINVAL;
-+		return -EIO;
- 	}
- 
- 	return 0;
+-	if (IS_ERR_OR_NULL(internal->class)) {
++	if (IS_ERR(internal->class)) {
+ 		gasket_nodev_error("Cannot register %s class [ret=%ld]",
+ 				   driver_desc->name, PTR_ERR(internal->class));
+ 		ret = PTR_ERR(internal->class);
 -- 
 2.18.0.203.gfac676dfb9-goog
 
