@@ -2,159 +2,127 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C86EECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 06:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C9AECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 06:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F30208D4
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 06:27:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="iirUbEq6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F30208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id E7FA8208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 06:27:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7FA8208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbeGNGow (ORCPT
+        id S1726769AbeGNGpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 02:44:52 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41975 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbeGNGow (ORCPT
+        Sat, 14 Jul 2018 02:45:35 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55760 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbeGNGpf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 02:44:52 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z8-v6so4199654pgu.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 23:26:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=GXCf2DtjHicnemDCwjMyufJSuD6C57gX89dFEyFsf3o=;
-        b=iirUbEq6AuISF4wszY1UfWON3J4AKQ5W7oHOfRAvC55rr9KFQmB/9z2kiDzQOyu3xL
-         hYqDRRfom9VYAw9M9+kmfsLbNMIj24mApvEINGmrpABV45stBNTCkzpv+Khwy5FkZHzA
-         uOhgcoxma1KG65X0nG7H27fAMdZ9vat4aTotXgDIXfNfW0E8+cgRcZH0aY3Uvn3kZTs7
-         SLKbjpNALkiL9K3F4zEBIq80fvlGcg0mu9RCfI38OnGQq3HJXXnr0anUfFLuaBkuiC4p
-         aVBRl7YYCJNvrQNdQlNq9q0Vxm6HBmRFOyn3z/Jl5Y9Q1nlKr1o5JPFrhVWnkPnnSN+4
-         ma5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=GXCf2DtjHicnemDCwjMyufJSuD6C57gX89dFEyFsf3o=;
-        b=O/1SrjxTPExxYEVSnowpR4SPmPrHfuEO3mNz6aGqgYwsI/jg7MfjEefpeOL2mX72nF
-         JxAp5wsjsGkB2KT3IyLcABjEV10fMOhtyqd2DlGbdXQ51WCifNPNBFhIEfCMI/VDYuTT
-         uKjv6yLe1CqxPjIJhDJzegRiAyF81R5UQz5uJdqJKMMlZ6eyThAlfScC2DUvOPkLZ6iA
-         EB0a2vaKeD/gKpDtlfZidXUWlr9m9sX8xG80lRKELaBcV7fFEvMB9Iu00fWTB9Y4yIK1
-         GM4ix0TkmeaIew1b4zHn0ldDywxQYmTJi5DPSOwtKLaog7J+G393M/xLL7U0AA/vsXY3
-         cZpw==
-X-Gm-Message-State: AOUpUlFN7Ge5Rd+pVZ1q9Agzo+SJeDcF2SjcQgt8NfUDbXcRephwy644
-        Rr134yKG69k08p2Daq0w4+NmjQ==
-X-Google-Smtp-Source: AAOMgpfU4Hl1FHveFOkKF/+ECfPQIXpkhU8Zdngb34WWW2aDHi1j3QszMniYvvoLFBjmKCZj2FvVlQ==
-X-Received: by 2002:a62:aa02:: with SMTP id e2-v6mr9885651pff.211.1531549617961;
-        Fri, 13 Jul 2018 23:26:57 -0700 (PDT)
-Received: from ?IPv6:2600:1011:b00b:a01c:a552:f4c5:78d1:838b? ([2600:1011:b00b:a01c:a552:f4c5:78d1:838b])
-        by smtp.gmail.com with ESMTPSA id m9-v6sm40245868pge.25.2018.07.13.23.26.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 23:26:56 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <20180714052110.cobtew6rms23ih37@suse.de>
-Date:   Fri, 13 Jul 2018 23:26:54 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Sat, 14 Jul 2018 02:45:35 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 5E03280391; Sat, 14 Jul 2018 08:27:38 +0200 (CEST)
+Date:   Sat, 14 Jul 2018 08:27:37 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <7AB4F269-E0E8-4290-A764-69D8605467E8@amacapital.net>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-11-git-send-email-joro@8bytes.org> <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com> <20180714052110.cobtew6rms23ih37@suse.de>
-To:     Joerg Roedel <jroedel@suse.de>
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v2 25/27] x86/cet: Add PTRACE interface for CET
+Message-ID: <20180714062737.GA13242@amd>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-26-yu-cheng.yu@intel.com>
+ <20180711102035.GB8574@gmail.com>
+ <1531323638.13297.24.camel@intel.com>
+ <20180712140327.GA7810@gmail.com>
+ <20180713062804.GA6905@amd>
+ <20180713133357.GB13602@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Disposition: inline
+In-Reply-To: <20180713133357.GB13602@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Jul 13, 2018, at 10:21 PM, Joerg Roedel <jroedel@suse.de> wrote:
+On Fri 2018-07-13 15:33:58, Ingo Molnar wrote:
 >=20
->> On Fri, Jul 13, 2018 at 04:31:02PM -0700, Andy Lutomirski wrote:
->> What you're really doing is keeping it available for an extra flag.
->> Please update the comment as such.  But see below.
+> * Pavel Machek <pavel@ucw.cz> wrote:
 >=20
-> Thanks, will do.
+> >=20
+> > > > > to "CET" (which is a well-known acronym for "Central European Tim=
+e"),
+> > > > > not to CFE?
+> > > > >=20
+> > > >=20
+> > > > I don't know if I can change that, will find out.
+> > >=20
+> > > So what I'd suggest is something pretty simple: to use CFT/cft in ker=
+nel internal=20
+> > > names, except for the Intel feature bit and any MSR enumeration which=
+ can be CET=20
+> > > if Intel named it that way, and a short comment explaining the acrony=
+m difference.
+> > >=20
+> > > Or something like that.
+> >=20
+> > Actually, I don't think CFT is much better -- there's limited number
+> > of TLAs (*). "ENFORCE_FLOW"? "FLOWE"? "EFLOW"?
 >=20
->>> +.macro PARANOID_EXIT_TO_KERNEL_MODE
->>> +
->>> +       /*
->>> +        * Test if we entered the kernel with the entry-stack. Most
->>> +        * likely we did not, because this code only runs on the
->>> +        * return-to-kernel path.
->>> +        */
->>> +       testl   $CS_FROM_ENTRY_STACK, PT_CS(%esp)
->>> +       jz      .Lend_\@
->>> +
->>> +       /* Unlikely slow-path */
->>> +
->>> +       /* Clear marker from stack-frame */
->>> +       andl    $(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
->>> +
->>> +       /* Copy the remaining task-stack contents to entry-stack */
->>> +       movl    %esp, %esi
->>> +       movl    PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
->>=20
->> I'm confused.  Why do we need any special handling here at all?  How
->> could we end up with the contents of the stack frame we interrupted in
->> a corrupt state?
->>=20
->> I guess I don't understand why this patch is needed.
+> Erm, I wanted to say 'CFE', i.e. the abbreviation of 'Control Flow Enforc=
+ement'.
 >=20
-> The patch is needed because we can get exceptions in kernel-mode while
-> we are already on user-cr3 and entry-stack. In this case we need to
-> return with user-cr3 and entry-stack to the kernel too, otherwise we
-> would go to user-space with kernel-cr3.
->=20
-> So based on that, I did the above because the entry-stack is a per-cpu
-> data structure and I am not sure that we always return from the exception
-> on the same CPU where we got it. Therefore the path is called
-> PARANOID_... :)
+> But I guess I can live with CET as well ...
 
-But we should just be able to IRET and end up right back on the entry stack w=
-here we were when we got interrupted.
+Yeah, and I am trying to say that perhaps we should use something
+longer than three letters. It will make code longer but easier to
+read.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-On x86_64, we *definitely* can=E2=80=99t schedule in NMI, MCE, or #DB becaus=
-e we=E2=80=99re on a percpu stack. Are you *sure* we need this patch?
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
->=20
->=20
-> Regards,
->=20
->    Joerg
->=20
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltJl9kACgkQMOfwapXb+vJ/zwCglPFXsNNzgW0ML/M0vPlj5C0a
+To0AoJ4qd5n1bRykjwlqyW6Hs34O+tnJ
+=7LRO
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
