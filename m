@@ -2,169 +2,181 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867E3ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 20:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25D59ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 20:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1252087C
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 20:40:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qlFm55vH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1252087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 9CBF420873
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 20:56:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CBF420873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731305AbeGNVAo (ORCPT
+        id S1731379AbeGNVQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 17:00:44 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42561 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729637AbeGNVAn (ORCPT
+        Sat, 14 Jul 2018 17:16:40 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:48269 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729849AbeGNVQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 17:00:43 -0400
-Received: by mail-pf0-f196.google.com with SMTP id l9-v6so12771003pff.9
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 13:40:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kW65wvSFS/wADxm8RxvMGO8BJqpIUO81dXNZDHRL/U8=;
-        b=qlFm55vHBffL2boyhOemCCWpMtYsUzq468W7/llHH5gzXiPRRyO30ThHR+uO1uAaxx
-         tt617MfQNIfEMTTKMAaoaWx/B+TgdZ1TgbHVF4B2EdFYMUuzAqMKKMUsHHdz8lOGP26F
-         NswlqXJfBqxZwntnhqt1HyHmore3w/KwFCcNVcWCqTK+dDvvOmiyU+BNWTdZFFmwd0rp
-         g7+yJzTTR7TZc+N2hNZuN6BOqQAdRf3vMr3Cpk+lF5RgWdcdTKXYmuHPobyPgwIX7Z8y
-         Ro8+GXuodSREGYBb4mxgCAqYGAVNRu0U25YX7AczTe2dOPYyP3ucMflXSKCXkY2CfrEA
-         ACfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kW65wvSFS/wADxm8RxvMGO8BJqpIUO81dXNZDHRL/U8=;
-        b=mRvOxnn54NozAaPeQqcATjHe2IHr1/YoKjdKcqfpyf0ldlJzlQJrOczUV21FoALMsZ
-         keF6rPgT846/HAFAYM2tikyGVZVK9pXx8OtJYgwbMm3loToiAV7HF17tUVv74q9j85dL
-         h1SCUJVRtx1XKvL5eGErzmYGebz+yIKXUWTjyjzEpRpuMZ6o1aPm7OwWthasosF67EOM
-         lNYfAzOV0dd2M0OS1USf04q4ZFghecZmFCgDlEmRL+nCoOeiKsQOIjdRqcJaGTy0swIG
-         nHOAnSjMsZZquroYmmD0bj4mJWeSekth349SIcSJRVv7Bn+b5V2ASv5PuaTpZqyxkb0a
-         lw8A==
-X-Gm-Message-State: AOUpUlE2vLXKVreD0lLPqklyp7qy9hgu1ndYnshmdeZNlgIWcB5dyFeu
-        DWBYSWRLTeXavCPbyd7/Q0LOZQ==
-X-Google-Smtp-Source: AAOMgpfBZg1IDUz0RvI9cklnZCVUfahEYVSUIz6kRo+60h5Rt6TKbRqsb5gRuu6aVqjiSkDhmkSBfQ==
-X-Received: by 2002:a63:da04:: with SMTP id c4-v6mr10089691pgh.398.1531600827673;
-        Sat, 14 Jul 2018 13:40:27 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id f126-v6sm24767509pgc.88.2018.07.14.13.40.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 Jul 2018 13:40:26 -0700 (PDT)
-Subject: Re: [Ksummit-discuss] bug-introducing patches
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Willy Tarreau <w@1wt.eu>,
-        "ksummit-discuss@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180501163818.GD1468@sasha-vm>
- <20180501194450.GD10479@thunk.org> <20180501200019.GA7397@sasha-vm>
- <20180501205448.GE10479@thunk.org> <20180501220228.GD7397@sasha-vm>
- <20180502043017.GA11938@1wt.eu> <20180502194139.GA18390@sasha-vm>
- <20180502200229.GA12729@1wt.eu> <20180714173812.xhfwtcijlxebmn2k@devuan>
- <e1198cd9-9113-d231-d15a-31ac5224b3b1@roeck-us.net>
- <20180714194716.GA27381@amd>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <4fbbb00c-dcc1-8a2a-a1c6-8d61d545b7b6@roeck-us.net>
-Date:   Sat, 14 Jul 2018 13:40:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sat, 14 Jul 2018 17:16:40 -0400
+Received: from ravnborg.org (unknown [158.248.196.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 41A8E20036;
+        Sat, 14 Jul 2018 22:56:17 +0200 (CEST)
+Date:   Sat, 14 Jul 2018 22:56:15 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     dri-devel@lists.freedesktop.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] atmel_lcdfb: support native-mode display-timings
+Message-ID: <20180714205615.GA21579@ravnborg.org>
 MIME-Version: 1.0
-In-Reply-To: <20180714194716.GA27381@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
+        a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8 a=XYAwZIGsAAAA:8 a=hD80L64hAAAA:8
+        a=P-IC7800AAAA:8 a=5hwdKRlHIUP8x7IPmiYA:9 a=CjuIK1q_8ugA:10
+        a=E9Po1WZjFZOl8hwRPBS3:22 a=E8ToXWR_bxluHZ7gmE-Z:22
+        a=d3PnA9EDa4IxuAV0gXij:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/14/2018 12:47 PM, Pavel Machek wrote:
-> Hi!
-> 
->>>>> The way I see it, if a commit can get one or two tested-by, it's a good
->>>>> alternative to a week in -next.
->>>>
->>>> Agreed. Even their own actually. And I'm not kidding. Those who run large
->>>> amounts of tests on certain patches could really mention is in tested-by,
->>>> as opposed to the most common cases where the code was just regularly
->>>> tested.
->>>
->>> Actually, it would be cool to get "Tested: no" and "Tested: compile"
->>> tags in the commit mesages. Sometimes it is clear from the context
->>> that patch was not tested (treewide update of time to 64bit), but
->>> sometime it is not.
->>>
->>> This is especially problem for -stable, as it seems that lately
->>> patches are backported from new version without any testing.
->>
->>
->> When I started my own testing some five years ago, most architectures
->> did not even build in stable releases. At that time, the only tests being
->> done on stable release candidates were a number of build tests, and most
->> of the results were ignored.
->>
->> Today, we have 0day, kernelci, kerneltests, Linaro's LKFT, and more, plus
->> several merge and boot tests done by individuals. Stable release candidates
->> are build tested on all supported architectures, with hundreds of
-> ...
->> Sure, testing is still far from perfect and needs to be improved. However,
->> requiring that every patch applied to stable releases be tested individually
->> (where ? on all affected architectures ?) would be the wrong
->> direction.
-> 
-> Well, 0day, kernelci etc... is nice... until the change is in the
-> driver. Most of the kernel are drivers, remember?
-> 
-> I don't know. I'd say that if patch is important enough for -stable,
-> there should be someone testing it. For core kernel changes, that can
-> be 0day bot, but for drivers...
-> 
+From 8aded81852666b591624001ec02aa4dc0d8f4cfb Mon Sep 17 00:00:00 2001
+From: Sam Ravnborg <sam@ravnborg.org>
+Date: Sat, 14 Jul 2018 22:17:18 +0200
+Subject: [PATCH 1/1] atmel_lcdfb: support native-mode display-timings
 
-For my part I am just glad that we were able to pick up a fix in xhci code
-just last week, tested or not, from -stable, instead of having to track it
-down ourselves. Similar for many other driver patches which _do_ affect us
-(like the flurry of ext4 patches this week). Granted, there are lots of
-patches which we don't use/need, but even there it is surprising how many
-problems are found with existing testing.
+When a device tree set a display-timing using native-mode
+then according to the bindings doc this should:
 
-For anyone interested in making sure that obscure (whatever that means)
-drivers are tested for stable releases, but does not want to spend time on it,
-all I can recommend is to implement qemu support for it and let me know,
-and I'll be happy to add a respective test to my test farm.
+    native-mode:
+    The native mode for the display, in case multiple
+    modes are provided.
+    When omitted, assume the first node is the native.
 
-However, ultimately, stable release candidates are public. Everyone is
-invited to test them. Anyone interested in a specific release and driver
-is invited take stable release candidates and do the necessary testing,
-just like I and several others do.
+The atmel_lcdfb used the last timing subnode and did not
+respect the timing mode specified with native-mode.
 
-> And problem exists on mainline, too.
-> 
-> Hmm. Patch for obscure driver. Wow, nice, is WellKnownName actually
-> using that driver? Aha, no, he is not; he is doing global
-> search&replace, and did not test the patch...
-> 
+Introduce use of of_get_videomode() which allowed
+a nice simplification of the code while also
+added support for native-mode.
 
-Ah, like me with the strncpy(x, y, strlen(y)) -> memcpy() replacements
-I did a week or so ago ? You are right, I only compile tested those and
-otherwise trusted my ability to understand C code. If that caused any
-problems, please let me know, and hopefully I'll be able to learn something
-from it.
+As a nice side-effect this fixes a memory leak where the
+data used for timings and the display_np was not freed.
 
-Really, there are infrastructure changes all the time. Sometimes I am asked
-to run a complete test sequence with those, but most of the time they are
-applied to -next and people wait for the fallout. That may not be perfect but,
-seriously, the only alternative would be to declare that in-kernel APIs
-shall not be changed anymore. I don't think that would be feasible.
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
 
-Thanks,
-Guenter
+Tested on a proprietary board utilizing an at91sam9263.
+Problem was found because I uses the bootloader to
+set the native-mode depending on the mounted display.
+
+Please note - I may have missed some magic around selecting
+the correct videomode.
+The patch was to some extend based on what was done in
+the mxsfb driver.
+
+I am away a few days after sunday, but decided to send
+out the patch in order to collect potential review feedback.
+
+        Sam
+
+ drivers/video/fbdev/atmel_lcdfb.c | 43 ++++++++-------------------------------
+ 1 file changed, 9 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/video/fbdev/atmel_lcdfb.c b/drivers/video/fbdev/atmel_lcdfb.c
+index 076d24afbd72..4ed55e6bbb84 100644
+--- a/drivers/video/fbdev/atmel_lcdfb.c
++++ b/drivers/video/fbdev/atmel_lcdfb.c
+@@ -22,6 +22,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <video/of_videomode.h>
+ #include <video/of_display_timing.h>
+ #include <linux/regulator/consumer.h>
+ #include <video/videomode.h>
+@@ -1028,11 +1029,11 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 	struct device *dev = &sinfo->pdev->dev;
+ 	struct device_node *np =dev->of_node;
+ 	struct device_node *display_np;
+-	struct device_node *timings_np;
+-	struct display_timings *timings;
+ 	struct atmel_lcdfb_power_ctrl_gpio *og;
+ 	bool is_gpio_power = false;
++	struct fb_videomode fb_vm;
+ 	struct gpio_desc *gpiod;
++	struct videomode vm;
+ 	int ret = -ENOENT;
+ 	int i;
+ 
+@@ -1105,44 +1106,18 @@ static int atmel_lcdfb_of_init(struct atmel_lcdfb_info *sinfo)
+ 	pdata->lcdcon_is_backlight = of_property_read_bool(display_np, "atmel,lcdcon-backlight");
+ 	pdata->lcdcon_pol_negative = of_property_read_bool(display_np, "atmel,lcdcon-backlight-inverted");
+ 
+-	timings = of_get_display_timings(display_np);
+-	if (!timings) {
+-		dev_err(dev, "failed to get display timings\n");
+-		ret = -EINVAL;
++	ret = of_get_videomode(display_np, &vm, OF_USE_NATIVE_MODE);
++	if (ret) {
++		dev_err(dev, "failed to get videomode from DT\n");
+ 		goto put_display_node;
+ 	}
+ 
+-	timings_np = of_get_child_by_name(display_np, "display-timings");
+-	if (!timings_np) {
+-		dev_err(dev, "failed to find display-timings node\n");
+-		ret = -ENODEV;
++	ret = fb_videomode_from_videomode(&vm, &fb_vm);
++	if (ret < 0)
+ 		goto put_display_node;
+-	}
+ 
+-	for (i = 0; i < of_get_child_count(timings_np); i++) {
+-		struct videomode vm;
+-		struct fb_videomode fb_vm;
+-
+-		ret = videomode_from_timings(timings, &vm, i);
+-		if (ret < 0)
+-			goto put_timings_node;
+-		ret = fb_videomode_from_videomode(&vm, &fb_vm);
+-		if (ret < 0)
+-			goto put_timings_node;
+-
+-		fb_add_videomode(&fb_vm, &info->modelist);
+-	}
+-
+-	/*
+-	 * FIXME: Make sure we are not referencing any fields in display_np
+-	 * and timings_np and drop our references to them before returning to
+-	 * avoid leaking the nodes on probe deferral and driver unbind.
+-	 */
+-
+-	return 0;
++	fb_add_videomode(&fb_vm, &info->modelist);
+ 
+-put_timings_node:
+-	of_node_put(timings_np);
+ put_display_node:
+ 	of_node_put(display_np);
+ 	return ret;
+-- 
+2.12.0
+
