@@ -2,111 +2,76 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CE9ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94C2ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B675208CE
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55B6C208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:57:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="qUmPRRY6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Kn0i4sIf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B675208CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="LgpiCssw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B6C208CC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725970AbeGNFBy (ORCPT
+        id S1725942AbeGNFO4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:01:54 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:39025 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbeGNFBy (ORCPT
+        Sat, 14 Jul 2018 01:14:56 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:43018 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725851AbeGNFO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:01:54 -0400
-Received: by mail-yw0-f193.google.com with SMTP id r184-v6so7127183ywg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:44:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=aQHsyx1Nte4fpKoux+yLig37fd8DcXMVXzLHv04tjsY=;
-        b=qUmPRRY6I9smXV+PCC4cBhPRTp9OnsItlpnHdYMnkuhQhTy0i9JxDVXt66YgDVJmP0
-         aN+RVv7HGw/wOLxzB3cHOupEGqpaUGN3hVAPvggQa+2Pt6KS4a/JdNjFmI2FqdWmRJP/
-         Bis5OUfTCSAn7sQWO0AoM98bo/mfy9XtBQQ9KgjumnV8QIX+Lke2agOFO6XUMqLDr0UM
-         0lWt2dzEundc+mjn06u7QtoBrcJc0CQg8mdqZ0ywTT+sVANt1OLhYgGB3RSD11kMAT2E
-         pbH3gXErOeW1Qhq2akJQb1rRsk28cENoVa8Ffjk2FVuVTG8OZ/z3wdlZiUpk+y5T3tb4
-         m1uQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=aQHsyx1Nte4fpKoux+yLig37fd8DcXMVXzLHv04tjsY=;
-        b=Kn0i4sIfreHr7ylOJGnEafaEMGH7Y0l9QiSAWAq7atZIig+UxjJiQXznJ0d/9KPtsw
-         BzMg5hIryCdVaAYb/y9dzZUlusnw8emomu2b2OEOvIVbYO2ncMLNX3SF5tsnTk5DemZf
-         L0ySnHUUiOyJNSTC9CpMcpzBu+Iys08Z1pu9g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=aQHsyx1Nte4fpKoux+yLig37fd8DcXMVXzLHv04tjsY=;
-        b=Zcyze2aP2gF/pYxMB0QXfQxm+tMXRjuwk8hzRmY5gtMiKDQaeTlDQ8biXmCvv1W5tg
-         cu/wGZ0+yexbESNlFGyDtHfdqP2bNJBDKtYOW+3HH2KYzpiY2zflQt1fI8jzbx5sl8Jz
-         +lvW0U60NKxzoyeu5+2e2lj7AWMgyqGLWcOxB6GTxJq9B0/IPgFZQvQ7BhbRZdDTCYhi
-         PeCaWVEACHCL1ujuXgDHVSnqQGfTNi3iZ5JpFP3KN1tThXU1U+cSh+LuXOhvO9lRI28W
-         VMgXdCjJ8GAMz4yavWbzsU/5azkfF5BLbOvL98MXmnGtMT0yNFwu3FsuA2aYhRspM7Oc
-         u5gA==
-X-Gm-Message-State: AOUpUlGXBBrAYpiaSZ+7zhcI6o+/GrnDWinpMi+Dl0XlYjMl8ykxZ0Gv
-        KJ+3eODcZ5qLao/V+Ushzq2hgDem08ee+H4ZrjTNOg==
-X-Google-Smtp-Source: AAOMgpdFBIFySUq9BmPGfqTbjI0EeUwwkWWS8fil1RLyrIs7/5STPWjQzYSSpSfo5nqAGIBDyYpFyH+JWCbs/4xGviM=
-X-Received: by 2002:a0d:d287:: with SMTP id u129-v6mr4597619ywd.95.1531543456545;
- Fri, 13 Jul 2018 21:44:16 -0700 (PDT)
+        Sat, 14 Jul 2018 01:14:56 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6E4tTJn006815
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=xmL8ncCAtnG56m8r5iFvOdITLASi8jNXBkQUtAB/CYI=;
+ b=LgpiCsswq34LaF2I1sNYRALu4D4bzNNi6Md4SmloyIC+APaA79qeSy0fR9rbXE7DtpSr
+ COgbGPzdRsojygh4Oc5ZfsFzKkUg8U/G5ZNoAE6CqeemBivCL1c+dj7T/jJIPhBB385M
+ CWuw/RZfeT8x6GS/j1vyHIW7hVkRj2KV9+8= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2k7a3qr154-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:17 -0700
+Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
+ (192.168.16.15) with Microsoft SMTP Server (TLS) id 14.3.361.1; Fri, 13 Jul
+ 2018 21:57:16 -0700
+Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
+ 27E308A46B4; Fri, 13 Jul 2018 21:57:14 -0700 (PDT)
+Smtp-Origin-Hostprefix: dev
+From:   Okash Khawaja <osk@fb.com>
+Smtp-Origin-Hostname: dev026.lla1.facebook.com
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S . Miller" <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-kernel@vger.kernel.org>
+Smtp-Origin-Cluster: lla1c22
+Subject: [PATCH bpf-next v5 0/3] bpf: btf: print bpftool map data with btf
+Date:   Fri, 13 Jul 2018 21:57:01 -0700
+Message-ID: <20180714045704.3779427-1-osk@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 21:44:15
- -0700 (PDT)
-In-Reply-To: <20180713135541.7ada72437862c32f4563a9a8@linux-foundation.org>
-References: <20180712130733.11510-1-adrian@lisas.de> <87sh4o5s82.fsf@xmission.com>
- <20180713135541.7ada72437862c32f4563a9a8@linux-foundation.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 13 Jul 2018 21:44:15 -0700
-X-Google-Sender-Auth: YI6AXLyNpF5tjP8Yr2AAzcdPeU8
-Message-ID: <CAGXu5jJMBDd3-Yab78aYwQ1N6VG7=BjARoTF1pDygPhaWA9VNQ@mail.gmail.com>
-Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Adrian Reber <adrian@lisas.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Josh Triplett <josh@joshtriplett.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-14_02:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 1:55 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Thu, 12 Jul 2018 11:33:33 -0500 ebiederm@xmission.com (Eric W. Biederman) wrote:
->> What is the value of disabling this functionality ever?
->>
->> Is there any reason why we don't just delete CONFIG_CHECKPOINT_RESTORE
->> entirely?
->
-> For the vast number of Linux machines which aren't servers?  Check out
-> some defconfigs - only one of arm's 119 defconfigs selects it.
+Re-sending v5 with updated Reviewed-by and Acked-by.
 
-Right, and I would bet the minification folks would like to keep it
-out of their builds too. I think we should keep the config.
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
