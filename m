@@ -2,177 +2,90 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCCE7ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 20:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03AB2ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 20:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83F3F20873
+	by mail.kernel.org (Postfix) with ESMTP id B257220897
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 20:16:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83F3F20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B257220897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeGNUgO (ORCPT
+        id S1731391AbeGNUgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 16:36:14 -0400
-Received: from smtp01.smtpout.orange.fr ([80.12.242.123]:21959 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727955AbeGNUgN (ORCPT
+        Sat, 14 Jul 2018 16:36:32 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:55249 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727955AbeGNUgb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 16:36:13 -0400
-Received: from belgarion ([90.76.60.200])
-        by mwinf5d36 with ME
-        id AkFm1y0044KClF603kFmY7; Sat, 14 Jul 2018 22:16:00 +0200
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 14 Jul 2018 22:16:00 +0200
-X-ME-IP: 90.76.60.200
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, devicetree@vger.kernel.org,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list\:ARM\/FREESCALE IMX \/ MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/2] ARM: dts: pxa: add mioa701 board description
-References: <20180702055733.18578-1-robert.jarzmik@free.fr>
-        <20180702055733.18578-2-robert.jarzmik@free.fr>
-        <CAL_JsqJU2jyfN3PyvXRCTO4xXQmUbU3tJ0uLok10KONULpJwXg@mail.gmail.com>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Sat, 14 Jul 2018 22:15:45 +0200
-In-Reply-To: <CAL_JsqJU2jyfN3PyvXRCTO4xXQmUbU3tJ0uLok10KONULpJwXg@mail.gmail.com>
-        (Rob Herring's message of "Mon, 9 Jul 2018 12:00:26 -0600")
-Message-ID: <87lgada80e.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+        Sat, 14 Jul 2018 16:36:31 -0400
+X-Originating-IP: 50.39.174.102
+Received: from localhost (50-39-174-102.bvtn.or.frontiernet.net [50.39.174.102])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 52F0B40002;
+        Sat, 14 Jul 2018 20:16:13 +0000 (UTC)
+Date:   Sat, 14 Jul 2018 13:16:10 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
+Message-ID: <20180714201610.GB17877@localhost>
+References: <20180712130733.11510-1-adrian@lisas.de>
+ <87sh4o5s82.fsf@xmission.com>
+ <20180713135541.7ada72437862c32f4563a9a8@linux-foundation.org>
+ <CAGXu5jJMBDd3-Yab78aYwQ1N6VG7=BjARoTF1pDygPhaWA9VNQ@mail.gmail.com>
+ <87pnzpvdtd.fsf@xmission.com>
+ <20180714191030.GA17877@localhost>
+ <871sc5vc7n.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871sc5vc7n.fsf@xmission.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rob Herring <robh+dt@kernel.org> writes:
+On Sat, Jul 14, 2018 at 02:39:24PM -0500, Eric W. Biederman wrote:
+> Josh Triplett <josh@joshtriplett.org> writes:
+> 
+> > On Sat, Jul 14, 2018 at 02:04:46PM -0500, Eric W. Biederman wrote:
+> >> For a config option that no one has come forward with an actual real
+> >> world use case for disabling, that cost seems much too high.
+> >
+> > The real-world use case is precisely as stated: code size, both storage
+> > and RAM.
+> 
+> That is theoretical.
 
-Hi Rob,
+No, it isn't. I've *watched* the kernel's size trend steadily upward
+over time. And it largely happens in individual features that don't
+think *their* contribution to size is all that large.
 
->> +       /* compatible = "mitac,mioa701"; */
->> +       compatible = "marvell,pxa270";
->
-> Why the comment?
-Leftover, I'll remove it.
+> > I regularly encounter systems I'd *like* to put Linux in that have
+> > around 1MB of storage and 1MB of RAM, or even less.
+> 
+> Yes.  There is so little code behind CONFIG_CHECKPOINT_RESTART that it
+> won't help with that.
 
->> +                       pstore_region:region@0xa2000000 {
->
-> Drop the 0x
-Done.
+It adds up; there are hundreds more small features like it.
 
->> +                               compatible = "linux,contiguous-memory-region";
->> +                               reg = <0xa2000000 1048576>;
->
-> Use hex for the size.
-Ok.
+> But if minification is the actual requirement for disabling
+> CONFIG_CHECKPOINT_RESTART than CONFIG_CHECKPIONT_RESTART is properly
+> behind expert and it needs to be default y instead of default n.
 
->> +               ffuart: uart@40100000 {
->
-> Should be "serial@...". You'll have to fix in the base dtsi.
-Ok for all of these.
->> +               pxai2c1: i2c@40301680 {
->> +                       mrvl,i2c-fast-mode;
->> +                       pinctrl-names = "default";
->> +                       pinctrl-0 = <&pinctrl_i2c_default>;
->> +                       status = "okay";
->> +
->> +                       mt9m111: camera@5d {
->> +                               compatible = "micron,mt9m111";
->> +                               reg = <0x5d>;
->> +                               gpios = <&gpio 56 GPIO_ACTIVE_HIGH>;
->> +
->> +                               remote = <&pxa_camera>;
->
-> Not needed with the graph:
-I don't understand that, do you mean the port node is not needed ?
-
->
->> +                               port {
->> +                                       mt9m111_1: endpoint {
->> +                                               bus-width = <8>;
->> +                                               remote-endpoint = <&pxa_camera>;
->> +                                       };
->> +                               };
->> +                       };
->> +               };
->> +               gpio-keys {
->> +                       compatible = "gpio-keys";
->> +                       #address-cells = <1>;
->> +                       #size-cells = <0>;
->> +                       autorepeat;
->> +                       pinctrl-names = "default";
->> +                       pinctrl-0 = <&pinctrl_gpiokeys_default>;
->> +                       status = "okay";
->
-> Don't need status here? It shouldn't be defined in the base dtsi.
-Heuh what ? The status is just above, and gpio-keys is not defined in any dtsi.
-
->> +
->> +                       button@0 {
->
-> If you have unit-address there should also be a reg property. Just
-> drop and name the node 'power' or 'power-button'. And similarly for
-> the rest.
-Ok.
-
->> +
->> +       regulators {
->> +               compatible = "simple-bus";
->
-> Drop this and move children to the top level. This is not an mmio bus.
-Ok.
-
->> +       docg3: flash@0 {
->
-> This probably should be a child of the bus controller.
-Most certainly yes.
-
->
->> +               compatible = "m-systems,diskonchip-g3";
->> +               reg = <0x0 0x2000>;
->> +       };
->> +
->> +       panel {
->> +               compatible = "toshiba,ltm0305a776";
->> +               lcd-type = "color-tft";
->
-> This should be implied by the compatible.
-Mmm no. Actually, this is used by the framebuffer controller, ie. pxafb to set
-it up. And I don't think adding a list of panel compatibles in pxafb is a good
-idea.
-The corresponding code is in : drivers/video/fbdev/pxafb.c, see
-"static const char * const lcd_types[]".
-
->> +               display-timings {
->> +                       native-mode = <&timing0>;
->
-> We generally imply this from the compatible (i.e. use simple-panel).
-But you suppose there is an actual driver for the panel, right ? But there is
-none.
-
-> Could use another level of indentation.
-Sure.
-
->> +       ac_charger: charger@1 {
->
-> Drop the unit-address.
-Ok.
-
-Thanks for the review.
-
--- 
-Robert
+I don't have any objection to *that*, as long as the option remains.
