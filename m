@@ -2,98 +2,64 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797BFECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 10:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FA1ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 11:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE972086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 10:17:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CjM4kIwP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE972086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B06720897
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 11:03:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B06720897
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbeGNKfZ (ORCPT
+        id S1726898AbeGNLWY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 06:35:25 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35048 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbeGNKfZ (ORCPT
+        Sat, 14 Jul 2018 07:22:24 -0400
+Received: from www62.your-server.de ([213.133.104.62]:59113 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbeGNLWY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 06:35:25 -0400
-Received: by mail-io0-f196.google.com with SMTP id q4-v6so33430221iob.2
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 03:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QO9BTGPtSnXoyIZDKfFGEXpcZP/Btky/KGEjrvP3hfY=;
-        b=CjM4kIwP80wKHjPS4U38nm5J9OCUYmEEvCeg2QRfCCcXDRQi7GvSTebzWktJXLyA1I
-         6Br2jqJqqJSL/KfOH8BfGT42IX0xE96VIHOx2QIxDy5HEnZSSOID3I97tIGPo2VfD4ah
-         0HJba2zagy6+364DQVMQPFv4UaFNmtDz2+9Cg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QO9BTGPtSnXoyIZDKfFGEXpcZP/Btky/KGEjrvP3hfY=;
-        b=sUAHu5TNsA35TETgAPdSHO5IzsB+G3m2UfUWAsNw0d7V411yUTHa6Sf/AkzW+/tMFF
-         FNAITluZZJ7O1zYrTiY6WqRObKRWGQnOjLyRM4COzGgsmgCLzEKGWqCIOXVBI+/TETPe
-         P+eKC0bZS5dbia2nlVwSSy+17gnQZZ10LJT74fJ8XUYPun98My9vcffdyPia6adK2jWv
-         jR8oABJUUk0eKY0uAS6Pm1CFiUmBsru/8Is0HbcSrb5e+96rPeg5s25GpnIWAP9fMpSL
-         6hufoMc8hwL7UulLsFLnQbUOH9zw17r6CklFXtNcRxIez9otHbzc3kGqT8SJOfGparWx
-         f/Nw==
-X-Gm-Message-State: APt69E0zQN8LHvg5JSDQ84k6aRmnxJLMnNQGoq+qZhI0bXiOf7y4L1gP
-        wEWmQCOzk2B7wXhhMMRdQRT6Zcko+zMSmklF1hdnUw==
-X-Google-Smtp-Source: AAOMgpc4DLuva886bV1nNqU+59flkb5GjIKmXGCePPJo/rKJC8v9Dp6V0JO2rKjtdqubw5AjKuhL/lWopZRURFzVyAc=
-X-Received: by 2002:a6b:6c0b:: with SMTP id a11-v6mr33548491ioh.175.1531563409841;
- Sat, 14 Jul 2018 03:16:49 -0700 (PDT)
+        Sat, 14 Jul 2018 07:22:24 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1feIKv-0001VH-HU; Sat, 14 Jul 2018 13:03:37 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1feIKv-0005S5-Bp; Sat, 14 Jul 2018 13:03:37 +0200
+Subject: Re: [PATCH bpf-next v5 0/3] bpf: btf: print bpftool map data with btf
+To:     Okash Khawaja <osk@fb.com>, Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, kernel-team@fb.com,
+        linux-kernel@vger.kernel.org
+References: <20180714045704.3779427-1-osk@fb.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <9c9fca41-ca3a-0ca8-6b46-78f3a62b4c6e@iogearbox.net>
+Date:   Sat, 14 Jul 2018 13:03:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-References: <20180709061925.20276-1-vkoul@kernel.org> <20180709061925.20276-4-vkoul@kernel.org>
-In-Reply-To: <20180709061925.20276-4-vkoul@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 14 Jul 2018 12:16:37 +0200
-Message-ID: <CACRpkdYk11wNMFFFqbVXgRtPCrvq25MOHDrG_dikCr31oUWyqA@mail.gmail.com>
-Subject: Re: [PATCH v5 3/6] crypto: Add Qcom prng driver
-To:     vkoul@kernel.org
-Cc:     linux-crypto@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        Timur Tabi <timur@codeaurora.org>, jhugo@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180714045704.3779427-1-osk@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24751/Sat Jul 14 06:52:35 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 8:20 AM Vinod Koul <vkoul@kernel.org> wrote:
+On 07/14/2018 06:57 AM, Okash Khawaja wrote:
+> Re-sending v5 with updated Reviewed-by and Acked-by.
 
-> This ports the Qcom prng from older hw_random driver.
->
-> No change of functionality and move from hw_random to crypto
-> APIs is done.
->
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-
-FWIW:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-
-> +config CRYPTO_DEV_QCOM_RNG
-> +       tristate "Qualcomm Randon Number Generator Driver"
-
-Random speling error.
-
-> +#include <linux/of_device.h>
-
-Do you need this? It seems like a platform device fair and square.
-
-Yours,
-Linus Walleij
+This time it worked, applied to bpf-next, thanks Okash!
