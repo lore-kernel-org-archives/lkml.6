@@ -2,402 +2,119 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F16ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D552ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1A4208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:33:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VoQTqK5Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1A4208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DD2E4208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:44:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2E4208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726333AbeGNHv4 (ORCPT
+        id S1726190AbeGNIDB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 03:51:56 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38146 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725824AbeGNHv4 (ORCPT
+        Sat, 14 Jul 2018 04:03:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56766 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeGNIDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 03:51:56 -0400
-Received: by mail-pf0-f193.google.com with SMTP id v15-v6so3828845pff.5;
-        Sat, 14 Jul 2018 00:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bo457rB2aPfU9FDNu+9AgXJc08vD8otytxqmhemQGCI=;
-        b=VoQTqK5Z6tiaZZSSCw7tvw0ZvEFOcmBrX7d8v/lsqscHJ+QnhQLaYWBvY15TnZQJd7
-         0J0I7xaMUdtmHXZEGdZf9F2uKsQQt/stVvVKj5FRaxuTFPbVe+GJPyHX+sEgX1iSMWMf
-         Fp7Y/bB8WOV8x4/bwQUyegIlEm0nvwge6zKfauvs9rtw76GstLRHjP5wW75LA7ccOZ1G
-         HDs4zs3TYTpisNMqOUQ501X/Cbsc654wlOimGYSRShatH62qQCyz2OIu48O2Q20bDTi6
-         U8ZvJdx6GMtOM8tbn6u9V9dleQ5PG2pi/ZdaiFaH1l6jJZl9Nb1lAqgSeS46nvQfnO/v
-         Gsaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bo457rB2aPfU9FDNu+9AgXJc08vD8otytxqmhemQGCI=;
-        b=ERa8PmpEv5IcPmp+X/ZnsJ8N3kb5Lc5eC34hR+MfnSP9AYieZcIQJrCaDnHVUVXePF
-         WukoIxNwy7mr9ET5oGdyyFMFh2yKl6uk5qcHdlts1xLtn77HT0e0Cj8bShwnfwMx6JlH
-         bh3Ft39Dauj4jSA45sqYWpm6NwxfDDwn4QgNoDdySJvGcE3EtigIsK9LRaEyiCvsfQq7
-         KrPxtaDtvuvPIpymYaY7UoQ87Z3PTwWZW0+JczWV8y+/Xhasw6kMc2tehWiZaXOMON4B
-         WYM8u/Zjh72BMflB3Vco+Z9Q5axgjnEG8j6g7nQZgrT2rnkwD4WacwA3DX46+PZlYH/3
-         Q91w==
-X-Gm-Message-State: AOUpUlGDKcWMsq6YJmwDbSqAVPk/LFy+hzoDxlCB7kFitEM/wmPmud7y
-        26t9AkZrnPNMAJza4qWnSyM=
-X-Google-Smtp-Source: AAOMgpe9SoUvn+cXn3jvmZIWmdqQuh9j6BCnVNq0CuKmH4K4z7X7MQalMLuTIgeIv3mrbtwL8phoiw==
-X-Received: by 2002:a65:620b:: with SMTP id d11-v6mr8841843pgv.429.1531553630063;
-        Sat, 14 Jul 2018 00:33:50 -0700 (PDT)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id y69-v6sm68440481pfd.36.2018.07.14.00.33.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 Jul 2018 00:33:49 -0700 (PDT)
-Date:   Sat, 14 Jul 2018 13:03:42 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     David Frey <dfrey@sierrawireless.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, Daniel Baluta <daniel.baluta@gmail.com>
-Subject: Re: [PATCH v3] iio: chemical: Add support for Bosch BME680 sensor
-Message-ID: <20180714073341.GA6542@himanshu-Vostro-3559>
-References: <1531311229-3586-1-git-send-email-himanshujha199640@gmail.com>
- <a33aa270-2c8b-7590-f1fc-1a22b4a8b2cf@sierrawireless.com>
+        Sat, 14 Jul 2018 04:03:01 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC3F28A5;
+        Sat, 14 Jul 2018 07:44:52 +0000 (UTC)
+Date:   Sat, 14 Jul 2018 09:44:50 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Zhongze Hu <frankhu@chromium.org>,
+        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
+Subject: Re: [PATCH 12/18] staging: gasket: annotate ioctl arg with __user
+Message-ID: <20180714074450.GA22469@kroah.com>
+References: <20180714055816.223754-1-toddpoynor@gmail.com>
+ <20180714055816.223754-13-toddpoynor@gmail.com>
+ <20180714063502.GF20451@kroah.com>
+ <CAO3upobyf9JpKLSoSPeVfNGOh6R0cud=hT+bhA=U2kNkGEJ-aw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <a33aa270-2c8b-7590-f1fc-1a22b4a8b2cf@sierrawireless.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO3upobyf9JpKLSoSPeVfNGOh6R0cud=hT+bhA=U2kNkGEJ-aw@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+On Sat, Jul 14, 2018 at 12:12:38AM -0700, Todd Poynor wrote:
 
-On Fri, Jul 13, 2018 at 01:42:35PM -0700, David Frey wrote:
-> Hi Himanshu Jha,
+HTML email gets rejected by the mailing lists :(
+
+Please fix your email client to not do that.
+
+> On Fri, Jul 13, 2018 at 11:35 PM, Greg Kroah-Hartman <
+> gregkh@linuxfoundation.org> wrote:
 > 
-> First a bit of background.  I'm working on a device which will contain a
-> bme680 sensor.  A colleague of mine started work on a Linux kernel driver
-> for the chip a little while ago.  The (WIP) driver can be found here:
-> https://github.com/mangOH/mangOH/tree/master/linux_kernel_modules/bme680
-
-Great!
-
-> This driver is written targeting an older kernel (3.18.x) because that's the
-> kernel we're stuck on for now.  Rather than writing the driver from scratch,
-> what we did was write the Linux kernel driver as a wrapper around the Bosch
-> code.  My theory at the time was that Bosch made the chip, so they probably
-> know what they're doing when it comes to writing a driver library.  After
-> having looked at the code in more detail, I'm less confident that our
-> approach was the best one.  I'm not attempting to upstream the driver built
-> by my colleague and I'm not trying to request review of this code either.  I
-> simply want to make you aware of it so that you can look at it to get some
-> ideas.
-
-Thanks for taking your time to review.
-
-> I have included a number of comments on your driver below.  Keep up the good
-> work!
+>     On Fri, Jul 13, 2018 at 10:58:10PM -0700, Todd Poynor wrote:
+>     > From: Todd Poynor <toddpoynor@google.com>
+>     >
+>     > For sparse checking.
+>     >
+>     > Reported-by: Dmitry Torokhov <dtor@chromium.org>
+>     > Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+>     > Signed-off-by: Todd Poynor <toddpoynor@google.com>
+>     > ---
 > 
-> >+++ b/drivers/iio/chemical/bme680.h
-> >@@ -0,0 +1,99 @@
-> >+/* SPDX-License-Identifier: GPL-2.0 */
-> >+#ifndef BME680_H_
-> >+#define BME680_H_
-> >+
-> >+#define BME680_REG_CHIP_I2C_ID			0xD0
-> >+#define BME680_REG_CHIP_SPI_ID			0x50
-> >+#define BME680_CHIP_ID_VAL			0x61
-> Try to be consistent with the indenting of the defines.  I think this would
-> be clearest:
-> #define BME680_REG_X			0x00
-> #define   BME680_X_FOO_EN_MASK		BIT(0)
-> #define   BME680_X_BAR_MASK		GENMASK(3, 1)
-> #define     BME680_BAR_VAL1		3
-> #define     BME680_BAR_VAL2		7
+>     Are you sure this patch even applies?  What tree did you make it
+>     against?
 > 
-> This way the register, field definition and field values are all visually
-> distinctive.
-
-I have used this pattern everywhere where applicable. But not applied
-for *_VAL, would definitely follow this up.
-
-> >+#define BME680_REG_SOFT_RESET			0xE0
-> The datasheet says that the soft reset register differs for I2C and SPI.
-> For I2C it is 0xE0 and for SPI it is 0x60 when page 0 is selected.
-
-That's really a stupid mistake :(
-I have exported these individual initialization code in the I2C & SPI
-drivers respectively but it slipped my mind somehow. This device has 
-peculiar characteristics in register addressing.
-
-I will correct this in next version.
-
-> >+#define BME680_CMD_SOFTRESET			0xB6
-> >+#define BME680_REG_STATUS			0x73
-> >+#define   BME680_SPI_MEM_PAGE_BIT		BIT(4)
-> >+#define   BME680_SPI_MEM_PAGE_1_VAL		1
-> >+
-> >+#define BME680_OSRS_TEMP_X(osrs_t)		((osrs_t) << 5)
-> >+#define BME680_OSRS_PRESS_X(osrs_p)		((osrs_p) << 2)
-> >+#define BME680_OSRS_HUMID_X(osrs_h)		((osrs_h) << 0)
-> You could use the FIELD_PREP macro from <linux/bitfield.h> to eliminate the
-> need for these macros.  For example:
-> ctrl_meas_reg = FIELD_PREP(BME680_OSRS_TEMP_MASK, temp_val) |
->                 FIELD_PREP(BME680_OSRS_PRESS_MASK, press_val) |
->                 FIELD_PREP(BME880_MODE_MASK, mode_val);
-
-Ah, yes! I didn't knew about these magic macros. It will remove some
-log2() computation hacks from my code.
-
-> >+
-> >+#define BME680_REG_TEMP_MSB			0x22
-> >+#define BME680_REG_PRESS_MSB			0x1F
-> >+#define BM6880_REG_HUMIDITY_MSB			0x25
-> >+#define BME680_REG_GAS_MSB			0x2A
-> >+#define BME680_REG_GAS_R_LSB			0x2B
-> >+#define   BME680_GAS_STAB_BIT			BIT(4)
-> >+
-> >+#define BME680_REG_CTRL_HUMIDITY		0x72
-> >+#define   BME680_OSRS_HUMIDITY_MASK		GENMASK(2, 0)
-> >+
-> >+#define BME680_REG_CTRL_MEAS			0x74
-> >+#define   BME680_OSRS_TEMP_MASK			GENMASK(7, 5)
-> >+#define   BME680_OSRS_PRESS_MASK		GENMASK(4, 2)
-> >+#define   BME680_MODE_MASK			GENMASK(1, 0)
-> >+
-> >+#define BME680_MODE_FORCED			BIT(0)
-> >+#define BME680_MODE_SLEEP			0
-> This should be:
-> #define BME680_MODE_SLEEP			0
-> #define BME680_MODE_FORCED			1
-
-Yes, this is much clearer and removes ambiguity.
-
-> >+/* Taken from Bosch BME680 API */
 > 
-> I think there should be a link to the Bosch code
-> (https://github.com/BoschSensortec/BME680_driver/) somewhere within the
-> comments of this file.  Maybe it belongs at the top of this file?
+> I'm working in linux-next at tag next-20180713, which is also tagged master at
+> this writing. 
+> 
+> I think I'm following http://www.kroah.com/log/linux/linux-staging-update.html,
+> but if I'm off in the weeds do clue me in, thanks. 
 
-I planned to add:
-https://github.com/BoschSensortec/BME680_driver/blob/63bb5336db4659519860832be2738c685133aa33/bme680.c#L876
-to here and likewise to other compensate functions.
-But these links may change(if somehow they plan to migrate to Gitlab),
-long lines are not welcomed.
+That's something I wrote 9 years ago :)
 
-You could also notice that I haven't included datasheet link at the top
-of this file. Well, most of the companies change the links when releasing
-the new Revision(Rev. A,B,...) so it is likely that the link would be
-dead/old lying at the top of source.
+Anyway, yes, linux-next is usually the right place to work off of, but
+it lags my staging.git tree usually by at least a day, maybe two,
+depending on when I push and when -next picks my tree up.  Also there is
+the lag of the weekend when -next is not being generated.
 
-Therefore, I added both links to Bosch API and datasheet only in the
-commmit log(also suggested by my mentor).
+Normally that is fine, except for when working on code that is "fast
+moving".  This driver has had lots of submissions against it lately as
+there are loads of "low hanging fruit" that people easily see to fix up.
+Look at the mailing list archives for this week alone for all of those
+patches.
 
-> >+static s32 bme680_compensate_temp(struct bme680_data *data,
-> >+				  s32 adc_temp)
-> >+{
-> >+	struct bme680_calib *calib = &data->bme680;
-> >+	s64 var1, var2, var3, calc_temp;
-> >+
-> >+	var1 = ((s32) adc_temp >> 3) - ((s32) calib->par_t1 << 1);
-> >+	var2 = (var1 * (s32) calib->par_t2) >> 11;
-> >+	var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
-> >+	var3 = ((var3) * ((s32) calib->par_t3 << 4)) >> 14;
-> >+	data->t_fine = (s32) (var2 + var3);
-> >+	calc_temp = (s16) (((data->t_fine * 5) + 128) >> 8);
-> >+
-> >+	return calc_temp;
-> I think the meaning of the s32 returned should be documented.  Based on code
-> elsewhere in the driver I'm guessing it's degrees celcius * 100. The same
-> comment applies to the other compensate functions.
+When working on something that lots of other people are working on, pay
+attention to the patches on the mailing list and work off of my
+staging.git tree, usually the staging-next branch, but sometimes
+staging-testing is needed if lots of patches are being sent rapidly.
 
-Yes, this function returns values like 3253(32.53degC), which I divide
-in the read_temp() at last few lines:
+>     I ask because this fragment:
+>    
+>     > @@ -12,6 +12,7 @@
+>     >   * GNU General Public License for more details.
+>     >   */
+> 
+>     is no longer in the tree.
+> 
+> 
+> Sorry, which tree?  I've made sure my linux-next is up-to-date and I still see
+> this code.
 
-	*val = bme680_compensate_temp();
-	*val2 = 100;
-	return IIO_VAL_FRACTIONAL;
+Look at my staging-next branch in staging.git.  It's long-gone :)
 
-You can only document when you have "official" references, I mean these
-*should* have been documented in datasheet. And then we could say:
+thanks,
 
-"Temperature has 100 degC .... Pg 21"
-
-But these resolution information is what I got from Bosch when I
-contacted them and also evident from README.md
-
-https://github.com/BoschSensortec/BME680_driver/blob/63bb5336db4659519860832be2738c685133aa33/README.md#example-for-reading-all-sensor-data
-
-	"printf("T: %.2f degC, P: %.2f hPa, H %.2f %%rH ",
-				data.temperature / 100.0f,
-				data.pressure / 100.0f,
-				data.humidity / 1000.0f );"
-
-And I am pretty sure they will add these information in the coming
-revision of datasheet.
-
-I have looked at the various family of sensors from Bosch and they even
-mention the optimal oversampling ratio, filter coefficient, etc., for 
-say "using in weather stations"(Take a look at bme280 datasheet)
-
-[ market policy is what I heard somewhere ;) ]
-
-> >+static int bme680_chip_config(struct bme680_data *data)
-> >+{
-> >+	struct device *dev = regmap_get_device(data->regmap);
-> >+	int ret;
-> >+	u8 osrs = BME680_OSRS_HUMID_X(data->oversampling_humid + 1);
-> >+	/*
-> >+	 * Highly recommended to set oversampling of humidity before
-> >+	 * temperature/pressure oversampling.
-> >+	 */
-> I think you are referring to this snippet from the datasheet: "It is highly
-> recommended to set first osrs_h<2:0> followed by osrs_t<2:0> and osrs_p<2:0>
-> in one write command (see Section 3.3)."  My interpretation of this is that
-> they are saying that you should do one bulk write rather than writing the
-> fields individually.  Maybe they're just recommending this for efficiency
-> reasons.  I'm not really sure though.  I read through section 3.3 and I
-> couldn't find any justification to backup this rather prominent suggestion.
-
-Yes, I referred to the same segment of article from datasheet.
-But how do you do a bulk_write() for *two different* registers ?
-
-We have humidity bit(osrs_h<2:0) at Ctrl_hum(0x72) register and
-temperature(osrs_t), pressure bit(osrs_p) at Ctrl_meas(0x74) register.
-
-So, I think it was setting humidity first perhaps and then doing the
-rest.
-
-Even Bosch is doing the reverse of what they say in the datasheet:
-https://github.com/BoschSensortec/BME680_driver/blob/63bb5336db4659519860832be2738c685133aa33/bme680.c#L464
-
-They are setting Temperature & Pressure _before_ humidity oversampling
-setting. Weird!?
-
-> >+static int bme680_read_temp(struct bme680_data *data,
-> >+			    int *val, int *val2)
-> >+{
-> >+	struct device *dev = regmap_get_device(data->regmap);
-> >+	int ret = 0;
-> >+	__be32 tmp = 0;
-> >+	s32 adc_temp, comp_temp;
-> >+
-> >+	/* set forced mode to trigger measurement */
-> >+	ret = bme680_set_mode(data, true);
-> >+	if (ret < 0)
-> >+		return ret;
-> >+
-> >+	ret = regmap_bulk_read(data->regmap, BME680_REG_TEMP_MSB,
-> >+			       (u8 *) &tmp, 3);
-> >+	if (ret < 0) {
-> >+		dev_err(dev, "failed to read temperature\n");
-> >+		return ret;
-> >+	}
-> I think the value you're reading from the register may actually be from a
-> previous request.  I think you need to poll meas_status_0 (0x1D) field
-> new_data_0 (bit 7) to wait for new data after setting the mode to forced.
-> You can see that's what Bosch's code does:
-> https://github.com/BoschSensortec/BME680_driver/blob/63bb5336db4659519860832be2738c685133aa33/bme680.c#L1227
-
-Yes, we can do that but, for a while, I am following my GSoC proposal
-timeline. And I have planned these check_bits function later, but since
-this check_bits function was imperative in gas sensing, therefore I
-included them now.
-
-My plan in incremental changes and this patch is kindof minimal. I have
-tested the sensor several times and found no errors in readings for
-T P H G readings so far.
-
-The problem arises that this sensor is made to work in a T->P->H->G
-fashion and every channel is mostly dependent on the other. And IIO
-driver design pattern isn't the best choice it. You can't just take a
-single channel readings by running Bosch Code because it is not designed
-like that.
-
-For instance: we need t_fine values for pressure/humidity compensation
-functions which we only get when reading temperature. So, you need to
-run the temperaure cycle if you need pressure/humidity values. And this
-is what I did by doing a dummy read_temp(data, NULL, NULL) to get the t_fine
-value.
-
-I had also planned to add heater_profile_duration:
-https://github.com/BoschSensortec/BME680_driver/blob/63bb5336db4659519860832be2738c685133aa33/bme680.c#L647
-
-But what if I only read gas channel ?
-Then this function needs to be tweaked accordingly.
-
-But without these functions my code works fine, but I will surely add
-them later.
-
-There are also function that can be added for eg. to add a delay during
-startup:
-
-Start-up time -- tstartup -- Time to first communication -- 2ms
-
-This delay should be added after power-on reset.
-
-I am currently considering only the core functionality for now, later
-incrementally add these function.
-
-I am currenlty supplying default values for heater temperature & duration
-at probe and planned to add syfs attributes for user to specify these
-values. But somehow it got complicated and my mentor advised to just to
-the needful now and later we can add various support interfaces. We can
-also add interface for turning on/off optional IIR filter.
-
-The another problem also arise is that each you want a reading, you need
-to set the FORCED mode. But Bosch Code doesn't support individual
-channel reading as we do in IIO, they don;t need to care about this
-information.
-
-But on other side in IIO, if you want pressure reading you do:
-
-# cat in_pressure_humidityrelative
-..
-and then behind the scenes FORCED mode is set and you get the reading.
-
-But then again, if you want temp & pressure both:
-
-# cat in_temp_input in_pressure_humidityrelative
-..
-
-and here we set FORCED mode *twice* for every measurement.
-And then datasheet say:
-
-At Page 14/50
-------------
-
-3. Sensor usage
-3.1 Sensor modes
-
-"It is important to note that, further mode change commands or other
-write commands to the control registers are ignored until
-the mode change command has been executed. All control registers should
-be set to the desired values before writing to the
-mode register."
-
-So, we need to take care of these stuff too!
-
-And then there are a lot of things to discuss....
-
-Thanks you so much for the feedback, David! :)
-
-And if at some point I have said something stupid, then please forgive me.
-
-I am a 3rd year undergrad student and started with IIO few months back, and
-not a Bosch driver developer ;)
-
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+greg k-h
