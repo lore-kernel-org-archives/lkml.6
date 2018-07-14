@@ -7,83 +7,118 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3262ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 15:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A6CECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 15:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7622D20896
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 15:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A463C20896
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 15:57:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bP6bcfsS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7622D20896
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/r3R2h4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A463C20896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730667AbeGNQNs (ORCPT
+        id S1730897AbeGNQQc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 12:13:48 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:50400 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbeGNQNs (ORCPT
+        Sat, 14 Jul 2018 12:16:32 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:40699 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbeGNQQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 12:13:48 -0400
-Received: by mail-it0-f66.google.com with SMTP id w16-v6so15301154ita.0;
-        Sat, 14 Jul 2018 08:54:19 -0700 (PDT)
+        Sat, 14 Jul 2018 12:16:32 -0400
+Received: by mail-yb0-f193.google.com with SMTP id y11-v6so13907176ybm.7;
+        Sat, 14 Jul 2018 08:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=e9U8adnCeSFtEBM2A3rTJ2qcAZ4dIE7H8hV9JxTQbHE=;
-        b=bP6bcfsS6aFqKGZ7H1EypTPe3TtBTHGCpy904pp3db0F0Y04mphvzHnpIg7DV6p1eg
-         5aYl7gfDofnOiDmS1Yg7dcauGo/wXt1z6qgfUFNm91+s5vNWYrWjwiHyzfPL5jP+5T8o
-         DLqBld1jLAwxRWdTlaL9HfVyu+2kgi7A7oXpIFczzQSaKU+MtGGlySHItbcZfF53Sd0P
-         SJ3JTgcoE0oXXrAh2kLMuRtaDx5AQR7NJ3uLvHkai4N0xxkCm1XclFzHIi2uwv+8sEic
-         2hVqXnU8FeoJwB1dtIgdmiZS76Us/44XwQRtKZgvdA23KYfubGrBSg1NwcGOi4M71T0U
-         hlmg==
+        bh=HwHZMPoWLasNY5WCoKItAo80+rfiDuGKoVBN3gf+QgA=;
+        b=C/r3R2h4mZHiXnlPBnDRVoOqj10QO+AEyoJML6hX5tw15l4U5kr2nnO7ZYGSo8v8Qf
+         h1uBBvRcR74aFlXhRezcthQSvEpJSW0zjw5YObMJxhqwsQapJdtPhZhSLUF+8Q6INBdU
+         amyEFIRVNqDQLBF1DzScoi/agi/okC/VR09TPfDGiWrYkwrJtutMck4bWuzwmwe0xRGG
+         3gZoOfrhZ0Qpjl/OKrTZc4WQFKLJWZBohufl7NlQ8Bhq5YYYEr7Jw5csgxl0qmyq05RF
+         PwPA3LPuIn5+BgStVOPi3VbtcsfdF4BPCgRKjULoJCA8l5/ATyBNRuj7lCkA/7DcNNyO
+         gzuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=e9U8adnCeSFtEBM2A3rTJ2qcAZ4dIE7H8hV9JxTQbHE=;
-        b=WZmLoCXR/1Bo/kOAxy9jtY5ENLomN5yG/orAPZm2ITx7KVqzMzrqmcp4O81LPYT9Ot
-         RQH7AQArBU3i/VdkjiZOaQViiPcPdz7+X+miDmH4FIzUIHjA+SVmbLjJrlT4FvtOfrSP
-         Yi6vO+QYq1rpkKkytN69kBH+WaBrJT3dDiD9uSMQLOeLqhnn7auwPGerkWidrZwUrhnB
-         1nwytKdTxPKZaKWeqokugccGZkj/GRUvRWPelfHjmGBijGyOse3EfStJV8VbR+KVGMvT
-         pgkQFHXOmgw1TAVsGY366dMUsBF/vXsPbXf40LXE/0cSUWaPLubsF7gkUL9WTeonT9gZ
-         s4/A==
-X-Gm-Message-State: AOUpUlHIzvJrT9CpsB0R/6qt07FNlp89M3+9ZzE0LhKuhWHtN5dWIF9P
-        uffALQfsM2XhkxiRszcl17w75A/2b5Xgp8YojvU=
-X-Google-Smtp-Source: AAOMgpdb+aGAY2J9jJzKATb1CVjlh5+M+ZSRRHv+3zJ3TmuI8sc5Log8frqCBRLK3HqL1Ktm9uGC44fYZnh9iL/y/VQ=
-X-Received: by 2002:a02:a1d9:: with SMTP id o25-v6mr9071883jah.86.1531583658607;
- Sat, 14 Jul 2018 08:54:18 -0700 (PDT)
+        bh=HwHZMPoWLasNY5WCoKItAo80+rfiDuGKoVBN3gf+QgA=;
+        b=uCN5c0O2gUR/1ORTwiOp5Kt1h2o1dNrRJBVlKnRFFpE1/vN4C5IBlFtDrsjzeuyN+x
+         GURcQkv67Yf94GKwbkgCnT9DI5a5lP8VevaA+cGSIaprALs9u6KySCONPlcjcGQZKQOt
+         mctamK/8SkLXElcyEczczb6pK9fWtEyKdnJJL5QIZ22La0ar/JbKtpJLX4UG5sDeqPbw
+         G1RSidFpmohX/726MWXzxT8pXNr332mqlPKB/TJBgpH3CQYz7lpRnkMe581aHqg2AdOR
+         SvSjeSD5xWK2hj0hyvsj53BA7c0Fen1QMfGlIDEojW/oGWg/CdDs/UqF4Y/VbNvXFmxM
+         GfvA==
+X-Gm-Message-State: AOUpUlG7A2F+eHEEFoC12NyUd7mgEviOlSwZS+Yl9Z/ly/SXkdjVsJA6
+        vZAOUg8li/BenJVVXNPv3QWu+Qsvi35OqctraJ4=
+X-Google-Smtp-Source: AAOMgpfOb1TWVfCbne1ZLcw+6xmHfH1X3CAFH3DHITl33rLz7pVYRc57FzSFu//IVXB3oWDwKWWM1tSxCMLJjSDSOPc=
+X-Received: by 2002:a25:1388:: with SMTP id 130-v6mr5362248ybt.346.1531583822075;
+ Sat, 14 Jul 2018 08:57:02 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4f:6801:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 08:54:17
+Received: by 2002:a81:5d04:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 08:57:01
  -0700 (PDT)
-In-Reply-To: <20180713133204.3123939-1-arnd@arndb.de>
-References: <20180713133204.3123939-1-arnd@arndb.de>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sat, 14 Jul 2018 08:54:17 -0700
-Message-ID: <CABeXuvphoYM+KOGPgtsuxzS1_XDSOO0Ta5hr3sA7gYtt-78wtQ@mail.gmail.com>
-Subject: Re: [PATCH] [RFC] y2038: globally rename compat_time to old_time32
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>, geert@linux-m68k.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        alsa-devel@alsa-project.org
+In-Reply-To: <20180713235021.18141-1-qing.huang@oracle.com>
+References: <20180713235021.18141-1-qing.huang@oracle.com>
+From:   Or Gerlitz <gerlitz.or@gmail.com>
+Date:   Sat, 14 Jul 2018 18:57:01 +0300
+Message-ID: <CAJ3xEMi5zF83aA_SWfYT+JtWGGhqRhLyTKe-qYwevSBLuiK=cA@mail.gmail.com>
+Subject: Re: [PATCH] IB/mlx5: avoid binding a new mpi unit to the same devices repeatedly
+To:     Daniel Jurgens <danielj@mellanox.com>
+Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        Leon Romanovsky <leon@kernel.org>, gerald.gibson@oracle.com,
+        Qing Huang <qing.huang@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now we only have compat syscalls and native syscalls.
-Until we transition all the architectures to use the new syscalls,
-wouldn't it be the same sort of confusion as exists today?
-These structures today are still used by compat entry points.
-I'm trying to understand why such a cleanup would make sense today
-rather than at the end of the transition.
+On Sat, Jul 14, 2018 at 2:50 AM, Qing Huang <qing.huang@oracle.com> wrote:
+> When a CX5 device is configured in dual-port RoCE mode, after creating
+> many VFs against port 1, creating the same number of VFs against port 2
+> will flood kernel/syslog with something like
+> "mlx5_*:mlx5_ib_bind_slave_port:4266:(pid 5269): port 2 already
+> affiliated."
+>
+> So basically, when traversing mlx5_ib_dev_list, mlx5_ib_add_slave_port()
+> shouldn't repeatedly attempt to bind the new mpi data unit to every device
+> on the list until it finds an unbound device.
 
--Deepa
+Daniel,
+
+What is mpi data unit?
+
+Or.
+
+>
+> Reported-by: Gerald Gibson <gerald.gibson@oracle.com>
+> Signed-off-by: Qing Huang <qing.huang@oracle.com>
+> ---
+>  drivers/infiniband/hw/mlx5/main.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
+> index b3ba9a2..1ddd1d3 100644
+> --- a/drivers/infiniband/hw/mlx5/main.c
+> +++ b/drivers/infiniband/hw/mlx5/main.c
+> @@ -6068,7 +6068,8 @@ static void *mlx5_ib_add_slave_port(struct mlx5_core_dev *mdev, u8 port_num)
+>
+>         mutex_lock(&mlx5_ib_multiport_mutex);
+>         list_for_each_entry(dev, &mlx5_ib_dev_list, ib_dev_list) {
+> -               if (dev->sys_image_guid == mpi->sys_image_guid)
+> +               if (dev->sys_image_guid == mpi->sys_image_guid &&
+> +                   !dev->port[mlx5_core_native_port_num(mdev) - 1].mp.mpi)
+>                         bound = mlx5_ib_bind_slave_port(dev, mpi);
+>
+>                 if (bound) {
+> --
+> 2.9.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
