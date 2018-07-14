@@ -5,83 +5,107 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF08ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC165ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98A9208A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:12:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98A9208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 60A3020875
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:20:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A3020875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731948AbeGNA24 (ORCPT
+        id S1731913AbeGNAhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 20:28:56 -0400
-Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:60824 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731021AbeGNA24 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 20:28:56 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 75017999D;
-        Sat, 14 Jul 2018 00:12:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: cover26_11651a50a7535
-X-Filterd-Recvd-Size: 2235
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 14 Jul 2018 00:11:59 +0000 (UTC)
-Message-ID: <751491f9b9d7ce18f048ba44fbdb17d8c699e674.camel@perches.com>
-Subject: Re: [PATCH] get_maintainer.pl: Add optional
- .get_maintainer.MAINTAINERS override
-From:   Joe Perches <joe@perches.com>
-To:     Don Zickus <dzickus@redhat.com>
-Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
-        jtoppins@redhat.com
-Date:   Fri, 13 Jul 2018 17:11:58 -0700
-In-Reply-To: <20180713185109.hanjstgdvl2fw4ry@redhat.com>
-References: <20180626182505.4176-1-prarit@redhat.com>
-         <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
-         <20180706175419.6irtvs64e6dbz7hk@redhat.com>
-         <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
-         <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
-         <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
-         <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
-         <20180706215851.sqpibusyqukbh55g@redhat.com>
-         <5ebb181efcdd2cdb3c1ee8eac9bba26f5759a0ea.camel@perches.com>
-         <9efeba75a47e9b0c40d5b9e5078598ff4a31f196.camel@perches.com>
-         <20180713185109.hanjstgdvl2fw4ry@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        Fri, 13 Jul 2018 20:37:23 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:48772 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731264AbeGNAhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 20:37:22 -0400
+Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.18])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fe8I9-0002fO-1Y; Fri, 13 Jul 2018 18:20:05 -0600
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Suresh Warrier <warrier@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>
+References: <20180622194752.11221-4-logang@deltatee.com>
+ <20180713233831.GA2946@roeck-us.net>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <0a32dbb8-a1fa-f691-1d4a-9851b1496b9a@deltatee.com>
+Date:   Fri, 13 Jul 2018 18:20:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180713233831.GA2946@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 68.147.191.165
+X-SA-Exim-Rcpt-To: npiggin@gmail.com, warrier@linux.vnet.ibm.com, mpe@ellerman.id.au, paulus@samba.org, benh@kernel.crashing.org, horia.geanta@nxp.com, andy.shevchenko@gmail.com, gregkh@linuxfoundation.org, arnd@arndb.de, akpm@linux-foundation.org, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@roeck-us.net
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [v18,3/7] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-13 at 14:51 -0400, Don Zickus wrote:
-> On Fri, Jul 06, 2018 at 03:14:28PM -0700, Joe Perches wrote:
-> > On Fri, 2018-07-06 at 15:09 -0700, Joe Perches wrote:
-> > > On Fri, 2018-07-06 at 17:58 -0400, Don Zickus wrote:
-> > > > We have an internal use case of multiple MAINTAINER files, some folks have
-> > > > more rights to patches than others so they are not allowed to be cc'd (think
-> > > > embargoed stuff).
-> > 
-> > How about:
-> 
-> Hi Joe,
-> 
-> You are probably busy with stuff, but wanted to softly poke you to see what
-> is going on with this patch and if there is anything we can help with?
 
-Hey Don.  No worries.
 
-Tell me again if the --find-maintainer-files=<path or file> should
-be exclusive or should it also read any existing MAINTAINERS file?
+On 13/07/18 05:38 PM, Guenter Roeck wrote:
+> This patch causes a build failure in -next when building
+> ppc:corenet64_smp_defconfig.
 
-What if anything is wrong with what I suggested?
+Thanks for the report. This 64bit IO stuff is a bit of a mess. It looks
+like your corner case arch and config was never covered by the kbuild
+robot which has run extensively on this patchset.
 
-cheers, Joe
+Anyway, I think the fix is to put back the ioread64/write64 prototypes
+(even though they are only used in this one corner).
 
+Can you try it with the following patch to ensure it fixes things for you?
+
+Logan
+
+--
+
+diff --git a/include/asm-generic/iomap.h b/include/asm-generic/iomap.h
+index 5a4af0199b32..9f11a79e0d7a 100644
+--- a/include/asm-generic/iomap.h
++++ b/include/asm-generic/iomap.h
+@@ -32,6 +32,11 @@ extern unsigned int ioread16be(void __iomem *);
+ extern unsigned int ioread32(void __iomem *);
+ extern unsigned int ioread32be(void __iomem *);
+
++#ifdef CONFIG_64BIT
++extern u64 ioread64(void __iomem *);
++extern u64 ioread64be(void __iomem *);
++#endif
++
+ #ifdef readq
+ #define ioread64_lo_hi ioread64_lo_hi
+ #define ioread64_hi_lo ioread64_hi_lo
+@@ -49,6 +54,11 @@ extern void iowrite16be(u16, void __iomem *);
+ extern void iowrite32(u32, void __iomem *);
+ extern void iowrite32be(u32, void __iomem *);
+
++#ifdef CONFIG_64BIT
++extern void iowrite64(u64, void __iomem *);
++extern void iowrite64be(u64, void __iomem *);
++#endif
++
+ #ifdef writeq
+ #define iowrite64_lo_hi iowrite64_lo_hi
+ #define iowrite64_hi_lo iowrite64_hi_lo
