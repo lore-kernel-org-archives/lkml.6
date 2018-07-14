@@ -6,128 +6,66 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC65ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E919ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0C1120871
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C1120871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 631FC2087C
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:50:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 631FC2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joshtriplett.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730882AbeGNUHZ (ORCPT
+        id S1731064AbeGNUK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 16:07:25 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:43444 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbeGNUHZ (ORCPT
+        Sat, 14 Jul 2018 16:10:56 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:57718 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727315AbeGNUK4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 16:07:25 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 8852D80548; Sat, 14 Jul 2018 21:47:17 +0200 (CEST)
-Date:   Sat, 14 Jul 2018 21:47:17 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Willy Tarreau <w@1wt.eu>,
-        "ksummit-discuss@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Ksummit-discuss] bug-introducing patches
-Message-ID: <20180714194716.GA27381@amd>
-References: <20180501163818.GD1468@sasha-vm>
- <20180501194450.GD10479@thunk.org>
- <20180501200019.GA7397@sasha-vm>
- <20180501205448.GE10479@thunk.org>
- <20180501220228.GD7397@sasha-vm>
- <20180502043017.GA11938@1wt.eu>
- <20180502194139.GA18390@sasha-vm>
- <20180502200229.GA12729@1wt.eu>
- <20180714173812.xhfwtcijlxebmn2k@devuan>
- <e1198cd9-9113-d231-d15a-31ac5224b3b1@roeck-us.net>
+        Sat, 14 Jul 2018 16:10:56 -0400
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by slow1-d.mail.gandi.net (Postfix) with ESMTP id E410B3A69A9
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 21:10:42 +0200 (CEST)
+Received: from localhost (50-39-174-102.bvtn.or.frontiernet.net [50.39.174.102])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id AC0EB200015;
+        Sat, 14 Jul 2018 19:10:34 +0000 (UTC)
+Date:   Sat, 14 Jul 2018 12:10:31 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
+Message-ID: <20180714191030.GA17877@localhost>
+References: <20180712130733.11510-1-adrian@lisas.de>
+ <87sh4o5s82.fsf@xmission.com>
+ <20180713135541.7ada72437862c32f4563a9a8@linux-foundation.org>
+ <CAGXu5jJMBDd3-Yab78aYwQ1N6VG7=BjARoTF1pDygPhaWA9VNQ@mail.gmail.com>
+ <87pnzpvdtd.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e1198cd9-9113-d231-d15a-31ac5224b3b1@roeck-us.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <87pnzpvdtd.fsf@xmission.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jul 14, 2018 at 02:04:46PM -0500, Eric W. Biederman wrote:
+> For a config option that no one has come forward with an actual real
+> world use case for disabling, that cost seems much too high.
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The real-world use case is precisely as stated: code size, both storage
+and RAM.
 
-Hi!
-
-> >>>The way I see it, if a commit can get one or two tested-by, it's a good
-> >>>alternative to a week in -next.
-> >>
-> >>Agreed. Even their own actually. And I'm not kidding. Those who run lar=
-ge
-> >>amounts of tests on certain patches could really mention is in tested-b=
-y,
-> >>as opposed to the most common cases where the code was just regularly
-> >>tested.
-> >
-> >Actually, it would be cool to get "Tested: no" and "Tested: compile"
-> >tags in the commit mesages. Sometimes it is clear from the context
-> >that patch was not tested (treewide update of time to 64bit), but
-> >sometime it is not.
-> >
-> >This is especially problem for -stable, as it seems that lately
-> >patches are backported from new version without any testing.
->=20
->=20
-> When I started my own testing some five years ago, most architectures
-> did not even build in stable releases. At that time, the only tests being
-> done on stable release candidates were a number of build tests, and most
-> of the results were ignored.
->=20
-> Today, we have 0day, kernelci, kerneltests, Linaro's LKFT, and more, plus
-> several merge and boot tests done by individuals. Stable release candidat=
-es
-> are build tested on all supported architectures, with hundreds of
-=2E..
-> Sure, testing is still far from perfect and needs to be improved. However,
-> requiring that every patch applied to stable releases be tested individua=
-lly
-> (where ? on all affected architectures ?) would be the wrong
->direction.
-
-Well, 0day, kernelci etc... is nice... until the change is in the
-driver. Most of the kernel are drivers, remember?
-
-I don't know. I'd say that if patch is important enough for -stable,
-there should be someone testing it. For core kernel changes, that can
-be 0day bot, but for drivers...
-
-And problem exists on mainline, too.
-
-Hmm. Patch for obscure driver. Wow, nice, is WellKnownName actually
-using that driver? Aha, no, he is not; he is doing global
-search&replace, and did not test the patch...
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltKU0QACgkQMOfwapXb+vKyRACcDkIDk//KX5XRu/ZqhSvh3P7W
-bOcAn2aYayhT2Pg9QPbqg9HRLWGcTkhU
-=PPeV
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
+I regularly encounter systems I'd *like* to put Linux in that have
+around 1MB of storage and 1MB of RAM, or even less.
