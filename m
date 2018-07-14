@@ -6,40 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18744ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04901ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E44208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:00:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E44208CC
+	by mail.kernel.org (Postfix) with ESMTP id 880BB208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:01:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 880BB208CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730267AbeGNFSZ (ORCPT
+        id S1727953AbeGNFSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:18:25 -0400
-Received: from mga05.intel.com ([192.55.52.43]:36407 "EHLO mga05.intel.com"
+        Sat, 14 Jul 2018 01:18:21 -0400
+Received: from mga11.intel.com ([192.55.52.93]:40757 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725880AbeGNFSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:18:25 -0400
+        id S1725986AbeGNFSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:18:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 22:00:45 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 22:00:11 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,350,1526367600"; 
-   d="scan'208";a="66866182"
+   d="scan'208";a="72664103"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga003.jf.intel.com with ESMTP; 13 Jul 2018 22:00:09 -0700
-Subject: [PATCH v6 08/13] mm,
- memory_failure: Collect mapping size in collect_procs()
+  by orsmga001.jf.intel.com with ESMTP; 13 Jul 2018 22:00:04 -0700
+Subject: [PATCH v6 07/13] mm,
+ madvise_inject_error: Let memory_failure() optionally take a page
+ reference
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, hch@lst.de,
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>, hch@lst.de,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 13 Jul 2018 21:50:11 -0700
-Message-ID: <153154381163.34503.9922261445330906942.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Fri, 13 Jul 2018 21:50:06 -0700
+Message-ID: <153154380652.34503.2174920161570183766.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -51,160 +53,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for supporting memory_failure() for dax mappings, teach
-collect_procs() to also determine the mapping size. Unlike typical
-mappings the dax mapping size is determined by walking page-table
-entries rather than using the compound-page accounting for THP pages.
+The madvise_inject_error() routine uses get_user_pages() to lookup the
+pfn and other information for injected error, but it does not release
+that pin. The assumption is that failed pages should be taken out of
+circulation.
 
-Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+However, for dax mappings it is not possible to take pages out of
+circulation since they are 1:1 physically mapped as filesystem blocks,
+or device-dax capacity. They also typically represent persistent memory
+which has an error clearing capability.
+
+In preparation for adding a special handler for dax mappings, shift the
+responsibility of taking the page reference to memory_failure(). I.e.
+drop the page reference and do not specify MF_COUNT_INCREASED to
+memory_failure().
+
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- mm/memory-failure.c |   81 +++++++++++++++++++++++++--------------------------
- 1 file changed, 40 insertions(+), 41 deletions(-)
+ mm/madvise.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 988f977db3d2..8a81680d00dd 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -174,22 +174,51 @@ int hwpoison_filter(struct page *p)
- EXPORT_SYMBOL_GPL(hwpoison_filter);
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 4d3c922ea1a1..972a9eaa898b 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -631,11 +631,13 @@ static int madvise_inject_error(int behavior,
  
- /*
-+ * Kill all processes that have a poisoned page mapped and then isolate
-+ * the page.
-+ *
-+ * General strategy:
-+ * Find all processes having the page mapped and kill them.
-+ * But we keep a page reference around so that the page is not
-+ * actually freed yet.
-+ * Then stash the page away
-+ *
-+ * There's no convenient way to get back to mapped processes
-+ * from the VMAs. So do a brute-force search over all
-+ * running processes.
-+ *
-+ * Remember that machine checks are not common (or rather
-+ * if they are common you have other problems), so this shouldn't
-+ * be a performance issue.
-+ *
-+ * Also there are some races possible while we get from the
-+ * error detection to actually handle it.
-+ */
-+
-+struct to_kill {
-+	struct list_head nd;
-+	struct task_struct *tsk;
-+	unsigned long addr;
-+	short size_shift;
-+	char addr_valid;
-+};
-+
-+/*
-  * Send all the processes who have the page mapped a signal.
-  * ``action optional'' if they are not immediately affected by the error
-  * ``action required'' if error happened in current execution context
-  */
--static int kill_proc(struct task_struct *t, unsigned long addr,
--			unsigned long pfn, struct page *page, int flags)
-+static int kill_proc(struct to_kill *tk, unsigned long pfn, int flags)
- {
--	short addr_lsb;
-+	struct task_struct *t = tk->tsk;
-+	short addr_lsb = tk->size_shift;
- 	int ret;
  
- 	pr_err("Memory failure: %#lx: Killing %s:%d due to hardware memory corruption\n",
- 		pfn, t->comm, t->pid);
--	addr_lsb = compound_order(compound_head(page)) + PAGE_SHIFT;
+ 	for (; start < end; start += PAGE_SIZE << order) {
++		unsigned long pfn;
+ 		int ret;
  
- 	if ((flags & MF_ACTION_REQUIRED) && t->mm == current->mm) {
--		ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)addr,
-+		ret = force_sig_mceerr(BUS_MCEERR_AR, (void __user *)tk->addr,
- 				       addr_lsb, current);
- 	} else {
+ 		ret = get_user_pages_fast(start, 1, 0, &page);
+ 		if (ret != 1)
+ 			return ret;
++		pfn = page_to_pfn(page);
+ 
  		/*
-@@ -198,7 +227,7 @@ static int kill_proc(struct task_struct *t, unsigned long addr,
- 		 * This could cause a loop when the user sets SIGBUS
- 		 * to SIG_IGN, but hopefully no one will do that?
- 		 */
--		ret = send_sig_mceerr(BUS_MCEERR_AO, (void __user *)addr,
-+		ret = send_sig_mceerr(BUS_MCEERR_AO, (void __user *)tk->addr,
- 				      addr_lsb, t);  /* synchronous? */
- 	}
- 	if (ret < 0)
-@@ -235,35 +264,6 @@ void shake_page(struct page *p, int access)
- EXPORT_SYMBOL_GPL(shake_page);
+ 		 * When soft offlining hugepages, after migrating the page
+@@ -651,17 +653,25 @@ static int madvise_inject_error(int behavior,
  
- /*
-- * Kill all processes that have a poisoned page mapped and then isolate
-- * the page.
-- *
-- * General strategy:
-- * Find all processes having the page mapped and kill them.
-- * But we keep a page reference around so that the page is not
-- * actually freed yet.
-- * Then stash the page away
-- *
-- * There's no convenient way to get back to mapped processes
-- * from the VMAs. So do a brute-force search over all
-- * running processes.
-- *
-- * Remember that machine checks are not common (or rather
-- * if they are common you have other problems), so this shouldn't
-- * be a performance issue.
-- *
-- * Also there are some races possible while we get from the
-- * error detection to actually handle it.
-- */
--
--struct to_kill {
--	struct list_head nd;
--	struct task_struct *tsk;
--	unsigned long addr;
--	char addr_valid;
--};
--
--/*
-  * Failure handling: if we can't find or can't kill a process there's
-  * not much we can do.	We just print a message and ignore otherwise.
-  */
-@@ -292,6 +292,7 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
- 	}
- 	tk->addr = page_address_in_vma(p, vma);
- 	tk->addr_valid = 1;
-+	tk->size_shift = compound_order(compound_head(p)) + PAGE_SHIFT;
+ 		if (behavior == MADV_SOFT_OFFLINE) {
+ 			pr_info("Soft offlining pfn %#lx at process virtual address %#lx\n",
+-						page_to_pfn(page), start);
++					pfn, start);
  
- 	/*
- 	 * In theory we don't have to kill when the page was
-@@ -317,9 +318,8 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
-  * Also when FAIL is set do a force kill because something went
-  * wrong earlier.
-  */
--static void kill_procs(struct list_head *to_kill, int forcekill,
--			  bool fail, struct page *page, unsigned long pfn,
--			  int flags)
-+static void kill_procs(struct list_head *to_kill, int forcekill, bool fail,
-+		unsigned long pfn, int flags)
- {
- 	struct to_kill *tk, *next;
- 
-@@ -342,8 +342,7 @@ static void kill_procs(struct list_head *to_kill, int forcekill,
- 			 * check for that, but we need to tell the
- 			 * process anyways.
- 			 */
--			else if (kill_proc(tk->tsk, tk->addr,
--					      pfn, page, flags) < 0)
-+			else if (kill_proc(tk, pfn, flags) < 0)
- 				pr_err("Memory failure: %#lx: Cannot send advisory machine check signal to %s:%d\n",
- 				       pfn, tk->tsk->comm, tk->tsk->pid);
+ 			ret = soft_offline_page(page, MF_COUNT_INCREASED);
+ 			if (ret)
+ 				return ret;
+ 			continue;
  		}
-@@ -1012,7 +1011,7 @@ static bool hwpoison_user_mappings(struct page *p, unsigned long pfn,
- 	 * any accesses to the poisoned memory.
- 	 */
- 	forcekill = PageDirty(hpage) || (flags & MF_MUST_KILL);
--	kill_procs(&tokill, forcekill, !unmap_success, p, pfn, flags);
-+	kill_procs(&tokill, forcekill, !unmap_success, pfn, flags);
++
+ 		pr_info("Injecting memory failure for pfn %#lx at process virtual address %#lx\n",
+-						page_to_pfn(page), start);
++				pfn, start);
  
- 	return unmap_success;
- }
+-		ret = memory_failure(page_to_pfn(page), MF_COUNT_INCREASED);
++		/*
++		 * Drop the page reference taken by get_user_pages_fast(). In
++		 * the absence of MF_COUNT_INCREASED the memory_failure()
++		 * routine is responsible for pinning the page to prevent it
++		 * from being released back to the page allocator.
++		 */
++		put_page(page);
++		ret = memory_failure(pfn, 0);
+ 		if (ret)
+ 			return ret;
+ 	}
 
