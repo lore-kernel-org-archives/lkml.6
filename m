@@ -2,107 +2,90 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F88EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470C2ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF6620896
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:04:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF6620896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id DE3F620896
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:08:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3F620896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeGNNXs (ORCPT
+        id S1727494AbeGNN1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 09:23:48 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43743 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbeGNNXs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 09:23:48 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6ED3vOk487603
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 14 Jul 2018 06:03:57 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6ED3uY0487600;
-        Sat, 14 Jul 2018 06:03:56 -0700
-Date:   Sat, 14 Jul 2018 06:03:56 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Simon Ser <tipbot@zytor.com>
-Message-ID: <tip-6d77d3b43ad84a48b502f02dc618e7c36737bdfe@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        tglx@linutronix.de, hpa@zytor.com, jpoimboe@redhat.com,
-        contact@emersion.fr
-Reply-To: hpa@zytor.com, tglx@linutronix.de, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, jpoimboe@redhat.com,
-          contact@emersion.fr, peterz@infradead.org, mingo@kernel.org
-In-Reply-To: <d1c1c3fe55872be433da7bc5e1860538506229ba.1531153015.git.jpoimboe@redhat.com>
-References: <d1c1c3fe55872be433da7bc5e1860538506229ba.1531153015.git.jpoimboe@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] objtool: Use '.strtab' if '.shstrtab' doesn't
- exist, to support ORC tables on Clang
-Git-Commit-ID: 6d77d3b43ad84a48b502f02dc618e7c36737bdfe
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 14 Jul 2018 09:27:20 -0400
+Received: from nautica.notk.org ([91.121.71.147]:42516 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726618AbeGNN1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 09:27:19 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id E2698C009; Sat, 14 Jul 2018 15:08:15 +0200 (CEST)
+Date:   Sat, 14 Jul 2018 15:08:00 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org, fengguang.wu@intel.com
+Subject: Re: [PATCH v2] coccinelle: strncpy+truncation by strscpy
+Message-ID: <20180714130800.GA15334@nautica>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1807140750040.3356@hadrien>
+ <alpine.DEB.2.20.1807140743550.3356@hadrien>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6d77d3b43ad84a48b502f02dc618e7c36737bdfe
-Gitweb:     https://git.kernel.org/tip/6d77d3b43ad84a48b502f02dc618e7c36737bdfe
-Author:     Simon Ser <contact@emersion.fr>
-AuthorDate: Mon, 9 Jul 2018 11:17:22 -0500
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 14 Jul 2018 14:59:42 +0200
+Julia Lawall wrote on Sat, Jul 14, 2018:
+> Not a big deal, but actually the v2 goes below the ---
 
-objtool: Use '.strtab' if '.shstrtab' doesn't exist, to support ORC tables on Clang
+I've seen both being done (if you look at the git log of the linux
+kernel and search for 'v2' you will have some matches)
 
-Clang puts its section header names in the '.strtab' section instead of
-'.shstrtab', which causes objtool to fail with a "can't find
-.shstrtab section" warning when attempting to write ORC metadata to an
-object file.
+The list was a bit long in this case, but I think it's worth at least
+mentioning that the previous version used strlcpy and why I changed in
+the commit message.
 
-If '.shstrtab' doesn't exist, use '.strtab' instead.
+> > +msg = "SUGGESTION: strncpy followed by truncation can be strscpy, if the destination buffer does not need to be fully overwritten"
+> > +coccilib.report.print_report(p[0], msg)
+> 
+> This is the first SUGGESTION.  I don't know if anyone out there is relying
+> on it always being WARNING or ERROR.
 
-Signed-off-by: Simon Ser <contact@emersion.fr>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/d1c1c3fe55872be433da7bc5e1860538506229ba.1531153015.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/objtool/elf.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Eh, I must have been really unlucky with the scripts I looked at, one
+just happened to have SUGGESTION used like this (misc/warn.cocci), but
+now you said that I can see it's the only one!
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 0d1acb704f64..7ec85d567598 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -519,10 +519,12 @@ struct section *elf_create_section(struct elf *elf, const char *name,
- 	sec->sh.sh_flags = SHF_ALLOC;
- 
- 
--	/* Add section name to .shstrtab */
-+	/* Add section name to .shstrtab (or .strtab for Clang) */
- 	shstrtab = find_section_by_name(elf, ".shstrtab");
-+	if (!shstrtab)
-+		shstrtab = find_section_by_name(elf, ".strtab");
- 	if (!shstrtab) {
--		WARN("can't find .shstrtab section");
-+		WARN("can't find .shstrtab or .strtab section");
- 		return NULL;
- 	}
- 
+I'm not sure on what to do here, if you think there could be scripts
+relying on that then I'll change this to WARNING, but the wording feels
+a bit strong and "suggestion" leaves more room for interpretation.
+
+
+> Copyright stuff in the other sub-thread
+
+Replying here instead to limit the number of mails sent,
+I think people would look at git blame/log if there is no name in the
+file, but I can understand it is simpler if a name is present.
+
+Just a nitpick on format, all copyright comments on cocci scripts end
+with the license; since that will be added as an SPDX tag instead do you
+mind if I do not list it again there?
+
+
+Also just a head's up, I'll be AFK for the next ~48 hours; I'll post a
+v3 of the patch with license/copyright added, possibly suggestion
+changed, and whatever else comes up by then :)
+
+Thanks,
+-- 
+Dominique Martinet
