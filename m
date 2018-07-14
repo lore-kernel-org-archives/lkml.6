@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50706C468C6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88770ECDFB3
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08ACD208D8
+	by mail.kernel.org (Postfix) with ESMTP id 406CE208A4
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:58:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AP0TC3VP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08ACD208D8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HrvxjOZf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 406CE208A4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbeGNGQj (ORCPT
+        id S1727154AbeGNGQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 02:16:39 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46055 "EHLO
+        Sat, 14 Jul 2018 02:16:40 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:38559 "EHLO
         mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbeGNGQj (ORCPT
+        with ESMTP id S1726971AbeGNGQj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 14 Jul 2018 02:16:39 -0400
-Received: by mail-pf0-f195.google.com with SMTP id i26-v6so12334809pfo.12
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 22:58:49 -0700 (PDT)
+Received: by mail-pf0-f195.google.com with SMTP id v15-v6so3748044pff.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 22:58:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Xk2ryzpVLuqGPuAzBDiKHKzQ3d09hZ/9MuED5R/pMhQ=;
-        b=AP0TC3VP3BMCHCFGbIMtTZ9gjAmcj5fPSkJNdODDmfPhbxn3M44m+oUgqHkZBULVe4
-         SPfDjhui3xB9t3ocQ7lc30yPZ7M9eVk/QT1oTSsLZT7zC+AEgXArTNVq0T/yocSIVOG2
-         5O8l6Ya39EHBNpLf64d2CzR18DOnzMEy+AUIagKaoiFMd+2bnrrGqg4B7OPAgQU+noLL
-         4NpjyXHqKT4UBBu4rao7rU2PciI750n45twFhYzs9rxrU24rp+rrNKEsG9Exlb7NqpGw
-         YpPwzzVmSNrYRx5i6+8+6n+c4xRcvSt1L55RqBsDE1UJ6UuQMi30nnEVikGIXbE3EzNf
-         BNyw==
+        bh=gx9z6Wrgu4Yfox5q4ztlpJjirvvil7nXZPI9+apOPSM=;
+        b=HrvxjOZfRMcsbQDuRX1PxPq6bZqQ7WPOGpAybfzaeysQj8JlfO1iLR5Ec/CXV/rOy4
+         MrlYAVcgBQUieGHApQT6ZRR/1Q/awKDwK4fBRHQSMcm44MLhIrMvqc61qomSvlmUopK3
+         pyRIlJMeA0JHGGdqqkwZpz5im+dEOoFf5z0MztjcNpl4NkP53y5PddGjUZYGV5UWu62h
+         E8qoFFzFn41hNHlXoQPVUoQhK48xqHFwGTTUZKFL8XJC8BQprQ2MJ8aaqaxIy5GORiMx
+         DDnfJ7+M3IiG7t0+JxLkeR0TIZ6R+uVjV7Th/ByTFx7YYcWLH4B39PFgvRdgu11Emzi9
+         aEEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Xk2ryzpVLuqGPuAzBDiKHKzQ3d09hZ/9MuED5R/pMhQ=;
-        b=OJfaeeuxMEy2OcvvG+xyXx7mygvi+818xu91G6QFC5Ixr4lZIHtMS81ZuJMIwsGAMM
-         NwsQb/qn6OwVUAh14KCypEGEHbFb9Yw/75jbh8yOoRufMvLu6O36KHPGh7Je/egb8upl
-         21C8FYD8+HWI31UDRzN/6nco4NW3BIcB+AZHB6++u2T0WGZqpLHNiCO2sgk/QWCbi5yw
-         +gzHW5PoIK18gGNONLKIRSuii2eYiA2ZhoooCNXYUVL4Ow5FK6XcnisFZC8K0mgs3Mat
-         d/4ZJsdxy56Wfzao3bdNeaeOB1XNniXQh7QdNq2+rzThQCXpvMzKWi4mbK0FYUv7cVpL
-         CbOQ==
-X-Gm-Message-State: AOUpUlFwxLWaPidF84TyAoWKxAnxwrQoGM8QIe0g65PSUQRmAkJ4yZ70
-        lhn/970x+7qktcONIzuyqtQ=
-X-Google-Smtp-Source: AAOMgpdIPE8HxlzBCDTFF87POT3rJ5085p36xSVt7SK0FoW1yqGjppv0DwN8kUK/JL52QrqdY+ymWw==
-X-Received: by 2002:a65:62ce:: with SMTP id m14-v6mr8514399pgv.407.1531547929366;
-        Fri, 13 Jul 2018 22:58:49 -0700 (PDT)
+        bh=gx9z6Wrgu4Yfox5q4ztlpJjirvvil7nXZPI9+apOPSM=;
+        b=JDSHQ5uvvp1dWthOCWj5szC4h3m05NN587Xp85lIonrnlHzyg/3LemGf1FuFWBRoGR
+         QR4dWYfMTitiqYKziJvyQYLtJdvip37FEBdRY9jfTCQFzp8XUYkFyqBh16FQyJLhNQMJ
+         WiUSaz8ifuVKhRNBmxUlglQuq4CijWfT0khPoYc9DDHPlwyDdmnL+l9c/JTw+N5Uwybo
+         U6hoFiPL0szh28RlBST5pQSSMDT61O1hJM15M6QisLepLIWYJ+4WiqLLZgsDORHndbks
+         wDMxtg5Skgou7ELGiQfYTXZm+zAa0cZZbSq5L4LReFtzb+WSnuXozPU1WAweR5doFNtL
+         JwYw==
+X-Gm-Message-State: AOUpUlFUtCcaI+/+CY4TtXp6TOkxIKusLQcYBZiAzUp/yBOB8iIZxl94
+        S/j8isr9251uYqC+czm0eEARrIt8
+X-Google-Smtp-Source: AAOMgpdGwkLZ2ddkMRAI84noLY7PqCJcErhRFMR05H1O2y2WOBtEMBYJT5w2qI1f3UMTRDMkXBG03w==
+X-Received: by 2002:a63:2506:: with SMTP id l6-v6mr6731030pgl.237.1531547930259;
+        Fri, 13 Jul 2018 22:58:50 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.48
+        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 22:58:48 -0700 (PDT)
+        Fri, 13 Jul 2018 22:58:49 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 05/18] staging: gasket: sysfs mapping creation fixups
-Date:   Fri, 13 Jul 2018 22:58:03 -0700
-Message-Id: <20180714055816.223754-6-toddpoynor@gmail.com>
+Subject: [PATCH 06/18] staging: gasket: fix deadlock in pci driver unregister path
+Date:   Fri, 13 Jul 2018 22:58:04 -0700
+Message-Id: <20180714055816.223754-7-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180714055816.223754-1-toddpoynor@gmail.com>
 References: <20180714055816.223754-1-toddpoynor@gmail.com>
@@ -81,38 +81,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Return EBUSY for attempt to create a mapping already in use.
+g_mutex held across pci_unregister_driver() call, also held in
+gasket_pci_remove(), which deadlocks.
 
-Remove stale pointers on error allocating attr array.
-
+Reported-by: Dmitry Torokhov <dtor@chromium.org>
 Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_sysfs.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/gasket/gasket_core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
-index a3705d6e088a..d1856a09b894 100644
---- a/drivers/staging/gasket/gasket_sysfs.c
-+++ b/drivers/staging/gasket/gasket_sysfs.c
-@@ -213,7 +213,7 @@ int gasket_sysfs_create_mapping(
- 			"0x%p.", device);
- 		put_mapping(mapping);
- 		mutex_unlock(&function_mutex);
--		return -EINVAL;
-+		return -EBUSY;
- 	}
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 3bdf7d36b397..6d240dc59557 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -668,13 +668,10 @@ static void gasket_pci_remove(struct pci_dev *pci_dev)
+ 	struct gasket_dev *gasket_dev = NULL;
+ 	const struct gasket_driver_desc *driver_desc;
+ 	/* Find the device desc. */
+-	mutex_lock(&g_mutex);
++	__must_hold(&g_mutex);
+ 	internal_desc = lookup_internal_desc(pci_dev);
+-	if (!internal_desc) {
+-		mutex_unlock(&g_mutex);
++	if (!internal_desc)
+ 		return;
+-	}
+-	mutex_unlock(&g_mutex);
  
- 	/* Find the first empty entry in the array. */
-@@ -244,6 +244,8 @@ int gasket_sysfs_create_mapping(
- 	mapping->attribute_count = 0;
- 	if (!mapping->attributes) {
- 		gasket_nodev_error("Unable to allocate sysfs attribute array.");
-+		mapping->device = NULL;
-+		mapping->gasket_dev = NULL;
- 		mutex_unlock(&mapping->mutex);
- 		mutex_unlock(&function_mutex);
- 		return -ENOMEM;
+ 	driver_desc = internal_desc->driver_desc;
+ 
 -- 
 2.18.0.203.gfac676dfb9-goog
 
