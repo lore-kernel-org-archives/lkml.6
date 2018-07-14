@@ -7,95 +7,96 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2EFECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 08:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B17ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 08:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66FCF208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 08:32:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1611208A3
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 08:36:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="urtRXWaM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66FCF208CC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p9SkAG8P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1611208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727007AbeGNIut (ORCPT
+        id S1727296AbeGNIzK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 04:50:49 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40783 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbeGNIus (ORCPT
+        Sat, 14 Jul 2018 04:55:10 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45712 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeGNIzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 04:50:48 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x5-v6so5741915pgp.7;
-        Sat, 14 Jul 2018 01:32:30 -0700 (PDT)
+        Sat, 14 Jul 2018 04:55:10 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9-v6so5443756pgp.12;
+        Sat, 14 Jul 2018 01:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=Akf5sLt8347RHVY+scAnPDa1ovmW923VlqnFnICc500=;
-        b=urtRXWaM4QG2OkH5hzq0uiTLDIL43VY6FuA6MHz191bAZLEF8HbzrtRkY0Gas3f9ck
-         w/jWZ+GaX/B51oJO5hHpZLv4Pj0+kUv6yEVKaSOLy3HH20P3TMuHpr0Mm+/o7CYhWiGT
-         CKPoxvD/wyDqZVOcWTRMk8DPwux9wuP62FY/L0ERhebYDM/RuQqNVVBleUFBdYjrb7tv
-         ip/xzq2VEBHcjHjSq3kwYT7XXBRKGMdvtgOXyDk7oTyeciEvMvfWk7L4Vx4eBO+3OuAl
-         zzmRM8vYTNQEYtyDVGnJo5Rne+5Lgz2bR+V+T+b3Xter3mZ69VkP9n8/kx99+gWnAqrk
-         q/Iw==
+        bh=DvRb1rIWLnSOUlEWxvv62Cz+83ZDoIyaEK8j/+Yn7Vs=;
+        b=p9SkAG8PcM7OhuuR2yfHXrgCIBjWje+HHeoEl0wWAztydYHosFSS5GG5ph6HuB1EiE
+         ivZWQAg5M7Og5DoZJCTVc5xvn/LyDxhP7vQ1aXTn0cDNlS4R9enAspElLwXY6+AVR+/c
+         kphxV7Ks/mYq2UErvsuVPiqBbWCiK8gOF8Z2+0xCTrIWc9J/IcshKn+VX7ZXCP1durs9
+         CtyZoJniO0mvebmMjdDsdf6wb4YNMeYDjYA1p9XnHYr+qWaaLjK6i5yn+stKZUk+CzmT
+         E5i6daLmHqrIiKsFwQt2+TN9r2YB7tl1nLW+prL3S+XAEr2Lx4mEn4BwMnjNudEqo1qK
+         EmzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Akf5sLt8347RHVY+scAnPDa1ovmW923VlqnFnICc500=;
-        b=WYdxOVmED2cre/0Fu8QQAnWDCbRxXyBn+NJLgBepYg6poTUJAVAs9fJl7PGUWfyuAA
-         c4VSOwWF28d22fUtvpPLLXTPnivtI+ptFTVe7z9nIjANl6Ru/B/2lbZPQsEMefTEqZl6
-         epaWzvuNaI9VUDNCtQoEWRYzGPwgEIhrSGu9ZhpeKxB2rOhk5QWKQRpfvfVhqaQwUhBd
-         h9mjJkZzHwDcc/aH7erMvhn/ydhs55+1LfCkUZngUSqkEF4vSGZJkU4Dnf5VB2xvgj0p
-         BLS+kDm0yxumtYb2npUZAeEYXZbLaWlqEsMUt/PDjbJ1FxAHdWVDgo7cJ1UIHmjFZ0KZ
-         jdzg==
-X-Gm-Message-State: AOUpUlFvwzzGRLA+CugN4gcpJH/xr7r2V9i2b52TzGoAAyBwEMuFFB8b
-        nNXRfOX0poqLIx3QQplMpAU=
-X-Google-Smtp-Source: AAOMgpdAyim9LB1p4hOeqe25oh965zFusovkUP8fS/LiwLWWVpWvog8Zo7sgE0OnNspA7+UOJ9DY8g==
-X-Received: by 2002:a63:8548:: with SMTP id u69-v6mr8838683pgd.346.1531557150620;
-        Sat, 14 Jul 2018 01:32:30 -0700 (PDT)
+        bh=DvRb1rIWLnSOUlEWxvv62Cz+83ZDoIyaEK8j/+Yn7Vs=;
+        b=d7bpirPghAW5FvbZ+Iy7cpxTgkgzMKWJScXdmJpk/jCbUGbJTptiP0pnsoaxoWdJ9h
+         oXFEoSFRjVIvPmXVjEt1NdMQFHyOP+owF/EySoat2S0UFJ435iL6IvFXVrwgkumzhsjb
+         sMmWi4wydp13PUg0VS3za69zdxfv8qAPVSvLFCXypAw96oTIQl7TWdVG3pnFW2OdjJOL
+         hOXjRS6nbP+IfdOTYnJ3ZcUom0GOnAuXD/bibKo4bSFQmjTKsaalLgVqWdkX//jLCvGs
+         O/UqunicvG1XPpUoz6FYd+H0HgANDk0sS3BK2wEnNXk1HdqgKzFIINJdSch3Fuxo0/A/
+         RcXA==
+X-Gm-Message-State: AOUpUlETfuPDSM/2owSkmRGLOLsn/aS1cJFwaJGLaOJnkTHR1oKnKxQN
+        O4kFpu6TJ/vV8leISIulXeV24olT
+X-Google-Smtp-Source: AAOMgpe/3p9o5i8EU9xvDFnjFbUByAk/n0Y30C8/qoNicONkOTTuHcWdmqeaSGv1zu1zuhfhJsEgIA==
+X-Received: by 2002:a65:60d2:: with SMTP id r18-v6mr8953717pgv.306.1531557411192;
+        Sat, 14 Jul 2018 01:36:51 -0700 (PDT)
 Received: from bogon.didichuxing.com ([168.63.150.120])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm83219857pfi.101.2018.07.14.01.32.27
+        by smtp.gmail.com with ESMTPSA id p66-v6sm39188874pfd.65.2018.07.14.01.36.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 Jul 2018 01:32:29 -0700 (PDT)
+        Sat, 14 Jul 2018 01:36:50 -0700 (PDT)
 From:   Yafang Shao <laoar.shao@gmail.com>
-To:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com
-Cc:     cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
-Date:   Sat, 14 Jul 2018 16:32:02 +0800
-Message-Id: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shaoyafang@didichuxing.com, Yafang Shao <laoar.shao@gmail.com>,
+        Eric Dumazet <edumazet@google.com>
+Subject: [PATCH net-next] tcp: remove redundant rcv_nxt update
+Date:   Sat, 14 Jul 2018 16:36:29 +0800
+Message-Id: <1531557390-12592-1-git-send-email-laoar.shao@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-try_charge maybe executed in packet receive path, which is in interrupt
-context.
-In this situation, the 'current' is the interrupted task, which may has
-no relation to the rx softirq, So it is nonsense to use 'current'.
+tcp_rcv_nxt_update() is already executed in tcp_data_queue().
+This line is redundant.
 
-Avoid bothering the interrupted if page_counter_try_charge failes.
+See bellow,
+	tcp_queue_rcv
+		tcp_rcv_nxt_update(tcp_sk(sk), TCP_SKB_CB(skb)->end_seq);
+	tcp_rcv_nxt_update(tp, TCP_SKB_CB(skb)->end_seq); <<<< redundant
 
 Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
 ---
- mm/memcontrol.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/tcp_input.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 68ef266..13f95db 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2123,6 +2123,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 		goto retry;
- 	}
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index 814ea43..3a54faf 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -4695,7 +4695,6 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
+ 		}
  
-+	if (in_softirq())
-+		goto nomem;
-+
- 	/*
- 	 * Unlike in global OOM situations, memcg is not in a physical
- 	 * memory shortage.  Allow dying and OOM-killed tasks to
+ 		eaten = tcp_queue_rcv(sk, skb, 0, &fragstolen);
+-		tcp_rcv_nxt_update(tp, TCP_SKB_CB(skb)->end_seq);
+ 		if (skb->len)
+ 			tcp_event_data_recv(sk, skb);
+ 		if (TCP_SKB_CB(skb)->tcp_flags & TCPHDR_FIN)
 -- 
 1.8.3.1
 
