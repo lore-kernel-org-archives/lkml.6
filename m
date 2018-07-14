@@ -2,128 +2,143 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	WEIRD_PORT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8C1ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 14:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA26ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 14:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 821C6208A4
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 14:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 722FB208A4
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 14:36:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="nu/a/eQA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821C6208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="zNCcgEiO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 722FB208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbeGNOzp (ORCPT
+        id S1730246AbeGNO4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 10:55:45 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:45721 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbeGNOzo (ORCPT
+        Sat, 14 Jul 2018 10:56:09 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41429 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726793AbeGNO4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 10:55:44 -0400
-Received: by mail-oi0-f67.google.com with SMTP id q11-v6so41695666oic.12;
-        Sat, 14 Jul 2018 07:36:27 -0700 (PDT)
+        Sat, 14 Jul 2018 10:56:08 -0400
+Received: by mail-pg1-f196.google.com with SMTP id z8-v6so4450538pgu.8
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 07:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TGt5jlVQ89vHBH7LGrpPW5YsixjskXx/cetx6/zrrtA=;
-        b=nu/a/eQAkZ9N0fTqAdAz004mLEbq7yqg/aWkeJIS2wrw+PxnVEs4BcrwSEDUJi70uP
-         pkLq3r+GXRdXJ7aMXDmvk8uetyV9r4jNMQAUisncNb3heTjAorCtqLygnBAH0hIjsw75
-         Zx1vuAly7EC33tMRWDyGK6UN8M3vh8kiipfZr6OuIMaZtYS6dbtxiThxMNRTAAn/tVWk
-         3QGgCftMD0bnzUWKls2iQl/wZIKcCCmi8USRzFN2S6sNwToKSQCAkYu21Bf2sWIaKIgZ
-         DfyKc8V1fVSNqFl8Zj1WCVzBJXdIx9kJBk99MDzrpf7UxykRHauFKduvlSJJ7jL7+jZp
-         hv+Q==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LoklCVrFsx/fI1fmNdWe00DMZXR9lXDr8bXcZL95ONs=;
+        b=zNCcgEiOA403efYsrFYBiUqL4hX8CLcsTiGtmKNwov8EfG0xyt38MrQghmeW7p9AFH
+         eO2jBVKE0nOvVo6WSm82EKOjDT6qC3HIb0p4zCy/1JGui4lR77wIQY1AQpzf/NgAekWa
+         9YaagNTjZK5tGcdX4saQ2Ji+LmRi2JHKxlsu3c6WMAhRF/gsJs82aP6u6njP//pmgazt
+         A03NP5FO03eMDOa6787pAwxn2oqY1lhfmrmSyQ39cZK4dniwzjuFBxr8unhDrC6jbjaX
+         f2kUp7NIp0RtQIEq8Ex/QptsCBDCHoz6pQC9hJO80h4vfiTXnbMBYWz3wr/01i+7NGYB
+         UfLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TGt5jlVQ89vHBH7LGrpPW5YsixjskXx/cetx6/zrrtA=;
-        b=nvwtQSrkpDH62OMwvhQGGjMPQ9BoKqQYurwlPso6Hmejk64xEFWUdip9CrxTqB8zi6
-         uk/JvWdJX3QfkRsBUEZ5LwSeCLcMycFM01py5tbDvU9hBVTjJTTnlg2d3I+DymT+a+H3
-         Awc5HVS5mvo4a07hGDxvZuxZDwAMIaB4vjhXoTB8U/NkSQg6hsu6m8Mjh5HtCESByhJq
-         45lhMw/0L8Ojeq3Wz7r9lnF4aQLdSGTkNCpCgOIdUTzDpnX75VDRmtauu+WwbVCmZa1U
-         mBGOnzAmXglPiIQxpFY71CD8Va06mU5nHSsuquPqgxwStEyH7+sW0kPM1K9WRhZukQ35
-         oMjw==
-X-Gm-Message-State: AOUpUlFfwc/QGddVB9gowlPsCWiBxr4aX6I6CZzq14CQ6kJYmuEirT94
-        m0n7iqXPIXD24bdS5kM5y2xO82hqO52ZEaqktgk=
-X-Google-Smtp-Source: AAOMgpdddxVk9GaTJ5sOY5vU5brtexaFHOiKvQoGT11ix5UWFReOUojbqaW+v7mLHt89rSoMTSmxX5aEw+KGw9Mwd7E=
-X-Received: by 2002:aca:c70f:: with SMTP id x15-v6mr11765582oif.97.1531578986909;
- Sat, 14 Jul 2018 07:36:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180704224511.29350-1-yixun.lan@amlogic.com> <CACRpkdauMRnLpfiARG-BWkuJfArri68e9BYx56SCUxJaYWsYYA@mail.gmail.com>
- <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
-In-Reply-To: <CAFBinCAVSGTWFzW6nikbnC+K9n5KRYjun9bnEp7YsKbGRHJorg@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 14 Jul 2018 16:36:15 +0200
-Message-ID: <CAFBinCDqHEh_9Gt65FHgt-4e8o1T-YZqp9_kqS1ajqqxJ1qfuw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] pinctrl: meson-g12a: add pinctrl driver support
-To:     linus.walleij@linaro.org
-Cc:     yixun.lan@amlogic.com, carlo@caione.org, b.galvani@gmail.com,
-        linux-gpio@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        khilman@baylibre.com, robh@kernel.org, xingyu.chen@amlogic.com,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=LoklCVrFsx/fI1fmNdWe00DMZXR9lXDr8bXcZL95ONs=;
+        b=E3Sj7Y0PAhXDA603VdpUYysIpXzb0Grlg1xLu4StDMXq83oxTKotXwNccNf8IKfHxf
+         PpvzsTcvzM6mHEufvCqRjcWvoWGSBYubnn+Hl8bLa4THaMcVUvL42HX2DKTKMMVJLOzA
+         ZWB5IM8fFUos/iij7sazm0ICU9XKyYEKlEoIuOthdkBBU2mK6ARhEg6ou8bdAg6BAYeo
+         oYy/bgJRyVzo9KXE2+nQgVdp7TqZ3yriMko8aNtOAI0KscS6DLpT79kYipQ3RbgudqS9
+         e8KaoTx2PNRDAAY0Nb4ixCnC4CU5OrwRj08Xwl5Hcw64v7f20KHlYxqB7KV7UqnD7l/s
+         JbVw==
+X-Gm-Message-State: AOUpUlH9DnRKAbRhNDkjmd5U0tiIJVCKFIc5oo+Cru2bNNwYjyBd2gN9
+        NKcx0mlKLK3wTCe92F6knOlqbw==
+X-Google-Smtp-Source: AAOMgpc74Dg1CCOx9g5LQQqEDJV2QybT9wBi3ZFJLzNijTE5CoPR5CSKAAXjwubVD/IUwe9wcrUK7g==
+X-Received: by 2002:a63:dc17:: with SMTP id s23-v6mr9972523pgg.40.1531579011389;
+        Sat, 14 Jul 2018 07:36:51 -0700 (PDT)
+Received: from ?IPv6:2600:1011:b00b:a01c:a552:f4c5:78d1:838b? ([2600:1011:b00b:a01c:a552:f4c5:78d1:838b])
+        by smtp.gmail.com with ESMTPSA id s12-v6sm41385652pfm.41.2018.07.14.07.36.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 14 Jul 2018 07:36:49 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <20180714080159.hqp36q7fxzb2ktlq@suse.de>
+Date:   Sat, 14 Jul 2018 07:36:47 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <75BDF04F-9585-438C-AE04-918FBE00A174@amacapital.net>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-11-git-send-email-joro@8bytes.org> <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com> <20180714052110.cobtew6rms23ih37@suse.de> <7AB4F269-E0E8-4290-A764-69D8605467E8@amacapital.net> <20180714080159.hqp36q7fxzb2ktlq@suse.de>
+To:     Joerg Roedel <jroedel@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 12:07 AM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> Hi Linus,
->
-> On Mon, Jul 9, 2018 at 3:35 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > On Wed, Jul 4, 2018 at 4:48 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
-> > >
-> > > This patch series try to add pinctrl driver support for
-> > > the Meson-G12A SoC.
-> > >
-> > >
-> > > Yixun Lan (3):
-> > >   documentation: Add compatibles for Amlogic Meson G12A pin controllers
-> > >   dt-bindings: pinctrl: meson-g12a: document pin name
-> > >   pinctrl: meson-g12a: add pinctrl driver support
-> >
-> > Overall this looks good to me, could we get some review or ACKs
-> > from Beniamino, Martin and/or Carlo as an indication that everything
-> > seems all right before I apply the series?
-> I do not have any documentation for this hardware (I'm not even sure
-> if this is the successor to AXG/"the Audio SoCs" or rather a successor
-> of GXL or GXM/"the OTT/STB SoCs"
-for those who are interested: according to [0] the marketing name of
-this SoC will be "A311D" - specs from the linked PDF:
-- CPU: Quad Cortex-A73 + Dual Cortex-A53 (max frequency: TBD)
-- GPU: ARM G52 MP4 (4ppc)
-- Memory: DDR3/4 LPDDR3/4
-- Video decoding: 4K H265&VP9&AVS2
-- Video Encoding: 1080P H264 H265
-- HDMI-Tx: 4K2K
-- Ethernet: 10/100M/1000M
-- AV output: CVBS
-- IP License: Dolby, DTS
-
-W400 is the reference board for this SoC, it comes with:
-- EMMC
-- WIFI AP6398S
-- DDR 2GB
-
-if I had to guess then I would say it's the successor of the GXL (or
-GXM?) family
 
 
-Regards
-Martin
+> On Jul 14, 2018, at 1:01 AM, Joerg Roedel <jroedel@suse.de> wrote:
+>=20
+> On Fri, Jul 13, 2018 at 11:26:54PM -0700, Andy Lutomirski wrote:
+>>> So based on that, I did the above because the entry-stack is a per-cpu
+>>> data structure and I am not sure that we always return from the exceptio=
+n
+>>> on the same CPU where we got it. Therefore the path is called
+>>> PARANOID_... :)
+>>=20
+>> But we should just be able to IRET and end up right back on the entry
+>> stack where we were when we got interrupted.
+>=20
+> Yeah, but using another CPUs entry-stack is a bad idea, no? Especially
+> since the owning CPU might have overwritten our content there already.
+>=20
+>> On x86_64, we *definitely* can=E2=80=99t schedule in NMI, MCE, or #DB bec=
+ause
+>> we=E2=80=99re on a percpu stack. Are you *sure* we need this patch?
+>=20
+> I am sure we need this patch, but not 100% sure that we really can
+> change CPUs in this path. We are not only talking about NMI, #MC and
+> #DB, but also about #GP and every other exception that can happen while
+> writing segments registers or on iret. With this implementation we are
+> on the safe side for this unlikely slow-path.
 
+Oh, right, exceptions while writing segment regs. IRET is special, though.
 
-[0] http://openlinux.amlogic.com:8000/download/doc/Amlogic_A311D_Buildroot_Preview_Release_Notes_V20180706.pdf
+But I=E2=80=99m still unconvinced. If any code executed with IRQs enabled on=
+ the entry stack, then that code is terminally buggy. If you=E2=80=99re exec=
+uting with IRQs off, you=E2=80=99re not going to get migrated.  64-bit kerne=
+ls run on percpu stacks all the time, and it=E2=80=99s not a problem.
+
+IRET errors are genuinely special and, if they=E2=80=99re causing a problem f=
+or you, we should fix them the same way we deal with them on x86_64. M
+
+>=20
+> Regards,
+>=20
+>    Joerg
