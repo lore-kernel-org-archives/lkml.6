@@ -2,88 +2,93 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9573DECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:20:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE5FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E62EE20873
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:20:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncO07Pnv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62EE20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7787C20871
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 19:39:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7787C20871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbeGNTky (ORCPT
+        id S1730745AbeGNT7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 15:40:54 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:44089 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727315AbeGNTky (ORCPT
+        Sat, 14 Jul 2018 15:59:38 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:57335 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727679AbeGNT7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 15:40:54 -0400
-Received: by mail-yw0-f195.google.com with SMTP id k18-v6so12913493ywm.11
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 12:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wvLa0VU3H1fgvh+Dpe4d1kFglH+s0YTBrfSvG4uOTro=;
-        b=ncO07PnvvohSW3VkZQfDOQcWAvfjKsgb8jpT0PYadlOEln8FpWOYqEqmrFsxK4bHE2
-         Brhq65NuEqKxKYIFcKSNRUq+3EokwoP+vaMo6vGn7wLY5M1zm+bErFKwX9XpQxIGgGvj
-         a6j0rFLbQHjBAehUS6WSgQ/88YZ9Al0UpLaCATQXbByjEZymLibVa0RX40jZsNlnaAYK
-         qW0KUmsUu26rwvHn9FrWeO+pCxW08Okd7rgF2S3oKd8MuUzbvkJf4xxuUSiTOA2evcS1
-         1hzEAXl10sZ+x4zHjbWgosRR43wxsJGIztIINIoNhSpup8ZPix0QKM8EDQCQdtvDER7J
-         qlNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wvLa0VU3H1fgvh+Dpe4d1kFglH+s0YTBrfSvG4uOTro=;
-        b=Ie4whJY2h8WPfVELOsDuvt1K5nbUAirHY8+JC/WLUmw6sMlBZWUBbyHk7q/qViu/Cg
-         5X86YVqjQmtMEuUGms50z6EUEjqRxGqtAA64AyoMStXEmdELgP7iQvDz0lkKxMzRhNcP
-         irqiEBIZ5VW4cyGFkjoxhBJ6FQlp35aG72NiwHqR7fi1/HoIBaB4Q9tS324WhedwKHmD
-         IjYJXXVwJ9wN9zpN3y19tSsqHGnsZ3otI1ORptVyVVCkyO+YXjDhOC+tonWSOQQkZoPn
-         Xl5heEuEdLC5qSbCG+XxlDo11CDZJZQMT+eHRn29MjxrCxBDgwys9Zo2re3zFjzQzVYO
-         RIRA==
-X-Gm-Message-State: AOUpUlFS/geL85+ppMySHLGRaAZG2TUrU5gzBan8rDD/cUMa8QkJpAXh
-        HfAusag4Gy8mSFX/sPinyELuIorl59rIOfhoK34+Tw==
-X-Google-Smtp-Source: AAOMgpe3wi16KT0Oj0rhy0QCH0ERCKmBdkVb9gTa9s6Zft3q6X/VQ+arcBIngHaC69sn9rGNFDZ5GvRP7tvhp00wndY=
-X-Received: by 2002:a81:86c4:: with SMTP id w187-v6mr5581530ywf.424.1531596051784;
- Sat, 14 Jul 2018 12:20:51 -0700 (PDT)
+        Sat, 14 Jul 2018 15:59:38 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1feQOB-0003Th-V2; Sat, 14 Jul 2018 13:39:31 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1feQOB-0005fB-DE; Sat, 14 Jul 2018 13:39:31 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Josh Triplett <josh@joshtriplett.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Adrian Reber <adrian@lisas.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+References: <20180712130733.11510-1-adrian@lisas.de>
+        <87sh4o5s82.fsf@xmission.com>
+        <20180713135541.7ada72437862c32f4563a9a8@linux-foundation.org>
+        <CAGXu5jJMBDd3-Yab78aYwQ1N6VG7=BjARoTF1pDygPhaWA9VNQ@mail.gmail.com>
+        <87pnzpvdtd.fsf@xmission.com> <20180714191030.GA17877@localhost>
+Date:   Sat, 14 Jul 2018 14:39:24 -0500
+In-Reply-To: <20180714191030.GA17877@localhost> (Josh Triplett's message of
+        "Sat, 14 Jul 2018 12:10:31 -0700")
+Message-ID: <871sc5vc7n.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 12:20:51
- -0700 (PDT)
-In-Reply-To: <20180714074450.GA22469@kroah.com>
-References: <20180714055816.223754-1-toddpoynor@gmail.com> <20180714055816.223754-13-toddpoynor@gmail.com>
- <20180714063502.GF20451@kroah.com> <CAO3upobyf9JpKLSoSPeVfNGOh6R0cud=hT+bhA=U2kNkGEJ-aw@mail.gmail.com>
- <20180714074450.GA22469@kroah.com>
-From:   Todd Poynor <toddpoynor@gmail.com>
-Date:   Sat, 14 Jul 2018 12:20:51 -0700
-Message-ID: <CAO3upoYSywZWQCnhYijzEeNdr+ONXxcX3kJVv6nKUeqqe52ujQ@mail.gmail.com>
-Subject: Re: [PATCH 12/18] staging: gasket: annotate ioctl arg with __user
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
-        Zhongze Hu <frankhu@chromium.org>,
-        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1feQOB-0005fB-DE;;;mid=<871sc5vc7n.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18gvSUzTuWmj5DpSJ0Z13IyU7LTt639n6I=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> I think I'm following http://www.kroah.com/log/linux/linux-staging-update.html,
->> but if I'm off in the weeds do clue me in, thanks.
->
-> That's something I wrote 9 years ago :)
+Josh Triplett <josh@joshtriplett.org> writes:
 
-Still the top search result for how to work in staging, suggest an update. :)
+> On Sat, Jul 14, 2018 at 02:04:46PM -0500, Eric W. Biederman wrote:
+>> For a config option that no one has come forward with an actual real
+>> world use case for disabling, that cost seems much too high.
+>
+> The real-world use case is precisely as stated: code size, both storage
+> and RAM.
+
+That is theoretical.  Which platform will break or feel distressed if we
+make it unconditional.  That is real world.
+
+> I regularly encounter systems I'd *like* to put Linux in that have
+> around 1MB of storage and 1MB of RAM, or even less.
+
+Yes.  There is so little code behind CONFIG_CHECKPOINT_RESTART that it
+won't help with that.
+
+But if minification is the actual requirement for disabling
+CONFIG_CHECKPOINT_RESTART than CONFIG_CHECKPIONT_RESTART is properly
+behind expert and it needs to be default y instead of default n.
+
+Eric
