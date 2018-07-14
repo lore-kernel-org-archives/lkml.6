@@ -2,142 +2,190 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5547ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DB5ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B8A120840
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B8A120840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 959A72089F
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 13:50:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="wZVPyw4j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 959A72089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbeGNN5G (ORCPT
+        id S1727871AbeGNOJX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 09:57:06 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34264 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726447AbeGNN5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 09:57:06 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 00DE430820C0;
-        Sat, 14 Jul 2018 13:37:58 +0000 (UTC)
-Received: from t460s.bristot.redhat.com (ovpn-116-20.phx2.redhat.com [10.3.116.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 80CC65C6B8;
-        Sat, 14 Jul 2018 13:37:52 +0000 (UTC)
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Juri Lelli <juri.lelli@redhat.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org
-Subject: [PATCH V2] sched/deadline: Update rq_clock of later_rq when pushing a task
-Date:   Sat, 14 Jul 2018 15:37:40 +0200
-Message-Id:
- <52d533238eb69a09fbf40b34765be312e0fd0296.1531490101.git.bristot@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Sat, 14 Jul 2018 13:37:58 +0000 (UTC)
+        Sat, 14 Jul 2018 10:09:23 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:40846 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbeGNOJX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 10:09:23 -0400
+Date:   Sat, 14 Jul 2018 15:50:08 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] rtc: jz4740: Add support for the JZ4725B, JZ4760, JZ4770
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <1531576208.2831.1@smtp.crapouillou.net>
+In-Reply-To: <20180714133250.GW16084@piout.net>
+References: <20180713151424.13000-1-paul@crapouillou.net>
+        <20180714131920.GU16084@piout.net> <1531574734.2831.0@smtp.crapouillou.net>
+        <20180714133250.GW16084@piout.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531576211; bh=KN9BC55cGoOdW/YBjewJLOT4OprP5FXIs83pNxHY4ds=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=wZVPyw4jDILkh7m+C0Q6g3zaIFzhKh2o7xJGuIxfcYCg4iahwoUyjqi1vvXwBMVukPDTZOkz+sEuYEBmaU3GkHAXzlSFsjc8Z0NcFJluiqECGuhEABuKQ1FXE8Zdx709oqMvqdhCjhPO3PSmgbFIhg8SeRLfo2VrZQ/cOJIwQO8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20180714133740.TnMAl7VgfTNYteJMmtFVZUn4vh0nso2WFpK60ltmBlA@z>
 
-Daniel Casini got this warn while running a DL task here at RetisLab:
 
-  [  461.137582] ------------[ cut here ]------------
-  [  461.137583] rq->clock_update_flags < RQCF_ACT_SKIP
-  [  461.137599] WARNING: CPU: 4 PID: 2354 at kernel/sched/sched.h:967 assert_clock_updated.isra.32.part.33+0x17/0x20
-      [a ton of modules]
-  [  461.137646] CPU: 4 PID: 2354 Comm: label_image Not tainted 4.18.0-rc4+ #3
-  [  461.137647] Hardware name: ASUS All Series/Z87-K, BIOS 0801 09/02/2013
-  [  461.137649] RIP: 0010:assert_clock_updated.isra.32.part.33+0x17/0x20
-  [  461.137649] Code: ff 48 89 83 08 09 00 00 eb c6 66 0f 1f 84 00 00 00 00 00 55 48 c7 c7 98 7a 6c a5 c6 05 bc 0d 54 01 01 48 89 e5 e8 a9 84 fb ff <0f> 0b 5d c3 0f 1f 44 00 00 0f 1f 44 00 00 83 7e 60 01 74 0a 48 3b
-  [  461.137673] RSP: 0018:ffffa77e08cafc68 EFLAGS: 00010082
-  [  461.137674] RAX: 0000000000000000 RBX: ffff8b3fc1702d80 RCX: 0000000000000006
-  [  461.137674] RDX: 0000000000000007 RSI: 0000000000000096 RDI: ffff8b3fded164b0
-  [  461.137675] RBP: ffffa77e08cafc68 R08: 0000000000000026 R09: 0000000000000339
-  [  461.137676] R10: ffff8b3fd060d410 R11: 0000000000000026 R12: ffffffffa4e14e20
-  [  461.137677] R13: ffff8b3fdec22940 R14: ffff8b3fc1702da0 R15: ffff8b3fdec22940
-  [  461.137678] FS:  00007efe43ee5700(0000) GS:ffff8b3fded00000(0000) knlGS:0000000000000000
-  [  461.137679] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [  461.137680] CR2: 00007efe30000010 CR3: 0000000301744003 CR4: 00000000001606e0
-  [  461.137680] Call Trace:
-  [  461.137684]  push_dl_task.part.46+0x3bc/0x460
-  [  461.137686]  task_woken_dl+0x60/0x80
-  [  461.137689]  ttwu_do_wakeup+0x4f/0x150
-  [  461.137690]  ttwu_do_activate+0x77/0x80
-  [  461.137692]  try_to_wake_up+0x1d6/0x4c0
-  [  461.137693]  wake_up_q+0x32/0x70
-  [  461.137696]  do_futex+0x7e7/0xb50
-  [  461.137698]  __x64_sys_futex+0x8b/0x180
-  [  461.137701]  do_syscall_64+0x5a/0x110
-  [  461.137703]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  [  461.137705] RIP: 0033:0x7efe4918ca26
-  [  461.137705] Code: 00 00 00 74 17 49 8b 48 20 44 8b 59 10 41 83 e3 30 41 83 fb 20 74 1e be 85 00 00 00 41 ba 01 00 00 00 41 b9 01 00 00 04 0f 05 <48> 3d 01 f0 ff ff 73 1f 31 c0 c3 be 8c 00 00 00 49 89 c8 4d 31 d2
-  [  461.137738] RSP: 002b:00007efe43ee4928 EFLAGS: 00000283 ORIG_RAX: 00000000000000ca
-  [  461.137739] RAX: ffffffffffffffda RBX: 0000000005094df0 RCX: 00007efe4918ca26
-  [  461.137740] RDX: 0000000000000001 RSI: 0000000000000085 RDI: 0000000005094e24
-  [  461.137741] RBP: 00007efe43ee49c0 R08: 0000000005094e20 R09: 0000000004000001
-  [  461.137741] R10: 0000000000000001 R11: 0000000000000283 R12: 0000000000000000
-  [  461.137742] R13: 0000000005094df8 R14: 0000000000000001 R15: 0000000000448a10
-  [  461.137743] ---[ end trace 187df4cad2bf7649 ]---
 
-This warning happened in the push_dl_task(), because
-__add_running_bw()->cpufreq_update_util() is getting the rq_clock of
-the later_rq before its update, which takes place at activate_task().
-The fix then is to update the rq_clock before calling add_running_bw().
+Le sam. 14 juil. 2018 =E0 15:32, Alexandre Belloni=20
+<alexandre.belloni@bootlin.com> a =E9crit :
+> On 14/07/2018 15:25:33+0200, Paul Cercueil wrote:
+>>  Hi Alexandre,
+>>=20
+>>  Le sam. 14 juil. 2018 =E0 15:19, Alexandre Belloni
+>>  <alexandre.belloni@bootlin.com> a =E9crit :
+>>  > Hello,
+>>  >
+>>  > On 13/07/2018 17:14:24+0200, Paul Cercueil wrote:
+>>  > >  The RTC in the JZ4725B works just like the one in the JZ4740.
+>>  > >
+>>  > >  The RTC in the JZ4760 and JZ4770 work just like the one in the
+>>  > > JZ4780.
+>>  > >
+>>  > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  > >  ---
+>>  > >   Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt=20
+>> |  3
+>>  > > +++
+>>  > >   drivers/rtc/rtc-jz4740.c                                    =20
+>> | 11
+>>  > > ++++++++++-
+>>  > >   2 files changed, 13 insertions(+), 1 deletion(-)
+>>  > >
+>>  > >  diff --git
+>>  > > a/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
+>>  > > b/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
+>>  > >  index 41c7ae18fd7b..a9e821de84f2 100644
+>>  > >  ---=20
+>> a/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
+>>  > >  +++=20
+>> b/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
+>>  > >  @@ -4,6 +4,9 @@ Required properties:
+>>  > >
+>>  > >   - compatible: One of:
+>>  > >     - "ingenic,jz4740-rtc" - for use with the JZ4740 SoC
+>>  > >  +  - "ingenic,jz4725b-rtc" - for use with the JZ4725B SoC
+>>  > >  +  - "ingenic,jz4760-rtc" - for use with the JZ4760 SoC
+>>  > >  +  - "ingenic,jz4770-rtc" - for use with the JZ4770 SoC
+>>  > >     - "ingenic,jz4780-rtc" - for use with the JZ4780 SoC
+>>  > >   - reg: Address range of rtc register set
+>>  > >   - interrupts: IRQ number for the alarm interrupt
+>>  > >  diff --git a/drivers/rtc/rtc-jz4740.c=20
+>> b/drivers/rtc/rtc-jz4740.c
+>>  > >  index d0a891777f44..1c867e3a0ea5 100644
+>>  > >  --- a/drivers/rtc/rtc-jz4740.c
+>>  > >  +++ b/drivers/rtc/rtc-jz4740.c
+>>  > >  @@ -54,6 +54,9 @@
+>>  > >
+>>  > >   enum jz4740_rtc_type {
+>>  > >   	ID_JZ4740,
+>>  > >  +	ID_JZ4725B,
+>>  > >  +	ID_JZ4760,
+>>  > >  +	ID_JZ4770,
+>>  >
+>>  > I wouldn't introduce those ids unless there are handling=20
+>> differences at
+>>  > some point.
+>>=20
+>>  Well there are handling differences, see below.
+>>=20
+>>  > >   	ID_JZ4780,
+>>  > >   };
+>>  > >
+>>  > >  @@ -114,7 +117,7 @@ static inline int=20
+>> jz4740_rtc_reg_write(struct
+>>  > > jz4740_rtc *rtc, size_t reg,
+>>  > >   {
+>>  > >   	int ret =3D 0;
+>>  > >
+>>  > >  -	if (rtc->type >=3D ID_JZ4780)
+>>  > >  +	if (rtc->type >=3D ID_JZ4760)
+>>  >
+>>  > This would avoid that change (and the test would preferably be
+>>  > (rtc->type =3D=3D ID_JZ4780))
+>>=20
+>>  That branch should be taken if the SoC is JZ4760, JZ4770 or JZ4780.
+>>  It should not be taken if the SoC is JZ4740 or JZ4725B.
+>=20
+> Sure but you can achieve that with only 2 ids...
+>=20
+>>=20
+>>  > >   		ret =3D jz4780_rtc_enable_write(rtc);
+>>  > >   	if (ret =3D=3D 0)
+>>  > >   		ret =3D jz4740_rtc_wait_write_ready(rtc);
+>>  > >  @@ -300,6 +303,9 @@ static void jz4740_rtc_power_off(void)
+>>  > >
+>>  > >   static const struct of_device_id jz4740_rtc_of_match[] =3D {
+>>  > >   	{ .compatible =3D "ingenic,jz4740-rtc", .data =3D (void=20
+>> *)ID_JZ4740 },
+>>  > >  +	{ .compatible =3D "ingenic,jz4725b-rtc", .data =3D (void=20
+>> *)ID_JZ4725B
+>>  > > },
+>>  > >  +	{ .compatible =3D "ingenic,jz4760-rtc", .data =3D (void=20
+>> *)ID_JZ4760 },
+>>  > >  +	{ .compatible =3D "ingenic,jz4770-rtc", .data =3D (void=20
+>> *)ID_JZ4770 },
+>=20
+> By doing the correct mapping here e.g:
+>=20
+> { .compatible =3D "ingenic,jz4725b-rtc", .data =3D (void *)ID_JZ4740 },
 
-To avoid double rq_clock_update() call, we set ENQUEUE_NOCLOCK flag to
-activate_task().
+Not very pretty and future-proof if you ask me...
+But you're the boss...
 
-Changes from v1:
-  Cosmetic changes in the log, and correct Juri's email (Daniel).
-
-Reported-by: Daniel Casini <daniel.casini@santannapisa.it>
-Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Luca Abeni <luca.abeni@santannapisa.it>
-Cc: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: <stable@vger.kernel.org> # 4.16+
-Fixes: e0367b12674b sched/deadline: Move CPU frequency selection triggering points
----
- kernel/sched/deadline.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index fbfc3f1d368a..e733c15b7695 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2090,8 +2090,16 @@ static int push_dl_task(struct rq *rq)
- 	sub_rq_bw(&next_task->dl, &rq->dl);
- 	set_task_cpu(next_task, later_rq->cpu);
- 	add_rq_bw(&next_task->dl, &later_rq->dl);
-+
-+	/*
-+	 * Update the later_rq clock here, because the clock is used
-+	 * by the cpufreq_update_util() inside __add_running_bw().
-+	 * Then, set ENQUEUE_NOCLOCK flag to avoid updating the rq_clock
-+	 * again in the activate_task()->enqueue_task().
-+	 */
-+	update_rq_clock(later_rq);
- 	add_running_bw(&next_task->dl, &later_rq->dl);
--	activate_task(later_rq, next_task, 0);
-+	activate_task(later_rq, next_task, ENQUEUE_NOCLOCK);
- 	ret = 1;
- 
- 	resched_curr(later_rq);
--- 
-2.17.1
+>>  > >   	{ .compatible =3D "ingenic,jz4780-rtc", .data =3D (void=20
+>> *)ID_JZ4780 },
+>>  > >   	{},
+>>  > >   };
+>>  > >  @@ -428,6 +434,9 @@ static const struct dev_pm_ops=20
+>> jz4740_pm_ops =3D {
+>>  > >
+>>  > >   static const struct platform_device_id jz4740_rtc_ids[] =3D {
+>>  > >   	{ "jz4740-rtc", ID_JZ4740 },
+>>  > >  +	{ "jz4725b-rtc", ID_JZ4725B },
+>>  > >  +	{ "jz4760-rtc", ID_JZ4760 },
+>>  > >  +	{ "jz4770-rtc", ID_JZ4770 },
+>=20
+> And here
+>=20
+>>  > >   	{ "jz4780-rtc", ID_JZ4780 },
+>>  > >   	{}
+>>  > >   };
+>>  > >  --
+>>  > >  2.11.0
+>>  > >
+>>  >
+>>  > --
+>>  > Alexandre Belloni, Bootlin (formerly Free Electrons)
+>>  > Embedded Linux and Kernel engineering
+>>  > https://bootlin.com
+>>=20
+>=20
+> --
+> Alexandre Belloni, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+=
 
