@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1E89ECDFB0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D39ECDFAA
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 363BD208A4
+	by mail.kernel.org (Postfix) with ESMTP id 8C036208D4
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 05:58:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfxqxdGO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 363BD208A4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnzmqoch"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C036208D4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726002AbeGNGQe (ORCPT
+        id S1726156AbeGNGQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 02:16:34 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44479 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbeGNGQe (ORCPT
+        Sat, 14 Jul 2018 02:16:35 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37178 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbeGNGQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 02:16:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r1-v6so5658819pgp.11
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 22:58:45 -0700 (PDT)
+        Sat, 14 Jul 2018 02:16:35 -0400
+Received: by mail-pg1-f196.google.com with SMTP id e9-v6so370545pgs.4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 22:58:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=8Y0Eor/8QT/wLbu75TJa8qgXzgMPAt14BJ4HIE9yb3Q=;
-        b=GfxqxdGOtVe21S/DMA/OPmgpAnvromQAtN0mqZtuhFIYy//OQxuohDmUCiXhWKHoSd
-         eKkf1sAdl/aK0pB1TFIWHLn+bL7Eic55FmuxCLhEWmfF8reA7t5Kbdt3kYlUMh3Rde4B
-         7Xb1rIkiuOmq5ZvygT2RnvlAiNlhwbg9v8QzUiZChiqT9YnBdUeyRkutfmVt97eVd39K
-         N21vd2GYykWgGYYiojg4d6Et0bmaAHoPwOqJZTWb0nlSxbN4yWnBro5sn+D0KqI+SMJT
-         8k5utvJufyZedfHztukgmOJ5ZsTbSjKvpTTogNGKAP1nI4GhDefCoIUzcWR9pksBYr5j
-         LfuQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=TIEj4TMZZFkA2jJsLDMwFa007UJ1WVyLXsEGERF2z7E=;
+        b=cnzmqoche/wZC+/i3FLeR8F5beC8FPai/41uJm7FRUS9QHeEMo0Y7BbU6CUVbHvO60
+         6Djnv6ngy9u9J9cvu7W4FAwcyTck26MkfAqxOgQK/hMwZfqnxpYGhQiKOY+62asjs+3N
+         C0mGbS7S5wvX1jyCWhqZTmZoqE1oiAi3GrxFuzSCQc/3MLmrbK2ih0RJ6ClgVSBKk3iD
+         e9bXVJG650M8KoR1kqlnVvUCz6zFeLEWfF772sAI5uzGSo+D5m+p34JsW+nn4nFXlEd5
+         92hD/pFgMOBrTHMyj7Jh25/Zs5wFGoCtwuu1p1LJ5C15jlnQdNFfvBYAFNNvuFMVtyng
+         vXLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8Y0Eor/8QT/wLbu75TJa8qgXzgMPAt14BJ4HIE9yb3Q=;
-        b=OYi3GJripnEyivH8uKTsja5oNrPVXj6cI2FXbh8nUuCljid1/oILzi3Tbd7Uid5+E0
-         4POh0SqxwE7QOW7Dq8dMBwIImPzmjOwWkt0bcl+8gsYYuTsyCxWb3JofaVHHgxdG0nBT
-         TELNd4sWvI9QJUo7CR+lV1nFuCaCXxcakQMe4KnE51YQ0Y0kWcFLi2ubWcCkc6YtPmaA
-         Cw5Mgoi7AUEHElRUVKAT67SWboYs2CLQpGr4Y/OHaNi5+QrMXXGPDhKSEIvTyjyU8ZD2
-         wtEaT+h9NmtDyVr4EHiKTpVjvbG92gQK2Bkd2gmBnlai1IM1p32BR1DqmhTvSAQxMRrB
-         n+Kw==
-X-Gm-Message-State: AOUpUlH3Yfk3weposLd9FaUMuMgxIwpJEe8SyU9nqx7n9D1D/vYTl9Dt
-        mcVsX2KYa8rqpwyDA2IWeV8=
-X-Google-Smtp-Source: AAOMgpcSbklLZXVr+HidUN88Bam3FU4bSGjqNp1OsO17CZVbCfNR67JKdD1CGMq+LyPP8aS8MS1b2Q==
-X-Received: by 2002:a63:5c10:: with SMTP id q16-v6mr8529740pgb.452.1531547924690;
-        Fri, 13 Jul 2018 22:58:44 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TIEj4TMZZFkA2jJsLDMwFa007UJ1WVyLXsEGERF2z7E=;
+        b=qd/u7YJ/D0n9EWbF2KRHWyq27uwJkmdkAHoY/jcOOmFyjXGhLH/N2cU76dlFdvSMNy
+         DVHTTxc5N33Fwhqk1mcYKrmAkUPk6+vuV2rdKNT1JSJIK0NtyxO3U8ppGFQKcilAZndd
+         llbidP3wR2poR4lB3WVYlOz0AKnBPWTxXiHgQnmjhi0ofW6FLz+NzzPFI445MmdPBPtl
+         GdYFoFXcVZBnA7iLUGMOX4sGi6+DMOJ3leGLI2wm/5cttg1raJxscRKkwjgYA3/ZNqpi
+         3I62lJA02wNDmS6ItlKQvrhz+Z/YV/PqADTgCi9ORvEx434AshiMLuNk2yHyWLMX9JGH
+         NbIw==
+X-Gm-Message-State: AOUpUlEYAOhBF0TJ3GDhYjfjLoUCX6wM5KPw+B+XiTE2Spq6dpv/EDDw
+        MYQUyTKgv/CZrUaegDvVy9E=
+X-Google-Smtp-Source: AAOMgpdHHUYISO6B6e0n6/Wc//4MSpnbno8vHrsiJSOwKxMk4dy1DbvnV8CnuxuGqdPMlG10vkEN9g==
+X-Received: by 2002:a63:df04:: with SMTP id u4-v6mr8515200pgg.434.1531547925689;
+        Fri, 13 Jul 2018 22:58:45 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.43
+        by smtp.gmail.com with ESMTPSA id 203-v6sm48411112pgb.14.2018.07.13.22.58.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 22:58:44 -0700 (PDT)
+        Fri, 13 Jul 2018 22:58:45 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -66,11 +67,14 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Dmitry Torokhov <dtor@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 00/18] staging: gasket: sundry fixes and fixups
-Date:   Fri, 13 Jul 2018 22:57:58 -0700
-Message-Id: <20180714055816.223754-1-toddpoynor@gmail.com>
+        Todd Poynor <toddpoynor@google.com>,
+        Todd Poynor <toddpoynor@gmail.com>
+Subject: [PATCH 01/18] staging: gasket: remove X86 Kconfig restriction
+Date:   Fri, 13 Jul 2018 22:57:59 -0700
+Message-Id: <20180714055816.223754-2-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+In-Reply-To: <20180714055816.223754-1-toddpoynor@gmail.com>
+References: <20180714055816.223754-1-toddpoynor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,42 +82,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Various fixes mainly from the chromium review of the gasket and apex
-drivers.  More to come.
+The gasket and apex drivers are to be used on other architectures
+besides X86.
 
-Various (18):
-  staging: gasket: remove X86 Kconfig restriction
-  MAINTAINERS: Add maintainer for drivers/staging/gasket
-  staging: gasket: typo and whitespace cleanups
-  staging: gasket: device registration error and unregister fixups
-  staging: gasket: sysfs mapping creation fixups
-  staging: gasket: fix deadlock in pci driver unregister path
-  staging: gasket: convert gasket_mmap_has_permissions to bool return
-  staging: gasket: gasket_wait_with_reschedule fixups
-  staging: gasket: bail out of reset sequence on device callback error
-  staging: gasket: gasket_open use container_of()
-  staging: gasket: always allow root open for write
-  staging: gasket: annotate ioctl arg with __user
-  staging: gasket: gasket_enable_dev fixups
-  staging: gasket: fix class create bug handling
-  staging: gasket: remove unnecessary code in coherent allocator
-  staging: gasket: gasket core error handling fixups
-  staging: gasket: don't release coherent mappings
-  staging: gasket: various cleanups
+Signed-off-by: Todd Poynor <toddpoynor@gmail.com>
+---
+ drivers/staging/gasket/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- MAINTAINERS                                |   1 +
- drivers/staging/gasket/Kconfig             |   2 +-
- drivers/staging/gasket/apex.h              |   7 +-
- drivers/staging/gasket/apex_driver.c       |  79 +++++++--------
- drivers/staging/gasket/gasket_core.c       | 107 ++++++++++-----------
- drivers/staging/gasket/gasket_core.h       |  11 ++-
- drivers/staging/gasket/gasket_ioctl.c      | 100 ++++++++++---------
- drivers/staging/gasket/gasket_ioctl.h      |   4 +-
- drivers/staging/gasket/gasket_page_table.c |  69 +++++++------
- drivers/staging/gasket/gasket_page_table.h |   8 +-
- drivers/staging/gasket/gasket_sysfs.c      |   4 +-
- 11 files changed, 198 insertions(+), 194 deletions(-)
-
+diff --git a/drivers/staging/gasket/Kconfig b/drivers/staging/gasket/Kconfig
+index c836389c1402..ef40c4c75e0f 100644
+--- a/drivers/staging/gasket/Kconfig
++++ b/drivers/staging/gasket/Kconfig
+@@ -2,7 +2,7 @@ menu "Gasket devices"
+ 
+ config STAGING_GASKET_FRAMEWORK
+ 	tristate "Gasket framework"
+-	depends on PCI && X86_64
++	depends on PCI
+ 	help
+ 	  This framework supports Gasket-compatible devices, such as Apex.
+ 	  It is required for any of the following module(s).
 -- 
 2.18.0.203.gfac676dfb9-goog
 
