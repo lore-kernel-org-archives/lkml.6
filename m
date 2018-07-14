@@ -2,119 +2,171 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D552ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD668ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2E4208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:44:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2E4208CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BE40208CE
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BE40208CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbeGNIDB (ORCPT
+        id S1727051AbeGNIP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 04:03:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56766 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeGNIDB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 04:03:01 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DC3F28A5;
-        Sat, 14 Jul 2018 07:44:52 +0000 (UTC)
-Date:   Sat, 14 Jul 2018 09:44:50 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
-        Zhongze Hu <frankhu@chromium.org>,
-        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 12/18] staging: gasket: annotate ioctl arg with __user
-Message-ID: <20180714074450.GA22469@kroah.com>
-References: <20180714055816.223754-1-toddpoynor@gmail.com>
- <20180714055816.223754-13-toddpoynor@gmail.com>
- <20180714063502.GF20451@kroah.com>
- <CAO3upobyf9JpKLSoSPeVfNGOh6R0cud=hT+bhA=U2kNkGEJ-aw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO3upobyf9JpKLSoSPeVfNGOh6R0cud=hT+bhA=U2kNkGEJ-aw@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Sat, 14 Jul 2018 04:15:26 -0400
+Received: from mga02.intel.com ([134.134.136.20]:11971 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726412AbeGNIPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 04:15:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2018 00:57:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,351,1526367600"; 
+   d="scan'208";a="54966332"
+Received: from allen-box.sh.intel.com ([10.239.48.172])
+  by fmsmga008.fm.intel.com with ESMTP; 14 Jul 2018 00:57:10 -0700
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
+        yi.y.sun@intel.com, peterx@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v5 3/9] iommu/vt-d: Apply global PASID in SVA
+Date:   Sat, 14 Jul 2018 15:46:56 +0800
+Message-Id: <1531554422-6874-4-git-send-email-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
+References: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 12:12:38AM -0700, Todd Poynor wrote:
+This patch applies the global pasid name space in the shared
+virtual address (SVA) implementation.
 
-HTML email gets rejected by the mailing lists :(
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>
+Cc: Liu Yi L <yi.l.liu@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
+---
+ drivers/iommu/intel-svm.c   | 22 +++++++++++-----------
+ include/linux/intel-iommu.h |  1 -
+ 2 files changed, 11 insertions(+), 12 deletions(-)
 
-Please fix your email client to not do that.
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index 36cc1d1..56e65d0 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -26,6 +26,8 @@
+ #include <linux/interrupt.h>
+ #include <asm/page.h>
+ 
++#include "intel-pasid.h"
++
+ #define PASID_ENTRY_P		BIT_ULL(0)
+ #define PASID_ENTRY_FLPM_5LP	BIT_ULL(9)
+ #define PASID_ENTRY_SRE		BIT_ULL(11)
+@@ -85,8 +87,6 @@ int intel_svm_alloc_pasid_tables(struct intel_iommu *iommu)
+ 				iommu->name);
+ 	}
+ 
+-	idr_init(&iommu->pasid_idr);
+-
+ 	return 0;
+ }
+ 
+@@ -102,7 +102,7 @@ int intel_svm_free_pasid_tables(struct intel_iommu *iommu)
+ 		free_pages((unsigned long)iommu->pasid_state_table, order);
+ 		iommu->pasid_state_table = NULL;
+ 	}
+-	idr_destroy(&iommu->pasid_idr);
++
+ 	return 0;
+ }
+ 
+@@ -392,9 +392,9 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 			pasid_max = iommu->pasid_max;
+ 
+ 		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
+-		ret = idr_alloc(&iommu->pasid_idr, svm,
+-				!!cap_caching_mode(iommu->cap),
+-				pasid_max - 1, GFP_KERNEL);
++		ret = intel_pasid_alloc_id(svm,
++					   !!cap_caching_mode(iommu->cap),
++					   pasid_max - 1, GFP_KERNEL);
+ 		if (ret < 0) {
+ 			kfree(svm);
+ 			kfree(sdev);
+@@ -410,7 +410,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		if (mm) {
+ 			ret = mmu_notifier_register(&svm->notifier, mm);
+ 			if (ret) {
+-				idr_remove(&svm->iommu->pasid_idr, svm->pasid);
++				intel_pasid_free_id(svm->pasid);
+ 				kfree(svm);
+ 				kfree(sdev);
+ 				goto out;
+@@ -460,7 +460,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 	if (!iommu || !iommu->pasid_table)
+ 		goto out;
+ 
+-	svm = idr_find(&iommu->pasid_idr, pasid);
++	svm = intel_pasid_lookup_id(pasid);
+ 	if (!svm)
+ 		goto out;
+ 
+@@ -485,7 +485,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 					svm->iommu->pasid_table[svm->pasid].val = 0;
+ 					wmb();
+ 
+-					idr_remove(&svm->iommu->pasid_idr, svm->pasid);
++					intel_pasid_free_id(svm->pasid);
+ 					if (svm->mm)
+ 						mmu_notifier_unregister(&svm->notifier, svm->mm);
+ 
+@@ -520,7 +520,7 @@ int intel_svm_is_pasid_valid(struct device *dev, int pasid)
+ 	if (!iommu || !iommu->pasid_table)
+ 		goto out;
+ 
+-	svm = idr_find(&iommu->pasid_idr, pasid);
++	svm = intel_pasid_lookup_id(pasid);
+ 	if (!svm)
+ 		goto out;
+ 
+@@ -618,7 +618,7 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 
+ 		if (!svm || svm->pasid != req->pasid) {
+ 			rcu_read_lock();
+-			svm = idr_find(&iommu->pasid_idr, req->pasid);
++			svm = intel_pasid_lookup_id(req->pasid);
+ 			/* It *can't* go away, because the driver is not permitted
+ 			 * to unbind the mm while any page faults are outstanding.
+ 			 * So we only need RCU to protect the internal idr code. */
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index e1e1938..2ff1519 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -420,7 +420,6 @@ struct intel_iommu {
+ 	struct pasid_state_entry *pasid_state_table;
+ 	struct page_req_dsc *prq;
+ 	unsigned char prq_name[16];    /* Name for PRQ interrupt */
+-	struct idr pasid_idr;
+ 	u32 pasid_max;
+ #endif
+ 	struct q_inval  *qi;            /* Queued invalidation info */
+-- 
+2.7.4
 
-> On Fri, Jul 13, 2018 at 11:35 PM, Greg Kroah-Hartman <
-> gregkh@linuxfoundation.org> wrote:
-> 
->     On Fri, Jul 13, 2018 at 10:58:10PM -0700, Todd Poynor wrote:
->     > From: Todd Poynor <toddpoynor@google.com>
->     >
->     > For sparse checking.
->     >
->     > Reported-by: Dmitry Torokhov <dtor@chromium.org>
->     > Signed-off-by: Zhongze Hu <frankhu@chromium.org>
->     > Signed-off-by: Todd Poynor <toddpoynor@google.com>
->     > ---
-> 
->     Are you sure this patch even applies?  What tree did you make it
->     against?
-> 
-> 
-> I'm working in linux-next at tag next-20180713, which is also tagged master at
-> this writing. 
-> 
-> I think I'm following http://www.kroah.com/log/linux/linux-staging-update.html,
-> but if I'm off in the weeds do clue me in, thanks. 
-
-That's something I wrote 9 years ago :)
-
-Anyway, yes, linux-next is usually the right place to work off of, but
-it lags my staging.git tree usually by at least a day, maybe two,
-depending on when I push and when -next picks my tree up.  Also there is
-the lag of the weekend when -next is not being generated.
-
-Normally that is fine, except for when working on code that is "fast
-moving".  This driver has had lots of submissions against it lately as
-there are loads of "low hanging fruit" that people easily see to fix up.
-Look at the mailing list archives for this week alone for all of those
-patches.
-
-When working on something that lots of other people are working on, pay
-attention to the patches on the mailing list and work off of my
-staging.git tree, usually the staging-next branch, but sometimes
-staging-testing is needed if lots of patches are being sent rapidly.
-
->     I ask because this fragment:
->    
->     > @@ -12,6 +12,7 @@
->     >   * GNU General Public License for more details.
->     >   */
-> 
->     is no longer in the tree.
-> 
-> 
-> Sorry, which tree?  I've made sure my linux-next is up-to-date and I still see
-> this code.
-
-Look at my staging-next branch in staging.git.  It's long-gone :)
-
-thanks,
-
-greg k-h
