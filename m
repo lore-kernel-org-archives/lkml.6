@@ -3,50 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33EF5ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF08ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF088208A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:08:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF088208A6
+	by mail.kernel.org (Postfix) with ESMTP id B98A9208A6
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:12:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98A9208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731973AbeGNAZf (ORCPT
+        id S1731948AbeGNA24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 20:25:35 -0400
-Received: from smtprelay0105.hostedemail.com ([216.40.44.105]:50469 "EHLO
+        Fri, 13 Jul 2018 20:28:56 -0400
+Received: from smtprelay0045.hostedemail.com ([216.40.44.45]:60824 "EHLO
         smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731021AbeGNAZf (ORCPT
+        by vger.kernel.org with ESMTP id S1731021AbeGNA24 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 20:25:35 -0400
+        Fri, 13 Jul 2018 20:28:56 -0400
 Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 3F9F318014AE5;
-        Sat, 14 Jul 2018 00:08:40 +0000 (UTC)
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 75017999D;
+        Sat, 14 Jul 2018 00:12:00 +0000 (UTC)
 X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bed23_85b13cc47b257
-X-Filterd-Recvd-Size: 3981
+X-HE-Tag: cover26_11651a50a7535
+X-Filterd-Recvd-Size: 2235
 Received: from XPS-9350.home (unknown [47.151.153.53])
         (Authenticated sender: joe@perches.com)
-        by omf01.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 14 Jul 2018 00:08:38 +0000 (UTC)
-Message-ID: <50a05aaf44e5f86cbf687863dadaa26b45debe2d.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Require commit text and warn on long commit
- text lines
+        by omf06.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 14 Jul 2018 00:11:59 +0000 (UTC)
+Message-ID: <751491f9b9d7ce18f048ba44fbdb17d8c699e674.camel@perches.com>
+Subject: Re: [PATCH] get_maintainer.pl: Add optional
+ .get_maintainer.MAINTAINERS override
 From:   Joe Perches <joe@perches.com>
-To:     pheragu@codeaurora.org, Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     apw@canonical.com, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, bryanh@codeaurora.org,
-        ckadabi@codeaurora.org, David Keitel <dkeitel@codeaurora.org>
-Date:   Fri, 13 Jul 2018 17:08:37 -0700
-In-Reply-To: <6ed46f85a7577e1d4a48e81f67fd7581@codeaurora.org>
-References: <1531518027-13318-1-git-send-email-pheragu@codeaurora.org>
-         <6799952fbd3639c764c112bde961b5e00270a52d.camel@perches.com>
-         <6ed46f85a7577e1d4a48e81f67fd7581@codeaurora.org>
+To:     Don Zickus <dzickus@redhat.com>
+Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
+        jtoppins@redhat.com
+Date:   Fri, 13 Jul 2018 17:11:58 -0700
+In-Reply-To: <20180713185109.hanjstgdvl2fw4ry@redhat.com>
+References: <20180626182505.4176-1-prarit@redhat.com>
+         <601f0e6bf3baa88b9f6145e635d728a435542292.camel@perches.com>
+         <20180706175419.6irtvs64e6dbz7hk@redhat.com>
+         <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
+         <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
+         <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
+         <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
+         <20180706215851.sqpibusyqukbh55g@redhat.com>
+         <5ebb181efcdd2cdb3c1ee8eac9bba26f5759a0ea.camel@perches.com>
+         <9efeba75a47e9b0c40d5b9e5078598ff4a31f196.camel@perches.com>
+         <20180713185109.hanjstgdvl2fw4ry@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-1"
 X-Mailer: Evolution 3.28.1-2 
 Mime-Version: 1.0
@@ -56,81 +61,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-07-13 at 16:28 -0700, pheragu@codeaurora.org wrote:
-> On 2018-07-13 14:46, Joe Perches wrote:
-> > On Fri, 2018-07-13 at 14:40 -0700, Prakruthi Deepak Heragu wrote:
-> > > Commit text is almost always necessary to explain why a change is 
-> > > needed.
+On Fri, 2018-07-13 at 14:51 -0400, Don Zickus wrote:
+> On Fri, Jul 06, 2018 at 03:14:28PM -0700, Joe Perches wrote:
+> > On Fri, 2018-07-06 at 15:09 -0700, Joe Perches wrote:
+> > > On Fri, 2018-07-06 at 17:58 -0400, Don Zickus wrote:
+> > > > We have an internal use case of multiple MAINTAINER files, some folks have
+> > > > more rights to patches than others so they are not allowed to be cc'd (think
+> > > > embargoed stuff).
 > > 
-> > This bit seems sensible, but perhaps it should just count the
-> > number of lines after the end of email headers and before any
-> > Signed-off-by:/Signature line
-> > 
+> > How about:
 > 
-> While committing the changes, one can just write the subject and not 
-> write
-> the commit text at all. So, if we just count the lines between email 
-> headers
-> and signed-off, we still do count lines which form the subject, but the
-> commit text is still absent. Also, subject can be longer than one line. 
-> So,
-> just counting lines doesn't really guarantee the presence of commit 
-> text.
-
-Not true.
-Look at $in_header_lines and $in_commit_log.
-
-> > > Also, warn on commit text lines longer than 75 characters. The commit 
-> > > text
-> > > are indented and may wrap on a terminal if they are longer than 75
-> > > characters.
-> > 
-> > This is already exists via
-> > 
-> > # Check for line lengths > 75 in commit log, warn once
-> > 		if ($in_commit_log && !$commit_log_long_line &&
-> > 		    length($line) > 75 &&
-> > 
+> Hi Joe,
 > 
-> True, but this patch points out every line of the commit text that is
-> exceeding the limit.
+> You are probably busy with stuff, but wanted to softly poke you to see what
+> is going on with this patch and if there is anything we can help with?
 
-Which is bad because things like dump_stack() are added in
-commit logs and those are already allowed to be > 75 chars.
+Hey Don.  No worries.
 
-Anyway, something like this probably works.  Please test.
----
- scripts/checkpatch.pl | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Tell me again if the --find-maintainer-files=<path or file> should
+be exclusive or should it also read any existing MAINTAINERS file?
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index b5c875d7132b..8b5f3dae31c9 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2240,6 +2240,7 @@ sub process {
- 	my $in_header_lines = $file ? 0 : 1;
- 	my $in_commit_log = 0;		#Scanning lines before patch
- 	my $has_commit_log = 0;		#Encountered lines before patch
-+	my $commit_log_lines = 0;	#Number of commit log lines
- 	my $commit_log_possible_stack_dump = 0;
- 	my $commit_log_long_line = 0;
- 	my $commit_log_has_diff = 0;
-@@ -2497,6 +2498,18 @@ sub process {
- 
- 		$cnt_lines++ if ($realcnt != 0);
- 
-+# Verify the existence of a commit log if appropriate
-+# 2 is used because a $signature is counted in $commit_log_lines
-+		if ($in_commit_log) {
-+			if ($line !~ /^\s*$/) {
-+				$commit_log_lines++;	#could be a $signature
-+			}
-+		} else if ($has_commit_log && $commit_log_lines < 2) {
-+			WARN("COMMIT_MESSAGE",
-+			     "Missing commit description - Add an appropriate one\n");
-+			$commit_log_lines = 2;	#warn only once
-+		}
-+
- # Check if the commit log has what seems like a diff which can confuse patch
- 		if ($in_commit_log && !$commit_log_has_diff &&
- 		    (($line =~ m@^\s+diff\b.*a/[\w/]+@ &&
+What if anything is wrong with what I suggested?
+
+cheers, Joe
+
