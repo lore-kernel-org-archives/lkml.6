@@ -2,107 +2,103 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10156ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:17:26 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1927208B0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EB1ECDFB0
 	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:17:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sxA+jC8P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1927208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 846C4208A4
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:17:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 846C4208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbeGNEef (ORCPT
+        id S1725902AbeGNEZS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 00:34:35 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54324 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbeGNEef (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 00:34:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NlhKrX54D6axL4V8VpVvpRwSz1NgbL7SiCG30N/13oQ=; b=sxA+jC8Pv6UvHJ+POpbRQeFdFI
-        UQAmW/FOSGoAr04gTB/ADAIRKpDYfYBb3r2tBxXcOtxuB6Vsom1MIfujku349dQV/UO2QdyPRmAxt
-        tKRTMgnguBLosAZtCozXxqyv8zDdCjSdagybHMOnynMT+repP08/gmVxvUpYANLRVj2oL5nXFwwj6
-        DkRlGIm9CDx8nQDoIIluZpFTTk2K12E7kEgdxQaDcAH69ckcaTmb0hLmGk5Si+Klk0/Pl+K8KQ1Ra
-        haKud4YUzwE6G22FLTM6rifs/LBJav0sOsnfu5+F4BLOf7aAcJG+v2eSG26/pWQYz69LzbZKtX1lu
-        qEsXZu4g==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1feBzQ-0006Wd-9z; Sat, 14 Jul 2018 04:17:00 +0000
-Subject: Re: [PATCH] mmc: mxcmmc: Fix missing parentheses and brace
-To:     Kees Cook <keescook@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180712195937.GA36007@beast>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <4bba8958-b328-68c1-6eec-61ffe0f2f086@infradead.org>
-Date:   Fri, 13 Jul 2018 21:16:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 14 Jul 2018 00:25:18 -0400
+Received: from mga06.intel.com ([134.134.136.31]:34727 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725812AbeGNEZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 00:25:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 21:07:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,350,1526367600"; 
+   d="scan'208";a="57576891"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by orsmga006.jf.intel.com with ESMTP; 13 Jul 2018 21:07:44 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 1/6] swap: Add comments to lock_cluster_or_swap_info()
+References: <20180712233636.20629-1-ying.huang@intel.com>
+        <20180712233636.20629-2-ying.huang@intel.com>
+        <3c3a4dce-980d-0405-d269-1da9e62b1344@linux.intel.com>
+Date:   Sat, 14 Jul 2018 12:07:43 +0800
+In-Reply-To: <3c3a4dce-980d-0405-d269-1da9e62b1344@linux.intel.com> (Dave
+        Hansen's message of "Fri, 13 Jul 2018 03:48:28 -0700")
+Message-ID: <87in5ie9yo.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180712195937.GA36007@beast>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 12:59 PM, Kees Cook wrote:
-> Looks like the adjusted syntax wasn't fully build tested. This fixes
-> failures with powerpc builds:
-> 
-> drivers/mmc/host/mxcmmc.c: In function ‘mxcmci_swap_buffers’:
-> drivers/mmc/host/mxcmmc.c:296:51: error: expected ‘)’ before ‘;’ token
->    void *buf = kmap_atomic(sg_page(sg) + sg->offset;
->                                                    ^
-> drivers/mmc/host/mxcmmc.c:299:1: error: expected ‘,’ or ‘;’ before ‘}’ token
->  }
->  ^
-> 
-> Fixes: b189e7589f6d3 ("mmc: mxcmmc: handle highmem pages")
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+Dave Hansen <dave.hansen@linux.intel.com> writes:
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+>> +/*
+>> + * At most times, fine grained cluster lock is sufficient to protect
+>
+> Can we call out those times, please?
 
-Thanks.
+To protect si->swap_map[], if HDD, si->lock is used, otherwise cluster
+lock is used.  "at most times" is ambiguous here, I will fix it.
 
-> ---
->  drivers/mmc/host/mxcmmc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
-> index 75f781c11e89..de4e6e5bf304 100644
-> --- a/drivers/mmc/host/mxcmmc.c
-> +++ b/drivers/mmc/host/mxcmmc.c
-> @@ -293,9 +293,10 @@ static void mxcmci_swap_buffers(struct mmc_data *data)
->  	int i;
->  
->  	for_each_sg(data->sg, sg, data->sg_len, i) {
-> -		void *buf = kmap_atomic(sg_page(sg) + sg->offset;
-> +		void *buf = kmap_atomic(sg_page(sg) + sg->offset);
->  		buffer_swap32(buf, sg->length);
->  		kunmap_atomic(buf);
-> +	}
->  }
->  #else
->  static inline void mxcmci_swap_buffers(struct mmc_data *data) {}
-> 
+>> + * the operations on sis->swap_map.  
+>
+> Please be careful with the naming.  You can call it 'si' because that's
+> what the function argument is named.  Or, swap_info_struct because
+> that's the struct name.  Calling it 'sis' is a bit sloppy, no?
+>
+>> 					No need to acquire gross grained
+>
+> "coarse" is a conventional antonym for "fine".
 
+Sorry for my poor English, will change this.
 
--- 
-~Randy
+>> + * sis->lock.  But cluster and cluster lock isn't available for HDD,
+>> + * so sis->lock will be instead for them.
+>> + */
+>>  static inline struct swap_cluster_info *lock_cluster_or_swap_info(
+>>  	struct swap_info_struct *si,
+>>  	unsigned long offset)
+>
+> What I already knew was: there are two locks.  We use one sometimes and
+> the other at other times.
+>
+> What I don't know is why there are two locks, and the heuristics why we
+> choose between them.  This comment doesn't help explain the things I
+> don't know.
+
+cluster lock is used to protect fields of struct swap_cluster_info, and
+si->swap_map[], this is described in comments of struct
+swap_cluster_info.  si->lock is used to protect other fields of si.  If
+two locks need to be held, hold si->lock first.  This is for non-HDD.
+For HDD, there are no cluster, so si->lock is used to protect
+si->swap_map[].
+
+Best Regards,
+Huang, Ying
