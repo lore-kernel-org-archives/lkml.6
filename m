@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79209ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62795ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DECF208A3
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DECF208A3
+	by mail.kernel.org (Postfix) with ESMTP id 1082D208A3
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 07:57:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1082D208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbeGNIPY (ORCPT
+        id S1727498AbeGNIPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 04:15:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:11970 "EHLO mga02.intel.com"
+        Sat, 14 Jul 2018 04:15:33 -0400
+Received: from mga02.intel.com ([134.134.136.20]:11976 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725894AbeGNIPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 04:15:24 -0400
+        id S1727328AbeGNIPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 04:15:32 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2018 00:57:12 -0700
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2018 00:57:20 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,351,1526367600"; 
-   d="scan'208";a="54966329"
+   d="scan'208";a="54966351"
 Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by fmsmga008.fm.intel.com with ESMTP; 14 Jul 2018 00:57:03 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 14 Jul 2018 00:57:18 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>
@@ -38,72 +38,61 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
         yi.y.sun@intel.com, peterx@redhat.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v5 0/9] iommu/vt-d: Improve PASID id and table management
-Date:   Sat, 14 Jul 2018 15:46:53 +0800
-Message-Id: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v5 7/9] iommu/vt-d: Allocate and free pasid table
+Date:   Sat, 14 Jul 2018 15:47:00 +0800
+Message-Id: <1531554422-6874-8-git-send-email-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
+References: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch allocates a PASID table for a PCI device at the time
+when the dmar dev_info is attached to dev->archdata.iommu, and
+free it in the opposite case.
 
-This patch set improves the PASID id and PASID table management
-for Intel IOMMU driver.
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>
+Cc: Liu Yi L <yi.l.liu@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
+---
+ drivers/iommu/intel-iommu.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-PATCH 1~3 replace per IOMMU idr name space with a global one.
-Current per IOMMU idr doesn't work in some cases where one
-application (associated with a PASID) might talk to two physical
-devices simultaneously while the two devices could reside behind
-two different IOMMU units.
-
-PATCH 4~9 implement per device PASID table. Current per IOMMU
-PASID table implementation is insecure in the cases where
-multiple devices under one single IOMMU unit support PASID
-feature. With per domain PASID table, we can achieve finer
-protection and isolation granularity. This has been discussed
-at https://lkml.org/lkml/2018/5/16/154.
-
-Best regards,
-Lu Baolu
-
-Change log:
-v1->v2:
-  - Patches have been reviewed by "Liu Yi L <yi.l.liu@intel.com>".
-  - An error case handling was added in PATCH 6/9.
-  - Some commit messages are refined to be more accurate.
-v2->v3:
-  - Patches rebased on top of v4.18-rc1.
-  - Replace per-domain with per-device pasid table.
-v3->v4:
-  - Patches rebased on top of Joerg's x86/vt-d branch.
-v4->v5:
-  - Change the top of the pasid value
-  - Refine the code to clear pasid entry
-
-Lu Baolu (9):
-  iommu/vt-d: Global PASID name space
-  iommu/vt-d: Avoid using idr_for_each_entry()
-  iommu/vt-d: Apply global PASID in SVA
-  iommu/vt-d: Move device_domain_info to header
-  iommu/vt-d: Add for_each_device_domain() helper
-  iommu/vt-d: Per PCI device pasid table interfaces
-  iommu/vt-d: Allocate and free pasid table
-  iommu/vt-d: Apply per pci device pasid table in SVA
-  iommu/vt-d: Remove the obsolete per iommu pasid tables
-
- drivers/iommu/Makefile      |   2 +-
- drivers/iommu/intel-iommu.c | 143 +++++++++++---------------
- drivers/iommu/intel-pasid.c | 239 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/iommu/intel-pasid.h |  39 ++++++++
- drivers/iommu/intel-svm.c   |  79 ++++++---------
- include/linux/intel-iommu.h |  72 ++++++++++++-
- 6 files changed, 441 insertions(+), 133 deletions(-)
- create mode 100644 drivers/iommu/intel-pasid.c
- create mode 100644 drivers/iommu/intel-pasid.h
-
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index a930918..baad27a 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2508,6 +2508,15 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 	list_add(&info->global, &device_domain_list);
+ 	if (dev)
+ 		dev->archdata.iommu = info;
++
++	if (dev && dev_is_pci(dev) && info->pasid_supported) {
++		ret = intel_pasid_alloc_table(dev);
++		if (ret) {
++			__dmar_remove_one_dev_info(info);
++			spin_unlock_irqrestore(&device_domain_lock, flags);
++			return NULL;
++		}
++	}
+ 	spin_unlock_irqrestore(&device_domain_lock, flags);
+ 
+ 	if (dev && domain_context_mapping(domain, dev)) {
+@@ -4873,6 +4882,7 @@ static void __dmar_remove_one_dev_info(struct device_domain_info *info)
+ 	if (info->dev) {
+ 		iommu_disable_dev_iotlb(info);
+ 		domain_context_clear(iommu, info->dev);
++		intel_pasid_free_table(info->dev);
+ 	}
+ 
+ 	unlink_domain_info(info);
 -- 
 2.7.4
 
