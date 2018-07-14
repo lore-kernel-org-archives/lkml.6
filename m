@@ -2,61 +2,81 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC165ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69244ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A3020875
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:20:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A3020875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 2290720875
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 00:21:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KZPsGgGv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2290720875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731913AbeGNAhX (ORCPT
+        id S1731973AbeGNAiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 20:37:23 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:48772 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731264AbeGNAhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 20:37:22 -0400
-Received: from s0106602ad0811846.cg.shawcable.net ([68.147.191.165] helo=[192.168.0.18])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fe8I9-0002fO-1Y; Fri, 13 Jul 2018 18:20:05 -0600
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Suresh Warrier <warrier@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-References: <20180622194752.11221-4-logang@deltatee.com>
- <20180713233831.GA2946@roeck-us.net>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <0a32dbb8-a1fa-f691-1d4a-9851b1496b9a@deltatee.com>
-Date:   Fri, 13 Jul 2018 18:20:00 -0600
+        Fri, 13 Jul 2018 20:38:17 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:45726 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731210AbeGNAiR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 20:38:17 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6E0JaGR145230;
+        Sat, 14 Jul 2018 00:20:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=6XIpyK294Xbr8ige6yulYwmQrYj6TdB8WF4n0ua3Vw4=;
+ b=KZPsGgGvnIe7/dxH5o5umejbk5W61wlURP8qdyZSIeGGzqUmZsf3MmZXDsmuFClhj09A
+ Rk2dFVGAuQTm6Dq0fXhmdFw+HlJYPKlalioDXEz0P6JE8YRedEu5mY1eE5APL1N9fQWR
+ pylePhfewwF/9zxDB0CtoqwEOzSwFxWOHIjzhc0qEDzHA4xtq5pktfNPnhHfIUVnlMwG
+ gGZ25BfgAK6iZHrhIemddYtpG+aqmEQPftlUfCJLcHu9sr7wHr9wTZQpaYzway15fbqS
+ yqkRB0+fxJGjMnyPPmH/e8n/DiAg4OCUwvSGm+0LaBQExQfuvpiGOAUg5y2jhNF8XVKO wQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2k2p769js9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 14 Jul 2018 00:20:43 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6E0KgvK032680
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 14 Jul 2018 00:20:42 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6E0KfZi025197;
+        Sat, 14 Jul 2018 00:20:41 GMT
+Received: from [192.168.1.10] (/73.69.118.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Jul 2018 17:20:41 -0700
+Subject: Re: [patch 0/7] x86/kvmclock: Remove memblock dependency and further
+ cleanups
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, peterz@infradead.org, jgross@suse.com,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>, x86@kernel.org,
+        kvm@vger.kernel.org
+References: <20180706161307.733337643@linutronix.de>
+ <CAGM2reaKmu=h8QosuoJvJzzdTy2QfGRp9YxaKK-9UzpsfL-MoQ@mail.gmail.com>
+ <alpine.DEB.2.21.1807140049200.2644@nanos.tec.linutronix.de>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Message-ID: <a82c80d1-f2ff-779b-7f90-a6fe9c51b7a4@oracle.com>
+Date:   Fri, 13 Jul 2018 20:20:39 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180713233831.GA2946@roeck-us.net>
+In-Reply-To: <alpine.DEB.2.21.1807140049200.2644@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 68.147.191.165
-X-SA-Exim-Rcpt-To: npiggin@gmail.com, warrier@linux.vnet.ibm.com, mpe@ellerman.id.au, paulus@samba.org, benh@kernel.crashing.org, horia.geanta@nxp.com, andy.shevchenko@gmail.com, gregkh@linuxfoundation.org, arnd@arndb.de, akpm@linux-foundation.org, linux-crypto@vger.kernel.org, linux-ntb@googlegroups.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linux@roeck-us.net
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [v18,3/7] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8953 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=889
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807140002
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,48 +84,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 13/07/18 05:38 PM, Guenter Roeck wrote:
-> This patch causes a build failure in -next when building
-> ppc:corenet64_smp_defconfig.
+On 07/13/2018 06:51 PM, Thomas Gleixner wrote:
+> On Wed, 11 Jul 2018, Pavel Tatashin wrote:
+> 
+>>> So this still will have some overhead when kvmclock is not in use, but
+>>> bringing it down to zero would be a massive trainwreck and even more
+>>> indirections.
+>>
+>> Hi Thomas,
+>>
+>> In my opinion, having kvmclock page in  __initdata for boot cpu, and
+>> setup it in init_hypervisor_platform(). Later, switch to memblock
+>> allocated memory in x86_init.hyper.guest_late_init() for all CPUs
+>> would not be too bad, and might be even use fewer lines of code. In
+>> addition, it won't have any overhead when kvm is not used.
+> 
+> Why memblock? This can be switched when the allocator is up and
+> running. And you can use the per cpu allocator for that.
+> 
+> I'm not having cycles at the moment to look at that, so feel free to pick
+> the series up and enhance it.
 
-Thanks for the report. This 64bit IO stuff is a bit of a mess. It looks
-like your corner case arch and config was never covered by the kbuild
-robot which has run extensively on this patchset.
+OK, I will add your series into my series, and fix all the comments that were raised by the reviewers.
 
-Anyway, I think the fix is to put back the ioread64/write64 prototypes
-(even though they are only used in this one corner).
-
-Can you try it with the following patch to ensure it fixes things for you?
-
-Logan
-
---
-
-diff --git a/include/asm-generic/iomap.h b/include/asm-generic/iomap.h
-index 5a4af0199b32..9f11a79e0d7a 100644
---- a/include/asm-generic/iomap.h
-+++ b/include/asm-generic/iomap.h
-@@ -32,6 +32,11 @@ extern unsigned int ioread16be(void __iomem *);
- extern unsigned int ioread32(void __iomem *);
- extern unsigned int ioread32be(void __iomem *);
-
-+#ifdef CONFIG_64BIT
-+extern u64 ioread64(void __iomem *);
-+extern u64 ioread64be(void __iomem *);
-+#endif
-+
- #ifdef readq
- #define ioread64_lo_hi ioread64_lo_hi
- #define ioread64_hi_lo ioread64_hi_lo
-@@ -49,6 +54,11 @@ extern void iowrite16be(u16, void __iomem *);
- extern void iowrite32(u32, void __iomem *);
- extern void iowrite32be(u32, void __iomem *);
-
-+#ifdef CONFIG_64BIT
-+extern void iowrite64(u64, void __iomem *);
-+extern void iowrite64be(u64, void __iomem *);
-+#endif
-+
- #ifdef writeq
- #define iowrite64_lo_hi iowrite64_lo_hi
- #define iowrite64_hi_lo iowrite64_hi_lo
+Pavel
