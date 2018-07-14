@@ -2,431 +2,154 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB23ECDFB2
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AB7ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB210208CC
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:57:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="eOvrczUi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB210208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id EB958208CC
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 04:59:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB958208CC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbeGNFPA (ORCPT
+        id S1726522AbeGNFRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 01:15:00 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:53820 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725851AbeGNFO6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 01:14:58 -0400
-Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
-        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6E4vHXs031860
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=sq7AT4jnNLOd7etFKroukW8vxdHzTuvxWfk+dJ24ww8=;
- b=eOvrczUiEZUIZ1hXT+pDRExvQ/VGgkKVfxR7ARitCzYlsQY+f+sAJK5entJ5KMqxZIdU
- s6lzje1B0HkxaDA4mDW4WfFWj5ST78iJbkVtzEfxR9vg68xBofcLpQ588rqvpZL17dVb
- MVOVhQyfeGC6LT3raDGsFx0tw4HExcEBuZ0= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0b-00082601.pphosted.com with ESMTP id 2k7a3er167-4
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 21:57:18 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.22) with Microsoft SMTP Server (TLS) id 14.3.319.2; Fri, 13 Jul
- 2018 21:57:16 -0700
-Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
- 56C5F8A46D6; Fri, 13 Jul 2018 21:57:14 -0700 (PDT)
-Smtp-Origin-Hostprefix: dev
-From:   Okash Khawaja <osk@fb.com>
-Smtp-Origin-Hostname: dev026.lla1.facebook.com
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S . Miller" <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
-        <linux-kernel@vger.kernel.org>
-Smtp-Origin-Cluster: lla1c22
-Subject: [PATCH bpf-next v5 3/3] bpf: btf: print map dump and lookup with btf info
-Date:   Fri, 13 Jul 2018 21:57:04 -0700
-Message-ID: <20180714045704.3779427-4-osk@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180714045704.3779427-1-osk@fb.com>
-References: <20180714045704.3779427-1-osk@fb.com>
-X-FB-Internal: Safe
+        Sat, 14 Jul 2018 01:17:07 -0400
+Received: from mga17.intel.com ([192.55.52.151]:58760 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725933AbeGNFRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 01:17:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 21:59:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,350,1526367600"; 
+   d="scan'208";a="245634555"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Jul 2018 21:59:26 -0700
+Subject: [PATCH v6 00/13] mm: Teach memory_failure() about ZONE_DEVICE pages
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     linux-edac@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Borislav Petkov <bp@alien8.de>, stable@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, "H. Peter Anvin" <hpa@zytor.com>,
+        x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 13 Jul 2018 21:49:29 -0700
+Message-ID: <153154376846.34503.15480221419473501643.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-14_02:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch augments the output of bpftool's map dump and map lookup
-commands to print data along side btf info, if the correspondin btf
-info is available. The outputs for each of  map dump and map lookup
-commands are augmented in two ways:
+Changes since v5 [1]:
+* Move put_page() before memory_failure() in madvise_inject_error()
+  (Naoya)
+* The previous change uncovered a latent bug / broken assumption in
+  __put_devmap_managed_page(). We need to preserve page->mapping for
+  dax pages when they go idle.
+* Rename mapping_size() to dev_pagemap_mapping_size() (Naoya)
+* Catch and fail attempts to soft-offline dax pages (Naoya)
+* Collect Naoya's ack on "mm, memory_failure: Collect mapping size in
+  collect_procs()"
 
-1. when neither of -j and -p are supplied, btf-ful map data is printed
-whose aim is human readability. This means no commitments for json- or
-backward- compatibility.
-
-2. when either -j or -p are supplied, a new json object named
-"formatted" is added for each key-value pair. This object contains the
-same data as the key-value pair, but with btf info. "formatted" object
-promises json- and backward- compatibility. Below is a sample output.
-
-$ bpftool map dump -p id 8
-[{
-        "key": ["0x0f","0x00","0x00","0x00"
-        ],
-        "value": ["0x03", "0x00", "0x00", "0x00", ...
-        ],
-        "formatted": {
-                "key": 15,
-                "value": {
-                        "int_field":  3,
-                        ...
-                }
-        }
-}
-]
-
-This patch calls btf_dumper introduced in previous patch to accomplish
-the above. Indeed, btf-ful info is only displayed if btf data for the
-given map is available. Otherwise existing output is displayed as-is.
-
-Signed-off-by: Okash Khawaja <osk@fb.com>
-Acked-by: Martin KaFai Lau <kafai@fb.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+[1]: https://lists.01.org/pipermail/linux-nvdimm/2018-July/016682.html
 
 ---
- tools/bpf/bpftool/map.c |  217 ++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 201 insertions(+), 16 deletions(-)
 
---- a/tools/bpf/bpftool/map.c
-+++ b/tools/bpf/bpftool/map.c
-@@ -34,6 +34,7 @@
- #include <assert.h>
- #include <errno.h>
- #include <fcntl.h>
-+#include <linux/err.h>
- #include <stdbool.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -44,6 +45,8 @@
- 
- #include <bpf.h>
- 
-+#include "btf.h"
-+#include "json_writer.h"
- #include "main.h"
- 
- static const char * const map_type_name[] = {
-@@ -148,8 +151,109 @@ int map_parse_fd_and_info(int *argc, cha
- 	return fd;
- }
- 
-+static int do_dump_btf(const struct btf_dumper *d,
-+		       struct bpf_map_info *map_info, void *key,
-+		       void *value)
-+{
-+	int ret;
-+
-+	/* start of key-value pair */
-+	jsonw_start_object(d->jw);
-+
-+	jsonw_name(d->jw, "key");
-+
-+	ret = btf_dumper_type(d, map_info->btf_key_type_id, key);
-+	if (ret)
-+		goto err_end_obj;
-+
-+	jsonw_name(d->jw, "value");
-+
-+	ret = btf_dumper_type(d, map_info->btf_value_type_id, value);
-+
-+err_end_obj:
-+	/* end of key-value pair */
-+	jsonw_end_object(d->jw);
-+
-+	return ret;
-+}
-+
-+static int get_btf(struct bpf_map_info *map_info, struct btf **btf)
-+{
-+	struct bpf_btf_info btf_info = { 0 };
-+	__u32 len = sizeof(btf_info);
-+	__u32 last_size;
-+	int btf_fd;
-+	void *ptr;
-+	int err;
-+
-+	err = 0;
-+	*btf = NULL;
-+	btf_fd = bpf_btf_get_fd_by_id(map_info->btf_id);
-+	if (btf_fd < 0)
-+		return 0;
-+
-+	/* we won't know btf_size until we call bpf_obj_get_info_by_fd(). so
-+	 * let's start with a sane default - 4KiB here - and resize it only if
-+	 * bpf_obj_get_info_by_fd() needs a bigger buffer.
-+	 */
-+	btf_info.btf_size = 4096;
-+	last_size = btf_info.btf_size;
-+	ptr = malloc(last_size);
-+	if (!ptr) {
-+		err = -ENOMEM;
-+		goto exit_free;
-+	}
-+
-+	bzero(ptr, last_size);
-+	btf_info.btf = ptr_to_u64(ptr);
-+	err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
-+
-+	if (!err && btf_info.btf_size > last_size) {
-+		void *temp_ptr;
-+
-+		last_size = btf_info.btf_size;
-+		temp_ptr = realloc(ptr, last_size);
-+		if (!temp_ptr) {
-+			err = -ENOMEM;
-+			goto exit_free;
-+		}
-+		ptr = temp_ptr;
-+		bzero(ptr, last_size);
-+		btf_info.btf = ptr_to_u64(ptr);
-+		err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
-+	}
-+
-+	if (err || btf_info.btf_size > last_size) {
-+		err = errno;
-+		goto exit_free;
-+	}
-+
-+	*btf = btf__new((__u8 *)btf_info.btf, btf_info.btf_size, NULL);
-+	if (IS_ERR(*btf)) {
-+		err = PTR_ERR(btf);
-+		*btf = NULL;
-+	}
-+
-+exit_free:
-+	close(btf_fd);
-+	free(ptr);
-+
-+	return err;
-+}
-+
-+static json_writer_t *get_btf_writer(void)
-+{
-+	json_writer_t *jw = jsonw_new(stdout);
-+
-+	if (!jw)
-+		return NULL;
-+	jsonw_pretty(jw, true);
-+
-+	return jw;
-+}
-+
- static void print_entry_json(struct bpf_map_info *info, unsigned char *key,
--			     unsigned char *value)
-+			     unsigned char *value, struct btf *btf)
- {
- 	jsonw_start_object(json_wtr);
- 
-@@ -158,6 +262,16 @@ static void print_entry_json(struct bpf_
- 		print_hex_data_json(key, info->key_size);
- 		jsonw_name(json_wtr, "value");
- 		print_hex_data_json(value, info->value_size);
-+		if (btf) {
-+			struct btf_dumper d = {
-+				.btf = btf,
-+				.jw = json_wtr,
-+				.is_plain_text = false,
-+			};
-+
-+			jsonw_name(json_wtr, "formatted");
-+			do_dump_btf(&d, info, key, value);
-+		}
- 	} else {
- 		unsigned int i, n;
- 
-@@ -508,10 +622,12 @@ static int do_show(int argc, char **argv
- 
- static int do_dump(int argc, char **argv)
- {
-+	struct bpf_map_info info = {};
- 	void *key, *value, *prev_key;
- 	unsigned int num_elems = 0;
--	struct bpf_map_info info = {};
- 	__u32 len = sizeof(info);
-+	json_writer_t *btf_wtr;
-+	struct btf *btf = NULL;
- 	int err;
- 	int fd;
- 
-@@ -537,8 +653,27 @@ static int do_dump(int argc, char **argv
- 	}
- 
- 	prev_key = NULL;
-+
-+	err = get_btf(&info, &btf);
-+	if (err) {
-+		p_err("failed to get btf");
-+		goto exit_free;
-+	}
-+
- 	if (json_output)
- 		jsonw_start_array(json_wtr);
-+	else
-+		if (btf) {
-+			btf_wtr = get_btf_writer();
-+			if (!btf_wtr) {
-+				p_info("failed to create json writer for btf. falling back to plain output");
-+				btf__free(btf);
-+				btf = NULL;
-+			} else {
-+				jsonw_start_array(btf_wtr);
-+			}
-+		}
-+
- 	while (true) {
- 		err = bpf_map_get_next_key(fd, prev_key, key);
- 		if (err) {
-@@ -549,9 +684,19 @@ static int do_dump(int argc, char **argv
- 
- 		if (!bpf_map_lookup_elem(fd, key, value)) {
- 			if (json_output)
--				print_entry_json(&info, key, value);
-+				print_entry_json(&info, key, value, btf);
- 			else
--				print_entry_plain(&info, key, value);
-+				if (btf) {
-+					struct btf_dumper d = {
-+						.btf = btf,
-+						.jw = btf_wtr,
-+						.is_plain_text = true,
-+					};
-+
-+					do_dump_btf(&d, &info, key, value);
-+				} else {
-+					print_entry_plain(&info, key, value);
-+				}
- 		} else {
- 			if (json_output) {
- 				jsonw_name(json_wtr, "key");
-@@ -574,14 +719,19 @@ static int do_dump(int argc, char **argv
- 
- 	if (json_output)
- 		jsonw_end_array(json_wtr);
--	else
-+	else if (btf) {
-+		jsonw_end_array(btf_wtr);
-+		jsonw_destroy(&btf_wtr);
-+	} else {
- 		printf("Found %u element%s\n", num_elems,
- 		       num_elems != 1 ? "s" : "");
-+	}
- 
- exit_free:
- 	free(key);
- 	free(value);
- 	close(fd);
-+	btf__free(btf);
- 
- 	return err;
- }
-@@ -637,6 +787,8 @@ static int do_lookup(int argc, char **ar
- {
- 	struct bpf_map_info info = {};
- 	__u32 len = sizeof(info);
-+	json_writer_t *btf_wtr;
-+	struct btf *btf = NULL;
- 	void *key, *value;
- 	int err;
- 	int fd;
-@@ -661,27 +813,60 @@ static int do_lookup(int argc, char **ar
- 		goto exit_free;
- 
- 	err = bpf_map_lookup_elem(fd, key, value);
--	if (!err) {
--		if (json_output)
--			print_entry_json(&info, key, value);
--		else
-+	if (err) {
-+		if (errno == ENOENT) {
-+			if (json_output) {
-+				jsonw_null(json_wtr);
-+			} else {
-+				printf("key:\n");
-+				fprint_hex(stdout, key, info.key_size, " ");
-+				printf("\n\nNot found\n");
-+			}
-+		} else {
-+			p_err("lookup failed: %s", strerror(errno));
-+		}
-+
-+		goto exit_free;
-+	}
-+
-+	/* here means bpf_map_lookup_elem() succeeded */
-+	err = get_btf(&info, &btf);
-+	if (err) {
-+		p_err("failed to get btf");
-+		goto exit_free;
-+	}
-+
-+	if (json_output) {
-+		print_entry_json(&info, key, value, btf);
-+	} else if (btf) {
-+		/* if here json_wtr wouldn't have been initialised,
-+		 * so let's create separate writer for btf
-+		 */
-+		btf_wtr = get_btf_writer();
-+		if (!btf_wtr) {
-+			p_info("failed to create json writer for btf. falling back to plain output");
-+			btf__free(btf);
-+			btf = NULL;
- 			print_entry_plain(&info, key, value);
--	} else if (errno == ENOENT) {
--		if (json_output) {
--			jsonw_null(json_wtr);
- 		} else {
--			printf("key:\n");
--			fprint_hex(stdout, key, info.key_size, " ");
--			printf("\n\nNot found\n");
-+			struct btf_dumper d = {
-+				.btf = btf,
-+				.jw = btf_wtr,
-+				.is_plain_text = true,
-+			};
-+
-+			do_dump_btf(&d, &info, key, value);
-+			jsonw_destroy(&btf_wtr);
- 		}
- 	} else {
--		p_err("lookup failed: %s", strerror(errno));
-+		print_entry_plain(&info, key, value);
- 	}
- 
- exit_free:
- 	free(key);
- 	free(value);
- 	close(fd);
-+	btf__free(btf);
- 
- 	return err;
- }
+As it stands, memory_failure() gets thoroughly confused by dev_pagemap
+backed mappings. The recovery code has specific enabling for several
+possible page states and needs new enabling to handle poison in dax
+mappings.
+
+In order to support reliable reverse mapping of user space addresses:
+
+1/ Add new locking in the memory_failure() rmap path to prevent races
+that would typically be handled by the page lock.
+
+2/ Since dev_pagemap pages are hidden from the page allocator and the
+"compound page" accounting machinery, add a mechanism to determine the
+size of the mapping that encompasses a given poisoned pfn.
+
+3/ Given pmem errors can be repaired, change the speculatively accessed
+poison protection, mce_unmap_kpfn(), to be reversible and otherwise
+allow ongoing access from the kernel.
+
+A side effect of this enabling is that MADV_HWPOISON becomes usable for
+dax mappings, however the primary motivation is to allow the system to
+survive userspace consumption of hardware-poison via dax. Specifically
+the current behavior is:
+
+    mce: Uncorrected hardware memory error in user-access at af34214200
+    {1}[Hardware Error]: It has been corrected by h/w and requires no further action
+    mce: [Hardware Error]: Machine check events logged
+    {1}[Hardware Error]: event severity: corrected
+    Memory failure: 0xaf34214: reserved kernel page still referenced by 1 users
+    [..]
+    Memory failure: 0xaf34214: recovery action for reserved kernel page: Failed
+    mce: Memory error not recovered
+    <reboot>
+
+...and with these changes:
+
+    Injecting memory failure for pfn 0x20cb00 at process virtual address 0x7f763dd00000
+    Memory failure: 0x20cb00: Killing dax-pmd:5421 due to hardware memory corruption
+    Memory failure: 0x20cb00: recovery action for dax page: Recovered
+
+Given all the cross dependencies I propose taking this through
+nvdimm.git with acks from Naoya, x86/core, x86/RAS, and of course dax
+folks.
+
+---
+
+Dan Williams (13):
+      device-dax: Convert to vmf_insert_mixed and vm_fault_t
+      device-dax: Enable page_mapping()
+      device-dax: Set page->index
+      filesystem-dax: Set page->index
+      mm, madvise_inject_error: Disable MADV_SOFT_OFFLINE for ZONE_DEVICE pages
+      mm, dev_pagemap: Do not clear ->mapping on final put
+      mm, madvise_inject_error: Let memory_failure() optionally take a page reference
+      mm, memory_failure: Collect mapping size in collect_procs()
+      filesystem-dax: Introduce dax_lock_mapping_entry()
+      mm, memory_failure: Teach memory_failure() about dev_pagemap pages
+      x86/mm/pat: Prepare {reserve,free}_memtype() for "decoy" addresses
+      x86/memory_failure: Introduce {set,clear}_mce_nospec()
+      libnvdimm, pmem: Restore page attributes when clearing errors
+
+
+ arch/x86/include/asm/set_memory.h         |   42 ++++++
+ arch/x86/kernel/cpu/mcheck/mce-internal.h |   15 --
+ arch/x86/kernel/cpu/mcheck/mce.c          |   38 -----
+ arch/x86/mm/pat.c                         |   16 ++
+ drivers/dax/device.c                      |   75 +++++++---
+ drivers/nvdimm/pmem.c                     |   26 ++++
+ drivers/nvdimm/pmem.h                     |   13 ++
+ fs/dax.c                                  |  125 ++++++++++++++++-
+ include/linux/dax.h                       |   13 ++
+ include/linux/huge_mm.h                   |    5 -
+ include/linux/mm.h                        |    1 
+ include/linux/set_memory.h                |   14 ++
+ kernel/memremap.c                         |    1 
+ mm/hmm.c                                  |    2 
+ mm/huge_memory.c                          |    4 -
+ mm/madvise.c                              |   16 ++
+ mm/memory-failure.c                       |  210 +++++++++++++++++++++++------
+ 17 files changed, 481 insertions(+), 135 deletions(-)
