@@ -2,81 +2,96 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35111ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C0DECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80CE72086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:43:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80CE72086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id 2AB9320890
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:49:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AB9320890
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbeGNM4U (ORCPT
+        id S1727199AbeGNNGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 08:56:20 -0400
-Received: from www.osadl.org ([62.245.132.105]:36844 "EHLO www.osadl.org"
+        Sat, 14 Jul 2018 09:06:32 -0400
+Received: from nautica.notk.org ([91.121.71.147]:47410 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbeGNM4U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 08:56:20 -0400
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w6ECWu8X023927;
-        Sat, 14 Jul 2018 14:32:56 +0200
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Gustavo Padovan <gustavo@padovan.org>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] drm: re-enable error handling
-Date:   Sat, 14 Jul 2018 14:32:12 +0200
-Message-Id: <1531571532-22733-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S1726447AbeGNNGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 09:06:31 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 9C66DC009; Sat, 14 Jul 2018 14:47:30 +0200 (CEST)
+Date:   Sat, 14 Jul 2018 14:47:15 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     jiangyiwen <jiangyiwen@huawei.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: [V9fs-developer] [PATCH] net/9p: Fix a deadlock case in the
+ virtio transport
+Message-ID: <20180714124715.GA16134@nautica>
+References: <5B49B8CF.40709@huawei.com>
+ <20180714090502.GA16186@nautica>
+ <5B49DAA5.3020600@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5B49DAA5.3020600@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drm_legacy_ctxbitmap_next() returns idr_alloc() which can return
--ENOMEM, -EINVAL or -ENOSPC none of which are -1 . but the call sites 
-of drm_legacy_ctxbitmap_next() seem to be assuming that the error case
-would be -1 (original return of drm_ctxbitmap_next() prior to 2.6.23
-was actually -1). Thus reenable error handling by checking for < 0.
+jiangyiwen wrote on Sat, Jul 14, 2018:
+> On 2018/7/14 17:05, Dominique Martinet wrote:
+> > jiangyiwen wrote on Sat, Jul 14, 2018:
+> >> When client has multiple threads that issue io requests all the
+> >> time, and the server has a very good performance, it may cause
+> >> cpu is running in the irq context for a long time because it can
+> >> check virtqueue has buf in the *while* loop.
+> >>
+> >> So we should keep chan->lock in the whole loop.
+> > 
+> > Hmm, this is generally bad practice to hold a spin lock for long.
+> > In general, spin locks are meant to protect data, not code.
+> > 
+> > I'd want some numbers to decide on this one, even if I think this
+> > particular case is safe (e.g. this cannot dead-lock)
+> > 
+> 
+> Actually, the loop will not hold a spin lock for long, because other
+> threads will not issue new requests in this case. In addition,
+> virtio-blk or virtio-scsi also use this solution, I guess it may also
+> encounter this problem before.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 62968144e673 ("drm: convert drm context code to use Linux idr")
----
+Fair enough. If you do have some numbers to give though (throughput
+and/or iops before/after) I'd still be really curious.
 
-Problem located with experimental coccinelle script
+> >>  		chan->ring_bufs_avail = 1;
+> >> -		spin_unlock_irqrestore(&chan->lock, flags);
+> >>  		/* Wakeup if anyone waiting for VirtIO ring space. */
+> >>  		wake_up(chan->vc_wq);
+> > 
+> > In particular, the wake up here echoes to wait events that will
+> > immediately try to grab the lock, and will needlessly spin on it until
+> > this thread is done.
+> > If we do go this way I'd want setting chan->ring_bufs_avail to be done
+> > just before unlocking and the wakeup to be done just after unlocking out
+> > of the loop iff we processed at least one iteration here.
+> 
+> I can move the wakeup operation after the unlocking. Like what I said
+> above, I think this loop will not execute for long.
 
-The noted Fixes tag is one of the commits that removed the -1 return
-value in 2.6.23 in drm_ctxbitmap_next() but thats not the only change
-that must have taken place to invalidate the error check.
+Please do, you listed virtio_blk as doing this and they have the same
+kind of pattern with a req_done bool and only restarting stopped queues
+if they processed something
 
-Patch was compile tested with: x86_64_defconfig
-
-Patch is against 4.18-rc4 (localversion-next is next-20180713)
-
- drivers/gpu/drm/drm_context.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/drm_context.c b/drivers/gpu/drm/drm_context.c
-index 3c4000f..f973d28 100644
---- a/drivers/gpu/drm/drm_context.c
-+++ b/drivers/gpu/drm/drm_context.c
-@@ -372,7 +372,7 @@ int drm_legacy_addctx(struct drm_device *dev, void *data,
- 		ctx->handle = drm_legacy_ctxbitmap_next(dev);
- 	}
- 	DRM_DEBUG("%d\n", ctx->handle);
--	if (ctx->handle == -1) {
-+	if (ctx->handle < 0) {
- 		DRM_DEBUG("Not enough free contexts.\n");
- 		/* Should this return -EBUSY instead? */
- 		return -ENOMEM;
 -- 
-2.1.4
-
+Dominique
