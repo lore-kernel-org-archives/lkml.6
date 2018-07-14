@@ -2,139 +2,108 @@ Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D75ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2C8ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F40922089F
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:53:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KypnvKEL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F40922089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E2E6208CE
+	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 12:53:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2E6208CE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730873AbeGNNMQ (ORCPT
+        id S1731087AbeGNNMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 14 Jul 2018 09:12:17 -0400
+Received: from mga05.intel.com ([192.55.52.43]:8251 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730897AbeGNNMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 14 Jul 2018 09:12:16 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37226 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbeGNNMP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 09:12:15 -0400
-Received: by mail-ed1-f65.google.com with SMTP id v22-v6so26585120edq.4
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 05:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IS1GJUM9S7B8HIwdEFcOjjBErjjOL6EBH9mRjTk9F5k=;
-        b=KypnvKEL9kRda36ELjL9+865wVGyKfk7JJHDnEcBN4EsiFADNDx7NLECN6QsVh8g78
-         X5uGogLcEfuZ4T2kQNlPHw8ZxMSp4jjEGSpOa5Uvk8AiEYk7ZJ6Jk/M3cYiUMu0DQCSN
-         g800aSLMTgtBxNACOcPgiOImpRUS763Fl3VUtq0FaKO1m+17yNZffsGzM1ZfWube7jc6
-         XGpRx2XlVSyUyzA/aNMTJB/qyLmSLarl5+t0hvb1UdOQpCQEVbAqxKNKodp75eexrj86
-         yWLcKi3dgwzV1DX0idY2FrfpucnvmaeGjvO7Gk6aY7VCfIGqU9mROHaYZGSJkY1B3eW0
-         Lamw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IS1GJUM9S7B8HIwdEFcOjjBErjjOL6EBH9mRjTk9F5k=;
-        b=tmNtwPA98wiL+ZiOIl1TactkxhlJfO/uVde/7+odL0HRiXgxPN4fEbW8H+7JmuudNp
-         TkwTbzPzhktNPnS7B3lA6B9auNIaSk+CLpq6NAZfQRwXs+ChT4ZBtNejel181EACGM8K
-         hy5uV6NJWFz1Q2hSfCUcRSpYJmYAbDiQCNs4Kd91GDdjwmDA4dmr43tBQPZsw7hk2I6+
-         HTEwpDDLKSxO5BUPFBhZn5IRSHbSawRHYxXhpO+7GoU1zYXPr+f/sORBETj5ka5nQLGT
-         wzbl/V501SUAljyg2cLEE29NFwxXaXjupXgSzUZbQu+hDzTitYBPYVMl5Io7YymLY8eC
-         NaBA==
-X-Gm-Message-State: AOUpUlEfuSRdCv/mkAe6zRftR6G67E1GBRUGQlI/d6ZhByKwd6P0O3zv
-        8Gy5tNKi7FC69a147ulyLOs=
-X-Google-Smtp-Source: AAOMgpdiI+aFTpN4o/PNsn2RcnmgzH5+vZlcpS5n/J0oUxEeeVrpUgGlDcCmdiJgRt/BOWEn4AJI0g==
-X-Received: by 2002:a50:93c5:: with SMTP id o63-v6mr10648390eda.154.1531572793867;
-        Sat, 14 Jul 2018 05:53:13 -0700 (PDT)
-Received: from arch.localdomain (x4db2bd54.dyn.telefonica.de. [77.178.189.84])
-        by smtp.gmail.com with ESMTPSA id n10-v6sm16577396edr.59.2018.07.14.05.53.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 14 Jul 2018 05:53:13 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 6/6] staging: rtl8188eu: remove redundant header file
-Date:   Sat, 14 Jul 2018 14:52:41 +0200
-Message-Id: <20180714125241.15509-6-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180714125241.15509-1-straube.linux@gmail.com>
-References: <20180714125241.15509-1-straube.linux@gmail.com>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2018 05:53:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,352,1526367600"; 
+   d="scan'208";a="215988230"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by orsmga004.jf.intel.com with ESMTP; 14 Jul 2018 05:53:13 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
+        "Johannes Weiner" <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 3/6] swap: Unify normal/huge code path in swap_page_trans_huge_swapped()
+References: <20180712233636.20629-1-ying.huang@intel.com>
+        <20180712233636.20629-4-ying.huang@intel.com>
+        <20180713201557.bjt4tj26nisgdmmi@ca-dmjordan1.us.oracle.com>
+Date:   Sat, 14 Jul 2018 20:53:12 +0800
+In-Reply-To: <20180713201557.bjt4tj26nisgdmmi@ca-dmjordan1.us.oracle.com>
+        (Daniel Jordan's message of "Fri, 13 Jul 2018 13:15:57 -0700")
+Message-ID: <87efg6dlmv.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both functions declared in rtl8188e_led.h are also declared in
-rtw_led.h which is included from drv_types.h. Remove rtl8188e_led.h
-and it's includes.
+Daniel Jordan <daniel.m.jordan@oracle.com> writes:
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/rtl8188eu_led.c |  1 -
- drivers/staging/rtl8188eu/hal/usb_halinit.c   |  1 -
- .../staging/rtl8188eu/include/rtl8188e_led.h  | 20 -------------------
- 3 files changed, 22 deletions(-)
- delete mode 100644 drivers/staging/rtl8188eu/include/rtl8188e_led.h
+> On Fri, Jul 13, 2018 at 07:36:33AM +0800, Huang, Ying wrote:
+>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> index 75c84aa763a3..160f78072667 100644
+>> --- a/mm/swapfile.c
+>> +++ b/mm/swapfile.c
+>> @@ -270,7 +270,10 @@ static inline void cluster_set_null(struct swap_cluster_info *info)
+>>  
+>>  static inline bool cluster_is_huge(struct swap_cluster_info *info)
+>>  {
+>> -	return info->flags & CLUSTER_FLAG_HUGE;
+>> +	if (IS_ENABLED(CONFIG_THP_SWAP))
+>> +		return info->flags & CLUSTER_FLAG_HUGE;
+>> +	else
+>> +		return false;
+>>  }
+>>  
+>>  static inline void cluster_clear_huge(struct swap_cluster_info *info)
+>> @@ -1489,9 +1492,6 @@ static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
+>>  	int i;
+>>  	bool ret = false;
+>>  
+>> -	if (!IS_ENABLED(CONFIG_THP_SWAP))
+>> -		return swap_swapcount(si, entry) != 0;
+>
+> This tests the value returned from swap_count,
+>
+>> -
+>>  	ci = lock_cluster_or_swap_info(si, offset);
+>>  	if (!ci || !cluster_is_huge(ci)) {
+>>  		if (map[roffset] != SWAP_HAS_CACHE)
+>
+> and now we're testing
+>
+>                     map[roffset] != SWAP_HAS_CACHE
+>
+> instead.  The two seem to mean the same thing here, since the swap slot hasn't
+> been freed to the global pool and so can't be 0, but it might be better for
+> consistency and clarity to use swap_count here, and a few lines down too
+>
+>         for (i = 0; i < SWAPFILE_CLUSTER; i++) {                                     
+>                 if (map[offset + i] != SWAP_HAS_CACHE) {                             
+>
+> since swap_count seems to be used everywhere else for this.
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c
-index ca0b0f1c2a7f..412b76271a3d 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c
-@@ -8,7 +8,6 @@
- #include <osdep_service.h>
- #include <drv_types.h>
- #include <rtl8188e_hal.h>
--#include <rtl8188e_led.h>
- #include <usb_ops_linux.h>
- 
- /*  LED object. */
-diff --git a/drivers/staging/rtl8188eu/hal/usb_halinit.c b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-index 4b3ece90bb34..d551d0cca90b 100644
---- a/drivers/staging/rtl8188eu/hal/usb_halinit.c
-+++ b/drivers/staging/rtl8188eu/hal/usb_halinit.c
-@@ -11,7 +11,6 @@
- #include <rtw_efuse.h>
- #include <fw.h>
- #include <rtl8188e_hal.h>
--#include <rtl8188e_led.h>
- #include <rtw_iol.h>
- #include <phy.h>
- 
-diff --git a/drivers/staging/rtl8188eu/include/rtl8188e_led.h b/drivers/staging/rtl8188eu/include/rtl8188e_led.h
-deleted file mode 100644
-index 74f2554e41d3..000000000000
---- a/drivers/staging/rtl8188eu/include/rtl8188e_led.h
-+++ /dev/null
-@@ -1,20 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/******************************************************************************
-- *
-- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
-- *
-- ******************************************************************************/
--#ifndef __RTL8188E_LED_H__
--#define __RTL8188E_LED_H__
--
--#include <osdep_service.h>
--#include <drv_types.h>
--
--
--/*  */
--/*  Interface to manipulate LED objects. */
--/*  */
--void SwLedOn(struct adapter *padapter, struct LED_871x *pLed);
--void SwLedOff(struct adapter *padapter, struct LED_871x *pLed);
--
--#endif
--- 
-2.18.0
+Yes.  swap_count() looks better here.  Will change this.
 
+Best Regards,
+Huang, Ying
