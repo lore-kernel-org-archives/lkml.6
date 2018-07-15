@@ -2,151 +2,120 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22287ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 229E8ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D335B2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25B02089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:58:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WizLeGwL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D335B2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XaOYhMOU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25B02089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbeGOPOn (ORCPT
+        id S1726745AbeGOPVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 11:14:43 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43612 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbeGOPOm (ORCPT
+        Sun, 15 Jul 2018 11:21:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36454 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbeGOPVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 11:14:42 -0400
-Received: by mail-pg1-f193.google.com with SMTP id v13-v6so6557817pgr.10
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 07:51:30 -0700 (PDT)
+        Sun, 15 Jul 2018 11:21:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id h9-v6so29432090wro.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 07:57:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2flE3noEECKVKBcgF+Ddu+JchgI8mi+aWz4JgiqPjts=;
-        b=WizLeGwLh6lYh5sp3VRKEi551wHSV8J6D8L9HTS/Pg4sENWBmwtbr9Sx79syRdKizy
-         vHCzNZXue+Du8OnhH28pIlxoo/VMJGYu+GTe3FCUNpv8Wj+jZxCyHiFOqU1yn3pDuFgA
-         F9EDjk9r2L2MGB2tOSk/DHuT6SB/xIz+3N2ys=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yEe7uB4POPTvuS7j1nml2EfZds2MWNvQ7PQqfxqOBnc=;
+        b=XaOYhMOU1KSyEfUzBUgJHuEswxLg8uI7dq8V9vYh1yOd+Hu2RbF503Bdc07fzee37N
+         GYswA0sTkhDUIbMSKuMavTigt8op6ytvLMClwvneTN8J2p9RDNR6uUkbx0z/Lg/aA2bq
+         6/fiBAg/705SpaKWYJFuW3750tAc5sw3rT/UbTp0mrj3tdDaNzhrce7/rkAkNH8MkU64
+         m/2mKVrBCjUUOM785k2HvoTHGQ8xOxYm3HXcrsqQ6VZZ3qZOrK5v7TWblsdn7r1MxIg+
+         DRe8SVU3VJUB2iGPxdOxWm+rsdRSaPndowHN0pq5rsD+KiTX59SJJIsNtOgcTnaxYLEw
+         E1Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2flE3noEECKVKBcgF+Ddu+JchgI8mi+aWz4JgiqPjts=;
-        b=ZsKZ3P8czNFqKnDN4wHKDUu+8KCxi5mCRBwQ5x59wqisUKnbw2MeBVzjrPsG7dxWdr
-         +DJEPtlGrUz95a84nfL2jg1hsqrMu1w65MaVEb2ShUy2WKv1Ue22cq3eT1+Elj9Akhny
-         MjRk72SonSD7oeJdckda6uvD3qyhrW9YEKAZFhrKw1A+sCS3D8TMbkm06Tp8BC6Sz90O
-         2d/WeCYi+XBfZHX0QnHD4Ky72RrX2VLIrJUfRNChUtsyrFdAofDv+q2KwbQq0K+xHpZq
-         8PO6OaAI7jdgiPxRVf0tUDfvqHQSzrQCy/57kVFsqh6FDI887PR0PCAWAb9BgLI5gFgn
-         n5Kw==
-X-Gm-Message-State: AOUpUlEhexZBKJTy7jXIz7O5UActvj15SjMpsQw3enphXO3srXmImmpz
-        GuFtRoW5gEmCeIbyOOhH1G6LYy/KsA==
-X-Google-Smtp-Source: AAOMgpda3wwltR7x2m5TpzoMfQv7+RnzUs2QnXL0ol/7FTRfkWM5Jl9D6cq8j+9cVyMy6qCtjLuBYA==
-X-Received: by 2002:a63:291:: with SMTP id 139-v6mr12659620pgc.365.1531666289883;
-        Sun, 15 Jul 2018 07:51:29 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2405:204:71c5:dcf2:1082:c344:2c7e:f99b])
-        by smtp.gmail.com with ESMTPSA id b67-v6sm100817433pfd.74.2018.07.15.07.51.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Jul 2018 07:51:29 -0700 (PDT)
-Date:   Sun, 15 Jul 2018 20:21:15 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Saravanan Sekar <sravanhome@gmail.com>
-Cc:     afaerber@suse.de, sboyd@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux@cubietech.com,
-        support@cubietech.com, catalin.marinas@arm.com,
-        mturquette@baylibre.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, thomas.liau@actions-semi.com,
-        darren@cubietech.com, robh+dt@kernel.org,
-        jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
-Subject: Re: [PATCH v4 4/5] arm64: dts: actions: Enable clock controller for
- S700
-Message-ID: <20180715145115.GE9980@Mani-XPS-13-9360>
-References: <20180715123145.16975-1-sravanhome@gmail.com>
- <20180715123145.16975-5-sravanhome@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yEe7uB4POPTvuS7j1nml2EfZds2MWNvQ7PQqfxqOBnc=;
+        b=nWR5aszExRtm5R0rld8ZNHjklvYIM9FrN3cS/sO6i7jOqSc393BuBQ0mAN8XBSXq4B
+         PA6kZrr53XrTgPSvx6QpqfmZJj9666PYvWC47USYmB9cFxOJmxi/iERhS3n4ekxxY3yS
+         +VQvOV+ZzKdNyApUZL5qhIAa2tru30addyq+bWgPxPFCzS6s44tD7KpSuWKETw6hYWNO
+         +rAhbmLmgLIY9W/Z8sW7rmL1GS5YwMATp2RDq2Y//JT9kmELgOtVc7YI48c97tmoh4K2
+         Dwk9Dr2cVxBcdbq0jD8chT3ZQSrn8lm7YmerMJPaUJYf9inOCEqZrcoCPAhU6EDaiZ15
+         mnVQ==
+X-Gm-Message-State: AOUpUlECShNsaatpk5JmaKJvZiSNBfDd0yZog4hIT8n5cRpeQXITpUMf
+        +vDWo3oNYejrnUNnnseIF7qu7AVR0hFYPi89KucJgQ==
+X-Google-Smtp-Source: AAOMgpf0Mqs24ZVlTXK6z/dO/v+I59VYiAgeOesl80NQYdTbw2Iqmx8LFBLnsQpTO3L6hqw615robpBcuDPyKOhg9xE=
+X-Received: by 2002:adf:c00b:: with SMTP id z11-v6mr9313493wre.268.1531666667174;
+ Sun, 15 Jul 2018 07:57:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180715123145.16975-5-sravanhome@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1531619649-1518-1-git-send-email-sbaranoff@gmail.com>
+In-Reply-To: <1531619649-1518-1-git-send-email-sbaranoff@gmail.com>
+From:   Neal Cardwell <ncardwell@google.com>
+Date:   Sun, 15 Jul 2018 10:57:30 -0400
+Message-ID: <CADVnQyn9o4rwHsc_QutS=ZDGn7DydST9y=qDbtAW5fx3H7ZQbA@mail.gmail.com>
+Subject: Re: [PATCH net] tcp: Fix broken repair socket window probe patch
+To:     sbaranoff@gmail.com
+Cc:     avagin@virtuozzo.com, xemul@virtuozzo.com,
+        Eric Dumazet <edumazet@google.com>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Sun, Jul 15, 2018 at 02:31:44PM +0200, Saravanan Sekar wrote:
-> Added clock management controller for S700
-> 
-
-Commit message can be as below:
-
-Add Clock Management Unit binding for Actions Semi S700 SoC.
-
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+On Sat, Jul 14, 2018 at 9:54 PM Stefan Baranoff <sbaranoff@gmail.com> wrote:
+>
+> Correct previous bad attempt at allowing sockets to come out of TCP
+> repair without sending window probes. To avoid changing size of
+> the repair variable in struct tcp_sock, this lets the decision for
+> sending probes or not to be made when coming out of repair by
+> introducing two ways to turn it off.
+>
+> Fixes: 70b7ff130224 ("tcp: allow user to create repair socket without window probes")
+> Signed-off-by: Stefan Baranoff <sbaranoff@gmail.com>
 > ---
->  arch/arm64/boot/dts/actions/s700.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-> index 66dd5309f0a2..19998f19af60 100644
-> --- a/arch/arm64/boot/dts/actions/s700.dtsi
-> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> @@ -4,6 +4,7 @@
->   */
->  
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/actions,s700-cmu.h>
->  
->  / {
->  	compatible = "actions,s700";
-> @@ -44,6 +45,13 @@
->  		};
->  	};
->  
-> +	clock: clock-controller@e0168000 {
-
-Following the S900 dts, label can be "cmu" instead of "clock".
-
-> +		compatible = "actions,s700-cmu";
-> +		reg = <0 0xe0168000 0 0x1000>;
-
-Should be:
-
-reg = <0x0 0xe0168000 0x0 0x1000>;
-
-Thanks,
-Mani
-
-> +		clocks = <&hosc>, <&losc>;
-> +		#clock-cells = <1>;
-> +	};
+>  include/uapi/linux/tcp.h |  4 ++++
+>  net/ipv4/tcp.c           | 12 +++++++-----
+>  2 files changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/uapi/linux/tcp.h b/include/uapi/linux/tcp.h
+> index 29eb659..e3f6ed8 100644
+> --- a/include/uapi/linux/tcp.h
+> +++ b/include/uapi/linux/tcp.h
+> @@ -127,6 +127,10 @@ enum {
+>
+>  #define TCP_CM_INQ             TCP_INQ
+>
+> +#define TCP_REPAIR_ON          1
+> +#define TCP_REPAIR_OFF         0
+> +#define TCP_REPAIR_OFF_NO_WP   -1      /* Turn off without window probes */
 > +
->  	reserved-memory {
->  		#address-cells = <2>;
->  		#size-cells = <2>;
-> @@ -87,6 +95,12 @@
->  		#clock-cells = <0>;
->  	};
->  
-> +	losc: losc {
-> +		compatible = "fixed-clock";
-> +		clock-frequency = <32768>;
-> +		#clock-cells = <0>;
-> +	};
-> +
->  	soc {
->  		compatible = "simple-bus";
->  		#address-cells = <2>;
-> -- 
-> 2.18.0
-> 
+>  struct tcp_repair_opt {
+>         __u32   opt_code;
+>         __u32   opt_val;
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 8e5e2ca..9163fb1 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -2824,15 +2824,17 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
+>                 if (!tcp_can_repair_sock(sk))
+>                         err = -EPERM;
+>                 /* 1 for normal repair, 2 for no window probes */
+
+Looks like this comment is now inconsistent with the code.
+
+cheers,
+neal
