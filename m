@@ -5,43 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC430ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7C2ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAAAC2124D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAAC2124D
+	by mail.kernel.org (Postfix) with ESMTP id D22CF2124D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 14:30:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D22CF2124D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbeGOOuU (ORCPT
+        id S1726745AbeGOOxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 10:50:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57524 "EHLO mx1.redhat.com"
+        Sun, 15 Jul 2018 10:53:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57598 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726246AbeGOOuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 10:50:20 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1726267AbeGOOxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 10:53:35 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3BDFF406DE3D;
-        Sun, 15 Jul 2018 14:27:11 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 126AD406F619;
+        Sun, 15 Jul 2018 14:30:25 +0000 (UTC)
 Received: from [10.36.116.39] (ovpn-116-39.ams2.redhat.com [10.36.116.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E961C76CE;
-        Sun, 15 Jul 2018 14:27:04 +0000 (UTC)
-Subject: Re: [PATCH] x86/kvm/vmx: don't read current->thread.{fs,gs}base of
- legacy tasks
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A8822215688A;
+        Sun, 15 Jul 2018 14:30:21 +0000 (UTC)
+Subject: Re: [PATCH] x86/kvm/nVMX: set exit_qualification correctly when
+ nested_vmx_load_msr() fails
 To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     kvm@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
         =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Masatake YAMATO <yamato@redhat.com>,
-        linux-kernel@vger.kernel.org
-References: <20180711173718.8850-1-vkuznets@redhat.com>
- <20180713164650.GA14830@linux.intel.com>
- <87lgafvz6p.fsf@vitty.brq.redhat.com>
+        the arch/x86 maintainers <x86@kernel.org>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180712113505.23354-1-vkuznets@redhat.com>
+ <CALMp9eRabYJ0Q==pok9R0eDUXtdPa2iv83GWPcM-xw3ZFGq4Ww@mail.gmail.com>
+ <87zhywwfw7.fsf@vitty.brq.redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -79,37 +79,34 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <7a455c76-50c5-814a-0a75-c3a8b3ce4eeb@redhat.com>
-Date:   Sun, 15 Jul 2018 16:27:01 +0200
+Message-ID: <b1eaedf8-19f3-9b62-c8f8-8488f905105c@redhat.com>
+Date:   Sun, 15 Jul 2018 16:30:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <87lgafvz6p.fsf@vitty.brq.redhat.com>
+In-Reply-To: <87zhywwfw7.fsf@vitty.brq.redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 15 Jul 2018 14:27:11 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 15 Jul 2018 14:27:11 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 15 Jul 2018 14:30:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sun, 15 Jul 2018 14:30:25 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/07/2018 19:10, Vitaly Kuznetsov wrote:
->> Because bikeshedding is fun, what do you think about using fs_base and
->> kernel_gs_base for these names?  I have a series that touches this
->> code and also adds local variables for {FS,GS}.base and {FS,GS}.sel.
->> I used {fs,gs}_base and {fs,gs}_sel to be consistent with the
->> vmx->host_state nomenclature (the local variables are used to update
->> the associated vmx->host_state variables), but I'll change my patches
->> if you have a strong preference for omitting the underscore.
->>
-> I have nothing against underscores :-)
+On 12/07/2018 18:57, Vitaly Kuznetsov wrote:
+> Jim Mattson <jmattson@google.com> writes:
 > 
-> Hope this small change can be done by Paolo/Radim upon commit. Or I'll
-> send v2 if needed.
+>> This looks similar to my "[PATCH] kvm: nVMX: Restore exit qual for
+>> VM-entry failure due to MSR loading"
+>>
+> 
+> ... which is still not in kvm/queue. Missed that, sorry! Let this one just
+> be a gentle ping then :-)
+> 
 
-Yup, I've made the change and queued for 4.18-rc.
+I queued Jim's patch, thanks.
 
 Paolo
