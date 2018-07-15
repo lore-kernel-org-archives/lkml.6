@@ -2,142 +2,146 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92474ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A73FFECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5415208BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:11:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5415208BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 51FC2208BA
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:26:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsfuxnNZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FC2208BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbeGOFcl (ORCPT
+        id S1726260AbeGOFrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 01:32:41 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:54864 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725743AbeGOFcl (ORCPT
+        Sun, 15 Jul 2018 01:47:45 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:46444 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbeGOFrp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 01:32:41 -0400
-X-UUID: 20c566fc75f94df79515a0c32af67e48-20180715
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1918835454; Sun, 15 Jul 2018 13:10:56 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Sun, 15 Jul 2018 13:10:49 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Sun, 15 Jul 2018 13:10:49 +0800
-Message-ID: <1531631449.26214.28.camel@mtkswgap22>
-Subject: Re: [PATCH v5 1/7] dt-bindings: net: bluetooth: Add
- mediatek-bluetooth
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Date:   Sun, 15 Jul 2018 13:10:49 +0800
-In-Reply-To: <7E55939D-7F8A-4832-9DD5-EFB3B19ACF0B@holtmann.org>
-References: <cover.1531150733.git.sean.wang@mediatek.com>
-         <d8a5b34513cf2187a2b23a513feaa358d719bc14.1531150733.git.sean.wang@mediatek.com>
-         <7E55939D-7F8A-4832-9DD5-EFB3B19ACF0B@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Sun, 15 Jul 2018 01:47:45 -0400
+Received: by mail-io0-f195.google.com with SMTP id i18-v6so19058391ioj.13;
+        Sat, 14 Jul 2018 22:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QW17LzTKLHMlIiGKf4STqLTs13MMTL942LYGFPuVZMs=;
+        b=gsfuxnNZDAHzAckT+84CKifnK1H6CjeiwwVqmDCh4AEcJxLtb+NKczlxkm6bB/enwe
+         UQYgimzDW4iol9c2ZJ/MQQSuByGTW4xEGfe2fg/767BVzLcJqErlDIDJwsBNHqloCvhL
+         ZzUStoMcCOhVTHIsxDFLO+tWqztC/tpkZq/zy6XoogUapdWEm8a8hmQ5e0opbKMWM/4c
+         e+cQ8c3cdY1uQOkMTV0VUhpTiMJLZoSGfag0+8GZep3Q78x45rD5AjHL+EJLgZ8ss9E9
+         sQgGNR+07oHVddAoCUXr8tp0fdI5MJ09khQguO/8Z8ItYMc0C1uFez2aMVmqStkdpJJd
+         DmtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QW17LzTKLHMlIiGKf4STqLTs13MMTL942LYGFPuVZMs=;
+        b=ckofZw61MY6LK0QaWilQSD7RJOpQJ0Z/bAHxrWOfcUesTfmkUo3r3gTW99FdVyFToK
+         P9tksXhbncv8+8hBACj8bzH+Jwr2FUcUMfZm4uwhrQzhhhQOGOM2F6Ac4MCKUi6jb5Xy
+         OTZhXmoOPRiA1fwCTFoxuA8wj+DxNCph5h0OeL8cxelREPvmhtPelmNtZBmLVQjiW05g
+         j+yIItKs1l5PJFgWtae0BHPZGlm4j4rOB+5FjHEXxGOCW+FAgdKdBNf2+8k+iluXlyzX
+         rLw8+5WK/aNbWVnfkp9mDOPuNw6OsC1HjbhiPBgS17P5dxdQqn0piwbIglIQ3WcJKKcf
+         B/bA==
+X-Gm-Message-State: AOUpUlHpWAxvp1wJ46REpMBxonfRdexcUVU05s2CTOC0qaGzWAF014p5
+        fkn30xGnQAjEQgzd+owqixnCC7GquS2n/CwUmJo=
+X-Google-Smtp-Source: AAOMgpeygcqlePFDkuZPqoPEM8E43l4IyJd+Uv+m+WPOUdvkwrnV0hSn+9/7PUg+yL0UD7r0eWigwiGeCyEUjasC7rQ=
+X-Received: by 2002:a6b:b845:: with SMTP id i66-v6mr33801372iof.142.1531632366361;
+ Sat, 14 Jul 2018 22:26:06 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 22:25:25
+ -0700 (PDT)
+In-Reply-To: <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
+References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+ <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
+ <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com> <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sun, 15 Jul 2018 13:25:25 +0800
+Message-ID: <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-07-14 at 18:26 +0200, Marcel Holtmann wrote:
-> Hi Sean,
-> 
-> > Add binding document for a SoC built-in device using MediaTek protocol.
-> > Which could be found on MT7622 SoC or other similar MediaTek SoCs.
-> > 
-> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > ---
-> > .../devicetree/bindings/net/mediatek-bluetooth.txt | 35 ++++++++++++++++++++++
-> > 1 file changed, 35 insertions(+)
-> > create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-> > new file mode 100644
-> > index 0000000..1335429
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-> > @@ -0,0 +1,35 @@
-> > +MediaTek SoC built-in Bluetooth Devices
-> > +==================================
-> > +
-> > +This device is a serial attached device to BTIF device and thus it must be a
-> > +child node of the serial node with BTIF. The dt-bindings details for BTIF
-> > +device can be known via Documentation/devicetree/bindings/serial/8250.txt.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible:	Must be one of
-> > +		  "mediatek,mt7622-bluetooth"": for MT7622 SoC
-> 
-> this does not match with the example below. And one of, should be normally be a list.
-> 
+On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>>
+>> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >>
+>> >> try_charge maybe executed in packet receive path, which is in interrupt
+>> >> context.
+>> >> In this situation, the 'current' is the interrupted task, which may has
+>> >> no relation to the rx softirq, So it is nonsense to use 'current'.
+>> >>
+>> >
+>> > Have you actually seen this occurring?
+>>
+>> Hi Shakeel,
+>>
+>> I'm trying to produce this issue, but haven't find it occur yet.
+>>
+>> > I am not very familiar with the
+>> > network code but I can think of two ways try_charge() can be called
+>> > from network code. Either through kmem charging or through
+>> > mem_cgroup_charge_skmem() and both locations correctly handle
+>> > interrupt context.
+>> >
+>>
+>> Why do you say that mem_cgroup_charge_skmem() correctly hanle
+>> interrupt context ?
+>>
+>> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
+>> context correctly.
+>>
+>> mem_cgroup_charge_skmem() is calling  try_charge() twice.
+>> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
+>> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
+>>
+>> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
+>> Then mem_cgroup_charge_skmem() will call try_charge() once more with
+>> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
+>> again the '
+>> force' label in  try_charge() will be executed and 0 is returned.
+>>
+>> No matter what, the 'current' will be used and touched, that is
+>> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
+>> correctly.
+>>
+>
+> Hi Yafang,
+>
+> If you check mem_cgroup_charge_skmem(), the memcg passed is not
+> 'current' but is from the sock object i.e. sk->sk_memcg for which the
+> network buffer is allocated for.
+>
 
-Thanks! I'll remove the words "one of" from the compatible description,
-and the extra " being added accidentally.
-
-And the below example fully shows the bluetooth device and its attached
-bus (mediatek,mt7622-btif) to let people know clearly how to enable the
-bluetooth device.
-
-The current document just describes the bluetooth device and as for the
-attached bus, it is already present at
-Documentation/devicetree/bindings/serial/8250.txt.
-
-	Sean
-
-
-> > +- clocks:	Should be the clock specifiers corresponding to the entry in
-> > +		clock-names property.
-> > +- clock-names:	Should contain "ref" entries.
-> > +- power-domains: Phandle to the power domain that the device is part of
-> > +
-> > +Example:
-> > +
-> > +	btif: serial@1100c000 {
-> > +		compatible = "mediatek,mt7622-btif",
-> > +			     "mediatek,mtk-btif";
-> > +		reg = <0 0x1100c000 0 0x1000>;
-> > +		interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_LOW>;
-> > +		clocks = <&pericfg CLK_PERI_BTIF_PD>;
-> > +		clock-names = "main";
-> > +		reg-shift = <2>;
-> > +		reg-io-width = <4>;
-> > +
-> > +		bluetooth {
-> > +			compatible = "mediatek,mt7622-bluetooth";
-> > +			power-domains = <&scpsys MT7622_POWER_DOMAIN_WB>;
-> > +			clocks = <&clk25m>;
-> > +			clock-names = "ref";
-> > +		};
-> > +	};
-> 
-> Regards
-> 
-> Marcel
-> 
+That's correct, the memcg if from the sock object.
+But the point is, in this situation why 'current' is used in try_charge() ?
+As 'current' is not related with the memcg, which is just a interrupted task.
 
 
+> If the network buffers is allocated through kmem interface, the
+> charging is bypassed altogether (through memcg_kmem_bypass()) for
+> interrupt context.
+>
+
+Yes.
+
+Thanks
+Yafang
