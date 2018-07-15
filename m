@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1175DECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 16:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F256ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 16:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6571208E7
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 16:06:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6571208E7
+	by mail.kernel.org (Postfix) with ESMTP id 354A5208E7
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 16:10:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 354A5208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbeGOQ3W (ORCPT
+        id S1726938AbeGOQeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 12:29:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50378 "EHLO mx1.redhat.com"
+        Sun, 15 Jul 2018 12:34:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50466 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726638AbeGOQ3W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 12:29:22 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        id S1726455AbeGOQeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 12:34:12 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 66A6A4005F6C;
-        Sun, 15 Jul 2018 16:05:56 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 751F54010238;
+        Sun, 15 Jul 2018 16:10:45 +0000 (UTC)
 Received: from [10.36.116.39] (ovpn-116-39.ams2.redhat.com [10.36.116.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E5FF7215688A;
-        Sun, 15 Jul 2018 16:05:54 +0000 (UTC)
-Subject: Re: [PATCH 2/2] KVM: X86: Fix loss of CR3_PCID_INVD bit when guest
- writes CR3
-To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Junaid Shahid <junaids@google.com>
-References: <1526181854-3631-1-git-send-email-wanpengli@tencent.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 92126111CB82;
+        Sun, 15 Jul 2018 16:10:41 +0000 (UTC)
+Subject: Re: [PATCH V2] KVM/Eventfd: Avoid crash when assign and deassign
+ specific eventfd in parallel.
+To:     Lan Tianyu <tianyu.lan@intel.com>
+Cc:     rkrcmar@redhat.com, kvm@vger.kernel.org, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, david@redhat.com
+References: <20171222021036.13107-1-tianyu.lan@intel.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -74,74 +73,78 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <882a14bb-d03f-a86a-2773-45da66ff0e8a@redhat.com>
-Date:   Sun, 15 Jul 2018 18:05:53 +0200
+Message-ID: <6b0960ed-8bc3-51a4-6053-882630e3bb4b@redhat.com>
+Date:   Sun, 15 Jul 2018 18:10:40 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1526181854-3631-1-git-send-email-wanpengli@tencent.com>
+In-Reply-To: <20171222021036.13107-1-tianyu.lan@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sun, 15 Jul 2018 16:05:56 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sun, 15 Jul 2018 16:05:56 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sun, 15 Jul 2018 16:10:45 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Sun, 15 Jul 2018 16:10:45 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/05/2018 05:24, Wanpeng Li wrote:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 22/12/2017 03:10, Lan Tianyu wrote:
+> Syzroot reports crash in kvm_irqfd_assign() is caused by use-after-free.
+> Because kvm_irqfd_assign() and kvm_irqfd_deassign() can't run in parallel
+> for one specific eventfd. When assign path hasn't been finished after irqfd
+> has been added to kvm->irqfds.items list, another thead may deassign the
+> eventfd and free struct kvm_kernel_irqfd(). This causes assign path still
+> uses struct kvm_kernel_irqfd freed by deassign path. To avoid such issue,
+> make irqfd's reference under kvm->irq_srcu protection after irqfd added to
+> kvm->irqfds.iterms list and call synchronize_srcu() in irq_shutdown() to
+> make sure that irqfd has been fully initialized in the assign path.
 > 
-> SDM volume 3, section 4.10.4:
-> 
-> * MOV to CR3. The behavior of the instruction depends on the value of CR4.PCIDE:
-> — If CR4.PCIDE = 1 and bit 63 of the instruction’s source operand is 1, the 
->   instruction is not required to invalidate any TLB entries or entries in 
->   paging-structure caches.
-> 
-> The CR3_PCID_INVD bit should not be removed if CR4.PCIDE = 1 when guest writes 
-> CR3, this patch fixes it.
-> 
+> Reported-by: Dmitry Vyukov <dvyukov@google.com>
 > Cc: Paolo Bonzini <pbonzini@redhat.com>
 > Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Junaid Shahid <junaids@google.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Signed-off-by: Tianyu Lan <tianyu.lan@intel.com>
 > ---
->  arch/x86/kvm/x86.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  virt/kvm/eventfd.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 9a90668..438f140 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -849,11 +849,13 @@ EXPORT_SYMBOL_GPL(kvm_set_cr4);
->  
->  int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
+> diff --git a/virt/kvm/eventfd.c b/virt/kvm/eventfd.c
+> index a334399fafec..0abc2e9ddafb 100644
+> --- a/virt/kvm/eventfd.c
+> +++ b/virt/kvm/eventfd.c
+> @@ -119,8 +119,12 @@ irqfd_shutdown(struct work_struct *work)
 >  {
-> +	unsigned long cr3_check = cr3;
-> +
->  #ifdef CONFIG_X86_64
->  	bool pcid_enabled = kvm_read_cr4_bits(vcpu, X86_CR4_PCIDE);
+>  	struct kvm_kernel_irqfd *irqfd =
+>  		container_of(work, struct kvm_kernel_irqfd, shutdown);
+> +	struct kvm *kvm = irqfd->kvm;
+>  	u64 cnt;
 >  
->  	if (pcid_enabled)
-> -		cr3 &= ~CR3_PCID_INVD;
-> +		cr3_check &= ~CR3_PCID_INVD;
+> +	/* Make sure irqfd has been initalized in assign path. */
+> +	synchronize_srcu(&kvm->irq_srcu);
+> +
+>  	/*
+>  	 * Synchronize with the wait-queue and unhook ourselves to prevent
+>  	 * further events.
+> @@ -387,7 +391,6 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+>  
+>  	idx = srcu_read_lock(&kvm->irq_srcu);
+>  	irqfd_update(kvm, irqfd);
+> -	srcu_read_unlock(&kvm->irq_srcu, idx);
+>  
+>  	list_add_tail(&irqfd->list, &kvm->irqfds.items);
+>  
+> @@ -421,6 +424,7 @@ kvm_irqfd_assign(struct kvm *kvm, struct kvm_irqfd *args)
+>  	}
 >  #endif
 >  
->  	if (cr3 == kvm_read_cr3(vcpu) && !pdptrs_changed(vcpu)) {
-> @@ -863,7 +865,7 @@ int kvm_set_cr3(struct kvm_vcpu *vcpu, unsigned long cr3)
->  	}
+> +	srcu_read_unlock(&kvm->irq_srcu, idx);
+>  	return 0;
 >  
->  	if (is_long_mode(vcpu) &&
-> -	    (cr3 & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
-> +	    (cr3_check & rsvd_bits(cpuid_maxphyaddr(vcpu), 63)))
->  		return 1;
->  	else if (is_pae(vcpu) && is_paging(vcpu) &&
->  		   !load_pdptrs(vcpu, vcpu->arch.walk_mmu, cr3))
+>  fail:
 > 
 
-Note that bit 63 is never written into CR3, and is always zero when read.
+Queued, at last.  Thanks,
 
 Paolo
