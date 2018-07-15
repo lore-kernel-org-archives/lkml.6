@@ -3,75 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: *
 X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A25EAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A42ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE6C2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84ABF2089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:59:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u3cXWBvx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE6C2089D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zm5hkkrB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84ABF2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeGOXTG (ORCPT
+        id S1727191AbeGOXXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 19:19:06 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54742 "EHLO
+        Sun, 15 Jul 2018 19:23:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50256 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeGOXTG (ORCPT
+        with ESMTP id S1727007AbeGOXXW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 19:19:06 -0400
-Received: by mail-wm0-f65.google.com with SMTP id c14-v6so3004231wmb.4
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 15:54:36 -0700 (PDT)
+        Sun, 15 Jul 2018 19:23:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v25-v6so13351598wmc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 15:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=GjqgaHEQYIiGykRYo46Quysg+OfmUfxDoUFyVLlUcRs=;
-        b=u3cXWBvxwibC+XkwOBGQ1K5jDPY0LoglDr+sCPYgauOvEmpU5RQjRsLlW/LSXHObGh
-         kYNxtLN6Nf02HiOgxSO/TqVxvmds7UNtgWDxzVVyYHTEml+QU0ccvSNrFi87Ea1ADGAa
-         m40cuuHKeeSO2w1wG9Q7ClTrk9Yu701rYA/ct9MgbLib+kr3XjIHtvdIuX0Jv0a30UwH
-         OtgwPPRTxoYlid1jAdworBsbVadZDgbx2oWGJ+Dx2lBRomaM05sMwNxXxb8s788SGo+w
-         18EaQzJlfkMv15eZ+lsMogPgd5bNUEHc43LQL7MG8Dq5hwHyh6vUIF6FyZ+CNZRaC5bo
-         MH/w==
+        bh=R0HTxfQLHIGBhGHQdcDuF2WSlfyWyL5x5araBZcNpdI=;
+        b=Zm5hkkrBdIOw79lSob5l4p5Yi5AgU1vl/ATLexCeDdqCnN63D+JRgfpwvBQxPXaHJA
+         SyorjluQ5D9zsW5E2OEK0RqLFlO5bHD3kdE0oGM5xhcKfDHA1ugi32YLFgm14J58Ntvz
+         79P9B/NsIg6Q3oMEmUiJzu9Ivtfor0m+bTk69AhUXdc/VTsCm1Rm7zhYnOWkHLjQr062
+         yR9+pThiYwmIMLLZjRM/prQGIc4wA9nwZmicKCHe/rv2qSxlDJrrqHOGAt6ZC2oxVNw/
+         yVdfh6ObTdqOP8+P+bsXgV5GmFxvjjBU8CLQqhP5yTLSKcC9B1M/pbHBl//Mqqubog2P
+         DfJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GjqgaHEQYIiGykRYo46Quysg+OfmUfxDoUFyVLlUcRs=;
-        b=fviWKFnQJhN8IFRkEi4d7MAzdqfyN37giFjgPHN7RCXG/954r/KmzjgVFOoHukvUX8
-         0oFpP4mBquVxtsMXdPpzNX3uh/HGTsUW6Z0y9jDKoeCrShyMUWkTgbBV91BLWL6ic8dI
-         lsPrhh2+kOirZ6jjl80J45298Kk1lKPIhseIoSgdnbd+I6kxOorgiVMCC6nT+hcelkIx
-         l+F5+8ImrEqgtr24vftwljvrJaHKpZExMZJube9RIHoTy2Ot6udIKBQg36a8uV6OBDXD
-         JNIoeglfyOw0r2daQ/gkelqla58172Z7khZP2NlqK37MQ7zkkU1vCYd+s7I9dtmLQTLU
-         fdAw==
-X-Gm-Message-State: AOUpUlEj0a17X36CP8ErMOh+XthfS3tM3albU+yRZiDT5a/PuHPXqw93
-        KOYhXXcFwuN22xmcTECFz/g=
-X-Google-Smtp-Source: AAOMgpfP+JDs2NtQSnyIh2kV9y/MJWPNiSe5FE7MGkv3JPwgaLHrbPb6kujsm3UZAV48e26mA1HYNw==
-X-Received: by 2002:a1c:9809:: with SMTP id a9-v6mr7843750wme.15.1531695275813;
-        Sun, 15 Jul 2018 15:54:35 -0700 (PDT)
+        bh=R0HTxfQLHIGBhGHQdcDuF2WSlfyWyL5x5araBZcNpdI=;
+        b=hmMVv8okHTo8kv5dWSanFyInYr2XwL7Yqx2WAtdkuaLEPSXM6xF/e/mYx8hokxJZBz
+         OuzekXxmPsrnhauLk9t2m4LXilpkdFVOixBzWVLWpBJHSuo8jEAFvSq0jECpSJCNxv+Q
+         Aic2R6K3PDsoHGyAayvjdNmNUdsDAW/LPCzVFLdbNz2BOF73CDzGfJ70+Ge3WZuLzDNo
+         yYcVHWM8ycfBrIffAMbznG1gqnUSF3TEnAYdvnk3J08Q+jxKU8v45xLWohe192nRMriL
+         08C3Wu5CzCrHcfbisZf0f8dtrXhE68pebajwejcxSFmL0MGVbleN9AW4qmPeZ3jlymNY
+         IHfA==
+X-Gm-Message-State: AOUpUlGEPrJNxPjcm2EzNMXr/tmykDR8NGQvtD9t9YX7MR/W52ExSyDL
+        D3xtkoZ4pGgZgchLnn4Zdto=
+X-Google-Smtp-Source: AAOMgpdHs6fqiw4kWcdyWnf8OU4aFtfbOfR3DCfNq2DJXSolnAeN+1Y52eSbEAsRHtjUQ3GlpeEiHQ==
+X-Received: by 2002:a1c:dc89:: with SMTP id t131-v6mr8916686wmg.50.1531695532003;
+        Sun, 15 Jul 2018 15:58:52 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id l15-v6sm22259956wrt.67.2018.07.15.15.54.34
+        by smtp.gmail.com with ESMTPSA id e12-v6sm25530223wrt.29.2018.07.15.15.58.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Jul 2018 15:54:34 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 00:54:33 +0200
+        Sun, 15 Jul 2018 15:58:51 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 00:58:49 +0200
 From:   Ingo Molnar <mingo@kernel.org>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Dirk Gouders <dirk@gouders.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] x86/ptrace: Add comments to x86_regset about empty slots
-Message-ID: <20180715225433.GA30102@gmail.com>
-References: <20180713171249.11510-1-yu-cheng.yu@intel.com>
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/boot: Fix if_changed build flip/flop
+Message-ID: <20180715225849.GB30102@gmail.com>
+References: <20180715025626.GA48623@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180713171249.11510-1-yu-cheng.yu@intel.com>
+In-Reply-To: <20180715025626.GA48623@beast>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -79,52 +80,27 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+* Kees Cook <keescook@chromium.org> wrote:
 
-> find_regset() goes through regsets sequentially.  Empty slots
-> in regset arrays causes mismatch.  Add comments to x86_regset
-> enum.
+> The if_changed kbuild function can only be used once per target. If not
+> it will effectively always trigger, flipping back and forth between the
+> two commands getting recorded. Instead, merge the two commands into a
+> single function to get stable build artifacts (i.e. .vmlinux.cmd).
 > 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> ---
->  arch/x86/kernel/ptrace.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-> index e2ee403865eb..130ca4f27a17 100644
-> --- a/arch/x86/kernel/ptrace.c
-> +++ b/arch/x86/kernel/ptrace.c
-> @@ -42,6 +42,11 @@
->  
->  #include "tls.h"
->  
-> +/*
-> + * find_regset() goes through regsets sequentially.
-> + * Do not create empty slots in x86_64_regsets[] or
-> + * x86_32_regsets[] below.
-> + */
->  enum x86_regset {
->  	REGSET_GENERAL,
->  	REGSET_FP,
+> Reported-by: Dirk Gouders <dirk@gouders.net>
 
-What mismatch exactly? The logic in find_regset() is:
+What actual symptoms does this bug have?
 
-        for (n = 0; n < view->n; ++n) {
-                regset = view->regsets + n;
-                if (regset->core_note_type == type)
-                        return regset;
-        }
+I.e. it would be nice if the changelog started with such an explanation:
 
+  Dirk Gouders reported that .... <bad stuff happens during kernel build> ... 
+  and bisected it back to:
 
-and an 'empty' slot would have .core_note_type of 0 - which would be easy to skip 
-or warn about.
+    98f78525371b ("x86/boot: Refuse to build with data relocations")
 
-It appears to me user-space ptrace users can control 'type' via PTRACE_GETREGSET, 
-so it might make sense to filter out the value of 0 there.
+  The root cause of the bug is that the if_changed kbuild function ...
 
-Or something like that. The patch doesn't really explain the problem, and I 
-maintain my argument that the current code of relying on no empty slots and not 
-having any mechanism other than human review ensuring it is both ugly and fragile.
+Or something like that.
 
 Thanks,
 
