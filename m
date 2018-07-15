@@ -2,114 +2,104 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58547ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB023ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC5921473
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69E3A21473
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vv/HJxbK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC5921473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=metanate.com header.i=@metanate.com header.b="r9Hld/V5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E3A21473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=metanate.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbeGOPbu (ORCPT
+        id S1726881AbeGOPfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 11:31:50 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34800 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbeGOPbu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 11:31:50 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so70369725ois.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 08:08:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=GbGD6dICMVOLkZcfAZiQD1V7K+TI1KHGPhQeJUZnzt8=;
-        b=Vv/HJxbK30WV7mIngWTuQZmheMDo/bkJlq9ewnx94rZmcy5xWzxA/4WaE84ovM4ST0
-         8qW/JpoHRi4eDsKpFr6JI2Pe3UoDfFHig5bvIP2xHIf0Hk/m7GfrpEGrGBz4H+c4gIUk
-         pxlDcZHUbJWXWmqtReWA4kLOgT1I26SP9gMwjez8+6eBGywrU+jQjeoDyjPeDAyZw9IP
-         Inrc7dndax8Y7B0e9XU5p0GHsGsuWd0MRtbyFK6VAjoZCrJ6EaGt3tXsAP43SB5dBzXR
-         lPeFszhotu65w8GC/7ajpV0Ii3XCTdREoF4S19TYZ0tYdFHWFWDOcY5tKw/bBhOI8OS4
-         chbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GbGD6dICMVOLkZcfAZiQD1V7K+TI1KHGPhQeJUZnzt8=;
-        b=FtZbKhlRdLmLlusvuB4i+2Xw4rR7LKVsawYz/KK0yE8j74d7RpCmnChFT0KkqutOkM
-         ewz7gC0UU0E6W4Gkd1T+QbCPSjgoA8fCvECiKKDAHKIg/Ps3t4GL83nYcV5EbW2G58Bz
-         QRxoUjlEXrV3R5V/H7Y3LGcnNJO/Uu0ZdaItV0fA3Scg1XuNgI5ss5E3yAbNKN7O7oov
-         2NezEUQ+y0tIzD/MxY/KirvxZVEPwIzze5ugyiRsJfG7f0MgcmZny0ryW9nIxYEeclXP
-         K5V5bhIvR7exZEIbfSHp0Ncvs/bTq1rT2aRx0UHYwiZbeyAUwNiYE9LjOUHmBVmd1pCD
-         pszA==
-X-Gm-Message-State: AOUpUlGjnVUwC6CR13E9wa3g/28i95/VvvViagQmPJkJ0N3Qo8hwj8mM
-        jA89bmaPt/G2NM9Gd5Ww/Mudfz6AxM7CCa4BJSxRvvFpLNM=
-X-Google-Smtp-Source: AAOMgpfPKNh51rVKdsXvipn0I4g2IQ4PxyqgwKqHYBJboFn8cxXYsu8dskN2U7kYVEBObWTP0ag7K00ShHKtgi+5PPI=
-X-Received: by 2002:aca:3546:: with SMTP id c67-v6mr15405882oia.249.1531667314330;
- Sun, 15 Jul 2018 08:08:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAE5jQCe4nX8m1f5jPL57GeU32CftNv+NvgNmZxufH85nun1o7w@mail.gmail.com>
- <878t6c7f8p.fsf@mail.parknet.co.jp> <20180715143043.GM30522@ZenIV.linux.org.uk>
-In-Reply-To: <20180715143043.GM30522@ZenIV.linux.org.uk>
-From:   Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Date:   Sun, 15 Jul 2018 18:08:23 +0300
-Message-ID: <CAE5jQCcs2x4myTHUhNmHPZvhMuPsrkzLmiqqeF5wzZ-Hf5druQ@mail.gmail.com>
-Subject: Re: FAT: Operating on broken FAT FS causes the write syscall to
- return negative number not equal to -1
-To:     viro@zeniv.linux.org.uk
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 15 Jul 2018 11:35:01 -0400
+Received: from dougal.metanate.com ([90.155.101.14]:32546 "EHLO metanate.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726224AbeGOPfB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 11:35:01 -0400
+X-Greylist: delayed 1278 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Jul 2018 11:35:00 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
+         s=stronger; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vkQdFU1BQsDAnCJf+QmX/RQ6w1vx9gZKvHY8xOJ3/Tg=; b=r9Hld/V5SQEdgMrIh3CpD8OpGO
+        UuXQ+bDaO7oBqFs7kRO+DrUXylciqA0gHBf8EfqDW1k3fYil0PN5bXtQIvj0VArXVu70MgRBeGu88
+        PYrApdgWwSF5SHNlKdwsCW7u++fSzkgwcKCPjxro1r2n4RLggJHgMuTmISbyzdXV6ZiNaB9wvFof3
+        bPNyEP6T5zYj1nZ0/Un9Yq+bjczuCIgXyItJ1OlQJIxAW7mSluIiX8UHRFvgF86jfTERpXb1dPZ98
+        etNoUmPLCguKrBlDx24zzXHIaD8OLMaB/HdE1prZzHJJrQnNm1ZT+OJpBbkearOl1yLmojmycY3da
+        KKmRirOQ==;
+Received: from johnkeeping.plus.com ([81.174.171.191] helo=localhost.localdomain)
+        by shrek.metanate.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <john@metanate.com>)
+        id 1feiLy-00024m-9M; Sun, 15 Jul 2018 15:50:26 +0100
+From:   John Keeping <john@metanate.com>
+To:     Minas Harutyunyan <hminas@synopsys.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Razmik Karapetyan <razmik@synopsys.com>,
+        John Keeping <john@metanate.com>
+Subject: [PATCH] usb: dwc2: avoid NULL dereferences
+Date:   Sun, 15 Jul 2018 15:50:43 +0100
+Message-Id: <20180715145043.25379-1-john@metanate.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you!
+For unidirectional endpoints, the endpoint pointer will be NULL for the
+unused direction.  Check that the endpoint is active before
+dereferencing this pointer.
 
-> This patch returns better error (-EIO) for me.
+Fixes: 1b4977c793d3 ("usb: dwc2: Update dwc2_handle_incomplete_isoc_in() function")
+Fixes: 689efb2619b5 ("usb: dwc2: Update dwc2_handle_incomplete_isoc_out() function")
+Fixes: d84845522d93 ("usb: dwc2: Update GINTSTS_GOUTNAKEFF interrupt handling")
+Signed-off-by: John Keeping <john@metanate.com>
+---
+ drivers/usb/dwc2/gadget.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-This works for me likewise.
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index a0f82cca2d9a..cefc99ae69b2 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -3430,7 +3430,7 @@ static void dwc2_gadget_handle_incomplete_isoc_in(struct dwc2_hsotg *hsotg)
+ 	for (idx = 1; idx < hsotg->num_of_eps; idx++) {
+ 		hs_ep = hsotg->eps_in[idx];
+ 		/* Proceed only unmasked ISOC EPs */
+-		if (!hs_ep->isochronous || (BIT(idx) & ~daintmsk))
++		if ((BIT(idx) & ~daintmsk) || !hs_ep->isochronous)
+ 			continue;
+ 
+ 		epctrl = dwc2_readl(hsotg->regs + DIEPCTL(idx));
+@@ -3476,7 +3476,7 @@ static void dwc2_gadget_handle_incomplete_isoc_out(struct dwc2_hsotg *hsotg)
+ 	for (idx = 1; idx < hsotg->num_of_eps; idx++) {
+ 		hs_ep = hsotg->eps_out[idx];
+ 		/* Proceed only unmasked ISOC EPs */
+-		if (!hs_ep->isochronous || (BIT(idx) & ~daintmsk))
++		if ((BIT(idx) & ~daintmsk) || !hs_ep->isochronous)
+ 			continue;
+ 
+ 		epctrl = dwc2_readl(hsotg->regs + DOEPCTL(idx));
+@@ -3650,7 +3650,7 @@ static irqreturn_t dwc2_hsotg_irq(int irq, void *pw)
+ 		for (idx = 1; idx < hsotg->num_of_eps; idx++) {
+ 			hs_ep = hsotg->eps_out[idx];
+ 			/* Proceed only unmasked ISOC EPs */
+-			if (!hs_ep->isochronous || (BIT(idx) & ~daintmsk))
++			if ((BIT(idx) & ~daintmsk) || !hs_ep->isochronous)
+ 				continue;
+ 
+ 			epctrl = dwc2_readl(hsotg->regs + DOEPCTL(idx));
+-- 
+2.18.0
 
-> (But note, the corrupted FS image doesn't guarantee POSIX behavior.)
-
-Oops, I was just doing some testing and thought that correct behavior
-for crafted FS is to return arbitrary valid error code (like -EIO) or
-some arbitrary data, say, not larger than FS (not disclosing the
-kernel memory, of course). Please excuse me if I was wrong. If fixing
-this would slow down some hot code path, then I am not insisting on
-returning valid errno. :)
-
-Meanwhile, how should be considered such discrepancies with man pages
-for invalid FS images: should it be considered low priority bug,
-not-a-bug or feature request (diagnostics)?
-
-
-Thanks
-Anatoly
-
-=D0=B2=D1=81, 15 =D0=B8=D1=8E=D0=BB. 2018 =D0=B3. =D0=B2 17:30, Al Viro <vi=
-ro@zeniv.linux.org.uk>:
->
-> On Sun, Jul 15, 2018 at 11:20:06PM +0900, OGAWA Hirofumi wrote:
-> > +static inline bool fat_valid_entry(struct msdos_sb_info *sbi, int entr=
-y)
-> > +{
-> > +     if (entry < FAT_START_ENT || sbi->max_cluster <=3D entry)
-> > +             return false;
-> > +     return true;
-> > +}
->
-> Pet peeve: if (...) return false; return true; instead of return !....;
->
-> In this case,
->         return entry >=3D FAT_START_ENT && entry < sb->max_cluster;
