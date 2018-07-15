@@ -3,55 +3,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79268ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE89ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F79B208CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:06:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 003A4208CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:13:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZZgVgev"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F79B208CC
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="00xB6NhH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003A4208CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387736AbeGOD1t (ORCPT
+        id S2387732AbeGODec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 23:27:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48894 "EHLO mail.kernel.org"
+        Sat, 14 Jul 2018 23:34:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731946AbeGOD1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 23:27:49 -0400
+        id S1732717AbeGODec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 23:34:32 -0400
 Received: from localhost (unknown [104.132.152.71])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCE762089F;
-        Sun, 15 Jul 2018 03:06:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26BB52089F;
+        Sun, 15 Jul 2018 03:13:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531623990;
-        bh=WcwhDruiD278M8T9LZqlOHCVbiXCOZPWPZ4pkT1beQw=;
+        s=default; t=1531624391;
+        bh=oN4zGWyAW7wnFdERo2Fd0oT+ycizu/Y4vgqKqkoZu2o=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fZZgVgevGZfiuTxXsfB5D1RKWPALePMyMf5cni3hwq2HZRAHdWHz5fotC3bEYRKkC
-         GtiGOPlcyimrleZ0qcnx3Zqr4W5a3b/jPnTdfL5HhELfgqwd+RhhU5uj8p+McARtTP
-         /iZYfGZ9ZI9OnBeFlZ1+5rjVFobPLpHlTI6tRYZE=
-Date:   Sun, 15 Jul 2018 12:06:27 +0900
+        b=00xB6NhHJ4kR2My658j87wnOsKBA9XlEAA6r0Rd/rJeHdTlxX5vhQApI2LXQowqda
+         OwleVe+afRaZ+CRsqhwQexTnJjukk33Z/WCxW8tNtY++TWJ4y4TlIm37ur8ubCFZFK
+         ohqCwf24v/Xj2AYurrztvrMbeb+bENDB9PjitSMA=
+Date:   Sun, 15 Jul 2018 12:13:08 +0900
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     Chao Yu <chao@kernel.org>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] f2fs: fix to do sanity check with inline flags
-Message-ID: <20180715030627.GH11571@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180628102559.2706-1-yuchao0@huawei.com>
- <20180628102559.2706-2-yuchao0@huawei.com>
- <20180707011255.GA3904@jaegeuk-macbookpro.roam.corp.google.com>
- <d336433b-47ff-e261-7122-970ed16ba76c@kernel.org>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: Re: [PATCH v2] f2fs: split discard command in prior to block layer
+Message-ID: <20180715031308.GI11571@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180708141433.24182-1-chao@kernel.org>
+ <20180715012700.GA11571@jaegeuk-macbookpro.roam.corp.google.com>
+ <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d336433b-47ff-e261-7122-970ed16ba76c@kernel.org>
+In-Reply-To: <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
 User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,247 +59,300 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 07/15, Chao Yu wrote:
 > Hi Jaegeuk,
 > 
-> On 2018/7/7 9:12, Jaegeuk Kim wrote:
-> > Hi Chao,
+> On 2018/7/15 9:27, Jaegeuk Kim wrote:
+> > On 07/08, Chao Yu wrote:
+> >> From: Chao Yu <yuchao0@huawei.com>
+> >>
+> >> Some devices has small max_{hw,}discard_sectors, so that in
+> >> __blkdev_issue_discard(), one big size discard bio can be split
+> >> into multiple small size discard bios, result in heavy load in IO
+> >> scheduler and device, which can hang other sync IO for long time.
+> >>
+> >> Now, f2fs is trying to control discard commands more elaboratively,
+> >> in order to make less conflict in between discard IO and user IO
+> >> to enhance application's performance, so in this patch, we will
+> >> split discard bio in f2fs in prior to in block layer to reduce
+> >> issuing multiple discard bios in a short time.
 > > 
-> > I'm hitting some messages below during fault injection test. I'll dig in the
-> > issue later, but meanwhile could you review this patch again?
+> > Can we just change __submit_discard_cmd() to submit the large candidate
+> > partially and adjust lstart in the original candidate?
 > 
-> You hit message like below call stack instead of the log I added in
-> sanity_check_inode(), right?
-> 
-> kernel BUG at fs/inode.c:512!
-> f2fs_evict_inode+0x253/0x630
-> evict+0x16f/0x290
-> iput+0x280/0x300
-> 
-> I can't reproduce this issue with fault injection test, could you still
-> reproduce this?
-
-Let me try it again. :)
-
+> Yep, could you check __submit_discard_cmd() implementation below? Does that
+> match the thoughts from you?
 > 
 > Thanks,
 > 
 > > 
-> > Thanks,
-> > 
-> > On 06/28, Chao Yu wrote:
-> >> https://bugzilla.kernel.org/show_bug.cgi?id=200221
 > >>
-> >> - Overview
-> >> BUG() in clear_inode() when mounting and un-mounting a corrupted f2fs image
-> >>
-> >> - Reproduce
-> >>
-> >> - Kernel message
-> >> [  538.601448] F2FS-fs (loop0): Invalid segment/section count (31, 24 x 1376257)
-> >> [  538.601458] F2FS-fs (loop0): Can't find valid F2FS filesystem in 2th superblock
-> >> [  538.724091] F2FS-fs (loop0): Try to recover 2th superblock, ret: 0
-> >> [  538.724102] F2FS-fs (loop0): Mounted with checkpoint version = 2
-> >> [  540.970834] ------------[ cut here ]------------
-> >> [  540.970838] kernel BUG at fs/inode.c:512!
-> >> [  540.971750] invalid opcode: 0000 [#1] SMP KASAN PTI
-> >> [  540.972755] CPU: 1 PID: 1305 Comm: umount Not tainted 4.18.0-rc1+ #4
-> >> [  540.974034] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> >> [  540.982913] RIP: 0010:clear_inode+0xc0/0xd0
-> >> [  540.983774] Code: 8d a3 30 01 00 00 4c 89 e7 e8 1c ec f8 ff 48 8b 83 30 01 00 00 49 39 c4 75 1a 48 c7 83 a0 00 00 00 60 00 00 00 5b 41 5c 5d c3 <0f> 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 1f 40 00 66 66 66 66 90 55
-> >> [  540.987570] RSP: 0018:ffff8801e34a7b70 EFLAGS: 00010002
-> >> [  540.988636] RAX: 0000000000000000 RBX: ffff8801e9b744e8 RCX: ffffffffb840eb3a
-> >> [  540.990063] RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff8801e9b746b8
-> >> [  540.991499] RBP: ffff8801e34a7b80 R08: ffffed003d36e8ce R09: ffffed003d36e8ce
-> >> [  540.992923] R10: 0000000000000001 R11: ffffed003d36e8cd R12: ffff8801e9b74668
-> >> [  540.994360] R13: ffff8801e9b74760 R14: ffff8801e9b74528 R15: ffff8801e9b74530
-> >> [  540.995786] FS:  00007f4662bdf840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-> >> [  540.997403] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> [  540.998571] CR2: 000000000175c568 CR3: 00000001dcfe6000 CR4: 00000000000006e0
-> >> [  541.000015] Call Trace:
-> >> [  541.000554]  f2fs_evict_inode+0x253/0x630
-> >> [  541.001381]  evict+0x16f/0x290
-> >> [  541.002015]  iput+0x280/0x300
-> >> [  541.002654]  dentry_unlink_inode+0x165/0x1e0
-> >> [  541.003528]  __dentry_kill+0x16a/0x260
-> >> [  541.004300]  dentry_kill+0x70/0x250
-> >> [  541.005018]  dput+0x154/0x1d0
-> >> [  541.005635]  do_one_tree+0x34/0x40
-> >> [  541.006354]  shrink_dcache_for_umount+0x3f/0xa0
-> >> [  541.007285]  generic_shutdown_super+0x43/0x1c0
-> >> [  541.008192]  kill_block_super+0x52/0x80
-> >> [  541.008978]  kill_f2fs_super+0x62/0x70
-> >> [  541.009750]  deactivate_locked_super+0x6f/0xa0
-> >> [  541.010664]  deactivate_super+0x5e/0x80
-> >> [  541.011450]  cleanup_mnt+0x61/0xa0
-> >> [  541.012151]  __cleanup_mnt+0x12/0x20
-> >> [  541.012893]  task_work_run+0xc8/0xf0
-> >> [  541.013635]  exit_to_usermode_loop+0x125/0x130
-> >> [  541.014555]  do_syscall_64+0x138/0x170
-> >> [  541.015340]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >> [  541.016375] RIP: 0033:0x7f46624bf487
-> >> [  541.017104] Code: 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e1 c9 2b 00 f7 d8 64 89 01 48
-> >> [  541.020923] RSP: 002b:00007fff5e12e9a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> >> [  541.022452] RAX: 0000000000000000 RBX: 0000000001753030 RCX: 00007f46624bf487
-> >> [  541.023885] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000000175a1e0
-> >> [  541.025318] RBP: 000000000175a1e0 R08: 0000000000000000 R09: 0000000000000014
-> >> [  541.026755] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f46629c883c
-> >> [  541.028186] R13: 0000000000000000 R14: 0000000001753210 R15: 00007fff5e12ec30
-> >> [  541.029626] Modules linked in: snd_hda_codec_generic snd_hda_intel snd_hda_codec snd_hwdep snd_hda_core snd_pcm snd_timer snd mac_hid i2c_piix4 soundcore ib_iser rdma_cm iw_cm ib_cm ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi raid10 raid456 async_raid6_recov async_memcpy async_pq async_xor async_tx raid1 raid0 multipath linear 8139too crct10dif_pclmul crc32_pclmul qxl drm_kms_helper syscopyarea aesni_intel sysfillrect sysimgblt fb_sys_fops ttm drm aes_x86_64 crypto_simd cryptd 8139cp glue_helper mii pata_acpi floppy
-> >> [  541.039445] ---[ end trace 4ce02f25ff7d3df5 ]---
-> >> [  541.040392] RIP: 0010:clear_inode+0xc0/0xd0
-> >> [  541.041240] Code: 8d a3 30 01 00 00 4c 89 e7 e8 1c ec f8 ff 48 8b 83 30 01 00 00 49 39 c4 75 1a 48 c7 83 a0 00 00 00 60 00 00 00 5b 41 5c 5d c3 <0f> 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 0b 0f 1f 40 00 66 66 66 66 90 55
-> >> [  541.045042] RSP: 0018:ffff8801e34a7b70 EFLAGS: 00010002
-> >> [  541.046099] RAX: 0000000000000000 RBX: ffff8801e9b744e8 RCX: ffffffffb840eb3a
-> >> [  541.047537] RDX: dffffc0000000000 RSI: 0000000000000004 RDI: ffff8801e9b746b8
-> >> [  541.048965] RBP: ffff8801e34a7b80 R08: ffffed003d36e8ce R09: ffffed003d36e8ce
-> >> [  541.050402] R10: 0000000000000001 R11: ffffed003d36e8cd R12: ffff8801e9b74668
-> >> [  541.051832] R13: ffff8801e9b74760 R14: ffff8801e9b74528 R15: ffff8801e9b74530
-> >> [  541.053263] FS:  00007f4662bdf840(0000) GS:ffff8801f6f00000(0000) knlGS:0000000000000000
-> >> [  541.054891] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >> [  541.056039] CR2: 000000000175c568 CR3: 00000001dcfe6000 CR4: 00000000000006e0
-> >> [  541.058506] ==================================================================
-> >> [  541.059991] BUG: KASAN: stack-out-of-bounds in update_stack_state+0x38c/0x3e0
-> >> [  541.061513] Read of size 8 at addr ffff8801e34a7970 by task umount/1305
-> >>
-> >> [  541.063302] CPU: 1 PID: 1305 Comm: umount Tainted: G      D           4.18.0-rc1+ #4
-> >> [  541.064838] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> >> [  541.066778] Call Trace:
-> >> [  541.067294]  dump_stack+0x7b/0xb5
-> >> [  541.067986]  print_address_description+0x70/0x290
-> >> [  541.068941]  kasan_report+0x291/0x390
-> >> [  541.069692]  ? update_stack_state+0x38c/0x3e0
-> >> [  541.070598]  __asan_load8+0x54/0x90
-> >> [  541.071315]  update_stack_state+0x38c/0x3e0
-> >> [  541.072172]  ? __read_once_size_nocheck.constprop.7+0x20/0x20
-> >> [  541.073340]  ? vprintk_func+0x27/0x60
-> >> [  541.074096]  ? printk+0xa3/0xd3
-> >> [  541.074762]  ? __save_stack_trace+0x5e/0x100
-> >> [  541.075634]  unwind_next_frame.part.5+0x18e/0x490
-> >> [  541.076594]  ? unwind_dump+0x290/0x290
-> >> [  541.077368]  ? __show_regs+0x2c4/0x330
-> >> [  541.078142]  __unwind_start+0x106/0x190
-> >> [  541.085422]  __save_stack_trace+0x5e/0x100
-> >> [  541.086268]  ? __save_stack_trace+0x5e/0x100
-> >> [  541.087161]  ? unlink_anon_vmas+0xba/0x2c0
-> >> [  541.087997]  save_stack_trace+0x1f/0x30
-> >> [  541.088782]  save_stack+0x46/0xd0
-> >> [  541.089475]  ? __alloc_pages_slowpath+0x1420/0x1420
-> >> [  541.090477]  ? flush_tlb_mm_range+0x15e/0x220
-> >> [  541.091364]  ? __dec_node_state+0x24/0xb0
-> >> [  541.092180]  ? lock_page_memcg+0x85/0xf0
-> >> [  541.092979]  ? unlock_page_memcg+0x16/0x80
-> >> [  541.093812]  ? page_remove_rmap+0x198/0x520
-> >> [  541.094674]  ? mark_page_accessed+0x133/0x200
-> >> [  541.095559]  ? _cond_resched+0x1a/0x50
-> >> [  541.096326]  ? unmap_page_range+0xcd4/0xe50
-> >> [  541.097179]  ? rb_next+0x58/0x80
-> >> [  541.097845]  ? rb_next+0x58/0x80
-> >> [  541.098518]  __kasan_slab_free+0x13c/0x1a0
-> >> [  541.099352]  ? unlink_anon_vmas+0xba/0x2c0
-> >> [  541.100184]  kasan_slab_free+0xe/0x10
-> >> [  541.100934]  kmem_cache_free+0x89/0x1e0
-> >> [  541.101724]  unlink_anon_vmas+0xba/0x2c0
-> >> [  541.102534]  free_pgtables+0x101/0x1b0
-> >> [  541.103299]  exit_mmap+0x146/0x2a0
-> >> [  541.103996]  ? __ia32_sys_munmap+0x50/0x50
-> >> [  541.104829]  ? kasan_check_read+0x11/0x20
-> >> [  541.105649]  ? mm_update_next_owner+0x322/0x380
-> >> [  541.106578]  mmput+0x8b/0x1d0
-> >> [  541.107191]  do_exit+0x43a/0x1390
-> >> [  541.107876]  ? mm_update_next_owner+0x380/0x380
-> >> [  541.108791]  ? deactivate_super+0x5e/0x80
-> >> [  541.109610]  ? cleanup_mnt+0x61/0xa0
-> >> [  541.110351]  ? __cleanup_mnt+0x12/0x20
-> >> [  541.111115]  ? task_work_run+0xc8/0xf0
-> >> [  541.111879]  ? exit_to_usermode_loop+0x125/0x130
-> >> [  541.112817]  rewind_stack_do_exit+0x17/0x20
-> >> [  541.113666] RIP: 0033:0x7f46624bf487
-> >> [  541.114404] Code: Bad RIP value.
-> >> [  541.115094] RSP: 002b:00007fff5e12e9a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-> >> [  541.116605] RAX: 0000000000000000 RBX: 0000000001753030 RCX: 00007f46624bf487
-> >> [  541.118034] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000000175a1e0
-> >> [  541.119472] RBP: 000000000175a1e0 R08: 0000000000000000 R09: 0000000000000014
-> >> [  541.120890] R10: 00000000000006b2 R11: 0000000000000246 R12: 00007f46629c883c
-> >> [  541.122321] R13: 0000000000000000 R14: 0000000001753210 R15: 00007fff5e12ec30
-> >>
-> >> [  541.124061] The buggy address belongs to the page:
-> >> [  541.125042] page:ffffea00078d29c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-> >> [  541.126651] flags: 0x2ffff0000000000()
-> >> [  541.127418] raw: 02ffff0000000000 dead000000000100 dead000000000200 0000000000000000
-> >> [  541.128963] raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-> >> [  541.130516] page dumped because: kasan: bad access detected
-> >>
-> >> [  541.131954] Memory state around the buggy address:
-> >> [  541.132924]  ffff8801e34a7800: 00 f1 f1 f1 f1 00 f4 f4 f4 f3 f3 f3 f3 00 00 00
-> >> [  541.134378]  ffff8801e34a7880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >> [  541.135814] >ffff8801e34a7900: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
-> >> [  541.137253]                                                              ^
-> >> [  541.138637]  ffff8801e34a7980: f1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> >> [  541.140075]  ffff8801e34a7a00: 00 00 00 00 00 00 00 00 f3 00 00 00 00 00 00 00
-> >> [  541.141509] ==================================================================
-> >>
-> >> - Location
-> >> https://elixir.bootlin.com/linux/v4.18-rc1/source/fs/inode.c#L512
-> >> 	BUG_ON(inode->i_data.nrpages);
-> >>
-> >> The root cause is root directory inode is corrupted, it has both
-> >> inline_data and inline_dentry flag, and its nlink is zero, so in
-> >> ->evict(), after dropping all page cache, it grabs page #0 for inline
-> >> data truncation, result in panic in later clear_inode() where we will
-> >> check inode->i_data.nrpages value.
-> >>
-> >> This patch adds inline flags check in sanity_check_inode, in addition,
-> >> do sanity check with root inode's nlink.
-> >>
-> >> Reported-by Wen Xu <wen.xu@gatech.edu>
 > >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > >> ---
-> >>  fs/f2fs/inode.c | 20 ++++++++++++++++++++
-> >>  fs/f2fs/super.c |  3 ++-
-> >>  2 files changed, 22 insertions(+), 1 deletion(-)
+> >> v2:
+> >> - change to split discard command entry before submission.
+> >>  fs/f2fs/f2fs.h    |  13 +++---
+> >>  fs/f2fs/segment.c | 117 +++++++++++++++++++++++++++++++++++++-----------------
+> >>  2 files changed, 86 insertions(+), 44 deletions(-)
 > >>
-> >> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> >> index 54067e456610..4cf0a05cc03e 100644
-> >> --- a/fs/f2fs/inode.c
-> >> +++ b/fs/f2fs/inode.c
-> >> @@ -224,6 +224,26 @@ static bool sanity_check_inode(struct inode *inode)
-> >>  			return false;
-> >>  		}
-> >>  	}
-> >> +
-> >> +	if (f2fs_has_inline_data(inode) &&
-> >> +			(!S_ISREG(inode->i_mode) || !S_ISLNK(inode->i_mode))) {
-> >> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >> +		f2fs_msg(sbi->sb, KERN_WARNING,
-> >> +			"%s: inode (ino=%lx, mode=%u) should not have "
-> >> +			"inline_data, run fsck to fix",
-> >> +			__func__, inode->i_ino, inode->i_mode);
-> >> +		return false;
-> >> +	}
-> >> +
-> >> +	if (f2fs_has_inline_dentry(inode) && !S_ISDIR(inode->i_mode)) {
-> >> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
-> >> +		f2fs_msg(sbi->sb, KERN_WARNING,
-> >> +			"%s: inode (ino=%lx, mode=%u) should not have "
-> >> +			"inline_dentry, run fsck to fix",
-> >> +			__func__, inode->i_ino, inode->i_mode);
-> >> +		return false;
-> >> +	}
-> >> +
-> >>  	return true;
+> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> >> index c48b655d5d8d..359526d88d3f 100644
+> >> --- a/fs/f2fs/f2fs.h
+> >> +++ b/fs/f2fs/f2fs.h
+> >> @@ -178,7 +178,6 @@ enum {
+> >>  
+> >>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+> >>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+> >> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+> >>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+> >>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+> >>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+> >> @@ -709,22 +708,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
 > >>  }
 > >>  
-> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >> index 657757635306..7405762d2bc9 100644
-> >> --- a/fs/f2fs/super.c
-> >> +++ b/fs/f2fs/super.c
-> >> @@ -2942,7 +2942,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >>  		err = PTR_ERR(root);
-> >>  		goto free_stats;
+> >>  static inline bool __is_discard_mergeable(struct discard_info *back,
+> >> -						struct discard_info *front)
+> >> +			struct discard_info *front, unsigned int max_len)
+> >>  {
+> >>  	return (back->lstart + back->len == front->lstart) &&
+> >> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+> >> +		(back->len + front->len <= max_len);
+> >>  }
+> >>  
+> >>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+> >> -						struct discard_info *back)
+> >> +			struct discard_info *back, unsigned int max_len)
+> >>  {
+> >> -	return __is_discard_mergeable(back, cur);
+> >> +	return __is_discard_mergeable(back, cur, max_len);
+> >>  }
+> >>  
+> >>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+> >> -						struct discard_info *front)
+> >> +			struct discard_info *front, unsigned int max_len)
+> >>  {
+> >> -	return __is_discard_mergeable(cur, front);
+> >> +	return __is_discard_mergeable(cur, front, max_len);
+> >>  }
+> >>  
+> >>  static inline bool __is_extent_mergeable(struct extent_info *back,
+> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >> index f7f56dd091b4..cbf8f3f9a8e7 100644
+> >> --- a/fs/f2fs/segment.c
+> >> +++ b/fs/f2fs/segment.c
+> >> @@ -966,17 +966,24 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
 > >>  	}
-> >> -	if (!S_ISDIR(root->i_mode) || !root->i_blocks || !root->i_size) {
-> >> +	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
-> >> +			!root->i_size || !root->i_nlink) {
-> >>  		iput(root);
-> >>  		err = -EINVAL;
-> >>  		goto free_stats;
+> >>  }
+> >>  
+> >> -
+
+===================== BEGIN
+
+> >> +static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >> +				struct block_device *bdev, block_t lstart,
+> >> +				block_t start, block_t len);
+> >>  /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+> >>  static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  						struct discard_policy *dpolicy,
+> >> -						struct discard_cmd *dc)
+> >> +						struct discard_cmd *dc,
+> >> +						unsigned int *issued)
+> >>  {
+> >> +	struct block_device *bdev = dc->bdev;
+> >> +	struct request_queue *q = bdev_get_queue(bdev);
+> >> +	unsigned int max_discard_blocks =
+> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+> >>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
+> >>  					&(dcc->fstrim_list) : &(dcc->wait_list);
+> >> -	struct bio *bio = NULL;
+> >>  	int flag = dpolicy->sync ? REQ_SYNC : 0;
+> >> +	block_t lstart, start, len, total_len;
+> >>  
+> >>  	if (dc->state != D_PREP)
+> >>  		return;
+> >> @@ -984,30 +991,63 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+> >>  		return;
+> >>  
+> >> -	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
+> >> -
+> >> -	dc->error = __blkdev_issue_discard(dc->bdev,
+> >> -				SECTOR_FROM_BLOCK(dc->start),
+> >> -				SECTOR_FROM_BLOCK(dc->len),
+> >> -				GFP_NOFS, 0, &bio);
+> >> -	if (!dc->error) {
+> >> -		/* should keep before submission to avoid D_DONE right away */
+> >> -		dc->state = D_SUBMIT;
+> >> -		atomic_inc(&dcc->issued_discard);
+> >> -		atomic_inc(&dcc->issing_discard);
+> >> -		if (bio) {
+> >> -			bio->bi_private = dc;
+> >> -			bio->bi_end_io = f2fs_submit_discard_endio;
+> >> -			bio->bi_opf |= flag;
+> >> -			submit_bio(bio);
+> >> -			list_move_tail(&dc->list, wait_list);
+> >> -			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
+> >> -
+> >> -			f2fs_update_iostat(sbi, FS_DISCARD, 1);
+> >> +	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
+> >> +
+> >> +	lstart = dc->lstart;
+> >> +	start = dc->start;
+> >> +	len = dc->len;
+> >> +	total_len = len;
+> >> +
+> >> +	while (total_len && *issued < dpolicy->max_requests) {
+> >> +		struct bio *bio = NULL;
+> >> +
+> >> +		if (len > max_discard_blocks)
+> >> +			len = max_discard_blocks;
+> >> +
+> >> +		dc->error = __blkdev_issue_discard(bdev,
+> >> +					SECTOR_FROM_BLOCK(start),
+> >> +					SECTOR_FROM_BLOCK(len),
+> >> +					GFP_NOFS, 0, &bio);
+> >> +		if (!dc->error) {
+> >> +			/*
+> >> +			 * should keep before submission to avoid D_DONE
+> >> +			 * right away
+> >> +			 */
+> >> +			dc->state = D_SUBMIT;
+> >> +			dc->len = len;
+> >> +			atomic_inc(&dcc->issued_discard);
+> >> +			atomic_inc(&dcc->issing_discard);
+> >> +			if (bio) {
+> >> +				bio->bi_private = dc;
+> >> +				bio->bi_end_io = f2fs_submit_discard_endio;
+> >> +				bio->bi_opf |= flag;
+> >> +				submit_bio(bio);
+> >> +				list_move_tail(&dc->list, wait_list);
+> >> +				__check_sit_bitmap(sbi, dc->start,
+> >> +							dc->start + dc->len);
+> >> +
+> >> +				f2fs_update_iostat(sbi, FS_DISCARD, 1);
+> >> +			}
+> >> +		} else {
+> >> +			__remove_discard_cmd(sbi, dc);
+
+Keep the original one, since it's partially failed?
+
+> >> +			return;
+> >> +		}
+> >> +		lstart += len;
+> >> +		start += len;
+> >> +		total_len -= len;
+> >> +		len = total_len;
+> >> +		(*issued)++;
+> >> +
+> >> +		if (len) {
+> >> +			__update_discard_tree_range(sbi, bdev, lstart,
+> >> +								start, len);
+
+Do we really need this? We already grabbed one candidate which was not merged
+well.
+
+> >> +			dc = (struct discard_cmd *)f2fs_lookup_rb_tree(
+> >> +						&dcc->root, NULL, lstart);
+> >> +			f2fs_bug_on(sbi, !dc);
+> >>  		}
+> >> -	} else {
+> >> -		__remove_discard_cmd(sbi, dc);
+> >>  	}
+> >> +
+> >> +	return;
+> >>  }
+
+======================= END
+
+
+> >>  
+> >>  static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
+> >> @@ -1088,10 +1128,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  	struct discard_cmd *dc;
+> >>  	struct discard_info di = {0};
+> >>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+> >> +	struct request_queue *q = bdev_get_queue(bdev);
+> >> +	unsigned int max_discard_blocks =
+> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+> >>  	block_t end = lstart + len;
+> >>  
+> >> -	mutex_lock(&dcc->cmd_lock);
+> >> -
+> >>  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
+> >>  					NULL, lstart,
+> >>  					(struct rb_entry **)&prev_dc,
+> >> @@ -1131,7 +1172,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  
+> >>  		if (prev_dc && prev_dc->state == D_PREP &&
+> >>  			prev_dc->bdev == bdev &&
+> >> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
+> >> +			__is_discard_back_mergeable(&di, &prev_dc->di,
+> >> +							max_discard_blocks)) {
+> >>  			prev_dc->di.len += di.len;
+> >>  			dcc->undiscard_blks += di.len;
+> >>  			__relocate_discard_cmd(dcc, prev_dc);
+> >> @@ -1142,7 +1184,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  
+> >>  		if (next_dc && next_dc->state == D_PREP &&
+> >>  			next_dc->bdev == bdev &&
+> >> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
+> >> +			__is_discard_front_mergeable(&di, &next_dc->di,
+> >> +							max_discard_blocks)) {
+> >>  			next_dc->di.lstart = di.lstart;
+> >>  			next_dc->di.len += di.len;
+> >>  			next_dc->di.start = di.start;
+> >> @@ -1165,8 +1208,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+> >>  		node = rb_next(&prev_dc->rb_node);
+> >>  		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+> >>  	}
+> >> -
+> >> -	mutex_unlock(&dcc->cmd_lock);
+> >>  }
+> >>  
+> >>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >> @@ -1181,7 +1222,9 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  
+> >>  		blkstart -= FDEV(devi).start_blk;
+> >>  	}
+> >> +	mutex_lock(&SM_I(sbi)->dcc_info->cmd_lock);
+> >>  	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
+> >> +	mutex_unlock(&SM_I(sbi)->dcc_info->cmd_lock);
+> >>  	return 0;
+> >>  }
+> >>  
+> >> @@ -1220,9 +1263,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+> >>  		}
+> >>  
+> >>  		dcc->next_pos = dc->lstart + dc->len;
+> >> -		__submit_discard_cmd(sbi, dpolicy, dc);
+> >> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>  
+> >> -		if (++issued >= dpolicy->max_requests)
+> >> +		if (issued >= dpolicy->max_requests)
+> >>  			break;
+> >>  next:
+> >>  		node = rb_next(&dc->rb_node);
+> >> @@ -1277,9 +1320,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >>  				break;
+> >>  			}
+> >>  
+> >> -			__submit_discard_cmd(sbi, dpolicy, dc);
+> >> +			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>  
+> >> -			if (++issued >= dpolicy->max_requests)
+> >> +			if (issued >= dpolicy->max_requests)
+> >>  				break;
+> >>  		}
+> >>  		blk_finish_plug(&plug);
+> >> @@ -2475,9 +2518,9 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+> >>  			goto skip;
+> >>  		}
+> >>  
+> >> -		__submit_discard_cmd(sbi, dpolicy, dc);
+> >> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+> >>  
+> >> -		if (++issued >= dpolicy->max_requests) {
+> >> +		if (issued >= dpolicy->max_requests) {
+> >>  			start = dc->lstart + dc->len;
+> >>  
+> >>  			blk_finish_plug(&plug);
 > >> -- 
-> >> 2.18.0.rc1
+> >> 2.16.2.17.g38e79b1fd
