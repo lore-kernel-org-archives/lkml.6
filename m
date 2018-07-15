@@ -1,97 +1,111 @@
 Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D78ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 21:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F94ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C105F20882
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 21:57:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C4D320882
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:04:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ArKGe9T8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C105F20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q0d1cVsY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4D320882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727227AbeGOWVs (ORCPT
+        id S1727111AbeGOW2F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 18:21:48 -0400
-Received: from ozlabs.org ([203.11.71.1]:40775 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726973AbeGOWVs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 18:21:48 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41TL4Q0q3Gz9ryt;
-        Mon, 16 Jul 2018 07:57:25 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531691847;
-        bh=Jkoiph9esUj5NIoNQe8WRHEdfdiLdpsDuaWtAhO5CJc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ArKGe9T8A+5E7tvVpe6kzsEIH+mLeBS7YwRj4gdQZKvcHDukWzFdd46QRyVYJpKTa
-         IlHlnZe4N6V8jk9UcDy9usaO9iNXIrY0NThFaTEaEMcXfXWggc19geBkRHZKM8RD99
-         pkPFp4fDcaQ9Bki/dhTE7FyJysrJz2CHfMNjYdCK5nl7dFpk4BxZPlexdcY0eb6xsE
-         e6mT3kkY31aFL0njh2oHIhhnxYz1y/yUrynRnN0ceaRqzv5m0YKSNpsP5v4o3MwLeK
-         Gy2/11yP2HrYj0114LU2UnOVoFwlUx1k2lOzQQMKp/4axfu5zUFSf3rIAkgWxyL1pE
-         hohtVnDWBCKTA==
-Date:   Mon, 16 Jul 2018 07:57:18 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: linux-next: Signed-off-by missing for commits in the arm-soc tree
-Message-ID: <20180716075718.4e5ef491@canb.auug.org.au>
+        Sun, 15 Jul 2018 18:28:05 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51618 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbeGOW2F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 18:28:05 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s12-v6so13299344wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 15:03:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Mo4KHA68nCtrOCiZfVJKbV7bYINPMwKyQNvZnbQRvcE=;
+        b=q0d1cVsYsM+0Zq9YrSCQNPXx/UG0wwSzkKZvPePFve9HH4aVzt/9Q3G22CQ2zbQj9j
+         W6PjnRPQ1RYJI0VhgS2LGzuX/jkAIugSDk6QYZ6WVTQgfxbgEo+ieubr6xtDf8/iLfUP
+         OFwscG4IfhJDn/m/knwN8m/dM/imcNjgxtPlnxk1r1LGL6SY/4CPfZWtYIZoknDFQ0QY
+         neeAObueAyH+xLW/U5NF6hSvAV+aESqvtoulmfNAACDSBxXC/U2wpjsb9Iw8dDx0GyPX
+         TtU2DoxKk4/J3pP9TzhvOFLye4kvlc+sGgjHdje18k3Ku63f4/1ysjrDlnztb9WwBZyL
+         GNRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Mo4KHA68nCtrOCiZfVJKbV7bYINPMwKyQNvZnbQRvcE=;
+        b=LoUKEfqZ6Dde2+zzkl8o4N0AjZ87QWwZtkYDhw5KlWrbYtcTXgJGJMupGAqRDvA4Z+
+         6b/I4aY9wAgytQKJAqmeht/Jg5R3ZavnWcK2w0raaQBK0rEq4gx8UYL4XlceCv/Dik7G
+         jQKvE5xNsCkMhYT1UtzPuHQEmA1Jvt1GIlcmA+nhPbcAlUpo9jtYYbe/3y61xIwMPG36
+         6WgPRISB/zd+L2E4VSv1RaJPTfpiCpBqH8uA6ydVftDHYKtXzMKmS4hDkT1ZqviaGziR
+         XA7FTv+I7lqBcP4AhZry4zK8I2cpSAKEQoupIz5DAkfCZ1WF5Gy1bI4FvX0evNq4XFaY
+         65Ow==
+X-Gm-Message-State: AOUpUlGPS1XrkQSaGdJkaV+hdF09aZkgfom6q+ZJubd4HTXi10sHkEOB
+        6PIEkIAe6+Yf2dN67NOnLduzkQ==
+X-Google-Smtp-Source: AAOMgpdX6R5R92hjF2w5ce9wQdmKDAmenX0K+p0ocLEilY7RN27Ayop8aTvMs7cvRtc2wT6Krzq7xg==
+X-Received: by 2002:a1c:37cd:: with SMTP id e196-v6mr7909168wma.84.1531692222304;
+        Sun, 15 Jul 2018 15:03:42 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id w21-v6sm13493658wmw.29.2018.07.15.15.03.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Jul 2018 15:03:41 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 00:03:39 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     andriy.shevchenko@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/mtrr: don't copy out-of-bounds data in mtrr_write
+Message-ID: <20180715220339.GA15435@gmail.com>
+References: <20180706215003.156702-1-jannh@google.com>
+ <f9c8cf81df29006bc9c79932f3bcd599b559b408.camel@linux.intel.com>
+ <CAG48ez105Jan3BDAKssThnbNcr3yBMFTbdQHEHwXdmZUvE5VQw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SNo_UrQAryXNh9eCq+Jn1SD"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez105Jan3BDAKssThnbNcr3yBMFTbdQHEHwXdmZUvE5VQw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/SNo_UrQAryXNh9eCq+Jn1SD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+* Jann Horn <jannh@google.com> wrote:
 
-Commits
+>  - A malicious user can pass an arbitrary file to a setuid binary as
+> stdin/stdout/stderr. When the setuid binary (expecting stdin/stdout to
+> be something normal, like a proper file or a pipe) then calls read(0,
+> <buf>, <len>), if the kernel disregards the length argument and writes
+> beyond the end of the buffer, it can corrupt adjacent userspace data,
+> potentially allowing a user to escalate their privileges; a write
+> handler is somewhat less interesting because it can probably (as in
+> this case) only leak out-of-bounds data from the caller, not corrupt
+> it, but it's still a concern in theory.
 
-  b8ccf02a5014 ("ARM: dts: bcm283x: Add the PMU to the devicetree.")
-  b7dd29b401f5 ("ARM: dts: bcm283x: Add Transposer block")
-  74d1e007915f ("hwmon: Add support for RPi voltage sensor")
-  70eea1bbb556 ("firmware: raspberrypi: Register hwmon driver")
-  a1547e0bca51 ("firmware: raspberrypi: Remove VLA usage")
+BTW., a naive question: would it make sense to simply disallow 'special'
+fds to be passed to setuid binaries, and fix any user-space that breaks?
+(i.e. only allow regular files and pipes/sockets.)
 
-are missing a Signed-off-by from their committer.
+Also, don't allow splice() on special files either, except if the driver 
+explicitly opts in to it.
 
---=20
-Cheers,
-Stephen Rothwell
+Sounds a lot more robust in the long run than playing whack-a-mole with the 
+*inevitable* hole in special read() and write() handlers in our 3,000+ device 
+drivers...
 
---Sig_/SNo_UrQAryXNh9eCq+Jn1SD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltLwz4ACgkQAVBC80lX
-0Gwf1Qf7B4Xn4xAMfPxVb0M+sskBPq51kCv/IbejqNZvlKN+TScnlQIvw+0sIDSf
-pjEgCBc2Ep3IdJzwEyXAtd9RswCSoTwgTsWjxYNl5IcPJAy4k+0iPcVdcO30UVIA
-W7GamnTTdq0Bzac8JwTKweI1RicgfjpNcsrDY+owCzv7UaBA/AoAmPzAUjOMp3lI
-IaG5TXWPqHnSYm6+cHhoUf+gEazQh/bIQV7DOuiD3xYgo+6bHWsl65dqmWzjs0hw
-0W4EH2RAmwkp2AjPRR3ojBmnkk1qXUx+l0vm3a10lKQNN/NzmhS0IEVOWrTsKt+X
-KFpt0Fpn5WOhtYKhbDvXaXXHYnPtYg==
-=sKqP
------END PGP SIGNATURE-----
-
---Sig_/SNo_UrQAryXNh9eCq+Jn1SD--
+	Ingo
