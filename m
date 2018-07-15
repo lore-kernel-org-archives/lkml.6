@@ -1,92 +1,99 @@
-Return-Path: <SRS0=T5ek=J6=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_24_48,
-	DKIM_SIGNED,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40234ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F90BECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 00:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E722C208A5
-	for <linux-kernel@archiver.kernel.org>; Sat, 14 Jul 2018 22:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C4D208CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 00:37:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="rTm1pPMv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E722C208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="i6MdIUa8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C4D208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731974AbeGNXFD (ORCPT
+        id S1731960AbeGOA6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 19:05:03 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58144 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731583AbeGNXFC (ORCPT
+        Sat, 14 Jul 2018 20:58:11 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:44507 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731877AbeGOA6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 19:05:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bkEM420ENpdthYaYnih5J3UZVlN8wWf2aVTIHJrSkLM=; b=rTm1pPMvKg6eusMWRxSyWbyC6
-        L0tIJ8Z/zdGGNPnDolaZ8aFt4Q/2HZonmSM9YN7u4U2UQTCq4Cq16Ag8eyvUrisSRxbKMCSvSmGBy
-        cba37HGVmWEvlvSoxnXWc/xSW8FbG6k/aQcM4PpKOmsiumU078Nwoswa3mDuODx7RMIh4=;
-Received: from host86-174-189-173.range86-174.btcentralplus.com ([86.174.189.173] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1feTH5-0006hp-5o; Sat, 14 Jul 2018 22:44:23 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id C44B144008C; Fri, 13 Jul 2018 17:14:08 +0100 (BST)
-Date:   Fri, 13 Jul 2018 17:14:08 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     gregkh@linuxfoundation.org, p.paillet@st.com,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH] base: core: Remove WARN_ON from link dependencies check
-Message-ID: <20180713161408.GE16228@sirena.org.uk>
-References: <20180712080623.21203-1-benjamin.gaignard@st.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xJK8B5Wah2CMJs8h"
-Content-Disposition: inline
-In-Reply-To: <20180712080623.21203-1-benjamin.gaignard@st.com>
-X-Cookie: Reactor error - core dumped!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Sat, 14 Jul 2018 20:58:11 -0400
+Received: by mail-pf0-f195.google.com with SMTP id j3-v6so24542971pfh.11
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 17:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LLi7oDyVUmGwjn4VbSGEb9paGFsJxF2mdUuOAQXcgKU=;
+        b=i6MdIUa8e0su7yIcfzBqVBEG1AI+9lFhBYkXpryoj6ak3nS86g553jOsnz1YGg6CnR
+         t8e6+0fdEh0m4iilnynYXKyDWZUcQUgGXUKtuNJF5K3biVa3LdoJOyPYkBt9kVXqDZzr
+         2XcvqaiwfyoHnvsHVv8jl8YLdFzWrWVRGcapw/5GVrqSJq0Ss5k/D3J/cuN6t85+SQaZ
+         AQXuCbVLYf3Zjk930vDVSBPESeV3PRRzRxbDsmJR91MNFLI0GJeeaCU3dww0rfobSOqh
+         5XIyDN/FJnfCZ3g1XpK0/Iz7nZL89A+g5uGJLOno7TVWNBZC1wG+O3wk/AivQiWZi9mS
+         JiJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LLi7oDyVUmGwjn4VbSGEb9paGFsJxF2mdUuOAQXcgKU=;
+        b=uEcIDm1oZ3XNmn9ha+0vNIuDZojVHs4k9Ty/NIp58yjQ2oVxevhtXI1B6vfMRZWp+f
+         RIZr9vGqrBQNzhNjL0orqfYCR4HmLIBLw9q2b2Jksxv1OVCnxhDLzJ/P9ytHbZsWTHBS
+         q/i2028sOqHjcgKnQ71y7vtqy2m9APgJ22hIoyS8CuZstX2SaL0k3foh2qF/Wms6w5t1
+         xSVpa/KWDzY2kjOh1Eafoq4mg4l8GNI1twAIdIIdQ8lKUqxr+l/ErtaAp2U+MNL0Tytn
+         IP4dadqgRZcK9lwQhkXeMCbF1uh8UpICI8i6omFE4R5l0pnNPXWJ+SrOK2DRxA/IrBvC
+         g4ZQ==
+X-Gm-Message-State: AOUpUlEl1byBngOZBPtQHFOilmjGbaVl5BLyFTM0DFuHU9I2d6p6mB20
+        45axe/oSnwtjwdbs5aurpgcTjw==
+X-Google-Smtp-Source: AAOMgpek0CoAQVgkxnAyQ51dCD6JfRCYYVHlXTjxYKwTeeIrb60G76iNoZOCQnzzzD672faxwocSeA==
+X-Received: by 2002:a65:448a:: with SMTP id l10-v6mr10916967pgq.382.1531615037886;
+        Sat, 14 Jul 2018 17:37:17 -0700 (PDT)
+Received: from rohan.hsd1.ca.comcast.net ([2601:646:c103:8ec:512d:ce75:aa80:7b73])
+        by smtp.gmail.com with ESMTPSA id r25-v6sm14114672pfj.117.2018.07.14.17.37.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 14 Jul 2018 17:37:16 -0700 (PDT)
+From:   Jim Wilson <jimw@sifive.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     Jim Wilson <jimw@sifive.com>, Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Atish Patra <atish.patra@wdc.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] RISC-V: Don't increment sepc after breakpoint.
+Date:   Sat, 14 Jul 2018 17:34:39 -0700
+Message-Id: <20180715003442.32216-1-jimw@sifive.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Adding 4 to sepc is pointless, and is wrong if we executed a 2-byte
+compressed breakpoint.  This plus a corresponding gdb patch allows
+compressed breakpoints to work in gdb.  Gdb maintainers have already
+agreed that this is the right approach.
 
---xJK8B5Wah2CMJs8h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Jim Wilson <jimw@sifive.com>
+---
+ arch/riscv/kernel/traps.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Thu, Jul 12, 2018 at 10:06:23AM +0200, Benjamin Gaignard wrote:
-> In some cases the link between between customer and supplier
-> already exist. Do not warn about already existing dependencies
-> because device_link_add() take care of this case.
+diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+index 14fcec5bdd24..ae323071c786 100644
+--- a/arch/riscv/kernel/traps.c
++++ b/arch/riscv/kernel/traps.c
+@@ -150,7 +150,6 @@ asmlinkage void do_trap_break(struct pt_regs *regs)
+ #endif /* CONFIG_GENERIC_BUG */
+ 
+ 	do_trap_siginfo(SIGTRAP, TRAP_BRKPT, regs->sepc, current);
+-	regs->sepc += 0x4;
+ }
+ 
+ #ifdef CONFIG_GENERIC_BUG
+-- 
+2.17.1
 
-Reviwed-by: Mark Brown <broonie@kernel.org>
-
---xJK8B5Wah2CMJs8h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltIz80ACgkQJNaLcl1U
-h9Bf2wf9FaEv16B8u9bsimEyjM8Hx4GGUEP9LMXHMIzhyUfUoVGy90eE3GTTV/+c
-3GKJb2yx9blLkIvwmOsZRXSKQqznNla1i4zATJNQC0PE1GWQUsAfticIE5cWIL7m
-xj0zcYDQw5bGXxbxMBNNgMQbZakRNCd2zHZ9DhQpYx4GwkzUp/FVPsqomxPVvfJ/
-3rgCs75qTr2c2gtygqSb+rCgCJ+ESfsyHxq2E0A0u6tID7HIVXZSgR2JnhaMXe4q
-tlORn7b/Ig6bamppVRQqZuvsvSx6bgGcrfk1eA24P+DzXRybmW4q9Cbp1YeBCQjH
-f8FSgpiPZvUQyS6g/qRzTaM+1MKLBQ==
-=0ghM
------END PGP SIGNATURE-----
-
---xJK8B5Wah2CMJs8h--
