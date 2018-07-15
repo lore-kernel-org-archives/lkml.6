@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2898ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF22ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0C320882
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55FB420882
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJH7rQsp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0C320882
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1JaKIQU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55FB420882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbeGOU7i (ORCPT
+        id S1727296AbeGOU7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 16:59:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:39080 "EHLO
+        Sun, 15 Jul 2018 16:59:41 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38494 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726965AbeGOU7i (ORCPT
+        with ESMTP id S1726973AbeGOU7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 16:59:38 -0400
-Received: by mail-wm0-f67.google.com with SMTP id h20-v6so13699516wmb.4;
-        Sun, 15 Jul 2018 13:35:30 -0700 (PDT)
+        Sun, 15 Jul 2018 16:59:39 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so13713877wmf.3;
+        Sun, 15 Jul 2018 13:35:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RL9nzhOLyDdXuPFCLZzvFhKZZgGr1SDBbDnvKwTVRvg=;
-        b=DJH7rQspCQHW8HO59W1JaGdhzCNQwdpzU2iTZ38LOVKMTPVyOFBXb6daQB6J/5xxpV
-         0dK0WfJCCGu6UIRw6bXyok0BSZyJkdKLEKbbvAaem1pV/hxaEunCM9FZoFbwjvGCoORR
-         DxjuPr+hB4i+a+ax2xyjsXiRiaHRvGuyTXKARhCzOyGPzH8CHYjEgMC4EGcB0F/QgC6g
-         EdTaHBbdfyzwOR3eLPO49kgGRw4F9B+IEBYbyRP1dHbyva9wIbn4RM1lZvfLUPWyFvsS
-         YDA3EnB67weehROJ1lolYa5IAVS6eogqOfWI1lSM3fXQPD+iIPgTm7P2xSuNJKwSLMmf
-         EctA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Y1yA57BlSXddt5KN4OOHp1H7O42JeT8BPpuP+j4k7hs=;
+        b=g1JaKIQUXUlFw6bHKW5RgTRbTn5QxROhvj84Yvb24NLpJlUnzPTExoQEOJzlI9CtZg
+         NYOv9JD+CkSOtF0pb2KFbfnOn/QG4pIwgJk20BUqzymxVPKNYUguMwH2WtBNwf8muW4Z
+         wp3hU33mErrcHmJz+mf675gkca+Lojkao/2PXJzQdSp7o3YoAOijxfH8BA1lIeAOGkLq
+         m/0HoQF3fgDM3NQVeu/dF/aeFqeYhXk2OC9hrvRswNGMNdmA+JP15BzfOYjd7fUOLyd0
+         5PuliO7wHQr4o6G5uDm0+9v9ufbz7vAb8MWLufypsOvVNd4ljJ2+eFPrsvYUg65lPFHE
+         ytsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RL9nzhOLyDdXuPFCLZzvFhKZZgGr1SDBbDnvKwTVRvg=;
-        b=iYgjnIYHtpXSAsuzc40DTImUv2ZiCrNuvgGk1KTPVnhDadS8M9OhKWvFWAvTWmLbCh
-         4yZq7/fcMeyLh8Ky94tA37S6T8gF6LdCp4jicwwGkVWk2SEMD2fV2XrTfIIkUjpgXLZd
-         rk+Zh51uJ8F9VAzHFIX5BXe/raMTuNzmsTFTwiLKbVWVlIyRbK3UqDy/Pm3WfJg8cP5t
-         8TKzBjKMPgI6ZXcusPlT5MTTmOFrZJYKXHRLQtj/TrXBW88MdP4uBjGNysGoTn+qdmqH
-         rxVzcm5rdry5rvZ7ptxOL3MYW5t0sv+HviYoXVhv0fMXeN+X9CtR256umSzE8zqOwcFk
-         869Q==
-X-Gm-Message-State: AOUpUlG+iTIyx43Km8jLSBtERnaJ13tXZipeGtnDRQeGU0gq0CYF/gbV
-        o38yyRiR2B3B6odh4frt/yw=
-X-Google-Smtp-Source: AAOMgpfqLGCgkAaasGhkZpGLY4XXRkP83wGHbR1Kzt3NFKJy19wXcgZHs0uUfwYSeTpVQFTGAiovGw==
-X-Received: by 2002:a1c:4405:: with SMTP id r5-v6mr7689270wma.4.1531686929374;
-        Sun, 15 Jul 2018 13:35:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Y1yA57BlSXddt5KN4OOHp1H7O42JeT8BPpuP+j4k7hs=;
+        b=rFRn9PKgIj7DA2/RWjryQVWBR6l0p9Wsc1sJHm0hMVzki/sUE7gP8OzPlpbhi/qsf8
+         juYj7UP4NUVTdZ8i4oOeVcTz4GEpXMINXAsrV7RmTmf0wsVsjQdpdzelgXFj16Z6Y7XL
+         fO1eN/9T86NFOuCnMo7cxzB678aI18iZWnHFsbfLRZYOqj5NJooCgyJ+8Zt04jia3hb/
+         cZy0tc5Plm/jJxJP7tci/zxlg8kuLNfMXgQ9Kk+Cw3eXgJGpi/xnwy/NXGe/73012yGl
+         MPB08kg4U9QwAAtvrfBM06xamrV5K7Oi/fOg+4mEotp4wve1bqSDaMuX3lTJloBWfhdY
+         bbqA==
+X-Gm-Message-State: AOUpUlFHA6QrDifi1tQYElumLArEdxLb2LtnDzsfnAIhbFhVb2c+a6UB
+        QZcBdLrmFmE+jZBsJvmFnfM=
+X-Google-Smtp-Source: AAOMgpc8JJQGgwYmsg/X2+VTF4wJgZkxqpvViS8FN96Z4gVVVdYjNlAPjZ9cB4ITIILcHihxhlyrjA==
+X-Received: by 2002:a1c:d942:: with SMTP id q63-v6mr8758568wmg.78.1531686930875;
+        Sun, 15 Jul 2018 13:35:30 -0700 (PDT)
 Received: from parthiban.fritz.box ([62.91.12.240])
-        by smtp.gmail.com with ESMTPSA id u25-v6sm11768387wrd.61.2018.07.15.13.35.28
+        by smtp.gmail.com with ESMTPSA id u25-v6sm11768387wrd.61.2018.07.15.13.35.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Jul 2018 13:35:28 -0700 (PDT)
+        Sun, 15 Jul 2018 13:35:30 -0700 (PDT)
 From:   Saravanan Sekar <sravanhome@gmail.com>
 To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
         sboyd@kernel.org
@@ -68,68 +69,38 @@ Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
         robh+dt@kernel.org, jeff.chen@actions-semi.com, pn@denx.de,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         mp-cs@actions-semi.com
-Subject: [PATCH v6 0/5] Add clock driver for Actions S700 SoC
-Date:   Sun, 15 Jul 2018 22:35:19 +0200
-Message-Id: <20180715203524.11948-1-sravanhome@gmail.com>
+Subject: [PATCH v6 1/5] clk: actions: Add missing REGMAP_MMIO dependency
+Date:   Sun, 15 Jul 2018 22:35:20 +0200
+Message-Id: <20180715203524.11948-2-sravanhome@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180715203524.11948-1-sravanhome@gmail.com>
+References: <20180715203524.11948-1-sravanhome@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds clock support for Actions Semi Owl series S700 SoC
-with relevant clock bindings and device tree info. 
+Add REGMAP_MMIO as dependency to avoid undefined
+reference to regmap symbols.
 
-Changed the UART clock using CMU instance and changes are tested in
-cubieboard7
+Fixes: d85d20053e19 ("clk: actions: Add S900 SoC clock support")
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
+ drivers/clk/actions/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changelog v6:
-- Adding Fixes tag for adding REGMAP dependency addition
-
-Changelog v5:
-- Commit message corrections
-- Removed MMC_OWL_CLK_NANDPLL option, as no active consumer
-- Device tree clock label name correction
-
-Changelog v4:
-- dt-bindings use absolute numbering for clocks
-- Patch re-oredering
-
-Changelog v3:
-- Splitted uart clock DTS changes into separate patch
-- Splitted REGMAP Kconfig selection into separate patch
-- General naming convention as "Actions Semi" in dt-binding documentation
-- Patch re-oredering
-- Cleanup and fixed review findings
-
-Changelog v2:
-Fixed 0 day compilation warning
-Modified existing dts Actions S900 clock bindings common to Actions
-Soc family
-
-Thanks and regards,
-Saravanan,
-Parthiban
-
-Saravanan Sekar (5):
-  clk: actions: Add missing REGMAP_MMIO dependency
-  dt-bindings: clock: Add S700 support for Actions Semi Soc's
-  clk: actions: Add S700 SoC clock support
-  arm64: dts: actions: Add Clock Management Unit for S700
-  arm64: dts: actions: Set UART clock reference from CMU
-
- ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +-
- .../boot/dts/actions/s700-cubieboard7.dts     |   8 +-
- arch/arm64/boot/dts/actions/s700.dtsi         |  14 +
- drivers/clk/actions/Kconfig                   |   7 +
- drivers/clk/actions/Makefile                  |   1 +
- drivers/clk/actions/owl-s700.c                | 606 ++++++++++++++++++
- include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++
- 7 files changed, 758 insertions(+), 16 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
- create mode 100644 drivers/clk/actions/owl-s700.c
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
-
+diff --git a/drivers/clk/actions/Kconfig b/drivers/clk/actions/Kconfig
+index 8854adb37847..39491154abbf 100644
+--- a/drivers/clk/actions/Kconfig
++++ b/drivers/clk/actions/Kconfig
+@@ -1,6 +1,7 @@
+ config CLK_ACTIONS
+ 	bool "Clock driver for Actions Semi SoCs"
+ 	depends on ARCH_ACTIONS || COMPILE_TEST
++	select REGMAP_MMIO
+ 	default ARCH_ACTIONS
+ 
+ if CLK_ACTIONS
 -- 
 2.18.0
 
