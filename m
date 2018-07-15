@@ -2,81 +2,106 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F29BECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D26E4ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58BF32087C
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:45:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58BF32087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 7B636208A5
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:50:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyYsXcmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B636208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732931AbeGODG1 (ORCPT
+        id S1733205AbeGODLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 23:06:27 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:54090 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731972AbeGODG1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 23:06:27 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1feX1j-0005hR-2E; Sun, 15 Jul 2018 10:44:47 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1feX1S-0000sh-Jz; Sun, 15 Jul 2018 10:44:30 +0800
-Date:   Sun, 15 Jul 2018 10:44:30 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for
- AHASH_REQUEST_ON_STACK
-Message-ID: <20180715024430.n6bcnb4k7cm3ugtj@gondor.apana.org.au>
-References: <20180711203619.1020-1-keescook@chromium.org>
- <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
- <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
- <CAGXu5jJOZ3u1BTf8U20wErphfjKzaGK+m1sdhA89LqVP3MDYZA@mail.gmail.com>
- <20180713062204.2o7gz5xri374nii6@gondor.apana.org.au>
- <CAGXu5jJp3Y4RZD+ZUYsWqf+sTbGJwdN3M=KOiPBn9VecYE4OgQ@mail.gmail.com>
+        Sat, 14 Jul 2018 23:11:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732004AbeGODLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 23:11:40 -0400
+Received: from localhost (unknown [104.132.152.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EEE0208A5;
+        Sun, 15 Jul 2018 02:50:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531623025;
+        bh=E83lF3tc7BtkhSRKapAxX7bsE31Ynnaq3QiYsgH/MhY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oyYsXcmDk/OKLmfVZwVMh3n+HxNgbOYrwHBmMg2bPu3igMCPllGEwhnb0wy6ekC2Y
+         2djkwiL7nByscsZV6U2mrAiLb6hh9LEFXZeEbAZAZ+Oh1ZAmQlIAU/4LhReoQetKgR
+         LhWOSBF3chVVR7o7MwKom9cif25RD79RpgiSMau0=
+Date:   Sun, 15 Jul 2018 11:50:21 +0900
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     youngjun yoo <youngjun.willow@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] fs: f2fs: Insert a space
+Message-ID: <20180715025021.GE11571@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180714103852.GA28458@willow72.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jJp3Y4RZD+ZUYsWqf+sTbGJwdN3M=KOiPBn9VecYE4OgQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180714103852.GA28458@willow72.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 08:07:10PM -0700, Kees Cook wrote:
->
-> On a plane today I started converting all these to shash. IIUC, it
-> just looks like this (apologies for whitespace damage):
+Hi Youngjun,
 
-Yes if it doesn't actually make use of SGs then shash would be
-the way to go.  However, for SG users ahash is the best interface.
+Look like you sent several patches to fix checkpatch error.
+Could you please write single patch saying "f2fs: clean up coding style", which
+contains all the changes that you want to fix?
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Thanks,
+
+On 07/14, youngjun yoo wrote:
+> clean up checkpatch error:
+> ERROR:
+> space required before the open parenthesis (
+> space required around that :
+> Signed-off-by: willow72 <youngjun.willow@gmail.com>
+> ---
+>  fs/f2fs/node.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 51388cf..14ed45c 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1225,7 +1225,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
+>  		goto out_err;
+>  	}
+>  page_hit:
+> -	if(unlikely(nid != nid_of_node(page))) {
+> +	if (unlikely (nid != nid_of_node (page))) {
+>  		f2fs_msg(sbi->sb, KERN_WARNING, "inconsistent node block, "
+>  			"nid:%lu, node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
+>  			nid, nid_of_node(page), ino_of_node(page),
+> @@ -1589,7 +1589,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>  out:
+>  	if (last_idx != ULONG_MAX)
+>  		f2fs_submit_merged_write_cond(sbi, NULL, ino, last_idx, NODE);
+> -	return ret ? -EIO: 0;
+> +	return ret ? -EIO : 0;
+>  }
+>  
+>  int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+> -- 
+> 2.7.4
+> 
+> 
+> ------------------------------------------------------------------------------
+> Check out the vibrant tech community on one of the world's most
+> engaging tech sites, Slashdot.org! http://sdm.link/slashdot
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
