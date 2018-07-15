@@ -2,124 +2,109 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7D6ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113D0ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BED0208CE
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B353F208A5
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:13:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPzgGwem"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BED0208CE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="kv0YNG72";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oDc+0oLM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B353F208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732623AbeGOCb7 (ORCPT
+        id S1732909AbeGOCeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 22:31:59 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55664 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731950AbeGOCb7 (ORCPT
+        Sat, 14 Jul 2018 22:34:50 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:37856 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731972AbeGOCeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 22:31:59 -0400
-Received: by mail-it0-f65.google.com with SMTP id 16-v6so16297567itl.5;
-        Sat, 14 Jul 2018 19:10:50 -0700 (PDT)
+        Sat, 14 Jul 2018 22:34:50 -0400
+Received: by mail-yw0-f194.google.com with SMTP id w76-v6so13094229ywg.4
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 19:13:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=kqJSv2Ubljjt/IjTKrl1FAo40tWJZsUFjKXl1ffUHqA=;
-        b=XPzgGwem3J1j0z49Ln85QCWkZl6/MRuHIe4Ep2JbH5r5bBDuHy4mvGwcQqOtvUgVox
-         yDxgtLUICSGdPZ8Lcy9DGeurC7cn6s2p5ndbDZWdF4Hy6310dd1edj8GPgrsuc+Agxvu
-         65QIYT/9oZCw5JkjulBgJYvdbnytcv5wInB73ATfVHxdU/fQzvSo8YwapGkElGY26SJL
-         sUoRc3C3uJNd9y7zDAXNINW3GIfrLOo+rhtpZpUX/83fS54ZhUdtVsBL24kyVbbrdN+f
-         upIwKKZCwswbPXboZbdRVC1iEIh2CxOhwJi+n37gpn/uH8nU6iqHEpxGxzL6EfOunbbM
-         dP0g==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=R4Rebggb6N2y72RxKVrGwrrusQgVLRNBH5D2ap4g8gw=;
+        b=kv0YNG72wlgo3NmSnRJ34whoLlq6PNVtRvrN0Q3bbA71fUDoJSuEOQNa4V2P6QiQEe
+         W0UPHGZ6KpTCHjeaTk8Z++QtDCHbT5FfyhaOGBqKwr7fMfE6IwsqSMsGFBo2vSEu3VPJ
+         feaVl1vTkC5RCMep8c2Flc7c2zOar40eA+gW6vL8A/EGPw38kUCRGpwkId8r2ndpk2d/
+         349fK4A91lEkZfDaGiK8IUMgtIVkVjZ1TsZIws/TlwepjhkQg1R6frhIVPAuLz1jJzCr
+         NaMce4Lwx94AGeOVURar2GvjQvT4q6z7bTvdHI5HniDlDr4xxbDayrYfemHr+v+iFkvX
+         tqHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=R4Rebggb6N2y72RxKVrGwrrusQgVLRNBH5D2ap4g8gw=;
+        b=oDc+0oLMMK45hwnlmmfmR74m4XjTwcXOurexoe4v/PkYv23Q3DRuIwSh42p0t9HCaB
+         9sD1gHI0Eav5HkSiTQ5wNhxSCesCrmxmUywM50TTuy7BtwQ2Zn78Dz42ZFJcOyJCcBuX
+         j2eWMPU3IcFxbIHC9OsMYwTUm1mfwyRBJtuT0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=kqJSv2Ubljjt/IjTKrl1FAo40tWJZsUFjKXl1ffUHqA=;
-        b=IfZdv7YDBuXrwQZizahWLhVL20BRNfgNfOUOr4WiN6x/BbworLOouQT6GcmhmPE4GR
-         mFMd6t+br//mZwgOg6UYAYsVONCO7aVU+oknP8KQ3wzHqgwCL1/ehOZWg7HYxPmPfL8f
-         0iZv54EBMs7t4dAEj37yTL9rMU5jQmu3Z85gPEJwTxoYZnd7rtxLEH6Ic70Aafb1LhmS
-         fy1e3zVWm3U1eHse/uUIeI3vbjTcwJTkKHVcppRTt7d25i4inadyUOTJtjQc4as+cjnY
-         J4oQvI2NMeY20DwoXKV/6vMeE6DzvqN9jnq53bnGYyVnHWpnK7hFcXfQ6DfX+71VV9N8
-         MIHA==
-X-Gm-Message-State: AOUpUlEuWracABVLJROCrt0o3dQRfhVJO6WQ037EIxQiAZTS8920gM+O
-        IfqManxnfU6fm6zj6G3wRNHZrw203lDs+zaC5hI=
-X-Google-Smtp-Source: AAOMgpdQQpwJIAny18VVMPiso/54YQdm2c7QT9eQBPivYD4EsUXFgolaDJIQ1x2CuguPhq5Blzw1D7VAGRMRcabjKks=
-X-Received: by 2002:a24:5004:: with SMTP id m4-v6mr8854447itb.38.1531620650437;
- Sat, 14 Jul 2018 19:10:50 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=R4Rebggb6N2y72RxKVrGwrrusQgVLRNBH5D2ap4g8gw=;
+        b=WhUZSUIEmp7oE8lyGkaUnk5ZfkmAnXmNcbKLNCpd8snP+cDQrp+toh3B8FpvAH59sl
+         I/iUMSqd8CBgTNssiBjGfA2qWZau3ArptOeyuRwa68Xkbe+9iQd3EvRufK93JZXLv718
+         bnooq69ADUguzeq9p9lHzUZg+WMQEJpAnDpVr6qonzTRN4eqFc2D7WvrM9tN4acT4LgB
+         i1/LyrFoNLAAVxrMovbfHCoqKJtF+nwGv8mXjCIw+CEnqpx+664ekdZdaKDZskM0cNrW
+         kSlQFw2dOMsssXgVswlKKZ9mIGcGJLqJQeF7JL25B3je6nh1mOsxriEkjqhWDxRyYuew
+         qgYw==
+X-Gm-Message-State: AOUpUlE3oj42hSBGvH00wH+ILtjMWV+uQ7niB7Ha0FgnjGK2ODHNekla
+        NH9v1vleJ7/uOLhQSOn+ZzxuUKzsyHdjWqRglN6d1/iF
+X-Google-Smtp-Source: AAOMgpewtQzg6/17I81AH2lARcoybE8N4rqPQ2+SeNlEEhemI0k2W4KUrZy1qtNDES+LMkt0VWaD0g6JWs+TEFuRSJU=
+X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr6055138ywf.53.1531620820335;
+ Sat, 14 Jul 2018 19:13:40 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 19:10:10
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 19:13:39
  -0700 (PDT)
-In-Reply-To: <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
-References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com> <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Sun, 15 Jul 2018 10:10:10 +0800
-Message-ID: <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com> <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 14 Jul 2018 19:13:39 -0700
+X-Google-Sender-Auth: xHzrJUFRM0LncA74oG7uK1sdxTU
+Message-ID: <CAGXu5jKU-cdYCQePZAr_eEUEsaK92kABFF=UowhaO6yuWVXEVA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/8] security: define new LSM hook named security_kernel_load_data
+To:     Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
->>
->> try_charge maybe executed in packet receive path, which is in interrupt
->> context.
->> In this situation, the 'current' is the interrupted task, which may has
->> no relation to the rx softirq, So it is nonsense to use 'current'.
->>
+On Fri, Jul 13, 2018 at 11:05 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> Differentiate between the kernel reading a file specified by userspace
+> from the kernel loading a buffer containing data provided by userspace.
+> This patch defines a new LSM hook named security_kernel_load_data().
 >
-> Have you actually seen this occurring?
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Luis R. Rodriguez <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
 
-Hi Shakeel,
+Acked-by: Kees Cook <keescook@chromium.org>
 
-I'm trying to produce this issue, but haven't find it occur yet.
+-Kees
 
-> I am not very familiar with the
-> network code but I can think of two ways try_charge() can be called
-> from network code. Either through kmem charging or through
-> mem_cgroup_charge_skmem() and both locations correctly handle
-> interrupt context.
->
-
-Why do you say that mem_cgroup_charge_skmem() correctly hanle
-interrupt context ?
-
-Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
-context correctly.
-
-mem_cgroup_charge_skmem() is calling  try_charge() twice.
-The first one is with GFP_NOWAIT as the gfp_mask, and the second one
-is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
-
-If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
-Then mem_cgroup_charge_skmem() will call try_charge() once more with
-__GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
-again the '
-force' label in  try_charge() will be executed and 0 is returned.
-
-No matter what, the 'current' will be used and touched, that is
-meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
-correctly.
-
-Pls. let me know if I miss something.
-
-
-Thanks
-Yafang
+-- 
+Kees Cook
+Pixel Security
