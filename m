@@ -2,133 +2,159 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4301FECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 04:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C18ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 04:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3EC02086E
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 04:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0EA62086E
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 04:29:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UNt8tGLk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3EC02086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="GUy8AVbc";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MihlEDiH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0EA62086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbeGOErQ (ORCPT
+        id S1726235AbeGOEuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 00:47:16 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39056 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725745AbeGOErP (ORCPT
+        Sun, 15 Jul 2018 00:50:10 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:45479 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725745AbeGOEuK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 00:47:15 -0400
-Received: by mail-wm0-f68.google.com with SMTP id h20-v6so12565644wmb.4
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 21:25:45 -0700 (PDT)
+        Sun, 15 Jul 2018 00:50:10 -0400
+Received: by mail-yw0-f194.google.com with SMTP id 139-v6so13127259ywg.12
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 21:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4OObvl9YHFDf56+yHYi/GcQGih1Kzx7x91kF95IH8A0=;
-        b=UNt8tGLk4+riZ4+ns8OFQBi64HlSLpUUjRI51/NFgYHlU+LDG4krU+60tO1pQ+0j4w
-         dg64ARhT24KnGq5jyygT0v4/rugg1LjyNkQbbVUSBBQdZnsvh6g01s7Gfr0KTjlV67RY
-         AN0PmwEtP762CPFuVpO00AVLrEb2KrUXsfVpbGPAVI4ElMj4val5FXAYOUF2mmKQh6di
-         /dE6P0OlXah4NbG84KhpreOgfmt7VZ+Xcsdak84SkGSUPjkBI3rJ+Rxs/d9NK7ysjvNT
-         xTDOp2F3gdizwR4x8xiYDb/heTR1p/mlDpw3Hmbm1+tBnTIa8s4kpUIjA8XCUBIQki2I
-         IskA==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=+EIlnIIKPX9TWus6wjuen3Utq7Z3LweYXEi8HYW6oOc=;
+        b=GUy8AVbc/cIRsCtuTl5497IU0rLhqk4fxX77S6RXAv9tOkKEoUQSp9fODAjEwnafjs
+         rDVkbSd6jUI7JhQAl8RYpf/aiBzvhE4ok2eTiE6hZvedwvTzOnu57gcalKcapnMkoGxD
+         CeYkVgj/tqLqU/GiM31hGGOpsJFK/z22ZJIN4Ju/SYbJLBPsJ9GQ2JqkZydDf0wWRTwu
+         X4KjoJ/rIQES3yhE1A6Mdz34Ilmiv4j7ro17t7NuQKKDqr5qmuZRUWyR7MPlDWnt8Dsr
+         4jx9kts0DHSUJV3w4L0foBNmBvNSpd4yry0QB35sIhcJGaOZ61+e1j/xfglwy2A2i4H8
+         JCeg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=+EIlnIIKPX9TWus6wjuen3Utq7Z3LweYXEi8HYW6oOc=;
+        b=MihlEDiH0eSRgEyl9ik/B0+YJmbUnBYfIsBxkCqJrtk4LETjtdQJBzfjMwzSP1mSCV
+         xBW04fv8XFf6uVqHa1aWAWP2UTYrQKr/zrr3fNEsM29p2I1/nn25gRbngZLMdjCM/uUO
+         kImXzmudZZb98DvYSFt5xD5/gfxs18s8EfTQ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4OObvl9YHFDf56+yHYi/GcQGih1Kzx7x91kF95IH8A0=;
-        b=fSZrPeMEVzedV/I1/gJsIIxqU92P8NnnHEQI/A7ARm6dBA4KYYtpu6p22+KAU4PJWJ
-         j6xxK8qT0l2wSQXX9IJ9E5nTGCIxEHTeYcebT9ND1rIGGCrfcAWPNOR4D53fke4tZHf5
-         b6Nll9rgilogEQ7xWcGDCfsXZppQCC6FGHb0PX+8XBhqLx7xV1Oln5JtYVNbfmOr2ATB
-         AQGbbUPyWVD69E/2dnWP0hPOTIlufm625JFLvO8c8KYD2M6ZooueVfvO5TElSGyjz8S3
-         FlpQO4OJVfnA+7m/nHxT0Ex4zz9W2HEbbnRp2Kr/poORSn75lp39o27hRQmZbP8CP/BQ
-         F1oQ==
-X-Gm-Message-State: AOUpUlFoVwnaTSMm2fyzkG2SqaDjyOp0dSDqcfcdJGsklHkqQuq2xAHI
-        Ul/92/f9NG1XXARAocDSeyPQ9wHWEjyEDF6eQqLSqQ==
-X-Google-Smtp-Source: AAOMgpc+XqAxYD6S4gvYd2vaMaGxWHRVYQHQIlRlwvm7VZW7/iTWNkEMSfavpdfBhDaCaVTLdQLLHyapcrWTWd2JPeY=
-X-Received: by 2002:a1c:63d4:: with SMTP id x203-v6mr6839811wmb.9.1531628744144;
- Sat, 14 Jul 2018 21:25:44 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=+EIlnIIKPX9TWus6wjuen3Utq7Z3LweYXEi8HYW6oOc=;
+        b=pvYEXHlg4B8WSbauu5gxZCOJJ2jlTpsweoaCFZ4Hvs1kMmw41FzYzWY453GftI5lRD
+         uH6f7VLr32LSF0LC/ZKWR5muNvK0731BfgYqiF0XtIXHfxmWLrCGSgg0k3gYuOQxCpY+
+         L/xAgyqTxkW7JOahnjyYIBwhSwbBl4tch+LuXs3WYzmberM7m/8YLnl2wbN3CoqjdUrU
+         d10Gms9rpP7h+QB3II3USECQSbti8cI5CxSmyWQIQjC9+UMyjvODap/OJuLKLCoXypIQ
+         L7sNMp6oKOWd7m2UBd+IqXaQJ9zQl4/PA8SmuIBixaWNHrC38QmaQurRbFUi9Sv+knwL
+         Gr7Q==
+X-Gm-Message-State: AOUpUlFmAq/hnWG4thM+ln9b0646VA4/7I83tjemkyvD/MgzF2GMEci8
+        SU/kgDdI+CO4PtXRoQinnRPz15tEjnVxpQMQYDgIsA==
+X-Google-Smtp-Source: AAOMgpdLvohSWqhXCnShH+5mqWO/45IrHyBml5kTu33FSgSWAGOnzGWVYLaTWfyw57LItWQCUiBlSRn3MgtbRDwkF/g=
+X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr6153355ywf.53.1531628918984;
+ Sat, 14 Jul 2018 21:28:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
- <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com> <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
-In-Reply-To: <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Sat, 14 Jul 2018 21:25:31 -0700
-Message-ID: <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 21:28:38
+ -0700 (PDT)
+In-Reply-To: <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
+ <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
+ <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
+ <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au> <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
+ <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 14 Jul 2018 21:28:38 -0700
+X-Google-Sender-Auth: xC8bVYLXF0eFQScVuWfA-Mo9BgI
+Message-ID: <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
+Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+On Fri, Jul 13, 2018 at 3:14 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Jul 13, 2018 at 8:00 AM, Kees Cook <keescook@chromium.org> wrote:
+>> On Thu, Jul 12, 2018 at 10:20 PM, Herbert Xu
+>> <herbert@gondor.apana.org.au> wrote:
+>>> On Thu, Jul 12, 2018 at 10:17:29PM -0700, Kees Cook wrote:
+>>>> What is the correct value to use for AHASH_REQUEST_ON_STACK?
+>>>
+>>> As I said to arrive at a fixed value you should examine all sync
+>>> ahash algorithms (e.g., all shash ones plus ahash ones marked as
+>>> sync if there are any).
+>>
+>> The "value" for the ahash I understand: it has a request size
+>> (tfm->reqsize, as set by crypto_ahash_set_reqsize()) what should be
+>> used to measure the shash value? (And how does this relate to the
+>> value returned by crypto_ahash_reqsize()?) The closest clue I can find
+>> is this:
+>>
+>> crypto_init_shash_ops_async() does:
+>>         crt->reqsize = sizeof(struct shash_desc) + crypto_shash_descsize(shash);
+>>
+>> and that gets called from crypto_ahash_init_tfm(), so if it starts
+>> with the above reqsize and adds to it with a call to
+>> crypto_ahash_set_reqsize() later, we'll have that maximum?
+>>
+>> So, do I want to calculate this answer as:
+>>
+>> sizeof(struct shash_desc) + max(shash descsize) + max(ahash-sync reqsize) ?
+>> 16 + 360 + 0
 >
-> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >>
-> >> try_charge maybe executed in packet receive path, which is in interrupt
-> >> context.
-> >> In this situation, the 'current' is the interrupted task, which may has
-> >> no relation to the rx softirq, So it is nonsense to use 'current'.
-> >>
-> >
-> > Have you actually seen this occurring?
->
-> Hi Shakeel,
->
-> I'm trying to produce this issue, but haven't find it occur yet.
->
-> > I am not very familiar with the
-> > network code but I can think of two ways try_charge() can be called
-> > from network code. Either through kmem charging or through
-> > mem_cgroup_charge_skmem() and both locations correctly handle
-> > interrupt context.
-> >
->
-> Why do you say that mem_cgroup_charge_skmem() correctly hanle
-> interrupt context ?
->
-> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
-> context correctly.
->
-> mem_cgroup_charge_skmem() is calling  try_charge() twice.
-> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
-> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
->
-> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
-> Then mem_cgroup_charge_skmem() will call try_charge() once more with
-> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
-> again the '
-> force' label in  try_charge() will be executed and 0 is returned.
->
-> No matter what, the 'current' will be used and touched, that is
-> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
-> correctly.
->
+> I arrived at the same number, looking at all the sizes in shash,
+> The largest I found are sha3_state (360 bytes) and s390_sha_ctx
+> (336 bytes), everything else is way smaller.
 
-Hi Yafang,
+Excellent. Thanks for double-checking this. :)
 
-If you check mem_cgroup_charge_skmem(), the memcg passed is not
-'current' but is from the sock object i.e. sk->sk_memcg for which the
-network buffer is allocated for.
+>
+>> It's 0 above because if I look at all the callers of
+>> crypto_ahash_set_reqsize() that do wrapping, all are ASYNC.
+>>
+>> So, should this really just be 376? Where is best to validate this
+>> size, as it seems checking in crypto_ahash_set_reqsize() is
+>> inappropriate?
+>
+> How about crypto_init_shash_ops_async()?
 
-If the network buffers is allocated through kmem interface, the
-charging is bypassed altogether (through memcg_kmem_bypass()) for
-interrupt context.
+Ah yes, that looks good. Nice find!
 
-regards,
-Shakeel
+After my ahash to shash conversions, only ccm is left as an ahash
+user, since it actually uses sg. But with the hard-coded value reduced
+to 376, this doesn't trip the frame warnings any more. :)
+
+I'll send an updated series soon.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
