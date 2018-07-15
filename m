@@ -6,102 +6,125 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BE1DECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 13:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D521BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 13:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07A2C208C1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 13:41:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CF61208E3
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 13:42:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VojxLPD5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A2C208C1
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4ON2ZlO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF61208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbeGOOEm (ORCPT
+        id S1726683AbeGOOEm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 15 Jul 2018 10:04:42 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35460 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbeGOOEl (ORCPT
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41138 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726235AbeGOOEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 10:04:41 -0400
-Received: by mail-lf0-f65.google.com with SMTP id f18-v6so14289620lfc.2
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 06:41:40 -0700 (PDT)
+        Sun, 15 Jul 2018 10:04:42 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17-v6so22995477ljy.8
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 06:41:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=B6OCQVNoKL3ERM72KMQHUkADhQugADJSrE6aOjnHvAs=;
-        b=VojxLPD5Y27iGgR0rMM7imggva2RpLe8MEmIe4E1r0DN39f+9+armqGVo6uWVBO83U
-         pDZJfzfry/Q+ZVNUcfthpGductafvAHIDo9az50RvyPvLk+FlSYJQTErD7QllfyENXEE
-         Y2CAJXu+xIg1YnfiqS5lw/niz7A5JfMhjiFhm5AaE2J2viNuk2kQeY/Ty1C3UG8h8hSt
-         7V8swjx+BO9bMilkpIV2KRa9oyd6Y8pYLftHQV1HcNoh4rzsVQq9b6NQCXB4fP1HB1ye
-         wcsHfGyrqq7HPYqDV2PC2F2+AcQzYRrrQixNfto+LdvcXKxlyIKy99nfZdzUeo130oNP
-         TbWA==
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=8BQ0IHaATCYoeTqwviFqp/+r2Wdc9WKKUjlXlfEVTJM=;
+        b=X4ON2ZlOBXVIZ7yepqQX/70owlb6Ksgcju2K9lJ3ZQ6L5WytzrJWLBti3kqNGZ6lYK
+         hEoStBzcM9DudHd5K4BPApR5s75Zauoe74HlWpanF58pwapjVfhKlYB7CYsDs7e3KI1w
+         KWfgpPeiOUaSHrErnPOMwvO5lNIqQoh4AwkZIoJQ6AX8zHozBdbHjUKsy/MbQZGacpvl
+         4bt+XIBrQ7uJmNxorcc+ztaN1Kq2MbwR1a104IH42APHhVw0xu6osz/D1Ms98YCf6ZK7
+         U1RIhlg9qt0kRh+UN2kAgcCxRywMyKc6TQ4vyslWfTB5jZOrC+H2DTvodfIh0agd0k1v
+         rYbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=B6OCQVNoKL3ERM72KMQHUkADhQugADJSrE6aOjnHvAs=;
-        b=toyAvosdsxzvyNzoZg99JNFHodMwt3H3WjpgYVvaFgv4dDtu8zTM3Nnaf5af/w6O9y
-         nXX7A644Z1D4kaBv0y2nrNoVr/dzgmUlaxFlvUVpBVftdcZ/Pv/95wmVzyji76is5+d2
-         yufPCsBD7PDzNeohYfeaSDELQfnOC0M8Ke4k6SNGnusEf4pyXepa8gBFe3/Hat16sADP
-         NCNdakjvQOSNs8AuK4+sMkXONG+mYHU/m5tMRQdoxQzJkLYrQY4YiIHnB6RCodsIRIyU
-         RCvHAofFJuvVXpmcxSQDfx50N9hfDizvg7UPesl8lef4eqYJQAkFhMkoPJSOpcG+O4JA
-         Lhig==
-X-Gm-Message-State: AOUpUlF53m5JIXghShK2oESRPI3xZbkvfLDIwY3qbA/VGcb2jLbHJrFW
-        0fNvr2kmRXsBiOeQeGJ2DYs=
-X-Google-Smtp-Source: AAOMgpdmxZhsBnl9/oBWa9qIL52mo2Lk0kNWtUzCWmye8g9lns4VCyZkFMLQzvxRIZGbCjJMjoqh2A==
-X-Received: by 2002:a19:d54c:: with SMTP id m73-v6mr9156416lfg.27.1531662100098;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references;
+        bh=8BQ0IHaATCYoeTqwviFqp/+r2Wdc9WKKUjlXlfEVTJM=;
+        b=GCtnzPEU13BP5hdBb9is/A75GqIO2+adIz1ti8avkq7VwcAb4loUxhHz5uI+02sRk9
+         QlWvQpX5Vo5wxR2izbrSCu034Zn74fsQXPHQeJq0QefskOJkqmGuJbBvjAOfx3nyb65A
+         UGYeUOZQZRHx8I13L6vvl15tmq0MuxARrOoe9btvNHuaelTFwgetbvl1KKekJoVSZfL5
+         VqDZVsShEdKBysWIUuD3S72ufeJlelUz6unY7Vya5K6Hd6TXblASZEPG7j93igL3JZI1
+         NAZ4eWySVJeB83d8ZIB4uRu2HXyqfl/ug/fdusofBR6HnP1UJ7vI3EVhDA8eJBoykEtl
+         2niA==
+X-Gm-Message-State: AOUpUlHAZ+nTp0zIBTP8R5IkAxyao5imb71Daa2DaB4ogaNLYdLUVyzg
+        2qWMAmiotfsaiL6TCXKvTQ4=
+X-Google-Smtp-Source: AAOMgpc7DuQPWsPCzzBkYk1pSY2If36bO846n8dg/jk4AFphX21EZULr2oiIxgNxGX98S9bk6exJJg==
+X-Received: by 2002:a2e:291c:: with SMTP id u28-v6mr7739669lje.70.1531662100519;
         Sun, 15 Jul 2018 06:41:40 -0700 (PDT)
 Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm3868448lji.63.2018.07.15.06.41.39
+        by smtp.gmail.com with ESMTPSA id n17-v6sm4436982ljb.82.2018.07.15.06.41.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Sun, 15 Jul 2018 06:41:39 -0700 (PDT)
 Received: from johan by xi.terra with local (Exim 4.91)
         (envelope-from <johan@xi.terra>)
-        id 1fehHI-0006WH-QT; Sun, 15 Jul 2018 15:41:32 +0200
+        id 1fehHJ-0006WP-1t; Sun, 15 Jul 2018 15:41:33 +0200
 From:   Johan Hovold <johan@kernel.org>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Jiri Slaby <jslaby@suse.com>,
         Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
         linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 0/3] tty: fix input-speed handling
-Date:   Sun, 15 Jul 2018 15:39:32 +0200
-Message-Id: <20180715133935.24964-1-johan@kernel.org>
+Subject: [PATCH 2/3] tty: fix termios input-speed encoding when using BOTHER
+Date:   Sun, 15 Jul 2018 15:39:34 +0200
+Message-Id: <20180715133935.24964-3-johan@kernel.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180715133935.24964-1-johan@kernel.org>
+References: <20180715133935.24964-1-johan@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Turns out we had some long-standing bugs in how we handle termios input
-speeds. Specifically, we could end up setting the CIBAUD bits despite
-the user leaving them cleared (i.e. B0, which means that we use the same
-input and output rate). And once any of these bits were set we failed to
-clear them on later updates, leading to incorrect rates being reported
-back to user space.
+When the termios CIBAUD bits are left unset (i.e. B0), we use the same
+output and input speed and should leave CIBAUD unchanged.
 
-Both issues could lead to an unexpected input rate being set on
-subsequent termios updates unless the user actively clears CIBAUD.
+When the user requests a rate using BOTHER and c_ospeed which the driver
+cannot set exactly, the driver can report back the actual baud rate
+using tty_termios_encode_baud_rate(). If this rate is close enough to a
+standard rate however, we could end up setting CIBAUD to a Bfoo value
+despite the user having left it unset.
 
-Fortunately, no in-tree tty driver seems to use the input speed for
-anything but to suppress line-setting updates, so the impact of this
-should be mostly limited to the CIBAUD bits sometimes being incorrectly
-set in returned termios data.
+This in turn could lead to an unexpected input rate being set on
+subsequent termios updates.
 
-The final patch cleans up the conditional compilation of the BOTHER and
-CIBAUD functionality by not having the latter depend on the former.
+Fix this by using a zero tolerance value also for the input rate when
+CIBAUD is clear so that the matching logic works as expected.
 
-Johan
+Fixes: 78137e3b34e1 ("[PATCH] tty: improve encode_baud_rate logic")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+---
+ drivers/tty/tty_baudrate.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-
-Johan Hovold (3):
-  tty: fix termios input-speed encoding
-  tty: fix termios input-speed encoding when using BOTHER
-  tty: support CIBAUD without BOTHER
-
- drivers/tty/tty_baudrate.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/tty/tty_baudrate.c b/drivers/tty/tty_baudrate.c
+index a7a438f54e69..3e827a3d48d5 100644
+--- a/drivers/tty/tty_baudrate.c
++++ b/drivers/tty/tty_baudrate.c
+@@ -157,16 +157,20 @@ void tty_termios_encode_baud_rate(struct ktermios *termios,
+ 	termios->c_ospeed = obaud;
+ 
+ #ifdef BOTHER
++	if ((termios->c_cflag >> IBSHIFT) & CBAUD)
++		ibinput = 1;	/* An input speed was specified */
++
+ 	/* If the user asked for a precise weird speed give a precise weird
+ 	   answer. If they asked for a Bfoo speed they may have problems
+ 	   digesting non-exact replies so fuzz a bit */
+ 
+-	if ((termios->c_cflag & CBAUD) == BOTHER)
++	if ((termios->c_cflag & CBAUD) == BOTHER) {
+ 		oclose = 0;
++		if (!ibinput)
++			iclose = 0;
++	}
+ 	if (((termios->c_cflag >> IBSHIFT) & CBAUD) == BOTHER)
+ 		iclose = 0;
+-	if ((termios->c_cflag >> IBSHIFT) & CBAUD)
+-		ibinput = 1;	/* An input speed was specified */
+ #endif
+ 	termios->c_cflag &= ~CBAUD;
+ #ifdef IBSHIFT
 -- 
 2.18.0
 
