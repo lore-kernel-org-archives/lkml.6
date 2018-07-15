@@ -2,154 +2,114 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7350BECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5157EECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 21:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10B1A2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:51:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iz0InVUa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B1A2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 037DE2089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 21:40:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 037DE2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbeGOVP5 (ORCPT
+        id S1727053AbeGOWED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 17:15:57 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36084 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbeGOVP5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 17:15:57 -0400
-Received: by mail-lj1-f193.google.com with SMTP id u7-v6so25609594lji.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 13:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Mw57Anu3QyN4JXAmQqKKWYE58NNgh7vOoLxTehHcDAc=;
-        b=iz0InVUanNe7LkNdv/TJJTvrCsIStHV5WkBfLUr9UF9OuTZHR/aXVLbi59XPOFXZmQ
-         VXgcEaTeMv1uiAhBrgiupBChGNNvDTxJjynwnRQ+2+MP//zmEHl+KjDgKT6+iFuJqu5Q
-         dCdpRxw21OMwynVU+vMxiTc2nh+ecK7eUWrLey5dn1utn/HAH0jwzbOOcLyRBAdtQ7zt
-         lcm21HH222WhR/L+2Qff9D8UxwBzbAPpNKXOaMVorGzyTuLCA0GHemt6F8fO//kIKFpl
-         FXeBrByDawwJtUd5uDxWK4T+xzo26WwofYowosLUM1fLYSaI7BMShw2Glulxj3FYKpqN
-         h4XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=Mw57Anu3QyN4JXAmQqKKWYE58NNgh7vOoLxTehHcDAc=;
-        b=oSgx5JASHHrwKFmBpC5NncqbRN/z+ujXxDAMMyAZN/YYO1Umy6GfwDLdT4uhSGUaqV
-         MVf5ChpVKNbEMXos5UYxBTk5cH+F4hYsQT+HkWbE6a/Pr5lEQOIrOjFi0o0r+BrCd7mx
-         /xh50bxw0g6QT18AbiGM2khZAw/SJbR//GqYHa2P/7JUp5JTZfbAb4WAs6bQBEgKLGjF
-         VqkiZF9R5cr19+F3qLhkbW+EpOPSsoZQCWNwXi4zljlvCv0yLVcMEhYphtNY6MAxt0Fw
-         DzQo5H0FCKAXkmUEkgIe7bB/ucLbi1hAlch4Dwt4qHtXpt5geua8Wu7se+Itm13ZrUC7
-         ysOw==
-X-Gm-Message-State: AOUpUlG989f3UERIiqJALsFWXCG2XwyYAcZvrJYAeqkk/oRMzenjlXA6
-        9/Nm/jtlgN0MM9e8BQyPIPkCpZOhR/TDiY5zqp4rv0Ze
-X-Google-Smtp-Source: AAOMgpcdczan51kFwTbeeSQL3AmI9EksALLmSDlHrFbySHDH5h9Q6UbaPeLOWkdGh1iQJwBVPGmVRH7OCyO+cB43U6M=
-X-Received: by 2002:a2e:40c6:: with SMTP id r67-v6mr8636528lje.41.1531687903884;
- Sun, 15 Jul 2018 13:51:43 -0700 (PDT)
+        Sun, 15 Jul 2018 18:04:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45594 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726932AbeGOWED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 18:04:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9380BAD75;
+        Sun, 15 Jul 2018 21:39:43 +0000 (UTC)
+Subject: Re: [PATCH v6 1/5] clk: actions: Add missing REGMAP_MMIO dependency
+To:     Saravanan Sekar <sravanhome@gmail.com>,
+        manivannan.sadhasivam@linaro.org, sboyd@kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux@cubietech.com, support@cubietech.com,
+        catalin.marinas@arm.com, mturquette@baylibre.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        thomas.liau@actions-semi.com, darren@cubietech.com,
+        robh+dt@kernel.org, jeff.chen@actions-semi.com, pn@denx.de,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mp-cs@actions-semi.com
+References: <20180715203524.11948-1-sravanhome@gmail.com>
+ <20180715203524.11948-2-sravanhome@gmail.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <9b580b0c-3cbe-a608-fb21-e8950e259c2f@suse.de>
+Date:   Sun, 15 Jul 2018 23:39:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 13:51:43
- -0700 (PDT)
-In-Reply-To: <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
-References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee>
- <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com>
- <alpine.LRH.2.21.1807051254050.21817@math.ut.ee> <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sun, 15 Jul 2018 22:51:43 +0200
-X-Google-Sender-Auth: H7164EGotxtdlKzYLko2j4OTHE8
-Message-ID: <CAK8P3a2NtB_FmiSjrzZb=HoshEzo+MP2xwafC3QcMg79rffipg@mail.gmail.com>
-Subject: Re: 4.18-rc* regression: x86-32 troubles (with timers?)
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Linux Kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180715203524.11948-2-sravanhome@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 5:05 PM, Meelis Roos <mroos@linux.ee> wrote:
+Am 15.07.2018 um 22:35 schrieb Saravanan Sekar:
+> Add REGMAP_MMIO as dependency to avoid undefined
+> reference to regmap symbols.
+> 
+> Fixes: d85d20053e19 ("clk: actions: Add S900 SoC clock support")
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 
->> > > I then tried multiple other machines. All x86-64 machines seem
->> > > unaffected, some x86-32 machines are affected (Athlon with AMD750
->> > > chipset, Fujitsu RX100-S2 with P4-3.4, and P4 with Intel 865 chipset),
->> > > some very similar x86-32 machines are unaffected. I have different
->> > > customized kernel configuration on them, so far I have not pinpointed
->> > > any configuration option to be at fault.
->> > >
->> > > All machines run Debian unstable.
->> > >
->> > > 4.17.0 was working fine.
->> > >
->> > > Will continue with bisecting between 4.17.0 and
->> > > 4.18.0-rc1-00023-g9ffc59d57228.
->
-> Bisection has been finished (I'm usually away from the problematic
-> computers in summer), result is strange and seems unrelated:
->
-> 0bc5fe857274133ca028ebb15ff2e8549a369916 is the first bad commit
-> commit 0bc5fe857274133ca028ebb15ff2e8549a369916
-> Author: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-> Date:   Sat May 5 18:42:59 2018 -0700
->
->     qed*: Refactor mf_mode to consist of bits.
+Reviewed-by: Andreas Färber <afaerber@suse.de>
 
-Agreed, that isn't the one you were looking for.
+Thanks,
+Andreas
 
->     `mf_mode' field indicates the multi-partitioning mode the device is
->     configured to. This method doesn't scale very well, adding a new MF mode
->     requires going over all the existing conditions, and deciding whether those
->     are needed for the new mode or not.
->     The patch defines a set of bit-fields for modes which are derived according
->     to the mode info shared by the MFW and all the configuration would be made
->     according to those. To add a new mode, there would be a single place where
->     we'll need to go and choose which bits apply and which don't.
->
->     Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
->     Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
->
-> :040000 040000 a3572846e1afb9ccfa9c4a84b0135a0057ade66f bdb7b28725a4f1bffe79ee384a3603b3127d6fdb M      drivers
-> :040000 040000 f90c7f26fd8445afa48c6679ed68fed294b23d7f 52119c547a82b268b5c173d3df94e267cc1297a0 M      include
-> mroos@rx100s2:~/linux$ nice git bisect log
-> git bisect start# good: [29dcea88779c856c7dc92040a0c01233263101d4] Linux 4.17
-> git bisect good 29dcea88779c856c7dc92040a0c01233263101d4
-> # good: [e27c49291a7fe9dc415c9fcab5bd781ec82dfe04] x86: Convert x86_platform_ops to timespec64
-> git bisect good e27c49291a7fe9dc415c9fcab5bd781ec82dfe04
-> # bad: [1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
-> git bisect bad 1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21
-> # bad: [1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
-> git bisect bad 1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21
-> # good: [135c5504a600ff9b06e321694fbcac78a9530cd4] Merge tag 'drm-next-2018-06-06-1' of git://anongit.freedesktop.org/drm/drm
-> git bisect good 135c5504a600ff9b06e321694fbcac78a9530cd4
-> # bad: [ffbc9197b4721634dc6c0fefa9b31e565fa89cee] wcn36xx: improve debug and error messages for SMD
-> git bisect bad ffbc9197b4721634dc6c0fefa9b31e565fa89cee
-> # good: [3a443bd6dd7c43bf5763779309514bf3e7c1c3eb] net/9p: correct the variable name in v9fs_get_trans_by_name() comment
-> git bisect good 3a443bd6dd7c43bf5763779309514bf3e7c1c3eb
-> # bad: [93c65d13d8a0b7c272868d4a9779f96fc973df26] vmxnet3: Replace msleep(1) with usleep_range()
-> git bisect bad 93c65d13d8a0b7c272868d4a9779f96fc973df26
-> # good: [4bc871984f7cb5b2dec3ae64b570cb02f9ce2227] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-> git bisect good 4bc871984f7cb5b2dec3ae64b570cb02f9ce2227
-
-Everything below here is is 'bad', which can be an indication that you
-misclassified one of
-the commits above as 'good' when it should have been 'bad'. The most likely
-explanations are that you either typed the 'git bisect good' by accident, or
-that the failure is not 100% reliable, and it sometimes works fine even on a
-broken kernel.
-
-0bc5fe857274133ca0 follows directly after 3a443bd6dd7c, "net/9p: correct the
-variable name in v9fs_get_trans_by_name() comment", which is marked "good",
-and can't really be good if 0bc5fe85727413 is bad and you are not using the
-'qed' driver.
-
-I'd retest 3a443bd6dd7c again to see if that should have been 'bad', and
-if it was, test v4.17-rc4, which is what the net-next tree was based on.
-
-        Arnd
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
