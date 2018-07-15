@@ -2,94 +2,62 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EA1ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 11:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B81ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 12:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF5FD208C2
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 11:42:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF5FD208C2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CE282089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 12:01:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE282089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbeGOMFc (ORCPT
+        id S1726277AbeGOMYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 08:05:32 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5744 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726141AbeGOMFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 08:05:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jul 2018 04:42:51 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,356,1526367600"; 
-   d="scan'208";a="56666425"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.43])
-  by orsmga007.jf.intel.com with ESMTP; 15 Jul 2018 04:42:49 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc-next] mei: bus: suppress sign-compare warnings
-Date:   Sun, 15 Jul 2018 14:41:18 +0300
-Message-Id: <20180715114118.7505-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.14.4
+        Sun, 15 Jul 2018 08:24:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38368 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726144AbeGOMYd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 08:24:33 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 693E3BC8;
+        Sun, 15 Jul 2018 12:01:49 +0000 (UTC)
+Date:   Sun, 15 Jul 2018 14:01:30 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Alan Tull <atull@kernel.org>
+Cc:     Wu Hao <hao.wu@intel.com>, Moritz Fischer <mdf@kernel.org>,
+        linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>
+Subject: Re: [PATCH v7 00/29] FPGA Device Feature List (DFL) Device Drivers
+Message-ID: <20180715120130.GA20467@kroah.com>
+References: <1530320016-24712-1-git-send-email-hao.wu@intel.com>
+ <CANk1AXQ0crNX2u_=XLEakhhfO8dcTED0OO6fHU10uAx0yOJewg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXQ0crNX2u_=XLEakhhfO8dcTED0OO6fHU10uAx0yOJewg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Comparison between signed and unsigned warnings
-and associated type promotion may cause error
-condition not be detected.
-The type promotion issue in mei bus was addressed by two patches:
-commit b40b3e9358fb ("mei: bus: type promotion bug in mei_nfc_if_version()")
-commit cf1ed2c59b98 ("mei: bus: type promotion bug in mei_fwver()")
-Now it is possible to suppress the warning, by adding proper
-casting to move out of radar.
+On Mon, Jul 09, 2018 at 11:34:20AM -0500, Alan Tull wrote:
+> On Fri, Jun 29, 2018 at 7:53 PM, Wu Hao <hao.wu@intel.com> wrote:
+> > Hi All,
+> >
+> > Here is v7 patch-series adding drivers for FPGA DFL devices.
+> 
+> Hi Greg,
+> 
+> Could you please take this v7 patchset for 4.19?
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/misc/mei/bus-fixup.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+All now queued up, thanks.
 
-diff --git a/drivers/misc/mei/bus-fixup.c b/drivers/misc/mei/bus-fixup.c
-index 2b8390447117..a6f41f96f2a1 100644
---- a/drivers/misc/mei/bus-fixup.c
-+++ b/drivers/misc/mei/bus-fixup.c
-@@ -181,7 +181,7 @@ static int mei_fwver(struct mei_cl_device *cldev)
- 	ret = 0;
- 	bytes_recv = __mei_cl_recv(cldev->cl, buf, sizeof(buf), 0,
- 				   MKHI_RCV_TIMEOUT);
--	if (bytes_recv < 0 || bytes_recv < MKHI_FWVER_LEN(1)) {
-+	if (bytes_recv < 0 || (size_t)bytes_recv < MKHI_FWVER_LEN(1)) {
- 		/*
- 		 * Should be at least one version block,
- 		 * error out if nothing found
-@@ -193,7 +193,7 @@ static int mei_fwver(struct mei_cl_device *cldev)
- 	fwver = (struct mkhi_fw_ver *)req->data;
- 	memset(cldev->bus->fw_ver, 0, sizeof(cldev->bus->fw_ver));
- 	for (i = 0; i < MEI_MAX_FW_VER_BLOCKS; i++) {
--		if (bytes_recv < MKHI_FWVER_LEN(i + 1))
-+		if ((size_t)bytes_recv < MKHI_FWVER_LEN(i + 1))
- 			break;
- 		dev_dbg(&cldev->dev, "FW version%d %d:%d.%d.%d.%d\n",
- 			i, fwver->ver[i].platform,
-@@ -341,7 +341,7 @@ static int mei_nfc_if_version(struct mei_cl *cl,
- 
- 	ret = 0;
- 	bytes_recv = __mei_cl_recv(cl, (u8 *)reply, if_version_length, 0, 0);
--	if (bytes_recv < 0 || bytes_recv < if_version_length) {
-+	if (bytes_recv < 0 || (size_t)bytes_recv < if_version_length) {
- 		dev_err(bus->dev, "Could not read IF version\n");
- 		ret = -EIO;
- 		goto err;
--- 
-2.14.4
-
+greg k-h
