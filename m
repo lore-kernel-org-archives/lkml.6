@@ -2,114 +2,134 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C923ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8E3ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 518B720882
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73D88208E3
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:35:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsSlD+Z9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518B720882
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rKXgx905"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D88208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbeGOU7q (ORCPT
+        id S1727618AbeGOU7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 16:59:46 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:40167 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbeGOU7p (ORCPT
+        Sun, 15 Jul 2018 16:59:54 -0400
+Received: from mail-io0-f180.google.com ([209.85.223.180]:37051 "EHLO
+        mail-io0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726984AbeGOU7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 16:59:45 -0400
-Received: by mail-wm0-f66.google.com with SMTP id z13-v6so13798939wma.5;
-        Sun, 15 Jul 2018 13:35:37 -0700 (PDT)
+        Sun, 15 Jul 2018 16:59:54 -0400
+Received: by mail-io0-f180.google.com with SMTP id z19-v6so35870783ioh.4;
+        Sun, 15 Jul 2018 13:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Y56U9Qy5luv40h9ja9fLysGeD/BwAI8wDVI6U0Xt3oU=;
-        b=TsSlD+Z9xLHhSaBrsHbc1FaRqkn0KH2zkI3CoupQOEYU5IPq/zaCVW0Bcicd/7e774
-         NQ3q6wDuAwZn2zqV6J8vMmmBej+OKuVCbxVXJmKhRAU3pSoIiOTqxDOduy3r6NjtlgTB
-         atceVZDHE9UszSbAY2pmFWSMc1IMumo77gg2C7UTjJfPsSdsc9EUK/3CPcVnUIZMn6Xj
-         ste+dfTbTf383V7s8IpsmV7qGnyHtiSfChplrQFYxZLLHez/RVS2CuMoPTH0AkqjsHMp
-         4TDLDX/EYfQ8innn/XbVZev1OTX57an0R0F0ZsAenHfwVJJj61P1qFndejsiCIrM2cH5
-         s3zg==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dhhOemaisv3ox9q5NU82mLZuv3XMkIJetImFY5HVVOc=;
+        b=rKXgx905Vf3vY1wUT+jKeWY6Zjw6nRSA8ZhC2pA0AUW5L/whRcCOHlaAH9EfYBo8ji
+         nCtIPlMG8O/pbeMPiXXTNomRXP+3HgZH5ab23eXXc9roJoQvXagbnIQEGCAZJ9KjRCzc
+         SjYJ20QaC+O//Ey0JCmm+x636xcimOZhks3OoK7/gCqZ89qxR82RnwBHBuI70anwWWld
+         IAkWKIRzYlrPx+4gCv9g8y6ZnaVNDFalJ3kZrx4ywAFRbgtEPWCuknYh8lf0yLesEE5U
+         mkl2lgiNCY5Og+WH9OFUmn83axUrrNI7njy0+t0HiKOK8wAEBhizn5A+ylgYSnc6whQB
+         bE8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Y56U9Qy5luv40h9ja9fLysGeD/BwAI8wDVI6U0Xt3oU=;
-        b=LZIB5IlyDtIXyUR0rNfg0+M8kvnqAoey/IXFflLJR5BcYMs5hO2DO/WH/3U5HDprFe
-         f/DaRgkk6idkG4cz0XkxhyQTdBQ9KC4Zl+l0wVyb4Uo01fwiW5ysuhLXZuNEWHbuvN3e
-         LbfT3zN89Kcfp3zF6x3FIjnVehSf2Fi9pELn1XeJNYktE0l1V96Y+d1klEEYOj4UNJ9B
-         JYPB8FZ18asm28qnriWZgQ8tSiOkiUCVjno8ZwcHUppgIOeAdfq1fZquHKY3mvI5KPs6
-         okl8PBkclaoLtdB1izP2UEk6UmEWJxBvT29l4LXQ30VHiOTWnrqTpkaD+6oANAV0YDqU
-         +tMA==
-X-Gm-Message-State: AOUpUlHjLVfArM85YBnkBFCszZwIaAGTnr3BdkWJRTV40Ha4EcwWeJyl
-        WOyjodDMvP5qPJbFAdJRSL4=
-X-Google-Smtp-Source: AAOMgpcwJqNcr4IOCR1bWE95nIOPUHuCeLVNMuDHndGsaaBm58wF1lcYp4jawz/eFd4cW3jXVX3L6Q==
-X-Received: by 2002:a1c:815:: with SMTP id 21-v6mr7891310wmi.151.1531686937052;
-        Sun, 15 Jul 2018 13:35:37 -0700 (PDT)
-Received: from parthiban.fritz.box ([62.91.12.240])
-        by smtp.gmail.com with ESMTPSA id u25-v6sm11768387wrd.61.2018.07.15.13.35.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Jul 2018 13:35:36 -0700 (PDT)
-From:   Saravanan Sekar <sravanhome@gmail.com>
-To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
-        sboyd@kernel.org
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux@cubietech.com, sravanhome@gmail.com, support@cubietech.com,
-        catalin.marinas@arm.com, mturquette@baylibre.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        thomas.liau@actions-semi.com, darren@cubietech.com,
-        robh+dt@kernel.org, jeff.chen@actions-semi.com, pn@denx.de,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mp-cs@actions-semi.com
-Subject: [PATCH v6 5/5] arm64: dts: actions: Set UART clock reference from CMU
-Date:   Sun, 15 Jul 2018 22:35:24 +0200
-Message-Id: <20180715203524.11948-6-sravanhome@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180715203524.11948-1-sravanhome@gmail.com>
-References: <20180715203524.11948-1-sravanhome@gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dhhOemaisv3ox9q5NU82mLZuv3XMkIJetImFY5HVVOc=;
+        b=iGDTvUeRDpxYSTpDySOGAkjm0X50/aKjO1wnUWFIej+5HPdxrMwQPtNCeG1GR9hlQV
+         6fjTvGc8qHnAVuHPzpsnkeewPM/9WY2QtM2nWxvMxiisrhlQlNDNttuKbOO5G9UIkUpm
+         9GhFC4Q92hooKerGerVVrPSXQgSn8O9xoBUBf17j1mHGlbMpvihUrQ8RoLUjGKN5VZ/C
+         BiHvasKbbByj2SzXiYyLl4OKQL0DWiejM8qZb+XscQtF9yzz/zmM5rYbmXku0ou9lh56
+         Tn0zTlEozQBeeCx2iC2dTXkuFwJJIe2nzuSn0ZOh3ruqCbmPQhQNs0yBMP/jyXIwI5FB
+         XRYQ==
+X-Gm-Message-State: AOUpUlHk7P4rfl+0JV4ZcHFD2JAuhwaz1ve+ZMIeOJfes8jNeU9zdXsq
+        ZRoXKEgSPzhMtd5VHN+dwc6D2dr3ha0ab/Xmg6eLtWUL
+X-Google-Smtp-Source: AAOMgpcwKHm4QOtHYDsNnfmHXlTCyyCw+F87wd4VdGklsk351e34dL+3LD3aFd3M+KPVSjfymANMxJZiApJPWrmsabg=
+X-Received: by 2002:a6b:828d:: with SMTP id m13-v6mr14390356ioi.161.1531686946110;
+ Sun, 15 Jul 2018 13:35:46 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:b845:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 13:35:45
+ -0700 (PDT)
+In-Reply-To: <20180713153318.GB3049@arm.com>
+References: <1530822201-5890-1-git-send-email-agustinv@codeaurora.org> <20180713153318.GB3049@arm.com>
+From:   =?UTF-8?B?Si4gQWd1c3TDrW4gVmVnYS1GcsOtYXM=?= 
+        <agustin.vega.frias@gmail.com>
+Date:   Sun, 15 Jul 2018 15:35:45 -0500
+Message-ID: <CAGbRU0QLSpNEtcryuPPZE98zAo7peEmcDqcQiLi1zO6cfKML2A@mail.gmail.com>
+Subject: Re: [RFC V4 0/3] arm_pmu: acpi: variant support and QCOM Falkor extensions
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Agustin Vega-Frias <agustinv@codeaurora.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-acpi@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Phani Pabba <pabba@codeaurora.org>,
+        Richard Ruigrok <rruigrok@codeaurora.org>,
+        Vijaya Kilari <vkilari@codeaurora.org>,
+        Jeff Hugo <jhugo@codeaurora.org>,
+        Rahul Ramasubramanian <rahulr@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- arch/arm64/boot/dts/actions/s700-cubieboard7.dts | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+Hi Will,
 
-diff --git a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-index ef79d7905f44..c08808ca3346 100644
---- a/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-+++ b/arch/arm64/boot/dts/actions/s700-cubieboard7.dts
-@@ -28,12 +28,6 @@
- 		device_type = "memory";
- 		reg = <0x1 0xe0000000 0x0 0x0>;
- 	};
--
--	uart3_clk: uart3-clk {
--		compatible = "fixed-clock";
--		clock-frequency = <921600>;
--		#clock-cells = <0>;
--	};
- };
- 
- &timer {
-@@ -42,5 +36,5 @@
- 
- &uart3 {
- 	status = "okay";
--	clocks = <&uart3_clk>;
-+	clocks = <&cmu CLK_UART3>;
- };
--- 
-2.18.0
+On Fri, Jul 13, 2018 at 10:33 AM, Will Deacon <will.deacon@arm.com> wrote:
 
+[snip]
+
+> I'm mostly ok with this approach, but I have a concern with the way in wh=
+ich
+> the sysfs interface for carving up the config fields is implemented. If t=
+his
+> is intended to be a strict extension to the armv8 pmu architecture, then =
+I
+> don't think you should be overriding the attr_groups entirely. Rather, yo=
+u
+> should be taking the attr_groups from pmuv3 and then extending them in a =
+way
+> which avoids overlapping field allocations by construction.
+>
+> As it stands, you already have an overlap between the pcc bit and the
+> chained counter bit which Suzuki has implemented and it will be very easy=
+ to
+> introduce API breakage if we don't enforce this as part of the design.
+>
+> Will
+
+FYI, I left Qualcomm on July 6, one of my former colleagues will submit
+new iterations of this series. I will continue to comment on this and futur=
+e
+patchsets as a courtesy to my former colleagues and the community.
+
+Thanks for pointing out the sysfs issue. My suggestion on how to address it=
+ is:
+
+1. Reserve config and config1 for architectural format attributes and
+   config2 for extension format attributes.
+2. Add a struct attribute ** parameter to the extension init function so
+   extensions can return the new attributes.
+3. The extension framework code in arm_pmu_acpi.c can then allocate a new
+   attribute array to contain the base and extension attributes and ensure
+   all the new attributes are on config2.
+
+Though a more elaborate approach can be implemented to find conflicts in
+bit usage within config fields, it would require much more code for a
+relatively simple problem. Thoughts?
+
+Thanks,
+Agust=C3=ADn
