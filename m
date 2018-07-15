@@ -2,112 +2,75 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACE2ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 10:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2001CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 10:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2427208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 10:39:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaoHBIEo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2427208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BDC3F208C2
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 10:44:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC3F208C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbeGOLCJ (ORCPT
+        id S1726260AbeGOLG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 07:02:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbeGOLCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 07:02:08 -0400
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E94E208C2;
-        Sun, 15 Jul 2018 10:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531651177;
-        bh=KCRAt0UEQ/TpWDORYeh1hOZijBS/J3eJ1lc2bFedDmg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=NaoHBIEov1kGOYbwlY67Ky5b9r+uA1DOqrAZgNsxyzn5Hhykg4KioBl5ulkOAGApp
-         NzKxhN0jaJJ4mQI5/mM3LDj0TEu+LLZRZlQdmua+tB2vaX20qUYtUf5zkEqPwQsj24
-         5JgI+x7YlNAWNedWrSz0fmwZqeCk8WQKw91kfrTw=
-Date:   Sun, 15 Jul 2018 11:39:32 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Sun, 15 Jul 2018 07:06:56 -0400
+Received: from www381.your-server.de ([78.46.137.84]:46189 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbeGOLG4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 07:06:56 -0400
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <lars@metafoo.de>)
+        id 1feeVo-0006oc-Lq; Sun, 15 Jul 2018 12:44:20 +0200
+Received: from [188.174.116.68] (helo=[192.168.178.33])
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <lars@metafoo.de>)
+        id 1feeVo-0009pf-Eu; Sun, 15 Jul 2018 12:44:20 +0200
+Subject: Re: [PATCH 5/5] iio:adxl372: Add filter bandwidth support
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Stefan Popa <stefan.popa@analog.com>
+Cc:     Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
         linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/18] iio: change strncpy+truncation to strlcpy
-Message-ID: <20180715113907.3813384d@archlinux>
-In-Reply-To: <1531445134-19250-1-git-send-email-asmadeus@codewreck.org>
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
-        <1531445134-19250-1-git-send-email-asmadeus@codewreck.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+References: <1531409818-20300-1-git-send-email-stefan.popa@analog.com>
+ <20180715113636.5394c756@archlinux>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <f16d0271-b203-ab02-50d8-fb0ef2ddc540@metafoo.de>
+Date:   Sun, 15 Jul 2018 12:44:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180715113636.5394c756@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24754/Sun Jul 15 06:52:15 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Jul 2018 03:25:34 +0200
-Dominique Martinet <asmadeus@codewreck.org> wrote:
-
-> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
+On 07/15/2018 12:36 PM, Jonathan Cameron wrote:
+> On Thu, 12 Jul 2018 18:36:58 +0300
+> Stefan Popa <stefan.popa@analog.com> wrote:
 > 
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-> ---
+>> This patch adds the option for the user to select the filter bandwidth. The
+>> user can also read the available bandwidths which are always adjusted to be
+>> at most half of the sampling frequency. Furthermore, the currently selected
+>> bandwidth can be read via the read_raw function, while the write_raw sets a
+>> new bandwidth value.
+>>
 > 
-> Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
-> first patch of the serie) for the motivation behind this patch
-> 
->  drivers/iio/common/st_sensors/st_sensors_core.c | 3 +--
->  drivers/iio/pressure/st_pressure_i2c.c          | 3 +--
->  2 files changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/iio/common/st_sensors/st_sensors_core.c
-> index 57db19182e95..26fbd1bd9413 100644
-> --- a/drivers/iio/common/st_sensors/st_sensors_core.c
-> +++ b/drivers/iio/common/st_sensors/st_sensors_core.c
-> @@ -380,8 +380,7 @@ void st_sensors_of_name_probe(struct device *dev,
->  		return;
->  
->  	/* The name from the OF match takes precedence if present */
-> -	strncpy(name, of_id->data, len);
-> -	name[len - 1] = '\0';
-> +	strlcpy(name, of_id->data, len);
->  }
->  EXPORT_SYMBOL(st_sensors_of_name_probe);
->  #else
-> diff --git a/drivers/iio/pressure/st_pressure_i2c.c b/drivers/iio/pressure/st_pressure_i2c.c
-> index fbb59059e942..2026a1012012 100644
-> --- a/drivers/iio/pressure/st_pressure_i2c.c
-> +++ b/drivers/iio/pressure/st_pressure_i2c.c
-> @@ -94,9 +94,8 @@ static int st_press_i2c_probe(struct i2c_client *client,
->  		if ((ret < 0) || (ret >= ST_PRESS_MAX))
->  			return -ENODEV;
->  
-> -		strncpy(client->name, st_press_id_table[ret].name,
-> +		strlcpy(client->name, st_press_id_table[ret].name,
->  				sizeof(client->name));
-> -		client->name[sizeof(client->name) - 1] = '\0';
->  	} else if (!id)
->  		return -ENODEV;
->  
+> How will the youth of today learn about aliasing if we are so nice to them?
+>  :)  Good user friendly design choice btw.  If someone is doing something
+> crazy where they actually want the aliasing they can hack the driver.
 
+Actually they can't. The hardware itself enforces that the filter bandwidth
+is below or equal to the Nyquist frequency. All the user can do is select a
+bandwidth even smaller. :)
