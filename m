@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A12ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 798E0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33D402089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E48120844
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 20:02:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U993ZVfJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D402089D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GHycQ3Mo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E48120844
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbeGOU0T (ORCPT
+        id S1727466AbeGOU0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 16:26:19 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46620 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbeGOU0S (ORCPT
+        Sun, 15 Jul 2018 16:26:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35280 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbeGOU0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 16:26:18 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s11-v6so29829731wra.13;
-        Sun, 15 Jul 2018 13:02:16 -0700 (PDT)
+        Sun, 15 Jul 2018 16:26:21 -0400
+Received: by mail-wm0-f65.google.com with SMTP id a9-v6so6902416wmb.0;
+        Sun, 15 Jul 2018 13:02:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LARERkT4kFPnkzoL+I7qvu5ZE6GqgvNe0rJ30yVlxtI=;
-        b=U993ZVfJU2ykusogi7qAEkQIGgsPFEedjhtjhK1Zx2vNS1wYviwmR/wkiGs+8gWAsV
-         I+xftvk/GZy0vEkkxuqPwcbnwvyLthATq1jWEwP38SqXvAypQeh/I6MPXj8yL0hmwVzL
-         tYOCl4H0q65toPRi1TgY8MD8XqrMvojhKP5kW5eATF19p09bE1v9xkvGwwyKnfJGdkWq
-         UXQUHtWYdFMbpgaKddE8yrR5F7Uile1eDbPi/nJrcj0UII+rzCszeQM4i3/NjbQFeUSB
-         ORXJbd93cWfxAPDUDJcWeRTyEZoD126MGYgo7j/v+u8IpzXenG3Le3iftq15W6JXhL/o
-         k2zA==
+        bh=YRj6yLCAtwa4d5ow6tddlLv3TA5jF/PNAMI5Oag6lBI=;
+        b=GHycQ3MoIZZLLuKqC/Mpf06thiu1dHZvVwyKtOKV7N11u35Zw/DPCwgGNc13kxkuaD
+         P9lwKu2hG1SSDrP9qD8Yf+JKazKXNAyM8cEKuwrt2+1RFylzKMgy+edgXr6OGD0/lBXj
+         NstumoiQVJlvjGgXeqzt+/XKgno3cQV0QVvx13WOCei03X2ZlYH5Y3mduYviiB8EjkVa
+         viLPkmwwVzqm23tq5itqPBCcXiT11//vf8BnqdV0gLaDZyALEdSgR0luOXXv21QU19rn
+         MIy1XX7tzdRYLKrdJuk3JWWiN/VwcvqDWGBJNRoMJYfkgWDNdv1U2TexsLvyzqn6Q0pf
+         vStw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=LARERkT4kFPnkzoL+I7qvu5ZE6GqgvNe0rJ30yVlxtI=;
-        b=EDgSd0RphTorzU8jUlBcDxj00+AyV8+S3Ud1oSSsahPF+oGf8GG8DdzBMroQIvR5qs
-         /6u8xbWYJjj+9wsdHJoU7i3uNLbp2P5/YhqCKQHozYSBGJTgvQMsNy8Ev/2vHFLg/C8T
-         BG+IURYv16d4w5WqAvjk/X90Sd9507FZ1qQKPMEkWsmxdJuTdKfjgO4sHFRJf0Qw+BU1
-         Lb5T1thDZd7XEekCcHw7GeuSkqZb0LPhIO6JbL0LH27SUP2qTBXmUJI+eR+hfygj7mr+
-         pxW9f1smdnnIqfjBBFOwwDFoJeW8ZxNHwv4PzCd309nyrAeN0mMXLa3GliIVZG/FtRTI
-         aQ0w==
-X-Gm-Message-State: AOUpUlFM8DtbfsWkSWBoqY5EexrHqrbnYX2PAe6J2ObdcdYHcaSn6Hex
-        Q6oGiXg3z9CTOWk84oWTPLU=
-X-Google-Smtp-Source: AAOMgpepMFCh/sfvwzOgPVVbhTLbNSA1+ythCtqWoWDzFCg+tKMuhDubTrDDqIfoU+KjiBjmcdI3Pw==
-X-Received: by 2002:adf:9b11:: with SMTP id b17-v6mr10141940wrc.119.1531684936095;
-        Sun, 15 Jul 2018 13:02:16 -0700 (PDT)
+        bh=YRj6yLCAtwa4d5ow6tddlLv3TA5jF/PNAMI5Oag6lBI=;
+        b=sCQK2mptAHYgHR93k5W945uU6LxGymU53svDO6RTCBERpRZWDa0mSL4rqqBc5abn/B
+         X+pRoX6RTp1Gb/u4eJ9fkBBW0gOlNoN7c0j9+iviUNQuZy2bP7HbVL1b8/KPWV2sfTPk
+         qFgysZIoTsYV1oJMEp3FgMx1Xv8Xt2tV1BklHXyoMWZYEbLY8RfBThl/S0MeYp/4j/Lm
+         lTyPeQFFfOyeS6Bf6CEY/D5gfj0TiQZ6OUcMcl/wXoXkoD982pDZMLqpMKQX+5fawTvu
+         IBpJQLY0A3lS04gYsV5wdjbag37gXNXIXL0hDqw1Eq99HJHqTi/Yw0VqOQbNrUEJVXR4
+         gfwg==
+X-Gm-Message-State: AOUpUlGdW6z7kQxUV72PqM2xonF+zl0fakPYLR3syp2bVyf08F37HhCu
+        m3qphAFWNKS/MvSgi1WYbos=
+X-Google-Smtp-Source: AAOMgpcBzFA8SWCHv5TcSTbuXq7cWgN2+46pEGRW0xSi5+ZS1CL38O4IU6Hsdfjo94mXFvkRdKWMpQ==
+X-Received: by 2002:a1c:9947:: with SMTP id b68-v6mr7879452wme.159.1531684938902;
+        Sun, 15 Jul 2018 13:02:18 -0700 (PDT)
 Received: from parthiban.fritz.box ([62.91.12.240])
-        by smtp.gmail.com with ESMTPSA id z7-v6sm20816234wrh.85.2018.07.15.13.02.14
+        by smtp.gmail.com with ESMTPSA id z7-v6sm20816234wrh.85.2018.07.15.13.02.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Jul 2018 13:02:15 -0700 (PDT)
+        Sun, 15 Jul 2018 13:02:18 -0700 (PDT)
 From:   Saravanan Sekar <sravanhome@gmail.com>
 To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
         sboyd@kernel.org
@@ -69,9 +69,9 @@ Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
         robh+dt@kernel.org, jeff.chen@actions-semi.com, pn@denx.de,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         mp-cs@actions-semi.com
-Subject: [PATCH v5 2/5] dt-bindings: clock: Add S700 support for Actions Semi Soc's
-Date:   Sun, 15 Jul 2018 22:01:48 +0200
-Message-Id: <20180715200151.10416-3-sravanhome@gmail.com>
+Subject: [PATCH v5 4/5] arm64: dts: actions: Add Clock Management Unit for S700
+Date:   Sun, 15 Jul 2018 22:01:50 +0200
+Message-Id: <20180715200151.10416-5-sravanhome@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180715200151.10416-1-sravanhome@gmail.com>
 References: <20180715200151.10416-1-sravanhome@gmail.com>
@@ -80,191 +80,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock bindings constants for action S700
-Maintain common clock dt-bindings for Actions Semi SoC's
-S700 and S900.
+Add Clock Management Unit for Actions Semi S700 SoC.
 
 Signed-off-by: Parthiban Nallathambi <pn@denx.de>
 Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
 ---
- ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +--
- include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++++++++++++++++
- 2 files changed, 129 insertions(+), 9 deletions(-)
- rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
- create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+ arch/arm64/boot/dts/actions/s700.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-similarity index 68%
-rename from Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-rename to Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-index 93e4fb827cd6..d1e60d297387 100644
---- a/Documentation/devicetree/bindings/clock/actions,s900-cmu.txt
-+++ b/Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
-@@ -1,12 +1,14 @@
--* Actions S900 Clock Management Unit (CMU)
-+* Actions Semi Owl Clock Management Unit (CMU)
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 66dd5309f0a2..4497741d48b2 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -4,6 +4,7 @@
+  */
  
--The Actions S900 clock management unit generates and supplies clock to various
--controllers within the SoC. The clock binding described here is applicable to
--S900 SoC.
-+The Actions Semi Owl Clock Management Unit generates and supplies clock
-+to various controllers within the SoC. The clock binding described here is
-+applicable to S900 and S700 SoC's.
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/actions,s700-cmu.h>
  
- Required Properties:
+ / {
+ 	compatible = "actions,s700";
+@@ -44,6 +45,13 @@
+ 		};
+ 	};
  
--- compatible: should be "actions,s900-cmu"
-+- compatible: should be one of the following,
-+	"actions,s900-cmu"
-+	"actions,s700-cmu"
- - reg: physical base address of the controller and length of memory mapped
-   region.
- - clocks: Reference to the parent clocks ("hosc", "losc")
-@@ -15,16 +17,16 @@ Required Properties:
- Each clock is assigned an identifier, and client nodes can use this identifier
- to specify the clock which they consume.
++	cmu: clock-controller@e0168000 {
++		compatible = "actions,s700-cmu";
++		reg = <0x0 0xe0168000 0x0 0x1000>;
++		clocks = <&hosc>, <&losc>;
++		#clock-cells = <1>;
++	};
++
+ 	reserved-memory {
+ 		#address-cells = <2>;
+ 		#size-cells = <2>;
+@@ -87,6 +95,12 @@
+ 		#clock-cells = <0>;
+ 	};
  
--All available clocks are defined as preprocessor macros in
--dt-bindings/clock/actions,s900-cmu.h header and can be used in device
--tree sources.
-+All available clocks are defined as preprocessor macros in corresponding
-+dt-bindings/clock/actions,s900-cmu.h or actions,s700-cmu.h header and can be
-+used in device tree sources.
- 
- External clocks:
- 
- The hosc clock used as input for the plls is generated outside the SoC. It is
- expected that it is defined using standard clock bindings as "hosc".
- 
--Actions S900 CMU also requires one more clock:
-+Actions Semi S900 CMU also requires one more clock:
-  - "losc" - internal low frequency oscillator
- 
- Example: Clock Management Unit node:
-diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
-new file mode 100644
-index 000000000000..3e1942996724
---- /dev/null
-+++ b/include/dt-bindings/clock/actions,s700-cmu.h
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Device Tree binding constants for Actions Semi S700 Clock Management Unit
-+ *
-+ * Copyright (c) 2014 Actions Semi Inc.
-+ * Author: David Liu <liuwei@actions-semi.com>
-+ *
-+ * Author: Pathiban Nallathambi <pn@denx.de>
-+ * Author: Saravanan Sekar <sravanhome@gmail.com>
-+ */
++	losc: losc {
++		compatible = "fixed-clock";
++		clock-frequency = <32768>;
++		#clock-cells = <0>;
++	};
 +
-+#ifndef __DT_BINDINGS_CLOCK_S700_H
-+#define __DT_BINDINGS_CLOCK_S700_H
-+
-+#define CLK_NONE			0
-+
-+/* pll clocks */
-+#define CLK_CORE_PLL			1
-+#define CLK_DEV_PLL			2
-+#define CLK_DDR_PLL			3
-+#define CLK_NAND_PLL			4
-+#define CLK_DISPLAY_PLL			5
-+#define CLK_TVOUT_PLL			6
-+#define CLK_CVBS_PLL			7
-+#define CLK_AUDIO_PLL			8
-+#define CLK_ETHERNET_PLL		9
-+
-+/* system clock */
-+#define CLK_CPU				10
-+#define CLK_DEV				11
-+#define CLK_AHB				12
-+#define CLK_APB				13
-+#define CLK_DMAC			14
-+#define CLK_NOC0_CLK_MUX		15
-+#define CLK_NOC1_CLK_MUX		16
-+#define CLK_HP_CLK_MUX			17
-+#define CLK_HP_CLK_DIV			18
-+#define CLK_NOC1_CLK_DIV		19
-+#define CLK_NOC0			20
-+#define CLK_NOC1			21
-+#define CLK_SENOR_SRC			22
-+
-+/* peripheral device clock */
-+#define CLK_GPIO			23
-+#define CLK_TIMER			24
-+#define CLK_DSI				25
-+#define CLK_CSI				26
-+#define CLK_SI				27
-+#define CLK_DE				28
-+#define CLK_HDE				29
-+#define CLK_VDE				30
-+#define CLK_VCE				31
-+#define CLK_NAND			32
-+#define CLK_SD0				33
-+#define CLK_SD1				34
-+#define CLK_SD2				35
-+
-+#define CLK_UART0			36
-+#define CLK_UART1			37
-+#define CLK_UART2			38
-+#define CLK_UART3			39
-+#define CLK_UART4			40
-+#define CLK_UART5			41
-+#define CLK_UART6			42
-+
-+#define CLK_PWM0			43
-+#define CLK_PWM1			44
-+#define CLK_PWM2			45
-+#define CLK_PWM3			46
-+#define CLK_PWM4			47
-+#define CLK_PWM5			48
-+#define CLK_GPU3D			49
-+
-+#define CLK_I2C0			50
-+#define CLK_I2C1			51
-+#define CLK_I2C2			52
-+#define CLK_I2C3			53
-+
-+#define CLK_SPI0			54
-+#define CLK_SPI1			55
-+#define CLK_SPI2			56
-+#define CLK_SPI3			57
-+
-+#define CLK_USB3_480MPLL0		58
-+#define CLK_USB3_480MPHY0		59
-+#define CLK_USB3_5GPHY			60
-+#define CLK_USB3_CCE			61
-+#define CLK_USB3_MAC			62
-+
-+#define CLK_LCD				63
-+#define CLK_HDMI_AUDIO			64
-+#define CLK_I2SRX			65
-+#define CLK_I2STX			66
-+
-+#define CLK_SENSOR0			67
-+#define CLK_SENSOR1			68
-+
-+#define CLK_HDMI_DEV			69
-+
-+#define CLK_ETHERNET			70
-+#define CLK_RMII_REF			71
-+
-+#define CLK_USB2H0_PLLEN		72
-+#define CLK_USB2H0_PHY			73
-+#define CLK_USB2H0_CCE			74
-+#define CLK_USB2H1_PLLEN		75
-+#define CLK_USB2H1_PHY			76
-+#define CLK_USB2H1_CCE			77
-+
-+#define CLK_TVOUT			78
-+
-+#define CLK_THERMAL_SENSOR		79
-+
-+#define CLK_IRC_SWITCH			80
-+#define CLK_PCM1			81
-+#define CLK_NR_CLKS			(CLK_PCM1 + 1)
-+
-+#endif /* __DT_BINDINGS_CLOCK_S700_H */
+ 	soc {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
 -- 
 2.18.0
 
