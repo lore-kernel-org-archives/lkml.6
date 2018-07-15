@@ -2,117 +2,121 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891A7ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB58CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 06:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 208D32086E
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:57:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208D32086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+	by mail.kernel.org (Postfix) with ESMTP id 80C8A2086E
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 06:00:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="GpFz4104"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80C8A2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726383AbeGOGTc (ORCPT
+        id S1726489AbeGOGWi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 02:19:32 -0400
-Received: from wtarreau.pck.nerim.net ([62.212.114.60]:10733 "EHLO 1wt.eu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbeGOGTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 02:19:32 -0400
-Received: (from willy@localhost)
-        by pcw.home.local (8.15.2/8.15.2/Submit) id w6F5vNs1019370;
-        Sun, 15 Jul 2018 07:57:23 +0200
-Date:   Sun, 15 Jul 2018 07:57:23 +0200
-From:   Willy Tarreau <w@1wt.eu>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        "ksummit-discuss@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Ksummit-discuss] bug-introducing patches
-Message-ID: <20180715055723.GA18578@1wt.eu>
-References: <20180501205448.GE10479@thunk.org>
- <20180501220228.GD7397@sasha-vm>
- <20180502043017.GA11938@1wt.eu>
- <20180502194139.GA18390@sasha-vm>
- <20180502200229.GA12729@1wt.eu>
- <20180714173812.xhfwtcijlxebmn2k@devuan>
- <e1198cd9-9113-d231-d15a-31ac5224b3b1@roeck-us.net>
- <20180714194716.GA27381@amd>
- <4fbbb00c-dcc1-8a2a-a1c6-8d61d545b7b6@roeck-us.net>
- <20180714210913.GA31065@amd>
+        Sun, 15 Jul 2018 02:22:38 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37940 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726194AbeGOGWi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 02:22:38 -0400
+Received: by mail-lf0-f68.google.com with SMTP id a4-v6so29998010lff.5
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 23:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=sDGsdEPu5YYAQ3demoLNQLXvZncY1GnAMqg/DQp65/s=;
+        b=GpFz4104eR2kOkmZ3Rm3DW9IWlNrzn3V7V+Ilr2oKtCZgJhS2WF4/VOlHZTchvExHQ
+         wLXXhj1Dlh0GHwTtd9C6P5aqqmSoiHBcoIdSYcdQqjlGmSIpW1xKb/bQEy5zRTi9XdKn
+         R7D48ibXecFOSKz1cb2yubz1OzDoha/rFBfv/U9rvuLCL5DDtiOt2tB9FPBfBAnwoQDH
+         3XLjDD+D+wn8EWvl+epAv993nHSMFeWgHJh4pzx+tAo36l3CXhRUPipfRPDcvPgNTqi4
+         nRRAqebHHf/u3pQXoTvbgJYYsFgFnMU5SsrAOJ5Rhh9dpsR284tsC8WIbDuJtgIOvPLy
+         FP5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=sDGsdEPu5YYAQ3demoLNQLXvZncY1GnAMqg/DQp65/s=;
+        b=SJwSKg2f0CA4UYuxelcUA0Dy7cjQA4iTjqhEoPII+BVCjEwLVvwCQ24DaTDtPsj8aT
+         2ZZdJDyr+AzzKao7++z/v7np5yliTle3KDYDr67xmwhpcQEcdseoYIGYz6i1s9XyW4yu
+         +3+RJaPFHr0dB2SAAXmrqYi7ZWaSXgorJbVRCsThTQ4BLwhOoBmo+25zFDH+iJ3pWG4P
+         lj//YAWwvpMZX57FEtsRtoqPY7H2KWwGyCb6oXm7Wq2Y3Z2fQKAUua385r/4rvG7ZSpI
+         ys/LWNf5Cm2YMUbFSDIB1ewSpiwPQbXeZUDyFuu20toCg+o13TY0UvaMwDseC4osHukK
+         oeRA==
+X-Gm-Message-State: AOUpUlFTlrWSKt5+GBRwzjevhCx6PtqMJCt+q83zyDkv/WriGEZl+ZvO
+        UpFP/HYSuc9JmXCrH8QiYtooxQ==
+X-Google-Smtp-Source: AAOMgpePymxXjFUnTWNDiB++U+uv9FpwpFIHmgu1Vn8ZuS2vIldJfgwtqfaOSyFDw/gmdrK9nlS97Q==
+X-Received: by 2002:a19:ca09:: with SMTP id a9-v6mr8407579lfg.142.1531634453137;
+        Sat, 14 Jul 2018 23:00:53 -0700 (PDT)
+Received: from localhost (h85-30-9-151.cust.se.alltele.net. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id z10-v6sm2561698ljh.57.2018.07.14.23.00.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 14 Jul 2018 23:00:51 -0700 (PDT)
+Date:   Sat, 14 Jul 2018 23:00:40 -0700
+From:   Olof Johansson <olof@lixom.net>
+To:     torvalds@linux-foundation.org
+Cc:     olof@lixom.net, arm@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] ARM: SoC fixes
+Message-ID: <20180715060040.ni7w7mierlxk3wrv@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180714210913.GA31065@amd>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 11:09:13PM +0200, Pavel Machek wrote:
-> > For anyone interested in making sure that obscure (whatever that means)
-> > drivers are tested for stable releases, but does not want to spend time on it,
-> > all I can recommend is to implement qemu support for it and let me know,
-> > and I'll be happy to add a respective test to my test farm.
-> 
-> Umm. Yes, qemu support for every driver would be nice, but will not happen.
+Hi Linus,
 
-Well, I would argue that driver code changes much less than core code
-between kernel versions, and that most of the changes in drivers are
-mostly infrastructure changes. Drivers don't evolve much in general,
-they are written, tested, merged, they receive fixes and then they
-only receive infrastructure changes that touch all drivers in the same
-category.
+The following changes since commit f0463f3619fd10e0cbaa5195bf2bc264a77a586d:
 
-When you backport fixes to drivers, it is very common that the code
-looks almost the same between even a very old kernel and mainline, and
-when not, the adaptations generally look quite straightforward, and if
-not it means the driver changed significantly and in this case we don't
-backport the fix as we don't even know if it is relevant.
+  Merge tag 'omap-for-v4.18/fixes-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into fixes (2018-07-05 14:59:20 -0700)
 
-I've always had much more difficulties backporting fixes under the arch/
-subdir where stuff changes all the time. Sometimes a patch applies but
-doesn't even compile. I learned not to play black magic in this area
-because some patches are subtle and if the code changed you often need
-the author and/or maintainers to double-check. Some subsystems like KVM
-improve a lot over time and are difficult to backport to as well, and
-even if you manage to properly backport a fix you're uncertain how to
-verify you backported it well. Similarly you don't want to improvise
-yourself the backporter of the year in this area.
+are available in the git repository at:
 
-Drivers are often OK and are the ones harder to test, so in the end
-you don't miss much by your limited ability to test a backport there.
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git tags/armsoc-fixes
 
-What I can certainly say as a stable kernel user is that the regression
-rate is so low compared to the fix rate that I never have any problem
-upgrading to a more recent version in the same branch, because the
-number of problems that will be fixed is much higher than the risk of
-a single regression.
+for you to fetch changes up to 13e66ceea1600f1061181acc2d4e0fac1a7d0333:
 
-As Guenter says, we can always improve, but the most important is to
-deliver fixes in a timely manner. When you see that any LTS branch
-accumulates around 5000 fixes over time, you understand that any
-single new kernel being released contains around 5000 bugs left to be
-found. Fixing them quickly is much more important to me (as a user)
-than ensuring that I will not reach 5001 by inheriting from a poorly
-tested backport.
+  Merge tag 'omap-for-v4.18/fixes-rc4-signed' of git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap into fixes (2018-07-14 15:14:02 -0700)
 
-My hope is that thanks to all the automated testing in place we can
-further accelerate the backport rate so that a stable kernel reaches
-in 2 months the level of quality that we previously used to reach only
-after one year. And I think we're already about there, as both 4.4.x
-and 4.9.x in their early versions (x < 10) were already very good for
-various use cases. 4.17.5 I'm using on this PC looks pretty slick as
-well. Overall it means that we can provide a clean upgrade path for
-users so that they don't stick to bogus or insecure kernels by fear
-of upgrading. We can always argue that a bug may appear once in a
-while but for me while technically this is true, stastistically this
-is just FUD and is not relevant to end users' real usage.
+----------------------------------------------------------------
+ARM: SoC fixes for 4.18-rc
 
-Willy
+ - A fix for OMAP5 and DRA7 to make the branch predictor hardening
+   settings take proper effect on secondary cores
+ - Disable USB OTG on am3517 since current driver isn't working
+ - Fix thermal sensor register settings on Armada 38x
+ - Fix suspend/resume IRQs on pxa3xx
+
+----------------------------------------------------------------
+Adam Ford (1):
+      ARM: dts: am3517.dtsi:  Disable reference to OMAP3 OTG controller
+
+Baruch Siach (1):
+      ARM: dts: armada-38x: use the new thermal binding
+
+Daniel Mack (1):
+      ARM: pxa: irq: fix handling of ICMR registers in suspend/resume
+
+Nishanth Menon (1):
+      ARM: DRA7/OMAP5: Enable ACTLR[0] (Enable invalidates of BTB) for secondary cores
+
+Olof Johansson (3):
+      Merge tag 'pxa-fixes-4.18' of https://github.com/rjarzmik/linux into fixes
+      Merge tag 'mvebu-fixes-4.18-1' of git://git.infradead.org/linux-mvebu into fixes
+      Merge tag 'omap-for-v4.18/fixes-rc4-signed' of git://git.kernel.org/.../tmlind/linux-omap into fixes
+
+ arch/arm/boot/dts/am3517.dtsi     |  5 +++++
+ arch/arm/boot/dts/armada-38x.dtsi |  2 +-
+ arch/arm/mach-omap2/omap-smp.c    | 41 +++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-pxa/irq.c           |  4 ++--
+ 4 files changed, 49 insertions(+), 3 deletions(-)
