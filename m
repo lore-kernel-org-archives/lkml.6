@@ -2,146 +2,669 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73FFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE11ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FC2208BA
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:26:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsfuxnNZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FC2208BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E3D92086E
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 05:53:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3D92086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbeGOFrp (ORCPT
+        id S1726301AbeGOGPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 01:47:45 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46444 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbeGOFrp (ORCPT
+        Sun, 15 Jul 2018 02:15:02 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:31835 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726010AbeGOGPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 01:47:45 -0400
-Received: by mail-io0-f195.google.com with SMTP id i18-v6so19058391ioj.13;
-        Sat, 14 Jul 2018 22:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QW17LzTKLHMlIiGKf4STqLTs13MMTL942LYGFPuVZMs=;
-        b=gsfuxnNZDAHzAckT+84CKifnK1H6CjeiwwVqmDCh4AEcJxLtb+NKczlxkm6bB/enwe
-         UQYgimzDW4iol9c2ZJ/MQQSuByGTW4xEGfe2fg/767BVzLcJqErlDIDJwsBNHqloCvhL
-         ZzUStoMcCOhVTHIsxDFLO+tWqztC/tpkZq/zy6XoogUapdWEm8a8hmQ5e0opbKMWM/4c
-         e+cQ8c3cdY1uQOkMTV0VUhpTiMJLZoSGfag0+8GZep3Q78x45rD5AjHL+EJLgZ8ss9E9
-         sQgGNR+07oHVddAoCUXr8tp0fdI5MJ09khQguO/8Z8ItYMc0C1uFez2aMVmqStkdpJJd
-         DmtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QW17LzTKLHMlIiGKf4STqLTs13MMTL942LYGFPuVZMs=;
-        b=ckofZw61MY6LK0QaWilQSD7RJOpQJ0Z/bAHxrWOfcUesTfmkUo3r3gTW99FdVyFToK
-         P9tksXhbncv8+8hBACj8bzH+Jwr2FUcUMfZm4uwhrQzhhhQOGOM2F6Ac4MCKUi6jb5Xy
-         OTZhXmoOPRiA1fwCTFoxuA8wj+DxNCph5h0OeL8cxelREPvmhtPelmNtZBmLVQjiW05g
-         j+yIItKs1l5PJFgWtae0BHPZGlm4j4rOB+5FjHEXxGOCW+FAgdKdBNf2+8k+iluXlyzX
-         rLw8+5WK/aNbWVnfkp9mDOPuNw6OsC1HjbhiPBgS17P5dxdQqn0piwbIglIQ3WcJKKcf
-         B/bA==
-X-Gm-Message-State: AOUpUlHpWAxvp1wJ46REpMBxonfRdexcUVU05s2CTOC0qaGzWAF014p5
-        fkn30xGnQAjEQgzd+owqixnCC7GquS2n/CwUmJo=
-X-Google-Smtp-Source: AAOMgpeygcqlePFDkuZPqoPEM8E43l4IyJd+Uv+m+WPOUdvkwrnV0hSn+9/7PUg+yL0UD7r0eWigwiGeCyEUjasC7rQ=
-X-Received: by 2002:a6b:b845:: with SMTP id i66-v6mr33801372iof.142.1531632366361;
- Sat, 14 Jul 2018 22:26:06 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 22:25:25
- -0700 (PDT)
-In-Reply-To: <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
-References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
- <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
- <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com> <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Sun, 15 Jul 2018 13:25:25 +0800
-Message-ID: <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Sun, 15 Jul 2018 02:15:02 -0400
+X-UUID: 3899b7e878fd45659844e64c8c973baf-20180715
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2023337135; Sun, 15 Jul 2018 13:53:08 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Sun, 15 Jul 2018 13:53:04 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Sun, 15 Jul 2018 13:53:04 +0800
+Message-ID: <1531633984.26214.35.camel@mtkswgap22>
+Subject: Re: [PATCH v5 6/7] Bluetooth: mediatek: Add protocol support for
+ MediaTek serial devices
+From:   Sean Wang <sean.wang@mediatek.com>
+To:     Marcel Holtmann <marcel@holtmann.org>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Date:   Sun, 15 Jul 2018 13:53:04 +0800
+In-Reply-To: <461698FC-1403-43ED-B4D2-E9CD2EB35A8D@holtmann.org>
+References: <cover.1531150733.git.sean.wang@mediatek.com>
+         <b7193c9afbccc55a56679fac451b73fa5bb051bb.1531150733.git.sean.wang@mediatek.com>
+         <461698FC-1403-43ED-B4D2-E9CD2EB35A8D@holtmann.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
->>
->> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
->> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
->> >>
->> >> try_charge maybe executed in packet receive path, which is in interrupt
->> >> context.
->> >> In this situation, the 'current' is the interrupted task, which may has
->> >> no relation to the rx softirq, So it is nonsense to use 'current'.
->> >>
->> >
->> > Have you actually seen this occurring?
->>
->> Hi Shakeel,
->>
->> I'm trying to produce this issue, but haven't find it occur yet.
->>
->> > I am not very familiar with the
->> > network code but I can think of two ways try_charge() can be called
->> > from network code. Either through kmem charging or through
->> > mem_cgroup_charge_skmem() and both locations correctly handle
->> > interrupt context.
->> >
->>
->> Why do you say that mem_cgroup_charge_skmem() correctly hanle
->> interrupt context ?
->>
->> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
->> context correctly.
->>
->> mem_cgroup_charge_skmem() is calling  try_charge() twice.
->> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
->> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
->>
->> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
->> Then mem_cgroup_charge_skmem() will call try_charge() once more with
->> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
->> again the '
->> force' label in  try_charge() will be executed and 0 is returned.
->>
->> No matter what, the 'current' will be used and touched, that is
->> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
->> correctly.
->>
->
-> Hi Yafang,
->
-> If you check mem_cgroup_charge_skmem(), the memcg passed is not
-> 'current' but is from the sock object i.e. sk->sk_memcg for which the
-> network buffer is allocated for.
->
+On Sat, 2018-07-14 at 18:32 +0200, Marcel Holtmann wrote:
+> Hi Sean,
+> 
+> > This adds a driver to run on the top of btuart driver for the MediaTek
+> > serial protocol based on running H:4, which can enable the built-in
+> > Bluetooth device inside MT7622 SoC.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > ---
+> > drivers/bluetooth/Kconfig     |  11 ++
+> > drivers/bluetooth/Makefile    |   2 +
+> > drivers/bluetooth/btmtkuart.c | 352 ++++++++++++++++++++++++++++++++++++++++++
+> > drivers/bluetooth/btmtkuart.h | 116 ++++++++++++++
+> > drivers/bluetooth/btuart.c    |  18 +++
+> > 5 files changed, 499 insertions(+)
+> > create mode 100644 drivers/bluetooth/btmtkuart.c
+> > create mode 100644 drivers/bluetooth/btmtkuart.h
+> > 
+> > diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> > index 00fdf5f..4d7d640 100644
+> > --- a/drivers/bluetooth/Kconfig
+> > +++ b/drivers/bluetooth/Kconfig
+> > @@ -85,6 +85,17 @@ config BT_HCIBTUART
+> > 	  Say Y here to compile support for Bluetooth UART devices into the
+> > 	  kernel or say M to compile it as module (btuart).
+> > 
+> > +config BT_HCIBTUART_MTK
+> > +	tristate "MediaTek HCI UART driver"
+> > +	depends on BT_HCIBTUART
+> > +	help
+> > +	  MediaTek Bluetooth HCI UART driver.
+> > +	  This driver is required if you want to use MediaTek Bluetooth
+> > +	  with serial interface.
+> > +
+> > +	  Say Y here to compile support for MediaTek Bluetooth UART devices
+> > +	  into the kernel or say M to compile it as module (btmtkuart).
+> > +
+> > config BT_HCIUART
+> > 	tristate "HCI UART driver"
+> > 	depends on SERIAL_DEV_BUS || !SERIAL_DEV_BUS
+> > diff --git a/drivers/bluetooth/Makefile b/drivers/bluetooth/Makefile
+> > index 60a19cb..c9a8926 100644
+> > --- a/drivers/bluetooth/Makefile
+> > +++ b/drivers/bluetooth/Makefile
+> > @@ -26,6 +26,8 @@ obj-$(CONFIG_BT_BCM)		+= btbcm.o
+> > obj-$(CONFIG_BT_RTL)		+= btrtl.o
+> > obj-$(CONFIG_BT_QCA)		+= btqca.o
+> > 
+> > +obj-$(CONFIG_BT_HCIBTUART_MTK)	+= btmtkuart.o
+> > +
+> > obj-$(CONFIG_BT_HCIUART_NOKIA)	+= hci_nokia.o
+> > 
+> > obj-$(CONFIG_BT_HCIRSI)		+= btrsi.o
+> > diff --git a/drivers/bluetooth/btmtkuart.c b/drivers/bluetooth/btmtkuart.c
+> > new file mode 100644
+> > index 0000000..9eed21c
+> > --- /dev/null
+> > +++ b/drivers/bluetooth/btmtkuart.c
+> > @@ -0,0 +1,352 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +// Copyright (c) 2018 MediaTek Inc.
+> > +
+> > +/*
+> > + * Bluetooth support for MediaTek serial devices
+> > + *
+> > + * Author: Sean Wang <sean.wang@mediatek.com>
+> > + *
+> > + */
+> > +
+> > +#include <asm/unaligned.h>
+> > +#include <linux/atomic.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/firmware.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/serdev.h>
+> > +
+> > +#include <net/bluetooth/bluetooth.h>
+> > +#include <net/bluetooth/hci_core.h>
+> > +
+> > +#include "btmtkuart.h"
+> > +#include "btuart.h"
+> > +#include "h4_recv.h"
+> > +
+> > +static void mtk_stp_reset(struct mtk_stp_splitter *sp)
+> > +{
+> > +	sp->cursor = 2;
+> > +	sp->dlen = 0;
+> > +}
+> > +
+> > +static const unsigned char *
+> > +mtk_stp_split(struct btuart_dev *bdev, struct mtk_stp_splitter *sp,
+> > +	      const unsigned char *data, int count, int *sz_h4)
+> > +{
+> > +	struct mtk_stp_hdr *shdr;
+> > +
+> > +	/* The cursor is reset when all the data of STP is consumed out. */
+> > +	if (!sp->dlen && sp->cursor >= 6)
+> > +		sp->cursor = 0;
+> > +
+> > +	/* Filling pad until all STP info is obtained. */
+> > +	while (sp->cursor < 6 && count > 0) {
+> > +		sp->pad[sp->cursor] = *data;
+> > +		sp->cursor++;
+> > +		data++;
+> > +		count--;
+> > +	}
+> > +
+> > +	/* Retrieve STP info and have a sanity check. */
+> > +	if (!sp->dlen && sp->cursor >= 6) {
+> > +		shdr = (struct mtk_stp_hdr *)&sp->pad[2];
+> > +		sp->dlen = shdr->dlen1 << 8 | shdr->dlen2;
+> > +
+> > +		/* Resync STP when unexpected data is being read. */
+> > +		if (shdr->prefix != 0x80 || sp->dlen > 2048) {
+> > +			bt_dev_err(bdev->hdev, "stp format unexpect (%d, %d)",
+> > +				   shdr->prefix, sp->dlen);
+> > +			mtk_stp_reset(sp);
+> > +		}
+> > +	}
+> > +
+> > +	/* Directly quit when there's no data found for H4 can process. */
+> > +	if (count <= 0)
+> > +		return NULL;
+> > +
+> > +	/* Tranlate to how much the size of data H4 can handle so far. */
+> > +	*sz_h4 = min_t(int, count, sp->dlen);
+> > +	/* Update the remaining size of STP packet. */
+> > +	sp->dlen -= *sz_h4;
+> > +
+> > +	/* Data points to STP payload which can be handled by H4. */
+> > +	return data;
+> > +}
+> > +
+> > +static int mtk_stp_send(struct btuart_dev *bdev, struct sk_buff *skb)
+> > +{
+> > +	struct mtk_stp_hdr *shdr;
+> > +	struct sk_buff *new_skb;
+> > +	int dlen;
+> > +
+> > +	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
+> > +	dlen = skb->len;
+> > +
+> > +	/* Make sure of STP header at least has 4-bytes free space to fill. */
+> > +	if (unlikely(skb_headroom(skb) < sizeof(*shdr))) {
+> > +		new_skb = skb_realloc_headroom(skb, sizeof(*shdr));
+> > +		kfree_skb(skb);
+> > +		skb = new_skb;
+> > +	}
+> > +
+> > +	/* Build for STP packet format. */
+> > +	shdr = skb_push(skb, sizeof(*shdr));
+> > +	mtk_make_stp_hdr(shdr, 0, dlen);
+> > +	skb_put_zero(skb, MTK_STP_TLR_SIZE);
+> > +
+> > +	skb_queue_tail(&bdev->txq, skb);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int mtk_hci_wmt_sync(struct hci_dev *hdev, u8 opcode, u8 flag,
+> > +			    u16 plen, const void *param)
+> > +{
+> > +	struct mtk_hci_wmt_cmd wc;
+> > +	struct mtk_wmt_hdr *hdr;
+> > +	struct sk_buff *skb;
+> > +	u32 hlen;
+> > +
+> > +	hlen = sizeof(*hdr) + plen;
+> > +	if (hlen > 255)
+> > +		return -EINVAL;
+> > +
+> > +	hdr = (struct mtk_wmt_hdr *)&wc;
+> > +	mtk_make_wmt_hdr(hdr, opcode, plen, flag);
+> > +	memcpy(wc.data, param, plen);
+> > +
+> > +	atomic_inc(&hdev->cmd_cnt);
+> > +
+> > +	skb =  __hci_cmd_sync_ev(hdev, 0xfc6f, hlen, &wc, HCI_VENDOR_PKT,
+> > +				 HCI_INIT_TIMEOUT);
+> 
+> you have two spaces between = and __hci..
 
-That's correct, the memcg if from the sock object.
-But the point is, in this situation why 'current' is used in try_charge() ?
-As 'current' is not related with the memcg, which is just a interrupted task.
+thanks! it'll be fixed in the next version.
 
 
-> If the network buffers is allocated through kmem interface, the
-> charging is bypassed altogether (through memcg_kmem_bypass()) for
-> interrupt context.
->
+> > +
+> > +	if (IS_ERR(skb)) {
+> > +		int err = PTR_ERR(skb);
+> > +
+> > +		bt_dev_err(hdev, "Failed to send wmt cmd (%d)\n", err);
+> 
+> No \n here since bt_dev_err already adds it.
+> 
 
-Yes.
+\n will be removed in the next version
 
-Thanks
-Yafang
+> > +		return err;
+> > +	}
+> > +
+> > +	kfree_skb(skb);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int mtk_setup_fw(struct hci_dev *hdev)
+> > +{
+> > +	const struct firmware *fw;
+> > +	const char *fwname;
+> > +	const u8 *fw_ptr;
+> > +	size_t fw_size;
+> > +	int err, dlen;
+> > +	u8 flag;
+> > +
+> > +	fwname = FIRMWARE_MT7622;
+> > +
+> > +	err = request_firmware(&fw, fwname, &hdev->dev);
+> > +	if (err < 0) {
+> > +		bt_dev_err(hdev, "Failed to load firmware file (%d)", err);
+> > +		return err;
+> > +	}
+> > +
+> > +	fw_ptr = fw->data;
+> > +	fw_size = fw->size;
+> > +
+> > +	/* The size of patch header is 30 bytes, should be skip. */
+> > +	if (fw_size < 30)
+> > +		return -EINVAL;
+> > +
+> > +	fw_size -= 30;
+> > +	fw_ptr += 30;
+> > +
+> > +	while (fw_size > 0) {
+> > +		dlen = min_t(int, 250, fw_size);
+> > +
+> > +		/* Tell deivice the position in sequence. */
+> > +		flag = (fw_size - dlen <= 0) ? 3 :
+> > +		       (fw_size < fw->size - 30) ? 2 : 1;
+> 
+> Use an if statement here. It is easier to read.
+> 
+
+thanks, the if statement would be used instead in the next version.
+
+> > +
+> > +		err = mtk_hci_wmt_sync(hdev, MTK_WMT_PATCH_DWNLD, flag, dlen,
+> > +				       fw_ptr);
+> > +		if (err < 0)
+> > +			break;
+> > +
+> > +		fw_size -= dlen;
+> > +		fw_ptr += dlen;
+> > +	}
+> > +
+> > +	release_firmware(fw);
+> > +
+> > +	return err;
+> > +}
+> > +
+> > +void *mtk_btuart_init(struct device *dev)
+> > +{
+> > +	struct mtk_bt_dev *soc;
+> > +
+> > +	soc = devm_kzalloc(dev, sizeof(*soc), GFP_KERNEL);
+> > +	if (!soc)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	soc->sp = devm_kzalloc(dev, sizeof(*soc->sp), GFP_KERNEL);
+> > +	if (!soc->sp)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	soc->clk = devm_clk_get(dev, "ref");
+> > +	if (IS_ERR(soc->clk))
+> > +		return ERR_CAST(soc->clk);
+> > +
+> > +	return soc;
+> > +}
+> > +EXPORT_SYMBOL_GPL(mtk_btuart_init);
+> > +
+> > +int mtk_btuart_send(struct hci_dev *hdev, struct sk_buff *skb)
+> > +{
+> > +	struct btuart_dev *bdev = hci_get_drvdata(hdev);
+> > +
+> > +	return mtk_stp_send(bdev, skb);
+> > +}
+> > +EXPORT_SYMBOL_GPL(mtk_btuart_send);
+> > +
+> > +int mtk_btuart_hci_frame(struct hci_dev *hdev, struct sk_buff *skb)
+> > +{
+> > +	struct hci_event_hdr *hdr = (void *)skb->data;
+> > +
+> > +	/* Fix up the vendor event id with HCI_VENDOR_PKT instead of
+> > +	 * 0xe4 so that btmon can parse the kind of vendor event properly.
+> > +	 */
+> > +	if (hdr->evt == 0xe4)
+> > +		hdr->evt = HCI_VENDOR_PKT;
+> > +
+> > +	/* Each HCI event would go through the core. */
+> > +	return hci_recv_frame(hdev, skb);
+> > +}
+> > +EXPORT_SYMBOL_GPL(mtk_btuart_hci_frame);
+> > +
+> > +int mtk_btuart_recv(struct hci_dev *hdev, const u8 *data, size_t count)
+> > +{
+> > +	struct btuart_dev *bdev = hci_get_drvdata(hdev);
+> > +	const unsigned char *p_left = data, *p_h4;
+> > +	const struct btuart_vnd *vnd = bdev->vnd;
+> > +	struct mtk_bt_dev *soc = bdev->data;
+> > +	int sz_left = count, sz_h4, adv;
+> > +	int err;
+> > +
+> > +	while (sz_left > 0) {
+> > +		/*  The serial data received from MT7622 BT controller is
+> > +		 *  at all time padded around with the STP header and tailer.
+> > +		 *
+> > +		 *  A full STP packet is looking like
+> > +		 *   -----------------------------------
+> > +		 *  | STP header  |  H:4   | STP tailer |
+> > +		 *   -----------------------------------
+> > +		 *  but it don't guarantee to contain a full H:4 packet which
+> > +		 *  means that it's possible for multiple STP packets forms a
+> > +		 *  full H:4 packet and whose length recorded in STP header can
+> > +		 *  shows up the most length the H:4 engine can handle in one
+> > +		 *  time.
+> > +		 */
+> > +
+> > +		p_h4 = mtk_stp_split(bdev, soc->sp, p_left, sz_left, &sz_h4);
+> > +		if (!p_h4)
+> > +			break;
+> > +
+> > +		adv = p_h4 - p_left;
+> > +		sz_left -= adv;
+> > +		p_left += adv;
+> > +
+> > +		bdev->rx_skb = h4_recv_buf(bdev->hdev, bdev->rx_skb, p_h4,
+> > +					   sz_h4, vnd->recv_pkts,
+> > +					   vnd->recv_pkts_cnt);
+> > +		if (IS_ERR(bdev->rx_skb)) {
+> > +			err = PTR_ERR(bdev->rx_skb);
+> > +			bt_dev_err(bdev->hdev,
+> > +				   "Frame reassembly failed (%d)", err);
+> > +			bdev->rx_skb = NULL;
+> > +			return err;
+> > +		}
+> > +
+> > +		sz_left -= sz_h4;
+> > +		p_left += sz_h4;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(mtk_btuart_recv);
+> > +
+> > +int mtk_btuart_setup(struct hci_dev *hdev)
+> > +{
+> > +	struct btuart_dev *bdev = hci_get_drvdata(hdev);
+> > +	struct mtk_bt_dev *soc = bdev->data;
+> > +	struct device *dev;
+> > +	u8 param = 0x1;
+> > +	int err = 0;
+> > +
+> > +	dev = &bdev->serdev->dev;
+> > +
+> > +	mtk_stp_reset(soc->sp);
+> > +
+> > +	/* Enable the power domain and clock the device requires. */
+> > +	pm_runtime_enable(dev);
+> > +	err = pm_runtime_get_sync(dev);
+> > +	if (err < 0) {
+> > +		pm_runtime_put_noidle(dev);
+> > +		goto err_disable_rpm;
+> > +	}
+> > +
+> > +	err = clk_prepare_enable(soc->clk);
+> > +	if (err < 0)
+> > +		goto err_put_rpm;
+> > +
+> > +	/* Setup a firmware which the device definitely requires. */
+> > +	err = mtk_setup_fw(hdev);
+> > +	if (err < 0)
+> > +		goto err_clk;
+> > +
+> > +	/* Activate funciton the firmware providing to. */
+> > +	err = mtk_hci_wmt_sync(hdev, MTK_WMT_RST, 0x4, 0, 0);
+> > +	if (err < 0)
+> > +		goto err_clk;
+> > +
+> > +	/* Enable Bluetooth protocol. */
+> > +	err = mtk_hci_wmt_sync(hdev, MTK_WMT_FUNC_CTRL, 0x0, sizeof(param),
+> > +			       &param);
+> > +	if (err < 0)
+> > +		goto err_clk;
+> > +
+> > +	set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
+> > +
+> > +	return 0;
+> > +err_clk:
+> > +	clk_disable_unprepare(soc->clk);
+> > +err_put_rpm:
+> > +	pm_runtime_put_sync(dev);
+> > +err_disable_rpm:
+> > +	pm_runtime_disable(dev);
+> > +
+> > +	return err;
+> > +}
+> > +EXPORT_SYMBOL_GPL(mtk_btuart_setup);
+> > +
+> > +int mtk_btuart_shutdown(struct hci_dev *hdev)
+> > +{
+> > +	struct btuart_dev *bdev = hci_get_drvdata(hdev);
+> > +	struct device *dev = &bdev->serdev->dev;
+> > +	struct mtk_bt_dev *soc = bdev->data;
+> > +	u8 param = 0x0;
+> > +
+> > +	/* Disable the device. */
+> > +	mtk_hci_wmt_sync(hdev, MTK_WMT_FUNC_CTRL, 0x0, sizeof(param), &param);
+> > +
+> > +	/* Shutdown the clock and power domain the device requires. */
+> > +	clk_disable_unprepare(soc->clk);
+> > +	pm_runtime_put_sync(dev);
+> > +	pm_runtime_disable(dev);
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(mtk_btuart_shutdown);
+> > +
+> > +MODULE_AUTHOR("Sean Wang <sean.wang@mediatek.com>");
+> > +MODULE_DESCRIPTION("Bluetooth Support for MediaTek Serial Devices");
+> > +MODULE_LICENSE("GPL v2");
+> > diff --git a/drivers/bluetooth/btmtkuart.h b/drivers/bluetooth/btmtkuart.h
+> > new file mode 100644
+> > index 0000000..4c2c24e
+> > --- /dev/null
+> > +++ b/drivers/bluetooth/btmtkuart.h
+> > @@ -0,0 +1,116 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * Copyright (c) 2018 MediaTek Inc.
+> > + *
+> > + * Bluetooth support for MediaTek serial devices
+> > + *
+> > + * Author: Sean Wang <sean.wang@mediatek.com>
+> > + *
+> > + */
+> > +
+> > +#define FIRMWARE_MT7622		"mediatek/mt7622pr2h.bin"
+> > +
+> > +#define MTK_STP_TLR_SIZE	2
+> > +
+> > +enum {
+> > +	MTK_WMT_PATCH_DWNLD = 0x1,
+> > +	MTK_WMT_FUNC_CTRL = 0x6,
+> > +	MTK_WMT_RST = 0x7
+> > +};
+> > +
+> > +struct mtk_stp_hdr {
+> > +	u8 prefix;
+> > +	u8 dlen1:4;
+> > +	u8 type:4;
+> > +	u8 dlen2;
+> > +	u8 cs;
+> > +} __packed;
+> > +
+> > +struct mtk_wmt_hdr {
+> > +	u8	dir;
+> > +	u8	op;
+> > +	__le16	dlen;
+> > +	u8	flag;
+> > +} __packed;
+> > +
+> > +struct mtk_hci_wmt_cmd {
+> > +	struct mtk_wmt_hdr hdr;
+> > +	u8 data[256];
+> > +} __packed;
+> > +
+> > +struct mtk_stp_splitter {
+> > +	u8	pad[6];
+> > +	u8	cursor;
+> > +	u16	dlen;
+> > +};
+> > +
+> > +struct mtk_bt_dev {
+> > +	struct clk *clk;
+> > +	struct completion wmt_cmd;
+> > +	struct mtk_stp_splitter *sp;
+> > +};
+> > +
+> > +static inline void
+> > +mtk_make_stp_hdr(struct mtk_stp_hdr *hdr, u8 type, u32 dlen)
+> > +{
+> > +	u8 *p = (u8 *)hdr;
+> > +
+> > +	hdr->prefix = 0x80;
+> > +	hdr->dlen1 = (dlen & 0xf00) >> 8;
+> > +	hdr->type = type;
+> > +	hdr->dlen2 = dlen & 0xff;
+> > +	hdr->cs = p[0] + p[1] + p[2];
+> > +}
+> > +
+> > +static inline void
+> > +mtk_make_wmt_hdr(struct mtk_wmt_hdr *hdr, u8 op, u16 plen, u8 flag)
+> > +{
+> > +	hdr->dir = 1;
+> > +	hdr->op = op;
+> > +	hdr->dlen = cpu_to_le16(plen + 1);
+> > +	hdr->flag = flag;
+> > +}
+> > +
+> > +#if IS_ENABLED(CONFIG_BT_HCIBTUART_MTK)
+> > +
+> > +void *mtk_btuart_init(struct device *dev);
+> > +int mtk_btuart_setup(struct hci_dev *hdev);
+> > +int mtk_btuart_shutdown(struct hci_dev *hdev);
+> > +int mtk_btuart_send(struct hci_dev *hdev, struct sk_buff *skb);
+> > +int mtk_btuart_hci_frame(struct hci_dev *hdev, struct sk_buff *skb);
+> > +int mtk_btuart_recv(struct hci_dev *hdev, const u8 *data, size_t count);
+> > +
+> > +#else
+> > +
+> > +static void *mtk_btuart_init(struct device *dev)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static inline int mtk_btuart_setup(struct hci_dev *hdev)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static inline int mtk_btuart_shutdown(struct hci_dev *hdev)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static inline int mtk_btuart_send(struct hci_dev *hdev, struct sk_buff *skb)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static int mtk_btuart_hci_frame(struct hci_dev *hdev, struct sk_buff *skb)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static inline int mtk_btuart_recv(struct hci_dev *hdev, const u8 *data,
+> > +				  size_t count)
+> > +{
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +#endif
+> > diff --git a/drivers/bluetooth/btuart.c b/drivers/bluetooth/btuart.c
+> > index 65d0086..2e715a5 100644
+> > --- a/drivers/bluetooth/btuart.c
+> > +++ b/drivers/bluetooth/btuart.c
+> > @@ -35,6 +35,7 @@
+> > #include "h4_recv.h"
+> > #include "btuart.h"
+> > #include "btbcm.h"
+> > +#include "btmtkuart.h"
+> > 
+> > #define VERSION "1.0"
+> > 
+> > @@ -396,6 +397,12 @@ static const struct h4_recv_pkt bcm_recv_pkts[] = {
+> > 	{ BCM_RECV_NULL,    .recv = hci_recv_diag  },
+> > };
+> > 
+> > +static const struct h4_recv_pkt mtk_recv_pkts[] = {
+> > +	{ H4_RECV_ACL,      .recv = hci_recv_frame },
+> > +	{ H4_RECV_SCO,      .recv = hci_recv_frame },
+> > +	{ H4_RECV_EVENT,    .recv = mtk_btuart_hci_frame },
+> > +};
+> > +
+> > static const struct btuart_vnd bcm_vnd = {
+> > 	.recv_pkts	= bcm_recv_pkts,
+> > 	.recv_pkts_cnt	= ARRAY_SIZE(bcm_recv_pkts),
+> > @@ -403,6 +410,16 @@ static const struct btuart_vnd bcm_vnd = {
+> > 	.setup		= bcm_setup,
+> > };
+> > 
+> > +static const struct btuart_vnd mtk_vnd = {
+> > +	.recv_pkts	= mtk_recv_pkts,
+> > +	.recv_pkts_cnt	= ARRAY_SIZE(mtk_recv_pkts),
+> > +	.init		= mtk_btuart_init,
+> > +	.setup		= mtk_btuart_setup,
+> > +	.shutdown	= mtk_btuart_shutdown,
+> > +	.send		= mtk_btuart_send,
+> > +	.recv		= mtk_btuart_recv,
+> > +};
+> > +
+> > static const struct h4_recv_pkt default_recv_pkts[] = {
+> > 	{ H4_RECV_ACL,      .recv = hci_recv_frame },
+> > 	{ H4_RECV_SCO,      .recv = hci_recv_frame },
+> > @@ -487,6 +504,7 @@ static void btuart_remove(struct serdev_device *serdev)
+> > #ifdef CONFIG_OF
+> > static const struct of_device_id btuart_of_match_table[] = {
+> > 	{ .compatible = "brcm,bcm43438-bt", .data = &bcm_vnd },
+> > +	{ .compatible = "mediatek,mt7622-bluetooth", .data = &mtk_vnd },
+> > 	{ }
+> > };
+> > MODULE_DEVICE_TABLE(of, btuart_of_match_table);
+> 
+> Regards
+> 
+> Marcel
+> 
+
+
