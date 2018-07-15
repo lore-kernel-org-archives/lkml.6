@@ -6,130 +6,185 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F58ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDF7ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487A521473
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:05:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487A521473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
+	by mail.kernel.org (Postfix) with ESMTP id 315EC21473
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315EC21473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbeGOP2Z (ORCPT
+        id S1726702AbeGOPbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 11:28:25 -0400
-Received: from smtp2.it.da.ut.ee ([193.40.5.67]:40454 "EHLO smtp2.it.da.ut.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbeGOP2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 11:28:25 -0400
-Received: from math.ut.ee (unknown [IPv6:2001:bb8:2002:2400:5054:ff:fe3b:8db9])
-        by smtp2.it.da.ut.ee (Postfix) with ESMTP id 5D58690020;
-        Sun, 15 Jul 2018 18:05:05 +0300 (EEST)
-Received: by math.ut.ee (Postfix, from userid 1014)
-        id 4B4A32207EE; Sun, 15 Jul 2018 18:05:03 +0300 (EEST)
-Received: from localhost (localhost [127.0.0.1])
-        by math.ut.ee (Postfix) with ESMTP id 3207F220442;
-        Sun, 15 Jul 2018 18:05:03 +0300 (EEST)
-Date:   Sun, 15 Jul 2018 18:05:03 +0300 (EEST)
-From:   Meelis Roos <mroos@linux.ee>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     Linux Kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: 4.18-rc* regression: x86-32 troubles (with timers?)
-In-Reply-To: <alpine.LRH.2.21.1807051254050.21817@math.ut.ee>
-Message-ID: <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
-References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee> <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com> <alpine.LRH.2.21.1807051254050.21817@math.ut.ee>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Sun, 15 Jul 2018 11:31:25 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:55672 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbeGOPbZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 11:31:25 -0400
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 69E50ADF4F;
+        Mon, 16 Jul 2018 00:08:08 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w6FF87QT008249
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Jul 2018 00:08:08 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w6FF874l006470
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Jul 2018 00:08:07 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id w6FF86To006469;
+        Mon, 16 Jul 2018 00:08:06 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] Re: FAT: Operating on broken FAT FS causes the write syscall to return negative number not equal to -1
+References: <CAE5jQCe4nX8m1f5jPL57GeU32CftNv+NvgNmZxufH85nun1o7w@mail.gmail.com>
+        <878t6c7f8p.fsf@mail.parknet.co.jp>
+        <20180715143043.GM30522@ZenIV.linux.org.uk>
+Date:   Mon, 16 Jul 2018 00:08:06 +0900
+In-Reply-To: <20180715143043.GM30522@ZenIV.linux.org.uk> (Al Viro's message of
+        "Sun, 15 Jul 2018 15:30:43 +0100")
+Message-ID: <87o9f8y1t5.fsf_-_@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > I tried 4.18.0-rc1-00023-g9ffc59d57228 and now
-> > > 4.18.0-rc3-00113-gfc36def997cf on a 32-bit server and then some other
-> > > 32-bit machines, and got half-failed bootup - kernel and userspace come
-> > > up but some services fail to start, including network and
-> > > systemd-journald:
-> > >
-> > > systemd-journald[85]: Assertion 'clock_gettime(map_clock_id(clock_id), &ts) == 0' failed at ../src/basic/time-util.c:53, function now(). Aborting.
-> > >
-> > > I then tried multiple other machines. All x86-64 machines seem
-> > > unaffected, some x86-32 machines are affected (Athlon with AMD750
-> > > chipset, Fujitsu RX100-S2 with P4-3.4, and P4 with Intel 865 chipset),
-> > > some very similar x86-32 machines are unaffected. I have different
-> > > customized kernel configuration on them, so far I have not pinpointed
-> > > any configuration option to be at fault.
-> > >
-> > > All machines run Debian unstable.
-> > >
-> > > 4.17.0 was working fine.
-> > >
-> > > Will continue with bisecting between 4.17.0 and
-> > > 4.18.0-rc1-00023-g9ffc59d57228.
+Al Viro <viro@ZenIV.linux.org.uk> writes:
 
-Bisection has been finished (I'm usually away from the problematic 
-computers in summer), result is strange and seems unrelated:
+> On Sun, Jul 15, 2018 at 11:20:06PM +0900, OGAWA Hirofumi wrote:
+>> +static inline bool fat_valid_entry(struct msdos_sb_info *sbi, int entry)
+>> +{
+>> +	if (entry < FAT_START_ENT || sbi->max_cluster <= entry)
+>> +		return false;
+>> +	return true;
+>> +}
+>
+> Pet peeve: if (...) return false; return true; instead of return !....;
+>
+> In this case,
+> 	return entry >= FAT_START_ENT && entry < sb->max_cluster;
 
-0bc5fe857274133ca028ebb15ff2e8549a369916 is the first bad commit
-commit 0bc5fe857274133ca028ebb15ff2e8549a369916
-Author: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-Date:   Sat May 5 18:42:59 2018 -0700
+Fixed. Thanks.
 
-    qed*: Refactor mf_mode to consist of bits.
 
-    `mf_mode' field indicates the multi-partitioning mode the device is
-    configured to. This method doesn't scale very well, adding a new MF mode
-    requires going over all the existing conditions, and deciding whether those
-    are needed for the new mode or not.
-    The patch defines a set of bit-fields for modes which are derived according
-    to the mode info shared by the MFW and all the configuration would be made
-    according to those. To add a new mode, there would be a single place where
-    we'll need to go and choose which bits apply and which don't.
+[PATCH v2] fat: Validate ->i_start before using
 
-    Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-    Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
+On corrupted FATfs may have invalid ->i_start. To handle it, this
+checks ->i_start before using, and return proper error code.
 
-:040000 040000 a3572846e1afb9ccfa9c4a84b0135a0057ade66f bdb7b28725a4f1bffe79ee384a3603b3127d6fdb M      drivers
-:040000 040000 f90c7f26fd8445afa48c6679ed68fed294b23d7f 52119c547a82b268b5c173d3df94e267cc1297a0 M      include
-mroos@rx100s2:~/linux$ nice git bisect log
-git bisect start# good: [29dcea88779c856c7dc92040a0c01233263101d4] Linux 4.17
-git bisect good 29dcea88779c856c7dc92040a0c01233263101d4
-# good: [e27c49291a7fe9dc415c9fcab5bd781ec82dfe04] x86: Convert x86_platform_ops to timespec64
-git bisect good e27c49291a7fe9dc415c9fcab5bd781ec82dfe04
-# bad: [1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
-git bisect bad 1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21
-# bad: [1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
-git bisect bad 1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21
-# good: [135c5504a600ff9b06e321694fbcac78a9530cd4] Merge tag 'drm-next-2018-06-06-1' of git://anongit.freedesktop.org/drm/drm
-git bisect good 135c5504a600ff9b06e321694fbcac78a9530cd4
-# bad: [ffbc9197b4721634dc6c0fefa9b31e565fa89cee] wcn36xx: improve debug and error messages for SMD
-git bisect bad ffbc9197b4721634dc6c0fefa9b31e565fa89cee
-# good: [3a443bd6dd7c43bf5763779309514bf3e7c1c3eb] net/9p: correct the variable name in v9fs_get_trans_by_name() comment
-git bisect good 3a443bd6dd7c43bf5763779309514bf3e7c1c3eb
-# bad: [93c65d13d8a0b7c272868d4a9779f96fc973df26] vmxnet3: Replace msleep(1) with usleep_range()
-git bisect bad 93c65d13d8a0b7c272868d4a9779f96fc973df26
-# good: [4bc871984f7cb5b2dec3ae64b570cb02f9ce2227] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-git bisect good 4bc871984f7cb5b2dec3ae64b570cb02f9ce2227
-# bad: [38aa51c134b56b7ea61bea79b428c5fbcd95f285] net/mlx5e: Support offloaded TC flows with no matches on headers
-git bisect bad 38aa51c134b56b7ea61bea79b428c5fbcd95f285
-# bad: [00483690552c5fb6aa30bf3acb75b0ee89b4c0fd] tcp: Add mark for TIMEWAIT sockets
-git bisect bad 00483690552c5fb6aa30bf3acb75b0ee89b4c0fd
-# bad: [3e50d2da5850dd126b3e6a6e4387620d55b71db4] microchip_t1: Add driver for Microchip LAN87XX T1 PHYs
-git bisect bad 3e50d2da5850dd126b3e6a6e4387620d55b71db4
-# bad: [dac0490718bd17df5e3995ffca14255e5f9ed22d] bnxt_en: Check unsupported speeds in bnxt_update_link() on PF only.
-git bisect bad dac0490718bd17df5e3995ffca14255e5f9ed22d
-# bad: [9d4927f0d3760d8f10727c3035121d2677108f44] Merge branch 'ipv6-misc'
-git bisect bad 9d4927f0d3760d8f10727c3035121d2677108f44
-# bad: [cac6f691546b9efd50c31c0db97fe50d0357104a] qed: Add support for Unified Fabric Port.
-git bisect bad cac6f691546b9efd50c31c0db97fe50d0357104a
-# bad: [27bf96e32c92599dc7523b36d6c761fc8312c8c0] qed: Remove unused data member 'is_mf_default'.
-git bisect bad 27bf96e32c92599dc7523b36d6c761fc8312c8c0
-# bad: [0bc5fe857274133ca028ebb15ff2e8549a369916] qed*: Refactor mf_mode to consist of bits.
-git bisect bad 0bc5fe857274133ca028ebb15ff2e8549a369916
-# first bad commit: [0bc5fe857274133ca028ebb15ff2e8549a369916] qed*: Refactor mf_mode to consist of bits.
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
 
+ fs/fat/cache.c  |   19 ++++++++++++-------
+ fs/fat/fat.h    |    5 +++++
+ fs/fat/fatent.c |    6 +++---
+ 3 files changed, 20 insertions(+), 10 deletions(-)
+
+diff -puN fs/fat/cache.c~fat-validate-i_start fs/fat/cache.c
+--- linux/fs/fat/cache.c~fat-validate-i_start	2018-07-15 23:03:25.167171670 +0900
++++ linux-hirofumi/fs/fat/cache.c	2018-07-15 23:59:11.978489716 +0900
+@@ -225,7 +225,8 @@ static inline void cache_init(struct fat
+ int fat_get_cluster(struct inode *inode, int cluster, int *fclus, int *dclus)
+ {
+ 	struct super_block *sb = inode->i_sb;
+-	const int limit = sb->s_maxbytes >> MSDOS_SB(sb)->cluster_bits;
++	struct msdos_sb_info *sbi = MSDOS_SB(sb);
++	const int limit = sb->s_maxbytes >> sbi->cluster_bits;
+ 	struct fat_entry fatent;
+ 	struct fat_cache_id cid;
+ 	int nr;
+@@ -234,6 +235,12 @@ int fat_get_cluster(struct inode *inode,
+ 
+ 	*fclus = 0;
+ 	*dclus = MSDOS_I(inode)->i_start;
++	if (!fat_valid_entry(sbi, *dclus)) {
++		fat_fs_error_ratelimit(sb,
++			"%s: invalid start cluster (i_pos %lld, start %08x)",
++			__func__, MSDOS_I(inode)->i_pos, *dclus);
++		return -EIO;
++	}
+ 	if (cluster == 0)
+ 		return 0;
+ 
+@@ -250,9 +257,8 @@ int fat_get_cluster(struct inode *inode,
+ 		/* prevent the infinite loop of cluster chain */
+ 		if (*fclus > limit) {
+ 			fat_fs_error_ratelimit(sb,
+-					"%s: detected the cluster chain loop"
+-					" (i_pos %lld)", __func__,
+-					MSDOS_I(inode)->i_pos);
++				"%s: detected the cluster chain loop (i_pos %lld)",
++				__func__, MSDOS_I(inode)->i_pos);
+ 			nr = -EIO;
+ 			goto out;
+ 		}
+@@ -262,9 +268,8 @@ int fat_get_cluster(struct inode *inode,
+ 			goto out;
+ 		else if (nr == FAT_ENT_FREE) {
+ 			fat_fs_error_ratelimit(sb,
+-				       "%s: invalid cluster chain (i_pos %lld)",
+-				       __func__,
+-				       MSDOS_I(inode)->i_pos);
++				"%s: invalid cluster chain (i_pos %lld)",
++				__func__, MSDOS_I(inode)->i_pos);
+ 			nr = -EIO;
+ 			goto out;
+ 		} else if (nr == FAT_ENT_EOF) {
+diff -puN fs/fat/fat.h~fat-validate-i_start fs/fat/fat.h
+--- linux/fs/fat/fat.h~fat-validate-i_start	2018-07-15 23:03:25.168171670 +0900
++++ linux-hirofumi/fs/fat/fat.h	2018-07-15 23:59:58.896437024 +0900
+@@ -348,6 +348,11 @@ static inline void fatent_brelse(struct
+ 	fatent->fat_inode = NULL;
+ }
+ 
++static inline bool fat_valid_entry(struct msdos_sb_info *sbi, int entry)
++{
++	return FAT_START_ENT <= entry && entry < sbi->max_cluster;
++}
++
+ extern void fat_ent_access_init(struct super_block *sb);
+ extern int fat_ent_read(struct inode *inode, struct fat_entry *fatent,
+ 			int entry);
+diff -puN fs/fat/fatent.c~fat-validate-i_start fs/fat/fatent.c
+--- linux/fs/fat/fatent.c~fat-validate-i_start	2018-07-15 23:03:25.169171668 +0900
++++ linux-hirofumi/fs/fat/fatent.c	2018-07-15 23:59:12.036489650 +0900
+@@ -24,7 +24,7 @@ static void fat12_ent_blocknr(struct sup
+ {
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+ 	int bytes = entry + (entry >> 1);
+-	WARN_ON(entry < FAT_START_ENT || sbi->max_cluster <= entry);
++	WARN_ON(!fat_valid_entry(sbi, entry));
+ 	*offset = bytes & (sb->s_blocksize - 1);
+ 	*blocknr = sbi->fat_start + (bytes >> sb->s_blocksize_bits);
+ }
+@@ -34,7 +34,7 @@ static void fat_ent_blocknr(struct super
+ {
+ 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
+ 	int bytes = (entry << sbi->fatent_shift);
+-	WARN_ON(entry < FAT_START_ENT || sbi->max_cluster <= entry);
++	WARN_ON(!fat_valid_entry(sbi, entry));
+ 	*offset = bytes & (sb->s_blocksize - 1);
+ 	*blocknr = sbi->fat_start + (bytes >> sb->s_blocksize_bits);
+ }
+@@ -354,7 +354,7 @@ int fat_ent_read(struct inode *inode, st
+ 	int err, offset;
+ 	sector_t blocknr;
+ 
+-	if (entry < FAT_START_ENT || sbi->max_cluster <= entry) {
++	if (!fat_valid_entry(sbi, entry)) {
+ 		fatent_brelse(fatent);
+ 		fat_fs_error(sb, "invalid access to FAT (entry 0x%08x)", entry);
+ 		return -EIO;
+_
 
 -- 
-Meelis Roos (mroos@linux.ee)
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
