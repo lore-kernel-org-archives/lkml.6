@@ -2,145 +2,135 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CC8ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D94C2ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1CD32089F
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E842208D4
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="hkET5GiQ";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K8Znm6EP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1CD32089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdCd++I4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E842208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732752AbeGOCKa (ORCPT
+        id S1733081AbeGOCPW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 22:10:30 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:41378 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731956AbeGOCKa (ORCPT
+        Sat, 14 Jul 2018 22:15:22 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:36253 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731955AbeGOCPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 22:10:30 -0400
-Received: by mail-yw0-f195.google.com with SMTP id q129-v6so10290419ywg.8
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 18:49:25 -0700 (PDT)
+        Sat, 14 Jul 2018 22:15:21 -0400
+Received: by mail-qt0-f193.google.com with SMTP id t5-v6so4390130qtn.3;
+        Sat, 14 Jul 2018 18:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=7XpD6qbQsRu/9MCwId1Gu1dCBvskrl8mWMeOZWorsA0=;
-        b=hkET5GiQYYsSeFbvSca/Bn35CXwjaLsvDskCDWJkXPAENX5k4K400pEf39vH0B5VEC
-         z/K3i+RVQWbA3tAerFfwwifCBaNkyje+VvXveg7R/+ZhkSE56KCnYhAhI9UbwEaai6/2
-         zOoVCaeNRikMNitS3CJmO0RNzCxKfXZ1yQPn4BURNEOQri2bYR9QxXDUd5YxQU7Col7g
-         piiEnW6CLaVGrMQ5gu5W/QeiD+Cw13acCpOoeTowpKTSOCDN38AaKCqQf7O7rDH3NMNd
-         8hMVIWIO6ovxtYTSvZFht9Kt2aHXf9VsAP2b0js0f68o/yyEmJKEirxNC0ZisCsmaRl5
-         iopg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=7XpD6qbQsRu/9MCwId1Gu1dCBvskrl8mWMeOZWorsA0=;
-        b=K8Znm6EPVeqjKZPNfgXJuMuk07Mvw2u9nrTsg2exnpqCM4darl5woJKPzYULODbvjR
-         08au7YzmPw3mZtEnGj9LLmJWxZqZO1+TGEUoxmA9bAXZUI4rB19IjWaADy4wBDreixSr
-         eqnU5L1o1LljciO+TohPniGloxB3Pt8EX/HKs=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=71d8ELp5ZJhp6gtNsTfzu+p7cXsohtPfcYzdTN/UKe0=;
+        b=FdCd++I4HOsCERg8VZkVZ8tx9SkrKXotrm9zd2mtKEg85sPqGOw3ETbC/GtAkGBSqB
+         UvIT4Gx7eTQpA/N/yBIDqH3Lg/OUJsylxxK8tVmAEd6RS9OcQfcyvYMQFA/P66D6c9js
+         rqJBip86Y7rvzhHiVWzai8e+o6PWGqy/1iQsVGAv2qSM595VWy33zLZIRlgxwZ6QSSuy
+         j02nwxnfyQiUGTryldhprYDtAXJG1zQdbz2RXrZjjjCIvhjLM+T8nnyiP10NHQFeF37w
+         qZQwz5q2q20EkcxWCErc2Ddx2zY9WDF914qbOkXAgi5PXsCXafYaNiQOMV6HhL9g0kp2
+         zNWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=7XpD6qbQsRu/9MCwId1Gu1dCBvskrl8mWMeOZWorsA0=;
-        b=D76BqQGB+VanStr7GsgY4/Nfr10jrq8x6BQg+ohSFUAYb9YDEzBvmdJT2NN8qmWYQI
-         VKb26nSNaDxmA1ezKKC32ceoWBQ8UP4QXVSydZ9iNMN4PiPVt4teF/t6GTFvtzmCY4dX
-         PtLwvVQiVEmxT/w9OuvwQ16h8pAFwPrhhaEl+zibJm1yT1kaJwDcWM75z3FcW5B4q3gG
-         iYrPqDR3E1i+UZO3XbBNSZIY8t4sFIZRBRSDV/MOjmX7rm/akzIscQnvwLLz2fNLSZ3f
-         unkMRjP+PQIljdRZl4iJR1LvzhTdRIR3YG0RsO3EzIhl+kRoRG6NxKr0flhRVjZJGY3j
-         dD5w==
-X-Gm-Message-State: AOUpUlGMuOsirffmJCtKYpNFUT7VhOeWeBLwg/73dENmSfc7BU4fLhza
-        7M3JnAFR1h0WkRd9YAs8mzGAUqjyArDUMp4klKT1RA==
-X-Google-Smtp-Source: AAOMgpd6DuwI6EAWKIarofhdI6PNsM0gF6ujUc3fr54vET8ytU2kEvXGdhGkOka6Tljh2qNITUSNYWQmxVCTycInyNE=
-X-Received: by 2002:a0d:e2cd:: with SMTP id l196-v6mr5705907ywe.38.1531619364867;
- Sat, 14 Jul 2018 18:49:24 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 18:49:24
- -0700 (PDT)
-In-Reply-To: <20180705161709.17028-1-bart.vanassche@wdc.com>
-References: <20180705161709.17028-1-bart.vanassche@wdc.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 14 Jul 2018 18:49:24 -0700
-X-Google-Sender-Auth: jLGmqQNtZjy5pJ7GFKlkuwIC-6c
-Message-ID: <CAGXu5jJJLh+oMcZ94nkrwCvyJzk6MzOATvt66WC-rHfxGTJh0Q@mail.gmail.com>
-Subject: Re: [PATCH] kernel.h: Avoid that sparse complains about using sizeof(void)
-To:     Bart Van Assche <bart.vanassche@wdc.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Martin Uecker <Martin.Uecker@med.uni-goettingen.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=71d8ELp5ZJhp6gtNsTfzu+p7cXsohtPfcYzdTN/UKe0=;
+        b=SIh0fWooiOSzLzwHwwPin5kQxKkyFsvNGmdbz4TDg8EYFW9Bs9jJ+IDpMjdGYTU9uP
+         Au9nMMfpAHHN4UgbhA9zU8HzyHT8tqN4j7gLhb3PYUoAIrBMjv5pbGGv6jXoZUZBEmGK
+         6ywKGmM/nO3t8RtkNtDlK05U0d1SdBkgq5z+7UIZruLJMWxm0Zm0XFA4ucaSsmdqb5vr
+         Z/bTTlIAvz9MsLkTTHP0U2Cll8prDG+M0EgstE6AWa4hbmkJ0jCZgUkm+Kun55VLPxWL
+         s6nLKIfvfh5wpZfATAnbthzDamWdeOqR91IEJNqO4B7YSBm384dwGBtDptZpKHPWnfKy
+         qLFg==
+X-Gm-Message-State: AOUpUlGdwqvxqXv63ZA2JLXeUx8CLJw/4GStresPL4RNo4NuKtogFCcx
+        fYeCZXvQC7enThqcryyPxe4=
+X-Google-Smtp-Source: AAOMgpcA3GqpogmYt/T1/dLkhBdpa7k2lLc7WgFh/OtR0bThDIshUfvzfbc5vlblPM5DaxaRElnRoA==
+X-Received: by 2002:ac8:2cb0:: with SMTP id 45-v6mr10814902qtw.29.1531619655685;
+        Sat, 14 Jul 2018 18:54:15 -0700 (PDT)
+Received: from localhost.localdomain.iceblazer.shadowybug.net (pool-173-67-16-152.bltmmd.fios.verizon.net. [173.67.16.152])
+        by smtp.gmail.com with ESMTPSA id t3-v6sm2949667qto.26.2018.07.14.18.54.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 14 Jul 2018 18:54:14 -0700 (PDT)
+From:   Stefan Baranoff <sbaranoff@gmail.com>
+Cc:     Andrey Vagin <avagin@virtuozzo.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Stefan Baranoff <sbaranoff@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net] tcp: Fix broken repair socket window probe patch
+Date:   Sat, 14 Jul 2018 21:54:09 -0400
+Message-Id: <1531619649-1518-1-git-send-email-sbaranoff@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 9:17 AM, Bart Van Assche <bart.vanassche@wdc.com> wrote:
-> The macro __is_constexpr() causes sparse to report the following:
->
->     warning: expression using sizeof(void)
->
-> Avoid this by using __builtin_constant_p() instead.
->
-> Fixes: 3c8ba0d61d04 ("kernel.h: Retain constant expression output for max()/min()")
-> Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-> Cc: <stable@vger.kernel.org>
-> ---
->  include/linux/kernel.h | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index d23123238534..a9f0d0d48971 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -811,13 +811,19 @@ static inline void ftrace_dump(enum ftrace_dump_mode oops_dump_mode) { }
->  #define __typecheck(x, y) \
->                 (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
->
-> +#ifndef __CHECKER__
->  /*
->   * This returns a constant expression while determining if an argument is
->   * a constant expression, most importantly without evaluating the argument.
-> - * Glory to Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
-> + * Glory to Martin Uecker <Martin.Uecker@med.uni-goettingen.de>. However, this
-> + * macro causes sparse to report the warning "expression using sizeof(void)".
-> + * Hence use __builtin_constant_p() instead when using sparse.
->   */
->  #define __is_constexpr(x) \
->         (sizeof(int) == sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)))
-> +#else
-> +#define __is_constexpr(x) __builtin_constant_p((x))
-> +#endif
->
->  #define __no_side_effects(x, y) \
->                 (__is_constexpr(x) && __is_constexpr(y))
+Correct previous bad attempt at allowing sockets to come out of TCP
+repair without sending window probes. To avoid changing size of
+the repair variable in struct tcp_sock, this lets the decision for
+sending probes or not to be made when coming out of repair by
+introducing two ways to turn it off.
 
-I'm fine with this; it'll only activate for sparse. I'd like to get
-Linus's eyes on it, though, since this macro caused us SO much pain
-that I'm nervous to change it without some greater level of review. :)
+Fixes: 70b7ff130224 ("tcp: allow user to create repair socket without window probes")
+Signed-off-by: Stefan Baranoff <sbaranoff@gmail.com>
+---
+ include/uapi/linux/tcp.h |  4 ++++
+ net/ipv4/tcp.c           | 12 +++++++-----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-Acked-by: Kees Cook <keescook@chromium.org>
-
-Thanks!
-
--Kees
-
+diff --git a/include/uapi/linux/tcp.h b/include/uapi/linux/tcp.h
+index 29eb659..e3f6ed8 100644
+--- a/include/uapi/linux/tcp.h
++++ b/include/uapi/linux/tcp.h
+@@ -127,6 +127,10 @@ enum {
+ 
+ #define TCP_CM_INQ		TCP_INQ
+ 
++#define TCP_REPAIR_ON		1
++#define TCP_REPAIR_OFF		0
++#define TCP_REPAIR_OFF_NO_WP	-1	/* Turn off without window probes */
++
+ struct tcp_repair_opt {
+ 	__u32	opt_code;
+ 	__u32	opt_val;
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 8e5e2ca..9163fb1 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2824,15 +2824,17 @@ static int do_tcp_setsockopt(struct sock *sk, int level,
+ 		if (!tcp_can_repair_sock(sk))
+ 			err = -EPERM;
+ 		/* 1 for normal repair, 2 for no window probes */
+-		else if (val == 1 || val == 2) {
+-			tp->repair = val;
++		else if (val == TCP_REPAIR_ON) {
++			tp->repair = 1;
+ 			sk->sk_reuse = SK_FORCE_REUSE;
+ 			tp->repair_queue = TCP_NO_QUEUE;
+-		} else if (val == 0) {
++		} else if (val == TCP_REPAIR_OFF) {
++			tp->repair = 0;
++			sk->sk_reuse = SK_NO_REUSE;
++			tcp_send_window_probe(sk);
++		} else if (val == TCP_REPAIR_OFF_NO_WP) {
+ 			tp->repair = 0;
+ 			sk->sk_reuse = SK_NO_REUSE;
+-			if (tp->repair == 1)
+-				tcp_send_window_probe(sk);
+ 		} else
+ 			err = -EINVAL;
+ 
 -- 
-Kees Cook
-Pixel Security
+1.8.3.1
+
