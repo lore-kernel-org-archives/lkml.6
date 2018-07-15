@@ -1,105 +1,132 @@
 Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA0AECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 07:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F8DECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 07:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4A820882
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 07:42:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4A820882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DF5720882
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 07:43:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWlVnac9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF5720882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726177AbeGOH6C (ORCPT
+        id S1726224AbeGOIEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 03:58:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726018AbeGOH6C (ORCPT
+        Sun, 15 Jul 2018 04:04:20 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43750 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbeGOIEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 03:58:02 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6F7Txpr115578
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 03:36:03 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k7xdqnpek-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 03:36:02 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <kamalesh@linux.vnet.ibm.com>;
-        Sun, 15 Jul 2018 08:36:01 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sun, 15 Jul 2018 08:35:59 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6F7ZwbU34013276
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 15 Jul 2018 07:35:58 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F1D5AE053;
-        Sun, 15 Jul 2018 10:36:17 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E274DAE051;
-        Sun, 15 Jul 2018 10:36:15 +0100 (BST)
-Received: from [9.79.225.171] (unknown [9.79.225.171])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 15 Jul 2018 10:36:15 +0100 (BST)
-Subject: Re: [PATCH] livepatch: Remove reliable stacktrace check in
- klp_try_switch_task()
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1531382706-9732-1-git-send-email-kamalesh@linux.vnet.ibm.com>
- <20180713183756.gfddtn3gbwkwpqbj@treble>
-From:   Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Date:   Sun, 15 Jul 2018 13:05:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 15 Jul 2018 04:04:20 -0400
+Received: by mail-lf0-f66.google.com with SMTP id m12-v6so30051334lfc.10;
+        Sun, 15 Jul 2018 00:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yRvnPedgbgbF1WZd0OSHNfkodvpFzXuGxAjQO6mdsgM=;
+        b=cWlVnac9sL8nXQyaKhJ6mf7AgUGurfHnglzS3o2b6fGrRq7MkS5F99ayOhjnEwIRgA
+         2x/SxEhEXwEZz3W+2fcmYWIl2AvSFEHGn65ANIIYLxIleQwlFlzpi0eH+8HQcicC+YIJ
+         qHGG9nuol4kruSs+bblvWuKned9gvLkP1ZyGu1ybw94JQembquh1B9qQet5N+jcEmBP+
+         +1hve4i9FiysgwHMr6rMTsUphfqsY6VweVnlab7eTIDkCa9RDEdLMkI9bdYIoe6AaNqY
+         K4b1mcEWgHJ+ZiZw65UPxTRAyEqP4bhGPUkgNEmVYPFP1qUrBCiaS8ByJatSPjbv2Hx8
+         pG4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yRvnPedgbgbF1WZd0OSHNfkodvpFzXuGxAjQO6mdsgM=;
+        b=pQ3fGDcpIt7biO2Fmo2V3EBgXkTWAKoJAJzSkomrEFuNY2eYtxPorbPvfEu9GthbRD
+         N7FTbAhTTLwoe7Y67EE/gRoJOVSx3INjAX/eylKMmy68W0nup6h9pp5XT9CDAMURm+Yx
+         /CnNlNH5CR4Ddfdo9A/feqoRwmidN6j+PdyYiYVT8VCxYdBdl8rZFq3zW6X++TUzqJzH
+         VYgQ6xFVgDlC5bha0blF1cWxZnmW3LbIOx6DEIiqwqGjPx392TCjdXbfJSRqA+E9C7a9
+         RbaqinAZYjQB6V4cje5dt8nrGM1HXG+wPhaF5H070NRCVN/WKeeB2q2keLP7+PzPsOkk
+         M9xg==
+X-Gm-Message-State: AOUpUlFoKTFcuB2SFcJDQc5b4dI/svmTirjRVKWXNFasWcj7AlD+aBlD
+        YGWAUd7y+6h1MsKvph/CFYw+wQ==
+X-Google-Smtp-Source: AAOMgpc4orgK6QlNrJ8pu7KjEynizM0gwAYOlJHgwkgEsJm1ydY5QS20KnAakTt5tIdt6HfQPwQPWA==
+X-Received: by 2002:a19:e4c1:: with SMTP id x62-v6mr8727023lfi.76.1531640538554;
+        Sun, 15 Jul 2018 00:42:18 -0700 (PDT)
+Received: from gmail.com (c-2ec26dfb-74736162.cust.telenor.se. [46.194.109.251])
+        by smtp.gmail.com with ESMTPSA id o11-v6sm2071624ljh.34.2018.07.15.00.42.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Jul 2018 00:42:17 -0700 (PDT)
+Date:   Sun, 15 Jul 2018 09:42:25 +0200
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org
+Subject: Re: [PATCH] Input: pxrc - fix leak of usb_device
+Message-ID: <20180715074225.GB15123@gmail.com>
+References: <1531512477-31981-1-git-send-email-khoroshilov@ispras.ru>
+ <20180714080920.GA15123@gmail.com>
+ <20180714085109.mbhk6aybpjsbuq6l@penguin>
 MIME-Version: 1.0
-In-Reply-To: <20180713183756.gfddtn3gbwkwpqbj@treble>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18071507-0012-0000-0000-0000028A4EB1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071507-0013-0000-0000-000020BC0240
-Message-Id: <dbd9bdf6-7cb1-cde1-5f7d-d3a5449c560d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-15_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=995 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807150092
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180714085109.mbhk6aybpjsbuq6l@penguin>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday 14 July 2018 12:07 AM, Josh Poimboeuf wrote:
->> We bail out during patch registration for architectures, those don't
->> support reliable stack trace.
+On Sat, Jul 14, 2018 at 08:51:09AM +0000, Dmitry Torokhov wrote:
+> On Sat, Jul 14, 2018 at 10:09:20AM +0200, Marcus Folkesson wrote:
+> > Hi Alexey,
+> > 
+> > Good catch!
+> > 
+> > On Fri, Jul 13, 2018 at 11:07:57PM +0300, Alexey Khoroshilov wrote:
+> > > pxrc_probe() calls usb_get_dev(), but there is no usb_put_dev()
+> > > anywhere in the driver.
+> > > 
+> > > The patch adds one to error handling code and to pxrc_disconnect().
+> > > 
+> > > Found by Linux Driver Verification project (linuxtesting.org).
+> > > 
+> > > Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> > 
+> > Reviewed-by: Marcus Folkesson <marcus.folkesson@gmail.com>
 > 
-> Does anybody know if that change was intentional?  I thought the plan
-> was to allow non-consistency-model arches to still use livepatch, and
-> that they'd just have to 'force' patches to completion instead.  That
-> seems a little more forgiving.
+> Hmm, the biggest question however if we need to "take" the device, as I
+> do not think interface can outlive the device, and whether we actually
+> need to store it in pxrc, as we only need it during set up, as far as I
+> can see.
+
+Yep, the device is only used during setup.
+I interpret the comments for usb_get_dev() as you should take a
+reference count on the device even if you only use the interface, but I
+could be wrong.
+
+From usb_get_dev()::
+
+	 * usb_get_dev - increments the reference count of the usb device structure
+	 * @dev: the device being referenced
+	 *
+	 * Each live reference to a device should be refcounted.
+	 *
+	 * Drivers for USB interfaces should normally record such references in
+	 * their probe() methods, when they bind to an interface, and release
+	 * them by calling usb_put_dev(), in their disconnect() methods.
+
+I can fix the driver to not take the device if that is what we want.
+If not Alexey want to fix it of course, it is his catch :-)
+
 > 
+> Thanks.
+> 
+> -- 
+> Dmitry
 
-The initial proposal was to allow 'force' feature on architectures
-without HAVE_RELIABLE_STACKTRACE support and use pr_notice() to warn
-user about the non-availability of consistency model. It was argued
-against, as it will encourage people to use it as an alternative instead
-of adding HAVE_RELIABLE_STACKTRACE support to the kernel.
-
--- 
-cheers,
-Kamalesh.
-
+Best regards
+Marcus Folkesson
