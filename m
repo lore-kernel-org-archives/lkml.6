@@ -2,192 +2,134 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98976ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F58ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A03521473
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:04:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oPExDVCv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A03521473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 487A521473
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:05:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 487A521473
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbeGOP1x (ORCPT
+        id S1726948AbeGOP2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 11:27:53 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53572 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbeGOP1w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 11:27:52 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s9-v6so5428836wmh.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 08:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KiVpzbUIdMnr/7Qi4XDDfIzppRHFLk8uvimEcOZb7nU=;
-        b=oPExDVCvEbA4l2ebxQG0mLkufq0C4ebM6EeB08H/iMiug3agRJAKA+s7DcILIYK74O
-         WHUsBmY2kmLq1DQo1iGnQkYsZTzL5J2yiJjr1lY2XvtNA/yQTE7ccuIrVlUcEoVEGK7Y
-         NX2HYcLdRdwu28ZzNvun6ydjYBwqa/qkmNZpLAB0cNOPbJuiPbdOVjuQPk/CH1MxSp/s
-         f/bU4HJOvejfqGy1PVDP3wuuNI0fwC+TV43pDzu523xL5PhcqYZ+K0mD223jipRyvUGM
-         8nW/y2NK00Xfas6RZTnalodEk/5RH9RcD1aMKngdDHyZEQ0+gNC/BbHUwqrywx9Fmns+
-         wNSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KiVpzbUIdMnr/7Qi4XDDfIzppRHFLk8uvimEcOZb7nU=;
-        b=qUOVvHbJ76vC/q9NNnrR5nUMNJ1V+JnHjZnEIMhdMCcoDLa3IXB/9PlcJhF0wF9C5g
-         fB6okIPyFw3vFwMOk49mv/DUGmObEP9TMcfWvl3iLxKKKcn2vNjg04cD3CxJG0m5myQc
-         bXDwbxc8gDUzimClYF3JwjqhipY7koCxIVYoa8KufF67MekHLgKLlU+hrxvwWKViyBjL
-         tdJymeDFBLbhWBUp4bBQ78+8UUJrrJ3Svk22RtGrviZwYPDtXMSNTB9PDHnegx0f8Inr
-         TmFfuL4cr9q2wpmwiz3RBZmJHFPRs/NC06MSMVpj7SHN9+dzPbxry5YCAdPs2qTZnxpz
-         LjPg==
-X-Gm-Message-State: AOUpUlHLa/Tr8J1wniqCfDTJUNNuRITqzJk5jhbhh3iNYLG6Y83vvtg4
-        +xb0w3RHAaUKgLh66JBBkGGiX/5tZVcPz0+ailr2wg==
-X-Google-Smtp-Source: AAOMgpfNX7j/J7hmBYHzkSOpTHrUelco2/uwYrl9e6B+5/DUBeCj5DPJBymzWVcn9KK8L4yFMdZS7WfT2uBbPDQdktg=
-X-Received: by 2002:a1c:8b81:: with SMTP id n123-v6mr7679904wmd.142.1531667075756;
- Sun, 15 Jul 2018 08:04:35 -0700 (PDT)
+        Sun, 15 Jul 2018 11:28:25 -0400
+Received: from smtp2.it.da.ut.ee ([193.40.5.67]:40454 "EHLO smtp2.it.da.ut.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726485AbeGOP2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 11:28:25 -0400
+Received: from math.ut.ee (unknown [IPv6:2001:bb8:2002:2400:5054:ff:fe3b:8db9])
+        by smtp2.it.da.ut.ee (Postfix) with ESMTP id 5D58690020;
+        Sun, 15 Jul 2018 18:05:05 +0300 (EEST)
+Received: by math.ut.ee (Postfix, from userid 1014)
+        id 4B4A32207EE; Sun, 15 Jul 2018 18:05:03 +0300 (EEST)
+Received: from localhost (localhost [127.0.0.1])
+        by math.ut.ee (Postfix) with ESMTP id 3207F220442;
+        Sun, 15 Jul 2018 18:05:03 +0300 (EEST)
+Date:   Sun, 15 Jul 2018 18:05:03 +0300 (EEST)
+From:   Meelis Roos <mroos@linux.ee>
+To:     Arnd Bergmann <arnd@arndb.de>
+cc:     Linux Kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: 4.18-rc* regression: x86-32 troubles (with timers?)
+In-Reply-To: <alpine.LRH.2.21.1807051254050.21817@math.ut.ee>
+Message-ID: <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
+References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee> <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com> <alpine.LRH.2.21.1807051254050.21817@math.ut.ee>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
- <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
- <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
- <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
- <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com>
- <CALvZod6F4vM_U0obH1aU3iJqRs-3JEfR4cHKZoB9JVLTgdSmSQ@mail.gmail.com> <CALOAHbByKH9t_c266Bi+Kv2r=07LLpa6UEQgsc7BNi2dZoeNhQ@mail.gmail.com>
-In-Reply-To: <CALOAHbByKH9t_c266Bi+Kv2r=07LLpa6UEQgsc7BNi2dZoeNhQ@mail.gmail.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Sun, 15 Jul 2018 08:04:24 -0700
-Message-ID: <CALvZod6SVJQz84sxMkvRY7K4iZ2_uzbmMq85URBznsu7+ZP9OA@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 1:02 AM Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> On Sun, Jul 15, 2018 at 2:34 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> > On Sat, Jul 14, 2018 at 10:26 PM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >>
-> >> On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> >> > On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >> >>
-> >> >> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> >> >> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >> >> >>
-> >> >> >> try_charge maybe executed in packet receive path, which is in interrupt
-> >> >> >> context.
-> >> >> >> In this situation, the 'current' is the interrupted task, which may has
-> >> >> >> no relation to the rx softirq, So it is nonsense to use 'current'.
-> >> >> >>
-> >> >> >
-> >> >> > Have you actually seen this occurring?
-> >> >>
-> >> >> Hi Shakeel,
-> >> >>
-> >> >> I'm trying to produce this issue, but haven't find it occur yet.
-> >> >>
-> >> >> > I am not very familiar with the
-> >> >> > network code but I can think of two ways try_charge() can be called
-> >> >> > from network code. Either through kmem charging or through
-> >> >> > mem_cgroup_charge_skmem() and both locations correctly handle
-> >> >> > interrupt context.
-> >> >> >
-> >> >>
-> >> >> Why do you say that mem_cgroup_charge_skmem() correctly hanle
-> >> >> interrupt context ?
-> >> >>
-> >> >> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
-> >> >> context correctly.
-> >> >>
-> >> >> mem_cgroup_charge_skmem() is calling  try_charge() twice.
-> >> >> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
-> >> >> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
-> >> >>
-> >> >> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
-> >> >> Then mem_cgroup_charge_skmem() will call try_charge() once more with
-> >> >> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
-> >> >> again the '
-> >> >> force' label in  try_charge() will be executed and 0 is returned.
-> >> >>
-> >> >> No matter what, the 'current' will be used and touched, that is
-> >> >> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
-> >> >> correctly.
-> >> >>
-> >> >
-> >> > Hi Yafang,
-> >> >
-> >> > If you check mem_cgroup_charge_skmem(), the memcg passed is not
-> >> > 'current' but is from the sock object i.e. sk->sk_memcg for which the
-> >> > network buffer is allocated for.
-> >> >
-> >>
-> >> That's correct, the memcg if from the sock object.
-> >> But the point is, in this situation why 'current' is used in try_charge() ?
-> >> As 'current' is not related with the memcg, which is just a interrupted task.
-> >>
-> >
-> > Hmm so you mean the behavior of memcg charging in the interrupt
-> > context depends on the state of the interrupted task.
->
-> Yes.
->
-> > As you have
-> > noted, mem_cgroup_charge_skmem() tries charging again with
-> > __GFP_NOFAIL and the charge succeeds. Basically the memcg charging by
-> > mem_cgroup_charge_skmem() will always succeed irrespective of the
-> > state of the interrupted task. However mem_cgroup_charge_skmem() can
-> > return true if the interrupted task was exiting or a fatal signal is
-> > pending or oom victim or reclaiming memory. Can you please explain why
-> > this is bad?
-> >
->
-> Let me show you the possible issues cause by this behavoir.
-> 1.  In mem_cgroup_oom(), some  members in 'current' is set.
->      That means an innocent task will be in  task_in_memcg_oom state.
->      But this task may be in a different memcg, I mean the memcg of
-> the 'current' may be differenct with the sk->sk_memcg.
->      Then when this innocent 'current' do try_charge it will hit  "if
-> (unlikely(task_in_memcg_oom(current)))" and  -ENOMEM is returned,
-> While there're maybe some free memory (or some memory could be freed )
-> in the memcg of the innocent 'task'.
->
+> > > I tried 4.18.0-rc1-00023-g9ffc59d57228 and now
+> > > 4.18.0-rc3-00113-gfc36def997cf on a 32-bit server and then some other
+> > > 32-bit machines, and got half-failed bootup - kernel and userspace come
+> > > up but some services fail to start, including network and
+> > > systemd-journald:
+> > >
+> > > systemd-journald[85]: Assertion 'clock_gettime(map_clock_id(clock_id), &ts) == 0' failed at ../src/basic/time-util.c:53, function now(). Aborting.
+> > >
+> > > I then tried multiple other machines. All x86-64 machines seem
+> > > unaffected, some x86-32 machines are affected (Athlon with AMD750
+> > > chipset, Fujitsu RX100-S2 with P4-3.4, and P4 with Intel 865 chipset),
+> > > some very similar x86-32 machines are unaffected. I have different
+> > > customized kernel configuration on them, so far I have not pinpointed
+> > > any configuration option to be at fault.
+> > >
+> > > All machines run Debian unstable.
+> > >
+> > > 4.17.0 was working fine.
+> > >
+> > > Will continue with bisecting between 4.17.0 and
+> > > 4.18.0-rc1-00023-g9ffc59d57228.
 
-No memory will be freed as try_charge() is in interrupt context.
+Bisection has been finished (I'm usually away from the problematic 
+computers in summer), result is strange and seems unrelated:
 
-> 2.  If the interrupted task was exiting or a fatal signal is  pending
-> or oom victim,
->      it will directly goto force and 0 is returned, and then
-> mem_cgroup_charge_skmem() will return true.
->      But mem_cgroup_charge_skmem() maybe need to try the second time
-> and return false.
->
-> That are all unexpected behavoir.
->
+0bc5fe857274133ca028ebb15ff2e8549a369916 is the first bad commit
+commit 0bc5fe857274133ca028ebb15ff2e8549a369916
+Author: Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
+Date:   Sat May 5 18:42:59 2018 -0700
 
-Yes, this is inconsistent behavior. Can you explain how this will
-affect network traffic? Basically mem_cgroup_charge_skmem() was
-supposed to return false but sometime based on the interrupted task,
-mem_cgroup_charge_skmem() returns true. How is this behavior bad for
-network traffic?
+    qed*: Refactor mf_mode to consist of bits.
 
-Please note that I am not against this patch. I just want that the
-motivation/reason behind it is very clear.
+    `mf_mode' field indicates the multi-partitioning mode the device is
+    configured to. This method doesn't scale very well, adding a new MF mode
+    requires going over all the existing conditions, and deciding whether those
+    are needed for the new mode or not.
+    The patch defines a set of bit-fields for modes which are derived according
+    to the mode info shared by the MFW and all the configuration would be made
+    according to those. To add a new mode, there would be a single place where
+    we'll need to go and choose which bits apply and which don't.
 
-thanks,
-Shakeel
+    Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
+    Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
+    Signed-off-by: David S. Miller <davem@davemloft.net>
+
+:040000 040000 a3572846e1afb9ccfa9c4a84b0135a0057ade66f bdb7b28725a4f1bffe79ee384a3603b3127d6fdb M      drivers
+:040000 040000 f90c7f26fd8445afa48c6679ed68fed294b23d7f 52119c547a82b268b5c173d3df94e267cc1297a0 M      include
+mroos@rx100s2:~/linux$ nice git bisect log
+git bisect start# good: [29dcea88779c856c7dc92040a0c01233263101d4] Linux 4.17
+git bisect good 29dcea88779c856c7dc92040a0c01233263101d4
+# good: [e27c49291a7fe9dc415c9fcab5bd781ec82dfe04] x86: Convert x86_platform_ops to timespec64
+git bisect good e27c49291a7fe9dc415c9fcab5bd781ec82dfe04
+# bad: [1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+git bisect bad 1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21
+# bad: [1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+git bisect bad 1c8c5a9d38f607c0b6fd12c91cbe1a4418762a21
+# good: [135c5504a600ff9b06e321694fbcac78a9530cd4] Merge tag 'drm-next-2018-06-06-1' of git://anongit.freedesktop.org/drm/drm
+git bisect good 135c5504a600ff9b06e321694fbcac78a9530cd4
+# bad: [ffbc9197b4721634dc6c0fefa9b31e565fa89cee] wcn36xx: improve debug and error messages for SMD
+git bisect bad ffbc9197b4721634dc6c0fefa9b31e565fa89cee
+# good: [3a443bd6dd7c43bf5763779309514bf3e7c1c3eb] net/9p: correct the variable name in v9fs_get_trans_by_name() comment
+git bisect good 3a443bd6dd7c43bf5763779309514bf3e7c1c3eb
+# bad: [93c65d13d8a0b7c272868d4a9779f96fc973df26] vmxnet3: Replace msleep(1) with usleep_range()
+git bisect bad 93c65d13d8a0b7c272868d4a9779f96fc973df26
+# good: [4bc871984f7cb5b2dec3ae64b570cb02f9ce2227] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+git bisect good 4bc871984f7cb5b2dec3ae64b570cb02f9ce2227
+# bad: [38aa51c134b56b7ea61bea79b428c5fbcd95f285] net/mlx5e: Support offloaded TC flows with no matches on headers
+git bisect bad 38aa51c134b56b7ea61bea79b428c5fbcd95f285
+# bad: [00483690552c5fb6aa30bf3acb75b0ee89b4c0fd] tcp: Add mark for TIMEWAIT sockets
+git bisect bad 00483690552c5fb6aa30bf3acb75b0ee89b4c0fd
+# bad: [3e50d2da5850dd126b3e6a6e4387620d55b71db4] microchip_t1: Add driver for Microchip LAN87XX T1 PHYs
+git bisect bad 3e50d2da5850dd126b3e6a6e4387620d55b71db4
+# bad: [dac0490718bd17df5e3995ffca14255e5f9ed22d] bnxt_en: Check unsupported speeds in bnxt_update_link() on PF only.
+git bisect bad dac0490718bd17df5e3995ffca14255e5f9ed22d
+# bad: [9d4927f0d3760d8f10727c3035121d2677108f44] Merge branch 'ipv6-misc'
+git bisect bad 9d4927f0d3760d8f10727c3035121d2677108f44
+# bad: [cac6f691546b9efd50c31c0db97fe50d0357104a] qed: Add support for Unified Fabric Port.
+git bisect bad cac6f691546b9efd50c31c0db97fe50d0357104a
+# bad: [27bf96e32c92599dc7523b36d6c761fc8312c8c0] qed: Remove unused data member 'is_mf_default'.
+git bisect bad 27bf96e32c92599dc7523b36d6c761fc8312c8c0
+# bad: [0bc5fe857274133ca028ebb15ff2e8549a369916] qed*: Refactor mf_mode to consist of bits.
+git bisect bad 0bc5fe857274133ca028ebb15ff2e8549a369916
+# first bad commit: [0bc5fe857274133ca028ebb15ff2e8549a369916] qed*: Refactor mf_mode to consist of bits.
+
+
+-- 
+Meelis Roos (mroos@linux.ee)
