@@ -2,121 +2,107 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E8FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 18:38:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 237FCECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 18:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11F8C20858
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 18:38:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11F8C20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id CD81320858
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 18:38:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="io/dZQjO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD81320858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbeGOTBg (ORCPT
+        id S1727116AbeGOTCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 15:01:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54990 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726794AbeGOTBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 15:01:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A0A01AF4E;
-        Sun, 15 Jul 2018 18:37:46 +0000 (UTC)
-Subject: Re: [PATCH v4 2/5] dt-bindings: clock: Add S700 support for Actions
- Semi Soc's
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Saravanan Sekar <sravanhome@gmail.com>
-Cc:     sboyd@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux@cubietech.com, support@cubietech.com,
-        catalin.marinas@arm.com, mturquette@baylibre.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        thomas.liau@actions-semi.com, darren@cubietech.com,
-        robh+dt@kernel.org, jeff.chen@actions-semi.com, pn@denx.de,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mp-cs@actions-semi.com
-References: <20180715123145.16975-1-sravanhome@gmail.com>
- <20180715123145.16975-3-sravanhome@gmail.com>
- <20180715143849.GC9980@Mani-XPS-13-9360>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Organization: SUSE Linux GmbH
-Message-ID: <0d52c569-bd9a-2a17-c1ef-13e0d1fe4495@suse.de>
-Date:   Sun, 15 Jul 2018 20:36:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180715143849.GC9980@Mani-XPS-13-9360>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sun, 15 Jul 2018 15:02:12 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39650 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbeGOTCL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 15:02:11 -0400
+Received: by mail-pf0-f196.google.com with SMTP id j8-v6so560105pff.6
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 11:38:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rzaIwXqzHU5RwIHoioeMCSQbAXyjSjbEWuDwInOE1Ac=;
+        b=io/dZQjOL4BREfwan5sBHhR692xwUtwyvmG1oLGm7oiMNfZeFSuunUArPycvbzeLZp
+         o76NzpJFyYNAg52Y46+LhcEyF+xVovIR390epN8RwckmF3Vq7qX11k82vVui+96tH/ik
+         /zM/QxLKXaXFWxBkMp9h0GZSgpR6cZDPvGrV/e5qNlijZ0LAIS8oG0SOKwDlWX0A/umr
+         M3TWgLICjHwcRfbf2H2VrenRWl3P7dWYh71natAiF9XHV7/OGQEXjNx9seCcl5dNht6T
+         oXO4f++8vqSc/ReeVWgOjVExWxN0w/bfQMOWWAaMO7Ahr9sao9Rg/oNBnnl9a3RuHdzw
+         ObjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rzaIwXqzHU5RwIHoioeMCSQbAXyjSjbEWuDwInOE1Ac=;
+        b=rCAbItF743z4zWEoPV7PyKsDi0WEZMUeuzv9Ej2shVxZ+LFoBVUFe5HYnf2GKCTjfG
+         aU5FOSqGVyIIykkbwd13WJM8A/2Q0H8x5sNLST1rnUtNb0bQXwK1Q0M/MdsYANTEX/GB
+         PWYxCtHlw1GPN1kZTssqA45ttsJ47n4lOv3+NPvPgS0sNCr5hcD4kyZKHSaFd1XZ6ZEG
+         hK7P+up/eHa4XRvsYuz6RZKB1T7lcoP5HmbNmZR/BylU//v/v7FJ7m/fsoFyf5dVv6cv
+         +i20JUDK7UNNtsTMqOpq6bSfWy5X7I61GoLXO7H0z3TQOnv+Gl/PUJyHYZauBHG1ucUN
+         8sJg==
+X-Gm-Message-State: AOUpUlG/+9v0Zjhluih1B4OvVrX2JQd32UeUFb/3vFhgsp3AZ75fsjEz
+        qyg/R6s7LJfKdAiJgl2571c=
+X-Google-Smtp-Source: AAOMgpe+FJSTs/zBIMcFDVXnNzT8axBIicdawNBXY7uiaeSwZ51a2exN82LMNe2FOt14UJP1O/lh2g==
+X-Received: by 2002:a65:660a:: with SMTP id w10-v6mr12766445pgv.366.1531679904249;
+        Sun, 15 Jul 2018 11:38:24 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id m82-v6sm16191976pfk.149.2018.07.15.11.38.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 15 Jul 2018 11:38:23 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH resend] staging: gasket: fix class create bug handling
+Date:   Sun, 15 Jul 2018 11:38:16 -0700
+Message-Id: <20180715183816.190819-1-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Todd Poynor <toddpoynor@google.com>
 
-Am 15.07.2018 um 16:38 schrieb Manivannan Sadhasivam:
-> On Sun, Jul 15, 2018 at 02:31:42PM +0200, Saravanan Sekar wrote:
->> diff --git a/include/dt-bindings/clock/actions,s700-cmu.h b/include/dt-bindings/clock/actions,s700-cmu.h
->> new file mode 100644
->> index 000000000000..905808bf335b
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/actions,s700-cmu.h
->> @@ -0,0 +1,118 @@
->> +/* SPDX-License-Identifier: GPL-2.0+
+class_create() never returns NULL, and this driver should never return
+PTR_ERR(NULL) anyway.
 
-"GPL-2.0-or-later OR MIT" please for bindings and DT.
+Reported-by: Dmitry Torokhov <dtor@chromium.org>
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/staging/gasket/gasket_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Andreas
-
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index b69b630f1b79..20da6bdb7a73 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -332,7 +332,7 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
+ 	internal->class =
+ 		class_create(driver_desc->module, driver_desc->name);
+ 
+-	if (IS_ERR_OR_NULL(internal->class)) {
++	if (IS_ERR(internal->class)) {
+ 		gasket_nodev_error("Cannot register %s class [ret=%ld]",
+ 				   driver_desc->name, PTR_ERR(internal->class));
+ 		return PTR_ERR(internal->class);
 -- 
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+2.18.0.203.gfac676dfb9-goog
+
+Resending, extracted from the previous stack of patches that needs
+other cleanups.
