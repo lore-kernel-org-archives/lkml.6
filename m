@@ -2,100 +2,105 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2A2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5088DECDFB3
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0B272089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:47:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B272089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id F10362089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:50:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="fc/0dEbF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10362089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbeGOXLX (ORCPT
+        id S1727278AbeGOXOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 19:11:23 -0400
-Received: from smtprelay0040.hostedemail.com ([216.40.44.40]:41051 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727046AbeGOXLX (ORCPT
+        Sun, 15 Jul 2018 19:14:38 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:33224 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeGOXOi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 19:11:23 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id D00981801EDC9;
-        Sun, 15 Jul 2018 22:46:54 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: able94_7635239b43705
-X-Filterd-Recvd-Size: 3072
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf09.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 15 Jul 2018 22:46:52 +0000 (UTC)
-Message-ID: <1db704b2e118b91c05ff37cd74c9adb818a4d033.camel@perches.com>
-Subject: Re: [PATCH 09/11] sched: use pelt for scale_rt_capacity()
-From:   Joe Perches <joe@perches.com>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
-        rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
-        valentin.schneider@arm.com, patrick.bellasi@arm.com,
-        joel@joelfernandes.org, daniel.lezcano@linaro.org,
-        quentin.perret@arm.com, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, Ingo Molnar <mingo@redhat.com>
-Date:   Sun, 15 Jul 2018 15:46:49 -0700
-In-Reply-To: <20180715221538.GA23280@gmail.com>
-References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
-         <1530200714-4504-10-git-send-email-vincent.guittot@linaro.org>
-         <20180715221538.GA23280@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sun, 15 Jul 2018 19:14:38 -0400
+Received: by mail-lf0-f68.google.com with SMTP id u14-v6so30918093lfu.0
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 15:50:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EfUBWWTM6JhdnYZkBjxXy9lee3OOw5z980ga+36EJlw=;
+        b=fc/0dEbFnIxNis+jS7CPhPpVGbufvpWkME6yM7Oimxya/1x3XbltNWQgu7UVcAT+8c
+         EOF9iaLqf0ZpUcftv6u6SSD3NRE0BWkHbDijwEfE17hp5TO6cWgDzjggrbc4tN7PLqQt
+         Asf/xIZ1w2zcw7II4Z6S/EaRcSmc7jr9GGUwIC29LKsFhKWQVcMEP5lWqccN89KZHR/X
+         LVAxIKI8+f/lr2Kq4l+/VAD+SP9x7NKssFlWfGo4H3RdWcdCteb+DVpPtop8hrw3YuXq
+         Ra9N1ir2+/Vxc5MaV+Fb0mKmm2nw+LSDLNVMOZfar6sFuYiT8ORSNS6OicsTNGAx0cjc
+         urQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EfUBWWTM6JhdnYZkBjxXy9lee3OOw5z980ga+36EJlw=;
+        b=Wf/gZy2SLfTxytlhdAolxCRHHHEt8R2JdTUKURuS3VA+1m3XKBWXusKmj6K/EK0jz9
+         kh562kOV2lclb4gysamEKkcFjJi/U5ZRA+q+SIEc+q75I3naTH8jzODErrFlJssV/7bh
+         ATqZ/GwgeKEu3HjkNwwWNgTFt8mbPWebahSS+pqgfo1gey7+BkX+YHQOfQUWbQmqjPR+
+         /0ArpIvlB8BmLAPbLHyf+lAkdBFhiyytsi/Ib7iKKAiCbRlxccX/2s2zbguXJfL2FhqO
+         bupbilE9TpTPwczS8v9L8u5xOfKc6OPG/mtsNRWjrbMNZe4ZsH9Gzn1n7USvKLXUsNSP
+         +uMw==
+X-Gm-Message-State: AOUpUlFWt6w7Issl4zyEFn8uiK3+KxlTAnd8/tbGUE/MuAYKX1LlBPEW
+        fyWlS8h698hHJepqrH5PVe1b/a0cqSLbhAymoUeeKw==
+X-Google-Smtp-Source: AAOMgpf+cQ0Bs9gEEY9XAp1S7YiVP3e0R2PcYNMVAyaJgeCvBuY0hUBjDrRMQKX47gx/PICx0sR16U7PSd7jh8PwjfI=
+X-Received: by 2002:a19:4344:: with SMTP id m4-v6mr10814159lfj.111.1531695008101;
+ Sun, 15 Jul 2018 15:50:08 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 15:50:07
+ -0700 (PDT)
+X-Originating-IP: [99.152.116.91]
+In-Reply-To: <20180716075718.4e5ef491@canb.auug.org.au>
+References: <20180716075718.4e5ef491@canb.auug.org.au>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Sun, 15 Jul 2018 15:50:07 -0700
+Message-ID: <CAOesGMhVeo6Wc=nMcEnusa+FfwQBWJnxs0LY-zXm4HMau+SMhg@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the arm-soc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Eric Anholt <eric@anholt.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-16 at 00:15 +0200, Ingo Molnar wrote:
-> * Vincent Guittot <vincent.guittot@linaro.org> wrote:
-> 
-> > The utilization of the CPU by rt, dl and interrupts are now tracked with
-> > PELT so we can use these metrics instead of rt_avg to evaluate the remaining
-> > capacity available for cfs class.
-> > 
-> > scale_rt_capacity() behavior has been changed and now returns the remaining
-> > capacity available for cfs instead of a scaling factor because rt, dl and
-> > interrupt provide now absolute utilization value.
-> > 
-> > The same formula as schedutil is used:
-> >   irq util_avg + (1 - irq util_avg / max capacity ) * /Sum rq util_avg
-> > but the implementation is different because it doesn't return the same value
-> > and doesn't benefit of the same optimization
-[]
-> I have applied the delta fix below for simplicity, but what we really want is a 
-> cleanup of that function to eliminate the #ifdefs. One solution would be to factor 
-> out the 'irq' utilization value into a helper inline, and double check that if the 
-> configs are off the compiler does the right thing and eliminates this identity 
-> transformation for the irq==0 case:
-[]
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-[]
-> @@ -7550,7 +7550,10 @@ static unsigned long scale_rt_capacity(int cpu)
->  {
->  	struct rq *rq = cpu_rq(cpu);
->  	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
-> -	unsigned long used, irq, free;
-> +	unsigned long used, free;
-> +#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
-> +	unsigned long irq;
-> +#endif
->  
->  #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
+Thanks Stephen, I keep saying every time you catch these that I need
+to run the same script. :(
 
-Perhaps combine these two #if defined blocks into
-a single block
+Florian, I wonder if this happened when you rebased to squash in the fix?
 
->  	irq = READ_ONCE(rq->avg_irq.util_avg);
+I'll figure out where to get this into my workflow so we catch it
+before I merge from now on.
+
+
+-Olof
+
+On Sun, Jul 15, 2018 at 2:57 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Commits
+>
+>   b8ccf02a5014 ("ARM: dts: bcm283x: Add the PMU to the devicetree.")
+>   b7dd29b401f5 ("ARM: dts: bcm283x: Add Transposer block")
+>   74d1e007915f ("hwmon: Add support for RPi voltage sensor")
+>   70eea1bbb556 ("firmware: raspberrypi: Register hwmon driver")
+>   a1547e0bca51 ("firmware: raspberrypi: Remove VLA usage")
+>
+> are missing a Signed-off-by from their committer.
+>
+> --
+> Cheers,
+> Stephen Rothwell
