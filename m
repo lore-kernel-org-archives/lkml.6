@@ -4,139 +4,260 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06687ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 18:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FDDECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 19:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66AD2083D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 18:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 311642087C
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 19:36:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyHJSOSO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A66AD2083D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sy9PJD9Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 311642087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbeGOTHd (ORCPT
+        id S1726984AbeGOUAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 15:07:33 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33247 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726745AbeGOTHd (ORCPT
+        Sun, 15 Jul 2018 16:00:53 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38133 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbeGOUAx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 15:07:33 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 6-v6so14289769plb.0
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 11:43:45 -0700 (PDT)
+        Sun, 15 Jul 2018 16:00:53 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v14-v6so46419wro.5;
+        Sun, 15 Jul 2018 12:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=YhvenjwlpV6aPD5yc+NzG38+j1bRadFV4bwNgqwaX2E=;
-        b=UyHJSOSOE6zbYnb3tJ9HMUopPCmp1Ytatncjc7N2jZkpP6nZatExz9yHlRxHiuchKU
-         4QT7aoFYqdL8eEHiPaHAmJE1EZqnse3MFlWSj6PuM3hvqDyqmJcd9vDi5gUrd70s1nkB
-         SFV/fpPkflW4rmPQ+LiTISp5dL2aRogRvwGbz5mrXEC4mEJtyMMg30/O1SYSw2ot5bed
-         8fpwP1g2v/1ZQ1nQIeFvJ5D5MNMCLw05wCG/vaXo5+Aay7EjMZWdRtmxCwpG7z6EXpzR
-         PqRuCjyAneE/zhx88Pg4KhVMulJxKyzO15w0CedKi7xL5/SXjxQdv61VSv2x8wKUw6dQ
-         3C0A==
+        bh=i6OpxHDAFht2WlLkjgru5w4YZqX0EQ9ee7kRidZIA8o=;
+        b=sy9PJD9YKAWjpbVoBwpVvMliwr/QMmPo1ten9zpvjsBCOs46e/Iuy58/aoZHU0ZNg3
+         YlvcpfNVv1xNV4nkVWEqhYj7L55V+Muh6BXJQybjO/33GrZFWfM3y5gn6o1qcaxUJUw8
+         z4Ozonzii/LV9GswY0d7YsN3Lydu35RWiXevFofc/GgKdpbYvriP2L8tKJIHyQzpy4xf
+         AduyLDlVwxks+YC8TJad9HViLQXghqy1zn7t9khYXMkumQmgYB/cmXh4evYFdQ77unGm
+         txSG/lIA/dV1ZQ/HtBKCs3KXThO/le3zq4hUu0hv9uVUILahEmGsmf5fpx5lhi8BZWQO
+         niNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YhvenjwlpV6aPD5yc+NzG38+j1bRadFV4bwNgqwaX2E=;
-        b=DklUQhJw9MElP1HUbFWEy6UPQaLZzfh1E+Z4FG4V/wV+hMKI2JE39eu6+XCw75kfON
-         B+stqr+B02C31l8vec3EUA761idtEXIryxdxjLEDzm3hlJNKe8VPUA0Bk0rvrPb7R2jP
-         HD81Qn9gsOE44H12/CZrXuVoSYHKz/kG+eaelrkDbs0+GeDkzOY5MX3cmiICPUcpJevw
-         l2h0TS9PiScJFf9hFlYfzZVhjWb8w8Qrf0tIQRE0BLgrPtgdjzUoBVT9AvAm9OkKvojb
-         dphIzyANRmdQXxVgiUpoJUFTDVIUooTVcRLIvc6BuFLhau9yCChrQ+2VxQoxEfXLx0iS
-         nArg==
-X-Gm-Message-State: AOUpUlE87YGq5fQDwtGovTPpTCSxKPOPX1ppiAYDOOwotkaNlCrOWy1B
-        jyJf1paxwOz+VGaIqA3Nvc8=
-X-Google-Smtp-Source: AAOMgpda5yuglVBHEyJCEWLE2Cyb0RTj1ucLeMb3T8d3RCk5DEamHhCIJPgE8bxYph3Gl5wDd3fh/Q==
-X-Received: by 2002:a17:902:bd4b:: with SMTP id b11-v6mr13639934plx.243.1531680224607;
-        Sun, 15 Jul 2018 11:43:44 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id j1-v6sm14778535pfk.125.2018.07.15.11.43.43
+        bh=i6OpxHDAFht2WlLkjgru5w4YZqX0EQ9ee7kRidZIA8o=;
+        b=m7kGgJIt2Y6qfTuCrdPO216Sp2ygon2Kvolt75GXG1hJOpOxDwUDL9TCkC4DX3CorQ
+         4yqU6omPWXF6uy9hB/yNcuv7/pSXhdJaiTKpkdaauUpx1pnC1+9c66GJFi41xzuJ1yi8
+         Hws0kFNwoScJCaojf78k44xGGq6GldsII85N7K/Rj+CP5fETro48DsQI0IN/bxX65pBw
+         xPlVQ7nZNoZfuXT4iMI2Y107CJmfrztk6anV9F7A1xBmQsTtHmb6+b2QYuduIkLeqXpT
+         h/2D1yiOVN+TBKwuZVVI7x2C9ewbxOgU73bh/1EGmQoIo19nsWQ4ZDLa/eo9EMZg2N+g
+         QCCA==
+X-Gm-Message-State: AOUpUlFZsMiFCdZJ40fGpz8CmMMhoJYBDYqaK0zY3qYcFSdn42hV5uBO
+        QEyBiWW8prNeCbiBnpntvclCg1UA
+X-Google-Smtp-Source: AAOMgpfvZkpYKu+7JJJ1y3DXiGyc8Bn+x9OcXgxYjlZFEbz+BTQ2dGDTHaxWzEaduWHA06YahZt/SA==
+X-Received: by 2002:a5d:6841:: with SMTP id o1-v6mr10100828wrw.159.1531683414620;
+        Sun, 15 Jul 2018 12:36:54 -0700 (PDT)
+Received: from localhost.localdomain (cpc101300-bagu16-2-0-cust362.1-3.cable.virginm.net. [86.21.41.107])
+        by smtp.gmail.com with ESMTPSA id 35-v6sm25140320wri.78.2018.07.15.12.36.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Jul 2018 11:43:44 -0700 (PDT)
-From:   Todd Poynor <toddpoynor@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH resend] staging: gasket: convert gasket_mmap_has_permissions to bool return
-Date:   Sun, 15 Jul 2018 11:43:36 -0700
-Message-Id: <20180715184336.195821-1-toddpoynor@gmail.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+        Sun, 15 Jul 2018 12:36:53 -0700 (PDT)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        netdev@vger.kernel.org,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] Bluetooth: avoid killing an already killed socket
+Date:   Sun, 15 Jul 2018 20:36:50 +0100
+Message-Id: <20180715193650.24747-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Poynor <toddpoynor@google.com>
+slub debug reported:
 
-gasket_mmap_has_permissions() should return a boolean value.
+[  440.648642] =============================================================================
+[  440.648649] BUG kmalloc-1024 (Tainted: G    BU     O   ): Poison overwritten
+[  440.648651] -----------------------------------------------------------------------------
 
-Signed-off-by: Zhongze Hu <frankhu@chromium.org>
-Signed-off-by: Todd Poynor <toddpoynor@google.com>
+[  440.648655] INFO: 0xe70f4bec-0xe70f4bec. First byte 0x6a instead of 0x6b
+[  440.648665] INFO: Allocated in sk_prot_alloc+0x6b/0xc6 age=33155 cpu=1 pid=1047
+[  440.648671] 	___slab_alloc.constprop.24+0x1fc/0x292
+[  440.648675] 	__slab_alloc.isra.18.constprop.23+0x1c/0x25
+[  440.648677] 	__kmalloc+0xb6/0x17f
+[  440.648680] 	sk_prot_alloc+0x6b/0xc6
+[  440.648683] 	sk_alloc+0x1e/0xa1
+[  440.648700] 	sco_sock_alloc.constprop.6+0x26/0xaf [bluetooth]
+[  440.648716] 	sco_connect_cfm+0x166/0x281 [bluetooth]
+[  440.648731] 	hci_conn_request_evt.isra.53+0x258/0x281 [bluetooth]
+[  440.648746] 	hci_event_packet+0x28b/0x2326 [bluetooth]
+[  440.648759] 	hci_rx_work+0x161/0x291 [bluetooth]
+[  440.648764] 	process_one_work+0x163/0x2b2
+[  440.648767] 	worker_thread+0x1a9/0x25c
+[  440.648770] 	kthread+0xf8/0xfd
+[  440.648774] 	ret_from_fork+0x2e/0x38
+[  440.648779] INFO: Freed in __sk_destruct+0xd3/0xdf age=3815 cpu=1 pid=1047
+[  440.648782] 	__slab_free+0x4b/0x27a
+[  440.648784] 	kfree+0x12e/0x155
+[  440.648787] 	__sk_destruct+0xd3/0xdf
+[  440.648790] 	sk_destruct+0x27/0x29
+[  440.648793] 	__sk_free+0x75/0x91
+[  440.648795] 	sk_free+0x1c/0x1e
+[  440.648810] 	sco_sock_kill+0x5a/0x5f [bluetooth]
+[  440.648825] 	sco_conn_del+0x8e/0xba [bluetooth]
+[  440.648840] 	sco_disconn_cfm+0x3a/0x41 [bluetooth]
+[  440.648855] 	hci_event_packet+0x45e/0x2326 [bluetooth]
+[  440.648868] 	hci_rx_work+0x161/0x291 [bluetooth]
+[  440.648872] 	process_one_work+0x163/0x2b2
+[  440.648875] 	worker_thread+0x1a9/0x25c
+[  440.648877] 	kthread+0xf8/0xfd
+[  440.648880] 	ret_from_fork+0x2e/0x38
+[  440.648884] INFO: Slab 0xf4718580 objects=27 used=27 fp=0x  (null) flags=0x40008100
+[  440.648886] INFO: Object 0xe70f4b88 @offset=19336 fp=0xe70f54f8
+
+When KASAN was enabled, it reported:
+
+[  210.096613] ==================================================================
+[  210.096634] BUG: KASAN: use-after-free in ex_handler_refcount+0x5b/0x127
+[  210.096641] Write of size 4 at addr ffff880107e17160 by task kworker/u9:1/2040
+
+[  210.096651] CPU: 1 PID: 2040 Comm: kworker/u9:1 Tainted: G     U     O    4.14.47-20180606+ #2
+[  210.096654] Hardware name: , BIOS 2017.01-00087-g43e04de 08/30/2017
+[  210.096693] Workqueue: hci0 hci_rx_work [bluetooth]
+[  210.096698] Call Trace:
+[  210.096711]  dump_stack+0x46/0x59
+[  210.096722]  print_address_description+0x6b/0x23b
+[  210.096729]  ? ex_handler_refcount+0x5b/0x127
+[  210.096736]  kasan_report+0x220/0x246
+[  210.096744]  ex_handler_refcount+0x5b/0x127
+[  210.096751]  ? ex_handler_clear_fs+0x85/0x85
+[  210.096757]  fixup_exception+0x8c/0x96
+[  210.096766]  do_trap+0x66/0x2c1
+[  210.096773]  do_error_trap+0x152/0x180
+[  210.096781]  ? fixup_bug+0x78/0x78
+[  210.096817]  ? hci_debugfs_create_conn+0x244/0x26a [bluetooth]
+[  210.096824]  ? __schedule+0x113b/0x1453
+[  210.096830]  ? sysctl_net_exit+0xe/0xe
+[  210.096837]  ? __wake_up_common+0x343/0x343
+[  210.096843]  ? insert_work+0x107/0x163
+[  210.096850]  invalid_op+0x1b/0x40
+[  210.096888] RIP: 0010:hci_debugfs_create_conn+0x244/0x26a [bluetooth]
+[  210.096892] RSP: 0018:ffff880094a0f970 EFLAGS: 00010296
+[  210.096898] RAX: 0000000000000000 RBX: ffff880107e170e8 RCX: ffff880107e17160
+[  210.096902] RDX: 000000000000002f RSI: ffff88013b80ed40 RDI: ffffffffa058b940
+[  210.096906] RBP: ffff88011b2b0578 R08: 00000000852f0ec9 R09: ffffffff81cfcf9b
+[  210.096909] R10: 00000000d21bdad7 R11: 0000000000000001 R12: ffff8800967b0488
+[  210.096913] R13: ffff880107e17168 R14: 0000000000000068 R15: ffff8800949c0008
+[  210.096920]  ? __sk_destruct+0x2c6/0x2d4
+[  210.096959]  hci_event_packet+0xff5/0x7de2 [bluetooth]
+[  210.096969]  ? __local_bh_enable_ip+0x43/0x5b
+[  210.097004]  ? l2cap_sock_recv_cb+0x158/0x166 [bluetooth]
+[  210.097039]  ? hci_le_meta_evt+0x2bb3/0x2bb3 [bluetooth]
+[  210.097075]  ? l2cap_ertm_init+0x94e/0x94e [bluetooth]
+[  210.097093]  ? xhci_urb_enqueue+0xbd8/0xcf5 [xhci_hcd]
+[  210.097102]  ? __accumulate_pelt_segments+0x24/0x33
+[  210.097109]  ? __accumulate_pelt_segments+0x24/0x33
+[  210.097115]  ? __update_load_avg_se.isra.2+0x217/0x3a4
+[  210.097122]  ? set_next_entity+0x7c3/0x12cd
+[  210.097128]  ? pick_next_entity+0x25e/0x26c
+[  210.097135]  ? pick_next_task_fair+0x2ca/0xc1a
+[  210.097141]  ? switch_mm_irqs_off+0x346/0xb4f
+[  210.097147]  ? __switch_to+0x769/0xbc4
+[  210.097153]  ? compat_start_thread+0x66/0x66
+[  210.097188]  ? hci_conn_check_link_mode+0x1cd/0x1cd [bluetooth]
+[  210.097195]  ? finish_task_switch+0x392/0x431
+[  210.097228]  ? hci_rx_work+0x154/0x487 [bluetooth]
+[  210.097260]  hci_rx_work+0x154/0x487 [bluetooth]
+[  210.097269]  process_one_work+0x579/0x9e9
+[  210.097277]  worker_thread+0x68f/0x804
+[  210.097285]  kthread+0x31c/0x32b
+[  210.097292]  ? rescuer_thread+0x70c/0x70c
+[  210.097299]  ? kthread_create_on_node+0xa3/0xa3
+[  210.097306]  ret_from_fork+0x35/0x40
+
+[  210.097314] Allocated by task 2040:
+[  210.097323]  kasan_kmalloc.part.1+0x51/0xc7
+[  210.097328]  __kmalloc+0x17f/0x1b6
+[  210.097335]  sk_prot_alloc+0xf2/0x1a3
+[  210.097340]  sk_alloc+0x22/0x297
+[  210.097375]  sco_sock_alloc.constprop.7+0x23/0x202 [bluetooth]
+[  210.097410]  sco_connect_cfm+0x2d0/0x566 [bluetooth]
+[  210.097443]  hci_conn_request_evt.isra.53+0x6d3/0x762 [bluetooth]
+[  210.097476]  hci_event_packet+0x85e/0x7de2 [bluetooth]
+[  210.097507]  hci_rx_work+0x154/0x487 [bluetooth]
+[  210.097512]  process_one_work+0x579/0x9e9
+[  210.097517]  worker_thread+0x68f/0x804
+[  210.097523]  kthread+0x31c/0x32b
+[  210.097529]  ret_from_fork+0x35/0x40
+
+[  210.097533] Freed by task 2040:
+[  210.097539]  kasan_slab_free+0xb3/0x15e
+[  210.097544]  kfree+0x103/0x1a9
+[  210.097549]  __sk_destruct+0x2c6/0x2d4
+[  210.097584]  sco_conn_del.isra.1+0xba/0x10e [bluetooth]
+[  210.097617]  hci_event_packet+0xff5/0x7de2 [bluetooth]
+[  210.097648]  hci_rx_work+0x154/0x487 [bluetooth]
+[  210.097653]  process_one_work+0x579/0x9e9
+[  210.097658]  worker_thread+0x68f/0x804
+[  210.097663]  kthread+0x31c/0x32b
+[  210.097670]  ret_from_fork+0x35/0x40
+
+[  210.097676] The buggy address belongs to the object at ffff880107e170e8
+ which belongs to the cache kmalloc-1024 of size 1024
+[  210.097681] The buggy address is located 120 bytes inside of
+ 1024-byte region [ffff880107e170e8, ffff880107e174e8)
+[  210.097683] The buggy address belongs to the page:
+[  210.097689] page:ffffea00041f8400 count:1 mapcount:0 mapping:          (null) index:0xffff880107e15b68 compound_mapcount: 0
+[  210.110194] flags: 0x8000000000008100(slab|head)
+[  210.115441] raw: 8000000000008100 0000000000000000 ffff880107e15b68 0000000100170016
+[  210.115448] raw: ffffea0004a47620 ffffea0004b48e20 ffff88013b80ed40 0000000000000000
+[  210.115451] page dumped because: kasan: bad access detected
+
+[  210.115454] Memory state around the buggy address:
+[  210.115460]  ffff880107e17000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  210.115465]  ffff880107e17080: fc fc fc fc fc fc fc fc fc fc fc fc fc fb fb fb
+[  210.115469] >ffff880107e17100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  210.115472]                                                        ^
+[  210.115477]  ffff880107e17180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  210.115481]  ffff880107e17200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[  210.115483] ==================================================================
+
+And finally when BT_DBG() and ftrace was enabled it showed:
+
+       <...>-14979 [001] ....   186.104191: sco_sock_kill <-sco_sock_close
+       <...>-14979 [001] ....   186.104191: sco_sock_kill <-sco_sock_release
+       <...>-14979 [001] ....   186.104192: sco_sock_kill: sk ef0497a0 state 9
+       <...>-14979 [001] ....   186.104193: bt_sock_unlink <-sco_sock_kill
+kworker/u9:2-792   [001] ....   186.104246: sco_sock_kill <-sco_conn_del
+kworker/u9:2-792   [001] ....   186.104248: sco_sock_kill: sk ef0497a0 state 9
+kworker/u9:2-792   [001] ....   186.104249: bt_sock_unlink <-sco_sock_kill
+kworker/u9:2-792   [001] ....   186.104250: sco_sock_destruct <-__sk_destruct
+kworker/u9:2-792   [001] ....   186.104250: sco_sock_destruct: sk ef0497a0
+kworker/u9:2-792   [001] ....   186.104860: hci_conn_del <-hci_event_packet
+kworker/u9:2-792   [001] ....   186.104864: hci_conn_del: hci0 hcon ef0484c0 handle 266
+
+Only in the failed case, sco_sock_kill() gets called with the same sock
+pointer two times. Add a check for SOCK_DEAD to avoid continue killing
+a socket which has already been killed.
+
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 ---
- drivers/staging/gasket/gasket_core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ net/bluetooth/sco.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 4ac239c33ea3..dd2daa2e1c31 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -1232,19 +1232,19 @@ static int gasket_release(struct inode *inode, struct file *file)
-  * that the provided descriptor/range is of adequate size to hold the range to
-  * be mapped.
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index 413b8ee49fec..8f0f9279eac9 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -393,7 +393,8 @@ static void sco_sock_cleanup_listen(struct sock *parent)
   */
--static int gasket_mmap_has_permissions(
-+static bool gasket_mmap_has_permissions(
- 	struct gasket_dev *gasket_dev, struct vm_area_struct *vma,
- 	int bar_permissions)
+ static void sco_sock_kill(struct sock *sk)
  {
- 	int requested_permissions;
- 	/* Always allow sysadmin to access. */
- 	if (capable(CAP_SYS_ADMIN))
--		return 1;
-+		return true;
+-	if (!sock_flag(sk, SOCK_ZAPPED) || sk->sk_socket)
++	if (!sock_flag(sk, SOCK_ZAPPED) || sk->sk_socket ||
++	    sock_flag(sk, SOCK_DEAD))
+ 		return;
  
- 	/* Never allow non-sysadmins to access to a dead device. */
- 	if (gasket_dev->status != GASKET_STATUS_ALIVE) {
- 		gasket_log_info(gasket_dev, "Device is dead.");
--		return 0;
-+		return false;
- 	}
- 
- 	/* Make sure that no wrong flags are set. */
-@@ -1256,7 +1256,7 @@ static int gasket_mmap_has_permissions(
- 			"Attempting to map a region with requested permissions "
- 			"0x%x, but region has permissions 0x%x.",
- 			requested_permissions, bar_permissions);
--		return 0;
-+		return false;
- 	}
- 
- 	/* Do not allow a non-owner to write. */
-@@ -1266,10 +1266,10 @@ static int gasket_mmap_has_permissions(
- 			gasket_dev,
- 			"Attempting to mmap a region for write without owning "
- 			"device.");
--		return 0;
-+		return false;
- 	}
- 
--	return 1;
-+	return true;
- }
- 
- /*
+ 	BT_DBG("sk %p state %d", sk, sk->sk_state);
 -- 
-2.18.0.203.gfac676dfb9-goog
+2.11.0
 
-Resending, extracted from the previous stack of patches that needs
-other cleanups.
