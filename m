@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412BDECDFB3
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF75ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2EDD20840
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:34:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2EDD20840
+	by mail.kernel.org (Postfix) with ESMTP id 110BE20840
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:35:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110BE20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbeGOX7H (ORCPT
+        id S1727498AbeGOX7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 19:59:07 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:54559 "EHLO
+        Sun, 15 Jul 2018 19:59:36 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44389 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeGOX7G (ORCPT
+        with ESMTP id S1727008AbeGOX7g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 19:59:06 -0400
+        Sun, 15 Jul 2018 19:59:36 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6FNYAeb922192
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6FNYfw2922244
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 15 Jul 2018 16:34:10 -0700
+        Sun, 15 Jul 2018 16:34:41 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6FNYAum922189;
-        Sun, 15 Jul 2018 16:34:10 -0700
-Date:   Sun, 15 Jul 2018 16:34:10 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6FNYfwM922241;
+        Sun, 15 Jul 2018 16:34:41 -0700
+Date:   Sun, 15 Jul 2018 16:34:41 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-45f5519ec55e75af3565dd737586d3b041834f71@git.kernel.org>
-Cc:     hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, mingo@kernel.org,
-        peterz@infradead.org, vincent.guittot@linaro.org,
-        viresh.kumar@linaro.org
-Reply-To: mingo@kernel.org, torvalds@linux-foundation.org,
-          peterz@infradead.org, hpa@zytor.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, viresh.kumar@linaro.org,
-          vincent.guittot@linaro.org
-In-Reply-To: <20180705123617.GM2458@hirez.programming.kicks-ass.net>
-References: <20180705123617.GM2458@hirez.programming.kicks-ass.net>
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-af0fffd9300b97d8875aa745bc78e2f6fdb3c1f0@git.kernel.org>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, bigeasy@linutronix.de,
+        torvalds@linux-foundation.org, mingo@kernel.org
+Reply-To: torvalds@linux-foundation.org, mingo@kernel.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          bigeasy@linutronix.de, peterz@infradead.org
+In-Reply-To: <20180706130615.g2ex2kmfu5kcvlq6@linutronix.de>
+References: <20180706130615.g2ex2kmfu5kcvlq6@linutronix.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/cpufreq: Clarify sugov_get_util()
-Git-Commit-ID: 45f5519ec55e75af3565dd737586d3b041834f71
+Subject: [tip:sched/core] sched/core: Remove get_cpu() from sched_fork()
+Git-Commit-ID: af0fffd9300b97d8875aa745bc78e2f6fdb3c1f0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,151 +58,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  45f5519ec55e75af3565dd737586d3b041834f71
-Gitweb:     https://git.kernel.org/tip/45f5519ec55e75af3565dd737586d3b041834f71
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Thu, 5 Jul 2018 14:36:17 +0200
+Commit-ID:  af0fffd9300b97d8875aa745bc78e2f6fdb3c1f0
+Gitweb:     https://git.kernel.org/tip/af0fffd9300b97d8875aa745bc78e2f6fdb3c1f0
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Fri, 6 Jul 2018 15:06:15 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Mon, 16 Jul 2018 00:16:29 +0200
 
-sched/cpufreq: Clarify sugov_get_util()
+sched/core: Remove get_cpu() from sched_fork()
 
-Add a few comments to (hopefully) clarifying some of the magic in
-sugov_get_util().
+get_cpu() disables preemption for the entire sched_fork() function.
+This get_cpu() was introduced in commit:
 
+  dd41f596cda0 ("sched: cfs core code")
+
+... which also invoked sched_balance_self() and this function
+required preemption do be off.
+
+Today, sched_balance_self() seems to be moved to ->task_fork callback
+which is invoked while the ->pi_lock is held.
+
+set_load_weight() could invoke reweight_task() which then via $callchain
+might end up in smp_processor_id() but since `update_load' is false
+this won't happen.
+
+I didn't find any this_cpu*() or similar usage during the initialisation
+of the task_struct.
+
+The `cpu' value (from get_cpu()) is only used later in __set_task_cpu()
+while the ->pi_lock lock is held.
+
+Based on this it is possible to remove get_cpu() and use
+smp_processor_id() for the `cpu' variable without breaking anything.
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Morten.Rasmussen@arm.com
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: claudio@evidence.eu.com
-Cc: daniel.lezcano@linaro.org
-Cc: dietmar.eggemann@arm.com
-Cc: joel@joelfernandes.org
-Cc: juri.lelli@redhat.com
-Cc: luca.abeni@santannapisa.it
-Cc: patrick.bellasi@arm.com
-Cc: quentin.perret@arm.com
-Cc: rjw@rjwysocki.net
-Cc: valentin.schneider@arm.com
-Link: http://lkml.kernel.org/r/20180705123617.GM2458@hirez.programming.kicks-ass.net
+Link: http://lkml.kernel.org/r/20180706130615.g2ex2kmfu5kcvlq6@linutronix.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/cpufreq_schedutil.c | 75 +++++++++++++++++++++++++++++-----------
- 1 file changed, 54 insertions(+), 21 deletions(-)
+ kernel/sched/core.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index c9622b3f183d..97dcd4472a0e 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -177,6 +177,26 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
- 	return cpufreq_driver_resolve_freq(policy, freq);
- }
- 
-+/*
-+ * This function computes an effective utilization for the given CPU, to be
-+ * used for frequency selection given the linear relation: f = u * f_max.
-+ *
-+ * The scheduler tracks the following metrics:
-+ *
-+ *   cpu_util_{cfs,rt,dl,irq}()
-+ *   cpu_bw_dl()
-+ *
-+ * Where the cfs,rt and dl util numbers are tracked with the same metric and
-+ * synchronized windows and are thus directly comparable.
-+ *
-+ * The cfs,rt,dl utilization are the running times measured with rq->clock_task
-+ * which excludes things like IRQ and steal-time. These latter are then accrued
-+ * in the irq utilization.
-+ *
-+ * The DL bandwidth number otoh is not a measured metric but a value computed
-+ * based on the task model parameters and gives the minimal utilization
-+ * required to meet deadlines.
-+ */
- static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ba6bb805693a..c3cf7d992159 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2294,7 +2294,6 @@ static inline void init_schedstats(void) {}
+ int sched_fork(unsigned long clone_flags, struct task_struct *p)
  {
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
-@@ -188,47 +208,60 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
- 	if (rt_rq_is_runnable(&rq->rt))
- 		return max;
+ 	unsigned long flags;
+-	int cpu = get_cpu();
  
-+	/*
-+	 * Early check to see if IRQ/steal time saturates the CPU, can be
-+	 * because of inaccuracies in how we track these -- see
-+	 * update_irq_load_avg().
-+	 */
- 	irq = cpu_util_irq(rq);
--
- 	if (unlikely(irq >= max))
- 		return max;
- 
--	/* Sum rq utilization */
-+	/*
-+	 * Because the time spend on RT/DL tasks is visible as 'lost' time to
-+	 * CFS tasks and we use the same metric to track the effective
-+	 * utilization (PELT windows are synchronized) we can directly add them
-+	 * to obtain the CPU's actual utilization.
-+	 */
- 	util = cpu_util_cfs(rq);
- 	util += cpu_util_rt(rq);
- 
+ 	__sched_fork(clone_flags, p);
  	/*
--	 * Interrupt time is not seen by RQS utilization so we can compare
--	 * them with the CPU capacity
-+	 * We do not make cpu_util_dl() a permanent part of this sum because we
-+	 * want to use cpu_bw_dl() later on, but we need to check if the
-+	 * CFS+RT+DL sum is saturated (ie. no idle time) such that we select
-+	 * f_max when there is no idle time.
-+	 *
-+	 * NOTE: numerical errors or stop class might cause us to not quite hit
-+	 * saturation when we should -- something for later.
- 	 */
- 	if ((util + cpu_util_dl(rq)) >= max)
- 		return max;
+@@ -2330,14 +2329,12 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 		p->sched_reset_on_fork = 0;
+ 	}
  
- 	/*
--	 * As there is still idle time on the CPU, we need to compute the
--	 * utilization level of the CPU.
-+	 * There is still idle time; further improve the number by using the
-+	 * irq metric. Because IRQ/steal time is hidden from the task clock we
-+	 * need to scale the task numbers:
- 	 *
-+	 *              1 - irq
-+	 *   U' = irq + ------- * U
-+	 *                max
-+	 */
-+	util *= (max - irq);
-+	util /= max;
-+	util += irq;
-+
-+	/*
- 	 * Bandwidth required by DEADLINE must always be granted while, for
- 	 * FAIR and RT, we use blocked utilization of IDLE CPUs as a mechanism
- 	 * to gracefully reduce the frequency when no tasks show up for longer
- 	 * periods of time.
- 	 *
--	 * Ideally we would like to set util_dl as min/guaranteed freq and
--	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
--	 * ready for such an interface. So, we only do the latter for now.
-+	 * Ideally we would like to set bw_dl as min/guaranteed freq and util +
-+	 * bw_dl as requested freq. However, cpufreq is not yet ready for such
-+	 * an interface. So, we only do the latter for now.
+-	if (dl_prio(p->prio)) {
+-		put_cpu();
++	if (dl_prio(p->prio))
+ 		return -EAGAIN;
+-	} else if (rt_prio(p->prio)) {
++	else if (rt_prio(p->prio))
+ 		p->sched_class = &rt_sched_class;
+-	} else {
++	else
+ 		p->sched_class = &fair_sched_class;
+-	}
+ 
+ 	init_entity_runnable_average(&p->se);
+ 
+@@ -2353,7 +2350,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 	 * We're setting the CPU for the first time, we don't migrate,
+ 	 * so use __set_task_cpu().
  	 */
+-	__set_task_cpu(p, cpu);
++	__set_task_cpu(p, smp_processor_id());
+ 	if (p->sched_class->task_fork)
+ 		p->sched_class->task_fork(p);
+ 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
+@@ -2370,8 +2367,6 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 	plist_node_init(&p->pushable_tasks, MAX_PRIO);
+ 	RB_CLEAR_NODE(&p->pushable_dl_tasks);
+ #endif
 -
--	/* Weight RQS utilization to normal context window */
--	util *= (max - irq);
--	util /= max;
--
--	/* Add interrupt utilization */
--	util += irq;
--
--	/* Add DL bandwidth requirement */
--	util += sg_cpu->bw_dl;
--
--	return min(max, util);
-+	return min(max, util + sg_cpu->bw_dl);
+-	put_cpu();
+ 	return 0;
  }
  
- /**
