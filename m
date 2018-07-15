@@ -2,191 +2,181 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C8FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 07:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD823ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 08:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C480520647
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 07:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5915F20870
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 08:02:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GKLebnQT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C480520647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mO74vuxz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5915F20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbeGOITm (ORCPT
+        id S1726277AbeGOIYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 04:19:42 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39995 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbeGOITl (ORCPT
+        Sun, 15 Jul 2018 04:24:12 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35014 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbeGOIYM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 04:19:41 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z13-v6so12867619wma.5
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 00:57:37 -0700 (PDT)
+        Sun, 15 Jul 2018 04:24:12 -0400
+Received: by mail-io0-f196.google.com with SMTP id q4-v6so34951621iob.2;
+        Sun, 15 Jul 2018 01:02:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qn7AHJe0dTeyuO8lEgP6SC8Eme/jAWPcuA7m8Wzd+88=;
-        b=GKLebnQTF7Sinz9XGaW1IW3y3+jOphW6T6Mo/y+kpN1C0nJPA+yRKgT5BR0lH78g4g
-         bownZ6n7Cxw56vHTYl6gSvchVMCvkJtzxCDCEc3Q7aVMvncdnidImR97yyjIzkugjnFA
-         JFfw5GRiG6ympVtYan90AV6CRdoeIY2habCcA=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=FDkr1xXrcgRA3MDnhm3HSG/gwPS7w5PE7zMtaHnyLbk=;
+        b=mO74vuxzav3hj1VgJcb5aHoeekKeWuzOCnaUK46j2dckpE429qyjbRZtunB+BzkZXw
+         0qZ+dm4lUfBTNxPp7PucxNbKXi8ooViJFMm0dAFJ8dfAil0AexJQ2AwLwww/KVsiLC/S
+         tXCukKMhTLFHG5PjkHJm3hT8/wjYnSOaH0UQPute/Zejav/nmKM1aqNi3wt90ibStM1i
+         Yw+4osxlnRSEGcF/Issgu0ZrmLsa3X3S8ttW+uon/56IAFJ+GUdlae3RHd6fs7mI69Ur
+         l0wjL0pGnGLqML7l6SrsKkNgOfq8oK/ubxIk4qTLsj8Oij/vSPLoYypEOPrJ/d6WITvj
+         AbnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qn7AHJe0dTeyuO8lEgP6SC8Eme/jAWPcuA7m8Wzd+88=;
-        b=aGFswcqGvAaH7yIxIOrEpJEswlfGT4C5Gs6M61CVm35dzvyafqAdDn5ROHunbHoslW
-         rRFZWW4MNf9BmfMVGUI1oylXjmex4v9wzMOfzz6L4a1y+5vN5F/hZl9EfqMUMBM1KBOI
-         fMmpyZSBzeMkrGO9d/OEYfHOaLD53AhuRA/f536uTbZfYzhEfhIo3/g4aTRJ5PQIrm2Q
-         dYM4Q5SYxxNeIsmzRXgD/EGQK+Uj7KSTsHAUwN3DKT6XKlwLCzheaG7EpSUk2p+u2XMa
-         xeMpFUCUe1WlEkV17zYDn/XuGgoVIL8rjYS+cwvyWFYWvQM5bfy+K/iJsA50llUlH0y8
-         C0QA==
-X-Gm-Message-State: AOUpUlHVljEE06IfjbQ6NbnGk+tCyL08ZSVgtmB/NztGpsqLfy/AA7uy
-        V3KGtWGUwpkkFLB/mWMre03EDw==
-X-Google-Smtp-Source: AAOMgpdChXAz0wDok90xdN5riFgbrsYcFIggYYIjrxsI8zpoQ8NBWHwyjMTh3T+Li3ngM3xQyoO2DA==
-X-Received: by 2002:a1c:8682:: with SMTP id i124-v6mr7704336wmd.77.1531641456287;
-        Sun, 15 Jul 2018 00:57:36 -0700 (PDT)
-Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id n8-v6sm42829169wrt.56.2018.07.15.00.57.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Jul 2018 00:57:34 -0700 (PDT)
-Date:   Sun, 15 Jul 2018 08:57:32 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     "dianders@google.com" <dianders@google.com>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "rpurdie@rpsys.net" <rpurdie@rpsys.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "kernel@collabora.com" <kernel@collabora.com>,
-        "briannorris@google.com" <briannorris@google.com>,
-        "amstan@google.com" <amstan@google.com>,
-        "groeck@google.com" <groeck@google.com>
-Subject: Re: REGRESSION: [RESEND PATCH v3 1/4] backlight: pwm_bl: linear
- interpolation between brightness-levels
-Message-ID: <20180715075732.GA2989@wychelm.lan>
-References: <20180409083333.1249-1-enric.balletbo@collabora.com>
- <20180409083333.1249-2-enric.balletbo@collabora.com>
- <1531580895.7579.7.camel@toradex.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=FDkr1xXrcgRA3MDnhm3HSG/gwPS7w5PE7zMtaHnyLbk=;
+        b=Pfzp2yGSGffBJ7amfeiM/wXGLaNGstvSxaseV5vrFiWUXQokBPZV0QB6NXMv7WhnGp
+         um882NgG6zV4MqFPvlygyKdHNJULSS0UVeqATm9vnmOjsWPWuVaMt7UxoSM/Wk0QS0YD
+         Vhhh6glvLH4duuB1HXqNKJXPtRjOTE2vnTWLe9GlIlC/k41bAzmytZnmECZfxTxRDuh2
+         NAD7KqZKM/q0jB0zswKBzlzfv9P1GsGMH4BICDCAemqs6CmmORp3JxcH4/yYW3hhZKsV
+         Y74RnNF07D1bj/NCOxPe3BU28w6AeGNx+Mgg3SIvJcwYSga8wCc/iTaXsxmmYqP188aj
+         fgRA==
+X-Gm-Message-State: APt69E1FM3TqeGKOtODd81+Vc6CbtcucVTduauTIarq3vA8bvabQisZI
+        dJTH1c2h8+6rdyPyxCh+A0tQYwhfEjQJRrQC3Lk=
+X-Google-Smtp-Source: AAOMgpcpteUmgFzlq+tByyjYkNPY7vCfzfsKEpvkJgKjYOikLmGIwzPK+Tzm9ecA2CZHLobqMw0kptJ8cyzz6UrJe18=
+X-Received: by 2002:a6b:c8c8:: with SMTP id y191-v6mr36032475iof.295.1531641727420;
+ Sun, 15 Jul 2018 01:02:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531580895.7579.7.camel@toradex.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 01:01:26
+ -0700 (PDT)
+In-Reply-To: <CALvZod6F4vM_U0obH1aU3iJqRs-3JEfR4cHKZoB9JVLTgdSmSQ@mail.gmail.com>
+References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+ <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
+ <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
+ <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
+ <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com> <CALvZod6F4vM_U0obH1aU3iJqRs-3JEfR4cHKZoB9JVLTgdSmSQ@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sun, 15 Jul 2018 16:01:26 +0800
+Message-ID: <CALOAHbByKH9t_c266Bi+Kv2r=07LLpa6UEQgsc7BNi2dZoeNhQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 03:08:17PM +0000, Marcel Ziswiler wrote:
-> On Mon, 2018-04-09 at 10:33 +0200, Enric Balletbo i Serra wrote:
-> > diff --git a/drivers/video/backlight/pwm_bl.c
-> > b/drivers/video/backlight/pwm_bl.c
-> > index 8e3f1245f5c5..f0a108ab570a 100644
-> > --- a/drivers/video/backlight/pwm_bl.c
-> > +++ b/drivers/video/backlight/pwm_bl.c
-> > @@ -147,7 +147,11 @@ static int pwm_backlight_parse_dt(struct device
-> > *dev,
-> >  				  struct platform_pwm_backlight_data
-> > *data)
-> >  {
-> >  	struct device_node *node = dev->of_node;
-> > +	unsigned int num_levels = 0;
-> > +	unsigned int levels_count;
-> > +	unsigned int num_steps;
+On Sun, Jul 15, 2018 at 2:34 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> On Sat, Jul 14, 2018 at 10:26 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>>
+>> On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> > On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >>
+>> >> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> >> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >> >>
+>> >> >> try_charge maybe executed in packet receive path, which is in interrupt
+>> >> >> context.
+>> >> >> In this situation, the 'current' is the interrupted task, which may has
+>> >> >> no relation to the rx softirq, So it is nonsense to use 'current'.
+>> >> >>
+>> >> >
+>> >> > Have you actually seen this occurring?
+>> >>
+>> >> Hi Shakeel,
+>> >>
+>> >> I'm trying to produce this issue, but haven't find it occur yet.
+>> >>
+>> >> > I am not very familiar with the
+>> >> > network code but I can think of two ways try_charge() can be called
+>> >> > from network code. Either through kmem charging or through
+>> >> > mem_cgroup_charge_skmem() and both locations correctly handle
+>> >> > interrupt context.
+>> >> >
+>> >>
+>> >> Why do you say that mem_cgroup_charge_skmem() correctly hanle
+>> >> interrupt context ?
+>> >>
+>> >> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
+>> >> context correctly.
+>> >>
+>> >> mem_cgroup_charge_skmem() is calling  try_charge() twice.
+>> >> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
+>> >> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
+>> >>
+>> >> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
+>> >> Then mem_cgroup_charge_skmem() will call try_charge() once more with
+>> >> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
+>> >> again the '
+>> >> force' label in  try_charge() will be executed and 0 is returned.
+>> >>
+>> >> No matter what, the 'current' will be used and touched, that is
+>> >> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
+>> >> correctly.
+>> >>
+>> >
+>> > Hi Yafang,
+>> >
+>> > If you check mem_cgroup_charge_skmem(), the memcg passed is not
+>> > 'current' but is from the sock object i.e. sk->sk_memcg for which the
+>> > network buffer is allocated for.
+>> >
+>>
+>> That's correct, the memcg if from the sock object.
+>> But the point is, in this situation why 'current' is used in try_charge() ?
+>> As 'current' is not related with the memcg, which is just a interrupted task.
+>>
+>
+> Hmm so you mean the behavior of memcg charging in the interrupt
+> context depends on the state of the interrupted task.
 
-num_steps is not initialized...
+Yes.
 
+> As you have
+> noted, mem_cgroup_charge_skmem() tries charging again with
+> __GFP_NOFAIL and the charge succeeds. Basically the memcg charging by
+> mem_cgroup_charge_skmem() will always succeed irrespective of the
+> state of the interrupted task. However mem_cgroup_charge_skmem() can
+> return true if the interrupted task was exiting or a fatal signal is
+> pending or oom victim or reclaiming memory. Can you please explain why
+> this is bad?
+>
 
-> >  	struct property *prop;
-> > +	unsigned int *table;
-> >  	int length;
-> >  	u32 value;
-> >  	int ret;
-> > @@ -167,6 +171,7 @@ static int pwm_backlight_parse_dt(struct device
-> > *dev,
-> >  	/* read brightness levels from DT property */
-> >  	if (data->max_brightness > 0) {
-> >  		size_t size = sizeof(*data->levels) * data-
-> > >max_brightness;
-> > +		unsigned int i, j, n = 0;
-> >  
-> >  		data->levels = devm_kzalloc(dev, size, GFP_KERNEL);
-> >  		if (!data->levels)
-> > @@ -184,6 +189,84 @@ static int pwm_backlight_parse_dt(struct device
-> > *dev,
-> >  			return ret;
-> >  
-> >  		data->dft_brightness = value;
-> > +
-> > +		/*
-> > +		 * This property is optional, if is set enables
-> > linear
-> > +		 * interpolation between each of the values of
-> > brightness levels
-> > +		 * and creates a new pre-computed table.
-> > +		 */
-> > +		of_property_read_u32(node, "num-interpolated-steps",
-> > +				     &num_steps);
+Let me show you the possible issues cause by this behavoir.
+1.  In mem_cgroup_oom(), some  members in 'current' is set.
+     That means an innocent task will be in  task_in_memcg_oom state.
+     But this task may be in a different memcg, I mean the memcg of
+the 'current' may be differenct with the sk->sk_memcg.
+     Then when this innocent 'current' do try_charge it will hit  "if
+(unlikely(task_in_memcg_oom(current)))" and  -ENOMEM is returned,
+While there're maybe some free memory (or some memory could be freed )
+in the memcg of the innocent 'task'.
 
-... this is not guaranteed to initialized num_steps ...
+2.  If the interrupted task was exiting or a fatal signal is  pending
+or oom victim,
+     it will directly goto force and 0 is returned, and then
+mem_cgroup_charge_skmem() will return true.
+     But mem_cgroup_charge_skmem() maybe need to try the second time
+and return false.
 
-> > +
-> > +		/*
-> > +		 * Make sure that there is at least two entries in
-> > the
-> > +		 * brightness-levels table, otherwise we can't
-> > interpolate
-> > +		 * between two points.
-> > +		 */
-> > +		if (num_steps) {
+That are all unexpected behavoir.
 
-... and we make a decision on it here.
+At least we must judge that whether the memcg of 'current' is same
+with sk->sk_memcg if we still want to use current here.
 
-Marcel: Can you try the following quick fix? It's untested on my side
-        but very simple...
-
-From 6fa2fbeb017086147ac61981107a95cb8ae7b4e7 Mon Sep 17 00:00:00 2001
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Date: Sun, 15 Jul 2018 08:49:05 +0100
-Subject: [PATCH] backlight: pwm_bl: Fix uninitialized variable
-
-Currently, if the DT does not define num-interpolated-steps then
-num_steps is undefined meaning the interpolation code will deploy
-randomly. Fix this.
-
-Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
-brightness-levels")
-Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
----
- drivers/video/backlight/pwm_bl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 9ee4c1b735b2..bdfcc0a71db1 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -250,7 +250,7 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 	struct device_node *node = dev->of_node;
- 	unsigned int num_levels = 0;
- 	unsigned int levels_count;
--	unsigned int num_steps;
-+	unsigned int num_steps = 0;
- 	struct property *prop;
- 	unsigned int *table;
- 	int length;
--- 
-2.17.1
-
+Thanks
+Yafang
