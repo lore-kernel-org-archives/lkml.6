@@ -1,125 +1,101 @@
 Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4278ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2A2ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60B3B2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:38:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5Yvgb7a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B3B2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F0B272089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:47:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B272089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeGOXCj (ORCPT
+        id S1727257AbeGOXLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 19:02:39 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43848 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbeGOXCj (ORCPT
+        Sun, 15 Jul 2018 19:11:23 -0400
+Received: from smtprelay0040.hostedemail.com ([216.40.44.40]:41051 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727046AbeGOXLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 19:02:39 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b15-v6so30079328wrv.10;
-        Sun, 15 Jul 2018 15:38:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZlQXIlqMkSH2VpVVVTef0i0kL3q9Jm1Q0+qUefEZWcs=;
-        b=Z5Yvgb7aTJ33eF5O1D+eepb+MCTJk5PciGmEEcAwxCUulBnlzdq2LeW2/A5qmVTeyd
-         KsBorP5TGVouzpNhddAYoS/oaBMgpIu1Xbj5bgEtARvfzt7ryR7UiY/g6S4t9DJqAAUI
-         XENkgCSDJL9QcNh1NFh+b6xXBpkAGGHrhI/zn5Hp2VhxO79WC/TSycjpWBIDaMZ3lnO6
-         1zk9uk9eFp8T+4BCbJ8icD+TyZAkA0zp7kucVIb+94gHKnTgnDwqfNjXidwNupk3ryNg
-         8RkKyNosiQvKraXjcSJldI7ksi3W1LYwVSj73TG4ta4vNb6RZlnsvMye3QWcydfQexzZ
-         OmBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZlQXIlqMkSH2VpVVVTef0i0kL3q9Jm1Q0+qUefEZWcs=;
-        b=h3smX28hU7gydnsvOtdgGL48aQwpsPfU/Ekv+cV6NJuKvGm+NJ6Y/hPl0lzoowWeoj
-         yPb/LnCS1mdWIrDGIGUE0sqzDtpv+GJr5IR/kws6JTuqmeT94gRdARp1cmJ87DZO03Vm
-         HYioBiWyZuVBBq6M0lNtpEhwyHMjIM2O7cKi4QCY65bzPaOVjF3ny7wOAFDOV5rtWQfZ
-         AX8FvYOG9B74FHl101sJ3B0ki8qgPmp1Ej0uZoLeVGLnO/fcVpY9pmxFt2EdKNO5ZORB
-         b8rujCOD8E7H5IdvPWSmJHsTO+DI3ss3qu9n9MaeOy9G/IhHQWx6NfyECZAnN9OZCCGp
-         lJQQ==
-X-Gm-Message-State: AOUpUlG23s7DoFVR/zN30hqRFv81me950u/ee7hkT+tTFPBUVZe7pCat
-        Gm7TUoCs1gvmmmC0/lRdeQE=
-X-Google-Smtp-Source: AAOMgpd/yV7ApOZ1/P5K4A0vG+m58+qic4gwNljHSpytVQoLynW4NpwMIqV6N/yY0UaxZRbiEwPV8g==
-X-Received: by 2002:adf:c74e:: with SMTP id b14-v6mr9738242wrh.16.1531694291468;
-        Sun, 15 Jul 2018 15:38:11 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id s16-v6sm24825330wrq.20.2018.07.15.15.38.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Jul 2018 15:38:10 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 00:38:08 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] efi/x86: Use non-blocking SetVariable() for
- efi_delete_dummy_variable()
-Message-ID: <20180715223808.GB16209@gmail.com>
-References: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
- <20180711094040.12506-3-ard.biesheuvel@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711094040.12506-3-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sun, 15 Jul 2018 19:11:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id D00981801EDC9;
+        Sun, 15 Jul 2018 22:46:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: able94_7635239b43705
+X-Filterd-Recvd-Size: 3072
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf09.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 15 Jul 2018 22:46:52 +0000 (UTC)
+Message-ID: <1db704b2e118b91c05ff37cd74c9adb818a4d033.camel@perches.com>
+Subject: Re: [PATCH 09/11] sched: use pelt for scale_rt_capacity()
+From:   Joe Perches <joe@perches.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org,
+        rjw@rjwysocki.net, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+        Morten.Rasmussen@arm.com, viresh.kumar@linaro.org,
+        valentin.schneider@arm.com, patrick.bellasi@arm.com,
+        joel@joelfernandes.org, daniel.lezcano@linaro.org,
+        quentin.perret@arm.com, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, Ingo Molnar <mingo@redhat.com>
+Date:   Sun, 15 Jul 2018 15:46:49 -0700
+In-Reply-To: <20180715221538.GA23280@gmail.com>
+References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
+         <1530200714-4504-10-git-send-email-vincent.guittot@linaro.org>
+         <20180715221538.GA23280@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-
-> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+On Mon, 2018-07-16 at 00:15 +0200, Ingo Molnar wrote:
+> * Vincent Guittot <vincent.guittot@linaro.org> wrote:
 > 
-> Presently, efi_delete_dummy_variable() uses set_variable() which might
-> block and hence kernel prints stack trace with a warning "bad:
-> scheduling from the idle thread!". So, make efi_delete_dummy_variable()
-> use set_variable_nonblocking(), which, as the name suggests doesn't
-> block.
-> 
-> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/x86/platform/efi/quirks.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-> index 36c1f8b9f7e0..6af39dc40325 100644
-> --- a/arch/x86/platform/efi/quirks.c
-> +++ b/arch/x86/platform/efi/quirks.c
-> @@ -105,12 +105,11 @@ early_param("efi_no_storage_paranoia", setup_storage_paranoia);
->  */
->  void efi_delete_dummy_variable(void)
+> > The utilization of the CPU by rt, dl and interrupts are now tracked with
+> > PELT so we can use these metrics instead of rt_avg to evaluate the remaining
+> > capacity available for cfs class.
+> > 
+> > scale_rt_capacity() behavior has been changed and now returns the remaining
+> > capacity available for cfs instead of a scaling factor because rt, dl and
+> > interrupt provide now absolute utilization value.
+> > 
+> > The same formula as schedutil is used:
+> >   irq util_avg + (1 - irq util_avg / max capacity ) * /Sum rq util_avg
+> > but the implementation is different because it doesn't return the same value
+> > and doesn't benefit of the same optimization
+[]
+> I have applied the delta fix below for simplicity, but what we really want is a 
+> cleanup of that function to eliminate the #ifdefs. One solution would be to factor 
+> out the 'irq' utilization value into a helper inline, and double check that if the 
+> configs are off the compiler does the right thing and eliminates this identity 
+> transformation for the irq==0 case:
+[]
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+[]
+> @@ -7550,7 +7550,10 @@ static unsigned long scale_rt_capacity(int cpu)
 >  {
-> -	efi.set_variable((efi_char16_t *)efi_dummy_name,
-> -			 &EFI_DUMMY_GUID,
-> -			 EFI_VARIABLE_NON_VOLATILE |
-> -			 EFI_VARIABLE_BOOTSERVICE_ACCESS |
-> -			 EFI_VARIABLE_RUNTIME_ACCESS,
-> -			 0, NULL);
-> +	efi.set_variable_nonblocking((efi_char16_t *)efi_dummy_name,
-> +				     &EFI_DUMMY_GUID,
-> +				     EFI_VARIABLE_NON_VOLATILE |
-> +				     EFI_VARIABLE_BOOTSERVICE_ACCESS |
-> +				     EFI_VARIABLE_RUNTIME_ACCESS, 0, NULL);
->  }
+>  	struct rq *rq = cpu_rq(cpu);
+>  	unsigned long max = arch_scale_cpu_capacity(NULL, cpu);
+> -	unsigned long used, irq, free;
+> +	unsigned long used, free;
+> +#if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
+> +	unsigned long irq;
+> +#endif
+>  
+>  #if defined(CONFIG_IRQ_TIME_ACCOUNTING) || defined(CONFIG_PARAVIRT_TIME_ACCOUNTING)
 
-Just wondering, what is the full stack trace of the splat? It sounds a bit 
-surprising to me that such type of EFI code is used from the idle thread.
+Perhaps combine these two #if defined blocks into
+a single block
 
-Thanks,
-
-	Ingo
+>  	irq = READ_ONCE(rq->avg_irq.util_avg);
