@@ -6,74 +6,73 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70043ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0EC2ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2464B2089F
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B4CB2089F
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 02:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="LjseaVra";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZOWa98CU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2464B2089F
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="bRfDWEzL";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N2OcVf6A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B4CB2089F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732996AbeGOCsy (ORCPT
+        id S2387722AbeGOCtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 22:48:54 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:46761 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731985AbeGOCsy (ORCPT
+        Sat, 14 Jul 2018 22:49:41 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:43782 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731950AbeGOCtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 22:48:54 -0400
-Received: by mail-yb0-f193.google.com with SMTP id c3-v6so4689490ybi.13
-        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 19:27:43 -0700 (PDT)
+        Sat, 14 Jul 2018 22:49:41 -0400
+Received: by mail-yw0-f195.google.com with SMTP id l189-v6so13096230ywb.10
+        for <linux-kernel@vger.kernel.org>; Sat, 14 Jul 2018 19:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=QsV+btA4uJwLvESfcb7wiZTl597SRI18zc1gHRK4F2M=;
-        b=LjseaVraG/dteYMHbW0vMmkuLJW5p/Up6EcD+74pGEx+Z8NfyamF7K57N9BQ+eYhca
-         FLfUuFG8Y/W0tyqUGEWZ/S9KUZlgcADacXsQNXzAD8NlF+iaR1TYjxvc/uFPnett6U39
-         llUw946vyLzZTCvSdbJvUfThvYv523sprrjaQZgZy9qFMVtui39f05MUsMfri/heydlT
-         uZ5FogKsLVNF9wCNcSkkLe8qilq9zZfOlZYA+jEngg65JK66KUtk0WFxcJ91P/xpcUac
-         WmMzm1QcCDmAMxwuLCZ/vdeH/m+tkUGq0Fx1O6jVONw+QlwUoIgGw6Y/f0Oru/d7e6nH
-         vLQQ==
+        bh=3fDa4j+SDTFFlhn2uvFQ50UxzOoKMDpIS2nMAAeqbtE=;
+        b=bRfDWEzLNhkL+6DVXKchRIlh2EU5wj9fGvXk+oFnkplUHaFDR7j4MPRYzpzOD35rAy
+         xEqeSbdHZlAASl+WSFlI20tnBlreTMLVAweEOXO9bfdtTmbhcGEITh4OmTEApVrX0EaO
+         1fOUsWUrQYVTVBm3UD6Ch2WW8WDQePe9dXYbTRtugL4YgEV6uPxHr+bxlus+kdjZ98xn
+         06numCgz1HYRMppkqfmDSUYShGc9KBN+VweQOKRxeC/JMEWtWri9oU5Ss5621tWglZ0O
+         3exqB1q0vS9uKGGe2vKsg7QQAsyHCBXxbx+IEH8GiBAoux5AzaWcerQiI/sbSoaPetYL
+         BFuA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=QsV+btA4uJwLvESfcb7wiZTl597SRI18zc1gHRK4F2M=;
-        b=ZOWa98CUXqPLigmarGcye2Z8LXPc758AqboM9MAmajHLbxUbYDZrr8HHjvcvCgFQb7
-         QfLFyHFl3ZrI7Z6xDg0wsWYaOUj1LYBmqYgZxtkrrb8lqyizjntOqOE/gEaXUPsn/PAP
-         5MhoZlf8MYNNCTxzx3zudAs6gXHSIm5nt98VU=
+        bh=3fDa4j+SDTFFlhn2uvFQ50UxzOoKMDpIS2nMAAeqbtE=;
+        b=N2OcVf6ANxxrOHZc1brwPCoYxbtnrWV/haWuXA4PY20dFrziIUjPZPG98oIiRLfgZv
+         DyXwWA7ZYf2//zYRFgbokcNndDg8g403YDAxRKMWSKGrpNLPtS0swohJRU26riF7Ni7c
+         2Fj1J7JFcndFOemblZssED5jxZW5tXmCMOxkE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=QsV+btA4uJwLvESfcb7wiZTl597SRI18zc1gHRK4F2M=;
-        b=MW9UWpaQag2nbgzmi5I/e2t/k1nYHOjaz7+K3WLrIFPFh3OyYvL7Y6IGmNDBZu5M1a
-         X9uQ/YBe359H5B0e+YRKLgUxrJg2xum2nEVgRqP/PHcQ/NL+S8bDGh+GIu40Cgr+g8eF
-         p8jAwTlmx2tWL9gZD+IHxiqwSK5xa7WO8r3532jyzrDM2teHxkHnqp5ko08sYu0NY/FL
-         4o9ZHlZZ8DwjaoR2ilEenXoMjoGZvIq8dd18M6yuGv/ipfadoo4Ye7Eyd5oUERxljr/O
-         IWlASpuKriQrLjFpV6O4UPiwjz/zRvcbv9LflP3aS+IlxWBf8Z/POEvRPvnQLN5aBRZY
-         kUYA==
-X-Gm-Message-State: AOUpUlG5NmHzH5cQLAtcF/XCa6s6YdFXp/c8p79we/sLQV1MJqlg7usL
-        oA6xi83KzeG6/y7R+Krnf6hLINNUPXgEuLhMLMrKlg==
-X-Google-Smtp-Source: AAOMgpe8ueSnhstXVubupCZKqp2dTJa9ekXfTC0DgB1044ze8FBv1bSjV4EwtympWegIM8YY4nB7yYRGGEPVBC+uzMY=
-X-Received: by 2002:a25:3445:: with SMTP id b66-v6mr6379363yba.484.1531621662873;
- Sat, 14 Jul 2018 19:27:42 -0700 (PDT)
+        bh=3fDa4j+SDTFFlhn2uvFQ50UxzOoKMDpIS2nMAAeqbtE=;
+        b=DZJ1iqm/taoUtSUcG1I+E4PZko6/Z1EuTiWEY7Hw/Voy6wjFUrnu7A1L++3bexG6fd
+         Y3Gs68ngWBZKKMjsd6T0t9r7KeDh9RZwKzBvcjAb5JnWdcHRh3EFc9Rw0hmH16Map2fa
+         hm1FYrnr8p5qQmkmsvd81GkU33TcHc/D5mOPw3vKWKLdcagM1+s2wuo8WGQSvBEFqtEd
+         jnWoTYrZNJZzaDIp+2YvY0POa2b6fb2/nB7J0WXbCAAZJERS9oKgAhTnLx3cRjKtFcIn
+         xkO7OXNKi9ieX/dVvMh9npeFX+Tl7Ia1NcfYZwWR+FK3S2LpxYX1OJLxGX9Wi1s+ag6n
+         fHAQ==
+X-Gm-Message-State: AOUpUlEAxvryeAIqBl8D68RnyziD+DkMqSpzb0cbj3XlJAhCOJf0NLj7
+        aBtr62MqWc/y/2rw878YPx6QFp+9ppyykrs4g9EY+w==
+X-Google-Smtp-Source: AAOMgper9SlNjFlJfWdq7S+t+m2R6UfZQpW+exmsepi8DQcOMwl/BoxVTl8piNzSD7PnsBvCikRu1LDAeX1vIB0V0Uw=
+X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr5751365ywn.88.1531621709190;
+ Sat, 14 Jul 2018 19:28:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 19:27:42
+Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Sat, 14 Jul 2018 19:28:28
  -0700 (PDT)
-In-Reply-To: <1531505163-20227-6-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com> <1531505163-20227-6-git-send-email-zohar@linux.vnet.ibm.com>
+In-Reply-To: <1531505163-20227-7-git-send-email-zohar@linux.vnet.ibm.com>
+References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com> <1531505163-20227-7-git-send-email-zohar@linux.vnet.ibm.com>
 From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 14 Jul 2018 19:27:42 -0700
-X-Google-Sender-Auth: BBB73tMICXFaURwiSUNEgE0N4j4
-Message-ID: <CAGXu5jKWGONcAfxrU_vk4g=La24NDSzS=scZWxp27xJdO_R0zA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/8] ima: based on policy require signed firmware
- (sysfs fallback)
+Date:   Sat, 14 Jul 2018 19:28:28 -0700
+X-Google-Sender-Auth: CA-9b3v1u3fpwvXfbJgSDcFey5E
+Message-ID: <CAGXu5jL8_nbUKKNO-PCyGwOdQ+vjPZ7_17FKNH1fssgtfjk=Rw@mail.gmail.com>
+Subject: Re: [PATCH v6 6/8] ima: add build time policy
 To:     Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>,
@@ -82,9 +81,7 @@ Cc:     linux-integrity <linux-integrity@vger.kernel.org>,
         Eric Biederman <ebiederm@xmission.com>,
         Kexec Mailing List <kexec@lists.infradead.org>,
         Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Matthew Garrett <mjg59@google.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -92,12 +89,16 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, Jul 13, 2018 at 11:06 AM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> With an IMA policy requiring signed firmware, this patch prevents
-> the sysfs fallback method of loading firmware.
+> IMA by default does not measure, appraise or audit files, but can be
+> enabled at runtime by specifying a builtin policy on the boot command line
+> or by loading a custom policy.
+>
+> This patch defines a build time policy, which verifies kernel modules,
+> firmware, kexec image, and/or the IMA policy signatures.  This build time
+> policy is automatically enabled at runtime and persists after loading a
+> custom policy.
 >
 > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> Cc: Luis R. Rodriguez <mcgrof@suse.com>
-> Cc: Matthew Garrett <mjg59@google.com>
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
