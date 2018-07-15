@@ -1,54 +1,51 @@
 Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F93ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 927A5ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 233572084C
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:36:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 233572084C
+	by mail.kernel.org (Postfix) with ESMTP id 353F620840
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:37:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 353F620840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeGPABU (ORCPT
+        id S1727860AbeGPABr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 20:01:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52259 "EHLO
+        Sun, 15 Jul 2018 20:01:47 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44481 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeGPABT (ORCPT
+        with ESMTP id S1727008AbeGPABq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 20:01:19 -0400
+        Sun, 15 Jul 2018 20:01:46 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6FNaIGv922546
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6FNamB8922584
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sun, 15 Jul 2018 16:36:18 -0700
+        Sun, 15 Jul 2018 16:36:48 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6FNaHlW922543;
-        Sun, 15 Jul 2018 16:36:17 -0700
-Date:   Sun, 15 Jul 2018 16:36:17 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6FNal3t922581;
+        Sun, 15 Jul 2018 16:36:47 -0700
+Date:   Sun, 15 Jul 2018 16:36:47 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Xunlei Pang <tipbot@zytor.com>
-Message-ID: <tip-8d4c00dc38a8aa30dae8402955e55e7b34e74bc8@git.kernel.org>
-Cc:     hpa@zytor.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, tj@kernel.org,
-        lcapitulino@redhat.com, frederic@kernel.org, peterz@infradead.org,
-        tglx@linutronix.de, xlpang@linux.alibaba.com
-Reply-To: xlpang@linux.alibaba.com, tglx@linutronix.de,
-          frederic@kernel.org, lcapitulino@redhat.com,
+From:   tip-bot for Ingo Molnar <tipbot@zytor.com>
+Message-ID: <tip-90a2186b7df183c2fd35f724d0d16a0c10fac9b2@git.kernel.org>
+Cc:     peterz@infradead.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, torvalds@linux-foundation.org,
+        mingo@kernel.org, matt@codeblueprint.co.uk, tglx@linutronix.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de, matt@codeblueprint.co.uk,
           peterz@infradead.org, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, tj@kernel.org,
-          mingo@kernel.org
-In-Reply-To: <20180709145843.126583-1-xlpang@linux.alibaba.com>
-References: <20180709145843.126583-1-xlpang@linux.alibaba.com>
+          linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
+          hpa@zytor.com
+In-Reply-To: <20180711094040.12506-2-ard.biesheuvel@linaro.org>
+References: <20180711094040.12506-2-ard.biesheuvel@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/cputime: Ensure accurate utime and stime
- ratio in cputime_adjust()
-Git-Commit-ID: 8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
+Subject: [tip:efi/core] efi/x86: Clean up the eboot code
+Git-Commit-ID: 90a2186b7df183c2fd35f724d0d16a0c10fac9b2
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,230 +59,527 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
-Gitweb:     https://git.kernel.org/tip/8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
-Author:     Xunlei Pang <xlpang@linux.alibaba.com>
-AuthorDate: Mon, 9 Jul 2018 22:58:43 +0800
+Commit-ID:  90a2186b7df183c2fd35f724d0d16a0c10fac9b2
+Gitweb:     https://git.kernel.org/tip/90a2186b7df183c2fd35f724d0d16a0c10fac9b2
+Author:     Ingo Molnar <mingo@kernel.org>
+AuthorDate: Wed, 11 Jul 2018 11:40:33 +0200
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 16 Jul 2018 00:28:31 +0200
+CommitDate: Mon, 16 Jul 2018 00:43:05 +0200
 
-sched/cputime: Ensure accurate utime and stime ratio in cputime_adjust()
+efi/x86: Clean up the eboot code
 
-If users access "/proc/pid/stat", the utime and stime ratio in the
-current SAMPLE period are excepted, but currently cputime_adjust()
-always calculates with the ratio of the WHOLE lifetime of the process.
+Various small cleanups:
 
-This results in inaccurate utime and stime in "/proc/pid/stat". For
-example,  a process runs for a while with "50% usr, 0% sys", then
-followed by "100% sys". For later while, the following is excepted:
+ - Standardize printk messages:
 
-  0.0 usr,  100.0 sys
+     'alloc' => 'allocate'
+     'mem'   => 'memory'
 
-but we get:
+   also put variable names in printk messages between quotes.
 
-  10.0 usr,  90.0 sys
+ - Align mass-assignments vertically for better readability
 
-This patch uses the accurate ratio in cputime_adjust() to address the
-issue. A new 'task_cputime' type field is added in prev_cputime to record
-previous 'task_cputime' so that we can get the elapsed times as the accurate
-ratio.
+ - Break multi-line function prototypes at the name where possible,
+   not in the middle of the parameter list
 
-Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
+ - Use a newline before return statements consistently.
+
+ - Use curly braces in a balanced fashion.
+
+ - Remove stray newlines.
+
+No change in functionality.
+
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luiz Capitulino <lcapitulino@redhat.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: baoyou.xie@gmail.com
-Link: http://lkml.kernel.org/r/20180709145843.126583-1-xlpang@linux.alibaba.com
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180711094040.12506-2-ard.biesheuvel@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- include/linux/sched.h         | 34 ++++++++++++------------
- include/linux/sched/cputime.h | 12 ++++++++-
- kernel/sched/cputime.c        | 61 ++++++++++++++++---------------------------
- 3 files changed, 52 insertions(+), 55 deletions(-)
+ arch/x86/boot/compressed/eboot.c | 245 ++++++++++++++++++++-------------------
+ 1 file changed, 125 insertions(+), 120 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 43731fe51c97..fedc69d4a425 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -223,10 +223,27 @@ extern void io_schedule_finish(int token);
- extern long io_schedule_timeout(long timeout);
- extern void io_schedule(void);
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index e98522ea6f09..9f6813493945 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -34,9 +34,9 @@ static void setup_boot_services##bits(struct efi_config *c)		\
+ 									\
+ 	table = (typeof(table))sys_table;				\
+ 									\
+-	c->runtime_services = table->runtime;				\
+-	c->boot_services = table->boottime;				\
+-	c->text_output = table->con_out;				\
++	c->runtime_services	= table->runtime;			\
++	c->boot_services	= table->boottime;			\
++	c->text_output		= table->con_out;			\
+ }
+ BOOT_SERVICES(32);
+ BOOT_SERVICES(64);
+@@ -64,6 +64,7 @@ static inline efi_status_t __open_volume32(void *__image, void **__fh)
+ 		efi_printk(sys_table, "Failed to open volume\n");
  
-+/**
-+ * struct task_cputime - collected CPU time counts
-+ * @utime:		time spent in user mode, in nanoseconds
-+ * @stime:		time spent in kernel mode, in nanoseconds
-+ * @sum_exec_runtime:	total time spent on the CPU, in nanoseconds
-+ *
-+ * This structure groups together three kinds of CPU time that are tracked for
-+ * threads and thread groups.  Most things considering CPU time want to group
-+ * these counts together and treat all three of them in parallel.
-+ */
-+struct task_cputime {
-+	u64				utime;
-+	u64				stime;
-+	unsigned long long		sum_exec_runtime;
-+};
+ 	*__fh = fh;
 +
- /**
-  * struct prev_cputime - snapshot of system and user cputime
-  * @utime: time spent in user mode
-  * @stime: time spent in system mode
-+ * @cputime: previous task_cputime to calculate utime/stime
-  * @lock: protects the above two fields
-  *
-  * Stores previous user/system time values such that we can guarantee
-@@ -236,26 +253,11 @@ struct prev_cputime {
- #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
- 	u64				utime;
- 	u64				stime;
-+	struct task_cputime		cputime;
- 	raw_spinlock_t			lock;
- #endif
+ 	return status;
+ }
+ 
+@@ -90,6 +91,7 @@ static inline efi_status_t __open_volume64(void *__image, void **__fh)
+ 		efi_printk(sys_table, "Failed to open volume\n");
+ 
+ 	*__fh = fh;
++
+ 	return status;
+ }
+ 
+@@ -134,16 +136,16 @@ __setup_efi_pci(efi_pci_io_protocol_t *pci, struct pci_setup_rom **__rom)
+ 
+ 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA, size, &rom);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc mem for rom\n");
++		efi_printk(sys_table, "Failed to allocate memory for 'rom'\n");
+ 		return status;
+ 	}
+ 
+ 	memset(rom, 0, sizeof(*rom));
+ 
+-	rom->data.type = SETUP_PCI;
+-	rom->data.len = size - sizeof(struct setup_data);
+-	rom->data.next = 0;
+-	rom->pcilen = pci->romsize;
++	rom->data.type	= SETUP_PCI;
++	rom->data.len	= size - sizeof(struct setup_data);
++	rom->data.next	= 0;
++	rom->pcilen	= pci->romsize;
+ 	*__rom = rom;
+ 
+ 	status = efi_call_proto(efi_pci_io_protocol, pci.read, pci,
+@@ -180,8 +182,7 @@ free_struct:
+ }
+ 
+ static void
+-setup_efi_pci32(struct boot_params *params, void **pci_handle,
+-		unsigned long size)
++setup_efi_pci32(struct boot_params *params, void **pci_handle, unsigned long size)
+ {
+ 	efi_pci_io_protocol_t *pci = NULL;
+ 	efi_guid_t pci_proto = EFI_PCI_IO_PROTOCOL_GUID;
+@@ -220,13 +221,11 @@ setup_efi_pci32(struct boot_params *params, void **pci_handle,
+ 			params->hdr.setup_data = (unsigned long)rom;
+ 
+ 		data = (struct setup_data *)rom;
+-
+ 	}
+ }
+ 
+ static void
+-setup_efi_pci64(struct boot_params *params, void **pci_handle,
+-		unsigned long size)
++setup_efi_pci64(struct boot_params *params, void **pci_handle, unsigned long size)
+ {
+ 	efi_pci_io_protocol_t *pci = NULL;
+ 	efi_guid_t pci_proto = EFI_PCI_IO_PROTOCOL_GUID;
+@@ -265,7 +264,6 @@ setup_efi_pci64(struct boot_params *params, void **pci_handle,
+ 			params->hdr.setup_data = (unsigned long)rom;
+ 
+ 		data = (struct setup_data *)rom;
+-
+ 	}
+ }
+ 
+@@ -295,7 +293,7 @@ static void setup_efi_pci(struct boot_params *params)
+ 					size, (void **)&pci_handle);
+ 
+ 		if (status != EFI_SUCCESS) {
+-			efi_printk(sys_table, "Failed to alloc mem for pci_handle\n");
++			efi_printk(sys_table, "Failed to allocate memory for 'pci_handle'\n");
+ 			return;
+ 		}
+ 
+@@ -341,8 +339,7 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
+ 		status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+ 					size + sizeof(struct setup_data), &new);
+ 		if (status != EFI_SUCCESS) {
+-			efi_printk(sys_table,
+-					"Failed to alloc mem for properties\n");
++			efi_printk(sys_table, "Failed to allocate memory for 'properties'\n");
+ 			return;
+ 		}
+ 
+@@ -358,9 +355,9 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
+ 	new->next = 0;
+ 
+ 	data = (struct setup_data *)(unsigned long)boot_params->hdr.setup_data;
+-	if (!data)
++	if (!data) {
+ 		boot_params->hdr.setup_data = (unsigned long)new;
+-	else {
++	} else {
+ 		while (data->next)
+ 			data = (struct setup_data *)(unsigned long)data->next;
+ 		data->next = (unsigned long)new;
+@@ -473,8 +470,8 @@ setup_uga64(void **uga_handle, unsigned long size, u32 *width, u32 *height)
+ /*
+  * See if we have Universal Graphics Adapter (UGA) protocol
+  */
+-static efi_status_t setup_uga(struct screen_info *si, efi_guid_t *uga_proto,
+-			      unsigned long size)
++static efi_status_t
++setup_uga(struct screen_info *si, efi_guid_t *uga_proto, unsigned long size)
+ {
+ 	efi_status_t status;
+ 	u32 width, height;
+@@ -503,23 +500,24 @@ static efi_status_t setup_uga(struct screen_info *si, efi_guid_t *uga_proto,
+ 		goto free_handle;
+ 
+ 	/* EFI framebuffer */
+-	si->orig_video_isVGA = VIDEO_TYPE_EFI;
++	si->orig_video_isVGA	= VIDEO_TYPE_EFI;
+ 
+-	si->lfb_depth = 32;
+-	si->lfb_width = width;
+-	si->lfb_height = height;
++	si->lfb_depth		= 32;
++	si->lfb_width		= width;
++	si->lfb_height		= height;
+ 
+-	si->red_size = 8;
+-	si->red_pos = 16;
+-	si->green_size = 8;
+-	si->green_pos = 8;
+-	si->blue_size = 8;
+-	si->blue_pos = 0;
+-	si->rsvd_size = 8;
+-	si->rsvd_pos = 24;
++	si->red_size		= 8;
++	si->red_pos		= 16;
++	si->green_size		= 8;
++	si->green_pos		= 8;
++	si->blue_size		= 8;
++	si->blue_pos		= 0;
++	si->rsvd_size		= 8;
++	si->rsvd_pos		= 24;
+ 
+ free_handle:
+ 	efi_call_early(free_pool, uga_handle);
++
+ 	return status;
+ }
+ 
+@@ -601,7 +599,7 @@ struct boot_params *make_boot_params(struct efi_config *c)
+ 	status = efi_low_alloc(sys_table, 0x4000, 1,
+ 			       (unsigned long *)&boot_params);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc lowmem for boot params\n");
++		efi_printk(sys_table, "Failed to allocate lowmem for boot params\n");
+ 		return NULL;
+ 	}
+ 
+@@ -617,9 +615,9 @@ struct boot_params *make_boot_params(struct efi_config *c)
+ 	 * Fill out some of the header fields ourselves because the
+ 	 * EFI firmware loader doesn't load the first sector.
+ 	 */
+-	hdr->root_flags = 1;
+-	hdr->vid_mode = 0xffff;
+-	hdr->boot_flag = 0xAA55;
++	hdr->root_flags	= 1;
++	hdr->vid_mode	= 0xffff;
++	hdr->boot_flag	= 0xAA55;
+ 
+ 	hdr->type_of_loader = 0x21;
+ 
+@@ -627,6 +625,7 @@ struct boot_params *make_boot_params(struct efi_config *c)
+ 	cmdline_ptr = efi_convert_cmdline(sys_table, image, &options_size);
+ 	if (!cmdline_ptr)
+ 		goto fail;
++
+ 	hdr->cmd_line_ptr = (unsigned long)cmdline_ptr;
+ 	/* Fill in upper bits of command line address, NOP on 32 bit  */
+ 	boot_params->ext_cmd_line_ptr = (u64)(unsigned long)cmdline_ptr >> 32;
+@@ -663,10 +662,12 @@ struct boot_params *make_boot_params(struct efi_config *c)
+ 	boot_params->ext_ramdisk_size  = (u64)ramdisk_size >> 32;
+ 
+ 	return boot_params;
++
+ fail2:
+ 	efi_free(sys_table, options_size, hdr->cmd_line_ptr);
+ fail:
+ 	efi_free(sys_table, 0x4000, (unsigned long)boot_params);
++
+ 	return NULL;
+ }
+ 
+@@ -678,7 +679,7 @@ static void add_e820ext(struct boot_params *params,
+ 	unsigned long size;
+ 
+ 	e820ext->type = SETUP_E820_EXT;
+-	e820ext->len = nr_entries * sizeof(struct boot_e820_entry);
++	e820ext->len  = nr_entries * sizeof(struct boot_e820_entry);
+ 	e820ext->next = 0;
+ 
+ 	data = (struct setup_data *)(unsigned long)params->hdr.setup_data;
+@@ -692,8 +693,8 @@ static void add_e820ext(struct boot_params *params,
+ 		params->hdr.setup_data = (unsigned long)e820ext;
+ }
+ 
+-static efi_status_t setup_e820(struct boot_params *params,
+-			       struct setup_data *e820ext, u32 e820ext_size)
++static efi_status_t
++setup_e820(struct boot_params *params, struct setup_data *e820ext, u32 e820ext_size)
+ {
+ 	struct boot_e820_entry *entry = params->e820_table;
+ 	struct efi_info *efi = &params->efi_info;
+@@ -814,11 +815,11 @@ static efi_status_t alloc_e820ext(u32 nr_desc, struct setup_data **e820ext,
+ }
+ 
+ struct exit_boot_struct {
+-	struct boot_params *boot_params;
+-	struct efi_info *efi;
+-	struct setup_data *e820ext;
+-	__u32 e820ext_size;
+-	bool is64;
++	struct boot_params	*boot_params;
++	struct efi_info		*efi;
++	struct setup_data	*e820ext;
++	__u32			e820ext_size;
++	bool			is64;
  };
  
--/**
-- * struct task_cputime - collected CPU time counts
-- * @utime:		time spent in user mode, in nanoseconds
-- * @stime:		time spent in kernel mode, in nanoseconds
-- * @sum_exec_runtime:	total time spent on the CPU, in nanoseconds
-- *
-- * This structure groups together three kinds of CPU time that are tracked for
-- * threads and thread groups.  Most things considering CPU time want to group
-- * these counts together and treat all three of them in parallel.
-- */
--struct task_cputime {
--	u64				utime;
--	u64				stime;
--	unsigned long long		sum_exec_runtime;
--};
--
- /* Alternate field names when used on cache expirations: */
- #define virt_exp			utime
- #define prof_exp			stime
-diff --git a/include/linux/sched/cputime.h b/include/linux/sched/cputime.h
-index 53f883f5a2fd..49f8fd2564ed 100644
---- a/include/linux/sched/cputime.h
-+++ b/include/linux/sched/cputime.h
-@@ -175,10 +175,20 @@ static inline void account_group_exec_runtime(struct task_struct *tsk,
- 	atomic64_add(ns, &cputimer->cputime_atomic.sum_exec_runtime);
- }
+ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
+@@ -848,15 +849,15 @@ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
+ 	signature = p->is64 ? EFI64_LOADER_SIGNATURE : EFI32_LOADER_SIGNATURE;
+ 	memcpy(&p->efi->efi_loader_signature, signature, sizeof(__u32));
  
--static inline void prev_cputime_init(struct prev_cputime *prev)
-+static inline void prev_cputime_clear(struct prev_cputime *prev)
- {
- #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
- 	prev->utime = prev->stime = 0;
-+	prev->cputime.utime = 0;
-+	prev->cputime.stime = 0;
-+	prev->cputime.sum_exec_runtime = 0;
-+#endif
-+}
-+
-+static inline void prev_cputime_init(struct prev_cputime *prev)
-+{
-+#ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-+	prev_cputime_clear(prev);
- 	raw_spin_lock_init(&prev->lock);
+-	p->efi->efi_systab = (unsigned long)sys_table_arg;
+-	p->efi->efi_memdesc_size = *map->desc_size;
+-	p->efi->efi_memdesc_version = *map->desc_ver;
+-	p->efi->efi_memmap = (unsigned long)*map->map;
+-	p->efi->efi_memmap_size = *map->map_size;
++	p->efi->efi_systab		= (unsigned long)sys_table_arg;
++	p->efi->efi_memdesc_size	= *map->desc_size;
++	p->efi->efi_memdesc_version	= *map->desc_ver;
++	p->efi->efi_memmap		= (unsigned long)*map->map;
++	p->efi->efi_memmap_size		= *map->map_size;
+ 
+ #ifdef CONFIG_X86_64
+-	p->efi->efi_systab_hi = (unsigned long)sys_table_arg >> 32;
+-	p->efi->efi_memmap_hi = (unsigned long)*map->map >> 32;
++	p->efi->efi_systab_hi		= (unsigned long)sys_table_arg >> 32;
++	p->efi->efi_memmap_hi		= (unsigned long)*map->map >> 32;
  #endif
- }
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 0796f938c4f0..a68483ee3ad7 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -590,69 +590,54 @@ drop_precision:
- void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
- 		    u64 *ut, u64 *st)
+ 
+ 	return EFI_SUCCESS;
+@@ -874,17 +875,17 @@ static efi_status_t exit_boot(struct boot_params *boot_params,
+ 	struct efi_boot_memmap map;
+ 	struct exit_boot_struct priv;
+ 
+-	map.map =		&mem_map;
+-	map.map_size =		&map_sz;
+-	map.desc_size =		&desc_size;
+-	map.desc_ver =		&desc_version;
+-	map.key_ptr =		&key;
+-	map.buff_size =		&buff_size;
+-	priv.boot_params =	boot_params;
+-	priv.efi =		&boot_params->efi_info;
+-	priv.e820ext =		NULL;
+-	priv.e820ext_size =	0;
+-	priv.is64 =		is64;
++	map.map			= &mem_map;
++	map.map_size		= &map_sz;
++	map.desc_size		= &desc_size;
++	map.desc_ver		= &desc_version;
++	map.key_ptr		= &key;
++	map.buff_size		= &buff_size;
++	priv.boot_params	= boot_params;
++	priv.efi		= &boot_params->efi_info;
++	priv.e820ext		= NULL;
++	priv.e820ext_size	= 0;
++	priv.is64		= is64;
+ 
+ 	/* Might as well exit boot services now */
+ 	status = efi_exit_boot_services(sys_table, handle, &map, &priv,
+@@ -892,10 +893,11 @@ static efi_status_t exit_boot(struct boot_params *boot_params,
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+ 
+-	e820ext = priv.e820ext;
+-	e820ext_size = priv.e820ext_size;
++	e820ext			= priv.e820ext;
++	e820ext_size		= priv.e820ext_size;
++
+ 	/* Historic? */
+-	boot_params->alt_mem_k = 32 * 1024;
++	boot_params->alt_mem_k	= 32 * 1024;
+ 
+ 	status = setup_e820(boot_params, e820ext, e820ext_size);
+ 	if (status != EFI_SUCCESS)
+@@ -908,8 +910,8 @@ static efi_status_t exit_boot(struct boot_params *boot_params,
+  * On success we return a pointer to a boot_params structure, and NULL
+  * on failure.
+  */
+-struct boot_params *efi_main(struct efi_config *c,
+-			     struct boot_params *boot_params)
++struct boot_params *
++efi_main(struct efi_config *c, struct boot_params *boot_params)
  {
--	u64 rtime, stime, utime;
-+	u64 rtime_delta, stime_delta, utime_delta;
- 	unsigned long flags;
- 
- 	/* Serialize concurrent callers such that we can honour our guarantees */
- 	raw_spin_lock_irqsave(&prev->lock, flags);
--	rtime = curr->sum_exec_runtime;
- 
- 	/*
- 	 * This is possible under two circumstances:
--	 *  - rtime isn't monotonic after all (a bug);
-+	 *  - task_cputime isn't monotonic after all (a bug);
- 	 *  - we got reordered by the lock.
- 	 *
- 	 * In both cases this acts as a filter such that the rest of the code
- 	 * can assume it is monotonic regardless of anything else.
- 	 */
--	if (prev->stime + prev->utime >= rtime)
-+	if (prev->cputime.utime > curr->utime ||
-+	    prev->cputime.stime > curr->stime ||
-+	    prev->cputime.sum_exec_runtime >= curr->sum_exec_runtime)
- 		goto out;
- 
--	stime = curr->stime;
--	utime = curr->utime;
-+	stime_delta = curr->stime - prev->cputime.stime;
-+	utime_delta = curr->utime - prev->cputime.utime;
-+	rtime_delta = curr->sum_exec_runtime - prev->cputime.sum_exec_runtime;
- 
- 	/*
--	 * If either stime or utime are 0, assume all runtime is userspace.
--	 * Once a task gets some ticks, the monotonicy code at 'update:'
--	 * will ensure things converge to the observed ratio.
-+	 * If either stime or utime increase are 0, assume all runtime
-+	 * is userspace. Once a task gets some ticks, the monotonicy code
-+	 * at 'update:' will ensure things converge to the observed ratio.
- 	 */
--	if (stime == 0) {
--		utime = rtime;
-+	if (stime_delta == 0) {
-+		utime_delta = rtime_delta;
- 		goto update;
+ 	struct desc_ptr *gdt = NULL;
+ 	efi_loaded_image_t *image;
+@@ -957,7 +959,7 @@ struct boot_params *efi_main(struct efi_config *c,
+ 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
+ 				sizeof(*gdt), (void **)&gdt);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc mem for gdt structure\n");
++		efi_printk(sys_table, "Failed to allocate memory for 'gdt' structure\n");
+ 		goto fail;
  	}
  
--	if (utime == 0) {
--		stime = rtime;
-+	if (utime_delta == 0) {
-+		stime_delta = rtime_delta;
- 		goto update;
+@@ -965,7 +967,7 @@ struct boot_params *efi_main(struct efi_config *c,
+ 	status = efi_low_alloc(sys_table, gdt->size, 8,
+ 			   (unsigned long *)&gdt->address);
+ 	if (status != EFI_SUCCESS) {
+-		efi_printk(sys_table, "Failed to alloc mem for gdt\n");
++		efi_printk(sys_table, "Failed to allocate memory for 'gdt'\n");
+ 		goto fail;
  	}
  
--	stime = scale_stime(stime, rtime, stime + utime);
-+	stime_delta = scale_stime(stime_delta, rtime_delta,
-+				stime_delta + utime_delta);
-+	if (stime_delta > rtime_delta)
-+		stime_delta = rtime_delta;
-+	utime_delta = rtime_delta - stime_delta;
+@@ -1002,19 +1004,20 @@ struct boot_params *efi_main(struct efi_config *c,
  
- update:
--	/*
--	 * Make sure stime doesn't go backwards; this preserves monotonicity
--	 * for utime because rtime is monotonic.
--	 *
--	 *  utime_i+1 = rtime_i+1 - stime_i
--	 *            = rtime_i+1 - (rtime_i - utime_i)
--	 *            = (rtime_i+1 - rtime_i) + utime_i
--	 *            >= utime_i
--	 */
--	if (stime < prev->stime)
--		stime = prev->stime;
--	utime = rtime - stime;
--
--	/*
--	 * Make sure utime doesn't go backwards; this still preserves
--	 * monotonicity for stime, analogous argument to above.
--	 */
--	if (utime < prev->utime) {
--		utime = prev->utime;
--		stime = rtime - utime;
--	}
--
--	prev->stime = stime;
--	prev->utime = utime;
-+	prev->cputime = *curr;
-+	prev->utime += utime_delta;
-+	prev->stime += stime_delta;
- out:
- 	*ut = prev->utime;
- 	*st = prev->stime;
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		/* __KERNEL32_CS */
+-		desc->limit0 = 0xffff;
+-		desc->base0 = 0x0000;
+-		desc->base1 = 0x0000;
+-		desc->type = SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
+-		desc->s = DESC_TYPE_CODE_DATA;
+-		desc->dpl = 0;
+-		desc->p = 1;
+-		desc->limit1 = 0xf;
+-		desc->avl = 0;
+-		desc->l = 0;
+-		desc->d = SEG_OP_SIZE_32BIT;
+-		desc->g = SEG_GRANULARITY_4KB;
+-		desc->base2 = 0x00;
++		desc->limit0	= 0xffff;
++		desc->base0	= 0x0000;
++		desc->base1	= 0x0000;
++		desc->type	= SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
++		desc->s		= DESC_TYPE_CODE_DATA;
++		desc->dpl	= 0;
++		desc->p		= 1;
++		desc->limit1	= 0xf;
++		desc->avl	= 0;
++		desc->l		= 0;
++		desc->d		= SEG_OP_SIZE_32BIT;
++		desc->g		= SEG_GRANULARITY_4KB;
++		desc->base2	= 0x00;
++
+ 		desc++;
+ 	} else {
+ 		/* Second entry is unused on 32-bit */
+@@ -1022,15 +1025,16 @@ struct boot_params *efi_main(struct efi_config *c,
+ 	}
+ 
+ 	/* __KERNEL_CS */
+-	desc->limit0 = 0xffff;
+-	desc->base0 = 0x0000;
+-	desc->base1 = 0x0000;
+-	desc->type = SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
+-	desc->s = DESC_TYPE_CODE_DATA;
+-	desc->dpl = 0;
+-	desc->p = 1;
+-	desc->limit1 = 0xf;
+-	desc->avl = 0;
++	desc->limit0	= 0xffff;
++	desc->base0	= 0x0000;
++	desc->base1	= 0x0000;
++	desc->type	= SEG_TYPE_CODE | SEG_TYPE_EXEC_READ;
++	desc->s		= DESC_TYPE_CODE_DATA;
++	desc->dpl	= 0;
++	desc->p		= 1;
++	desc->limit1	= 0xf;
++	desc->avl	= 0;
++
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		desc->l = 1;
+ 		desc->d = 0;
+@@ -1038,41 +1042,41 @@ struct boot_params *efi_main(struct efi_config *c,
+ 		desc->l = 0;
+ 		desc->d = SEG_OP_SIZE_32BIT;
+ 	}
+-	desc->g = SEG_GRANULARITY_4KB;
+-	desc->base2 = 0x00;
++	desc->g		= SEG_GRANULARITY_4KB;
++	desc->base2	= 0x00;
+ 	desc++;
+ 
+ 	/* __KERNEL_DS */
+-	desc->limit0 = 0xffff;
+-	desc->base0 = 0x0000;
+-	desc->base1 = 0x0000;
+-	desc->type = SEG_TYPE_DATA | SEG_TYPE_READ_WRITE;
+-	desc->s = DESC_TYPE_CODE_DATA;
+-	desc->dpl = 0;
+-	desc->p = 1;
+-	desc->limit1 = 0xf;
+-	desc->avl = 0;
+-	desc->l = 0;
+-	desc->d = SEG_OP_SIZE_32BIT;
+-	desc->g = SEG_GRANULARITY_4KB;
+-	desc->base2 = 0x00;
++	desc->limit0	= 0xffff;
++	desc->base0	= 0x0000;
++	desc->base1	= 0x0000;
++	desc->type	= SEG_TYPE_DATA | SEG_TYPE_READ_WRITE;
++	desc->s		= DESC_TYPE_CODE_DATA;
++	desc->dpl	= 0;
++	desc->p		= 1;
++	desc->limit1	= 0xf;
++	desc->avl	= 0;
++	desc->l		= 0;
++	desc->d		= SEG_OP_SIZE_32BIT;
++	desc->g		= SEG_GRANULARITY_4KB;
++	desc->base2	= 0x00;
+ 	desc++;
+ 
+ 	if (IS_ENABLED(CONFIG_X86_64)) {
+ 		/* Task segment value */
+-		desc->limit0 = 0x0000;
+-		desc->base0 = 0x0000;
+-		desc->base1 = 0x0000;
+-		desc->type = SEG_TYPE_TSS;
+-		desc->s = 0;
+-		desc->dpl = 0;
+-		desc->p = 1;
+-		desc->limit1 = 0x0;
+-		desc->avl = 0;
+-		desc->l = 0;
+-		desc->d = 0;
+-		desc->g = SEG_GRANULARITY_4KB;
+-		desc->base2 = 0x00;
++		desc->limit0	= 0x0000;
++		desc->base0	= 0x0000;
++		desc->base1	= 0x0000;
++		desc->type	= SEG_TYPE_TSS;
++		desc->s		= 0;
++		desc->dpl	= 0;
++		desc->p		= 1;
++		desc->limit1	= 0x0;
++		desc->avl	= 0;
++		desc->l		= 0;
++		desc->d		= 0;
++		desc->g		= SEG_GRANULARITY_4KB;
++		desc->base2	= 0x00;
+ 		desc++;
+ 	}
+ 
+@@ -1082,5 +1086,6 @@ struct boot_params *efi_main(struct efi_config *c,
+ 	return boot_params;
+ fail:
+ 	efi_printk(sys_table, "efi_main() failed!\n");
++
+ 	return NULL;
+ }
