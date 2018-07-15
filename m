@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9728DECDFAA
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8BAECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47A73208CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0A9F208CE
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 01:11:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+OvN0Nd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47A73208CC
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVwLWZJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0A9F208CE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732689AbeGOBcE (ORCPT
+        id S1732834AbeGOBcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 21:32:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51940 "EHLO mail.kernel.org"
+        Sat, 14 Jul 2018 21:32:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731952AbeGOBcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 21:32:04 -0400
+        id S1731952AbeGOBcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 21:32:18 -0400
 Received: from localhost (unknown [104.132.152.71])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A8792089F;
-        Sun, 15 Jul 2018 01:11:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8674A2089F;
+        Sun, 15 Jul 2018 01:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531617066;
+        s=default; t=1531617079;
         bh=e7il8SwJ36+f23qbL53Bu+nMYswXDshoKAZAaEjXu20=;
         h=From:To:Cc:Subject:Date:From;
-        b=C+OvN0Nd3Xy3OiTobkFn7Vf68z82QaE1MEswpAaiztf7wNNVtMNC3mydf5aCPs+C9
-         MXhFaI3b8jvd1EyBETvwx3c8OCXnA/TAqA0mREy1bZGYoJMipoLqINpbaavjTxb0co
-         i+jtZvy3QpSSDM/hdpzMfjfBABAnegJDOc7qc8gI=
+        b=mVwLWZJmx5f4+6nqJgjhaa6p9QjTS3sf3ddQYS1DwwXdeoNv6lnykuKVsAM8NvJyI
+         13yFzVAGOdV6WdJxS3bg4ItNBkrjBcSwxMy0nJz0bAvNeiiPgvh2weWyUpHJPWbRQI
+         oIEO3EjpE1R+AIB9ozuR7X9cd4IMJ1wGXDMF0ulM=
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net
 Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
 Subject: [PATCH 1/3] f2fs: turn off atomic writes when deteting abnormal behaviors
-Date:   Sun, 15 Jul 2018 10:10:59 +0900
-Message-Id: <20180715011101.11382-1-jaegeuk@kernel.org>
+Date:   Sun, 15 Jul 2018 10:11:10 +0900
+Message-Id: <20180715011112.11475-1-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
