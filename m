@@ -2,189 +2,114 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDF7ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58547ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315EC21473
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315EC21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+	by mail.kernel.org (Postfix) with ESMTP id 0FC5921473
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 15:08:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vv/HJxbK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC5921473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbeGOPbZ (ORCPT
+        id S1726940AbeGOPbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 11:31:25 -0400
-Received: from mail.parknet.co.jp ([210.171.160.6]:55672 "EHLO
-        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbeGOPbZ (ORCPT
+        Sun, 15 Jul 2018 11:31:50 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34800 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbeGOPbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 11:31:25 -0400
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 69E50ADF4F;
-        Mon, 16 Jul 2018 00:08:08 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w6FF87QT008249
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Jul 2018 00:08:08 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-11) with ESMTPS id w6FF874l006470
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 16 Jul 2018 00:08:07 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id w6FF86To006469;
-        Mon, 16 Jul 2018 00:08:06 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] Re: FAT: Operating on broken FAT FS causes the write syscall to return negative number not equal to -1
-References: <CAE5jQCe4nX8m1f5jPL57GeU32CftNv+NvgNmZxufH85nun1o7w@mail.gmail.com>
-        <878t6c7f8p.fsf@mail.parknet.co.jp>
-        <20180715143043.GM30522@ZenIV.linux.org.uk>
-Date:   Mon, 16 Jul 2018 00:08:06 +0900
-In-Reply-To: <20180715143043.GM30522@ZenIV.linux.org.uk> (Al Viro's message of
-        "Sun, 15 Jul 2018 15:30:43 +0100")
-Message-ID: <87o9f8y1t5.fsf_-_@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
+        Sun, 15 Jul 2018 11:31:50 -0400
+Received: by mail-oi0-f65.google.com with SMTP id 13-v6so70369725ois.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 08:08:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=GbGD6dICMVOLkZcfAZiQD1V7K+TI1KHGPhQeJUZnzt8=;
+        b=Vv/HJxbK30WV7mIngWTuQZmheMDo/bkJlq9ewnx94rZmcy5xWzxA/4WaE84ovM4ST0
+         8qW/JpoHRi4eDsKpFr6JI2Pe3UoDfFHig5bvIP2xHIf0Hk/m7GfrpEGrGBz4H+c4gIUk
+         pxlDcZHUbJWXWmqtReWA4kLOgT1I26SP9gMwjez8+6eBGywrU+jQjeoDyjPeDAyZw9IP
+         Inrc7dndax8Y7B0e9XU5p0GHsGsuWd0MRtbyFK6VAjoZCrJ6EaGt3tXsAP43SB5dBzXR
+         lPeFszhotu65w8GC/7ajpV0Ii3XCTdREoF4S19TYZ0tYdFHWFWDOcY5tKw/bBhOI8OS4
+         chbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=GbGD6dICMVOLkZcfAZiQD1V7K+TI1KHGPhQeJUZnzt8=;
+        b=FtZbKhlRdLmLlusvuB4i+2Xw4rR7LKVsawYz/KK0yE8j74d7RpCmnChFT0KkqutOkM
+         ewz7gC0UU0E6W4Gkd1T+QbCPSjgoA8fCvECiKKDAHKIg/Ps3t4GL83nYcV5EbW2G58Bz
+         QRxoUjlEXrV3R5V/H7Y3LGcnNJO/Uu0ZdaItV0fA3Scg1XuNgI5ss5E3yAbNKN7O7oov
+         2NezEUQ+y0tIzD/MxY/KirvxZVEPwIzze5ugyiRsJfG7f0MgcmZny0ryW9nIxYEeclXP
+         K5V5bhIvR7exZEIbfSHp0Ncvs/bTq1rT2aRx0UHYwiZbeyAUwNiYE9LjOUHmBVmd1pCD
+         pszA==
+X-Gm-Message-State: AOUpUlGjnVUwC6CR13E9wa3g/28i95/VvvViagQmPJkJ0N3Qo8hwj8mM
+        jA89bmaPt/G2NM9Gd5Ww/Mudfz6AxM7CCa4BJSxRvvFpLNM=
+X-Google-Smtp-Source: AAOMgpfPKNh51rVKdsXvipn0I4g2IQ4PxyqgwKqHYBJboFn8cxXYsu8dskN2U7kYVEBObWTP0ag7K00ShHKtgi+5PPI=
+X-Received: by 2002:aca:3546:: with SMTP id c67-v6mr15405882oia.249.1531667314330;
+ Sun, 15 Jul 2018 08:08:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <CAE5jQCe4nX8m1f5jPL57GeU32CftNv+NvgNmZxufH85nun1o7w@mail.gmail.com>
+ <878t6c7f8p.fsf@mail.parknet.co.jp> <20180715143043.GM30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180715143043.GM30522@ZenIV.linux.org.uk>
+From:   Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Date:   Sun, 15 Jul 2018 18:08:23 +0300
+Message-ID: <CAE5jQCcs2x4myTHUhNmHPZvhMuPsrkzLmiqqeF5wzZ-Hf5druQ@mail.gmail.com>
+Subject: Re: FAT: Operating on broken FAT FS causes the write syscall to
+ return negative number not equal to -1
+To:     viro@zeniv.linux.org.uk
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Al Viro <viro@ZenIV.linux.org.uk> writes:
+Thank you!
 
+> This patch returns better error (-EIO) for me.
+
+This works for me likewise.
+
+> (But note, the corrupted FS image doesn't guarantee POSIX behavior.)
+
+Oops, I was just doing some testing and thought that correct behavior
+for crafted FS is to return arbitrary valid error code (like -EIO) or
+some arbitrary data, say, not larger than FS (not disclosing the
+kernel memory, of course). Please excuse me if I was wrong. If fixing
+this would slow down some hot code path, then I am not insisting on
+returning valid errno. :)
+
+Meanwhile, how should be considered such discrepancies with man pages
+for invalid FS images: should it be considered low priority bug,
+not-a-bug or feature request (diagnostics)?
+
+
+Thanks
+Anatoly
+
+=D0=B2=D1=81, 15 =D0=B8=D1=8E=D0=BB. 2018 =D0=B3. =D0=B2 17:30, Al Viro <vi=
+ro@zeniv.linux.org.uk>:
+>
 > On Sun, Jul 15, 2018 at 11:20:06PM +0900, OGAWA Hirofumi wrote:
->> +static inline bool fat_valid_entry(struct msdos_sb_info *sbi, int entry)
->> +{
->> +	if (entry < FAT_START_ENT || sbi->max_cluster <= entry)
->> +		return false;
->> +	return true;
->> +}
+> > +static inline bool fat_valid_entry(struct msdos_sb_info *sbi, int entr=
+y)
+> > +{
+> > +     if (entry < FAT_START_ENT || sbi->max_cluster <=3D entry)
+> > +             return false;
+> > +     return true;
+> > +}
 >
 > Pet peeve: if (...) return false; return true; instead of return !....;
 >
 > In this case,
-> 	return entry >= FAT_START_ENT && entry < sb->max_cluster;
-
-Fixed. Thanks.
-
-
-[PATCH v2] fat: Validate ->i_start before using
-
-On corrupted FATfs may have invalid ->i_start. To handle it, this
-checks ->i_start before using, and return proper error code.
-
-Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
----
-
- fs/fat/cache.c  |   19 ++++++++++++-------
- fs/fat/fat.h    |    5 +++++
- fs/fat/fatent.c |    6 +++---
- 3 files changed, 20 insertions(+), 10 deletions(-)
-
-diff -puN fs/fat/cache.c~fat-validate-i_start fs/fat/cache.c
---- linux/fs/fat/cache.c~fat-validate-i_start	2018-07-15 23:03:25.167171670 +0900
-+++ linux-hirofumi/fs/fat/cache.c	2018-07-15 23:59:11.978489716 +0900
-@@ -225,7 +225,8 @@ static inline void cache_init(struct fat
- int fat_get_cluster(struct inode *inode, int cluster, int *fclus, int *dclus)
- {
- 	struct super_block *sb = inode->i_sb;
--	const int limit = sb->s_maxbytes >> MSDOS_SB(sb)->cluster_bits;
-+	struct msdos_sb_info *sbi = MSDOS_SB(sb);
-+	const int limit = sb->s_maxbytes >> sbi->cluster_bits;
- 	struct fat_entry fatent;
- 	struct fat_cache_id cid;
- 	int nr;
-@@ -234,6 +235,12 @@ int fat_get_cluster(struct inode *inode,
- 
- 	*fclus = 0;
- 	*dclus = MSDOS_I(inode)->i_start;
-+	if (!fat_valid_entry(sbi, *dclus)) {
-+		fat_fs_error_ratelimit(sb,
-+			"%s: invalid start cluster (i_pos %lld, start %08x)",
-+			__func__, MSDOS_I(inode)->i_pos, *dclus);
-+		return -EIO;
-+	}
- 	if (cluster == 0)
- 		return 0;
- 
-@@ -250,9 +257,8 @@ int fat_get_cluster(struct inode *inode,
- 		/* prevent the infinite loop of cluster chain */
- 		if (*fclus > limit) {
- 			fat_fs_error_ratelimit(sb,
--					"%s: detected the cluster chain loop"
--					" (i_pos %lld)", __func__,
--					MSDOS_I(inode)->i_pos);
-+				"%s: detected the cluster chain loop (i_pos %lld)",
-+				__func__, MSDOS_I(inode)->i_pos);
- 			nr = -EIO;
- 			goto out;
- 		}
-@@ -262,9 +268,8 @@ int fat_get_cluster(struct inode *inode,
- 			goto out;
- 		else if (nr == FAT_ENT_FREE) {
- 			fat_fs_error_ratelimit(sb,
--				       "%s: invalid cluster chain (i_pos %lld)",
--				       __func__,
--				       MSDOS_I(inode)->i_pos);
-+				"%s: invalid cluster chain (i_pos %lld)",
-+				__func__, MSDOS_I(inode)->i_pos);
- 			nr = -EIO;
- 			goto out;
- 		} else if (nr == FAT_ENT_EOF) {
-diff -puN fs/fat/fat.h~fat-validate-i_start fs/fat/fat.h
---- linux/fs/fat/fat.h~fat-validate-i_start	2018-07-15 23:03:25.168171670 +0900
-+++ linux-hirofumi/fs/fat/fat.h	2018-07-15 23:59:58.896437024 +0900
-@@ -348,6 +348,11 @@ static inline void fatent_brelse(struct
- 	fatent->fat_inode = NULL;
- }
- 
-+static inline bool fat_valid_entry(struct msdos_sb_info *sbi, int entry)
-+{
-+	return FAT_START_ENT <= entry && entry < sbi->max_cluster;
-+}
-+
- extern void fat_ent_access_init(struct super_block *sb);
- extern int fat_ent_read(struct inode *inode, struct fat_entry *fatent,
- 			int entry);
-diff -puN fs/fat/fatent.c~fat-validate-i_start fs/fat/fatent.c
---- linux/fs/fat/fatent.c~fat-validate-i_start	2018-07-15 23:03:25.169171668 +0900
-+++ linux-hirofumi/fs/fat/fatent.c	2018-07-15 23:59:12.036489650 +0900
-@@ -24,7 +24,7 @@ static void fat12_ent_blocknr(struct sup
- {
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
- 	int bytes = entry + (entry >> 1);
--	WARN_ON(entry < FAT_START_ENT || sbi->max_cluster <= entry);
-+	WARN_ON(!fat_valid_entry(sbi, entry));
- 	*offset = bytes & (sb->s_blocksize - 1);
- 	*blocknr = sbi->fat_start + (bytes >> sb->s_blocksize_bits);
- }
-@@ -34,7 +34,7 @@ static void fat_ent_blocknr(struct super
- {
- 	struct msdos_sb_info *sbi = MSDOS_SB(sb);
- 	int bytes = (entry << sbi->fatent_shift);
--	WARN_ON(entry < FAT_START_ENT || sbi->max_cluster <= entry);
-+	WARN_ON(!fat_valid_entry(sbi, entry));
- 	*offset = bytes & (sb->s_blocksize - 1);
- 	*blocknr = sbi->fat_start + (bytes >> sb->s_blocksize_bits);
- }
-@@ -354,7 +354,7 @@ int fat_ent_read(struct inode *inode, st
- 	int err, offset;
- 	sector_t blocknr;
- 
--	if (entry < FAT_START_ENT || sbi->max_cluster <= entry) {
-+	if (!fat_valid_entry(sbi, entry)) {
- 		fatent_brelse(fatent);
- 		fat_fs_error(sb, "invalid access to FAT (entry 0x%08x)", entry);
- 		return -EIO;
-_
-
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+>         return entry >=3D FAT_START_ENT && entry < sb->max_cluster;
