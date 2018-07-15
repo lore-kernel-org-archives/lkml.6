@@ -2,129 +2,384 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94701ECDFB1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 712C2ECDFB0
 	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 11:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49D52208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 11:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE56D20873
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 11:14:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r3B+up46"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D52208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="18OT/Co4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE56D20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbeGOLgc (ORCPT
+        id S1726293AbeGOLbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 07:36:32 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42800 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbeGOLgc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 07:36:32 -0400
-Received: by mail-oi0-f65.google.com with SMTP id n84-v6so69807702oib.9;
-        Sun, 15 Jul 2018 04:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ggVq9sRjBMb4saG9utf/MJBHNhFX7rIyYzyqyzSJfpA=;
-        b=r3B+up460JGmfkkZsTS2CHkf2TTY88iDHQoqA1TgMS8ApphbiDsaenFzreFz2FVAbn
-         fUzoQXFGZcwu5BTThDBoSJkfaAxpt6cgktIohVxM+G+YCsRY2W3RrIa4PJQPMhGFWeXA
-         dc800C5UPz20btpdxvZpf071+snYMNgYFrZ6i36s3wnm657tgMMC0MzzRW3gZ1KLmlWn
-         BDDVSgMbE7U8iTcJ1wcRzq1qLcsA94HDQqDIwJEbSSo/Oq42L43GfpRGffc65RhYPyK1
-         LhB7I5BsvzTFWhJrfCJTH34pVcQKqhSe09+pkn31pa4T+Ty+e1OlnR9FX+xkhrfrcMbE
-         FNDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ggVq9sRjBMb4saG9utf/MJBHNhFX7rIyYzyqyzSJfpA=;
-        b=euqG4cYTQXdgRYiv2GKjmnPLY8hOJRq9SAgy4ZUCxZH8Wt/1ZvGSlvgZEA4MdxZ4Tn
-         unKZLYYiG4poGb6Z7yVLk4t2kqEtK3Vd080eyU2c0qi1lONhrccJZSCYMBu2TLEA5nhv
-         LYR1qPLL5elo/ew63qnsuSXW7aeZjuz5pPH7HjFsSyVeU+hNd52r0Z2u3vLcASTVOPmR
-         yTZSBKkGy2xQjkRNRQAhHjx3xRm2M14yAari+Yly/ypvPZij3kz+spfcp8UVbsib7H67
-         SCGkc2CTffUoYIHBM33dfHiTn+Lizb/GMgWvdbzcxOZZQIUZhNCkQxRFoLWq7DT96+tF
-         UyQw==
-X-Gm-Message-State: AOUpUlFOQb5cF4ol5I86e4aGG7Vgq/HaMbbvNeb2q1Gnzaj0oOSrIFA+
-        Q0ZeZF0PczrvLk4FTEVKsj/e4A==
-X-Google-Smtp-Source: AAOMgpfSTwcHNhB0jQ6Npdjd1o46K1sphwsrpocRAncXcuFWyYJtL6Vsf0F8JWxEgCKVrJdswhiVSA==
-X-Received: by 2002:aca:51c3:: with SMTP id f186-v6mr12957093oib.59.1531653235470;
-        Sun, 15 Jul 2018 04:13:55 -0700 (PDT)
-Received: from xiebaoyou-VirtualBox.DHCP ([205.204.117.16])
-        by smtp.gmail.com with ESMTPSA id q124-v6sm12502387oif.8.2018.07.15.04.13.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 15 Jul 2018 04:13:55 -0700 (PDT)
-From:   Baoyou Xie <baoyou.xie@gmail.com>
-To:     davem@davemloft.net, willemb@google.com, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, pombredanne@nexb.com,
-        tklauser@distanz.ch, matthew@mjdsystems.ca
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Baoyou Xie <baoyou.xie@gmail.com>
-Subject: [PATCH v2] datagram: return from __skb_recv_datagram() as soon as possible
-Date:   Sun, 15 Jul 2018 19:13:11 +0800
-Message-Id: <1531653191-6456-1-git-send-email-baoyou.xie@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 15 Jul 2018 07:31:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52080 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbeGOLbg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 07:31:36 -0400
+Received: from [192.168.0.101] (unknown [222.94.210.33])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD9D520873;
+        Sun, 15 Jul 2018 11:08:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531652940;
+        bh=uav6n9bM++nHN83Ydfsoi2t1Se2W5P1DBnPoNatVxVc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=18OT/Co4IoRo8IuVS8u7LoXHxvbdhAmrSkH7lwYUEQAc2j2feYBdyVyoQcXDmcmhF
+         dVYC+9P5LPguU1Z9yW1hxqueWXjKFSrvbjYXlcBYMB1efLMLiaheDcrSm3yzDJTdZw
+         tj5gkqpPMevn1ERUFzs06RzqYJeS6cMU/65/FmiM=
+Subject: Re: [PATCH v2] f2fs: split discard command in prior to block layer
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+References: <20180708141433.24182-1-chao@kernel.org>
+ <20180715012700.GA11571@jaegeuk-macbookpro.roam.corp.google.com>
+ <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
+ <20180715031308.GI11571@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <30b14b7b-4036-d8a7-c477-0f578449e18d@kernel.org>
+Date:   Sun, 15 Jul 2018 19:08:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20180715031308.GI11571@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We got a soft lockup in a heavy busy cloud server where RIP is
-at _raw_spin_unlock_irqrestore+0x1b/0x40:
-        [] finish_wait+0x56/0x70
-        [] __skb_recv_datagram+0x3fb/0x5a0
-        [] ? datagram_poll+0x100/0x100
-        [] skb_recv_datagram+0x41/0x60
-        [] netlink_recvmsg+0x62/0x450
-        [] sock_recvmsg+0xbf/0x100
-        [] ? futex_wait+0x193/0x280
-        [] ? finish_task_switch+0x108/0x170
-        [] SYSC_recvfrom+0xe8/0x160
-        [] ? __schedule+0x3c8/0x990
-        [] SyS_recvfrom+0xe/0x10
-        [] system_call_fastpath+0x16/0x1b
+On 2018/7/15 11:13, Jaegeuk Kim wrote:
+> On 07/15, Chao Yu wrote:
+>> Hi Jaegeuk,
+>>
+>> On 2018/7/15 9:27, Jaegeuk Kim wrote:
+>>> On 07/08, Chao Yu wrote:
+>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>>
+>>>> Some devices has small max_{hw,}discard_sectors, so that in
+>>>> __blkdev_issue_discard(), one big size discard bio can be split
+>>>> into multiple small size discard bios, result in heavy load in IO
+>>>> scheduler and device, which can hang other sync IO for long time.
+>>>>
+>>>> Now, f2fs is trying to control discard commands more elaboratively,
+>>>> in order to make less conflict in between discard IO and user IO
+>>>> to enhance application's performance, so in this patch, we will
+>>>> split discard bio in f2fs in prior to in block layer to reduce
+>>>> issuing multiple discard bios in a short time.
+>>>
+>>> Can we just change __submit_discard_cmd() to submit the large candidate
+>>> partially and adjust lstart in the original candidate?
+>>
+>> Yep, could you check __submit_discard_cmd() implementation below? Does that
+>> match the thoughts from you?
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>> ---
+>>>> v2:
+>>>> - change to split discard command entry before submission.
+>>>>  fs/f2fs/f2fs.h    |  13 +++---
+>>>>  fs/f2fs/segment.c | 117 +++++++++++++++++++++++++++++++++++++-----------------
+>>>>  2 files changed, 86 insertions(+), 44 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>> index c48b655d5d8d..359526d88d3f 100644
+>>>> --- a/fs/f2fs/f2fs.h
+>>>> +++ b/fs/f2fs/f2fs.h
+>>>> @@ -178,7 +178,6 @@ enum {
+>>>>  
+>>>>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
+>>>>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
+>>>> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
+>>>>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
+>>>>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
+>>>>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
+>>>> @@ -709,22 +708,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_discard_mergeable(struct discard_info *back,
+>>>> -						struct discard_info *front)
+>>>> +			struct discard_info *front, unsigned int max_len)
+>>>>  {
+>>>>  	return (back->lstart + back->len == front->lstart) &&
+>>>> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
+>>>> +		(back->len + front->len <= max_len);
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
+>>>> -						struct discard_info *back)
+>>>> +			struct discard_info *back, unsigned int max_len)
+>>>>  {
+>>>> -	return __is_discard_mergeable(back, cur);
+>>>> +	return __is_discard_mergeable(back, cur, max_len);
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
+>>>> -						struct discard_info *front)
+>>>> +			struct discard_info *front, unsigned int max_len)
+>>>>  {
+>>>> -	return __is_discard_mergeable(cur, front);
+>>>> +	return __is_discard_mergeable(cur, front, max_len);
+>>>>  }
+>>>>  
+>>>>  static inline bool __is_extent_mergeable(struct extent_info *back,
+>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>> index f7f56dd091b4..cbf8f3f9a8e7 100644
+>>>> --- a/fs/f2fs/segment.c
+>>>> +++ b/fs/f2fs/segment.c
+>>>> @@ -966,17 +966,24 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+>>>>  	}
+>>>>  }
+>>>>  
+>>>> -
+> 
+> ===================== BEGIN
+> 
+>>>> +static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>> +				struct block_device *bdev, block_t lstart,
+>>>> +				block_t start, block_t len);
+>>>>  /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
+>>>>  static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  						struct discard_policy *dpolicy,
+>>>> -						struct discard_cmd *dc)
+>>>> +						struct discard_cmd *dc,
+>>>> +						unsigned int *issued)
+>>>>  {
+>>>> +	struct block_device *bdev = dc->bdev;
+>>>> +	struct request_queue *q = bdev_get_queue(bdev);
+>>>> +	unsigned int max_discard_blocks =
+>>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+>>>>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+>>>>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
+>>>>  					&(dcc->fstrim_list) : &(dcc->wait_list);
+>>>> -	struct bio *bio = NULL;
+>>>>  	int flag = dpolicy->sync ? REQ_SYNC : 0;
+>>>> +	block_t lstart, start, len, total_len;
+>>>>  
+>>>>  	if (dc->state != D_PREP)
+>>>>  		return;
+>>>> @@ -984,30 +991,63 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
+>>>>  		return;
+>>>>  
+>>>> -	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
+>>>> -
+>>>> -	dc->error = __blkdev_issue_discard(dc->bdev,
+>>>> -				SECTOR_FROM_BLOCK(dc->start),
+>>>> -				SECTOR_FROM_BLOCK(dc->len),
+>>>> -				GFP_NOFS, 0, &bio);
+>>>> -	if (!dc->error) {
+>>>> -		/* should keep before submission to avoid D_DONE right away */
+>>>> -		dc->state = D_SUBMIT;
+>>>> -		atomic_inc(&dcc->issued_discard);
+>>>> -		atomic_inc(&dcc->issing_discard);
+>>>> -		if (bio) {
+>>>> -			bio->bi_private = dc;
+>>>> -			bio->bi_end_io = f2fs_submit_discard_endio;
+>>>> -			bio->bi_opf |= flag;
+>>>> -			submit_bio(bio);
+>>>> -			list_move_tail(&dc->list, wait_list);
+>>>> -			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
+>>>> -
+>>>> -			f2fs_update_iostat(sbi, FS_DISCARD, 1);
+>>>> +	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
+>>>> +
+>>>> +	lstart = dc->lstart;
+>>>> +	start = dc->start;
+>>>> +	len = dc->len;
+>>>> +	total_len = len;
+>>>> +
+>>>> +	while (total_len && *issued < dpolicy->max_requests) {
+>>>> +		struct bio *bio = NULL;
+>>>> +
+>>>> +		if (len > max_discard_blocks)
+>>>> +			len = max_discard_blocks;
+>>>> +
+>>>> +		dc->error = __blkdev_issue_discard(bdev,
+>>>> +					SECTOR_FROM_BLOCK(start),
+>>>> +					SECTOR_FROM_BLOCK(len),
+>>>> +					GFP_NOFS, 0, &bio);
+>>>> +		if (!dc->error) {
+>>>> +			/*
+>>>> +			 * should keep before submission to avoid D_DONE
+>>>> +			 * right away
+>>>> +			 */
+>>>> +			dc->state = D_SUBMIT;
+>>>> +			dc->len = len;
+>>>> +			atomic_inc(&dcc->issued_discard);
+>>>> +			atomic_inc(&dcc->issing_discard);
+>>>> +			if (bio) {
+>>>> +				bio->bi_private = dc;
+>>>> +				bio->bi_end_io = f2fs_submit_discard_endio;
+>>>> +				bio->bi_opf |= flag;
+>>>> +				submit_bio(bio);
+>>>> +				list_move_tail(&dc->list, wait_list);
+>>>> +				__check_sit_bitmap(sbi, dc->start,
+>>>> +							dc->start + dc->len);
+>>>> +
+>>>> +				f2fs_update_iostat(sbi, FS_DISCARD, 1);
+>>>> +			}
+>>>> +		} else {
+>>>> +			__remove_discard_cmd(sbi, dc);
+> 
+> Keep the original one, since it's partially failed?
 
-In fact, a mistake exists in __skb_recv_datagram(). For example,
-if a datagram come in persistently after go through the socket
-queue, then __skb_wait_for_more_packets() will find out that the
-last peeked skb is not the real last one, so it return 0. this
-results in long time outer loop, and can trigger soft lockup.
+During __submit_discard_cmd(), we are trying to split original dc into multiple
+dc, and once we failed to submit some of them, we will remove corresponding dc,
+the removal logic is the same as before, not being changed...
 
-So this patch changes the loop condition to prevent soft lockup.
+If we want to keep failed dc and do retry, we'd better add another patch for
+that, right?
 
-Signed-off-by: Baoyou Xie <baoyou.xie@gmail.com>
----
- net/core/datagram.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+>>>> +			return;
+>>>> +		}
+>>>> +		lstart += len;
+>>>> +		start += len;
+>>>> +		total_len -= len;
+>>>> +		len = total_len;
+>>>> +		(*issued)++;
+>>>> +
+>>>> +		if (len) {
+>>>> +			__update_discard_tree_range(sbi, bdev, lstart,
+>>>> +								start, len);
+> 
+> Do we really need this? We already grabbed one candidate which was not merged
+> well.
 
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 9938952..76c1001 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -295,9 +295,11 @@ struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned int flags,
- 				    int *peeked, int *off, int *err)
- {
- 	struct sk_buff *skb, *last;
-+	unsigned long expire;
- 	long timeo;
- 
- 	timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
-+	expire = jiffies + timeo;
- 
- 	do {
- 		skb = __skb_try_recv_datagram(sk, flags, destructor, peeked,
-@@ -307,7 +309,7 @@ struct sk_buff *__skb_recv_datagram(struct sock *sk, unsigned int flags,
- 
- 		if (*err != -EAGAIN)
- 			break;
--	} while (timeo &&
-+	} while (time_before(jiffies, expire) &&
- 		!__skb_wait_for_more_packets(sk, err, &timeo, last));
- 
- 	return NULL;
--- 
-2.7.4
+You mean submitting multiple bios based on one large size dc?
 
+Previously, one bio references to one dc as below, in end_io, it will change
+dc->state which can be detected by its own waiter.
+
+	bio->bi_private = dc;
+	bio->bi_end_io = f2fs_submit_discard_endio;
+	bio->bi_opf |= flag;
+
+If multiple bios reference to one dc, it will be more complicated to handle
+that. How do you think?
+
+Thanks,
+
+> 
+>>>> +			dc = (struct discard_cmd *)f2fs_lookup_rb_tree(
+>>>> +						&dcc->root, NULL, lstart);
+>>>> +			f2fs_bug_on(sbi, !dc);
+>>>>  		}
+>>>> -	} else {
+>>>> -		__remove_discard_cmd(sbi, dc);
+>>>>  	}
+>>>> +
+>>>> +	return;
+>>>>  }
+> 
+> ======================= END
+> 
+> 
+>>>>  
+>>>>  static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
+>>>> @@ -1088,10 +1128,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  	struct discard_cmd *dc;
+>>>>  	struct discard_info di = {0};
+>>>>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
+>>>> +	struct request_queue *q = bdev_get_queue(bdev);
+>>>> +	unsigned int max_discard_blocks =
+>>>> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
+>>>>  	block_t end = lstart + len;
+>>>>  
+>>>> -	mutex_lock(&dcc->cmd_lock);
+>>>> -
+>>>>  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
+>>>>  					NULL, lstart,
+>>>>  					(struct rb_entry **)&prev_dc,
+>>>> @@ -1131,7 +1172,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  
+>>>>  		if (prev_dc && prev_dc->state == D_PREP &&
+>>>>  			prev_dc->bdev == bdev &&
+>>>> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
+>>>> +			__is_discard_back_mergeable(&di, &prev_dc->di,
+>>>> +							max_discard_blocks)) {
+>>>>  			prev_dc->di.len += di.len;
+>>>>  			dcc->undiscard_blks += di.len;
+>>>>  			__relocate_discard_cmd(dcc, prev_dc);
+>>>> @@ -1142,7 +1184,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  
+>>>>  		if (next_dc && next_dc->state == D_PREP &&
+>>>>  			next_dc->bdev == bdev &&
+>>>> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
+>>>> +			__is_discard_front_mergeable(&di, &next_dc->di,
+>>>> +							max_discard_blocks)) {
+>>>>  			next_dc->di.lstart = di.lstart;
+>>>>  			next_dc->di.len += di.len;
+>>>>  			next_dc->di.start = di.start;
+>>>> @@ -1165,8 +1208,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
+>>>>  		node = rb_next(&prev_dc->rb_node);
+>>>>  		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
+>>>>  	}
+>>>> -
+>>>> -	mutex_unlock(&dcc->cmd_lock);
+>>>>  }
+>>>>  
+>>>>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>> @@ -1181,7 +1222,9 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  
+>>>>  		blkstart -= FDEV(devi).start_blk;
+>>>>  	}
+>>>> +	mutex_lock(&SM_I(sbi)->dcc_info->cmd_lock);
+>>>>  	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
+>>>> +	mutex_unlock(&SM_I(sbi)->dcc_info->cmd_lock);
+>>>>  	return 0;
+>>>>  }
+>>>>  
+>>>> @@ -1220,9 +1263,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
+>>>>  		}
+>>>>  
+>>>>  		dcc->next_pos = dc->lstart + dc->len;
+>>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
+>>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+>>>>  
+>>>> -		if (++issued >= dpolicy->max_requests)
+>>>> +		if (issued >= dpolicy->max_requests)
+>>>>  			break;
+>>>>  next:
+>>>>  		node = rb_next(&dc->rb_node);
+>>>> @@ -1277,9 +1320,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+>>>>  				break;
+>>>>  			}
+>>>>  
+>>>> -			__submit_discard_cmd(sbi, dpolicy, dc);
+>>>> +			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+>>>>  
+>>>> -			if (++issued >= dpolicy->max_requests)
+>>>> +			if (issued >= dpolicy->max_requests)
+>>>>  				break;
+>>>>  		}
+>>>>  		blk_finish_plug(&plug);
+>>>> @@ -2475,9 +2518,9 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
+>>>>  			goto skip;
+>>>>  		}
+>>>>  
+>>>> -		__submit_discard_cmd(sbi, dpolicy, dc);
+>>>> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
+>>>>  
+>>>> -		if (++issued >= dpolicy->max_requests) {
+>>>> +		if (issued >= dpolicy->max_requests) {
+>>>>  			start = dc->lstart + dc->len;
+>>>>  
+>>>>  			blk_finish_plug(&plug);
+>>>> -- 
+>>>> 2.16.2.17.g38e79b1fd
