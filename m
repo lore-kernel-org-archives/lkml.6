@@ -2,357 +2,162 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE89ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D82EECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003A4208CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB0DD2087C
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 03:28:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="00xB6NhH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003A4208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="af15CIgg";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Y1vmMbG1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0DD2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387732AbeGODec (ORCPT
+        id S2387752AbeGODt3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 14 Jul 2018 23:34:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732717AbeGODec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 14 Jul 2018 23:34:32 -0400
-Received: from localhost (unknown [104.132.152.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26BB52089F;
-        Sun, 15 Jul 2018 03:13:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531624391;
-        bh=oN4zGWyAW7wnFdERo2Fd0oT+ycizu/Y4vgqKqkoZu2o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=00xB6NhHJ4kR2My658j87wnOsKBA9XlEAA6r0Rd/rJeHdTlxX5vhQApI2LXQowqda
-         OwleVe+afRaZ+CRsqhwQexTnJjukk33Z/WCxW8tNtY++TWJ4y4TlIm37ur8ubCFZFK
-         ohqCwf24v/Xj2AYurrztvrMbeb+bENDB9PjitSMA=
-Date:   Sun, 15 Jul 2018 12:13:08 +0900
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: Re: [PATCH v2] f2fs: split discard command in prior to block layer
-Message-ID: <20180715031308.GI11571@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180708141433.24182-1-chao@kernel.org>
- <20180715012700.GA11571@jaegeuk-macbookpro.roam.corp.google.com>
- <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
+        Sat, 14 Jul 2018 23:49:29 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:51276 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733104AbeGODt3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 14 Jul 2018 23:49:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1531625288; x=1563161288;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=QYB4XU7Lo8mdjvgvIgBdQXqVfxcglTKARVVdzcbNPnM=;
+  b=af15CIggPlGntaixvDzM3PwwNlK9X6oAyfUm2IMcYY6y5EJYzhOZ+NH1
+   ez3KEghmQZo81W6FePQRV3EhFFnDaKHZtrpfEX/W2RknV1zCXqUEhQpUl
+   CxIhKgcua41bKZtdk6U1f7c+cO0vXWwYFoB0sLTbvHBlniUFWcSPM7ICu
+   vmMpNGvcsowf278qWnJdUDA+D73gOmsNP1nrPf6xRh0K+FwlZmNBVYvdG
+   vyNVj6NWDhMITSkHQrEFlBHEHrydX6IDYyewOHLeCdv1t6IOHeY8IIOso
+   ICSL5CIV8meS2QWCKUevLB2qc5iH5CGS99Mba+Rbfzd7Jl78ppAgMrE/g
+   g==;
+X-IronPort-AV: E=Sophos;i="5.51,354,1526313600"; 
+   d="scan'208";a="85338634"
+Received: from mail-bl2nam02lp0086.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([207.46.163.86])
+  by ob1.hgst.iphmx.com with ESMTP; 15 Jul 2018 11:28:06 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c9PRWHaPdiEFaIZVtxXNs71JWINv/oCGypFPhY56JRc=;
+ b=Y1vmMbG17DlmRAJRn57+bs5IHj1Bm6Yj71v9ON1DqnzOqMNY2LNp+sRvYsUiOu+Al/FkhP6oHxZu8ifWRto2nk8scNYRTb8WERKyJT1exX+jhYjBBdQ074bruuL2FatdwlsVPOP6ua79TaIVs7aJoILCobwiAeBnY/7afmHSZmI=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0782.namprd04.prod.outlook.com (10.172.168.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.19; Sun, 15 Jul 2018 03:28:04 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::a134:ec95:a6c0:7c44]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::a134:ec95:a6c0:7c44%4]) with mapi id 15.20.0930.022; Sun, 15 Jul 2018
+ 03:28:04 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "luc.vanoostenryck@gmail.com" <luc.vanoostenryck@gmail.com>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Martin.Uecker@med.uni-goettingen.de" 
+        <Martin.Uecker@med.uni-goettingen.de>,
+        "miguel.ojeda.sandonis@gmail.com" <miguel.ojeda.sandonis@gmail.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] kernel.h: Avoid that sparse complains about using
+ sizeof(void)
+Thread-Topic: [PATCH] kernel.h: Avoid that sparse complains about using
+ sizeof(void)
+Thread-Index: AQHUFHulYJ4VJGGnCUWDyLkAZDmdA6SPkyUAgAACZICAAABgAIAAGMyA
+Date:   Sun, 15 Jul 2018 03:28:03 +0000
+Message-ID: <efdfce609aebc2f583eb843acad2438dfdf9ec9f.camel@wdc.com>
+References: <20180705161709.17028-1-bart.vanassche@wdc.com>
+         <CAGXu5jJJLh+oMcZ94nkrwCvyJzk6MzOATvt66WC-rHfxGTJh0Q@mail.gmail.com>
+         <CA+55aFzYEnZR2GZLR-DwpONjMNYGYoDy+6AWLCVNayWiaZuqoA@mail.gmail.com>
+         <CA+55aFynusYJ8OCS_jnQhOEEjrfVhYV5PLxi_XF8ritsWEcP0A@mail.gmail.com>
+In-Reply-To: <CA+55aFynusYJ8OCS_jnQhOEEjrfVhYV5PLxi_XF8ritsWEcP0A@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [174.62.111.89]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0782;7:hYlRKiutyIuZvZTERcvSYfFNqCndeHl891m9g/g/2zEHP0OX1g5skUwwr86GNmMdDJ0dYKidDWEQwSigeU2LYyXUYcgz2fucdmH/Pl6vL0vCvG/DYAwjdQ6SlrQmqH8l5ral2nsJtp5XBU3pfa7Sk76dJmOA8Gf64OXyHgf+0kYurAX+SOdpX35kXKhthrTpNQxN3UZxXzc5S52KL0DaFYM4hJeIKF07dRHu/Gm5ug7P0SN23IGlYHcric+ZTyNN;20:m8m+vkh/UNUfVkOywJt698srUx137uLk4cxb3qwAA47SgGZ3NfT+2Vki57Li5VYsiKQTtZgLMkl95QgG1mePKoTZCE9lmkVk7NPhCUcsb4g5vufpnRw8C9LKSOLIY516ylPeiPt7Cd4/h4TCiocTMcbpPW2G57Ve7I2zsP2qte0=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 2bacdf4b-cbd9-4603-002c-08d5ea02f98a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0782;
+x-ms-traffictypediagnostic: MWHPR04MB0782:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB07820365DF40A456E065EAD9985E0@MWHPR04MB0782.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(166708455590820);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0782;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0782;
+x-forefront-prvs: 07349BFAD2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(346002)(39860400002)(366004)(53754006)(199004)(189003)(186003)(76176011)(478600001)(6116002)(345774005)(26005)(102836004)(6506007)(53546011)(6246003)(39060400002)(97736004)(53936002)(3846002)(118296001)(4326008)(25786009)(66066001)(5660300001)(2501003)(5250100002)(93886005)(7736002)(305945005)(86362001)(36756003)(966005)(2201001)(2906002)(72206003)(105586002)(106356001)(8676002)(14454004)(8936002)(81156014)(486006)(476003)(2616005)(81166006)(11346002)(446003)(6306002)(6512007)(316002)(6486002)(68736007)(229853002)(99286004)(6436002)(2900100001)(54906003)(14444005)(256004)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0782;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: m2LonI6OaGEqNV4trdi2z9rZsbruifh6IuMeyYCE6mFS8kot7+NFDn3oq8r6SLcBHjJ816DIYIZppN5R1NMPt7SQnfzIohdzCVC3vjtzXsMGhp8SwxgHqRKqelxb9vsyQCei8Gl/aa5CdVNSzF/V040QrK5lRlnioRmILMZpaRQq7OxzPXiB6Qze4Ww6xE9YthcOu0Wgt9mpg4ww0c916wC5XTBInQ53s4FU67a5+CtJ+pjJQFZvKOiRCIMmlGxN98JLChf8te3Bk48i8WxQOEnb68q0XpUaMI4H3xff7N1z9aAxytO0YznL+6F6QKM/o6gzkcf8wTHU6Uqg44qHGkeDhPQWHy2XbTrMaSFHRJs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <DDB02D99CE1C3545A9ACDE89FF30EEC6@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f2fafdd-eb5a-0dcd-272b-65aac5080677@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bacdf4b-cbd9-4603-002c-08d5ea02f98a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2018 03:28:03.9387
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0782
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/15, Chao Yu wrote:
-> Hi Jaegeuk,
-> 
-> On 2018/7/15 9:27, Jaegeuk Kim wrote:
-> > On 07/08, Chao Yu wrote:
-> >> From: Chao Yu <yuchao0@huawei.com>
-> >>
-> >> Some devices has small max_{hw,}discard_sectors, so that in
-> >> __blkdev_issue_discard(), one big size discard bio can be split
-> >> into multiple small size discard bios, result in heavy load in IO
-> >> scheduler and device, which can hang other sync IO for long time.
-> >>
-> >> Now, f2fs is trying to control discard commands more elaboratively,
-> >> in order to make less conflict in between discard IO and user IO
-> >> to enhance application's performance, so in this patch, we will
-> >> split discard bio in f2fs in prior to in block layer to reduce
-> >> issuing multiple discard bios in a short time.
-> > 
-> > Can we just change __submit_discard_cmd() to submit the large candidate
-> > partially and adjust lstart in the original candidate?
-> 
-> Yep, could you check __submit_discard_cmd() implementation below? Does that
-> match the thoughts from you?
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >> ---
-> >> v2:
-> >> - change to split discard command entry before submission.
-> >>  fs/f2fs/f2fs.h    |  13 +++---
-> >>  fs/f2fs/segment.c | 117 +++++++++++++++++++++++++++++++++++++-----------------
-> >>  2 files changed, 86 insertions(+), 44 deletions(-)
-> >>
-> >> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >> index c48b655d5d8d..359526d88d3f 100644
-> >> --- a/fs/f2fs/f2fs.h
-> >> +++ b/fs/f2fs/f2fs.h
-> >> @@ -178,7 +178,6 @@ enum {
-> >>  
-> >>  #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
-> >>  #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-> >> -#define DEF_MAX_DISCARD_LEN		512	/* Max. 2MB per discard */
-> >>  #define DEF_MIN_DISCARD_ISSUE_TIME	50	/* 50 ms, if exists */
-> >>  #define DEF_MID_DISCARD_ISSUE_TIME	500	/* 500 ms, if device busy */
-> >>  #define DEF_MAX_DISCARD_ISSUE_TIME	60000	/* 60 s, if no candidates */
-> >> @@ -709,22 +708,22 @@ static inline void set_extent_info(struct extent_info *ei, unsigned int fofs,
-> >>  }
-> >>  
-> >>  static inline bool __is_discard_mergeable(struct discard_info *back,
-> >> -						struct discard_info *front)
-> >> +			struct discard_info *front, unsigned int max_len)
-> >>  {
-> >>  	return (back->lstart + back->len == front->lstart) &&
-> >> -		(back->len + front->len < DEF_MAX_DISCARD_LEN);
-> >> +		(back->len + front->len <= max_len);
-> >>  }
-> >>  
-> >>  static inline bool __is_discard_back_mergeable(struct discard_info *cur,
-> >> -						struct discard_info *back)
-> >> +			struct discard_info *back, unsigned int max_len)
-> >>  {
-> >> -	return __is_discard_mergeable(back, cur);
-> >> +	return __is_discard_mergeable(back, cur, max_len);
-> >>  }
-> >>  
-> >>  static inline bool __is_discard_front_mergeable(struct discard_info *cur,
-> >> -						struct discard_info *front)
-> >> +			struct discard_info *front, unsigned int max_len)
-> >>  {
-> >> -	return __is_discard_mergeable(cur, front);
-> >> +	return __is_discard_mergeable(cur, front, max_len);
-> >>  }
-> >>  
-> >>  static inline bool __is_extent_mergeable(struct extent_info *back,
-> >> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >> index f7f56dd091b4..cbf8f3f9a8e7 100644
-> >> --- a/fs/f2fs/segment.c
-> >> +++ b/fs/f2fs/segment.c
-> >> @@ -966,17 +966,24 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
-> >>  	}
-> >>  }
-> >>  
-> >> -
+On Sat, 2018-07-14 at 18:59 -0700, Linus Torvalds wrote:
++AD4- On Sat, Jul 14, 2018 at 6:57 PM Linus Torvalds
++AD4- +ADw-torvalds+AEA-linux-foundation.org+AD4- wrote:
++AD4- +AD4-=20
++AD4- +AD4- Honestly, I'd like to just encourage people to get the sparse u=
+pdate
++AD4- +AD4- from Luc Van Oostenryck instead.
++AD4- +AD4-=20
++AD4- +AD4- For a while there it looked like Chris Li would just pull from =
+Luc,
++AD4- +AD4- and we'd have timely releases, but that really doesn't seem to =
+have
++AD4- +AD4- ended up happening after all. So right now it's probably just b=
+est to
++AD4- +AD4- get Luc's tree instead from
++AD4- +AD4-=20
++AD4- +AD4-     https://github.com/lucvoo/sparse-dev
++AD4- +AD4-=20
++AD4- +AD4- which also ends up fixing a lot of other issues.
++AD4- +AD4-=20
++AD4- +AD4-                 Linus
++AD4-
++AD4- Oh,
++AD4-  and I meant to cc Luc on that email, but then forgot. So here he is =
+cc'd now.
++AD4-=20
++AD4-             Linus
 
-===================== BEGIN
+Hello everyone,
 
-> >> +static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >> +				struct block_device *bdev, block_t lstart,
-> >> +				block_t start, block_t len);
-> >>  /* this function is copied from blkdev_issue_discard from block/blk-lib.c */
-> >>  static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  						struct discard_policy *dpolicy,
-> >> -						struct discard_cmd *dc)
-> >> +						struct discard_cmd *dc,
-> >> +						unsigned int *issued)
-> >>  {
-> >> +	struct block_device *bdev = dc->bdev;
-> >> +	struct request_queue *q = bdev_get_queue(bdev);
-> >> +	unsigned int max_discard_blocks =
-> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
-> >>  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
-> >>  	struct list_head *wait_list = (dpolicy->type == DPOLICY_FSTRIM) ?
-> >>  					&(dcc->fstrim_list) : &(dcc->wait_list);
-> >> -	struct bio *bio = NULL;
-> >>  	int flag = dpolicy->sync ? REQ_SYNC : 0;
-> >> +	block_t lstart, start, len, total_len;
-> >>  
-> >>  	if (dc->state != D_PREP)
-> >>  		return;
-> >> @@ -984,30 +991,63 @@ static void __submit_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  	if (is_sbi_flag_set(sbi, SBI_NEED_FSCK))
-> >>  		return;
-> >>  
-> >> -	trace_f2fs_issue_discard(dc->bdev, dc->start, dc->len);
-> >> -
-> >> -	dc->error = __blkdev_issue_discard(dc->bdev,
-> >> -				SECTOR_FROM_BLOCK(dc->start),
-> >> -				SECTOR_FROM_BLOCK(dc->len),
-> >> -				GFP_NOFS, 0, &bio);
-> >> -	if (!dc->error) {
-> >> -		/* should keep before submission to avoid D_DONE right away */
-> >> -		dc->state = D_SUBMIT;
-> >> -		atomic_inc(&dcc->issued_discard);
-> >> -		atomic_inc(&dcc->issing_discard);
-> >> -		if (bio) {
-> >> -			bio->bi_private = dc;
-> >> -			bio->bi_end_io = f2fs_submit_discard_endio;
-> >> -			bio->bi_opf |= flag;
-> >> -			submit_bio(bio);
-> >> -			list_move_tail(&dc->list, wait_list);
-> >> -			__check_sit_bitmap(sbi, dc->start, dc->start + dc->len);
-> >> -
-> >> -			f2fs_update_iostat(sbi, FS_DISCARD, 1);
-> >> +	trace_f2fs_issue_discard(bdev, dc->start, dc->len);
-> >> +
-> >> +	lstart = dc->lstart;
-> >> +	start = dc->start;
-> >> +	len = dc->len;
-> >> +	total_len = len;
-> >> +
-> >> +	while (total_len && *issued < dpolicy->max_requests) {
-> >> +		struct bio *bio = NULL;
-> >> +
-> >> +		if (len > max_discard_blocks)
-> >> +			len = max_discard_blocks;
-> >> +
-> >> +		dc->error = __blkdev_issue_discard(bdev,
-> >> +					SECTOR_FROM_BLOCK(start),
-> >> +					SECTOR_FROM_BLOCK(len),
-> >> +					GFP_NOFS, 0, &bio);
-> >> +		if (!dc->error) {
-> >> +			/*
-> >> +			 * should keep before submission to avoid D_DONE
-> >> +			 * right away
-> >> +			 */
-> >> +			dc->state = D_SUBMIT;
-> >> +			dc->len = len;
-> >> +			atomic_inc(&dcc->issued_discard);
-> >> +			atomic_inc(&dcc->issing_discard);
-> >> +			if (bio) {
-> >> +				bio->bi_private = dc;
-> >> +				bio->bi_end_io = f2fs_submit_discard_endio;
-> >> +				bio->bi_opf |= flag;
-> >> +				submit_bio(bio);
-> >> +				list_move_tail(&dc->list, wait_list);
-> >> +				__check_sit_bitmap(sbi, dc->start,
-> >> +							dc->start + dc->len);
-> >> +
-> >> +				f2fs_update_iostat(sbi, FS_DISCARD, 1);
-> >> +			}
-> >> +		} else {
-> >> +			__remove_discard_cmd(sbi, dc);
+I will switch to Luc's sparse tree.
 
-Keep the original one, since it's partially failed?
+Thank you for the feedback.
 
-> >> +			return;
-> >> +		}
-> >> +		lstart += len;
-> >> +		start += len;
-> >> +		total_len -= len;
-> >> +		len = total_len;
-> >> +		(*issued)++;
-> >> +
-> >> +		if (len) {
-> >> +			__update_discard_tree_range(sbi, bdev, lstart,
-> >> +								start, len);
-
-Do we really need this? We already grabbed one candidate which was not merged
-well.
-
-> >> +			dc = (struct discard_cmd *)f2fs_lookup_rb_tree(
-> >> +						&dcc->root, NULL, lstart);
-> >> +			f2fs_bug_on(sbi, !dc);
-> >>  		}
-> >> -	} else {
-> >> -		__remove_discard_cmd(sbi, dc);
-> >>  	}
-> >> +
-> >> +	return;
-> >>  }
-
-======================= END
+Bart.
 
 
-> >>  
-> >>  static struct discard_cmd *__insert_discard_tree(struct f2fs_sb_info *sbi,
-> >> @@ -1088,10 +1128,11 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  	struct discard_cmd *dc;
-> >>  	struct discard_info di = {0};
-> >>  	struct rb_node **insert_p = NULL, *insert_parent = NULL;
-> >> +	struct request_queue *q = bdev_get_queue(bdev);
-> >> +	unsigned int max_discard_blocks =
-> >> +			SECTOR_TO_BLOCK(q->limits.max_discard_sectors);
-> >>  	block_t end = lstart + len;
-> >>  
-> >> -	mutex_lock(&dcc->cmd_lock);
-> >> -
-> >>  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree_ret(&dcc->root,
-> >>  					NULL, lstart,
-> >>  					(struct rb_entry **)&prev_dc,
-> >> @@ -1131,7 +1172,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  
-> >>  		if (prev_dc && prev_dc->state == D_PREP &&
-> >>  			prev_dc->bdev == bdev &&
-> >> -			__is_discard_back_mergeable(&di, &prev_dc->di)) {
-> >> +			__is_discard_back_mergeable(&di, &prev_dc->di,
-> >> +							max_discard_blocks)) {
-> >>  			prev_dc->di.len += di.len;
-> >>  			dcc->undiscard_blks += di.len;
-> >>  			__relocate_discard_cmd(dcc, prev_dc);
-> >> @@ -1142,7 +1184,8 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  
-> >>  		if (next_dc && next_dc->state == D_PREP &&
-> >>  			next_dc->bdev == bdev &&
-> >> -			__is_discard_front_mergeable(&di, &next_dc->di)) {
-> >> +			__is_discard_front_mergeable(&di, &next_dc->di,
-> >> +							max_discard_blocks)) {
-> >>  			next_dc->di.lstart = di.lstart;
-> >>  			next_dc->di.len += di.len;
-> >>  			next_dc->di.start = di.start;
-> >> @@ -1165,8 +1208,6 @@ static void __update_discard_tree_range(struct f2fs_sb_info *sbi,
-> >>  		node = rb_next(&prev_dc->rb_node);
-> >>  		next_dc = rb_entry_safe(node, struct discard_cmd, rb_node);
-> >>  	}
-> >> -
-> >> -	mutex_unlock(&dcc->cmd_lock);
-> >>  }
-> >>  
-> >>  static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-> >> @@ -1181,7 +1222,9 @@ static int __queue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  
-> >>  		blkstart -= FDEV(devi).start_blk;
-> >>  	}
-> >> +	mutex_lock(&SM_I(sbi)->dcc_info->cmd_lock);
-> >>  	__update_discard_tree_range(sbi, bdev, lblkstart, blkstart, blklen);
-> >> +	mutex_unlock(&SM_I(sbi)->dcc_info->cmd_lock);
-> >>  	return 0;
-> >>  }
-> >>  
-> >> @@ -1220,9 +1263,9 @@ static unsigned int __issue_discard_cmd_orderly(struct f2fs_sb_info *sbi,
-> >>  		}
-> >>  
-> >>  		dcc->next_pos = dc->lstart + dc->len;
-> >> -		__submit_discard_cmd(sbi, dpolicy, dc);
-> >> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> >>  
-> >> -		if (++issued >= dpolicy->max_requests)
-> >> +		if (issued >= dpolicy->max_requests)
-> >>  			break;
-> >>  next:
-> >>  		node = rb_next(&dc->rb_node);
-> >> @@ -1277,9 +1320,9 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
-> >>  				break;
-> >>  			}
-> >>  
-> >> -			__submit_discard_cmd(sbi, dpolicy, dc);
-> >> +			__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> >>  
-> >> -			if (++issued >= dpolicy->max_requests)
-> >> +			if (issued >= dpolicy->max_requests)
-> >>  				break;
-> >>  		}
-> >>  		blk_finish_plug(&plug);
-> >> @@ -2475,9 +2518,9 @@ static unsigned int __issue_discard_cmd_range(struct f2fs_sb_info *sbi,
-> >>  			goto skip;
-> >>  		}
-> >>  
-> >> -		__submit_discard_cmd(sbi, dpolicy, dc);
-> >> +		__submit_discard_cmd(sbi, dpolicy, dc, &issued);
-> >>  
-> >> -		if (++issued >= dpolicy->max_requests) {
-> >> +		if (issued >= dpolicy->max_requests) {
-> >>  			start = dc->lstart + dc->len;
-> >>  
-> >>  			blk_finish_plug(&plug);
-> >> -- 
-> >> 2.16.2.17.g38e79b1fd
+
+
+
+
+
