@@ -3,78 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: *
 X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFA8ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4278ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F12C2089D
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60B3B2089D
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 22:38:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u2McwbOE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F12C2089D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5Yvgb7a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B3B2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbeGOW7O (ORCPT
+        id S1727246AbeGOXCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 18:59:14 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:46346 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726989AbeGOW7O (ORCPT
+        Sun, 15 Jul 2018 19:02:39 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43848 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbeGOXCj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 18:59:14 -0400
-Received: by mail-wr1-f41.google.com with SMTP id s11-v6so30024092wra.13
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 15:34:47 -0700 (PDT)
+        Sun, 15 Jul 2018 19:02:39 -0400
+Received: by mail-wr1-f65.google.com with SMTP id b15-v6so30079328wrv.10;
+        Sun, 15 Jul 2018 15:38:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=KbkQXVQrZ64UEgGdmPrimNG6EFaJ5b+KTi3T4qbQuhY=;
-        b=u2McwbOE502QL654bWITHBSQP1pKGQxfZjLTCmwXgMNIP5ly9kAyDVgA5FUnijSgXl
-         w1oEDbsoRVtF/y0jx8c+zXBpwImCTG/vBtrol9YuaFF5f1wMXZnyyhmymT/Adul6RkBt
-         6WWhafRMi/trHqeAMlqBzdYrR9HNabM0DnsuM1lbu+OBUKIqX/VoQdwUhivTRJmXjdhH
-         k7MdsiftQ/3QwKza+QmiWQIPlIQ+NKTWLCNuLN/6+C3/l1h11+qj2HRqFoOMjqKju5Cn
-         +4x1X+G0G1dVuukHTb+F1GcgCe8iI5eeHU5HPBQvGw1mlCYekTDrBgIMnmq7sb3px41b
-         6taw==
+        bh=ZlQXIlqMkSH2VpVVVTef0i0kL3q9Jm1Q0+qUefEZWcs=;
+        b=Z5Yvgb7aTJ33eF5O1D+eepb+MCTJk5PciGmEEcAwxCUulBnlzdq2LeW2/A5qmVTeyd
+         KsBorP5TGVouzpNhddAYoS/oaBMgpIu1Xbj5bgEtARvfzt7ryR7UiY/g6S4t9DJqAAUI
+         XENkgCSDJL9QcNh1NFh+b6xXBpkAGGHrhI/zn5Hp2VhxO79WC/TSycjpWBIDaMZ3lnO6
+         1zk9uk9eFp8T+4BCbJ8icD+TyZAkA0zp7kucVIb+94gHKnTgnDwqfNjXidwNupk3ryNg
+         8RkKyNosiQvKraXjcSJldI7ksi3W1LYwVSj73TG4ta4vNb6RZlnsvMye3QWcydfQexzZ
+         OmBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KbkQXVQrZ64UEgGdmPrimNG6EFaJ5b+KTi3T4qbQuhY=;
-        b=cphBs2yqR1F+V4GePffiIdBt/LTOTQqopV6/JXXEcWemqN26IaXnclRVRfTA3GasXI
-         WiCJfz7eNG3YNuhnPSK5DjIBq7whIGfFMHoAHJ/CRiYULAKUy9bY20PfOzNTDegSaTNA
-         TM33uNHreWNb8N7Mw2HQWVjIyrqK0FZ063gkXuTgquBpkH1pyllT663LlLzsTA1cMBDW
-         8oOqcTcmoATloLR2RzOW6URj7deViE2HTeXq9LzY64e5fj/GXBVPoEF3ss5dcnx5lxsF
-         X7qb2h0ymS1OI9Bfek28Ah8JH33iCCRxI77Pj98KvGoaEOHZUs8Qhp7B8TbYSLW73xcp
-         mNCg==
-X-Gm-Message-State: AOUpUlF6e92YlmbzByrKqHOMZjMT6qSKaq6a/SINhEOJlRGSkOj85Gt8
-        7baQfecLRfXqy/MCarrJXc8=
-X-Google-Smtp-Source: AAOMgpfAxiApEwkAmxSuznhhDG8ewCm+Vq0Fthl+0FlymK/JGFdaOZK3RwIJ5N7txGfAshrwauwbPw==
-X-Received: by 2002:a5d:5641:: with SMTP id j1-v6mr10939187wrw.209.1531694087116;
-        Sun, 15 Jul 2018 15:34:47 -0700 (PDT)
+        bh=ZlQXIlqMkSH2VpVVVTef0i0kL3q9Jm1Q0+qUefEZWcs=;
+        b=h3smX28hU7gydnsvOtdgGL48aQwpsPfU/Ekv+cV6NJuKvGm+NJ6Y/hPl0lzoowWeoj
+         yPb/LnCS1mdWIrDGIGUE0sqzDtpv+GJr5IR/kws6JTuqmeT94gRdARp1cmJ87DZO03Vm
+         HYioBiWyZuVBBq6M0lNtpEhwyHMjIM2O7cKi4QCY65bzPaOVjF3ny7wOAFDOV5rtWQfZ
+         AX8FvYOG9B74FHl101sJ3B0ki8qgPmp1Ej0uZoLeVGLnO/fcVpY9pmxFt2EdKNO5ZORB
+         b8rujCOD8E7H5IdvPWSmJHsTO+DI3ss3qu9n9MaeOy9G/IhHQWx6NfyECZAnN9OZCCGp
+         lJQQ==
+X-Gm-Message-State: AOUpUlG23s7DoFVR/zN30hqRFv81me950u/ee7hkT+tTFPBUVZe7pCat
+        Gm7TUoCs1gvmmmC0/lRdeQE=
+X-Google-Smtp-Source: AAOMgpd/yV7ApOZ1/P5K4A0vG+m58+qic4gwNljHSpytVQoLynW4NpwMIqV6N/yY0UaxZRbiEwPV8g==
+X-Received: by 2002:adf:c74e:: with SMTP id b14-v6mr9738242wrh.16.1531694291468;
+        Sun, 15 Jul 2018 15:38:11 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id d7-v6sm21178924wro.92.2018.07.15.15.34.45
+        by smtp.gmail.com with ESMTPSA id s16-v6sm24825330wrq.20.2018.07.15.15.38.10
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Jul 2018 15:34:46 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 00:34:44 +0200
+        Sun, 15 Jul 2018 15:38:10 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 00:38:08 +0200
 From:   Ingo Molnar <mingo@kernel.org>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Kan Liang <kan.liang@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
-Subject: Re: [PATCH] [RESEND] perf/x86/intel/uncore: Fix the index of PCU.3
- Broadwell CPUs
-Message-ID: <20180715223444.GA16209@gmail.com>
-References: <20180710233158.21037-1-msys.mizuma@gmail.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] efi/x86: Use non-blocking SetVariable() for
+ efi_delete_dummy_variable()
+Message-ID: <20180715223808.GB16209@gmail.com>
+References: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
+ <20180711094040.12506-3-ard.biesheuvel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180710233158.21037-1-msys.mizuma@gmail.com>
+In-Reply-To: <20180711094040.12506-3-ard.biesheuvel@linaro.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -82,38 +80,45 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Masayoshi Mizuma <msys.mizuma@gmail.com> wrote:
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
 
-> From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 > 
-> commit 15a3e845b01c ("perf/x86/intel/uncore: Fix SBOX support for
-> Broadwell CPUs") introduced PCU.3 for Broadwell CPU. Unfortunately,
-> the driver_data of PCU.3 conflicts to QPI Port 2 filter.
+> Presently, efi_delete_dummy_variable() uses set_variable() which might
+> block and hence kernel prints stack trace with a warning "bad:
+> scheduling from the idle thread!". So, make efi_delete_dummy_variable()
+> use set_variable_nonblocking(), which, as the name suggests doesn't
+> block.
 > 
->     { /* QPI Port 2 filter  */
->             PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6f46),
->             .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV, 2),
+> Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  arch/x86/platform/efi/quirks.c | 11 +++++------
+>  1 file changed, 5 insertions(+), 6 deletions(-)
 > 
->     { /* PCU.3 (for Capability registers) */
->             PCI_DEVICE(PCI_VENDOR_ID_INTEL, 0x6fc0),
->             .driver_data = UNCORE_PCI_DEV_DATA(UNCORE_EXTRA_PCI_DEV,
->                                                HSWEP_PCI_PCU_3),
->                              // HSWEP_PCI_PCU_3 == 2
+> diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
+> index 36c1f8b9f7e0..6af39dc40325 100644
+> --- a/arch/x86/platform/efi/quirks.c
+> +++ b/arch/x86/platform/efi/quirks.c
+> @@ -105,12 +105,11 @@ early_param("efi_no_storage_paranoia", setup_storage_paranoia);
+>  */
+>  void efi_delete_dummy_variable(void)
+>  {
+> -	efi.set_variable((efi_char16_t *)efi_dummy_name,
+> -			 &EFI_DUMMY_GUID,
+> -			 EFI_VARIABLE_NON_VOLATILE |
+> -			 EFI_VARIABLE_BOOTSERVICE_ACCESS |
+> -			 EFI_VARIABLE_RUNTIME_ACCESS,
+> -			 0, NULL);
+> +	efi.set_variable_nonblocking((efi_char16_t *)efi_dummy_name,
+> +				     &EFI_DUMMY_GUID,
+> +				     EFI_VARIABLE_NON_VOLATILE |
+> +				     EFI_VARIABLE_BOOTSERVICE_ACCESS |
+> +				     EFI_VARIABLE_RUNTIME_ACCESS, 0, NULL);
+>  }
 
-> --- a/arch/x86/events/intel/uncore_snbep.c
-> +++ b/arch/x86/events/intel/uncore_snbep.c
-> @@ -1030,6 +1030,7 @@ enum {
->  	SNBEP_PCI_QPI_PORT0_FILTER,
->  	SNBEP_PCI_QPI_PORT1_FILTER,
->  	HSWEP_PCI_PCU_3,
-> +	BDX_PCI_PCU_3,
->  };
-
-So we use a magic '2' enumerator in the 'QPI Port 2 filter', and that overlaps 
-with HSWEP_PCI_PCU_3, right?
-
-Shouldn't we clean up all the enumerators and not use magic numbers, and this fix 
-the conflict?
+Just wondering, what is the full stack trace of the splat? It sounds a bit 
+surprising to me that such type of EFI code is used from the idle thread.
 
 Thanks,
 
