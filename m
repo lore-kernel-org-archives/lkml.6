@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86671ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8196EECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C94C20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C94C20864
+	by mail.kernel.org (Postfix) with ESMTP id 3ABF7208FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABF7208FC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbeGPIBw (ORCPT
+        id S1730272AbeGPIBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:01:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46538 "EHLO
+        Mon, 16 Jul 2018 04:01:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46558 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726301AbeGPIBu (ORCPT
+        with ESMTP id S1730092AbeGPIBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:01:50 -0400
+        Mon, 16 Jul 2018 04:01:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A620CAF;
-        Mon, 16 Jul 2018 07:35:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 049B2CA8;
+        Mon, 16 Jul 2018 07:35:52 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         James Hogan <jhogan@kernel.org>,
         Ralf Baechle <ralf@linux-mips.org>,
         Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
-Subject: [PATCH 4.17 02/67] MIPS: Call dump_stack() from show_regs()
-Date:   Mon, 16 Jul 2018 09:34:31 +0200
-Message-Id: <20180716073443.563127118@linuxfoundation.org>
+Subject: [PATCH 4.17 03/67] MIPS: Use async IPIs for arch_trigger_cpumask_backtrace()
+Date:   Mon, 16 Jul 2018 09:34:32 +0200
+Message-Id: <20180716073443.668979248@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -54,69 +54,178 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paul Burton <paul.burton@mips.com>
 
-commit 5a267832c2ec47b2dad0fdb291a96bb5b8869315 upstream.
+commit b63e132b6433a41cf311e8bc382d33fd2b73b505 upstream.
 
-The generic nmi_cpu_backtrace() function calls show_regs() when a struct
-pt_regs is available, and dump_stack() otherwise. If we were to make use
-of the generic nmi_cpu_backtrace() with MIPS' current implementation of
-show_regs() this would mean that we see only register data with no
-accompanying stack information, in contrast with our current
-implementation which calls dump_stack() regardless of whether register
-state is available.
+The current MIPS implementation of arch_trigger_cpumask_backtrace() is
+broken because it attempts to use synchronous IPIs despite the fact that
+it may be run with interrupts disabled.
 
-In preparation for making use of the generic nmi_cpu_backtrace() to
-implement arch_trigger_cpumask_backtrace(), have our implementation of
-show_regs() call dump_stack() and drop the explicit dump_stack() call in
-arch_dump_stack() which is invoked by arch_trigger_cpumask_backtrace().
+This means that when arch_trigger_cpumask_backtrace() is invoked, for
+example by the RCU CPU stall watchdog, we may:
 
-This will allow the output we produce to remain the same after a later
-patch switches to using nmi_cpu_backtrace(). It may mean that we produce
-extra stack output in other uses of show_regs(), but this:
+  - Deadlock due to use of synchronous IPIs with interrupts disabled,
+    causing the CPU that's attempting to generate the backtrace output
+    to hang itself.
 
-  1) Seems harmless.
-  2) Is good for consistency between arch_trigger_cpumask_backtrace()
-     and other users of show_regs().
-  3) Matches the behaviour of the ARM & PowerPC architectures.
+  - Not succeed in generating the desired output from remote CPUs.
 
-Marked for stable back to v4.9 as a prerequisite of the following patch
-"MIPS: Call dump_stack() from show_regs()".
+  - Produce warnings about this from smp_call_function_many(), for
+    example:
+
+    [42760.526910] INFO: rcu_sched detected stalls on CPUs/tasks:
+    [42760.535755]  0-...!: (1 GPs behind) idle=ade/140000000000000/0 softirq=526944/526945 fqs=0
+    [42760.547874]  1-...!: (0 ticks this GP) idle=e4a/140000000000000/0 softirq=547885/547885 fqs=0
+    [42760.559869]  (detected by 2, t=2162 jiffies, g=266689, c=266688, q=33)
+    [42760.568927] ------------[ cut here ]------------
+    [42760.576146] WARNING: CPU: 2 PID: 1216 at kernel/smp.c:416 smp_call_function_many+0x88/0x20c
+    [42760.587839] Modules linked in:
+    [42760.593152] CPU: 2 PID: 1216 Comm: sh Not tainted 4.15.4-00373-gee058bb4d0c2 #2
+    [42760.603767] Stack : 8e09bd20 8e09bd20 8e09bd20 fffffff0 00000007 00000006 00000000 8e09bca8
+    [42760.616937]         95b2b379 95b2b379 807a0080 00000007 81944518 0000018a 00000032 00000000
+    [42760.630095]         00000000 00000030 80000000 00000000 806eca74 00000009 8017e2b8 000001a0
+    [42760.643169]         00000000 00000002 00000000 8e09baa4 00000008 808b8008 86d69080 8e09bca0
+    [42760.656282]         8e09ad50 805e20aa 00000000 00000000 00000000 8017e2b8 00000009 801070ca
+    [42760.669424]         ...
+    [42760.673919] Call Trace:
+    [42760.678672] [<27fde568>] show_stack+0x70/0xf0
+    [42760.685417] [<84751641>] dump_stack+0xaa/0xd0
+    [42760.692188] [<699d671c>] __warn+0x80/0x92
+    [42760.698549] [<68915d41>] warn_slowpath_null+0x28/0x36
+    [42760.705912] [<f7c76c1c>] smp_call_function_many+0x88/0x20c
+    [42760.713696] [<6bbdfc2a>] arch_trigger_cpumask_backtrace+0x30/0x4a
+    [42760.722216] [<f845bd33>] rcu_dump_cpu_stacks+0x6a/0x98
+    [42760.729580] [<796e7629>] rcu_check_callbacks+0x672/0x6ac
+    [42760.737476] [<059b3b43>] update_process_times+0x18/0x34
+    [42760.744981] [<6eb94941>] tick_sched_handle.isra.5+0x26/0x38
+    [42760.752793] [<478d3d70>] tick_sched_timer+0x1c/0x50
+    [42760.759882] [<e56ea39f>] __hrtimer_run_queues+0xc6/0x226
+    [42760.767418] [<e88bbcae>] hrtimer_interrupt+0x88/0x19a
+    [42760.775031] [<6765a19e>] gic_compare_interrupt+0x2e/0x3a
+    [42760.782761] [<0558bf5f>] handle_percpu_devid_irq+0x78/0x168
+    [42760.790795] [<90c11ba2>] generic_handle_irq+0x1e/0x2c
+    [42760.798117] [<1b6d462c>] gic_handle_local_int+0x38/0x86
+    [42760.805545] [<b2ada1c7>] gic_irq_dispatch+0xa/0x14
+    [42760.812534] [<90c11ba2>] generic_handle_irq+0x1e/0x2c
+    [42760.820086] [<c7521934>] do_IRQ+0x16/0x20
+    [42760.826274] [<9aef3ce6>] plat_irq_dispatch+0x62/0x94
+    [42760.833458] [<6a94b53c>] except_vec_vi_end+0x70/0x78
+    [42760.840655] [<22284043>] smp_call_function_many+0x1ba/0x20c
+    [42760.848501] [<54022b58>] smp_call_function+0x1e/0x2c
+    [42760.855693] [<ab9fc705>] flush_tlb_mm+0x2a/0x98
+    [42760.862730] [<0844cdd0>] tlb_flush_mmu+0x1c/0x44
+    [42760.869628] [<cb259b74>] arch_tlb_finish_mmu+0x26/0x3e
+    [42760.877021] [<1aeaaf74>] tlb_finish_mmu+0x18/0x66
+    [42760.883907] [<b3fce717>] exit_mmap+0x76/0xea
+    [42760.890428] [<c4c8a2f6>] mmput+0x80/0x11a
+    [42760.896632] [<a41a08f4>] do_exit+0x1f4/0x80c
+    [42760.903158] [<ee01cef6>] do_group_exit+0x20/0x7e
+    [42760.909990] [<13fa8d54>] __wake_up_parent+0x0/0x1e
+    [42760.917045] [<46cf89d0>] smp_call_function_many+0x1a2/0x20c
+    [42760.924893] [<8c21a93b>] syscall_common+0x14/0x1c
+    [42760.931765] ---[ end trace 02aa09da9dc52a60 ]---
+    [42760.938342] ------------[ cut here ]------------
+    [42760.945311] WARNING: CPU: 2 PID: 1216 at kernel/smp.c:291 smp_call_function_single+0xee/0xf8
+    ...
+
+This patch switches MIPS' arch_trigger_cpumask_backtrace() to use async
+IPIs & smp_call_function_single_async() in order to resolve this
+problem. We ensure use of the pre-allocated call_single_data_t
+structures is serialized by maintaining a cpumask indicating that
+they're busy, and refusing to attempt to send an IPI when a CPU's bit is
+set in this mask. This should only happen if a CPU hasn't responded to a
+previous backtrace IPI - ie. if it's hung - and we print a warning to
+the console in this case.
+
+I've marked this for stable branches as far back as v4.9, to which it
+applies cleanly. Strictly speaking the faulty MIPS implementation can be
+traced further back to commit 856839b76836 ("MIPS: Add
+arch_trigger_all_cpu_backtrace() function") in v3.19, but kernel
+versions v3.19 through v4.8 will require further work to backport due to
+the rework performed in commit 9a01c3ed5cdb ("nmi_backtrace: add more
+trigger_*_cpu_backtrace() methods").
 
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19596/
+Patchwork: https://patchwork.linux-mips.org/patch/19597/
 Cc: James Hogan <jhogan@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
 Cc: Huacai Chen <chenhc@lemote.com>
 Cc: linux-mips@linux-mips.org
 Cc: stable@vger.kernel.org # v4.9+
+Fixes: 856839b76836 ("MIPS: Add arch_trigger_all_cpu_backtrace() function")
+Fixes: 9a01c3ed5cdb ("nmi_backtrace: add more trigger_*_cpu_backtrace() methods")
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/process.c |    4 ++--
- arch/mips/kernel/traps.c   |    1 +
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ arch/mips/kernel/process.c |   45 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 30 insertions(+), 15 deletions(-)
 
 --- a/arch/mips/kernel/process.c
 +++ b/arch/mips/kernel/process.c
-@@ -663,8 +663,8 @@ static void arch_dump_stack(void *info)
+@@ -29,6 +29,7 @@
+ #include <linux/kallsyms.h>
+ #include <linux/random.h>
+ #include <linux/prctl.h>
++#include <linux/nmi.h>
  
- 	if (regs)
- 		show_regs(regs);
+ #include <asm/asm.h>
+ #include <asm/bootinfo.h>
+@@ -655,28 +656,42 @@ unsigned long arch_align_stack(unsigned
+ 	return sp & ALMASK;
+ }
+ 
+-static void arch_dump_stack(void *info)
+-{
+-	struct pt_regs *regs;
++static DEFINE_PER_CPU(call_single_data_t, backtrace_csd);
++static struct cpumask backtrace_csd_busy;
+ 
+-	regs = get_irq_regs();
 -
--	dump_stack();
-+	else
-+		dump_stack();
+-	if (regs)
+-		show_regs(regs);
+-	else
+-		dump_stack();
++static void handle_backtrace(void *info)
++{
++	nmi_cpu_backtrace(get_irq_regs());
++	cpumask_clear_cpu(smp_processor_id(), &backtrace_csd_busy);
  }
  
- void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
---- a/arch/mips/kernel/traps.c
-+++ b/arch/mips/kernel/traps.c
-@@ -351,6 +351,7 @@ static void __show_regs(const struct pt_
- void show_regs(struct pt_regs *regs)
+-void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
++static void raise_backtrace(cpumask_t *mask)
  {
- 	__show_regs((struct pt_regs *)regs);
-+	dump_stack();
+-	long this_cpu = get_cpu();
++	call_single_data_t *csd;
++	int cpu;
+ 
+-	if (cpumask_test_cpu(this_cpu, mask) && !exclude_self)
+-		dump_stack();
++	for_each_cpu(cpu, mask) {
++		/*
++		 * If we previously sent an IPI to the target CPU & it hasn't
++		 * cleared its bit in the busy cpumask then it didn't handle
++		 * our previous IPI & it's not safe for us to reuse the
++		 * call_single_data_t.
++		 */
++		if (cpumask_test_and_set_cpu(cpu, &backtrace_csd_busy)) {
++			pr_warn("Unable to send backtrace IPI to CPU%u - perhaps it hung?\n",
++				cpu);
++			continue;
++		}
+ 
+-	smp_call_function_many(mask, arch_dump_stack, NULL, 1);
++		csd = &per_cpu(backtrace_csd, cpu);
++		csd->func = handle_backtrace;
++		smp_call_function_single_async(cpu, csd);
++	}
++}
+ 
+-	put_cpu();
++void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
++{
++	nmi_trigger_cpumask_backtrace(mask, exclude_self, raise_backtrace);
  }
  
- void show_registers(struct pt_regs *regs)
+ int mips_get_process_fp_mode(struct task_struct *task)
 
 
