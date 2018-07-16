@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA1EECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA39ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB91B2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB91B2075B
+	by mail.kernel.org (Postfix) with ESMTP id 146D32075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 146D32075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389354AbeGPIKa (ORCPT
+        id S2389368AbeGPIKe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48202 "EHLO
+        Mon, 16 Jul 2018 04:10:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48210 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388522AbeGPIK3 (ORCPT
+        with ESMTP id S2388522AbeGPIKd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:29 -0400
+        Mon, 16 Jul 2018 04:10:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9331C03;
-        Mon, 16 Jul 2018 07:44:26 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6097DC03;
+        Mon, 16 Jul 2018 07:44:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
-        Nadav Amit <namit@vmware.com>
-Subject: [PATCH 4.4 03/43] vmw_balloon: fix inflation with batching
-Date:   Mon, 16 Jul 2018 09:36:08 +0200
-Message-Id: <20180716073512.143167619@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.4 04/43] ahci: Disable LPM on Lenovo 50 series laptops with a too old BIOS
+Date:   Mon, 16 Jul 2018 09:36:09 +0200
+Message-Id: <20180716073512.273228006@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -50,44 +50,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nadav Amit <namit@vmware.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 90d72ce079791399ac255c75728f3c9e747b093d upstream.
+commit 240630e61870e62e39a97225048f9945848fa5f5 upstream.
 
-Embarrassingly, the recent fix introduced worse problem than it solved,
-causing the balloon not to inflate. The VM informed the hypervisor that
-the pages for lock/unlock are sitting in the wrong address, as it used
-the page that is used the uninitialized page variable.
+There have been several reports of LPM related hard freezes about once
+a day on multiple Lenovo 50 series models. Strange enough these reports
+where not disk model specific as LPM issues usually are and some users
+with the exact same disk + laptop where seeing them while other users
+where not seeing these issues.
 
-Fixes: b23220fe054e9 ("vmw_balloon: fixing double free when batching mode is off")
+It turns out that enabling LPM triggers a firmware bug somewhere, which
+has been fixed in later BIOS versions.
+
+This commit adds a new ahci_broken_lpm() function and a new ATA_FLAG_NO_LPM
+for dealing with this.
+
+The ahci_broken_lpm() function contains DMI match info for the 4 models
+which are known to be affected by this and the DMI BIOS date field for
+known good BIOS versions. If the BIOS date is older then the one in the
+table LPM will be disabled and a warning will be printed.
+
+Note the BIOS dates are for known good versions, some older versions may
+work too, but we don't know for sure, the table is using dates from BIOS
+versions for which users have confirmed that upgrading to that version
+makes the problem go away.
+
+Unfortunately I've been unable to get hold of the reporter who reported
+that BIOS version 2.35 fixed the problems on the W541 for him. I've been
+able to verify the DMI_SYS_VENDOR and DMI_PRODUCT_VERSION from an older
+dmidecode, but I don't know the exact BIOS date as reported in the DMI.
+Lenovo keeps a changelog with dates in their release notes, but the
+dates there are the release dates not the build dates which are in DMI.
+So I've chosen to set the date to which we compare to one day past the
+release date of the 2.34 BIOS. I plan to fix this with a follow up
+commit once I've the necessary info.
+
 Cc: stable@vger.kernel.org
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ata/ahci.c        |   59 ++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/ata/libata-core.c |    3 ++
+ include/linux/libata.h    |    1 
+ 3 files changed, 63 insertions(+)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -467,7 +467,7 @@ static int vmballoon_send_batched_lock(s
- 		unsigned int num_pages, bool is_2m_pages, unsigned int *target)
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -1229,6 +1229,59 @@ static bool ahci_broken_suspend(struct p
+ 	return strcmp(buf, dmi->driver_data) < 0;
+ }
+ 
++static bool ahci_broken_lpm(struct pci_dev *pdev)
++{
++	static const struct dmi_system_id sysids[] = {
++		/* Various Lenovo 50 series have LPM issues with older BIOSen */
++		{
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++				DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad X250"),
++			},
++			.driver_data = "20180406", /* 1.31 */
++		},
++		{
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++				DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad L450"),
++			},
++			.driver_data = "20180420", /* 1.28 */
++		},
++		{
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++				DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad T450s"),
++			},
++			.driver_data = "20180315", /* 1.33 */
++		},
++		{
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++				DMI_MATCH(DMI_PRODUCT_VERSION, "ThinkPad W541"),
++			},
++			/*
++			 * Note date based on release notes, 2.35 has been
++			 * reported to be good, but I've been unable to get
++			 * a hold of the reporter to get the DMI BIOS date.
++			 * TODO: fix this.
++			 */
++			.driver_data = "20180310", /* 2.35 */
++		},
++		{ }	/* terminate list */
++	};
++	const struct dmi_system_id *dmi = dmi_first_match(sysids);
++	int year, month, date;
++	char buf[9];
++
++	if (!dmi)
++		return false;
++
++	dmi_get_date(DMI_BIOS_DATE, &year, &month, &date);
++	snprintf(buf, sizeof(buf), "%04d%02d%02d", year, month, date);
++
++	return strcmp(buf, dmi->driver_data) < 0;
++}
++
+ static bool ahci_broken_online(struct pci_dev *pdev)
  {
- 	unsigned long status;
--	unsigned long pfn = page_to_pfn(b->page);
-+	unsigned long pfn = PHYS_PFN(virt_to_phys(b->batch_page));
+ #define ENCODE_BUSDEVFN(bus, slot, func)			\
+@@ -1588,6 +1641,12 @@ static int ahci_init_one(struct pci_dev
+ 			"quirky BIOS, skipping spindown on poweroff\n");
+ 	}
  
- 	STATS_INC(b->stats.lock[is_2m_pages]);
++	if (ahci_broken_lpm(pdev)) {
++		pi.flags |= ATA_FLAG_NO_LPM;
++		dev_warn(&pdev->dev,
++			 "BIOS update required for Link Power Management support\n");
++	}
++
+ 	if (ahci_broken_suspend(pdev)) {
+ 		hpriv->flags |= AHCI_HFLAG_NO_SUSPEND;
+ 		dev_warn(&pdev->dev,
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -2209,6 +2209,9 @@ int ata_dev_configure(struct ata_device
+ 	    (id[ATA_ID_SATA_CAPABILITY] & 0xe) == 0x2)
+ 		dev->horkage |= ATA_HORKAGE_NOLPM;
  
-@@ -515,7 +515,7 @@ static bool vmballoon_send_batched_unloc
- 		unsigned int num_pages, bool is_2m_pages, unsigned int *target)
- {
- 	unsigned long status;
--	unsigned long pfn = page_to_pfn(b->page);
-+	unsigned long pfn = PHYS_PFN(virt_to_phys(b->batch_page));
- 
- 	STATS_INC(b->stats.unlock[is_2m_pages]);
- 
++	if (ap->flags & ATA_FLAG_NO_LPM)
++		dev->horkage |= ATA_HORKAGE_NOLPM;
++
+ 	if (dev->horkage & ATA_HORKAGE_NOLPM) {
+ 		ata_dev_warn(dev, "LPM support broken, forcing max_power\n");
+ 		dev->link->ap->target_lpm_policy = ATA_LPM_MAX_POWER;
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -210,6 +210,7 @@ enum {
+ 	ATA_FLAG_SLAVE_POSS	= (1 << 0), /* host supports slave dev */
+ 					    /* (doesn't imply presence) */
+ 	ATA_FLAG_SATA		= (1 << 1),
++	ATA_FLAG_NO_LPM		= (1 << 2), /* host not happy with LPM */
+ 	ATA_FLAG_NO_LOG_PAGE	= (1 << 5), /* do not issue log page read */
+ 	ATA_FLAG_NO_ATAPI	= (1 << 6), /* No ATAPI support */
+ 	ATA_FLAG_PIO_DMA	= (1 << 7), /* PIO cmds via DMA */
 
 
