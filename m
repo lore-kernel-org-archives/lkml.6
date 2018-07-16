@@ -2,125 +2,99 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7CBECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E55ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB82920647
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E98520647
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:30:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F3ildcLq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB82920647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5LxdXoh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E98520647
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729854AbeGPP5q (ORCPT
+        id S1730301AbeGPP6B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:57:46 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:37482 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727610AbeGPP5o (ORCPT
+        Mon, 16 Jul 2018 11:58:01 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36750 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbeGPP6B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:57:44 -0400
-Received: by mail-it0-f67.google.com with SMTP id p17-v6so21951207itc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 08:29:48 -0700 (PDT)
+        Mon, 16 Jul 2018 11:58:01 -0400
+Received: by mail-pg1-f193.google.com with SMTP id m19-v6so7643251pgv.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 08:30:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zIenD44khob/6JStWiqv5fGyAtotdvdBsyMlyX7RnNY=;
-        b=F3ildcLqUk7r2C0OF/vmYIUd7OQVZLIaznrWdvNSoHsAwfzTFDpEQa6pXFz7jQ7JNp
-         QfRfPgWNTYC9CK7vs1zKXzkhjwCIqb5GfM6laRP1YuziQyy473rgAjlv7mIglbjqGTbn
-         DM1f6ouQqN9fbgdRaZO3c+EPwRaKDzKb4qRm0jbUr91rjBRklEU3Pb55K6aHPinHo+7s
-         2bC42kp7kOht6MrRqNjrZyaxTKweVhKx+WymVlZGsJgfWbHTUPNCxy8paS74Q2gdroPC
-         ss9EK5Tv/TIkM+FuTjH6zJxh7tSi7PCjC7U4G0PFOZ8R8CwpiNnQSo4T7lhNnRghx24e
-         QS1Q==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FU0/wP1FdFcZWaM6Lp9dasTfWT6u/MLrRj91pF40vOE=;
+        b=V5LxdXohDcq/0b4TwQuV0LvAZ7bJJIJk46NxAeYmaRQdBvyoQfLGAMfDrgWr0QkUyT
+         qiUTfdoDvOVaO1GV0z7omgF0QrpBTqmfErfG45/aq2o5TYbLaVlXTVvGFZkCxZSBxnck
+         p9hLvQI0mJPF+ZafpK5MYxZ42PzABC1RsIplYd2ACtroFfSFPPz+8tPnklaOiQLvQ2F9
+         SZlr79LKQlVdbBWhxmHxBSoEtM0iyH+eBa7juITsorlvtP8ZFpm7txg+4B5Cj4FIu7r9
+         eDiPgId9OOy3ef5M4yHUEpNzA28A8JNjde6A3kHVUpFBqNkLSusXzEBa8H6SPoy8jQfa
+         7/Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zIenD44khob/6JStWiqv5fGyAtotdvdBsyMlyX7RnNY=;
-        b=QQUj7zYNpS3QE6kFVvc1do6rf5fC3WsWIafDnvcPmuYC+2hcDI8KSnq6icUqwtaxVl
-         5PRkLRRA7xRWD51tL3T3SlLuf30BheD1k315zScpMQp0iNnMvZEtkaFR2VZnVYKMD5sj
-         A16J3r7sJfxcIN8MBR4HHaXsAlYp8PAlt2sgnE2KF3OdF7noMR4VYnFU/4GKGkSPBhM7
-         Wj27r/zWw+Q1VSEMT0dQW4AcDCA4wGhnyulcTSkuMu+TLUmqYkLI4hmmauKwD9Vc8zYz
-         PL6PG7aNuJUWpV3fn6/AZouvMvjIQRnd/ggavG5++vjcsJVix1p2Og6vxkCx8L8hwmgG
-         I1fw==
-X-Gm-Message-State: AOUpUlG9k/wjMFiDWdfPH96fleXm4F09E7BowZh6T2THDMUD3ItQtzLN
-        g5v5MBSmvoOYYa12drKfqH4MRjX1ZhXfocRFNvikxQ==
-X-Google-Smtp-Source: AAOMgpdootPMIc9x7xz+7wibuc7XB8S63OqmNml9KVyL3p+5nuCy2d/GYOH9MXvXDJR9KGcT/iXlAUBEeZeQ5e0fRIM=
-X-Received: by 2002:a24:130c:: with SMTP id 12-v6mr13601410itz.35.1531754988095;
- Mon, 16 Jul 2018 08:29:48 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FU0/wP1FdFcZWaM6Lp9dasTfWT6u/MLrRj91pF40vOE=;
+        b=nfVvV9VEUgEvCoJgmfIKvlw40QsVME5/BNGl81leNIaMe9LPxwiaLloSa5+J85GgaS
+         NMVJjTOtVKlAXaspDruxDqSS6hkM3khN2cpy333hNKhlyBBzr+n4EynOsduMiqQjXEuD
+         Kdn83nqvFDfII7VgoAptefrrvW0YemhuKJKzx60sMXlgYAHPus8UzW38il9EiUwbyrnM
+         O8deWjzGBlowUJs9Xo8Hfj8a67pKDvsl4PvUOsJhlMgz5xqiEVpueRaSoOWgL5TP8KHN
+         kdA4ZZ7SnnPtDeFPufaXt2eMczntHiKqsIc/LHDYa3ftWqYrNn0M/3kYi8dYZij5yWen
+         3JUw==
+X-Gm-Message-State: AOUpUlH6rrnqmgfLukgT9SXZ7V35FvhtZRyg2/90ta2EdDT2nwaWLrM0
+        F3ZhznsEIEugR7ULddQ9C3rgn6jZ
+X-Google-Smtp-Source: AAOMgpcGBUNRwV9IbsPGei1Itj4ZPXeQmXVXfSf7JVTbiCiOPbueBTtaVpx1BkPegAiHIWlf9TSZdw==
+X-Received: by 2002:a63:3686:: with SMTP id d128-v6mr15473088pga.18.1531755005563;
+        Mon, 16 Jul 2018 08:30:05 -0700 (PDT)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id p5-v6sm38186220pfn.57.2018.07.16.08.30.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 08:30:05 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 20:59:59 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: comedi: comedi_internal.h: Avoid '(' at the end
+ of line
+Message-ID: <20180716152957.GA16348@nishad>
+References: <20180715064914.GA5081@nishad>
+ <20180715072712.GA15766@kroah.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:ba01:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 08:29:47
- -0700 (PDT)
-In-Reply-To: <20180714181815.GA199777@joelaf.mtv.corp.google.com>
-References: <951478560.1636.1531083278064.JavaMail.zimbra@efficios.com>
- <20180709210944.quulirpmv3ydytk7@ast-mbp.dhcp.thefacebook.com>
- <CAKOZuet+pjqM8zghmXYdA9f10bsYOzMuSQhSYXG5wbrNmFEqpQ@mail.gmail.com>
- <20180709221005.sintsjkle4xpkcyk@ast-mbp.dhcp.thefacebook.com>
- <CAKOZuetaKNaJVWcu10ZcsiXiK4X+-2z3eFaz1pF8DSxdQ_mEnQ@mail.gmail.com>
- <20180709223439.uc2a6hyic35inwye@ast-mbp.dhcp.thefacebook.com>
- <CAMOXUJ=QmkjTqbWqPRxb=R7f6EpsHBkDQ4MhrSD=VPiDTj7RiA@mail.gmail.com>
- <20180710235252.mioihpgtu4n3syaq@ast-mbp.dhcp.thefacebook.com>
- <CAKD1Yr07uxpd95oGAE7QxfrS_qWuiLcUmy7nsEsC0CzVhV2-rg@mail.gmail.com>
- <20180711034017.o2ehf27tv5hpl3td@ast-mbp.dhcp.thefacebook.com> <20180714181815.GA199777@joelaf.mtv.corp.google.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 16 Jul 2018 08:29:47 -0700
-Message-ID: <CAKOZuetwbE2HSa7vfVoVYwSqfz0ZcNWO93Y=pcJ-q4uEWHSuNg@mail.gmail.com>
-Subject: Re: [RFC] Add BPF_SYNCHRONIZE bpf(2) command
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Lorenzo Colitti <lorenzo@google.com>,
-        Chenbo Feng <fengc@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Alexei Starovoitov <ast@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180715072712.GA15766@kroah.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 11:18 AM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> On Tue, Jul 10, 2018 at 08:40:19PM -0700, Alexei Starovoitov wrote:
-> [..]
->> > The kernel program might do:
->> >
->> > =====
->> > const int current_map_key = 1;
->> > void *current_map = bpf_map_lookup_elem(outer_map, &current_map_key);
->> >
->> > int stats_key = 42;
->> > uint64_t *stats_value = bpf_map_lookup_elem(current_map, &stats_key);
->> > __sync_fetch_and_add(&stats_value, 1);
->> > =====
->> >
->> > If a userspace does:
->> >
->> > 1. Write new fd to outer_map[1].
->> > 2. Call BPF_SYNC_MAP_ACCESS.
->> > 3. Start deleting everything in the old map.
->> >
->> > How can we guarantee that the __sync_fetch_and_add will not add to the
->> > old map?
->>
->> without any changes to the kernel sys_membarrier will work.
->> And that's what folks use already.
->> BPF_SYNC_MAP_ACCESS implemented via synchronize_rcu() will work
->> as well whether in the current implementation where rcu_lock/unlock
->> is done outside of the program and in the future when
->> rcu_lock/unlock are called by the program itself.
->
-> Cool Alexei and Lorenzo, sounds great to me. Daniel want to send a follow up
-> patch with BPF_SYNC_MAP_ACCESS changes then?
+On Sun, Jul 15, 2018 at 09:27:12AM +0200, Greg Kroah-Hartman wrote:
+> On Sun, Jul 15, 2018 at 12:19:18PM +0530, Nishad Kamdar wrote:
+> > Bring function argument 'struct comedi_subdevice *s' to the
+> > previous line to avoid ending the line with open parenthesis.
+> > Issue found by checkpatch.
+> 
+> But now the code has another checkpatch violation, too long of a line.
+> You can go back and forth submitting the same change over and over for
+> forever :)
+> 
+> Let's just leave this as-is, thanks.
+> 
+> greg k-h
 
-Will do. Mind if I just mine this thread for the doc comment?
+Ok noted. Thanks for reviewing.
+
+regards,
+nishad kamdar
