@@ -2,131 +2,117 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA880ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF455ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2849208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74BC3208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:03:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Az0VIVQZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2849208E8
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S/sC4JUZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74BC3208E8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbeGPVaz (ORCPT
+        id S1730362AbeGPVc2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:30:55 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:39182 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728415AbeGPVay (ORCPT
+        Mon, 16 Jul 2018 17:32:28 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:55475 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729601AbeGPVc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:30:54 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h10-v6so33257554wre.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:01:44 -0700 (PDT)
+        Mon, 16 Jul 2018 17:32:28 -0400
+Received: by mail-wm0-f68.google.com with SMTP id f21-v6so4275214wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:03:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EZNJr0eTyWX+0EudR48uBYNiRNF51MCqerQkoqYyZ9E=;
-        b=Az0VIVQZfEq0jkiaBA1HAotzCTuvNYQ0nrDN9rLp+TJ+fw0+XtwJJB95tOICtWEwu/
-         rQoEy00IDem9WBMYJCPLcrNEQ69sKoeSXg3oSuSXSqOmgFHKzFMUCAhRZxa9/YeQA7UR
-         +VfW9tJ4uwtJKMPx3fE0etl0NbAyGaWzCrjr8=
+        h=from:to:cc:subject:date:message-id;
+        bh=XtqqCN2m3xu2+xIK5UM2oKwxj9zAXPr6CmFB6iF0ET0=;
+        b=S/sC4JUZWZNQryEq7Tf2YQbA7CF0BR7N6sSfHLD2XJomM9ML4dbQG7N6CpF19WEnLZ
+         JymdPNbBfOmRQydOR5udU5U0KHVDYMAMEXN4a+9xpjJAo179Km05l1IENAGz0RlHDyey
+         VVvw/KQ/dvFW6FvQ65H5a6cOXhkPhEgG7wYgA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EZNJr0eTyWX+0EudR48uBYNiRNF51MCqerQkoqYyZ9E=;
-        b=cOPk/PT1vVrj2Nq+TBOvN3djQICOW32r+RUhiGJ0g5lq4U3vZ+0sF8jlVlQHHwKsI/
-         OESrBWlmPe28IB97womqFt8A2oxyAl7FdB/ZLIynMGPpnLvmGo5ZUYMgLeJgxTNkedid
-         BWnJrEAyN256cZHbJHQ/VcyKyZq+2OPCComzZ4FFl0H5OuIptChxLvtkZr5Lsgf+G8uY
-         6kNmyDPKbJO5uWCGbS5tXhiumlDGBfr8fAqJbnO9mqg1IEx75L/abon6INhY3mokbROd
-         d/xHBGKD5MewHmXzJFrS/38P61UN5ngWiOMeE0Gi7ZQowdc0jj1Pv6CNyiAy9jD3ITFy
-         bcfA==
-X-Gm-Message-State: AOUpUlFsa6PyPjo7E3tRz/vXcjJzbHPxnJd955GyENppDWTEHvX58hmp
-        zqSHOBzqPpYzI5ENqo9ot18L0U3n6fhGKHo3dACwVg==
-X-Google-Smtp-Source: AAOMgpeuzPPpqNziXQIOKY9q0N3HqAH/hsypb3oMxci3el6ZhnS9x2X5LvDqaX53ASJC1HBqXuedkjnJCPs3FhOAcKA=
-X-Received: by 2002:a5d:4b50:: with SMTP id w16-v6mr13034087wrs.87.1531774902106;
- Mon, 16 Jul 2018 14:01:42 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 14:01:41
- -0700 (PDT)
-In-Reply-To: <1531773650-30424-1-git-send-email-mojha@codeaurora.org>
-References: <1531773650-30424-1-git-send-email-mojha@codeaurora.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 16 Jul 2018 14:01:41 -0700
-Message-ID: <CALAqxLVMaU4FJ1xu78ow=FwSbmQObw0-HGBUTpgr27vjKTOqrw@mail.gmail.com>
-Subject: Re: [PATCH v4] time: Fix extra sleeptime injection when suspend fails
-To:     Mukesh Ojha <mojha@codeaurora.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>, gkohli@codeaurora.org,
-        cpandya@codeaurora.org, neeraju@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XtqqCN2m3xu2+xIK5UM2oKwxj9zAXPr6CmFB6iF0ET0=;
+        b=Crxbc7ozjTAnRJ4Ck8JhId+fxw055tRs5hZIF6ZzHS9T0O9TvNJPsX5jIftnANSSeT
+         Rr/xD4Km1EAiLGWJKDch9aEz4AI22Ji3rKDxmU5WqYIjgvNCdQg2Rz0bBOdOwNZRCjfH
+         HkKCbXe66H31pLc5ucwE/TgrWQ5F0Igzdq0X6tcSMQzQvqY9prUOyjTXy5ZVSttWuiAo
+         DkYidQ+DdtysAXzAt1qmwWGQUJFrCk7/GuApDy7pwn5PDkosGRaJAzNZQ6IseUqX0F4l
+         bqzlqXAlrPRS12bYbpLgTzOR3v0tZBxz8FDUqr/X7yQmSV4QpwtKbwJf/hdtoDgqDKvK
+         xYJQ==
+X-Gm-Message-State: AOUpUlGO1qF7KKzZapwmtE/K9JRYH1AtmQyfA/ZYdkdPXK0ju744ncnM
+        8V+2grm8VkW3aq8YrlWq8RCOjw==
+X-Google-Smtp-Source: AAOMgpe1r72w0fHi5KLe2PHYwWQebahpDRj3TY9tbmn0Uuk/vQspoBFxh851a5ni3+31LBODUu7/yw==
+X-Received: by 2002:a1c:d892:: with SMTP id p140-v6mr2649336wmg.76.1531774996308;
+        Mon, 16 Jul 2018 14:03:16 -0700 (PDT)
+Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id u135-v6sm15127923wmf.2.2018.07.16.14.03.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 14:03:15 -0700 (PDT)
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@linaro.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: [PATCH] backlight: pwm_bl: Fix uninitialized variable
+Date:   Mon, 16 Jul 2018 22:02:41 +0100
+Message-Id: <20180716210241.9457-1-daniel.thompson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 1:40 PM, Mukesh Ojha <mojha@codeaurora.org> wrote:
-> Currently, there exists a corner case assuming when there is
-> only one clocksource e.g RTC, and system failed to go to
-> suspend mode. While resume rtc_resume() injects the sleeptime
-> as timekeeping_rtc_skipresume() returned 'false' (default value
-> of sleeptime_injected) due to which we can see mismatch in
-> timestamps.
->
-> This issue can also come in a system where more than one
-> clocksource are present and very first suspend fails.
->
-> Fix this by handling the sleeptime_injected flag properly.
->
-> Success case:
-> ------------
->                                         {sleeptime_injected=false}
-> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() =>
->
-> (sleeptime injected)
->  rtc_resume()
->
-> Failure case:
-> ------------
->          {failure in sleep path} {sleeptime_injected=false}
-> rtc_suspend()     =>          rtc_resume()
->
-> sleeptime injected again which was not required as the suspend failed)
->
-> Originally-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-> ---
-> Changes in V4:
->  * Changes as suggested by John
->     - Changed the variable name from sleeptime_injected to suspend_timing_needed
->     - Changed the boolean logic.
+Currently, if the DT does not define num-interpolated-steps then
+num_steps is undefined and the interpolation code will deploy randomly.
+Fix this.
 
-Thanks so much for reworking and resending this again!
+Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
+brightness-levels")
+Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
+ drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 9ee4c1b735b2..e3c22b79fbcd 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct device *dev,
+ 		 * interpolation between each of the values of brightness levels
+ 		 * and creates a new pre-computed table.
+ 		 */
+-		of_property_read_u32(node, "num-interpolated-steps",
+-				     &num_steps);
+-
+-		/*
+-		 * Make sure that there is at least two entries in the
+-		 * brightness-levels table, otherwise we can't interpolate
+-		 * between two points.
+-		 */
+-		if (num_steps) {
++		if ((of_property_read_u32(node, "num-interpolated-steps",
++					  &num_steps) == 0) && num_steps) {
++			/*
++			 * Make sure that there is at least two entries in the
++			 * brightness-levels table, otherwise we can't
++			 * interpolate
++			 * between two points.
++			 */
+ 			if (data->max_brightness < 2) {
+ 				dev_err(dev, "can't interpolate\n");
+ 				return -EINVAL;
+--
+2.17.1
 
-> diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-> index d37588f..ee455cc 100644
-> --- a/drivers/rtc/class.c
-> +++ b/drivers/rtc/class.c
-> @@ -102,7 +102,7 @@ static int rtc_resume(struct device *dev)
->         struct timespec64       sleep_time;
->         int err;
->
-> -       if (timekeeping_rtc_skipresume())
-> +       if (!timekeeping_rtc_skipresume())
-
-
-Hrm... So I'd have instead inverted the logic *in*
-timekeeping_rtc_skipresume(), rather then here,  but this looks to be
-close enough and I can fix that bit up.
-
-Can you confirm you've validated this version of the patch resolves
-the issue you reported?
-
-thanks
--john
