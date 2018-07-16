@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEA0ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B1CECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F0A6206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0A6206B7
+	by mail.kernel.org (Postfix) with ESMTP id E2DA5206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DA5206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388829AbeGPIIn (ORCPT
+        id S2388842AbeGPIIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:08:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47834 "EHLO
+        Mon, 16 Jul 2018 04:08:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47840 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIIm (ORCPT
+        with ESMTP id S1730161AbeGPIIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:08:42 -0400
+        Mon, 16 Jul 2018 04:08:45 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A92DCA0;
-        Mon, 16 Jul 2018 07:42:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B86DAC03;
+        Mon, 16 Jul 2018 07:42:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: [PATCH 4.9 06/32] ibmasm: dont write out of bounds in read handler
-Date:   Mon, 16 Jul 2018 09:36:14 +0200
-Message-Id: <20180716073505.229291390@linuxfoundation.org>
+        stable@vger.kernel.org,
+        David Butterfield <david.butterfield@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.9 07/32] ata: Fix ZBC_OUT command block check
+Date:   Mon, 16 Jul 2018 09:36:15 +0200
+Message-Id: <20180716073505.333504299@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -49,63 +52,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit a0341fc1981a950c1e902ab901e98f60e0e243f3 upstream.
+commit b320a0a9f23c98f21631eb27bcbbca91c79b1c6e upstream.
 
-This read handler had a lot of custom logic and wrote outside the bounds of
-the provided buffer. This could lead to kernel and userspace memory
-corruption. Just use simple_read_from_buffer() with a stack buffer.
+The block (LBA) specified must not exceed the last addressable LBA,
+which is dev->nr_sectors - 1. So fix the correct check is
+"if (block >= dev->n_sectors)" and not "if (block > dev->n_sectords)".
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Additionally, the asc/ascq to return for an LBA that is not a zone start
+LBA should be ILLEGAL REQUEST, regardless if the bad LBA is out of
+range.
+
+Reported-by: David Butterfield <david.butterfield@wdc.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/ibmasm/ibmasmfs.c |   27 +++------------------------
- 1 file changed, 3 insertions(+), 24 deletions(-)
+ drivers/ata/libata-scsi.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
---- a/drivers/misc/ibmasm/ibmasmfs.c
-+++ b/drivers/misc/ibmasm/ibmasmfs.c
-@@ -507,35 +507,14 @@ static int remote_settings_file_close(st
- static ssize_t remote_settings_file_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
- {
- 	void __iomem *address = (void __iomem *)file->private_data;
--	unsigned char *page;
--	int retval;
- 	int len = 0;
- 	unsigned int value;
--
--	if (*offset < 0)
--		return -EINVAL;
--	if (count == 0 || count > 1024)
--		return 0;
--	if (*offset != 0)
--		return 0;
--
--	page = (unsigned char *)__get_free_page(GFP_KERNEL);
--	if (!page)
--		return -ENOMEM;
-+	char lbuf[20];
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -3772,8 +3772,13 @@ static unsigned int ata_scsi_zbc_out_xla
+ 		 */
+ 		goto invalid_param_len;
+ 	}
+-	if (block > dev->n_sectors)
+-		goto out_of_range;
++	if (block >= dev->n_sectors) {
++		/*
++		 * Block must be a valid zone ID (a zone start LBA).
++		 */
++		fp = 2;
++		goto invalid_fld;
++	}
  
- 	value = readl(address);
--	len = sprintf(page, "%d\n", value);
--
--	if (copy_to_user(buf, page, len)) {
--		retval = -EFAULT;
--		goto exit;
--	}
--	*offset += len;
--	retval = len;
-+	len = snprintf(lbuf, sizeof(lbuf), "%d\n", value);
+ 	all = cdb[14] & 0x1;
  
--exit:
--	free_page((unsigned long)page);
--	return retval;
-+	return simple_read_from_buffer(buf, count, offset, lbuf, len);
- }
- 
- static ssize_t remote_settings_file_write(struct file *file, const char __user *ubuff, size_t count, loff_t *offset)
+@@ -3804,10 +3809,6 @@ static unsigned int ata_scsi_zbc_out_xla
+  invalid_fld:
+ 	ata_scsi_set_invalid_field(qc->dev, scmd, fp, 0xff);
+ 	return 1;
+- out_of_range:
+-	/* "Logical Block Address out of range" */
+-	ata_scsi_set_sense(qc->dev, scmd, ILLEGAL_REQUEST, 0x21, 0x00);
+-	return 1;
+ invalid_param_len:
+ 	/* "Parameter list length error" */
+ 	ata_scsi_set_sense(qc->dev, scmd, ILLEGAL_REQUEST, 0x1a, 0x0);
 
 
