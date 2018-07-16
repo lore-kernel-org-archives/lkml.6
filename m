@@ -2,108 +2,161 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52404ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D71ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE2420844
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CACE220844
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:21:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YibVELlP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE2420844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Ta2D0CGU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CACE220844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730810AbeGPMr2 (ORCPT
+        id S1730818AbeGPMsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:47:28 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37723 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729865AbeGPMr1 (ORCPT
+        Mon, 16 Jul 2018 08:48:46 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:37182 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729583AbeGPMsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:47:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id q10-v6so31679548wrd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 05:20:16 -0700 (PDT)
+        Mon, 16 Jul 2018 08:48:46 -0400
+Received: by mail-ed1-f66.google.com with SMTP id b10-v6so2594386eds.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 05:21:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=T/12huL75C8/ffmcGlYd7MBgq8LuvYKvjxW8yRl8lDU=;
-        b=YibVELlP+gZJtA8oLj15xrdlylrmNYiuV/Qc+Rx0RpR49HbXTJJ444hqdnnYRKLdT7
-         AggL40VBAGJSlYW47BkFko1nNCpBPMBbGbQOZz8T1eiPcDse21knGSeAtOOqQZ29c1O7
-         QsJ4SKLQ3oTXRcDE3tV/FHi1AHSFIkw0yz66E=
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JkRzUpVSbLz8pSh84iRWw/9lE0/Y3iCMZEHP5BGx5XI=;
+        b=Ta2D0CGUytyb9IcWvSkq+AXvnm6UBKNsyoq/Ra4/DgAarMRScCbeHwVseXAC1ZNEeZ
+         fsim27NwuvV+myYmQ/PI/uLdiaXLfVlXerWwHkSxNEt14u2s5xO47zFIj5n1sUKtcV9N
+         ZsKqaLRN8LR6+DTkTP9R1dz1uuUojQUI7vGuY4elX27hgb0xuVp2AZLFtuWXN2Skrut6
+         afTYhKnfnAwRcZu/ZiDVzTqWaMrI3CGuvNnAfXL3GjZbvblc0rKmiAo/uiwFUbzdwjOJ
+         HZsBV9Oi7T2ylq7hJfnyM4UcjOH8Guk+H7TIrscJrMV8OwCT3mGSB8gl/U2F8kRrRZke
+         Ll9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=T/12huL75C8/ffmcGlYd7MBgq8LuvYKvjxW8yRl8lDU=;
-        b=XvPcFBdH/P0aDAXDyPBYkof2/IeItCGz67q7lFovFS2r7pnizyXdMY9Y5+7J/xOScz
-         IbBA7C4PnFebP6gpNLVabFmZ6px1Ym1IhJ1a66slY1E0U9VLAiaKCtzz2QWcGifDkxfr
-         4nmZUthyTrAXfNJYwxNMRLhji1WP0o/9h2LlsBJslxHupXuqSaRtD7tM0BhLmJ54vkII
-         dfEOJIVsQHAaO+XgszCg940sZDbStEUtSssenL/reDZtk+ISyDVpNugcrnjEMFVG+thZ
-         l6b9/aVRsS8m0FvI7UHNfb9EiCQt/eC6Y3QzxQiZloPqSXdBvDMVS7qVqsDMvV5DSK5R
-         7rXA==
-X-Gm-Message-State: AOUpUlHJDMrljTigtF5pS11VS3hHq/egAgFhUlVWn5sNi3ZlfWVsxdcd
-        rfc3BD8LQMy0A/1fJzK8/oVX7A==
-X-Google-Smtp-Source: AAOMgpcz7SVDG+OaGl4ydBnh+wLUBDULxaGbG9QNxo3sgAA/cCT3MwLCnubTouXn14lEyJIittA1vg==
-X-Received: by 2002:adf:f585:: with SMTP id f5-v6mr8083830wro.59.1531743615494;
-        Mon, 16 Jul 2018 05:20:15 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id 79-v6sm10833372wmf.5.2018.07.16.05.20.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JkRzUpVSbLz8pSh84iRWw/9lE0/Y3iCMZEHP5BGx5XI=;
+        b=CqLTlZJs3mD+JWQZsN9Y53h+jLcEvzXYYTmiAM9nN0Oap6SuJumEc1tp1af17hF03W
+         k1KE6Y7cafXoVTEwZjN08Frdek404DLDzO2GYS+2b3E+2c3uLAk6zmdFacF75BL/piV8
+         m2qRC1dwHDQsF2yeK9qEZJPc9nHOtzb5PHztXdG6qHXIYZY7YNYDambtF1ujnEqjycJS
+         jQRBK02beWJul/bN8CKvy/F1YfEFsXWkzvNIGwYXrLHirv0wqCc3gYFW9p4lztR9pDOv
+         b1GtmtTxM88Arvq5HEXBskyEcmWD/JPYoX2XbDV2OTrjNg/un0QE+IjqrMetiTnAI2ce
+         fdvQ==
+X-Gm-Message-State: AOUpUlEpYYICFWu6EemJ+PNt5Abz5BVVtVhGeRsD+DN9MiknBT/XIf0U
+        14qUGoScib9gjikfF8/HIoQVkZUsS8c=
+X-Google-Smtp-Source: AAOMgpcFgYt7PHwbJTIbBCfHF2IzRE6hNQ55De3LR9jPPfM/21+NNsqbO82wG295WM2AI9c/3699gQ==
+X-Received: by 2002:a50:da01:: with SMTP id z1-v6mr17330336edj.62.1531743692737;
+        Mon, 16 Jul 2018 05:21:32 -0700 (PDT)
+Received: from maco.fcp3.net (a83-162-234-235.adsl.xs4all.nl. [83.162.234.235])
+        by smtp.gmail.com with ESMTPSA id a9-v6sm4635471edi.26.2018.07.16.05.21.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 05:20:14 -0700 (PDT)
-Subject: Re: [PATCH v4 01/18] nvmem: add support for cell lookups
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
+        Mon, 16 Jul 2018 05:21:31 -0700 (PDT)
+From:   Martijn Coenen <maco@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Martijn Coenen <maco@android.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180629094039.7543-1-brgl@bgdev.pl>
- <20180629094039.7543-2-brgl@bgdev.pl>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <c460e73f-bfc4-abc6-e61c-26290632a3ab@linaro.org>
-Date:   Mon, 16 Jul 2018 13:20:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <20180629094039.7543-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Oliver Neukum <oneukum@suse.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jessica Yu <jeyu@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-usb@vger.kernel.org,
+        usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org,
+        linux-arch@vger.kernel.org, maco@google.com, sspatil@google.com,
+        malchev@google.com, joelaf@google.com
+Subject: [PATCH 0/6] Symbol namespaces
+Date:   Mon, 16 Jul 2018 14:21:19 +0200
+Message-Id: <20180716122125.175792-1-maco@android.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As of Linux 4.17, there are more than 30000 exported symbols
+in the kernel. There seems to be some consensus amongst
+kernel devs that the export surface is too large, and hard
+to reason about.
 
+Generally, these symbols fall in one of these categories:
+1) Symbols actually meant for drivers
+2) Symbols that are only exported because functionality is
+   split over multiple modules, yet they really shouldn't
+   be used by modules outside of their own subsystem
+3) Symbols really only meant for in-tree use
 
-On 29/06/18 10:40, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski<bgolaszewski@baylibre.com>
-> 
-> We can currently only register nvmem cells from device tree or by
-> manually calling nvmem_add_cells(). The latter options however forces
-> users to make sure that the nvmem provider with which the cells are
-> associated is registered before the call.
-> 
-> This patch proposes a new solution inspired by other frameworks that
-> offer resource lookups (GPIO, PWM etc.). It adds functions that allow
-> machine code to register nvmem lookup which are later lazily used to
-> add corresponding nvmem cells and remove them if no longer needed.
-> 
-> Signed-off-by: Bartosz Golaszewski<bgolaszewski@baylibre.com>
+When module developers try to upstream their code, it
+regularly turns out that they are using exported symbols
+that they really shouldn't be using. This problem is even
+bigger for drivers that are currently out-of-tree, which
+may be using many symbols that they shouldn't be using,
+and that break when those symbols are removed or modified.
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+This patch allows subsystem maintainers to partition their
+exported symbols into separate namespaces, and module
+authors to import such namespaces only when needed.
+
+This allows subsystem maintainers to more easily limit
+availability of these namespaced symbols to other parts of
+the kernel. It can also be used to partition the set of
+exported symbols for documentation purposes; for example,
+a set of symbols that is really only used for debugging
+could be in a "SUBSYSTEM_DEBUG" namespace.
+
+Martijn Coenen (6):
+  export: explicitly align struct kernel_symbol.
+  module: add support for symbol namespaces.
+  modpost: add support for checking symbol namespaces.
+  modpost: add support for generating namespace dependencies.
+  scripts: Coccinelle script for namespace dependencies.
+  RFC: USB: storage: move symbols into USB_STORAGE namespace.
+
+ Makefile                            |  11 +++
+ arch/m68k/include/asm/export.h      |   1 -
+ arch/x86/include/asm/Kbuild         |   1 +
+ arch/x86/include/asm/export.h       |   5 --
+ drivers/usb/storage/alauda.c        |   1 +
+ drivers/usb/storage/cypress_atacb.c |   1 +
+ drivers/usb/storage/datafab.c       |   1 +
+ drivers/usb/storage/ene_ub6250.c    |   1 +
+ drivers/usb/storage/freecom.c       |   1 +
+ drivers/usb/storage/isd200.c        |   1 +
+ drivers/usb/storage/jumpshot.c      |   1 +
+ drivers/usb/storage/karma.c         |   1 +
+ drivers/usb/storage/onetouch.c      |   1 +
+ drivers/usb/storage/realtek_cr.c    |   1 +
+ drivers/usb/storage/sddr09.c        |   1 +
+ drivers/usb/storage/sddr55.c        |   1 +
+ drivers/usb/storage/shuttle_usbat.c |   1 +
+ drivers/usb/storage/uas.c           |   1 +
+ drivers/usb/storage/usb.c           |  20 ++---
+ include/asm-generic/export.h        |   2 +-
+ include/linux/export.h              |  84 ++++++++++++++-----
+ include/linux/module.h              |  13 +++
+ kernel/module.c                     |  79 ++++++++++++++++++
+ scripts/Makefile.modpost            |   4 +-
+ scripts/add_namespace.cocci         |  19 +++++
+ scripts/mod/modpost.c               | 120 ++++++++++++++++++++++++++--
+ scripts/mod/modpost.h               |   9 +++
+ scripts/nsdeps                      |  41 ++++++++++
+ 28 files changed, 379 insertions(+), 44 deletions(-)
+ delete mode 100644 arch/x86/include/asm/export.h
+ create mode 100644 scripts/add_namespace.cocci
+ create mode 100644 scripts/nsdeps
+
+-- 
+2.18.0.203.gfac676dfb9-goog
+
