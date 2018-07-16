@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 268EBECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5292AECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9014206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9014206B7
+	by mail.kernel.org (Postfix) with ESMTP id 1A61F206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A61F206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388266AbeGPIGj (ORCPT
+        id S2388277AbeGPIGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:06:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47368 "EHLO
+        Mon, 16 Jul 2018 04:06:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47376 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbeGPIGi (ORCPT
+        with ESMTP id S1728440AbeGPIGl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:06:38 -0400
+        Mon, 16 Jul 2018 04:06:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8F8E4CA4;
-        Mon, 16 Jul 2018 07:40:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CBE3CA4;
+        Mon, 16 Jul 2018 07:40:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Butterfield <david.butterfield@wdc.com>,
         Damien Le Moal <damien.lemoal@wdc.com>,
         Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4.14 11/54] ata: Fix ZBC_OUT command block check
-Date:   Mon, 16 Jul 2018 09:35:08 +0200
-Message-Id: <20180716073452.933535174@linuxfoundation.org>
+Subject: [PATCH 4.14 12/54] ata: Fix ZBC_OUT all bit handling
+Date:   Mon, 16 Jul 2018 09:35:09 +0200
+Message-Id: <20180716073453.107237079@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -54,15 +54,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit b320a0a9f23c98f21631eb27bcbbca91c79b1c6e upstream.
+commit 6edf1d4cb0acde3a0a5dac849f33031bd7abb7b1 upstream.
 
-The block (LBA) specified must not exceed the last addressable LBA,
-which is dev->nr_sectors - 1. So fix the correct check is
-"if (block >= dev->n_sectors)" and not "if (block > dev->n_sectords)".
-
-Additionally, the asc/ascq to return for an LBA that is not a zone start
-LBA should be ILLEGAL REQUEST, regardless if the bad LBA is out of
-range.
+If the ALL bit is set in the ZBC_OUT command, the command zone ID field
+(block) should be ignored.
 
 Reported-by: David Butterfield <david.butterfield@wdc.com>
 Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
@@ -71,37 +66,35 @@ Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/ata/libata-scsi.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/ata/libata-scsi.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 --- a/drivers/ata/libata-scsi.c
 +++ b/drivers/ata/libata-scsi.c
-@@ -3801,8 +3801,13 @@ static unsigned int ata_scsi_zbc_out_xla
+@@ -3801,7 +3801,14 @@ static unsigned int ata_scsi_zbc_out_xla
  		 */
  		goto invalid_param_len;
  	}
--	if (block > dev->n_sectors)
--		goto out_of_range;
-+	if (block >= dev->n_sectors) {
+-	if (block >= dev->n_sectors) {
++
++	all = cdb[14] & 0x1;
++	if (all) {
 +		/*
-+		 * Block must be a valid zone ID (a zone start LBA).
++		 * Ignore the block address (zone ID) as defined by ZBC.
 +		 */
-+		fp = 2;
-+		goto invalid_fld;
-+	}
++		block = 0;
++	} else if (block >= dev->n_sectors) {
+ 		/*
+ 		 * Block must be a valid zone ID (a zone start LBA).
+ 		 */
+@@ -3809,8 +3816,6 @@ static unsigned int ata_scsi_zbc_out_xla
+ 		goto invalid_fld;
+ 	}
  
- 	all = cdb[14] & 0x1;
- 
-@@ -3833,10 +3838,6 @@ static unsigned int ata_scsi_zbc_out_xla
-  invalid_fld:
- 	ata_scsi_set_invalid_field(qc->dev, scmd, fp, 0xff);
- 	return 1;
-- out_of_range:
--	/* "Logical Block Address out of range" */
--	ata_scsi_set_sense(qc->dev, scmd, ILLEGAL_REQUEST, 0x21, 0x00);
--	return 1;
- invalid_param_len:
- 	/* "Parameter list length error" */
- 	ata_scsi_set_sense(qc->dev, scmd, ILLEGAL_REQUEST, 0x1a, 0x0);
+-	all = cdb[14] & 0x1;
+-
+ 	if (ata_ncq_enabled(qc->dev) &&
+ 	    ata_fpdma_zac_mgmt_out_supported(qc->dev)) {
+ 		tf->protocol = ATA_PROT_NCQ_NODATA;
 
 
