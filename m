@@ -2,149 +2,143 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E69ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9D9ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFAC520877
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:05:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhC0yavg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFAC520877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2255F208FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:06:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2255F208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbeGPPdp (ORCPT
+        id S1729834AbeGPPeO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:33:45 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43870 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727342AbeGPPdp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:33:45 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b20-v6so4687554edt.10
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 08:05:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zBmkILqKihgkRZVX3+qLNdQ1ZzqWv0eU3DJ/7Ud1jAI=;
-        b=bhC0yavgO7Wqu2SQ1V6wUqicoZPdIYMHCOs2lVRhkXEbkKxqryT7lmO5cX7XL9rJ9h
-         N0kvTYUkKeke7UyLwsu5rWU7xeKOPHxfw1Kas+HTnIZ4XKulkqTAbcxJHA+3A3OJrS6t
-         WQ8v1dkTPwpqvFpYOwVzf4C05f+vA+HLGXjWE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zBmkILqKihgkRZVX3+qLNdQ1ZzqWv0eU3DJ/7Ud1jAI=;
-        b=kaaAk2/vNh5GNA1oTFM56RHDac8hJkVuHFua6onHczZufR3p2qvlHiX/OCX0nD+pwg
-         lB79mlmKugN1qDvUOQYCNY2k8sp3C4+3TqUadlDKZLYsQEha4rGVYKh4j8INHFoNF7BM
-         v5BGw/HoDOJheDNXecNqfQ7yTTLtUnTosrvPXBsTlVySl32DxfvHy+lbO+lAag6sKQDP
-         gHbfBg8ezDIqruUzmS1RHoYWX5R6+2/qMFFGlV6eKwykZG6agax+Z/pICH180ddQrAq5
-         nKHl4vOLis1Yfyrsz8dWgk3UA/N9XU06RLmKAhzFUzuPTFfs5HNksrMji3MBE+rlmOjX
-         DK4g==
-X-Gm-Message-State: AOUpUlH3QlrxmLIlELgNEualNf9/eVPqJLXcdrC5qhyWObwZ+i5JLO7O
-        eAO3/of6/nV3s+3qBiAUdDiqrUUsxYhK5VX2c1t0mQ==
-X-Google-Smtp-Source: AAOMgpe9tTbmZkn2Ksalnm/735OFqHbiig/UgC0rx/wS/i0b3TZpdWWY4DY7C3+MuckQoM7MwYK+1qbVKQx3TqjbXEc=
-X-Received: by 2002:a50:b505:: with SMTP id y5-v6mr17186927edd.195.1531753554294;
- Mon, 16 Jul 2018 08:05:54 -0700 (PDT)
+        Mon, 16 Jul 2018 11:34:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:64084 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727342AbeGPPeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 11:34:14 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5594F3086245;
+        Mon, 16 Jul 2018 15:06:23 +0000 (UTC)
+Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F4DD600C9;
+        Mon, 16 Jul 2018 15:06:21 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 09:06:20 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v6 0/4] Add parameter for disabling ACS redirection for
+ P2P
+Message-ID: <20180716090620.0caa3d79@t450s.home>
+In-Reply-To: <710e15b2-89f8-a658-656f-84492ef78898@ozlabs.ru>
+References: <20180713233158.19528-1-logang@deltatee.com>
+        <710e15b2-89f8-a658-656f-84492ef78898@ozlabs.ru>
 MIME-Version: 1.0
-References: <1531318599-8840-1-git-send-email-suzuki.poulose@arm.com>
- <1531318599-8840-7-git-send-email-suzuki.poulose@arm.com> <20180712205740.GA22128@xps15>
- <cf11b93e-6e57-7309-5364-6c1d00ff8381@arm.com>
-In-Reply-To: <cf11b93e-6e57-7309-5364-6c1d00ff8381@arm.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 16 Jul 2018 09:05:43 -0600
-Message-ID: <CANLsYkzMoU=9JibeuK6dUrK+umxPEuFaYyEStY5h2p=V5ujBUA@mail.gmail.com>
-Subject: Re: [PATCH 6/6] coresight: etm-perf: Add support for ETR backend
-To:     "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        coresight@lists.linaro.org, Robert Walker <robert.walker@arm.com>,
-        Mike Leach <mike.leach@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 16 Jul 2018 15:06:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Jul 2018 at 05:23, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
->
-> On 12/07/18 21:57, Mathieu Poirier wrote:
-> > Hi Suzuki,
-> >
-> > On Wed, Jul 11, 2018 at 03:16:39PM +0100, Suzuki K Poulose wrote:
-> >> Add support for using TMC-ETR as backend for ETM perf tracing.
-> >> We use software double buffering at the moment. i.e, the TMC-ETR
-> >> uses a separate buffer than the perf ring buffer. The data is
-> >> copied to the perf ring buffer once a session completes.
-> >>
-> >> The TMC-ETR would try to match the larger of perf ring buffer
-> >> or the ETR buffer size configured via sysfs, scaling down to
-> >> a minimum limit of 1MB.
-> >>
-> >> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >> ---
-> >>   drivers/hwtracing/coresight/coresight-tmc-etr.c | 265 +++++++++++++++++++++++-
-> >>   drivers/hwtracing/coresight/coresight-tmc.h     |   2 +
-> >>   2 files changed, 265 insertions(+), 2 deletions(-)
->
-> >> +/*
-> >> + * tmc_etr_sync_perf_buffer: Copy the actual trace data from the hardware
-> >> + * buffer to the perf ring buffer.
-> >> + */
-> >> +static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
-> >> +{
-> >> +    long bytes, to_copy;
-> >> +    long pg_idx, pg_offset, src_offset;
-> >> +    unsigned long head = etr_perf->head;
-> >> +    char **dst_pages, *src_buf;
-> >> +    struct etr_buf *etr_buf = etr_perf->etr_buf;
-> >> +
-> >> +    head = PERF_IDX2OFF(etr_perf->head, etr_perf);
-> >
-> > I'm puzzled here.  Since etr_perf->head is set in tmc_etr_set_perf_buffer() to
-> > the value of handle->head, its value is always within the range of the perf ring
->
-> IIUC, the handle->head is not necessarily guaranteed to be within the aux-ring buffer.
+On Mon, 16 Jul 2018 15:01:21 +1000
+Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
 
-I just looked at the ETB code and you are correct.
+> On 14/7/18 9:31 am, Logan Gunthorpe wrote:
+> > Changes since v5:
+> > * Add a quirk to handle the Intel SPT PCH case (as pointed out by Alex)
+> > * Warn in the case that we try to disable ACS redirect on a device
+> >   that doesn't have the ACS capability (also suggested by Alex)
+> > * Collect reviewed-by tag from Alex
+> > * Rebased onto v4.18-rc4 (no conflicts)
+> > 
+> > Changes since v4:
+> > * Fixed a couple documentation mistakes spotted by Randy
+> > 
+> > Changes since v3:
+> > * Removed some of the cruft that was copied from the resource_alignment
+> >   paramater (per Alex)
+> > * A number of docuemntation fixes as noticed by Alex and Willy
+> > 
+> > Changes since v2:
+> > * Rebased onto v4.18-rc1 (no conflicts)
+> > * Minor tweaks to the documentation per Andy
+> > * Removed the "path:" prefix and use the path parsing code
+> >   for simple devices (as it works the same). Per a suggestion from Alex
+> > 
+> > Changes since v1:
+> > * Reworked pci_dev_str_match_path using strrchr as suggested by Alex
+> > * Collected Christian's Acks
+> > 
+> > --
+> > 
+> > Hi,
+> > 
+> > As discussed in our PCI P2PDMA series, we'd like to add a kernel
+> > parameter for selectively disabling ACS redirection for select
+> > bridges. Seeing this turned out to be a small series in itself, we've
+> > decided to send this separately from the P2P work.
+> > 
+> > This series generalizes the code already done for the resource_alignment
+> > option that already exists. The first patch creates a helper function
+> > to match PCI devices against strings based on the code that already
+> > existed in pci_specified_resource_alignment().
+> > 
+> > The second patch expands the new helper to optionally take a path of
+> > PCI devfns. This is to address Alex's renumbering concern when using
+> > simple bus-devfns. The implementation is essentially how he described it and
+> > similar to the Intel VT-d spec (Section 8.3.1).
+> > 
+> > The final patch adds the disable_acs_redir kernel parameter which takes
+> > a list of PCI devices and will disable the ACS P2P Request Redirect,
+> > ACS P2P Completion Redirect and ACS P2P Egress Control bits for the
+> > selected devices. This allows P2P traffic between selected bridges and
+> > seeing it's done at boot, before the IOMMU groups will be created, the
+> > groups will match the security provided by ACS.  
+> 
+> 
+> I am pretty sure it's been discussed but just to make sure I understand the
+> whole picture - why exactly does ACS have to be disabled at the boot time?
+> We could enable it, for example, for 2 devices in the same VFIO container
+> if there are in isolatable part of the PCI tree, or we just do not want to
+> make VFIO containers or QEMU aware of PCI hierarchy (I can see why, just
+> double checking)? Thanks.
 
->
-> > buffer.  In tmc_etr_alloc_perf_buffer() etr_perf->nr_pages is set to the number
-> > of pages present in that ring buffer.  As such I'm not sure as to why we need
-> > the PERF_IDX2OFF() macro.
-> >
-> > It seems to me that "head = etr_perf->head;" above is sufficient.
-> >
->
-> We need to do the step at some point, which could be moved to set_perf_buffer.
+AIUI, vfio is not necessarily a primary use case here, native bare
+metal drivers might also want to perform direct p2p.  In the vfio case,
+any time we're allowing p2p via ACS, we're poking holes into the IOVA
+space presented to the user.  We don't have a good way for the user to
+handle that, or even learn about it, so there are quite a few issues if
+vfio were a use case here.  Currently the intersection with vfio is
+that when ACS is disabled, it introduces p2p channels which breaks
+device isolation.  These need to be reflected in the IOMMU groups so
+it's done at boot time, before the groups are created.  If we wanted to
+allow dynamic manipulation, we'd effectively need to soft unplug entire
+sub-hierarchies around the point where ACS is modified and re-add the
+devices in order to get the grouping correct.  Thanks,
 
-That's a good idea.
-
->
-> >> +    pg_idx = head >> PAGE_SHIFT;
-> >> +    pg_offset = head & (PAGE_SIZE - 1);
-> >> +    dst_pages = (char **)etr_perf->pages;
-> >> +    src_offset = etr_buf->offset;
-> >> +    to_copy = etr_buf->len;
-> >> +
-> >> +    while (to_copy > 0) {
-> >> +            /*
-> >> +             * We can copy minimum of :
-> >
-> > s/We can copy minimum of :/In one iteration we can copy a minimum of:/
-> >
-> > If I'm wrong about the PERF_IDX2OFF(), don't bother respinning just for that.
->
-> I have some more fixes for handling the different modes (sysfs vs perf),
-> which I can include in the v2.
-
-Very well.
-
->
-> Suzuki
+Alex
