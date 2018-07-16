@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2264ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC29ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A65E20B80
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A65E20B80
+	by mail.kernel.org (Postfix) with ESMTP id A225820B80
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A225820B80
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731203AbeGPL5p (ORCPT
+        id S1731250AbeGPL5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 07:57:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:57630 "EHLO foss.arm.com"
+        Mon, 16 Jul 2018 07:57:49 -0400
+Received: from foss.arm.com ([217.140.101.70]:57654 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728643AbeGPL5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 07:57:44 -0400
+        id S1728643AbeGPL5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 07:57:48 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A85FB1682;
-        Mon, 16 Jul 2018 04:30:45 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62C6B18A;
+        Mon, 16 Jul 2018 04:30:49 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B8CC93F589;
-        Mon, 16 Jul 2018 04:30:42 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 727DC3F589;
+        Mon, 16 Jul 2018 04:30:46 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     mingo@kernel.org, mingo@redhat.com
 Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
@@ -36,9 +36,9 @@ Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
         mark.rutland@arm.com, parri.andrea@gmail.com,
         peter@hurleysoftware.com, peterz@infradead.org, tglx@linutronix.de,
         will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCHv4 03/12] atomics: simplify cmpxchg() instrumentation
-Date:   Mon, 16 Jul 2018 12:30:08 +0100
-Message-Id: <20180716113017.3909-4-mark.rutland@arm.com>
+Subject: [PATCHv4 04/12] atomics/treewide: instrument xchg()
+Date:   Mon, 16 Jul 2018 12:30:09 +0100
+Message-Id: <20180716113017.3909-5-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180716113017.3909-1-mark.rutland@arm.com>
 References: <20180716113017.3909-1-mark.rutland@arm.com>
@@ -47,169 +47,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we define some fairly verbose wrappers for the cmpxchg()
-family so that we can pass a pointer and size into kasan_check_write().
+While we instrument all of the (non-relaxed) atomic_*() functions and
+cmpxchg(), we missed xchg().
 
-The wrappers duplicate the size-switching logic necessary in arch code,
-and only work for scalar types. On some architectures, (cmp)xchg are
-used on non-scalar types, and thus the instrumented wrappers need to be
-able to handle this.
-
-We could take the type-punning logic from {READ,WRITE}_ONCE(), but this
-makes the wrappers even more verbose, and requires several local
-variables in the macros.
-
-Instead, let's simplify the wrappers into simple macros which:
-
-* snapshot the pointer into a single local variable, called __ai_ptr to
-  avoid conflicts with variables in the scope of the caller.
-
-* call kasan_check_write() on __ai_ptr.
-
-* invoke the relevant arch_*() function, passing the original arguments,
-  bar __ai_ptr being substituted for ptr.
-
-There should be no functional change as a result of this patch.
+Let's add instrumentation for xchg(), fixing up x86 to implement
+arch_xchg().
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Will Deacon <will.deacon@arm.com>
 Cc: Boqun Feng <boqun.feng@gmail.com>
 Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/asm-generic/atomic-instrumented.h | 100 +++++-------------------------
- 1 file changed, 15 insertions(+), 85 deletions(-)
+ arch/x86/include/asm/atomic.h             | 2 +-
+ arch/x86/include/asm/atomic64_64.h        | 2 +-
+ arch/x86/include/asm/cmpxchg.h            | 2 +-
+ include/asm-generic/atomic-instrumented.h | 7 +++++++
+ 4 files changed, 10 insertions(+), 3 deletions(-)
 
+diff --git a/arch/x86/include/asm/atomic.h b/arch/x86/include/asm/atomic.h
+index 823fd2f320cf..b143717b92b3 100644
+--- a/arch/x86/include/asm/atomic.h
++++ b/arch/x86/include/asm/atomic.h
+@@ -202,7 +202,7 @@ static __always_inline bool arch_atomic_try_cmpxchg(atomic_t *v, int *old, int n
+ 
+ static inline int arch_atomic_xchg(atomic_t *v, int new)
+ {
+-	return xchg(&v->counter, new);
++	return arch_xchg(&v->counter, new);
+ }
+ 
+ static inline void arch_atomic_and(int i, atomic_t *v)
+diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
+index 849f1c566a11..4343d9b4f30e 100644
+--- a/arch/x86/include/asm/atomic64_64.h
++++ b/arch/x86/include/asm/atomic64_64.h
+@@ -188,7 +188,7 @@ static __always_inline bool arch_atomic64_try_cmpxchg(atomic64_t *v, s64 *old, l
+ 
+ static inline long arch_atomic64_xchg(atomic64_t *v, long new)
+ {
+-	return xchg(&v->counter, new);
++	return arch_xchg(&v->counter, new);
+ }
+ 
+ static inline void arch_atomic64_and(long i, atomic64_t *v)
+diff --git a/arch/x86/include/asm/cmpxchg.h b/arch/x86/include/asm/cmpxchg.h
+index e3efd8a06066..a55d79b233d3 100644
+--- a/arch/x86/include/asm/cmpxchg.h
++++ b/arch/x86/include/asm/cmpxchg.h
+@@ -75,7 +75,7 @@ extern void __add_wrong_size(void)
+  * use "asm volatile" and "memory" clobbers to prevent gcc from moving
+  * information around.
+  */
+-#define xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
++#define arch_xchg(ptr, v)	__xchg_op((ptr), (v), xchg, "")
+ 
+ /*
+  * Atomic compare and exchange.  Compare OLD with MEM, if identical,
 diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-index 3c64e95d5ed0..c7c3e4cdd942 100644
+index c7c3e4cdd942..53481b6eacdf 100644
 --- a/include/asm-generic/atomic-instrumented.h
 +++ b/include/asm-generic/atomic-instrumented.h
-@@ -408,109 +408,39 @@ static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
+@@ -408,6 +408,13 @@ static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
  }
  #endif
  
--static __always_inline unsigned long
--cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new, int size)
--{
--	kasan_check_write(ptr, size);
--	switch (size) {
--	case 1:
--		return arch_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
--	case 2:
--		return arch_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
--	case 4:
--		return arch_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
--	case 8:
--		BUILD_BUG_ON(sizeof(unsigned long) != 8);
--		return arch_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
--	}
--	BUILD_BUG();
--	return 0;
--}
--
++#define xchg(ptr, new)							\
++({									\
++	typeof(ptr) __ai_ptr = (ptr);					\
++	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
++	arch_xchg(__ai_ptr, (new));					\
++})
++
  #define cmpxchg(ptr, old, new)						\
  ({									\
--	((__typeof__(*(ptr)))cmpxchg_size((ptr), (unsigned long)(old),	\
--		(unsigned long)(new), sizeof(*(ptr))));			\
-+	typeof(ptr) __ai_ptr = (ptr);					\
-+	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
-+	arch_cmpxchg(__ai_ptr, (old), (new));				\
- })
- 
--static __always_inline unsigned long
--sync_cmpxchg_size(volatile void *ptr, unsigned long old, unsigned long new,
--		  int size)
--{
--	kasan_check_write(ptr, size);
--	switch (size) {
--	case 1:
--		return arch_sync_cmpxchg((u8 *)ptr, (u8)old, (u8)new);
--	case 2:
--		return arch_sync_cmpxchg((u16 *)ptr, (u16)old, (u16)new);
--	case 4:
--		return arch_sync_cmpxchg((u32 *)ptr, (u32)old, (u32)new);
--	case 8:
--		BUILD_BUG_ON(sizeof(unsigned long) != 8);
--		return arch_sync_cmpxchg((u64 *)ptr, (u64)old, (u64)new);
--	}
--	BUILD_BUG();
--	return 0;
--}
--
- #define sync_cmpxchg(ptr, old, new)					\
- ({									\
--	((__typeof__(*(ptr)))sync_cmpxchg_size((ptr),			\
--		(unsigned long)(old), (unsigned long)(new),		\
--		sizeof(*(ptr))));					\
-+	typeof(ptr) __ai_ptr = (ptr);					\
-+	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
-+	arch_sync_cmpxchg(__ai_ptr, (old), (new));			\
- })
- 
--static __always_inline unsigned long
--cmpxchg_local_size(volatile void *ptr, unsigned long old, unsigned long new,
--		   int size)
--{
--	kasan_check_write(ptr, size);
--	switch (size) {
--	case 1:
--		return arch_cmpxchg_local((u8 *)ptr, (u8)old, (u8)new);
--	case 2:
--		return arch_cmpxchg_local((u16 *)ptr, (u16)old, (u16)new);
--	case 4:
--		return arch_cmpxchg_local((u32 *)ptr, (u32)old, (u32)new);
--	case 8:
--		BUILD_BUG_ON(sizeof(unsigned long) != 8);
--		return arch_cmpxchg_local((u64 *)ptr, (u64)old, (u64)new);
--	}
--	BUILD_BUG();
--	return 0;
--}
--
- #define cmpxchg_local(ptr, old, new)					\
- ({									\
--	((__typeof__(*(ptr)))cmpxchg_local_size((ptr),			\
--		(unsigned long)(old), (unsigned long)(new),		\
--		sizeof(*(ptr))));					\
-+	typeof(ptr) __ai_ptr = (ptr);					\
-+	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
-+	arch_cmpxchg_local(__ai_ptr, (old), (new));			\
- })
- 
--static __always_inline u64
--cmpxchg64_size(volatile u64 *ptr, u64 old, u64 new)
--{
--	kasan_check_write(ptr, sizeof(*ptr));
--	return arch_cmpxchg64(ptr, old, new);
--}
--
- #define cmpxchg64(ptr, old, new)					\
- ({									\
--	((__typeof__(*(ptr)))cmpxchg64_size((ptr), (u64)(old),		\
--		(u64)(new)));						\
-+	typeof(ptr) __ai_ptr = (ptr);					\
-+	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
-+	arch_cmpxchg64(__ai_ptr, (old), (new));				\
- })
- 
--static __always_inline u64
--cmpxchg64_local_size(volatile u64 *ptr, u64 old, u64 new)
--{
--	kasan_check_write(ptr, sizeof(*ptr));
--	return arch_cmpxchg64_local(ptr, old, new);
--}
--
- #define cmpxchg64_local(ptr, old, new)					\
- ({									\
--	((__typeof__(*(ptr)))cmpxchg64_local_size((ptr), (u64)(old),	\
--		(u64)(new)));						\
-+	typeof(ptr) __ai_ptr = (ptr);					\
-+	kasan_check_write(__ai_ptr, sizeof(*__ai_ptr));			\
-+	arch_cmpxchg64_local(__ai_ptr, (old), (new));			\
- })
- 
- /*
+ 	typeof(ptr) __ai_ptr = (ptr);					\
 -- 
 2.11.0
 
