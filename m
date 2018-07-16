@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B53ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8ADECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD72206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD72206B7
+	by mail.kernel.org (Postfix) with ESMTP id 8EF57206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EF57206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388064AbeGPIFv (ORCPT
+        id S2388071AbeGPIFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:05:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47212 "EHLO
+        Mon, 16 Jul 2018 04:05:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47224 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729810AbeGPIFu (ORCPT
+        with ESMTP id S1729810AbeGPIFx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:05:50 -0400
+        Mon, 16 Jul 2018 04:05:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9EFF5C03;
-        Mon, 16 Jul 2018 07:39:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0170DC03;
+        Mon, 16 Jul 2018 07:39:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        KaiChieh Chuang <kaichieh.chuang@mediatek.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 02/54] ASoC: mediatek: preallocate pages use platform device
-Date:   Mon, 16 Jul 2018 09:34:59 +0200
-Message-Id: <20180716073450.850368875@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
+Subject: [PATCH 4.14 03/54] MIPS: Call dump_stack() from show_regs()
+Date:   Mon, 16 Jul 2018 09:35:00 +0200
+Message-Id: <20180716073451.016568406@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -52,41 +52,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 5845e6155d8f4a4a9bae2d4c1d1bb4a4d9a925c2 upstream.
+commit 5a267832c2ec47b2dad0fdb291a96bb5b8869315 upstream.
 
-preallocate pages should use platform device,
-since we set dma mask for platform device.
+The generic nmi_cpu_backtrace() function calls show_regs() when a struct
+pt_regs is available, and dump_stack() otherwise. If we were to make use
+of the generic nmi_cpu_backtrace() with MIPS' current implementation of
+show_regs() this would mean that we see only register data with no
+accompanying stack information, in contrast with our current
+implementation which calls dump_stack() regardless of whether register
+state is available.
 
-Signed-off-by: KaiChieh Chuang <kaichieh.chuang@mediatek.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+In preparation for making use of the generic nmi_cpu_backtrace() to
+implement arch_trigger_cpumask_backtrace(), have our implementation of
+show_regs() call dump_stack() and drop the explicit dump_stack() call in
+arch_dump_stack() which is invoked by arch_trigger_cpumask_backtrace().
+
+This will allow the output we produce to remain the same after a later
+patch switches to using nmi_cpu_backtrace(). It may mean that we produce
+extra stack output in other uses of show_regs(), but this:
+
+  1) Seems harmless.
+  2) Is good for consistency between arch_trigger_cpumask_backtrace()
+     and other users of show_regs().
+  3) Matches the behaviour of the ARM & PowerPC architectures.
+
+Marked for stable back to v4.9 as a prerequisite of the following patch
+"MIPS: Call dump_stack() from show_regs()".
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19596/
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.9+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- sound/soc/mediatek/common/mtk-afe-platform-driver.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/kernel/process.c |    4 ++--
+ arch/mips/kernel/traps.c   |    1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
-+++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
-@@ -63,13 +63,13 @@ static const struct snd_pcm_ops mtk_afe_
- static int mtk_afe_pcm_new(struct snd_soc_pcm_runtime *rtd)
- {
- 	size_t size;
--	struct snd_card *card = rtd->card->snd_card;
- 	struct snd_pcm *pcm = rtd->pcm;
- 	struct mtk_base_afe *afe = snd_soc_platform_get_drvdata(rtd->platform);
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -663,8 +663,8 @@ static void arch_dump_stack(void *info)
  
- 	size = afe->mtk_afe_hardware->buffer_bytes_max;
- 	return snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
--						     card->dev, size, size);
-+						     rtd->platform->dev,
-+						     size, size);
+ 	if (regs)
+ 		show_regs(regs);
+-
+-	dump_stack();
++	else
++		dump_stack();
  }
  
- static void mtk_afe_pcm_free(struct snd_pcm *pcm)
+ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
+--- a/arch/mips/kernel/traps.c
++++ b/arch/mips/kernel/traps.c
+@@ -351,6 +351,7 @@ static void __show_regs(const struct pt_
+ void show_regs(struct pt_regs *regs)
+ {
+ 	__show_regs((struct pt_regs *)regs);
++	dump_stack();
+ }
+ 
+ void show_registers(struct pt_regs *regs)
 
 
