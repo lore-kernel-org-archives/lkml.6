@@ -2,121 +2,107 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0FDECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E93ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6635F20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:53:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OnDKyils"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6635F20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D5DE20854
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:55:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5DE20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731304AbeGPPVZ (ORCPT
+        id S1729881AbeGPPXb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:21:25 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:46639 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727385AbeGPPUP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:20:15 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 243F610C1A04;
-        Mon, 16 Jul 2018 07:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531752748; bh=xWay15+tMZ5QoUFyv+vu3iYt+QFjUiCzSfdbhpG7rXk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=OnDKyilsCaMuC1JbA33b45e/ESZCBvZmzuVUBhE6lBTZjZRk+bc5VqY1ckdlGiNyW
-         QgF2QYAYIS5MTuHmZU0eerjHvKw/nAcN1H56qMLRa/A7LflytJq/hA58Ca/2rEKY7t
-         sS8fK7II5ZeZME0iydbHnPGDh9AedDUV3t1wIeBvxTwXg8fAPaHpgf1OgU/qWIDiVq
-         yiPmyUoPlxIkA727BsrMSgr8Dm1FnaOIAeErXbkhsh0UOr9Nz7fAl42AK369cuZyQP
-         qBy7+wqHPNXrOKAcfvspwhivYrclEWPuY1EyQIdWzrHIWEpHstW46ILclAfqA0VVuF
-         RwVrHMM47XCRw==
-Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id A09E850D0;
-        Mon, 16 Jul 2018 07:52:27 -0700 (PDT)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 968D23DCBD;
-        Mon, 16 Jul 2018 16:52:26 +0200 (CEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v11 00/12] Add MSI-X support on pcitest tool
-Date:   Mon, 16 Jul 2018 16:52:12 +0200
-Message-Id: <cover.1531751641.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 16 Jul 2018 11:23:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60434 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729357AbeGPPXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 11:23:31 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DD2424022414;
+        Mon, 16 Jul 2018 14:55:43 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 641D2111CB8E;
+        Mon, 16 Jul 2018 14:55:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 16 Jul 2018 16:55:43 +0200 (CEST)
+Date:   Mon, 16 Jul 2018 16:55:40 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>
+Subject: Re: [RFC][PATCH 09/11] tty_io: Use do_send_sig_info in __do_SACK  to
+ forcibly kill tasks
+Message-ID: <20180716145540.GA20960@redhat.com>
+References: <877em2jxyr.fsf_-_@xmission.com>
+ <20180711024459.10654-9-ebiederm@xmission.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711024459.10654-9-ebiederm@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 14:55:43 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 14:55:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch series made against Lorenzo's master branch.
+On 07/10, Eric W. Biederman wrote:
+>
+> Therefore use do_send_sig_info in all cases in __do_SAK to kill
+> tasks as allows for exactly what the code wants to do.
 
-Fix EP link notification implementation.
+OK, but probably the changelog should also mention that now even the global
+init will be killed if it has this tty opened.
 
-Add MSI-X support on pcitest tool.
 
-Add new callbacks methods and handlers to trigger the MSI-X interrupts
-on the EP DesignWare IP driver.
-
-Allow to set/get MSI-X EP maximum capability number.
-
-Rework on set/get and triggering MSI methods on EP DesignWare IP driver.
-
-Add a new input parameter (msix) to pcitest tool to test MSI-X feature.
-
-Update the pcitest.sh script to support MSI-X feature tests.
-
-Update related documentation accordingly.
-
-Gustavo Pimentel (12):
-  PCI: dwc: Fix EP link notification implementation
-  PCI: endpoint: Add MSI-X interfaces
-  PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
-  PCI: dwc: Add MSI-X callbacks handler
-  PCI: dwc: Rework MSI callbacks handler
-  PCI: dwc: Add legacy interrupt callback handler
-  pci-epf-test/pci_endpoint_test: Cleanup PCI_ENDPOINT_TEST memspace
-  pci-epf-test/pci_endpoint_test: Use irq_type module parameter
-  pci-epf-test/pci_endpoint_test: Add MSI-X support
-  pci_endpoint_test: Add 2 ioctl commands
-  tools: PCI: Add MSI-X support
-  PCI: endpoint: Add MSI set maximum restriction
-
- .../PCI/endpoint/function/binding/pci-test.txt     |   2 +
- Documentation/PCI/endpoint/pci-endpoint.txt        |   4 +-
- Documentation/PCI/endpoint/pci-test-function.txt   |  29 ++-
- Documentation/PCI/endpoint/pci-test-howto.txt      |  30 ++-
- Documentation/ioctl/ioctl-number.txt               |   1 +
- Documentation/misc-devices/pci-endpoint-test.txt   |   6 +
- drivers/misc/pci_endpoint_test.c                   | 276 ++++++++++++++++-----
- drivers/pci/controller/dwc/pci-dra7xx.c            |   2 +-
- drivers/pci/controller/dwc/pcie-artpec6.c          |   2 +-
- drivers/pci/controller/dwc/pcie-designware-ep.c    | 210 ++++++++++++++--
- drivers/pci/controller/dwc/pcie-designware-plat.c  |  11 +-
- drivers/pci/controller/dwc/pcie-designware.h       |  29 ++-
- drivers/pci/controller/pcie-cadence-ep.c           |   3 +-
- drivers/pci/controller/pcie-rockchip-ep.c          |   2 +-
- drivers/pci/endpoint/functions/pci-epf-test.c      |  86 +++++--
- drivers/pci/endpoint/pci-ep-cfs.c                  |  24 ++
- drivers/pci/endpoint/pci-epc-core.c                |  68 ++++-
- include/linux/pci-epc.h                            |  16 +-
- include/linux/pci-epf.h                            |   1 +
- include/uapi/linux/pcitest.h                       |   3 +
- tools/pci/pcitest.c                                |  51 +++-
- tools/pci/pcitest.sh                               |  15 ++
- 22 files changed, 722 insertions(+), 149 deletions(-)
-
--- 
-2.7.4
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
+>  drivers/tty/tty_io.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+> index cec58c53b0c4..42ac168c2a47 100644
+> --- a/drivers/tty/tty_io.c
+> +++ b/drivers/tty/tty_io.c
+> @@ -2747,7 +2747,7 @@ void __do_SAK(struct tty_struct *tty)
+>  	do_each_pid_task(session, PIDTYPE_SID, p) {
+>  		tty_notice(tty, "SAK: killed process %d (%s): by session\n",
+>  			   task_pid_nr(p), p->comm);
+> -		send_sig(SIGKILL, p, 1);
+> +		do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, true);
+>  	} while_each_pid_task(session, PIDTYPE_SID, p);
+>  
+>  	/* Now kill any processes that happen to have the tty open */
+> @@ -2755,7 +2755,7 @@ void __do_SAK(struct tty_struct *tty)
+>  		if (p->signal->tty == tty) {
+>  			tty_notice(tty, "SAK: killed process %d (%s): by controlling tty\n",
+>  				   task_pid_nr(p), p->comm);
+> -			send_sig(SIGKILL, p, 1);
+> +			do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, true);
+>  			continue;
+>  		}
+>  		task_lock(p);
+> @@ -2763,7 +2763,7 @@ void __do_SAK(struct tty_struct *tty)
+>  		if (i != 0) {
+>  			tty_notice(tty, "SAK: killed process %d (%s): by fd#%d\n",
+>  				   task_pid_nr(p), p->comm, i - 1);
+> -			force_sig(SIGKILL, p);
+> +			do_send_sig_info(SIGKILL, SEND_SIG_FORCED, p, true);
+>  		}
+>  		task_unlock(p);
+>  	} while_each_thread(g, p);
+> -- 
+> 2.17.1
+> 
 
