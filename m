@@ -2,148 +2,123 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E95DBECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CD0ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF70208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FE05208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eX9N0cZs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF70208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AaK6lya1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE05208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729865AbeGPKhv (ORCPT
+        id S1730876AbeGPKh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:37:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43778 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727163AbeGPKhu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:37:50 -0400
-Received: from mail.kernel.org (host-091-097-051-136.ewe-ip-backbone.de [91.97.51.136])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 434D9208AD;
-        Mon, 16 Jul 2018 10:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531735869;
-        bh=zW/9OHI6qT/vPrKErOesdFVIGRNPHA4ZGo5w3mIcjVU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eX9N0cZsLNSH24H+84HjXKlwmANast2FwFfTsfnZOT/bDAq/SyOkmXLpPMxWBBTPL
-         9fA1on6L8mibxU1wqB6fAtbS8zNT1TFSLLo+E4Ml/+wAJacgAMGHKPsr3pSLJ5pCR/
-         AtAojcmuynwU2nFN6ENYuADzqkcdg/GFRI63z0yc=
-Date:   Mon, 16 Jul 2018 12:11:06 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
-        merlijn@wizzup.org
-Subject: Re: [PATCH] dts/droid4: fix dts w.r.t. pwm
-Message-ID: <20180716101106.vgmjz3ic7gqy2u2q@earth.universe>
-References: <20180709081534.GA6799@amd>
- <20180709214910.tes6u4ivxomd3aja@earth.universe>
- <20180709220211.GA7760@amd>
- <20180710101147.lyu65ro4czvrs2da@earth.universe>
- <20180710133040.GA4391@amd>
- <20180710161123.azym6sbboriuj4yc@earth.universe>
- <20180711080218.GA21225@amd>
- <20180711132739.GL99251@atomide.com>
- <20180711142526.dto6iost57zx5t5l@earth.universe>
- <20180716071048.GA23110@amd>
+        Mon, 16 Jul 2018 06:37:56 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:39861 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730092AbeGPKh4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 06:37:56 -0400
+Received: by mail-io0-f196.google.com with SMTP id e13-v6so37236768iof.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 03:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=9q1WaT/2V+uxn0Yztk64P6o3fEZdTOj0JElUDP6oULs=;
+        b=AaK6lya1U9rZEcQ2ORk4hlQJ2aScX4U+VK3M1Ywys0m8Dhdup81bOwxR6e7J5/Dxpj
+         CB/pJQ/DULTHtnYF9ekBkonRyVrcveWf3zeup61VyctGWJp/ZhHfxEDk1lWgydka8agg
+         02Crs67KJiw0hWy8b1oRl5m6jReBDPRAuQXfk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=9q1WaT/2V+uxn0Yztk64P6o3fEZdTOj0JElUDP6oULs=;
+        b=LFVAbd09Jjzh1XULtS1tdAt8GTmU/8722axGwOeN3tFk/UJVknF88jMT94J+kCSlEm
+         sgzZrn/Dbz/ksvhd+TmQubEmX0tNKlJQrR75sw+Smf0Lv/n7hNyA1PYJUTjN+WZW1qQu
+         eV1IVCmQ38F/xz5aR+8Ao9lkZWwvrvXAsfePdyz9oyIk1BaKR/5PO7w9E7+by5gNF3MK
+         e8JuFJPPbU5jY08GaTbSb69RrQtR8fAJTa/VXk1CNpouLBZ/MLujyO0iJjRZ66Y1sUPa
+         96Kx5xR9gDr1psa0WjMd8F1QaJ0FN2tDvodKFCjge9mx/RF+BHDttx76rLFNNmcvZmzJ
+         9D+w==
+X-Gm-Message-State: AOUpUlHeGXQMAdSRHZEvjJSIfQk6VlT9G8+N+LhjWTDSy66J+O0VqklQ
+        QWEj4bG9LXj+chw/DQn/XZWFmzkiwBEok5G3gkwcBA==
+X-Google-Smtp-Source: AAOMgpfxZ47HjznYHTUzvOPekrUBTfSd4/Y2QPJSK/IqW8Y8B8Uc6g20zw3+CtsXMmCmxgbcjQtnTYdr56o3OhOllO0=
+X-Received: by 2002:a6b:c997:: with SMTP id z145-v6mr40392167iof.266.1531735875254;
+ Mon, 16 Jul 2018 03:11:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qshvk5u2dnfjfb3e"
-Content-Disposition: inline
-In-Reply-To: <20180716071048.GA23110@amd>
-User-Agent: NeoMutt/20180622
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 03:11:14
+ -0700 (PDT)
+In-Reply-To: <20180712073904.4705-1-stefan@agner.ch>
+References: <20180712073904.4705-1-stefan@agner.ch>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 16 Jul 2018 12:11:14 +0200
+Message-ID: <CAPDyKFq=zPvoCHUbeCSCdZAj7BWkuJxe9xRruwhkV1WK8WA61w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mmc: tegra: prevent HS200 on Tegra 3
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12 July 2018 at 09:39, Stefan Agner <stefan@agner.ch> wrote:
+> The stack assumes that SDHC controller which support SD3.0 (SDR104) do
+> support HS200. This is not the case for Tegra 3, which does support SD
+> 3.0
+> but only supports eMMC spec 4.41.
+>
+> Use SDHCI_QUIRK2_BROKEN_HS200 to indicate that the controller does not
+> support HS200.
+>
+> Note that commit 156e14b126ff ("mmc: sdhci: fix caps2 for HS200") added
+> the tie between SD3.0 (SDR104) and HS200. I don't think that this is
+> necessarly true. It is fully legitimate to support SD3.0 and not support
+> HS200. The quirk naming suggests something is broken in the controller,
+> but this is not the case: The controller simply does not support HS200.
+>
+> Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
---qshvk5u2dnfjfb3e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, applied all three patches for next!
 
-Hi,
+Kind regards
+Uffe
 
-On Mon, Jul 16, 2018 at 09:10:48AM +0200, Pavel Machek wrote:
-> pwm node should not be under gpio6 node in the device tree.
->   =20
-> This fixes detection of the pwm on Droid 4.
->    =20
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-
--- Sebastian
-
-> diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts=
-/omap4-droid4-xt894.dts
-> index 45305e8..c27fc87 100644
-> --- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-> +++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-> @@ -159,13 +159,7 @@
-> =20
->  		dais =3D <&mcbsp2_port>, <&mcbsp3_port>;
->  	};
-> -};
-> -
-> -&dss {
-> -	status =3D "okay";
-> -};
-> =20
-> -&gpio6 {
->  	pwm8: dmtimer-pwm-8 {
->  		pinctrl-names =3D "default";
->  		pinctrl-0 =3D <&vibrator_direction_pin>;
-> @@ -192,7 +186,10 @@
->  		pwm-names =3D "enable", "direction";
->  		direction-duty-cycle-ns =3D <10000000>;
->  	};
-> +};
-> =20
-> +&dss {
-> +	status =3D "okay";
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 970d38f68939..137df06b9b6e 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -334,7 +334,8 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+>                   SDHCI_QUIRK_NO_HISPD_BIT |
+>                   SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+>                   SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> -       .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+> +       .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> +                  SDHCI_QUIRK2_BROKEN_HS200,
+>         .ops  = &tegra_sdhci_ops,
 >  };
-> =20
->  &dsi1 {
->=20
->=20
->=20
-> --=20
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/b=
-log.html
-
-
-
---qshvk5u2dnfjfb3e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltMbzcACgkQ2O7X88g7
-+por8A//buhi/5dQvTTjCwl1wz4IvrTxE9qONWMbjxu2xjA/5rQciYLQ5uvkozWd
-ZvpLsWuIMXdkg5CAxTjwPJMlTI3D4iRGaxBg+pW3JTuWdyGgZcbbRfaJ9mGFfZbF
-O0qHKLA4Cv6l5rOVz4UP7yvgPXsTYlm6S4byt3JPzbK/gCEig+ciZ4XyI9pkyhi0
-bvd9AnauYRkoZVyoChOp9uLesNRDOBuBKynQlIrRUa2d8O8Dr6M4Lpx80EQFqQcc
-aS9PdgIK3tQLlW2VJvYi+hmZGoLH57c2o//W0ocsiFBEY3QtXz5mujMsPPssQiUA
-vpzsmDUTYls7Z2fQsHjGbpCX1RzB6YPfVgTE5+WjcncK0YMVWiqLzyqizdwaevwp
-ur6qK2K6y+khPcmqkgvKosmKBDNsUdJ9hUmTVpY1iNGcfXo4NAmMV6RMnSAPD9is
-qISNVZiW7nj8Y/MRH0cbIXbV4qx3xRwaYxS3A/XgRjxWkLUxQJbkjTwQYUu1BBUp
-WgEdkkt8d4MxYnovMcu6SRAm5yz2sKK6rJMstFqISm6I+po41dwJHkzHn+DRCogH
-5mvXHb/RDkwa29H3sATcmQiJ2hJmNNAAOdkpWRa6aZZF0Mm9MqN8rg73HRh5hbJg
-1BkGCfyO2/kCU9NhwHnhANymygXOde9ix9gudmRpmtxigTjJygs=
-=o33p
------END PGP SIGNATURE-----
-
---qshvk5u2dnfjfb3e--
+>
+> --
+> 2.18.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
