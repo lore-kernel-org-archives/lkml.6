@@ -2,104 +2,98 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409D6ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB225ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF59C20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:21:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44D1208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:22:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cXmk13/M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF59C20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CuaAYvpy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44D1208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbeGPQtK (ORCPT
+        id S1729474AbeGPQuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 12:49:10 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:34642 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbeGPQtK (ORCPT
+        Mon, 16 Jul 2018 12:50:17 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36220 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbeGPQuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 12:49:10 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 13-v6so75899736ois.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 09:21:02 -0700 (PDT)
+        Mon, 16 Jul 2018 12:50:17 -0400
+Received: by mail-pf0-f195.google.com with SMTP id d14-v6so2772566pfo.3;
+        Mon, 16 Jul 2018 09:22:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GEvseBhIcJtzOMAk3j/8ABDNdL6rUFRm/FoSCJuxLDE=;
-        b=cXmk13/MtSYPZ8OODCaw81kFr1mYLy/Fshcjmzbt215TbcLBhs6dTT++JxHeexKoRN
-         nEVzxL3xGSwKnMz68zTcUNHN9908x9rZ8m+iX3M+WiEtunGuF2m/HaNj3yd/zQ0dWDaD
-         erhXx7jdIorICRAIVOGbqXIoLo19U/ovEYX3ljXtg+t1DoMYs5N8+X8VUo1nAHHNPkXq
-         QCGhXg2fg+bxA+6gLVYmpmVyLMhRq+Uopw1u9GoXonytYX1yGw8c/xItLXYunOn0IqSC
-         w72r+WaFYQEpediwGby5oioep8OgJxw+BzPgLg5SHEyUMPoiEw2HIQw/xit9kBxtktcI
-         hyzQ==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cjLGXnHCUwnJZYCdZoFKWGe8SeiwXKZNmX19tW4Zj7c=;
+        b=CuaAYvpywqgrbwHjbCxC1OsS+LF7NwCemqDy2pFwKaH0a5ii4d9v9c6T2+H4dJ2Fzn
+         6Pktlk7ld11VwZxdagXmOBSNF1hHJfrRVYyXbVU+qvjo88H3MvWdZVAQTF2VL+ZiAVeM
+         FdgnwVPPebNZm+okD3IkY6cXJSLquOzJd+tCjeOMHIGoexRdOMKhbU/Epv1LGlEBEnQ1
+         NvfpT05RS/o9iZjTcvK7qnsFEu/bJnFdhWayVptNzEReKGsoEIEp3uzEcbnX4XvawRjo
+         uwyOq6nCAFX68SQqEpdd7NevUolgy7+guDfSeaJ0ZT6D/9jLbJYtAWhO4IFlkd1+8lQV
+         ZIUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GEvseBhIcJtzOMAk3j/8ABDNdL6rUFRm/FoSCJuxLDE=;
-        b=e1T5fuURmXUO39pXcPjH652+j6objbY6sSvKeHhsrGAGv6n1gAExQhNxzK5MaX28u0
-         DtiKBG7WY//Xwzd5YdwrQgcPm/r6vwD3zClaMB0fCWMFGZHfxWgZw/rYi2ZkO3jq8PxF
-         JiGdQjDJ+fH8iEONIE0JwEIioTlOLBVA3JkF+ye36A7CKaUYax+RNaAMv3NMsG7d6NXZ
-         28oQAYwS4YgWJ8oQ4us//9cDckIrh22kxXRKU/u+lNeepdVFy6FbqOBv7/psslRRmJtx
-         emmBb2uy952jwAqOfud0uUvshdhjFEjCaVZotHzjjkFgOBe6ZQJ1ubDTP/iovCnZdpbq
-         g8fQ==
-X-Gm-Message-State: AOUpUlExTIpb+Rrv/Gxv8OKP1FJDWjU2x8+YlCzvcq3wzgCqbd5IvAUP
-        Rt1EF4B2N8XGQxRdYZyqVYstsfJFQOgykoSuIDblMQ==
-X-Google-Smtp-Source: AAOMgpf+qT3SNwIiU0s+TYjvLkZP4JMkdcc/b7wtdetk25qidPUKKj3GMqrOABHCYgZtirYrNgN04qorgwVdW2Yb8pA=
-X-Received: by 2002:aca:c42:: with SMTP id i2-v6mr7101572oiy.219.1531758061284;
- Mon, 16 Jul 2018 09:21:01 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cjLGXnHCUwnJZYCdZoFKWGe8SeiwXKZNmX19tW4Zj7c=;
+        b=VoUHUAlvF/EFDMNFiyVvQEQ9jvVZuwxw+715xCwio1x0GnFCiLxhM9c1/fD9QaCf93
+         EwVHCttTyK4iEoC0jpjtR2Qw2kD5gm78E5TwVTqHuB3tr5Y2CsV7K0XNAHrhc5rFnEmn
+         jqQjm8SbalkH+4Rt45gx+NXm+OYWWu+7LZaIZ+59ZXLcdIjJALm2tlAA85q6Mc23R50X
+         4j/P/3oy/LssCQTUMvCqQoZnocYGacDuEXhM0bziipw2uQRIvHB46MLERkeEolXh92H1
+         rZpWn4TvBtVY3sb6v5x/52D2Lnl1KoVo1r44ydcLiMRmC4GJ/R8WaXokFjy0AysJ0HiQ
+         DeOg==
+X-Gm-Message-State: AOUpUlEUZwhVIU1gkzcsQ+MDqtsNG6Ai0kTZfGTiABFE/YKm95xLXYWB
+        vxu+vSAxlUrHhNLJvDo/GSbQgA==
+X-Google-Smtp-Source: AAOMgpfFT0yiR/RD3J3OInGNTyF5RjLyyD4MC+XOc6V/j5kCR9C4ACOIaEOQDEDFCNy7bGEPXR7uDw==
+X-Received: by 2002:a63:8a41:: with SMTP id y62-v6mr15604642pgd.291.1531758129149;
+        Mon, 16 Jul 2018 09:22:09 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id p66-v6sm53422079pfd.65.2018.07.16.09.22.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Jul 2018 09:22:08 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 09:22:07 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/43] 4.4.141-stable review
+Message-ID: <20180716162207.GA12065@roeck-us.net>
+References: <20180716073511.796555857@linuxfoundation.org>
 MIME-Version: 1.0
-References: <1530913134.3135.2.camel@HansenPartnership.com>
- <CA+55aFy-o3fRtkQnJU=0zv7CPUtgfKiwhfQi_05K25Y_-mx+_w@mail.gmail.com>
- <CA+55aFxQ8QzGTWsVdVQVok9cLbgZDFjG2g3JZtWJd+G9jHkYoQ@mail.gmail.com>
- <CA+55aFxAy__3hE1OoUFPKZfptLT1cXuoujsnSGXBMzJPQ+Qjzg@mail.gmail.com>
- <1530940958.3135.4.camel@HansenPartnership.com> <CA+55aFwg-2GP4ASTdd1pusmZkF7c8AN9febVDCaioDxzYJSLfw@mail.gmail.com>
-In-Reply-To: <CA+55aFwg-2GP4ASTdd1pusmZkF7c8AN9febVDCaioDxzYJSLfw@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 16 Jul 2018 18:20:35 +0200
-Message-ID: <CAG48ez0h4c7z+a6Dj-94Wb4-HdWM1YbrBd44oyBEiQyu8NhCKA@mail.gmail.com>
-Subject: Re: [GIT PULL] SCSI fixes for 4.18-rc3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-scsi@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 2:41 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, Jul 6, 2018 at 10:22 PM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> >
-> > We did discuss removing the r/w interface, but, as you say, it's been
-> > around for ages so it's not clear what regressions would surface if we
-> > did.
->
-> So since nobody else followed up on this, the attached patch is what I
-> was thinking of just committing.
->
-> It removes the warnings from the access check, and just puts them
-> (unconditionally) at the top of the read/write function instead.
+On Mon, Jul 16, 2018 at 09:36:05AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.141 release.
+> There are 43 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Jul 18 07:34:50 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Minor issue:
+Build results:
+	total: 148 pass: 148 fail: 0
+Qemu test results:
+	total: 149 pass: 149 fail: 0
 
-+ pr_err_once("process %d (%s) does direct read on /dev/sg",
-+ task_tgid_vnr(current), current->comm);
-[...]
-+ pr_err_once("process %d (%s) does direct write on /dev/sg",
-+ task_tgid_vnr(current), current->comm);
+Details are available at http://kerneltests.org/builders.
 
-printk wants a newline at the end of the message, otherwise the
-message hangs until the next message is printed.
+Guenter
