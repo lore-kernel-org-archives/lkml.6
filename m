@@ -6,37 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 603F3ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C09AECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1946B206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1946B206B7
+	by mail.kernel.org (Postfix) with ESMTP id 34FFB20837
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34FFB20837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389076AbeGPIJf (ORCPT
+        id S2388363AbeGPIJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48014 "EHLO
+        Mon, 16 Jul 2018 04:09:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48022 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388675AbeGPIJe (ORCPT
+        with ESMTP id S2389078AbeGPIJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:34 -0400
+        Mon, 16 Jul 2018 04:09:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC856CA0;
-        Mon, 16 Jul 2018 07:43:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6FC30C03;
+        Mon, 16 Jul 2018 07:43:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot 
-        <syzbot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 32/32] loop: remember whether sysfs_create_group() was done
-Date:   Mon, 16 Jul 2018 09:36:40 +0200
-Message-Id: <20180716073508.445812597@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: [PATCH 4.9 14/32] USB: yurex: fix out-of-bounds uaccess in read handler
+Date:   Mon, 16 Jul 2018 09:36:22 +0200
+Message-Id: <20180716073506.120084210@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -53,65 +49,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Jann Horn <jannh@google.com>
 
-commit d3349b6b3c373ac1fbfb040b810fcee5e2adc7e0 upstream.
+commit f1e255d60ae66a9f672ff9a207ee6cd8e33d2679 upstream.
 
-syzbot is hitting WARN() triggered by memory allocation fault
-injection [1] because loop module is calling sysfs_remove_group()
-when sysfs_create_group() failed.
-Fix this by remembering whether sysfs_create_group() succeeded.
+In general, accessing userspace memory beyond the length of the supplied
+buffer in VFS read/write handlers can lead to both kernel memory corruption
+(via kernel_read()/kernel_write(), which can e.g. be triggered via
+sys_splice()) and privilege escalation inside userspace.
 
-[1] https://syzkaller.appspot.com/bug?id=3f86c0edf75c86d2633aeb9dd69eccc70bc7e90b
+Fix it by using simple_read_from_buffer() instead of custom logic.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 6bc235a2e24a ("USB: add driver for Meywa-Denki & Kayac YUREX")
+Signed-off-by: Jann Horn <jannh@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Renamed sysfs_ready -> sysfs_inited.
-
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
 ---
- drivers/block/loop.c |   11 ++++++-----
- drivers/block/loop.h |    1 +
- 2 files changed, 7 insertions(+), 5 deletions(-)
+ drivers/usb/misc/yurex.c |   23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -824,16 +824,17 @@ static struct attribute_group loop_attri
- 	.attrs= loop_attrs,
- };
- 
--static int loop_sysfs_init(struct loop_device *lo)
-+static void loop_sysfs_init(struct loop_device *lo)
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -406,8 +406,7 @@ static ssize_t yurex_read(struct file *f
+ 			  loff_t *ppos)
  {
--	return sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
--				  &loop_attribute_group);
-+	lo->sysfs_inited = !sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
-+						&loop_attribute_group);
+ 	struct usb_yurex *dev;
+-	int retval = 0;
+-	int bytes_read = 0;
++	int len = 0;
+ 	char in_buffer[20];
+ 	unsigned long flags;
+ 
+@@ -415,26 +414,16 @@ static ssize_t yurex_read(struct file *f
+ 
+ 	mutex_lock(&dev->io_mutex);
+ 	if (!dev->interface) {		/* already disconnected */
+-		retval = -ENODEV;
+-		goto exit;
++		mutex_unlock(&dev->io_mutex);
++		return -ENODEV;
+ 	}
+ 
+ 	spin_lock_irqsave(&dev->lock, flags);
+-	bytes_read = snprintf(in_buffer, 20, "%lld\n", dev->bbu);
++	len = snprintf(in_buffer, 20, "%lld\n", dev->bbu);
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+-
+-	if (*ppos < bytes_read) {
+-		if (copy_to_user(buffer, in_buffer + *ppos, bytes_read - *ppos))
+-			retval = -EFAULT;
+-		else {
+-			retval = bytes_read - *ppos;
+-			*ppos += bytes_read;
+-		}
+-	}
+-
+-exit:
+ 	mutex_unlock(&dev->io_mutex);
+-	return retval;
++
++	return simple_read_from_buffer(buffer, count, ppos, in_buffer, len);
  }
  
- static void loop_sysfs_exit(struct loop_device *lo)
- {
--	sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
--			   &loop_attribute_group);
-+	if (lo->sysfs_inited)
-+		sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
-+				   &loop_attribute_group);
- }
- 
- static void loop_config_discard(struct loop_device *lo)
---- a/drivers/block/loop.h
-+++ b/drivers/block/loop.h
-@@ -59,6 +59,7 @@ struct loop_device {
- 	struct kthread_worker	worker;
- 	struct task_struct	*worker_task;
- 	bool			use_dio;
-+	bool			sysfs_inited;
- 
- 	struct request_queue	*lo_queue;
- 	struct blk_mq_tag_set	tag_set;
+ static ssize_t yurex_write(struct file *file, const char __user *user_buffer,
 
 
