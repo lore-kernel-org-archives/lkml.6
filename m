@@ -2,118 +2,87 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98935ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B94EECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A253208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:02:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A253208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EB3D320871
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:03:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GolFZH5t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB3D320871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbeGPN33 (ORCPT
+        id S1730092AbeGPNbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:29:29 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49616 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729792AbeGPN32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 09:29:28 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0008B7C6A9;
-        Mon, 16 Jul 2018 13:02:06 +0000 (UTC)
-Received: from localhost (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B063D2026D65;
-        Mon, 16 Jul 2018 13:02:05 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 21:02:02 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        yasu.isimatu@gmail.com, keescook@chromium.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        vbabka@suse.cz, mgorman@techsingularity.net
-Subject: Re: Bug report about KASLR and ZONE_MOVABLE
-Message-ID: <20180716130202.GB1724@MiWiFi-R3L-srv>
-References: <20180711094244.GA2019@localhost.localdomain>
- <20180711104158.GE2070@MiWiFi-R3L-srv>
- <20180711104944.GG1969@MiWiFi-R3L-srv>
- <20180711124008.GF2070@MiWiFi-R3L-srv>
- <72721138-ba6a-32c9-3489-f2060f40a4c9@cn.fujitsu.com>
- <20180712060115.GD6742@localhost.localdomain>
- <20180712123228.GK32648@dhcp22.suse.cz>
- <20180712235240.GH2070@MiWiFi-R3L-srv>
- <20180716113845.GM17280@dhcp22.suse.cz>
+        Mon, 16 Jul 2018 09:31:16 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:37839 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728734AbeGPNbQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 09:31:16 -0400
+Received: by mail-it0-f53.google.com with SMTP id p17-v6so21179753itc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 06:03:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iMnw6wD8ayCsAY3s5wGqnXZGrWKraHxbSHUhkbBz+84=;
+        b=GolFZH5tXgGG0T7e5HLJwkEAGeRswobtJMimBgLxkvWDVWFMwwGb/a6UAC/qtaavEM
+         DkghDLoeJ+ZC8XxwfoTVHJMfAiXC3BzP9uYFm/sdUCmoCKiYnvrqzBlnuRXR1bVR56JZ
+         Q/ZaFFgRaUvcmw267VUn1MlYKltWf4v2jgzoY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iMnw6wD8ayCsAY3s5wGqnXZGrWKraHxbSHUhkbBz+84=;
+        b=gTVfVA6dUOkKYOGruoqz9ztiDKr2nKVJ0Rs3ZpdpE5scHrGytYf9+uwrjA516tZ0V/
+         90Y3ve8wH7vVNAhbzzmtRh4X/ES6235gbD0BDjqo55Ai4wL0N5xsfL2XIbD5k0H719NI
+         t3cVY3FWWwa+7U4UT9Yz7vu+ef0dEYFVRtjVAKeY3P5sNJBRkPXtEYjnIL6dCLRYE8Q4
+         9e0HON44Qv2eFOwtRr3zw3G6a4KU98CCI/KiW5ZwrA+Ekvg9dBBI9/DNYn39rouDTtQL
+         vOaZlRQ+YDDY8+v0W6xdljXhvocag9obksMr9RU3U7kpYH7JlwWlu+HVk6GntCNK8lRb
+         fTZg==
+X-Gm-Message-State: AOUpUlH611eTBSWOM0s6tJeoffOE25mMuaU8PDCFoWUo0S2oJr6DQSoF
+        Ru5OqIYIeB5Sjd87bbrJgOYpHubWianx1trjgy3CRKoH
+X-Google-Smtp-Source: AAOMgpeZSLed5oJhhJ6ItOGV54ucex/54lLuA5uD1pCjxH3R11kHQNnAdVGdzyu4xVNIgRAmh9ZA+TI/Fah313BuCmk=
+X-Received: by 2002:a24:2c49:: with SMTP id i70-v6mr12760439iti.135.1531746234147;
+ Mon, 16 Jul 2018 06:03:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716113845.GM17280@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 16 Jul 2018 13:02:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 16 Jul 2018 13:02:07 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+References: <20180716081018.21bfe495@canb.auug.org.au> <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+ <CAMuHMdVRfEcxo0SVW7VkmE-1bjsESKeL9nRk41W32_2V6rpA-A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVRfEcxo0SVW7VkmE-1bjsESKeL9nRk41W32_2V6rpA-A@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 16 Jul 2018 15:03:42 +0200
+Message-ID: <CACRpkdbC6Z6NY2LAki2cwyGs4ohokWoXYBBR+gAx4DPU0S-YsA@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl tree
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/16/18 at 01:38pm, Michal Hocko wrote:
-> On Fri 13-07-18 07:52:40, Baoquan He wrote:
-> > Hi Michal,
-> > 
-> > On 07/12/18 at 02:32pm, Michal Hocko wrote:
-> [...]
-> > > I am not able to find the beginning of the email thread right now. Could
-> > > you summarize what is the actual problem please?
-> > 
-> > The bug is found on x86 now. 
-> > 
-> > When added "kernelcore=" or "movablecore=" into kernel command line,
-> > kernel memory is spread evenly among nodes. However, this is right when
-> > KASLR is not enabled, then kernel will be at 16M of place in x86 arch.
-> > If KASLR enabled, it could be put any place from 16M to 64T randomly.
-> >  
-> > Consider a scenario, we have 10 nodes, and each node has 20G memory, and
-> > we specify "kernelcore=50%", means each node will take 10G for
-> > kernelcore, 10G for movable area. But this doesn't take kernel position
-> > into consideration. E.g if kernel is put at 15G of 2nd node, namely
-> > node1. Then we think on node1 there's 10G for kernelcore, 10G for
-> > movable, in fact there's only 5G available for movable, just after
-> > kernel.
-> 
-> OK, I guess I see that part. But who is going to use movablecore along
-> with KASLR enabled? I mean do we really have to support those two
-> obscure command line parameters for KASLR?
+On Mon, Jul 16, 2018 at 9:59 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-Not very sure whether we have to support both of those to work with
-KASLR. Maybe it's time to make clear of it now.
+> The previous issue was a missing commit from the _author_, not committer.
+> As you rebased the branch, _you_ are now the committer, not me anymore.
+> So now your SoBs must be present, too.
 
-For 'kernelcore=mirror', we have solved the conflict to make it work well
-with KASLR. For 'movable_node' conflict with KASLR, Chao is posting
-patches to fix it. As for 'kernelcore=' and 'movablecore=', 
+Yeah I figured. Sorry.
 
-1) solve the conflict between them with KASLR in
-   find_zone_movable_pfns_for_nodes();
-2) disable KASLR when 'kernelcore=' | 'movablecore=' is set;
-3) disable 'kernelcore=' | 'movablecore=' when KASLR is enabled;
-4) add note in doc to notice people to not add them at the same time;
+> As I already told you I had fixed up the author SoB, and updated the tag,
+> just drop the above commits, pull sh-pfc-for-v4.19-tag1 again, and be done
+> with it ;-)
 
-2) and 3) may need be fixed in arch/x86 code. As long as come to an
-agreement, any one is fine to me.
-> 
-> In fact I would be much more concerned about memory hotplug and
-> pre-defined movable nodes. Does the current KASLR code work in that
-> case?
+But it's no fun if I can't do all mistakes myself! ;)
 
-As said above, kernelcore=mirror works well with KASLR now. Making
-'movable_node' work with KASLR is in progress.
-
-Thanks
-Baoquan
+Yours,
+Linus Walleij
