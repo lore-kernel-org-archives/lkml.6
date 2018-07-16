@@ -2,112 +2,147 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 089F6ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A321ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5D322086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3O/eEl/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5D322086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 010D62086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010D62086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbeGPVnl (ORCPT
+        id S1730926AbeGPVn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:43:41 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:38164 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728290AbeGPVnl (ORCPT
+        Mon, 16 Jul 2018 17:43:56 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42357 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728290AbeGPVn4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:43:41 -0400
-Received: by mail-yw0-f196.google.com with SMTP id r3-v6so14721129ywc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:14:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3yMCA1M2W7gMct2yGQkZobLd76tOdtLn1ILDE9Pbs5I=;
-        b=l3O/eEl/TKgTgt7YX2M6OKah6N74o5WMf7U1EREDk3kOKDcvAqM2q/D2rz7mKJ9umc
-         CE6lvbbs5MEA4petq4FA6rFLRxfbe+CxyZBQTbsReGTryYc3jqSWov83HNunqr+hYZ0i
-         mLE7XEOqwtTtYC8u7SfHFwjyg8m/RNrJDRfIdwwIWxsS1EaLei4DM0OLkAz3jrJuS73E
-         xWavlb3GOQruqWSfAmADTx0iY/IqZlGNX0AA9OW6EZBWdEu3wVgnP7X3Plzmq9FnbD1u
-         iPz0l5VkaCHhV7kuW4NiNOYNpenjyRRCUS8dZdKXGgP8+zysUzTiEY1M1q/HqIZ2/DNH
-         mERQ==
+        Mon, 16 Jul 2018 17:43:56 -0400
+Received: by mail-oi0-f65.google.com with SMTP id n84-v6so77534053oib.9;
+        Mon, 16 Jul 2018 14:14:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3yMCA1M2W7gMct2yGQkZobLd76tOdtLn1ILDE9Pbs5I=;
-        b=crdo3wK2obOg64rY3g5cJT8nKQhbjGS9LJKOv+gAd3pITyf5k3GeBCAZI03rvQ2WPR
-         Ut9Ca4DSDH3mAJJvUHIMeIPxwByxSvgSqgx7uvl/q06sNXdHXq6Am7Jt8hXhlPb3MTp8
-         9QvCE+8V+ub6hGapSx4x2S7rgHi/PFt1F0KrMr9UOhKv5536pfEYnaRRUAaxLHQmevqq
-         dzFDmPUtKQZ+7fGchR9c+C+L0gEI5lI8t0BVzM9Fz5bvjU8LUJm8BXuHFPgjT+YDMgm3
-         ZLwWXAvBEAvie/hZwicK3pSlg0dvK3UqWa3pGrbmVa9bI8kpmX8mBtazLguo8USHkLPu
-         ecbw==
-X-Gm-Message-State: AOUpUlE5LMvnDXUJjzOyU/wlPZuhD8JkKx1XoFRXloj31ppDvMgxkxNf
-        lU63tCwRaNbxoqkvVYXmYnzhwgJ2sapmg7t+G3s=
-X-Google-Smtp-Source: AAOMgpf1AhHMMUDiQenUBDcbEznB+feDPwqQgWragt0lZtp9ISjARXOThPXC+EWtpGcHRV+9n77UE3yeBiUQ6Ym3wNo=
-X-Received: by 2002:a81:86c4:: with SMTP id w187-v6mr8968277ywf.424.1531775668534;
- Mon, 16 Jul 2018 14:14:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LU2LqsFNAEpFUP5kEdUX4g0JXqRSXceo6W2XcJQHPq0=;
+        b=pXxSYj7dL7fIsnR7hicfgmLtr3QL0cYzFw9QKk4MNPjsT5fvXca1ByYI9+dnI0tXMS
+         dFu49hdUVwhyfuuoUvZNbqyfjO1oxOQJjWm8NxBH3fz+PsRYelsTOspksTstLH6AFBw1
+         +9Jnk6LLF2JK3M3S85bO6+aSXevt6EPqz6ImrBYEzxbrwkyEI2dm1rv131HpASE2OhvY
+         F6o6w2JIgPSRRsCWSB/oG5SntjdlAXXxeykt61kxX2HrXrKQBEjUb9uI1ofyKQq3gkGp
+         S2QoovSTro0PQwpnozNiKX7tBQr98tQtMRNco/ps999QghqR7A/klu5bbz1a4jDPncsW
+         8hkQ==
+X-Gm-Message-State: AOUpUlGppq5aDu5753uWlCYF5oyPk142DjmbjUzgLq4/ndmdMAtj8jHK
+        kjkhEgL/GhzNgbZZVCEkLg==
+X-Google-Smtp-Source: AAOMgpf68B5POwNtnH0YbMmF1e5z0xvSeAuRIGqq3U4nFBhsFRVZlIYUp2V6sCAnorvRXAkwT1IMpw==
+X-Received: by 2002:aca:45c3:: with SMTP id s186-v6mr980637oia.289.1531775682879;
+        Mon, 16 Jul 2018 14:14:42 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id p4-v6sm51678587oig.43.2018.07.16.14.14.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 14:14:41 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 15:14:40 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Damian Kos <dkos@cadence.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, ltyrala@cadence.com,
+        pgaj@cadence.com, stelford@cadence.com
+Subject: Re: [PATCH 10/12] dt-bindings: drm/bridge: Document Cadence MHDP
+ bridge bindings
+Message-ID: <20180716211440.GA29964@rob-hp-laptop>
+References: <1530612152-27555-1-git-send-email-dkos@cadence.com>
+ <1530612152-27555-11-git-send-email-dkos@cadence.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 14:14:27
- -0700 (PDT)
-In-Reply-To: <20180714063224.GD20451@kroah.com>
-References: <20180714055816.223754-1-toddpoynor@gmail.com> <20180714055816.223754-6-toddpoynor@gmail.com>
- <20180714063224.GD20451@kroah.com>
-From:   Todd Poynor <toddpoynor@gmail.com>
-Date:   Mon, 16 Jul 2018 14:14:27 -0700
-Message-ID: <CAO3upoZQ0QXc5OjvhJbwN42QE71m6ABvLb2WM_iFVWd64iGgSg@mail.gmail.com>
-Subject: Re: [PATCH 05/18] staging: gasket: sysfs mapping creation fixups
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
-        Zhongze Hu <frankhu@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530612152-27555-11-git-send-email-dkos@cadence.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 11:32 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Fri, Jul 13, 2018 at 10:58:03PM -0700, Todd Poynor wrote:
->> From: Todd Poynor <toddpoynor@google.com>
->>
->> Return EBUSY for attempt to create a mapping already in use.
->
-> Why?
+On Tue, Jul 03, 2018 at 11:02:21AM +0100, Damian Kos wrote:
+> Document the bindings used for the Cadence MHDP DPI/DP bridge.
+> 
+> Signed-off-by: Damian Kos <dkos@cadence.com>
+> ---
+>  .../bindings/display/bridge/cdns,mhdp.txt          |   39 ++++++++++++++++++++
+>  1 files changed, 39 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
+> new file mode 100644
+> index 0000000..d872e26
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,mhdp.txt
+> @@ -0,0 +1,39 @@
+> +Cadence MHDP bridge
+> +==========================
+> +
+> +The Cadence MHDP bridge is a DPI to DP bridge.
+> +
+> +Required properties:
+> + - compatible: should be "cdns,mhdp",
 
-The existing code returns EINVAL which often means something bogus was
-requested, whereas EBUSY is sometimes used for requesting something
-already in use.  If that's not an error typically returned in this
-situation I'm happy to drop it.
+Not very specific. Only 1 version of this block?
 
->
->> Remove stale pointers on error allocating attr array.
->
-> This should be a different patch.
+> + - reg: physical base address and length of the controller's registers,
+> + - clocks: DP bridge clock, it's used by the IP to know how to translate
+> +	   a number of clock cycles into a time (which is used to comply
+> +	   with DP standard timings and delays),
+> + - clock-names: must be "clk",
 
-Will do.
+Not a useful name. With only 1 clock, you can just drop this.
 
->
-> thanks,
->
-> greg k-h
+> +
+> +Required subnodes:
+> + - ports: Ports as described in Documentation/devictree/bindings/graph.txt
+> +   Currently contains a single input port at address 0 representing the DPI
+> +   input.
 
+Currently? You should have a port connecting to a connector node.
 
+> +   Port 0 should be connected to a DPI encoder output.
+> +
+> +Example:
+> +
+> +	mhdp: mhdp@0xf0fb000000 {
 
--- 
-Todd
+dp-bridge@f0fb000000
+
+> +		compatible = "cdns,mhdp";
+> +		reg = <0xf0 0xfb000000 0x0 0x1000000>;
+> +		clocks = <&mhdp_clock>;
+> +		clock-names = "clk";
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				mhdp0_dpi_input: endpoint {
+> +					remote-endpoint = <&xxx_dpi_output>;
+> +				};
+> +			};
+> +		};
+> +	};
+> -- 
+> 1.7.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
