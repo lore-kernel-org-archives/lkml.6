@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7F9ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D41ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5EE20936
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:57:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5EE20936
+	by mail.kernel.org (Postfix) with ESMTP id 10B462098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:57:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10B462098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbeGPJXw (ORCPT
+        id S1730531AbeGPJXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:23:52 -0400
+        Mon, 16 Jul 2018 05:23:55 -0400
 Received: from mail.cn.fujitsu.com ([183.91.158.132]:31700 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727192AbeGPJXw (ORCPT
+        with ESMTP id S1730093AbeGPJXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:23:52 -0400
+        Mon, 16 Jul 2018 05:23:54 -0400
 X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="42280504"
+   d="scan'208";a="42280506"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Jul 2018 16:57:24 +0800
+  by heian.cn.fujitsu.com with ESMTP; 16 Jul 2018 16:57:29 +0800
 Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
-        by cn.fujitsu.com (Postfix) with ESMTP id 17FE74B5CF65;
-        Mon, 16 Jul 2018 16:57:25 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id 4BA274B625E8;
+        Mon, 16 Jul 2018 16:57:29 +0800 (CST)
 Received: from localhost (10.167.225.56) by G08CNEXCHPEKD02.g08.fujitsu.local
  (10.167.33.89) with Microsoft SMTP Server id 14.3.399.0; Mon, 16 Jul 2018
- 16:57:27 +0800
+ 16:57:31 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
@@ -40,13 +40,15 @@ To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
 CC:     <indou.takao@jp.fujitsu.com>, <lcapitulino@redhat.com>,
         <caoj.fnst@cn.fujitsu.com>, <douly.fnst@cn.fujitsu.com>,
         Chao Fan <fanc.fnst@cn.fujitsu.com>
-Subject: [RFC PATCH v2 0/4] x86/boot/KASLR: Parse ACPI table and limit kaslr in immovable memory.
-Date:   Mon, 16 Jul 2018 16:55:34 +0800
-Message-ID: <20180716085538.31939-1-fanc.fnst@cn.fujitsu.com>
+Subject: [RFC PATCH v2 2/4] x86/boot: Add acpitb.c to parse acpi tables
+Date:   Mon, 16 Jul 2018 16:55:36 +0800
+Message-ID: <20180716085538.31939-3-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180716085538.31939-1-fanc.fnst@cn.fujitsu.com>
+References: <20180716085538.31939-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-yoursite-MailScanner-ID: 17FE74B5CF65.AD8CC
+X-yoursite-MailScanner-ID: 4BA274B625E8.AAC38
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,72 +56,280 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-***Background:
-People reported that kaslr may randomly chooses some positions
-which are located in movable memory regions. This will break memory
-hotplug feature and make the memory can't be removed.
+Imitate the ACPI code to parse ACPI tables. Functions are simplified
+cause some operations are not needed here.
+And also, this method won't influence the initialization of ACPI.
 
-***Solutions:
-There should be a method to limit kaslr to choosing immovable memory
-regions, so there are 2 solutions:
-1) Add a kernel parameter to specify the memory regions.
-2) Get the information of memory hotremove, then kaslr will know the
-   right regions.
-In method 2, information about memory hot remove is in ACPI
-tables, which will be parsed after 'start_kernel', kaslr can't get
-the information.
-In method 1, users should know the regions address and specify in
-kernel parameter.
-
-In the earliest time, I tried to dig ACPI tabls to solve this problem.
-But I didn't splite the code in 'compressed/' and ACPI code, so the patch
-is hard to follow so refused by community.
-Somebody suggest to add a kernel parameter to specify the
-immovable memory so that limit kaslr in these regions. Then I make
-a patchset. After several versions, Ingo gave a suggestion:
-https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
-Follow Ingo's suggestion, imitate the ACPI code to parse the acpi
-tables, so that the kaslr can get necessary memory information in
-ACPI tables.
-Since I think ACPI code is independent part, so copy the codes
-and functions to 'compressed/' directory, so that kaslr won't
-influence the initialization of ACPI.
-
-PATCH 1/4 Reuse the head file of linux/acpi.h, and copy a fcuntion from
-          ACPI code.
-PATCH 2/4 Functions to parse ACPI code.
-PATCH 3/4 If 'CONFIG_MEMORY_HOTREMOVE' specified, walk all nodes and
-          store the information of immovable memory regions.
-PATCH 4/4 According to the immovable memory regions, filter the
-          immovable regions which KASLR can choose.
-
-***Test results:
- - I did a very simple test, and it can get the memory information in
-   bios and efi KVM guest machine, and put it by early printk. But no
-   more tests, so it's with RFC tag.
-
-v1->v2:
- -  Simplify some code.
-Follow Baoquan He's suggestion:
- - Reuse the head file of acpi code.
-
-Any comments will be welcome.
-
-
-Chao Fan (4):
-  x86/boot: Add acpitb.h to help parse acpi tables
-  x86/boot: Add acpitb.c to parse acpi tables
-  x86/boot/KASLR: Walk srat tables to filter immovable memory
-  x86/boot/KASLR: Limit kaslr to choosing the immovable memory
-
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+---
  arch/x86/boot/compressed/Makefile |   4 +
  arch/x86/boot/compressed/acpitb.c | 242 ++++++++++++++++++++++++++++++
- arch/x86/boot/compressed/acpitb.h |  49 ++++++
- arch/x86/boot/compressed/kaslr.c  | 120 +++++++++++++--
- 4 files changed, 404 insertions(+), 11 deletions(-)
+ 2 files changed, 246 insertions(+)
  create mode 100644 arch/x86/boot/compressed/acpitb.c
- create mode 100644 arch/x86/boot/compressed/acpitb.h
 
+diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+index fa42f895fdde..41017dc98b61 100644
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@ -83,6 +83,10 @@ ifdef CONFIG_X86_64
+ 	vmlinux-objs-y += $(obj)/pgtable_64.o
+ endif
+ 
++ifdef CONFIG_MEMORY_HOTREMOVE
++vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/acpitb.o
++endif
++
+ $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
+ 
+ vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
+diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+new file mode 100644
+index 000000000000..e6eaaa6b0b22
+--- /dev/null
++++ b/arch/x86/boot/compressed/acpitb.c
+@@ -0,0 +1,242 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#define BOOT_CTYPE_H
++#include "misc.h"
++#include "acpitb.h"
++
++#include <linux/efi.h>
++#include <asm/efi.h>
++#include <linux/numa.h>
++
++extern unsigned long get_cmd_line_ptr(void);
++
++/* Search from efi table for rsdp table. */
++static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
++{
++	efi_system_table_t *systab;
++	bool find_rsdp = false;
++	bool acpi_20 = false;
++	bool efi_64 = false;
++	void *config_tables;
++	struct efi_info *e;
++	char *sig;
++	int size;
++	int i;
++
++#ifndef CONFIG_EFI
++	return false;
++#endif
++
++	e = &boot_params->efi_info;
++	sig = (char *)&e->efi_loader_signature;
++
++	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
++		efi_64 = true;
++	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
++		efi_64 = false;
++	else {
++		debug_putstr("Wrong efi loader signature.\n");
++		return false;
++	}
++
++	/* Get systab from boot params. */
++#ifdef CONFIG_X86_32
++	if (e->efi_systab_hi || e->efi_memmap_hi) {
++		debug_putstr("Table located above 4GB, disabling EFI.\n");
++		return false;
++	}
++	systab = (efi_system_table_t *)e->efi_systab;
++#else
++	systab = (efi_system_table_t *)(
++			e->efi_systab | ((__u64)e->efi_systab_hi<<32));
++#endif
++
++	if (systab == NULL)
++		return false;
++
++	/* Get efi tables from systab. */
++	size = efi_64 ? sizeof(efi_config_table_64_t) :
++			sizeof(efi_config_table_32_t);
++
++	for (i = 0; i < systab->nr_tables; i++) {
++		efi_guid_t guid;
++		unsigned long table;
++
++		config_tables = (void *)(systab->tables + size * i);
++		if (efi_64) {
++			efi_config_table_64_t *tmp_table;
++
++			tmp_table = (efi_config_table_64_t *)config_tables;
++			guid = tmp_table->guid;
++			table = tmp_table->table;
++#ifndef CONFIG_64BIT
++			if (table >> 32) {
++				debug_putstr("Table located above 4G, disabling EFI.\n");
++				return false;
++			}
++#endif
++		} else {
++			efi_config_table_32_t *tmp_table;
++
++			tmp_table = (efi_config_table_32_t *)config_tables;
++			guid = tmp_table->guid;
++			table = tmp_table->table;
++		}
++
++		/* Get rsdp from efi tables. */
++		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)) && !acpi_20) {
++			*rsdp_addr = (acpi_physical_address)table;
++			acpi_20 = false;
++			find_rsdp = true;
++		} else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID))) {
++			*rsdp_addr = (acpi_physical_address)table;
++			acpi_20 = true;
++			return true;
++		}
++	}
++	return find_rsdp;
++}
++
++static u8 checksum(u8 *buffer, u32 length)
++{
++	u8 sum = 0;
++	u8 *end = buffer + length;
++
++	while (buffer < end)
++		sum = (u8)(sum + *(buffer++));
++
++	return sum;
++}
++
++static u8 *scan_memory_for_rsdp(u8 *start_address, u32 length)
++{
++	struct acpi_table_rsdp *rsdp;
++	u8 *end_address;
++	u8 *mem_rover;
++
++	end_address = start_address + length;
++
++	for (mem_rover = start_address; mem_rover < end_address;
++	     mem_rover += ACPI_RSDP_SCAN_STEP) {
++		rsdp = (struct acpi_table_rsdp *)mem_rover;
++		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
++			continue;
++		if (checksum((u8 *) rsdp,
++		    ACPI_RSDP_CHECKSUM_LENGTH) != 0)
++			continue;
++		if ((rsdp->revision >= 2) && (checksum((u8 *)
++		    rsdp, ACPI_RSDP_XCHECKSUM_LENGTH) != 0))
++			continue;
++		return mem_rover;
++	}
++	return NULL;
++}
++
++static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
++{
++	struct acpi_table_rsdp *rsdp;
++	u32 physical_address;
++	u8 *table_ptr;
++	u8 *mem_rover;
++
++	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
++	ACPI_MOVE_16_TO_32(&physical_address, table_ptr);
++	physical_address <<= 4;
++	table_ptr = (u8 *)(acpi_physical_address)physical_address;
++
++	if (physical_address > 0x400) {
++		mem_rover = scan_memory_for_rsdp(table_ptr,
++						 ACPI_EBDA_WINDOW_SIZE);
++
++		if (mem_rover) {
++			physical_address += (u32)ACPI_PTR_DIFF(mem_rover,
++							       table_ptr);
++			*rsdp_addr = (acpi_physical_address)physical_address;
++			return;
++		}
++	}
++
++	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
++	mem_rover = scan_memory_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
++
++	if (mem_rover) {
++		physical_address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
++					 ACPI_PTR_DIFF(mem_rover, table_ptr));
++		*rsdp_addr = (acpi_physical_address)physical_address;
++		return;
++	}
++}
++
++/*
++ * Used to dig rsdp table from efi table or bios.
++ * If rsdp table found in efi table, use it. Or search bios.
++ */
++static acpi_physical_address get_rsdp_addr(void)
++{
++	acpi_physical_address pa = 0;
++	bool status = false;
++
++	status = efi_get_rsdp_addr(&pa);
++
++	if (!status || pa == 0)
++		bios_get_rsdp_addr(&pa);
++
++	return pa;
++}
++
++struct acpi_table_header *get_acpi_srat_table(void)
++{
++	char *args = (char *)get_cmd_line_ptr();
++	acpi_physical_address acpi_table;
++	acpi_physical_address root_table;
++	struct acpi_table_header *header;
++	struct acpi_table_rsdp *rsdp;
++	char *signature;
++	u32 size;
++	u8 *entry;
++	u32 count;
++	int i, j;
++	u32 len;
++
++	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
++	if (!rsdp)
++		return NULL;
++
++	/* Get rsdt or xsdt from rsdp. */
++	if (!strstr(args, "acpi=rsdt") &&
++	    rsdp->xsdt_physical_address &&
++	    rsdp->revision > 1) {
++		root_table = rsdp->xsdt_physical_address;
++		size = ACPI_XSDT_ENTRY_SIZE;
++	} else {
++		root_table = rsdp->rsdt_physical_address;
++		size = ACPI_RSDT_ENTRY_SIZE;
++	}
++
++	/* Get acpi root table from rsdt or xsdt.*/
++	header = (struct acpi_table_header *)root_table;
++	len = header->length;
++	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
++	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
++
++	for (i = 0; i < count; i++) {
++		u64 address64;
++
++		if (size == ACPI_RSDT_ENTRY_SIZE)
++			acpi_table = ((acpi_physical_address)
++				      (*ACPI_CAST_PTR(u32, entry)));
++		else {
++			ACPI_MOVE_64_TO_64(&address64, entry);
++			acpi_table = (acpi_physical_address) address64;
++		}
++
++		if (acpi_table) {
++			header = (struct acpi_table_header *)acpi_table;
++			signature = header->signature;
++
++			if (!strncmp(signature, "SRAT", 4))
++				return header;
++		}
++		entry += size;
++	}
++	return NULL;
++}
 -- 
 2.17.1
 
