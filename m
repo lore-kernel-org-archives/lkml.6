@@ -2,97 +2,185 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FE3ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E932ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94134208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:30:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94134208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=web.de
+	by mail.kernel.org (Postfix) with ESMTP id D0E37208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:32:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E37208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbeGPJ52 (ORCPT
+        id S1729591AbeGPJ7B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:57:28 -0400
-Received: from mout.web.de ([212.227.15.14]:49935 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727677AbeGPJ52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:57:28 -0400
-Received: from lab-pc05.sra.uni-hannover.de ([130.75.33.87]) by smtp.web.de
- (mrweb004 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 0MFeoH-1frLea18TN-00EfqU; Mon, 16 Jul 2018 11:30:45 +0200
-From:   Matthias Wolf <der_wolf_@web.de>
-To:     devel@driverdev.osuosl.org
-Cc:     linux-kernel@i4.cs.fau.de, Matthias Wolf <der_wolf_@web.de>,
-        Felix Siegel <felix.siegel@stud.uni-hannover.de>,
-        Tim Cofala <cofala@stud.uni-hannover.de>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] staging: fbtft: Fix line continuation
-Date:   Mon, 16 Jul 2018 11:30:00 +0200
-Message-Id: <1531733420-25438-2-git-send-email-der_wolf_@web.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531733420-25438-1-git-send-email-der_wolf_@web.de>
-References: <1531733420-25438-1-git-send-email-der_wolf_@web.de>
-X-Provags-ID: V03:K1:EvCKBAhJwz+o3UQiWQqtRF9DaL5GvGFDTPW0LcrADoI0kHq60ti
- CuMegf/ws18yMBK9HTnsETPRR4spGFungF/qlW/F4eEXfM9xQpcans1pWnib/Zym/C+1PW+
- WUxJMvQ10M2iZpVBNBrsua9diovR7GtDQxXwa/6BuNNTXaMWkys7nGB71/MfYFnZ0a18i7T
- dTbPudyI0ciMGK4poslBA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:eBYXwcc/V9M=:ZazZWlJ8YzuseOiPWFrR9l
- AgqudQdfLvGg1OEV9sr4gDqe64vy4p3sba7jtv2aoOH7Kqg8+1g0eKBPxEirhnR91kfz96Wzy
- cp2xPs6P5EhIxqB0tC49icWcOc3T7hShyfB11DHwUZvpaP9UFHAtjtgTjP39dXHjykLWPbP4C
- m2V43mrRaBSLnoJaYJZLMTu3BV7GLfVmggY9DIqxc37JvB61TjhXfaPk7WFrIAEHgoL+VXMEO
- pIMCr/G0jzX0iW76nnbDVfOdzOUd70buw6bSFhqrqKiAebCWavWrwagpgI2+P7kL7LIlu5wuL
- 4AMXFdIe8nEPV5GiiTineCZYedN7YWMWi3n85MFj93jSZq4b54kT1gC0n6ncuC5SyZppWEzrs
- j47/64UZ8lnZ/L7eBqDxR1emdT1VpoytHvqYs4WRkRqBi4W5EBqL07sLKO+95sr9WJI9U/YpR
- PrbKAuHakncptr1fSHwwq1wkweo30DcZI1D1pdkA78BG78Cb6i5Fdom1zdL5yKuIrRC7j6WVc
- MUitkG2gujEAUsxxQF0adcOxyh0/NPEbFKCbxeM49VmkgYez9KATwY3v83kfBVoDg1WXa08dY
- LiJA9LKd1RF7FuuJ8fNCTb34Cb/sAgvGQJ+TBbWQsxo2Fvwog6E0x5wVNPW94eIz1ewdEewej
- B2fajjciT3EY0UieS4nVKuBIr9IivxcjKgNI8NnrzRbCtDp/jFTmGvimS37son3I+WoKcL36L
- NgnDb9ccZM+T66xA+uK5gPuYKrhLTj+mvYTcqAG3ybpXB6VZihl1F1DTqBo=
+        Mon, 16 Jul 2018 05:59:01 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:18181 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726305AbeGPJ7A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 05:59:00 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42282714"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 16 Jul 2018 17:32:26 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id C1E724B66B65;
+        Mon, 16 Jul 2018 17:32:22 +0800 (CST)
+Received: from localhost.localdomain (10.167.226.106) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Mon, 16 Jul 2018 17:32:23 +0800
+Subject: Re: [PATCH v13 13/18] x86/tsc: calibrate tsc only once
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+CC:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        <linux@armlinux.org.uk>, <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, <sboyd@codeaurora.org>,
+        <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        <mingo@redhat.com>, <tglx@linutronix.de>, <hpa@zytor.com>,
+        <peterz@infradead.org>, <prarit@redhat.com>, <feng.tang@intel.com>,
+        Petr Mladek <pmladek@suse.com>, <gnomes@lxorguk.ukuu.org.uk>,
+        <linux-s390@vger.kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>
+References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
+ <20180712000419.5165-14-pasha.tatashin@oracle.com>
+ <928b8490-89d2-46a3-8596-16751bcd12db@cn.fujitsu.com>
+ <CAGM2reb-MwiT8qoiSkXCjAAM46JOYL9BP+U3q7PMTcxp9EiK7w@mail.gmail.com>
+From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <01812492-b88b-4436-570b-ef776eaafc6a@cn.fujitsu.com>
+Date:   Mon, 16 Jul 2018 17:32:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <CAGM2reb-MwiT8qoiSkXCjAAM46JOYL9BP+U3q7PMTcxp9EiK7w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: C1E724B66B65.ABE64
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch warning: avoid unnecessary line continuation
-to allow grepping of whole error message.
 
-Signed-off-by: Matthias Wolf <der_wolf_@web.de>
-Signed-off-by: Felix Siegel <felix.siegel@stud.uni-hannover.de>
-Signed-off-by: Tim Cofala <cofala@stud.uni-hannover.de>
----
- drivers/staging/fbtft/fb_ssd1351.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fb_ssd1351.c b/drivers/staging/fbtft/fb_ssd1351.c
-index b8ef75f..1b92691 100644
---- a/drivers/staging/fbtft/fb_ssd1351.c
-+++ b/drivers/staging/fbtft/fb_ssd1351.c
-@@ -126,16 +126,14 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
- 	for (i = 0; i < 63; i++) {
- 		if (i > 0 && curves[i] < 2) {
- 			dev_err(par->info->device,
--				"Illegal value in Grayscale Lookup Table at index %d. " \
--				"Must be greater than 1\n", i);
-+				"Illegal value in Grayscale Lookup Table at index %d. Must be greater than 1\n", i);
- 			return -EINVAL;
- 		}
- 		acc += curves[i];
- 		tmp[i] = acc;
- 		if (acc > 180) {
- 			dev_err(par->info->device,
--				"Illegal value(s) in Grayscale Lookup Table. " \
--				"At index=%d, the accumulated value has exceeded 180\n", i);
-+				"Illegal value(s) in Grayscale Lookup Table. At index=%d, the accumulated value has exceeded 180\n", i);
- 			return -EINVAL;
- 		}
- 	}
--- 
-2.7.4
+At 07/13/2018 07:30 PM, Pavel Tatashin wrote:
+> On Fri, Jul 13, 2018 at 3:24 AM Dou Liyang <douly.fnst@cn.fujitsu.com> wrote:
+>>
+>>
+>> At 07/12/2018 08:04 AM, Pavel Tatashin wrote:
+>>> During boot tsc is calibrated twice: once in tsc_early_delay_calibrate(),
+>>> and the second time in tsc_init().
+>>>
+>>> Rename tsc_early_delay_calibrate() to tsc_early_init(), and rework it so
+>>> the calibration is done only early, and make tsc_init() to use the values
+>>> already determined in tsc_early_init().
+>>>
+>>> Sometimes it is not possible to determine tsc early, as the subsystem that
+>>> is required is not yet initialized, in such case try again later in
+>>> tsc_init().
+>>>
+>>> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+>>> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+>>
+>> Hi Pavel,
+>>
+>> Aha, a complex solution for a simple problem! ;-) And I did find any
+>> benefits of doing that. did I miss something?
+> 
+> Hi Dou,
+> 
+> I had this in previous version:  init early, and unconditionally
+> re-init later (which required to resync sched clocks for continuity,
+> and check for some other corner cases). Thomas did not like the idea,
+> as it is less deterministic: it leads for code to work by accident,
+> where we might get one tsc frequency early and another later, and so
+> on. The request was to initialize only once, and if that fails do it
+> again later. This way, if early initialization is broken, we will know
+> and fix it.
+> 
+
+Hi Pavel,
+
+Yes, right, I have seen the purpose in v12.
+
+>>
+>> As the cpu_khz and tsc_khz are global variables and the tsc_khz may
+>> be reset to cpu_khz. How about the following patch.
+> 
+> Could you please explain where you think this patch can be applied,
+> and what it fixes?
+> 
+
+This patch is just an simple alternative to realize what you want in
+your patch. your patch is also good but complex, and need some scrub.
+eg:
+   - Is it suitable to using the WARN_ON()
+   - the name of determine_cpu_tsc_frequncies() function,
+    s/frequncies/frequencies/. BTW, How about tsc_calibrate_frequencies()
+   - ...
+
+BTW, before this patch, seems we need make sure xen should work well, I
+can investigate and try to test if we can also move the pagetable_init()
+to the front of tsc_early_init() for you.
+
+Thanks,
+	dou
+
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index da1dbd99cb6e..74cb16d89e25 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1197,12 +1197,12 @@ void __init setup_arch(char **cmdline_p)
+
+         memblock_find_dma_reserve();
+
++       x86_init.paging.pagetable_init();
++
+         tsc_early_delay_calibrate();
+         if (!early_xdbc_setup_hardware())
+                 early_xdbc_register_console();
+
+-       x86_init.paging.pagetable_init();
+-
+         kasan_init();
+
+         /*
+
+> Thank you,
+> Pavel
+> 
+>>
+>> Thanks,
+>>          dou
+>> ------------------------8<-----------------------------------
+>>
+>> diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+>> index 74392d9d51e0..e54fa1037d45 100644
+>> --- a/arch/x86/kernel/tsc.c
+>> +++ b/arch/x86/kernel/tsc.c
+>> @@ -1370,8 +1370,10 @@ void __init tsc_init(void)
+>>                   return;
+>>           }
+>>
+>> -       cpu_khz = x86_platform.calibrate_cpu();
+>> -       tsc_khz = x86_platform.calibrate_tsc();
+>> +       if (!tsc_khz) {
+>> +               cpu_khz = x86_platform.calibrate_cpu();
+>> +               tsc_khz = x86_platform.calibrate_tsc();
+>> +       }
+>>
+>>           /*
+>>            * Trust non-zero tsc_khz as authorative,
+> 
+> 
+> 
+
 
