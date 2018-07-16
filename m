@@ -3,107 +3,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15ABECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 01:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0304ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3165D208DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 01:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3165D208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D14A20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:12:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D14A20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbeGPCVH (ORCPT
+        id S1727494AbeGPCex (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 22:21:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9674 "EHLO huawei.com"
+        Sun, 15 Jul 2018 22:34:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45738 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727302AbeGPCVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 22:21:07 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8A1598757A3D1;
-        Mon, 16 Jul 2018 09:55:53 +0800 (CST)
-Received: from [127.0.0.1] (10.177.16.168) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Mon, 16 Jul 2018
- 09:55:55 +0800
-Subject: Re: [V9fs-developer] [PATCH] net/9p: Fix a deadlock case in the
- virtio transport
-To:     Dominique Martinet <asmadeus@codewreck.org>
-References: <5B49B8CF.40709@huawei.com> <20180714090502.GA16186@nautica>
- <5B49DAA5.3020600@huawei.com> <20180714124715.GA16134@nautica>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5B4BFB29.3080507@huawei.com>
-Date:   Mon, 16 Jul 2018 09:55:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1727008AbeGPCex (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 22:34:53 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C7DAF401C7E8;
+        Mon, 16 Jul 2018 02:09:50 +0000 (UTC)
+Received: from [10.72.12.29] (ovpn-12-29.pek2.redhat.com [10.72.12.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2BA212156893;
+        Mon, 16 Jul 2018 02:09:45 +0000 (UTC)
+Subject: Re: [PATCH v4 0/3] uio: fix potential crash bug
+To:     Hamish Martin <Hamish.Martin@alliedtelesis.co.nz>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "jannh@google.com" <jannh@google.com>,
+        "pkalever@redhat.com" <pkalever@redhat.com>,
+        "pkarampu@redhat.com" <pkarampu@redhat.com>,
+        "atumball@redhat.com" <atumball@redhat.com>,
+        "sabose@redhat.com" <sabose@redhat.com>,
+        "mchristi@redhat.com" <mchristi@redhat.com>
+References: <1530929139-13652-1-git-send-email-xiubli@redhat.com>
+ <7c0ae0c9-2af6-c7c3-49b0-24302584a24d@alliedtelesis.co.nz>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <095acd45-675d-b9c3-244a-d1b6cdc1e8f0@redhat.com>
+Date:   Mon, 16 Jul 2018 10:09:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180714124715.GA16134@nautica>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <7c0ae0c9-2af6-c7c3-49b0-24302584a24d@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 02:09:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 02:09:50 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'xiubli@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/14 20:47, Dominique Martinet wrote:
-> jiangyiwen wrote on Sat, Jul 14, 2018:
->> On 2018/7/14 17:05, Dominique Martinet wrote:
->>> jiangyiwen wrote on Sat, Jul 14, 2018:
->>>> When client has multiple threads that issue io requests all the
->>>> time, and the server has a very good performance, it may cause
->>>> cpu is running in the irq context for a long time because it can
->>>> check virtqueue has buf in the *while* loop.
->>>>
->>>> So we should keep chan->lock in the whole loop.
->>>
->>> Hmm, this is generally bad practice to hold a spin lock for long.
->>> In general, spin locks are meant to protect data, not code.
->>>
->>> I'd want some numbers to decide on this one, even if I think this
->>> particular case is safe (e.g. this cannot dead-lock)
->>>
->>
->> Actually, the loop will not hold a spin lock for long, because other
->> threads will not issue new requests in this case. In addition,
->> virtio-blk or virtio-scsi also use this solution, I guess it may also
->> encounter this problem before.
-> 
-> Fair enough. If you do have some numbers to give though (throughput
-> and/or iops before/after) I'd still be really curious.
-> 
->>>>  		chan->ring_bufs_avail = 1;
->>>> -		spin_unlock_irqrestore(&chan->lock, flags);
->>>>  		/* Wakeup if anyone waiting for VirtIO ring space. */
->>>>  		wake_up(chan->vc_wq);
->>>
->>> In particular, the wake up here echoes to wait events that will
->>> immediately try to grab the lock, and will needlessly spin on it until
->>> this thread is done.
->>> If we do go this way I'd want setting chan->ring_bufs_avail to be done
->>> just before unlocking and the wakeup to be done just after unlocking out
->>> of the loop iff we processed at least one iteration here.
->>
->> I can move the wakeup operation after the unlocking. Like what I said
->> above, I think this loop will not execute for long.
-> 
-> Please do, you listed virtio_blk as doing this and they have the same
-> kind of pattern with a req_done bool and only restarting stopped queues
-> if they processed something
-> 
+On 2018/7/13 4:34, Hamish Martin wrote:
+> Hi Xiubo,
+>
+> Tested-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
+>
+> I see these were already merged into Linus' tree but I wanted to let you
+> know that I tested v4.18-rc4 (which contains these three patches) and
+> the issue which led to my original series is still fixed and this patch
+> series of yours has caused no regression in our scenario. This was
+> tested on PPC 64 bit system (NXP T2081).
+Hi Hamish,
 
-You're right, this wake up operation should be put after the unlocking,
-I will resend it. In addition, whether I should resend this patch based
-on your 9p-next branch?
+Cool and thanks very much for your testing about this.
 
-Thanks,
-Yiwen.
+BRs
+Xiubo
+
+
+> Thanks for resolving that.
+>
+> Regards,
+> Hamish M.
+>
+> On 07/07/2018 02:05 PM, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> V2:
+>> - resend it with some small fix
+>>
+>> V3:
+>> - switch to use request_threaded_irq
+>>
+>> V4:
+>> - remove useless checking code, Thanks Mike.
+>> - Thanks very much for the review from Hamish and Mike.
+>>
+>>
+>> Xiubo Li (3):
+>>     uio: use request_threaded_irq instead
+>>     uio: change to use the mutex lock instead of the spin lock
+>>     uio: fix crash after the device is unregistered
+>>
+>>    drivers/uio/uio.c          | 139 +++++++++++++++++++++++++++++++++------------
+>>    include/linux/uio_driver.h |   2 +-
+>>    2 files changed, 104 insertions(+), 37 deletions(-)
+>>
 
