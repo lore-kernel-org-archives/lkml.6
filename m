@@ -2,184 +2,112 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B29ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAE9ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 210792086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:20:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 210792086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3756F2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:22:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lRIehX0Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3756F2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbeGPVtf (ORCPT
+        id S1729828AbeGPVv1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:49:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45410 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728413AbeGPVtf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:49:35 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1B95672620;
-        Mon, 16 Jul 2018 21:20:20 +0000 (UTC)
-Received: from redhat.com (dhcp-17-158.bos.redhat.com [10.18.17.158])
-        by smtp.corp.redhat.com (Postfix) with SMTP id E12AA2156893;
-        Mon, 16 Jul 2018 21:20:19 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 17:20:19 -0400
-From:   Don Zickus <dzickus@redhat.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Prarit Bhargava <prarit@redhat.com>, linux-kernel@vger.kernel.org,
-        jtoppins@redhat.com
-Subject: Re: [PATCH] get_maintainer.pl: Add optional
- .get_maintainer.MAINTAINERS override
-Message-ID: <20180716212019.sjxyxqeltgdcuqqr@redhat.com>
-References: <20180706175419.6irtvs64e6dbz7hk@redhat.com>
- <c187fe5040cb616292dab6c106352273df95bc41.camel@perches.com>
- <20180706184411.ilzbt7fxuje2nhx6@redhat.com>
- <716eb88d-31ac-c488-f799-dec9c9afb5af@redhat.com>
- <948af2d06623e8fcca6f0c0fd300a65bbfd1c6fa.camel@perches.com>
- <20180706215851.sqpibusyqukbh55g@redhat.com>
- <5ebb181efcdd2cdb3c1ee8eac9bba26f5759a0ea.camel@perches.com>
- <9efeba75a47e9b0c40d5b9e5078598ff4a31f196.camel@perches.com>
- <20180713185109.hanjstgdvl2fw4ry@redhat.com>
- <751491f9b9d7ce18f048ba44fbdb17d8c699e674.camel@perches.com>
+        Mon, 16 Jul 2018 17:51:27 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:33188 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbeGPVv1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 17:51:27 -0400
+Received: by mail-yw0-f196.google.com with SMTP id c135-v6so14727823ywa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:22:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=uP6e0Z0pvJvyUAQDYAM/zoFR5JtkAnySkd70fHejRhU=;
+        b=lRIehX0YWEM/kEZJD6rCjjPfqxpQ2+YMkjDnRTHNBR+vTRFdQcLylIs31IOqJnbT2Z
+         cWGrjKoMnPNSRJ0pIWAlAoZIn2Mx5387dPZxmOkapWbC372xlLLeh2jtBXGlQG4pG8C3
+         n6fVCvOI8hz2+4gLRFm7XHIAc5GeSJ8G26NWkx6veurjhsB17RXQB77T6MyXygsvA2V6
+         b0nG0MP5huGqyQl7ac0aebS4iUPnKTCQSyhvhkSO84zPzpxOmcIlVNK+1hmj+cEM+OcC
+         XTHuTZXLFtiyngBLNn+zd3yN9XatVpclKvj0hgmiunutpggdejVMA7lw0xzsetJ8eR3d
+         2s0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=uP6e0Z0pvJvyUAQDYAM/zoFR5JtkAnySkd70fHejRhU=;
+        b=nbp6f2qJgCnxjxVMxB4xiH2fehybS9ctFiiBXxXWtu8y7cg4ApfxgwR2Tc2Sgmzq3s
+         qn4ckrdkVFOKsk+m1MjHxfU9F75fR0SjNSXqhZMPzkOc51KRc4bLTecIM4UbrPVf2k13
+         zSnZ4S5SnAqMiloBRlR0rpCVFFmjUcLNiE+VlPBrAcZo9FQaJFYJF/j6i7vNns8sOz1q
+         9ISUEdIwdo7ixnv8AnXQ3tUINYsj+NLa8E3b97D8X5LZNd5zvze8H4LBKPShklZBoKfj
+         1nz0gkY2+ayqYRiQhhGq6MxLApOw6ucGmBoOgbE3HVe6skTlbx64ehaJ7LPfvKiW7Vty
+         0s4A==
+X-Gm-Message-State: AOUpUlEsfq33LSfAJ67JhaPueUcJAooCOb2RPjcRLuzIC4BG22f6DTiJ
+        kE49tNRMMKhWS/uSPNYFTlQHCr0i2kuy4AJACcM=
+X-Google-Smtp-Source: AAOMgpfpFoeuUGGd+XRL+GggrbcttsYAtqAx/OtZMKeIzVBJ6GzQO0qJRNh2Of/CZVyG8LfW0Bi4q4dDY/kj+jHeVgg=
+X-Received: by 2002:a81:2309:: with SMTP id j9-v6mr9146942ywj.261.1531776132647;
+ Mon, 16 Jul 2018 14:22:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <751491f9b9d7ce18f048ba44fbdb17d8c699e674.camel@perches.com>
-User-Agent: NeoMutt/20180622
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 16 Jul 2018 21:20:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 16 Jul 2018 21:20:20 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dzickus@redhat.com' RCPT:''
+Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 14:22:12
+ -0700 (PDT)
+In-Reply-To: <CAE_wzQ8GSXb=6Jt1imJyLKSfspVnjOuYb+YOuGenr6R916G4Vw@mail.gmail.com>
+References: <20180714055816.223754-1-toddpoynor@gmail.com> <20180714055816.223754-12-toddpoynor@gmail.com>
+ <CAE_wzQ8GSXb=6Jt1imJyLKSfspVnjOuYb+YOuGenr6R916G4Vw@mail.gmail.com>
+From:   Todd Poynor <toddpoynor@gmail.com>
+Date:   Mon, 16 Jul 2018 14:22:12 -0700
+Message-ID: <CAO3upoYuwq8V1hSHFHB5KKosCyuVd5PoOxmmb9haLtWcfGZKUA@mail.gmail.com>
+Subject: Re: [PATCH 11/18] staging: gasket: always allow root open for write
+To:     Dmitry Torokhov <dtor@chromium.org>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zhongze Hu <frankhu@chromium.org>,
+        Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        devel@driverdev.osuosl.org, lkml <linux-kernel@vger.kernel.org>,
+        Todd Poynor <toddpoynor@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 05:11:58PM -0700, Joe Perches wrote:
-> On Fri, 2018-07-13 at 14:51 -0400, Don Zickus wrote:
-> > On Fri, Jul 06, 2018 at 03:14:28PM -0700, Joe Perches wrote:
-> > > On Fri, 2018-07-06 at 15:09 -0700, Joe Perches wrote:
-> > > > On Fri, 2018-07-06 at 17:58 -0400, Don Zickus wrote:
-> > > > > We have an internal use case of multiple MAINTAINER files, some folks have
-> > > > > more rights to patches than others so they are not allowed to be cc'd (think
-> > > > > embargoed stuff).
-> > > 
-> > > How about:
-> > 
-> > Hi Joe,
-> > 
-> > You are probably busy with stuff, but wanted to softly poke you to see what
-> > is going on with this patch and if there is anything we can help with?
-> 
-> Hey Don.  No worries.
-> 
-> Tell me again if the --find-maintainer-files=<path or file> should
-> be exclusive or should it also read any existing MAINTAINERS file?
+On Sat, Jul 14, 2018 at 1:25 AM, Dmitry Torokhov <dtor@chromium.org> wrote:
+> On Sat, Jul 14, 2018 at 8:58 AM Todd Poynor <toddpoynor@gmail.com> wrote:
+>>
+>> From: Todd Poynor <toddpoynor@google.com>
+>>
+>> Always allow root to open device for writing.
+>>
+>> Drop special-casing of ioctl permissions for root vs. owner.
+>>
+>> Reported-by: Dmitry Torokhov <dtor@chromium.org>
+>> Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+>> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+>
+> I think this patch is good as is, but as a followup you should create
+> a patch that supports user namespaces, i.e. replaces
+> capable(CAP_SYS_ADMIN) with ns_capable(...) in gasket_open() so you
+> can allow containers to control the device, if necessary.
 
-Hi Joe,
+Thanks, I'll add that to the list.
 
-We were looking for it to be exclusive.  If we backport a patch, we want our
-internal maintainers to be cc'd not the upstream maintainers.  I don't think
-upstream needs any more spam. :-)
+>
+> Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
+>
+> Thanks,
+> Dmitry
 
-> 
-> What if anything is wrong with what I suggested?
 
-You posted multiple versions of a similar patch, each needed some
-tweaks.  But were pretty close to working.
 
-If I had a <dir> with a MAINTAINERS directory beneath it with files behind
-that, I just wanted to run:
-
-get_maintainers.pl --find-maintainer-files <dir>/  # find <dir>/MAINTAINERS/
-get_maintainers.pl --find-maintainer-files <dir>/MAINTAINER/<file>  # restricted list
-
-That's it.  I attached a patch you provided that worked for me. I added a
-
-+  push(@mfiles, "${path}") if -f "${path}";
-
-to your last version of the patch to get things working for me.  You may
-want a different solution there.
-
-Cheers,
-Don
-
----
- scripts/get_maintainer.pl | 39 +++++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 18 deletions(-)
-
-diff --git a/scripts/get_maintainer.pl b/scripts/get_maintainer.pl
-index c87fa734e3e1..f7a7d46340a8 100755
---- a/scripts/get_maintainer.pl
-+++ b/scripts/get_maintainer.pl
-@@ -60,7 +60,7 @@ my $pattern_depth = 0;
- my $self_test = undef;
- my $version = 0;
- my $help = 0;
--my $find_maintainer_files = 0;
-+my $find_maintainer_files;
- 
- my $vcs_used = 0;
- 
-@@ -262,7 +262,7 @@ if (!GetOptions(
- 		'sections!' => \$sections,
- 		'fe|file-emails!' => \$file_emails,
- 		'f|file' => \$from_filename,
--		'find-maintainer-files' => \$find_maintainer_files,
-+		'find-maintainer-files:s' => \$find_maintainer_files,
- 		'self-test:s' => \$self_test,
- 		'v|version' => \$version,
- 		'h|help|usage' => \$help,
-@@ -384,26 +384,30 @@ sub find_ignore_git {
- read_all_maintainer_files();
- 
- sub read_all_maintainer_files {
--    if (-d "${lk_path}MAINTAINERS") {
--        opendir(DIR, "${lk_path}MAINTAINERS") or die $!;
--        my @files = readdir(DIR);
--        closedir(DIR);
--        foreach my $file (@files) {
--            push(@mfiles, "${lk_path}MAINTAINERS/$file") if ($file !~ /^\./);
--        }
--    }
--
--    if ($find_maintainer_files) {
--        find( { wanted => \&find_is_maintainer_file,
--                preprocess => \&find_ignore_git,
--                no_chdir => 1,
--        }, "${lk_path}");
-+    my $path = defined $find_maintainer_files && $find_maintainer_files ne ""
-+	? $find_maintainer_files : $lk_path;
-+    if (-d "${path}MAINTAINERS") {
-+	opendir(DIR, "${path}MAINTAINERS") or die $!;
-+	my @files = readdir(DIR);
-+	closedir(DIR);
-+	foreach my $file (@files) {
-+	    push(@mfiles, "${path}MAINTAINERS/$file") if ($file !~ /^\./);
-+	}
-+    }
-+
-+    if (defined $find_maintainer_files && (-d $find_maintainer_files)) {
-+	find( { wanted => \&find_is_maintainer_file,
-+		preprocess => \&find_ignore_git,
-+		no_chdir => 1,
-+	      }, "${path}");
-     } else {
--        push(@mfiles, "${lk_path}MAINTAINERS") if -f "${lk_path}MAINTAINERS";
-+	push(@mfiles, "${path}MAINTAINERS") if -f "${path}MAINTAINERS";
-+	push(@mfiles, "${path}") if -f "${path}";
-     }
- 
-+    die "$P: No MAINTAINER files found in $path\n" if (scalar(@mfiles) == 0);
-     foreach my $file (@mfiles) {
--        read_maintainer_file("$file");
-+	read_maintainer_file("$file");
-     }
- }
- 
+-- 
+Todd
