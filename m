@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB6DECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4DDECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238D5206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238D5206B7
+	by mail.kernel.org (Postfix) with ESMTP id 4B9A82075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9A82075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389170AbeGPIJv (ORCPT
+        id S2389182AbeGPIJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48058 "EHLO
+        Mon, 16 Jul 2018 04:09:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48068 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbeGPIJv (ORCPT
+        with ESMTP id S2388375AbeGPIJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:51 -0400
+        Mon, 16 Jul 2018 04:09:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68EF8CA0;
-        Mon, 16 Jul 2018 07:43:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B0D9C03;
+        Mon, 16 Jul 2018 07:43:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 19/32] Fix up non-directory creation in SGID directories
-Date:   Mon, 16 Jul 2018 09:36:27 +0200
-Message-Id: <20180716073506.937642880@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 20/32] ALSA: hda - Handle pm failure during hotplug
+Date:   Mon, 16 Jul 2018 09:36:28 +0200
+Message-Id: <20180716073507.082209267@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -52,47 +50,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 0fa3ecd87848c9c93c2c828ef4c3a8ca36ce46c7 upstream.
+commit aaa23f86001bdb82d2f937c5c7bce0a1e11a6c5b upstream.
 
-sgid directories have special semantics, making newly created files in
-the directory belong to the group of the directory, and newly created
-subdirectories will also become sgid.  This is historically used for
-group-shared directories.
+Obtaining the runtime pm wakeref can fail, especially in a hotplug
+scenario where i915.ko has been unloaded. If we do not catch the
+failure, we end up with an unbalanced pm.
 
-But group directories writable by non-group members should not imply
-that such non-group members can magically join the group, so make sure
-to clear the sgid bit on non-directories for non-members (but remember
-that sgid without group execute means "mandatory locking", just to
-confuse things even more).
+v2 additions by tiwai:
+hdmi_present_sense() checks the return value and handle only a
+negative error case and bails out only if it's really still suspended.
+Also, snd_hda_power_down() is called at the error path so that the
+refcount is balanced.
 
-Reported-by: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Along with it, the spec->pcm_lock is taken outside
+hdmi_present_sense() in the caller side, so that it won't cause
+deadlock at reentrace via runtime resume.
+
+v3 fix by tiwai:
+Missing linux/pm_runtime.h is included.
+
+References: 222bde03881c ("ALSA: hda - Fix mutex deadlock at HDMI/DP hotplug")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/inode.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/pci/hda/patch_hdmi.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2003,8 +2003,14 @@ void inode_init_owner(struct inode *inod
- 	inode->i_uid = current_fsuid();
- 	if (dir && dir->i_mode & S_ISGID) {
- 		inode->i_gid = dir->i_gid;
-+
-+		/* Directories are special, and always inherit S_ISGID */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
-+		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
-+			 !in_group_p(inode->i_gid) &&
-+			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
-+			mode &= ~S_ISGID;
- 	} else
- 		inode->i_gid = current_fsgid();
- 	inode->i_mode = mode;
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -33,6 +33,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/pm_runtime.h>
+ #include <sound/core.h>
+ #include <sound/jack.h>
+ #include <sound/asoundef.h>
+@@ -731,8 +732,10 @@ static void check_presence_and_report(st
+ 
+ 	if (pin_idx < 0)
+ 		return;
++	mutex_lock(&spec->pcm_lock);
+ 	if (hdmi_present_sense(get_pin(spec, pin_idx), 1))
+ 		snd_hda_jack_report_sync(codec);
++	mutex_unlock(&spec->pcm_lock);
+ }
+ 
+ static void jack_callback(struct hda_codec *codec,
+@@ -1521,21 +1524,23 @@ static void sync_eld_via_acomp(struct hd
+ static bool hdmi_present_sense(struct hdmi_spec_per_pin *per_pin, int repoll)
+ {
+ 	struct hda_codec *codec = per_pin->codec;
+-	struct hdmi_spec *spec = codec->spec;
+ 	int ret;
+ 
+ 	/* no temporary power up/down needed for component notifier */
+-	if (!codec_has_acomp(codec))
+-		snd_hda_power_up_pm(codec);
++	if (!codec_has_acomp(codec)) {
++		ret = snd_hda_power_up_pm(codec);
++		if (ret < 0 && pm_runtime_suspended(hda_codec_dev(codec))) {
++			snd_hda_power_down_pm(codec);
++			return false;
++		}
++	}
+ 
+-	mutex_lock(&spec->pcm_lock);
+ 	if (codec_has_acomp(codec)) {
+ 		sync_eld_via_acomp(codec, per_pin);
+ 		ret = false; /* don't call snd_hda_jack_report_sync() */
+ 	} else {
+ 		ret = hdmi_present_sense_via_verbs(per_pin, repoll);
+ 	}
+-	mutex_unlock(&spec->pcm_lock);
+ 
+ 	if (!codec_has_acomp(codec))
+ 		snd_hda_power_down_pm(codec);
+@@ -1547,12 +1552,16 @@ static void hdmi_repoll_eld(struct work_
+ {
+ 	struct hdmi_spec_per_pin *per_pin =
+ 	container_of(to_delayed_work(work), struct hdmi_spec_per_pin, work);
++	struct hda_codec *codec = per_pin->codec;
++	struct hdmi_spec *spec = codec->spec;
+ 
+ 	if (per_pin->repoll_count++ > 6)
+ 		per_pin->repoll_count = 0;
+ 
++	mutex_lock(&spec->pcm_lock);
+ 	if (hdmi_present_sense(per_pin, per_pin->repoll_count))
+ 		snd_hda_jack_report_sync(per_pin->codec);
++	mutex_unlock(&spec->pcm_lock);
+ }
+ 
+ static void intel_haswell_fixup_connect_list(struct hda_codec *codec,
 
 
