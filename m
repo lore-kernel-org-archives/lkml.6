@@ -2,133 +2,112 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F69ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75484ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE42E208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:59:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUgq0cnj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE42E208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3A49E208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A49E208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeGPIZm (ORCPT
+        id S1729245AbeGPIZv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:25:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38776 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727163AbeGPIZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:25:42 -0400
-Received: from localhost (unknown [213.57.183.250])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AC76208E9;
-        Mon, 16 Jul 2018 07:59:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531727973;
-        bh=ByOgweLHyFK2hG+QtMGwx8iQqvGjGryIKlunfOGZb9w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tUgq0cnjJvNy7H92+2QbW/339iLt/WPS7H0pHdNlIyMl5NfBjUNDoFxHZk52mUx1q
-         Eo8d05JxEQSJddEV2Kvwbg1Q4XMQLUnkn8Xs8ems//YgcBUfubl1x0t1N6hxEcnmFJ
-         KHXZfzlM3zoooBoYojIPtXcI+HuNjf7REqbCcwrk=
-Date:   Mon, 16 Jul 2018 10:59:29 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        David Rientjes <rientjes@google.com>,
-        Felix Kuehling <felix.kuehling@amd.com>
-Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180716075929.GF3152@mtr-leonro.mtl.com>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <20180627074421.GF32348@dhcp22.suse.cz>
- <20180709122908.GJ22049@dhcp22.suse.cz>
- <20180710134040.GG3014@mtr-leonro.mtl.com>
- <20180710141410.GP14284@dhcp22.suse.cz>
+        Mon, 16 Jul 2018 04:25:51 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33208 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726937AbeGPIZv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:25:51 -0400
+Received: by mail-ua0-f196.google.com with SMTP id i4-v6so17371448uak.0;
+        Mon, 16 Jul 2018 00:59:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5R46MDSXnHRTuE+idWrKKhBsHF639hVBpEm0t1bWtZM=;
+        b=UCPiBn0jWRlKkfPDPRI+UFNIOMbeSrVtJ7x3lgzAQI5RlKLiP/IO7eL18J6OX6LX6L
+         NtYDq+dp18l9e0gqADpGFLL7sQyCwWMGpCIBCn5XWTmpGI0Wb/HmuYDP9I49aGneqG7t
+         2T1o9TF0Aa4X9Kh+wVAPO9FNukOwFDxtYvE88QvyL7Y+o9onMgsT34wXT9bQXu58NRsR
+         8ZvZGRLk8tW8ur+2rG9zt4+j8IrZ3SQ88knueG3ZYXBR45BCxizHCZovzXc9b1NCuQb9
+         Un4JdfMbLUZyCvxROLYG9mgRkkyeQuIRBqmCIk2w4pyciEh7D97PGRjCvSk++oPANBdm
+         jijA==
+X-Gm-Message-State: AOUpUlFmE5OfL25iVG3eslIrT485g+oXCgFT3QZBq+DAoQK0hhT2/1pU
+        Svw4IN/AYJXCOSf3rSx8XklEDEyL/+Ln8BCgNlk=
+X-Google-Smtp-Source: AAOMgpcjyElxKoh19nBuro7agac7CWmZZNLxk+4rXFDmz+1r2dB7ezgM7NnwUrf8FYEWiWrOqIN+Fxg/6EOXis8GLSM=
+X-Received: by 2002:ab0:72d1:: with SMTP id g17-v6mr11143644uap.33.1531727983016;
+ Mon, 16 Jul 2018 00:59:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IpbVkmxF4tDyP/Kb"
-Content-Disposition: inline
-In-Reply-To: <20180710141410.GP14284@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180716081018.21bfe495@canb.auug.org.au> <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+In-Reply-To: <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 16 Jul 2018 09:59:31 +0200
+Message-ID: <CAMuHMdVRfEcxo0SVW7VkmE-1bjsESKeL9nRk41W32_2V6rpA-A@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl tree
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Next <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---IpbVkmxF4tDyP/Kb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jul 10, 2018 at 04:14:10PM +0200, Michal Hocko wrote:
-> On Tue 10-07-18 16:40:40, Leon Romanovsky wrote:
-> > On Mon, Jul 09, 2018 at 02:29:08PM +0200, Michal Hocko wrote:
-> > > On Wed 27-06-18 09:44:21, Michal Hocko wrote:
-> > > > This is the v2 of RFC based on the feedback I've received so far. The
-> > > > code even compiles as a bonus ;) I haven't runtime tested it yet, mostly
-> > > > because I have no idea how.
-> > > >
-> > > > Any further feedback is highly appreciated of course.
-> > >
-> > > Any other feedback before I post this as non-RFC?
+On Mon, Jul 16, 2018 at 9:52 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Jul 16, 2018 at 12:10 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Commits
 > >
-> > From mlx5 perspective, who is primary user of umem_odp.c your change looks ok.
+> >   bc319333c156 ("pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions")
+> >   99500c6a4836 ("pinctrl: sh-pfc: r8a77990: Revise USB ID pin name")
+> >   3d3c62d3458a ("pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and functions")
+> >   1e0f13198edf ("pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and functions")
+> >
+> > are missing a Signed-off-by from their committer.
 >
-> Can I assume your Acked-by?
+> I am looking at this and I just feel confused. Top to bottom:
+
+> commit bc319333c156a710891942d34560b9fca0f52f5d
+> Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Date:   Thu Dec 14 13:04:55 2017 +0900
 >
-> Thanks for your review!
+>     pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions
+>
+>     This patch adds HSCIF{0,1,2,3,4} pins, groups and functions to
+>     the R8A77965 SoC.
+>
+>     Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+>     Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> This is very confusing, it looks correct to me.
+>
+> As usual it must be some minor syntactic thing like a character missing or
+> something, I am just soo.... what's wrong here, really?
 
-For mlx and umem_odp pieces,
-Acked-by: Leon Romanovsky <leonro@mellanox.com>
+The previous issue was a missing commit from the _author_, not committer.
+As you rebased the branch, _you_ are now the committer, not me anymore.
+So now your SoBs must be present, too.
 
-Thanks
+As I already told you I had fixed up the author SoB, and updated the tag,
+just drop the above commits, pull sh-pfc-for-v4.19-tag1 again, and be done
+with it ;-)
 
---IpbVkmxF4tDyP/Kb
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks!
 
------BEGIN PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
-iQIcBAEBAgAGBQJbTFBhAAoJEORje4g2clinrPEQAM3K+7WNo+Ro9U49mpUc8xr/
-MGGxTsfNW12jUSp6FCTQU6e53hUr+Xkr7HLA9V2PRM848OAOjQlBUKgCGQ4Mb1hQ
-jaWFDf5PTXMiSwutJGhqJXuaYkFyLiR6oE0hdGoaPFRQ6TDkWeqXmP7MDOvJe9ml
-Ea4dAgif8LEjYjGNOCUGJ6Ur89jJmf4D6EFcWhHyin7XejnD3z4vX0VcRbVwY8tl
-H7w7S/TRXNE9gGUTid8i6eC81IG+p+xOaG0JhLcf95F0/sz7Y2gwWUzHWUScrn7A
-m7mLXJf+hMGM6oVYxE224xTUbKkVXfYjYLzY9BZ7NB9ycKdi6aDL4diB2w+83acB
-SplvTEfXKFVQtSKVyo24NoxEIscZyIHrJu0BaE8d002tvAcE2uiSmgUbQ/grXooe
-8Fl8vyau1974/hx4bP6/Fclol25CUtqCatVw+x4vysEqferddvmFW0xOTzUorpTP
-bI7zb9Ozs3icZ90Hhxk1jBe1Jmw8XIPGTCv06yDQOufFHxi2UnL2qKVxIrPLh/s5
-xkJzguy/TxXk210mWnbWmpmytgKNsUQSMmYqyUEfxtzWlRHYWD3Z6KVUAsPsuy8J
-b/fCbYfHzCTP2X4Vm4eoYTxI7YzByBnyIK/eAz1eKVlYbJb8yXx0bqzRbmn6gizc
-jWDNXsZCJJ8q58BpwivZ
-=YBIL
------END PGP SIGNATURE-----
+                        Geert
 
---IpbVkmxF4tDyP/Kb--
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
