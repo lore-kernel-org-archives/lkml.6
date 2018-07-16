@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7890EECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FF4ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C160206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C160206B7
+	by mail.kernel.org (Postfix) with ESMTP id 9942F206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9942F206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388027AbeGPIFm (ORCPT
+        id S2388040AbeGPIFp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:05:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47186 "EHLO
+        Mon, 16 Jul 2018 04:05:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47194 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729810AbeGPIFl (ORCPT
+        with ESMTP id S1729810AbeGPIFo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:05:41 -0400
+        Mon, 16 Jul 2018 04:05:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FD0BC03;
-        Mon, 16 Jul 2018 07:39:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D386BC03;
+        Mon, 16 Jul 2018 07:39:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
-        Baruch Siach <baruch@tkos.co.il>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: [PATCH 4.17 67/67] ARM: dts: armada-38x: use the new thermal binding
-Date:   Mon, 16 Jul 2018 09:35:36 +0200
-Message-Id: <20180716073454.729656115@linuxfoundation.org>
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH 4.17 64/67] f2fs: avoid bug_on on corrupted inode
+Date:   Mon, 16 Jul 2018 09:35:33 +0200
+Message-Id: <20180716073454.070271157@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -51,37 +50,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baruch Siach <baruch@tkos.co.il>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit 568cc2f07c8ea5f71a0486464bd9703e4671045f upstream.
+commit 5d64600d4f337dc2bb89cd59da99f452f5e4f3c3 upstream.
 
-Commit 2f28e4c24b10e (thermal: armada: Clarify control registers
-accesses) introduced the new thermal binding. The new binding extends
-the second registers field size to 8. Switch to the new binding to fix
-thermal reading values. Without this change the fix for errata #132698
-introduced in commit 8c0b888f661 (thermal: armada: Change sensors trim
-default value) has no effect.
+syzbot has tested the proposed patch but the reproducer still triggered crash:
+kernel BUG at fs/f2fs/inode.c:LINE!
 
-Cc: stable@vger.kernel.org # v4.16+
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Baruch Siach <baruch@tkos.co.il>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+F2FS-fs (loop1): invalid crc value
+F2FS-fs (loop5): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+F2FS-fs (loop5): Can't find valid F2FS filesystem in 1th superblock
+F2FS-fs (loop5): invalid crc value
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/inode.c:238!
+invalid opcode: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+Modules linked in:
+CPU: 1 PID: 4886 Comm: syz-executor1 Not tainted 4.17.0-rc1+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:do_read_inode fs/f2fs/inode.c:238 [inline]
+RIP: 0010:f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313
+RSP: 0018:ffff8801c44a70e8 EFLAGS: 00010293
+RAX: ffff8801ce208040 RBX: ffff8801b3621080 RCX: ffffffff82eace18
+F2FS-fs (loop2): Magic Mismatch, valid(0xf2f52010) - read(0x0)
+RDX: 0000000000000000 RSI: ffffffff82eaf047 RDI: 0000000000000007
+RBP: ffff8801c44a7410 R08: ffff8801ce208040 R09: ffffed0039ee4176
+R10: ffffed0039ee4176 R11: ffff8801cf720bb7 R12: ffff8801c0efa000
+R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f753aa9d700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+------------[ cut here ]------------
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel BUG at fs/f2fs/inode.c:238!
+CR2: 0000000001b03018 CR3: 00000001c8b74000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ f2fs_fill_super+0x4377/0x7bf0 fs/f2fs/super.c:2842
+ mount_bdev+0x30c/0x3e0 fs/super.c:1165
+ f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
+ mount_fs+0xae/0x328 fs/super.c:1268
+ vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+ vfs_kern_mount fs/namespace.c:1027 [inline]
+ do_new_mount fs/namespace.c:2517 [inline]
+ do_mount+0x564/0x3070 fs/namespace.c:2847
+ ksys_mount+0x12d/0x140 fs/namespace.c:3063
+ __do_sys_mount fs/namespace.c:3077 [inline]
+ __se_sys_mount fs/namespace.c:3074 [inline]
+ __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
+ do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457daa
+RSP: 002b:00007f753aa9cba8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 0000000000457daa
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f753aa9cbf0
+RBP: 0000000000000064 R08: 0000000020016a00 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
+R13: 0000000000000064 R14: 00000000006fcb80 R15: 0000000000000000
+RIP: do_read_inode fs/f2fs/inode.c:238 [inline] RSP: ffff8801c44a70e8
+RIP: f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313 RSP: ffff8801c44a70e8
+invalid opcode: 0000 [#2] SMP KASAN
+---[ end trace 1cbcbec2156680bc ]---
+
+Reported-and-tested-by: syzbot+41a1b341571f0952badb@syzkaller.appspotmail.com
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/armada-38x.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/inode.c |   20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/armada-38x.dtsi
-+++ b/arch/arm/boot/dts/armada-38x.dtsi
-@@ -547,7 +547,7 @@
+--- a/fs/f2fs/inode.c
++++ b/fs/f2fs/inode.c
+@@ -185,6 +185,21 @@ void f2fs_inode_chksum_set(struct f2fs_s
+ 	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
+ }
  
- 			thermal: thermal@e8078 {
- 				compatible = "marvell,armada380-thermal";
--				reg = <0xe4078 0x4>, <0xe4074 0x4>;
-+				reg = <0xe4078 0x4>, <0xe4070 0x8>;
- 				status = "okay";
- 			};
++static bool sanity_check_inode(struct inode *inode)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++
++	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)
++			&& !f2fs_has_extra_attr(inode)) {
++		set_sbi_flag(sbi, SBI_NEED_FSCK);
++		f2fs_msg(sbi->sb, KERN_WARNING,
++			"%s: corrupted inode ino=%lx, run fsck to fix.",
++			__func__, inode->i_ino);
++		return false;
++	}
++	return true;
++}
++
+ static int do_read_inode(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+@@ -235,7 +250,6 @@ static int do_read_inode(struct inode *i
+ 					le16_to_cpu(ri->i_extra_isize) : 0;
  
+ 	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)) {
+-		f2fs_bug_on(sbi, !f2fs_has_extra_attr(inode));
+ 		fi->i_inline_xattr_size = le16_to_cpu(ri->i_inline_xattr_size);
+ 	} else if (f2fs_has_inline_xattr(inode) ||
+ 				f2fs_has_inline_dentry(inode)) {
+@@ -313,6 +327,10 @@ struct inode *f2fs_iget(struct super_blo
+ 	ret = do_read_inode(inode);
+ 	if (ret)
+ 		goto bad_inode;
++	if (!sanity_check_inode(inode)) {
++		ret = -EINVAL;
++		goto bad_inode;
++	}
+ make_now:
+ 	if (ino == F2FS_NODE_INO(sbi)) {
+ 		inode->i_mapping->a_ops = &f2fs_node_aops;
 
 
