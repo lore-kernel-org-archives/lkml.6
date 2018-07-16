@@ -2,139 +2,126 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3B1ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7F9ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039A1208FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iHtViZUH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039A1208FC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E5EE20936
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:57:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5EE20936
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbeGPJXM (ORCPT
+        id S1730056AbeGPJXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:23:12 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:56162 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbeGPJXM (ORCPT
+        Mon, 16 Jul 2018 05:23:52 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:31700 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727192AbeGPJXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:23:12 -0400
-Received: by mail-wm0-f68.google.com with SMTP id f21-v6so2162782wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 01:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IKhCvJ8GLRbnK4Ts7jTCw8XOdnXHtRR+2Bac1oVPFPY=;
-        b=iHtViZUHTuSNCH+mVlWBPw0wX8pO5UdTpURrs5vWGbCITZ/LDW9kpFqZAMP3Yum9dm
-         qd7IpxUgXLzJrMTvG8m+FqD7Nsh6gN+4tNxYsHGm+bpBGU4D8gdVwDvSq1PsGknyjvH+
-         CLmCIy5HcaGQvfY7idqay/K04qJAz1F7DMf1o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IKhCvJ8GLRbnK4Ts7jTCw8XOdnXHtRR+2Bac1oVPFPY=;
-        b=NVYHwn4xem/dWThZiNN5bQZsOMtxGdCnhcLOB1hjAjPMi3aCll6mi33XqgUkSJQSJs
-         rKfEM0aRQzmVb5dETtyiFrj+NEdPb6ovRSgV1qPZrqqFQbLusKvwBy9wmQDaL3xBTf6Z
-         MPh41aJsYh8K85+GYLuB0nHJCdMQxqfTrq3+d13eyMY7StbN7vLDlmaWr6s7zy0fuifq
-         XA0B08NRMX0FJEZZvMXUD/qNMgZ0MEUBnW5o/DAB/FrDWrYYsz+Sk+3sFNW6326QXmf7
-         ZupmPJ8RAcuGVtODAa0pyA1igkqCfbud3fp5NqTKxyoWG4tJvx6Bn/g+67CNXAPcBOGs
-         P3+A==
-X-Gm-Message-State: AOUpUlHoPifBpM5dxvzbzCGMLNCV/binN0tkWG3x5m0mAyPpcWUlWrAn
-        jKN6LhQ1frnsWeBkjChdawZQXw==
-X-Google-Smtp-Source: AAOMgpf0DWt/FETT02evyoqjnh90BUAdszT03eBUfoByWVy0rLlE7N6fLnd3mvl7LVe1YwTMWs7emA==
-X-Received: by 2002:a1c:5b09:: with SMTP id p9-v6mr10271019wmb.0.1531731407935;
-        Mon, 16 Jul 2018 01:56:47 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id d15-v6sm13434192wmb.0.2018.07.16.01.56.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 01:56:47 -0700 (PDT)
-Subject: Re: [PATCH v4 08/18] net: davinci_emac: potentially get the MAC
- address from MTD
-To:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Ladislav Michl <ladis@linux-mips.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20180629094039.7543-1-brgl@bgdev.pl>
- <20180629094039.7543-9-brgl@bgdev.pl>
- <03b77e24-9ab9-fa01-2387-9de0408a9942@gmail.com>
- <20180704070919.GA14051@lenoch>
- <CAMRc=McOYG9=naT2=4c4hnhJwxcqBCATEZOGXXv9u9zuvXyDXw@mail.gmail.com>
- <c0ffc590-8064-3b02-9b5c-fcc24628d390@ti.com>
- <CAMRc=McO8H9Aw8a7h318a=hJjKBOgeC+9_hreBnOY3Tc3Fh7sg@mail.gmail.com>
- <d7f03763-982f-5e3e-d0ad-54e024b10f97@ti.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <a70aebb0-408c-c61f-897a-227114888585@linaro.org>
-Date:   Mon, 16 Jul 2018 09:56:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 16 Jul 2018 05:23:52 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42280504"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 16 Jul 2018 16:57:24 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 17FE74B5CF65;
+        Mon, 16 Jul 2018 16:57:25 +0800 (CST)
+Received: from localhost (10.167.225.56) by G08CNEXCHPEKD02.g08.fujitsu.local
+ (10.167.33.89) with Microsoft SMTP Server id 14.3.399.0; Mon, 16 Jul 2018
+ 16:57:27 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
+        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <lcapitulino@redhat.com>,
+        <caoj.fnst@cn.fujitsu.com>, <douly.fnst@cn.fujitsu.com>,
+        Chao Fan <fanc.fnst@cn.fujitsu.com>
+Subject: [RFC PATCH v2 0/4] x86/boot/KASLR: Parse ACPI table and limit kaslr in immovable memory.
+Date:   Mon, 16 Jul 2018 16:55:34 +0800
+Message-ID: <20180716085538.31939-1-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <d7f03763-982f-5e3e-d0ad-54e024b10f97@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-yoursite-MailScanner-ID: 17FE74B5CF65.AD8CC
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+***Background:
+People reported that kaslr may randomly chooses some positions
+which are located in movable memory regions. This will break memory
+hotplug feature and make the memory can't be removed.
+
+***Solutions:
+There should be a method to limit kaslr to choosing immovable memory
+regions, so there are 2 solutions:
+1) Add a kernel parameter to specify the memory regions.
+2) Get the information of memory hotremove, then kaslr will know the
+   right regions.
+In method 2, information about memory hot remove is in ACPI
+tables, which will be parsed after 'start_kernel', kaslr can't get
+the information.
+In method 1, users should know the regions address and specify in
+kernel parameter.
+
+In the earliest time, I tried to dig ACPI tabls to solve this problem.
+But I didn't splite the code in 'compressed/' and ACPI code, so the patch
+is hard to follow so refused by community.
+Somebody suggest to add a kernel parameter to specify the
+immovable memory so that limit kaslr in these regions. Then I make
+a patchset. After several versions, Ingo gave a suggestion:
+https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1634024.html
+Follow Ingo's suggestion, imitate the ACPI code to parse the acpi
+tables, so that the kaslr can get necessary memory information in
+ACPI tables.
+Since I think ACPI code is independent part, so copy the codes
+and functions to 'compressed/' directory, so that kaslr won't
+influence the initialization of ACPI.
+
+PATCH 1/4 Reuse the head file of linux/acpi.h, and copy a fcuntion from
+          ACPI code.
+PATCH 2/4 Functions to parse ACPI code.
+PATCH 3/4 If 'CONFIG_MEMORY_HOTREMOVE' specified, walk all nodes and
+          store the information of immovable memory regions.
+PATCH 4/4 According to the immovable memory regions, filter the
+          immovable regions which KASLR can choose.
+
+***Test results:
+ - I did a very simple test, and it can get the memory information in
+   bios and efi KVM guest machine, and put it by early printk. But no
+   more tests, so it's with RFC tag.
+
+v1->v2:
+ -  Simplify some code.
+Follow Baoquan He's suggestion:
+ - Reuse the head file of acpi code.
+
+Any comments will be welcome.
 
 
-On 16/07/18 09:50, Sekhar Nori wrote:
-> On Friday 13 July 2018 11:30 PM, Bartosz Golaszewski wrote:
-> 
->> We're getting close to rc5 so I'd like to make a case for this series again.
->>
->> I understand that there's more to do than just the changes introduced
->> here, but we shouldn't try to fix several problems in many different
->> places at once. There's just too many moving pieces. I'd rather start
->> merging small improvements right away.
->>
->> The idea behind this series is to remove (almost) all users of
->> at24_platform_data. The davinci_emac patches are there only because we
->> need to remove some MAC adress reading stuff from the board files.
->> Having this code there and calling it back from EEPROM/MTD drivers is
->> already wrong and we should work towards using nvmem for that anyway.
->>
->> Currently for MTD the nvmem support series seems to be dead and it's
->> going to take some time before anything gets upstream.
->>
->> So I'd like to again ask you to consider picking up the patches from
->> this series to your respective trees or at the very least: I'd like to
->> ask Srinivas to pick up the nvmem patches and Sekhar to take the
->> first, non-controversial batch of davinci platform changes so that
->> we'll have less code to carry for the next release.
-> 
-> I think those are patches 3-7. I can take those if I get an immutable
-> commit over v4.18-rc1 from Srinivas with patches 1 & 2 applied.
-nvmem patches go via Greg KH char-misc tree, if it makes things easy I 
-can provide Ack on nvmem patches, so that you can take these patches via 
-your tree?
+Chao Fan (4):
+  x86/boot: Add acpitb.h to help parse acpi tables
+  x86/boot: Add acpitb.c to parse acpi tables
+  x86/boot/KASLR: Walk srat tables to filter immovable memory
+  x86/boot/KASLR: Limit kaslr to choosing the immovable memory
 
-Let me know.
+ arch/x86/boot/compressed/Makefile |   4 +
+ arch/x86/boot/compressed/acpitb.c | 242 ++++++++++++++++++++++++++++++
+ arch/x86/boot/compressed/acpitb.h |  49 ++++++
+ arch/x86/boot/compressed/kaslr.c  | 120 +++++++++++++--
+ 4 files changed, 404 insertions(+), 11 deletions(-)
+ create mode 100644 arch/x86/boot/compressed/acpitb.c
+ create mode 100644 arch/x86/boot/compressed/acpitb.h
 
---srini
-> 
-> Thanks,
-> Sekhar
-> 
+-- 
+2.17.1
+
+
+
