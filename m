@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC321ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C77FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B1752075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1752075B
+	by mail.kernel.org (Postfix) with ESMTP id D74392075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D74392075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389262AbeGPIKL (ORCPT
+        id S2389275AbeGPIKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48122 "EHLO
+        Mon, 16 Jul 2018 04:10:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48134 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbeGPIKL (ORCPT
+        with ESMTP id S2388375AbeGPIKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:11 -0400
+        Mon, 16 Jul 2018 04:10:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9B23CA1;
-        Mon, 16 Jul 2018 07:44:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5795BC03;
+        Mon, 16 Jul 2018 07:44:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 13/43] Fix up non-directory creation in SGID directories
-Date:   Mon, 16 Jul 2018 09:36:18 +0200
-Message-Id: <20180716073513.229883114@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.4 14/43] tools build: fix # escaping in .cmd files for future Make
+Date:   Mon, 16 Jul 2018 09:36:19 +0200
+Message-Id: <20180716073513.350026232@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -52,47 +52,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Paul Menzel <pmenzel@molgen.mpg.de>
 
-commit 0fa3ecd87848c9c93c2c828ef4c3a8ca36ce46c7 upstream.
+commit 9feeb638cde083c737e295c0547f1b4f28e99583 upstream.
 
-sgid directories have special semantics, making newly created files in
-the directory belong to the group of the directory, and newly created
-subdirectories will also become sgid.  This is historically used for
-group-shared directories.
+In 2016 GNU Make made a backwards incompatible change to the way '#'
+characters were handled in Makefiles when used inside functions or
+macros:
 
-But group directories writable by non-group members should not imply
-that such non-group members can magically join the group, so make sure
-to clear the sgid bit on non-directories for non-members (but remember
-that sgid without group execute means "mandatory locking", just to
-confuse things even more).
+http://git.savannah.gnu.org/cgit/make.git/commit/?id=c6966b323811c37acedff05b57
 
-Reported-by: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Due to this change, when attempting to run `make prepare' I get a
+spurious make syntax error:
+
+    /home/earnest/linux/tools/objtool/.fixdep.o.cmd:1: *** missing separator.  Stop.
+
+When inspecting `.fixdep.o.cmd' it includes two lines which use
+unescaped comment characters at the top:
+
+    \# cannot find fixdep (/home/earnest/linux/tools/objtool//fixdep)
+    \# using basic dep data
+
+This is because `tools/build/Build.include' prints these '\#'
+characters:
+
+    printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
+    printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
+
+This completes commit 9564a8cf422d ("Kbuild: fix # escaping in .cmd files
+for future Make").
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=197847
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: stable@vger.kernel.org
+Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/inode.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/build/Build.include |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1937,8 +1937,14 @@ void inode_init_owner(struct inode *inod
- 	inode->i_uid = current_fsuid();
- 	if (dir && dir->i_mode & S_ISGID) {
- 		inode->i_gid = dir->i_gid;
-+
-+		/* Directories are special, and always inherit S_ISGID */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
-+		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
-+			 !in_group_p(inode->i_gid) &&
-+			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
-+			mode &= ~S_ISGID;
- 	} else
- 		inode->i_gid = current_fsgid();
- 	inode->i_mode = mode;
+--- a/tools/build/Build.include
++++ b/tools/build/Build.include
+@@ -62,8 +62,8 @@ dep-cmd = $(if $(wildcard $(fixdep)),
+            $(fixdep) $(depfile) $@ '$(make-cmd)' > $(dot-target).tmp;           \
+            rm -f $(depfile);                                                    \
+            mv -f $(dot-target).tmp $(dot-target).cmd,                           \
+-           printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
+-           printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
++           printf '$(pound) cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
++           printf '$(pound) using basic dep data\n\n' >> $(dot-target).cmd;           \
+            cat $(depfile) >> $(dot-target).cmd;                                 \
+            printf '%s\n' 'cmd_$@ := $(make-cmd)' >> $(dot-target).cmd)
+ 
 
 
