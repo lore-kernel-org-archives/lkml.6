@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E23ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A84D6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA0420693
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BA0420693
+	by mail.kernel.org (Postfix) with ESMTP id 5B94820693
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B94820693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387805AbeGPIE4 (ORCPT
+        id S2387823AbeGPIE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47024 "EHLO
+        Mon, 16 Jul 2018 04:04:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47032 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeGPIEz (ORCPT
+        with ESMTP id S1726898AbeGPIE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:55 -0400
+        Mon, 16 Jul 2018 04:04:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 390AAC03;
-        Mon, 16 Jul 2018 07:38:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00442C03;
+        Mon, 16 Jul 2018 07:38:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.17 59/67] PM / hibernate: Fix oops at snapshot_write()
-Date:   Mon, 16 Jul 2018 09:35:28 +0200
-Message-Id: <20180716073453.114498284@linuxfoundation.org>
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.17 60/67] RDMA/ucm: Mark UCM interface as BROKEN
+Date:   Mon, 16 Jul 2018 09:35:29 +0200
+Message-Id: <20180716073453.332828986@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -52,38 +50,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit fc14eebfc20854a38fd9f1d93a42b1783dad4d17 upstream.
+commit 7a8690ed6f5346f6738971892205e91d39b6b901 upstream.
 
-syzbot is reporting NULL pointer dereference at snapshot_write() [1].
-This is because data->handle is zero-cleared by ioctl(SNAPSHOT_FREE).
-Fix this by checking data_of(data->handle) != NULL before using it.
+In commit 357d23c811a7 ("Remove the obsolete libibcm library")
+in rdma-core [1], we removed obsolete library which used the
+/dev/infiniband/ucmX interface.
 
-[1] https://syzkaller.appspot.com/bug?id=828a3c71bd344a6de8b6a31233d51a72099f27fd
+Following multiple syzkaller reports about non-sanitized
+user input in the UCMA module, the short audit reveals the same
+issues in UCM module too.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+It is better to disable this interface in the kernel,
+before syzkaller team invests time and energy to harden
+this unused interface.
+
+[1] https://github.com/linux-rdma/rdma-core/pull/279
+
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/power/user.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/infiniband/Kconfig       |   11 +++++++++++
+ drivers/infiniband/core/Makefile |    4 ++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -186,6 +186,11 @@ static ssize_t snapshot_write(struct fil
- 		res = PAGE_SIZE - pg_offp;
- 	}
+--- a/drivers/infiniband/Kconfig
++++ b/drivers/infiniband/Kconfig
+@@ -35,6 +35,17 @@ config INFINIBAND_USER_ACCESS
+ 	  libibverbs, libibcm and a hardware driver library from
+ 	  rdma-core <https://github.com/linux-rdma/rdma-core>.
  
-+	if (!data_of(data->handle)) {
-+		res = -EINVAL;
-+		goto unlock;
-+	}
++config INFINIBAND_USER_ACCESS_UCM
++	bool "Userspace CM (UCM, DEPRECATED)"
++	depends on BROKEN
++	depends on INFINIBAND_USER_ACCESS
++	help
++	  The UCM module has known security flaws, which no one is
++	  interested to fix. The user-space part of this code was
++	  dropped from the upstream a long time ago.
 +
- 	res = simple_write_to_buffer(data_of(data->handle), res, &pg_offp,
- 			buf, count);
- 	if (res > 0)
++	  This option is DEPRECATED and planned to be removed.
++
+ config INFINIBAND_EXP_LEGACY_VERBS_NEW_UAPI
+ 	bool "Allow experimental legacy verbs in new ioctl uAPI  (EXPERIMENTAL)"
+ 	depends on INFINIBAND_USER_ACCESS
+--- a/drivers/infiniband/core/Makefile
++++ b/drivers/infiniband/core/Makefile
+@@ -5,8 +5,8 @@ user_access-$(CONFIG_INFINIBAND_ADDR_TRA
+ obj-$(CONFIG_INFINIBAND) +=		ib_core.o ib_cm.o iw_cm.o \
+ 					$(infiniband-y)
+ obj-$(CONFIG_INFINIBAND_USER_MAD) +=	ib_umad.o
+-obj-$(CONFIG_INFINIBAND_USER_ACCESS) +=	ib_uverbs.o ib_ucm.o \
+-					$(user_access-y)
++obj-$(CONFIG_INFINIBAND_USER_ACCESS) += ib_uverbs.o $(user_access-y)
++obj-$(CONFIG_INFINIBAND_USER_ACCESS_UCM) += ib_ucm.o $(user_access-y)
+ 
+ ib_core-y :=			packer.o ud_header.o verbs.o cq.o rw.o sysfs.o \
+ 				device.o fmr_pool.o cache.o netlink.o \
 
 
