@@ -2,167 +2,147 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4B0ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB50ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C9920870
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:51:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="ixvRTK7h";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ckyVHmX0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C9920870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aj.id.au
+	by mail.kernel.org (Postfix) with ESMTP id B3B322086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B322086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbeGPDQE (ORCPT
+        id S1727469AbeGPDeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 23:16:04 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:49311 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727374AbeGPDQE (ORCPT
+        Sun, 15 Jul 2018 23:34:16 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:34267 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727184AbeGPDeP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 23:16:04 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 132F721B82;
-        Sun, 15 Jul 2018 22:50:54 -0400 (EDT)
-Received: from web5 ([10.202.2.215])
-  by compute4.internal (MEProxy); Sun, 15 Jul 2018 22:50:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=cc
-        :content-transfer-encoding:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=Zzl7/sHSNh+IyPQWupkGHIFiP4/yf
-        QZ+hKPwMIwSg88=; b=ixvRTK7hFWNCX7jVankQK53KlBrEZnr287ulbWGM1D6ZZ
-        YxMF4Jk5eAKNJMSycMbwTue3rkA5R6Ujyz+oOva+APfWDqdcxGVuuKejiWEL8M8z
-        WTInibBGM+RrJWa5ndKFyL8B4lz3jhtlwrVS1Fb47vdpwj0nitn0NjJc2teWZmn2
-        D1vgWULf+njJw8HZwu4rGVPhn4jOjE6DE2DgNnqO2emIRafQBXEnz0hbBYvHp8GX
-        TnZ8E3H7apixX1Aryd7Lxsp8OY/+RXvzEFu0AEFHZZs0IN8/hDxTeIxolZnJ2XjF
-        UDpsTaDvQya/BMyp5DLPnZzpySF+10URhElBjzSLA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=Zzl7/s
-        HSNh+IyPQWupkGHIFiP4/yfQZ+hKPwMIwSg88=; b=ckyVHmX03SmfMlOVkWqmh1
-        +Tq5AQKi3H+2jlzV+Ebk8rgN+TcFqu0wQDFJo8BusC298LRgPmiFV2SmzJL51DBL
-        cw/kidPbk9yig6uN4+Lw30iMmJwFjeU4gqwGtpWFVAjF/wj/z7qv843Vfy/xztOa
-        gcBV25GpO2pzq7HkqVD59BpLkqrLo5d3dv0jXnWzHQPTQnb/bOTctj22dJQgqH8A
-        dhhBe+m0l8JzZayIqgyQqfSvhin7c3wTuaRNaAeXkiMaJRODhjNT6aXZo+HEFbWI
-        WBNOy3vsFedMPefNV6I9lTk82Zhl+IpFlpvn4E4uTJYAOyWS+CMMvZ5dzuPb3IEg
-        ==
-X-ME-Proxy: <xmx:DQhMW8KXNZBIEY-RocbjG3bfc-EcDbfB4vpknJo9gY16tiVvGT-y-A>
-    <xmx:DQhMW0Gg-LNHyH1lTG_bHtaReW1QakHa9QBuDlY_NvrHtCGqsB7UDg>
-    <xmx:DQhMWz6raDA0EZlhI6cYnnsGKXmPat9w_yVVsAx_uRohBkYGBVm6vQ>
-    <xmx:DQhMW_36dVxfLUKYMVSTJ6UGuuRtq8Xg4gze7jJyuSAyxfzwLqLgZg>
-    <xmx:DQhMW_h95tb9tnaueVSpPRt0-_yIz3IQ3gyZ9AL6pScGmrd3yjxEtg>
-    <xmx:DghMW6T9I9TgaUNw-c514H_8hcyWH4vupebE5MEnc5kCmPghTYzr6Q>
-X-ME-Sender: <xms:DQhMWyHsFBiEc-FEkxcug-ogyHj-skjQR-iDsrG6gP3kT58bDUyTkw>
-Received: by mailuser.nyi.internal (Postfix, from userid 99)
-        id F016B9E0F5; Sun, 15 Jul 2018 22:50:52 -0400 (EDT)
-Message-Id: <1531709452.1037890.1441737864.7E216D02@webmail.messagingengine.com>
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     Rob Herring <robh@kernel.org>, Tomer Maimon <tmaimon77@gmail.com>
-Cc:     mark.rutland@arm.com, arnd@arnd.de, gregkh@linuxfoundation.org,
-        avifishman70@gmail.com, yuenn@google.com,
-        brendanhiggins@google.com, venture@google.com, joel@jms.id.au,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, openbmc@lists.ozlabs.org
+        Sun, 15 Jul 2018 23:34:15 -0400
+Received: by mail-io0-f199.google.com with SMTP id f9-v6so3820671ioh.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 20:09:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=VQDft/MFek4HGfQwj3aPVgccku64xjpUP9X4lWrmCzk=;
+        b=oXoT4MBABoZ21f7LPXi7BFBEVTm7N7YTIVaZp4jXj0injlgE17BuGDolk48ZbiHFk+
+         Z+EyWmeJhe8TK3gC0Sdndm7kbYVu7KOXikIzG8ENH3TGdz7Pa0f9SgMgKoA+c/JYOelF
+         7RSWEIdIdYkHQIbmOct2Y4QVX1YONd/lfEhudkQlqpe6kM7d0lHmWauN8pKd7svdGOla
+         RsCOc2uoO+zvGDalSZzZ9rQtdbXMN+FZZ0ONuPbnAaUC7XGveOXyfV2TwaMq95v4EBMi
+         fVMJIrvEaPY6xvCAWiXhsXZjKStWPW6dYvk/9X/kSK0kGEDcCQ6COf0BsMgJe5MvixKE
+         pEPw==
+X-Gm-Message-State: AOUpUlHkb+agfH3ypCWEz4v3+ImcYBdicw+Iu08agwWsj3bOSyzU3of2
+        tHcPovnr/hTcuYpit6xcjH2xyS4/fZ/hGX35hqyrLHMumU75
+X-Google-Smtp-Source: AAOMgpcnX755aWzzEP1gDpedi6svO0hSYUCTKp5eSMJD7rtX1jLVhNUh3xoZv/AZyqbWF2iRhxXJzYUGkpPQGYkt6gfoqNXevbCU
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: MessagingEngine.com Webmail Interface - ajax-957169fa
-In-Reply-To: <20180711202107.GA29980@rob-hp-laptop>
-Subject: Re: [PATCH v1 1/2] dt-binding: bmc: Add NPCM7xx LPC BPC documentation
-Date:   Mon, 16 Jul 2018 12:20:52 +0930
-References: <20180704091427.409971-1-tmaimon77@gmail.com>
- <20180704091427.409971-2-tmaimon77@gmail.com>
- <20180711202107.GA29980@rob-hp-laptop>
+X-Received: by 2002:a6b:4e0b:: with SMTP id c11-v6mr6413802iob.22.1531710542342;
+ Sun, 15 Jul 2018 20:09:02 -0700 (PDT)
+Date:   Sun, 15 Jul 2018 20:09:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c678690571152620@google.com>
+Subject: WARNING: kmalloc bug in krealloc
+From:   syzbot <syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jul 2018, at 05:51, Rob Herring wrote:
-> On Wed, Jul 04, 2018 at 12:14:26PM +0300, Tomer Maimon wrote:
-> > Added device tree binding documentation for Nuvoton BMC
-> > NPCM7xx BIOS Post Code (BPC).
-> > The NPCM7xx BPC monitoring two configurable I/O addresses
-> > written by the host on Low Pin Count (LPC) bus.
-> > 
-> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> > ---
-> >  .../devicetree/bindings/bmc/npcm7xx-lpc-bpc.txt    | 26 ++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/bmc/npcm7xx-lpc-bpc.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/bmc/npcm7xx-lpc-bpc.txt b/Documentation/devicetree/bindings/bmc/npcm7xx-lpc-bpc.txt
-> > new file mode 100644
-> > index 000000000000..0832c9cbea32
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/bmc/npcm7xx-lpc-bpc.txt
-> > @@ -0,0 +1,26 @@
-> > +Nuvoton NPCM7xx LPC BPC interface
-> > +
-> > +Nuvoton BMC NPCM7xx BIOS Post Code (BPC) monitoring two
-> > +configurable I/O addresses written by the host on the
-> > +Low Pin Count (LPC) bus, the capure data stored in 128-word FIFO.
-> 
-> s/capure/capture/
-> 
-> Otherwise,
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+Hello,
 
-So uncovering a bit of a dirty secret here, we should probably consider this in the context of the ASPEED snoop function. A driver snuck into the misc tree without an associated bindings document:
+syzbot found the following crash on:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/misc/aspeed-lpc-snoop.c
+HEAD commit:    483d835c8189 Add linux-next specific files for 20180713
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13689bb2400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=60e5ac2478928314
+dashboard link: https://syzkaller.appspot.com/bug?extid=8574471d8734457d98aa
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17babf0c400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1285cf94400000
 
-(it wasn't me, I'm happy to discuss my proposed bindings, please don't shoot the messenger :))
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
 
-The devicetree node looks something like:
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+WARNING: CPU: 0 PID: 4406 at mm/slab_common.c:1031 kmalloc_slab+0x56/0x70  
+mm/slab_common.c:1031
+Kernel panic - not syncing: panic_on_warn set ...
 
-					lpc_snoop: lpc-snoop@0 {
-						compatible = "aspeed,ast2500-lpc-snoop";
-						reg = <0x0 0x80>;
-						interrupts = <8>;
-						status = "disabled";
-					};
+CPU: 0 PID: 4406 Comm: syz-executor177 Not tainted  
+4.18.0-rc4-next-20180713+ #7
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
+  report_bug+0x252/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
+  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:996
+RIP: 0010:kmalloc_slab+0x56/0x70 mm/slab_common.c:1031
+Code: c5 c0 1a d1 88 5d c3 b8 10 00 00 00 48 85 ff 74 f4 83 ef 01 c1 ef 03  
+0f b6 87 e0 19 d1 88 eb d8 31 c0 81 e6 00 02 00 00 75 db <0f> 0b 5d c3 48  
+8b 04 c5 00 1a d1 88 5d c3 66 90 66 2e 0f 1f 84 00
+RSP: 0018:ffff8801af0ef830 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81d098cd
+RDX: ffffffff81d09964 RSI: 0000000000000000 RDI: 0000000000550001
+RBP: ffff8801af0ef830 R08: ffff8801b640c6c0 R09: fffffbfff12569a0
+R10: fffffbfff12569a0 R11: ffffffff892b4d03 R12: 0000000000550001
+R13: 0000000000600040 R14: ffff8801af0ef998 R15: 0000000000600040
+  __do_kmalloc mm/slab.c:3713 [inline]
+  __kmalloc_track_caller+0x21/0x760 mm/slab.c:3733
+  __do_krealloc mm/slab_common.c:1468 [inline]
+  krealloc+0x65/0xb0 mm/slab_common.c:1515
+  vfs_getxattr_alloc+0x274/0x3c0 fs/xattr.c:288
+  cap_inode_getsecurity+0x104/0x820 security/commoncap.c:396
+  security_inode_getsecurity+0xe1/0x130 security/security.c:866
+  xattr_getsecurity fs/xattr.c:243 [inline]
+  vfs_getxattr+0x1db/0x390 fs/xattr.c:331
+  getxattr+0x139/0x2c0 fs/xattr.c:537
+  path_getxattr+0x103/0x1b0 fs/xattr.c:565
+  __do_sys_getxattr fs/xattr.c:577 [inline]
+  __se_sys_getxattr fs/xattr.c:574 [inline]
+  __x64_sys_getxattr+0x9d/0x100 fs/xattr.c:574
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440639
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffdc307f058 EFLAGS: 00000217 ORIG_RAX: 00000000000000bf
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 0000000000440639
+RDX: 00000000200002c0 RSI: 0000000020000500 RDI: 00000000200004c0
+RBP: 64663d736e617274 R08: 00007ffdc307f1d8 R09: 00007ffdc307f1d8
+R10: 0000000000000143 R11: 0000000000000217 R12: 0000000000401ec0
+R13: 0000000000401f50 R14: 0000000000000000 R15: 0000000000000000
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-and also has a required "snoop-ports" property with at least one and up to two cells that describe the channels to snoop. Channel values are either 0 or 1. It's feasible that the double-word capture could also be supported as both supported channels have their data captured in different fields of the same register.
 
-Do we go with what's already in the tree in supporting 'snoop-ports' or keep 'monitor-ports' as proposed by Tomer?
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Andrew
-
-> 
-> 
-> > +
-> > +NPCM7xx BPC supports capture double words, when using capture
-> > +double word only I/O address 1 is monitored.
-> > +
-> > +Required properties for lpc_bpc node
-> > +- compatible	: "nuvoton,npcm750-lpc-bpc" for Poleg NPCM7XX.
-> > +- reg 			: specifies physical base address and size of the registers.
-> > +- interrupts	: contain the LPC BPC with flags for falling edge.
-> > +- monitor-ports : contain monitor I/O addresses, at least one monitor I/O
-> > +				  address required
-> > +
-> > +Optional property for lpc_bpc node
-> > +- bpc-en-dwcapture : enable capture double words support.
-> > +
-> > +Example:
-> > +	lpc_bpc: lpc-bpc@f0007040 {
-> > +		compatible = "nuvoton,npcm7xx-lpc-bpc";
-> > +		reg = <0xf0007040 0x14>;
-> > +		monitor-ports = <0x80>;
-> > +		interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> > +	};
-> > -- 
-> > 2.14.1
-> > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-hwmon" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
