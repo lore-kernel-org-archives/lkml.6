@@ -2,93 +2,81 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C88DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A24ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A7E72084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:39:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="UiGZcpN/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7E72084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	by mail.kernel.org (Postfix) with ESMTP id 589142084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589142084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729985AbeGPNHF (ORCPT
+        id S1730531AbeGPNHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:07:05 -0400
-Received: from services.gouders.net ([141.101.32.176]:36140 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728437AbeGPNHF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 09:07:05 -0400
-Received: from lena.gouders.net ([193.175.198.193])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w6GCdRnG011181
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Mon, 16 Jul 2018 14:39:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1531744778; bh=Pp7yxRotF0kC0fYRR8X3GkFpaswQe84KPuVwD7sYPxw=;
-        h=From:To:Cc:Subject:Date;
-        b=UiGZcpN/Q9vBniot+WReOrW52b8JdHvMXog+aa/k5yAL+Jc2vw7E4E9mwlkBY6428
-         lFViJt/Eagu+4xRO9O0Jr9erJldlRGBwoqMXTlUslGt9OQDp5lzq4xaXfTvJGH6/S4
-         h5OtMH7pJn1YFiWcu7JBIrh7m7bXHF3TXPHppioE=
-From:   Dirk Gouders <dirk@gouders.net>
-To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc:     Dirk Gouders <dirk@gouders.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] checkpatch: if_changed: check for multiple calls in targets
-Date:   Mon, 16 Jul 2018 14:39:02 +0200
-Message-Id: <20180716123902.5337-1-dirk@gouders.net>
-X-Mailer: git-send-email 2.16.1
+        Mon, 16 Jul 2018 09:07:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51742 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728437AbeGPNHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 09:07:32 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2AC5977885;
+        Mon, 16 Jul 2018 12:40:16 +0000 (UTC)
+Received: from treble (ovpn-122-49.rdu2.redhat.com [10.10.122.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39B83111DD03;
+        Mon, 16 Jul 2018 12:40:15 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 07:40:13 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
+Cc:     Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] livepatch: Remove reliable stacktrace check in
+ klp_try_switch_task()
+Message-ID: <20180716124013.uiyyzr3wabgdshea@treble>
+References: <1531382706-9732-1-git-send-email-kamalesh@linux.vnet.ibm.com>
+ <20180713183756.gfddtn3gbwkwpqbj@treble>
+ <dbd9bdf6-7cb1-cde1-5f7d-d3a5449c560d@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dbd9bdf6-7cb1-cde1-5f7d-d3a5449c560d@linux.vnet.ibm.com>
+User-Agent: NeoMutt/20180323
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 16 Jul 2018 12:40:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 16 Jul 2018 12:40:16 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Because the kbuild function if_changed writes the command line to a
-.cmd file for later tests, multiple calls of that function within a
-target would result in overwrites of previous values and effectively
-render the command line test meaningless, resulting in flip-flop
-behaviour.
+On Sun, Jul 15, 2018 at 01:05:56PM +0530, Kamalesh Babulal wrote:
+> On Saturday 14 July 2018 12:07 AM, Josh Poimboeuf wrote:
+> > > We bail out during patch registration for architectures, those don't
+> > > support reliable stack trace.
+> > 
+> > Does anybody know if that change was intentional?  I thought the plan
+> > was to allow non-consistency-model arches to still use livepatch, and
+> > that they'd just have to 'force' patches to completion instead.  That
+> > seems a little more forgiving.
+> > 
+> 
+> The initial proposal was to allow 'force' feature on architectures
+> without HAVE_RELIABLE_STACKTRACE support and use pr_notice() to warn
+> user about the non-availability of consistency model. It was argued
+> against, as it will encourage people to use it as an alternative instead
+> of adding HAVE_RELIABLE_STACKTRACE support to the kernel.
 
-Produce an error for targets with multiple calls to if_changed.
+Ok, looking through the archives, I found it:
 
-Three examples that would now be detected:
+  https://lkml.kernel.org/r/20171221151428.rt4dlizxb5nqhb3h@pathway.suse.cz
 
-98f78525371b55ccd (x86/boot: Refuse to build with data relocations)
-6a8dfe1cac5c591ae (microblaze: support U-BOOT image format)
-684151a75bf25f5ae (sparc32: added U-Boot build target: uImage)
+I'm not sure I agree with that conclusion, but nobody has complained
+about it, so it's probably fine...
 
-Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Dirk Gouders <dirk@gouders.net>
----
- scripts/checkpatch.pl | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 447857ffaf6b..b0aadf23148e 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2911,6 +2911,14 @@ sub process {
- 			     "Use of $flag is deprecated, please use \`$replacement->{$flag} instead.\n" . $herecurr) if ($replacement->{$flag});
- 		}
- 
-+		# Check for multiple calls of if_changed within a target in Makefiles
-+		if (($realfile =~ /Makefile.*/ || $realfile =~ /Kbuild.*/) &&
-+		    ($prevline =~ /^[ +]\t\$\(call if_changed,/) &&
-+		    ($line =~ /^[ +]\t\$\(call if_changed,/)) {
-+				ERROR("MULTIPLE_IF_CHANGED",
-+				      "Multiple calls of if_changed within a target.\n" . $herecurr);
-+		}
-+
- # check for DT compatible documentation
- 		if (defined $root &&
- 			(($realfile =~ /\.dtsi?$/ && $line =~ /^\+\s*compatible\s*=\s*\"/) ||
 -- 
-2.17.1
-
+Josh
