@@ -2,213 +2,73 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07056ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A76ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B28C1208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:40:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B28C1208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DBA6208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DBA6208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbeGPLHB (ORCPT
+        id S1729604AbeGPLIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 07:07:01 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49154 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeGPLHB (ORCPT
+        Mon, 16 Jul 2018 07:08:34 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:44618 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeGPLIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 07:07:01 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id 00C55260732
-Subject: Re: mainline/master boot: 177 boots: 2 failed, 174 passed with 1
- conflict (v4.18-rc4-160-gf353078f028f)
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-References: <5b4a9633.1c69fb81.17984.f7b3@mx.google.com>
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Cc:     kernel-build-reports@lists.linaro.org, linux-mm@kvack.org,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Message-ID: <0ab16066-5498-374b-5391-3dd7979044aa@collabora.com>
-Date:   Mon, 16 Jul 2018 11:40:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 16 Jul 2018 07:08:34 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 7ecd7176bebb05d0; Mon, 16 Jul 2018 12:41:44 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     broonie@kernel.org, p.paillet@st.com, linux-kernel@vger.kernel.org,
+        m.szyprowski@samsung.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH v2] base: core: Remove WARN_ON from link dependencies check
+Date:   Mon, 16 Jul 2018 12:40:08 +0200
+Message-ID: <2548044.UDzUby0S5K@aspire.rjw.lan>
+In-Reply-To: <20180716102735.GA6269@kroah.com>
+References: <20180716095952.22202-1-benjamin.gaignard@st.com> <1753469.EDefOSO2YU@aspire.rjw.lan> <20180716102735.GA6269@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <5b4a9633.1c69fb81.17984.f7b3@mx.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/07/18 01:32, kernelci.org bot wrote:
-> mainline/master boot: 177 boots: 2 failed, 174 passed with 1 conflict (v4.18-rc4-160-gf353078f028f)
+On Monday, July 16, 2018 12:27:35 PM CEST Greg KH wrote:
+> On Mon, Jul 16, 2018 at 12:07:20PM +0200, Rafael J. Wysocki wrote:
+> > On Monday, July 16, 2018 11:59:52 AM CEST Benjamin Gaignard wrote:
+> > > In some cases the link between between customer and supplier
+> > > already exist, for example when a device use it parent as supplier [1].
+> > 
+> > I think this should be "its parent as a supplier".
+> > 
+> > > Do not warn about already existing dependencies because device_link_add()
+> > > take care of this case.
+> > 
+> > "device_link_add() takes care of"
+> > 
+> > > [1] https://lkml.org/lkml/2018/7/9/356
+> > 
+> > There is the Link: tag for links and it is better to not use lkml.org
+> > as it is not reliable enough.  You can use lore.kernel.org/lkml/ instead.
 > 
-> Full Boot Summary: https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
-> Full Build Summary: https://kernelci.org/build/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
-> 
-> Tree: mainline
-> Branch: master
-> Git Describe: v4.18-rc4-160-gf353078f028f
-> Git Commit: f353078f028fbfe9acd4b747b4a19c69ef6846cd
-> Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> Tested: 67 unique boards, 25 SoC families, 21 builds out of 199
-> 
-> Boot Regressions Detected:
-[...]
-> x86:
-> 
->      i386_defconfig:
->          x86-celeron:
->              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
->          x86-pentium4:
->              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
+> Even better, use:
+> 	lkml.kernel.org/r/[message-id]
 
-Please see below an automated bisection report for this
-regression.  Several bisections were run on other x86 platforms
-with i386_defconfig on a few revisions up to v4.18-rc5, they all
-reached the same "bad" commit.
+Where [message-id] is the value of the Message-Id: header (without the
+enclosing <>) of the target e-mail message (that you can find by looking
+at the raw message).
 
-
-Unfortunately there isn't much to learn from the kernelci.org
-boot logs as the kernel seems to crash very early on:
-
-     https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc5/
-     https://storage.kernelci.org/mainline/master/v4.18-rc4-160-gf353078f028f/x86/i386_defconfig/lab-mhart/lava-x86-celeron.html
-
-
-It looks like stable-rc/linux-4.17.y is also broken with
-i386_defconfig, which tends to confirm the "bad" commit found by
-the automated bisection which was applied there as well:
-
-     https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.17.y/kernel/v4.17.6-68-gbc0bd9e05fa1/
-
-
-The automated bisection on kernelci.org is still quite new, so
-please take the results with a pinch of salt as the "bad" commit
-found may not be the actual root cause of the boot failure.
-
-Hope this helps!
-
-Best wishes,
-Guillaume
-
-
---------------------------------------8<--------------------------------------
-
-
-
-Bisection result for mainline/master (v4.18-rc4-160-gf353078f028f) on x86-celeron
-
-   Good:       2db39a2f491a Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
-   Bad:        f353078f028f Merge branch 'akpm' (patches from Andrew)
-   Found:      e181ae0c5db9 mm: zero unavailable pages before memmap init
-
-Checks:
-   revert:     PASS
-   verify:     PASS
-
-Parameters:
-   Tree:       mainline
-   URL:        http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-   Branch:     master
-   Target:     x86-celeron
-   Lab:        lab-mhart
-   Config:     i386_defconfig
-   Plan:       boot
-
-Breaking commit found:
-
--------------------------------------------------------------------------------
-commit e181ae0c5db9544de9c53239eb22bc012ce75033
-Author: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Sat Jul 14 09:15:07 2018 -0400
-
-     mm: zero unavailable pages before memmap init
-     
-     We must zero struct pages for memory that is not backed by physical
-     memory, or kernel does not have access to.
-     
-     Recently, there was a change which zeroed all memmap for all holes in
-     e820.  Unfortunately, it introduced a bug that is discussed here:
-     
-       https://www.spinics.net/lists/linux-mm/msg156764.html
-     
-     Linus, also saw this bug on his machine, and confirmed that reverting
-     commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
-     memblock.reserved") fixes the issue.
-     
-     The problem is that we incorrectly zero some struct pages after they
-     were setup.
-     
-     The fix is to zero unavailable struct pages prior to initializing of
-     struct pages.
-     
-     A more detailed fix should come later that would avoid double zeroing
-     cases: one in __init_single_page(), the other one in
-     zero_resv_unavail().
-     
-     Fixes: 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into memblock.reserved")
-     Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 1521100f1e63..5d800d61ddb7 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6847,6 +6847,7 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
-  	/* Initialise every node */
-  	mminit_verify_pageflags_layout();
-  	setup_nr_node_ids();
-+	zero_resv_unavail();
-  	for_each_online_node(nid) {
-  		pg_data_t *pgdat = NODE_DATA(nid);
-  		free_area_init_node(nid, NULL,
-@@ -6857,7 +6858,6 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
-  			node_set_state(nid, N_MEMORY);
-  		check_for_memory(pgdat, nid);
-  	}
--	zero_resv_unavail();
-  }
-  
-  static int __init cmdline_parse_core(char *p, unsigned long *core,
-@@ -7033,9 +7033,9 @@ void __init set_dma_reserve(unsigned long new_dma_reserve)
-  
-  void __init free_area_init(unsigned long *zones_size)
-  {
-+	zero_resv_unavail();
-  	free_area_init_node(0, zones_size,
-  			__pa(PAGE_OFFSET) >> PAGE_SHIFT, NULL);
--	zero_resv_unavail();
-  }
-  
-  static int page_alloc_cpu_dead(unsigned int cpu)
--------------------------------------------------------------------------------
-
-
-Git bisection log:
-
--------------------------------------------------------------------------------
-git bisect start
-# good: [2db39a2f491a48ec740e0214a7dd584eefc2137d] Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
-git bisect good 2db39a2f491a48ec740e0214a7dd584eefc2137d
-# bad: [f353078f028fbfe9acd4b747b4a19c69ef6846cd] Merge branch 'akpm' (patches from Andrew)
-git bisect bad f353078f028fbfe9acd4b747b4a19c69ef6846cd
-# good: [fa8cbda88db12e632a8987c94b66f5caf25bcec4] x86/purgatory: add missing FORCE to Makefile target
-git bisect good fa8cbda88db12e632a8987c94b66f5caf25bcec4
-# good: [bb177a732c4369bb58a1fe1df8f552b6f0f7db5f] mm: do not bug_on on incorrect length in __mm_populate()
-git bisect good bb177a732c4369bb58a1fe1df8f552b6f0f7db5f
-# good: [fe10e398e860955bac4d28ec031b701d358465e4] reiserfs: fix buffer overflow with long warning messages
-git bisect good fe10e398e860955bac4d28ec031b701d358465e4
-# bad: [e181ae0c5db9544de9c53239eb22bc012ce75033] mm: zero unavailable pages before memmap init
-git bisect bad e181ae0c5db9544de9c53239eb22bc012ce75033
-# first bad commit: [e181ae0c5db9544de9c53239eb22bc012ce75033] mm: zero unavailable pages before memmap init
--------------------------------------------------------------------------------
+Thanks,
+Rafael
 
