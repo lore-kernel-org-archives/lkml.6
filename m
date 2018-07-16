@@ -2,134 +2,54 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A8FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0A62ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDA1208FE
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:35:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EDA1208FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 83D1F208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D1F208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731234AbeGPJBR (ORCPT
+        id S1731292AbeGPJB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:01:17 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42826 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbeGPJBQ (ORCPT
+        Mon, 16 Jul 2018 05:01:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33634 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbeGPJB1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:01:16 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1feyy4-0000d3-Af; Mon, 16 Jul 2018 08:34:52 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: opl3: remove redundant pointer opl3
-Date:   Mon, 16 Jul 2018 09:34:51 +0100
-Message-Id: <20180716083451.15290-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 16 Jul 2018 05:01:27 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A68ED25;
+        Mon, 16 Jul 2018 08:35:10 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 10:35:07 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Oliver =?iso-8859-1?Q?H=FCbers?= <oliver.huebers@web.de>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@i4.cs.fau.de,
+        Vanessa Borgmann <nessa.x@web.de>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        matthias.bgg@gmail.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/4] staging: mt7621: Add braces around macro argument
+Message-ID: <20180716083507.GB7903@kroah.com>
+References: <1531489266-20410-1-git-send-email-oliver.huebers@web.de>
+ <1531489266-20410-3-git-send-email-oliver.huebers@web.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531489266-20410-3-git-send-email-oliver.huebers@web.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Jul 13, 2018 at 03:41:05PM +0200, Oliver Hübers wrote:
+> Add braces around macro argument to avoid precedence problems.
 
-Variable opl3 is being assigned but is never used hence it is
-redundant and can be removed.
-
-Cleans up several clang warnings:
-warning: variable 'opl3' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/drivers/opl3/opl3_midi.c | 12 ------------
- sound/drivers/opl3/opl3_oss.c  |  6 ------
- 2 files changed, 18 deletions(-)
-
-diff --git a/sound/drivers/opl3/opl3_midi.c b/sound/drivers/opl3/opl3_midi.c
-index bb3f3a5a6951..71cd5a2fbe82 100644
---- a/sound/drivers/opl3/opl3_midi.c
-+++ b/sound/drivers/opl3/opl3_midi.c
-@@ -721,9 +721,6 @@ void snd_opl3_note_off(void *p, int note, int vel,
-  */
- void snd_opl3_key_press(void *p, int note, int vel, struct snd_midi_channel *chan)
- {
--  	struct snd_opl3 *opl3;
--
--	opl3 = p;
- #ifdef DEBUG_MIDI
- 	snd_printk(KERN_DEBUG "Key pressure, ch#: %i, inst#: %i\n",
- 		   chan->number, chan->midi_program);
-@@ -735,9 +732,6 @@ void snd_opl3_key_press(void *p, int note, int vel, struct snd_midi_channel *cha
-  */
- void snd_opl3_terminate_note(void *p, int note, struct snd_midi_channel *chan)
- {
--  	struct snd_opl3 *opl3;
--
--	opl3 = p;
- #ifdef DEBUG_MIDI
- 	snd_printk(KERN_DEBUG "Terminate note, ch#: %i, inst#: %i\n",
- 		   chan->number, chan->midi_program);
-@@ -861,9 +855,6 @@ void snd_opl3_control(void *p, int type, struct snd_midi_channel *chan)
- void snd_opl3_nrpn(void *p, struct snd_midi_channel *chan,
- 		   struct snd_midi_channel_set *chset)
- {
--  	struct snd_opl3 *opl3;
--
--	opl3 = p;
- #ifdef DEBUG_MIDI
- 	snd_printk(KERN_DEBUG "NRPN, ch#: %i, inst#: %i\n",
- 		   chan->number, chan->midi_program);
-@@ -876,9 +867,6 @@ void snd_opl3_nrpn(void *p, struct snd_midi_channel *chan,
- void snd_opl3_sysex(void *p, unsigned char *buf, int len,
- 		    int parsed, struct snd_midi_channel_set *chset)
- {
--  	struct snd_opl3 *opl3;
--
--	opl3 = p;
- #ifdef DEBUG_MIDI
- 	snd_printk(KERN_DEBUG "SYSEX\n");
- #endif
-diff --git a/sound/drivers/opl3/opl3_oss.c b/sound/drivers/opl3/opl3_oss.c
-index 22c3e4bca220..8a0ce3f43f42 100644
---- a/sound/drivers/opl3/opl3_oss.c
-+++ b/sound/drivers/opl3/opl3_oss.c
-@@ -233,11 +233,8 @@ static int snd_opl3_load_patch_seq_oss(struct snd_seq_oss_arg *arg, int format,
- static int snd_opl3_ioctl_seq_oss(struct snd_seq_oss_arg *arg, unsigned int cmd,
- 				  unsigned long ioarg)
- {
--	struct snd_opl3 *opl3;
--
- 	if (snd_BUG_ON(!arg))
- 		return -ENXIO;
--	opl3 = arg->private_data;
- 	switch (cmd) {
- 		case SNDCTL_FM_LOAD_INSTR:
- 			snd_printk(KERN_ERR "OPL3: "
-@@ -261,11 +258,8 @@ static int snd_opl3_ioctl_seq_oss(struct snd_seq_oss_arg *arg, unsigned int cmd,
- /* reset device */
- static int snd_opl3_reset_seq_oss(struct snd_seq_oss_arg *arg)
- {
--	struct snd_opl3 *opl3;
--
- 	if (snd_BUG_ON(!arg))
- 		return -ENXIO;
--	opl3 = arg->private_data;
- 
- 	return 0;
- }
--- 
-2.17.1
+That is not what this patch does :(
 
