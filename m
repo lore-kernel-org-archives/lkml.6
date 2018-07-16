@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA29ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0CFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56AA620B80
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56AA620B80
+	by mail.kernel.org (Postfix) with ESMTP id B21FC20BED
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:30:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21FC20BED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731289AbeGPL5w (ORCPT
+        id S1731324AbeGPL54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 07:57:52 -0400
-Received: from foss.arm.com ([217.140.101.70]:57698 "EHLO foss.arm.com"
+        Mon, 16 Jul 2018 07:57:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:57728 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728643AbeGPL5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 07:57:52 -0400
+        id S1728588AbeGPL54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 07:57:56 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0875315AD;
-        Mon, 16 Jul 2018 04:30:53 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6D851684;
+        Mon, 16 Jul 2018 04:30:56 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 18A473F589;
-        Mon, 16 Jul 2018 04:30:49 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B6D533F589;
+        Mon, 16 Jul 2018 04:30:53 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     mingo@kernel.org, mingo@redhat.com
 Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
@@ -36,9 +36,9 @@ Cc:     andy.shevchenko@gmail.com, arnd@arndb.de, aryabinin@virtuozzo.com,
         mark.rutland@arm.com, parri.andrea@gmail.com,
         peter@hurleysoftware.com, peterz@infradead.org, tglx@linutronix.de,
         will.deacon@arm.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCHv4 05/12] atomics: instrument cmpxchg_double*()
-Date:   Mon, 16 Jul 2018 12:30:10 +0100
-Message-Id: <20180716113017.3909-6-mark.rutland@arm.com>
+Subject: [PATCHv4 06/12] atomics/treewide: rework ordering barriers
+Date:   Mon, 16 Jul 2018 12:30:11 +0100
+Message-Id: <20180716113017.3909-7-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180716113017.3909-1-mark.rutland@arm.com>
 References: <20180716113017.3909-1-mark.rutland@arm.com>
@@ -47,68 +47,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We currently don't instrument cmpxchg_double() and
-cmpxchg_double_local() due to compilation issues reported in the past,
-which are supposedly related to GCC bug 72873 [1], reported when GCC 7
-was not yet released. This bug only applies to x86-64, and does not
-apply to other architectures.
+Currently architectures can override __atomic_op_*() to define the barriers
+used before/after a relaxed atomic when used to build acquire/release/fence
+variants.
 
-While the test case for GCC bug 72873 triggers issues with released
-versions of GCC, the instrumented kernel code compiles fine for all
-configurations I have tried, and it is unclear how the two cases
-are/were related.
+This has the unfortunate property of requiring the architecture to define the
+full wrapper for the atomics, rather than just the barriers they care about,
+and gets in the way of generating atomics which can be easily read.
 
-As we can't reproduce the kernel build failures, let's instrument
-cmpxchg_double*() again. We can revisit the issue if build failures
-reappear.
+Instead, this patch has architectures define an optional set of barriers:
+
+* __atomic_acquire_fence()
+* __atomic_release_fence()
+* __atomic_pre_full_fence()
+* __atomic_post_full_fence()
+
+... which <linux/atomic.h> uses to build the wrappers.
+
+It would be nice if we could undef these, along with the __atomic_op_*()
+wrappers, but that would break the cmpxchg() wrappers, which are written
+in preprocessor. Undefs would have been nice, but alas.
+
+There should be no functional change as a result of this patch.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrea Parri <parri.andrea@gmail.com>
 Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- include/asm-generic/atomic-instrumented.h | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ arch/alpha/include/asm/atomic.h   |  8 ++++----
+ arch/powerpc/include/asm/atomic.h | 17 +++++------------
+ arch/riscv/include/asm/atomic.h   | 17 +++++------------
+ include/linux/atomic.h            | 38 ++++++++++++++++++++++----------------
+ 4 files changed, 36 insertions(+), 44 deletions(-)
 
-diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
-index 53481b6eacdf..0d4b1d3dbc1e 100644
---- a/include/asm-generic/atomic-instrumented.h
-+++ b/include/asm-generic/atomic-instrumented.h
-@@ -450,23 +450,18 @@ static __always_inline bool atomic64_add_negative(s64 i, atomic64_t *v)
- 	arch_cmpxchg64_local(__ai_ptr, (old), (new));			\
- })
+diff --git a/arch/alpha/include/asm/atomic.h b/arch/alpha/include/asm/atomic.h
+index 4a6a8f58c9c9..150a1c5d6a2c 100644
+--- a/arch/alpha/include/asm/atomic.h
++++ b/arch/alpha/include/asm/atomic.h
+@@ -18,11 +18,11 @@
+  * To ensure dependency ordering is preserved for the _relaxed and
+  * _release atomics, an smp_read_barrier_depends() is unconditionally
+  * inserted into the _relaxed variants, which are used to build the
+- * barriered versions. To avoid redundant back-to-back fences, we can
+- * define the _acquire and _fence versions explicitly.
++ * barriered versions. Avoid redundant back-to-back fences in the
++ * _acquire and _fence versions.
+  */
+-#define __atomic_op_acquire(op, args...)	op##_relaxed(args)
+-#define __atomic_op_fence			__atomic_op_release
++#define __atomic_acquire_fence()
++#define __atomic_post_full_fence()
  
--/*
-- * Originally we had the following code here:
-- *     __typeof__(p1) ____p1 = (p1);
-- *     kasan_check_write(____p1, 2 * sizeof(*____p1));
-- *     arch_cmpxchg_double(____p1, (p2), (o1), (o2), (n1), (n2));
-- * But it leads to compilation failures (see gcc issue 72873).
-- * So for now it's left non-instrumented.
-- * There are few callers of cmpxchg_double(), so it's not critical.
-- */
- #define cmpxchg_double(p1, p2, o1, o2, n1, n2)				\
- ({									\
--	arch_cmpxchg_double((p1), (p2), (o1), (o2), (n1), (n2));	\
-+	typeof(p1) __ai_p1 = (p1);					\
-+	kasan_check_write(__ai_p1, 2 * sizeof(*__ai_p1));		\
-+	arch_cmpxchg_double(__ai_p1, (p2), (o1), (o2), (n1), (n2));	\
- })
- 
--#define cmpxchg_double_local(p1, p2, o1, o2, n1, n2)			\
+ #define ATOMIC_INIT(i)		{ (i) }
+ #define ATOMIC64_INIT(i)	{ (i) }
+diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
+index a0156cb43d1f..963abf8bf1c0 100644
+--- a/arch/powerpc/include/asm/atomic.h
++++ b/arch/powerpc/include/asm/atomic.h
+@@ -18,18 +18,11 @@
+  * a "bne-" instruction at the end, so an isync is enough as a acquire barrier
+  * on the platform without lwsync.
+  */
+-#define __atomic_op_acquire(op, args...)				\
 -({									\
--	arch_cmpxchg_double_local((p1), (p2), (o1), (o2), (n1), (n2));	\
-+#define cmpxchg_double_local(p1, p2, o1, o2, n1, n2)				\
-+({										\
-+	typeof(p1) __ai_p1 = (p1);						\
-+	kasan_check_write(__ai_p1, 2 * sizeof(*__ai_p1));			\
-+	arch_cmpxchg_double_local(__ai_p1, (p2), (o1), (o2), (n1), (n2));	\
- })
+-	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
+-	__asm__ __volatile__(PPC_ACQUIRE_BARRIER "" : : : "memory");	\
+-	__ret;								\
+-})
+-
+-#define __atomic_op_release(op, args...)				\
+-({									\
+-	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory");	\
+-	op##_relaxed(args);						\
+-})
++#define __atomic_acquire_fence()					\
++	__asm__ __volatile__(PPC_ACQUIRE_BARRIER "" : : : "memory")
++
++#define __atomic_release_fence()					\
++	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory")
  
- #endif /* _LINUX_ATOMIC_INSTRUMENTED_H */
+ static __inline__ int atomic_read(const atomic_t *v)
+ {
+diff --git a/arch/riscv/include/asm/atomic.h b/arch/riscv/include/asm/atomic.h
+index 512b89485790..c452359c9cb8 100644
+--- a/arch/riscv/include/asm/atomic.h
++++ b/arch/riscv/include/asm/atomic.h
+@@ -25,18 +25,11 @@
+ 
+ #define ATOMIC_INIT(i)	{ (i) }
+ 
+-#define __atomic_op_acquire(op, args...)				\
+-({									\
+-	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
+-	__asm__ __volatile__(RISCV_ACQUIRE_BARRIER "" ::: "memory");	\
+-	__ret;								\
+-})
+-
+-#define __atomic_op_release(op, args...)				\
+-({									\
+-	__asm__ __volatile__(RISCV_RELEASE_BARRIER "" ::: "memory");	\
+-	op##_relaxed(args);						\
+-})
++#define __atomic_acquire_fence()					\
++	__asm__ __volatile__(RISCV_ACQUIRE_BARRIER "" ::: "memory")
++
++#define __atomic_release_fence()					\
++	__asm__ __volatile__(RISCV_RELEASE_BARRIER "" ::: "memory");
+ 
+ static __always_inline int atomic_read(const atomic_t *v)
+ {
+diff --git a/include/linux/atomic.h b/include/linux/atomic.h
+index 8e04f1f69bd9..1e8e88bdaf09 100644
+--- a/include/linux/atomic.h
++++ b/include/linux/atomic.h
+@@ -38,40 +38,46 @@
+  * barriers on top of the relaxed variant. In the case where the relaxed
+  * variant is already fully ordered, no additional barriers are needed.
+  *
+- * Besides, if an arch has a special barrier for acquire/release, it could
+- * implement its own __atomic_op_* and use the same framework for building
+- * variants
+- *
+- * If an architecture overrides __atomic_op_acquire() it will probably want
+- * to define smp_mb__after_spinlock().
++ * If an architecture overrides __atomic_acquire_fence() it will probably
++ * want to define smp_mb__after_spinlock().
+  */
+-#ifndef __atomic_op_acquire
++#ifndef __atomic_acquire_fence
++#define __atomic_acquire_fence		smp_mb__after_atomic
++#endif
++
++#ifndef __atomic_release_fence
++#define __atomic_release_fence		smp_mb__before_atomic
++#endif
++
++#ifndef __atomic_pre_full_fence
++#define __atomic_pre_full_fence		smp_mb__before_atomic
++#endif
++
++#ifndef __atomic_post_full_fence
++#define __atomic_post_full_fence	smp_mb__after_atomic
++#endif
++
+ #define __atomic_op_acquire(op, args...)				\
+ ({									\
+ 	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
+-	smp_mb__after_atomic();						\
++	__atomic_acquire_fence();					\
+ 	__ret;								\
+ })
+-#endif
+ 
+-#ifndef __atomic_op_release
+ #define __atomic_op_release(op, args...)				\
+ ({									\
+-	smp_mb__before_atomic();					\
++	__atomic_release_fence();					\
+ 	op##_relaxed(args);						\
+ })
+-#endif
+ 
+-#ifndef __atomic_op_fence
+ #define __atomic_op_fence(op, args...)					\
+ ({									\
+ 	typeof(op##_relaxed(args)) __ret;				\
+-	smp_mb__before_atomic();					\
++	__atomic_pre_full_fence();					\
+ 	__ret = op##_relaxed(args);					\
+-	smp_mb__after_atomic();						\
++	__atomic_post_full_fence();					\
+ 	__ret;								\
+ })
+-#endif
+ 
+ /* atomic_add_return_relaxed */
+ #ifndef atomic_add_return_relaxed
 -- 
 2.11.0
 
