@@ -7,72 +7,70 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF118ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AE5ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D80C20936
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DD9E20936
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pq2H4TZ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D80C20936
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O+SG30uh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD9E20936
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731939AbeGPI4b (ORCPT
+        id S1731325AbeGPI5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:56:31 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43689 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728707AbeGPI4a (ORCPT
+        Mon, 16 Jul 2018 04:57:01 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43919 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728246AbeGPI5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:56:30 -0400
-Received: by mail-pf0-f196.google.com with SMTP id j26-v6so1435638pfi.10
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 01:30:14 -0700 (PDT)
+        Mon, 16 Jul 2018 04:57:00 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v13-v6so7225863pgr.10
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 01:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=7gUr0mEovJyj+5ErZACxD+/PVUTkJxKmsUR1LJKM0GM=;
-        b=pq2H4TZ26EpDpcPsdQjfPmXgcdh/ZO95ySJwCs6ksWbJ+UfplG5izIXgWargZAC96j
-         nxEoECbYw8lf0wtsovWg6WG3iPMUHEzIre6jDofYMqMMtBdF4VCzdU8KHvI4Sz2v06QL
-         EIyX5clzLZpda1GCkPOX29vTcspJFjRZGKbZ6AupZkybSilP3CjDW3mJJux2nwQscs81
-         FrOJRTxEGyGYlLvsmU/wQHpe93BreG49FnxlSP2bGKZN6gBbsWCLBmOLcrkz/HPZ7fVq
-         yRmQfrkpjlme/S2qPiKmuCbLAAqWSCYuuyowBZ/BY8kLF/lFkiCXaoJNGBd/4veaQVfR
-         UeaA==
+        bh=NIwcRtglU55olTcy76zpCxHUUkG4wyyIG3OZ08JFVdY=;
+        b=O+SG30uhDeKLQUp/RPcBzV1FUwOkVVuy8w5zgjIFXsQXI2F73sfZ4qOs7SYQkfUHoI
+         8TYiOCxhiKgPpCfLbgnws1nr1XPCqPmvrKhlshCKOJs+0zhzABFtqZbLl6CA556Sq9WA
+         P7YQp6toTrDO8TiJP4F1p/hXWYymS04CVrc3zj1/8etsEDbdElboIq8lL57QR9e4vV3m
+         R2svX8hPqyMMm6TGreMqmvkzZsoG6RBu5KT/FviV2Kv6h/7mXb+v3OhVKP7NgkYYCbf5
+         YmoYmuUzcF5/6uaN6XKFYGHPrULosq0a/3yw7B7R5TlNsYZZKzTVUEN7iOau76Cgd0YA
+         O58g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=7gUr0mEovJyj+5ErZACxD+/PVUTkJxKmsUR1LJKM0GM=;
-        b=XeMrkMLo6swmiYyIZH+USc2c2ZgTZlDJnutA9HuEQ7T5s/r1E8V29elH2aeMdXEAAz
-         dhUD98nEMP6zEwvvZJhQBNKM1wY4SB6BZVQKG9ROWf6T3E0ZzdKsmYJtw0N/YYGA+dVI
-         f8Ku3mtv3YkuPKSrSJprfCf4TjBIoBByNhTfCcrm+DATmr2+CgZIuHpsHKp4xYbZ8cM9
-         VyOzHPxY0fHE02828W/NtJG8Be8B4K2AZwmpC9Sy5nk/3LO9XFG5OU+gza7ZhTCzgI9U
-         yhH0yN9glfhhutIMSuniCY/s3SkfH+zgZCOPzGCAkSt1yVNLnUfQMF277bjaodmmtnhR
-         oJbA==
-X-Gm-Message-State: AOUpUlFcRw/WIluwCaY4dKghINZ4xLncp9GXdvLJDjFkAzMWbJDiGVrY
-        U4vYYAuN60slc6f/E/lBkddP0jRUNv6RFCNAe4QvSQ==
-X-Google-Smtp-Source: AAOMgpcAZ3Axv8wR3Z8vItzAnG0YuWuCLokk/afHJ2CcS5mo5E3mfSCdPmb6aVh2wDYoDe31ZdxeRUHcYBn7CvEwEQs=
-X-Received: by 2002:a62:3f44:: with SMTP id m65-v6mr16968575pfa.98.1531729813806;
- Mon, 16 Jul 2018 01:30:13 -0700 (PDT)
+        bh=NIwcRtglU55olTcy76zpCxHUUkG4wyyIG3OZ08JFVdY=;
+        b=KeUNY+2mMarRhyEgYO0f1/yh2aIZI8ygDd5ramHw2ZDSPBtckP0+ijW8Bj6BHQxevZ
+         h93msWFkxznXu2DXwVil29SE05t1aXrG0Gdq301ukp9YS2GcWMnMtdBes61WR8Z99V/B
+         c9IwMnGpjhl2i4kXTJBc6ZjCjcLo//kwhD+7t5wOtfPx3grMcQsWo2YxxccYmCX2J7Bj
+         2njnQvRzCcwJAM9bcbBXrdrFG7d3vQeA9XoqRnNPQ/z900Bbhpq3lU0f7yDScplE6CTO
+         CGxorZk9OuMZnCJnRiQmoH8EvCvJMpJ8edMj5BwUb2fKmVjmVWel5qhtS6lJu0eIuFUN
+         yhCg==
+X-Gm-Message-State: AOUpUlGa6chW7TMa1Ap1dFXrq5v7b5MnrzGzF5sXTr5yJbzGrNC+v6c5
+        zPVfsH/vyvdrtR6SgdZYkwgNN7lybCTCMz8m6a6V6bU/x5g=
+X-Google-Smtp-Source: AAOMgpcFAG0oJpm89YZ6N3w4w54jY1iDsFLzCJEhxB08EqHWsuC443/JIAGanBaz9ZRykwj1UQTVMBigrTajv9JZzeQ=
+X-Received: by 2002:a63:e742:: with SMTP id j2-v6mr14693085pgk.114.1531729843796;
+ Mon, 16 Jul 2018 01:30:43 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 16 Jul 2018 01:29:53
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Mon, 16 Jul 2018 01:30:23
  -0700 (PDT)
-In-Reply-To: <0000000000000956640571197f98@google.com>
-References: <0000000000000956640571197f98@google.com>
+In-Reply-To: <0000000000000696430571197fe9@google.com>
+References: <0000000000000696430571197fe9@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 16 Jul 2018 10:29:53 +0200
-Message-ID: <CACT4Y+Yg9KqWNScAvtZnG3dS9JPnYLORffc=M_eeJRHKHGHMxg@mail.gmail.com>
-Subject: Re: WARNING: kernel stack frame pointer has bad value (2)
-To:     syzbot <syzbot+903cdd6bce9a6eb832a4@syzkaller.appspotmail.com>,
+Date:   Mon, 16 Jul 2018 10:30:23 +0200
+Message-ID: <CACT4Y+a_UhxTfOp+e0RN3PoAirhgYqwZy-so2f4_-Ud7eayQ0w@mail.gmail.com>
+Subject: Re: WARNING: kernel stack regs has bad 'bp' value (4)
+To:     syzbot <syzbot+f337218531b644bdeb70@syzkaller.appspotmail.com>,
         megha.dey@linux.intel.com
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, KVM list <kvm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "the arch/x86 maintainers" <x86@kernel.org>
@@ -83,737 +81,776 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Jul 16, 2018 at 10:20 AM, syzbot
-<syzbot+903cdd6bce9a6eb832a4@syzkaller.appspotmail.com> wrote:
+<syzbot+f337218531b644bdeb70@syzkaller.appspotmail.com> wrote:
 > Hello,
 >
 > syzbot found the following crash on:
 >
-> HEAD commit:    c31496dbacc2 Merge tag 'for-linus-4.18-rc5-tag' of git://g..
+> HEAD commit:    63f047771621 Merge tag 'mtd/fixes-for-4.18-rc5' of git://g..
 > git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=136d770c400000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1777bb70400000
 > kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
-> dashboard link: https://syzkaller.appspot.com/bug?extid=903cdd6bce9a6eb832a4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f337218531b644bdeb70
 > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 >
 > Unfortunately, I don't have any reproducer for this crash yet.
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+903cdd6bce9a6eb832a4@syzkaller.appspotmail.com
+> Reported-by: syzbot+f337218531b644bdeb70@syzkaller.appspotmail.com
 
 Most likely this is K512_4, +Megha.
 
-> binder: 23389:23392 ERROR: BC_REGISTER_LOOPER called without request
-> binder: 23389:23392 unknown command 0
-> binder: 23389:23392 ioctl c0306201 2000efd0 returned -22
-> WARNING: kernel stack frame pointer at 00000000dd2b4720 in
-> syz-executor4:23395 has bad value 0000000035266bf0
+
+> WARNING: kernel stack regs at 000000008650f4f9 in syz-executor7:25492 has
+> bad 'bp' value 0000000010d16b6f
 > unwind stack type:0 next_sp:          (null) mask:0x2 graph_idx:0
-> 00000000d307878c: ffff8801b2e26b80 (0xffff8801b2e26b80)
-> 00000000a5e29d4b: ffffffff812d369d (__save_stack_trace+0x7d/0xf0)
-> 000000008f1ec963: 0000000000000000 ...
-> 000000008a1bd6e7: ffff8801b2e20000 (0xffff8801b2e20000)
-> 00000000f78e715f: ffff8801b2e28000 (0xffff8801b2e28000)
-> 000000002616d809: 0000000000000000 ...
-> 000000001b7077a7: 0000000000000002 (0x2)
-> 0000000090fd08e4: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000dbfa684c: 0000010100000000 (0x10100000000)
-> 00000000cb1132ef: ffff8801b2e27458 (0xffff8801b2e27458)
-> 0000000038c2a725: ffff8801b2e26af0 (0xffff8801b2e26af0)
-> 000000001c5817c2: ffffffff815f1750 (lock_release+0xa30/0xa30)
-> 00000000beeee1a2: 0000000000000000 ...
-> 00000000f34cc57e: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000000db4bbe9: ffffffff8a603b58 (lock_classes+0x9b198/0x29fee0)
-> 000000000e769f75: ffffffff8a241a68 (stack_trace+0x121148/0x400020)
-> 000000001a5d9de1: ffffffff8a603b5c (lock_classes+0x9b19c/0x29fee0)
-> 00000000c2d035dd: 0000000000000008 (0x8)
-> 00000000caea43e1: ffff8801b2e26b90 (0xffff8801b2e26b90)
-> 00000000003a0884: ffffffff812d372a (save_stack_trace+0x1a/0x20)
-> 00000000c939fe29: ffff8801b2e26bd0 (0xffff8801b2e26bd0)
-> 000000009341d9a0: ffffffff815e0c40 (save_trace+0xe0/0x290)
-> 000000007ad3e489: ffff8801b2e26bb0 (0xffff8801b2e26bb0)
-> 00000000b7e4e22a: 1ffff100365c4d81 (0x1ffff100365c4d81)
-> 00000000de858161: ffff880198f2afa8 (0xffff880198f2afa8)
-> 0000000007f566a6: ffff880198f2afc8 (0xffff880198f2afc8)
-> 00000000a1ce690d: 0000000000000008 (0x8)
-> 00000000fde86834: 0000000000000100 (0x100)
-> 00000000e05bd15b: ffff8801b2e26d10 (0xffff8801b2e26d10)
-> 000000006543447e: ffffffff815e8a9a (mark_lock+0x3aa/0x19f0)
-> 00000000f1019a5a: ffff88019eaa65d0 (0xffff88019eaa65d0)
-> 0000000029d7302f: ffffffff815e2225 (__lock_is_held+0xb5/0x140)
-> 0000000091b9d58b: 0000000041b58ab3 (0x41b58ab3)
-> 000000003115be7f: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000cd482fdc: ffff880100000008 (0xffff880100000008)
-> 000000003698fffe: 0000000041b58ab3 (0x41b58ab3)
-> 0000000014c51d07: ffffffff88bd7c30 (regoff.34024+0x36a210/0x37af60)
-> 000000004e2df20a: ffffffff815e86f0 (print_usage_bug+0xc0/0xc0)
-> 00000000b9144ede: ffffffff899f35f0 (offload_base+0x10/0x10)
-> 0000000068b70fd3: ffffffff8a5689d0 (lock_classes+0x10/0x29fee0)
-> 0000000013a2bdb8: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000c700383a: ffff8801afd007c0 (0xffff8801afd007c0)
-> 0000000001840907: ffff8801afd007c0 (0xffff8801afd007c0)
-> 00000000688cfa2e: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000806e4815: 1ffff100365c4d92 (0x1ffff100365c4d92)
-> 00000000b7168aa1: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000570f0e0b: dffffc0000000000 (0xdffffc0000000000)
-> 00000000a37e1002: ffffffff88f7b480 (root_cpuacct+0x1000/0x1000)
-> 00000000cc719769: ffff8801afd00400 (0xffff8801afd00400)
-> 00000000c41a2b95: ffff88019eaa6540 (0xffff88019eaa6540)
-> 00000000120bcfc4: ffff88019eaa6610 (0xffff88019eaa6610)
-> 00000000d4d0f11d: ffff8801b2e26eb0 (0xffff8801b2e26eb0)
-> 00000000ab11c684: ffffffff85f898f3 (dev_hard_start_xmit+0x173/0xc30)
-> 00000000e6f967a7: ffffffff88bd7800 (regoff.34024+0x369de0/0x37af60)
-> 00000000fcd5bcad: 1ffff100365c4d9d (0x1ffff100365c4d9d)
-> 00000000229b017a: ffffffff8a603a70 (lock_classes+0x9b0b0/0x29fee0)
-> 00000000fc2b80a1: 1ffff100365c4da1 (0x1ffff100365c4da1)
-> 0000000079dc8117: ffffed00365c4da1 (0xffffed00365c4da1)
-> 00000000c809e95c: ffff88019eaa6728 (0xffff88019eaa6728)
-> 00000000642ece16: ffff8801b2e26c01 (0xffff8801b2e26c01)
-> 0000000057bd14b1: ffffffff817c0c2a
-> (__sanitizer_cov_trace_const_cmp1+0x1a/0x20)
-> 00000000ebaf14e5: ffff8801c9c2c700 (0xffff8801c9c2c700)
-> 00000000aa8fcf82: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000846403c7: 0000000000000763 (0x763)
-> 0000000084f33fe0: ffff880198f2afca (0xffff880198f2afca)
-> 000000007499e1fc: 0000000000000007 (0x7)
-> 00000000ea4ac45c: ffff880198f2a680 (0xffff880198f2a680)
-> 000000003f39d3ea: 000000000000000c (0xc)
-> 0000000052dbda05: ffff8801b2e270a8 (0xffff8801b2e270a8)
-> 00000000a6dc2ae0: ffffffff815eb00c (__lock_acquire+0x7fc/0x5020)
-> 0000000008b1fc78: ffff8801b2e26d98 (0xffff8801b2e26d98)
-> 00000000960a9a88: ffffffff86926a0f (validate_xmit_xfrm+0x1ef/0xdc0)
-> 000000006eb6a7f6: 0000000000000000 ...
-> 0000000076f03b5e: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000009a2cecc6: ffff880198f2af00 (0xffff880198f2af00)
-> 00000000be71225c: ffff88019e45c928 (0xffff88019e45c928)
-> 00000000635bff21: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000e7aa1aff: 0000000000000000 ...
-> 00000000949522a1: 0000000000000001 (0x1)
-> 00000000dd834bdf: 0000000000000000 ...
-> 000000001ff35eda: ffff8801b2e26e90 (0xffff8801b2e26e90)
-> 000000000f87ee21: ffffffff815f1934 (lock_acquire+0x1e4/0x540)
-> 00000000b6bf96de: ffff880198f2afc0 (0xffff880198f2afc0)
-> 000000001869183d: ffffffff00000006 (0xffffffff00000006)
-> 00000000e8bc2543: ffff880198f2afc8 (0xffff880198f2afc8)
-> 000000000e917578: ffff880198f2aeb0 (0xffff880198f2aeb0)
-> 0000000002f68c56: ffff880198f2afa8 (0xffff880198f2afa8)
-> 00000000c80f9403: ffff880198f2aeb8 (0xffff880198f2aeb8)
-> 00000000747a1c35: 1ffff100365c4db8 (0x1ffff100365c4db8)
-> 00000000a1fd0069: 0000000000000000 ...
-> 0000000048c72f12: 0000000041b58ab3 (0x41b58ab3)
-> 0000000018a1c9f0: ffffffff88bf1308 (K512_4+0x6788/0x12085c)
-> 00000000e0720cfc: ffffffff815ea810 (trace_hardirqs_on+0x10/0x10)
-> 00000000e94d1368: ffffffff815f1750 (lock_release+0xa30/0xa30)
-> 000000000d7296d6: 0000000041b58ab3 (0x41b58ab3)
-> 00000000df8b2f98: ffffffff88bd5e44 (regoff.34024+0x368424/0x37af60)
-> 0000000022b8735f: ffffffff85f88080 (netif_skb_features+0xb70/0xb70)
-> 000000005e960ed5: 0000000000000000 ...
-> 0000000062b9b958: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000005402b303: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000812cd5e1: 0000000000000001 (0x1)
-> 00000000e520da0b: 0000000000000000 ...
-> 000000009ccf580d: ffffffff89f5c5a8 (lock_chains+0x43ea8/0x200020)
-> 0000000034c9aaff: 0000000000000000 ...
-> 0000000006a8ce80: ffff88019ea0c340 (0xffff88019ea0c340)
-> 0000000091f83256: ffff88019ea0c348 (0xffff88019ea0c348)
-> 000000000486053d: ffff88019ea0c350 (0xffff88019ea0c350)
-> 00000000c543e06a: ffff8801b2e26e58 (0xffff8801b2e26e58)
-> 00000000672b8044: ffffffff81b9da54 (kasan_check_write+0x14/0x20)
-> 00000000d4dd5cb4: ffff8801b2e26e90 (0xffff8801b2e26e90)
-> 00000000b389ef95: ffffffff816017a1 (do_raw_spin_lock+0xc1/0x200)
-> 000000003c9de80b: ffff88019ea0c340 (0xffff88019ea0c340)
-> 000000009c5067bb: ffff88019ea0c340 (0xffff88019ea0c340)
-> 000000005b8a2102: ffff88019ea0c2c0 (0xffff88019ea0c2c0)
-> 0000000028241823: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000009a810b78: ffff8801b2e26fa8 (0xffff8801b2e26fa8)
-> 00000000e58145fc: ffff88019ea0c2c0 (0xffff88019ea0c2c0)
-> 000000005598f286: ffff8801afd00400 (0xffff8801afd00400)
-> 00000000feb38ae8: ffff88019c376940 (0xffff88019c376940)
-> 000000002215a699: ffff88019eaa6610 (0xffff88019eaa6610)
-> 000000002ab5021c: ffff8801b2e26fd0 (0xffff8801b2e26fd0)
-> 000000009a12cab6: ffffffff860c87c6 (sch_direct_xmit+0x486/0x1140)
-> 00000000cf2cb5c7: ffff88019c376940 (0xffff88019c376940)
-> 000000009629b205: 0000000041b58ab3 (0x41b58ab3)
-> 000000002184fdd9: ffffffff88bdf618 (regoff.34024+0x371bf8/0x37af60)
-> 00000000619b6b81: ffffffff860c35e0 (noqueue_init+0x40/0x40)
-> 00000000a88bdc6f: 0000000000000000 ...
-> 000000002beebc0a: ffff8801b2e26f68 (0xffff8801b2e26f68)
-> 000000004ef072de: 1ffff100365c4de1 (0x1ffff100365c4de1)
-> 00000000bdc57d96: 0000000000000000 ...
-> 000000004904994a: ffff88019eaa6540 (0xffff88019eaa6540)
-> 00000000ec816361: 0000000041b58ab3 (0x41b58ab3)
-> 0000000042635bbf: ffffffff88ccdf8f (K512_4+0xe340f/0x12085c)
-> 000000007093f90d: ffffffff860c8340 (dev_watchdog+0xb10/0xb10)
-> 00000000ac6dce73: ffffed00331e55d6 (0xffffed00331e55d6)
-> 000000000b52725e: ffff880198f2ae00 (0xffff880198f2ae00)
-> 000000008dc2e847: 0000000000000002 (0x2)
-> 000000009fef9361: ffff8801b2e26f88 (0xffff8801b2e26f88)
-> 00000000c6ec1acd: ffffffff815e2225 (__lock_is_held+0xb5/0x140)
-> 0000000072603c55: ffffffffb2e26fd0 (0xffffffffb2e26fd0)
-> 0000000065c95123: ffff880198f2aeb0 (0xffff880198f2aeb0)
-> 000000004c37101f: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
-> 00000000b07f0a3d: 0000000000000286 (0x286)
-> 00000000194edb83: ffff880100000010 (0xffff880100000010)
-> 00000000b48dfbfc: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
-> 000000009aa8fc0b: ffff88019c376940 (0xffff88019c376940)
-> 00000000d32c3de2: ffff8801afd007c0 (0xffff8801afd007c0)
-> 00000000a29bad7c: ffff8801b2e26fb8 (0xffff8801b2e26fb8)
-> 0000000001538360: 0000000000000286 (0x286)
-> 0000000051e29542: 0000000000000000 ...
-> 00000000036084c7: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000a5252733: 0000000000000000 ...
-> 0000000002c179b8: ffff88019ea0c2c0 (0xffff88019ea0c2c0)
-> 00000000509fe9e1: dffffc0000000000 (0xdffffc0000000000)
-> 00000000a32efb8d: ffff88019c376940 (0xffff88019c376940)
-> 000000002294494d: ffff8801afd007c0 (0xffff8801afd007c0)
-> 00000000ac0fca89: ffff8801b2e27198 (0xffff8801b2e27198)
-> 00000000c227782e: ffffffff860c9a99 (__qdisc_run+0x619/0x19f0)
-> 000000003fe0b810: ffff8801b2e27070 (0xffff8801b2e27070)
-> 0000000056f759a3: 1ffff100365c4e0a (0x1ffff100365c4e0a)
-> 0000000036308db9: ffffffff88bd51c7 (regoff.34024+0x3677a7/0x37af60)
-> 00000000681c5eac: ffffed00365c4e0e (0xffffed00365c4e0e)
-> 00000000143a3221: ffff88019c376948 (0xffff88019c376948)
-> 000000001654714a: 1ffff100365c4e06 (0x1ffff100365c4e06)
-> 00000000c520f84a: ffffffff899ed160 (__cpu_present_mask+0x8/0x8)
-> 00000000741787ab: ffff88019c376980 (0xffff88019c376980)
-> 00000000262937b9: ffff88019c3769c0 (0xffff88019c3769c0)
-> 000000009743e54e: 3aee86f4ffffff01 (0x3aee86f4ffffff01)
-> 0000000091bf65b8: ffff88019c376950 (0xffff88019c376950)
-> 00000000888d8bbe: 00000040365c4e17 (0x40365c4e17)
-> 000000006b28a8b4: 0000000000000001 (0x1)
-> 00000000503bfb17: ffff88019ea0c2c0 (0xffff88019ea0c2c0)
-> 0000000098a99289: 0000000041b58ab3 (0x41b58ab3)
-> 00000000885ec6f3: ffffffff88bd7188 (regoff.34024+0x369768/0x37af60)
-> 000000002e952352: ffffffff860c9480 (sch_direct_xmit+0x1140/0x1140)
-> 000000002807afd0: 0000000000000001 (0x1)
-> 000000002dfd4a9a: 0000000000000000 ...
-> 00000000af414281: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000d3a2e247: 1ffff100365c4e20 (0x1ffff100365c4e20)
-> 000000008e63b0a3: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000679e95b2: 0000000000000000 ...
-> 00000000d559f312: 0000000000000001 (0x1)
-> 000000000fb50e8d: 0000000000000000 ...
-> 0000000074ca6f2a: ffff8801b2e271c8 (0xffff8801b2e271c8)
-> 000000000fd21fa6: ffffffff815f1934 (lock_acquire+0x1e4/0x540)
-> 000000007da037d5: 0000000000000000 ...
-> 000000003dff24b3: ffffffff81b9e97e (kasan_report+0x8e/0x110)
-> 000000003c5750ff: 0000000000000000 ...
-> 000000001131e5ff: ffffffff88bd51c7 (regoff.34024+0x3677a7/0x37af60)
-> 00000000e390f4e1: ffffffff815f1750 (lock_release+0xa30/0xa30)
-> 000000002ad9f337: 0000000000000086 (0x86)
-> 0000000052c5fedd: 00000000b2e27188 (0xb2e27188)
-> 00000000db29e534: ffffffff89029cd8 (report_lock+0x18/0x40)
-> 000000000aed230c: 0000000041b58ab3 (0x41b58ab3)
-> 000000005a8930c5: ffffffff88bd51c7 (regoff.34024+0x3677a7/0x37af60)
-> 0000000070e61733: ffffffff815f1750 (lock_release+0xa30/0xa30)
-> 00000000de3e3542: 0000000000000000 ...
-> 0000000011064908: ffffffff00000000 (0xffffffff00000000)
-> 0000000007407cb7: ffffffff860c4720 (mini_qdisc_pair_init+0x160/0x160)
-> 000000001b98a3ca: 0000000000000000 ...
-> 0000000028c99718: ffff8801afd007c0 (0xffff8801afd007c0)
-> 000000008e8612e1: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
-> 00000000867bb79e: 0000000000000000 ...
-> 00000000106b7ade: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000000337a54f: ffff88019c376b78 (0xffff88019c376b78)
-> 00000000d6015d7d: 0000000000000000 ...
-> 000000008271684f: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000fe71be97: ffff88019c376a78 (0xffff88019c376a78)
-> 000000009c222b75: 0000000000000000 ...
-> 000000005375a800: ffff88019c376940 (0xffff88019c376940)
-> 000000007c48d9ab: 0000000000000100 (0x100)
-> 0000000054464db7: ffff88019c376a70 (0xffff88019c376a70)
-> 000000003c437d92: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 0000000077b6de6f: ffffffff89029cc0 (kmem_cache_boot+0x320/0x320)
-> 0000000028312c9e: 0000000000000086 (0x86)
-> 0000000048d091d8: 0000000000000000 ...
-> 00000000d78aa4b3: ffffffff81365ee6 (fixup_exception+0xc6/0xcb)
-> 00000000119a6f34: 0000000000000000 ...
-> 00000000d09db23e: ffff8801b2e271f0 (0xffff8801b2e271f0)
-> 00000000ca1fc683: ffffffff87940bb6 (_raw_spin_lock_irqsave+0x96/0xc0)
-> 00000000d236a9ff: ffffffff81b9e97e (kasan_report+0x8e/0x110)
-> 00000000fcd5f062: ffff8801b2e27348 (0xffff8801b2e27348)
-> 000000006b1c81b4: 0000000000000008 (0x8)
-> 000000000da66f86: ffff8801b2e27238 (0xffff8801b2e27238)
-> 000000007d1711cf: ffffffff81b9e97e (kasan_report+0x8e/0x110)
-> 00000000324f98cf: ffffffff816677a0 (rcu_report_qs_rnp+0x7a0/0x7a0)
-> 0000000007ce5bb1: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000001d27a006: ffff8801b2e272c8 (0xffff8801b2e272c8)
-> 0000000029a8b0ec: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000074bfd15: ffff8801b2e272c8 (0xffff8801b2e272c8)
-> 00000000fb16ecaa: 000000000000000d (0xd)
-> 00000000ad1885d4: 0000000000000000 ...
-> 00000000b397a762: ffff8801b2e27248 (0xffff8801b2e27248)
-> 000000000da6b591: ffffffff81b9ea74 (__asan_report_load8_noabort+0x14/0x20)
-> 000000006ade75cc: ffff8801b2e27278 (0xffff8801b2e27278)
-> 00000000cd57f1ce: ffffffff81365ee6 (fixup_exception+0xc6/0xcb)
-> 00000000d87b605c: ffff8801b2e272c8 (0xffff8801b2e272c8)
-> 0000000060fbf76e: ffff880198f2a680 (0xffff880198f2a680)
-> 0000000058a6255f: 0000000000000000 ...
-> 000000000dff31bb: ffff8801b2e272b8 (0xffff8801b2e272b8)
-> 00000000626bf62f: ffffffff8129cac3 (do_general_protection+0x1c3/0x2f0)
-> 0000000066ef7347: 0000000087a00a07 (0x87a00a07)
-> 0000000037fea57a: 0000000000000001 (0x1)
-> 00000000d5c26829: 0000000000000000 ...
-> 00000000bc980ee2: ffff8801b2e272c9 (0xffff8801b2e272c9)
-> 000000006723023c: ffffffff87a00f9e (general_protection+0x1e/0x30)
-> 00000000288050b6: 0000000000000000 ...
-> 00000000d95ae78d: ffff8801b2e27458 (0xffff8801b2e27458)
-> 00000000cf8bcee8: 0000000010000000 (0x10000000)
-> 00000000ce251a17: 0000000000000000 ...
-> 00000000b7f5e222: ffff880198f2a680 (0xffff880198f2a680)
-> 000000003f82814e: 1ffff100365c4e83 (0x1ffff100365c4e83)
-> 0000000015163f2c: ffffc90002a12000 (0xffffc90002a12000)
-> 00000000476514f1: 1ffff100331e55d7 (0x1ffff100331e55d7)
-> 0000000068bf91c9: ffffffff811f4727 (vmx_vcpu_run+0x1307/0x2600)
-> 000000005bdea1e8: 0000000000000005 (0x5)
-> 0000000030979fab: ffffffffffffffff (0xffffffffffffffff)
-> 00000000667f78eb: ffffffff811f4748 (vmx_vcpu_run+0x1328/0x2600)
-> 00000000d3fd9b39: 0000000000000010 (0x10)
-> 00000000d5ecdf4a: 0000000000010046 (0x10046)
-> 00000000a4580412: ffff8801b2e27370 (0xffff8801b2e27370)
-> 00000000cd536266: 0000000000000018 (0x18)
-> 00000000dca12b52: 1ffff100365c4e83 (0x1ffff100365c4e83)
-> 000000000ad0ac11: ffff880198f2aeb8 (0xffff880198f2aeb8)
-> 00000000f19c5027: ffff88019c77e688 (0xffff88019c77e688)
-> 000000003d8d582a: ffff88019c77e688 (0xffff88019c77e688)
-> 00000000351fafad: 0000000000000000 ...
-> 00000000d88610ee: ffff8801b2e273e0 (0xffff8801b2e273e0)
-> 00000000d3a6008c: ffffffff815e1fe6 (find_held_lock+0x36/0x1c0)
-> 00000000fe38bd96: 00000001b2e273b8 (0x1b2e273b8)
-> 000000006abeac8e: ffff8801b2e27438 (0xffff8801b2e27438)
-> 00000000b7dadfe6: 1ffff100365c4e83 (0x1ffff100365c4e83)
-> 000000007b4a2214: ffff8801b2e274f8 (0xffff8801b2e274f8)
-> 000000001625208e: ffff88019c77e688 (0xffff88019c77e688)
-> 00000000784b6c7e: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000bdba5c14: ffff8801b2e27438 (0xffff8801b2e27438)
-> 00000000e4bf1fbe: ffff8801b2e27520 (0xffff8801b2e27520)
-> 00000000e0af99a9: 0000000000000286 (0x286)
-> 0000000054193d42: 0000000000000000 ...
-> 000000003f832237: ffff880100000001 (0xffff880100000001)
-> 00000000a36cd698: ffff880198f2aeb0 (0xffff880198f2aeb0)
-> 00000000268984f0: 0000000000000286 (0x286)
-> 000000009218bbe9: ffffffff00000001 (0xffffffff00000001)
-> 00000000b65360b0: 0000000041b58ab3 (0x41b58ab3)
-> 00000000ca0ec8da: ffffffff88bf1398 (K512_4+0x6818/0x12085c)
-> 000000009320ce9f: ffffffff815f0d20 (lock_downgrade+0x8f0/0x8f0)
-> 0000000033162354: 0000000000000500 (0x500)
-> 00000000025d5f36: 0000000000000000 ...
-> 000000002084b3c7: ffff88019c77e688 (0xffff88019c77e688)
-> 000000001cce91d3: 0000000041b58ab3 (0x41b58ab3)
-> 00000000dd2b4720: ffffffff88bd51c7 (regoff.34024+0x3677a7/0x37af60)
-> 00000000423f1c0b: ffffffff815f1750 (lock_release+0xa30/0xa30)
-> 0000000006c157f6: ffffffff88be6507 (regoff.34024+0x378ae7/0x37af60)
-> 0000000050e62de3: ffffffff81542620 (check_same_owner+0x340/0x340)
-> 00000000626e8fb3: ffff8801b2e274b0 (0xffff8801b2e274b0)
-> 00000000a7ee06bc: ffffffff85ef9b5e (skb_set_owner_w+0x24e/0x360)
-> 000000006a73e029: 0000000000000000 ...
-> 0000000032c7251d: ffff8801afd007c0 (0xffff8801afd007c0)
-> 0000000044e1d460: ffff8801b2e276c0 (0xffff8801b2e276c0)
-> 000000008696da64: 0000000000034000 (0x34000)
-> 00000000339801bb: dffffc0000000000 (0xdffffc0000000000)
-> 000000008a3406bc: 0000000000000000 ...
-> 00000000d6c26fa4: ffff880198f2a680 (0xffff880198f2a680)
-> 0000000011df9c85: ffffffff881a3c60 (guid_null+0x120/0x560)
-> 00000000e53036c6: 0000000000000285 (0x285)
-> 00000000b624b512: 0000000000000000 ...
-> 000000006a36526e: 0000000000000062 (0x62)
-> 000000009d12467c: 00000000200002ec (0x200002ec)
-> 00000000add7e1d9: 000000002000028a (0x2000028a)
-> 0000000034b8eb5a: ffff8801b2e27508 (0xffff8801b2e27508)
-> 000000005426a2de: ffffffff81b9da54 (kasan_check_write+0x14/0x20)
-> 0000000032ca6da5: ffff8801b2e27548 (0xffff8801b2e27548)
-> 00000000c6d8b7ce: ffff88019c376940 (0xffff88019c376940)
-> 00000000c4fcb61f: 0000000000000000 ...
-> 00000000f58a7111: 0000000000000062 (0x62)
-> 0000000070854bd7: 000000000000006c (0x6c)
-> 00000000817df4dc: 0000000000000000 ...
-> 000000001c0d4f50: ffff8801b2e27548 (0xffff8801b2e27548)
-> 000000009573d37d: ffffffff817c0c08 (__sanitizer_cov_trace_cmp8+0x18/0x20)
-> 000000000b12126d: ffff8801b2e27660 (0xffff8801b2e27660)
-> 0000000096aa120b: 0000000000000000 ...
-> 0000000082d5a383: ffffffff817c0c08 (__sanitizer_cov_trace_cmp8+0x18/0x20)
-> 0000000082be9464: ffff8801b2e27660 (0xffff8801b2e27660)
-> 0000000068128dfe: ffffffff81c24e6d (__check_object_size+0x9d/0x5f2)
-> 0000000058d2bf6a: 0000000041b58ab3 (0x41b58ab3)
-> 00000000f0393536: ffff8801b2e27ca0 (0xffff8801b2e27ca0)
-> 00000000648550b3: ffff8801b2e27c90 (0xffff8801b2e27c90)
-> 00000000084690ac: ffff8801af2cb774 (0xffff8801af2cb774)
-> 00000000e9b8cdcd: ffff8801b2e27c98 (0xffff8801b2e27c98)
-> 00000000210e899c: 0000000041b58ab3 (0x41b58ab3)
-> 00000000439d8289: 1ffff100365c4ebb (0x1ffff100365c4ebb)
-> 00000000426b82fc: ffffffff81c24dd0 (usercopy_warn+0x120/0x120)
-> 00000000b01a6e6e: 000000000000006c (0x6c)
-> 00000000870b6843: ffff8801b2e27c48 (0xffff8801b2e27c48)
-> 00000000254be3eb: ffff8801b2e27c40 (0xffff8801b2e27c40)
-> 00000000082eec71: ffff8801af2cb774 (0xffff8801af2cb774)
-> 00000000a273a4c2: 0000000000000062 (0x62)
-> 0000000053aec4db: 0000000041b58ab3 (0x41b58ab3)
-> 000000009ac07220: ffffffff88c57cfc (K512_4+0x6d17c/0x12085c)
-> 00000000fcb69abd: ffffffff835dafc0 (_copy_from_iter_nocache+0x1050/0x1050)
-> 00000000dd3412bb: 0000000000000000 ...
-> 00000000e134e4d7: ffffea000656fa08 (0xffffea000656fa08)
-> 000000008d39697e: ffffffff835d0bec (_copy_from_iter_full+0x2bc/0xd20)
-> 000000003b1313dc: ffff8801dae236b0 (0xffff8801dae236b0)
-> 00000000d8393489: 0000000000000000 ...
-> 0000000028f94eea: ffffffff81b9da31 (kasan_check_read+0x11/0x20)
-> 000000003c34fd61: ffff8801b2e276c0 (0xffff8801b2e276c0)
-> 00000000c41bc2e0: 1ffff100365c4ecc (0x1ffff100365c4ecc)
-> 00000000da415aba: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 0000000092342c82: 0000000000000062 (0x62)
-> 00000000c93d1a2e: 0000000000000062 (0x62)
-> 0000000053afd30c: ffff8801af2cb712 (0xffff8801af2cb712)
-> 000000005c1a3894: 0000000000000000 ...
-> 000000009f9fd6e1: ffffffff817c0c66
-> (__sanitizer_cov_trace_const_cmp4+0x16/0x20)
-> 00000000fbd2550b: ffff8801b2e268f8 (0xffff8801b2e268f8)
-> 00000000dafdf71a: dffffc0000000000 (0xdffffc0000000000)
-> 0000000020922d1d: ffff8801b4707db8 (0xffff8801b4707db8)
-> 000000009015f5ae: ffff88019e45c1c0 (0xffff88019e45c1c0)
-> 000000001f231f5f: ffff880198f2aed8 (0xffff880198f2aed8)
-> 00000000795bbb1f: ffff8801b2e269a0 (0xffff8801b2e269a0)
-> 00000000940857bc: 1ffff100368e0fb7 (0x1ffff100368e0fb7)
-> 00000000ef7c2f49: ffff8801b2e268f8 (0xffff8801b2e268f8)
-> 00000000a1149c47: ffff880198f2a680 (0xffff880198f2a680)
-> 000000003c161aed: ffffed003b5c46d6 (0xffffed003b5c46d6)
-> 0000000036ac4929: ffffed003b5c46d6 (0xffffed003b5c46d6)
-> 000000004ceb6657: ffff8801dae236b3 (0xffff8801dae236b3)
-> 00000000cb0f390d: ffff8801b2e26978 (0xffff8801b2e26978)
-> 00000000d8cdaf10: 1ffff100365c4d13 (0x1ffff100365c4d13)
-> 0000000027f7311a: ffff8801b4707d80 (0xffff8801b4707d80)
-> 000000001747afee: ffff88019e45c3c8 (0xffff88019e45c3c8)
-> 00000000f507eec8: 0000000000000000 ...
-> 00000000002f2f22: ffff8801b2e27b30 (0xffff8801b2e27b30)
-> 000000005e5f9611: ffffffff86bb7aee (packet_sendmsg+0x428e/0x6130)
-> 0000000036f00016: ffff8801b2e27740 (0xffff8801b2e27740)
-> 00000000d6580bb9: 000000000044f5d0 (0x44f5d0)
-> 00000000d53f6df3: 0000000188bd51c7 (0x188bd51c7)
-> 000000005dc5cca3: ffff8801b2e27798 (0xffff8801b2e27798)
-> 00000000c34d423f: 1ffff100365c4eef (0x1ffff100365c4eef)
-> 000000001c4534f4: ffff8801b2e27858 (0xffff8801b2e27858)
-> 00000000683f2cb4: ffffffff88f92620 (rcu_bh_lock_map+0x40/0x40)
-> 00000000038e2ef8: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000adfbab58: ffff8801b2e27798 (0xffff8801b2e27798)
-> 000000001568a59f: ffff8801b2e27880 (0xffff8801b2e27880)
-> 00000000f3cd0858: 0000000000000286 (0x286)
-> 000000004fe8bb57: 0000000000000000 ...
-> 00000000d9865248: ffff880100000001 (0xffff880100000001)
-> 0000000073c26d7b: ffff880198f2aeb0 (0xffff880198f2aeb0)
-> 00000000acca94a2: 0000000000000286 (0x286)
-> 00000000f1a5b842: ffffffff00000001 (0xffffffff00000001)
-> 0000000047dd5da9: 1ffff100365c4f05 (0x1ffff100365c4f05)
-> 00000000d281b6a6: ffff88019e45c710 (0xffff88019e45c710)
-> 0000000048fbdc2e: ffff88019eaa6786 (0xffff88019eaa6786)
-> 00000000bc11bb2b: 0000000000000062 (0x62)
-> 00000000bf8d0310: ffff88019e45c220 (0xffff88019e45c220)
-> 0000000095ff54a8: ffff8801afd00888 (0xffff8801afd00888)
-> 00000000ade542d4: 00010000dae236a0 (0x10000dae236a0)
-> 000000008c5e5cbe: ffff8801afd00890 (0xffff8801afd00890)
-> 0000000010ced30e: ffff8801b2e27d04 (0xffff8801b2e27d04)
-> 0000000061550119: ffff8801afd00898 (0xffff8801afd00898)
-> 000000002b12da51: ffff8801dae23601 (0xffff8801dae23601)
-> 0000000096618c28: ffff880100000062 (0xffff880100000062)
-> 000000007363da37: ffffffff81b90008 (ksm_do_scan+0x2d68/0x4ff0)
-> 0000000074cb0217: ffff880100000000 (0xffff880100000000)
-> 00000000692c8805: ffff8801d26c3602 (0xffff8801d26c3602)
-> 0000000056caef25: ffff880100000000 (0xffff880100000000)
-> 0000000048f0626c: 000000000000000e (0xe)
-> 00000000ca43726d: ffff8801b2e27948 (0xffff8801b2e27948)
-> 00000000017319e3: ffff8801b2e27988 (0xffff8801b2e27988)
-> 0000000029dc3d34: 000000000000006c (0x6c)
-> 00000000999d1ca2: ffff8801b2e27888 (0xffff8801b2e27888)
-> 000000004b28e137: ffff88019eaa6540 (0xffff88019eaa6540)
-> 00000000ae849909: 0000000041b58ab3 (0x41b58ab3)
-> 000000009cca5655: ffffffff88ce68e0 (K512_4+0xfbd60/0x12085c)
-> 00000000186e8da0: ffffffff86bb3860 (packet_getname+0x5f0/0x5f0)
-> 00000000d6668977: ffff8801b2e27870 (0xffff8801b2e27870)
-> 0000000078106820: 0000000000000286 (0x286)
-> 00000000cc9b041a: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 0000000058d15a0f: 0000000000000001 (0x1)
-> 00000000c458275d: ffff8801b3d5d5f0 (0xffff8801b3d5d5f0)
-> 0000000044371996: dffffc0000000000 (0xdffffc0000000000)
-> 00000000271c5168: ffff8801b2e279b8 (0xffff8801b2e279b8)
-> 000000002ebb0273: 0000000041b58ab3 (0x41b58ab3)
-> 000000000d8cfa86: ffffffff88bd51c7 (regoff.34024+0x3677a7/0x37af60)
-> 0000000004d4defb: ffffffff00000000 (0xffffffff00000000)
-> 000000001b7ef5a5: ffff8801b2e27938 (0xffff8801b2e27938)
-> 000000004e607365: 1ffff100365c4f1b (0x1ffff100365c4f1b)
-> 00000000cc4cc40e: 0000001300004000 (0x1300004000)
-> 000000009c4857eb: ffff8801bdf2ec10 (0xffff8801bdf2ec10)
-> 00000000d408686f: ffff8801b3d5d580 (0xffff8801b3d5d580)
-> 00000000af67ff63: ffff8801bdf2ebc0 (0xffff8801bdf2ebc0)
-> 00000000aa075c9c: ffffffff81601b01 (do_raw_spin_unlock+0x61/0x2f0)
-> 000000008a1874e7: ffff8801b2e27978 (0xffff8801b2e27978)
-> 0000000076f1b87c: ffffed00365c4f27 (0xffffed00365c4f27)
-> 00000000b7a0536f: 0000000041b58ab3 (0x41b58ab3)
-> 00000000e4ed2e5f: ffffffff88bd5a98 (regoff.34024+0x368078/0x37af60)
-> 000000009276d2d7: ffffffff81cc8760 (expand_files.part.8+0x9c0/0x9c0)
-> 00000000f8235dc8: ffffffff81294090 (compat_start_thread+0x80/0x80)
-> 00000000778def9f: 0000000000000001 (0x1)
-> 000000003e0ec936: ffffffff87940637 (_raw_spin_unlock_irq+0x27/0x70)
-> 000000009693ec35: ffff8801bb106000 (0xffff8801bb106000)
-> 00000000dd74a0d7: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000004100ea75: 1ffff100365c4f38 (0x1ffff100365c4f38)
-> 0000000027835102: ffff880198f2aeb8 (0xffff880198f2aeb8)
-> 00000000dcc20d3f: ffff88019c77e688 (0xffff88019c77e688)
-> 00000000d196ba6c: ffff88019c77e688 (0xffff88019c77e688)
-> 00000000eca03010: 0000000000000000 ...
-> 0000000026eaf126: ffff8801b2e27988 (0xffff8801b2e27988)
-> 00000000a245ee0f: ffff000000000000 (0xffff000000000000)
-> 000000008e6d9e75: 00000001b2e27968 (0x1b2e27968)
-> 000000005c8ca95e: ffff8801b2e279e0 (0xffff8801b2e279e0)
-> 00000000865b5ad1: 1ffff100365c4f38 (0x1ffff100365c4f38)
-> 00000000548409ea: ffff8801b2e27aa0 (0xffff8801b2e27aa0)
-> 000000007ebd04e3: ffff88019c77e688 (0xffff88019c77e688)
-> 000000009cb042d6: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000d5af2c12: ffff8801b2e279e0 (0xffff8801b2e279e0)
-> 00000000f287d446: 0000000700000302 (0x700000302)
-> 00000000b9664b7c: 0000000000000000 ...
-> 0000000048130abb: ffff880100000001 (0xffff880100000001)
-> 000000006f8a0d34: ffff880198f2aeb0 (0xffff880198f2aeb0)
-> 00000000a70db07b: 0000000000000286 (0x286)
-> 00000000490ee6ab: ffffffff00000001 (0xffffffff00000001)
-> 0000000094dc6fbb: 0000000041b58ab3 (0x41b58ab3)
-> 0000000054d1d2ef: ffffffff88bf1398 (K512_4+0x6818/0x12085c)
-> 00000000c5ed18a9: ffffffff815f0d20 (lock_downgrade+0x8f0/0x8f0)
-> 000000006e73c540: ffff8801bdf2ebc0 (0xffff8801bdf2ebc0)
-> 00000000ba2b9216: 0000000000000000 ...
-> 000000003b3e9e44: ffff88019c77e688 (0xffff88019c77e688)
-> 0000000045f56c7d: 0000000041b58ab3 (0x41b58ab3)
-> 0000000001af2c0c: ffffffff88bd51c7 (regoff.34024+0x3677a7/0x37af60)
-> 000000000698c6c6: 000000040000005a (0x40000005a)
-> 0000000078084025: ffffffff0011dd86 (0xffffffff0011dd86)
-> 000000004061662c: ffffffff81542620 (check_same_owner+0x340/0x340)
-> 00000000479d33ca: 0000000000000001 (0x1)
-> 0000000072998e9b: ffffea0006cb89c0 (0xffffea0006cb89c0)
-> 00000000304f3cb1: ffff8801b2e27b30 (0xffff8801b2e27b30)
-> 000000009ae67e1e: ffffffff81c24e6d (__check_object_size+0x9d/0x5f2)
-> 000000001a616c5d: 0000000098f2a680 (0x98f2a680)
-> 0000000016450608: 0000000000000000 ...
-> 000000003a9e09f9: ffff880198f2a680 (0xffff880198f2a680)
-> 0000000088f6f702: ffffffff881a4b40 (__func__.18908+0xaa0/0xf20)
-> 00000000661fb5db: 000000000000000a (0xa)
-> 00000000fabf0dee: 0000000000000000 ...
-> 00000000bb11b877: ffff8801b2e27ac8 (0xffff8801b2e27ac8)
-> 00000000536b952b: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000c875b7a2: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000a4f557e4: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000794823ae: ffffffff881a4b40 (__func__.18908+0xaa0/0xf20)
-> 0000000085634401: 000000000000000a (0xa)
-> 00000000d4e6f524: ffff8801b2e27cf8 (0xffff8801b2e27cf8)
-> 00000000b3805cac: 000000000000001c (0x1c)
-> 00000000f8f140a0: 000000000000001c (0x1c)
-> 000000005e413a7c: 000000002000009c (0x2000009c)
-> 00000000fa1d4c70: 0000000020000080 (0x20000080)
-> 0000000078fca0a3: ffff8801b2e27af0 (0xffff8801b2e27af0)
-> 000000001cba29fa: ffffffff817c0c88
+> 000000006a29c968: ffff8801ab8ce9a0 (0xffff8801ab8ce9a0)
+> 00000000ecfbee4c: ffffffff812d369d (__save_stack_trace+0x7d/0xf0)
+> 0000000028a174b6: 0000000000000000 ...
+> 000000002d74f539: ffff8801ab8c8000 (0xffff8801ab8c8000)
+> 0000000026789d45: ffff8801ab8d0000 (0xffff8801ab8d0000)
+> 000000006294d3ab: 0000000000000000 ...
+> 00000000c7f7292d: 0000000000000002 (0x2)
+> 0000000022f9265f: ffff880198e06680 (0xffff880198e06680)
+> 00000000dea0a03a: 0000010100000000 (0x10100000000)
+> 0000000071139d45: 0000000000000000 ...
+> 000000007bd0335c: ffff8801ab8ce910 (0xffff8801ab8ce910)
+> 00000000c2e52072: ffffffff811f4748 (vmx_vcpu_run+0x1328/0x2600)
+> 00000000c1d3f858: ffff8801ab8cf2c8 (0xffff8801ab8cf2c8)
+> 00000000b137b0a1: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 000000000411de75: ffffffff8a61a448 (lock_classes+0xb1a88/0x29fee0)
+> 000000008d8642bf: ffffffff8a2717a8 (stack_trace+0x150e88/0x400020)
+> 0000000070cbef12: ffffffff8a61a44c (lock_classes+0xb1a8c/0x29fee0)
+> 000000002e8ee7c6: 0000000000000008 (0x8)
+> 000000003d8da4b7: ffff8801ab8ce9b0 (0xffff8801ab8ce9b0)
+> 000000008a989a11: ffffffff812d372a (save_stack_trace+0x1a/0x20)
+> 00000000e8d1a390: ffff8801ab8ce9f0 (0xffff8801ab8ce9f0)
+> 00000000024dd122: ffffffff815e0c40 (save_trace+0xe0/0x290)
+> 000000009473f7ca: ffff8801ab8ce9d0 (0xffff8801ab8ce9d0)
+> 0000000028a3fa56: 1ffff10035719d45 (0x1ffff10035719d45)
+> 00000000ba0a1d4a: ffff880198e06eb8 (0xffff880198e06eb8)
+> 000000002f5e8001: ffff880198e06ed8 (0xffff880198e06ed8)
+> 00000000b21e1d95: 0000000000000008 (0x8)
+> 00000000b8c4c0c1: 0000000000000100 (0x100)
+> 00000000e993461f: ffff8801ab8ceb30 (0xffff8801ab8ceb30)
+> 0000000018592a85: ffffffff815e8a9a (mark_lock+0x3aa/0x19f0)
+> 0000000074238aeb: 1ffff10000000002 (0x1ffff10000000002)
+> 00000000690dfdcd: ffffed0000000018 (0xffffed0000000018)
+> 00000000627591e3: ffff88018f5c6300 (0xffff88018f5c6300)
+> 00000000a2608c7c: ffff880198e06680 (0xffff880198e06680)
+> 0000000099802ef6: ffff880100000008 (0xffff880100000008)
+> 000000007cf12050: 0000000041b58ab3 (0x41b58ab3)
+> 00000000c20c7f7a: ffffffff88bd7780 (regoff.34021+0x36a1e0/0x37af30)
+> 0000000091adbcf7: ffffffff815e86f0 (print_usage_bug+0xc0/0xc0)
+> 000000006210ff95: ffffffff815e16e0 (graph_lock+0x170/0x170)
+> 00000000dd79cf49: ffffffff8a5689d0 (lock_classes+0x10/0x29fee0)
+> 00000000bc675b6b: ffff8801ab8cea60 (0xffff8801ab8cea60)
+> 00000000f9d17ed1: ffffffff817c0ce8
 > (__sanitizer_cov_trace_const_cmp8+0x18/0x20)
-> 0000000067795e81: ffff8801b2e27b30 (0xffff8801b2e27b30)
-> 00000000e934e3fe: ffffffff8319d254 (security_socket_sendmsg+0x94/0xc0)
-> 00000000f87cb524: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 0000000095ba1122: ffffffff86bb3860 (packet_getname+0x5f0/0x5f0)
-> 00000000bafe3d19: ffff8801b2e27c78 (0xffff8801b2e27c78)
-> 0000000049045eee: ffff8801d26c3680 (0xffff8801d26c3680)
-> 00000000122e8394: ffff8801b2e27c98 (0xffff8801b2e27c98)
-> 000000005fb19ef1: 0000000000000000 ...
-> 00000000b040d76d: ffff8801b2e27b60 (0xffff8801b2e27b60)
-> 00000000b1c16ec4: ffffffff85ee51c5 (sock_sendmsg+0xd5/0x120)
-> 000000005f3c2f01: ffff8801b2e27db8 (0xffff8801b2e27db8)
-> 00000000b77fd024: ffff8801b2e27c78 (0xffff8801b2e27c78)
-> 0000000055f0413f: ffff8801d26c3680 (0xffff8801d26c3680)
-> 00000000ed2e128c: ffff8801b2e27bb8 (0xffff8801b2e27bb8)
-> 00000000ebf88e55: ffff8801b2e27de0 (0xffff8801b2e27de0)
-> 000000005a46d7e2: ffffffff85eeb607 (__sys_sendto+0x3d7/0x670)
-> 00000000993cab38: ffff8801b2e27cf8 (0xffff8801b2e27cf8)
-> 00000000d4ceea5c: 00000000b2e27ca8 (0xb2e27ca8)
-> 000000000f0c88f4: ffff8801b2e27bf8 (0xffff8801b2e27bf8)
-> 000000009330d54c: 1ffff100365c4f73 (0x1ffff100365c4f73)
-> 00000000ee5ed43b: 0000000000000000 ...
-> 00000000a54da0de: 0000000041b58ab3 (0x41b58ab3)
-> 000000008d3fafde: ffffffff88cc5298 (K512_4+0xda718/0x12085c)
-> 00000000ed2bf4df: ffffffff85eeb230 (__ia32_sys_getpeername+0xb0/0xb0)
-> 00000000e1627200: ffffffff81cc8e10 (fget_raw+0x20/0x20)
-> 00000000ae16b1ee: ffffffff00000000 (0xffffffff00000000)
-> 00000000280de600: ffffffff00000002 (0xffffffff00000002)
-> 00000000721fa00a: 0000000000000000 ...
-> 00000000fd0db626: ffff8801b2e27cd0 (0xffff8801b2e27cd0)
-> 00000000bb527915: ffffffff8360dfcb (debug_check_no_obj_freed+0x30b/0x595)
-> 0000000035b2a4ef: 0000000000000000 ...
-> 000000001238bb6d: 0000000041b58ab3 (0x41b58ab3)
-> 00000000df79af1b: ffff8801dae236a0 (0xffff8801dae236a0)
-> 00000000f62bcaff: 1ffff10000000001 (0x1ffff10000000001)
-> 000000001a95d2a4: ffff8801dae236b0 (0xffff8801dae236b0)
-> 000000002d5e3176: ffff8801b2e27c18 (0xffff8801b2e27c18)
-> 0000000068e5d70e: ffffffff81b9da31 (kasan_check_read+0x11/0x20)
-> 0000000074728045: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000e4d3bbcc: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000e7dec6eb: dffffc0000000000 (0xdffffc0000000000)
-> 00000000da741361: 1ffff100365c4f8e (0x1ffff100365c4f8e)
-> 0000000028ce2f36: 0000000020000280 (0x20000280)
-> 00000000b6e4cd05: 000000000000006c (0x6c)
-> 0000000043cadd55: ffff8801b2e27d78 (0xffff8801b2e27d78)
-> 00000000c9d57be8: ffffffff8792a4bb (schedule+0xfb/0x450)
-> 00000000e663bb02: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
-> 00000000787ef91b: 0000000000000286 (0x286)
-> 00000000be33daa0: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000a77919f1: 0000000041b58ab3 (0x41b58ab3)
-> 00000000d56f5015: ffff8801b2e27cf8 (0xffff8801b2e27cf8)
-> 000000009990d5b9: ffffffff0000001c (0xffffffff0000001c)
-> 000000007bf61e58: ffff880100000001 (0xffff880100000001)
-> 00000000ff75a7c1: 0000000000000000 ...
-> 000000004c5ff539: ffff8801b2e27c48 (0xffff8801b2e27c48)
-> 0000000097d90dfa: 0000000000000000 ...
-> 000000002f13b06c: ffff880100000000 (0xffff880100000000)
-> 0000000079f0e0e3: ffffffff85edf9f5 (sockfd_lookup_light+0xc5/0x160)
-> 000000000ce7a5f3: 1ffff100365c4fa4 (0x1ffff100365c4fa4)
-> 0000000015c89153: ffff8801b2e27d40 (0xffff8801b2e27d40)
-> 00000000013aedcf: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 0000000081e28ebc: 1ffff100365c4fab (0x1ffff100365c4fab)
-> 000000001456a19d: 0000000000000001 (0x1)
-> 0000000033f35c6d: 000000050008000a (0x50008000a)
-> 000000002b2c70b2: 00000000000002ff (0x2ff)
-> 000000001e2f203b: 0100000000000000 (0x100000000000000)
-> 00000000f00d7fd1: ffff880100000000 (0xffff880100000000)
-> 0000000008277133: ffff8801b2e27e20 (0xffff8801b2e27e20)
-> 00000000ed61549c: ffff880198f2a680 (0xffff880198f2a680)
-> 00000000a3a0c245: ffffffff8100ab9c (exit_to_usermode_loop+0x8c/0x370)
-> 00000000cad41110: ffff8801b2e27df8 (0xffff8801b2e27df8)
-> 000000006e53b510: fffffbfff11e360e (0xfffffbfff11e360e)
-> 00000000ffed7777: 1ffff100365c4fdc (0x1ffff100365c4fdc)
-> 000000003be92a0c: 0000000000000086 (0x86)
-> 000000005c860268: 0000000000000000 ...
-> 000000007e2c757f: dffffc0000000000 (0xdffffc0000000000)
-> 00000000b06727ad: ffff8801b2e27df8 (0xffff8801b2e27df8)
-> 0000000000bb40da: ffff8801b2e27d78 (0xffff8801b2e27d78)
-> 00000000ee55fd11: ffffffff817c0c66
+> 000000003772a3ac: ffff8801ab8ceaa8 (0xffff8801ab8ceaa8)
+> 0000000066f466de: ffffffff8110c54e (pte_list_add.isra.63+0x5e/0x460)
+> 0000000073f20b2e: 0000000000000000 ...
+> 000000007227d5aa: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000b14cca93: ffff88019b58b000 (0xffff88019b58b000)
+> 0000000060e89226: ffffffff88f7b480 (root_cpuacct+0x1000/0x1000)
+> 000000006d1ad90d: ffff88021b58b000 (0xffff88021b58b000)
+> 00000000d2d0abf3: ffff8801a8896740 (0xffff8801a8896740)
+> 0000000057777b09: ffff8801c4d00880 (0xffff8801c4d00880)
+> 00000000f34ce6e0: ffff8801ab8ceb78 (0xffff8801ab8ceb78)
+> 0000000034b4235d: ffffffff8111c6b8 (mmu_set_spte+0x288/0x960)
+> 000000001308f959: ffff8801ab8ceb50 (0xffff8801ab8ceb50)
+> 00000000cccf5817: ffff8801a8896768 (0xffff8801a8896768)
+> 00000000d16e9b7c: ffffffff8a61a360 (lock_classes+0xb19a0/0x29fee0)
+> 0000000085c4c3a0: 1ffff10035719d6f (0x1ffff10035719d6f)
+> 00000000005bb79c: ffff880198e06f08 (0xffff880198e06f08)
+> 0000000089e069a2: ffffc90001b1a018 (0xffffc90001b1a018)
+> 00000000e4812939: ffffc90001b1a018 (0xffffc90001b1a018)
+> 000000003c40f3aa: 0000000000000002 (0x2)
+> 0000000059fa7460: ffff8801ab8ceb40 (0xffff8801ab8ceb40)
+> 000000001722bc61: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 000000007c0e0082: 0000000000000876 (0x876)
+> 00000000bcc27fea: ffff880198e06eda (0xffff880198e06eda)
+> 000000001cb9c3fd: 0000000000000008 (0x8)
+> 00000000fc9dbc13: ffff880198e06680 (0xffff880198e06680)
+> 0000000036e3233a: 000000000000000c (0xc)
+> 00000000b17d3403: ffff8801ab8ceec8 (0xffff8801ab8ceec8)
+> 00000000b7cee26c: ffffffff815eb00c (__lock_acquire+0x7fc/0x5020)
+> 000000008ccf5e5c: ffff8801ab8cec80 (0xffff8801ab8cec80)
+> 00000000b16cd3b8: 0000000184a98067 (0x184a98067)
+> 000000002bb0cea2: ffff8801ab8cec68 (0xffff8801ab8cec68)
+> 00000000ebe4851c: dffffc0000000003 (0xdffffc0000000003)
+> 0000000096ef2bb4: ffff880198e06eb0 (0xffff880198e06eb0)
+> 000000003f646042: 0000000000000286 (0x286)
+> 00000000ab07f442: ffffffff00000003 (0xffffffff00000003)
+> 0000000079897728: 0000000041b58ab3 (0x41b58ab3)
+> 0000000080b958a6: ffffffff88bf0f18 (K512_4+0x6818/0x12081c)
+> 000000004cf99b03: 0000000184a98067 (0x184a98067)
+> 00000000f623ea63: ffff8801ab8cec90 (0xffff8801ab8cec90)
+> 00000000322a7d2d: ffffffff00000002 (0xffffffff00000002)
+> 0000000029075107: ffff880198e06ed0 (0xffff880198e06ed0)
+> 00000000dcbca122: 0000000100000000 (0x100000000)
+> 000000000ed0e7a5: ffff880198e06ed8 (0xffff880198e06ed8)
+> 0000000016ad6d8a: ffff880198e06eb0 (0xffff880198e06eb0)
+> 00000000c751f3a2: ffff880198e06eb8 (0xffff880198e06eb8)
+> 00000000494f9827: ffff880198e06eb8 (0xffff880198e06eb8)
+> 00000000cab61d63: 1ffff10035719d7c (0x1ffff10035719d7c)
+> 000000002d1fc089: 0000000000000000 ...
+> 0000000007de4707: 0000000041b58ab3 (0x41b58ab3)
+> 00000000180cf716: ffffffff88bf0e88 (K512_4+0x6788/0x12081c)
+> 0000000027cba804: ffffffff815ea810 (trace_hardirqs_on+0x10/0x10)
+> 000000006b475d4d: 0000000041b58ab3 (0x41b58ab3)
+> 0000000091af2ae5: ffffffff88bd5994 (regoff.34021+0x3683f4/0x37af30)
+> 00000000b4860bd6: ffffffff81601aa0 (do_raw_spin_trylock+0x1c0/0x1c0)
+> 000000005ce45dcf: 000000019b58b000 (0x19b58b000)
+> 00000000dca1261b: 0000000000000001 (0x1)
+> 00000000af09ed9b: 0000000000000001 (0x1)
+> 000000005db329c8: ffffc90001b1a010 (0xffffc90001b1a010)
+> 00000000978c1c1e: ffff8801ab8cec40 (0xffff8801ab8cec40)
+> 00000000dcfeb8be: ffffffff81b9d5e4 (kasan_check_write+0x14/0x20)
+> 00000000f9163822: ffff8801ab8cec78 (0xffff8801ab8cec78)
+> 00000000fb5ec3e8: ffffffff816017a1 (do_raw_spin_lock+0xc1/0x200)
+> 00000000a37e69f1: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 000000002c2c1bf4: ffffc90001b1a000 (0xffffc90001b1a000)
+> 000000006be6717d: ffff8801ab8cee18 (0xffff8801ab8cee18)
+> 00000000485a5eec: ffff8801c4d00880 (0xffff8801c4d00880)
+> 000000003e5d458a: 0000000000000000 ...
+> 000000002fe58b53: ffff8801ab8cec98 (0xffff8801ab8cec98)
+> 0000000047073a11: ffffffff8793f1b2 (_raw_spin_unlock+0x22/0x30)
+> 00000000b746f65b: ffff8801ab8cee98 (0xffff8801ab8cee98)
+> 000000005ba1843e: ffff8801ab8ceec0 (0xffff8801ab8ceec0)
+> 000000004ce48ac3: ffffffff8113e294 (tdp_page_fault+0x194/0xc00)
+> 00000000fbf6106c: 0000000041b58ab3 (0x41b58ab3)
+> 0000000048a1e802: ffff8801ab8cedd8 (0xffff8801ab8cedd8)
+> 00000000cb70eab7: 0000000000000000 ...
+> 00000000d5dda2b9: ffff8801ab8ced98 (0xffff8801ab8ced98)
+> 00000000a18e4bbb: ffff8801ab8ced58 (0xffff8801ab8ced58)
+> 0000000019a14e0c: ffff8801ab8ced18 (0xffff8801ab8ced18)
+> 00000000ef3abfa6: ffffc90001b1a000 (0xffffc90001b1a000)
+> 00000000cc2c1092: ffff8801ab8cee58 (0xffff8801ab8cee58)
+> 00000000d71a5b3c: 1ffff10035719d9f (0x1ffff10035719d9f)
+> 000000004a624ce7: 0000000000000000 ...
+> 0000000081668525: 0000000041b58ab3 (0x41b58ab3)
+> 000000005c08a1e0: ffffffff88bddbf0 (regoff.34021+0x370650/0x37af30)
+> 00000000b74ff359: ffffffff8113e100 (ept_page_fault+0x2360/0x2360)
+> 0000000053b54a41: 0000000041b58ab3 (0x41b58ab3)
+> 0000000062341f16: 0000000041b58a00 (0x41b58a00)
+> 0000000023d691d1: ffffffff88bd7780 (regoff.34021+0x36a1e0/0x37af30)
+> 000000006689935a: ffffffff815e86f0 (print_usage_bug+0xc0/0xc0)
+> 00000000b2d2fc75: 0000000000000000 ...
+> 000000000f7f3ce8: ffff880198e06680 (0xffff880198e06680)
+> 00000000e4ea2a4c: 0000000191119067 (0x191119067)
+> 000000001281cabf: ffff8801ab8cf0f0 (0xffff8801ab8cf0f0)
+> 00000000f9e7f717: ffffffff815eb001 (__lock_acquire+0x7f1/0x5020)
+> 00000000dcebed8d: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
+> 000000000b88c976: 0000000000000002 (0x2)
+> 000000000b8aa96b: ffff8801ab8cedb8 (0xffff8801ab8cedb8)
+> 00000000dfaec3da: 0000000041b58ab3 (0x41b58ab3)
+> 000000002478f787: ffffffff88bd7780 (regoff.34021+0x36a1e0/0x37af30)
+> 00000000032eb7ce: ffffffff815e86f0 (print_usage_bug+0xc0/0xc0)
+> 00000000ff2a6dae: 1ffff10035719dbe (0x1ffff10035719dbe)
+> 00000000c29804f1: ffff880100000000 (0xffff880100000000)
+> 000000007dbaf172: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
+> 00000000ddf16d30: ffff880198e06680 (0xffff880198e06680)
+> 000000008e7ad51d: 0000000041b58ab3 (0x41b58ab3)
+> 0000000003f88754: ffffffff88bd4d17 (regoff.34021+0x367777/0x37af30)
+> 0000000065a9e168: ffffffff815e16e0 (graph_lock+0x170/0x170)
+> 000000006716d5f8: ffffffff00000002 (0xffffffff00000002)
+> 000000003a364b3d: ffff880198e06f28 (0xffff880198e06f28)
+> 00000000b5657653: ffff880100000001 (0xffff880100000001)
+> 0000000077a559bd: ffff880198e06ea8 (0xffff880198e06ea8)
+> 000000002f389e0e: ffff880198e06eb8 (0xffff880198e06eb8)
+> 000000008f057df4: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000f59b1daa: 0000000000000211 (0x211)
+> 00000000c3df8403: 0000000000000000 ...
+> 000000008685c9db: 0000000000000002 (0x2)
+> 0000000088bebb2f: ffff8801ab8cee20 (0xffff8801ab8cee20)
+> 00000000ed6b1a78: ffffffff817c0c8a
+> (__sanitizer_cov_trace_const_cmp1+0x1a/0x20)
+> 000000006bc90786: ffff8801ab8cee70 (0xffff8801ab8cee70)
+> 0000000095ca0dbb: ffffffff810da1ed (kvm_multiple_exception+0x22d/0x580)
+> 000000003cb12fa9: 0000000000000000 ...
+> 0000000097a1f0fc: 00ff880100000001 (0xff880100000001)
+> 0000000067444559: ffff8801c4d0343d (0xffff8801c4d0343d)
+> 00000000e5b489b1: ffff8801c4d00880 (0xffff8801c4d00880)
+> 00000000de07033d: 000000000000000d (0xd)
+> 00000000ccc6465d: 0000000000000000 ...
+> 000000002ffd01ad: ffffc00000000f00 (0xffffc00000000f00)
+> 000000003800af32: 0000000000000001 (0x1)
+> 000000008ab57f20: ffff8801ab8cee98 (0xffff8801ab8cee98)
+> 0000000074c0a9fe: ffffffff810dc05d (kvm_queue_exception_e+0x2d/0x40)
+> 00000000a36fc4e5: 0000000000000001 (0x1)
+> 0000000046232f67: 0000000000000800 (0x800)
+> 000000007b26ebe6: ffff8801c4d00880 (0xffff8801c4d00880)
+> 00000000e67b9cdf: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 000000005f443313: 1ffff10035719de4 (0x1ffff10035719de4)
+> 00000000b0278093: ffff880198e06680 (0xffff880198e06680)
+> 000000002770ffd7: 0000000000000000 ...
+> 000000004e906bf7: 0000000000000001 (0x1)
+> 0000000024241599: 0000000000000000 ...
+> 00000000dcbb69f8: ffff8801ab8cefe8 (0xffff8801ab8cefe8)
+> 00000000023f8053: ffffffff815f1934 (lock_acquire+0x1e4/0x540)
+> 0000000079cd217e: 0000000000000000 ...
+> 00000000b9b9aa3f: ffffffff81b9e50e (kasan_report+0x8e/0x110)
+> 0000000081ccea2f: 0000000000000000 ...
+> 000000006d7a69be: ffffffff88c3e868 (K512_4+0x54168/0x12081c)
+> 00000000ef1a307e: ffffffff8371a9d0 (fault_create_debugfs_attr+0x1f0/0x1f0)
+> 000000006c9f915a: 0000000000000086 (0x86)
+> 0000000033b9be20: 0000000000000000 ...
+> 000000005555faa3: ffffffff89029cd8 (report_lock+0x18/0x40)
+> 00000000ac8bbbd8: 0000000041b58ab3 (0x41b58ab3)
+> 0000000089852af1: ffffffff88bd4d17 (regoff.34021+0x367777/0x37af30)
+> 00000000083e4cff: ffffffff815f1750 (lock_release+0xa30/0xa30)
+> 00000000dfaf717a: 1ffff10035719de9 (0x1ffff10035719de9)
+> 000000002e962bde: 0000000100000010 (0x100000010)
+> 000000000a39439a: 80000001bb734067 (0x80000001bb734067)
+> 0000000079ecdb4a: ffffffff88bdd7a0 (regoff.34021+0x370200/0x37af30)
+> 00000000ba7f98cf: ffffffff81128f50
+> (make_mmu_pages_available.isra.113+0x680/0x680)
+> 000000005adad4ac: ffffffff817c0c8a
+> (__sanitizer_cov_trace_const_cmp1+0x1a/0x20)
+> 0000000012353181: ffff8801ab8cf058 (0xffff8801ab8cf058)
+> 00000000fd4c6a82: ffffffff8111485f (kvm_mmu_flush_or_zap+0x17f/0x2b0)
+> 0000000034d7290d: ffff8801daf236a0 (0xffff8801daf236a0)
+> 000000005ef3f319: 0000000000000000 ...
+> 00000000d49e2857: ffffea00070c5b48 (0xffffea00070c5b48)
+> 0000000089ad527f: 0000000041b58ab3 (0x41b58ab3)
+> 00000000b7f4f935: ffffffff88bd4d17 (regoff.34021+0x367777/0x37af30)
+> 00000000bdd1390f: ffffffff811146e0
+> (kvm_mmu_commit_zap_page.part.90+0x5d0/0x5d0)
+> 0000000009eb79d1: ffffed00331c0dd6 (0xffffed00331c0dd6)
+> 00000000850df102: ffff8801ab8cefe8 (0xffff8801ab8cefe8)
+> 00000000681a7614: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 0000000019c87bae: ffffffff89029cc0 (kmem_cache_boot+0x320/0x320)
+> 00000000b141707d: 0000000000000086 (0x86)
+> 0000000062116297: 0000000000000000 ...
+> 000000005f53bccf: ffffffff813637d9 (__do_page_fault+0xd59/0xe50)
+> 00000000c9e86d04: 0000000000000000 ...
+> 000000000a1894e0: ffff8801ab8cf010 (0xffff8801ab8cf010)
+> 000000001f85b231: ffffffff8793fb16 (_raw_spin_lock_irqsave+0x96/0xc0)
+> 0000000066623bcd: ffffffff81b9e50e (kasan_report+0x8e/0x110)
+> 00000000d45af9cf: ffff8801ab8cf350 (0xffff8801ab8cf350)
+> 0000000089853377: 0000000000000008 (0x8)
+> 00000000b6171519: ffff8801ab8cf058 (0xffff8801ab8cf058)
+> 0000000099b81317: ffffffff81b9e50e (kasan_report+0x8e/0x110)
+> 000000004cec1f6a: ffffffff81aa7bcb (get_user_pages_fast+0x22b/0x450)
+> 000000000150073a: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 000000006108c16d: 00000000000059c6 (0x59c6)
+> 0000000080d4da80: ffff8801ab8cf2c8 (0xffff8801ab8cf2c8)
+> 00000000b5ddf7cd: 0000000000000000 ...
+> 0000000080321133: ffff8801ab8cf068 (0xffff8801ab8cf068)
+> 00000000b4a498ef: ffffffff81b9e604 (__asan_report_load8_noabort+0x14/0x20)
+> 0000000016c81178: ffff8801ab8cf150 (0xffff8801ab8cf150)
+> 0000000041863b34: ffffffff813637d9 (__do_page_fault+0xd59/0xe50)
+> 000000000294cb63: ffffffff81aa7c49 (get_user_pages_fast+0x2a9/0x450)
+> 00000000e17cdf18: ffffffff812d36ad (__save_stack_trace+0x8d/0xf0)
+> 000000008818f733: 0000000000000001 (0x1)
+> 000000007aa46f04: 0000000198e06ef8 (0x198e06ef8)
+> 000000003e222fa2: ffff880100000000 (0xffff880100000000)
+> 000000007fbefd66: 0000000000000000 ...
+> 00000000a4ab371a: 1ffff10035719e19 (0x1ffff10035719e19)
+> 000000006b27c5e4: ffff8801cc24b128 (0xffff8801cc24b128)
+> 00000000193b1848: ffff8801cc24b080 (0xffff8801cc24b080)
+> 0000000052c06385: ffff880198e06680 (0xffff880198e06680)
+> 000000005497ef8c: 0000000041b58ab3 (0x41b58ab3)
+> 00000000d264c199: ffffffff88be758b (regoff.34021+0x379feb/0x37af30)
+> 00000000c88f842e: ffffffff81362a80 (mm_fault_error+0x380/0x380)
+> 00000000b8cf7b30: ffff8801ab8cf118 (0xffff8801ab8cf118)
+> 00000000bd037bc4: ffffffff817c0d43 (__sanitizer_cov_trace_switch+0x53/0x90)
+> 00000000b7c6fd93: 0000000000000002 (0x2)
+> 00000000ebf6a011: ffff8801cc24b080 (0xffff8801cc24b080)
+> 00000000f46704a3: ffff8801ab8cf710 (0xffff8801ab8cf710)
+> 000000001fe77e9c: ffff8801ab8cf118 (0xffff8801ab8cf118)
+> 00000000ded2d51a: ffffffff81b9d5e4 (kasan_check_write+0x14/0x20)
+> 0000000080b3b9fe: ffff8801ab8cf138 (0xffff8801ab8cf138)
+> 000000009077c5c2: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000f826580f: 1ffff10035719e2e (0x1ffff10035719e2e)
+> 0000000090e47410: ffff8801ab8cf2c8 (0xffff8801ab8cf2c8)
+> 000000002d91e34a: 0000000000000000 ...
+> 000000006beb8b49: 00000000000059c6 (0x59c6)
+> 000000003d4fd04f: ffff8801ab8cf290 (0xffff8801ab8cf290)
+> 000000005b366005: ffff8801ab8cf2b8 (0xffff8801ab8cf2b8)
+> 0000000085231112: ffffffff813639f6 (do_page_fault+0xf6/0x8c0)
+> 000000008954caf8: 0000000000000000 ...
+> 00000000bfdffbb8: 1ffff10035719e36 (0x1ffff10035719e36)
+> 00000000c41ea60b: 0000000041b58ab3 (0x41b58ab3)
+> 00000000566cd6a4: ffffffff88bd5610 (regoff.34021+0x368070/0x37af30)
+> 00000000abeddbb8: ffffffff81363900 (vmalloc_sync_all+0x30/0x30)
+> 000000002253f2f5: ffff8801ab8cf1d8 (0xffff8801ab8cf1d8)
+> 000000001c452da7: ffffea0006edcd00 (0xffffea0006edcd00)
+> 00000000ab891620: ffffed0035719e8a (0xffffed0035719e8a)
+> 000000004d0628bb: ffff8801ae684129 (0xffff8801ae684129)
+> 000000001ea0019a: ffff8801ab8cf1d0 (0xffff8801ab8cf1d0)
+> 0000000067d41ae8: 0000000041b58ab3 (0x41b58ab3)
+> 00000000cd82e714: ffffffff88bf5638 (K512_4+0xaf38/0x12081c)
+> 00000000e93979b1: ffffffff816ed300 (futex_lock_pi_atomic+0x3a0/0x3a0)
+> 00000000a64707f2: ffff8801ab8cf388 (0xffff8801ab8cf388)
+> 000000000e12fff8: ffffea0006edcd00 (0xffffea0006edcd00)
+> 000000006786f7e6: ffff8801ab8cf200 (0xffff8801ab8cf200)
+> 00000000a73c5f8f: 0000000041b58ab3 (0x41b58ab3)
+> 00000000a2f164c4: ffffffff88bd4d17 (regoff.34021+0x367777/0x37af30)
+> 000000005805ca67: ffffffff815e16e0 (graph_lock+0x170/0x170)
+> 000000000a81b373: 0000000000000001 (0x1)
+> 000000007e2201b1: ffff8801ab8cf3b0 (0xffff8801ab8cf3b0)
+> 00000000d6e1d048: ffffffff811d988b (handle_wrmsr+0x22b/0xa30)
+> 00000000106cf6fe: 0000000000000001 (0x1)
+> 000000002cc2eb8f: ffff8801ab8cf268 (0xffff8801ab8cf268)
+> 00000000f88ebaa3: 0000020e815e2225 (0x20e815e2225)
+> 000000001455b136: 0000000041b58ab3 (0x41b58ab3)
+> 00000000ff01d3b9: ffffffff88bd7780 (regoff.34021+0x36a1e0/0x37af30)
+> 00000000033b0008: 0000000000000086 (0x86)
+> 00000000cc2734d4: 0000000000000001 (0x1)
+> 00000000eef8d79d: 0000000000000000 ...
+> 00000000a358167f: ffff8801ab8cf2b0 (0xffff8801ab8cf2b0)
+> 000000009fe2608a: ffffffff81007d20 (trace_hardirqs_off_thunk+0x1a/0x1c)
+> 00000000396dd800: 0000000000000000 ...
+> 00000000e8abd307: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 000000005ef9f6aa: 0000000000000001 (0x1)
+> 00000000b13126f6: 0000000000000000 ...
+> 0000000045f1b5ab: ffff8801ab8cf2c9 (0xffff8801ab8cf2c9)
+> 00000000b1a635af: ffffffff87a00fce (page_fault+0x1e/0x30)
+> 000000008650f4f9: 0000000000000000 ...
+> 00000000712a000c: ffff8801c4d00880 (0xffff8801c4d00880)
+> 00000000ab6685fc: 0000000010000000 (0x10000000)
+> 0000000069c4d171: 0000000000000000 ...
+> 000000003de8ae34: ffff880198e06680 (0xffff880198e06680)
+> 000000006d5bd517: 0000000000000286 (0x286)
+> 00000000189bbd42: ffffc90006c43000 (0xffffc90006c43000)
+> 0000000079f2944d: 1ffffffff11a2000 (0x1ffffffff11a2000)
+> 00000000e933925f: ffffffff811f4727 (vmx_vcpu_run+0x1307/0x2600)
+> 000000005fd13617: 0000000000000005 (0x5)
+> 00000000ac02e2d2: ffffffffffffffff (0xffffffffffffffff)
+> 00000000419acdc8: ffffffff811f4748 (vmx_vcpu_run+0x1328/0x2600)
+> 00000000e738902a: 0000000000000010 (0x10)
+> 00000000c46d54d8: 0000000000010046 (0x10046)
+> 0000000099a9b66c: ffff8801ab8cf370 (0xffff8801ab8cf370)
+> 000000001635a08d: 0000000000000018 (0x18)
+> 000000005d32f7c1: 0000000000000286 (0x286)
+> 000000005e98022e: ffffffff88d10000 (raw_data+0x2000/0x2000)
+> 00000000d9b3166b: 0000000000000003 (0x3)
+> 00000000d2f7888a: ffffffff88d10000 (raw_data+0x2000/0x2000)
+> 000000000252dd5d: ffff8801ae684129 (0xffff8801ae684129)
+> 0000000030959f83: ffff8801ab8cf3b0 (0xffff8801ab8cf3b0)
+> 000000001bfc06c3: ffff880198e06ef8 (0xffff880198e06ef8)
+> 0000000010632c9d: ffffffff00000001 (0xffffffff00000001)
+> 0000000087e6ba5e: ffff880198e06f00 (0xffff880198e06f00)
+> 000000007e7781f2: ffff880198e06eb0 (0xffff880198e06eb0)
+> 00000000084b393c: ffff880198e06ea8 (0xffff880198e06ea8)
+> 0000000074ab80fd: ffff880198e06eb8 (0xffff880198e06eb8)
+> 0000000016760c83: 1ffff10035719e7c (0x1ffff10035719e7c)
+> 000000009e315b7e: 0000000000000000 ...
+> 0000000032d4ad90: 0000000041b58ab3 (0x41b58ab3)
+> 000000001950da16: ffffffff88bf0e88 (K512_4+0x6788/0x12081c)
+> 000000003a5852c2: ffffffff815ea810 (trace_hardirqs_on+0x10/0x10)
+> 00000000b4f76e9f: 0000000000000286 (0x286)
+> 0000000017a9b793: 0000000000000000 ...
+> 000000002c6f3cf0: 1ffff10035719e83 (0x1ffff10035719e83)
+> 0000000029758b22: 0000000000000000 ...
+> 00000000ac28f0c3: 0000000041b58ab3 (0x41b58ab3)
+> 00000000896b3f3c: ffffffff88bd4d17 (regoff.34021+0x367777/0x37af30)
+> 000000001ea02daa: ffffffff811ee670 (handle_vmfunc+0x9d0/0x9d0)
+> 00000000e244a975: 0000000000000000 ...
+> 000000007cb71dc3: ffff880198e06680 (0xffff880198e06680)
+> 0000000030b7b339: dffffc0000000000 (0xdffffc0000000000)
+> 0000000013670d06: 0000000000000007 (0x7)
+> 000000005a3061d7: ffffea00070c5b48 (0xffffea00070c5b48)
+> 0000000069137372: ffff8801ab8cf4b0 (0xffff8801ab8cf4b0)
+> 0000000019d43971: 0000000041b58ab3 (0x41b58ab3)
+> 000000009d607412: ffffffff88bd5994 (regoff.34021+0x3683f4/0x37af30)
+> 00000000393d0fc9: 0000000000000000 ...
+> 00000000198944ca: ffffffff00000019 (0xffffffff00000019)
+> 000000006fc4271c: ffff880198e06680 (0xffff880198e06680)
+> 00000000220bc0d0: ffffffff810e6589 (vcpu_enter_guest+0x11a9/0x6090)
+> 0000000007c018ae: 0000000000000000 ...
+> 00000000737bc2c1: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000c45769ee: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 0000000061f95688: ffff8801c4d00880 (0xffff8801c4d00880)
+> 00000000141e1035: ffffffff88d10000 (raw_data+0x2000/0x2000)
+> 00000000cddc18fa: 0000000000000000 ...
+> 0000000028e8e9b7: ffff8801ab8cf840 (0xffff8801ab8cf840)
+> 00000000719fa9c7: ffffffff810e743b (vcpu_enter_guest+0x205b/0x6090)
+> 000000005e9ea18f: ffff880198e06680 (0xffff880198e06680)
+> 00000000c9cde3eb: 0000000041b58ab3 (0x41b58ab3)
+> 000000004d7b20e1: ffffffff88bd4d17 (regoff.34021+0x367777/0x37af30)
+> 00000000694ba90e: ffffffff815e16e0 (graph_lock+0x170/0x170)
+> 0000000057670d40: ffffea00070c5b48 (0xffffea00070c5b48)
+> 00000000b1b7055e: ffffffff815e2225 (__lock_is_held+0xb5/0x140)
+> 00000000bcc7cb2a: ffff8801c4d00c4c (0xffff8801c4d00c4c)
+> 000000008258596c: ffff8801c4d0343c (0xffff8801c4d0343c)
+> 00000000249602bc: ffff8801c4d04c00 (0xffff8801c4d04c00)
+> 00000000c395cc43: ffff8801c4d008a8 (0xffff8801c4d008a8)
+> 00000000983d371a: ffffff2e5a76c48b (0xffffff2e5a76c48b)
+> 000000000c71cc61: 1ffff10035719eaa (0x1ffff10035719eaa)
+> 00000000cda7e238: 0000000041b58ab3 (0x41b58ab3)
+> 0000000041cbed0b: ffffffff88bdc1b0 (regoff.34021+0x36ec10/0x37af30)
+> 000000003be3c7c1: ffffffff810e53e0 (kvm_set_msr_common+0x26a0/0x26a0)
+> 00000000558331d6: ffffffff88bf0e88 (K512_4+0x6788/0x12081c)
+> 000000009e8d419a: 0000000000004000 (0x4000)
+> 0000000077a242a0: ffff880198e06700 (0xffff880198e06700)
+> 000000001360d345: 1ffff10035719eb8 (0x1ffff10035719eb8)
+> 000000003a548ad2: ffff880198e06740 (0xffff880198e06740)
+> 000000009c58ff72: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000c12b3bb0: 1ffff10035719ec8 (0x1ffff10035719ec8)
+> 0000000035d36c06: ffff880198e06eb8 (0xffff880198e06eb8)
+> 0000000023d8eeff: ffff8801c4d00938 (0xffff8801c4d00938)
+> 0000000066504ed3: ffff8801c4d00938 (0xffff8801c4d00938)
+> 000000001e9d5cc9: 0000000000000000 ...
+> 00000000a0c2d90f: ffff8801ab8cf608 (0xffff8801ab8cf608)
+> 00000000b0a91282: ffffffff815e1fe6 (find_held_lock+0x36/0x1c0)
+> 00000000836bb33c: 0000000181586330 (0x181586330)
+> 00000000f2bcad7b: ffff8801ab8cf660 (0xffff8801ab8cf660)
+> 0000000021c000f1: 1ffff10035719ec8 (0x1ffff10035719ec8)
+> 00000000a58e5126: ffff8801ab8cf720 (0xffff8801ab8cf720)
+> 00000000aae4e98d: ffff8801c4d00938 (0xffff8801c4d00938)
+> 00000000361c8fd6: ffff880198e06680 (0xffff880198e06680)
+> 0000000062e24cd5: ffff8801ab8cf660 (0xffff8801ab8cf660)
+> 0000000061693095: ffff8801ab8cf748 (0xffff8801ab8cf748)
+> 0000000036482c90: 0000000000000286 (0x286)
+> 00000000ea897434: 0000000041b58ab3 (0x41b58ab3)
+> 000000002afad7b3: ffffffff00000001 (0xffffffff00000001)
+> 0000000052347459: ffff880198e06eb0 (0xffff880198e06eb0)
+> 0000000085a42dfd: 0000000000000286 (0x286)
+> 000000007c40b7f1: ffffffff00000001 (0xffffffff00000001)
+> 00000000c7782241: 0000000041b58ab3 (0x41b58ab3)
+> 00000000ecc61f8e: ffffffff88bf0f18 (K512_4+0x6818/0x12081c)
+> 00000000f7c203e8: ffffffff815f0d20 (lock_downgrade+0x8f0/0x8f0)
+> 00000000a9533a7a: ffffc90001b23da8 (0xffffc90001b23da8)
+> 00000000df9a22ba: ffffc90000000000 (0xffffc90000000000)
+> 000000000a701e6b: 0000000000000001 (0x1)
+> 00000000eb4340a5: ffff8801ab8cf6b8 (0xffff8801ab8cf6b8)
+> 00000000f0151654: ffffffff815e1fe6 (find_held_lock+0x36/0x1c0)
+> 00000000e0595eaf: 0000000298e06680 (0x298e06680)
+> 00000000b90baafe: ffff8801ab8cf6a0 (0xffff8801ab8cf6a0)
+> 00000000cfad3c05: ffffffff8137bfbc (get_cpu_entry_area+0xc/0x30)
+> 0000000032ad5797: 1ffff10035719ed7 (0x1ffff10035719ed7)
+> 00000000ceea9e3b: ffff8801ab8cf730 (0xffff8801ab8cf730)
+> 0000000047cb9b44: ffffffff812db0c1 (load_fixmap_gdt+0x111/0x180)
+> 0000000024427137: ffff8801ab8cf710 (0xffff8801ab8cf710)
+> 000000000f431946: 0000000041b58ab3 (0x41b58ab3)
+> 000000007ec09e32: ffffffff88be4037 (regoff.34021+0x376a97/0x37af30)
+> 00000000d33383ae: ffffffff812dafb0 (load_direct_gdt+0x1c0/0x1c0)
+> 0000000093bdf459: ffff880100000002 (0xffff880100000002)
+> 000000000273fdd6: fe0000032000007f (0xfe0000032000007f)
+> 00000000af83756f: 0000000000000000 ...
+> 000000000760995a: ffffffff00000002 (0xffffffff00000002)
+> 000000009a3c78fc: 0000000041b58ab3 (0x41b58ab3)
+> 00000000319c5374: ffffffff88bf0f18 (K512_4+0x6818/0x12081c)
+> 00000000b4e4ed16: ffffffff815f0d20 (lock_downgrade+0x8f0/0x8f0)
+> 0000000062bc43f9: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 0000000072405a31: 0000000000000001 (0x1)
+> 00000000880d7726: 000000000072bec4 (0x72bec4)
+> 0000000058eac6f1: dffffc0000000000 (0xdffffc0000000000)
+> 000000009c17bd71: ffff8801ab8cf878 (0xffff8801ab8cf878)
+> 00000000a9b7ed1d: ffff8801ab8cf7f8 (0xffff8801ab8cf7f8)
+> 00000000766eb389: ffff8801ab8cf8a0 (0xffff8801ab8cf8a0)
+> 00000000956def02: ffffffff816ef34c (futex_wake+0x1ac/0x760)
+> 00000000b227c37b: ffff8801ab8cf8c8 (0xffff8801ab8cf8c8)
+> 00000000f2616fb0: ffffffff87930347 (__mutex_unlock_slowpath+0x197/0x8c0)
+> 00000000957ccafe: 1ffff10035719ef3 (0x1ffff10035719ef3)
+> 00000000ba29cdb9: ffffffff00000000 (0xffffffff00000000)
+> 00000000a2ff450e: 1ffff100ffffffff (0x1ffff100ffffffff)
+> 000000005bc571eb: ffffed0000000000 (0xffffed0000000000)
+> 00000000229be885: ffff8801ab8cf7b8 (0xffff8801ab8cf7b8)
+> 000000000a072eba: ffff8801ab8cf7f8 (0xffff8801ab8cf7f8)
+> 000000003aa4a08f: ffffffff88bf08a0 (K512_4+0x61a0/0x12081c)
+> 000000005772caa7: ffffffff879301b0 (wait_for_completion+0x8d0/0x8d0)
+> 000000000ce52b55: 0000000041b58ab3 (0x41b58ab3)
+> 00000000b5b29f90: ffffffff88bf5740 (K512_4+0xb040/0x12081c)
+> 0000000052bd1ecf: ffffffff816ef1a0 (get_futex_key+0x1ea0/0x1ea0)
+> 0000000008943bd8: 0000000041b58ab3 (0x41b58ab3)
+> 00000000a41dbc96: 0000000000000001 (0x1)
+> 00000000ea19df0f: ffff8801ab8cf7b8 (0xffff8801ab8cf7b8)
+> 000000003c9e8fda: ffff8801daf236a0 (0xffff8801daf236a0)
+> 00000000d51600b5: 1ffff10035719f01 (0x1ffff10035719f01)
+> 000000002031fc4c: ffff8801daf236b0 (0xffff8801daf236b0)
+> 0000000019d32319: ffff8801ab8cf7f0 (0xffff8801ab8cf7f0)
+> 00000000edfce132: ffffffff81b9d5c1 (kasan_check_read+0x11/0x20)
+> 00000000b866c397: ffff8801ab8cf890 (0xffff8801ab8cf890)
+> 00000000a5dccd2f: 000000000072b000 (0x72b000)
+> 00000000b5c544da: ffff8801cc24b080 (0xffff8801cc24b080)
+> 000000005b4bf29a: 0000000000000ec6 (0xec6)
+> 000000004264eb7e: ffffffff88bd56ee (regoff.34021+0x36814e/0x37af30)
+> 0000000024d5ecfd: ffffffff8166b8c0 (rcu_pm_notify+0xc0/0xc0)
+> 00000000f648c45b: ffffffff98e06680 (0xffffffff98e06680)
+> 00000000812432ae: ffff880198e06eb0 (0xffff880198e06eb0)
+> 00000000184eb101: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
+> 000000001cd2463f: 0000000000000286 (0x286)
+> 00000000e10fb801: ffff880198e06680 (0xffff880198e06680)
+> 0000000003678c17: ffffffff88f925a0 (rcu_callback_map+0x40/0x40)
+> 0000000019d669de: ffff8801c4d008d8 (0xffff8801c4d008d8)
+> 00000000f661f8b9: 0000000000000000 ...
+> 000000005cefabbe: ffff8801ab8cf890 (0xffff8801ab8cf890)
+> 00000000132ff07f: ffff8801ab8cf8a0 (0xffff8801ab8cf8a0)
+> 000000008cb1527e: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000726e7035: 00000000ffffffff (0xffffffff)
+> 00000000ff12faea: 0000000000000000 ...
+> 000000004e10b78a: ffff8801ab8cfd10 (0xffff8801ab8cfd10)
+> 00000000c456d624: ffffffff816f7040 (do_futex+0x300/0x27d0)
+> 000000009d82e73e: ffffffff81b9bc19 (kfree+0x1e9/0x260)
+> 0000000010e9032b: 1ffff10035719f20 (0x1ffff10035719f20)
+> 000000006d563adc: 0000000000000001 (0x1)
+> 00000000a170c37a: 0000000000000000 ...
+> 00000000849494ad: ffff8801c4d008d8 (0xffff8801c4d008d8)
+> 000000007427fa1e: ffff8801ab8cfc08 (0xffff8801ab8cfc08)
+> 00000000b3bdf942: ffffffff8107120a (kvm_vcpu_ioctl+0x2ba/0x1300)
+> 00000000ae9eed64: 0000000000000001 (0x1)
+> 0000000077f53fcf: 0000000000000000 ...
+> 00000000eb904886: 0000000041b58ab3 (0x41b58ab3)
+> 00000000002c8d38: ffffffff88bda118 (regoff.34021+0x36cb78/0x37af30)
+> 00000000e2dd6e0b: ffffffff00000000 (0xffffffff00000000)
+> 00000000f8dbbeb1: dffffc0000000000 (0xdffffc0000000000)
+> 000000006a5df9bf: ffff880100000000 (0xffff880100000000)
+> 0000000017859aa2: ffffffff815ea661 (trace_hardirqs_on_caller+0x421/0x5c0)
+> 00000000050b086f: 1ffff10035719f29 (0x1ffff10035719f29)
+> 00000000e44c2f47: ffff880100000001 (0xffff880100000001)
+> 0000000087728510: 000000000072bec4 (0x72bec4)
+> 00000000a823394c: 0000000041b58ab3 (0x41b58ab3)
+> 00000000275fa63a: ffffffff88bf5918 (K512_4+0xb218/0x12081c)
+> 000000006bcdd7a7: ffffffff816f6d40 (exit_robust_list+0x290/0x290)
+> 00000000170d612f: 1ffff10035719f41 (0x1ffff10035719f41)
+> 00000000185abae2: ffff880198e06eb8 (0xffff880198e06eb8)
+> 00000000a8112cdf: ffffffff88f92620 (rcu_bh_lock_map+0x40/0x40)
+> 00000000a0a378e2: ffffffff88f92620 (rcu_bh_lock_map+0x40/0x40)
+> 00000000ea33792a: 0000000000000000 ...
+> 00000000a807ef10: ffff8801ab8cf9d0 (0xffff8801ab8cf9d0)
+> 00000000644b3a38: ffffffff815e1fe6 (find_held_lock+0x36/0x1c0)
+> 00000000703ab95b: 0000000100000001 (0x100000001)
+> 000000000ea3a622: ffff8801ab8cfa28 (0xffff8801ab8cfa28)
+> 00000000d1678315: 1ffff10035719f41 (0x1ffff10035719f41)
+> 0000000059f320f7: ffff8801ab8cfae8 (0xffff8801ab8cfae8)
+> 00000000341431c8: ffffffff88f92620 (rcu_bh_lock_map+0x40/0x40)
+> 0000000054dd2a3d: ffff880198e06680 (0xffff880198e06680)
+> 00000000594f1640: ffff8801ab8cfa28 (0xffff8801ab8cfa28)
+> 00000000ae862235: ffff8801ab8cfb10 (0xffff8801ab8cfb10)
+> 00000000fadb56b9: 0000000000000286 (0x286)
+> 00000000a5d282e9: 0000000000000000 ...
+> 000000000c84f1c5: ffff8801ffffffff (0xffff8801ffffffff)
+> 0000000071b85947: ffff880198e06eb0 (0xffff880198e06eb0)
+> 00000000bec499d0: 0000000000000286 (0x286)
+> 000000000f6a14d0: ffffffff00000001 (0xffffffff00000001)
+> 00000000b898e101: 0000000041b58ab3 (0x41b58ab3)
+> 0000000009079dce: ffffffff88bf0f18 (K512_4+0x6818/0x12081c)
+> 00000000152f1c36: ffffffff815f0d20 (lock_downgrade+0x8f0/0x8f0)
+> 000000002eca5038: ffff8801c5847280 (0xffff8801c5847280)
+> 000000007446f080: 0000000000000000 ...
+> 000000004064ebbf: 00000000c7bce480 (0xc7bce480)
+> 000000008f1a4a0f: ffff8801daf236a0 (0xffff8801daf236a0)
+> 0000000019fbde90: 1ffff10035719f4f (0x1ffff10035719f4f)
+> 000000001817c3fd: ffff8801daf236a0 (0xffff8801daf236a0)
+> 00000000287921fb: 1ffff10035719f51 (0x1ffff10035719f51)
+> 00000000310acf8a: ffff8801daf236b0 (0xffff8801daf236b0)
+> 00000000ae875ff7: ffff8801ab8cfa70 (0xffff8801ab8cfa70)
+> 00000000e7bd32d7: ffffffff81b9d5c1 (kasan_check_read+0x11/0x20)
+> 000000003017daff: ffff8801ab8cfb10 (0xffff8801ab8cfb10)
+> 000000003cfce45c: ffffffff8166782c (rcu_is_watching+0x8c/0x150)
+> 000000004f0f8f0b: ffff8801ab8cfad0 (0xffff8801ab8cfad0)
+> 00000000882e2b6d: 0000000041b58ab3 (0x41b58ab3)
+> 00000000f28e12e4: ffffffff88bd5994 (regoff.34021+0x3683f4/0x37af30)
+> 000000000a90f689: ffffffff816677a0 (rcu_report_qs_rnp+0x7a0/0x7a0)
+> 000000002c3e1371: ffffffff88f92620 (rcu_bh_lock_map+0x40/0x40)
+> 00000000cad59922: 0000000000000000 ...
+> 0000000005d4afab: ffff880198e06680 (0xffff880198e06680)
+> 00000000564c19be: ffffffff88f92620 (rcu_bh_lock_map+0x40/0x40)
+> 000000001ccb654f: ffff8801ab8cfc48 (0xffff8801ab8cfc48)
+> 00000000846ab4a6: ffff8801ad86e080 (0xffff8801ad86e080)
+> 00000000c864571c: ffff8801ab8cfb00 (0xffff8801ab8cfb00)
+> 0000000020096f0e: 0000000000000286 (0x286)
+> 000000002762829f: 0000000000000000 ...
+> 000000006d4d5f6e: 0000000000000001 (0x1)
+> 00000000c9bb25cd: ffff8801cbac73b0 (0xffff8801cbac73b0)
+> 0000000093257e72: dffffc0000000000 (0xdffffc0000000000)
+> 0000000039681e24: ffff8801ab8cfc48 (0xffff8801ab8cfc48)
+> 00000000dcc4c887: 0000000000000001 (0x1)
+> 000000005c341a1a: ffff8801ab8cfc70 (0xffff8801ab8cfc70)
+> 0000000046a54e61: ffffffff81cc8704 (__fget+0x414/0x670)
+> 000000009c3bf7ca: ffff8801ab8cfbc8 (0xffff8801ab8cfbc8)
+> 000000000868f78d: 1ffff10035719f6d (0x1ffff10035719f6d)
+> 00000000e2b0700e: 0000001500004000 (0x1500004000)
+> 00000000dd981ec0: ffff8801ad86e0d0 (0xffff8801ad86e0d0)
+> 00000000990473a0: ffff8801cbac7340 (0xffff8801cbac7340)
+> 000000004d75fa6b: ffff8801ad86e080 (0xffff8801ad86e080)
+> 00000000ad3048af: ffff880198e06e01 (0xffff880198e06e01)
+> 00000000a9da8436: ffff8801ab8cfc08 (0xffff8801ab8cfc08)
+> 00000000f3535484: ffffed0035719f79 (0xffffed0035719f79)
+> 000000000e9642f8: 0000000041b58ab3 (0x41b58ab3)
+> 0000000022b2a262: ffffffff88bd55e8 (regoff.34021+0x368048/0x37af30)
+> 0000000049ae6b52: ffffffff81cc82f0 (expand_files.part.8+0x9c0/0x9c0)
+> 00000000e4f660a3: ffff880100000001 (0xffff880100000001)
+> 00000000b1b629f3: 0000000000000001 (0x1)
+> 000000003b5f291c: ffff880198e06eb0 (0xffff880198e06eb0)
+> 000000008046c848: ffffffff00000001 (0xffffffff00000001)
+> 000000006789f2fe: 0000000041b58ab3 (0x41b58ab3)
+> 00000000b84f30b7: ffff880198e06680 (0xffff880198e06680)
+> 00000000e112f034: ffffffff87a009d5 (retint_kernel+0x10/0x10)
+> 00000000ed07b8e9: 0000000000000000 ...
+> 00000000a4ff4233: ffff8801b3168100 (0xffff8801b3168100)
+> 00000000eddeb16d: ffff8801ab8cfc08 (0xffff8801ab8cfc08)
+> 00000000f3d8f315: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 0000000021096d50: ffff8801cbac7340 (0xffff8801cbac7340)
+> 00000000cc80b3b0: 1ffff10035719f8a (0x1ffff10035719f8a)
+> 000000002f036a88: ffffffff81070f50
+> (kvm_uevent_notify_change.part.31+0x440/0x440)
+> 0000000007a8c1bc: ffff8801ab8cfc08 (0xffff8801ab8cfc08)
+> 00000000e409e860: ffffffff817c0cc6
 > (__sanitizer_cov_trace_const_cmp4+0x16/0x20)
-> 0000000059255b7c: ffff8801b2e27e20 (0xffff8801b2e27e20)
-> 00000000ac1d205b: ffffffff8100ad04 (exit_to_usermode_loop+0x1f4/0x370)
-> 000000006a0e3e65: 1ffff100365c4fb3 (0x1ffff100365c4fb3)
-> 00000000635ec6f3: ffff8801b2e27f58 (0xffff8801b2e27f58)
-> 00000000a97b5ed2: 0000000041b58ab3 (0x41b58ab3)
-> 00000000b77ca7e9: ffffffff88bd5b9e (regoff.34024+0x36817e/0x37af60)
-> 00000000ec7675c4: ffffffff8100ab10 (syscall_slow_exit_work+0x500/0x500)
-> 0000000087a533d2: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 00000000f58d667c: ffff8801b2e27f58 (0xffff8801b2e27f58)
-> 00000000915e87b3: 1ffff100365c4fc8 (0x1ffff100365c4fc8)
-> 000000004e98b026: ffff8801b2e27f20 (0xffff8801b2e27f20)
-> 000000006fb2769e: ffff8801b2e27f58 (0xffff8801b2e27f58)
-> 00000000bfc40af5: dffffc0000000000 (0xdffffc0000000000)
-> 00000000b847b6fc: ffff8801b2e27e20 (0xffff8801b2e27e20)
-> 00000000354de9dc: ffffffff85eeb981 (__x64_sys_sendto+0xe1/0x1a0)
-> 000000005697395d: ffff8801b2e27e10 (0xffff8801b2e27e10)
-> 00000000789c87c0: ffffffff815ea661 (trace_hardirqs_on_caller+0x421/0x5c0)
-> 000000009f263e70: 000000000000002c (0x2c)
-> 0000000021dbe773: 1ffff100365c4fc8 (0x1ffff100365c4fc8)
-> 000000002a7413ae: ffff8801b2e27e20 (0xffff8801b2e27e20)
-> 000000008d771b65: 000000000000002c (0x2c)
-> 00000000314ea10a: ffff8801b2e27f48 (0xffff8801b2e27f48)
-> 000000003755494d: ffffffff8100c4d9 (do_syscall_64+0x1b9/0x820)
-> 000000005680af08: ffffffff8153a7c3 (finish_task_switch+0x1d3/0x870)
-> 000000007a4aaf69: 0000000000000000 ...
-> 000000006091a0b7: 0000000041b58ab3 (0x41b58ab3)
-> 000000008a709bac: ffffffff88bd5a98 (regoff.34024+0x368078/0x37af60)
-> 00000000498b8263: ffffffff8100c320 (syscall_return_slowpath+0x5e0/0x5e0)
-> 000000007b33c017: ffff8801b2e27e68 (0xffff8801b2e27e68)
-> 000000000504e062: 0000000000000000 ...
-> 00000000bf096e7a: ffff8801b2e27f48 (0xffff8801b2e27f48)
-> 000000005e0e6f64: ffffffff8100c05d (syscall_return_slowpath+0x31d/0x5e0)
-> 0000000034398236: ffff8801b2e27f58 (0xffff8801b2e27f58)
-> 00000000d57cd6c8: 0000000041b58ab3 (0x41b58ab3)
-> 0000000040db320a: ffffffff88bd51c7 (regoff.34024+0x3677a7/0x37af60)
-> 0000000048d4ef82: ffff880198f2aeb0 (0xffff880198f2aeb0)
-> 000000009444900f: ffff8801b2e27ea8 (0xffff8801b2e27ea8)
-> 00000000d7675da5: 0000000000000008 (0x8)
-> 00000000afd8bd99: ffff880198f2a680 (0xffff880198f2a680)
-> 000000007ff79042: ffffffff87a0009d
+> 0000000052e197ce: ffff8801ab8cfdb8 (0xffff8801ab8cfdb8)
+> 000000000536f5a4: ffffffff81c94241 (do_vfs_ioctl+0x201/0x1720)
+> 00000000c93c584c: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 0000000038fcf5a5: ffff880198e06680 (0xffff880198e06680)
+> 0000000004e719ac: dffffc0000000000 (0xdffffc0000000000)
+> 00000000ae1cc1e1: 1ffff10035719f8e (0x1ffff10035719f8e)
+> 000000008fc1c78e: fffffbfff11e360e (0xfffffbfff11e360e)
+> 000000006ee58bd9: 565b4ee700000000 (0x565b4ee700000000)
+> 00000000d1f15f45: 0000000000000000 ...
+> 00000000a7b6e947: 0000000041b58ab3 (0x41b58ab3)
+> 000000007924b758: ffffffff88c09d10 (K512_4+0x1f610/0x12081c)
+> 00000000102b65cc: ffffffff81c94040 (ioctl_preallocate+0x300/0x300)
+> 00000000ab08f487: ffff8801ad86e080 (0xffff8801ad86e080)
+> 00000000ce97e801: ffff8801ab8cfda0 (0xffff8801ab8cfda0)
+> 000000002ea608e4: ffffffff81cc8c97 (__fget_light+0x2f7/0x440)
+> 000000004f2c28fc: ffffffff87929320 (__schedule+0x1ed0/0x1ed0)
+> 00000000ebe3e060: 0000400000000000 (0x400000000000)
+> 0000000037bf8e99: 0000000000000002 (0x2)
+> 0000000011a86a19: 0000000041b58ab3 (0x41b58ab3)
+> 00000000e575eec7: ffffffff88bd7350 (regoff.34021+0x369db0/0x37af30)
+> 000000000b4b96d3: ffffffff81cc89a0 (fget_raw+0x20/0x20)
+> 00000000c35af09d: ffffffff816f9699 (__x64_sys_futex+0x189/0x6a0)
+> 000000000d5fbc79: f8210fd800000002 (0xf8210fd800000002)
+> 000000006b87b299: 0000000000000000 ...
+> 00000000b3475914: 0000000000000007 (0x7)
+> 0000000027e35475: ffffffffffffff13 (0xffffffffffffff13)
+> 0000000039f9a7da: ffffffff817c0b9c (write_comp_data+0x6c/0x70)
+> 00000000e4fc7c22: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000f78586c7: 1ffff10035719fab (0x1ffff10035719fab)
+> 000000001894a37f: 0000000000000001 (0x1)
+> 000000007b585be4: 0000000000000000 ...
+> 0000000071d95cb1: 0000000000000001 (0x1)
+> 0000000097ef569c: ffff8801ab8cfe20 (0xffff8801ab8cfe20)
+> 0000000049e4b267: ffffffff816f9982 (__x64_sys_futex+0x472/0x6a0)
+> 000000007043f426: 0000000000000000 ...
+> 00000000fe8c1fcc: ffffffff8100ab9c (exit_to_usermode_loop+0x8c/0x370)
+> 00000000b2f6a066: 000000000072bec4 (0x72bec4)
+> 000000007ea5e658: 0000000000000000 ...
+> 0000000061548819: 0000000041b58ab3 (0x41b58ab3)
+> 000000004650d5d5: ffffffff88bf5532 (K512_4+0xae32/0x12081c)
+> 000000003934581f: ffffffff816f9510 (do_futex+0x27d0/0x27d0)
+> 00000000a987b610: ffff8801cbac7340 (0xffff8801cbac7340)
+> 00000000b2d7b903: 0000000000000000 ...
+> 0000000086207298: ffff8801ab8cfd90 (0xffff8801ab8cfd90)
+> 00000000d63d50fe: ffffffff817c0c8a
+> (__sanitizer_cov_trace_const_cmp1+0x1a/0x20)
+> 000000003403b3bf: ffff8801ab8cfdb8 (0xffff8801ab8cfdb8)
+> 000000004d2ec5af: ffffffff81c421a0 (fput+0x130/0x1a0)
+> 00000000d5f7f733: 0000000000000001 (0x1)
+> 0000000085d9de29: ffff8801cbac7340 (0xffff8801cbac7340)
+> 00000000982a4fb5: ffff880198e06eb0 (0xffff880198e06eb0)
+> 00000000e24921c0: ffff8801ab8cfdf8 (0xffff8801ab8cfdf8)
+> 00000000d191effb: ffffffff81c957e1 (ksys_ioctl+0x81/0xd0)
+> 00000000a24c2ce4: ffff880198e06680 (0xffff880198e06680)
+> 00000000c45b1de4: ffffffff8100c3ba (do_syscall_64+0x9a/0x820)
+> 00000000798ecb79: ffff8801ab8cff20 (0xffff8801ab8cff20)
+> 00000000d952091a: ffff8801ab8cff58 (0xffff8801ab8cff58)
+> 000000001913a75f: dffffc0000000000 (0xdffffc0000000000)
+> 000000009323f401: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 0000000058d4c44b: 00000000000000ca (0xca)
+> 000000007867969f: 1ffff10035719fc8 (0x1ffff10035719fc8)
+> 00000000b6ca5817: ffff8801ab8cff20 (0xffff8801ab8cff20)
+> 0000000090dcbf66: ffff8801ab8cff58 (0xffff8801ab8cff58)
+> 00000000d75dc9ca: dffffc0000000000 (0xdffffc0000000000)
+> 00000000eb06b3ba: ffff8801ab8cff48 (0xffff8801ab8cff48)
+> 000000001300d2b9: ffffffff8100c4d9 (do_syscall_64+0x1b9/0x820)
+> 0000000058f7afda: ffffffff8153a7c3 (finish_task_switch+0x1d3/0x870)
+> 00000000fd6da31f: 0000000000000000 ...
+> 000000004d321498: 0000000041b58ab3 (0x41b58ab3)
+> 000000004a9e5b71: ffffffff88bd55e8 (regoff.34021+0x368048/0x37af30)
+> 00000000ee9680ea: ffffffff8100c320 (syscall_return_slowpath+0x5e0/0x5e0)
+> 00000000067a4de5: ffff8801ab8cfe68 (0xffff8801ab8cfe68)
+> 000000009d7aae12: 0000000000000000 ...
+> 0000000070405232: ffff8801ab8cff48 (0xffff8801ab8cff48)
+> 00000000754df3b2: ffffffff8100c05d (syscall_return_slowpath+0x31d/0x5e0)
+> 00000000168a3ca9: ffff8801ab8cff58 (0xffff8801ab8cff58)
+> 000000003040effa: 0000000041b58ab3 (0x41b58ab3)
+> 000000004941a1a1: ffffffff88bd4d17 (regoff.34021+0x367777/0x37af30)
+> 0000000047877673: ffff880198e06eb0 (0xffff880198e06eb0)
+> 000000001d8abfb5: ffff8801ab8cfea8 (0xffff8801ab8cfea8)
+> 00000000eccebe2e: 0000000000000000 ...
+> 00000000a677d7ee: ffff880198e06680 (0xffff880198e06680)
+> 0000000037314512: ffffffff87a0009d
 > (entry_SYSCALL_64_after_hwframe+0x59/0xbe)
-> 00000000e210b4b3: 0000000000000000 ...
-> 000000000dbc4afc: 0000000000000086 (0x86)
-> 00000000c329aee9: 0000000000000000 ...
-> 00000000149d2508: ffff8801b2e27f48 (0xffff8801b2e27f48)
-> 000000008173a772: ffffffff81007d20 (trace_hardirqs_off_thunk+0x1a/0x1c)
-> 0000000064f6538e: 0000000000000000 ...
-> 00000000d872c505: 3aee86f4bec70600 (0x3aee86f4bec70600)
-> 000000009bd73e67: 0000000000000000 ...
-> 00000000aa5ce777: ffffffff87a0008d
+> 000000009de7f25f: 0000000000000000 ...
+> 00000000312199c5: 0000000000000086 (0x86)
+> 000000009c40a827: 0000000000000000 ...
+> 0000000063966756: ffff8801ab8cff48 (0xffff8801ab8cff48)
+> 000000002fc76575: ffffffff81007d20 (trace_hardirqs_off_thunk+0x1a/0x1c)
+> 000000009aaffda0: 0000000000000000 ...
+> 000000001fead651: 565b4ee74dc97d00 (0x565b4ee74dc97d00)
+> 00000000225c0589: 0000000000000000 ...
+> 00000000abaeecfc: ffffffff87a0008d
 > (entry_SYSCALL_64_after_hwframe+0x49/0xbe)
-> 00000000f9fa0f88: 0000000000000000 ...
-> 000000006ccf5b86: 00000000004d1860 (0x4d1860)
-> 00000000585e390a: 00000000004c1164 (0x4c1164)
-> 00000000e96746f4: 00000000ffffffff (0xffffffff)
-> 000000006ff7e1d2: 000000000072bea0 (0x72bea0)
-> 000000002f673581: 00007fce202ec6d4 (0x7fce202ec6d4)
-> 0000000035544d63: 0000000000000246 (0x246)
-> 000000000c5b9734: 0000000000000000 ...
-> 0000000052dbe6b7: 000000000000001c (0x1c)
-> 00000000a309acb7: 0000000020000080 (0x20000080)
-> 00000000ac9bbcc5: ffffffffffffffda (0xffffffffffffffda)
-> 000000009a58656d: 0000000000455ab9 (0x455ab9)
-> 00000000bdd42954: 000000000000006c (0x6c)
-> 000000005b602f3b: 0000000020000280 (0x20000280)
-> 000000009d4ded67: 0000000000000013 (0x13)
-> 00000000ba6ed140: 000000000000002c (0x2c)
-> 00000000c8ba397f: 0000000000455ab9 (0x455ab9)
-> 00000000a90829d3: 0000000000000033 (0x33)
-> 000000008771247a: 0000000000000246 (0x246)
-> 00000000735bcdb1: 00007fce202ebc68 (0x7fce202ebc68)
-> 00000000369ae6c6: 000000000000002b (0x2b)
+> 00000000c1e5d38e: 0000000000000000 ...
+> 000000006d6b3093: 00000000004cc690 (0x4cc690)
+> 000000008fa4fda6: 00000000004bdc54 (0x4bdc54)
+> 00000000f35bb826: 00000000ffffffff (0xffffffff)
+> 00000000edf43c01: 000000000072bea0 (0x72bea0)
+> 000000004e587abb: 00007f1981b5b6d4 (0x7f1981b5b6d4)
+> 00000000270aea2d: 0000000000000246 (0x246)
+> 000000008da32a2c: 0000000000000000 ...
+> 00000000e1f7bc2f: ffffffffffffffda (0xffffffffffffffda)
+> 00000000a4647491: 0000000000455a79 (0x455a79)
+> 0000000096ee5958: 0000000000000000 ...
+> 000000008c4de666: 0000000000000001 (0x1)
+> 00000000bac6497d: 000000000072bec4 (0x72bec4)
+> 000000002526be51: 00000000000000ca (0xca)
+> 000000003753719b: 0000000000455a79 (0x455a79)
+> 000000003729c76c: 0000000000000033 (0x33)
+> 000000000351afb6: 0000000000000246 (0x246)
+> 00000000251c1a7f: 00007f1981b5ac88 (0x7f1981b5ac88)
+> 00000000c308a304: 000000000000002b (0x2b)
 > ==================================================================
-> binder: BINDER_SET_CONTEXT_MGR already set
-> BUG: KASAN: stack-out-of-bounds in fixup_exception+0xc6/0xcb
-> arch/x86/mm/extable.c:192
-> binder: 23389:23409 ioctl 40046207 0 returned -16
-> Read of size 8 at addr ffff8801b2e27348 by task syz-executor4/23395
+> BUG: KASAN: stack-out-of-bounds in __do_page_fault+0xd59/0xe50
+> arch/x86/mm/fault.c:1293
+> Read of size 8 at addr ffff8801ab8cf350 by task syz-executor7/25492
 >
-> CPU: 0 PID: 23395 Comm: syz-executor4 Not tainted 4.18.0-rc4+ #147
+> CPU: 1 PID: 25492 Comm: syz-executor7 Not tainted 4.18.0-rc4+ #144
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
 > Call Trace:
 >  __dump_stack lib/dump_stack.c:77 [inline]
 >  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-> binder: 23389:23409 ERROR: BC_REGISTER_LOOPER called without request
 >  print_address_description+0x6c/0x20b mm/kasan/report.c:256
 >  kasan_report_error mm/kasan/report.c:354 [inline]
 >  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
 >  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->  fixup_exception+0xc6/0xcb arch/x86/mm/extable.c:192
->  do_general_protection+0x1c3/0x2f0 arch/x86/kernel/traps.c:554
->  general_protection+0x1e/0x30 arch/x86/entry/entry_64.S:1159
+>  __do_page_fault+0xd59/0xe50 arch/x86/mm/fault.c:1293
+>  do_page_fault+0xf6/0x8c0 arch/x86/mm/fault.c:1471
+>  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1160
 > RIP: 0010:msr_write_intercepted arch/x86/kvm/vmx.c:2338 [inline]
 > RIP: 0010:vmx_vcpu_run+0x1328/0x2600 arch/x86/kvm/vmx.c:10160
-> binder: 23389:23417 unknown command 0
-> Code: 91 00 00 00 e8 19 c4 5c 00 48 8b 54 24 08 48 b8 00 00 00 00 00 fc ff
-> df 48 c1 ea 03 80 3c 02
-> binder_alloc: 23389: binder_alloc_buf, no vma
-> 00 0f 85 8c 10 00 00 48 8b 04 24 <48> 8b 98 40 57 00 00 48 b8 00 00 00 00 00
-> fc ff df 48 8d 7b 40 48
-> RSP: 0018:ffff8801b2e27370 EFLAGS: 00010046
-> binder: 23389:23409 transaction failed 29189/-3, size 0-0 line 2967
-> RAX: 1ffff100365c4e83 RBX: 0000000010000000 RCX: ffffc90002a12000
-> RDX: 1ffff100331e55d7 RSI: ffffffff811f4727 RDI: 0000000000000005
-> RBP: ffff8801b2e27458 R08: ffff880198f2a680 R09: 0000000000000000
+> Code: 91 00 00 00 e8 79 c4 5c 00 48 8b 54 24 08 48 b8 00 00 00 00 00 fc ff
+> df 48 c1 ea 03 80 3c 02 00 0f 85 8c 10 00 00 48 8b 04 24 <48> 8b 98 40 57 00
+> 00 48 b8 00 00 00 00 00 fc ff df 48 8d 7b 40 48
+> RSP: 0018:ffff8801ab8cf370 EFLAGS: 00010046
+> RAX: 0000000000000286 RBX: 0000000010000000 RCX: ffffc90006c43000
+> RDX: 1ffffffff11a2000 RSI: ffffffff811f4727 RDI: 0000000000000005
+> RBP: ffff8801c4d00880 R08: ffff880198e06680 R09: 0000000000000000
 > R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
 > R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> binder: 23389:23417 ioctl c0306201 2000efd0 returned -22
->  lock_release+0xa30/0xa30 kernel/locking/lockdep.c:3730
-> binder: undelivered TRANSACTION_ERROR: 29189
-> binder: send failed reply for transaction 442 to 23389:23392
 >
 > The buggy address belongs to the page:
-> page:ffffea0006cb89c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> page:ffffea0006ae33c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
 > flags: 0x2fffc0000000000()
-> raw: 02fffc0000000000 0000000000000000 ffffffff06cb0101 0000000000000000
+> raw: 02fffc0000000000 ffffea0006afdc08 ffffea0006ae3388 0000000000000000
 > raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
 > page dumped because: kasan: bad access detected
 >
 > Memory state around the buggy address:
->  ffff8801b2e27200: 00 00 00 00 00 00 f1 f1 f1 f1 01 f2 f2 f2 f2 f2
->  ffff8801b2e27280: f2 f2 04 f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 f2 f2
+>  ffff8801ab8cf200: f2 f2 00 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2
+>  ffff8801ab8cf280: f2 f2 04 f2 f2 f2 f2 f2 f2 f2 04 f2 f2 f2 f2 f2
 >>
->> ffff8801b2e27300: f2 f2 00 f2 f2 f2 f2 f2 f2 f2 00 00 f2 f2 f2 f2
+>> ffff8801ab8cf300: f2 f2 04 f2 f2 f2 f2 f2 f2 f2 04 f2 f2 f2 f2 f2
 >
->                                               ^
->  ffff8801b2e27380: f2 f2 00 00 04 f2 f2 f2 f2 f2 04 f2 f2 f2 f2 f2
->  ffff8801b2e27400: f2 f2 04 f2 f2 f2 f2 f2 f2 f2 04 f2 f2 f2 f2 f2
+>                                                  ^
+>  ffff8801ab8cf380: f2 f2 f8 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2
+>  ffff8801ab8cf400: f2 f2 00 f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 f2 f2
 > ==================================================================
 >
 >
@@ -832,5 +869,5 @@ Most likely this is K512_4, +Megha.
 > To unsubscribe from this group and stop receiving emails from it, send an
 > email to syzkaller-bugs+unsubscribe@googlegroups.com.
 > To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000000956640571197f98%40google.com.
+> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000000696430571197fe9%40google.com.
 > For more options, visit https://groups.google.com/d/optout.
