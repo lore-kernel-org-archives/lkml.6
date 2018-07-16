@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07618ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A302ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6506F20871
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6506F20871
+	by mail.kernel.org (Postfix) with ESMTP id C2DD420871
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2DD420871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731066AbeGPM6i (ORCPT
+        id S1731196AbeGPM6r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:58:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34098 "EHLO mx1.suse.de"
+        Mon, 16 Jul 2018 08:58:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34186 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727857AbeGPM6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:58:38 -0400
+        id S1727857AbeGPM6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 08:58:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 00DE1ADC9;
-        Mon, 16 Jul 2018 12:31:23 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 14:31:22 +0200
-Message-ID: <s5hpnzn5plx.wl-tiwai@suse.de>
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D4F78ADC9;
+        Mon, 16 Jul 2018 12:31:31 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 14:31:31 +0200
+Message-ID: <s5ho9f75plo.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Colin King" <colin.king@canonical.com>
-Cc:     <alsa-devel@alsa-project.org>,
-        "Arvind Yadav" <arvind.yadav.cs@gmail.com>,
-        "Jaroslav Kysela" <perex@perex.cz>,
+Cc:     <alsa-devel@alsa-project.org>, "Jaroslav Kysela" <perex@perex.cz>,
         <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: es1688: remove redundant pointer chip
-In-Reply-To: <20180716084308.15571-1-colin.king@canonical.com>
-References: <20180716084308.15571-1-colin.king@canonical.com>
+Subject: Re: [PATCH] ALSA: gus: remove redundant pointer private_data
+In-Reply-To: <20180716084938.15733-1-colin.king@canonical.com>
+References: <20180716084938.15733-1-colin.king@canonical.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -47,16 +45,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Jul 2018 10:43:08 +0200,
+On Mon, 16 Jul 2018 10:49:38 +0200,
 Colin King wrote:
 > 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Pointer chip is being assigned but is never used hence it is
+> Pointer private_data is being assigned but is never used hence it is
 > redundant and can be removed.
 > 
 > Cleans up clang warning:
-> warning: variable 'chip' set but not used [-Wunused-but-set-variable]
+> warning: variable 'private_data' set but not used [-Wunused-but-set-variable]
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
