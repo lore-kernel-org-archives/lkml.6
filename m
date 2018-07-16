@@ -2,115 +2,146 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34247ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6FDECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8B6E208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:55:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8B6E208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 27A0D208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:57:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bClc71Ny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A0D208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbeGPSYI (ORCPT
+        id S1729595AbeGPS0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 14:24:08 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:43312 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbeGPSYI (ORCPT
+        Mon, 16 Jul 2018 14:26:21 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55882 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbeGPS0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 14:24:08 -0400
-Received: by mail-yb0-f196.google.com with SMTP id x10-v6so15760609ybl.10;
-        Mon, 16 Jul 2018 10:55:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z+n2y7bqnH05oma4+qLV+X6GQKqHQu56p2vXD3bDgNA=;
-        b=rJVdGcIVyeByHtGwIFWGG0UIeRzFnGIApkPOaGdXbvtrTMFo+dr7QRG0QzexdsexUl
-         YZhtq8pRQcYamaHHk+u5lptPUu6tA/GIg5QIo4Qo4FO9r6wPzCe0PghZgTMJ00KeNsZW
-         M1Lq5QwUeCuhuYk4ORqR298aTJbeRXpFjANqgMxUy94jiMgusD6lb1qHhORuB5wyVJGP
-         BjRho7ke3IU+XDt80vzIAAHcf1jSaBXtmzVJZ58bXGJDWZ1teupvAS+8cLyAilR7gOxk
-         tERJYBt8kgMTrHjURhLPTKY+fo116e0B+ZNQTnzS2mLyAqTBiqTei9iQ7VWD27XQlfZx
-         ZwGQ==
-X-Gm-Message-State: AOUpUlHmzHRmr1w4jjxEP299V9gYrSPyarNRBfxVwK0xdfX5Z9dfUgsy
-        CG+wQRPwj5CRGRZeg2wtMg==
-X-Google-Smtp-Source: AAOMgpcwGcHDE6EgLzsszJHwjafidfWz/mfZZjpry/HIf10ZAHoG/D1BgYsLs+pPt0U4g0H66WC7wQ==
-X-Received: by 2002:a25:848d:: with SMTP id v13-v6mr9352865ybk.389.1531763737645;
-        Mon, 16 Jul 2018 10:55:37 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id c74-v6sm19075287ywh.17.2018.07.16.10.55.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 10:55:36 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 11:55:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, mark.rutland@arm.com,
-        fabio.estevam@nxp.com, Anson.Huang@nxp.com, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: pfuze100: add optional disable
- switch-regulators binding
-Message-ID: <20180716175535.GA10835@rob-hp-laptop>
-References: <20180713125002.24331-1-m.felsch@pengutronix.de>
- <20180713125002.24331-2-m.felsch@pengutronix.de>
+        Mon, 16 Jul 2018 14:26:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=BYx5myUGIkmYXwGPIC699Xs5MUWpuZb/BxmaWMA5Sg4=; b=bClc71NyuonA7etPAF3TOYDf3W
+        A8Dz/FpsGmVZkT7r40bamadWyo7L67DC8vcolRerGYk2dT2T5+/W33bkXTvWY+Zc/wHoTc8TPwJhj
+        cO02YjO+8rpaQtk7V3qJJtimK43NIUHh6b5kstokBMZW+xUIJioK/4UxKufLGZBPlDCw/I/QNKx6c
+        xl7yKBqTp+oJGco4HKgmMQja1eWZF++BMo38SPj06dsehCAoraLgFr6Z3XFoZV0zel3TnyKmiNpgT
+        5i75i00uYNVGWVtLjHih6sK2Lzgb3eo8bExc1e/5/D0LADR5yhi8bVqWMtDvg0WsR2Dhr9AIfBY5w
+        WDtLfvYw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ff7kl-0003mQ-Ff; Mon, 16 Jul 2018 17:57:43 +0000
+Subject: Re: [PATCH 2/4] lib: add crc64 calculation routines
+To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+References: <20180716165507.23100-1-colyli@suse.de>
+ <20180716165507.23100-3-colyli@suse.de>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <d8b85ecd-8641-bdaf-5238-6cd2523a5701@infradead.org>
+Date:   Mon, 16 Jul 2018 10:57:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180713125002.24331-2-m.felsch@pengutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180716165507.23100-3-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 02:50:01PM +0200, Marco Felsch wrote:
-> This binding is used to keep the backward compatibility with the current
-> dtb's [1]. The binding informs the driver that the unused switch regulators
-> can be disabled.
-> If it is not specified, the driver doesn't disable the switch regulators.
+On 07/16/2018 09:55 AM, Coly Li wrote:
 > 
-> [1] https://patchwork.kernel.org/patch/10490381/
-> 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> 
-> ---
-> Changes in V2:
->   - add more information about the binding
->   - rename binding and add vendor prefix
-> 
->  .../devicetree/bindings/regulator/pfuze100.txt        | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-> index 672c939045ff..2c46b8d368db 100644
-> --- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
-> +++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-> @@ -4,6 +4,17 @@ Required properties:
->  - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000", "fsl,pfuze3001"
->  - reg: I2C slave address
->  
-> +Optional properties:
-> +- fsl,pfuze-support-disable: Boolean, if present disable all unused switch
-> +  regulators to save power consumption. Attention, till 4.18 these regulators
-
-You shouldn't have kernel version info in bindings.
-
-> +  were always on without specifying "regulator-always-on". So be sure to mark
-> +  import regulators as "regulator-always-on" (e.g. DDR ref, DDR supply). If
-
-s/import/important/
-
-> +  not present, the switched regualtors are always on and can't be disabled.
-> +  This binding is a workaround to keep backward compatibility with old dtb's
-> +  which rely on the fact that the switched regulators are always on and don't
-> +  mark them explicit as "regulator-always-on". On new dtbs this property should
-> +  always be present.
+> diff --git a/lib/crc64.c b/lib/crc64.c
+> new file mode 100644
+> index 000000000000..03f078303bd3
+> --- /dev/null
+> +++ b/lib/crc64.c
+> @@ -0,0 +1,71 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Normal 64bit CRC calculation.
+> + *
+> + * This is a basic crc64 implementation following ECMA-182 specification,
+> + * which can be found from,
+> + * http://www.ecma-international.org/publications/standards/Ecma-182.htm
+> + *
+> + * Dr. Ross N. Williams has a great document to introduce the idea of CRC
+> + * algorithm, here the CRC64 code is also inspired by the table-driven
+> + * algorithm and detail example from this paper. This paper can be found
+> + * from,
+> + * http://www.ross.net/crc/download/crc_v3.txt
+> + *
+> + * crc64table_le[256] is the lookup table of a table-driver 64bit CRC
+> + * calculation, which is generated by gen_crc64table.c in kernel build
+> + * time. The polynomial of crc64 arithmetic is from ECMA-182 specification
+> + * as well, which is defined as,
+> + *
+> + * x^64 + x^62 + x^57 + x^55 + x^54 + x^53 + x^52 + x^47 + x^46 + x^45 +
+> + * x^40 + x^39 + x^38 + x^37 + x^35 + x^33 + x^32 + x^31 + x^29 + x^27 +
+> + * x^24 + x^23 + x^22 + x^21 + x^19 + x^17 + x^13 + x^12 + x^10 + x^9 +
+> + * x^7 + x^4 + x + 1
+> + *
+> + * Copyright 2018 SUSE Linux.
+> + *   Author: Coly Li <colyli@suse.de>
+> + *
+> + */
 > +
->  Required child node:
->  - regulators: This is the list of child nodes that specify the regulator
->    initialization data for defined regulators. Please refer to below doc
-> -- 
-> 2.18.0
-> 
+> +#include <linux/module.h>
+> +#include <uapi/linux/types.h>
+> +#include "crc64table.h"
+> +
+> +MODULE_DESCRIPTION("CRC64 calculations");
+> +MODULE_LICENSE("GPL");
+> +
+> +__le64 crc64_le_update(__le64 crc, const void *_p, size_t len)
+> +{
+> +	size_t i, t;
+> +
+> +	const unsigned char *p = _p;
+> +
+> +	for (i = 0; i < len; i++) {
+> +		t = ((crc >> 56) ^ (__le64)(*p++)) & 0xFF;
+> +		crc = crc64table_le[t] ^ (crc << 8);
+> +	}
+> +
+> +	return crc;
+> +}
+> +EXPORT_SYMBOL_GPL(crc64_le_update);
+> +
+> +__le64 crc64_le(const void *p, size_t len)
+> +{
+> +	__le64 crc = 0x0000000000000000ULL;
+
+Hi,
+What's wrong with just using 0ULL ?
+
+thanks.
+
+> +
+> +	crc = crc64_le_update(crc, p, len);
+> +
+> +	return crc;
+> +}
+
+
+-- 
+~Randy
