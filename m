@@ -2,827 +2,222 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1B9ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C77ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65446208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:40:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5034208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:41:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s1+CbL6e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65446208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FFn2XBJ2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5034208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729997AbeGPUJk (ORCPT
+        id S1730072AbeGPUKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 16:09:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46250 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728417AbeGPUJj (ORCPT
+        Mon, 16 Jul 2018 16:10:10 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38024 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728290AbeGPUKJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 16:09:39 -0400
-Received: by mail-ed1-f68.google.com with SMTP id o8-v6so3317154edt.13;
-        Mon, 16 Jul 2018 12:40:43 -0700 (PDT)
+        Mon, 16 Jul 2018 16:10:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id k3-v6so7903991pgq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 12:41:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=78YI7SrUGxesBuXZ2/SCti+G1NSNESubV61pYuUSaBQ=;
-        b=s1+CbL6ev6Y+m7LlZtxkynfZbDDX0O5QOwnxmEwU0wmxIzanLpK6o8KDOAhKEQEm/U
-         DDGh+yS5AA09XLw4RS7fYNKpoWDfAWDlXT2r/tFp5Rw/ZnUo1948cLrd905LbKabG1BK
-         ImQleWPYrPIns3UMLVEu7evF8RDSYPRNqvBz21EJSXOQFdItyxqMDaCNJ/cHYH/UV2Qx
-         lj9+qYe9gUEPxh5wl4RXV3UBls2rpvYwsKOTA+QOsW0c2OwNiCLu764CeCI3BFsskW95
-         vV2irWFAWX6xGRmBq+Em0EKfdHtLLw1E0fkAXvsHlxKKfeKQIFPInQwwtvaaDWLGbq3P
-         y1Lg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=vDNNbMALTMFXifP8zFUGXLrYbeOj/2F7ZtBvsefTJMI=;
+        b=FFn2XBJ2/lBuvSSUoseGcl4y5vfIwgBCbQwEqlNU8uqzqfWI8bIqn4iDHB5meL5LjC
+         M09bfV6gkOV7ijZX/qRVR6vDDQfqEgmXJtfbFacHy0j8r6nvLYnj+ijyC6OtNaBjO6NC
+         26srIJyQ4/PS06R8j+D4SZuWKfViUCMvj9MAg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=78YI7SrUGxesBuXZ2/SCti+G1NSNESubV61pYuUSaBQ=;
-        b=eYut57P0pLDgr7QaIv5oc9fYSFVvId1YuALCidXH4glMj3T6Gw96aRWnpw+sBFNxa8
-         2jhkk3IrMCzg9Yll5GTN8crbIHDOwNMdV2Ly/HuQTU/L4waTJwnoxNEmc95UGSuHilmg
-         VfBvGj13G0ponicU+bkpCB6WUokCZ1r4XWettaM/VyNapSuKQ1Vv63wYjkt9bP5897pd
-         P/rt1Qf4izOGt53Xo4DIahPeF8cOVhUriq9d/vFBy1lmiYWhBW5Afw+wLPZXwHP1A68+
-         QvNjmEOVxAnkuEUPd4kBC9Tzhr0NN2u05H0kP6823tq+xAZkK6x8iw0HdDJVbMdkeiVS
-         C7/Q==
-X-Gm-Message-State: AOUpUlHfjyVRqRNuRfLuRyltWBeswjj1UK9M801P9lMr6ae5SW684eJs
-        vMzsq4BXnruN8rpMDkV5EqU=
-X-Google-Smtp-Source: AAOMgpflfJ2WeL5hnMEU03v6JrZbfT9NGCdJ+RC1rrK9VU88ILoCxlYZbYctH3mHjO20p4isa81C8Q==
-X-Received: by 2002:a50:f78a:: with SMTP id h10-v6mr18238378edn.37.1531770042503;
-        Mon, 16 Jul 2018 12:40:42 -0700 (PDT)
-Received: from localhost.localdomain ([156.212.29.248])
-        by smtp.gmail.com with ESMTPSA id x51-v6sm9660804edd.67.2018.07.16.12.40.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 12:40:41 -0700 (PDT)
-From:   Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Rik van Riel <riel@surriel.com>,
-        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
-Subject: [RFC V2] kvm: Adding skelaton for Memory ROE
-Date:   Mon, 16 Jul 2018 21:38:38 +0200
-Message-Id: <20180716193838.1734-1-ahmedsoliman0x666@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180716193513.30371-1-ahmedsoliman0x666@gmail.com>
-References: <20180716193513.30371-1-ahmedsoliman0x666@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=vDNNbMALTMFXifP8zFUGXLrYbeOj/2F7ZtBvsefTJMI=;
+        b=YBpvgfZtDKBbGnQh8aCVcRQfdKbkexgaun/fWhgb4qn3Btjm/WzkkpE5q1ClHejq5P
+         WNf39eP1C5Z74rUiFo7LkJpIhz70DvwSTiiGP1qGlG9at/Js0gfgu3dC9yXv2zXRgiUx
+         wQr6EM3MaqVKBtB2Ul+2FK3Tyjvkk3bSbJD6xkS2dbx1AtPXm2Qb3wAD/lyvfL9r98mZ
+         6q2fP6RY6OMbVgmWJC9JLodiz5hR5hVAYtpP7KnnHGRGxmOpEGb7ZuQ5TtZEkhxaig2z
+         Xhur/i9qr5mwA4fQvYHMRfZcXfhXvDps1zNCQgM5x7abltgE7y12vbIVtvd8IkA6KXo6
+         u6SA==
+X-Gm-Message-State: AOUpUlH5UDH9QefzdsQlfF2qqvdv9GlidsGHb0cvfnBS89CCUfrvLKW7
+        t3iW2NJLsDkx8VT4ZUZv+inSbw==
+X-Google-Smtp-Source: AAOMgpdlBHM2krlewtIM/AlYygL08Go9XEurYwElvDVDwptn9+B8RMhRSXUYjH+KOH6NiDiHpOWmYQ==
+X-Received: by 2002:a63:2246:: with SMTP id t6-v6mr16812904pgm.258.1531770075691;
+        Mon, 16 Jul 2018 12:41:15 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id z10-v6sm48985998pfh.83.2018.07.16.12.41.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 12:41:15 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 12:41:14 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v5 07/12] PM / devfreq: export devfreq_class
+Message-ID: <20180716194114.GA129942@google.com>
+References: <20180703234705.227473-1-mka@chromium.org>
+ <CGME20180703234837epcas5p1da751e0394c16816b95ac1956bf6de20@epcas5p1.samsung.com>
+ <20180703234705.227473-8-mka@chromium.org>
+ <5B3C5B78.6020401@samsung.com>
+ <20180706180923.GH129942@google.com>
+ <41164a91-b271-5f3b-b461-21ff5997cc84@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <41164a91-b271-5f3b-b461-21ff5997cc84@samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an attempt to implement Memory ROE discussed by me earlier as a
-way to prevent Rootkits. I have already explained in details in this
-thread:
-https://www.mail-archive.com/kernelnewbies@kernelnewbies.org/msg18826.html
-So I think there is no need for saying the exact same thing again.
-The problem is that the code isn't working and I can't figure out why
+Hi Chanwoo,
 
-I tried implementing the protection to follow similar behavior to that
-of KVM_MEM_READONLY but to be on page (SPTE) level
-The current problem I am facing is that when handling the hypercall
-vcpu->mode turns to be OUTSIDE_GUEST_MODE but KVM_REQ_TLB_FLUSH doesn't
-seem to be handled correctly. KVM documentation promised that when VCPU is
-not in GUEST_MODE VCPU are handled asap and kvm_vcpu_kick(vcpu); will
-even force that, but it doesn't seem to be the case for me. This is the
-kind of logging I am getting:
+On Thu, Jul 12, 2018 at 06:08:36PM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
+> 
+> On 2018년 07월 07일 03:09, Matthias Kaehlcke wrote:
+> > Hi,
+> > 
+> > On Wed, Jul 04, 2018 at 02:30:32PM +0900, Chanwoo Choi wrote:
+> > 
+> >> I didn't see any framework which exporting the class instance.
+> >> It is very dangerous. Unknown device drivers is able to reset
+> >> the 'devfreq_class' instance. I can't agree this approach.
+> > 
+> > While I agree that it is potential dangerous it is actually a common
+> > practice to export the class:
+> > 
+> 
+> I tried to find the real usage of exported class instance
+> and I add the comment for each class instance. Almost exported class
+> instance are used in the their own director or some exported class
+> like rio_mport_class/switchtec_class are created from specific device driver
+> instead of subsystem.
+> 
+> Only following two cases are used on outside of subsystem directory.
+> devtmpfs.c and alarmtimer.c are core feature of linux kernel.
+> 
+> 	drivers/base/devtmpfs.c uses 'block_class'.
+> 	kernel/time/alarmtimer.c uses 'rtc_class'.
+> 
+> I cannot yet agree this approach due to only block_class and rtc_class.
 
-[9073.753306] I came here kvm_mmu_slot_apply_flags
-[9073.753311] kvm_mmu_slot_apply_write_access: Flush = false
-[9073.992536] gfn_is_readonly: test_bit = 0
-[9073.992543] gfn_is_readonly: test_bit = 0
-[9073.992545] gfn_is_readonly: test_bit = 0
-[9073.992703] Hypercall received, page address 0x0
-[9073.992705] gfn_is_readonly: test_bit = 0
-[9073.992708] kvm_mroe: flush state = Done
-[9073.992709] kvm_mroe: cpu mode = OUTSIDE_GUEST_MODE
-[9073.992711] Setting page number 0 in slot number 0
-[9073.992715] slot_rmap_apply_protection: The 0th page is readonly, Flush = True
-[9073.992717] kvm_mmu_slot_apply_write_access: Flush = true
-[9073.992719] kvm_mroe: cpu mode = OUTSIDE_GUEST_MODE
-[9073.992720] kvm_mroe: cpu mode = OUTSIDE_GUEST_MODE
-[9073.992721] kvm_mroe: flush state = Waiting
+I thought your main concern was that the class is exported, which is
+what several other subsystems do. That the class isn't used outside of
+the subsystem directory most likely means that there is no need for
+it, rather than that it shouldn't be done at all (depending on the
+type of use of course).
 
-For some reason kvm_vcpu_kick() didn't force the KVM_REQ_TLB_FLUSH to
-kick into the virtual cpu (I am talking about the last 2 lines).
+In any case not exporting the class object provides a limited
+protection against potential abuse of the class at best. To use the
+class API all that is needed is a 'struct device' of a devfreq device,
+which has a pointer to the class object (dev->class).
 
-I am aware that there is still alot missing (like dealing with malicious
-guest remappings) and the code quality sucks, but any ideas about what I
-could be doing wrong (or ideas in general) would be apprciated. I am
-already planning to do everything cleanly once it works.
+Theoretically I could register a fake devfreq device to obtain access
+to the class object, though that doesn't seem a very neat approach ;-)
 
-Thansk.
+> You added the following comment why devfreq_class instance is necessary.
+> Actullay, I don't know the best solution right now. But, all device drivers
+> can be added or removed if driver uses the module type. It is not a problem
+> for only devfreq instance.
 
-Edits for V2:
-Unfortunately I did few mistakes that lead do kernel not compiling on
-valnilla .config file because of silly mistakes not doing #ifdef..#endif
-in some places so this lead to using symbols only available when CONFIG_KVM_MROE
-is set in .conf even if it wasn't anyway it is fixed. and I should not
-that CONFIG_KVM_MROE should be used when testing my code and trying to
-figure out what went wrong
-Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
----
- arch/x86/include/asm/kvm_host.h |   7 +-
- arch/x86/kvm/Kconfig            |   7 ++
- arch/x86/kvm/mmu.c              | 158 ++++++++++++++++++++++++++++++----------
- arch/x86/kvm/x86.c              |  83 ++++++++++++++++++++-
- include/linux/kvm_host.h        |  17 +++++
- include/uapi/linux/kvm_para.h   |   4 +-
- virt/kvm/kvm_main.c             |  36 +++++++--
- 7 files changed, 257 insertions(+), 55 deletions(-)
+Certainly it's not a problem limited to devfreq devices. In many other
+cases bus notifiers can be used, but since devfreq devices areen't
+tied to a specific bus this is not an option here.
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index c13cd28d9d1b..c66e9245f750 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -235,7 +235,10 @@ struct kvm_mmu_memory_cache {
- 	int nobjs;
- 	void *objects[KVM_NR_MEM_OBJS];
- };
--
-+struct kvm_write_access_data {
-+	int i;
-+	struct kvm_memory_slot *memslot;
-+};
- /*
-  * the pages used as guest page table on soft mmu are tracked by
-  * kvm_memory_slot.arch.gfn_track which is 16 bits, so the role bits used
-@@ -1130,7 +1133,7 @@ void kvm_mmu_set_mask_ptes(u64 user_mask, u64 accessed_mask,
- 		u64 acc_track_mask, u64 me_mask);
- 
- void kvm_mmu_reset_context(struct kvm_vcpu *vcpu);
--void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
-+void kvm_mmu_slot_apply_write_access(struct kvm *kvm,
- 				      struct kvm_memory_slot *memslot);
- void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
- 				   const struct kvm_memory_slot *memslot);
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 92fd433c50b9..8ae822a8dc7a 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -96,6 +96,13 @@ config KVM_MMU_AUDIT
- 	 This option adds a R/W kVM module parameter 'mmu_audit', which allows
- 	 auditing of KVM MMU events at runtime.
- 
-+config KVM_MROE
-+	bool "Hypercall Memory Read-Only Enforcement"
-+	depends on KVM && X86
-+	help
-+	This option add KVM_HC_HMROE hypercall to kvm which as hardening
-+	mechanism to protect memory pages from being edited.
-+
- # OK, it's a little counter-intuitive to do this, but it puts it neatly under
- # the virtualization menu.
- source drivers/vhost/Kconfig
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index d594690d8b95..e06e923f90aa 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -70,7 +70,7 @@ enum {
- #undef MMU_DEBUG
- 
- #ifdef MMU_DEBUG
--static bool dbg = 0;
-+static bool dbg = 1;
- module_param(dbg, bool, 0644);
- 
- #define pgprintk(x...) do { if (dbg) printk(x); } while (0)
-@@ -1402,7 +1402,6 @@ static void drop_large_spte(struct kvm_vcpu *vcpu, u64 *sptep)
- static bool spte_write_protect(u64 *sptep, bool pt_protect)
- {
- 	u64 spte = *sptep;
--
- 	if (!is_writable_pte(spte) &&
- 	      !(pt_protect && spte_can_locklessly_be_made_writable(spte)))
- 		return false;
-@@ -1415,21 +1414,42 @@ static bool spte_write_protect(u64 *sptep, bool pt_protect)
- 
- 	return mmu_spte_update(sptep, spte);
- }
--
-+#ifdef CONFIG_KVM_MROE
- static bool __rmap_write_protect(struct kvm *kvm,
- 				 struct kvm_rmap_head *rmap_head,
--				 bool pt_protect)
-+				 bool pt_protect,
-+				 struct kvm_write_access_data *d)
-+{
-+	u64 *sptep;
-+	struct rmap_iterator iter;
-+	bool flush = false;
-+	if (d != NULL) {
-+		for_each_rmap_spte(rmap_head, &iter, sptep) {
-+			flush |= spte_write_protect(sptep,
-+				!test_bit(d->i, d->memslot->mroe_bitmap)
-+				&& pt_protect);
-+			d->i++;
-+		}
-+	} else {
-+		for_each_rmap_spte(rmap_head, &iter, sptep)
-+			flush |= spte_write_protect(sptep, pt_protect);
-+	}
-+	return flush;
-+}
-+#else
-+static bool __rmap_write_protect(struct kvm *kvm,
-+				 struct kvm_rmap_head *rmap_head,
-+				 bool pt_protect,
-+				 struct kvm_write_access_data *d)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
- 	bool flush = false;
--
- 	for_each_rmap_spte(rmap_head, &iter, sptep)
- 		flush |= spte_write_protect(sptep, pt_protect);
--
- 	return flush;
- }
--
-+#endif
- static bool spte_clear_dirty(u64 *sptep)
- {
- 	u64 spte = *sptep;
-@@ -1457,7 +1477,8 @@ static bool wrprot_ad_disabled_spte(u64 *sptep)
-  *	- W bit on ad-disabled SPTEs.
-  * Returns true iff any D or W bits were cleared.
-  */
--static bool __rmap_clear_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
-+static bool __rmap_clear_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-+		void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -1483,7 +1504,8 @@ static bool spte_set_dirty(u64 *sptep)
- 	return mmu_spte_update(sptep, spte);
- }
- 
--static bool __rmap_set_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
-+static bool __rmap_set_dirty(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-+		void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -1515,7 +1537,7 @@ static void kvm_mmu_write_protect_pt_masked(struct kvm *kvm,
- 	while (mask) {
- 		rmap_head = __gfn_to_rmap(slot->base_gfn + gfn_offset + __ffs(mask),
- 					  PT_PAGE_TABLE_LEVEL, slot);
--		__rmap_write_protect(kvm, rmap_head, false);
-+		__rmap_write_protect(kvm, rmap_head, false, NULL);
- 
- 		/* clear the first set bit */
- 		mask &= mask - 1;
-@@ -1541,7 +1563,7 @@ void kvm_mmu_clear_dirty_pt_masked(struct kvm *kvm,
- 	while (mask) {
- 		rmap_head = __gfn_to_rmap(slot->base_gfn + gfn_offset + __ffs(mask),
- 					  PT_PAGE_TABLE_LEVEL, slot);
--		__rmap_clear_dirty(kvm, rmap_head);
-+		__rmap_clear_dirty(kvm, rmap_head, NULL);
- 
- 		/* clear the first set bit */
- 		mask &= mask - 1;
-@@ -1591,10 +1613,14 @@ bool kvm_mmu_slot_gfn_write_protect(struct kvm *kvm,
- 	struct kvm_rmap_head *rmap_head;
- 	int i;
- 	bool write_protected = false;
--
-+	struct kvm_write_access_data data = {
-+		.i = 0,
-+		.memslot = slot,
-+	};
- 	for (i = PT_PAGE_TABLE_LEVEL; i <= PT_MAX_HUGEPAGE_LEVEL; ++i) {
- 		rmap_head = __gfn_to_rmap(gfn, i, slot);
--		write_protected |= __rmap_write_protect(kvm, rmap_head, true);
-+		write_protected |= __rmap_write_protect(kvm, rmap_head, true,
-+				&data);
- 	}
- 
- 	return write_protected;
-@@ -1608,7 +1634,8 @@ static bool rmap_write_protect(struct kvm_vcpu *vcpu, u64 gfn)
- 	return kvm_mmu_slot_gfn_write_protect(vcpu->kvm, slot, gfn);
- }
- 
--static bool kvm_zap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head)
-+static bool kvm_zap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-+		void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -1628,7 +1655,7 @@ static int kvm_unmap_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
- 			   struct kvm_memory_slot *slot, gfn_t gfn, int level,
- 			   unsigned long data)
- {
--	return kvm_zap_rmapp(kvm, rmap_head);
-+	return kvm_zap_rmapp(kvm, rmap_head, NULL);
- }
- 
- static int kvm_set_pte_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
-@@ -5086,13 +5113,15 @@ void kvm_mmu_uninit_vm(struct kvm *kvm)
- }
- 
- /* The return value indicates if tlb flush on all vcpus is needed. */
--typedef bool (*slot_level_handler) (struct kvm *kvm, struct kvm_rmap_head *rmap_head);
-+typedef bool (*slot_level_handler) (struct kvm *kvm,
-+		struct kvm_rmap_head *rmap_head, void *data);
- 
- /* The caller should hold mmu-lock before calling this function. */
- static __always_inline bool
- slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 			slot_level_handler fn, int start_level, int end_level,
--			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb)
-+			gfn_t start_gfn, gfn_t end_gfn, bool lock_flush_tlb,
-+			void *data)
- {
- 	struct slot_rmap_walk_iterator iterator;
- 	bool flush = false;
-@@ -5100,7 +5129,7 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 	for_each_slot_rmap_range(memslot, start_level, end_level, start_gfn,
- 			end_gfn, &iterator) {
- 		if (iterator.rmap)
--			flush |= fn(kvm, iterator.rmap);
-+			flush |= fn(kvm, iterator.rmap, data);
- 
- 		if (need_resched() || spin_needbreak(&kvm->mmu_lock)) {
- 			if (flush && lock_flush_tlb) {
-@@ -5122,36 +5151,36 @@ slot_handle_level_range(struct kvm *kvm, struct kvm_memory_slot *memslot,
- static __always_inline bool
- slot_handle_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
- 		  slot_level_handler fn, int start_level, int end_level,
--		  bool lock_flush_tlb)
-+		  bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level_range(kvm, memslot, fn, start_level,
- 			end_level, memslot->base_gfn,
- 			memslot->base_gfn + memslot->npages - 1,
--			lock_flush_tlb);
-+			lock_flush_tlb, data);
- }
- 
- static __always_inline bool
- slot_handle_all_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
--		      slot_level_handler fn, bool lock_flush_tlb)
-+		      slot_level_handler fn, bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
--				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
-+				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb, data);
- }
- 
- static __always_inline bool
- slot_handle_large_level(struct kvm *kvm, struct kvm_memory_slot *memslot,
--			slot_level_handler fn, bool lock_flush_tlb)
-+			slot_level_handler fn, bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL + 1,
--				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb);
-+				 PT_MAX_HUGEPAGE_LEVEL, lock_flush_tlb, data);
- }
- 
- static __always_inline bool
- slot_handle_leaf(struct kvm *kvm, struct kvm_memory_slot *memslot,
--		 slot_level_handler fn, bool lock_flush_tlb)
-+		 slot_level_handler fn, bool lock_flush_tlb, void *data)
- {
- 	return slot_handle_level(kvm, memslot, fn, PT_PAGE_TABLE_LEVEL,
--				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb);
-+				 PT_PAGE_TABLE_LEVEL, lock_flush_tlb, data);
- }
- 
- void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
-@@ -5173,7 +5202,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 
- 			slot_handle_level_range(kvm, memslot, kvm_zap_rmapp,
- 						PT_PAGE_TABLE_LEVEL, PT_MAX_HUGEPAGE_LEVEL,
--						start, end - 1, true);
-+						start, end - 1, true, NULL);
- 		}
- 	}
- 
-@@ -5181,23 +5210,70 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- }
- 
- static bool slot_rmap_write_protect(struct kvm *kvm,
--				    struct kvm_rmap_head *rmap_head)
-+				    struct kvm_rmap_head *rmap_head,
-+				    void *data)
-+{
-+	return __rmap_write_protect(kvm, rmap_head, false,
-+			(struct kvm_write_access_data *)data);
-+}
-+#ifdef CONFIG_KVM_MROE
-+static bool slot_rmap_apply_protection(struct kvm *kvm,
-+				      struct kvm_rmap_head *rmap_head,
-+				      void *data)
- {
--	return __rmap_write_protect(kvm, rmap_head, false);
-+	struct kvm_write_access_data *d = (struct kvm_write_access_data *) data;
-+	unsigned long *protection = d->memslot->mroe_bitmap;
-+	bool prot_mask = d->memslot->flags & KVM_MEM_READONLY;
-+	u64 *sptep;
-+	struct rmap_iterator iter;
-+	bool flush = false;
-+
-+	for_each_rmap_spte(rmap_head, &iter, sptep) {
-+		flush |= spte_write_protect(sptep,
-+				!(test_bit(d->i, protection) || prot_mask));
-+		if (test_bit(d->i, protection)) {
-+			pr_info("%s: The %dth page is readonly, Flush = %s\n",
-+				 __func__, d->i, flush?"True" : "False");
-+		}
-+		d->i++;
-+	}
-+	return flush;
-+}
-+#else
-+static bool slot_rmap_apply_protection(struct kvm *kvm,
-+				      struct kvm_rmap_head *rmap_head,
-+				      void *data)
-+{
-+	struct kvm_write_access_data *d = (struct kvm_write_access_data *) data;
-+	bool prot_mask = d->memslot->flags & KVM_MEM_READONLY;
-+	u64 *sptep;
-+	struct rmap_iterator iter;
-+	bool flush = false;
-+
-+	for_each_rmap_spte(rmap_head, &iter, sptep) {
-+		flush |= spte_write_protect(sptep, !prot_mask);
-+		d->i++;
-+	}
-+	return flush;
- }
- 
--void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
-+#endif
-+void kvm_mmu_slot_apply_write_access(struct kvm *kvm,
- 				      struct kvm_memory_slot *memslot)
- {
- 	bool flush;
--
-+	struct kvm_write_access_data data = {
-+		.i = 0,
-+		.memslot = memslot,
-+	};
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_all_level(kvm, memslot, slot_rmap_write_protect,
--				      false);
-+	flush = slot_handle_all_level(kvm, memslot, slot_rmap_apply_protection,
-+				      false, &data);
-+	pr_info("%s: Flush = %s\n", __func__, flush ? "true":"false");
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	/*
--	 * kvm_mmu_slot_remove_write_access() and kvm_vm_ioctl_get_dirty_log()
-+	 * kvm_mmu_slot_apply_write_access() and kvm_vm_ioctl_get_dirty_log()
- 	 * which do tlb flush out of mmu-lock should be serialized by
- 	 * kvm->slots_lock otherwise tlb flush would be missed.
- 	 */
-@@ -5219,7 +5295,8 @@ void kvm_mmu_slot_remove_write_access(struct kvm *kvm,
- }
- 
- static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
--					 struct kvm_rmap_head *rmap_head)
-+					 struct kvm_rmap_head *rmap_head,
-+					 void *data)
- {
- 	u64 *sptep;
- 	struct rmap_iterator iter;
-@@ -5257,7 +5334,7 @@ void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
- 	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
- 	spin_lock(&kvm->mmu_lock);
- 	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
--			 kvm_mmu_zap_collapsible_spte, true);
-+			 kvm_mmu_zap_collapsible_spte, true, NULL);
- 	spin_unlock(&kvm->mmu_lock);
- }
- 
-@@ -5267,7 +5344,7 @@ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false);
-+	flush = slot_handle_leaf(kvm, memslot, __rmap_clear_dirty, false, NULL);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	lockdep_assert_held(&kvm->slots_lock);
-@@ -5290,10 +5367,10 @@ void kvm_mmu_slot_largepage_remove_write_access(struct kvm *kvm,
- 
- 	spin_lock(&kvm->mmu_lock);
- 	flush = slot_handle_large_level(kvm, memslot, slot_rmap_write_protect,
--					false);
-+					false, NULL);
- 	spin_unlock(&kvm->mmu_lock);
- 
--	/* see kvm_mmu_slot_remove_write_access */
-+	/* see kvm_mmu_slot_apply_write_access */
- 	lockdep_assert_held(&kvm->slots_lock);
- 
- 	if (flush)
-@@ -5307,7 +5384,8 @@ void kvm_mmu_slot_set_dirty(struct kvm *kvm,
- 	bool flush;
- 
- 	spin_lock(&kvm->mmu_lock);
--	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false);
-+	flush = slot_handle_all_level(kvm, memslot, __rmap_set_dirty, false,
-+			NULL);
- 	spin_unlock(&kvm->mmu_lock);
- 
- 	lockdep_assert_held(&kvm->slots_lock);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0046aa70205a..96e967199fda 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -55,7 +55,7 @@
- #include <linux/irqbypass.h>
- #include <linux/sched/stat.h>
- #include <linux/mem_encrypt.h>
--
-+#include <linux/mempolicy.h>
- #include <trace/events/kvm.h>
- 
- #include <asm/debugreg.h>
-@@ -4177,7 +4177,7 @@ int kvm_vm_ioctl_get_dirty_log(struct kvm *kvm, struct kvm_dirty_log *log)
- 
- 	/*
- 	 * All the TLBs can be flushed out of mmu lock, see the comments in
--	 * kvm_mmu_slot_remove_write_access().
-+	 * kvm_mmu_slot_apply_write_access().
- 	 */
- 	lockdep_assert_held(&kvm->slots_lock);
- 	if (is_dirty)
-@@ -6669,7 +6669,74 @@ static int kvm_pv_clock_pairing(struct kvm_vcpu *vcpu, gpa_t paddr,
- 	return ret;
- }
- #endif
-+#ifdef CONFIG_KVM_MROE
-+static int roe_protect_frame(struct kvm *kvm, gpa_t gpa)
-+{
-+	struct kvm_memory_slot *slot;
-+	gfn_t gfn = gpa >> PAGE_SHIFT;
-+
-+	slot = gfn_to_memslot(kvm, gfn);
-+	//XXX do some error checking dude.
-+	if (gfn > slot->base_gfn + slot->npages) {
-+		//XXX use a better language
-+		pr_err("You have an overflow\n");
-+		return -1;
-+	}
-+	pr_info("Setting page number %lld in slot number %d\n",
-+		gfn - slot->base_gfn, slot->id);
-+	// something is wrong with the locking here
-+	// you should lock the area before writing the bit
-+	set_bit(gfn - slot->base_gfn, slot->mroe_bitmap);
-+	kvm_mmu_slot_apply_write_access(kvm, slot);
-+	return 0;
-+}
-+void debug_cpu_mode(struct kvm_vcpu *vcpu)
-+{
-+	char *mode = "Unknown";
-+
-+	if (vcpu->mode == OUTSIDE_GUEST_MODE)
-+		mode = "OUTSIDE_GUEST_MODE";
-+	else if (vcpu->mode == IN_GUEST_MODE)
-+		mode = "IN_GUEST_MODE";
-+	else if (vcpu->mode == EXITING_GUEST_MODE)
-+		mode = "EXITING_GUEST_MODE";
-+	else if (vcpu->mode == READING_SHADOW_PAGE_TABLES)
-+		mode = "READING_SHADOW_PAGE_TABLES";
-+	pr_info("kvm_mroe: cpu mode = %s\n", mode);
-+}
-+static int kvm_mroe(struct kvm_vcpu *vcpu, u64 gva)
-+{
-+	struct kvm *kvm = vcpu->kvm;
-+	gpa_t gpa;
-+	u64 hva;
-+	int ret;
- 
-+	//XXX check that the hypercall is done from kernel mode
-+	if (gva & ~PAGE_MASK)
-+		return -EINVAL;
-+	gpa = kvm_mmu_gva_to_gpa_system(vcpu, gva, NULL);
-+	hva = gfn_to_hva(kvm, gpa >> PAGE_SHIFT);
-+	//XXX This doesn't work but it will be ok to check that we can access
-+	// the address and make sure that the mapping makes sense
-+	if (!access_ok(VERIFY_WRITE, hva, PAGE_SIZE)) {
-+		pr_info("Duplicate request\n");
-+		return -KVM_EROEDUPLICATR;
-+	}
-+	pr_info("%s: flush state = %s\n", __func__,
-+			kvm_check_request(KVM_REQ_TLB_FLUSH, vcpu) ? "Waiting" :
-+								     "Done");
-+	debug_cpu_mode(vcpu);
-+	ret = roe_protect_frame(vcpu->kvm, gpa);
-+	debug_cpu_mode(vcpu);
-+	kvm_vcpu_kick(vcpu);
-+	debug_cpu_mode(vcpu);
-+	pr_info("%s: flush state = %s\n", __func__,
-+			kvm_check_request(KVM_REQ_TLB_FLUSH, vcpu) ? "Waiting" :
-+								     "Done");
-+
-+	return ret;
-+}
-+#endif
- /*
-  * kvm_pv_kick_cpu_op:  Kick a vcpu.
-  *
-@@ -6737,6 +6804,12 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- 	case KVM_HC_CLOCK_PAIRING:
- 		ret = kvm_pv_clock_pairing(vcpu, a0, a1);
- 		break;
-+#endif
-+#ifdef CONFIG_KVM_MROE
-+	case KVM_HC_HMROE:
-+		pr_info("Hypercall received, page address 0x%lx\n", a0);
-+		ret = kvm_mroe(vcpu, a0);
-+		break;
- #endif
- 	default:
- 		ret = -KVM_ENOSYS;
-@@ -8971,8 +9044,10 @@ static void kvm_mmu_slot_apply_flags(struct kvm *kvm,
- 				     struct kvm_memory_slot *new)
- {
- 	/* Still write protect RO slot */
-+	pr_info("%s: visited\n", __func__);
-+	kvm_mmu_slot_apply_write_access(kvm, new);
-+	return;
- 	if (new->flags & KVM_MEM_READONLY) {
--		kvm_mmu_slot_remove_write_access(kvm, new);
- 		return;
- 	}
- 
-@@ -9010,7 +9085,7 @@ static void kvm_mmu_slot_apply_flags(struct kvm *kvm,
- 		if (kvm_x86_ops->slot_enable_log_dirty)
- 			kvm_x86_ops->slot_enable_log_dirty(kvm, new);
- 		else
--			kvm_mmu_slot_remove_write_access(kvm, new);
-+			kvm_mmu_slot_apply_write_access(kvm, new);
- 	} else {
- 		if (kvm_x86_ops->slot_disable_log_dirty)
- 			kvm_x86_ops->slot_disable_log_dirty(kvm, new);
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 4ee7bc548a83..1ca6db7b8931 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/types.h>
-+#include <linux/hashtable.h>
- #include <linux/hardirq.h>
- #include <linux/list.h>
- #include <linux/mutex.h>
-@@ -297,6 +298,9 @@ static inline int kvm_vcpu_exiting_guest_mode(struct kvm_vcpu *vcpu)
- struct kvm_memory_slot {
- 	gfn_t base_gfn;
- 	unsigned long npages;
-+#ifdef CONFIG_KVM_MROE
-+	unsigned long *mroe_bitmap;
-+#endif
- 	unsigned long *dirty_bitmap;
- 	struct kvm_arch_memory_slot arch;
- 	unsigned long userspace_addr;
-@@ -387,6 +391,13 @@ struct kvm_memslots {
- 	int used_slots;
- };
- 
-+#ifdef CONFIG_KVM_MROE
-+struct roe_page {
-+	void *page_start;
-+	struct hlist_node hash_list;
-+};
-+#endif
-+
- struct kvm {
- 	spinlock_t mmu_lock;
- 	struct mutex slots_lock;
-@@ -440,6 +451,12 @@ struct kvm {
- 	unsigned long mmu_notifier_seq;
- 	long mmu_notifier_count;
- #endif
-+
-+#ifdef CONFIG_KVM_MROE
-+	//TODO tune hash size;
-+	#define KVM_MROE_HASH_SIZE 8
-+	DECLARE_HASHTABLE(roe_pages, KVM_MROE_HASH_SIZE);
-+#endif
- 	long tlbs_dirty;
- 	struct list_head devices;
- 	struct dentry *debugfs_dentry;
-diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
-index dcf629dd2889..2be960477649 100644
---- a/include/uapi/linux/kvm_para.h
-+++ b/include/uapi/linux/kvm_para.h
-@@ -17,6 +17,8 @@
- #define KVM_EPERM		EPERM
- #define KVM_EOPNOTSUPP		95
- 
-+#define KVM_EROEDUPLICATR	1
-+
- #define KVM_HC_VAPIC_POLL_IRQ		1
- #define KVM_HC_MMU_OP			2
- #define KVM_HC_FEATURES			3
-@@ -26,7 +28,7 @@
- #define KVM_HC_MIPS_EXIT_VM		7
- #define KVM_HC_MIPS_CONSOLE_OUTPUT	8
- #define KVM_HC_CLOCK_PAIRING		9
--
-+#define KVM_HC_HMROE			10
- /*
-  * hypercalls use architecture specific
-  */
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 8b47507faab5..ca1b95a16a8b 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -634,7 +634,6 @@ static struct kvm *kvm_create_vm(unsigned long type)
- 	mutex_init(&kvm->slots_lock);
- 	refcount_set(&kvm->users_count, 1);
- 	INIT_LIST_HEAD(&kvm->devices);
--
- 	r = kvm_arch_init_vm(kvm, type);
- 	if (r)
- 		goto out_err_no_disable;
-@@ -794,6 +793,17 @@ static int kvm_create_dirty_bitmap(struct kvm_memory_slot *memslot)
- 	return 0;
- }
- 
-+static int kvm_init_mroe_bitmap(struct kvm_memory_slot *slot)
-+{
-+#ifdef CONFIG_KVM_MROE
-+	slot->mroe_bitmap = kvzalloc(BITS_TO_LONGS(slot->npages) *
-+			sizeof(unsigned long), GFP_KERNEL);
-+	if (!slot->mroe_bitmap)
-+		return -ENOMEM;
-+#endif
-+	return 0;
-+}
-+
- /*
-  * Insert memslot and re-sort memslots based on their GFN,
-  * so binary search could be used to lookup GFN.
-@@ -1011,7 +1021,8 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		if (kvm_create_dirty_bitmap(&new) < 0)
- 			goto out_free;
- 	}
--
-+	if (kvm_init_mroe_bitmap(&new) < 0)
-+		goto out_free;
- 	slots = kvzalloc(sizeof(struct kvm_memslots), GFP_KERNEL);
- 	if (!slots)
- 		goto out_free;
-@@ -1263,16 +1274,25 @@ static bool memslot_is_readonly(struct kvm_memory_slot *slot)
- {
- 	return slot->flags & KVM_MEM_READONLY;
- }
--
-+static bool gfn_is_readonly(struct kvm_memory_slot *slot, gfn_t gfn)
-+{
-+#ifdef CONFIG_KVM_MROE
-+	pr_info("%s: test_bit = %d", __func__,
-+			test_bit(gfn - slot->base_gfn, slot->mroe_bitmap));
-+	///dump_stack();
-+	return test_bit(gfn - slot->base_gfn, slot->mroe_bitmap) ||
-+		memslot_is_readonly(slot);
-+#else
-+	return memslot_is_readonly(slot);
-+#endif
-+}
- static unsigned long __gfn_to_hva_many(struct kvm_memory_slot *slot, gfn_t gfn,
- 				       gfn_t *nr_pages, bool write)
- {
- 	if (!slot || slot->flags & KVM_MEMSLOT_INVALID)
- 		return KVM_HVA_ERR_BAD;
--
--	if (memslot_is_readonly(slot) && write)
-+	if (gfn_is_readonly(slot, gfn) && write)
- 		return KVM_HVA_ERR_RO_BAD;
--
- 	if (nr_pages)
- 		*nr_pages = slot->npages - (gfn - slot->base_gfn);
- 
-@@ -1314,7 +1334,7 @@ unsigned long gfn_to_hva_memslot_prot(struct kvm_memory_slot *slot,
- 	unsigned long hva = __gfn_to_hva_many(slot, gfn, NULL, false);
- 
- 	if (!kvm_is_error_hva(hva) && writable)
--		*writable = !memslot_is_readonly(slot);
-+		*writable = !gfn_is_readonly(slot, gfn);
- 
- 	return hva;
- }
-@@ -1554,7 +1574,7 @@ kvm_pfn_t __gfn_to_pfn_memslot(struct kvm_memory_slot *slot, gfn_t gfn,
- 	}
- 
- 	/* Do not map writable pfn in the readonly memslot. */
--	if (writable && memslot_is_readonly(slot)) {
-+	if (writable && gfn_is_readonly(slot, gfn)) {
- 		*writable = false;
- 		writable = NULL;
- 	}
--- 
-2.16.4
+If you really don't want to export the class we could add wrappers
+for (un)registering a class interface:
 
+int devfreq_class_interface_register(struct class_interface *)
+void devfreq_class_interface_unregister(struct class_interface *)
+
+The wrappers would have to assign ci->class since the throttler
+can't see the class object.
+
+Or add notifiers for device addition/removal, though the throttler
+relies on the behavior of the class_interface which also notifies
+about devices added before registration. This might not be what other
+potential users of the notifiers expect.
+
+Thanks
+
+Matthias
+
+> /*
+> +	 * devfreq devices can be added and removed at runtime, hence they
+> +	 * must also be handled dynamically. The class_interface notifies us
+> +	 * whenever a device is added or removed. When the interface is
+> +	 * registered ci->add_dev() is called for all existing devfreq
+> +	 * devices.
+> */
+> 
+> 
+> > grep "extern struct class " include/linux/ -R
+> > include/linux/rio.h:extern struct class rio_mport_class;
+> rio_mport_class is created on drivers/rapidio/rio-drivers.c.
+> It means that just device driver create the 'rio_mport_class' class
+> instead of any linux kernel subsystem.
+> 
+> > include/linux/tty.h:extern struct class *tty_class;
+> tty_class is not used on outside of drivers/tty
+> 
+> > include/linux/fb.h:extern struct class *fb_class;
+> fb_class is not used on outside of drivers/video/fbdev
+> 
+> > include/linux/ide.h:extern struct class *ide_port_class;
+> ide_port_class is not used on outside of drivers/ide.
+> 
+> > include/linux/device.h:extern struct class * __must_check __class_create(struct module *owner,
+> 
+> > include/linux/devfreq.h:extern struct class *devfreq_class;
+> not yet
+> 
+> > include/linux/switchtec.h:extern struct class *switchtec_class;
+> switchtec_class is created on drivers/pci/switch/switchtec.c
+> and then switchtec_class is only used on drivers/ntb/hw/mscc/ntb_hw_switchtec.c.
+> It is not subsystem. Just switchtec.c device driver makes the their own class.
+> 
+> > include/linux/input.h:extern struct class input_class;
+> 	input_class is not used on outside of drivers/input.
+> 
+> > include/linux/power_supply.h:extern struct class *power_supply_class;
+> 	power_supply_class is not used on outside of drivers/power/supply.
+> 
+> 
+> > include/linux/genhd.h:extern struct class block_class;
+> 	drivers/base/devtmpfs.c uses 'block_class'.
+> 
+> > include/linux/rtc.h:extern struct class *rtc_class;
+> 	kernel/time/alarmtimer.c uses 'rtc_class'.
+> 
+> > 
+> > struct class_interface and class_interface_register() would be
+> > pointless without exported classes.
+> > 
+> > My understanding is that the kernel is often lax on encapsulation and
+> > exposes private/delicate data pragmatically within the kernel when
+> > needed because "the kernel trusts itself".
