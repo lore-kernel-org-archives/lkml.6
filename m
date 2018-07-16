@@ -6,62 +6,86 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D481ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A48ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB740208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB740208B2
+	by mail.kernel.org (Postfix) with ESMTP id C0449208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:01:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0449208B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbeGPAZh (ORCPT
+        id S1727299AbeGPA0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 20:25:37 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34328 "EHLO
+        Sun, 15 Jul 2018 20:26:35 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:34354 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727051AbeGPAZh (ORCPT
+        with ESMTP id S1727034AbeGPA0f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 20:25:37 -0400
+        Sun, 15 Jul 2018 20:26:35 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1feqwb-0002Bi-UP; Mon, 16 Jul 2018 08:00:49 +0800
+        id 1feqxE-0002CH-FQ; Mon, 16 Jul 2018 08:01:28 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1feqwY-0001o4-DI; Mon, 16 Jul 2018 08:00:46 +0800
-Date:   Mon, 16 Jul 2018 08:00:46 +0800
+        id 1feqx4-0001oJ-CR; Mon, 16 Jul 2018 08:01:18 +0800
+Date:   Mon, 16 Jul 2018 08:01:18 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     akpm@linux-foundation.org, tgraf@suug.ch,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH] lib/rhashtable: consider param->min_size when setting
- initial table size
-Message-ID: <20180716000046.yscgnpr256qhm2qg@gondor.apana.org.au>
-References: <20180714062516.30433-1-dave@stgolabs.net>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for
+ AHASH_REQUEST_ON_STACK
+Message-ID: <20180716000118.nna5jkgcjxofbsup@gondor.apana.org.au>
+References: <20180711203619.1020-1-keescook@chromium.org>
+ <20180711203619.1020-12-keescook@chromium.org>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
+ <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
+ <CAGXu5jJOZ3u1BTf8U20wErphfjKzaGK+m1sdhA89LqVP3MDYZA@mail.gmail.com>
+ <20180713062204.2o7gz5xri374nii6@gondor.apana.org.au>
+ <CAGXu5jJp3Y4RZD+ZUYsWqf+sTbGJwdN3M=KOiPBn9VecYE4OgQ@mail.gmail.com>
+ <20180715024430.n6bcnb4k7cm3ugtj@gondor.apana.org.au>
+ <CAGXu5jLkhC8Jb0zVXuVZnbJM6tmMpyGkaoCvw=jACLA3fnoChw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180714062516.30433-1-dave@stgolabs.net>
+In-Reply-To: <CAGXu5jLkhC8Jb0zVXuVZnbJM6tmMpyGkaoCvw=jACLA3fnoChw@mail.gmail.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 11:25:16PM -0700, Davidlohr Bueso wrote:
-> rhashtable_init() currently does not take into account the user-passed
-> min_size parameter unless param->nelem_hint is set as well. As such,
-> the default size (number of buckets) will always be HASH_DEFAULT_SIZE
-> even if the smallest allowed size is larger than that. Remediate this
-> by unconditionally calling into rounded_hashtable_size() and handling
-> things accordingly.
+On Sat, Jul 14, 2018 at 07:59:09PM -0700, Kees Cook wrote:
+> On Sat, Jul 14, 2018 at 7:44 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> > On Fri, Jul 13, 2018 at 08:07:10PM -0700, Kees Cook wrote:
+> >>
+> >> On a plane today I started converting all these to shash. IIUC, it
+> >> just looks like this (apologies for whitespace damage):
+> >
+> > Yes if it doesn't actually make use of SGs then shash would be
+> > the way to go.  However, for SG users ahash is the best interface.
 > 
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> Nearly all of them artificially build an sg explicitly to use the
+> ahash interface. :P
+> 
+> So, I'll take that as a "yes, do these conversions." :) Thanks!
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-Normally these patches go through netdev so could you please resend
-it with my ack to netdev@vger.kernel.org?
+Yeah anything that's doing a single-element SG list should just
+be converted.
 
 Thanks,
 -- 
