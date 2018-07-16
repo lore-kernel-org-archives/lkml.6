@@ -2,144 +2,115 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA1BECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F35ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53654208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:56:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53654208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id CB05E208EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:59:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB05E208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729883AbeGPWZl (ORCPT
+        id S1730621AbeGPW2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 18:25:41 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54918 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728522AbeGPWZl (ORCPT
+        Mon, 16 Jul 2018 18:28:40 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:44616 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728758AbeGPW2j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 18:25:41 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D8A0480590; Mon, 16 Jul 2018 23:56:16 +0200 (CEST)
-Date:   Mon, 16 Jul 2018 23:56:16 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     David Lechner <david@lechnology.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Message-ID: <20180716215616.GB10734@amd>
-References: <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
- <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
- <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd>
- <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd>
- <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
+        Mon, 16 Jul 2018 18:28:39 -0400
+Received: by mail-oi0-f66.google.com with SMTP id s198-v6so77759261oih.11;
+        Mon, 16 Jul 2018 14:59:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oU/oiYyCbZnjeYwr14HD6ydz17fIzIngQF4N1A2lJMg=;
+        b=VDkfVunffL4pEE5rky9rgKCszbi1oAP41V3DPAh9NPMGo7dfx4AnlPCPl9fh8ysJwU
+         S3XLh9zsNg377IqRSzG2zUTFwBDhbKI5qTXPdpEglO4J6ZorHzzbe7zHPFCe6VHRrI3v
+         i/h0kbl7SSReFh+VZgl3eXODr1+n8RscC0CZkEkth0hM3i5euvlnoI8WfTAdrXWWzgbm
+         SuJq/ktwiJyOb+tCFSKhq0siALSa2A1kAisBpw0TTbmPemRE1EQfM+h8EKure5Wf9bET
+         2h5b2ZpiVwbuKluf5i/NNUc+v9Sn7jCBZGfHybZW6ASQospsm0TmcFnoxgEGU6ic8hJq
+         ToZQ==
+X-Gm-Message-State: AOUpUlGLiDFTWXs/VDlt9X7TuHPIDEp38oPmlHxivgsyyk0QmaG0z6KK
+        pbrfM9R0OQt9BiakioxA/w==
+X-Google-Smtp-Source: AAOMgpdMccCKdfXTs5LsUZ3dg+kyqy0M4NSoqR8Q3NHYoyfcIoG6DX/ctY1iIYHXoHoO5O+2EPu1Mw==
+X-Received: by 2002:aca:5cd4:: with SMTP id q203-v6mr1244246oib.217.1531778356677;
+        Mon, 16 Jul 2018 14:59:16 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id p132-v6sm10707704oia.31.2018.07.16.14.59.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 14:59:15 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 15:59:13 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manjunath M B <Manjunath.MB@synopsys.com>,
+        Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] dt: bindings: Add bindings for SDHCI Synopsys DWC
+ MSHC
+Message-ID: <20180716215913.GA4269@rob-hp-laptop>
+References: <20180706151930.78b3024b@xhacker.debian>
+ <20180706152047.0b0a4944@xhacker.debian>
+ <20180711161206.GA1558@rob-hp-laptop>
+ <20180712100611.5887a195@xhacker.debian>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180712100611.5887a195@xhacker.debian>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 12, 2018 at 10:06:11AM +0800, Jisheng Zhang wrote:
+> Hi Rob,
+> 
+> On Wed, 11 Jul 2018 10:12:06 -0600 Rob Herring wrote:
+> 
+> > On Fri, Jul 06, 2018 at 03:20:47PM +0800, Jisheng Zhang wrote:
+> > > Synopsys SDHCI compatible DesignWare Cores Mobile Storage Host
+> > > Controller can support eMMC/SD/SDIO. Add the bindings.
+> > > 
+> > > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> > > ---
+> > >  .../bindings/mmc/sdhci-of-dwcmshc.txt         | 20 +++++++++++++++++++
+> > >  1 file changed, 20 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> > > new file mode 100644
+> > > index 000000000000..ee4253b33be2
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> > > @@ -0,0 +1,20 @@
+> > > +* Synopsys DesignWare Cores Mobile Storage Host Controller
+> > > +
+> > > +Required properties:
+> > > +- compatible: should be one of the following:
+> > > +    "snps,dwcmshc-sdhci"  
+> > 
+> > Needs to note that there must also be an SoC specific compatible.
+> 
+> Currently, there's no SoC specific code in this driver, so the binding could
+> be extended to SoC compatible if necessary. What do you think?
 
---rS8CxjVDS/+yyDmU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Doesn't matter what's in the driver, it can use this compatible.
 
-Hi!
+But experience has shown that a compatible for a licensed IP is never 
+sufficient. There are versions of the blocks, configuration options, and 
+integration differences.
 
-> >>>echo pattern > trigger
-> >>>echo "1 2 3 4 5 6 7 8" > somewhere
-> >>
-> >>s/somewhere/pattern/
-> >>
-> >>pattern trigger should create "pattern" file similarly how ledtrig-timer
-> >>creates delay_{on|off} files.
-> >>
-> >
-> >I don't think this is the best way. For example, if you want more than o=
-ne
-> >LED to have the same pattern, then the patterns will not be synchronized
-> >between the LEDs. The same things happens now with many of the existing
-> >triggers. For example, if I have two LEDs side-by-side using the heartbe=
-at
-> >trigger, they may blink at the same time or they may not, which is not
-> >very nice. I think we can make something better.
+I'm not asking you to add any SoC specific compatible now unless you 
+are working on a particular SoC, but just state one is needed. 
 
-Yes, synchronization would be nice -- it is really a must for RGB LEDs
--- but I believe it is too much to ask from Baolin at the moment.
-
-> It is virtually impossible to enforce synchronous blinking for the
-> LEDs driven by different hardware due to:
->=20
-> - different hardware means via which brightness is set (MMIO, I2C, SPI,
->   PWM and other pulsed fashion based protocols),
-> - the need for deferring brightness setting to a workqueue task to
->   allow for setting LED brightness from atomic context,
-> - contention on locks
-
-I disagree here. Yes, it would be hard to synchronize blinking down to
-microseconds, but it would be easy to get synchronization right down
-to miliseconds and humans will not be able to tell the difference.
-
-> For the LEDs driven by the same chip it would make more sense
-> to allow for synchronization, but it can be achieved on driver
-> level, with help of some subsystem level interface to indicate
-> which LEDs should be synchronized.
->=20
-> However, when we start to pretend that we can synchronize the
-> devices, we must answer how accurate we can be. The accuracy
-> will decrease as blink frequency rises. We'd need to define
-> reliability limit.
-
-We don't need _that_ ammount of overengineering. We just need to
-synchronize them well enough :-).
-
-> We've had few attempts of approaching the subject of synchronized
-> blinking but none of them proved to be good enough to be merged.
-
-I'm sure interested person could do something like that in less than
-two weeks fulltime... It is not rocket science, just a lot of work in
-kernel...=20
-
-But patterns are few years overdue and I believe we should not delay
-them any further.
-
-So... I guess I agree with Jacek in the end :-).
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---rS8CxjVDS/+yyDmU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltNFIAACgkQMOfwapXb+vK00wCgpHQ4rxBXORCX5Z+HmRWgPeA0
-V58An00SukHgMNMoCXrbGD0Gty5Wnf1d
-=DW3Y
------END PGP SIGNATURE-----
-
---rS8CxjVDS/+yyDmU--
+Rob
