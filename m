@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B1EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0329FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3CBE20693
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CBE20693
+	by mail.kernel.org (Postfix) with ESMTP id BDA1B206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA1B206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387758AbeGPIEv (ORCPT
+        id S2387784AbeGPIEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47002 "EHLO
+        Mon, 16 Jul 2018 04:04:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47012 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeGPIEu (ORCPT
+        with ESMTP id S1726898AbeGPIEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:50 -0400
+        Mon, 16 Jul 2018 04:04:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6CCD2C03;
-        Mon, 16 Jul 2018 07:38:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 655E6C03;
+        Mon, 16 Jul 2018 07:38:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+4349872271ece473a7c91190b68b4bac7c5dbc87@syzkaller.appspotmail.com,
-        syzbot+40bd32c4d9a3cc12a339@syzkaller.appspotmail.com,
-        syzbot+769c54e66f994b041be7@syzkaller.appspotmail.com,
-        syzbot+0a89a9ce473936c57065@syzkaller.appspotmail.com,
-        Theodore Tso <tytso@mit.edu>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.17 57/67] loop: add recursion validation to LOOP_CHANGE_FD
-Date:   Mon, 16 Jul 2018 09:35:26 +0200
-Message-Id: <20180716073452.796619568@linuxfoundation.org>
+        syzbot+08ab33be0178b76851c8@syzkaller.appspotmail.com,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH 4.17 58/67] xfs: fix inobt magic number check
+Date:   Mon, 16 Jul 2018 09:35:27 +0200
+Message-Id: <20180716073452.939919041@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -54,143 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-commit d2ac838e4cd7e5e9891ecc094d626734b0245c99 upstream.
+commit 2e050e648ad6c74a2f0a28f645155128be0626ca upstream.
 
-Refactor the validation code used in LOOP_SET_FD so it is also used in
-LOOP_CHANGE_FD.  Otherwise it is possible to construct a set of loop
-devices that all refer to each other.  This can lead to a infinite
-loop in starting with "while (is_loop_device(f)) .." in loop_set_fd().
+In commit a6a781a58befcbd467c ("xfs: have buffer verifier functions
+report failing address") the bad magic number return was ported
+incorrectly.
 
-Fix this by refactoring out the validation code and using it for
-LOOP_CHANGE_FD as well as LOOP_SET_FD.
-
-Reported-by: syzbot+4349872271ece473a7c91190b68b4bac7c5dbc87@syzkaller.appspotmail.com
-Reported-by: syzbot+40bd32c4d9a3cc12a339@syzkaller.appspotmail.com
-Reported-by: syzbot+769c54e66f994b041be7@syzkaller.appspotmail.com
-Reported-by: syzbot+0a89a9ce473936c57065@syzkaller.appspotmail.com
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: a6a781a58befcbd467ce843af4eaca3906aa1f08
+Reported-by: syzbot+08ab33be0178b76851c8@syzkaller.appspotmail.com
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Eric Sandeen <sandeen@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/loop.c |   68 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 38 insertions(+), 30 deletions(-)
+ fs/xfs/libxfs/xfs_ialloc_btree.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -644,6 +644,36 @@ static void loop_reread_partitions(struc
- 			__func__, lo->lo_number, lo->lo_file_name, rc);
- }
+--- a/fs/xfs/libxfs/xfs_ialloc_btree.c
++++ b/fs/xfs/libxfs/xfs_ialloc_btree.c
+@@ -296,7 +296,7 @@ xfs_inobt_verify(
+ 	case cpu_to_be32(XFS_FIBT_MAGIC):
+ 		break;
+ 	default:
+-		return NULL;
++		return __this_address;
+ 	}
  
-+static inline int is_loop_device(struct file *file)
-+{
-+	struct inode *i = file->f_mapping->host;
-+
-+	return i && S_ISBLK(i->i_mode) && MAJOR(i->i_rdev) == LOOP_MAJOR;
-+}
-+
-+static int loop_validate_file(struct file *file, struct block_device *bdev)
-+{
-+	struct inode	*inode = file->f_mapping->host;
-+	struct file	*f = file;
-+
-+	/* Avoid recursion */
-+	while (is_loop_device(f)) {
-+		struct loop_device *l;
-+
-+		if (f->f_mapping->host->i_bdev == bdev)
-+			return -EBADF;
-+
-+		l = f->f_mapping->host->i_bdev->bd_disk->private_data;
-+		if (l->lo_state == Lo_unbound) {
-+			return -EINVAL;
-+		}
-+		f = l->lo_backing_file;
-+	}
-+	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
-+		return -EINVAL;
-+	return 0;
-+}
-+
- /*
-  * loop_change_fd switched the backing store of a loopback device to
-  * a new file. This is useful for operating system installers to free up
-@@ -673,14 +703,15 @@ static int loop_change_fd(struct loop_de
- 	if (!file)
- 		goto out;
- 
-+	error = loop_validate_file(file, bdev);
-+	if (error)
-+		goto out_putf;
-+
- 	inode = file->f_mapping->host;
- 	old_file = lo->lo_backing_file;
- 
- 	error = -EINVAL;
- 
--	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
--		goto out_putf;
--
- 	/* size of the new backing store needs to be the same */
- 	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
- 		goto out_putf;
-@@ -706,13 +737,6 @@ static int loop_change_fd(struct loop_de
- 	return error;
- }
- 
--static inline int is_loop_device(struct file *file)
--{
--	struct inode *i = file->f_mapping->host;
--
--	return i && S_ISBLK(i->i_mode) && MAJOR(i->i_rdev) == LOOP_MAJOR;
--}
--
- /* loop sysfs attributes */
- 
- static ssize_t loop_attr_show(struct device *dev, char *page,
-@@ -877,7 +901,7 @@ static int loop_prepare_queue(struct loo
- static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 		       struct block_device *bdev, unsigned int arg)
- {
--	struct file	*file, *f;
-+	struct file	*file;
- 	struct inode	*inode;
- 	struct address_space *mapping;
- 	int		lo_flags = 0;
-@@ -896,29 +920,13 @@ static int loop_set_fd(struct loop_devic
- 	if (lo->lo_state != Lo_unbound)
- 		goto out_putf;
- 
--	/* Avoid recursion */
--	f = file;
--	while (is_loop_device(f)) {
--		struct loop_device *l;
--
--		if (f->f_mapping->host->i_bdev == bdev)
--			goto out_putf;
--
--		l = f->f_mapping->host->i_bdev->bd_disk->private_data;
--		if (l->lo_state == Lo_unbound) {
--			error = -EINVAL;
--			goto out_putf;
--		}
--		f = l->lo_backing_file;
--	}
-+	error = loop_validate_file(file, bdev);
-+	if (error)
-+		goto out_putf;
- 
- 	mapping = file->f_mapping;
- 	inode = mapping->host;
- 
--	error = -EINVAL;
--	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
--		goto out_putf;
--
- 	if (!(file->f_mode & FMODE_WRITE) || !(mode & FMODE_WRITE) ||
- 	    !file->f_op->write_iter)
- 		lo_flags |= LO_FLAGS_READ_ONLY;
+ 	/* level verification */
 
 
