@@ -2,235 +2,189 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998D6ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C59D6ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C9DB208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:48:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dCvlHE2X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C9DB208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F5C2208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:49:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5C2208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbeGPURt (ORCPT
+        id S1729595AbeGPUSF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 16:17:49 -0400
-Received: from mail-yb0-f202.google.com ([209.85.213.202]:49102 "EHLO
-        mail-yb0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728359AbeGPURt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 16:17:49 -0400
-Received: by mail-yb0-f202.google.com with SMTP id v1-v6so36352949ybm.15
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 12:48:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=H6NALeg3lViT3S6DjyL4tYLosFh80Ug4LFZXp6rvTsE=;
-        b=dCvlHE2XvcmRPc24h3JneVRNHUYY3uODKF7j4RqGxa/dijZmr9x6QJTqm4/1w7wgKZ
-         k9oo5FcKvYDuNzV8A2oTFlDO69I59yZaPV+n8I8RaqaWuhYtUxuqhbc/5Sqow1lmpaG5
-         NKtCsnk6tAcNMjK/IkPy4tW7zzS6eOO4OSuGSxGf/1qXYLL2Hu6n7K/eP3fkSdyFcZmD
-         qZodS/Aczgq3Ur6THGhifNX8ykSvZW325dPjFh2JMUIV/23CI53BGPWX/vDtDcVxECkb
-         4u2lfu3buOmclHNG6b8RQyrhp1XyqSD3gfw1Hoo0X5D2vpZtVgBCYz+gtbIUVHKf0Fs3
-         QgAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=H6NALeg3lViT3S6DjyL4tYLosFh80Ug4LFZXp6rvTsE=;
-        b=tLD2UujFJEzXizVvNKaRLcbiIq7kodNrGTI69YKvHkNFtmU4igdI6oNjchCEXvSLr+
-         wZzABotf+nlsgLrqV8V8lnwFvGIiTeJV1qm4kr0oGX31WE+SRdH/RrIc2kcaqUJY4dZL
-         Jm4+7c5EAPhcXd5iSxFbkR6WEhj3PD8q2FoHnI2GcTCWP58o+hDw2J9C8PVMJYiU5yRz
-         nzCxKJcQyaXPV8R/u+TkGhFdVG4kk3elCjTKcE7Ymm4vgSRJYN5vFon2MQ/fiygN8BRi
-         irq9ilpZ0oJWkt5fsVaPirNaqsX3ceKCRWNOafd2F1HeVI3+yOcdMA4OTyLOUC1D24fe
-         xIdQ==
-X-Gm-Message-State: AOUpUlEp/Cs1mkA2JDWlYlsp3VFUgXmvqOaHEROTIHfItxCSqU01Di/h
-        FXjDnZdBFC+aOn1Hwh4xTCNjMUM7sw==
-X-Google-Smtp-Source: AAOMgpcd+QpIrAdXWbgL0ZJcFcBP2XAllFkOcCyLkiNYLylpG/9XBWdwJ1wjDcNpmNnZDym6+aaJC4vqIA==
+        Mon, 16 Jul 2018 16:18:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728075AbeGPUSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 16:18:05 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CC20808255B;
+        Mon, 16 Jul 2018 19:49:09 +0000 (UTC)
+Received: from [10.36.116.40] (ovpn-116-40.ams2.redhat.com [10.36.116.40])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF7EC2156893;
+        Mon, 16 Jul 2018 19:48:59 +0000 (UTC)
+Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
+ device driver
+From:   David Hildenbrand <david@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Young <dyoung@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jaewon Kim <jaewon31.kim@samsung.com>, Jan Kara <jack@suse.cz>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>
+References: <20180523151151.6730-1-david@redhat.com>
+ <20180524075327.GU20441@dhcp22.suse.cz>
+ <14d79dad-ad47-f090-2ec0-c5daf87ac529@redhat.com>
+ <20180524093121.GZ20441@dhcp22.suse.cz>
+ <c0b8bbd5-6c01-f550-ae13-ef80b2255ea6@redhat.com>
+ <20180524120341.GF20441@dhcp22.suse.cz>
+ <1a03ac4e-9185-ce8e-a672-c747c3e40ff2@redhat.com>
+ <20180524142241.GJ20441@dhcp22.suse.cz>
+ <819e45c5-6ae3-1dff-3f1d-c0411b6e2e1d@redhat.com>
+ <3748f033-f349-6d88-d189-d77c76565981@redhat.com>
+ <20180611115641.GL13364@dhcp22.suse.cz>
+ <71bd1b65-2a88-5de7-9789-bf4fac26507d@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <e9697e6f-e562-a96c-7080-9271dbfbbea9@redhat.com>
+Date:   Mon, 16 Jul 2018 21:48:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a0d:cad5:: with SMTP id m204-v6mr5263732ywd.242.1531770533782;
- Mon, 16 Jul 2018 12:48:53 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 21:48:43 +0200
-Message-Id: <20180716194843.252772-1-jannh@google.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-Subject: [PATCH] fs: don't let getdents return bogus names
-From:   Jann Horn <jannh@google.com>
-To:     Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, jannh@google.com
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <71bd1b65-2a88-5de7-9789-bf4fac26507d@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 16 Jul 2018 19:49:09 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Mon, 16 Jul 2018 19:49:09 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'david@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When you e.g. run `find` on a directory for which getdents returns
-"filenames" that contain slashes, `find` passes those "filenames" back to
-the kernel, which then interprets them as paths. That could conceivably
-cause userspace to do something bad when accessing something like an
-untrusted USB stick, but I'm not aware of any specific example.
+On 11.06.2018 14:33, David Hildenbrand wrote:
+> On 11.06.2018 13:56, Michal Hocko wrote:
+>> On Mon 11-06-18 13:53:49, David Hildenbrand wrote:
+>>> On 24.05.2018 23:07, David Hildenbrand wrote:
+>>>> On 24.05.2018 16:22, Michal Hocko wrote:
+>>>>> I will go over the rest of the email later I just wanted to make this
+>>>>> point clear because I suspect we are talking past each other.
+>>>>
+>>>> It sounds like we are now talking about how to solve the problem. I like
+>>>> that :)
+>>>>
+>>>
+>>> Hi Michal,
+>>>
+>>> did you have time to think about the details of your proposed idea?
+>>
+>> Not really. Sorry about that. It's been busy time. I am planning to
+>> revisit after merge window closes.
+>>
+> 
+> Sure no worries, I still have a bunch of other things to work on. But it
+> would be nice to clarify soon in which direction I have to head to get
+> this implemented and upstream (e.g. what I proposed, what you proposed
+> or maybe something different).
+> 
+I would really like to make progress here.
 
-Instead of returning bogus filenames to userspace, return -EUCLEAN.
+I pointed out basic problems/questions with the proposed alternative. I
+think I answered all your questions. But you also said that you are not
+going to accept the current approach. So some decision has to be made.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
----
-I didn't get any replies to my mail "readdir() and directory names
-containing slashes" from a few days ago, so here's a suggested fix.
+Although it's very demotivating and frustrating (I hope not all work in
+the MM area will be like this), if there is no guidance on how to
+proceed, I'll have to switch to adding/removing/onlining/offlining whole
+segments. This is not what I want, but maybe this has a higher chance of
+getting reviews/acks.
 
-As often, I'm not entirely sure whether this should be marked for stable
-backport.
-Does anyone want to bikeshed the choice of error number? ext4 uses
--EUCLEAN (aliased as -EFSCORRUPTED) for signalling filesystem corruption;
-I think vfat just skips errors; fuse uses -EIO for this specific problem.
+Understanding that you are busy, please if you make suggestions, follow
+up on responses.
 
-Behavior of "find" when encountering such filesystem corruption:
-
-$ sudo mount img mnt
-$ strace -v -e trace=getdents ls mnt
-getdents(3, [{d_ino=1, d_off=1, d_reclen=24, d_name=".", d_type=DT_DIR}, {d_ino=1, d_off=2, d_reclen=24, d_name="..", d_type=DT_DIR}, {d_ino=67, d_off=16384, d_reclen=32, d_name="../../xx", d_type=DT_DIR}], 32768) = 80
-getdents(3, [], 32768)                  = 0
-+++ exited with 0 +++
-$ find ../xx -ls
-   406454      4 drwxr-xr-x   3 user     user         4096 Jul 16 20:48 ../xx
-   406455      4 drwxr-xr-x   2 user     user         4096 Jul 16 20:48 ../xx/blah
-   406457      0 -rw-r--r--   1 user     user            0 Jul 16 20:48 ../xx/blah/bar
-$ find mnt -ls
-        1     16 drwxr-xr-x   3 root     root        16384 Jan  1  1970 mnt
-   406454      4 drwxr-xr-x   3 user     user         4096 Jul 16 20:48 mnt/../../xx
-   406455      4 drwxr-xr-x   2 user     user         4096 Jul 16 20:48 mnt/../../xx/blah
-   406457      0 -rw-r--r--   1 user     user            0 Jul 16 20:48 mnt/../../xx/blah/bar
-
- arch/alpha/kernel/osf_sys.c |  3 +++
- fs/readdir.c                | 33 +++++++++++++++++++++++++++++++++
- include/linux/fs.h          |  3 +++
- 3 files changed, 39 insertions(+)
-
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index 6e921754c8fc..f16857d9782d 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -40,6 +40,7 @@
- #include <linux/vfs.h>
- #include <linux/rcupdate.h>
- #include <linux/slab.h>
-+#include <linux/fs.h>
- 
- #include <asm/fpu.h>
- #include <asm/io.h>
-@@ -117,6 +118,8 @@ osf_filldir(struct dir_context *ctx, const char *name, int namlen,
- 	unsigned int reclen = ALIGN(NAME_OFFSET + namlen + 1, sizeof(u32));
- 	unsigned int d_ino;
- 
-+	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
-+		return -EUCLEAN;
- 	buf->error = -EINVAL;	/* only used if we fail */
- 	if (reclen > buf->count)
- 		return -EINVAL;
-diff --git a/fs/readdir.c b/fs/readdir.c
-index d97f548e6323..a061a52b06d1 100644
---- a/fs/readdir.c
-+++ b/fs/readdir.c
-@@ -88,6 +88,29 @@ struct readdir_callback {
- 	int result;
- };
- 
-+/*
-+ * Most filesystems don't filter out bogus directory entry names, and userspace
-+ * can get very confused by such names. Behave as if a low-level IO error had
-+ * happened while reading directory entries.
-+ */
-+bool bogus_dirent_name(int *errp, const char *name, int namlen,
-+		       const char *caller)
-+{
-+	if (namlen == 0) {
-+		pr_err_once("%s: filesystem returned bogus empty name\n",
-+			    caller);
-+		*errp = -EUCLEAN;
-+		return true;
-+	}
-+	if (memchr(name, '/', namlen)) {
-+		pr_err_once("%s: filesystem returned bogus name '%*pEhp' (contains slash)\n",
-+			    caller, namlen, name);
-+		*errp = -EUCLEAN;
-+		return true;
-+	}
-+	return false;
-+}
-+
- static int fillonedir(struct dir_context *ctx, const char *name, int namlen,
- 		      loff_t offset, u64 ino, unsigned int d_type)
- {
-@@ -98,6 +121,8 @@ static int fillonedir(struct dir_context *ctx, const char *name, int namlen,
- 
- 	if (buf->result)
- 		return -EINVAL;
-+	if (bogus_dirent_name(&buf->result, name, namlen, __func__))
-+		return -EUCLEAN;
- 	d_ino = ino;
- 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
- 		buf->result = -EOVERFLOW;
-@@ -173,6 +198,8 @@ static int filldir(struct dir_context *ctx, const char *name, int namlen,
- 	int reclen = ALIGN(offsetof(struct linux_dirent, d_name) + namlen + 2,
- 		sizeof(long));
- 
-+	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
-+		return -EUCLEAN;
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
-@@ -259,6 +286,8 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
- 	int reclen = ALIGN(offsetof(struct linux_dirent64, d_name) + namlen + 1,
- 		sizeof(u64));
- 
-+	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
-+		return -EUCLEAN;
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
-@@ -358,6 +387,8 @@ static int compat_fillonedir(struct dir_context *ctx, const char *name,
- 
- 	if (buf->result)
- 		return -EINVAL;
-+	if (bogus_dirent_name(&buf->result, name, namlen, __func__))
-+		return -EUCLEAN;
- 	d_ino = ino;
- 	if (sizeof(d_ino) < sizeof(ino) && d_ino != ino) {
- 		buf->result = -EOVERFLOW;
-@@ -427,6 +458,8 @@ static int compat_filldir(struct dir_context *ctx, const char *name, int namlen,
- 	int reclen = ALIGN(offsetof(struct compat_linux_dirent, d_name) +
- 		namlen + 2, sizeof(compat_long_t));
- 
-+	if (bogus_dirent_name(&buf->error, name, namlen, __func__))
-+		return -EUCLEAN;
- 	buf->error = -EINVAL;	/* only used if we fail.. */
- 	if (reclen > buf->count)
- 		return -EINVAL;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d78d146a98da..5d12a40bcc0c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1680,6 +1680,9 @@ struct dir_context {
- 	loff_t pos;
- };
- 
-+bool bogus_dirent_name(int *errp, const char *name, int namlen,
-+		       const char *caller);
-+
- struct block_device_operations;
- 
- /* These macros are for out of kernel modules to test that
 -- 
-2.18.0.203.gfac676dfb9-goog
 
+Thanks,
+
+David / dhildenb
