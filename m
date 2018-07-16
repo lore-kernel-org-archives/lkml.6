@@ -5,120 +5,110 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CE6ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 797C4ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2978320846
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:28:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2978320846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
+	by mail.kernel.org (Postfix) with ESMTP id 42C7220846
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:29:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42C7220846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbeGPR5P (ORCPT
+        id S1728945AbeGPR5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 13:57:15 -0400
-Received: from mout.web.de ([212.227.17.12]:53343 "EHLO mout.web.de"
+        Mon, 16 Jul 2018 13:57:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:8412 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727514AbeGPR5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 13:57:15 -0400
-Received: from [192.168.1.3] ([77.191.164.6]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0Ls95v-1g2sBq1OAh-013vHI; Mon, 16
- Jul 2018 19:28:41 +0200
-Subject: [PATCH v2 3/8] Coccinelle: atomic_as_refcounter: Optimise a
- disjunction in the first SmPL rule
-From:   SF Markus Elfring <elfring@users.sourceforge.net>
-To:     kernel-janitors@vger.kernel.org,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Coccinelle <cocci@systeme.lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
- <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
+        id S1727514AbeGPR5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 13:57:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:29:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,362,1526367600"; 
+   d="scan'208";a="240730221"
+Received: from binman-mobl2.amr.corp.intel.com (HELO [10.252.141.97]) ([10.252.141.97])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jul 2018 10:28:40 -0700
+Subject: Re: cpu_no_speculation omissions?
+To:     Thomas Gleixner <tglx@linutronix.de>, Rich Felker <dalias@libc.org>
+References: <20180716160513.GA6080@brightrain.aerifal.cx>
+ <alpine.DEB.2.21.1807161851290.1693@nanos.tec.linutronix.de>
+Cc:     x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alan Cox <alan@linux.intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
 Openpgp: preference=signencrypt
-Message-ID: <9941258f-9243-6400-3c93-ea0637da3e0d@users.sourceforge.net>
-Date:   Mon, 16 Jul 2018 19:28:38 +0200
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <193fb2f5-8f6c-8fe6-298f-a6af4fae862a@linux.intel.com>
+Date:   Mon, 16 Jul 2018 10:28:38 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
+In-Reply-To: <alpine.DEB.2.21.1807161851290.1693@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:uJgxQIIOgA4tvUXop98/G6CrMfpxYGCiANQ6eYvzqpceQB3Rus8
- yX1timK4xBTlHprJclHskFdNQYgf0iqeR/wU6D7J58dlWYmbBXRe24yqmevOVjCl90tvG9l
- XdB6o5T7ReDzB5LXIbbPH5FMDjMuixLQL/Rzua8qyr1i8FYLKeX7+R+D1amwYQH/ASQN8BU
- r6mOz/4AETwWIvwDyVWXQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:f3eMi+j0t64=:R6dBYN2lwQQR5s+1+UP1Ea
- nyItem9cvZBvtYorabJRsGu38HZg9fBRLeqVxSAlK3Xo2gBYvzMIHzVACNtCgHyaL5TXXZ+kr
- Ua9vCHyjIspwnEv73zL3ru3BF27PHMdbCDY1314oGIyOGzmTBJkyhiWgVipE9lUnYHzPoZhZD
- w6lMe50sISHo+gcu8bDzi+1u6upSonf2EuQjWOp5W+uVhja5kzSEuYd0rNyNZoeuIV3/3tOv5
- lSyhJ8VY8vue7PvdMeyl1iLZ6gf884GD6spI535QGi7pJ8vPJJ2F/q1ICuUiwC6Fg2jk66a3I
- Q3OBeJGRppqlkHEq6n+x38OzXt68MCTd7HAGaERBZsXDcghfmKRemkjPApZIEfU4HhzHbQQOH
- GVRDve10Ic6YvOLmosCXP7rHW/rIXGXBbIGGB8wnP8j7kqzX1KJgNH6RyT7ZjxF6JpeVJbZ7h
- 6q/bFshYjLO9/nydTvVDxho5IaE6zhUMcA/s2WniX8yZaLDatIdliXI3+Amy4W/1wLqHYBIb+
- eYpl94BrJ+06458luxnVMyfszun91D05c3ybob/PqpQZiWaEynFCBFvfg5GMl+zOErRtdQpV2
- Totu7TfRmbXCMGKpLVoR2Vj1NZb/aTOZ5znqf/SMEtrCNe7eN4H7cDLxWq/ERLsAApb41dO/L
- JsdXWFZiaLNZM/zLp8UsRsfHvZ1ze42F3mscKZYLop4VX0wfL48Oul5qcKIP+ZNR6ICxiDzAH
- k2gKi1WkUn2qYMBsZHAORjT0h7wbiyBt52tKqDe4ucadeZQ875SIBoKUgDP8V7DH6RY2X3gAv
- sbBVO7z
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 17:43:49 +0200
+On 07/16/2018 09:56 AM, Thomas Gleixner wrote:
+> On Mon, 16 Jul 2018, Rich Felker wrote:
+>> At least the Centerton (late-generation Bonnell uarch) Atom family is
+>> omitted from the cpu_no_speculation table added by commit fec9434a12f3
+>> to arch/x86/kernel/cpu/common.c. Is this intentional? Would a patch
+>> adding it and possibly other omissions be welcome?
+> 
+> Probably. Dave?
 
-The variables “fname2” till “fname6” do not care for different function
-parameters in the disjunction at the end of a rule in a script
-for the semantic patch language.
-Thus reduce this disjunction by using a regular expression with
-an alternation for an optimised constraint.
+IIRC, Alan Cox was compiling a list on what is affected vs. not.  He
+would know way better than I.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
-
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 46d27b2b1dff..4da83ccfa6f6 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -13,12 +13,7 @@ virtual report
- identifier a, x;
- position p1, p2;
- identifier fname =~ "free";
--identifier fname2 =~ ".*destroy.*";
--identifier fname3 =~ ".*del.*";
--identifier fname4 =~ ".*queue_work.*";
--identifier fname5 =~ ".*schedule_work.*";
--identifier fname6 =~ ".*call_rcu.*";
--
-+identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
- @@
- 
- (
-@@ -39,14 +34,6 @@ identifier fname6 =~ ".*call_rcu.*";
-  fname@p2(a, ...);
- |
-  fname2@p2(...);
--|
-- fname3@p2(...);
--|
-- fname4@p2(...);
--|
-- fname5@p2(...);
--|
-- fname6@p2(...);
- )
- 
- 
--- 
-2.18.0
-
+Rich, did you have a specific set of family/model combinations that you
+thought were missed?
