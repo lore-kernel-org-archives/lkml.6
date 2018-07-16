@@ -6,34 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4A2ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4784ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CC820864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51CC820864
+	by mail.kernel.org (Postfix) with ESMTP id 9816320864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9816320864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732623AbeGPIE2 (ORCPT
+        id S1732800AbeGPIEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46908 "EHLO
+        Mon, 16 Jul 2018 04:04:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46918 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729883AbeGPIE1 (ORCPT
+        with ESMTP id S1732677AbeGPIEa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:27 -0400
+        Mon, 16 Jul 2018 04:04:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F082FC03;
-        Mon, 16 Jul 2018 07:38:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96920CA1;
+        Mon, 16 Jul 2018 07:38:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.17 34/67] ALSA: hda - Handle pm failure during hotplug
-Date:   Mon, 16 Jul 2018 09:35:03 +0200
-Message-Id: <20180716073448.508530063@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 35/67] mm: do not drop unused pages when userfaultd is running
+Date:   Mon, 16 Jul 2018 09:35:04 +0200
+Message-Id: <20180716073448.643250194@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -50,103 +58,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-commit aaa23f86001bdb82d2f937c5c7bce0a1e11a6c5b upstream.
+commit bce73e4842390f7b7309c8e253e139db71288ac3 upstream.
 
-Obtaining the runtime pm wakeref can fail, especially in a hotplug
-scenario where i915.ko has been unloaded. If we do not catch the
-failure, we end up with an unbalanced pm.
+KVM guests on s390 can notify the host of unused pages.  This can result
+in pte_unused callbacks to be true for KVM guest memory.
 
-v2 additions by tiwai:
-hdmi_present_sense() checks the return value and handle only a
-negative error case and bails out only if it's really still suspended.
-Also, snd_hda_power_down() is called at the error path so that the
-refcount is balanced.
+If a page is unused (checked with pte_unused) we might drop this page
+instead of paging it.  This can have side-effects on userfaultd, when
+the page in question was already migrated:
 
-Along with it, the spec->pcm_lock is taken outside
-hdmi_present_sense() in the caller side, so that it won't cause
-deadlock at reentrace via runtime resume.
+The next access of that page will trigger a fault and a user fault
+instead of faulting in a new and empty zero page.  As QEMU does not
+expect a userfault on an already migrated page this migration will fail.
 
-v3 fix by tiwai:
-Missing linux/pm_runtime.h is included.
+The most straightforward solution is to ignore the pte_unused hint if a
+userfault context is active for this VMA.
 
-References: 222bde03881c ("ALSA: hda - Fix mutex deadlock at HDMI/DP hotplug")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: http://lkml.kernel.org/r/20180703171854.63981-1-borntraeger@de.ibm.com
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Janosch Frank <frankja@linux.ibm.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Cornelia Huck <cohuck@redhat.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_hdmi.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ mm/rmap.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -33,6 +33,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
- #include <sound/core.h>
- #include <sound/jack.h>
- #include <sound/asoundef.h>
-@@ -764,8 +765,10 @@ static void check_presence_and_report(st
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -64,6 +64,7 @@
+ #include <linux/backing-dev.h>
+ #include <linux/page_idle.h>
+ #include <linux/memremap.h>
++#include <linux/userfaultfd_k.h>
  
- 	if (pin_idx < 0)
- 		return;
-+	mutex_lock(&spec->pcm_lock);
- 	if (hdmi_present_sense(get_pin(spec, pin_idx), 1))
- 		snd_hda_jack_report_sync(codec);
-+	mutex_unlock(&spec->pcm_lock);
- }
+ #include <asm/tlbflush.h>
  
- static void jack_callback(struct hda_codec *codec,
-@@ -1628,21 +1631,23 @@ static void sync_eld_via_acomp(struct hd
- static bool hdmi_present_sense(struct hdmi_spec_per_pin *per_pin, int repoll)
- {
- 	struct hda_codec *codec = per_pin->codec;
--	struct hdmi_spec *spec = codec->spec;
- 	int ret;
+@@ -1481,11 +1482,16 @@ static bool try_to_unmap_one(struct page
+ 				set_pte_at(mm, address, pvmw.pte, pteval);
+ 			}
  
- 	/* no temporary power up/down needed for component notifier */
--	if (!codec_has_acomp(codec))
--		snd_hda_power_up_pm(codec);
-+	if (!codec_has_acomp(codec)) {
-+		ret = snd_hda_power_up_pm(codec);
-+		if (ret < 0 && pm_runtime_suspended(hda_codec_dev(codec))) {
-+			snd_hda_power_down_pm(codec);
-+			return false;
-+		}
-+	}
- 
--	mutex_lock(&spec->pcm_lock);
- 	if (codec_has_acomp(codec)) {
- 		sync_eld_via_acomp(codec, per_pin);
- 		ret = false; /* don't call snd_hda_jack_report_sync() */
- 	} else {
- 		ret = hdmi_present_sense_via_verbs(per_pin, repoll);
- 	}
--	mutex_unlock(&spec->pcm_lock);
- 
- 	if (!codec_has_acomp(codec))
- 		snd_hda_power_down_pm(codec);
-@@ -1654,12 +1659,16 @@ static void hdmi_repoll_eld(struct work_
- {
- 	struct hdmi_spec_per_pin *per_pin =
- 	container_of(to_delayed_work(work), struct hdmi_spec_per_pin, work);
-+	struct hda_codec *codec = per_pin->codec;
-+	struct hdmi_spec *spec = codec->spec;
- 
- 	if (per_pin->repoll_count++ > 6)
- 		per_pin->repoll_count = 0;
- 
-+	mutex_lock(&spec->pcm_lock);
- 	if (hdmi_present_sense(per_pin, per_pin->repoll_count))
- 		snd_hda_jack_report_sync(per_pin->codec);
-+	mutex_unlock(&spec->pcm_lock);
- }
- 
- static void intel_haswell_fixup_connect_list(struct hda_codec *codec,
+-		} else if (pte_unused(pteval)) {
++		} else if (pte_unused(pteval) && !userfaultfd_armed(vma)) {
+ 			/*
+ 			 * The guest indicated that the page content is of no
+ 			 * interest anymore. Simply discard the pte, vmscan
+ 			 * will take care of the rest.
++			 * A future reference will then fault in a new zero
++			 * page. When userfaultfd is active, we must not drop
++			 * this page though, as its main user (postcopy
++			 * migration) will not expect userfaults on already
++			 * copied pages.
+ 			 */
+ 			dec_mm_counter(mm, mm_counter(page));
+ 			/* We have to invalidate as we cleared the pte */
 
 
