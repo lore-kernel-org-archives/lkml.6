@@ -2,323 +2,151 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D283DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D932ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 839A8208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:25:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 839A8208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 17E6420647
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E6420647
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbeGPPxF (ORCPT
+        id S1729151AbeGPP53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:53:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38594 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727387AbeGPPxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:53:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 77198AEC0;
-        Mon, 16 Jul 2018 15:25:07 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 32E791E11C8; Mon, 16 Jul 2018 17:25:06 +0200 (CEST)
-Date:   Mon, 16 Jul 2018 17:25:06 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     reiserfs-devel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jeff Mahoney <jeffm@suse.com>, Jan Kara <jack@suse.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH] reiserfs: fix buffer overflow with long warning messages
-Message-ID: <20180716152506.mfy3cputokdgauhs@quack2.suse.cz>
-References: <001a1139d0ba06bddf056a063986@google.com>
- <20180707203621.30922-1-ebiggers3@gmail.com>
+        Mon, 16 Jul 2018 11:57:29 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:11094 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727403AbeGPP53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 11:57:29 -0400
+X-UUID: a1ea01a4d3064a43bb2ac1674ba09cb4-20180716
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 30478694; Mon, 16 Jul 2018 23:29:27 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Mon, 16 Jul 2018 23:29:25 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Mon, 16 Jul 2018 23:29:25 +0800
+Message-ID: <1531754965.8953.3.camel@mtkswgap22>
+Subject: Re: [PATCH v5 5/7] Bluetooth: Extend btuart driver for join more
+ vendor devices
+From:   Sean Wang <sean.wang@mediatek.com>
+To:     Marcel Holtmann <marcel@holtmann.org>
+CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Mon, 16 Jul 2018 23:29:25 +0800
+In-Reply-To: <6476BE78-3FE5-465F-8060-2215387323AA@holtmann.org>
+References: <cover.1531150733.git.sean.wang@mediatek.com>
+         <85d449cdd34bf47d72935a821915e825c64a2145.1531150733.git.sean.wang@mediatek.com>
+         <70616B99-5A2D-417A-8815-246700EEF4E2@holtmann.org>
+         <1531641134.3955.19.camel@mtkswgap22>
+         <6476BE78-3FE5-465F-8060-2215387323AA@holtmann.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180707203621.30922-1-ebiggers3@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 07-07-18 13:36:21, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Mon, 2018-07-16 at 14:59 +0200, Marcel Holtmann wrote:
+> Hi Sean,
 > 
-> ReiserFS prepares log messages into a 1024-byte buffer with no bounds
-> checks.  Long messages, such as the "unknown mount option" warning when
-> userspace passes a crafted mount options string, overflow this buffer.
-> This causes KASAN to report a global-out-of-bounds write.
+> >>> Adding an independent btuart.h header allows these essential definitions
+> >>> can be reused in vendor driver. Also, struct btuart_vnd is extended with
+> >>> additional callbacks such as .init initializing vendor data, .shtudown,
+> >>> .recv and .send supporting SoC specific framing for that btuart can
+> >>> simply adapt to various Bluetooth uart-based devices.
+> >>> 
+> >>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> >>> ---
+> >>> drivers/bluetooth/btuart.c | 73 ++++++++++++++++++++++++----------------------
+> >>> drivers/bluetooth/btuart.h | 30 +++++++++++++++++++
+> >>> 2 files changed, 68 insertions(+), 35 deletions(-)
+> >>> create mode 100644 drivers/bluetooth/btuart.h
+> >>> 
+> >>> diff --git a/drivers/bluetooth/btuart.c b/drivers/bluetooth/btuart.c
+> >>> index a900aac..65d0086 100644
+> >>> --- a/drivers/bluetooth/btuart.c
+> >>> +++ b/drivers/bluetooth/btuart.c
+> >>> @@ -33,35 +33,11 @@
+> >>> #include <net/bluetooth/hci_core.h>
+> >>> 
+> >>> #include "h4_recv.h"
+> >>> +#include "btuart.h"
+> >>> #include "btbcm.h"
+> >>> 
+> >>> #define VERSION "1.0"
+> >>> 
+> >>> -struct btuart_vnd {
+> >>> -	const struct h4_recv_pkt *recv_pkts;
+> >>> -	int recv_pkts_cnt;
+> >>> -	unsigned int manufacturer;
+> >>> -	int (*open)(struct hci_dev *hdev);
+> >>> -	int (*close)(struct hci_dev *hdev);
+> >>> -	int (*setup)(struct hci_dev *hdev);
+> >>> -};
+> >>> -
+> >>> -struct btuart_dev {
+> >>> -	struct hci_dev *hdev;
+> >>> -	struct serdev_device *serdev;
+> >>> -
+> >>> -	struct work_struct tx_work;
+> >>> -	unsigned long tx_state;
+> >>> -	struct sk_buff_head txq;
+> >>> -
+> >>> -	struct sk_buff *rx_skb;
+> >>> -
+> >>> -	const struct btuart_vnd *vnd;
+> >>> -};
+> >> 
+> >> I really like to avoid this since it is not clean. Frankly I prefer to keep the btuart.c driver for drivers that really just use H:4 as transport protocol. If the protocol is only H:4 alike and has extra headers, then it should be a separate driver.
+> >> 
+> > 
+> > thanks for letting me know your concern. I think I'm a little over in reusing these existing methods and break something generic and its beauty.
+> > 
+> > I'll make the driver be a separate one based on btuart in the next version.
+> > 
+> > 
+> >> The common H:4 handling is abstracted in h4_recv.h already anyway and we can add more pieces if needed. However I also wonder since you have extra framing that the complex H:4 state keeping might be not needed at all. So it could be simplified.
+> >> 
+> > 
+> > okay, I will get rid of h4_recv.h and consider to use more simplified logic to handle the extra framing and its payload.
 > 
-> Fix it by truncating messages to the buffer size.
+> only if it is already framed by your extra header, but I seem to recall that it will frame it. For example the bfusb.c old driver does frame H:4 as well and then no extra state keeping for H:4 is needed. Just pass the frames up into the core via hci_recv_frame (or hci_recv_diag for vendor diagnostic) and move on with it.
 > 
-> Reported-by: syzbot+b890b3335a4d8c608963@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-
-Looks good to me. You can add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-I'd just note that I'd prefer some lines not to exceed 80 chars like:
-
--			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
-+			p += scnprintf_le_key(p, end - p,
-+					      va_arg(args, struct reiserfs_key *));
-
-could be:
-
-+			p += scnprintf_le_key(p, end - p,
-+					va_arg(args, struct reiserfs_key *));
-
-But I don't mind that much.
-
-Andrew usually merges reiserfs patches. Andrew?
-
-								Honza
-> ---
->  fs/reiserfs/prints.c | 141 +++++++++++++++++++++++++------------------
->  1 file changed, 81 insertions(+), 60 deletions(-)
+> You can of course use h4_recv.h if you need to, but only do that if you are true H:4 stream and have no idea where a frame ends and starts.
 > 
-> diff --git a/fs/reiserfs/prints.c b/fs/reiserfs/prints.c
-> index 7e288d97adcbb..9fed1c05f1f4d 100644
-> --- a/fs/reiserfs/prints.c
-> +++ b/fs/reiserfs/prints.c
-> @@ -76,83 +76,99 @@ static char *le_type(struct reiserfs_key *key)
->  }
->  
->  /* %k */
-> -static void sprintf_le_key(char *buf, struct reiserfs_key *key)
-> +static int scnprintf_le_key(char *buf, size_t size, struct reiserfs_key *key)
->  {
->  	if (key)
-> -		sprintf(buf, "[%d %d %s %s]", le32_to_cpu(key->k_dir_id),
-> -			le32_to_cpu(key->k_objectid), le_offset(key),
-> -			le_type(key));
-> +		return scnprintf(buf, size, "[%d %d %s %s]",
-> +				 le32_to_cpu(key->k_dir_id),
-> +				 le32_to_cpu(key->k_objectid), le_offset(key),
-> +				 le_type(key));
->  	else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  }
->  
->  /* %K */
-> -static void sprintf_cpu_key(char *buf, struct cpu_key *key)
-> +static int scnprintf_cpu_key(char *buf, size_t size, struct cpu_key *key)
->  {
->  	if (key)
-> -		sprintf(buf, "[%d %d %s %s]", key->on_disk_key.k_dir_id,
-> -			key->on_disk_key.k_objectid, reiserfs_cpu_offset(key),
-> -			cpu_type(key));
-> +		return scnprintf(buf, size, "[%d %d %s %s]",
-> +				 key->on_disk_key.k_dir_id,
-> +				 key->on_disk_key.k_objectid,
-> +				 reiserfs_cpu_offset(key), cpu_type(key));
->  	else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  }
->  
-> -static void sprintf_de_head(char *buf, struct reiserfs_de_head *deh)
-> +static int scnprintf_de_head(char *buf, size_t size,
-> +			     struct reiserfs_de_head *deh)
->  {
->  	if (deh)
-> -		sprintf(buf,
-> -			"[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
-> -			deh_offset(deh), deh_dir_id(deh), deh_objectid(deh),
-> -			deh_location(deh), deh_state(deh));
-> +		return scnprintf(buf, size,
-> +				 "[offset=%d dir_id=%d objectid=%d location=%d state=%04x]",
-> +				 deh_offset(deh), deh_dir_id(deh),
-> +				 deh_objectid(deh), deh_location(deh),
-> +				 deh_state(deh));
->  	else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  
->  }
->  
-> -static void sprintf_item_head(char *buf, struct item_head *ih)
-> +static int scnprintf_item_head(char *buf, size_t size, struct item_head *ih)
->  {
->  	if (ih) {
-> -		strcpy(buf,
-> -		       (ih_version(ih) == KEY_FORMAT_3_6) ? "*3.6* " : "*3.5*");
-> -		sprintf_le_key(buf + strlen(buf), &(ih->ih_key));
-> -		sprintf(buf + strlen(buf), ", item_len %d, item_location %d, "
-> -			"free_space(entry_count) %d",
-> -			ih_item_len(ih), ih_location(ih), ih_free_space(ih));
-> +		char *p = buf;
-> +		char * const end = buf + size;
-> +
-> +		p += scnprintf(p, end - p, "%s",
-> +			       (ih_version(ih) == KEY_FORMAT_3_6) ?
-> +			       "*3.6* " : "*3.5*");
-> +
-> +		p += scnprintf_le_key(p, end - p, &ih->ih_key);
-> +
-> +		p += scnprintf(p, end - p,
-> +			       ", item_len %d, item_location %d, free_space(entry_count) %d",
-> +			       ih_item_len(ih), ih_location(ih),
-> +			       ih_free_space(ih));
-> +		return p - buf;
->  	} else
-> -		sprintf(buf, "[NULL]");
-> +		return scnprintf(buf, size, "[NULL]");
->  }
->  
-> -static void sprintf_direntry(char *buf, struct reiserfs_dir_entry *de)
-> +static int scnprintf_direntry(char *buf, size_t size,
-> +			      struct reiserfs_dir_entry *de)
->  {
->  	char name[20];
->  
->  	memcpy(name, de->de_name, de->de_namelen > 19 ? 19 : de->de_namelen);
->  	name[de->de_namelen > 19 ? 19 : de->de_namelen] = 0;
-> -	sprintf(buf, "\"%s\"==>[%d %d]", name, de->de_dir_id, de->de_objectid);
-> +	return scnprintf(buf, size, "\"%s\"==>[%d %d]",
-> +			 name, de->de_dir_id, de->de_objectid);
->  }
->  
-> -static void sprintf_block_head(char *buf, struct buffer_head *bh)
-> +static int scnprintf_block_head(char *buf, size_t size, struct buffer_head *bh)
->  {
-> -	sprintf(buf, "level=%d, nr_items=%d, free_space=%d rdkey ",
-> -		B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
-> +	return scnprintf(buf, size,
-> +			 "level=%d, nr_items=%d, free_space=%d rdkey ",
-> +			 B_LEVEL(bh), B_NR_ITEMS(bh), B_FREE_SPACE(bh));
->  }
->  
-> -static void sprintf_buffer_head(char *buf, struct buffer_head *bh)
-> +static int scnprintf_buffer_head(char *buf, size_t size, struct buffer_head *bh)
->  {
-> -	sprintf(buf,
-> -		"dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
-> -		bh->b_bdev, bh->b_size,
-> -		(unsigned long long)bh->b_blocknr, atomic_read(&(bh->b_count)),
-> -		bh->b_state, bh->b_page,
-> -		buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
-> -		buffer_dirty(bh) ? "DIRTY" : "CLEAN",
-> -		buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
-> +	return scnprintf(buf, size,
-> +			 "dev %pg, size %zd, blocknr %llu, count %d, state 0x%lx, page %p, (%s, %s, %s)",
-> +			 bh->b_bdev, bh->b_size,
-> +			 (unsigned long long)bh->b_blocknr,
-> +			 atomic_read(&(bh->b_count)),
-> +			 bh->b_state, bh->b_page,
-> +			 buffer_uptodate(bh) ? "UPTODATE" : "!UPTODATE",
-> +			 buffer_dirty(bh) ? "DIRTY" : "CLEAN",
-> +			 buffer_locked(bh) ? "LOCKED" : "UNLOCKED");
->  }
->  
-> -static void sprintf_disk_child(char *buf, struct disk_child *dc)
-> +static int scnprintf_disk_child(char *buf, size_t size, struct disk_child *dc)
->  {
-> -	sprintf(buf, "[dc_number=%d, dc_size=%u]", dc_block_number(dc),
-> -		dc_size(dc));
-> +	return scnprintf(buf, size, "[dc_number=%d, dc_size=%u]",
-> +			 dc_block_number(dc), dc_size(dc));
->  }
->  
->  static char *is_there_reiserfs_struct(char *fmt, int *what)
-> @@ -189,55 +205,60 @@ static void prepare_error_buf(const char *fmt, va_list args)
->  	char *fmt1 = fmt_buf;
->  	char *k;
->  	char *p = error_buf;
-> +	char * const end = &error_buf[sizeof(error_buf)];
->  	int what;
->  
->  	spin_lock(&error_lock);
->  
-> -	strcpy(fmt1, fmt);
-> +	if (WARN_ON(strscpy(fmt_buf, fmt, sizeof(fmt_buf)) < 0)) {
-> +		strscpy(error_buf, "format string too long", end - error_buf);
-> +		goto out_unlock;
-> +	}
->  
->  	while ((k = is_there_reiserfs_struct(fmt1, &what)) != NULL) {
->  		*k = 0;
->  
-> -		p += vsprintf(p, fmt1, args);
-> +		p += vscnprintf(p, end - p, fmt1, args);
->  
->  		switch (what) {
->  		case 'k':
-> -			sprintf_le_key(p, va_arg(args, struct reiserfs_key *));
-> +			p += scnprintf_le_key(p, end - p,
-> +					      va_arg(args, struct reiserfs_key *));
->  			break;
->  		case 'K':
-> -			sprintf_cpu_key(p, va_arg(args, struct cpu_key *));
-> +			p += scnprintf_cpu_key(p, end - p,
-> +					       va_arg(args, struct cpu_key *));
->  			break;
->  		case 'h':
-> -			sprintf_item_head(p, va_arg(args, struct item_head *));
-> +			p += scnprintf_item_head(p, end - p,
-> +						 va_arg(args, struct item_head *));
->  			break;
->  		case 't':
-> -			sprintf_direntry(p,
-> -					 va_arg(args,
-> -						struct reiserfs_dir_entry *));
-> +			p += scnprintf_direntry(p, end - p,
-> +						va_arg(args, struct reiserfs_dir_entry *));
->  			break;
->  		case 'y':
-> -			sprintf_disk_child(p,
-> -					   va_arg(args, struct disk_child *));
-> +			p += scnprintf_disk_child(p, end - p,
-> +						  va_arg(args, struct disk_child *));
->  			break;
->  		case 'z':
-> -			sprintf_block_head(p,
-> -					   va_arg(args, struct buffer_head *));
-> +			p += scnprintf_block_head(p, end - p,
-> +						  va_arg(args, struct buffer_head *));
->  			break;
->  		case 'b':
-> -			sprintf_buffer_head(p,
-> -					    va_arg(args, struct buffer_head *));
-> +			p += scnprintf_buffer_head(p, end - p,
-> +						   va_arg(args, struct buffer_head *));
->  			break;
->  		case 'a':
-> -			sprintf_de_head(p,
-> -					va_arg(args,
-> -					       struct reiserfs_de_head *));
-> +			p += scnprintf_de_head(p, end - p,
-> +					       va_arg(args, struct reiserfs_de_head *));
->  			break;
->  		}
->  
-> -		p += strlen(p);
->  		fmt1 = k + 2;
->  	}
-> -	vsprintf(p, fmt1, args);
-> +	p += vscnprintf(p, end - p, fmt1, args);
-> +out_unlock:
->  	spin_unlock(&error_lock);
->  
->  }
-> -- 
-> 2.18.0
+> Regards
 > 
+> Marcel
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+Thanks for the explanation, I didn't show what the extra header is, that causes some misunderstanding.
+
+The mtk extra header doesn't provide any idea where a frame ends and starts in the bluetooth stream. 
+
+It is just totally a legacy stuff used by mtk combo devices sharing a serial transport, such as BT/GPS/FM running via a shared UART, to
+let the host know what type of radio the following bytes is for and how long it's. 
+
+The extra header is really useful for a combo device, splitting flow and fitting in a single serial transport, but for a single device such as
+mt7622 Bluetooth I made here, it seems to be useless.
+
+Because the extra header doesn't provide any details about this stream and each radio stack still needs to be in charge of their stream
+parsing. That is why I still want to use recv_h4.h instead of coding my own parser.
+
+	Sean
+
+
