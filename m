@@ -1,625 +1,160 @@
 Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D50ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46765ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7AC208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:48:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mXACKjYl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F7AC208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 06670208C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:49:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06670208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbeGPQQY (ORCPT
+        id S1730828AbeGPQRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 12:16:24 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:43732 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbeGPQQX (ORCPT
+        Mon, 16 Jul 2018 12:17:04 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:32791 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbeGPQRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 12:16:23 -0400
-Received: by mail-pl0-f66.google.com with SMTP id o7-v6so5057498plk.10;
-        Mon, 16 Jul 2018 08:48:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9Bs36BOGCpOCBSJpn8ewObAo9A0ZANg84+/h/ShMeig=;
-        b=mXACKjYlyAxaHCR47WEjPOZICplANp2bYjwSfUA2FB3sBcuFQ76Nl+ZmHwa7Hj/9yD
-         R0dZbmc+kg8nqsLuLbvMHIDUX0w55fSxGoCMNT1dnzYnGmyCHqPEWu6JARxIiHoMYNPP
-         rZPnqv7KlqqRCb8yNLlwWrqFoWVNhmGbWIDCtiQ1OzjUrV2JBHbJyQYw3dvGoVrJEQL1
-         vakZ17gs8t0tIwGbxE9aTltdkjg+pGBQb32teNXhIGX1MlJ1FEKEbItiI/Rl5qLkKnKl
-         4DxLp65ZyadsKKQoKmNXmxw0guGpCdOtcy+wynB8t0jV2k4Qe1klEsWL/zLzL5l3NouQ
-         edpQ==
+        Mon, 16 Jul 2018 12:17:04 -0400
+Received: by mail-io0-f199.google.com with SMTP id s14-v6so17420906ioc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 08:49:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9Bs36BOGCpOCBSJpn8ewObAo9A0ZANg84+/h/ShMeig=;
-        b=eL8BO/qjla0wYa6VPbYNShomBgYUvvTI5hn/BEPImsrY9LFb9uoi1oxOxeo0d+OUSk
-         HF46IrXp12Ao8XMvmwKSgiFk9SKOsZrSa+nRBqYs+lmCrej6GlsAvo1LiwX/XujryVIM
-         OxJqTMMUBCHwHpe0+pCS905OB4B8/xbBfCB7d70/dIq8cr+OJeLOEY2z+sgHihYn6z/4
-         W3XnPIHRGD0C2tSt+v3d5zTx6+BHTTHIvV35ifBF6/xnR4BWLmiLCLZ8V8G2YJRPZClc
-         KOU3ZVr6fs/NvM4zFJtrimJs6k+rbEBfXHGOXIRCyeYuqKuU1CqtBm/DI/aCFW6L5g7C
-         AKag==
-X-Gm-Message-State: AOUpUlHXCdEzr6fGkwRzcXb5tzcZIZljGt5kcaY0vyz85EEth7r/vLnj
-        6DYksa9PaGz4txNyrAAEsrL2oQ==
-X-Google-Smtp-Source: AAOMgpeKfojHsXWRhMeugjAYi2jWCeYVEolpBxbVMVuGLRlWMtethhI2Oo0F33w5vd7aPhMki8Ikvw==
-X-Received: by 2002:a17:902:e101:: with SMTP id cc1-v6mr16961857plb.96.1531756101724;
-        Mon, 16 Jul 2018 08:48:21 -0700 (PDT)
-Received: from localhost.localdomain ([240f:34:212d:1:91ac:ef2:819b:3d04])
-        by smtp.gmail.com with ESMTPSA id r64-v6sm6195001pfk.157.2018.07.16.08.48.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 16 Jul 2018 08:48:21 -0700 (PDT)
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-To:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Peter Rosin <peda@axentia.se>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: [PATCH -next v4 3/3] media: ov9650: use SCCB regmap
-Date:   Tue, 17 Jul 2018 00:47:50 +0900
-Message-Id: <1531756070-8560-4-git-send-email-akinobu.mita@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
-References: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=FJuu8Wfws5V682JdlmPA29t8CMuYqOiuybTQ2tBBlQE=;
+        b=GOQPjFQPDQ8SzmpZes9clxYj82VTdQjS/+syGwghUdYfBMQdqRFky2Z3lFtDGVL+LS
+         wgPboRuUUV0eN5Eof6O+5l/QinRygE6FSInQs51m6FRXxgwz77D/KxxC0RWGqBdmhxC+
+         +SQyI/IbrIfxtTw13VWsl35y1g/poCSNr7eWGFh8cglKchMBBCKsp/NDiYJH/cIxSE94
+         OFu0NH25xr9oHRaWGDtCFZN3+2iGnLrHCM4D+ptCs+AImNVhyWCBTTgo+mDMBh6CVD2k
+         UzOraLd82WCM5Nid7Jyhd901+WjUueWbNkvyfhgYvj8EFp++4cDOhTP2mhNWrATvg/3x
+         ggQQ==
+X-Gm-Message-State: AOUpUlFhK87NuzJGSc7/20Vv1G0NeR0o0go/tAgXav9IF1LKvV23dC0z
+        xb21g/5uc9jnm9VzBmWeAsYrc4G0WhQVWjxh7edQSiGhe0Yd
+X-Google-Smtp-Source: AAOMgpdsOe68tGkj3efNIrvfCHud4EwPWB9fetvklMkWivEPGo4gEaopzZBptRrvzY4wHLc2I+Q63oGCaZc8LHID9pvUsFTRstQA
+MIME-Version: 1.0
+X-Received: by 2002:a02:4d:: with SMTP id 74-v6mr7823204jaa.15.1531756143048;
+ Mon, 16 Jul 2018 08:49:03 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 08:49:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ca008a05711fc427@google.com>
+Subject: BUG: corrupted list in p9_fd_cancelled
+From:   syzbot <syzbot+f78c15f5aa00e5c16d59@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, ericvh@gmail.com,
+        linux-kernel@vger.kernel.org, lucho@ionkov.net,
+        netdev@vger.kernel.org, rminnich@sandia.gov,
+        syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert ov965x register access to use SCCB regmap.
+Hello,
 
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Peter Rosin <peda@axentia.se>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hans.verkuil@cisco.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
+syzbot found the following crash on:
+
+HEAD commit:    1d4eb636f0ab Add linux-next specific files for 20180716
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10abe770400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea5926dddb0db97a
+dashboard link: https://syzkaller.appspot.com/bug?extid=f78c15f5aa00e5c16d59
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f78c15f5aa00e5c16d59@syzkaller.appspotmail.com
+
+list_del corruption, ffff880193723368->next is LIST_POISON1  
+(dead000000000100)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:47!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 1 PID: 9124 Comm: syz-executor7 Not tainted 4.18.0-rc5-next-20180716+  
+#8
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__list_del_entry_valid.cold.1+0x26/0x58 lib/list_debug.c:45
+Code: ff fd 0f 0b 4c 89 e2 48 89 de 48 c7 c7 40 88 1a 88 e8 0a 35 ff fd 0f  
+0b 4c 89 ea 48 89 de 48 c7 c7 e0 87 1a 88 e8 f6 34 ff fd <0f> 0b 48 89 de  
+48 c7 c7 00 89 1a 88 e8 e5 34 ff fd 0f 0b 48 89 de
+RSP: 0018:ffff88019b65f1d0 EFLAGS: 00010282
+RAX: 000000000000004e RBX: ffff880193723368 RCX: ffffc90008c3b000
+RDX: 0000000000000000 RSI: ffffffff81633fc1 RDI: 0000000000000001
+RBP: ffff88019b65f1e8 R08: ffff88019918e100 R09: ffffed003b5e4fc0
+R10: ffffed003b5e4fc0 R11: ffff8801daf27e07 R12: dead000000000200
+R13: dead000000000100 R14: ffff8801ab908600 R15: dffffc0000000000
+FS:  00007f238387e700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000625208 CR3: 00000001b4588000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del include/linux/list.h:125 [inline]
+  p9_fd_cancelled+0x80/0x2f0 net/9p/trans_fd.c:707
+  p9_client_flush+0x252/0x2a0 net/9p/client.c:693
+  p9_client_rpc+0x122c/0x1400 net/9p/client.c:802
+  p9_client_version net/9p/client.c:977 [inline]
+  p9_client_create+0xdbc/0x177c net/9p/client.c:1070
+  v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
+  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
+  legacy_get_tree+0x118/0x440 fs/fs_context.c:659
+  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
+  do_new_mount fs/namespace.c:2567 [inline]
+  do_mount+0x6c1/0x1fb0 fs/namespace.c:2889
+  ksys_mount+0x12d/0x140 fs/namespace.c:3105
+  __do_sys_mount fs/namespace.c:3119 [inline]
+  __se_sys_mount fs/namespace.c:3116 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3116
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ab9
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f238387dc68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f238387e6d4 RCX: 0000000000455ab9
+RDX: 00000000200002c0 RSI: 00000000200001c0 RDI: 0000000000000000
+RBP: 000000000072bea0 R08: 00000000200003c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004c0201 R14: 00000000004cfe50 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace 7de5f20f6f7cde43 ]---
+RIP: 0010:__list_del_entry_valid.cold.1+0x26/0x58 lib/list_debug.c:45
+Code: ff fd 0f 0b 4c 89 e2 48 89 de 48 c7 c7 40 88 1a 88 e8 0a 35 ff fd 0f  
+0b 4c 89 ea 48 89 de 48 c7 c7 e0 87 1a 88 e8 f6 34 ff fd <0f> 0b 48 89 de  
+48 c7 c7 00 89 1a 88 e8 e5 34 ff fd 0f 0b 48 89 de
+serio: Serial port pts1
+RSP: 0018:ffff88019b65f1d0 EFLAGS: 00010282
+RAX: 000000000000004e RBX: ffff880193723368 RCX: ffffc90008c3b000
+RDX: 0000000000000000 RSI: ffffffff81633fc1 RDI: 0000000000000001
+RBP: ffff88019b65f1e8 R08: ffff88019918e100 R09: ffffed003b5e4fc0
+R10: ffffed003b5e4fc0 R11: ffff8801daf27e07 R12: dead000000000200
+R13: dead000000000100 R14: ffff8801ab908600 R15: dffffc0000000000
+FS:  00007f238387e700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000625208 CR3: 00000001b4588000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- drivers/media/i2c/Kconfig  |   1 +
- drivers/media/i2c/ov9650.c | 157 ++++++++++++++++++++++-----------------------
- 2 files changed, 76 insertions(+), 82 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index b923a51..7028824 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -755,6 +755,7 @@ config VIDEO_OV7740
- config VIDEO_OV9650
- 	tristate "OmniVision OV9650/OV9652 sensor support"
- 	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
-+	select REGMAP_SCCB
- 	---help---
- 	  This is a V4L2 sensor-level driver for the Omnivision
- 	  OV9650 and OV9652 camera sensors.
-diff --git a/drivers/media/i2c/ov9650.c b/drivers/media/i2c/ov9650.c
-index 5bea31c..16f625f 100644
---- a/drivers/media/i2c/ov9650.c
-+++ b/drivers/media/i2c/ov9650.c
-@@ -20,6 +20,7 @@
- #include <linux/media.h>
- #include <linux/module.h>
- #include <linux/ratelimit.h>
-+#include <linux/regmap.h>
- #include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/videodev2.h>
-@@ -259,7 +260,7 @@ struct ov965x {
- 	/* Protects the struct fields below */
- 	struct mutex lock;
- 
--	struct i2c_client *client;
-+	struct regmap *regmap;
- 
- 	/* Exposure row interval in us */
- 	unsigned int exp_row_interval;
-@@ -424,51 +425,40 @@ static inline struct ov965x *to_ov965x(struct v4l2_subdev *sd)
- 	return container_of(sd, struct ov965x, sd);
- }
- 
--static int ov965x_read(struct i2c_client *client, u8 addr, u8 *val)
-+static int ov965x_read(struct ov965x *ov965x, u8 addr, u8 *val)
- {
--	u8 buf = addr;
--	struct i2c_msg msg = {
--		.addr = client->addr,
--		.flags = 0,
--		.len = 1,
--		.buf = &buf
--	};
- 	int ret;
-+	unsigned int buf;
- 
--	ret = i2c_transfer(client->adapter, &msg, 1);
--	if (ret == 1) {
--		msg.flags = I2C_M_RD;
--		ret = i2c_transfer(client->adapter, &msg, 1);
--
--		if (ret == 1)
--			*val = buf;
--	}
-+	ret = regmap_read(ov965x->regmap, addr, &buf);
-+	if (!ret)
-+		*val = buf;
- 
--	v4l2_dbg(2, debug, client, "%s: 0x%02x @ 0x%02x. (%d)\n",
-+	v4l2_dbg(2, debug, &ov965x->sd, "%s: 0x%02x @ 0x%02x. (%d)\n",
- 		 __func__, *val, addr, ret);
- 
--	return ret == 1 ? 0 : ret;
-+	return ret;
- }
- 
--static int ov965x_write(struct i2c_client *client, u8 addr, u8 val)
-+static int ov965x_write(struct ov965x *ov965x, u8 addr, u8 val)
- {
--	u8 buf[2] = { addr, val };
-+	int ret;
- 
--	int ret = i2c_master_send(client, buf, 2);
-+	ret = regmap_write(ov965x->regmap, addr, val);
- 
--	v4l2_dbg(2, debug, client, "%s: 0x%02x @ 0x%02X (%d)\n",
-+	v4l2_dbg(2, debug, &ov965x->sd, "%s: 0x%02x @ 0x%02X (%d)\n",
- 		 __func__, val, addr, ret);
- 
--	return ret == 2 ? 0 : ret;
-+	return ret;
- }
- 
--static int ov965x_write_array(struct i2c_client *client,
-+static int ov965x_write_array(struct ov965x *ov965x,
- 			      const struct i2c_rv *regs)
- {
- 	int i, ret = 0;
- 
- 	for (i = 0; ret == 0 && regs[i].addr != REG_NULL; i++)
--		ret = ov965x_write(client, regs[i].addr, regs[i].value);
-+		ret = ov965x_write(ov965x, regs[i].addr, regs[i].value);
- 
- 	return ret;
- }
-@@ -486,7 +476,7 @@ static int ov965x_set_default_gamma_curve(struct ov965x *ov965x)
- 	unsigned int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(gamma_curve); i++) {
--		int ret = ov965x_write(ov965x->client, addr, gamma_curve[i]);
-+		int ret = ov965x_write(ov965x, addr, gamma_curve[i]);
- 
- 		if (ret < 0)
- 			return ret;
-@@ -506,7 +496,7 @@ static int ov965x_set_color_matrix(struct ov965x *ov965x)
- 	unsigned int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(mtx); i++) {
--		int ret = ov965x_write(ov965x->client, addr, mtx[i]);
-+		int ret = ov965x_write(ov965x, addr, mtx[i]);
- 
- 		if (ret < 0)
- 			return ret;
-@@ -542,16 +532,15 @@ static int __ov965x_set_power(struct ov965x *ov965x, int on)
- static int ov965x_s_power(struct v4l2_subdev *sd, int on)
- {
- 	struct ov965x *ov965x = to_ov965x(sd);
--	struct i2c_client *client = ov965x->client;
- 	int ret = 0;
- 
--	v4l2_dbg(1, debug, client, "%s: on: %d\n", __func__, on);
-+	v4l2_dbg(1, debug, sd, "%s: on: %d\n", __func__, on);
- 
- 	mutex_lock(&ov965x->lock);
- 	if (ov965x->power == !on) {
- 		ret = __ov965x_set_power(ov965x, on);
- 		if (!ret && on) {
--			ret = ov965x_write_array(client,
-+			ret = ov965x_write_array(ov965x,
- 						 ov965x_init_regs);
- 			ov965x->apply_frame_fmt = 1;
- 			ov965x->ctrls.update = 1;
-@@ -609,13 +598,13 @@ static int ov965x_set_banding_filter(struct ov965x *ov965x, int value)
- 	int ret;
- 	u8 reg;
- 
--	ret = ov965x_read(ov965x->client, REG_COM8, &reg);
-+	ret = ov965x_read(ov965x, REG_COM8, &reg);
- 	if (!ret) {
- 		if (value == V4L2_CID_POWER_LINE_FREQUENCY_DISABLED)
- 			reg &= ~COM8_BFILT;
- 		else
- 			reg |= COM8_BFILT;
--		ret = ov965x_write(ov965x->client, REG_COM8, reg);
-+		ret = ov965x_write(ov965x, REG_COM8, reg);
- 	}
- 	if (value == V4L2_CID_POWER_LINE_FREQUENCY_DISABLED)
- 		return 0;
-@@ -631,7 +620,7 @@ static int ov965x_set_banding_filter(struct ov965x *ov965x, int value)
- 	       ov965x->fiv->interval.numerator;
- 	mbd = ((mbd / (light_freq * 2)) + 500) / 1000UL;
- 
--	return ov965x_write(ov965x->client, REG_MBD, mbd);
-+	return ov965x_write(ov965x, REG_MBD, mbd);
- }
- 
- static int ov965x_set_white_balance(struct ov965x *ov965x, int awb)
-@@ -639,17 +628,17 @@ static int ov965x_set_white_balance(struct ov965x *ov965x, int awb)
- 	int ret;
- 	u8 reg;
- 
--	ret = ov965x_read(ov965x->client, REG_COM8, &reg);
-+	ret = ov965x_read(ov965x, REG_COM8, &reg);
- 	if (!ret) {
- 		reg = awb ? reg | REG_COM8 : reg & ~REG_COM8;
--		ret = ov965x_write(ov965x->client, REG_COM8, reg);
-+		ret = ov965x_write(ov965x, REG_COM8, reg);
- 	}
- 	if (!ret && !awb) {
--		ret = ov965x_write(ov965x->client, REG_BLUE,
-+		ret = ov965x_write(ov965x, REG_BLUE,
- 				   ov965x->ctrls.blue_balance->val);
- 		if (ret < 0)
- 			return ret;
--		ret = ov965x_write(ov965x->client, REG_RED,
-+		ret = ov965x_write(ov965x, REG_RED,
- 				   ov965x->ctrls.red_balance->val);
- 	}
- 	return ret;
-@@ -677,14 +666,13 @@ static int ov965x_set_brightness(struct ov965x *ov965x, int val)
- 		return -EINVAL;
- 
- 	for (i = 0; i < NUM_BR_REGS && !ret; i++)
--		ret = ov965x_write(ov965x->client, regs[0][i],
-+		ret = ov965x_write(ov965x, regs[0][i],
- 				   regs[val][i]);
- 	return ret;
- }
- 
- static int ov965x_set_gain(struct ov965x *ov965x, int auto_gain)
- {
--	struct i2c_client *client = ov965x->client;
- 	struct ov965x_ctrls *ctrls = &ov965x->ctrls;
- 	int ret = 0;
- 	u8 reg;
-@@ -693,14 +681,14 @@ static int ov965x_set_gain(struct ov965x *ov965x, int auto_gain)
- 	 * gain value in REG_VREF, REG_GAIN is not overwritten.
- 	 */
- 	if (ctrls->auto_gain->is_new) {
--		ret = ov965x_read(client, REG_COM8, &reg);
-+		ret = ov965x_read(ov965x, REG_COM8, &reg);
- 		if (ret < 0)
- 			return ret;
- 		if (ctrls->auto_gain->val)
- 			reg |= COM8_AGC;
- 		else
- 			reg &= ~COM8_AGC;
--		ret = ov965x_write(client, REG_COM8, reg);
-+		ret = ov965x_write(ov965x, REG_COM8, reg);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -719,15 +707,15 @@ static int ov965x_set_gain(struct ov965x *ov965x, int auto_gain)
- 		rgain = (gain - ((1 << m) * 16)) / (1 << m);
- 		rgain |= (((1 << m) - 1) << 4);
- 
--		ret = ov965x_write(client, REG_GAIN, rgain & 0xff);
-+		ret = ov965x_write(ov965x, REG_GAIN, rgain & 0xff);
- 		if (ret < 0)
- 			return ret;
--		ret = ov965x_read(client, REG_VREF, &reg);
-+		ret = ov965x_read(ov965x, REG_VREF, &reg);
- 		if (ret < 0)
- 			return ret;
- 		reg &= ~VREF_GAIN_MASK;
- 		reg |= (((rgain >> 8) & 0x3) << 6);
--		ret = ov965x_write(client, REG_VREF, reg);
-+		ret = ov965x_write(ov965x, REG_VREF, reg);
- 		if (ret < 0)
- 			return ret;
- 		/* Return updated control's value to userspace */
-@@ -742,10 +730,10 @@ static int ov965x_set_sharpness(struct ov965x *ov965x, unsigned int value)
- 	u8 com14, edge;
- 	int ret;
- 
--	ret = ov965x_read(ov965x->client, REG_COM14, &com14);
-+	ret = ov965x_read(ov965x, REG_COM14, &com14);
- 	if (ret < 0)
- 		return ret;
--	ret = ov965x_read(ov965x->client, REG_EDGE, &edge);
-+	ret = ov965x_read(ov965x, REG_EDGE, &edge);
- 	if (ret < 0)
- 		return ret;
- 	com14 = value ? com14 | COM14_EDGE_EN : com14 & ~COM14_EDGE_EN;
-@@ -756,33 +744,32 @@ static int ov965x_set_sharpness(struct ov965x *ov965x, unsigned int value)
- 	} else {
- 		com14 &= ~COM14_EEF_X2;
- 	}
--	ret = ov965x_write(ov965x->client, REG_COM14, com14);
-+	ret = ov965x_write(ov965x, REG_COM14, com14);
- 	if (ret < 0)
- 		return ret;
- 
- 	edge &= ~EDGE_FACTOR_MASK;
- 	edge |= ((u8)value & 0x0f);
- 
--	return ov965x_write(ov965x->client, REG_EDGE, edge);
-+	return ov965x_write(ov965x, REG_EDGE, edge);
- }
- 
- static int ov965x_set_exposure(struct ov965x *ov965x, int exp)
- {
--	struct i2c_client *client = ov965x->client;
- 	struct ov965x_ctrls *ctrls = &ov965x->ctrls;
- 	bool auto_exposure = (exp == V4L2_EXPOSURE_AUTO);
- 	int ret;
- 	u8 reg;
- 
- 	if (ctrls->auto_exp->is_new) {
--		ret = ov965x_read(client, REG_COM8, &reg);
-+		ret = ov965x_read(ov965x, REG_COM8, &reg);
- 		if (ret < 0)
- 			return ret;
- 		if (auto_exposure)
- 			reg |= (COM8_AEC | COM8_AGC);
- 		else
- 			reg &= ~(COM8_AEC | COM8_AGC);
--		ret = ov965x_write(client, REG_COM8, reg);
-+		ret = ov965x_write(ov965x, REG_COM8, reg);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -794,12 +781,12 @@ static int ov965x_set_exposure(struct ov965x *ov965x, int exp)
- 		 * Manual exposure value
- 		 * [b15:b0] - AECHM (b15:b10), AECH (b9:b2), COM1 (b1:b0)
- 		 */
--		ret = ov965x_write(client, REG_COM1, exposure & 0x3);
-+		ret = ov965x_write(ov965x, REG_COM1, exposure & 0x3);
- 		if (!ret)
--			ret = ov965x_write(client, REG_AECH,
-+			ret = ov965x_write(ov965x, REG_AECH,
- 					   (exposure >> 2) & 0xff);
- 		if (!ret)
--			ret = ov965x_write(client, REG_AECHM,
-+			ret = ov965x_write(ov965x, REG_AECHM,
- 					   (exposure >> 10) & 0x3f);
- 		/* Update the value to minimize rounding errors */
- 		ctrls->exposure->val = ((exposure * ov965x->exp_row_interval)
-@@ -822,7 +809,7 @@ static int ov965x_set_flip(struct ov965x *ov965x)
- 	if (ov965x->ctrls.vflip->val)
- 		mvfp |= MVFP_FLIP;
- 
--	return ov965x_write(ov965x->client, REG_MVFP, mvfp);
-+	return ov965x_write(ov965x, REG_MVFP, mvfp);
- }
- 
- #define NUM_SAT_LEVELS	5
-@@ -846,7 +833,7 @@ static int ov965x_set_saturation(struct ov965x *ov965x, int val)
- 		return -EINVAL;
- 
- 	for (i = 0; i < NUM_SAT_REGS && !ret; i++)
--		ret = ov965x_write(ov965x->client, addr + i, regs[val][i]);
-+		ret = ov965x_write(ov965x, addr + i, regs[val][i]);
- 
- 	return ret;
- }
-@@ -856,16 +843,15 @@ static int ov965x_set_test_pattern(struct ov965x *ov965x, int value)
- 	int ret;
- 	u8 reg;
- 
--	ret = ov965x_read(ov965x->client, REG_COM23, &reg);
-+	ret = ov965x_read(ov965x, REG_COM23, &reg);
- 	if (ret < 0)
- 		return ret;
- 	reg = value ? reg | COM23_TEST_MODE : reg & ~COM23_TEST_MODE;
--	return ov965x_write(ov965x->client, REG_COM23, reg);
-+	return ov965x_write(ov965x, REG_COM23, reg);
- }
- 
- static int __g_volatile_ctrl(struct ov965x *ov965x, struct v4l2_ctrl *ctrl)
- {
--	struct i2c_client *client = ov965x->client;
- 	unsigned int exposure, gain, m;
- 	u8 reg0, reg1, reg2;
- 	int ret;
-@@ -877,10 +863,10 @@ static int __g_volatile_ctrl(struct ov965x *ov965x, struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_AUTOGAIN:
- 		if (!ctrl->val)
- 			return 0;
--		ret = ov965x_read(client, REG_GAIN, &reg0);
-+		ret = ov965x_read(ov965x, REG_GAIN, &reg0);
- 		if (ret < 0)
- 			return ret;
--		ret = ov965x_read(client, REG_VREF, &reg1);
-+		ret = ov965x_read(ov965x, REG_VREF, &reg1);
- 		if (ret < 0)
- 			return ret;
- 		gain = ((reg1 >> 6) << 8) | reg0;
-@@ -891,13 +877,13 @@ static int __g_volatile_ctrl(struct ov965x *ov965x, struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_EXPOSURE_AUTO:
- 		if (ctrl->val == V4L2_EXPOSURE_MANUAL)
- 			return 0;
--		ret = ov965x_read(client, REG_COM1, &reg0);
-+		ret = ov965x_read(ov965x, REG_COM1, &reg0);
- 		if (ret < 0)
- 			return ret;
--		ret = ov965x_read(client, REG_AECH, &reg1);
-+		ret = ov965x_read(ov965x, REG_AECH, &reg1);
- 		if (ret < 0)
- 			return ret;
--		ret = ov965x_read(client, REG_AECHM, &reg2);
-+		ret = ov965x_read(ov965x, REG_AECHM, &reg2);
- 		if (ret < 0)
- 			return ret;
- 		exposure = ((reg2 & 0x3f) << 10) | (reg1 << 2) |
-@@ -1279,32 +1265,31 @@ static int ov965x_set_frame_size(struct ov965x *ov965x)
- 	int i, ret = 0;
- 
- 	for (i = 0; ret == 0 && i < NUM_FMT_REGS; i++)
--		ret = ov965x_write(ov965x->client, frame_size_reg_addr[i],
-+		ret = ov965x_write(ov965x, frame_size_reg_addr[i],
- 				   ov965x->frame_size->regs[i]);
- 	return ret;
- }
- 
- static int __ov965x_set_params(struct ov965x *ov965x)
- {
--	struct i2c_client *client = ov965x->client;
- 	struct ov965x_ctrls *ctrls = &ov965x->ctrls;
- 	int ret = 0;
- 	u8 reg;
- 
- 	if (ov965x->apply_frame_fmt) {
- 		reg = DEF_CLKRC + ov965x->fiv->clkrc_div;
--		ret = ov965x_write(client, REG_CLKRC, reg);
-+		ret = ov965x_write(ov965x, REG_CLKRC, reg);
- 		if (ret < 0)
- 			return ret;
- 		ret = ov965x_set_frame_size(ov965x);
- 		if (ret < 0)
- 			return ret;
--		ret = ov965x_read(client, REG_TSLB, &reg);
-+		ret = ov965x_read(ov965x, REG_TSLB, &reg);
- 		if (ret < 0)
- 			return ret;
- 		reg &= ~TSLB_YUYV_MASK;
- 		reg |= ov965x->tslb_reg;
--		ret = ov965x_write(client, REG_TSLB, reg);
-+		ret = ov965x_write(ov965x, REG_TSLB, reg);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -1318,10 +1303,10 @@ static int __ov965x_set_params(struct ov965x *ov965x)
- 	 * Select manual banding filter, the filter will
- 	 * be enabled further if required.
- 	 */
--	ret = ov965x_read(client, REG_COM11, &reg);
-+	ret = ov965x_read(ov965x, REG_COM11, &reg);
- 	if (!ret)
- 		reg |= COM11_BANDING;
--	ret = ov965x_write(client, REG_COM11, reg);
-+	ret = ov965x_write(ov965x, REG_COM11, reg);
- 	if (ret < 0)
- 		return ret;
- 	/*
-@@ -1333,12 +1318,11 @@ static int __ov965x_set_params(struct ov965x *ov965x)
- 
- static int ov965x_s_stream(struct v4l2_subdev *sd, int on)
- {
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
- 	struct ov965x *ov965x = to_ov965x(sd);
- 	struct ov965x_ctrls *ctrls = &ov965x->ctrls;
- 	int ret = 0;
- 
--	v4l2_dbg(1, debug, client, "%s: on: %d\n", __func__, on);
-+	v4l2_dbg(1, debug, sd, "%s: on: %d\n", __func__, on);
- 
- 	mutex_lock(&ov965x->lock);
- 	if (ov965x->streaming == !on) {
-@@ -1358,7 +1342,7 @@ static int ov965x_s_stream(struct v4l2_subdev *sd, int on)
- 				ctrls->update = 0;
- 		}
- 		if (!ret)
--			ret = ov965x_write(client, REG_COM2,
-+			ret = ov965x_write(ov965x, REG_COM2,
- 					   on ? 0x01 : 0x11);
- 	}
- 	if (!ret)
-@@ -1421,6 +1405,7 @@ static int ov965x_configure_gpios_pdata(struct ov965x *ov965x,
- {
- 	int ret, i;
- 	int gpios[NUM_GPIOS];
-+	struct device *dev = regmap_get_device(ov965x->regmap);
- 
- 	gpios[GPIO_PWDN] = pdata->gpio_pwdn;
- 	gpios[GPIO_RST]  = pdata->gpio_reset;
-@@ -1430,7 +1415,7 @@ static int ov965x_configure_gpios_pdata(struct ov965x *ov965x,
- 
- 		if (!gpio_is_valid(gpio))
- 			continue;
--		ret = devm_gpio_request_one(&ov965x->client->dev, gpio,
-+		ret = devm_gpio_request_one(dev, gpio,
- 					    GPIOF_OUT_INIT_HIGH, "OV965X");
- 		if (ret < 0)
- 			return ret;
-@@ -1446,7 +1431,7 @@ static int ov965x_configure_gpios_pdata(struct ov965x *ov965x,
- 
- static int ov965x_configure_gpios(struct ov965x *ov965x)
- {
--	struct device *dev = &ov965x->client->dev;
-+	struct device *dev = regmap_get_device(ov965x->regmap);
- 
- 	ov965x->gpios[GPIO_PWDN] = devm_gpiod_get_optional(dev, "powerdown",
- 							GPIOD_OUT_HIGH);
-@@ -1467,7 +1452,6 @@ static int ov965x_configure_gpios(struct ov965x *ov965x)
- 
- static int ov965x_detect_sensor(struct v4l2_subdev *sd)
- {
--	struct i2c_client *client = v4l2_get_subdevdata(sd);
- 	struct ov965x *ov965x = to_ov965x(sd);
- 	u8 pid, ver;
- 	int ret;
-@@ -1480,9 +1464,9 @@ static int ov965x_detect_sensor(struct v4l2_subdev *sd)
- 	msleep(25);
- 
- 	/* Check sensor revision */
--	ret = ov965x_read(client, REG_PID, &pid);
-+	ret = ov965x_read(ov965x, REG_PID, &pid);
- 	if (!ret)
--		ret = ov965x_read(client, REG_VER, &ver);
-+		ret = ov965x_read(ov965x, REG_VER, &ver);
- 
- 	__ov965x_set_power(ov965x, 0);
- 
-@@ -1509,12 +1493,21 @@ static int ov965x_probe(struct i2c_client *client,
- 	struct v4l2_subdev *sd;
- 	struct ov965x *ov965x;
- 	int ret;
-+	static const struct regmap_config ov965x_regmap_config = {
-+		.reg_bits = 8,
-+		.val_bits = 8,
-+		.max_register = 0xab,
-+	};
- 
- 	ov965x = devm_kzalloc(&client->dev, sizeof(*ov965x), GFP_KERNEL);
- 	if (!ov965x)
- 		return -ENOMEM;
- 
--	ov965x->client = client;
-+	ov965x->regmap = devm_regmap_init_sccb(client, &ov965x_regmap_config);
-+	if (IS_ERR(ov965x->regmap)) {
-+		dev_err(&client->dev, "Failed to allocate register map\n");
-+		return PTR_ERR(ov965x->regmap);
-+	}
- 
- 	if (pdata) {
- 		if (pdata->mclk_frequency == 0) {
-@@ -1527,7 +1520,7 @@ static int ov965x_probe(struct i2c_client *client,
- 		if (ret < 0)
- 			return ret;
- 	} else if (dev_fwnode(&client->dev)) {
--		ov965x->clk = devm_clk_get(&ov965x->client->dev, NULL);
-+		ov965x->clk = devm_clk_get(&client->dev, NULL);
- 		if (IS_ERR(ov965x->clk))
- 			return PTR_ERR(ov965x->clk);
- 		ov965x->mclk_frequency = clk_get_rate(ov965x->clk);
--- 
-2.7.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
