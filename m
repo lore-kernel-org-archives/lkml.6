@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D46FECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7990ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1058420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1058420864
+	by mail.kernel.org (Postfix) with ESMTP id 60EC7208FE
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60EC7208FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733014AbeGPIH3 (ORCPT
+        id S2388493AbeGPIHb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:07:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47550 "EHLO
+        Mon, 16 Jul 2018 04:07:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47558 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbeGPIH2 (ORCPT
+        with ESMTP id S1728440AbeGPIHa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:07:28 -0400
+        Mon, 16 Jul 2018 04:07:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF704CA1;
-        Mon, 16 Jul 2018 07:41:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9DE78CA1;
+        Mon, 16 Jul 2018 07:41:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kashyap Desai <kashyap.desai@broadcom.com>,
         Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 27/54] scsi: megaraid_sas: replace instance->ctrl_context checks with instance->adapter_type
-Date:   Mon, 16 Jul 2018 09:35:24 +0200
-Message-Id: <20180716073456.006560412@linuxfoundation.org>
+Subject: [PATCH 4.14 28/54] scsi: megaraid_sas: replace is_ventura with adapter_type checks
+Date:   Mon, 16 Jul 2018 09:35:25 +0200
+Message-Id: <20180716073456.203237586@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -53,9 +53,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
 
-commit e7d36b88435077847e1ea992919c600f3fa9321c upstream.
+commit f369a31578c461a360f58c7695e5aef931bada13 upstream.
 
-Increase code readability. No functional change.
+No functional change.
 
 Signed-off-by: Kashyap Desai <kashyap.desai@broadcom.com>
 Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
@@ -63,252 +63,224 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c |   64 +++++++++++++++++-------------
- 1 file changed, 37 insertions(+), 27 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas.h        |    1 -
+ drivers/scsi/megaraid/megaraid_sas_base.c   |    9 ++++-----
+ drivers/scsi/megaraid/megaraid_sas_fp.c     |   10 +++++-----
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |   24 ++++++++++++------------
+ 4 files changed, 21 insertions(+), 23 deletions(-)
 
+--- a/drivers/scsi/megaraid/megaraid_sas.h
++++ b/drivers/scsi/megaraid/megaraid_sas.h
+@@ -2243,7 +2243,6 @@ struct megasas_instance {
+ 	bool dev_handle;
+ 	bool fw_sync_cache_support;
+ 	u32 mfi_frame_size;
+-	bool is_ventura;
+ 	bool msix_combined;
+ 	u16 max_raid_mapsize;
+ 	/* preffered count to send as LDIO irrspective of FP capable.*/
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -2023,7 +2023,7 @@ void megaraid_sas_kill_hba(struct megasa
- 	msleep(1000);
- 	if ((instance->pdev->device == PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
- 		(instance->pdev->device == PCI_DEVICE_ID_LSI_SAS0071SKINNY) ||
--		(instance->ctrl_context)) {
-+		(instance->adapter_type != MFI_SERIES)) {
- 		writel(MFI_STOP_ADP, &instance->reg_set->doorbell);
- 		/* Flush */
- 		readl(&instance->reg_set->doorbell);
-@@ -2494,7 +2494,8 @@ int megasas_sriov_start_heartbeat(struct
- 	dev_warn(&instance->pdev->dev, "SR-IOV: Starting heartbeat for scsi%d\n",
- 	       instance->host->host_no);
- 
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		retval = megasas_issue_blocked_cmd(instance, cmd,
- 			MEGASAS_ROUTINE_WAIT_TIME_VF);
- 	else
-@@ -2790,7 +2791,9 @@ static int megasas_reset_bus_host(struct
- 	/*
- 	 * First wait for all commands to complete
- 	 */
--	if (instance->ctrl_context) {
-+	if (instance->adapter_type == MFI_SERIES) {
-+		ret = megasas_generic_reset(scmd);
-+	} else {
- 		struct megasas_cmd_fusion *cmd;
- 		cmd = (struct megasas_cmd_fusion *)scmd->SCp.ptr;
- 		if (cmd)
-@@ -2798,8 +2801,7 @@ static int megasas_reset_bus_host(struct
- 				MEGA_MPI2_RAID_DEFAULT_IO_FRAME_SIZE);
- 		ret = megasas_reset_fusion(scmd->device->host,
- 				SCSIIO_TIMEOUT_OCR);
--	} else
--		ret = megasas_generic_reset(scmd);
-+	}
- 
- 	return ret;
- }
-@@ -2816,7 +2818,7 @@ static int megasas_task_abort(struct scs
- 
- 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
- 
--	if (instance->ctrl_context)
-+	if (instance->adapter_type != MFI_SERIES)
- 		ret = megasas_task_abort_fusion(scmd);
- 	else {
- 		sdev_printk(KERN_NOTICE, scmd->device, "TASK ABORT not supported\n");
-@@ -2838,7 +2840,7 @@ static int megasas_reset_target(struct s
- 
- 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
- 
--	if (instance->ctrl_context)
-+	if (instance->adapter_type != MFI_SERIES)
- 		ret = megasas_reset_target_fusion(scmd);
- 	else {
- 		sdev_printk(KERN_NOTICE, scmd->device, "TARGET RESET not supported\n");
-@@ -3715,7 +3717,7 @@ megasas_transition_to_ready(struct megas
- 				PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
- 				(instance->pdev->device ==
- 				 PCI_DEVICE_ID_LSI_SAS0071SKINNY) ||
--				(instance->ctrl_context))
-+				(instance->adapter_type != MFI_SERIES))
- 				writel(
- 				  MFI_INIT_CLEAR_HANDSHAKE|MFI_INIT_HOTPLUG,
- 				  &instance->reg_set->doorbell);
-@@ -3733,7 +3735,7 @@ megasas_transition_to_ready(struct megas
- 			     PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
- 				(instance->pdev->device ==
- 				 PCI_DEVICE_ID_LSI_SAS0071SKINNY) ||
--				(instance->ctrl_context))
-+				(instance->adapter_type != MFI_SERIES))
- 				writel(MFI_INIT_HOTPLUG,
- 				       &instance->reg_set->doorbell);
- 			else
-@@ -3753,11 +3755,11 @@ megasas_transition_to_ready(struct megas
- 				PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
- 				(instance->pdev->device ==
- 				PCI_DEVICE_ID_LSI_SAS0071SKINNY)  ||
--				(instance->ctrl_context)) {
-+				(instance->adapter_type != MFI_SERIES)) {
- 				writel(MFI_RESET_FLAGS,
- 					&instance->reg_set->doorbell);
- 
--				if (instance->ctrl_context) {
-+				if (instance->adapter_type != MFI_SERIES) {
- 					for (i = 0; i < (10 * 1000); i += 20) {
- 						if (readl(
- 							    &instance->
-@@ -3924,7 +3926,8 @@ static int megasas_create_frame_pool(str
- 	 * max_sge_sz  = 12 byte (sizeof  megasas_sge64)
- 	 * Total 192 byte (3 MFI frame of 64 byte)
- 	 */
--	frame_count = instance->ctrl_context ? (3 + 1) : (15 + 1);
-+	frame_count = (instance->adapter_type == MFI_SERIES) ?
-+			(15 + 1) : (3 + 1);
- 	instance->mfi_frame_size = MEGAMFI_FRAME_SIZE * frame_count;
- 	/*
- 	 * Use DMA pool facility provided by PCI layer
-@@ -3979,7 +3982,7 @@ static int megasas_create_frame_pool(str
- 		memset(cmd->frame, 0, instance->mfi_frame_size);
- 		cmd->frame->io.context = cpu_to_le32(cmd->index);
- 		cmd->frame->io.pad_0 = 0;
--		if (!instance->ctrl_context && reset_devices)
-+		if ((instance->adapter_type == MFI_SERIES) && reset_devices)
- 			cmd->frame->hdr.cmd = MFI_CMD_INVALID;
+@@ -5220,7 +5220,7 @@ static int megasas_init_fw(struct megasa
+ 			goto fail_ready_state;
  	}
  
-@@ -4099,7 +4102,7 @@ int megasas_alloc_cmds(struct megasas_in
- inline int
- dcmd_timeout_ocr_possible(struct megasas_instance *instance) {
+-	if (instance->is_ventura) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		scratch_pad_3 =
+ 			readl(&instance->reg_set->outbound_scratch_pad_3);
+ 		instance->max_raid_mapsize = ((scratch_pad_3 >>
+@@ -5329,7 +5329,7 @@ static int megasas_init_fw(struct megasa
+ 	if (instance->instancet->init_adapter(instance))
+ 		goto fail_init_adapter;
  
--	if (!instance->ctrl_context)
-+	if (instance->adapter_type == MFI_SERIES)
- 		return KILL_ADAPTER;
- 	else if (instance->unload ||
- 			test_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags))
-@@ -4143,7 +4146,8 @@ megasas_get_pd_info(struct megasas_insta
- 	dcmd->sgl.sge32[0].phys_addr = cpu_to_le32(instance->pd_info_h);
- 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct MR_PD_INFO));
+-	if (instance->is_ventura) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		scratch_pad_4 =
+ 			readl(&instance->reg_set->outbound_scratch_pad_4);
+ 		if ((scratch_pad_4 & MR_NVME_PAGE_SIZE_MASK) >=
+@@ -5365,7 +5365,7 @@ static int megasas_init_fw(struct megasa
+ 	memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
  
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
- 	else
- 		ret = megasas_issue_polled(instance, cmd);
-@@ -4240,7 +4244,8 @@ megasas_get_pd_list(struct megasas_insta
- 	dcmd->sgl.sge32[0].phys_addr = cpu_to_le32(ci_h);
- 	dcmd->sgl.sge32[0].length = cpu_to_le32(MEGASAS_MAX_PD * sizeof(struct MR_PD_LIST));
+ 	/* stream detection initialization */
+-	if (instance->is_ventura && fusion) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		fusion->stream_detect_by_ld =
+ 			kzalloc(sizeof(struct LD_STREAM_DETECT *)
+ 			* MAX_LOGICAL_DRIVES_EXT,
+@@ -6094,7 +6094,6 @@ static int megasas_probe_one(struct pci_
  
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		ret = megasas_issue_blocked_cmd(instance, cmd,
- 			MFI_IO_TIMEOUT_SECS);
- 	else
-@@ -4251,7 +4256,7 @@ megasas_get_pd_list(struct megasas_insta
- 		dev_info(&instance->pdev->dev, "MR_DCMD_PD_LIST_QUERY "
- 			"failed/not supported by firmware\n");
+ 		break;
+ 	case VENTURA_SERIES:
+-		instance->is_ventura = 1;
+ 	case THUNDERBOLT_SERIES:
+ 	case INVADER_SERIES:
+ 		if (megasas_alloc_fusion_context(instance)) {
+@@ -6686,7 +6685,7 @@ skip_firing_dcmds:
+ 	if (instance->msix_vectors)
+ 		pci_free_irq_vectors(instance->pdev);
  
--		if (instance->ctrl_context)
-+		if (instance->adapter_type != MFI_SERIES)
- 			megaraid_sas_kill_hba(instance);
- 		else
- 			instance->pd_list_not_supported = 1;
-@@ -4372,7 +4377,8 @@ megasas_get_ld_list(struct megasas_insta
- 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct MR_LD_LIST));
- 	dcmd->pad_0  = 0;
+-	if (instance->is_ventura) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		for (i = 0; i < MAX_LOGICAL_DRIVES_EXT; ++i)
+ 			kfree(fusion->stream_detect_by_ld[i]);
+ 		kfree(fusion->stream_detect_by_ld);
+--- a/drivers/scsi/megaraid/megaraid_sas_fp.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
+@@ -745,7 +745,7 @@ static u8 mr_spanset_get_phy_params(stru
+ 		*pDevHandle = MR_PdDevHandleGet(pd, map);
+ 		*pPdInterface = MR_PdInterfaceTypeGet(pd, map);
+ 		/* get second pd also for raid 1/10 fast path writes*/
+-		if (instance->is_ventura &&
++		if ((instance->adapter_type == VENTURA_SERIES) &&
+ 		    (raid->level == 1) &&
+ 		    !io_info->isRead) {
+ 			r1_alt_pd = MR_ArPdGet(arRef, physArm + 1, map);
+@@ -770,7 +770,7 @@ static u8 mr_spanset_get_phy_params(stru
+ 	}
  
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		ret = megasas_issue_blocked_cmd(instance, cmd,
- 			MFI_IO_TIMEOUT_SECS);
- 	else
-@@ -4491,7 +4497,8 @@ megasas_ld_list_query(struct megasas_ins
- 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct MR_LD_TARGETID_LIST));
- 	dcmd->pad_0  = 0;
+ 	*pdBlock += stripRef + le64_to_cpu(MR_LdSpanPtrGet(ld, span, map)->startBlk);
+-	if (instance->is_ventura) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		((struct RAID_CONTEXT_G35 *)pRAID_Context)->span_arm =
+ 			(span << RAID_CTX_SPANARM_SPAN_SHIFT) | physArm;
+ 		io_info->span_arm =
+@@ -861,7 +861,7 @@ u8 MR_GetPhyParams(struct megasas_instan
+ 		*pDevHandle = MR_PdDevHandleGet(pd, map);
+ 		*pPdInterface = MR_PdInterfaceTypeGet(pd, map);
+ 		/* get second pd also for raid 1/10 fast path writes*/
+-		if (instance->is_ventura &&
++		if ((instance->adapter_type == VENTURA_SERIES) &&
+ 		    (raid->level == 1) &&
+ 		    !io_info->isRead) {
+ 			r1_alt_pd = MR_ArPdGet(arRef, physArm + 1, map);
+@@ -888,7 +888,7 @@ u8 MR_GetPhyParams(struct megasas_instan
+ 	}
  
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
- 	else
- 		ret = megasas_issue_polled(instance, cmd);
-@@ -4664,7 +4671,8 @@ megasas_get_ctrl_info(struct megasas_ins
- 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct megasas_ctrl_info));
- 	dcmd->mbox.b[0] = 1;
- 
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
- 	else
- 		ret = megasas_issue_polled(instance, cmd);
-@@ -4783,7 +4791,8 @@ int megasas_set_crash_dump_params(struct
- 	dcmd->sgl.sge32[0].phys_addr = cpu_to_le32(instance->crash_dump_h);
- 	dcmd->sgl.sge32[0].length = cpu_to_le32(CRASH_DMA_BUF_SIZE);
- 
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
- 	else
- 		ret = megasas_issue_polled(instance, cmd);
-@@ -5170,7 +5179,7 @@ static int megasas_init_fw(struct megasa
- 
+ 	*pdBlock += stripRef + le64_to_cpu(MR_LdSpanPtrGet(ld, span, map)->startBlk);
+-	if (instance->is_ventura) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		((struct RAID_CONTEXT_G35 *)pRAID_Context)->span_arm =
+ 				(span << RAID_CTX_SPANARM_SPAN_SHIFT) | physArm;
+ 		io_info->span_arm =
+@@ -1099,7 +1099,7 @@ MR_BuildRaidContext(struct megasas_insta
+ 	if (instance->adapter_type == INVADER_SERIES)
+ 		pRAID_Context->reg_lock_flags = (isRead) ?
+ 			raid->regTypeReqOnRead : raid->regTypeReqOnWrite;
+-	else if (!instance->is_ventura)
++	else if (instance->adapter_type == THUNDERBOLT_SERIES)
+ 		pRAID_Context->reg_lock_flags = (isRead) ?
+ 			REGION_TYPE_SHARED_READ : raid->regTypeReqOnWrite;
+ 	pRAID_Context->virtual_disk_tgt_id = raid->targetId;
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -237,7 +237,7 @@ megasas_fusion_update_can_queue(struct m
  	reg_set = instance->reg_set;
  
--	if (fusion)
-+	if (instance->adapter_type != MFI_SERIES)
- 		instance->instancet = &megasas_instance_template_fusion;
- 	else {
- 		switch (instance->pdev->device) {
-@@ -5805,7 +5814,8 @@ megasas_get_target_prop(struct megasas_i
- 	dcmd->sgl.sge32[0].length =
- 		cpu_to_le32(sizeof(struct MR_TARGET_PROPERTIES));
+ 	/* ventura FW does not fill outbound_scratch_pad_3 with queue depth */
+-	if (!instance->is_ventura)
++	if (instance->adapter_type < VENTURA_SERIES)
+ 		cur_max_fw_cmds =
+ 		readl(&instance->reg_set->outbound_scratch_pad_3) & 0x00FFFF;
  
--	if (instance->ctrl_context && !instance->mask_interrupts)
-+	if ((instance->adapter_type != MFI_SERIES) &&
-+	    !instance->mask_interrupts)
- 		ret = megasas_issue_blocked_cmd(instance,
- 						cmd, MFI_IO_TIMEOUT_SECS);
- 	else
-@@ -6186,7 +6196,7 @@ static int megasas_probe_one(struct pci_
- 	instance->disableOnlineCtrlReset = 1;
- 	instance->UnevenSpanSupport = 0;
- 
--	if (instance->ctrl_context) {
-+	if (instance->adapter_type != MFI_SERIES) {
- 		INIT_WORK(&instance->work_init, megasas_fusion_ocr_wq);
- 		INIT_WORK(&instance->crash_init, megasas_fusion_crash_dump_wq);
- 	} else
-@@ -6266,7 +6276,7 @@ fail_io_attach:
- 	instance->instancet->disable_intr(instance);
- 	megasas_destroy_irqs(instance);
- 
--	if (instance->ctrl_context)
-+	if (instance->adapter_type != MFI_SERIES)
- 		megasas_release_fusion(instance);
- 	else
- 		megasas_release_mfi(instance);
-@@ -6500,7 +6510,7 @@ megasas_resume(struct pci_dev *pdev)
- 	if (rval < 0)
- 		goto fail_reenable_msix;
- 
--	if (instance->ctrl_context) {
-+	if (instance->adapter_type != MFI_SERIES) {
- 		megasas_reset_reply_desc(instance);
- 		if (megasas_ioc_init_fusion(instance)) {
- 			megasas_free_cmds(instance);
-@@ -6684,7 +6694,7 @@ skip_firing_dcmds:
+@@ -285,7 +285,7 @@ megasas_fusion_update_can_queue(struct m
+ 		instance->host->can_queue = instance->cur_can_queue;
  	}
  
+-	if (instance->is_ventura)
++	if (instance->adapter_type == VENTURA_SERIES)
+ 		instance->max_mpt_cmds =
+ 		instance->max_fw_cmds * RAID_1_PEER_CMDS;
+ 	else
+@@ -2349,7 +2349,7 @@ megasas_build_ldio_fusion(struct megasas
  
--	if (instance->ctrl_context) {
-+	if (instance->adapter_type != MFI_SERIES) {
- 		megasas_release_fusion(instance);
- 			pd_seq_map_sz = sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) +
- 				(sizeof(struct MR_PD_CFG_SEQ) *
+ 	praid_context = &io_request->RaidContext;
+ 
+-	if (instance->is_ventura) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		spin_lock_irqsave(&instance->stream_lock, spinlock_flags);
+ 		megasas_stream_detect(instance, cmd, &io_info);
+ 		spin_unlock_irqrestore(&instance->stream_lock, spinlock_flags);
+@@ -2415,7 +2415,7 @@ megasas_build_ldio_fusion(struct megasas
+ 			io_request->RaidContext.raid_context.reg_lock_flags |=
+ 			  (MR_RL_FLAGS_GRANT_DESTINATION_CUDA |
+ 			   MR_RL_FLAGS_SEQ_NUM_ENABLE);
+-		} else if (instance->is_ventura) {
++		} else if (instance->adapter_type == VENTURA_SERIES) {
+ 			io_request->RaidContext.raid_context_g35.nseg_type |=
+ 						(1 << RAID_CONTEXT_NSEG_SHIFT);
+ 			io_request->RaidContext.raid_context_g35.nseg_type |=
+@@ -2434,7 +2434,7 @@ megasas_build_ldio_fusion(struct megasas
+ 					&io_info, local_map_ptr);
+ 			scp->SCp.Status |= MEGASAS_LOAD_BALANCE_FLAG;
+ 			cmd->pd_r1_lb = io_info.pd_after_lb;
+-			if (instance->is_ventura)
++			if (instance->adapter_type == VENTURA_SERIES)
+ 				io_request->RaidContext.raid_context_g35.span_arm
+ 					= io_info.span_arm;
+ 			else
+@@ -2444,7 +2444,7 @@ megasas_build_ldio_fusion(struct megasas
+ 		} else
+ 			scp->SCp.Status &= ~MEGASAS_LOAD_BALANCE_FLAG;
+ 
+-		if (instance->is_ventura)
++		if (instance->adapter_type == VENTURA_SERIES)
+ 			cmd->r1_alt_dev_handle = io_info.r1_alt_dev_handle;
+ 		else
+ 			cmd->r1_alt_dev_handle = MR_DEVHANDLE_INVALID;
+@@ -2480,7 +2480,7 @@ megasas_build_ldio_fusion(struct megasas
+ 				(MR_RL_FLAGS_GRANT_DESTINATION_CPU0 |
+ 				 MR_RL_FLAGS_SEQ_NUM_ENABLE);
+ 			io_request->RaidContext.raid_context.nseg = 0x1;
+-		} else if (instance->is_ventura) {
++		} else if (instance->adapter_type == VENTURA_SERIES) {
+ 			io_request->RaidContext.raid_context_g35.routing_flags |=
+ 					(1 << MR_RAID_CTX_ROUTINGFLAGS_SQN_SHIFT);
+ 			io_request->RaidContext.raid_context_g35.nseg_type |=
+@@ -2555,7 +2555,7 @@ static void megasas_build_ld_nonrw_fusio
+ 
+ 		/* set RAID context values */
+ 		pRAID_Context->config_seq_num = raid->seqNum;
+-		if (!instance->is_ventura)
++		if (instance->adapter_type != VENTURA_SERIES)
+ 			pRAID_Context->reg_lock_flags = REGION_TYPE_SHARED_READ;
+ 		pRAID_Context->timeout_value =
+ 			cpu_to_le16(raid->fpIoTimeoutForLd);
+@@ -2640,7 +2640,7 @@ megasas_build_syspd_fusion(struct megasa
+ 				cpu_to_le16(device_id + (MAX_PHYSICAL_DEVICES - 1));
+ 		pRAID_Context->config_seq_num = pd_sync->seq[pd_index].seqNum;
+ 		io_request->DevHandle = pd_sync->seq[pd_index].devHandle;
+-		if (instance->is_ventura) {
++		if (instance->adapter_type == VENTURA_SERIES) {
+ 			io_request->RaidContext.raid_context_g35.routing_flags |=
+ 				(1 << MR_RAID_CTX_ROUTINGFLAGS_SQN_SHIFT);
+ 			io_request->RaidContext.raid_context_g35.nseg_type |=
+@@ -2771,7 +2771,7 @@ megasas_build_io_fusion(struct megasas_i
+ 		return 1;
+ 	}
+ 
+-	if (instance->is_ventura) {
++	if (instance->adapter_type == VENTURA_SERIES) {
+ 		set_num_sge(&io_request->RaidContext.raid_context_g35, sge_count);
+ 		cpu_to_le16s(&io_request->RaidContext.raid_context_g35.routing_flags);
+ 		cpu_to_le16s(&io_request->RaidContext.raid_context_g35.nseg_type);
+@@ -4233,7 +4233,7 @@ int megasas_reset_fusion(struct Scsi_Hos
+ 		for (i = 0 ; i < instance->max_scsi_cmds; i++) {
+ 			cmd_fusion = fusion->cmd_list[i];
+ 			/*check for extra commands issued by driver*/
+-			if (instance->is_ventura) {
++			if (instance->adapter_type == VENTURA_SERIES) {
+ 				r1_cmd = fusion->cmd_list[i + instance->max_fw_cmds];
+ 				megasas_return_cmd_fusion(instance, r1_cmd);
+ 			}
+@@ -4334,7 +4334,7 @@ transition_to_ready:
+ 				megasas_set_dynamic_target_properties(sdev);
+ 
+ 			/* reset stream detection array */
+-			if (instance->is_ventura) {
++			if (instance->adapter_type == VENTURA_SERIES) {
+ 				for (j = 0; j < MAX_LOGICAL_DRIVES_EXT; ++j) {
+ 					memset(fusion->stream_detect_by_ld[j],
+ 					0, sizeof(struct LD_STREAM_DETECT));
 
 
