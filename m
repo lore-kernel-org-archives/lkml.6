@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAC9ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603F3ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F22206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F22206B7
+	by mail.kernel.org (Postfix) with ESMTP id 1946B206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1946B206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389058AbeGPIJc (ORCPT
+        id S2389076AbeGPIJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48006 "EHLO
+        Mon, 16 Jul 2018 04:09:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48014 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388675AbeGPIJb (ORCPT
+        with ESMTP id S2388675AbeGPIJe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:31 -0400
+        Mon, 16 Jul 2018 04:09:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED252C03;
-        Mon, 16 Jul 2018 07:43:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC856CA0;
+        Mon, 16 Jul 2018 07:43:30 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.9 31/32] RDMA/ucm: Mark UCM interface as BROKEN
-Date:   Mon, 16 Jul 2018 09:36:39 +0200
-Message-Id: <20180716073508.329161069@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot 
+        <syzbot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 32/32] loop: remember whether sysfs_create_group() was done
+Date:   Mon, 16 Jul 2018 09:36:40 +0200
+Message-Id: <20180716073508.445812597@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -50,66 +53,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 7a8690ed6f5346f6738971892205e91d39b6b901 upstream.
+commit d3349b6b3c373ac1fbfb040b810fcee5e2adc7e0 upstream.
 
-In commit 357d23c811a7 ("Remove the obsolete libibcm library")
-in rdma-core [1], we removed obsolete library which used the
-/dev/infiniband/ucmX interface.
+syzbot is hitting WARN() triggered by memory allocation fault
+injection [1] because loop module is calling sysfs_remove_group()
+when sysfs_create_group() failed.
+Fix this by remembering whether sysfs_create_group() succeeded.
 
-Following multiple syzkaller reports about non-sanitized
-user input in the UCMA module, the short audit reveals the same
-issues in UCM module too.
+[1] https://syzkaller.appspot.com/bug?id=3f86c0edf75c86d2633aeb9dd69eccc70bc7e90b
 
-It is better to disable this interface in the kernel,
-before syzkaller team invests time and energy to harden
-this unused interface.
-
-[1] https://github.com/linux-rdma/rdma-core/pull/279
-
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/infiniband/Kconfig       |   12 ++++++++++++
- drivers/infiniband/core/Makefile |    4 ++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
+Renamed sysfs_ready -> sysfs_inited.
 
---- a/drivers/infiniband/Kconfig
-+++ b/drivers/infiniband/Kconfig
-@@ -34,6 +34,18 @@ config INFINIBAND_USER_ACCESS
- 	  libibverbs, libibcm and a hardware driver library from
- 	  <http://www.openfabrics.org/git/>.
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+ drivers/block/loop.c |   11 ++++++-----
+ drivers/block/loop.h |    1 +
+ 2 files changed, 7 insertions(+), 5 deletions(-)
+
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -824,16 +824,17 @@ static struct attribute_group loop_attri
+ 	.attrs= loop_attrs,
+ };
  
-+config INFINIBAND_USER_ACCESS_UCM
-+	bool "Userspace CM (UCM, DEPRECATED)"
-+	depends on BROKEN
-+	depends on INFINIBAND_USER_ACCESS
-+	help
-+	  The UCM module has known security flaws, which no one is
-+	  interested to fix. The user-space part of this code was
-+	  dropped from the upstream a long time ago.
-+
-+	  This option is DEPRECATED and planned to be removed.
-+
-+
- config INFINIBAND_USER_MEM
- 	bool
- 	depends on INFINIBAND_USER_ACCESS != n
---- a/drivers/infiniband/core/Makefile
-+++ b/drivers/infiniband/core/Makefile
-@@ -4,8 +4,8 @@ user_access-$(CONFIG_INFINIBAND_ADDR_TRA
- obj-$(CONFIG_INFINIBAND) +=		ib_core.o ib_cm.o iw_cm.o \
- 					$(infiniband-y)
- obj-$(CONFIG_INFINIBAND_USER_MAD) +=	ib_umad.o
--obj-$(CONFIG_INFINIBAND_USER_ACCESS) +=	ib_uverbs.o ib_ucm.o \
--					$(user_access-y)
-+obj-$(CONFIG_INFINIBAND_USER_ACCESS) += ib_uverbs.o $(user_access-y)
-+obj-$(CONFIG_INFINIBAND_USER_ACCESS_UCM) += ib_ucm.o $(user_access-y)
+-static int loop_sysfs_init(struct loop_device *lo)
++static void loop_sysfs_init(struct loop_device *lo)
+ {
+-	return sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
+-				  &loop_attribute_group);
++	lo->sysfs_inited = !sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
++						&loop_attribute_group);
+ }
  
- ib_core-y :=			packer.o ud_header.o verbs.o cq.o rw.o sysfs.o \
- 				device.o fmr_pool.o cache.o netlink.o \
+ static void loop_sysfs_exit(struct loop_device *lo)
+ {
+-	sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
+-			   &loop_attribute_group);
++	if (lo->sysfs_inited)
++		sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
++				   &loop_attribute_group);
+ }
+ 
+ static void loop_config_discard(struct loop_device *lo)
+--- a/drivers/block/loop.h
++++ b/drivers/block/loop.h
+@@ -59,6 +59,7 @@ struct loop_device {
+ 	struct kthread_worker	worker;
+ 	struct task_struct	*worker_task;
+ 	bool			use_dio;
++	bool			sysfs_inited;
+ 
+ 	struct request_queue	*lo_queue;
+ 	struct blk_mq_tag_set	tag_set;
 
 
