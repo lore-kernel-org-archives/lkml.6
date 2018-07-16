@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F34A8ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55FDECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACA5420779
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA5420779
+	by mail.kernel.org (Postfix) with ESMTP id 725DA20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:30:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725DA20779
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbeGPI4W (ORCPT
+        id S1731911AbeGPI4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:56:22 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54478 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731687AbeGPI4V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:56:21 -0400
+        Mon, 16 Jul 2018 04:56:25 -0400
+Received: from foss.arm.com ([217.140.101.70]:54494 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731687AbeGPI4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:56:24 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D237EED1;
-        Mon, 16 Jul 2018 01:30:05 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E30A15A1;
+        Mon, 16 Jul 2018 01:30:09 -0700 (PDT)
 Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.210.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 103AE3F5A0;
-        Mon, 16 Jul 2018 01:30:02 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C1E1C3F5A0;
+        Mon, 16 Jul 2018 01:30:06 -0700 (PDT)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -44,9 +44,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v2 11/12] sched/core: uclamp: update CPU's refcount on TG's clamp changes
-Date:   Mon, 16 Jul 2018 09:29:05 +0100
-Message-Id: <20180716082906.6061-12-patrick.bellasi@arm.com>
+Subject: [PATCH v2 12/12] sched/core: uclamp: use percentage clamp values
+Date:   Mon, 16 Jul 2018 09:29:06 +0100
+Message-Id: <20180716082906.6061-13-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180716082906.6061-1-patrick.bellasi@arm.com>
 References: <20180716082906.6061-1-patrick.bellasi@arm.com>
@@ -55,144 +55,197 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a task group refcounts a new clamp group, we need to ensure that
-the new clamp values are immediately enforced to all its tasks which are
-currently RUNNABLE. This is to ensure that all currently RUNNABLE task
-are boosted and/or clamped as requested as soon as possible.
+The utilization is a well defined property of tasks and CPUs with an
+in-kernel representation based on power-of-two values.
+The current representation, in the [0..SCHED_CAPACITY_SCALE] range,
+allows efficient computations in hot-paths and a sufficient fixed point
+arithmetic precision.
+However, the utilization values range is still an implementation detail
+which is also possibly subject to changes in the future.
 
-Let's ensure that, whenever a new clamp group is refcounted by a task
-group, all its RUNNABLE tasks are correctly accounted in their
-respective CPUs. We do that by slightly refactoring uclamp_group_get()
-to get an additional parameter *cgroup_subsys_state which, when
-provided, it's used to walk the list of tasks in the correspond TGs and
-update the RUNNABLE ones.
+Since we don't want to commit new user-space APIs to any in-kernel
+implementation detail, let's add an abstraction layer on top of the APIs
+used by util_clamp, i.e. sched_{set,get}attr syscalls and the cgroup's
+cpu.util_{min,max} attributes.
 
-This is a "brute force" solution which allows to reuse the same refcount
-update code already used by the per-task API. That's also the only way
-to ensure a prompt enforcement of new clamp constraints on RUNNABLE
-tasks, as soon as a task group attribute is tweaked.
+We do that by adding a couple of conversion function which can be used
+to conveniently transform utilization/capacity values from/to the internal
+SCHED_FIXEDPOINT_SCALE representation to/from a more generic percentage
+in the standard [0..100] range.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Tejun Heo <tj@kernel.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Cc: Paul Turner <pjt@google.com>
 Cc: Todd Kjos <tkjos@google.com>
 Cc: Joel Fernandes <joelaf@google.com>
 Cc: Steve Muckle <smuckle@google.com>
 Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-pm@vger.kernel.org
 ---
- kernel/sched/core.c | 42 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 8 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst |  6 +++---
+ include/linux/sched.h                   | 20 ++++++++++++++++++++
+ include/uapi/linux/sched/types.h        | 14 ++++++++------
+ kernel/sched/core.c                     | 18 ++++++++++++------
+ 4 files changed, 43 insertions(+), 15 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 50613d3d5b83..42cff5ffddae 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1198,21 +1198,43 @@ static inline void uclamp_group_put(int clamp_id, int group_id)
- 	raw_spin_unlock_irqrestore(&uc_map[group_id].se_lock, flags);
- }
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 328c011cc105..08b8062e55cd 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -973,7 +973,7 @@ All time durations are in microseconds.
+         A read-write single value file which exists on non-root cgroups.
+         The default is "0", i.e. no bandwidth boosting.
  
-+static inline void uclamp_group_get_tg(struct cgroup_subsys_state *css,
-+				       int clamp_id, unsigned int group_id)
+-        The minimum utilization in the range [0, 1023].
++        The minimum percentage of utilization in the range [0, 100].
+ 
+         This interface allows reading and setting minimum utilization clamp
+         values similar to the sched_setattr(2). This minimum utilization
+@@ -981,9 +981,9 @@ All time durations are in microseconds.
+ 
+   cpu.util_max
+         A read-write single value file which exists on non-root cgroups.
+-        The default is "1023". i.e. no bandwidth clamping
++        The default is "100". i.e. no bandwidth clamping
+ 
+-        The maximum utilization in the range [0, 1023].
++        The maximum percentage of utilization in the range [0, 100].
+ 
+         This interface allows reading and setting maximum utilization clamp
+         values similar to the sched_setattr(2). This maximum utilization
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 5dd76a27ec17..f5970903c187 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -321,6 +321,26 @@ struct sched_info {
+ # define SCHED_FIXEDPOINT_SHIFT		10
+ # define SCHED_FIXEDPOINT_SCALE		(1L << SCHED_FIXEDPOINT_SHIFT)
+ 
++static inline unsigned int scale_from_percent(unsigned int pct)
 +{
-+	struct css_task_iter it;
-+	struct task_struct *p;
++	WARN_ON(pct > 100);
 +
-+	/* Update clamp groups for RUNNABLE tasks in this TG */
-+	css_task_iter_start(css, 0, &it);
-+	while ((p = css_task_iter_next(&it)))
-+		uclamp_task_update_active(p, clamp_id, group_id);
-+	css_task_iter_end(&it);
++	return ((SCHED_FIXEDPOINT_SCALE * pct) / 100);
 +}
 +
- /**
-  * uclamp_group_get: increase the reference count for a clamp group
-  * @p: the task which clamp value must be tracked
-- * @clamp_id: the clamp index affected by the task
-- * @uc_se: the utilization clamp data for the task
-- * @clamp_value: the new clamp value for the task
-+ * @css: the task group which clamp value must be tracked
-+ * @clamp_id: the clamp index affected by the task (group)
-+ * @uc_se: the utilization clamp data for the task (group)
-+ * @clamp_value: the new clamp value for the task (group)
-  *
-  * Each time a task changes its utilization clamp value, for a specified clamp
-  * index, we need to find an available clamp group which can be used to track
-  * this new clamp value. The corresponding clamp group index will be used by
-  * the task to reference count the clamp value on CPUs while enqueued.
-  *
-+ * When the cgroup's cpu controller utilization clamping support is enabled,
-+ * each task group has a set of clamp values which are used to restrict the
-+ * corresponding task specific clamp values.
-+ * When a clamp value for a task group is changed, all the (active) tasks
-+ * belonging to that task group must be update to ensure they are refcounting
-+ * the correct CPU's clamp value.
-+ *
-  * Return: -ENOSPC if there are no available clamp groups, 0 on success.
-  */
- static inline int uclamp_group_get(struct task_struct *p,
-+				   struct cgroup_subsys_state *css,
- 				   int clamp_id, struct uclamp_se *uc_se,
- 				   unsigned int clamp_value)
- {
-@@ -1240,6 +1262,10 @@ static inline int uclamp_group_get(struct task_struct *p,
- 	uc_map[next_group_id].se_count += 1;
- 	raw_spin_unlock_irqrestore(&uc_map[next_group_id].se_lock, flags);
- 
-+	/* Newly created TG don't have tasks assigned */
-+	if (css)
-+		uclamp_group_get_tg(css, clamp_id, next_group_id);
++static inline unsigned int scale_to_percent(unsigned int value)
++{
++	unsigned int rounding = 0;
 +
- 	/* Update CPU's clamp group refcounts of RUNNABLE task */
- 	if (p)
- 		uclamp_task_update_active(p, clamp_id, next_group_id);
-@@ -1307,7 +1333,7 @@ static inline int alloc_uclamp_sched_group(struct task_group *tg,
- 		uc_se->value = parent->uclamp[clamp_id].value;
- 		uc_se->group_id = UCLAMP_NONE;
++	WARN_ON(value > SCHED_FIXEDPOINT_SCALE);
++
++	/* Compensate rounding errors for: 0, 256, 512, 768, 1024 */
++	if (likely((value & 0xFF) && ~(value & 0x700)))
++		rounding = 1;
++
++	return (rounding + ((100 * value) / SCHED_FIXEDPOINT_SCALE));
++}
++
+ struct load_weight {
+ 	unsigned long			weight;
+ 	u32				inv_weight;
+diff --git a/include/uapi/linux/sched/types.h b/include/uapi/linux/sched/types.h
+index 7421cd25354d..e2c2acb1c6af 100644
+--- a/include/uapi/linux/sched/types.h
++++ b/include/uapi/linux/sched/types.h
+@@ -84,15 +84,17 @@ struct sched_param {
+  *
+  *  @sched_util_min	represents the minimum utilization
+  *  @sched_util_max	represents the maximum utilization
++ *  @sched_util_min	represents the minimum utilization percentage
++ *  @sched_util_max	represents the maximum utilization percentage
+  *
+- * Utilization is a value in the range [0..SCHED_CAPACITY_SCALE] which
+- * represents the percentage of CPU time used by a task when running at the
+- * maximum frequency on the highest capacity CPU of the system. Thus, for
+- * example, a 20% utilization task is a task running for 2ms every 10ms.
++ * Utilization is a value in the range [0..100] which represents the
++ * percentage of CPU time used by a task when running at the maximum frequency
++ * on the highest capacity CPU of the system. Thus, for example, a 20%
++ * utilization task is a task running for 2ms every 10ms.
+  *
+- * A task with a min utilization value bigger then 0 is more likely to be
++ * A task with a min utilization value bigger then 0% is more likely to be
+  * scheduled on a CPU which can provide that bandwidth.
+- * A task with a max utilization value smaller then 1024 is more likely to be
++ * A task with a max utilization value smaller then 100% is more likely to be
+  * scheduled on a CPU which do not provide more then the required bandwidth.
+  */
+ struct sched_attr {
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 42cff5ffddae..da7b8630cc8d 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1381,7 +1381,7 @@ static inline int __setscheduler_uclamp(struct task_struct *p,
  
--		if (uclamp_group_get(NULL, clamp_id, uc_se,
-+		if (uclamp_group_get(NULL, NULL, clamp_id, uc_se,
- 				     parent->uclamp[clamp_id].value)) {
- 			ret = 0;
- 			goto out;
-@@ -1362,12 +1388,12 @@ static inline int __setscheduler_uclamp(struct task_struct *p,
+ 	if (attr->sched_util_min > attr->sched_util_max)
+ 		return -EINVAL;
+-	if (attr->sched_util_max > SCHED_CAPACITY_SCALE)
++	if (attr->sched_util_max > 100)
+ 		return -EINVAL;
  
+ 	mutex_lock(&uclamp_mutex);
+@@ -1389,12 +1389,12 @@ static inline int __setscheduler_uclamp(struct task_struct *p,
  	/* Update min utilization clamp */
  	uc_se = &p->uclamp[UCLAMP_MIN];
--	retval |= uclamp_group_get(p, UCLAMP_MIN, uc_se,
-+	retval |= uclamp_group_get(p, NULL, UCLAMP_MIN, uc_se,
- 				   attr->sched_util_min);
+ 	retval |= uclamp_group_get(p, NULL, UCLAMP_MIN, uc_se,
+-				   attr->sched_util_min);
++				   scale_from_percent(attr->sched_util_min));
  
  	/* Update max utilization clamp */
  	uc_se = &p->uclamp[UCLAMP_MAX];
--	retval |= uclamp_group_get(p, UCLAMP_MAX, uc_se,
-+	retval |= uclamp_group_get(p, NULL, UCLAMP_MAX, uc_se,
- 				   attr->sched_util_max);
+ 	retval |= uclamp_group_get(p, NULL, UCLAMP_MAX, uc_se,
+-				   attr->sched_util_max);
++				   scale_from_percent(attr->sched_util_max));
  
  	mutex_unlock(&uclamp_mutex);
-@@ -7274,7 +7300,7 @@ static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
  
- 	/* Update TG's reference count */
- 	uc_se = &tg->uclamp[UCLAMP_MIN];
--	ret = uclamp_group_get(NULL, UCLAMP_MIN, uc_se, min_value);
-+	ret = uclamp_group_get(NULL, css, UCLAMP_MIN, uc_se, min_value);
+@@ -5493,6 +5493,8 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+ 	if (task_group(p)->uclamp[UCLAMP_MAX].value < attr.sched_util_max)
+ 		attr.sched_util_max = task_group(p)->uclamp[UCLAMP_MAX].value;
+ #endif
++	attr.sched_util_min = scale_to_percent(attr.sched_util_min);
++	attr.sched_util_max = scale_to_percent(attr.sched_util_max);
+ #endif
  
- out:
  	rcu_read_unlock();
-@@ -7306,7 +7332,7 @@ static int cpu_util_max_write_u64(struct cgroup_subsys_state *css,
+@@ -7284,8 +7286,10 @@ static int cpu_util_min_write_u64(struct cgroup_subsys_state *css,
+ 	struct task_group *tg;
+ 	int ret = -EINVAL;
  
- 	/* Update TG's reference count */
- 	uc_se = &tg->uclamp[UCLAMP_MAX];
--	ret = uclamp_group_get(NULL, UCLAMP_MAX, uc_se, max_value);
-+	ret = uclamp_group_get(NULL, css, UCLAMP_MAX, uc_se, max_value);
+-	if (min_value > SCHED_CAPACITY_SCALE)
++	/* Check range and scale to internal representation */
++	if (min_value > 100)
+ 		return -ERANGE;
++	min_value = scale_from_percent(min_value);
  
- out:
+ 	mutex_lock(&uclamp_mutex);
+ 	rcu_read_lock();
+@@ -7316,8 +7320,10 @@ static int cpu_util_max_write_u64(struct cgroup_subsys_state *css,
+ 	struct task_group *tg;
+ 	int ret = -EINVAL;
+ 
+-	if (max_value > SCHED_CAPACITY_SCALE)
++	/* Check range and scale to internal representation */
++	if (max_value > 100)
+ 		return -ERANGE;
++	max_value = scale_from_percent(max_value);
+ 
+ 	mutex_lock(&uclamp_mutex);
+ 	rcu_read_lock();
+@@ -7352,7 +7358,7 @@ static inline u64 cpu_uclamp_read(struct cgroup_subsys_state *css,
+ 	util_clamp = tg->uclamp[clamp_id].value;
  	rcu_read_unlock();
+ 
+-	return util_clamp;
++	return scale_to_percent(util_clamp);
+ }
+ 
+ static u64 cpu_util_min_read_u64(struct cgroup_subsys_state *css,
 -- 
 2.17.1
 
