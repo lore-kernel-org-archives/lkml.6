@@ -2,125 +2,128 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B74AFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B75DECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 689C6208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:39:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DAHPGAfo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689C6208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C5A62208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:40:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5A62208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729591AbeGPPHE (ORCPT
+        id S1729595AbeGPPIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:07:04 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:44431 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbeGPPHE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:07:04 -0400
-Received: by mail-yb0-f195.google.com with SMTP id b21-v6so1379690yba.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 07:39:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j1U2p8MyroRxhi7NG/UQ91LVLaDxg/OWCjfHgw/lobw=;
-        b=DAHPGAfozspxj/u8IcvQNhqxkbH8vEVefrcYkA/oegr5tz1UODcXJudECPLPrTDxTp
-         paKZgz1oFMYEninCG8RjifJ798il5Iz08szX7Il4ZyFGGBkbaFHraE0H21jjAlu/z+jP
-         3rL81/LQTzyChMIwGJxr3RqR6Eb51+XQPD/uA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j1U2p8MyroRxhi7NG/UQ91LVLaDxg/OWCjfHgw/lobw=;
-        b=IkFQZw3MS99bWq29tEOEP+F315F3xf71aZeu8SsHNrOkhKxHBqFQK7PQErxomnJczZ
-         jmovEcV6dlHWMg4UkYe70tPWf2gVPvZ1hQaOWd6b8D6JTNZYzlek405ElQqPXDedYzAc
-         MVpJ6h5YdHdUxo7nyHEu1ZCuHhqCBDs5ltgqpzw5mBVFxeZwgLktr0DriZG4ul1L6FW4
-         t3k7XKRaMoToXzl4AEM5HQOkhpd+YQDwgFXlzeNxQWkdPXv7KynqEsip1yWQ89NDAbnL
-         4qSrn1U9eP8JFj1Si+PQVNp1OfXXTEh0SZV9EiWFkDQKIq53AM+fUGfeotZORNvzkrgF
-         rdQA==
-X-Gm-Message-State: AOUpUlH5YOcXLPCKHehL3fTbx77J7iUtcKLsahgkIfr+G2zF+v/CepP+
-        hN5fj/CunEM5YWCyGOkWw2Y7LA==
-X-Google-Smtp-Source: AAOMgpeRrmVCqPVVOE/ieAE+3Qng75mTJmh285JDwKNUAQkc0kPjOE3UD1vXW4AA/QUB2bMYPfWzyA==
-X-Received: by 2002:a25:854f:: with SMTP id f15-v6mr8888695ybn.119.1531751960020;
-        Mon, 16 Jul 2018 07:39:20 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id r132-v6sm18780834ywb.0.2018.07.16.07.39.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 07:39:19 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 10:39:18 -0400
-From:   Sean Paul <seanpaul@chromium.org>
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm: re-enable error handling
-Message-ID: <20180716143918.GT20303@art_vandelay>
-References: <1531571532-22733-1-git-send-email-hofrat@osadl.org>
+        Mon, 16 Jul 2018 11:08:16 -0400
+Received: from ozlabs.org ([203.11.71.1]:50727 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727150AbeGPPIQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 11:08:16 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41TmKh5hhYz9ryt;
+        Tue, 17 Jul 2018 00:40:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nick Piggin <npiggin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and remove it for ordinary release/acquire
+In-Reply-To: <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
+References: <20180712134821.GT2494@hirez.programming.kicks-ass.net> <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org> <20180712172838.GU3593@linux.vnet.ibm.com> <20180712180511.GP2476@hirez.programming.kicks-ass.net> <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com> <20180713110851.GY2494@hirez.programming.kicks-ass.net> <87tvp3xonl.fsf@concordia.ellerman.id.au> <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
+Date:   Tue, 17 Jul 2018 00:40:19 +1000
+Message-ID: <87601fz1kc.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531571532-22733-1-git-send-email-hofrat@osadl.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 02:32:12PM +0200, Nicholas Mc Guire wrote:
-> drm_legacy_ctxbitmap_next() returns idr_alloc() which can return
-> -ENOMEM, -EINVAL or -ENOSPC none of which are -1 . but the call sites 
-> of drm_legacy_ctxbitmap_next() seem to be assuming that the error case
-> would be -1 (original return of drm_ctxbitmap_next() prior to 2.6.23
-> was actually -1). Thus reenable error handling by checking for < 0.
-> 
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Peter Zijlstra <peterz@infradead.org> writes:
+> On Fri, Jul 13, 2018 at 11:15:26PM +1000, Michael Ellerman wrote:
+...
+>> 
+>> 
+>> So 18-32% slower, or 23-47 cycles.
+>
+> Very good info. Note that another option is to put the SYNC in lock() it
+> doesn't really matter which of the two primitives gets it. I don't
+> suppose it really matters for timing either way around.
 
-Thanks for your patch, I've applied it to drm-misc-fixes.
+If the numbers can be trusted it is actually slower to put the sync in
+lock, at least on one of the machines:
 
-Sean
+              Time
+lwsync_sync   84,932,987,977
+sync_lwsync   93,185,930,333
 
-> Fixes: 62968144e673 ("drm: convert drm context code to use Linux idr")
-> ---
-> 
-> Problem located with experimental coccinelle script
-> 
-> The noted Fixes tag is one of the commits that removed the -1 return
-> value in 2.6.23 in drm_ctxbitmap_next() but thats not the only change
-> that must have taken place to invalidate the error check.
-> 
-> Patch was compile tested with: x86_64_defconfig
-> 
-> Patch is against 4.18-rc4 (localversion-next is next-20180713)
-> 
->  drivers/gpu/drm/drm_context.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_context.c b/drivers/gpu/drm/drm_context.c
-> index 3c4000f..f973d28 100644
-> --- a/drivers/gpu/drm/drm_context.c
-> +++ b/drivers/gpu/drm/drm_context.c
-> @@ -372,7 +372,7 @@ int drm_legacy_addctx(struct drm_device *dev, void *data,
->  		ctx->handle = drm_legacy_ctxbitmap_next(dev);
->  	}
->  	DRM_DEBUG("%d\n", ctx->handle);
-> -	if (ctx->handle == -1) {
-> +	if (ctx->handle < 0) {
->  		DRM_DEBUG("Not enough free contexts.\n");
->  		/* Should this return -EBUSY instead? */
->  		return -ENOMEM;
-> -- 
-> 2.1.4
-> 
+On the other machine it's slower but only by 0.1%, so that's slightly
+weird.
 
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+The other advantage of putting the sync in unlock is we could get rid of
+our SYNC_IO logic, which conditionally puts a sync in unlock to order
+IO accesses vs unlock.
+
+
+>> Next week I can do some macro benchmarks, to see if it's actually
+>> detectable at all.
+
+
+I guess arguably it's not a very macro benchmark, but we have a
+context_switch benchmark in the tree[1] which we often use to tune
+things, and it degrades badly. It just spins up two threads and has them
+ping-pong using yield.
+
+
+The numbers are context switch iterations, so more == better.
+
+	   | Before     | After      | Change     | Change %
+	   +------------+------------+------------+----------
+	   | 35,601,160 | 32,371,164 | -3,229,996 | -9.07%
+	   | 35,762,126 | 32,438,798 | -3,323,328 | -9.29%
+	   | 35,690,870 | 32,353,676 | -3,337,194 | -9.35%
+	   | 35,440,346 | 32,336,750 | -3,103,596 | -8.76%
+	   | 35,614,868 | 32,676,378 | -2,938,490 | -8.25%
+	   | 35,659,690 | 32,462,624 | -3,197,066 | -8.97%
+	   | 35,594,058 | 32,403,922 | -3,190,136 | -8.96%
+	   | 35,682,682 | 32,353,146 | -3,329,536 | -9.33%
+	   | 35,954,454 | 32,306,168 | -3,648,286 | -10.15%
+	   | 35,849,314 | 32,291,094 | -3,558,220 | -9.93%
+ ----------+------------+------------+------------+----------
+ Average   | 35,684,956 | 32,399,372 | -3,285,584 | -9.21%
+ Std Dev   |    143,877 |    111,385 |
+ Std Dev % |      0.40% |      0.34% |
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/powerpc/benchmarks/context_switch.c
+
+
+I'll do some kernbench runs tomorrow and see if it shows up there.
+
+
+>> My personal preference would be to switch to sync, we don't want to be
+>> the only arch finding (or not finding!) exotic ordering bugs.
+>> 
+>> But we'd also rather not make our slow locks any slower than they have
+>> to be.
+>
+> I completely understand, but I'll get you beer (lots) if you do manage
+> to make SYNC happen :-) :-)
+
+Just so we're clear Fosters is not beer :)
+
+cheers
