@@ -1,102 +1,84 @@
 Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.6 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB90AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDC9ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 790D2208FE
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:23:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QAk+M2Fl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 790D2208FE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0357D20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:24:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0357D20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730816AbeGPIt6 (ORCPT
+        id S1731271AbeGPIui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:49:58 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38186 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727199AbeGPIt6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:49:58 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 69-v6so14794235wmf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 01:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7zD8bH9isIRx2fNShhZVWlujWcqaAEctRw7k89hX4PA=;
-        b=QAk+M2FlmPCpLbaaqdkJbgylxRh11AK89JhfOpoVVwvMd+lR054PcpT2c19t9/oqgR
-         RTQ/dQY8sZo+jUktHv2it1Yr9hbIxhqHm1nERGT6aKrKbw8LJsEsQ4iezPPoEZgoqGmX
-         8H03aQ9sgDHubpIV+PY9uu+cdpn+ILF423geY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7zD8bH9isIRx2fNShhZVWlujWcqaAEctRw7k89hX4PA=;
-        b=Rz1HFCqSc+U/exgumrje/zoNsuk5QicDjtw6VQh4awTYjtb/JhjmAiPwKgmUs8oSaI
-         Cy9sShy8hBLTYbKoujVFMNdF2TOZxYianQ0Kz0YWmZPdulOj1nQAURvrlMorSAnJ7VGQ
-         tgSjrKloXtzvIcYPhxeVu5o3KYLjh14q//j7s9KLJFOX0bALMj8iDtDQEq2pmhu8i/0H
-         poo6w0CGRQprPXCoXsAO0B400ghbPHzcElqPpz7QOnILQzUTDXCtiweYsKtBLt0iIsMV
-         Vuz0ORK6IizmBJSLwb99sf+/JcnfWyOPPffIX1BFULmX3a6JEcRf7Uocea2/yYenNZ2q
-         33BA==
-X-Gm-Message-State: AOUpUlGXNl6HmmnbFk5shj1NFD6tFzJZ4Wou4VgJSJnN1SuGkES24yqt
-        LhmfDRiuUOv//0eK7Is3iG0/Yw==
-X-Google-Smtp-Source: AAOMgpeBaJsH4svM/AJ8ydB1a1ahBfZqnqeVkXmH9LnaNvzO1ZDHSpZ6nyiB8orR0us+h27Qq9sO5w==
-X-Received: by 2002:a1c:af0c:: with SMTP id y12-v6mr1609458wme.87.1531729423217;
-        Mon, 16 Jul 2018 01:23:43 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id u4-v6sm38119512wrt.31.2018.07.16.01.23.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 01:23:42 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 09:23:39 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/18] kdb_support: change strncpy+truncation to strlcpy
-Message-ID: <20180716082339.tcczk5tdnruhr47x@holly.lan>
-References: <93d3ace9a35b4436930ed0521127c12b@AcuMS.aculab.com>
- <20180713103321.thjpohla6fuszona@holly.lan>
- <20180713151851.GA14190@nautica>
+        Mon, 16 Jul 2018 04:50:38 -0400
+Received: from asrmicro.com ([210.13.118.86]:25650 "EHLO mail2012.asrmicro.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726190AbeGPIui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:50:38 -0400
+Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
+ (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 16 Jul
+ 2018 16:24:00 +0800
+Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
+ mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
+ 15.00.0847.030; Mon, 16 Jul 2018 16:24:00 +0800
+From:   =?gb2312?B?RmFuZyBIb25namllKLe9uum93Ck=?= 
+        <hongjiefang@asrmicro.com>
+To:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+CC:     "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "bst@pengutronix.de" <bst@pengutronix.de>,
+        "jinqian@google.com" <jinqian@google.com>,
+        "chanho.min@lge.com" <chanho.min@lge.com>,
+        "kyle.roeschley@ni.com" <kyle.roeschley@ni.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V2] mmc: core: improve reasonableness of bus width
+ setting for HS400es
+Thread-Topic: [PATCH V2] mmc: core: improve reasonableness of bus width
+ setting for HS400es
+Thread-Index: AQHUGMNhtrBnhjWARU2PBNkn39YK8aSRiRRw
+Date:   Mon, 16 Jul 2018 08:23:59 +0000
+Message-ID: <ec4d793a90ed43af998c89b86b024e10@mail2012.asrmicro.com>
+References: <1531278049-22213-1-git-send-email-hongjiefang@asrmicro.com>
+In-Reply-To: <1531278049-22213-1-git-send-email-hongjiefang@asrmicro.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.1.170.195]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180713151851.GA14190@nautica>
-User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 05:18:51PM +0200, Dominique Martinet wrote:
-> Daniel Thompson wrote on Fri, Jul 13, 2018:
-> > On Fri, Jul 13, 2018 at 03:25:58AM +0200, Dominique Martinet wrote:
-> > > Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
-> > > 
-> > > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> > 
-> > It would have been good for you to mention in the changelog how
-> > you reviewed your change to verify that the extra zero padding
-> > from strncpy() isn't required.
-> 
-> I'm sorry, I went a bit too fast with the send-email button on this
-> path series; I agree it is lacking.
-> 
-> > However... I have taken a look and can't see any problem so:
-> > 
-> > Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-> Thank you for the review, I will update the commit message with more
-> details and change strlcpy to strscpy in a v2
-
-You can keep the reviewed by after the change to strscpy().
+DQo+IG1tY19zZWxlY3RfaHM0MDBlcygpIGNhbGxzIG1tY19zZWxlY3RfYnVzX3dpZHRoKCkgd2hp
+Y2ggd2lsbCBjb250aW51ZQ0KPiB0byBzZXQgNGJpdCB0cmFuc2ZlciBtb2RlIGlmIGZhaWwgdG8g
+c2V0IDhiaXQgbW9kZS4gVGhlIGJ1cyB3aWR0aA0KPiBzaG91bGQgbm90IGJlIHNldCB0byA0Yml0
+IGluIEhTNDAwZXMuDQo+IA0KPiBXaGVuIGZhaWwgdG8gc2V0IDhiaXQgbW9kZSwgbmVlZCByZXR1
+cm4gZXJyb3IgZGlyZWN0bHkgZm9yIEhTNDAwZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBIb25n
+amllIEZhbmcgPGhvbmdqaWVmYW5nQGFzcm1pY3JvLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL21t
+Yy9jb3JlL21tYy5jIHwgNSArKysrLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2NvcmUvbW1j
+LmMgYi9kcml2ZXJzL21tYy9jb3JlL21tYy5jDQo+IGluZGV4IDQ0NjZmNWQuLjRiZDZjMDkgMTAw
+NjQ0DQo+IC0tLSBhL2RyaXZlcnMvbW1jL2NvcmUvbW1jLmMNCj4gKysrIGIvZHJpdmVycy9tbWMv
+Y29yZS9tbWMuYw0KPiBAQCAtMTAyMSw4ICsxMDIxLDExIEBAIHN0YXRpYyBpbnQgbW1jX3NlbGVj
+dF9idXNfd2lkdGgoc3RydWN0IG1tY19jYXJkICpjYXJkKQ0KPiAgCQkJCSBFWFRfQ1NEX0JVU19X
+SURUSCwNCj4gIAkJCQkgZXh0X2NzZF9iaXRzW2lkeF0sDQo+ICAJCQkJIGNhcmQtPmV4dF9jc2Qu
+Z2VuZXJpY19jbWQ2X3RpbWUpOw0KPiAtCQlpZiAoZXJyKQ0KPiArCQlpZiAoZXJyKSB7DQo+ICsJ
+CQlpZiAoY2FyZC0+bW1jX2F2YWlsX3R5cGUgJiBFWFRfQ1NEX0NBUkRfVFlQRV9IUzQwMEVTKQ0K
+PiArCQkJCXJldHVybiBlcnI7DQo+ICAJCQljb250aW51ZTsNCj4gKwkJfQ0KPiANCj4gIAkJYnVz
+X3dpZHRoID0gYnVzX3dpZHRoc1tpZHhdOw0KPiAgCQltbWNfc2V0X2J1c193aWR0aChob3N0LCBi
+dXNfd2lkdGgpOw0KPiAtLQ0KPiAxLjkuMQ0KDQpQaW5nLg0KQW55IHN1Z2dlc3Rpb24gZm9yIHRo
+aXMgcGF0Y2ggPw0KDQoNCkImUg0KSG9uZ2ppZQ0K
