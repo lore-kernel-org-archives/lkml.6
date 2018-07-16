@@ -6,102 +6,171 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 973D7ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26681ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E478208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:29:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E478208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E091E208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:29:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E091E208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729810AbeGPK4N (ORCPT
+        id S1729938AbeGPK4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:56:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:56646 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727596AbeGPK4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:56:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9756E15AD;
-        Mon, 16 Jul 2018 03:29:26 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A354C3F589;
-        Mon, 16 Jul 2018 03:29:22 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 11:29:17 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 03/12] PM: Introduce an Energy Model management
- framework
-Message-ID: <20180716102917.GA19311@e108498-lin.cambridge.arm.com>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-4-quentin.perret@arm.com>
- <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
- <20180710083202.GD17598@e108498-lin.cambridge.arm.com>
+        Mon, 16 Jul 2018 06:56:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59786 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727596AbeGPK4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 06:56:25 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 634D3401EF04;
+        Mon, 16 Jul 2018 10:29:38 +0000 (UTC)
+Received: from krava (unknown [10.43.17.196])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 103BC111E40D;
+        Mon, 16 Jul 2018 10:29:34 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 12:29:34 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Lukasz Odzioba <lukasz.odzioba@intel.com>,
+        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com
+Subject: Re: [PATCH 1/4] perf tools: Fix struct comm_str removal crash
+Message-ID: <20180716102934.GA14153@krava>
+References: <20180712142023.16915-1-jolsa@kernel.org>
+ <20180712142023.16915-2-jolsa@kernel.org>
+ <20180715130827.GA5071@danjae.aot.lge.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180710083202.GD17598@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <20180715130827.GA5071@danjae.aot.lge.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 10:29:38 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 10:29:38 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 10 Jul 2018 at 09:32:02 (+0100), Quentin Perret wrote:
-> Indeed, having 'capacity' values in the EM framework is just an
-> optimization for the scheduler, so that it doesn't need to compute them
-> in the wake-up path. I could get rid of the whole
-> em_rescale_cpu_capacity() mess (and by the same occasion the RCU
-> protection of the tables ...) if I removed the 'capacity' values from
-> the EM.
+On Sun, Jul 15, 2018 at 10:08:27PM +0900, Namhyung Kim wrote:
 
-Another thing to take into consideration here is basically that the
-thermal subsystem (IPA) will be impacted by the RCU protection on the
-cs_table. However, since the 'frequency' and 'power' fields do not change
-at run-time, and since IPA doesn't need the 'capacity' value, there is no
-good reason to have IPA do rcu_read_lock() all over the place, so
-arguably something needs to be fixed here.
+SNIP
 
-One possibility is to remove entirely the following struct:
-	struct em_cap_state {
-		unsigned long capacity;
-		unsigned long frequency; /* Kilo-hertz */
-		unsigned long power; /* Milli-watts */
-	};
+> > Because thread 2 first decrements the refcnt and only after then it
+> > removes the struct comm_str from the list, the thread 1 can find this
+> > object on the list with refcnt equls to 0 and hit the assert.
+> > 
+> > This patch fixes the thread 2 path, by removing the struct comm_str
+> > FIRST from the list and only AFTER calling comm_str__put on it. This
+> > way the thread 1 finds only valid objects on the list.
+> 
+> I'm not sure we can unconditionally remove the comm_str from the tree.
+> It should be removed only if refcount is going to zero IMHO.
+> Otherwise it could end up having multiple comm_str entry for a same
+> name.
 
-and to have three independent vectors (of the same size) for frequency,
-power and capacity. That way only the 'capacity' vector would be RCU
-protected, and IPA could use 'frequency' and 'power' directly, without
-further protections.
+right, but it wouldn't crash ;-)
 
-A second possibility is to remove the capacity values from the EM
-altogether (as I suggested in my previous message) and to get rid of the
-need for RCU protection at the same occasion.
+how about attached change, that actualy deals with the refcnt
+race I'm running the tests now, seems ok so far
 
-The second option simplifies the code of the EM framework significantly
-(no more em_rescale_cpu_capacity()) and shouldn't introduce massive
-overheads on the scheduler side (the energy calculation already
-requires one multiplication and one division, so nothing new on that
-side). At the same time, that would make it a whole lot easier to
-interface the EM framework with IPA without having to deal with RCU all
-over the place.
+jirka
 
-So, if there are no objections, I'll try to explore that possibility for
-v5.
 
-I hope that makes sense
-
-Thanks,
-Quentin
+---
+diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+index 7798a2cc8a86..592b03548021 100644
+--- a/tools/perf/util/comm.c
++++ b/tools/perf/util/comm.c
+@@ -18,22 +18,27 @@ struct comm_str {
+ static struct rb_root comm_str_root;
+ static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,};
+ 
+-static struct comm_str *comm_str__get(struct comm_str *cs)
++static bool comm_str__get(struct comm_str *cs)
+ {
+-	if (cs)
+-		refcount_inc(&cs->refcnt);
+-	return cs;
++	return cs ? refcount_inc_not_zero(&cs->refcnt) : false;
+ }
+ 
+-static void comm_str__put(struct comm_str *cs)
++static int comm_str__put(struct comm_str *cs, bool lock)
+ {
+-	if (cs && refcount_dec_and_test(&cs->refcnt)) {
++	if (!cs || !refcount_dec_and_test(&cs->refcnt))
++		return 0;
++
++	if (lock)
+ 		down_write(&comm_str_lock);
+-		rb_erase(&cs->rb_node, &comm_str_root);
++
++	rb_erase(&cs->rb_node, &comm_str_root);
++
++	if (lock)
+ 		up_write(&comm_str_lock);
+-		zfree(&cs->str);
+-		free(cs);
+-	}
++
++	zfree(&cs->str);
++	free(cs);
++	return 1;
+ }
+ 
+ static struct comm_str *comm_str__alloc(const char *str)
+@@ -67,9 +72,22 @@ struct comm_str *__comm_str__findnew(const char *str, struct rb_root *root)
+ 		parent = *p;
+ 		iter = rb_entry(parent, struct comm_str, rb_node);
+ 
+-		cmp = strcmp(str, iter->str);
+-		if (!cmp)
+-			return comm_str__get(iter);
++		/*
++		 * If we race with comm_str__put, iter->refcnt == 0
++		 * and it will be removed within comm_str__put
++		 * thread shortly, ignore it in this search.
++		 */
++		if (comm_str__get(iter)) {
++			cmp = strcmp(str, iter->str);
++			if (!cmp)
++				return iter;
++			/*
++			 * If we actualy had to remove the item, restart
++			 * the search to have the clean tree search.
++			 */
++			if (comm_str__put(iter, false))
++				return __comm_str__findnew(str, root);
++		}
+ 
+ 		if (cmp < 0)
+ 			p = &(*p)->rb_left;
+@@ -125,7 +143,7 @@ int comm__override(struct comm *comm, const char *str, u64 timestamp, bool exec)
+ 	if (!new)
+ 		return -ENOMEM;
+ 
+-	comm_str__put(old);
++	comm_str__put(old, true);
+ 	comm->comm_str = new;
+ 	comm->start = timestamp;
+ 	if (exec)
+@@ -136,7 +154,7 @@ int comm__override(struct comm *comm, const char *str, u64 timestamp, bool exec)
+ 
+ void comm__free(struct comm *comm)
+ {
+-	comm_str__put(comm->comm_str);
++	comm_str__put(comm->comm_str, true);
+ 	free(comm);
+ }
+ 
