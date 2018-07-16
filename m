@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A4AECDFB4
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B41BECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A008206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A008206B7
+	by mail.kernel.org (Postfix) with ESMTP id AF0B3206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0B3206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388694AbeGPIIO (ORCPT
+        id S2388710AbeGPIIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:08:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47716 "EHLO
+        Mon, 16 Jul 2018 04:08:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47728 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIIN (ORCPT
+        with ESMTP id S1730161AbeGPIIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:08:13 -0400
+        Mon, 16 Jul 2018 04:08:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0E1BC03;
-        Mon, 16 Jul 2018 07:42:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A7DDDCA1;
+        Mon, 16 Jul 2018 07:42:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
+        stable@vger.kernel.org,
+        syzbot+da4494182233c23a5fcf@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 48/54] netfilter: nf_queue: augment nfqa_cfg_policy
-Date:   Mon, 16 Jul 2018 09:35:45 +0200
-Message-Id: <20180716073459.629944502@linuxfoundation.org>
+Subject: [PATCH 4.14 49/54] netfilter: x_tables: initialise match/target check parameter struct
+Date:   Mon, 16 Jul 2018 09:35:46 +0200
+Message-Id: <20180716073459.776540020@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -51,94 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit ba062ebb2cd561d404e0fba8ee4b3f5ebce7cbfc upstream.
+commit c568503ef02030f169c9e19204def610a3510918 upstream.
 
-Three attributes are currently not verified, thus can trigger KMSAN
-warnings such as :
+syzbot reports following splat:
 
-BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
-BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-BUG: KMSAN: uninit-value in nfqnl_recv_config+0x939/0x17d0 net/netfilter/nfnetlink_queue.c:1268
-CPU: 1 PID: 4521 Comm: syz-executor120 Not tainted 4.17.0+ #5
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1117
- __msan_warning_32+0x70/0xc0 mm/kmsan/kmsan_instr.c:620
- __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
- __fswab32 include/uapi/linux/swab.h:59 [inline]
- nfqnl_recv_config+0x939/0x17d0 net/netfilter/nfnetlink_queue.c:1268
- nfnetlink_rcv_msg+0xb2e/0xc80 net/netfilter/nfnetlink.c:212
- netlink_rcv_skb+0x37e/0x600 net/netlink/af_netlink.c:2448
- nfnetlink_rcv+0x2fe/0x680 net/netfilter/nfnetlink.c:513
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1680/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec8/0x1320 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43fd59
-RSP: 002b:00007ffde0e30d28 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd59
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401680
-R13: 0000000000401710 R14: 0000000000000000 R15: 0000000000000000
+BUG: KMSAN: uninit-value in ebt_stp_mt_check+0x24b/0x450
+ net/bridge/netfilter/ebt_stp.c:162
+ ebt_stp_mt_check+0x24b/0x450 net/bridge/netfilter/ebt_stp.c:162
+ xt_check_match+0x1438/0x1650 net/netfilter/x_tables.c:506
+ ebt_check_match net/bridge/netfilter/ebtables.c:372 [inline]
+ ebt_check_entry net/bridge/netfilter/ebtables.c:702 [inline]
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2753 [inline]
- __kmalloc_node_track_caller+0xb35/0x11b0 mm/slub.c:4395
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:988 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
- netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec8/0x1320 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+The uninitialised access is
+   xt_mtchk_param->nft_compat
 
-Fixes: fdb694a01f1f ("netfilter: Add fail-open support")
-Fixes: 829e17a1a602 ("[NETFILTER]: nfnetlink_queue: allow changing queue length through netlink")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
+... which should be set to 0.
+Fix it by zeroing the struct beforehand, same for tgchk.
+
+ip(6)tables targetinfo uses c99-style initialiser, so no change
+needed there.
+
+Reported-by: syzbot+da4494182233c23a5fcf@syzkaller.appspotmail.com
+Fixes: 55917a21d0cc0 ("netfilter: x_tables: add context to know if extension runs from nft_compat")
+Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nfnetlink_queue.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/bridge/netfilter/ebtables.c |    2 ++
+ net/ipv4/netfilter/ip_tables.c  |    1 +
+ net/ipv6/netfilter/ip6_tables.c |    1 +
+ 3 files changed, 4 insertions(+)
 
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -1228,6 +1228,9 @@ static int nfqnl_recv_unsupp(struct net
- static const struct nla_policy nfqa_cfg_policy[NFQA_CFG_MAX+1] = {
- 	[NFQA_CFG_CMD]		= { .len = sizeof(struct nfqnl_msg_config_cmd) },
- 	[NFQA_CFG_PARAMS]	= { .len = sizeof(struct nfqnl_msg_config_params) },
-+	[NFQA_CFG_QUEUE_MAXLEN]	= { .type = NLA_U32 },
-+	[NFQA_CFG_MASK]		= { .type = NLA_U32 },
-+	[NFQA_CFG_FLAGS]	= { .type = NLA_U32 },
- };
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -696,6 +696,8 @@ ebt_check_entry(struct ebt_entry *e, str
+ 	}
+ 	i = 0;
  
- static const struct nf_queue_handler nfqh = {
++	memset(&mtpar, 0, sizeof(mtpar));
++	memset(&tgpar, 0, sizeof(tgpar));
+ 	mtpar.net	= tgpar.net       = net;
+ 	mtpar.table     = tgpar.table     = name;
+ 	mtpar.entryinfo = tgpar.entryinfo = e;
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -541,6 +541,7 @@ find_check_entry(struct ipt_entry *e, st
+ 		return -ENOMEM;
+ 
+ 	j = 0;
++	memset(&mtpar, 0, sizeof(mtpar));
+ 	mtpar.net	= net;
+ 	mtpar.table     = name;
+ 	mtpar.entryinfo = &e->ip;
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -561,6 +561,7 @@ find_check_entry(struct ip6t_entry *e, s
+ 		return -ENOMEM;
+ 
+ 	j = 0;
++	memset(&mtpar, 0, sizeof(mtpar));
+ 	mtpar.net	= net;
+ 	mtpar.table     = name;
+ 	mtpar.entryinfo = &e->ipv6;
 
 
