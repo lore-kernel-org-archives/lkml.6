@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA602ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9389ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 833B920864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 833B920864
+	by mail.kernel.org (Postfix) with ESMTP id AEFFC206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEFFC206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387879AbeGPIFL (ORCPT
+        id S2387893AbeGPIFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:05:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47068 "EHLO
+        Mon, 16 Jul 2018 04:05:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeGPIFK (ORCPT
+        with ESMTP id S1726898AbeGPIFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:05:10 -0400
+        Mon, 16 Jul 2018 04:05:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 98274C03;
-        Mon, 16 Jul 2018 07:39:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59F13CA0;
+        Mon, 16 Jul 2018 07:39:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.17 48/67] iw_cxgb4: correctly enforce the max reg_mr depth
-Date:   Mon, 16 Jul 2018 09:35:17 +0200
-Message-Id: <20180716073450.825402381@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Young <m.a.young@durham.ac.uk>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.17 49/67] xen: remove global bit from __default_kernel_pte_mask for pv guests
+Date:   Mon, 16 Jul 2018 09:35:18 +0200
+Message-Id: <20180716073451.002432579@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -50,35 +51,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve Wise <swise@opengridcomputing.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit 7b72717a20bba8bdd01b14c0460be7d15061cd6b upstream.
+commit e69b5d308da72cbf4e7911c3979f9a46d28532af upstream.
 
-The code was mistakenly using the length of the page array memory instead
-of the depth of the page array.
+When removing the global bit from __supported_pte_mask do the same for
+__default_kernel_pte_mask in order to avoid the WARN_ONCE() in
+check_pgprot() when setting a kernel pte before having called
+init_mem_mapping().
 
-This would cause MR creation to fail in some cases.
-
-Fixes: 8376b86de7d3 ("iw_cxgb4: Support the new memory registration API")
-Cc: stable@vger.kernel.org
-Signed-off-by: Steve Wise <swise@opengridcomputing.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: <stable@vger.kernel.org> # 4.17
+Reported-by: Michael Young <m.a.young@durham.ac.uk>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/cxgb4/mem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/xen/enlighten_pv.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/hw/cxgb4/mem.c
-+++ b/drivers/infiniband/hw/cxgb4/mem.c
-@@ -774,7 +774,7 @@ static int c4iw_set_page(struct ib_mr *i
- {
- 	struct c4iw_mr *mhp = to_c4iw_mr(ibmr);
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -1228,6 +1228,7 @@ asmlinkage __visible void __init xen_sta
  
--	if (unlikely(mhp->mpl_len == mhp->max_mpl_len))
-+	if (unlikely(mhp->mpl_len == mhp->attr.pbl_size))
- 		return -ENOMEM;
+ 	/* Prevent unwanted bits from being set in PTEs. */
+ 	__supported_pte_mask &= ~_PAGE_GLOBAL;
++	__default_kernel_pte_mask &= ~_PAGE_GLOBAL;
  
- 	mhp->mpl[mhp->mpl_len++] = addr;
+ 	/*
+ 	 * Prevent page tables from being allocated in highmem, even
 
 
