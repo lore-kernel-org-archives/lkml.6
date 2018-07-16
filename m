@@ -2,247 +2,179 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035F0ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E13ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66C9208FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:53:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fx2GBp20"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A66C9208FC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D72F120936
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:53:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D72F120936
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731175AbeGPJTj (ORCPT
+        id S1731244AbeGPJTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:19:39 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36801 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729595AbeGPJTi (ORCPT
+        Mon, 16 Jul 2018 05:19:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41920 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729595AbeGPJTk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:19:38 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u7-v6so26602334lji.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 01:53:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EVUmlH6FS+z/wMuyx+xgPEK2M7zLF9DNYLfx4Gt3oAo=;
-        b=fx2GBp20YHA7DnrVBn0tlh+Jgw435cq40qcpnvIN8yIIwHwxARwjnV6HsieFMHpXZL
-         KueQd3jrKJlHaWqoILPu7ewsnYFEuJxeQfXfH+lMRP9DLVWAbRqjqvcIckvrFa8PxWtP
-         5qXrDCcH8rof8+XRD87osjrn5gNAsVzbormao=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EVUmlH6FS+z/wMuyx+xgPEK2M7zLF9DNYLfx4Gt3oAo=;
-        b=DJJjEgz2Zx0Nu9+oAFrTrERqOUySpf9xItMIWYI7e3XvU/bTYNowkskvnKc2KF+W1c
-         ZZvk/h+zvPJWalvpu10h1O58lf9sKzP3W32+s15Ah+eoDnsX/qfWqfj9dBrEXzvjwDut
-         gOVIMSxhzWC6B9K+badnLOB0DsKVEWd/5X4XJX2bDiI9M4ujZ6hIX9TmZSowd8Dd0B7A
-         LPjA1mb4m4LmUZx5YacayLiNgMoA6UzIL8Ka/uxY7SxabfsVRSaE7Z8nlWKNCIqeTS6E
-         1uT0yBK/yGjUAbgpwhs/o8mSjigi8WIwy9hqC6Xe7UG0qMdq3hlMF13V3a1LC9mJHUs3
-         PsSg==
-X-Gm-Message-State: AOUpUlHlGLAZaIn1sW4hXiWyM3BZgcUICF3H8kDD+OBp27b1c9xPoyRI
-        QjzZ7QNpjBpC6BbBwOlJhhY5h0JQw2uj9lLH5KLZ2A==
-X-Google-Smtp-Source: AAOMgpfHINjPI5ad6kFuQ6MYKdx5RL+vEcBGnrKM4Xy6KXarzBP1e1p7dA+YU1trw0woeWTf6jgtdjhBJnHj9UO6mec=
-X-Received: by 2002:a2e:2b0e:: with SMTP id q14-v6mr9322441lje.147.1531731194201;
- Mon, 16 Jul 2018 01:53:14 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:d3cd:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 01:53:13
- -0700 (PDT)
-In-Reply-To: <20180711160713.GA29354@rob-hp-laptop>
-References: <1530797585-8555-1-git-send-email-todor.tomov@linaro.org>
- <1530797585-8555-9-git-send-email-todor.tomov@linaro.org> <20180711160713.GA29354@rob-hp-laptop>
-From:   Todor Tomov <todor.tomov@linaro.org>
-Date:   Mon, 16 Jul 2018 11:53:13 +0300
-Message-ID: <CAA3CUABj_udpu1yAGGd070_uLNYLbTYEHb_sbHLheUErkPnYtQ@mail.gmail.com>
-Subject: Re: [PATCH v2 08/34] media: camss: Unify the clock names
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+        Mon, 16 Jul 2018 05:19:40 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6G8moZu032704
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:53:18 -0400
+Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k8jaam7rn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:53:17 -0400
+Received: from localhost
+        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
+        Mon, 16 Jul 2018 02:53:17 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 16 Jul 2018 02:53:14 -0600
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6G8rD1K7733504
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 16 Jul 2018 01:53:13 -0700
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE58C6E052;
+        Mon, 16 Jul 2018 02:53:13 -0600 (MDT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 24B256E04C;
+        Mon, 16 Jul 2018 02:53:11 -0600 (MDT)
+Received: from [9.109.249.91] (unknown [9.109.249.91])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 16 Jul 2018 02:53:10 -0600 (MDT)
+Subject: [4.18.0-rc4][bisected a063057d][mpt3sas] WARNING: CPU: 87 PID:
+ 18868 at block/blk-core.c:781 blk_cleanup_queue+0x20c/0x220
+From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc:     "bart.vanassche" <bart.vanassche@wdc.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Jan Kara <jack@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        mpe <mpe@ellerman.id.au>, dougmill@linux.vnet.ibm.com,
+        MPT-FusionLinux.pdl@broadcom.com,
+        sachinp <sachinp@linux.vnet.ibm.com>
+Date:   Mon, 16 Jul 2018 14:23:09 +0530
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18071608-8235-0000-0000-00000DD31558
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009372; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01061579; UDB=6.00545010; IPR=6.00839489;
+ MB=3.00022157; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-16 08:53:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071608-8236-0000-0000-000041E612E5
+Message-Id: <1531731189.15016.15.camel@abdul.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-16_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=412 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807160106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Greeting's
 
-Thank you for review.
+mpt3sas module unload triggered a warning at block/blk-core.c:781 on a
+powerpc bare-metal running mainline kernel
 
-On 11 July 2018 at 19:07, Rob Herring <robh@kernel.org> wrote:
-> On Thu, Jul 05, 2018 at 04:32:39PM +0300, Todor Tomov wrote:
->> Unify the clock names - use names closer to the clock
->> definitions.
->
-> Why? You can't just change names. You are breaking an ABI.
+WARN_ON_ONCE() was introduced with commit a063057 : block: Fix a race
+between request queue removal and the block cgroup controller
 
-Main reason is that this change allows more logical names and
-handling in the driver when support for 8996 is added.
-To clarify by example:
-- we used to have "camss_vfe_vfe" in 8916;
-- now we will have "vfe0" in 8916 and "vfe0" and "vfe1" in 8996.
+Machine: Power8 Bare-metal
+kernel : 4.18.0-rc4
+test: module load/unload mpt3sas in a loop
 
-To achieve this I have changed the names to match more closely
-the definitions in the clock driver, which are based on the
-documentation. Yes, I should have done this the first time...
+trace logs:
+-----------
+sd 16:0:4:0: [sde] Attached SCSI disk
+mpt3sas version 25.100.00.00 unloading
+mpt3sas_cm0: IR shutdown (sending)
+mpt3sas_cm0: IR shutdown (complete): ioc_status(0x0000), loginfo(0x00000000)
+sd 16:1:0:0: RAID REMOVE
+sd 16:1:0:0: RAID REMOVE DONE
+mpt3sas_cm0: removing handle(0x0143), wwid(0x05b15ecf7afeb371)
+mpt3sas_cm0: removing handle(0x000a), sas_addr(0x500304801f080d00)
+mpt3sas_cm0: enclosure logical id(0x500304801f080d3f), slot(0)
+mpt3sas_cm0: enclosure level(0x0000), connector name(     )
+mpt3sas_cm0: removing handle(0x000b), sas_addr(0x500304801f080d01)
+mpt3sas_cm0: enclosure logical id(0x500304801f080d3f), slot(1)
+mpt3sas_cm0: enclosure level(0x0000), connector name(     )
+mpt3sas_cm0: removing handle(0x000c), sas_addr(0x500304801f080d02)
+mpt3sas_cm0: enclosure logical id(0x500304801f080d3f), slot(2)
+mpt3sas_cm0: enclosure level(0x0000), connector name(     )
+WARNING: CPU: 87 PID: 18868 at block/blk-core.c:781 blk_cleanup_queue+0x20c/0x220
+Modules linked in: mpt3sas(-) ixgbe i40e ipt_MASQUERADE tun bridge stp
+llc xt_tcpudp ipt_REJECT nf_reject_ipv4 xt_conntrack nfnetlink
+iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat
+nf_conntrack iptable_mangle iptable_filter btrfs xor zstd_decompress
+zstd_compress xxhash lzo_compress vmx_crypto raid6_pq powernv_rng
+rng_core kvm_hv kvm nfsd ip_tables x_tables autofs4 xfs libcrc32c
+qla2xxx nvme_fc nvme_fabrics raid_class mdio nvme_core
+scsi_transport_sas [last unloaded: mpt3sas]
+CPU: 87 PID: 18868 Comm: rmmod Not tainted 4.18.0-rc4-autotest-autotest #1
+NIP:  c0000000004fff0c LR: c0000000004ffe10 CTR: 0000000000000000
+REGS: c0000078cdcc3480 TRAP: 0700   Not tainted  (4.18.0-rc4-autotest-autotest)
+MSR:  900000010282b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 42008882  XER: 20000000
+CFAR: c0000000004ffe18 IRQMASK: 0
+GPR00: c0000000004ffe10 c0000078cdcc3700 c00000000109aa00 0000000000000000
+GPR04: 000000007fffffff c0000078cdcc3690 0000000000000000 0000000000000000
+GPR08: 0000000000000001 0000000300000004 0000000000000001 c000007fff76b484
+GPR12: 0000000000008800 c000007fff76b480 0000000000000000 0000000000000000
+GPR16: 0000000000000000 0000000000000000 000001002ee601e0 0000000010020098
+GPR20: 0000000010020050 0000000010020038 0000000000000000 c000003b6ed86178
+GPR24: c000003fd15b4000 0000000000000004 0000000000000003 c000003fd15b4000
+GPR28: 0000000000000000 c000003fa4eef658 c000003fa4eef150 c000003fa4eeefa0
+NIP [c0000000004fff0c] blk_cleanup_queue+0x20c/0x220
+LR [c0000000004ffe10] blk_cleanup_queue+0x110/0x220
+Call Trace:
+[c0000078cdcc3700] [c0000000004ffe10] blk_cleanup_queue+0x110/0x220 (unreliable)
+[c0000078cdcc3740] [c000000000684070] __scsi_remove_device+0x110/0x1d0
+[c0000078cdcc3780] [c00000000068416c] scsi_remove_device+0x3c/0x60
+[c0000078cdcc37b0] [c000000000684410] scsi_remove_target+0x220/0x280
+[c0000078cdcc3820] [d00000000fd82554] sas_rphy_remove+0x94/0xa0 [scsi_transport_sas]
+[c0000078cdcc3850] [d00000000fd8451c] sas_port_delete+0x4c/0x238 [scsi_transport_sas]
+[c0000078cdcc38b0] [d00000001a533e30] mpt3sas_transport_port_remove+0x2d0/0x310 [mpt3sas]
+[c0000078cdcc3950] [d00000001a522a10] _scsih_remove_device+0x100/0x2a0 [mpt3sas]
+[c0000078cdcc3a10] [d00000001a527824] mpt3sas_device_remove_by_sas_address.part.44+0xb4/0x160 [mpt3sas]
+[c0000078cdcc3a70] [d00000001a527964] _scsih_expander_node_remove+0x94/0x170 [mpt3sas]
+[c0000078cdcc3af0] [d00000001a52a2f8] _scsih_flush_running_cmds+0x5f8/0x1040 [mpt3sas]
+[c0000078cdcc3b90] [c00000000057c0c4] pci_device_remove+0x64/0x110
+[c0000078cdcc3bd0] [c000000000624294] device_release_driver_internal+0x204/0x2e0
+[c0000078cdcc3c20] [c00000000062440c] driver_detach+0x7c/0x100
+[c0000078cdcc3c60] [c000000000622c18] bus_remove_driver+0x78/0x100
+[c0000078cdcc3c90] [c0000000006250a0] driver_unregister+0x40/0x90
+[c0000078cdcc3d00] [c00000000057a478] pci_unregister_driver+0x38/0x100
+[c0000078cdcc3d50] [d00000001a53bc34] cleanup_module+0x50/0x391c [mpt3sas]
+[c0000078cdcc3db0] [c0000000001aa61c] sys_delete_module+0x1bc/0x270
+[c0000078cdcc3e30] [c00000000000b9e4] system_call+0x5c/0x70
+Instruction dump:
+ebc1fff0 ebe1fff8 7c0803a6 4e800020 7c0004ac 39400000 994d098c 4bfffe7c
+7c0004ac 39400000 994d098c 4bffffa0 <0fe00000> 4bffff0c 7c0004ac 9b8d098c
+---[ end trace 0e9e02a66337b6a8 ]---
+mpt3sas_cm0: removing handle(0x000d), sas_addr(0x500304801f080d03)
+mpt3sas_cm0: enclosure logical id(0x500304801f080d3f), slot(3)
+mpt3sas_cm0: enclosure level(0x0000), connector name(     )
+sd 16:0:4:0: [sde] Synchronizing SCSI cache
+-- 
+Regard's
 
-I have used to update the dt and kernel code together. Yes, the
-change breaks the ABI but does this cause difficulties in practice?
+Abdul Haleem
+IBM Linux Technology Centre
 
->
->>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: Mark Rutland <mark.rutland@arm.com>
->> CC: devicetree@vger.kernel.org
->> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
->> ---
->>  .../devicetree/bindings/media/qcom,camss.txt       | 24 +++++++++++-----------
->
-> Bindings should be a separate patch.
 
-I can do that in the next version.
 
-Best regards,
-Todor
-
->
->>  drivers/media/platform/qcom/camss/camss.c          | 20 ++++++++----------
->>  2 files changed, 20 insertions(+), 24 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/media/qcom,camss.txt b/Documentation/devicetree/bindings/media/qcom,camss.txt
->> index cadeceb..032e8ed 100644
->> --- a/Documentation/devicetree/bindings/media/qcom,camss.txt
->> +++ b/Documentation/devicetree/bindings/media/qcom,camss.txt
->> @@ -53,7 +53,7 @@ Qualcomm Camera Subsystem
->>       Usage: required
->>       Value type: <stringlist>
->>       Definition: Should contain the following entries:
->> -                - "camss_top_ahb"
->> +                - "top_ahb"
->>                  - "ispif_ahb"
->>                  - "csiphy0_timer"
->>                  - "csiphy1_timer"
->> @@ -67,11 +67,11 @@ Qualcomm Camera Subsystem
->>                  - "csi1_phy"
->>                  - "csi1_pix"
->>                  - "csi1_rdi"
->> -                - "camss_ahb"
->> -                - "camss_vfe_vfe"
->> -                - "camss_csi_vfe"
->> -                - "iface"
->> -                - "bus"
->> +                - "ahb"
->> +                - "vfe0"
->> +                - "csi_vfe0"
->> +                - "vfe_ahb"
->> +                - "vfe_axi"
->>  - vdda-supply:
->>       Usage: required
->>       Value type: <phandle>
->> @@ -161,7 +161,7 @@ Qualcomm Camera Subsystem
->>                       <&gcc GCC_CAMSS_CSI_VFE0_CLK>,
->>                       <&gcc GCC_CAMSS_VFE_AHB_CLK>,
->>                       <&gcc GCC_CAMSS_VFE_AXI_CLK>;
->> -                clock-names = "camss_top_ahb",
->> +                clock-names = "top_ahb",
->>                          "ispif_ahb",
->>                          "csiphy0_timer",
->>                          "csiphy1_timer",
->> @@ -175,11 +175,11 @@ Qualcomm Camera Subsystem
->>                          "csi1_phy",
->>                          "csi1_pix",
->>                          "csi1_rdi",
->> -                        "camss_ahb",
->> -                        "camss_vfe_vfe",
->> -                        "camss_csi_vfe",
->> -                        "iface",
->> -                        "bus";
->> +                        "ahb",
->> +                        "vfe0",
->> +                        "csi_vfe0",
->> +                        "vfe_ahb",
->> +                        "vfe_axi";
->>               vdda-supply = <&pm8916_l2>;
->>               iommus = <&apps_iommu 3>;
->>               ports {
->> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
->> index abf6184..0b663e0 100644
->> --- a/drivers/media/platform/qcom/camss/camss.c
->> +++ b/drivers/media/platform/qcom/camss/camss.c
->> @@ -32,8 +32,7 @@ static const struct resources csiphy_res[] = {
->>       /* CSIPHY0 */
->>       {
->>               .regulator = { NULL },
->> -             .clock = { "camss_top_ahb", "ispif_ahb",
->> -                        "camss_ahb", "csiphy0_timer" },
->> +             .clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy0_timer" },
->>               .clock_rate = { { 0 },
->>                               { 0 },
->>                               { 0 },
->> @@ -45,8 +44,7 @@ static const struct resources csiphy_res[] = {
->>       /* CSIPHY1 */
->>       {
->>               .regulator = { NULL },
->> -             .clock = { "camss_top_ahb", "ispif_ahb",
->> -                        "camss_ahb", "csiphy1_timer" },
->> +             .clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy1_timer" },
->>               .clock_rate = { { 0 },
->>                               { 0 },
->>                               { 0 },
->> @@ -60,8 +58,7 @@ static const struct resources csid_res[] = {
->>       /* CSID0 */
->>       {
->>               .regulator = { "vdda" },
->> -             .clock = { "camss_top_ahb", "ispif_ahb",
->> -                        "csi0_ahb", "camss_ahb",
->> +             .clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
->>                          "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
->>               .clock_rate = { { 0 },
->>                               { 0 },
->> @@ -78,8 +75,7 @@ static const struct resources csid_res[] = {
->>       /* CSID1 */
->>       {
->>               .regulator = { "vdda" },
->> -             .clock = { "camss_top_ahb", "ispif_ahb",
->> -                        "csi1_ahb", "camss_ahb",
->> +             .clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
->>                          "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
->>               .clock_rate = { { 0 },
->>                               { 0 },
->> @@ -96,10 +92,10 @@ static const struct resources csid_res[] = {
->>
->>  static const struct resources_ispif ispif_res = {
->>       /* ISPIF */
->> -     .clock = { "camss_top_ahb", "camss_ahb", "ispif_ahb",
->> +     .clock = { "top_ahb", "ahb", "ispif_ahb",
->>                  "csi0", "csi0_pix", "csi0_rdi",
->>                  "csi1", "csi1_pix", "csi1_rdi" },
->> -     .clock_for_reset = { "camss_vfe_vfe", "camss_csi_vfe" },
->> +     .clock_for_reset = { "vfe0", "csi_vfe0" },
->>       .reg = { "ispif", "csi_clk_mux" },
->>       .interrupt = "ispif"
->>
->> @@ -108,8 +104,8 @@ static const struct resources_ispif ispif_res = {
->>  static const struct resources vfe_res = {
->>       /* VFE0 */
->>       .regulator = { NULL },
->> -     .clock = { "camss_top_ahb", "camss_vfe_vfe", "camss_csi_vfe",
->> -                "iface", "bus", "camss_ahb" },
->> +     .clock = { "top_ahb", "vfe0", "csi_vfe0",
->> +                "vfe_ahb", "vfe_axi", "ahb" },
->>       .clock_rate = { { 0 },
->>                       { 50000000, 80000000, 100000000, 160000000,
->>                         177780000, 200000000, 266670000, 320000000,
->> --
->> 2.7.4
->>
