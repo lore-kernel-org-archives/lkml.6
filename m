@@ -2,135 +2,101 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836A5ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB27ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 451B220C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:11:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 451B220C01
+	by mail.kernel.org (Postfix) with ESMTP id E513220C07
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:11:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pNR1RtPl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E513220C07
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbeGPQjV (ORCPT
+        id S1729917AbeGPQji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 12:39:21 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:36920 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbeGPQjV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 12:39:21 -0400
-Received: by mail-yb0-f196.google.com with SMTP id r3-v6so15632937ybo.4;
-        Mon, 16 Jul 2018 09:11:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zlyKTTZf8dc4vhm2++g5KtZLI5X0bPaqvPDTND6r988=;
-        b=cvHcXeyIJzWFf/xhunoAPiPF3Zl+LvmoeD75j6QNKY7qgZD3d8UGmBt0TFJZVEoyld
-         95eCXn7Lc8SDlei+CkUYn718dpmqvgkkYqI2nGV0b64vJTKCx46o66fymJ2RFikJBcYt
-         7I86fPtPqrT4W1t7+zn3g2ohUQjae1Zri6107BGMvnfyl9EKCGD5DLtii9JxZacTngja
-         +VKrmhMIUYTJJnMNy8samsvAt5hzPK44uBbGp3NquLgLoi7B3VCY++mGdsjphamIi7iR
-         mNQkd4vx1byB5KDpnXWjoxlAAxeQy91A8vY/OeMXBBc7sJtun7m8zHCXyzM4KJhTmMOi
-         ngUA==
-X-Gm-Message-State: AOUpUlFm6FyT+H/GsEtcDTNICLZ5G/wyzcZysQXSSWZwQYeDfLJNgOk9
-        jKT5ui23yGwQW7zy3Nc1YTA0xSI=
-X-Google-Smtp-Source: AAOMgpfk9OT+64IMpK/QbOTFsEDuC/NBvVW0IEHpT11h36PACsCRtwShAofH+oahEDBDSH0obDI9tA==
-X-Received: by 2002:a25:6546:: with SMTP id z67-v6mr8667888ybb.453.1531757474598;
-        Mon, 16 Jul 2018 09:11:14 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id q127-v6sm235968ywq.83.2018.07.16.09.11.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 09:11:13 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 10:11:12 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Janek Kotas <jank@cadence.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: ufs: Add UFS platform driver for
- Cadence UFS
-Message-ID: <20180716161112.GA16292@rob-hp-laptop>
-References: <B652B768-D5BC-460F-B0A4-64A2A76064CC@cadence.com>
+        Mon, 16 Jul 2018 12:39:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727405AbeGPQji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 12:39:38 -0400
+Received: from localhost (LFbn-NCY-1-193-82.w83-194.abo.wanadoo.fr [83.194.41.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CF2220BED;
+        Mon, 16 Jul 2018 16:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531757492;
+        bh=3N3+SkOOc+ri+94ElzY6wVP/Zt4vbW3G/ZQdXabVu8c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pNR1RtPlVkPc8GYvNQ5VfAjBBxX08X2Vxv/g8Hvvab1CoDDdQygNm4RKHT9MTtHqJ
+         4JmlsUoWcSmtQz6wMq3IryFeTeudrZmPx4EyXDteafTqSNxcV/R1F8uaQiFDLyytpO
+         fjHwqXioTSqwcy4NIpgyczJy5hQgk5qHqNjoyBdw=
+Date:   Mon, 16 Jul 2018 18:11:28 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     xlpang@linux.alibaba.com, tglx@linutronix.de,
+        lcapitulino@redhat.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tj@kernel.org,
+        mingo@kernel.org, linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:sched/core] sched/cputime: Ensure accurate utime and stime
+ ratio in cputime_adjust()
+Message-ID: <20180716161127.GB29270@lerouge>
+References: <20180709145843.126583-1-xlpang@linux.alibaba.com>
+ <tip-8d4c00dc38a8aa30dae8402955e55e7b34e74bc8@git.kernel.org>
+ <20180716133751.GC2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <B652B768-D5BC-460F-B0A4-64A2A76064CC@cadence.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180716133751.GC2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 11:58:04AM +0000, Janek Kotas wrote:
-> This patch adds a device tree platform
-> driver description for Cadence UFS Controller.
-
-Bindings are not platform drivers...
-
+On Mon, Jul 16, 2018 at 03:37:51PM +0200, Peter Zijlstra wrote:
+> On Sun, Jul 15, 2018 at 04:36:17PM -0700, tip-bot for Xunlei Pang wrote:
+> > Commit-ID:  8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
+> > Gitweb:     https://git.kernel.org/tip/8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
+> > Author:     Xunlei Pang <xlpang@linux.alibaba.com>
+> > AuthorDate: Mon, 9 Jul 2018 22:58:43 +0800
+> > Committer:  Ingo Molnar <mingo@kernel.org>
+> > CommitDate: Mon, 16 Jul 2018 00:28:31 +0200
+> > 
+> > sched/cputime: Ensure accurate utime and stime ratio in cputime_adjust()
+> > 
+> > If users access "/proc/pid/stat", the utime and stime ratio in the
+> > current SAMPLE period are excepted, but currently cputime_adjust()
+> > always calculates with the ratio of the WHOLE lifetime of the process.
+> > 
+> > This results in inaccurate utime and stime in "/proc/pid/stat". For
+> > example,  a process runs for a while with "50% usr, 0% sys", then
+> > followed by "100% sys". For later while, the following is excepted:
+> > 
+> >   0.0 usr,  100.0 sys
+> > 
+> > but we get:
+> > 
+> >   10.0 usr,  90.0 sys
+> > 
+> > This patch uses the accurate ratio in cputime_adjust() to address the
+> > issue. A new 'task_cputime' type field is added in prev_cputime to record
+> > previous 'task_cputime' so that we can get the elapsed times as the accurate
+> > ratio.
 > 
-> Signed-off-by: Jan Kotas <jank@cadence.com>
-> ---
->  .../devicetree/bindings/ufs/cdns,ufshc.txt         | 31 ++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/ufs/cdns,ufshc.txt
+> Ingo, please make this one go away. I still have no idae what the
+> problem is and I've not had time to reverse engineer the patch.
 > 
-> diff --git a/Documentation/devicetree/bindings/ufs/cdns,ufshc.txt b/Documentation/devicetree/bindings/ufs/cdns,ufshc.txt
-> new file mode 100644
-> index 0000000..cb6d62a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/ufs/cdns,ufshc.txt
-> @@ -0,0 +1,31 @@
-> +* Cadence Universal Flash Storage (UFS) Controller
-> +
-> +UFS nodes are defined to describe on-chip UFS host controllers.
-> +Each UFS controller instance should have its own node.
-> +
-> +Required properties:
-> +- compatible	: compatible list, contains the following controller:
-> +			"cdns,ufshc"
-> +		  complemented with the JEDEC version:
-> +			"jedec,ufs-2.0"
-> +
-> +- reg		: address and length of the UFS register set
-> +- interrupts	: one interrupt mapping
-> +- clocks	: List of phandle and clock specifier pairs.
-> +- clock-names	: List of clock input name strings sorted in the same
-> +		  order as the clocks property. "core" is mandatory.
-
-And phy?
-
-> +- freq-table-hz	: Array of <min max> operating frequencies stored in the same
-> +		  order as the clocks property. If this property is not
-> +		  defined or a value in the array is "0" then it is assumed
-> +		  that the frequency is set by the parent clock or a
-> +		  fixed rate clock source.
-
-Don't define again here. Just refer to the common definition.
-
-> +
-> +Example:
-> +	ufs@fd030000 {
-> +		compatible = "cdns,ufshc", "jedec,ufs-2.0";
-> +		reg = <0xfd030000 0x10000>;
-> +		interrupts = <0 1 IRQ_TYPE_LEVEL_HIGH>;
-> +		freq-table-hz = <0 0>, <0 0>;
-> +		clocks = <&ufs_core_clk>, <&ufs_phy_clk>;
-> +		clock-names = "core_clk", "phy_clk";
-
-Doesn't match the doc.
-
-> +	};
-> -- 
-> 1.9.0
+> The previous (v1) Changelog was a pile of incoherent rambling and the
+> above doesn't explain anything much.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I want a clear description of the problem and a coherent explanation of
+> the proposed solution without having to reverse engineer the actual
+> patch.
+
+I must confess I'm having trouble to understand what the real problem is.
