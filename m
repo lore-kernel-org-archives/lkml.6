@@ -6,34 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2765CECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEA0ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E504C20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E504C20864
+	by mail.kernel.org (Postfix) with ESMTP id 9F0A6206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F0A6206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388818AbeGPIIk (ORCPT
+        id S2388829AbeGPIIn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:08:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47826 "EHLO
+        Mon, 16 Jul 2018 04:08:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47834 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIIj (ORCPT
+        with ESMTP id S1730161AbeGPIIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:08:39 -0400
+        Mon, 16 Jul 2018 04:08:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 518BAC03;
-        Mon, 16 Jul 2018 07:42:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A92DCA0;
+        Mon, 16 Jul 2018 07:42:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qing Xia <xiaqing17@hisilicon.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 05/32] mmc: dw_mmc: fix card threshold control configuration
-Date:   Mon, 16 Jul 2018 09:36:13 +0200
-Message-Id: <20180716073505.097623666@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: [PATCH 4.9 06/32] ibmasm: dont write out of bounds in read handler
+Date:   Mon, 16 Jul 2018 09:36:14 +0200
+Message-Id: <20180716073505.229291390@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -50,49 +49,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: x00270170 <xiaqing17@hisilicon.com>
+From: Jann Horn <jannh@google.com>
 
-commit 7a6b9f4d601dfce8cb68f0dcfd834270280e31e6 upstream.
+commit a0341fc1981a950c1e902ab901e98f60e0e243f3 upstream.
 
-Card write threshold control is supposed to be set since controller
-version 2.80a for data write in HS400 mode and data read in
-HS200/HS400/SDR104 mode. However the current code returns without
-configuring it in the case of data writing in HS400 mode.
-Meanwhile the patch fixes that the current code goes to
-'disable' when doing data reading in HS400 mode.
+This read handler had a lot of custom logic and wrote outside the bounds of
+the provided buffer. This could lead to kernel and userspace memory
+corruption. Just use simple_read_from_buffer() with a stack buffer.
 
-Fixes: 7e4bf1bc9543 ("mmc: dw_mmc: add the card write threshold for HS400 mode")
-Signed-off-by: Qing Xia <xiaqing17@hisilicon.com>
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/dw_mmc.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/misc/ibmasm/ibmasmfs.c |   27 +++------------------------
+ 1 file changed, 3 insertions(+), 24 deletions(-)
 
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -981,8 +981,8 @@ static void dw_mci_ctrl_thld(struct dw_m
- 	 * It's used when HS400 mode is enabled.
- 	 */
- 	if (data->flags & MMC_DATA_WRITE &&
--		!(host->timing != MMC_TIMING_MMC_HS400))
--		return;
-+		host->timing != MMC_TIMING_MMC_HS400)
-+		goto disable;
+--- a/drivers/misc/ibmasm/ibmasmfs.c
++++ b/drivers/misc/ibmasm/ibmasmfs.c
+@@ -507,35 +507,14 @@ static int remote_settings_file_close(st
+ static ssize_t remote_settings_file_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
+ {
+ 	void __iomem *address = (void __iomem *)file->private_data;
+-	unsigned char *page;
+-	int retval;
+ 	int len = 0;
+ 	unsigned int value;
+-
+-	if (*offset < 0)
+-		return -EINVAL;
+-	if (count == 0 || count > 1024)
+-		return 0;
+-	if (*offset != 0)
+-		return 0;
+-
+-	page = (unsigned char *)__get_free_page(GFP_KERNEL);
+-	if (!page)
+-		return -ENOMEM;
++	char lbuf[20];
  
- 	if (data->flags & MMC_DATA_WRITE)
- 		enable = SDMMC_CARD_WR_THR_EN;
-@@ -990,7 +990,8 @@ static void dw_mci_ctrl_thld(struct dw_m
- 		enable = SDMMC_CARD_RD_THR_EN;
+ 	value = readl(address);
+-	len = sprintf(page, "%d\n", value);
+-
+-	if (copy_to_user(buf, page, len)) {
+-		retval = -EFAULT;
+-		goto exit;
+-	}
+-	*offset += len;
+-	retval = len;
++	len = snprintf(lbuf, sizeof(lbuf), "%d\n", value);
  
- 	if (host->timing != MMC_TIMING_MMC_HS200 &&
--	    host->timing != MMC_TIMING_UHS_SDR104)
-+	    host->timing != MMC_TIMING_UHS_SDR104 &&
-+	    host->timing != MMC_TIMING_MMC_HS400)
- 		goto disable;
+-exit:
+-	free_page((unsigned long)page);
+-	return retval;
++	return simple_read_from_buffer(buf, count, offset, lbuf, len);
+ }
  
- 	blksz_depth = blksz / (1 << host->data_shift);
+ static ssize_t remote_settings_file_write(struct file *file, const char __user *ubuff, size_t count, loff_t *offset)
 
 
