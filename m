@@ -1,57 +1,54 @@
 Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A716BECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D7BECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59B9F208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:59:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B9F208C3
+	by mail.kernel.org (Postfix) with ESMTP id B148E208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B148E208E9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbeGPP0x (ORCPT
+        id S1729808AbeGPP1E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:26:53 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:37630 "EHLO
+        Mon, 16 Jul 2018 11:27:04 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:33619 "EHLO
         mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727374AbeGPP0w (ORCPT
+        with ESMTP id S1727265AbeGPP0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Jul 2018 11:26:52 -0400
-Received: by mail-it0-f69.google.com with SMTP id r10-v6so14003021itc.2
+Received: by mail-it0-f69.google.com with SMTP id s40-v6so298925ite.0
         for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 07:59:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=hlle/18Tt2m3iMsWkDJl4aJLdOc2mUdoHraeBW0kaE8=;
-        b=QhWB+OnXJ1fKjJrf3nz45aiztcys3KuCe93GLsuwmkN3m+MNQNVePCDLzN0phSjStI
-         J98WU1LV5jS8BJNqL0qayz46e0VR4oIKqa7TfeZhKWrC5Fce3z7yAC4WdoCZacuwLWeT
-         YjUWA0fJbmoRWN9a/BHXDy0j4LkOuc9jpSfJuz3kRz0wXjV+PVZ2/09velI9wCF7FKTp
-         h0+6guhh2Qx3NhyrzGyiHGg9xgL5q6wyvCo3vljoTiBq87L0h86uR0F1ihnuSlXCKWYK
-         OrFegq0bXZWtXZ3flWtSbRxO9rMjHtYxkb05a5mqA9Jn7xUBmSCucn9RWBYpdabBaz4g
-         rIeA==
-X-Gm-Message-State: AOUpUlHPwEDwCrQJ+w9yf1j4ntZUEyr64A004VYL35A8nVGCW1sAhQyR
-        /TFerMiaXBi3VhC/JdE51NaXnhbf64e9yykr/MtkC7fFRcRc
-X-Google-Smtp-Source: AAOMgpdt8Zqg1pZ4lqN4MTVYcbhNK+KUZWSPOUeIZZ3QUD4PmY9hAg5hSNaRJQANHqKqqY7ZesUS/B0qlDuITHd7ug96leLSSxhm
+        bh=A/VrmFLVYBlbJWLFxYFc33vo/HpQvSes0CBwmQAzCII=;
+        b=W2WqrUsCJcREVkOjGmr7PzfmhtuBQgfMWLgurEVRdPJGrE/ujL9IBCAFfZ0uyzyjul
+         xwL67p7xdrfpO5xjqtXGvjokP+rNrEhilwJw+F2H2mcWkyOWdkO8qJGK7DMK6dcg5sDq
+         +n7ntVCE8nVVuv3JNBLSct/BXGzXa3lXlBxzQyBZwQJkoobt8C8yuPwt85ZD4LU0wvaj
+         17CfnkugJ3gbsJrDLwBjMcBMEv/5vn5Kh8P0kyJDTYDB8kKvr0oP52XPGhBIZKqyusN8
+         sDxi2RXV+z87eHPkAdU45/BlzTcuqvxqCFQq2oY3+X8opNbyCSfaOXz1Nfs8hmkX25da
+         upbA==
+X-Gm-Message-State: AOUpUlELJHFSoYWD6c/IZZFqhIN08uWM3Qejhv+TqVDY9OKCP+UR1zUJ
+        XygwkLQo8Xf7up+FUCBeLTvzALJucAeOt3tfs2TnLrh1PAbg
+X-Google-Smtp-Source: AAOMgpf2/4e0uVfMBLoNVSdwBKZ++gPr8rmTZDggCO8Vcf6wxCDecz4pMdJ1+hBKqhGiFz3Kcr3MsckDS9sXQEANR4dIdY3AStws
 MIME-Version: 1.0
-X-Received: by 2002:a6b:4608:: with SMTP id t8-v6mr7341015ioa.141.1531753143391;
+X-Received: by 2002:a6b:3384:: with SMTP id z126-v6mr7564528ioz.61.1531753143182;
  Mon, 16 Jul 2018 07:59:03 -0700 (PDT)
 Date:   Mon, 16 Jul 2018 07:59:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fedc1105711f11fd@google.com>
-Subject: general protection fault in do_raw_spin_unlock
-From:   syzbot <syzbot+83a25334ef203851dc81@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, ericvh@gmail.com,
-        linux-kernel@vger.kernel.org, lucho@ionkov.net,
-        netdev@vger.kernel.org, rminnich@sandia.gov,
-        syzkaller-bugs@googlegroups.com,
-        v9fs-developer@lists.sourceforge.net
+Message-ID: <000000000000fbad1405711f113c@google.com>
+Subject: KASAN: use-after-free Read in kernel_accept
+From:   syzbot <syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,74 +59,110 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    1d4eb636f0ab Add linux-next specific files for 20180716
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1186bf0c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea5926dddb0db97a
-dashboard link: https://syzkaller.appspot.com/bug?extid=83a25334ef203851dc81
+HEAD commit:    6bed5e260709 Merge branch 'fix-DCTCP-delayed-ACK'
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=176b25d0400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b88de6eac8694da6
+dashboard link: https://syzkaller.appspot.com/bug?extid=0bf2e01269f1274b4b03
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=179ed444400000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=159dd178400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b76d62400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+83a25334ef203851dc81@syzkaller.appspotmail.com
+Reported-by: syzbot+0bf2e01269f1274b4b03@syzkaller.appspotmail.com
 
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 24 Comm: kworker/1:1 Not tainted 4.18.0-rc5-next-20180716+ #8
+==================================================================
+BUG: KASAN: use-after-free in kernel_accept+0x2a4/0x310 net/socket.c:3251
+Read of size 8 at addr ffff8801a772c5e8 by task kworker/1:3/4569
+
+CPU: 1 PID: 4569 Comm: kworker/1:3 Not tainted 4.18.0-rc3+ #10
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: events p9_poll_workfn
-RIP: 0010:debug_spin_unlock kernel/locking/spinlock_debug.c:97 [inline]
-RIP: 0010:do_raw_spin_unlock+0x65/0x2f0 kernel/locking/spinlock_debug.c:134
-Code: 0a bd 88 48 c7 85 78 ff ff ff b3 8a b5 41 48 c7 45 88 d0 3c 60 81 c7  
-02 f1 f1 f1 f1 c7 42 04 04 f2 f2 f2 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 65 48 8b 0c 25 28 00 00 00 48 89 4d d0 31 c9
-RSP: 0018:ffff8801d945f288 EFLAGS: 00010047
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff8770a045
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000004
-RBP: ffff8801d945f310 R08: 1ffff1003b28be45 R09: ffffed0035e7bd88
-R10: ffffed0035e7bd88 R11: ffff8801af3dec43 R12: 0000000000000000
-R13: 1ffff1003b28be51 R14: ffff8801d945f2e8 R15: ffff8801c5811d50
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000072c029 CR3: 00000001b19fd000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Workqueue: events smc_tcp_listen_work
 Call Trace:
-  __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:159 [inline]
-  _raw_spin_unlock_irqrestore+0x27/0xc0 kernel/locking/spinlock.c:184
-  spin_unlock_irqrestore include/linux/spinlock.h:384 [inline]
-  p9_conn_cancel+0x9b6/0xd30 net/9p/trans_fd.c:208
-  p9_poll_mux net/9p/trans_fd.c:620 [inline]
-  p9_poll_workfn+0x4b2/0x6d0 net/9p/trans_fd.c:1107
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  kernel_accept+0x2a4/0x310 net/socket.c:3251
+  smc_clcsock_accept net/smc/af_smc.c:701 [inline]
+  smc_tcp_listen_work+0x222/0xef0 net/smc/af_smc.c:1114
   process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
   worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-  kthread+0x345/0x410 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 4d86351f63a12683 ]---
-RIP: 0010:debug_spin_unlock kernel/locking/spinlock_debug.c:97 [inline]
-RIP: 0010:do_raw_spin_unlock+0x65/0x2f0 kernel/locking/spinlock_debug.c:134
-Code: 0a bd 88 48 c7 85 78 ff ff ff b3 8a b5 41 48 c7 45 88 d0 3c 60 81 c7  
-02 f1 f1 f1 f1 c7 42 04 04 f2 f2 f2 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 65 48 8b 0c 25 28 00 00 00 48 89 4d d0 31 c9
-RSP: 0018:ffff8801d945f288 EFLAGS: 00010047
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff8770a045
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000004
-RBP: ffff8801d945f310 R08: 1ffff1003b28be45 R09: ffffed0035e7bd88
-R10: ffffed0035e7bd88 R11: ffff8801af3dec43 R12: 0000000000000000
-R13: 1ffff1003b28be51 R14: ffff8801d945f2e8 R15: ffff8801c5811d50
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000072c029 CR3: 00000001b19fd000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+Allocated by task 4568:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  sock_alloc_inode+0x78/0x320 net/socket.c:243
+  alloc_inode+0x63/0x190 fs/inode.c:210
+  new_inode_pseudo+0x71/0x1a0 fs/inode.c:895
+  sock_alloc+0x41/0x270 net/socket.c:567
+  __sock_create+0x175/0x940 net/socket.c:1250
+  sock_create_kern+0x3b/0x50 net/socket.c:1332
+  smc_create+0x141/0x360 net/smc/af_smc.c:1701
+  __sock_create+0x53c/0x940 net/socket.c:1286
+  sock_create net/socket.c:1326 [inline]
+  __sys_socket+0x106/0x260 net/socket.c:1356
+  __do_sys_socket net/socket.c:1365 [inline]
+  __se_sys_socket net/socket.c:1363 [inline]
+  __x64_sys_socket+0x73/0xb0 net/socket.c:1363
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 4568:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  sock_destroy_inode+0x56/0x70 net/socket.c:273
+  destroy_inode+0x159/0x200 fs/inode.c:267
+  evict+0x5d5/0x990 fs/inode.c:575
+  iput_final fs/inode.c:1506 [inline]
+  iput+0x635/0xaa0 fs/inode.c:1532
+  __sock_release+0x1f1/0x260 net/socket.c:610
+  sock_release+0x17/0x20 net/socket.c:618
+  smc_release+0x1a8/0x720 net/smc/af_smc.c:146
+  __sock_release+0xd7/0x260 net/socket.c:599
+  sock_close+0x19/0x20 net/socket.c:1150
+  __fput+0x355/0x8b0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801a772c5c0
+  which belongs to the cache sock_inode_cache of size 992
+The buggy address is located 40 bytes inside of
+  992-byte region [ffff8801a772c5c0, ffff8801a772c9a0)
+The buggy address belongs to the page:
+page:ffffea00069dcb00 count:1 mapcount:0 mapping:ffff8801d9be93c0  
+index:0xffff8801a772cffd
+flags: 0x2fffc0000000100(slab)
+raw: 02fffc0000000100 ffffea00069dcac8 ffffea00069dd408 ffff8801d9be93c0
+raw: ffff8801a772cffd ffff8801a772c140 0000000100000003 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801a772c480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801a772c500: 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801a772c580: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                                           ^
+  ffff8801a772c600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801a772c680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
