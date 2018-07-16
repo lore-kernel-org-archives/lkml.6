@@ -6,45 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AF4ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE132ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C25420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C25420864
+	by mail.kernel.org (Postfix) with ESMTP id 7D6C720864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6C720864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732057AbeGPID6 (ORCPT
+        id S1732074AbeGPIEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:03:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46802 "EHLO
+        Mon, 16 Jul 2018 04:04:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46826 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeGPID6 (ORCPT
+        with ESMTP id S1728460AbeGPIEB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:03:58 -0400
+        Mon, 16 Jul 2018 04:04:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB092C03;
-        Mon, 16 Jul 2018 07:37:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91308CA0;
+        Mon, 16 Jul 2018 07:37:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        syzbot <syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Oscar Salvador <osalvador@suse.de>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 39/67] mm: do not bug_on on incorrect length in __mm_populate()
-Date:   Mon, 16 Jul 2018 09:35:08 +0200
-Message-Id: <20180716073449.337211671@linuxfoundation.org>
+        stable@vger.kernel.org, jreck@google.com, tkjos@google.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.17 40/67] tracing: Reorder display of TGID to be after PID
+Date:   Mon, 16 Jul 2018 09:35:09 +0200
+Message-Id: <20180716073449.486391288@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -61,148 +51,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-commit bb177a732c4369bb58a1fe1df8f552b6f0f7db5f upstream.
+commit f8494fa3dd10b52eab47a9666a8bc34719a129aa upstream.
 
-syzbot has noticed that a specially crafted library can easily hit
-VM_BUG_ON in __mm_populate
+Currently ftrace displays data in trace output like so:
 
-  kernel BUG at mm/gup.c:1242!
-  invalid opcode: 0000 [#1] SMP
-  CPU: 2 PID: 9667 Comm: a.out Not tainted 4.18.0-rc3 #644
-  Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-  RIP: 0010:__mm_populate+0x1e2/0x1f0
-  Code: 55 d0 65 48 33 14 25 28 00 00 00 89 d8 75 21 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 18 f1 ff 0f 0b e8 6e 18 f1 ff <0f> 0b 31 db eb c9 e8 93 06 e0 ff 0f 1f 00 55 48 89 e5 53 48 89 fb
-  Call Trace:
-     vm_brk_flags+0xc3/0x100
-     vm_brk+0x1f/0x30
-     load_elf_library+0x281/0x2e0
-     __ia32_sys_uselib+0x170/0x1e0
-     do_fast_syscall_32+0xca/0x420
-     entry_SYSENTER_compat+0x70/0x7f
+                                       _-----=> irqs-off
+                                      / _----=> need-resched
+                                     | / _---=> hardirq/softirq
+                                     || / _--=> preempt-depth
+                                     ||| /     delay
+            TASK-PID   CPU    TGID   ||||    TIMESTAMP  FUNCTION
+               | |       |      |    ||||       |         |
+            bash-1091  [000] ( 1091) d..2    28.313544: sched_switch:
 
-The reason is that the length of the new brk is not page aligned when we
-try to populate the it.  There is no reason to bug on that though.
-do_brk_flags already aligns the length properly so the mapping is
-expanded as it should.  All we need is to tell mm_populate about it.
-Besides that there is absolutely no reason to to bug_on in the first
-place.  The worst thing that could happen is that the last page wouldn't
-get populated and that is far from putting system into an inconsistent
-state.
+However Android's trace visualization tools expect a slightly different
+format due to an out-of-tree patch patch that was been carried for a
+decade, notice that the TGID and CPU fields are reversed:
 
-Fix the issue by moving the length sanitization code from do_brk_flags
-up to vm_brk_flags.  The only other caller of do_brk_flags is brk
-syscall entry and it makes sure to provide the proper length so t here
-is no need for sanitation and so we can use do_brk_flags without it.
+                                       _-----=> irqs-off
+                                      / _----=> need-resched
+                                     | / _---=> hardirq/softirq
+                                     || / _--=> preempt-depth
+                                     ||| /     delay
+            TASK-PID    TGID   CPU   ||||    TIMESTAMP  FUNCTION
+               | |        |      |   ||||       |         |
+            bash-1091  ( 1091) [002] d..2    64.965177: sched_switch:
 
-Also remove the bogus BUG_ONs.
+>From kernel v4.13 onwards, during which TGID was introduced, tracing
+with systrace on all Android kernels will break (most Android kernels
+have been on 4.9 with Android patches, so this issues hasn't been seen
+yet). From v4.13 onwards things will break.
 
-[osalvador@techadventures.net: fix up vm_brk_flags s@request@len@]
-Link: http://lkml.kernel.org/r/20180706090217.GI32658@dhcp22.suse.cz
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: syzbot <syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com>
-Tested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+The chrome browser's tracing tools also embed the systrace viewer which
+uses the legacy TGID format and updates to that are known to be
+difficult to make.
+
+Considering this, I suggest we make this change to the upstream kernel
+and backport it to all Android kernels. I believe this feature is merged
+recently enough into the upstream kernel that it shouldn't be a problem.
+Also logically, IMO it makes more sense to group the TGID with the
+TASK-PID and the CPU after these.
+
+Link: http://lkml.kernel.org/r/20180626000822.113931-1-joel@joelfernandes.org
+
+Cc: jreck@google.com
+Cc: tkjos@google.com
+Cc: stable@vger.kernel.org
+Fixes: 441dae8f2f29 ("tracing: Add support for display of tgid in trace output")
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/gup.c  |    2 --
- mm/mmap.c |   29 ++++++++++++-----------------
- 2 files changed, 12 insertions(+), 19 deletions(-)
+ kernel/trace/trace.c        |    8 ++++----
+ kernel/trace/trace_output.c |    5 +++--
+ 2 files changed, 7 insertions(+), 6 deletions(-)
 
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1222,8 +1222,6 @@ int __mm_populate(unsigned long start, u
- 	int locked = 0;
- 	long ret = 0;
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -3363,8 +3363,8 @@ static void print_func_help_header(struc
  
--	VM_BUG_ON(start & ~PAGE_MASK);
--	VM_BUG_ON(len != PAGE_ALIGN(len));
- 	end = start + len;
+ 	print_event_info(buf, m);
  
- 	for (nstart = start; nstart < end; nstart = nend) {
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -186,8 +186,8 @@ static struct vm_area_struct *remove_vma
- 	return next;
+-	seq_printf(m, "#           TASK-PID   CPU#   %s  TIMESTAMP  FUNCTION\n", tgid ? "TGID     " : "");
+-	seq_printf(m, "#              | |       |    %s     |         |\n",	 tgid ? "  |      " : "");
++	seq_printf(m, "#           TASK-PID   %s  CPU#   TIMESTAMP  FUNCTION\n", tgid ? "TGID     " : "");
++	seq_printf(m, "#              | |     %s    |       |         |\n",	 tgid ? "  |      " : "");
  }
  
--static int do_brk(unsigned long addr, unsigned long len, struct list_head *uf);
--
-+static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long flags,
-+		struct list_head *uf);
- SYSCALL_DEFINE1(brk, unsigned long, brk)
- {
- 	unsigned long retval;
-@@ -245,7 +245,7 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
- 		goto out;
- 
- 	/* Ok, looks good - let it rip. */
--	if (do_brk(oldbrk, newbrk-oldbrk, &uf) < 0)
-+	if (do_brk_flags(oldbrk, newbrk-oldbrk, 0, &uf) < 0)
- 		goto out;
- 
- set_brk:
-@@ -2929,21 +2929,14 @@ static inline void verify_mm_writelocked
-  *  anonymous maps.  eventually we may be able to do some
-  *  brk-specific accounting here.
-  */
--static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long flags, struct list_head *uf)
-+static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long flags, struct list_head *uf)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma, *prev;
--	unsigned long len;
- 	struct rb_node **rb_link, *rb_parent;
- 	pgoff_t pgoff = addr >> PAGE_SHIFT;
- 	int error;
- 
--	len = PAGE_ALIGN(request);
--	if (len < request)
--		return -ENOMEM;
--	if (!len)
--		return 0;
--
- 	/* Until we need other flags, refuse anything except VM_EXEC. */
- 	if ((flags & (~VM_EXEC)) != 0)
- 		return -EINVAL;
-@@ -3015,18 +3008,20 @@ out:
- 	return 0;
+ static void print_func_help_header_irq(struct trace_buffer *buf, struct seq_file *m,
+@@ -3384,9 +3384,9 @@ static void print_func_help_header_irq(s
+ 		   tgid ? tgid_space : space);
+ 	seq_printf(m, "#                          %s||| /     delay\n",
+ 		   tgid ? tgid_space : space);
+-	seq_printf(m, "#           TASK-PID   CPU#%s||||    TIMESTAMP  FUNCTION\n",
++	seq_printf(m, "#           TASK-PID %sCPU#  ||||    TIMESTAMP  FUNCTION\n",
+ 		   tgid ? "   TGID   " : space);
+-	seq_printf(m, "#              | |       | %s||||       |         |\n",
++	seq_printf(m, "#              | |   %s  |   ||||       |         |\n",
+ 		   tgid ? "     |    " : space);
  }
  
--static int do_brk(unsigned long addr, unsigned long len, struct list_head *uf)
--{
--	return do_brk_flags(addr, len, 0, uf);
--}
--
--int vm_brk_flags(unsigned long addr, unsigned long len, unsigned long flags)
-+int vm_brk_flags(unsigned long addr, unsigned long request, unsigned long flags)
- {
- 	struct mm_struct *mm = current->mm;
-+	unsigned long len;
- 	int ret;
- 	bool populate;
- 	LIST_HEAD(uf);
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -594,8 +594,7 @@ int trace_print_context(struct trace_ite
  
-+	len = PAGE_ALIGN(request);
-+	if (len < request)
-+		return -ENOMEM;
-+	if (!len)
-+		return 0;
+ 	trace_find_cmdline(entry->pid, comm);
+ 
+-	trace_seq_printf(s, "%16s-%-5d [%03d] ",
+-			       comm, entry->pid, iter->cpu);
++	trace_seq_printf(s, "%16s-%-5d ", comm, entry->pid);
+ 
+ 	if (tr->trace_flags & TRACE_ITER_RECORD_TGID) {
+ 		unsigned int tgid = trace_find_tgid(entry->pid);
+@@ -606,6 +605,8 @@ int trace_print_context(struct trace_ite
+ 			trace_seq_printf(s, "(%5d) ", tgid);
+ 	}
+ 
++	trace_seq_printf(s, "[%03d] ", iter->cpu);
 +
- 	if (down_write_killable(&mm->mmap_sem))
- 		return -EINTR;
+ 	if (tr->trace_flags & TRACE_ITER_IRQ_INFO)
+ 		trace_print_lat_fmt(s, entry);
  
 
 
