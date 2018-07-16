@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D71ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 880A6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:21:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CACE220844
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:21:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 389DD208F7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:21:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Ta2D0CGU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CACE220844
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Wx77KgRp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 389DD208F7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbeGPMsq (ORCPT
+        id S1731234AbeGPMsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:48:46 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37182 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729583AbeGPMsq (ORCPT
+        Mon, 16 Jul 2018 08:48:53 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44918 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731096AbeGPMsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:48:46 -0400
-Received: by mail-ed1-f66.google.com with SMTP id b10-v6so2594386eds.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 05:21:33 -0700 (PDT)
+        Mon, 16 Jul 2018 08:48:52 -0400
+Received: by mail-ed1-f67.google.com with SMTP id d17-v6so17729485eds.11
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 05:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JkRzUpVSbLz8pSh84iRWw/9lE0/Y3iCMZEHP5BGx5XI=;
-        b=Ta2D0CGUytyb9IcWvSkq+AXvnm6UBKNsyoq/Ra4/DgAarMRScCbeHwVseXAC1ZNEeZ
-         fsim27NwuvV+myYmQ/PI/uLdiaXLfVlXerWwHkSxNEt14u2s5xO47zFIj5n1sUKtcV9N
-         ZsKqaLRN8LR6+DTkTP9R1dz1uuUojQUI7vGuY4elX27hgb0xuVp2AZLFtuWXN2Skrut6
-         afTYhKnfnAwRcZu/ZiDVzTqWaMrI3CGuvNnAfXL3GjZbvblc0rKmiAo/uiwFUbzdwjOJ
-         HZsBV9Oi7T2ylq7hJfnyM4UcjOH8Guk+H7TIrscJrMV8OwCT3mGSB8gl/U2F8kRrRZke
-         Ll9Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Qu+bT7PO79vqYWmK/HljxHsQAW+8guyzbN9/q2IIU2E=;
+        b=Wx77KgRp52cggbrbkIxxAeqouIrDNtpsN15HzRltDqrJiE5APXqULFAHUF3xOKdaMO
+         Fy8jTQgJ6im00gve/rIgN0XN7RDMHBPaYKHYUhoHp1GwxtJ/lCYGfKo1hUlDWPE3eexF
+         28CrNZZM1sKHUsY4AvmxOt1PqMo1Y3R2vIaMZdBKt0BWKMH41ru15VCV/b/9cMgwe809
+         4lQgnDN/z6GJV3t3f+pSnzcEoqDKhI+TaCpd3l3anmmT7cXnLvzGBTzBAttWKSyhfKk9
+         W1cukE10fSFxba6/pk0ATzTUfVpSuAoa9bXICvF+wbhhRrUy75kJC5kjNwPR1U0h/kPW
+         m46Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JkRzUpVSbLz8pSh84iRWw/9lE0/Y3iCMZEHP5BGx5XI=;
-        b=CqLTlZJs3mD+JWQZsN9Y53h+jLcEvzXYYTmiAM9nN0Oap6SuJumEc1tp1af17hF03W
-         k1KE6Y7cafXoVTEwZjN08Frdek404DLDzO2GYS+2b3E+2c3uLAk6zmdFacF75BL/piV8
-         m2qRC1dwHDQsF2yeK9qEZJPc9nHOtzb5PHztXdG6qHXIYZY7YNYDambtF1ujnEqjycJS
-         jQRBK02beWJul/bN8CKvy/F1YfEFsXWkzvNIGwYXrLHirv0wqCc3gYFW9p4lztR9pDOv
-         b1GtmtTxM88Arvq5HEXBskyEcmWD/JPYoX2XbDV2OTrjNg/un0QE+IjqrMetiTnAI2ce
-         fdvQ==
-X-Gm-Message-State: AOUpUlEpYYICFWu6EemJ+PNt5Abz5BVVtVhGeRsD+DN9MiknBT/XIf0U
-        14qUGoScib9gjikfF8/HIoQVkZUsS8c=
-X-Google-Smtp-Source: AAOMgpcFgYt7PHwbJTIbBCfHF2IzRE6hNQ55De3LR9jPPfM/21+NNsqbO82wG295WM2AI9c/3699gQ==
-X-Received: by 2002:a50:da01:: with SMTP id z1-v6mr17330336edj.62.1531743692737;
-        Mon, 16 Jul 2018 05:21:32 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Qu+bT7PO79vqYWmK/HljxHsQAW+8guyzbN9/q2IIU2E=;
+        b=ef3EFhqLTu9g2VhS/wPQH2i4pjphwY3hSQi/AXKXqvys2bODKBMWiBYVKIy+46Xzzx
+         KOYL4yWIjSaqpHnBTGfRpTqL9g+WRS5H3H7SZ38sMNM73YLt7RoOYc8KLV9R9YQJCubM
+         +pfetUtMKsHD7sPdUG2VqdVSIKx8gBDZKOMgtA5pmsHX1EhSPfTJGJsvdzAxu64GshGh
+         PEKY4eQQokg+zr003lF76QTCwu9W2OUcWE8x5SIXOB0d5m4JW5CJlHsryKU8LvbLdSDA
+         J80DiHeT3ehppXR/7ZYlIW120VwopzH/pSZQnri2GIUBf2MweJ6OkwNii6TwMx406h0p
+         SDKw==
+X-Gm-Message-State: AOUpUlEKchZXxxiZRSm8/Arl3N11UFdUoKELIwrRkOSJPMOpbx7qCJB8
+        7QT0T8UDTGBrRnY09MwCmg8pQHyhU00=
+X-Google-Smtp-Source: AAOMgpcZSdUIiA9zKztW4es5dig2R5tins3PQjWL4rRvGpw5dBvqjAWeoBypi1H+j1UsCVyG6/wXwg==
+X-Received: by 2002:aa7:c0c9:: with SMTP id j9-v6mr17324330edp.135.1531743699064;
+        Mon, 16 Jul 2018 05:21:39 -0700 (PDT)
 Received: from maco.fcp3.net (a83-162-234-235.adsl.xs4all.nl. [83.162.234.235])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm4635471edi.26.2018.07.16.05.21.31
+        by smtp.gmail.com with ESMTPSA id a9-v6sm4635471edi.26.2018.07.16.05.21.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 05:21:31 -0700 (PDT)
+        Mon, 16 Jul 2018 05:21:38 -0700 (PDT)
 From:   Martijn Coenen <maco@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Martijn Coenen <maco@android.com>,
@@ -77,86 +78,164 @@ Cc:     Martijn Coenen <maco@android.com>,
         usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org,
         linux-arch@vger.kernel.org, maco@google.com, sspatil@google.com,
         malchev@google.com, joelaf@google.com
-Subject: [PATCH 0/6] Symbol namespaces
-Date:   Mon, 16 Jul 2018 14:21:19 +0200
-Message-Id: <20180716122125.175792-1-maco@android.com>
+Subject: [PATCH 5/6] scripts: Coccinelle script for namespace dependencies.
+Date:   Mon, 16 Jul 2018 14:21:24 +0200
+Message-Id: <20180716122125.175792-6-maco@android.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+In-Reply-To: <20180716122125.175792-1-maco@android.com>
+References: <20180716122125.175792-1-maco@android.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of Linux 4.17, there are more than 30000 exported symbols
-in the kernel. There seems to be some consensus amongst
-kernel devs that the export surface is too large, and hard
-to reason about.
+A script that uses the '<module>.ns_deps' file generated by modpost to
+automatically add the required symbol namespace dependencies to each
+module.
 
-Generally, these symbols fall in one of these categories:
-1) Symbols actually meant for drivers
-2) Symbols that are only exported because functionality is
-   split over multiple modules, yet they really shouldn't
-   be used by modules outside of their own subsystem
-3) Symbols really only meant for in-tree use
+Usage:
+1) Move some symbols to a namespace with EXPORT_SYMBOL_NS()
+2) Run 'make' (or 'make modules'), get warnings about modules not
+   importing that namespace
+3) Run 'make nsdeps' to automatically add required import statements
+   to said modules
 
-When module developers try to upstream their code, it
-regularly turns out that they are using exported symbols
-that they really shouldn't be using. This problem is even
-bigger for drivers that are currently out-of-tree, which
-may be using many symbols that they shouldn't be using,
-and that break when those symbols are removed or modified.
+This makes it easer for subsystem maintainers to introduce and maintain
+symbol namespaces into their codebase.
 
-This patch allows subsystem maintainers to partition their
-exported symbols into separate namespaces, and module
-authors to import such namespaces only when needed.
-
-This allows subsystem maintainers to more easily limit
-availability of these namespaced symbols to other parts of
-the kernel. It can also be used to partition the set of
-exported symbols for documentation purposes; for example,
-a set of symbols that is really only used for debugging
-could be in a "SUBSYSTEM_DEBUG" namespace.
-
-Martijn Coenen (6):
-  export: explicitly align struct kernel_symbol.
-  module: add support for symbol namespaces.
-  modpost: add support for checking symbol namespaces.
-  modpost: add support for generating namespace dependencies.
-  scripts: Coccinelle script for namespace dependencies.
-  RFC: USB: storage: move symbols into USB_STORAGE namespace.
-
- Makefile                            |  11 +++
- arch/m68k/include/asm/export.h      |   1 -
- arch/x86/include/asm/Kbuild         |   1 +
- arch/x86/include/asm/export.h       |   5 --
- drivers/usb/storage/alauda.c        |   1 +
- drivers/usb/storage/cypress_atacb.c |   1 +
- drivers/usb/storage/datafab.c       |   1 +
- drivers/usb/storage/ene_ub6250.c    |   1 +
- drivers/usb/storage/freecom.c       |   1 +
- drivers/usb/storage/isd200.c        |   1 +
- drivers/usb/storage/jumpshot.c      |   1 +
- drivers/usb/storage/karma.c         |   1 +
- drivers/usb/storage/onetouch.c      |   1 +
- drivers/usb/storage/realtek_cr.c    |   1 +
- drivers/usb/storage/sddr09.c        |   1 +
- drivers/usb/storage/sddr55.c        |   1 +
- drivers/usb/storage/shuttle_usbat.c |   1 +
- drivers/usb/storage/uas.c           |   1 +
- drivers/usb/storage/usb.c           |  20 ++---
- include/asm-generic/export.h        |   2 +-
- include/linux/export.h              |  84 ++++++++++++++-----
- include/linux/module.h              |  13 +++
- kernel/module.c                     |  79 ++++++++++++++++++
- scripts/Makefile.modpost            |   4 +-
- scripts/add_namespace.cocci         |  19 +++++
- scripts/mod/modpost.c               | 120 ++++++++++++++++++++++++++--
- scripts/mod/modpost.h               |   9 +++
- scripts/nsdeps                      |  41 ++++++++++
- 28 files changed, 379 insertions(+), 44 deletions(-)
- delete mode 100644 arch/x86/include/asm/export.h
+Signed-off-by: Martijn Coenen <maco@android.com>
+---
+ Makefile                    | 11 ++++++++++
+ scripts/Makefile.modpost    |  4 +++-
+ scripts/add_namespace.cocci | 19 +++++++++++++++++
+ scripts/nsdeps              | 41 +++++++++++++++++++++++++++++++++++++
+ 4 files changed, 74 insertions(+), 1 deletion(-)
  create mode 100644 scripts/add_namespace.cocci
  create mode 100644 scripts/nsdeps
 
+diff --git a/Makefile b/Makefile
+index 925c55f2524f..96e62d732a3b 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1391,6 +1391,9 @@ help:
+ 	@echo  '  headerdep       - Detect inclusion cycles in headers'
+ 	@echo  '  coccicheck      - Check with Coccinelle'
+ 	@echo  ''
++	@echo  'Tools:'
++	@echo  '  nsdeps          - Generate missing symbol namespace dependencies'
++	@echo  ''
+ 	@echo  'Kernel selftest:'
+ 	@echo  '  kselftest       - Build and run kernel selftest (run as root)'
+ 	@echo  '                    Build, install, and boot kernel before'
+@@ -1566,6 +1569,14 @@ quiet_cmd_tags = GEN     $@
+ tags TAGS cscope gtags: FORCE
+ 	$(call cmd,tags)
+ 
++# Script to generate missing namespace dependencies
++
++PHONY += nsdeps
++
++nsdeps:
++	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost nsdeps
++	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/$@
++
+ # Scripts to check various things for consistency
+ # ---------------------------------------------------------------------------
+ 
+diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
+index df4174405feb..a9a90c3e3879 100644
+--- a/scripts/Makefile.modpost
++++ b/scripts/Makefile.modpost
+@@ -79,7 +79,8 @@ modpost = scripts/mod/modpost                    \
+  $(if $(KBUILD_EXTMOD),-o $(modulesymfile))      \
+  $(if $(CONFIG_DEBUG_SECTION_MISMATCH),,-S)      \
+  $(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)  \
+- $(if $(KBUILD_EXTMOD)$(KBUILD_MODPOST_WARN),-w)
++ $(if $(KBUILD_EXTMOD)$(KBUILD_MODPOST_WARN),-w) \
++ $(if $(filter nsdeps,$(MAKECMDGOALS)),-d)
+ 
+ MODPOST_OPT=$(subst -i,-n,$(filter -i,$(MAKEFLAGS)))
+ 
+@@ -130,6 +131,7 @@ $(modules): %.ko :%.o %.mod.o FORCE
+ 
+ targets += $(modules)
+ 
++nsdeps: _modpost
+ 
+ # Add FORCE to the prequisites of a target to force it to be always rebuilt.
+ # ---------------------------------------------------------------------------
+diff --git a/scripts/add_namespace.cocci b/scripts/add_namespace.cocci
+new file mode 100644
+index 000000000000..a6d33e066067
+--- /dev/null
++++ b/scripts/add_namespace.cocci
+@@ -0,0 +1,19 @@
++@has_ns_import@
++declarer name MODULE_IMPORT_NS;
++identifier virtual.ns;
++@@
++MODULE_IMPORT_NS(ns);
++
++@has_module_license@
++declarer name MODULE_LICENSE;
++expression license;
++@@
++MODULE_LICENSE(license);
++
++@do_import depends on has_module_license && !has_ns_import@
++declarer name MODULE_LICENSE;
++expression license;
++identifier virtual.ns;
++@@
++MODULE_LICENSE(license);
+++ MODULE_IMPORT_NS(ns);
+diff --git a/scripts/nsdeps b/scripts/nsdeps
+new file mode 100644
+index 000000000000..5678e02626b3
+--- /dev/null
++++ b/scripts/nsdeps
+@@ -0,0 +1,41 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0
++# Linux kernel symbol namespace import generator
++#
++# This script requires at least spatch
++# version 1.0.6.
++SPATCH_REQ_VERSION="1.0.6"
++
++DIR="$(dirname $(readlink -f $0))/.."
++SPATCH="`which ${SPATCH:=spatch}`"
++if [ ! -x "$SPATCH" ]; then
++    echo 'spatch is part of the Coccinelle project and is available at http://coccinelle.lip6.fr/'
++    exit 1
++fi
++
++SPATCH_REQ_VERSION_NUM=$(echo $SPATCH_REQ_VERSION | ${DIR}/scripts/ld-version.sh)
++SPATCH_VERSION=$($SPATCH --version | head -1 | awk '{print $3}')
++SPATCH_VERSION_NUM=$(echo $SPATCH_VERSION | ${DIR}/scripts/ld-version.sh)
++
++if [ "$SPATCH_VERSION_NUM" -lt "$SPATCH_REQ_VERSION_NUM" ] ; then
++    echo 'spatch needs to be version 1.06 or higher'
++    exit 1
++fi
++
++generate_deps_for_ns() {
++    $SPATCH --very-quiet --in-place --sp-file $srctree/scripts/add_namespace.cocci -D ns=$1 $2
++}
++
++generate_deps() {
++    local mod_file=`echo $@ | sed -e 's/\.ns_deps/\.mod/'`
++    local mod_name=`cat $mod_file | sed -n 1p | sed -e 's/\/[^.]*$//'`
++    local mod_source_files=`cat $mod_file | sed -n 2p | sed -e 's/\.o/\.c/'`
++    for ns in `cat $@`; do
++	echo "Adding namespace $ns to module $mod_name (if needed)."
++        generate_deps_for_ns $ns $mod_source_files
++    done
++}
++
++for f in `find $srctree/.tmp_versions/ -name *.ns_deps`; do
++    generate_deps $f
++done
 -- 
 2.18.0.203.gfac676dfb9-goog
 
