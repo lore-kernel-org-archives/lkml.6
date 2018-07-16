@@ -2,226 +2,139 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8466AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC8DECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33402208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:21:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECCFE208F7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:21:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=pks.im header.i=@pks.im header.b="exAqppZL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZxbwLD/f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33402208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pks.im
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JDZs33As"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCFE208F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbeGPPs7 (ORCPT
+        id S1730702AbeGPPtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:48:59 -0400
-Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:37147 "EHLO
-        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727387AbeGPPs7 (ORCPT
+        Mon, 16 Jul 2018 11:49:25 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38260 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727374AbeGPPtY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:48:59 -0400
-X-Greylist: delayed 548 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Jul 2018 11:48:58 EDT
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 11DBD2D5;
-        Mon, 16 Jul 2018 11:11:56 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 16 Jul 2018 11:11:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pks.im; h=cc
-        :content-type:date:from:in-reply-to:message-id:mime-version
-        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=XX4NfZn4kDkjAl0oM+QXjmkOtluHhcNIar1SfoTomf0=; b=exAqppZL
-        sHVfd3+2MGjwhhh0+9JVFsb5JO/AIsn8TiIE54k0jSJVp2C1PIqCu27a7rEFftud
-        oJ6a+qmkrEWP9lamIKhzkx4YvRYoNyzaJHwf6VyvVv7uc2btGjOo2mbrupdBqzNy
-        CArUJx1wB3zozL73jGOE8+4LuyU9nzo5jtonsslHS0Ci0tEnoL9Mdq2GDkrEDRiK
-        zPdLWlAXMmLJvfeu57mlO3/PCN8O8rZxyVidF3fUvvR0KKZ5d5BSoRrTg1os5Ok8
-        OCrntXg9uhQgNdC7RW/FaG75xPgh5cb2G6B2uChM+bADIjVBsDPz0dAMKVJPuc28
-        LmEEZm3vO9iYEQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=XX4NfZn4kDkjAl0oM+QXjmkOtluHh
-        cNIar1SfoTomf0=; b=ZxbwLD/f/5agFj/8J7VAIuG/Fz+EEuytPNeKVJGacBM+c
-        IGw+EXlLsmSkxCyH0avmiHj/wI3V1/21E4vffEgn2pdm77BJK146ciPXNLyAgiMo
-        YkUfa1zA2Qwi+Gmr0Qb97FksXQHoaqVKGuG9ASPuFJ4F73I0cn/s3ZYJNLOzhYX6
-        Fp0WmqbFQLSQR7NtEn49WgS+7u3GqnMKZFk3fIv7TrNsUXuIG8ptSBeXUjjhFu6h
-        oz68FP+cu/DSEryMbDZzwfLyFPlaCTNeyOleJuN+ciq0nQFth7Zm3O2a59JkX9vG
-        m/2l4wpZuDrzbo9hNoOK2Swr1vNMAKwXsHH3Z9cfw==
-X-ME-Proxy: <xmx:u7VMW51ldqTSlgFQ219K0Ff1Wpp9eJBQXv4U8M-UnObsjtdyyel3tQ>
-    <xmx:u7VMW1IgciUVmhEY7RF7-GnJabjEhYGQzqcFPAjw8pQAoCTMJEJT-g>
-    <xmx:u7VMW260X026qYnTsqPFWVaRhUGF7xWPuY7AowUOKK_sl2pqoVav2A>
-    <xmx:u7VMW0hIcRxgP5_vGTl0r6Y1Notx9eTZdj7JtAo5kNVuYJO8E9AKGg>
-    <xmx:u7VMW9kNHbFrCe30OVxSdUiOkM2NUeCWfkcNiWArq8gYG22LjTnDMQ>
-    <xmx:u7VMWwWgQPpOVbBBl6mQ9mwd5Vkv7UXgJKA-MhBQWcZFcihlASV4hQ>
-X-ME-Sender: <xms:u7VMW7_cjOILfyt2RUYP8Ad397IERbvI2h7ITDd0bugOvo9Wx4Gi5Q>
-Received: from apu2.pks.im (x4db33da9.dyn.telefonica.de [77.179.61.169])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8E45BE473B;
-        Mon, 16 Jul 2018 11:11:54 -0400 (EDT)
-Received: from localhost (10.192.0.11 [10.192.0.11])
-        by apu2.pks.im (OpenSMTPD) with ESMTPSA id 1cb67304 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Mon, 16 Jul 2018 15:11:53 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 17:11:53 +0200
-From:   Patrick Steinhardt <ps@pks.im>
-To:     Ming Lei <tom.leiming@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: fix NPE when resuming SCSI devices using blk-mq
-Message-ID: <20180716151153.GC1787@ncase.pks.im>
-References: <b712b87a509dc64619a3aec7c673935ed09be5de.1531488173.git.ps@pks.im>
- <CACVXFVPoO7kcEnUVmqGVWDgiTVYup2sD9puBZ8FzY+mDaMp-bQ@mail.gmail.com>
+        Mon, 16 Jul 2018 11:49:24 -0400
+Received: by mail-it0-f68.google.com with SMTP id v71-v6so21887050itb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 08:21:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ryu3NsWRCgZAHLFLDnhrrKcb1QFSmj6/XnLV+bZPNbo=;
+        b=JDZs33As1F6aZ0zZ45Gcrjb6viFm8vztd9b/DpCgnfIbwcrRP5tmeLD5kiENjiWtS2
+         m3a/OQ3JPSktcwUEYpClWuz99T9LH7p2bWo9SXu+AyOE+p9A7YpXG9lbFRaRqD9FF64k
+         jo7XW6Lpl7hw9+wG+yyhGUQusnoVBN5NfvWAU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Ryu3NsWRCgZAHLFLDnhrrKcb1QFSmj6/XnLV+bZPNbo=;
+        b=GIOfZv+7HN2YcmRv3U6jV+XHuXYD7qse6pMs1qv9QReYQyeWoqUuw0KP0De9umADnE
+         sZXy8rSIQ/KhJ7qW0/YmBIibdPCdioXiOwYpXFFdoR+gRsIPsdioxY/kcP6LAQDW3bWw
+         39IorsTxw6VMDmaNjeAZZ0f5WuF2KF6wg7eszu7mqH9GVrH+b6cIA3P6C86644vh4OJN
+         8XQ29YQuXE/Jem2b8dZDmo/qtejuy2qv/2RuxG0FVmVvHhRrhom57UpVA3t0Kb9QAKb9
+         pPYbvZ02PTi/Oo0BfMhEaFR52emIKeX/XT9WfCDuGvHcdUqy/cBYzBc57//nZlPleJ1C
+         93LA==
+X-Gm-Message-State: AOUpUlGIHmmmz8f9Ki149StnsoZalN+eMWayYQNp8B/gmT3qAHo1L7r1
+        uTwOyPsplCyIV3oYPqpWqK4LeA==
+X-Google-Smtp-Source: AAOMgpfCio4OnLADIhqd+wRnGbRBlKo68BCn4+YRJ4DYOj2tLT87EyoaNjr+bO2PTVV3PWeKCCnWUA==
+X-Received: by 2002:a24:e506:: with SMTP id g6-v6mr13556935iti.117.1531754489440;
+        Mon, 16 Jul 2018 08:21:29 -0700 (PDT)
+Received: from chatter (ca2x.mullvad.net. [162.219.176.251])
+        by smtp.gmail.com with ESMTPSA id g124-v6sm13349430iog.1.2018.07.16.08.21.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 08:21:27 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 11:21:46 -0400
+From:   "konstantin@linuxfoundation.org" <konstantin@linuxfoundation.org>
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "luc.vanoostenryck@gmail.com" <luc.vanoostenryck@gmail.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Martin.Uecker@med.uni-goettingen.de" 
+        <Martin.Uecker@med.uni-goettingen.de>,
+        "miguel.ojeda.sandonis@gmail.com" <miguel.ojeda.sandonis@gmail.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] kernel.h: Avoid that sparse complains about using
+ sizeof(void)
+Message-ID: <20180716152146.GA1779@chatter>
+Mail-Followup-To: Bart Van Assche <Bart.VanAssche@wdc.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "luc.vanoostenryck@gmail.com" <luc.vanoostenryck@gmail.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Martin.Uecker@med.uni-goettingen.de" <Martin.Uecker@med.uni-goettingen.de>,
+        "miguel.ojeda.sandonis@gmail.com" <miguel.ojeda.sandonis@gmail.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20180705161709.17028-1-bart.vanassche@wdc.com>
+ <CAGXu5jJJLh+oMcZ94nkrwCvyJzk6MzOATvt66WC-rHfxGTJh0Q@mail.gmail.com>
+ <CA+55aFzYEnZR2GZLR-DwpONjMNYGYoDy+6AWLCVNayWiaZuqoA@mail.gmail.com>
+ <CA+55aFynusYJ8OCS_jnQhOEEjrfVhYV5PLxi_XF8ritsWEcP0A@mail.gmail.com>
+ <480382ffffcb3008bc317b0c6cec68078e797e27.camel@wdc.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ieNMXl1Fr3cevapt"
+        protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Content-Disposition: inline
-In-Reply-To: <CACVXFVPoO7kcEnUVmqGVWDgiTVYup2sD9puBZ8FzY+mDaMp-bQ@mail.gmail.com>
+In-Reply-To: <480382ffffcb3008bc317b0c6cec68078e797e27.camel@wdc.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ieNMXl1Fr3cevapt
-Content-Type: multipart/mixed; boundary="CblX+4bnyfN0pR09"
-Content-Disposition: inline
-
-
---CblX+4bnyfN0pR09
-Content-Type: text/plain; charset=us-ascii
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 13, 2018 at 09:41:41PM +0800, Ming Lei wrote:
-> On Fri, Jul 13, 2018 at 9:29 PM, Patrick Steinhardt <ps@pks.im> wrote:
-> > When power management for SCSI is enabled and if a device uses blk-mq,
-> > it is possible to trigger a `NULL` pointer exception when resuming that
-> > device. The NPE is triggered when trying to dereference the `request_fn`
-> > function pointer of the device's `request_queue`:
-> >
-> >     __blk_run_queue_uncond:470
-> >     __blk_run_queue:490
-> >     blk_post_runtime_resume:3889
-> >     sdev_runtime_resume:263
-> >     scsi_runtime_resume:275
-> >
-> > When the SCSI device is being allocated by `scsi_alloc_sdev`, the
-> > device's request queue will either be initialized via
-> > `scsi_mq_alloc_queue` or `scsi_old_alloc_queue`. But the `request_fn`
-> > member of the request queue is in fact only being set in
-> > `scsi_old_alloc_queue`, which will then later cause the mentioned NPE.
-> >
-> > Fix the issue by checking whether the `request_fn` is set in
-> > `__blk_run_queue_uncond`. In case it is unset, we'll silently return and
-> > not try to invoke the callback, thus fixing the NPE.
-> >
-> > Signed-off-by: Patrick Steinhardt <ps@pks.im>
-> > ---
-> >
-> > Since at least v4.14, I am easily able to trigger above NPE by
-> > unplugging USB mass storage devices on my computer (Skylake, ASUS
-> > Z170I) with CONFIG_SCSI_MQ_DEFAULT=3Dy. The attached patch fixes
-> > the issue, but keep in mind that this is my first patch, so the
-> > proposed fix may not be appropriate at all. Feedback would be
-> > highly appreciated.
-> >
-> >  block/blk-core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/block/blk-core.c b/block/blk-core.c
-> > index f84a9b7b6f5a..0a2041660cd9 100644
-> > --- a/block/blk-core.c
-> > +++ b/block/blk-core.c
-> > @@ -456,7 +456,7 @@ inline void __blk_run_queue_uncond(struct request_q=
-ueue *q)
-> >         lockdep_assert_held(q->queue_lock);
-> >         WARN_ON_ONCE(q->mq_ops);
-> >
-> > -       if (unlikely(blk_queue_dead(q)))
-> > +       if (unlikely(!q->request_fn) || unlikely(blk_queue_dead(q)))
-> >                 return;
-> >
->=20
-> Now runtime PM is disabled for blk-mq/scsi_mq, not sure how this issue is
-> triggered on your machine.
->=20
-> Could you share the steps for reproducing this issue?
+On Sun, Jul 15, 2018 at 04:07:39AM +0000, Bart Van Assche wrote:
+>> Oh,
+>>  and I meant to cc Luc on that email, but then forgot. So here he is cc'=
+d now.
+>
+>(+ Konstantin)
+>
+>Something that is confusing for kernel developers is that the sparse wiki
+>(https://sparse.wiki.kernel.org/index.php/Main_Page) refers kernel develop=
+ers
+>to an outdated sparse tree. Should something be done about this inconsiste=
+ncy?
+>Should the sparse wiki point at one of Luc's sparse trees or should perhaps
+>Luc be granted access to the tree that wiki points at
+>(https://git.kernel.org/pub/scm/devel/sparse/sparse.git)?
 
-I bet that the issue stems from custom hotplugging scripts then,
-which change the value of power/control. See the attachment of
-this mail for all sysfs changes that are being performed after
-plugging in the USB stick. Basically, the reproduction steps on
-my machine are:
+I believe Luc is working to get the necessary signatures on his PGP key=20
+so we can grant him access to the repo at kernel.org. I believe this=20
+will be less confusing than modifying the wiki to point to the github=20
+fork of the tree.
 
-1. plug in USB stick (assumed to be /dev/sdb now)
-2. wait a short amount of time
-3. dd if=3D/dev/sdb of=3D/dev/null bs=3D4M
-4. wait a short amount of time
-5. unplug the USB stick, which immediately crashes the system
+Best,
+Konstantin
 
-The issue isn't always reproducible, I think there is some
-variance depending on how much time passes by at step 2 and/or 4.
-It probably is related to the autosuspend delay. From my
-experience the crash becomes more likely the longer I wait after
-step 4.
-
-Regards
-Patrick
-
---CblX+4bnyfN0pR09
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="sysfs.log"
-
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/power/control -> on
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/scsi_host/host4/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/scsi_host/host4/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_device/4:0:0:0/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/bsg/4:0:0:0/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_device/4:0:0:0/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/bsg/4:0:0:0/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/power/control -> auto
-/sys//devices/virtual/bdi/8:16/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_disk/4:0:0:0/power/autosuspend_delay_ms -> 60000
-/sys//devices/virtual/bdi/8:16/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_disk/4:0:0:0/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb2/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb2/power/control -> auto
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb1/power/autosuspend_delay_ms -> 60000
-/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb1/power/control -> auto
-
---CblX+4bnyfN0pR09--
-
---ieNMXl1Fr3cevapt
+--+HP7ph2BbKc20aGI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEtmscHsieVjl9VyNUEXxntp6r8SwFAltMtbkACgkQEXxntp6r
-8SzTZw//eymI5QedFIbDBoPdIVsnBJJSdodpu/pMjHcOXIvaPoBAM0ma6V49YRtG
-slcAs69j6EA8zbpqwJTwJ6tKKaZSJW9m7BuYowvqtbbkHwDfbwmZWQi8ZwI+LisU
-dLHJyrR5cbPCF5it2VcBj0qI2nCmFA44jN5wu2AuUFLTwN7/N48lX57ghRajnOV/
-mbqYTrqU4IH9IveNXcJ/knkIrIBzXv630ujML28uuvU8nzCOIyeJ1Um1RNWR3HK4
-1yDJE2l3gUwNPFCQdm9Rj7/aRDMZUmDZl9VeAMDRR3EjHbP1yO4Fow6k2xTKH/l9
-KYXeBRkuRx8MQZElsEKJ45JknM9oWKpg9AqdFqa8hEPjmqx3MpmDNW3JPKz3k8nK
-4tdLVeM+URDwItfqI+WaRpBO66T268huSNgRdd5uROWro2GY0Hoy7hEx57JY6Rb1
-n1MEs0rN304iOVO7lhWrY7LUB+6XcP1QXOSYMGwv7/aahNO1aN2QRG923qViDcnY
-VpRFZqNIqvchQJhEHYsver5LqmzJ5pOvM9An0Feq3v7clJRknmBo6aXlh21W/1lA
-H3oFOKT6CTHHHejfB1g5UUjibPUm6kYCse43qMNHusgW0T1XxvgqeT5+YKCyIkfo
-v9xyM8wgaqZGJcpUjP+6RTKdMwve2zSHE2cHCFHWmspYuqZ7cdQ=
-=DaPo
+iHUEABYIAB0WIQR2vl2yUnHhSB5njDW2xBzjVmSZbAUCW0y4CQAKCRC2xBzjVmSZ
+bAlAAP9rKSWCcF97HmKehA3LtrSRMu+XkjxfOK/fltkReWivWgD+LZVJ0ILJdVZc
+6B6LlitGgysTRz50nZRn7E9TQDkxJwY=
+=udF8
 -----END PGP SIGNATURE-----
 
---ieNMXl1Fr3cevapt--
+--+HP7ph2BbKc20aGI--
