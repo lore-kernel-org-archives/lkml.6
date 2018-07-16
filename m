@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C079FECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1892EECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ABEC206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABEC206B7
+	by mail.kernel.org (Postfix) with ESMTP id D16FC206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16FC206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388578AbeGPIHs (ORCPT
+        id S2388588AbeGPIHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:07:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47630 "EHLO
+        Mon, 16 Jul 2018 04:07:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47638 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIHr (ORCPT
+        with ESMTP id S1730161AbeGPIHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:07:47 -0400
+        Mon, 16 Jul 2018 04:07:50 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91E5FC03;
-        Mon, 16 Jul 2018 07:41:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5FF37CA4;
+        Mon, 16 Jul 2018 07:41:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 24/54] Fix up non-directory creation in SGID directories
-Date:   Mon, 16 Jul 2018 09:35:21 +0200
-Message-Id: <20180716073455.452966215@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.14 43/54] iw_cxgb4: correctly enforce the max reg_mr depth
+Date:   Mon, 16 Jul 2018 09:35:40 +0200
+Message-Id: <20180716073459.026522351@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -52,47 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Steve Wise <swise@opengridcomputing.com>
 
-commit 0fa3ecd87848c9c93c2c828ef4c3a8ca36ce46c7 upstream.
+commit 7b72717a20bba8bdd01b14c0460be7d15061cd6b upstream.
 
-sgid directories have special semantics, making newly created files in
-the directory belong to the group of the directory, and newly created
-subdirectories will also become sgid.  This is historically used for
-group-shared directories.
+The code was mistakenly using the length of the page array memory instead
+of the depth of the page array.
 
-But group directories writable by non-group members should not imply
-that such non-group members can magically join the group, so make sure
-to clear the sgid bit on non-directories for non-members (but remember
-that sgid without group execute means "mandatory locking", just to
-confuse things even more).
+This would cause MR creation to fail in some cases.
 
-Reported-by: Jann Horn <jannh@google.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 8376b86de7d3 ("iw_cxgb4: Support the new memory registration API")
+Cc: stable@vger.kernel.org
+Signed-off-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/inode.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/infiniband/hw/cxgb4/mem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2006,8 +2006,14 @@ void inode_init_owner(struct inode *inod
- 	inode->i_uid = current_fsuid();
- 	if (dir && dir->i_mode & S_ISGID) {
- 		inode->i_gid = dir->i_gid;
-+
-+		/* Directories are special, and always inherit S_ISGID */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
-+		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
-+			 !in_group_p(inode->i_gid) &&
-+			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
-+			mode &= ~S_ISGID;
- 	} else
- 		inode->i_gid = current_fsgid();
- 	inode->i_mode = mode;
+--- a/drivers/infiniband/hw/cxgb4/mem.c
++++ b/drivers/infiniband/hw/cxgb4/mem.c
+@@ -720,7 +720,7 @@ static int c4iw_set_page(struct ib_mr *i
+ {
+ 	struct c4iw_mr *mhp = to_c4iw_mr(ibmr);
+ 
+-	if (unlikely(mhp->mpl_len == mhp->max_mpl_len))
++	if (unlikely(mhp->mpl_len == mhp->attr.pbl_size))
+ 		return -ENOMEM;
+ 
+ 	mhp->mpl[mhp->mpl_len++] = addr;
 
 
