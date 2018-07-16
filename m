@@ -1,85 +1,70 @@
-Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC1FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D481ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 645172086E
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 23:58:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645172086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id BB740208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:00:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB740208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbeGPAX3 (ORCPT
+        id S1727246AbeGPAZh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 20:23:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56812 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727051AbeGPAX3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 20:23:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 17356ACF1;
-        Sun, 15 Jul 2018 23:58:47 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     David Miller <davem@davemloft.net>
-Date:   Mon, 16 Jul 2018 09:58:40 +1000
-Cc:     tgraf@suug.ch, herbert@gondor.apana.org.au, tom@quantonium.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] rhashtable: add rhashtable_walk_last_seen()
-In-Reply-To: <20180710.165547.1599531889181336348.davem@davemloft.net>
-References: <153086101070.2825.6850140624411927465.stgit@noble> <153086109260.2825.1459722786871837620.stgit@noble> <20180710.165547.1599531889181336348.davem@davemloft.net>
-Message-ID: <87d0vot5jj.fsf@notabene.neil.brown.name>
+        Sun, 15 Jul 2018 20:25:37 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:34328 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbeGPAZh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 20:25:37 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1feqwb-0002Bi-UP; Mon, 16 Jul 2018 08:00:49 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1feqwY-0001o4-DI; Mon, 16 Jul 2018 08:00:46 +0800
+Date:   Mon, 16 Jul 2018 08:00:46 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     akpm@linux-foundation.org, tgraf@suug.ch,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH] lib/rhashtable: consider param->min_size when setting
+ initial table size
+Message-ID: <20180716000046.yscgnpr256qhm2qg@gondor.apana.org.au>
+References: <20180714062516.30433-1-dave@stgolabs.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180714062516.30433-1-dave@stgolabs.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Fri, Jul 13, 2018 at 11:25:16PM -0700, Davidlohr Bueso wrote:
+> rhashtable_init() currently does not take into account the user-passed
+> min_size parameter unless param->nelem_hint is set as well. As such,
+> the default size (number of buckets) will always be HASH_DEFAULT_SIZE
+> even if the smallest allowed size is larger than that. Remediate this
+> by unconditionally calling into rounded_hashtable_size() and handling
+> things accordingly.
+> 
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 
-On Tue, Jul 10 2018, David Miller wrote:
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-> From: NeilBrown <neilb@suse.com>
-> Date: Fri, 06 Jul 2018 17:11:32 +1000
->
->> rhashtable_walk_last_seen() returns the object returned by
->> the previous rhashtable_walk_next(), providing it is still in the
->> table (or was during this grace period).
->> This works even if rhashtable_walk_stop() and rhashtable_talk_start()
->                                                            ^^^^
->
-> "walk"
-
-Thanks :-)  Fixed for when I next post.
+Normally these patches go through netdev so could you please resend
+it with my ack to netdev@vger.kernel.org?
 
 Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltL37AACgkQOeye3VZi
-gbnxNxAAkp8A4O7UQY5TbVwLd6F5uANm19VN3tjAkxJXFtjNdwOD2BLEXgJLrcqg
-KS2OMPlb7olHC4M0+i4XQk3zDG4fLMxs3sG826nAdhNPIOuzFX80XmLJUYBnPsxy
-kJcVXJB8KzKtIVGuwYSPMibkidtZuSOcPDB61cIT3itmMO+liHGE9/3OtBT/4UTM
-HIuj1K7AoPDFNTUUryQrEtfZiXhLszrKAsivRvoiubW428CVNIbpWPOU8GCFhhQy
-nhCqqUA1paseB3iSjOXTEkt1Fg+CxMCJ7tPyIrxlR7n+vQkJx+q45LQXXWcVaLMO
-5iCdUvStCf5snbuNOJZWRD98VHufQZyERZaZT9DpjGzcdcnBAjFwPQveM+74SzUY
-MLBKkWC1+zaniXxM1/h7YRUT4gGMYYq9eJJETX70JLbsd8QxVj8tqvUryNqSkPUp
-ORKoGGBDgrZFCsYVByH7eLGdrpihd2lolFQpiGHw4H7kUY8H0jhGf1D3bT84m1nT
-SUEnDMYup7QkFX2kQ9wuBdoQabr/pueo1tsPQRaXvnkjY11wQ56TOn6BDPWDEGKk
-GVgRTkANtWKhPYA4Qx2uIhrOkkio2QlTdYP8AYV1V8MRmb8xm4NwcIBCJvJUWegJ
-NhsJZAcqZ1fJf9/Gl7ibKsxU02lsPaKphTOLUAT4Zc7+ohhdfW0=
-=rmFw
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
