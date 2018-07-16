@@ -2,173 +2,247 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4EDECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C5AAECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 935A52086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:36:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 935A52086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aspeedtech.com
+	by mail.kernel.org (Postfix) with ESMTP id CA7882086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:39:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbBcrUW9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA7882086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbeGPECA (ORCPT
+        id S1726509AbeGPEEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 00:02:00 -0400
-Received: from twspam01.aspeedtech.com ([211.20.114.71]:57809 "EHLO
-        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725731AbeGPEB7 (ORCPT
+        Mon, 16 Jul 2018 00:04:45 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:50489 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725731AbeGPEEp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 00:01:59 -0400
-X-Greylist: delayed 1875 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Jul 2018 00:01:57 EDT
-Received: from twspam01.aspeedtech.com (localhost [127.0.0.2])
-        by twspam01.aspeedtech.com with ESMTP id w6G36Y5v092450
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 11:06:34 +0800 (CST)
-        (envelope-from gary_hsu@aspeedtech.com)
-Received: from mail.aspeedtech.com (twmbx02.aspeed.com [192.168.0.24])
-        by twspam01.aspeedtech.com with ESMTP id w6G36SFB092436;
-        Mon, 16 Jul 2018 11:06:28 +0800 (CST)
-        (envelope-from gary_hsu@aspeedtech.com)
-Received: from TWMBX01.aspeed.com (192.168.0.23) by TWMBX02.aspeed.com
- (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.620.29; Mon, 16 Jul
- 2018 11:05:26 +0800
-Received: from TWMBX01.aspeed.com (192.168.0.23) by TWMBX01.aspeed.com
- (192.168.0.23) with Microsoft SMTP Server (TLS) id 15.0.620.29; Mon, 16 Jul
- 2018 11:05:51 +0800
-Received: from TWMBX01.aspeed.com ([fe80::157a:4af5:bbf4:5dbb]) by
- TWMBX01.aspeed.com ([fe80::157a:4af5:bbf4:5dbb%12]) with mapi id
- 15.00.0620.020; Mon, 16 Jul 2018 11:05:51 +0800
-From:   Gary Hsu <gary_hsu@aspeedtech.com>
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>
-CC:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "james.feist@linux.intel.com" <james.feist@linux.intel.com>,
-        "vernon.mauery@linux.intel.com" <vernon.mauery@linux.intel.com>,
-        "Benjamin Fair" <benjaminfair@google.com>,
-        Patrick Venture <venture@google.com>,
-        "Ryan Chen" <ryan_chen@aspeedtech.com>
-Subject: RE: [PATCH] i2c: aspeed: Improve driver to support multi-master use
- cases stably
-Thread-Topic: [PATCH] i2c: aspeed: Improve driver to support multi-master
- use cases stably
-Thread-Index: AQHUGs4pYZmTV0v6jUONZuXHvtz+7qSM7oWAgAALlwCABDPtcA==
-Date:   Mon, 16 Jul 2018 03:05:50 +0000
-Message-ID: <a84da5d076924f40b1c836fe8b9d0844@TWMBX01.aspeed.com>
-References: <20180626165812.4141-1-jae.hyun.yoo@linux.intel.com>
- <CAFd5g45z--ucXf-So517tgrayZT6x2TGvaUvaDF7zeRNn7CPXw@mail.gmail.com>
- <e51471e6-0f8a-bffc-34c8-1e74239fdbcf@linux.intel.com>
- <CAFd5g47j_h4ZrT8Eg1FZ8sAj5ekCUH20jUVub75ozdkg8_YW7Q@mail.gmail.com>
- <921b1ab7-9c9f-0aeb-da89-5a1a27d009f0@linux.intel.com>
- <d3f10fc1-635b-3a5d-a967-2816eac005fc@linux.intel.com>
- <CAFd5g47zdPdqqjVJtNHtFk+jKgciKbMcEH9M-W9rL4DgLM5hkg@mail.gmail.com>
- <b8232faa-58f5-f3a5-d12a-3f326cf1d03d@linux.intel.com>
-In-Reply-To: <b8232faa-58f5-f3a5-d12a-3f326cf1d03d@linux.intel.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [192.168.0.80]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 16 Jul 2018 00:04:45 -0400
+Received: by mail-it0-f66.google.com with SMTP id w16-v6so18920155ita.0;
+        Sun, 15 Jul 2018 20:39:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XTKRxXwARErFdamAx7nM6wlMEjskJT0yFImSXgE9+v0=;
+        b=YbBcrUW9s8U2fYOynpA3TsRHCtBGtJZO3VE8a7/hqRyN6CKA7ivMpmsInoBa3lEm7G
+         hD1jVeAmHE0OlAJIxegU/FmrBtOsk+QwM0WElp2TmktTb9c4ES3MMB+OkrfS60R4vb3Z
+         Vh9BGqLU/8oU91s4AXZtIrleGFKphVBScvAENubRdldW7bOMDKjiKjj6fP4wtb2JDcg+
+         QJhZCfSdYpsQMc5DWnBb/KNXVBEmIwGXPEFKHm1inksHrO3VUU+blNL2WW2hZhoBVONV
+         Nf2rhO69V5e7xae2fGz6AS3O15phtwUTROLdLE9tiT6ssw+h5WnBkmb1yI0I6eXps8Y/
+         RYHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XTKRxXwARErFdamAx7nM6wlMEjskJT0yFImSXgE9+v0=;
+        b=UPbvA+Y8UeEVwMnaxy6y4XhT7NKEfcxz0OlJn3BZ5TrI55NzFhUJsHzFyvwqlI+gEV
+         KgDNYbtO9nwBKJV5leXgTJwaVpu5v7FUWkWnOPMcRBKIOC/dUwst+yoPWjaAlrgXbG9S
+         KNJ+lZsU39m4yDbhDd7/G4fyrcZo3do1HXfWH9tT5RvsaqhlhRbvfSOQC5K5K/CmA88W
+         hIHRpqJcj3c01oYa3Qk1jM00WtAKCT4ONwNs1LESkiCSSgJm1mM3pSZWMn845zCvJ7TV
+         ATHg6JksUPAHgDDB/bxsbWQuDZH0FwJNw84JZ9A13OgmIOdnPmNj6xBz7YhRCvxAwXie
+         T4pw==
+X-Gm-Message-State: AOUpUlFFIoWf+w2hHoMJ3LMepIKX01CzFMnY14zXhcmbnyqKawXL3GCT
+        sN/XsSDXoWss4igd1fHtk7tSXZHOEL/dB1Tg/2o=
+X-Google-Smtp-Source: AAOMgpfjEh/qUUcbYsJHbMoJknaeBeiXbyscpzObaWne3+GBjMZ6kMKsPsOnjmHHHuiAvVsb5e6gaMGT+9Gya5D0vrI=
+X-Received: by 2002:a24:9194:: with SMTP id i142-v6mr11426600ite.142.1531712366378;
+ Sun, 15 Jul 2018 20:39:26 -0700 (PDT)
 MIME-Version: 1.0
-X-DKIM-Results: twmbx02.aspeed.com; dkim=none;
-X-DNSRBL: 
-X-MAIL: twspam01.aspeedtech.com w6G36SFB092436
+Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 20:38:45
+ -0700 (PDT)
+In-Reply-To: <CALvZod4jx1r4k6gMrqFq+PzDT3D37_DFGyyokgPSsZFXbMV0ZA@mail.gmail.com>
+References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+ <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
+ <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
+ <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
+ <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com>
+ <CALvZod6F4vM_U0obH1aU3iJqRs-3JEfR4cHKZoB9JVLTgdSmSQ@mail.gmail.com>
+ <CALOAHbByKH9t_c266Bi+Kv2r=07LLpa6UEQgsc7BNi2dZoeNhQ@mail.gmail.com>
+ <CALvZod6SVJQz84sxMkvRY7K4iZ2_uzbmMq85URBznsu7+ZP9OA@mail.gmail.com>
+ <CALOAHbAnVvKR2AQ4TAkwUuC8XVK5UaD3vt80OC_M4OK2j6b_Yg@mail.gmail.com> <CALvZod4jx1r4k6gMrqFq+PzDT3D37_DFGyyokgPSsZFXbMV0ZA@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 16 Jul 2018 11:38:45 +0800
+Message-ID: <CALOAHbAovZyh5Lju9rR6wDAFFovXnW9EBeJ6is7W7O4ooULqYA@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, Roman Gushchin <guro@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSmFlLA0KDQpJbiBvcmlnaW5hbGx5LCB3ZSByZXNlcnZlZCB0aGVzZSByZWdpc3RlciBiaXRz
-IGZvciBkZWJ1ZyBwdXJwb3NlLiBCdXQgZm9yIHNvbWUgZXJyb3IgaGFuZGxpbmcgY2FzZSwgd2Ug
-Zm91bmQgaXQgaXMgYWxzbyB1c2VmdWwgdG8gaGVscCB0byBjbGFyaWZ5IHNvbWUgZXJyb3IgY29u
-ZGl0aW9ucy4gU28gZHJpdmVyIGFsc28gY2FuIHVzZSB0aGVzZSBmaWVsZHMgaW5mb3JtYXRpb24g
-dG8gY2hlY2sgc29tZXRoaW5nLg0KQXMgZm9yIGhvdyBkcml2ZXIgdXNlIHRoZXNlIGluZm9ybWF0
-aW9uIGluIHRoZWlyIGNvZGUsIEkgaGF2ZSBubyBjb21tZW50LiBJIGRvbuKAmXQgdW5kZXJzdGFu
-ZCB0aGUgZHJpdmVyLiBCdXQgdGhlc2UgaW5mb3JtYXRpb24gaXMgdGhlIHJlYWwgY29udHJvbGxl
-ciBzdGF0ZSwgaXQgaGFkIG5vIHByb2JsZW0gdG8gdXNlIGluZm9ybWF0aW9uLg0KDQpCZXN0IFJl
-Z2FyZHMsDQoNCuiosemmpeeWhyBHYXJ5IEhzdQ0KDQrkv6HpqYrnp5HmioDogqHku73mnInpmZDl
-hazlj7gNCkFTUEVFRCBUZWNobm9sb2d5IEluYy4NCg0KMkYsTm8uMTUsSW5kdXN0cnkgRWFzdCBS
-b2FkIDQuLEhzaW5jaHUgU2NpZW5jZSBQYXJrLCBIc2luY2h1IENpdHkgMzAwNzcsIFRhaXdhbg0K
-5paw56u556eR5a245ZyS5Y2A5bel5qWt5p2x5Zub6LevIDE1IOiZnyAyRg0KDQpUZWwgOiA4ODYt
-My01Nzg5NTY4IGV4dDo4MDcNCkZheCA6IDg4Ni0zLTU3ODk1ODYNCldlYiA6IGh0dHA6Ly93d3cu
-YXNwZWVkdGVjaC5jb20NCg0KKioqKioqKioqKioqKiBFbWFpbCBDb25maWRlbnRpYWxpdHkgTm90
-aWNlICoqKioqKioqKioqKioqKioqKioqDQrlhY3osqzogbLmmI46DQrlm6Dmh4nlgIvkurros4fm
-lpnkv53orbfms5Xmlr3ooYws5pys5L+h5Lu2KOaIluWFtumZhOS7tinlj6/og73ljIXlkKvmqZ/l
-r4bos4foqIrvvIzkuKblj5fms5Xlvovkv53orbfjgILlpoIg5Y+w56uv6Z2e5oyH5a6a5LmL5pS2
-5Lu26ICF77yM6KuL5Lul6Zu75a2Q6YO15Lu26YCa55+l5pys6Zu75a2Q6YO15Lu25LmL55m86YCB
-6ICFLCDkuKboq4vnq4vljbPliKrpmaTmnKzpm7vlrZDpg7Xku7blj4rlhbbpmYTku7blkozpirfm
-r4DmiYDmnInopIfljbDku7bjgILorJ3orJ3mgqjnmoTlkIjkvZwhDQoNCkRJU0NMQUlNRVI6DQpU
-aGlzIG1lc3NhZ2UgKGFuZCBhbnkgYXR0YWNobWVudHMpIG1heSBjb250YWluIGxlZ2FsbHkgcHJp
-dmlsZWdlZCBhbmQvb3Igb3RoZXIgY29uZmlkZW50aWFsIGluZm9ybWF0aW9uLiBJZiB5b3UgaGF2
-ZSByZWNlaXZlZCBpdCBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSB0aGUgc2VuZGVyIGJ5IHJlcGx5
-IGUtbWFpbCBhbmQgaW1tZWRpYXRlbHkgZGVsZXRlIHRoZSBlLW1haWwgYW5kIGFueSBhdHRhY2ht
-ZW50cyB3aXRob3V0IGNvcHlpbmcgb3IgZGlzY2xvc2luZyB0aGUgY29udGVudHMuIFRoYW5rIHlv
-dS4NCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IEphZSBIeXVuIFlvbyBbbWFp
-bHRvOmphZS5oeXVuLnlvb0BsaW51eC5pbnRlbC5jb21dIA0KU2VudDogU2F0dXJkYXksIEp1bHkg
-MTQsIDIwMTggMjo1NCBBTQ0KVG86IEJyZW5kYW4gSGlnZ2lucyA8YnJlbmRhbmhpZ2dpbnNAZ29v
-Z2xlLmNvbT4NCkNjOiBCZW5qYW1pbiBIZXJyZW5zY2htaWR0IDxiZW5oQGtlcm5lbC5jcmFzaGlu
-Zy5vcmc+OyBKb2VsIFN0YW5sZXkgPGpvZWxAam1zLmlkLmF1PjsgQW5kcmV3IEplZmZlcnkgPGFu
-ZHJld0Bhai5pZC5hdT47IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IE9wZW5CTUMgTWFpbGxp
-c3QgPG9wZW5ibWNAbGlzdHMub3psYWJzLm9yZz47IExpbnV4IEFSTSA8bGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnPjsgbGludXgtYXNwZWVkQGxpc3RzLm96bGFicy5vcmc7IExp
-bnV4IEtlcm5lbCBNYWlsaW5nIExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBq
-YW1lcy5mZWlzdEBsaW51eC5pbnRlbC5jb207IHZlcm5vbi5tYXVlcnlAbGludXguaW50ZWwuY29t
-OyBCZW5qYW1pbiBGYWlyIDxiZW5qYW1pbmZhaXJAZ29vZ2xlLmNvbT47IFBhdHJpY2sgVmVudHVy
-ZSA8dmVudHVyZUBnb29nbGUuY29tPjsgR2FyeSBIc3UgPGdhcnlfaHN1QGFzcGVlZHRlY2guY29t
-PjsgUnlhbiBDaGVuIDxyeWFuX2NoZW5AYXNwZWVkdGVjaC5jb20+DQpTdWJqZWN0OiBSZTogW1BB
-VENIXSBpMmM6IGFzcGVlZDogSW1wcm92ZSBkcml2ZXIgdG8gc3VwcG9ydCBtdWx0aS1tYXN0ZXIg
-dXNlIGNhc2VzIHN0YWJseQ0KDQpPbiA3LzEzLzIwMTggMTE6MTIgQU0sIEJyZW5kYW4gSGlnZ2lu
-cyB3cm90ZToNCj4gT24gRnJpLCBKdWwgMTMsIDIwMTggYXQgMTA6MjIgQU0gSmFlIEh5dW4gWW9v
-IA0KPiA8amFlLmh5dW4ueW9vQGxpbnV4LmludGVsLmNvbT4gd3JvdGU6DQo+Pg0KPj4gT24gNy8x
-Mi8yMDE4IDExOjIxIEFNLCBKYWUgSHl1biBZb28gd3JvdGU6DQo+Pj4gT24gNy8xMi8yMDE4IDI6
-MzMgQU0sIEJyZW5kYW4gSGlnZ2lucyB3cm90ZToNCj4+Pj4gT24gV2VkLCBKdW4gMjcsIDIwMTgg
-YXQgMTA6NTUgQU0gSmFlIEh5dW4gWW9vIA0KPj4+PiA8amFlLmh5dW4ueW9vQGxpbnV4LmludGVs
-LmNvbT4gd3JvdGU6DQo+IDxzbmlwPg0KPj4+PiA8c25pcD4NCj4+Pj4+Pj4gKyAgICAgICBmb3Ig
-KDs7KSB7DQo+Pj4+Pj4+ICsgICAgICAgICAgICAgICBpZiAoIShyZWFkbChidXMtPmJhc2UgKyBB
-U1BFRURfSTJDX0NNRF9SRUcpICYNCj4+Pj4+Pj4gKyAgICAgICAgICAgICAgICAgICAgIChBU1BF
-RURfSTJDRF9CVVNfQlVTWV9TVFMgfA0KPj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgIEFT
-UEVFRF9JMkNEX1hGRVJfTU9ERV9TVFNfTUFTSykpKQ0KPj4+Pj4+DQo+Pj4+Pj4gSXMgdXNpbmcg
-dGhlIFRyYW5zZmVyIE1vZGUgU3RhdGUgTWFjaGluZSBiaXRzIG5lY2Vzc2FyeT8gVGhlIA0KPj4+
-Pj4+IGRvY3VtZW50YXRpb24gbWFya3MgaXQgYXMgImZvciBkZWJ1Z2dpbmcgcHVycG9zZSBvbmx5
-LCIgc28gDQo+Pj4+Pj4gcmVseWluZyBvbiBpdCBtYWtlcyBtZSBuZXJ2b3VzLg0KPj4+Pj4+DQo+
-Pj4+Pg0KPj4+Pj4gQXMgeW91IHNhaWQsIHRoZSBkb2N1bWVudGF0aW9uIG1hcmtzIGl0IGFzICJm
-b3IgZGVidWdnaW5nIHB1cnBvc2Ugb25seS4iDQo+Pj4+PiBidXQgQVNQRUVEIGFsc28gdXNlcyB0
-aGlzIHdheSBpbiB0aGVpciBTREsgY29kZSBiZWNhdXNlIGl0J3MgdGhlIA0KPj4+Pj4gYmVzdCB3
-YXkgZm9yIGNoZWNraW5nIGJ1cyBidXN5IHN0YXR1cyB3aGljaCBjYW4gY292ZXIgYm90aCBzaW5n
-bGUgDQo+Pj4+PiBhbmQgbXVsdGktbWFzdGVyIHVzZSBjYXNlcy4NCj4+Pj4+DQo+Pj4+DQo+Pj4+
-IFdlbGwsIGl0IHdvdWxkIGFsc28gYmUgcmVhbGx5IG5pY2UgdG8gaGF2ZSBhY2Nlc3MgdG8gdGhp
-cyBiaXQgaWYgDQo+Pj4+IHNvbWVvbmUgd2FudHMgdG8gaW1wbGVtZW50IE1DVFAuIENvdWxkIHdl
-IG1heWJlIGNoZWNrIHdpdGggQXNwZWVkIA0KPj4+PiB3aGF0IHRoZW0gbWVhbnQgYnkgImZvciBk
-ZWJ1Z2dpbmcgcHVycG9zZXMgb25seSIgYW5kIGRvY3VtZW50IGl0IA0KPj4+PiBoZXJlPyBJdCBt
-YWtlcyBtZSBuZXJ2b3VzIHRvIHJlbHkgb24gZGVidWdnaW5nIGZ1bmN0aW9uYWxpdHkgZm9yIA0K
-Pj4+PiBub3JtYWwgdXNhZ2UuDQo+Pj4+DQo+Pj4NCj4+PiBPa2F5LCBJJ2xsIGNoZWNrIGl0IHdp
-dGggQXNwZWVkLiBXaWxsIGxldCB5b3Uga25vdyB0aGVpciByZXNwb25zZS4NCj4+Pg0KPj4NCj4+
-IEkndmUgY2hlY2tlZCBpdCB3aXRoIEdhcnkgSHN1IDxnYXJ5X2hzdUBhc3BlZWR0ZWNoLmNvbT4g
-YW5kIGhlIA0KPj4gY29uZmlybWVkIHRoYXQgdGhlIGJpdHMgcmVmbGVjdCByZWFsIGluZm9ybWF0
-aW9uIGFuZCBnb29kIHRvIGJlIHVzZWQgDQo+PiBpbiBwcmFjdGljYWwgY29kZS4NCj4gDQo+IEh1
-aC4gRm9yIG15IG93biBlZGlmaWNhdGlvbiwgY291bGQgeW91IGFzayB0aGVtIHdoeSB0aGV5IHNh
-aWQgImZvciANCj4gZGVidWdnaW5nIHB1cnBvc2Ugb25seSIgaW4gdGhlIGRvY3VtZW50YXRpb24/
-IEkgYW0ganVzdCByZWFsbHkgY3VyaW91cyANCj4gd2hhdCB0aGV5IG1lYW50IGJ5IHRoYXQuIEkg
-d291bGQgYmUgc2F0aXNmaWVkIGlmIHlvdSBqdXN0IENDJ2VkIG1lIG9uIA0KPiB5b3VyIGVtYWls
-IHRocmVhZCB3aXRoIEdhcnksIGFuZCBJIGNhbiBhc2sgaGltIG15c2VsZi4NCj4gDQoNCkkndmUg
-YWxyZWFkeSBDQydlZCBHYXJ5IGFuZCBSeWFuIGluIHRoaXMgdGhyZWFkLg0KDQpIaSBHYXJ5LA0K
-DQpDYW4geW91IGV4cGxhaW4gd2h5IHRoZSBkb2N1bWVudGF0aW9uIHNheXMgdGhhdCB0aGUgYml0
-IGZpZWxkIGlzICdmb3IgZGVidWdnaW5nIHB1cnBvc2Ugb25seSc/IEFueSBwbGFuIHRvIGNoYW5n
-ZSB0aGUgZGVzY3JpcHRpb24/DQoNClRoYW5rcywNCg0KSmFlDQoNCj4+DQo+PiBJJ2xsIGFkZCBh
-IGNvbW1lbnQgbGlrZSBiZWxvdzoNCj4+DQo+PiAvKg0KPj4gICAgKiBUaGlzIGlzIG1hcmtlZCBh
-cyAnZm9yIGRlYnVnZ2luZyBwdXJwb3NlIG9ubHknIGluIGRhdGFzaGVldCBidXQNCj4+ICAgICog
-QVNQRUVEIGNvbmZpcm1lZCB0aGF0IHRoaXMgcmVmbGVjdHMgcmVhbCBpbmZvcm1hdGlvbiBhbmQg
-Z29vZA0KPj4gICAgKiB0byBiZSB1c2VkIGluIHByYWN0aWNhbCBjb2RlLg0KPj4gICAgKi8NCj4+
-DQo+PiBJcyBpdCBhY2NlcHRhYmxlIHRoZW4/DQo+IA0KPiBZZWFoLCB0aGF0J3MgZmluZS4NCj4g
-DQo+IDxzbmlwPg0KPiANCj4gQ2hlZXJzDQo+IA0K
+On Mon, Jul 16, 2018 at 11:09 AM, Shakeel Butt <shakeelb@google.com> wrote:
+> On Sun, Jul 15, 2018 at 6:50 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>>
+>> On Sun, Jul 15, 2018 at 11:04 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> > On Sun, Jul 15, 2018 at 1:02 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >>
+>> >> On Sun, Jul 15, 2018 at 2:34 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> >> > On Sat, Jul 14, 2018 at 10:26 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >> >>
+>> >> >> On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> >> >> > On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >> >> >>
+>> >> >> >> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> >> >> >> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >> >> >> >>
+>> >> >> >> >> try_charge maybe executed in packet receive path, which is in interrupt
+>> >> >> >> >> context.
+>> >> >> >> >> In this situation, the 'current' is the interrupted task, which may has
+>> >> >> >> >> no relation to the rx softirq, So it is nonsense to use 'current'.
+>> >> >> >> >>
+>> >> >> >> >
+>> >> >> >> > Have you actually seen this occurring?
+>> >> >> >>
+>> >> >> >> Hi Shakeel,
+>> >> >> >>
+>> >> >> >> I'm trying to produce this issue, but haven't find it occur yet.
+>> >> >> >>
+>> >> >> >> > I am not very familiar with the
+>> >> >> >> > network code but I can think of two ways try_charge() can be called
+>> >> >> >> > from network code. Either through kmem charging or through
+>> >> >> >> > mem_cgroup_charge_skmem() and both locations correctly handle
+>> >> >> >> > interrupt context.
+>> >> >> >> >
+>> >> >> >>
+>> >> >> >> Why do you say that mem_cgroup_charge_skmem() correctly hanle
+>> >> >> >> interrupt context ?
+>> >> >> >>
+>> >> >> >> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
+>> >> >> >> context correctly.
+>> >> >> >>
+>> >> >> >> mem_cgroup_charge_skmem() is calling  try_charge() twice.
+>> >> >> >> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
+>> >> >> >> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
+>> >> >> >>
+>> >> >> >> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
+>> >> >> >> Then mem_cgroup_charge_skmem() will call try_charge() once more with
+>> >> >> >> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
+>> >> >> >> again the '
+>> >> >> >> force' label in  try_charge() will be executed and 0 is returned.
+>> >> >> >>
+>> >> >> >> No matter what, the 'current' will be used and touched, that is
+>> >> >> >> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
+>> >> >> >> correctly.
+>> >> >> >>
+>> >> >> >
+>> >> >> > Hi Yafang,
+>> >> >> >
+>> >> >> > If you check mem_cgroup_charge_skmem(), the memcg passed is not
+>> >> >> > 'current' but is from the sock object i.e. sk->sk_memcg for which the
+>> >> >> > network buffer is allocated for.
+>> >> >> >
+>> >> >>
+>> >> >> That's correct, the memcg if from the sock object.
+>> >> >> But the point is, in this situation why 'current' is used in try_charge() ?
+>> >> >> As 'current' is not related with the memcg, which is just a interrupted task.
+>> >> >>
+>> >> >
+>> >> > Hmm so you mean the behavior of memcg charging in the interrupt
+>> >> > context depends on the state of the interrupted task.
+>> >>
+>> >> Yes.
+>> >>
+>> >> > As you have
+>> >> > noted, mem_cgroup_charge_skmem() tries charging again with
+>> >> > __GFP_NOFAIL and the charge succeeds. Basically the memcg charging by
+>> >> > mem_cgroup_charge_skmem() will always succeed irrespective of the
+>> >> > state of the interrupted task. However mem_cgroup_charge_skmem() can
+>> >> > return true if the interrupted task was exiting or a fatal signal is
+>> >> > pending or oom victim or reclaiming memory. Can you please explain why
+>> >> > this is bad?
+>> >> >
+>> >>
+>> >> Let me show you the possible issues cause by this behavoir.
+>> >> 1.  In mem_cgroup_oom(), some  members in 'current' is set.
+>> >>      That means an innocent task will be in  task_in_memcg_oom state.
+>> >>      But this task may be in a different memcg, I mean the memcg of
+>> >> the 'current' may be differenct with the sk->sk_memcg.
+>> >>      Then when this innocent 'current' do try_charge it will hit  "if
+>> >> (unlikely(task_in_memcg_oom(current)))" and  -ENOMEM is returned,
+>> >> While there're maybe some free memory (or some memory could be freed )
+>> >> in the memcg of the innocent 'task'.
+>> >>
+>> >
+>> > No memory will be freed as try_charge() is in interrupt context.
+>> >
+>>
+>> I mean when this interrupted 'current' is running, that's in process context.
+>> In process context it should call try_to_free_mem_cgroup_pages() to
+>> free some memory,
+>> but it will hit "if (unlikely(task_in_memcg_oom(current)))"  before as
+>> it is set in the interrupt context.
+>>
+>> That's an obviously issue. Do you understand ?
+>>
+>
+> Not really. I couldn't find where current->memcg_in_oom can be set in
+> the interrupt context.
+>
+
+You are right. current->memcg_in_oom can't be set in the interrupt context.
+
+>> >> 2.  If the interrupted task was exiting or a fatal signal is  pending
+>> >> or oom victim,
+>> >>      it will directly goto force and 0 is returned, and then
+>> >> mem_cgroup_charge_skmem() will return true.
+>> >>      But mem_cgroup_charge_skmem() maybe need to try the second time
+>> >> and return false.
+>> >>
+>> >> That are all unexpected behavoir.
+>> >>
+>> >
+>> > Yes, this is inconsistent behavior. Can you explain how this will
+>> > affect network traffic? Basically mem_cgroup_charge_skmem() was
+>> > supposed to return false but sometime based on the interrupted task,
+>> > mem_cgroup_charge_skmem() returns true. How is this behavior bad for
+>> > network traffic?
+>> >
+>>
+>> You could see the funtion  __sk_mem_raise_allocated().
+>> If mem_cgroup_charge_skmem() return false, it will goto
+>> suppress_allocation and uncharge skmem,
+>> while when mem_cgroup_charge_skmem() return true, it will charge skmem
+>> sucessfully.
+>>
+>> The consequence behavior is  sk_rmem_schedule may fail while it should sucess.
+>> And then it will call  tcp_prune_queue() and tcp collapse may take a long time.
+>>
+>
+> Is that a good thing or bad?
+> From what I understand with your change
+> if charge fails, sk_rmem_schedule will always fail. However without
+> your change the interrupted task's state might help sk_rmem_schedule
+> to pass. I am all for consistent behavior but I wanted to make sure if
+> that is what you are aiming for.
+>
+
+Yes, with this change it will always fail. Without this change it may
+sucess depends on the  interrupted task's state.
+My previous statement makes some mistake.
+
+I have no clear idea it is bad or good. That's why I'm trying to
+produce the issue now.
+But I think that we should avoid this unexpected behavior due to state
+of the random interrupted task.
+
+> Anyways, from what I remember Facebook is using the cgroup-v2's tcpmem
+> accounting. Johannes or Roman can shed some light if they have
+> observed this issue in production and might have opinion on how to
+> solve it.
+>
+> thanks,
+> Shakeel
