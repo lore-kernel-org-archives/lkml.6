@@ -2,135 +2,118 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A711ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B71E2ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B36F20647
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:28:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o3vRzYjs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B36F20647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 74EBA20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:28:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74EBA20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbeGPV5m (ORCPT
+        id S1730688AbeGPV6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:57:42 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:36720 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbeGPV5l (ORCPT
+        Mon, 16 Jul 2018 17:58:10 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:37471 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728413AbeGPV6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:57:41 -0400
-Received: by mail-yw0-f195.google.com with SMTP id v197-v6so2304044ywg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=d53myzn0QbaJyHytaN8vLBqiiC4WT1n54JmZmVJ/TVo=;
-        b=o3vRzYjsU+58h1Ulw+ZghlW6gMPsj9TG6SPTdwauFc116l8L+OotC614SQIoNKbvem
-         fwL17SMemboqAy/T8M2zHxeTknqY68uPhB0it5WjFSQ8xEUPZKBus9hoIjXoq2rb2Qbx
-         tLKKeqUfBXt2tFf7NrESu4nvQ7RiacZmYxGV9VMhdISS21obD5DsjalOCO/+rV5U6MWs
-         LGLnCaCKDCa2qN9PbJNbpbZldHVeB+yUJWapSWM87l+Pk941u93wXrzhcRWg0rj/PZP3
-         QxQ9xQgoxpnM1gRLSSgt2l71K02Ej3GGM6DNr8sfGv84f/BKIPMLWl7ZPZCUXLer3v48
-         GDhQ==
+        Mon, 16 Jul 2018 17:58:10 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k81-v6so77584495oib.4;
+        Mon, 16 Jul 2018 14:28:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=d53myzn0QbaJyHytaN8vLBqiiC4WT1n54JmZmVJ/TVo=;
-        b=Mj9bPMgTO9/whDHJ6fjkko5FTitvxJOO3ezKkFqEG+bQXlT88GRyEX3SkF7O5IHO87
-         v6mnPDi/QHKCcjSLMjS+s3xo2lRzNeqMnrU23A/xHjVUaF7a/tPynLehrb0I/rzkzHiS
-         TOfaEN7wq3JKuChC5s9RJs0tXWbtqSkuRRIRGhz9rX7vRMaExEMkGFetVEs+FV6j6sRV
-         XG8c3ipvCOTXg8cqsC/xNc3+cwESxVQtOnfl5fqr9xGn4Jr2py56oJm6q9Q6jVOzlkRG
-         DXNBFDK/8Bb2NIc7IehxDi3+Iz0NiXa4FwuavC5CR++OSxxjDeXIUey99Ksd6QwUVb5u
-         y23A==
-X-Gm-Message-State: AOUpUlFr2zPaV1LWJzoYHqLczbFlb4p1VYNfba3+PDSP7fcxWgqAMgCY
-        9ZtD56k+vxraKDLLETK7qLNeR9VrDEsbHoZt7gU=
-X-Google-Smtp-Source: AAOMgpe80m44q4yhWXLm+EP2ioZ6Ej5T/AdLh8xIW0ZzTWA1lxX6C7nt+6qifYn0D17vLwWteXYZcHPWyzNAZWQrhig=
-X-Received: by 2002:a81:8c1:: with SMTP id 184-v6mr8955333ywi.126.1531776505445;
- Mon, 16 Jul 2018 14:28:25 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z4LTUphqrMF2ZUQkliDnej/gPLyoQjbEBwgTd9g6gvo=;
+        b=MnEdgsmepfH3oGWAJrAZUdgk4sYMNwPC3BWT8OTROPnQRgXXSHtpYbddjBEg6umQml
+         ByCdKlaGjP7uDpp5EqSwC7RUEzAW94K4VGJ34Q7ZQn710jCgcXOzNSuYpYt7RCVDfAUr
+         De58pxY1KvyLtbe/xAHGY2yl4tZRbKWIMjVY+m45RWVJNV9Po+KeyvXHdDJd6owAZ6hW
+         ASNjDZq9HMO83stDmpqjCCQ677kcojqKXBS4/D78tYqkRkBHzTotb3WH0mdq1C9oiL3s
+         jqmyy+yxudk+D2Y+GjzhK81ADpTN7qp4lY20gGW2YK5/ETg1g6CK+l1ntY32nOzs3x00
+         X7/Q==
+X-Gm-Message-State: AOUpUlEsPg3rPJyPCW/6H56i6cW56NttKc6zCq1ZG47lHcfOnWiAxHqZ
+        J8oP19Hbjm6aC4AmfKVZLvllP+o=
+X-Google-Smtp-Source: AAOMgpeZD5rBFhgJQpDu4ehuJR2dtHJPUmFlHhzDv1eC+rbBSiwkybQp+GHo4PbeB0kWRShOBnWs8w==
+X-Received: by 2002:aca:a64d:: with SMTP id p74-v6mr1034454oie.149.1531776534378;
+        Mon, 16 Jul 2018 14:28:54 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id r133-v6sm30021629oia.33.2018.07.16.14.28.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 14:28:53 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 15:28:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     Vinod <vkoul@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH 02/14] dmaengine: dma-jz4780: Separate chan/ctrl registers
+Message-ID: <20180716212852.GA6323@rob-hp-laptop>
+References: <20180703123214.23090-1-paul@crapouillou.net>
+ <20180703123214.23090-3-paul@crapouillou.net>
+ <20180709170359.GI22377@vkoul-mobl>
+ <1531237019.17118.1@crapouillou.net>
+ <20180711121655.GS3219@vkoul-mobl>
+ <20180711232715.djxrbgmcski5xtjp@pburton-laptop>
 MIME-Version: 1.0
-Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 14:28:24
- -0700 (PDT)
-In-Reply-To: <20180714063904.GH20451@kroah.com>
-References: <20180714055816.223754-1-toddpoynor@gmail.com> <20180714055816.223754-14-toddpoynor@gmail.com>
- <20180714063904.GH20451@kroah.com>
-From:   Todd Poynor <toddpoynor@gmail.com>
-Date:   Mon, 16 Jul 2018 14:28:24 -0700
-Message-ID: <CAO3upoaJ8R9svW1kTOu6aGdRpPzjM0i6+YL0YV29xCDwvgSqjA@mail.gmail.com>
-Subject: Re: [PATCH 13/18] staging: gasket: gasket_enable_dev fixups
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
-        Zhongze Hu <frankhu@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711232715.djxrbgmcski5xtjp@pburton-laptop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 11:39 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Fri, Jul 13, 2018 at 10:58:11PM -0700, Todd Poynor wrote:
->> From: Todd Poynor <toddpoynor@google.com>
->>
->> Remove unnecessary variable.
->>
->> Bail out if no physical device.
->>
->> Signed-off-by: Todd Poynor <toddpoynor@google.com>
->> ---
->>  drivers/staging/gasket/gasket_core.c | 19 ++++++-------------
->>  1 file changed, 6 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
->> index 65aa7cf454fb..f7d8f66e8746 100644
->> --- a/drivers/staging/gasket/gasket_core.c
->> +++ b/drivers/staging/gasket/gasket_core.c
->> @@ -915,8 +915,6 @@ static int gasket_enable_dev(
->>  {
->>       int tbl_idx;
->>       int ret;
->> -     bool has_dma_ops;
->> -     struct device *ddev;
->>       const struct gasket_driver_desc *driver_desc =
->>               internal_desc->driver_desc;
->>
->> @@ -934,26 +932,21 @@ static int gasket_enable_dev(
->>               return ret;
->>       }
->>
->> -     has_dma_ops = true;
->> +     if (!gasket_dev->pci_dev) {
->> +             gasket_log_error(gasket_dev,
->> +                              "%s: no physical device", __func__);
->> +             return -ENODEV;
->> +     }
->
-> How can this ever be true?  I don't see where this can be removed to
-> enable this error check to be hit.  What am I missing?
+On Wed, Jul 11, 2018 at 04:27:15PM -0700, Paul Burton wrote:
+> Hi Vinod,
+> 
+> On Wed, Jul 11, 2018 at 05:46:55PM +0530, Vinod wrote:
+> > > > >  -	jzdma->base = devm_ioremap_resource(dev, res);
+> > > > >  -	if (IS_ERR(jzdma->base))
+> > > > >  -		return PTR_ERR(jzdma->base);
+> > > > >  +	jzdma->chn_base = devm_ioremap_resource(dev, res);
+> > > > >  +	if (IS_ERR(jzdma->chn_base))
+> > > > >  +		return PTR_ERR(jzdma->chn_base);
+> > > > >  +
+> > > > >  +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> > > > >  +	if (!res) {
+> > > > >  +		dev_err(dev, "failed to get I/O memory\n");
+> > > > >  +		return -EINVAL;
+> > > > >  +	}
+> > > > 
+> > > > okay and this breaks if you happen to get probed on older DT. I think DT
+> > > > is treated as ABI so you need to continue support older method while
+> > > > finding if DT has split resources
+> > > 
+> > > See my response to PrasannaKumar. All the Ingenic-based boards do compile
+> > > the devicetree within the kernel, so I think it's still fine to add breaking
+> > > changes. I'll wait on @Rob to give his point of view on this, though.
+> > > 
+> > > (It's not something hard to change, but I'd like to know what's the policy
+> > > in that case. I have other DT-breaking patches to submit)
+> > 
+> > The policy is that DT is an ABI and should not break :)
+> 
+> I think in general that's a good policy to have for compatibility, but
+> if it's known for certain that the DT for all users of a driver is
+> always built into the kernel then I don't see why we shouldn't feel free
+> to change a binding. I agree with Paul that it'd be interesting to hear
+> the DT binding maintainers take on this.
 
-Agree, I'll split this into two patches for the two things it does,
-and just remove the unnecessary check.  Thanks,
+If the platform maintainers (and their users) don't care, then I don't 
+have an issue with the change. It should still be an exception and not 
+just any change goes. The commit message should still highlight that 
+compatibility is being broken and why.
 
->
-> thanks,
->
-> greg k-h
+Rob
 
-
-
--- 
-Todd
