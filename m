@@ -2,128 +2,130 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CAEECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3C1ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C94820844
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:23:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsUb4ug4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C94820844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BF96620864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:24:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF96620864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731456AbeGPMu2 (ORCPT
+        id S1730876AbeGPMvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:50:28 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:51638 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729811AbeGPMu1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:50:27 -0400
-Received: by mail-wm0-f67.google.com with SMTP id s12-v6so14996387wmc.1;
-        Mon, 16 Jul 2018 05:23:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=x8NAgkPM1O3BFqJRMzJrHJ/hQ87vwY+ENQ2KoNyDwS4=;
-        b=QsUb4ug491BNC4IYpImeKw28Sh1YcmeSH9ySQ0AvAbaC0xzZ4F+2w4Z3hggSQ2A+J2
-         UlI05XOrD7DJYwxNuGYKTd+o4vNOgQqI+cnamWDoEYMW/FyNsjTOAaXi4+yfObDm84ah
-         abA/SK39Zs4KOAFFVI4ViUwDlcmdN24EKjENA63yCXP5H6aHDDlPw09NGB7MYdlkdu8a
-         6uYXbDJaP7z3fMuZVyNoyFoydpStbvgKF+rK98cDSKgIR7Z5pB6H89560x1WvE/Yx/DF
-         9FW93s6L6jiwYKG1E5KskQUmt1BaTiooA6r+Eb54pBrj2WhTrJdSfEef1TSWCZXPhywu
-         73Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x8NAgkPM1O3BFqJRMzJrHJ/hQ87vwY+ENQ2KoNyDwS4=;
-        b=qJwUqj9Xhgy3AX8M+qKj4NkFZG7hN8xOBzsotApIFgec3+VzO7v/rI+E4Ow+0VM+RP
-         wIQBLeKEg92+wjoAPrfF98nNcZWX/w2AGfGGirIbUmrkHVya+pu1Pj22sTvU6LAn0Xm3
-         tP7P8j/ojacPzKllKSDDkbsKCYjiVW+Cxz88G6lCI9aFOCaG/9Lam5McNohUN4IdHOVY
-         ijiX0H4faVcTAFsApssIX2W8fOYs0ReMqUsRyGg1GZc0crCe/L3Q6I0r/nO0ExmFcCpC
-         Rl/6IPKFwhu1d8E3+D8mM33LmhdrODS6EcOuyhfyJo94aEjHEjBh/j6l2lEc/o650ip4
-         pFsw==
-X-Gm-Message-State: AOUpUlHh9Q2TiCR8ILg/RRDqYmBPJnn3WvOfHBE6sfTS+SpeK5kBjymH
-        bTLOVClrr9jFJy6wue2Kqnc=
-X-Google-Smtp-Source: AAOMgpeXS45NRoKZEgJvaF8UJjfkgk+5DjRVUIeQXwNE3VovZv1VDQiu18B6kUoNwzhfYul6IrZz+w==
-X-Received: by 2002:a1c:1802:: with SMTP id 2-v6mr9288175wmy.81.1531743793178;
-        Mon, 16 Jul 2018 05:23:13 -0700 (PDT)
-Received: from localhost (ohdikc.static.otenet.gr. [80.107.51.104])
-        by smtp.gmail.com with ESMTPSA id o4-v6sm15625692wmo.20.2018.07.16.05.23.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 05:23:12 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 12:21:25 +0000
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>, Helge Deller <deller@gmx.de>,
-        linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] Input: hilkbd - Add casts to HP9000/300 I/O accessors
-Message-ID: <20180716122125.m5ycmj7xh2mmufnf@penguin>
-References: <20180709093040.23597-1-geert@linux-m68k.org>
- <20180709093040.23597-4-geert@linux-m68k.org>
+        Mon, 16 Jul 2018 08:51:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35272 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728574AbeGPMvi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 08:51:38 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A353D401EF04;
+        Mon, 16 Jul 2018 12:24:25 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-124.pek2.redhat.com [10.72.12.124])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E8E78111E40F;
+        Mon, 16 Jul 2018 12:24:16 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 20:24:12 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     James Morse <james.morse@arm.com>
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH v11 03/15] powerpc, kexec_file: factor out memblock-based
+ arch_kexec_walk_mem()
+Message-ID: <20180716122412.GA7160@dhcp-128-65.nay.redhat.com>
+References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
+ <20180711074203.3019-4-takahiro.akashi@linaro.org>
+ <20180714015223.GA2745@dhcp-128-65.nay.redhat.com>
+ <2a4ec965-5258-5835-3022-8f403a2f6bdd@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180709093040.23597-4-geert@linux-m68k.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <2a4ec965-5258-5835-3022-8f403a2f6bdd@arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 12:24:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 12:24:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 11:30:38AM +0200, Geert Uytterhoeven wrote:
-> Internally, hilkbd uses "unsigned long" I/O addresses everywhere.
-> This works fine as:
->   - On PA-RISC, hilkbd uses the gsc_{read,write}b() I/O accessors, which
->     take "unsigned long" addresses,
->   - On m68k, hilkbd uses {read,write}b(), which are currently mapped to
->     {in,out}_8(), and convert the passed addresses to pointers
->     internally.
+On 07/16/18 at 12:04pm, James Morse wrote:
+> Hi Dave,
 > 
-> However, the asm-generic version of {read,write}b() does not perform
-> such conversions, and requires passing pointers instead.  Hence add
-> casts to prepare for switching m68k to the asm-generic version.
+> On 14/07/18 02:52, Dave Young wrote:
+> > On 07/11/18 at 04:41pm, AKASHI Takahiro wrote:
+> >> Memblock list is another source for usable system memory layout.
+> >> So powerpc's arch_kexec_walk_mem() is moved to kexec_file.c so that
+> >> other memblock-based architectures, particularly arm64, can also utilise
+> >> it. A moved function is now renamed to kexec_walk_memblock() and merged
+> >> into the existing arch_kexec_walk_mem() for general use, either resource
+> >> list or memblock list.
+> >>
+> >> A consequent function will not work for kdump with memblock list, but
+> >> this will be fixed in the next patch.
 > 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> >> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> 
+> >> @@ -513,6 +563,10 @@ static int locate_mem_hole_callback(struct resource *res, void *arg)
+> >>  int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> >>  			       int (*func)(struct resource *, void *))
+> >>  {
+> >> +	if (IS_ENABLED(CONFIG_HAVE_MEMBLOCK) &&
+> >> +			!IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK))
+> >> +		return kexec_walk_memblock(kbuf, func);
+> > 
+> > AKASHI, I'm not sure if this works on all arches, for example I chekced
+> > the .config on my Nokia N900 kernel tree, there is HAVE_MEMBLOCK=y and
+> > no CONFIG_ARCH_DISCARD_MEMBLOCK, in 32bit arm code no arch_kexec_walk_mem()
+> By doesn't work you mean it's a change in behaviour?
+> I think this is fine because 32bit arm doesn't support KEXEC_FILE, (this file is
+> kexec_file specific right?).
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Ah, replied on a train, I forgot this is only for kexec_file, sorry
+about that.  Please ignore the comment.
 
-> ---
-> This is a dependency for "m68k/io: Switch mmu variant to
-> <asm-generic/io.h>".
-> 
-> v2:
->   - No changes.
-> ---
->  drivers/input/keyboard/hilkbd.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/hilkbd.c b/drivers/input/keyboard/hilkbd.c
-> index a4e404aaf64bdb82..5c7afdec192c139b 100644
-> --- a/drivers/input/keyboard/hilkbd.c
-> +++ b/drivers/input/keyboard/hilkbd.c
-> @@ -57,8 +57,8 @@ MODULE_LICENSE("GPL v2");
->   #define HIL_DATA		0x1
->   #define HIL_CMD		0x3
->   #define HIL_IRQ		2
-> - #define hil_readb(p)		readb(p)
-> - #define hil_writeb(v,p)	writeb((v),(p))
-> + #define hil_readb(p)		readb((const volatile void __iomem *)(p))
-> + #define hil_writeb(v, p)	writeb((v), (volatile void __iomem *)(p))
->  
->  #else
->  #error "HIL is not supported on this platform"
-> -- 
-> 2.17.1
-> 
+But since we have a weak function arch_kexec_walk_mem, adding another
+condition branch within this weak function looks not good.
+Something like below would be better:
+ 
+int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+{
+        int ret;
 
--- 
-Dmitry
+	+ if use memblock
+	+	ret = kexec_walk_memblock()
+	+ else
+        	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+
+        return ret == 1 ? 0 : -EADDRNOTAVAIL;
+}
+
+
+> 
+> It only affects architectures with MEMBLOCK and KEXEC_FILE: powerpc, s390 and
+> soon arm64. s390 keeps its behaviour because it provides arch_kexec_walk_mem(),
+> and powerpc's is copied in here as its generic 'memblock describes my memory'
+> stuff. The implementation would be the same on arm64, so we're doing this to
+> avoid duplicating otherwise generic arch code. I think 32bit arm should be able
+> to use this too if it gets KEXEC_FILE support. (32bit arms' KEXEC already
+> depends on MEMBLOCK).
+> 
+> 
+> Thanks,
+> 
+> James
+
+Thanks
+Dave
