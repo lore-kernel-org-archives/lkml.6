@@ -5,102 +5,144 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 028D4ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB1BECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 06:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C05208DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:59:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C05208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EFF820873
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 06:02:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFF820873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbeGPGYt (ORCPT
+        id S1727819AbeGPG15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 02:24:49 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:52038 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbeGPGYr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 02:24:47 -0400
-Received: from [10.28.16.194] (10.28.16.194) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Mon, 16 Jul
- 2018 13:59:01 +0800
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        <qianggui.song@amlogic.com>, <sboyd@kernel.org>,
-        <khilman@baylibre.com>, <mturquette@baylibre.com>,
-        <linux-kernel@vger.kernel.org>, <bo.yang@amlogic.com>,
-        <qiufang.dai@amlogic.com>, <linux-arm-kernel@lists.infradead.org>,
-        <carlo@caione.org>, <linux-amlogic@lists.infradead.org>,
-        <sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <xingyu.chen@amlogic.com>, Rob Herring <robh@kernel.org>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
- <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
- <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
- <1531216472.2708.71.camel@baylibre.com>
- <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
- <1531316752.2708.113.camel@baylibre.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <d00bfbac-a041-3dc9-0cda-9a6eef5f3216@amlogic.com>
-Date:   Mon, 16 Jul 2018 13:58:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 16 Jul 2018 02:27:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:8746 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727163AbeGPG15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 02:27:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jul 2018 23:02:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,360,1526367600"; 
+   d="scan'208";a="216294168"
+Received: from blu2-desk2.ccr.corp.intel.com (HELO [10.0.2.15]) ([10.239.13.1])
+  by orsmga004.jf.intel.com with ESMTP; 15 Jul 2018 23:02:11 -0700
+Subject: Re: [PATCH 1/1] Revert "iommu/vt-d: Clean up pasid quirk for
+ pre-production devices"
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <1531031001-5783-1-git-send-email-baolu.lu@linux.intel.com>
+Cc:     ashok.raj@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5B4C34E4.30004@linux.intel.com>
+Date:   Mon, 16 Jul 2018 14:02:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <1531316752.2708.113.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.16.194]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+In-Reply-To: <1531031001-5783-1-git-send-email-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome
+Hi Joerg,
 
-On 2018/7/11 21:45, Jerome Brunet wrote:
-> On Wed, 2018-07-11 at 21:41 +0800, Jian Hu wrote:
->>>>>> +static struct clk_regmap g12a_mpll0 = {
->>>>>> +       .data = &(struct clk_regmap_gate_data){
->>>>>> +               .offset = HHI_MPLL_CNTL1,
->>>>>> +               .bit_idx = 31,
->>>>>> +       },
->>>>>> +       .hw.init = &(struct clk_init_data){
->>>>>> +               .name = "mpll0",
->>>>>> +               .ops = &clk_regmap_gate_ops,
->>>>>> +               .parent_names = (const char *[]){ "mpll0_div" },
->>>>>> +               .num_parents = 1,
->>>>>> +               .flags = CLK_SET_RATE_PARENT,
->>>>>> +       },
->>>>>> +};
->>>
->>> The previous had a predivider (1 or 2) in front of these mpll. Even if the
->>> predivider is usually set to be a passthrough, it is better to model the tree
->>> correctly.
->>>
->>> Is this SoC any different ?
->>>
->>
->> I am not sure the difference, I will confirm with IC design guys.
-> 
-> I suggest that you have a look at the (upstream) axg and gxbb clock driver for
-> this
-> 
-> Same goes for the fdiv gates.
-> 
-> Last, please trim your replies a bit. It will make easier to see what you are
-> replying to.
-> 
-> .
-> 
+The graphic guys are looking forward to having this in 4.18.
+Is it possible to take it in the following rcs?
 
-I have confirmed with IC design guys, axg and gxbb clock driver have a 
-prediver in frount  of these mpll, according to the Spec, we can get the 
-prediver function in HHI_MPLL_CNTL5 bit12, the G12A SoC have not the 
-prediver function.
+Best regards,
+Lu Baolu
+
+On 07/08/2018 02:23 PM, Lu Baolu wrote:
+> This reverts commit ab96746aaa344fb720a198245a837e266fad3b62.
+>
+> The commit ab96746aaa34 ("iommu/vt-d: Clean up pasid quirk for
+> pre-production devices") triggers ECS mode on some platforms
+> which have broken ECS support. As the result, graphic device
+> will be inoperable on boot.
+>
+> Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107017
+>
+> Cc: Ashok Raj <ashok.raj@intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/intel-iommu.c | 32 ++++++++++++++++++++++++++++++--
+>  include/linux/intel-iommu.h |  1 +
+>  2 files changed, 31 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index b344a88..115ff26 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -484,14 +484,37 @@ static int dmar_forcedac;
+>  static int intel_iommu_strict;
+>  static int intel_iommu_superpage = 1;
+>  static int intel_iommu_ecs = 1;
+> +static int intel_iommu_pasid28;
+>  static int iommu_identity_mapping;
+>  
+>  #define IDENTMAP_ALL		1
+>  #define IDENTMAP_GFX		2
+>  #define IDENTMAP_AZALIA		4
+>  
+> -#define ecs_enabled(iommu)	(intel_iommu_ecs && ecap_ecs(iommu->ecap))
+> -#define pasid_enabled(iommu)	(ecs_enabled(iommu) && ecap_pasid(iommu->ecap))
+> +/* Broadwell and Skylake have broken ECS support — normal so-called "second
+> + * level" translation of DMA requests-without-PASID doesn't actually happen
+> + * unless you also set the NESTE bit in an extended context-entry. Which of
+> + * course means that SVM doesn't work because it's trying to do nested
+> + * translation of the physical addresses it finds in the process page tables,
+> + * through the IOVA->phys mapping found in the "second level" page tables.
+> + *
+> + * The VT-d specification was retroactively changed to change the definition
+> + * of the capability bits and pretend that Broadwell/Skylake never happened...
+> + * but unfortunately the wrong bit was changed. It's ECS which is broken, but
+> + * for some reason it was the PASID capability bit which was redefined (from
+> + * bit 28 on BDW/SKL to bit 40 in future).
+> + *
+> + * So our test for ECS needs to eschew those implementations which set the old
+> + * PASID capabiity bit 28, since those are the ones on which ECS is broken.
+> + * Unless we are working around the 'pasid28' limitations, that is, by putting
+> + * the device into passthrough mode for normal DMA and thus masking the bug.
+> + */
+> +#define ecs_enabled(iommu) (intel_iommu_ecs && ecap_ecs(iommu->ecap) && \
+> +			    (intel_iommu_pasid28 || !ecap_broken_pasid(iommu->ecap)))
+> +/* PASID support is thus enabled if ECS is enabled and *either* of the old
+> + * or new capability bits are set. */
+> +#define pasid_enabled(iommu) (ecs_enabled(iommu) &&			\
+> +			      (ecap_pasid(iommu->ecap) || ecap_broken_pasid(iommu->ecap)))
+>  
+>  int intel_iommu_gfx_mapped;
+>  EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
+> @@ -554,6 +577,11 @@ static int __init intel_iommu_setup(char *str)
+>  			printk(KERN_INFO
+>  				"Intel-IOMMU: disable extended context table support\n");
+>  			intel_iommu_ecs = 0;
+> +		} else if (!strncmp(str, "pasid28", 7)) {
+> +			printk(KERN_INFO
+> +				"Intel-IOMMU: enable pre-production PASID support\n");
+> +			intel_iommu_pasid28 = 1;
+> +			iommu_identity_mapping |= IDENTMAP_GFX;
+>  		} else if (!strncmp(str, "tboot_noforce", 13)) {
+>  			printk(KERN_INFO
+>  				"Intel-IOMMU: not forcing on after tboot. This could expose security risk for tboot\n");
+> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+> index 1df9401..ef169d6 100644
+> --- a/include/linux/intel-iommu.h
+> +++ b/include/linux/intel-iommu.h
+> @@ -121,6 +121,7 @@
+>  #define ecap_srs(e)		((e >> 31) & 0x1)
+>  #define ecap_ers(e)		((e >> 30) & 0x1)
+>  #define ecap_prs(e)		((e >> 29) & 0x1)
+> +#define ecap_broken_pasid(e)	((e >> 28) & 0x1)
+>  #define ecap_dis(e)		((e >> 27) & 0x1)
+>  #define ecap_nest(e)		((e >> 26) & 0x1)
+>  #define ecap_mts(e)		((e >> 25) & 0x1)
+
