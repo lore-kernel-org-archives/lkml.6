@@ -2,117 +2,93 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF455ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1061ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74BC3208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:03:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S/sC4JUZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74BC3208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A2D81208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D81208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbeGPVc2 (ORCPT
+        id S1729983AbeGPVhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:32:28 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55475 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729601AbeGPVc2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:32:28 -0400
-Received: by mail-wm0-f68.google.com with SMTP id f21-v6so4275214wmc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:03:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=XtqqCN2m3xu2+xIK5UM2oKwxj9zAXPr6CmFB6iF0ET0=;
-        b=S/sC4JUZWZNQryEq7Tf2YQbA7CF0BR7N6sSfHLD2XJomM9ML4dbQG7N6CpF19WEnLZ
-         JymdPNbBfOmRQydOR5udU5U0KHVDYMAMEXN4a+9xpjJAo179Km05l1IENAGz0RlHDyey
-         VVvw/KQ/dvFW6FvQ65H5a6cOXhkPhEgG7wYgA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XtqqCN2m3xu2+xIK5UM2oKwxj9zAXPr6CmFB6iF0ET0=;
-        b=Crxbc7ozjTAnRJ4Ck8JhId+fxw055tRs5hZIF6ZzHS9T0O9TvNJPsX5jIftnANSSeT
-         Rr/xD4Km1EAiLGWJKDch9aEz4AI22Ji3rKDxmU5WqYIjgvNCdQg2Rz0bBOdOwNZRCjfH
-         HkKCbXe66H31pLc5ucwE/TgrWQ5F0Igzdq0X6tcSMQzQvqY9prUOyjTXy5ZVSttWuiAo
-         DkYidQ+DdtysAXzAt1qmwWGQUJFrCk7/GuApDy7pwn5PDkosGRaJAzNZQ6IseUqX0F4l
-         bqzlqXAlrPRS12bYbpLgTzOR3v0tZBxz8FDUqr/X7yQmSV4QpwtKbwJf/hdtoDgqDKvK
-         xYJQ==
-X-Gm-Message-State: AOUpUlGO1qF7KKzZapwmtE/K9JRYH1AtmQyfA/ZYdkdPXK0ju744ncnM
-        8V+2grm8VkW3aq8YrlWq8RCOjw==
-X-Google-Smtp-Source: AAOMgpe1r72w0fHi5KLe2PHYwWQebahpDRj3TY9tbmn0Uuk/vQspoBFxh851a5ni3+31LBODUu7/yw==
-X-Received: by 2002:a1c:d892:: with SMTP id p140-v6mr2649336wmg.76.1531774996308;
-        Mon, 16 Jul 2018 14:03:16 -0700 (PDT)
-Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id u135-v6sm15127923wmf.2.2018.07.16.14.03.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 14:03:15 -0700 (PDT)
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@linaro.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH] backlight: pwm_bl: Fix uninitialized variable
-Date:   Mon, 16 Jul 2018 22:02:41 +0100
-Message-Id: <20180716210241.9457-1-daniel.thompson@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 16 Jul 2018 17:37:33 -0400
+Received: from mga02.intel.com ([134.134.136.20]:60394 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728412AbeGPVhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 17:37:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 14:08:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,363,1526367600"; 
+   d="scan'208";a="75274995"
+Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
+  by orsmga002.jf.intel.com with ESMTP; 16 Jul 2018 14:08:20 -0700
+Date:   Mon, 16 Jul 2018 15:08:20 -0600
+From:   Ross Zwisler <ross.zwisler@linux.intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
+        kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 1/5] radix tree test suite: fix mapshift build target
+Message-ID: <20180716210820.GA17164@linux.intel.com>
+References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+ <20180503192430.7582-2-ross.zwisler@linux.intel.com>
+ <20180715230052.GA6486@bombadil.infradead.org>
+ <20180716160710.GA2287@linux.intel.com>
+ <20180716195249.GA14380@bombadil.infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716195249.GA14380@bombadil.infradead.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, if the DT does not define num-interpolated-steps then
-num_steps is undefined and the interpolation code will deploy randomly.
-Fix this.
+On Mon, Jul 16, 2018 at 12:52:49PM -0700, Matthew Wilcox wrote:
+> On Mon, Jul 16, 2018 at 10:07:10AM -0600, Ross Zwisler wrote:
+<>
+> OK ... what version of make are you using?  Because this works fine for me:
+> 
+> $ git clone linux clean
+> $ cd clean
+> $ git checkout v4.17
+> $ cd tools/testing/radix-tree/ 
+> $ git revert 8d9fa88edd5e360b71765feeadb915d4066c9684
+> $ make
+> 
+> $ make --version
+> GNU Make 4.1
+> Built for x86_64-pc-linux-gnu
+> 
+> It's Debian's Version: 4.1-9.1
 
-Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
-brightness-levels")
-Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
----
- drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+$ make --version
+GNU Make 4.2.1
+Built for x86_64-redhat-linux-gnu
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 9ee4c1b735b2..e3c22b79fbcd 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct device *dev,
- 		 * interpolation between each of the values of brightness levels
- 		 * and creates a new pre-computed table.
- 		 */
--		of_property_read_u32(node, "num-interpolated-steps",
--				     &num_steps);
--
--		/*
--		 * Make sure that there is at least two entries in the
--		 * brightness-levels table, otherwise we can't interpolate
--		 * between two points.
--		 */
--		if (num_steps) {
-+		if ((of_property_read_u32(node, "num-interpolated-steps",
-+					  &num_steps) == 0) && num_steps) {
-+			/*
-+			 * Make sure that there is at least two entries in the
-+			 * brightness-levels table, otherwise we can't
-+			 * interpolate
-+			 * between two points.
-+			 */
- 			if (data->max_brightness < 2) {
- 				dev_err(dev, "can't interpolate\n");
- 				return -EINVAL;
---
-2.17.1
+The one from Fedora 27.
 
+> > If you want generated/map-shift.h to be rebuilt each time you run 'make' so
+> > that it can take a new SHIFT argument, that's fine, but let's not make users
+> > run 'make mapshift' before an actual 'make' will work, which is where we're at
+> > with v4.17 with my commit reverted.
+> 
+> I don't want it to be rebuilt, I want it to be checked before each
+> build, regenerated if SHIFT has changed, and everything to rebuild if
+> it has changed.
+
+Sure, sounds good.
