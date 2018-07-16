@@ -2,392 +2,137 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 452C0ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A94ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D78EB20B80
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4683620BED
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nbnsaGSa";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NZ6Ttd3l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78EB20B80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQX6jEAb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4683620BED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730598AbeGPKLD (ORCPT
+        id S1730129AbeGPKMW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:11:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54502 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727044AbeGPKLC (ORCPT
+        Mon, 16 Jul 2018 06:12:22 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34055 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727044AbeGPKMW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:11:02 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9040A602D7; Mon, 16 Jul 2018 09:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531734267;
-        bh=/Cld40T4pIKW13WtpRN3N0VADSXYPPYfItBcGi2Mdzk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nbnsaGSaAJXfWP/svh0z3q0WgMgNo0zVKamto/94saiidgoOdosEnQFuAaHDq4giC
-         kthUxwM39DlrwQko7qFqXg9Jn82HIEUm6oMX/QLVXVDGV7cgeMFOXdthzsxQVnvMST
-         VZQcVH9kLII4ukON5H/UEViL1rCjmDMTCS6UeHfM=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A2769607C6;
-        Mon, 16 Jul 2018 09:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531734266;
-        bh=/Cld40T4pIKW13WtpRN3N0VADSXYPPYfItBcGi2Mdzk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NZ6Ttd3lIOYLTmAQrXgWWN6+SZzCh1QyPWVSUg/GHV0X/AN/qOlJZEKaqcVMRipFK
-         NG58A6dMvBtaoc4Ulw8nLoZ4fxnvEW1LhAM/KGWaGL3B9tcJeBDc8g2V/ThsX9hinl
-         WLGXVJzrgMluKQWlDS5qo64N4k2V32fdRI5iA8jI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2769607C6
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V6] scsi: ufs: Add configfs support for UFS provisioning
-Date:   Mon, 16 Jul 2018 15:13:57 +0530
-Message-Id: <1531734237-27421-2-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1531734237-27421-1-git-send-email-sayalil@codeaurora.org>
-References: <1531734237-27421-1-git-send-email-sayalil@codeaurora.org>
+        Mon, 16 Jul 2018 06:12:22 -0400
+Received: by mail-io0-f194.google.com with SMTP id l7-v6so37214644ioj.1;
+        Mon, 16 Jul 2018 02:45:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=sJTq8AniM1Z+6gTI66hjrVaMXxjjiH/dBEBAepNZTdg=;
+        b=DQX6jEAbElBeid5Yo7I0Ir0LxYpc8pAjADQdZ7sO0ZCYpyfiykk5YjN+IbXvUyuZGS
+         aKomHEWgv0WOdOcVgy5Ru+Cnzgl/JbRRnXhQGFFGg2wdWHkuraTXHvR52sHqqbMdkbj9
+         UM5elV3DwCLqz3G24z79uEVPYnjYTyP31r+GPxes70IzZFtLe0eWsh6A+yHeMo2Z+pi7
+         Hevkx/5+MSF4wmctL5N1CqVzCr/RA60W1MSSIRW9a7YNovrB0+87N/9vhrKoL7CMoGhr
+         dBm21Xnwfi0LeLLVqhvB6FkEj0QiPTy54Khk2VGWat6rjS7YJqzXmejlJZT5BKZkHtfo
+         LhXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sJTq8AniM1Z+6gTI66hjrVaMXxjjiH/dBEBAepNZTdg=;
+        b=tT1lPZZXRQ3wxQjSnRfdH3iYUvWsYQrDTHtJ6HluFEIEZBbI1zzUXKclohDfZWAXrR
+         IGn51H8Li0LGehv32StZB9/kJylgZr7wlks/hRP9efbiQhCW4ioZ5d2DQFAmkaEQPSBL
+         pRJ9WU4Rd+vQX3K3LJlvy5VXhIXUpHcfFEYdK49eqgbzCoKqeySt/QlptC820zuE6/em
+         ymhX9DuJgsBz1H5moBMu/E1OOeY2wWzFCW0pVvVdX8xF3bKetdQ6tGhQlUezbJPdHl7J
+         YiXlFFE6Hn2SM6ASIQL8gqtjyU0J7BiV3vTiL0sgKklsMb+2NtMNHImHA/vZEhjec24W
+         X5ow==
+X-Gm-Message-State: AOUpUlE4/7SrpycQ32aAh7ZzIp2RqOTOFx6L46pqZgjKtmUpk6XCpxee
+        bBaTyMjHvOd20/vrLM+9aKb+YcqoI8Jkd/Lrhis=
+X-Google-Smtp-Source: AAOMgpcRFz5lSVyGmpa153g+bId7xP817NJPE1AaC4DtksERlVh8e/BJCQtZd57X76XZxXKV6DG1bycL1mtuhmF2BJ8=
+X-Received: by 2002:a6b:6410:: with SMTP id t16-v6mr13029940iog.11.1531734347111;
+ Mon, 16 Jul 2018 02:45:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 02:45:06
+ -0700 (PDT)
+In-Reply-To: <20180716075836.GC17280@dhcp22.suse.cz>
+References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com> <20180716075836.GC17280@dhcp22.suse.cz>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 16 Jul 2018 17:45:06 +0800
+Message-ID: <CALOAHbD1+eYHDo5-q1--nsBTNj66ZX6iw2YU4koLgZD_0ZDy+w@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds configfs support to provision UFS device at
-runtime. This feature can be primarily useful in factory or
-assembly line as some devices may be required to be configured
-multiple times during initial system development phase.
-Configuration Descriptors can be written multiple times until
-bConfigDescrLock attribute is zero.
+On Mon, Jul 16, 2018 at 3:58 PM, Michal Hocko <mhocko@kernel.org> wrote:
+> On Sat 14-07-18 16:32:02, Yafang Shao wrote:
+>> try_charge maybe executed in packet receive path, which is in interrupt
+>> context.
+>> In this situation, the 'current' is the interrupted task, which may has
+>> no relation to the rx softirq, So it is nonsense to use 'current'.
+>>
+>> Avoid bothering the interrupted if page_counter_try_charge failes.
+>
+> I agree with Shakeel that this changelog asks for more information about
+> "why it matters". Small inconsistencies should be tolerable because the
+> state we rely on is so rarely set that it shouldn't make a visible
+> difference in practice.
+>
 
-Configuration descriptor buffer consists of Device and Unit
-descriptor configurable parameters which are parsed from vendor
-specific provisioning file and then passed via configfs node at
-runtime to provision ufs device.
-CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+HI Michal,
 
-Usage:
-1) To read current configuration descriptor :
-   cat /config/XXXX.ufshc/ufs_provision
-2) To provision ufs device:
-   echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+No, it can make a visible difference in pratice.
+The difference is in __sk_mem_raise_allocated().
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
----
- Documentation/ABI/testing/configfs-driver-ufs |  18 +++
- drivers/scsi/ufs/Kconfig                      |  10 ++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 162 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufshcd.c                     |   2 +
- drivers/scsi/ufs/ufshcd.h                     |  19 +++
- 6 files changed, 212 insertions(+)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+Without this patch, if the random interrupted task is oom victim or
+fatal signal pending or exiting, the charge will success anyway. That
+means the cgroup limit doesn't work in this situation.
 
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..eeee499c
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,18 @@
-+What:		/config/ufshcd/ufs_provision
-+Date:		Jun 2018
-+KernelVersion:	4.14
-+Description:
-+		This file shows the current ufs configuration descriptor set in device.
-+		This can be used to provision ufs device if bConfigDescrLock is 0.
-+		For more details, refer 14.1.6.3 Configuration Descriptor and
-+		Table 14-12 - Unit Descriptor configurable parameters from specs for
-+		description of each configuration descriptor parameter.
-+		Configuration descriptor buffer needs to be passed in space separated
-+		format specificied as below:
-+		echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
-+		<bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
-+		<bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
-+		<0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
-+		<bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
-+		<bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
-+		> /config/XXXX.ufshc/ufs_provision
-diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
-index e27b4d4..34d89c2 100644
---- a/drivers/scsi/ufs/Kconfig
-+++ b/drivers/scsi/ufs/Kconfig
-@@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
- 
- 	  Select this if you have UFS controller on QCOM chipset.
- 	  If unsure, say N.
-+
-+config UFS_PROVISION
-+	tristate "Runtime UFS Provisioning support"
-+	depends on SCSI_UFSHCD_PLATFORM && CONFIGFS_FS
-+	help
-+	  This enables runtime UFS provisioning support. This can be used
-+	  primarily during assembly line as some devices may be required to
-+	  be configured multiple times during initial development phase.
-+
-+	  If unsure, say N.
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..00110ea 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_UFS_PROVISION) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..3e9837a
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,162 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018, Linux Foundation.
-+
-+#include <linux/configfs.h>
-+#include <linux/err.h>
-+#include <linux/string.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
-+{
-+	struct config_group *group = to_config_group(item);
-+	struct configfs_subsystem *subsys = to_configfs_subsystem(group);
-+	struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
-+
-+	return hba ? hba : NULL;
-+}
-+
-+static ssize_t ufs_provision_show(struct config_item *item, char *buf)
-+{
-+	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-+	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-+	int i, ret, curr_len = 0;
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+
-+	if (!hba)
-+		return snprintf(buf, PAGE_SIZE, "ufs hba is NULL!\n");
-+
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-+
-+	if (ret)
-+		return snprintf(buf, PAGE_SIZE,
-+		"Failed reading descriptor. desc_idn %d, opcode %x ret %d\n",
-+		QUERY_DESC_IDN_CONFIGURATION,
-+		UPIU_QUERY_OPCODE_READ_DESC, ret);
-+
-+	for (i = 0; i < buff_len; i++)
-+		curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
-+				"0x%x ", desc_buf[i]);
-+
-+	return curr_len;
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
-+		const char *buf, size_t count)
-+{
-+	char *strbuf;
-+	char *strbuf_copy;
-+	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-+	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-+	char *token;
-+	int i, ret, value;
-+	u32 bConfigDescrLock = 0;
-+
-+	/* reserve one byte for null termination */
-+	strbuf = kmalloc(count + 1, GFP_KERNEL);
-+	if (!strbuf)
-+		return -ENOMEM;
-+
-+	strbuf_copy = strbuf;
-+	strlcpy(strbuf, buf, count + 1);
-+
-+	if (!hba)
-+		goto out;
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &bConfigDescrLock);
-+	if (ret)
-+		goto out;
-+
-+	if (bConfigDescrLock) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+		__func__, bConfigDescrLock);
-+		goto out;
-+	}
-+
-+	for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
-+		token = strsep(&strbuf, " ");
-+		if (!token && i)
-+			break;
-+
-+		ret = kstrtoint(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-+				__func__, ret, token);
-+			break;
-+		}
-+		desc_buf[i] = (u8)value;
-+	}
-+
-+	/* Write configuration descriptor to provision ufs */
-+	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-+		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-+
-+	if (!ret)
-+		dev_err(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
-+		__func__);
-+
-+out:
-+	kfree(strbuf_copy);
-+	return count;
-+}
-+
-+static ssize_t ufs_provision_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	struct ufs_hba *hba = config_item_to_hba(item);
-+
-+	return ufshcd_desc_configfs_store(hba, buf, count);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision = {
-+	.ca_name	= "ufs_provision",
-+	.ca_mode	= 0644,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_provision_show,
-+	.store		= ufs_provision_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem ufscfg_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_type = &ufscfg_type,
-+		},
-+	},
-+};
-+
-+int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+	int ret;
-+	struct configfs_subsystem *subsys = &hba->subsys;
-+
-+	strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
-+	subsys->su_group = ufscfg_subsys.su_group;
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret)
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+
-+	return ret;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+	configfs_unregister_subsystem(&ufscfg_subsys);
-+}
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c5b1bf1..bfdd502 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7622,6 +7622,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit();
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -7875,6 +7876,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
-+	ufshcd_configfs_init(hba, dev_name(hba->dev));
- 
- 	return 0;
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 8110dcd..2ece88d 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -37,6 +37,7 @@
- #ifndef _UFSHCD_H
- #define _UFSHCD_H
- 
-+#include <linux/configfs.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/init.h>
-@@ -515,6 +516,9 @@ struct ufs_hba {
- 
- 	struct Scsi_Host *host;
- 	struct device *dev;
-+#ifdef CONFIG_UFS_PROVISION
-+	struct configfs_subsystem subsys;
-+#endif
- 	/*
- 	 * This field is to keep a reference to "scsi_device" corresponding to
- 	 * "UFS device" W-LU.
-@@ -866,6 +870,21 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
- 
-+/* Expose UFS configfs API's */
-+#ifdef CONFIG_UFS_PROVISION
-+int ufshcd_configfs_init(struct ufs_hba *hba, const char *name);
-+void ufshcd_configfs_exit(void);
-+#else
-+int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
-+{
-+	return 0;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+}
-+#endif
-+
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
- 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+With this patch, in the same situation the charged memory will be
+uncharged as it hits the memcg limit.
 
+That is okay if the memcg of the interrupted task is same with the
+sk->sk_memcg,  but it may not okay if they are difference.
+
+I'm trying to prove it, but seems it's very hard to produce this issue.
+
+>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+>> ---
+>>  mm/memcontrol.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index 68ef266..13f95db 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -2123,6 +2123,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+>>               goto retry;
+>>       }
+>>
+>> +     if (in_softirq())
+>> +             goto nomem;
+>> +
+>
+> If anything would it make more sense to use in_interrupt() to be more
+> bullet proof for future?
+>
+>>       /*
+>>        * Unlike in global OOM situations, memcg is not in a physical
+>>        * memory shortage.  Allow dying and OOM-killed tasks to
+>> --
+>> 1.8.3.1
+>
+> --
+> Michal Hocko
+> SUSE Labs
