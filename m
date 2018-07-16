@@ -2,139 +2,109 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312E7ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:34:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF52CECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:34:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2EC20877
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:34:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="t3UBEDFx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC2EC20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 8F8B920877
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:34:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8B920877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbeGPPBu (ORCPT
+        id S1728413AbeGPPCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:01:50 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41591 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbeGPPBt (ORCPT
+        Mon, 16 Jul 2018 11:02:25 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4238 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727342AbeGPPCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:01:49 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y17-v6so25364792ljy.8
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 07:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=IFphJYXKeJx951UEdEgRlj759+EmGd4AL1FdfKdQ3Yw=;
-        b=t3UBEDFx3R14pwwn+MsOSwqzR0vcZTuUZVmRxl9agbTG3s9bcl4bUHX2aSiPSAaeBv
-         BM1B0ihUIKdcVLoXtiWg01dQhCN3kiTTKeq6bf/R6SSRHYz5g8a8CD70Hk6gmww0rLVv
-         bL275pr8rmJsk14G3voh4TxtzkQFQSPzNF3nh8JNLahlKvgtlHos6Km6mnCn7xL1sIO5
-         JHNbvhYotggjxfXFtsXvX6XTJS1147jAGN3LajSHOfPjfbJARTM4CrF/kPPL/nFhw7Z4
-         dp+yTx3q3ut5zHpvqez1Q/P4XIQD1fnIJisPT6F6jnpo2jAJFI48tOLfVO/746WeT4Y1
-         kwiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=IFphJYXKeJx951UEdEgRlj759+EmGd4AL1FdfKdQ3Yw=;
-        b=JQHeM4NOoLx4qaB/OKwJayusHFnotzW7D5rvEHnq3dpQy7FXOlm/LTEX91Ir9gQLch
-         +SYx0lBOJE68De5opZ3xUmi0s5STlG+ZvNJNpg0JZFj+0u/3cbeECf1t90JKS/O8v+nq
-         2gNK7cVnEiNGYb5Bflkap8qkjMLxEZAkt5j2ZePtBUmltNVdgoTsv1sZLaVptAPI3dNw
-         MMV8+GubpZ35D0x+aUn/QwEvs/EjBU3SitcXG5N8OdL1gv0uT1q2jpxWBZY2nPPqyWOe
-         i/V0g/7tCiYp1586QVCygaSxUhUGx4fryjeyhy85na9S84HVcz2rFvGYjVCU+2Lr9b/w
-         iDuQ==
-X-Gm-Message-State: AOUpUlHU5e9+eOWbQMMO3q3XUE4K8bddvDVJ2ootluROP3I9f0iAEkwm
-        TRoW9lF3Ot+ONYiVsIaQmsycMLtojjeE+Khl+1vHJg==
-X-Google-Smtp-Source: AAOMgpfdL+oM6NaspadrJ9stW+7P/k/oGUqWbSd8ihMcJf9j+KZ4noqWWepkXt4yMrI4rw5XSnlgiHnyKh32Aj1Z0Is=
-X-Received: by 2002:a2e:740f:: with SMTP id p15-v6mr10152907ljc.130.1531751646361;
- Mon, 16 Jul 2018 07:34:06 -0700 (PDT)
+        Mon, 16 Jul 2018 11:02:25 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b4cacd10000>; Mon, 16 Jul 2018 07:33:53 -0700
+Received: from HQMAIL106.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 16 Jul 2018 07:34:42 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 16 Jul 2018 07:34:42 -0700
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 16 Jul
+ 2018 14:34:42 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Mon, 16 Jul 2018 14:34:42 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b4cad000000>; Mon, 16 Jul 2018 07:34:42 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>
+CC:     <linux-mmc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
+Subject: [PATCH] mmc: tegra: Force correct divider calculation on DDR50/52
+Date:   Mon, 16 Jul 2018 17:34:29 +0300
+Message-ID: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 07:34:05
- -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:200::6:90ed]
-In-Reply-To: <f619f0e9-b8b4-29fb-5ad6-7f5ebc3a4da8@arm.com>
-References: <20180715035342.11371-1-olof@lixom.net> <f619f0e9-b8b4-29fb-5ad6-7f5ebc3a4da8@arm.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Mon, 16 Jul 2018 07:34:05 -0700
-Message-ID: <CAOesGMjq=d3ZPLTq5qudx+EE+XC2-zSsA1ViheTwM7fnTtJh2Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: cpuinfo: Include cleartext implementer and part strings
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 2:17 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> Hi Olof,
->
-> On 15/07/18 04:53, Olof Johansson wrote:
->> There's some use in printing out what the implementer and part numbers
->> decode to for cases where they're known.
->>
->> I filled in the table based on public information; mostly from ARM TRMs
->> and other tools (and some of the SSBD tables in the kernel, etc).
->>
->> Apple IDs came from
->> https://github.com/apple/darwin-xnu/blob/master/osfmk/arm/cpuid.h
->>
->> Signed-off-by: Olof Johansson <olof@lixom.net>
->> ---
->>  arch/arm64/kernel/cpuinfo.c | 79 +++++++++++++++++++++++++++++++++++++++++++--
->>  1 file changed, 76 insertions(+), 3 deletions(-)
->
-> [...]
->
-> The same thing pops up every so often. And the answer is the same each time:
+Tegra SDHCI controllers require the SDHCI clock divider to be configured
+to divide the clock by two in DDR50/52 modes. Incorrectly configured
+clock divider results in corrupted data.
 
-Ever thought about why it pops up?
+Prevent the possibility of incorrectly calculating the divider value due
+to clock rate rounding or low parent clock frequency by not assigning
+host->max_clk to clk_get_rate() on tegra_sdhci_set_clock().
 
-> - it breaks an existing userspace ABI by changing the format of cpuinfo
+See the comments for further details.
 
-Most tools likely rely on a per-line format, and in this case they're
-likely interpreting the contents after the ':' as an integer. Adding
-something to the line might or might not break them, agreed.
+Fixes: a8e326a ("mmc: tegra: implement module external clock change")
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/mmc/host/sdhci-tegra.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-How about introducing a "CPU model" line similar to x86's cleartext one?
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index ddf00166..908b23e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -210,9 +210,24 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	if (!clock)
+ 		return sdhci_set_clock(host, clock);
+ 
++	/*
++	 * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI
++	 * divider to be configured to divided the host clock by two. The SDHCI
++	 * clock divider is calculated as part of sdhci_set_clock() by
++	 * sdhci_calc_clk(). The divider is calculated from host->max_clk and
++	 * the requested clock rate.
++	 *
++	 * By setting the host->max_clk to clock * 2 the divider calculation
++	 * will always result in the correct value for DDR50/52 modes,
++	 * regardless of clock rate rounding, which may happen if the value
++	 * from clk_get_rate() is used.
++	 */
+ 	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
+ 	clk_set_rate(pltfm_host->clk, host_clk);
+-	host->max_clk = clk_get_rate(pltfm_host->clk);
++	if (tegra_host->ddr_signaling)
++		host->max_clk = host_clk;
++	else
++		host->max_clk = clk_get_rate(pltfm_host->clk);
+ 
+ 	sdhci_set_clock(host, clock);
+ 
+-- 
+2.7.4
 
-> - it is unmaintainable in the long run
-
-False. Chances are you already need details more fine-grained than
-this for errata and quirks, we already do for SSBD. And if it lacks an
-entry it's not the end of the world.
-
-> - userspace already has this information by simply running "lscpu"
->
-> What has changed?
-
-What has changed is that ARM(64) is moving from a
-custom-kernel-custom-userspace world to one where you might be
-upreving kernels and userspace separately, and you might be using an
-older userspace with a newer machine and a newer kernel. Having to
-update lscpu is an extra step and extra friction to making it behave
-nicely.
-
-There's also a growing expectation of the system to behave more like
-x86, especially when it comes to trivial ways of detecting what kind
-of machine you are running on. On x86 it's been trivial to look at
-/proc/cpuinfo since it is provided by the platform there. Nobody wants
-to change their implementation from having to read a file to exec a
-program, dealing with errors, and parsing its output (sure, easier
-from scripts, but more awkward from real source).
-
-Having the information exported from the kernel is a reasonable way to
-do it. The other extreme is that the kernel should just ever have
-exported the raw MIDR value.
-
-
--Olof
