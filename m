@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA172ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D77EEECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0849206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0849206B7
+	by mail.kernel.org (Postfix) with ESMTP id 974A1206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974A1206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389022AbeGPIJZ (ORCPT
+        id S2389036AbeGPIJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47992 "EHLO
+        Mon, 16 Jul 2018 04:09:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIJY (ORCPT
+        with ESMTP id S1730161AbeGPIJ2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:24 -0400
+        Mon, 16 Jul 2018 04:09:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 519E0CA0;
-        Mon, 16 Jul 2018 07:43:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D80AC03;
+        Mon, 16 Jul 2018 07:43:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.9 30/32] PM / hibernate: Fix oops at snapshot_write()
-Date:   Mon, 16 Jul 2018 09:36:38 +0200
-Message-Id: <20180716073508.208481961@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 13/32] USB: serial: keyspan_pda: fix modem-status error handling
+Date:   Mon, 16 Jul 2018 09:36:21 +0200
+Message-Id: <20180716073505.993553231@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -52,38 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Johan Hovold <johan@kernel.org>
 
-commit fc14eebfc20854a38fd9f1d93a42b1783dad4d17 upstream.
+commit 01b3cdfca263a17554f7b249d20a247b2a751521 upstream.
 
-syzbot is reporting NULL pointer dereference at snapshot_write() [1].
-This is because data->handle is zero-cleared by ioctl(SNAPSHOT_FREE).
-Fix this by checking data_of(data->handle) != NULL before using it.
+Fix broken modem-status error handling which could lead to bits of slab
+data leaking to user space.
 
-[1] https://syzkaller.appspot.com/bug?id=828a3c71bd344a6de8b6a31233d51a72099f27fd
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 3b36a8fd6777 ("usb: fix uninitialized variable warning in keyspan_pda")
+Cc: stable <stable@vger.kernel.org>     # 2.6.27
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/power/user.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/usb/serial/keyspan_pda.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -186,6 +186,11 @@ static ssize_t snapshot_write(struct fil
- 		res = PAGE_SIZE - pg_offp;
- 	}
+--- a/drivers/usb/serial/keyspan_pda.c
++++ b/drivers/usb/serial/keyspan_pda.c
+@@ -373,8 +373,10 @@ static int keyspan_pda_get_modem_info(st
+ 			     3, /* get pins */
+ 			     USB_TYPE_VENDOR|USB_RECIP_INTERFACE|USB_DIR_IN,
+ 			     0, 0, data, 1, 2000);
+-	if (rc >= 0)
++	if (rc == 1)
+ 		*value = *data;
++	else if (rc >= 0)
++		rc = -EIO;
  
-+	if (!data_of(data->handle)) {
-+		res = -EINVAL;
-+		goto unlock;
-+	}
-+
- 	res = simple_write_to_buffer(data_of(data->handle), res, &pg_offp,
- 			buf, count);
- 	if (res > 0)
+ 	kfree(data);
+ 	return rc;
 
 
