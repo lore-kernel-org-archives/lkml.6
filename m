@@ -2,307 +2,105 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA10ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B69ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF485208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8DB1208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PyBGMxzP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GX2D+LnP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF485208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XMUPOWg+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DB1208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbeGPKiD (ORCPT
+        id S1731198AbeGPKiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:38:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47442 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730919AbeGPKiD (ORCPT
+        Mon, 16 Jul 2018 06:38:07 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34212 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729591AbeGPKiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:38:03 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B28D160B1E; Mon, 16 Jul 2018 10:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531735881;
-        bh=OdZI8JjSKQWv4qa/XyqSgLAJJbeZ8bU2n73iI00WRO4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PyBGMxzPvQhgc8NxmHjCtHmvajSM8RY5pHskhpVQ6Fd7HfbkkJ8njjP6NctC/HHZT
-         rlDEOqUIn6IZ1Uy6/UiEd/vAoUH77JFcHrFb9U8wS9oEWzXdMAr+lYQNHtkJWbqjD7
-         3qpD9IANSoTd01HHSWOTShLZN4HvBMHfRo/lhp/Y=
-Received: from [10.79.40.153] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3BE5960555;
-        Mon, 16 Jul 2018 10:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531735878;
-        bh=OdZI8JjSKQWv4qa/XyqSgLAJJbeZ8bU2n73iI00WRO4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GX2D+LnPIs9gbYO27WrhQxFsyOW2sMoIxGiHHy+8yL8lP50tO43EHOu7BV7Hh45po
-         OF4JrRTHmKrz8xiXNqXUjyHiuOm6lwSZvc6ghsKn9AXgwrUHsq07sr/M0wcCQ8tK4c
-         4aT7Vnpe7hEeXVCrS2KCxKTAhZ52h+/aFp8Fd+i4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3BE5960555
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v12 1/4] iommu/arm-smmu: Add pm_runtime/sleep ops
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
- <20180708173413.1965-2-vivek.gautam@codeaurora.org>
- <17407514.unFVTGoGrn@aspire.rjw.lan>
- <CAFp+6iHxJucfzJJeEvSToG4p2zADjDb9F0L8h053x-JKAy55mg@mail.gmail.com>
- <CAJZ5v0gbkdkx_+oHYiPz=SFdFCLm38hsi1TmJ2Jdc7j73TNtzg@mail.gmail.com>
- <CAAFQd5Cqd=J+_nqRc_sx=sq2ayxwSRMgygvffuHH9nC5R_LjdA@mail.gmail.com>
- <CAFp+6iFxiM0DDnRqUameH6XOYjgdAF8ysuXXAjkc8zsod-dVcQ@mail.gmail.com>
- <CAJZ5v0hq3bLUbXNsr_ig7D72td_wqRP063x1AseP85F5UWs8VA@mail.gmail.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <010cb56a-36e8-e729-1fe7-738048eb551d@codeaurora.org>
-Date:   Mon, 16 Jul 2018 15:41:12 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Mon, 16 Jul 2018 06:38:06 -0400
+Received: by mail-io0-f193.google.com with SMTP id l7-v6so37281354ioj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 03:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=IjNNlyuma/ODdInN8NdA/DfopR03FbEjTSacH9rTx4Q=;
+        b=XMUPOWg+Xm/8whsLtGQMpTabUbv11+uIQ21dncke2Eh2SoEh5G9cRgT5nurWup09e/
+         qnbXEOQUMgw+50eOCHg81wyp6yBG2wB2LMTFxRTeZ1zktgEAoB+ZDPLumoNl3vlpSw4H
+         f2gygv20jQvzk5+LQ4k3S43tW/TYqMcB75O8A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=IjNNlyuma/ODdInN8NdA/DfopR03FbEjTSacH9rTx4Q=;
+        b=AkkVkEmAo9FkaZ4/UTjbiAe36iAuYJEYMQcQUbVdhXRAcaRGR0ZraCVZl86F8tsr3E
+         R5DNTctR+0I4Idx0I5iR6kGs/kF0eQi8N0HY/27dP4EWY8cXoLigfzCA+kDDptXBQEyp
+         bZoRr5g7jL+Hn00ESnMU4VESwUBIT0ABWRYu5kXM30eiGxrNmul86cjxncXxhx8+iorB
+         dvnyc2wL3He1eg6g/dTjcFaC4dwEPPDR4+mopOsgJ9jLZ0dlvx5QArYp4b8gxgX0u9kq
+         euaM4vAzRyrbnU7Pb4bv6P5qW9YJ06CWTTe6xErHHlbvlRRUYqzRmFxgyZW653aWvJNX
+         wOCg==
+X-Gm-Message-State: AOUpUlFMy1CfMJQuLYxKp1DBbyKSOCCobeSNfEVJzeA6l7SGSG16kzXt
+        GjwfQXcY2mjEPP7MFIkBaANcAahGpVPpimVn/lICvQ==
+X-Google-Smtp-Source: AAOMgpc0gtjlegnDSV0bHijLD741yXX9VEE8aHbkjEigFXIybiE4FofhouGFJL84nWPUge0iQ07w31JVstLwji9b/Mg=
+X-Received: by 2002:a6b:c997:: with SMTP id z145-v6mr40392578iof.266.1531735885275;
+ Mon, 16 Jul 2018 03:11:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0hq3bLUbXNsr_ig7D72td_wqRP063x1AseP85F5UWs8VA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 03:11:24
+ -0700 (PDT)
+In-Reply-To: <20180712080725.14250-2-stefan@agner.ch>
+References: <20180712080725.14250-1-stefan@agner.ch> <20180712080725.14250-2-stefan@agner.ch>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 16 Jul 2018 12:11:24 +0200
+Message-ID: <CAPDyKFqyQ_6NQmaw2rTGEO6eR5GfFAf2aTqsJZVbU5MW49WN0w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mmc: sdhci-esdhc-imx: fix indent
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Haibo Chen <haibo.chen@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Rafael,
+On 12 July 2018 at 10:07, Stefan Agner <stefan@agner.ch> wrote:
+> Fix indent. This also makes disable/enable clock blocks look
+> alike.
+>
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
+Thanks, applied for next!
 
-On 7/16/2018 2:21 PM, Rafael J. Wysocki wrote:
-> On Thu, Jul 12, 2018 at 12:57 PM, Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
->> Hi,
->>
->>
->> On Wed, Jul 11, 2018 at 6:21 PM, Tomasz Figa <tfiga@chromium.org> wrote:
->>> On Wed, Jul 11, 2018 at 8:11 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>> On Wed, Jul 11, 2018 at 12:55 PM, Vivek Gautam
->>>> <vivek.gautam@codeaurora.org> wrote:
->>>>> Hi Rafael,
->>>>>
->>>>>
->>>>> On Wed, Jul 11, 2018 at 3:20 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->>>>>> On Sunday, July 8, 2018 7:34:10 PM CEST Vivek Gautam wrote:
->>>>>>> From: Sricharan R <sricharan@codeaurora.org>
->>>>>>>
->>>>>>> The smmu needs to be functional only when the respective
->>>>>>> master's using it are active. The device_link feature
->>>>>>> helps to track such functional dependencies, so that the
->>>>>>> iommu gets powered when the master device enables itself
->>>>>>> using pm_runtime. So by adapting the smmu driver for
->>>>>>> runtime pm, above said dependency can be addressed.
->>>>>>>
->>>>>>> This patch adds the pm runtime/sleep callbacks to the
->>>>>>> driver and also the functions to parse the smmu clocks
->>>>>>> from DT and enable them in resume/suspend.
->>>>>>>
->>>>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>>>>> Signed-off-by: Archit Taneja <architt@codeaurora.org>
->>>>>>> [vivek: Clock rework to request bulk of clocks]
->>>>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>>>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->>>>>>> ---
->>>>>>>
->>>>>>>   - No change since v11.
->>>>>>>
->>>>>>>   drivers/iommu/arm-smmu.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++--
->>>>>>>   1 file changed, 58 insertions(+), 2 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>>>>>> index f7a96bcf94a6..a01d0dde21dd 100644
->>>>>>> --- a/drivers/iommu/arm-smmu.c
->>>>>>> +++ b/drivers/iommu/arm-smmu.c
->>>>>>> @@ -48,6 +48,7 @@
->>>>>>>   #include <linux/of_iommu.h>
->>>>>>>   #include <linux/pci.h>
->>>>>>>   #include <linux/platform_device.h>
->>>>>>> +#include <linux/pm_runtime.h>
->>>>>>>   #include <linux/slab.h>
->>>>>>>   #include <linux/spinlock.h>
->>>>>>>
->>>>>>> @@ -205,6 +206,8 @@ struct arm_smmu_device {
->>>>>>>        u32                             num_global_irqs;
->>>>>>>        u32                             num_context_irqs;
->>>>>>>        unsigned int                    *irqs;
->>>>>>> +     struct clk_bulk_data            *clks;
->>>>>>> +     int                             num_clks;
->>>>>>>
->>>>>>>        u32                             cavium_id_base; /* Specific to Cavium */
->>>>>>>
->>>>>>> @@ -1897,10 +1900,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
->>>>>>>   struct arm_smmu_match_data {
->>>>>>>        enum arm_smmu_arch_version version;
->>>>>>>        enum arm_smmu_implementation model;
->>>>>>> +     const char * const *clks;
->>>>>>> +     int num_clks;
->>>>>>>   };
->>>>>>>
->>>>>>>   #define ARM_SMMU_MATCH_DATA(name, ver, imp)  \
->>>>>>> -static struct arm_smmu_match_data name = { .version = ver, .model = imp }
->>>>>>> +static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
->>>>>>>
->>>>>>>   ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
->>>>>>>   ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
->>>>>>> @@ -1919,6 +1924,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
->>>>>>>   };
->>>>>>>   MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
->>>>>>>
->>>>>>> +static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
->>>>>>> +                                const char * const *clks)
->>>>>>> +{
->>>>>>> +     int i;
->>>>>>> +
->>>>>>> +     if (smmu->num_clks < 1)
->>>>>>> +             return;
->>>>>>> +
->>>>>>> +     smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
->>>>>>> +                               sizeof(*smmu->clks), GFP_KERNEL);
->>>>>>> +     if (!smmu->clks)
->>>>>>> +             return;
->>>>>>> +
->>>>>>> +     for (i = 0; i < smmu->num_clks; i++)
->>>>>>> +             smmu->clks[i].id = clks[i];
->>>>>>> +}
->>>>>>> +
->>>>>>>   #ifdef CONFIG_ACPI
->>>>>>>   static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
->>>>>>>   {
->>>>>>> @@ -2001,6 +2023,9 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
->>>>>>>        data = of_device_get_match_data(dev);
->>>>>>>        smmu->version = data->version;
->>>>>>>        smmu->model = data->model;
->>>>>>> +     smmu->num_clks = data->num_clks;
->>>>>>> +
->>>>>>> +     arm_smmu_fill_clk_data(smmu, data->clks);
->>>>>>>
->>>>>>>        parse_driver_options(smmu);
->>>>>>>
->>>>>>> @@ -2099,6 +2124,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->>>>>>>                smmu->irqs[i] = irq;
->>>>>>>        }
->>>>>>>
->>>>>>> +     err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
->>>>>>> +     if (err)
->>>>>>> +             return err;
->>>>>>> +
->>>>>>> +     err = clk_bulk_prepare(smmu->num_clks, smmu->clks);
->>>>>>> +     if (err)
->>>>>>> +             return err;
->>>>>>> +
->>>>>>>        err = arm_smmu_device_cfg_probe(smmu);
->>>>>>>        if (err)
->>>>>>>                return err;
->>>>>>> @@ -2181,6 +2214,9 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
->>>>>>>
->>>>>>>        /* Turn the thing off */
->>>>>>>        writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
->>>>>>> +
->>>>>>> +     clk_bulk_unprepare(smmu->num_clks, smmu->clks);
->>>>>>> +
->>>>>>>        return 0;
->>>>>>>   }
->>>>>>>
->>>>>>> @@ -2197,7 +2233,27 @@ static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
->>>>>>>        return 0;
->>>>>>>   }
->>>>>>>
->>>>>>> -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
->>>>>>> +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
->>>>>>> +{
->>>>>>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
->>>>>>> +
->>>>>>> +     return clk_bulk_enable(smmu->num_clks, smmu->clks);
->>>>>>> +}
->>>>>>> +
->>>>>>> +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
->>>>>>> +{
->>>>>>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
->>>>>>> +
->>>>>>> +     clk_bulk_disable(smmu->num_clks, smmu->clks);
->>>>>>> +
->>>>>>> +     return 0;
->>>>>>> +}
->>>>>>> +
->>>>>>> +static const struct dev_pm_ops arm_smmu_pm_ops = {
->>>>>>> +     SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
->>>>>> This is suspicious.
->>>>>>
->>>>>> If you need a runtime suspend method, why do you think that it is not necessary
->>>>>> to suspend the device during system-wide transitions?
->>>>> Okay, so you suggest to put clock disabling in say arm_smmu_pm_suspend()?
->>>>> In that case the clocks have to be enabled in the resume path too.
->>>>>
->>>>> I remember Tomasz pointed to that we shouldn't need clock enable in resume
->>>>> path [1].
->>>>>
->>>>> [1] https://lkml.org/lkml/2018/3/15/60
->>> That was an answer for a different question. I don't remember
->>> suggesting having no suspend function.
->> My bad, apologies. You are right, we were discussing if we need any additional
->> handling of power for arm_smmu_device_reset() in arm_smmu_pm_resume().
->>
->>> Although, given the PM
->>> subsystem internals, the suspend function wouldn't be called on SMMU
->>> implementation needed power control (since they would have runtime PM
->>> enabled) and on others, it would be called but do nothing (since no
->>> clocks).
->>>
->>>> Honestly, I just don't know. :-)
->>>>
->>>> It just looks odd the way it is done.  I think the clock should be
->>>> gated during system-wide suspend too, because the system can spend
->>>> much more time in a sleep state than in the working state, on average.
->>>>
->>>> And note that you cannot rely on runtime PM to always do it for you,
->>>> because it may be disabled at a client device or even blocked by user
->>>> space via power/control in sysfs and that shouldn't matter for
->>>> system-wide PM.
->>> User space blocking runtime PM through sysfs is a good point. I'm not
->>> 100% sure how the PM subsystem deals with that in case of system-wide
->>> suspend. I guess for consistency and safety, we should have the
->>> suspend callback.
->> Will add the following suspend callback (same as arm_smmu_runtime_suspend):
->>
->>   static int __maybe_unused arm_smmu_pm_suspend(struct device *dev)
->>   {
->>           struct arm_smmu_device *smmu = dev_get_drvdata(dev);
->>
->>           clk_bulk_disable(smmu->num_clks, smmu->clks);
->>
->>           return 0;
->>   }
-> I think you also need to check if the clock has already been disabled
-> by runtime PM.  Otherwise you may end up disabling it twice in a row.
+Kind regards
+Uffe
 
-Should I rather call a pm_runtime_put() in suspend callback? Or an 
-expanded form
-something similar to:
-https://elixir.bootlin.com/linux/v4.18-rc5/source/drivers/slimbus/qcom-ctrl.c#L695
-
-
-Best regards
-Vivek
+> ---
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index acacd8481473..aa48f4b2541a 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -761,7 +761,7 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
+>         if (esdhc_is_usdhc(imx_data)) {
+>                 val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
+>                 writel(val | ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
+> -               host->ioaddr + ESDHC_VENDOR_SPEC);
+> +                       host->ioaddr + ESDHC_VENDOR_SPEC);
+>         }
+>
+>         mdelay(1);
+> --
+> 2.18.0
+>
