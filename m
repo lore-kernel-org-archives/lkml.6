@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F92ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FD6ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92F8C2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:45:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F8C2075B
+	by mail.kernel.org (Postfix) with ESMTP id 2C6522075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:46:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C6522075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389703AbeGPIL5 (ORCPT
+        id S2389714AbeGPIMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:11:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50926 "EHLO
+        Mon, 16 Jul 2018 04:12:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50972 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388975AbeGPIL5 (ORCPT
+        with ESMTP id S2388975AbeGPIMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:11:57 -0400
+        Mon, 16 Jul 2018 04:12:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 329ACCE8;
-        Mon, 16 Jul 2018 07:45:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C42ECEA;
+        Mon, 16 Jul 2018 07:45:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Borislav Petkov <bp@suse.de>,
         Andy Lutomirski <luto@amacapital.net>,
         Borislav Petkov <bp@alien8.de>,
         Brian Gerst <brgerst@gmail.com>,
         Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,9 +43,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 23/43] x86/cpufeature: Replace the old static_cpu_has() with safe variant
-Date:   Mon, 16 Jul 2018 09:36:28 +0200
-Message-Id: <20180716073514.369909233@linuxfoundation.org>
+Subject: [PATCH 4.4 24/43] x86/cpufeature: Get rid of the non-asm goto variant
+Date:   Mon, 16 Jul 2018 09:36:29 +0200
+Message-Id: <20180716073514.490563926@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -62,35 +62,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Borislav Petkov <bp@alien8.de>
 
-commit bc696ca05f5a8927329ec276a892341e006b00ba upstream
+commit a362bf9f5e7dd659b96d01382da7b855f4e5a7a1 upstream
 
-So the old one didn't work properly before alternatives had run.
-And it was supposed to provide an optimized JMP because the
-assumption was that the offset it is jumping to is within a
-signed byte and thus a two-byte JMP.
+I can simply quote hpa from the mail:
 
-So I did an x86_64 allyesconfig build and dumped all possible
-sites where static_cpu_has() was used. The optimization amounted
-to all in all 12(!) places where static_cpu_has() had generated
-a 2-byte JMP. Which has saved us a whopping 36 bytes!
+  "Get rid of the non-asm goto variant and just fall back to
+   dynamic if asm goto is unavailable. It doesn't make any sense,
+   really, if it is supposed to be safe, and by now the asm
+   goto-capable gcc is in more wide use. (Originally the gcc 3.x
+   fallback to pure dynamic didn't exist, either.)"
 
-This clearly is not worth the trouble so we can remove it. The
-only place where the optimization might count - in __switch_to()
-- we will handle differently. But that's not subject of this
-patch.
+Booy, am I lazy.
 
+Cleanup the whole CC_HAVE_ASM_GOTO ifdeffery too, while at it.
+
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
 Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1453842730-28463-6-git-send-email-bp@alien8.de
+Link: http://lkml.kernel.org/r/20160127084325.GB30712@pd.tnic
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
@@ -99,112 +96,45 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/Kconfig.debug               |   10 ---
- arch/x86/include/asm/cpufeature.h    |  100 ++---------------------------------
- arch/x86/include/asm/fpu/internal.h  |   12 ++--
- arch/x86/kernel/apic/apic_numachip.c |    4 -
- arch/x86/kernel/cpu/common.c         |   12 ----
- arch/x86/kernel/vm86_32.c            |    2 
- fs/btrfs/disk-io.c                   |    2 
- 7 files changed, 19 insertions(+), 123 deletions(-)
+ arch/x86/include/asm/cpufeature.h |   49 +++-----------------------------------
+ 1 file changed, 5 insertions(+), 44 deletions(-)
 
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -367,16 +367,6 @@ config DEBUG_IMR_SELFTEST
- 
- 	  If unsure say N here.
- 
--config X86_DEBUG_STATIC_CPU_HAS
--	bool "Debug alternatives"
--	depends on DEBUG_KERNEL
--	---help---
--	  This option causes additional code to be generated which
--	  fails if static_cpu_has() is used before alternatives have
--	  run.
--
--	  If unsure, say N.
--
- config X86_DEBUG_FPU
- 	bool "Debug the x86 FPU code"
- 	depends on DEBUG_KERNEL
 --- a/arch/x86/include/asm/cpufeature.h
 +++ b/arch/x86/include/asm/cpufeature.h
-@@ -127,103 +127,19 @@ extern const char * const x86_bug_flags[
- #define cpu_has_osxsave		boot_cpu_has(X86_FEATURE_OSXSAVE)
- #define cpu_has_hypervisor	boot_cpu_has(X86_FEATURE_HYPERVISOR)
- /*
-- * Do not add any more of those clumsy macros - use static_cpu_has_safe() for
-+ * Do not add any more of those clumsy macros - use static_cpu_has() for
+@@ -131,17 +131,16 @@ extern const char * const x86_bug_flags[
   * fast paths and boot_cpu_has() otherwise!
   */
  
- #if __GNUC__ >= 4 && defined(CONFIG_X86_FAST_FEATURE_TESTS)
--extern void warn_pre_alternatives(void);
--extern bool __static_cpu_has_safe(u16 bit);
-+extern bool __static_cpu_has(u16 bit);
+-#if __GNUC__ >= 4 && defined(CONFIG_X86_FAST_FEATURE_TESTS)
++#if defined(CC_HAVE_ASM_GOTO) && defined(CONFIG_X86_FAST_FEATURE_TESTS)
+ extern bool __static_cpu_has(u16 bit);
  
  /*
   * Static testing of CPU features.  Used the same as boot_cpu_has().
-  * These are only valid after alternatives have run, but will statically
-  * patch the target code for additional performance.
+- * These are only valid after alternatives have run, but will statically
+- * patch the target code for additional performance.
++ * These will statically patch the target code for additional
++ * performance.
   */
--static __always_inline __pure bool __static_cpu_has(u16 bit)
--{
+ static __always_inline __pure bool _static_cpu_has(u16 bit)
+ {
 -#ifdef CC_HAVE_ASM_GOTO
--
--#ifdef CONFIG_X86_DEBUG_STATIC_CPU_HAS
--
--		/*
--		 * Catch too early usage of this before alternatives
--		 * have run.
--		 */
--		asm_volatile_goto("1: jmp %l[t_warn]\n"
--			 "2:\n"
--			 ".section .altinstructions,\"a\"\n"
--			 " .long 1b - .\n"
--			 " .long 0\n"		/* no replacement */
--			 " .word %P0\n"		/* 1: do replace */
--			 " .byte 2b - 1b\n"	/* source len */
--			 " .byte 0\n"		/* replacement len */
--			 " .byte 0\n"		/* pad len */
--			 ".previous\n"
--			 /* skipping size check since replacement size = 0 */
--			 : : "i" (X86_FEATURE_ALWAYS) : : t_warn);
--
--#endif
--
--		asm_volatile_goto("1: jmp %l[t_no]\n"
--			 "2:\n"
--			 ".section .altinstructions,\"a\"\n"
--			 " .long 1b - .\n"
--			 " .long 0\n"		/* no replacement */
--			 " .word %P0\n"		/* feature bit */
--			 " .byte 2b - 1b\n"	/* source len */
--			 " .byte 0\n"		/* replacement len */
--			 " .byte 0\n"		/* pad len */
--			 ".previous\n"
--			 /* skipping size check since replacement size = 0 */
--			 : : "i" (bit) : : t_no);
--		return true;
--	t_no:
--		return false;
--
--#ifdef CONFIG_X86_DEBUG_STATIC_CPU_HAS
--	t_warn:
--		warn_pre_alternatives();
--		return false;
--#endif
--
--#else /* CC_HAVE_ASM_GOTO */
--
+ 		asm_volatile_goto("1: jmp %l[t_dynamic]\n"
+ 			 "2:\n"
+ 			 ".skip -(((5f-4f) - (2b-1b)) > 0) * "
+@@ -174,45 +173,6 @@ static __always_inline __pure bool _stat
+ 		return false;
+ 	t_dynamic:
+ 		return __static_cpu_has(bit);
+-#else
 -		u8 flag;
 -		/* Open-coded due to __stringify() in ALTERNATIVE() */
--		asm volatile("1: movb $0,%0\n"
+-		asm volatile("1: movb $2,%0\n"
 -			     "2:\n"
 -			     ".section .altinstructions,\"a\"\n"
--			     " .long 1b - .\n"
--			     " .long 3f - .\n"
--			     " .word %P1\n"		/* feature bit */
+-			     " .long 1b - .\n"		/* src offset */
+-			     " .long 3f - .\n"		/* repl offset */
+-			     " .word %P2\n"		/* always replace */
 -			     " .byte 2b - 1b\n"		/* source len */
 -			     " .byte 4f - 3f\n"		/* replacement len */
 -			     " .byte 0\n"		/* pad len */
@@ -213,187 +143,40 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 -			     " .byte 0xff + (4f-3f) - (2b-1b)\n" /* size check */
 -			     ".previous\n"
 -			     ".section .altinstr_replacement,\"ax\"\n"
--			     "3: movb $1,%0\n"
+-			     "3: movb $0,%0\n"
 -			     "4:\n"
 -			     ".previous\n"
--			     : "=qm" (flag) : "i" (bit));
--		return flag;
--
+-			     ".section .altinstructions,\"a\"\n"
+-			     " .long 1b - .\n"		/* src offset */
+-			     " .long 5f - .\n"		/* repl offset */
+-			     " .word %P1\n"		/* feature bit */
+-			     " .byte 4b - 3b\n"		/* src len */
+-			     " .byte 6f - 5f\n"		/* repl len */
+-			     " .byte 0\n"		/* pad len */
+-			     ".previous\n"
+-			     ".section .discard,\"aw\",@progbits\n"
+-			     " .byte 0xff + (6f-5f) - (4b-3b)\n" /* size check */
+-			     ".previous\n"
+-			     ".section .altinstr_replacement,\"ax\"\n"
+-			     "5: movb $1,%0\n"
+-			     "6:\n"
+-			     ".previous\n"
+-			     : "=qm" (flag)
+-			     : "i" (bit), "i" (X86_FEATURE_ALWAYS));
+-		return (flag == 2 ? __static_cpu_has(bit) : flag);
 -#endif /* CC_HAVE_ASM_GOTO */
--}
--
--#define static_cpu_has(bit)					\
--(								\
--	__builtin_constant_p(boot_cpu_has(bit)) ?		\
--		boot_cpu_has(bit) :				\
--	__builtin_constant_p(bit) ?				\
--		__static_cpu_has(bit) :				\
--		boot_cpu_has(bit)				\
--)
--
--static __always_inline __pure bool _static_cpu_has_safe(u16 bit)
-+static __always_inline __pure bool _static_cpu_has(u16 bit)
- {
- #ifdef CC_HAVE_ASM_GOTO
- 		asm_volatile_goto("1: jmp %l[t_dynamic]\n"
-@@ -257,7 +173,7 @@ static __always_inline __pure bool _stat
- 	t_no:
- 		return false;
- 	t_dynamic:
--		return __static_cpu_has_safe(bit);
-+		return __static_cpu_has(bit);
- #else
- 		u8 flag;
- 		/* Open-coded due to __stringify() in ALTERNATIVE() */
-@@ -295,22 +211,21 @@ static __always_inline __pure bool _stat
- 			     ".previous\n"
- 			     : "=qm" (flag)
- 			     : "i" (bit), "i" (X86_FEATURE_ALWAYS));
--		return (flag == 2 ? __static_cpu_has_safe(bit) : flag);
-+		return (flag == 2 ? __static_cpu_has(bit) : flag);
- #endif /* CC_HAVE_ASM_GOTO */
  }
  
--#define static_cpu_has_safe(bit)				\
-+#define static_cpu_has(bit)					\
- (								\
- 	__builtin_constant_p(boot_cpu_has(bit)) ?		\
- 		boot_cpu_has(bit) :				\
--		_static_cpu_has_safe(bit)			\
-+		_static_cpu_has(bit)				\
+ #define static_cpu_has(bit)					\
+@@ -223,7 +183,8 @@ static __always_inline __pure bool _stat
  )
  #else
  /*
-  * gcc 3.x is too stupid to do the static test; fall back to dynamic.
+- * gcc 3.x is too stupid to do the static test; fall back to dynamic.
++ * Fall back to dynamic for gcc versions which don't support asm goto. Should be
++ * a minority now anyway.
   */
  #define static_cpu_has(bit)		boot_cpu_has(bit)
--#define static_cpu_has_safe(bit)	boot_cpu_has(bit)
  #endif
- 
- #define cpu_has_bug(c, bit)		cpu_has(c, (bit))
-@@ -318,7 +233,6 @@ static __always_inline __pure bool _stat
- #define clear_cpu_bug(c, bit)		clear_cpu_cap(c, (bit))
- 
- #define static_cpu_has_bug(bit)		static_cpu_has((bit))
--#define static_cpu_has_bug_safe(bit)	static_cpu_has_safe((bit))
- #define boot_cpu_has_bug(bit)		cpu_has_bug(&boot_cpu_data, (bit))
- 
- #define MAX_CPU_FEATURES		(NCAPINTS * 32)
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -64,17 +64,17 @@ static __always_inline __pure bool use_e
- 
- static __always_inline __pure bool use_xsaveopt(void)
- {
--	return static_cpu_has_safe(X86_FEATURE_XSAVEOPT);
-+	return static_cpu_has(X86_FEATURE_XSAVEOPT);
- }
- 
- static __always_inline __pure bool use_xsave(void)
- {
--	return static_cpu_has_safe(X86_FEATURE_XSAVE);
-+	return static_cpu_has(X86_FEATURE_XSAVE);
- }
- 
- static __always_inline __pure bool use_fxsr(void)
- {
--	return static_cpu_has_safe(X86_FEATURE_FXSR);
-+	return static_cpu_has(X86_FEATURE_FXSR);
- }
- 
- /*
-@@ -301,7 +301,7 @@ static inline void copy_xregs_to_kernel_
- 
- 	WARN_ON(system_state != SYSTEM_BOOTING);
- 
--	if (static_cpu_has_safe(X86_FEATURE_XSAVES))
-+	if (static_cpu_has(X86_FEATURE_XSAVES))
- 		XSTATE_OP(XSAVES, xstate, lmask, hmask, err);
- 	else
- 		XSTATE_OP(XSAVE, xstate, lmask, hmask, err);
-@@ -323,7 +323,7 @@ static inline void copy_kernel_to_xregs_
- 
- 	WARN_ON(system_state != SYSTEM_BOOTING);
- 
--	if (static_cpu_has_safe(X86_FEATURE_XSAVES))
-+	if (static_cpu_has(X86_FEATURE_XSAVES))
- 		XSTATE_OP(XRSTORS, xstate, lmask, hmask, err);
- 	else
- 		XSTATE_OP(XRSTOR, xstate, lmask, hmask, err);
-@@ -461,7 +461,7 @@ static inline void copy_kernel_to_fpregs
- 	 * pending. Clear the x87 state here by setting it to fixed values.
- 	 * "m" is a random variable that should be in L1.
- 	 */
--	if (unlikely(static_cpu_has_bug_safe(X86_BUG_FXSAVE_LEAK))) {
-+	if (unlikely(static_cpu_has_bug(X86_BUG_FXSAVE_LEAK))) {
- 		asm volatile(
- 			"fnclex\n\t"
- 			"emms\n\t"
---- a/arch/x86/kernel/apic/apic_numachip.c
-+++ b/arch/x86/kernel/apic/apic_numachip.c
-@@ -30,7 +30,7 @@ static unsigned int numachip1_get_apic_i
- 	unsigned long value;
- 	unsigned int id = (x >> 24) & 0xff;
- 
--	if (static_cpu_has_safe(X86_FEATURE_NODEID_MSR)) {
-+	if (static_cpu_has(X86_FEATURE_NODEID_MSR)) {
- 		rdmsrl(MSR_FAM10H_NODE_ID, value);
- 		id |= (value << 2) & 0xff00;
- 	}
-@@ -178,7 +178,7 @@ static void fixup_cpu_id(struct cpuinfo_
- 	this_cpu_write(cpu_llc_id, node);
- 
- 	/* Account for nodes per socket in multi-core-module processors */
--	if (static_cpu_has_safe(X86_FEATURE_NODEID_MSR)) {
-+	if (static_cpu_has(X86_FEATURE_NODEID_MSR)) {
- 		rdmsrl(MSR_FAM10H_NODE_ID, val);
- 		nodes = ((val >> 3) & 7) + 1;
- 	}
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1576,19 +1576,11 @@ void cpu_init(void)
- }
- #endif
- 
--#ifdef CONFIG_X86_DEBUG_STATIC_CPU_HAS
--void warn_pre_alternatives(void)
--{
--	WARN(1, "You're using static_cpu_has before alternatives have run!\n");
--}
--EXPORT_SYMBOL_GPL(warn_pre_alternatives);
--#endif
--
--inline bool __static_cpu_has_safe(u16 bit)
-+inline bool __static_cpu_has(u16 bit)
- {
- 	return boot_cpu_has(bit);
- }
--EXPORT_SYMBOL_GPL(__static_cpu_has_safe);
-+EXPORT_SYMBOL_GPL(__static_cpu_has);
- 
- static void bsp_resume(void)
- {
---- a/arch/x86/kernel/vm86_32.c
-+++ b/arch/x86/kernel/vm86_32.c
-@@ -358,7 +358,7 @@ static long do_sys_vm86(struct vm86plus_
- 	/* make room for real-mode segments */
- 	tsk->thread.sp0 += 16;
- 
--	if (static_cpu_has_safe(X86_FEATURE_SEP))
-+	if (static_cpu_has(X86_FEATURE_SEP))
- 		tsk->thread.sysenter_cs = 0;
- 
- 	load_sp0(tss, &tsk->thread);
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -923,7 +923,7 @@ static int check_async_write(struct inod
- 	if (bio_flags & EXTENT_BIO_TREE_LOG)
- 		return 0;
- #ifdef CONFIG_X86
--	if (static_cpu_has_safe(X86_FEATURE_XMM4_2))
-+	if (static_cpu_has(X86_FEATURE_XMM4_2))
- 		return 0;
- #endif
- 	return 1;
 
 
