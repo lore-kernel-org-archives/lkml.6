@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B6FECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291B7ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E756208FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E756208FC
+	by mail.kernel.org (Postfix) with ESMTP id D33D020864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33D020864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732150AbeGPIER (ORCPT
+        id S1732166AbeGPIEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46870 "EHLO
+        Mon, 16 Jul 2018 04:04:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46882 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729883AbeGPIEP (ORCPT
+        with ESMTP id S1729883AbeGPIES (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:15 -0400
+        Mon, 16 Jul 2018 04:04:18 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20D47CA4;
-        Mon, 16 Jul 2018 07:38:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 80366CA0;
+        Mon, 16 Jul 2018 07:38:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kamenee Arumugam <kamenee.arumugam@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.17 45/67] IB/hfi1: Fix incorrect mixing of ERR_PTR and NULL return values
-Date:   Mon, 16 Jul 2018 09:35:14 +0200
-Message-Id: <20180716073450.280022308@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 31/67] Fix up non-directory creation in SGID directories
+Date:   Mon, 16 Jul 2018 09:35:00 +0200
+Message-Id: <20180716073448.068935535@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -54,120 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit b697d7d8c741f27b728a878fc55852b06d0f6f5e upstream.
+commit 0fa3ecd87848c9c93c2c828ef4c3a8ca36ce46c7 upstream.
 
-The __get_txreq() function can return a pointer, ERR_PTR(-EBUSY), or NULL.
-All of the relevant call sites look for IS_ERR, so the NULL return would
-lead to a NULL pointer exception.
+sgid directories have special semantics, making newly created files in
+the directory belong to the group of the directory, and newly created
+subdirectories will also become sgid.  This is historically used for
+group-shared directories.
 
-Do not use the ERR_PTR mechanism for this function.
+But group directories writable by non-group members should not imply
+that such non-group members can magically join the group, so make sure
+to clear the sgid bit on non-directories for non-members (but remember
+that sgid without group execute means "mandatory locking", just to
+confuse things even more).
 
-Update all call sites to handle the return value correctly.
-
-Clean up error paths to reflect return value.
-
-Fixes: 45842abbb292 ("staging/rdma/hfi1: move txreq header code")
-Cc: <stable@vger.kernel.org> # 4.9.x+
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Kamenee Arumugam <kamenee.arumugam@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/rc.c          |    2 +-
- drivers/infiniband/hw/hfi1/uc.c          |    4 ++--
- drivers/infiniband/hw/hfi1/ud.c          |    4 ++--
- drivers/infiniband/hw/hfi1/verbs_txreq.c |    4 ++--
- drivers/infiniband/hw/hfi1/verbs_txreq.h |    4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+ fs/inode.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/infiniband/hw/hfi1/rc.c
-+++ b/drivers/infiniband/hw/hfi1/rc.c
-@@ -271,7 +271,7 @@ int hfi1_make_rc_req(struct rvt_qp *qp,
- 
- 	lockdep_assert_held(&qp->s_lock);
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
- 
- 	if (priv->hdr_type == HFI1_PKT_TYPE_9B) {
---- a/drivers/infiniband/hw/hfi1/uc.c
-+++ b/drivers/infiniband/hw/hfi1/uc.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2015, 2016 Intel Corporation.
-+ * Copyright(c) 2015 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -72,7 +72,7 @@ int hfi1_make_uc_req(struct rvt_qp *qp,
- 	int middle = 0;
- 
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
- 
- 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_SEND_OK)) {
---- a/drivers/infiniband/hw/hfi1/ud.c
-+++ b/drivers/infiniband/hw/hfi1/ud.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2015, 2016 Intel Corporation.
-+ * Copyright(c) 2015 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -482,7 +482,7 @@ int hfi1_make_ud_req(struct rvt_qp *qp,
- 	u32 lid;
- 
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
- 
- 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_NEXT_SEND_OK)) {
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.c
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2016 - 2017 Intel Corporation.
-+ * Copyright(c) 2016 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -94,7 +94,7 @@ struct verbs_txreq *__get_txreq(struct h
- 				struct rvt_qp *qp)
- 	__must_hold(&qp->s_lock)
- {
--	struct verbs_txreq *tx = ERR_PTR(-EBUSY);
-+	struct verbs_txreq *tx = NULL;
- 
- 	write_seqlock(&dev->txwait_lock);
- 	if (ib_rvt_state_ops[qp->state] & RVT_PROCESS_RECV_OK) {
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.h
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2016 Intel Corporation.
-+ * Copyright(c) 2016 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -83,7 +83,7 @@ static inline struct verbs_txreq *get_tx
- 	if (unlikely(!tx)) {
- 		/* call slow path to get the lock */
- 		tx = __get_txreq(dev, qp);
--		if (IS_ERR(tx))
-+		if (!tx)
- 			return tx;
- 	}
- 	tx->qp = qp;
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2013,8 +2013,14 @@ void inode_init_owner(struct inode *inod
+ 	inode->i_uid = current_fsuid();
+ 	if (dir && dir->i_mode & S_ISGID) {
+ 		inode->i_gid = dir->i_gid;
++
++		/* Directories are special, and always inherit S_ISGID */
+ 		if (S_ISDIR(mode))
+ 			mode |= S_ISGID;
++		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
++			 !in_group_p(inode->i_gid) &&
++			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
++			mode &= ~S_ISGID;
+ 	} else
+ 		inode->i_gid = current_fsgid();
+ 	inode->i_mode = mode;
 
 
