@@ -6,33 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0C9ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AF4ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD4D20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AD4D20864
+	by mail.kernel.org (Postfix) with ESMTP id 4C25420864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C25420864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732036AbeGPID4 (ORCPT
+        id S1732057AbeGPID6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:03:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46792 "EHLO
+        Mon, 16 Jul 2018 04:03:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46802 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeGPIDz (ORCPT
+        with ESMTP id S1728460AbeGPID6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:03:55 -0400
+        Mon, 16 Jul 2018 04:03:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3098ACA0;
-        Mon, 16 Jul 2018 07:37:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB092C03;
+        Mon, 16 Jul 2018 07:37:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH 4.17 30/67] xhci: xhci-mem: off by one in xhci_stream_id_to_ring()
-Date:   Mon, 16 Jul 2018 09:34:59 +0200
-Message-Id: <20180716073447.900624911@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        syzbot <syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Oscar Salvador <osalvador@suse.de>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 39/67] mm: do not bug_on on incorrect length in __mm_populate()
+Date:   Mon, 16 Jul 2018 09:35:08 +0200
+Message-Id: <20180716073449.337211671@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -49,32 +61,148 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 313db3d6488bb03b61b99de9dbca061f1fd838e1 upstream.
+commit bb177a732c4369bb58a1fe1df8f552b6f0f7db5f upstream.
 
-The > should be >= here so that we don't read one element beyond the end
-of the ep->stream_info->stream_rings[] array.
+syzbot has noticed that a specially crafted library can easily hit
+VM_BUG_ON in __mm_populate
 
-Fixes: e9df17eb1408 ("USB: xhci: Correct assumptions about number of rings per endpoint.")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: stable <stable@vger.kernel.org>
+  kernel BUG at mm/gup.c:1242!
+  invalid opcode: 0000 [#1] SMP
+  CPU: 2 PID: 9667 Comm: a.out Not tainted 4.18.0-rc3 #644
+  Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+  RIP: 0010:__mm_populate+0x1e2/0x1f0
+  Code: 55 d0 65 48 33 14 25 28 00 00 00 89 d8 75 21 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 18 f1 ff 0f 0b e8 6e 18 f1 ff <0f> 0b 31 db eb c9 e8 93 06 e0 ff 0f 1f 00 55 48 89 e5 53 48 89 fb
+  Call Trace:
+     vm_brk_flags+0xc3/0x100
+     vm_brk+0x1f/0x30
+     load_elf_library+0x281/0x2e0
+     __ia32_sys_uselib+0x170/0x1e0
+     do_fast_syscall_32+0xca/0x420
+     entry_SYSENTER_compat+0x70/0x7f
+
+The reason is that the length of the new brk is not page aligned when we
+try to populate the it.  There is no reason to bug on that though.
+do_brk_flags already aligns the length properly so the mapping is
+expanded as it should.  All we need is to tell mm_populate about it.
+Besides that there is absolutely no reason to to bug_on in the first
+place.  The worst thing that could happen is that the last page wouldn't
+get populated and that is far from putting system into an inconsistent
+state.
+
+Fix the issue by moving the length sanitization code from do_brk_flags
+up to vm_brk_flags.  The only other caller of do_brk_flags is brk
+syscall entry and it makes sure to provide the proper length so t here
+is no need for sanitation and so we can use do_brk_flags without it.
+
+Also remove the bogus BUG_ONs.
+
+[osalvador@techadventures.net: fix up vm_brk_flags s@request@len@]
+Link: http://lkml.kernel.org/r/20180706090217.GI32658@dhcp22.suse.cz
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reported-by: syzbot <syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com>
+Tested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: "Huang, Ying" <ying.huang@intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-mem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/gup.c  |    2 --
+ mm/mmap.c |   29 ++++++++++++-----------------
+ 2 files changed, 12 insertions(+), 19 deletions(-)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -591,7 +591,7 @@ struct xhci_ring *xhci_stream_id_to_ring
- 	if (!ep->stream_info)
- 		return NULL;
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1222,8 +1222,6 @@ int __mm_populate(unsigned long start, u
+ 	int locked = 0;
+ 	long ret = 0;
  
--	if (stream_id > ep->stream_info->num_streams)
-+	if (stream_id >= ep->stream_info->num_streams)
- 		return NULL;
- 	return ep->stream_info->stream_rings[stream_id];
+-	VM_BUG_ON(start & ~PAGE_MASK);
+-	VM_BUG_ON(len != PAGE_ALIGN(len));
+ 	end = start + len;
+ 
+ 	for (nstart = start; nstart < end; nstart = nend) {
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -186,8 +186,8 @@ static struct vm_area_struct *remove_vma
+ 	return next;
  }
+ 
+-static int do_brk(unsigned long addr, unsigned long len, struct list_head *uf);
+-
++static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long flags,
++		struct list_head *uf);
+ SYSCALL_DEFINE1(brk, unsigned long, brk)
+ {
+ 	unsigned long retval;
+@@ -245,7 +245,7 @@ SYSCALL_DEFINE1(brk, unsigned long, brk)
+ 		goto out;
+ 
+ 	/* Ok, looks good - let it rip. */
+-	if (do_brk(oldbrk, newbrk-oldbrk, &uf) < 0)
++	if (do_brk_flags(oldbrk, newbrk-oldbrk, 0, &uf) < 0)
+ 		goto out;
+ 
+ set_brk:
+@@ -2929,21 +2929,14 @@ static inline void verify_mm_writelocked
+  *  anonymous maps.  eventually we may be able to do some
+  *  brk-specific accounting here.
+  */
+-static int do_brk_flags(unsigned long addr, unsigned long request, unsigned long flags, struct list_head *uf)
++static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long flags, struct list_head *uf)
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma, *prev;
+-	unsigned long len;
+ 	struct rb_node **rb_link, *rb_parent;
+ 	pgoff_t pgoff = addr >> PAGE_SHIFT;
+ 	int error;
+ 
+-	len = PAGE_ALIGN(request);
+-	if (len < request)
+-		return -ENOMEM;
+-	if (!len)
+-		return 0;
+-
+ 	/* Until we need other flags, refuse anything except VM_EXEC. */
+ 	if ((flags & (~VM_EXEC)) != 0)
+ 		return -EINVAL;
+@@ -3015,18 +3008,20 @@ out:
+ 	return 0;
+ }
+ 
+-static int do_brk(unsigned long addr, unsigned long len, struct list_head *uf)
+-{
+-	return do_brk_flags(addr, len, 0, uf);
+-}
+-
+-int vm_brk_flags(unsigned long addr, unsigned long len, unsigned long flags)
++int vm_brk_flags(unsigned long addr, unsigned long request, unsigned long flags)
+ {
+ 	struct mm_struct *mm = current->mm;
++	unsigned long len;
+ 	int ret;
+ 	bool populate;
+ 	LIST_HEAD(uf);
+ 
++	len = PAGE_ALIGN(request);
++	if (len < request)
++		return -ENOMEM;
++	if (!len)
++		return 0;
++
+ 	if (down_write_killable(&mm->mmap_sem))
+ 		return -EINTR;
+ 
 
 
