@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72051ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DC7ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 362C820864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:00:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 362C820864
+	by mail.kernel.org (Postfix) with ESMTP id DE7FE20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:00:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7FE20864
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbeGPH0H (ORCPT
+        id S1728947AbeGPH0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 03:26:07 -0400
+        Mon, 16 Jul 2018 03:26:10 -0400
 Received: from mga14.intel.com ([192.55.52.115]:45301 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727540AbeGPH0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 03:26:07 -0400
+        id S1727540AbeGPH0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 03:26:08 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 00:00:13 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 00:00:15 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,360,1526367600"; 
-   d="scan'208";a="72647236"
+   d="scan'208";a="72647248"
 Received: from allen-box.sh.intel.com ([10.239.48.172])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Jul 2018 00:00:12 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 16 Jul 2018 00:00:14 -0700
 From:   Lu Baolu <baolu.lu@linux.intel.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         David Woodhouse <dwmw2@infradead.org>
@@ -38,104 +38,184 @@ Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
         jacob.jun.pan@intel.com, kevin.tian@intel.com, yi.l.liu@intel.com,
         yi.y.sun@intel.com, peterx@redhat.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 00/10] iommu/vt-d: Add scalable mode support
-Date:   Mon, 16 Jul 2018 14:49:43 +0800
-Message-Id: <1531723793-14607-1-git-send-email-baolu.lu@linux.intel.com>
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH 01/10] iommu/vt-d: Enumerate the scalable mode capability
+Date:   Mon, 16 Jul 2018 14:49:44 +0800
+Message-Id: <1531723793-14607-2-git-send-email-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531723793-14607-1-git-send-email-baolu.lu@linux.intel.com>
+References: <1531723793-14607-1-git-send-email-baolu.lu@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The Intel vt-d spec rev3.0 introduces a new translation
+mode called scalable mode, which enables PASID-granular
+translations for first level, second level, nested and
+pass-through modes. At the same time, the previous
+Extended Context (ECS) mode is deprecated (no production
+ever implements ECS).
 
-Intel vt-d rev3.0 [1] introduces a new translation mode called
-'scalable mode', which enables PASID-granular translations for
-first level, second level, nested and pass-through modes. The
-vt-d scalable mode is the key ingredient to enable Scalable I/O
-Virtualization (Scalable IOV) [2] [3], which allows sharing a
-device in minimal possible granularity (ADI - Assignable Device
-Interface). It also includes all the capabilities required to
-enable Shared Virtual Addressing (SVA). As a result, previous
-Extended Context (ECS) mode is deprecated (no production ever
-implements ECS).
+This patch adds enumeration for Scalable Mode and removes
+the deprecated ECS enumeration. It provides a boot time
+option to disable scalable mode in case it's required as
+a chicken bit option.
 
-Each scalable mode pasid table entry is 64 bytes in length, with
-fields point to the first level page table and the second level
-page table. The PGTT (Pasid Granular Translation Type) field is
-used by hardware to determine the translation type.
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Kevin Tian <kevin.tian@intel.com>
+Cc: Liu Yi L <yi.l.liu@intel.com>
+Signed-off-by: Sanjay Kumar <sanjay.k.kumar@intel.com>
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+---
+ drivers/iommu/intel-iommu.c | 35 ++++++++++++++++-------------------
+ include/linux/intel-iommu.h |  1 +
+ 2 files changed, 17 insertions(+), 19 deletions(-)
 
-
-          A Scalable Mode            .-------------.
-           PASID Entry             .-|             |
-       .------------------.      .-| | 1st Level   |
-      7|                  |      | | | Page Table  |
-       .------------------.      | | |             |
-      6|                  |      | | |             |
-       '------------------'      | | '-------------'
-      5|                  |      | '-------------'
-       '------------------'      '-------------'
-      4|                  |    ^
-       '------------------'   /
-      3|                  |  /       .-------------.
-       .----.-------.-----. /      .-|             |
-      2|    | FLPTR |     |/     .-| | 2nd Level   |
-       .----'-------'-----.      | | | Page Table  |
-      1|                  |      | | |             |
-       .-.-------..------..      | | |             |
-      0| | SLPTR || PGTT ||----> | | '-------------'
-       '-'-------''------''      | '-------------'
-       6             |    0      '-------------'
-       3             v
-             .------------------------------------.
-             | PASID Granular Translation Type    |
-             |                                    |
-             | 001b: 1st level translation only   |
-             | 101b: 2nd level translation only   |
-             | 011b: Nested translation           |
-             | 100b: Pass through                 |
-             '------------------------------------'
-
-This patch series adds the scalable mode support in the Intel
-IOMMU driver. It will make all the Intel IOMMU features work
-in scalable mode. The changes are all constrained within the
-Intel IOMMU driver, as it's purely internal format change.
-
-This patch series depends on a patch set titled ("iommu/vt-d:
-Improve PASID id and table management") post here [4] which
-implements global pasid namespace and per-device pasid table
-APIs.
-
-References:
-[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
-[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
-[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
-[4] https://lkml.org/lkml/2018/7/14/69
-
-Best regards,
-Lu Baolu
-
-Lu Baolu (10):
-  iommu/vt-d: Enumerate the scalable mode capability
-  iommu/vt-d: Manage scalalble mode PASID tables
-  iommu/vt-d: Move page table helpers into header
-  iommu/vt-d: Add second level page table interface
-  iommu/vt-d: Setup pasid entry for RID2PASID support
-  iommu/vt-d: Pass pasid table to context mapping
-  iommu/vt-d: Setup context and enable RID2PASID support
-  iommu/vt-d: Add first level page table interface
-  iommu/vt-d: Shared virtual address in scalable mode
-  iommu/vt-d: Remove deferred invalidation
-
- drivers/iommu/intel-iommu.c   | 252 +++++++++++++++++++-----------------
- drivers/iommu/intel-pasid.c   | 295 ++++++++++++++++++++++++++++++++++++++++--
- drivers/iommu/intel-pasid.h   |  20 ++-
- drivers/iommu/intel-svm.c     |  74 +----------
- include/linux/dma_remapping.h |   9 +-
- include/linux/intel-iommu.h   |  54 ++++++--
- 6 files changed, 485 insertions(+), 219 deletions(-)
-
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index fed67c6..0a7362b 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -429,15 +429,15 @@ static int dmar_map_gfx = 1;
+ static int dmar_forcedac;
+ static int intel_iommu_strict;
+ static int intel_iommu_superpage = 1;
+-static int intel_iommu_ecs = 1;
++static int intel_iommu_sm = 1;
+ static int iommu_identity_mapping;
+ 
+ #define IDENTMAP_ALL		1
+ #define IDENTMAP_GFX		2
+ #define IDENTMAP_AZALIA		4
+ 
+-#define ecs_enabled(iommu)	(intel_iommu_ecs && ecap_ecs(iommu->ecap))
+-#define pasid_enabled(iommu)	(ecs_enabled(iommu) && ecap_pasid(iommu->ecap))
++#define sm_supported(iu)	(intel_iommu_sm && ecap_smts((iu)->ecap))
++#define pasid_supported(iu)	(sm_supported(iu) && ecap_pasid((iu)->ecap))
+ 
+ int intel_iommu_gfx_mapped;
+ EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
+@@ -517,10 +517,9 @@ static int __init intel_iommu_setup(char *str)
+ 		} else if (!strncmp(str, "sp_off", 6)) {
+ 			pr_info("Disable supported super page\n");
+ 			intel_iommu_superpage = 0;
+-		} else if (!strncmp(str, "ecs_off", 7)) {
+-			printk(KERN_INFO
+-				"Intel-IOMMU: disable extended context table support\n");
+-			intel_iommu_ecs = 0;
++		} else if (!strncmp(str, "sm_off", 6)) {
++			pr_info("Intel-IOMMU: disable scalable mode support\n");
++			intel_iommu_sm = 0;
+ 		} else if (!strncmp(str, "tboot_noforce", 13)) {
+ 			printk(KERN_INFO
+ 				"Intel-IOMMU: not forcing on after tboot. This could expose security risk for tboot\n");
+@@ -767,7 +766,7 @@ static inline struct context_entry *iommu_context_addr(struct intel_iommu *iommu
+ 	u64 *entry;
+ 
+ 	entry = &root->lo;
+-	if (ecs_enabled(iommu)) {
++	if (sm_supported(iommu)) {
+ 		if (devfn >= 0x80) {
+ 			devfn -= 0x80;
+ 			entry = &root->hi;
+@@ -909,7 +908,7 @@ static void free_context_table(struct intel_iommu *iommu)
+ 		if (context)
+ 			free_pgtable_page(context);
+ 
+-		if (!ecs_enabled(iommu))
++		if (!sm_supported(iommu))
+ 			continue;
+ 
+ 		context = iommu_context_addr(iommu, i, 0x80, 0);
+@@ -1261,8 +1260,6 @@ static void iommu_set_root_entry(struct intel_iommu *iommu)
+ 	unsigned long flag;
+ 
+ 	addr = virt_to_phys(iommu->root_entry);
+-	if (ecs_enabled(iommu))
+-		addr |= DMA_RTADDR_RTT;
+ 
+ 	raw_spin_lock_irqsave(&iommu->register_lock, flag);
+ 	dmar_writeq(iommu->reg + DMAR_RTADDR_REG, addr);
+@@ -1739,7 +1736,7 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
+ 	free_context_table(iommu);
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+-	if (pasid_enabled(iommu)) {
++	if (pasid_supported(iommu)) {
+ 		if (ecap_prs(iommu->ecap))
+ 			intel_svm_finish_prq(iommu);
+ 		intel_svm_exit(iommu);
+@@ -2418,8 +2415,8 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
+ 		    dmar_find_matched_atsr_unit(pdev))
+ 			info->ats_supported = 1;
+ 
+-		if (ecs_enabled(iommu)) {
+-			if (pasid_enabled(iommu)) {
++		if (sm_supported(iommu)) {
++			if (pasid_supported(iommu)) {
+ 				int features = pci_pasid_features(pdev);
+ 				if (features >= 0)
+ 					info->pasid_supported = features | 1;
+@@ -3231,7 +3228,7 @@ static int __init init_dmars(void)
+ 		 * We need to ensure the system pasid table is no bigger
+ 		 * than the smallest supported.
+ 		 */
+-		if (pasid_enabled(iommu)) {
++		if (pasid_supported(iommu)) {
+ 			u32 temp = 2 << ecap_pss(iommu->ecap);
+ 
+ 			intel_pasid_max_id = min_t(u32, temp,
+@@ -3292,7 +3289,7 @@ static int __init init_dmars(void)
+ 		if (!ecap_pass_through(iommu->ecap))
+ 			hw_pass_through = 0;
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+-		if (pasid_enabled(iommu))
++		if (pasid_supported(iommu))
+ 			intel_svm_init(iommu);
+ #endif
+ 	}
+@@ -3396,7 +3393,7 @@ static int __init init_dmars(void)
+ 		iommu_flush_write_buffer(iommu);
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+-		if (pasid_enabled(iommu) && ecap_prs(iommu->ecap)) {
++		if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
+ 			ret = intel_svm_enable_prq(iommu);
+ 			if (ret)
+ 				goto free_iommu;
+@@ -4300,7 +4297,7 @@ static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
+ 		goto out;
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+-	if (pasid_enabled(iommu))
++	if (pasid_supported(iommu))
+ 		intel_svm_init(iommu);
+ #endif
+ 
+@@ -4317,7 +4314,7 @@ static int intel_iommu_add(struct dmar_drhd_unit *dmaru)
+ 	iommu_flush_write_buffer(iommu);
+ 
+ #ifdef CONFIG_INTEL_IOMMU_SVM
+-	if (pasid_enabled(iommu) && ecap_prs(iommu->ecap)) {
++	if (pasid_supported(iommu) && ecap_prs(iommu->ecap)) {
+ 		ret = intel_svm_enable_prq(iommu);
+ 		if (ret)
+ 			goto disable_iommu;
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index 398defb..4124cd9 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -115,6 +115,7 @@
+  * Extended Capability Register
+  */
+ 
++#define ecap_smts(e)		(((e) >> 43) & 0x1)
+ #define ecap_dit(e)		((e >> 41) & 0x1)
+ #define ecap_pasid(e)		((e >> 40) & 0x1)
+ #define ecap_pss(e)		((e >> 35) & 0x1f)
 -- 
 2.7.4
 
