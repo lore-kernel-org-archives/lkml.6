@@ -6,78 +6,60 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D9EDECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 519DFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D16B208FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:17:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D16B208FC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 14AAA20B80
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:17:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14AAA20B80
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbeGPJnu (ORCPT
+        id S1729853AbeGPJoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:43:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55436 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727594AbeGPJnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:43:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBE087A9;
-        Mon, 16 Jul 2018 02:17:21 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B56D3F589;
-        Mon, 16 Jul 2018 02:17:20 -0700 (PDT)
-Subject: Re: [PATCH] arm64: cpuinfo: Include cleartext implementer and part
- strings
-To:     Olof Johansson <olof@lixom.net>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20180715035342.11371-1-olof@lixom.net>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <f619f0e9-b8b4-29fb-5ad6-7f5ebc3a4da8@arm.com>
-Date:   Mon, 16 Jul 2018 10:17:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 16 Jul 2018 05:44:13 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51353 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727594AbeGPJoM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 05:44:12 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fezdG-0000BK-7i; Mon, 16 Jul 2018 11:17:26 +0200
+Date:   Mon, 16 Jul 2018 11:17:25 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Andy Lutomirski <luto@amacapital.net>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Subject: Re: [PATCH 2/3] x86: Convert vdso to use vm_fault_t
+In-Reply-To: <20180703123910.2180-2-willy@infradead.org>
+Message-ID: <alpine.DEB.2.21.1807161116590.2644@nanos.tec.linutronix.de>
+References: <20180703123910.2180-1-willy@infradead.org> <20180703123910.2180-2-willy@infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180715035342.11371-1-olof@lixom.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof,
+On Tue, 3 Jul 2018, Matthew Wilcox wrote:
 
-On 15/07/18 04:53, Olof Johansson wrote:
-> There's some use in printing out what the implementer and part numbers
-> decode to for cases where they're known.
+> Return vm_fault_t codes directly from the appropriate mm routines instead
+> of converting from errnos ourselves.  Fixes a minor bug where we'd return
+> SIGBUS instead of the correct OOM code if we ran out of memory allocating
+> page tables.
 > 
-> I filled in the table based on public information; mostly from ARM TRMs
-> and other tools (and some of the SSBD tables in the kernel, etc).
-> 
-> Apple IDs came from
-> https://github.com/apple/darwin-xnu/blob/master/osfmk/arm/cpuid.h
-> 
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> ---
->  arch/arm64/kernel/cpuinfo.c | 79 +++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 76 insertions(+), 3 deletions(-)
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
 
-[...]
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-The same thing pops up every so often. And the answer is the same each time:
-
-- it breaks an existing userspace ABI by changing the format of cpuinfo
-- it is unmaintainable in the long run
-- userspace already has this information by simply running "lscpu"
-
-What has changed?
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
