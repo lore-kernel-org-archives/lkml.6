@@ -2,114 +2,214 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,T_DKIMWL_WL_MED,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B2C4ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 589B7ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2121C20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:35:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2121C20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=users.sourceforge.net
+	by mail.kernel.org (Postfix) with ESMTP id 0C17A20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:36:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mYGtAIuk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C17A20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeGPSEL (ORCPT
+        id S1729591AbeGPSFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 14:04:11 -0400
-Received: from mout.web.de ([212.227.17.11]:49553 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727797AbeGPSEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 14:04:11 -0400
-X-Greylist: delayed 307 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Jul 2018 14:04:10 EDT
-Received: from [192.168.1.3] ([77.191.164.6]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LdmyV-1gNprh21Vj-00j1vC; Mon, 16
- Jul 2018 19:30:30 +0200
-Subject: =?UTF-8?Q?[PATCH_v2_4/8]_Coccinelle:_atomic=5fas=5frefcounter:_Use_?=
- =?UTF-8?Q?type_=e2=80=9cexpression=e2=80=9d_for_another_metavariable?=
-From:   SF Markus Elfring <elfring@users.sourceforge.net>
-To:     kernel-janitors@vger.kernel.org,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Coccinelle <cocci@systeme.lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>
-References: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
- <6043bdc9-529f-e93f-e509-e2dedd290a10@users.sourceforge.net>
- <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
-Openpgp: preference=signencrypt
-Message-ID: <d9561774-a7ed-f9f8-796c-2ba2cb9f7732@users.sourceforge.net>
-Date:   Mon, 16 Jul 2018 19:30:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 16 Jul 2018 14:05:00 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40165 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728290AbeGPSFA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 14:05:00 -0400
+Received: by mail-pl0-f65.google.com with SMTP id s17-v6so6171310plp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 10:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PhItFWs8gGCG4LXXW2c9n4Z2Q+kPYkAY2+pTgx2YwLI=;
+        b=mYGtAIuk4NNxSYRFahOOWzqI9d7YxQLKQ3SJ256I98i5CFD67IqK3zwc2Isp5Wt6AL
+         SvusYGXAKHpq0PmIFVNRGQL+Ef+7+MROciROJx1kYLkWI4CG7wyPk3N9H8Lu9razy7Rk
+         okUpY8ep1tB1TJi0LsXEFYv9TsTRDQ0jGDBwwxSOOjYIkcf0YwjOP/zm1Frq1TxGqqNR
+         kNFdlA8CtVJo0AQl0dqWsgJkJCiguNHMK3XMpZ2bsqgaSTpzXRPSduovrS+K9m8v2kz4
+         fhpsMxTPem2Pt61K4hALjqYoOYF7xsA0ipdlvzJWWgJ2iQncvtTcsfBY+a6aSNB9UPPF
+         vMpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PhItFWs8gGCG4LXXW2c9n4Z2Q+kPYkAY2+pTgx2YwLI=;
+        b=JbnNS5oxTgJsbFte/asKgZqvOQ8vOjLXduYCYL9RKHHx9N4tl74REWvFnv2Mk1MFnj
+         q7mz9XlYsR7b9Ii8wqjyKsYX5CwmdtZ2kun/QBB4tP8GUNdBnJfTIKIPdf4kuIOPvzFE
+         L+IB9Gcwd2OLgvudk2TYkv97SFnD0s5RRd1ErQPC0HTP8sS1L9P7inZvzp/6D/Hl1/FT
+         vZcfSfhx97eaWCUC2v3/ZsspXiHf5xf4a72wmKY+g0fjpU4F6wbhjb5U3zo0Yd9V02V6
+         p9frR+ajyrwgSH8XFILDBXtaVI+EPBkUxrZoVaBzOn9U0LOO6JwWtAD0dGR0QnTZP6QM
+         dlFQ==
+X-Gm-Message-State: AOUpUlGNXTsgfldIf7pp6r1fNXpZ/ELuLGEmenCmm7Hv9QkhDHKNtSpW
+        s2QX3BCi71NC01x7DQBEVxlgHA==
+X-Google-Smtp-Source: AAOMgpecaimRNSQCCA+Qv6at1EE+wjZEIlf84E2OaqkxYiGqDVNO+6lZUaBbTGQhzkWO540rBTCbmQ==
+X-Received: by 2002:a17:902:784d:: with SMTP id e13-v6mr17178090pln.197.1531762594093;
+        Mon, 16 Jul 2018 10:36:34 -0700 (PDT)
+Received: from google.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm46451657pfi.114.2018.07.16.10.36.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 10:36:33 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 10:36:32 -0700
+From:   Eric Biggers <ebiggers@google.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Paul Mackerras <paulus@samba.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-ppp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ppp: mppe: Remove VLA usage
+Message-ID: <20180716173632.GD77258@google.com>
+References: <20180716040516.GA32783@beast>
 MIME-Version: 1.0
-In-Reply-To: <5ca6ab58-e929-8468-74e2-012f987a0773@users.sourceforge.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:7lxRFp9yoiRPkmRz691KFqcvidMEO9oyKP8Lkt1SJIuI8ff5LRh
- PnF/Y1kat0v6luR7XU9OfYUytbZt9tfkCaj938qge/uKvxXqU7ZJ9QnRBsmRrbNW3BweNtr
- TVfJozw+BbRcFqR5u7v+MXhZbt52ayfjs2yCLcjy6KnhbpD2JQjcA/8jArBbpMGgJirpTmt
- xLsvdFy826DLlgXLMPzeQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:RlOhJkGDV2Q=:DR6JeESAO5s/7nOqvGQH5W
- sZejivGkaj8RTaStRROdx3annpmYrRQqVVYYfmg/SyU0Vel+YyFQNloGtwC4erCNFvO0pFM2l
- ynvr8so8VUEL5J2AMk8mSc1LDrssSNSRtUBILgZJPSM4TivS2T0d/GROTn0zOs54F/79tLACl
- qLi7ZZDcgRhoOWyaYfRXemj2WJr/J4TI7uIlvKegB7ASNe+XZtGrSP9H5YntEaArEHdAC0Wms
- S0i/L88xsSUeyShf6vEMw2SWcVgflpUW0vJWAGr9FSbiI9Z039GaFfK/lBRKoHPJY02TNCAeD
- 4bl/5ICn7l2DTNq9AQxNlHlFD2PbeKtG2PqqLCWVR0pRQpdQ46SHxoqSN8NL/FCa8YuBBxqvU
- xl3ww8J8PvBlxtCLSsPQceodMwnnYpKNjGqVRewLses4MyjHPfaFvlVwIInzrNqMuFNaV8MP6
- TbGB7Ce/JKHUX6Ae2cAiFPXtSlmLuwPWDxLRQWy0Iz9kgDf6aEZPp+NadEof6LldJ4BeiD3RE
- VodKj22Uuz2OT9S3JsdUSjyTCeOlo8inTKl3jpbQDLrcRqFLG0LuxG4gR8TDwWkDj8Zs7lllx
- SK/cUKqtM1OV5M0xGxiCzQow4Jvlh6hKit8J9pZfZmgCWXdwFePaxaga3l2u4JyzaKMtIPJMj
- A4ZUO7yXPg6NsDHKRqRURYn1W11rcsOSF5aBT/Qx8GSger6IiEmB9qehLhTHIOLkQt0H51vFx
- vtPx+9a4uzBNIpwdbGJKirHzQu2mt8OjQBsmMqMzidXx9+JNzqiuEan4etFb76X2H2Z+Ih5Hs
- 4j+hYhx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716040516.GA32783@beast>
+User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Mon, 16 Jul 2018 18:00:54 +0200
+On Sun, Jul 15, 2018 at 09:05:16PM -0700, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> removes the discouraged use of AHASH_REQUEST_ON_STACK (and associated
+> VLA) by switching to shash directly and keeping the associated descriptor
+> allocated with the regular state on the heap.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  drivers/net/ppp/ppp_mppe.c | 57 +++++++++++++++++++++-----------------
+>  1 file changed, 31 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/net/ppp/ppp_mppe.c b/drivers/net/ppp/ppp_mppe.c
+> index 6c7fd98cb00a..5b4b81027a75 100644
+> --- a/drivers/net/ppp/ppp_mppe.c
+> +++ b/drivers/net/ppp/ppp_mppe.c
+> @@ -96,7 +96,7 @@ static inline void sha_pad_init(struct sha_pad *shapad)
+>   */
+>  struct ppp_mppe_state {
+>  	struct crypto_skcipher *arc4;
+> -	struct crypto_ahash *sha1;
+> +	struct shash_desc *sha1;
+>  	unsigned char *sha1_digest;
+>  	unsigned char master_key[MPPE_MAX_KEY_LEN];
+>  	unsigned char session_key[MPPE_MAX_KEY_LEN];
+> @@ -136,25 +136,16 @@ struct ppp_mppe_state {
+>   */
+>  static void get_new_key_from_sha(struct ppp_mppe_state * state)
+>  {
+> -	AHASH_REQUEST_ON_STACK(req, state->sha1);
+> -	struct scatterlist sg[4];
+> -	unsigned int nbytes;
+> -
+> -	sg_init_table(sg, 4);
+> -
+> -	nbytes = setup_sg(&sg[0], state->master_key, state->keylen);
+> -	nbytes += setup_sg(&sg[1], sha_pad->sha_pad1,
+> -			   sizeof(sha_pad->sha_pad1));
+> -	nbytes += setup_sg(&sg[2], state->session_key, state->keylen);
+> -	nbytes += setup_sg(&sg[3], sha_pad->sha_pad2,
+> -			   sizeof(sha_pad->sha_pad2));
+> -
+> -	ahash_request_set_tfm(req, state->sha1);
+> -	ahash_request_set_callback(req, 0, NULL, NULL);
+> -	ahash_request_set_crypt(req, sg, state->sha1_digest, nbytes);
+> -
+> -	crypto_ahash_digest(req);
+> -	ahash_request_zero(req);
+> +	crypto_shash_init(state->sha1);
+> +	crypto_shash_update(state->sha1, state->master_key,
+> +			    state->keylen);
+> +	crypto_shash_update(state->sha1, sha_pad->sha_pad1,
+> +			    sizeof(sha_pad->sha_pad1));
+> +	crypto_shash_update(state->sha1, state->session_key,
+> +			    state->keylen);
+> +	crypto_shash_update(state->sha1, sha_pad->sha_pad2,
+> +			    sizeof(sha_pad->sha_pad2));
+> +	crypto_shash_final(state->sha1, state->sha1_digest);
+>  }
+>  
+>  /*
+> @@ -200,6 +191,7 @@ static void mppe_rekey(struct ppp_mppe_state * state, int initial_key)
+>  static void *mppe_alloc(unsigned char *options, int optlen)
+>  {
+>  	struct ppp_mppe_state *state;
+> +	struct crypto_shash *shash;
+>  	unsigned int digestsize;
+>  
+>  	if (optlen != CILEN_MPPE + sizeof(state->master_key) ||
+> @@ -217,13 +209,21 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+>  		goto out_free;
+>  	}
+>  
+> -	state->sha1 = crypto_alloc_ahash("sha1", 0, CRYPTO_ALG_ASYNC);
+> -	if (IS_ERR(state->sha1)) {
+> -		state->sha1 = NULL;
+> +	shash = crypto_alloc_shash("sha1", 0, 0);
+> +	if (IS_ERR(shash))
+> +		goto out_free;
+> +
+> +	state->sha1 = kmalloc(sizeof(*state->sha1) +
+> +				     crypto_shash_descsize(shash),
+> +			      GFP_KERNEL);
+> +	if (!state->sha1) {
+> +		crypto_free_shash(shash);
+>  		goto out_free;
+>  	}
+> +	state->sha1->tfm = shash;
+> +	state->sha1->flags = 0;
+>  
+> -	digestsize = crypto_ahash_digestsize(state->sha1);
+> +	digestsize = crypto_shash_digestsize(shash);
+>  	if (digestsize < MPPE_MAX_KEY_LEN)
+>  		goto out_free;
+>  
+> @@ -246,7 +246,11 @@ static void *mppe_alloc(unsigned char *options, int optlen)
+>  
+>  out_free:
+>  	kfree(state->sha1_digest);
+> -	crypto_free_ahash(state->sha1);
+> +	if (state->sha1) {
+> +		if (state->sha1->tfm)
+> +			crypto_free_shash(state->sha1->tfm);
 
-The metavariable “a” is enclosed by parentheses in two rules of
-a script for the semantic patch language.
-Replace its type by “expression” so that the corresponding source code
-search becomes more powerful.
+It's not necessary to check for NULL before calling crypto_free_shash().
+Otherwise this looks good, though I dislike how the error codes aren't checked
+in get_new_key_from_sha() (of course, they weren't before this patch either).
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- scripts/coccinelle/api/atomic_as_refcounter.cocci | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-index 4da83ccfa6f6..62b0132d65fc 100644
---- a/scripts/coccinelle/api/atomic_as_refcounter.cocci
-+++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
-@@ -10,7 +10,8 @@
- virtual report
- 
- @r1 exists@
--identifier a, x;
-+expression a;
-+identifier x;
- position p1, p2;
- identifier fname =~ "free";
- identifier fname2 =~ "(?:call_rcu|de(?:l|stroy)|(?:queue|schedule)_work)";
-@@ -45,7 +46,8 @@ msg = "atomic_dec_and_test variation before object free at line %s."
- coccilib.report.print_report(p1[0], msg % (p2[0].line))
- 
- @r2 exists@
--identifier a, x;
-+expression a;
-+identifier x;
- position p1;
- @@
- 
--- 
-2.18.0
-
+> +		kzfree(state->sha1);
+> +	}
+>  	crypto_free_skcipher(state->arc4);
+>  	kfree(state);
+>  out:
+> @@ -261,7 +265,8 @@ static void mppe_free(void *arg)
+>  	struct ppp_mppe_state *state = (struct ppp_mppe_state *) arg;
+>  	if (state) {
+>  		kfree(state->sha1_digest);
+> -		crypto_free_ahash(state->sha1);
+> +		crypto_free_shash(state->sha1->tfm);
+> +		kzfree(state->sha1);
+>  		crypto_free_skcipher(state->arc4);
+>  		kfree(state);
+>  	}
+> -- 
+> 2.17.1
+> 
+> 
+> -- 
+> Kees Cook
+> Pixel Security
