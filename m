@@ -6,180 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0E1ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A331DECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788EA20858
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:49:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788EA20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 653E520858
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:49:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 653E520858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbeGPNQb (ORCPT
+        id S1730232AbeGPNRC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:16:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52098 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727522AbeGPNQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 09:16:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DB7AA77886;
-        Mon, 16 Jul 2018 12:49:10 +0000 (UTC)
-Received: from redhat.com (ovpn-120-40.rdu2.redhat.com [10.10.120.40])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 85B5F7C4D;
-        Mon, 16 Jul 2018 12:49:04 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 15:49:04 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com,
-        maxime.coquelin@redhat.com
-Subject: Re: [PATCH net-next V2 0/8] Packed virtqueue support for vhost
-Message-ID: <20180716154102-mutt-send-email-mst@kernel.org>
-References: <1531711691-6769-1-git-send-email-jasowang@redhat.com>
- <20180716113720-mutt-send-email-mst@kernel.org>
- <33f4643f-f226-0389-1f4f-607c289db94e@redhat.com>
+        Mon, 16 Jul 2018 09:17:02 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59094 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727522AbeGPNRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 09:17:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2CA7915AD;
+        Mon, 16 Jul 2018 05:49:44 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7ABAB3F5B1;
+        Mon, 16 Jul 2018 05:49:42 -0700 (PDT)
+Subject: Re: [PATCH v6 6/8] KVM: arm64: Support handling access faults for PUD
+ hugepages
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20180716110857.19310-1-punit.agrawal@arm.com>
+ <20180716110857.19310-7-punit.agrawal@arm.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <fb38da83-e1b6-ed8e-3008-d4b8af103321@arm.com>
+Date:   Mon, 16 Jul 2018 13:49:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <33f4643f-f226-0389-1f4f-607c289db94e@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 16 Jul 2018 12:49:10 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 16 Jul 2018 12:49:10 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180716110857.19310-7-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 05:46:33PM +0800, Jason Wang wrote:
+On 16/07/18 12:08, Punit Agrawal wrote:
+> In preparation for creating larger hugepages at Stage 2, extend the
+> access fault handling at Stage 2 to support PUD hugepages when
+> encountered.
 > 
+> Provide trivial helpers for arm32 to allow sharing of code.
 > 
-> On 2018年07月16日 16:39, Michael S. Tsirkin wrote:
-> > On Mon, Jul 16, 2018 at 11:28:03AM +0800, Jason Wang wrote:
-> > > Hi all:
-> > > 
-> > > This series implements packed virtqueues. The code were tested with
-> > > Tiwei's guest driver series at https://patchwork.ozlabs.org/cover/942297/
-> > > 
-> > > 
-> > > Pktgen test for both RX and TX does not show obvious difference with
-> > > split virtqueues. The main bottleneck is the guest Linux driver, since
-> > > it can not stress vhost for a 100% CPU utilization. A full TCP
-> > > benchmark is ongoing. Will test virtio-net pmd as well when it was
-> > > ready.
-> > Well the question then is why we should bother merging this
-> > if this doesn't give a performance gain.
-> 
-> We meet bottlenecks at other places. I can only test Linux driver which has
-> lots of overheads e.g interrupts. And perf show only a small fraction of
-> time were spent on e.g virtqueue manipulation. I hope virtio-net pmd can
-> give us different result but we don't have one ready for testing now. (Jen's
-> V4 have bugs thus can not work with this series).
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
 
-Can't linux busy poll? And how about testing loopback with XDP?
-
-> >   Do you see
-> > a gain in CPU utilization maybe?
-> 
-> Unfortunately not.
-> 
-> > 
-> > If not - let's wait for that TCP benchmark result?
-> 
-> We can, but you know TCP_STREAM result is sometime misleading.
-> 
-> A brunch of other patches of mine were rebased on this and then blocked on
-> this series. Consider we don't meet regression, maybe we can merge this
-> first and try optimizations or fixups on top?
-> 
-> Thanks
-
-I'm not sure I understand this approach. Packed ring is just an optimization.
-What value is there in merging it if it does not help speed?
-
-> > 
-> > > Notes:
-> > > - This version depends on Tiwei's series at https://patchwork.ozlabs.org/cover/942297/
-> > > 
-> > > This version were tested with:
-> > > 
-> > > - Zerocopy (Out of Order) support
-> > > - vIOMMU support
-> > > - mergeable buffer on/off
-> > > - busy polling on/off
-> > > - vsock (nc-vsock)
-> > > 
-> > > Changes from V1:
-> > > - drop uapi patch and use Tiwei's
-> > > - split the enablement of packed virtqueue into a separate patch
-> > > 
-> > > Changes from RFC V5:
-> > > 
-> > > - save unnecessary barriers during vhost_add_used_packed_n()
-> > > - more compact math for event idx
-> > > - fix failure of SET_VRING_BASE when avail_wrap_counter is true
-> > > - fix not copy avail_wrap_counter during GET_VRING_BASE
-> > > - introduce SET_VRING_USED_BASE/GET_VRING_USED_BASE for syncing last_used_idx
-> > > - rename used_wrap_counter to last_used_wrap_counter
-> > > - rebase to net-next
-> > > 
-> > > Changes from RFC V4:
-> > > 
-> > > - fix signalled_used index recording
-> > > - track avail index correctly
-> > > - various minor fixes
-> > > 
-> > > Changes from RFC V3:
-> > > 
-> > > - Fix math on event idx checking
-> > > - Sync last avail wrap counter through GET/SET_VRING_BASE
-> > > - remove desc_event prefix in the driver/device structure
-> > > 
-> > > Changes from RFC V2:
-> > > 
-> > > - do not use & in checking desc_event_flags
-> > > - off should be most significant bit
-> > > - remove the workaround of mergeable buffer for dpdk prototype
-> > > - id should be in the last descriptor in the chain
-> > > - keep _F_WRITE for write descriptor when adding used
-> > > - device flags updating should use ADDR_USED type
-> > > - return error on unexpected unavail descriptor in a chain
-> > > - return false in vhost_ve_avail_empty is descriptor is available
-> > > - track last seen avail_wrap_counter
-> > > - correctly examine available descriptor in get_indirect_packed()
-> > > - vhost_idx_diff should return u16 instead of bool
-> > > 
-> > > Changes from RFC V1:
-> > > 
-> > > - Refactor vhost used elem code to avoid open coding on used elem
-> > > - Event suppression support (compile test only).
-> > > - Indirect descriptor support (compile test only).
-> > > - Zerocopy support.
-> > > - vIOMMU support.
-> > > - SCSI/VSOCK support (compile test only).
-> > > - Fix several bugs
-> > > 
-> > > Jason Wang (8):
-> > >    vhost: move get_rx_bufs to vhost.c
-> > >    vhost: hide used ring layout from device
-> > >    vhost: do not use vring_used_elem
-> > >    vhost_net: do not explicitly manipulate vhost_used_elem
-> > >    vhost: vhost_put_user() can accept metadata type
-> > >    vhost: packed ring support
-> > >    vhost: event suppression for packed ring
-> > >    vhost: enable packed virtqueues
-> > > 
-> > >   drivers/vhost/net.c        | 143 ++-----
-> > >   drivers/vhost/scsi.c       |  62 +--
-> > >   drivers/vhost/vhost.c      | 994 ++++++++++++++++++++++++++++++++++++++++-----
-> > >   drivers/vhost/vhost.h      |  55 ++-
-> > >   drivers/vhost/vsock.c      |  42 +-
-> > >   include/uapi/linux/vhost.h |   7 +
-> > >   6 files changed, 1035 insertions(+), 268 deletions(-)
-> > > 
-> > > -- 
-> > > 2.7.4
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
