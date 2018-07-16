@@ -2,119 +2,151 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82735ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C236ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39FFB208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:51:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39FFB208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 50384208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:52:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50384208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388775AbeGPIR5 (ORCPT
+        id S2388540AbeGPIHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:17:57 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60923 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729792AbeGPIR4 (ORCPT
+        Mon, 16 Jul 2018 04:07:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47604 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388527AbeGPIHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:17:56 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 13D4280558; Mon, 16 Jul 2018 09:51:48 +0200 (CEST)
-Date:   Mon, 16 Jul 2018 09:51:48 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>, jroedel@suse.de
-Subject: Re: [PATCH 00/39 v7] PTI support for x86-32
-Message-ID: <20180716075148.GA10794@amd>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+        Mon, 16 Jul 2018 04:07:41 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C0E25C03;
+        Mon, 16 Jul 2018 07:41:38 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 32/54] ALSA: hda - Handle pm failure during hotplug
+Date:   Mon, 16 Jul 2018 09:35:29 +0200
+Message-Id: <20180716073456.927102101@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
+References: <20180716073450.534886211@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
-Content-Disposition: inline
-In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
---C7zPtVaVf+AK4Oqc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-Hi!
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-> here is version 7 of my patches to enable PTI on x86-32.
-> Changes to the previous version are:
->=20
-> 	* Rebased to v4.18-rc4
->=20
-> 	* Introduced pti_finalize() which is called after
-> 	  mark_readonly() and used to update the kernel
-> 	  mappings in the user page-table after RO/NX
-> 	  protections are in place.
->=20
-> The patches need the vmalloc/ioremap fixes in tip/x86/mm to
-> work correctly, because this enablement makes the issues
-> fixed there more likely to happen.
->=20
-> I did the load-testing again with 'perf top', the ldt_gdt
-> self-test and a kernel-compile running in a loop again. The
-> patches posted here were tested for 16 hours without any
-> regression showing up. An earlier version of these patches
-> based on v4.18-rc1 survived this test for over a week before
-> I canceled the test. The test ran with enabled CR3 debugging
-> added in the last patch of this series.
+commit aaa23f86001bdb82d2f937c5c7bce0a1e11a6c5b upstream.
 
-Would it make sense to merge the part of the series that was reviewed
-without comments? It would get at least part of the series testing in
--next....
+Obtaining the runtime pm wakeref can fail, especially in a hotplug
+scenario where i915.ko has been unloaded. If we do not catch the
+failure, we end up with an unbalanced pm.
 
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+v2 additions by tiwai:
+hdmi_present_sense() checks the return value and handle only a
+negative error case and bails out only if it's really still suspended.
+Also, snd_hda_power_down() is called at the error path so that the
+refcount is balanced.
 
---C7zPtVaVf+AK4Oqc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Along with it, the spec->pcm_lock is taken outside
+hdmi_present_sense() in the caller side, so that it won't cause
+deadlock at reentrace via runtime resume.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+v3 fix by tiwai:
+Missing linux/pm_runtime.h is included.
 
-iEYEARECAAYFAltMTpQACgkQMOfwapXb+vLIKACbB/Q+v4hVGhChiR3UgMdV4XP4
-GG0AoI3pzik+gBn6LveC+9+75BpALLw2
-=CyC3
------END PGP SIGNATURE-----
+References: 222bde03881c ("ALSA: hda - Fix mutex deadlock at HDMI/DP hotplug")
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---C7zPtVaVf+AK4Oqc--
+---
+ sound/pci/hda/patch_hdmi.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -33,6 +33,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/pm_runtime.h>
+ #include <sound/core.h>
+ #include <sound/jack.h>
+ #include <sound/asoundef.h>
+@@ -764,8 +765,10 @@ static void check_presence_and_report(st
+ 
+ 	if (pin_idx < 0)
+ 		return;
++	mutex_lock(&spec->pcm_lock);
+ 	if (hdmi_present_sense(get_pin(spec, pin_idx), 1))
+ 		snd_hda_jack_report_sync(codec);
++	mutex_unlock(&spec->pcm_lock);
+ }
+ 
+ static void jack_callback(struct hda_codec *codec,
+@@ -1628,21 +1631,23 @@ static void sync_eld_via_acomp(struct hd
+ static bool hdmi_present_sense(struct hdmi_spec_per_pin *per_pin, int repoll)
+ {
+ 	struct hda_codec *codec = per_pin->codec;
+-	struct hdmi_spec *spec = codec->spec;
+ 	int ret;
+ 
+ 	/* no temporary power up/down needed for component notifier */
+-	if (!codec_has_acomp(codec))
+-		snd_hda_power_up_pm(codec);
++	if (!codec_has_acomp(codec)) {
++		ret = snd_hda_power_up_pm(codec);
++		if (ret < 0 && pm_runtime_suspended(hda_codec_dev(codec))) {
++			snd_hda_power_down_pm(codec);
++			return false;
++		}
++	}
+ 
+-	mutex_lock(&spec->pcm_lock);
+ 	if (codec_has_acomp(codec)) {
+ 		sync_eld_via_acomp(codec, per_pin);
+ 		ret = false; /* don't call snd_hda_jack_report_sync() */
+ 	} else {
+ 		ret = hdmi_present_sense_via_verbs(per_pin, repoll);
+ 	}
+-	mutex_unlock(&spec->pcm_lock);
+ 
+ 	if (!codec_has_acomp(codec))
+ 		snd_hda_power_down_pm(codec);
+@@ -1654,12 +1659,16 @@ static void hdmi_repoll_eld(struct work_
+ {
+ 	struct hdmi_spec_per_pin *per_pin =
+ 	container_of(to_delayed_work(work), struct hdmi_spec_per_pin, work);
++	struct hda_codec *codec = per_pin->codec;
++	struct hdmi_spec *spec = codec->spec;
+ 
+ 	if (per_pin->repoll_count++ > 6)
+ 		per_pin->repoll_count = 0;
+ 
++	mutex_lock(&spec->pcm_lock);
+ 	if (hdmi_present_sense(per_pin, per_pin->repoll_count))
+ 		snd_hda_jack_report_sync(per_pin->codec);
++	mutex_unlock(&spec->pcm_lock);
+ }
+ 
+ static void intel_haswell_fixup_connect_list(struct hda_codec *codec,
+
+
