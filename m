@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9399FECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1183AECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE8220871
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE8220871
+	by mail.kernel.org (Postfix) with ESMTP id CAC5E20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:32:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC5E20871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731369AbeGPM7F (ORCPT
+        id S1731443AbeGPM7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:59:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34410 "EHLO mx1.suse.de"
+        Mon, 16 Jul 2018 08:59:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34462 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727148AbeGPM7F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:59:05 -0400
+        id S1727148AbeGPM7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 08:59:14 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EAA23ADC9;
-        Mon, 16 Jul 2018 12:31:49 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 14:31:49 +0200
-Message-ID: <s5hlgab5pl6.wl-tiwai@suse.de>
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C1D0FADC9;
+        Mon, 16 Jul 2018 12:31:58 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 14:31:58 +0200
+Message-ID: <s5hk1pv5pkx.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Colin King" <colin.king@canonical.com>
 Cc:     <alsa-devel@alsa-project.org>, "Jaroslav Kysela" <perex@perex.cz>,
         <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: ali5451: remove redundant pointer 'codec'
-In-Reply-To: <20180716085738.16041-1-colin.king@canonical.com>
-References: <20180716085738.16041-1-colin.king@canonical.com>
+Subject: Re: [PATCH] ALSA: cs46xx: remove redundant pointer 'ins'
+In-Reply-To: <20180716090315.16267-1-colin.king@canonical.com>
+References: <20180716090315.16267-1-colin.king@canonical.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -45,16 +45,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Jul 2018 10:57:38 +0200,
+On Mon, 16 Jul 2018 11:03:15 +0200,
 Colin King wrote:
 > 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Pointer 'codec' is being assigned but is never used hence it is
+> Pointer 'ins' is being assigned but is never used hence it is
 > redundant and can be removed.
 > 
 > Cleans up clang warning:
-> warning: variable 'codec' set but not used [-Wunused-but-set-variable]
+> warning: variable 'ins' set but not used [-Wunused-but-set-variable]
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
