@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECB9ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EAFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ABBE208FA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:03:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ABBE208FA
+	by mail.kernel.org (Postfix) with ESMTP id 8FC71208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC71208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbeGPTcj (ORCPT
+        id S1730444AbeGPTci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 15:32:39 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:36138 "EHLO
+        Mon, 16 Jul 2018 15:32:38 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:36168 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728470AbeGPTch (ORCPT
+        with ESMTP id S1730072AbeGPTch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Jul 2018 15:32:37 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1ff8ma-0003RH-Lc; Mon, 16 Jul 2018 15:03:40 -0400
+        id 1ff8ma-0003RH-Hd; Mon, 16 Jul 2018 15:03:40 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, luto@kernel.org, efault@gmx.de, kernel-team@fb.com,
         mingo@kernel.org, dave.hansen@intel.com,
         Rik van Riel <riel@surriel.com>
-Subject: [PATCH 7/7] x86,switch_mm: skip atomic operations for init_mm
-Date:   Mon, 16 Jul 2018 15:03:37 -0400
-Message-Id: <20180716190337.26133-8-riel@surriel.com>
+Subject: [PATCH 3/7] x86,mm: restructure switch_mm_irqs_off
+Date:   Mon, 16 Jul 2018 15:03:33 -0400
+Message-Id: <20180716190337.26133-4-riel@surriel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180716190337.26133-1-riel@surriel.com>
 References: <20180716190337.26133-1-riel@surriel.com>
@@ -44,58 +44,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Song noticed switch_mm_irqs_off taking a lot of CPU time in recent
-kernels,using 1.8% of a 48 CPU system during a netperf to localhost run.
-Digging into the profile, we noticed that cpumask_clear_cpu and
-cpumask_set_cpu together take about half of the CPU time taken by
-switch_mm_irqs_off.
+Move some code that will be needed for the lazy -> !lazy state
+transition when a lazy TLB CPU has gotten out of date.
 
-However, the CPUs running netperf end up switching back and forth
-between netperf and the idle task, which does not require changes
-to the mm_cpumask. Furthermore, the init_mm cpumask ends up being
-the most heavily contended one in the system.
-
-Simply skipping changes to mm_cpumask(&init_mm) reduces overhead.
+No functional changes, since the if (real_prev == next) branch
+always returns.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
-Reported-and-tested-by: Song Liu <songliubraving@fb.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/mm/tlb.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ arch/x86/mm/tlb.c | 60 +++++++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 493559cae2d5..f086195f644c 100644
+index 9a893673c56b..4b73fe835c95 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -310,15 +310,22 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			sync_current_stack_to_mm(next);
- 		}
+@@ -187,6 +187,8 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+ 	unsigned cpu = smp_processor_id();
+ 	u64 next_tlb_gen;
++	bool need_flush;
++	u16 new_asid;
  
--		/* Stop remote flushes for the previous mm */
--		VM_WARN_ON_ONCE(!cpumask_test_cpu(cpu, mm_cpumask(real_prev)) &&
--				real_prev != &init_mm);
--		cpumask_clear_cpu(cpu, mm_cpumask(real_prev));
-+		/*
-+		 * Stop remote flushes for the previous mm.
-+		 * Skip kernel threads; we never send init_mm TLB flushing IPIs,
-+		 * but the bitmap manipulation can cause cache line contention.
-+		 */
-+		if (real_prev != &init_mm) {
-+			VM_WARN_ON_ONCE(!cpumask_test_cpu(cpu,
-+						mm_cpumask(real_prev)));
-+			cpumask_clear_cpu(cpu, mm_cpumask(real_prev));
-+		}
+ 	/*
+ 	 * NB: The scheduler will call us with prev == next when switching
+@@ -252,8 +254,6 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 
+ 		return;
+ 	} else {
+-		u16 new_asid;
+-		bool need_flush;
+ 		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
  
  		/*
- 		 * Start remote flushes and then read tlb_gen.
- 		 */
--		cpumask_set_cpu(cpu, mm_cpumask(next));
-+		if (next != &init_mm)
-+			cpumask_set_cpu(cpu, mm_cpumask(next));
+@@ -297,41 +297,41 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
  		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
  
  		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
++	}
+ 
+-		if (need_flush) {
+-			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+-			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+-			load_new_mm_cr3(next->pgd, new_asid, true);
+-
+-			/*
+-			 * NB: This gets called via leave_mm() in the idle path
+-			 * where RCU functions differently.  Tracing normally
+-			 * uses RCU, so we need to use the _rcuidle variant.
+-			 *
+-			 * (There is no good reason for this.  The idle code should
+-			 *  be rearranged to call this before rcu_idle_enter().)
+-			 */
+-			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
+-		} else {
+-			/* The new ASID is already up to date. */
+-			load_new_mm_cr3(next->pgd, new_asid, false);
+-
+-			/* See above wrt _rcuidle. */
+-			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+-		}
++	if (need_flush) {
++		this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
++		this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
++		load_new_mm_cr3(next->pgd, new_asid, true);
+ 
+ 		/*
+-		 * Record last user mm's context id, so we can avoid
+-		 * flushing branch buffer with IBPB if we switch back
+-		 * to the same user.
++		 * NB: This gets called via leave_mm() in the idle path
++		 * where RCU functions differently.  Tracing normally
++		 * uses RCU, so we need to use the _rcuidle variant.
++		 *
++		 * (There is no good reason for this.  The idle code should
++		 *  be rearranged to call this before rcu_idle_enter().)
+ 		 */
+-		if (next != &init_mm)
+-			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
++		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
++	} else {
++		/* The new ASID is already up to date. */
++		load_new_mm_cr3(next->pgd, new_asid, false);
+ 
+-		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+-		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
++		/* See above wrt _rcuidle. */
++		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+ 	}
+ 
++	/*
++	 * Record last user mm's context id, so we can avoid
++	 * flushing branch buffer with IBPB if we switch back
++	 * to the same user.
++	 */
++	if (next != &init_mm)
++		this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
++
++	this_cpu_write(cpu_tlbstate.loaded_mm, next);
++	this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
++
+ 	load_mm_cr4(next);
+ 	switch_ldt(real_prev, next);
+ }
 -- 
 2.14.4
 
