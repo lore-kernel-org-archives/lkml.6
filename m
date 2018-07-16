@@ -2,148 +2,145 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03365ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7549ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FDF20B80
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5055C20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:19:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z+c9bTWJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FDF20B80
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxuvTcJ7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5055C20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbeGPMoD (ORCPT
+        id S1729818AbeGPMqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:44:03 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:60978 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728129AbeGPMoD (ORCPT
+        Mon, 16 Jul 2018 08:46:13 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43224 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728477AbeGPMqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:44:03 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6GCDFsX070124;
-        Mon, 16 Jul 2018 07:13:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531743195;
-        bh=mdbHH8GlSYIR9oHY37p5kjbz34VrxG4F9TIRygBudec=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Z+c9bTWJR9EBX3INyhZhkmQHt7qRFqLNe4aR/CwhvKD2jfMinaCO/MIXc+/jVUVEA
-         bDPYwv8o2C3QPb+jhld4N07k9ViqUEB1DZalEmDYNwgX/JN8Fq3JvJNy+FJAvhioG7
-         VQ1m44parK8jQzRx7HjHIx7bDgNJDqzJOmIMjhso=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GCDFnb031741;
-        Mon, 16 Jul 2018 07:13:15 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 16
- Jul 2018 07:13:15 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 16 Jul 2018 07:13:15 -0500
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GCD33f001945;
-        Mon, 16 Jul 2018 07:13:05 -0500
-Subject: Re: [PATCH v4 08/18] net: davinci_emac: potentially get the MAC
- address from MTD
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Ladislav Michl <ladis@linux-mips.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+        Mon, 16 Jul 2018 08:46:13 -0400
+Received: by mail-wr1-f65.google.com with SMTP id b15-v6so31721756wrv.10
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 05:19:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=caBKpWwaHSpjQh0KeAWGrQRHNRY7iRsR+IIl5LC46Vw=;
+        b=gxuvTcJ7ff2pfbiMveMXStKVAGzYdfPsOegiCwouqErX/zqaBV4p8Lf4CyxJhyd4AM
+         JMCW7U7z8Aav7JaDtLUqWpnPQq1J4QiE89w2LvIDtIfCxjoDr/U5Z8A23JWmtltv9jZh
+         wZgkL2ZE+7F1rWCpDYHPLBIsBKcuryqQXNdCg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=caBKpWwaHSpjQh0KeAWGrQRHNRY7iRsR+IIl5LC46Vw=;
+        b=LfZJQgb+hFF2B8tc6ntQp0otTreDWjyoAarof/v0nBXZ8nkWglJVG41W4hsXo/5IBT
+         wA1ResnA/YBCmETPkRmSdgLYCqNrOvyQnubXZTemZzOxVuupF2QB4vXgrySzKdM58W/v
+         qlV+YUUHinp46f4UlrufFrxdPJn8mtnS1NITRLQc5Dw03B9xZzzOnF9v1ii09+l4TACm
+         0moQoiQFC9jaVpQejOg8b3osP+ovIuf4nnD9KreDOM8gb2jpTBNKObwbVoZ1bk8d3e9i
+         ob6RhhlL14/QDKq/DpR9JwMxh9fJz/0DRTmG84nLdKkwf2vUc6S5yN8mmUEK6hSm6D6n
+         WlOg==
+X-Gm-Message-State: AOUpUlGTndnJyfSrfLyCw+fmArkBxASN6ZqGCZxrT24quRJsEFygrbqq
+        KkxA5pDTyGswI5JisshNsSgYQg==
+X-Google-Smtp-Source: AAOMgpfd/XhHqt1PukE133Vd6hTy0vDpvSH+YZSc2HgpFo+kRAXG29Q6MEMNozE1YK/QTtJgb0/YRA==
+X-Received: by 2002:adf:959a:: with SMTP id p26-v6mr11625588wrp.202.1531743541197;
+        Mon, 16 Jul 2018 05:19:01 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id 185-v6sm20164030wmh.22.2018.07.16.05.18.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Jul 2018 05:19:00 -0700 (PDT)
+Subject: Re: [PATCH v4 02/18] Documentation: nvmem: document lookup entries
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Grygorii Strashko <grygorii.strashko@ti.com>,
         "David S . Miller" <davem@davemloft.net>,
         Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
         David Lechner <david@lechnology.com>,
-        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 References: <20180629094039.7543-1-brgl@bgdev.pl>
- <20180629094039.7543-9-brgl@bgdev.pl>
- <03b77e24-9ab9-fa01-2387-9de0408a9942@gmail.com>
- <20180704070919.GA14051@lenoch>
- <CAMRc=McOYG9=naT2=4c4hnhJwxcqBCATEZOGXXv9u9zuvXyDXw@mail.gmail.com>
- <c0ffc590-8064-3b02-9b5c-fcc24628d390@ti.com>
- <CAMRc=McO8H9Aw8a7h318a=hJjKBOgeC+9_hreBnOY3Tc3Fh7sg@mail.gmail.com>
- <d7f03763-982f-5e3e-d0ad-54e024b10f97@ti.com>
- <a70aebb0-408c-c61f-897a-227114888585@linaro.org>
- <3b53a8a7-3f3a-4341-35b0-e7b52854fa9b@ti.com>
- <20180716121005.GA23309@kroah.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <84a960a1-efac-ffcd-cf04-25b65922fd50@ti.com>
-Date:   Mon, 16 Jul 2018 17:43:03 +0530
+ <20180629094039.7543-3-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <d5c1a83c-7c63-32ab-1d41-8e9bf4cdd6b7@linaro.org>
+Date:   Mon, 16 Jul 2018 13:18:59 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180716121005.GA23309@kroah.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20180629094039.7543-3-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 16 July 2018 05:40 PM, Greg Kroah-Hartman wrote:
-> On Mon, Jul 16, 2018 at 05:27:00PM +0530, Sekhar Nori wrote:
->> On Monday 16 July 2018 02:26 PM, Srinivas Kandagatla wrote:
->>>
->>>
->>> On 16/07/18 09:50, Sekhar Nori wrote:
->>>> On Friday 13 July 2018 11:30 PM, Bartosz Golaszewski wrote:
->>>>
->>>>> We're getting close to rc5 so I'd like to make a case for this series
->>>>> again.
->>>>>
->>>>> I understand that there's more to do than just the changes introduced
->>>>> here, but we shouldn't try to fix several problems in many different
->>>>> places at once. There's just too many moving pieces. I'd rather start
->>>>> merging small improvements right away.
->>>>>
->>>>> The idea behind this series is to remove (almost) all users of
->>>>> at24_platform_data. The davinci_emac patches are there only because we
->>>>> need to remove some MAC adress reading stuff from the board files.
->>>>> Having this code there and calling it back from EEPROM/MTD drivers is
->>>>> already wrong and we should work towards using nvmem for that anyway.
->>>>>
->>>>> Currently for MTD the nvmem support series seems to be dead and it's
->>>>> going to take some time before anything gets upstream.
->>>>>
->>>>> So I'd like to again ask you to consider picking up the patches from
->>>>> this series to your respective trees or at the very least: I'd like to
->>>>> ask Srinivas to pick up the nvmem patches and Sekhar to take the
->>>>> first, non-controversial batch of davinci platform changes so that
->>>>> we'll have less code to carry for the next release.
->>>>
->>>> I think those are patches 3-7. I can take those if I get an immutable
->>>> commit over v4.18-rc1 from Srinivas with patches 1 & 2 applied.
->>
->>> nvmem patches go via Greg KH char-misc tree, if it makes things easy I
->>> can provide Ack on nvmem patches, so that you can take these patches via
->>> your tree?
->>>
->>> Let me know.
->>
->> I can do that.
->>
->> Greg, are you fine with this? It will be great to have your ack for
->> patches 1/8 and 2/18.
+
+
+On 29/06/18 10:40, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> I'm not the nvmem maintainer :)
+> Describe the usage of nvmem cell lookup tables.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Got it. Will apply with Srinivas's ack.
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-Regards,
-Sekhar
+> ---
+>   Documentation/nvmem/nvmem.txt | 28 ++++++++++++++++++++++++++++
+>   1 file changed, 28 insertions(+)
+> 
+> diff --git a/Documentation/nvmem/nvmem.txt b/Documentation/nvmem/nvmem.txt
+> index 8d8d8f58f96f..9d5e3ca2b4f3 100644
+> --- a/Documentation/nvmem/nvmem.txt
+> +++ b/Documentation/nvmem/nvmem.txt
+> @@ -58,6 +58,34 @@ static int qfprom_probe(struct platform_device *pdev)
+>   It is mandatory that the NVMEM provider has a regmap associated with its
+>   struct device. Failure to do would return error code from nvmem_register().
+>   
+> +Additionally it is possible to create nvmem cell lookup entries and register
+> +them with the nvmem framework from machine code as shown in the example below:
+> +
+> +static struct nvmem_cell_lookup foobar_lookup = {
+> +	.info = {
+> +		.name = "mac-address",
+> +		.offset = 0xd000,
+> +		.bytes = ERH_ALEN,
+> +	},
+> +	.nvmem_name = "foobar",
+> +};
+> +
+> +static void foobar_register(void)
+> +{
+> +	...
+> +	nvmem_add_lookup_table(&foobar_lookup, 1);
+> +	...
+> +}
+> +
+> +A lookup entry table can be later removed if needed:
+> +
+> +static void foobar_fini(void)
+> +{
+> +	...
+> +	nvmem_del_lookup_table(&foobar_lookup, 1);
+> +	...
+> +}
+> +
+>   NVMEM Consumers
+>   +++++++++++++++
+>   
+> 
