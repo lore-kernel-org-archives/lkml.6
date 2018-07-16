@@ -1,108 +1,279 @@
 Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B01ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D308CECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F449208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:39:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRPOpXGx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F449208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7DB6E208C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB6E208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731542AbeGPMGT (ORCPT
+        id S1729859AbeGPMHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:06:19 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:36872 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729859AbeGPMGT (ORCPT
+        Mon, 16 Jul 2018 08:07:52 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:45384 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727522AbeGPMHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:06:19 -0400
-Received: by mail-wm0-f44.google.com with SMTP id n17-v6so15555092wmh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0KmJ5Zu/ERbKEGlrwpSB+5zOzCJEYPpU0w+rC6L0R3w=;
-        b=nRPOpXGx+mEu6FQUTmLa1HpIILHdBjgQQ6+fItM9h2QKQz/1O8WheX7KcdVcObyXDH
-         yEb1EIh6K1JdrnsZGR00+Au4co8tVMg8HZ8daK8C3gEqcToCE116FTUUJoOOfajgYTQb
-         nzjvNEkMvL/4iidMXnPZddYfy9YnLRSxdFrwBt1Z4LtROOATWj7m9irDRIF/RcHNXAQU
-         HnyJlSKyp1aFjNx/J9VzBvNB0WHsXtI9EXqfqAd778T/9F7mVrUc0/uyubRVJdVk6V9i
-         Wv4GDeaUiqmXgByphRnhBnk+liLsxHXVHUZRYV04KoO5QiGar9nuP/0IW+UnpQgNJ2en
-         hIhA==
+        Mon, 16 Jul 2018 08:07:51 -0400
+Received: by mail-vk0-f68.google.com with SMTP id b78-v6so7460396vka.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:40:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0KmJ5Zu/ERbKEGlrwpSB+5zOzCJEYPpU0w+rC6L0R3w=;
-        b=St6VtJ7HtyXsxR5ErwY3hFJepFRGTmoyzSGBsB3NTfeJ5JqJp+18p7kYpmnC4ootVd
-         hPLyIGddQAPAESIZaOoRj9bjx1gZbvUNo+aUlNOqQGZHTloNxTSMBofM06HIVmPJpiah
-         Pv1zPUktoaWsEhqPbXw9SG+pddS+UKlOjhjIj/duwKcFsOGjlPD4w/Z1oHQZSFnAl9WZ
-         7Z6/5dICnFDIadGc86G6b5N00IA0c7gM2dt9jHzqPcGWodVRRK9Jwtr2mf0dY9Xw9T4l
-         Kxvl6+9XIsSAuzI3wROEUga4G5U+Db0b/7u0ZigKHJBBH2Qbiqs8rYm6Ye9KPGdAg1aU
-         q2lg==
-X-Gm-Message-State: AOUpUlGdIXar8IvTvtvg68+lYNYJ+iuGXOvUT+s4ZcIbjuQ9lRG4F9t1
-        phpp1AF2/XfuDieTGjJPA3g=
-X-Google-Smtp-Source: AAOMgpfJsAIL/sDyYEP01NNYM59O8Rq+LqOg5G763afI+VtxWT4MV/uY34naqmZKehllAbN3f3cQew==
-X-Received: by 2002:a1c:6585:: with SMTP id z127-v6mr8902580wmb.5.1531741156049;
-        Mon, 16 Jul 2018 04:39:16 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g125-v6sm11715328wmf.16.2018.07.16.04.39.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 04:39:15 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 13:39:13 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Luca Abeni <luca.abeni@santannapisa.it>,
-        Claudio Scordino <claudio@evidence.eu.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH 09/11] sched: use pelt for scale_rt_capacity()
-Message-ID: <20180716113913.GA7053@gmail.com>
-References: <1530200714-4504-1-git-send-email-vincent.guittot@linaro.org>
- <1530200714-4504-10-git-send-email-vincent.guittot@linaro.org>
- <20180715221538.GA23280@gmail.com>
- <CAKfTPtCNtsu3v95+2vtVAn_mxAO_gQgb0X1L2G97T2dwdvee1g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hMadaCnxyFkeKiav5z1+/iu5CWb7rw8Mi5nFwwqriow=;
+        b=LcshrSDN/AIRBMt5wSGjRXRvsXbQEOdr3vQvnngoVsv3kt/1dmxkBFAtQe1K3u/tjB
+         NhcXEbudXojSrtut2fQv9an3P2ufm7tX6cbCnXJAHO3yFxI9ePXsnWq2kRqyp1yosbT1
+         cjWwVxvhMMSKlNeErmwvXSNkV3Zw8a/fIfraAIgcIttQOprlBMZw4JcQPw84CF0EQr+5
+         nwwApltqzCzGFtkK/+qS0GiDfM2ciASBuAkRq5tRpnCsCnK01JtmEYhp4wJSwaALFTKS
+         Om65Yd5Tf18RbUtRyHHeXLDiM2RhSyGxG1hS+dppXSqKrc3xtVQjqarnKz0mdP/ykNtB
+         iCQA==
+X-Gm-Message-State: AOUpUlHkQ3elw0ImgXSyGO84I8eIuNm5N4cE7s5uueNntqVbnJoGF9wm
+        Jlf7VOQzsivv8S+SEyfnYW43FCru4PHLpb/VBrgCTCFG
+X-Google-Smtp-Source: AAOMgpess9XD53XbFgyR81TcLMBJNL6X2QkkkFi/6b+vua/XffK0nA3WfCRQKItcsLXwPHswUuKVFKWH4QW0sJatOMs=
+X-Received: by 2002:a1f:4a03:: with SMTP id x3-v6mr9227128vka.90.1531741246870;
+ Mon, 16 Jul 2018 04:40:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtCNtsu3v95+2vtVAn_mxAO_gQgb0X1L2G97T2dwdvee1g@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180716113300.27032-1-geert@linux-m68k.org>
+In-Reply-To: <20180716113300.27032-1-geert@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 16 Jul 2018 13:40:35 +0200
+Message-ID: <CAMuHMdUy1N7kGOO3DvTeG-0Z2ETC4E4PAZnRk5RZpdqWK==fLA@mail.gmail.com>
+Subject: Re: Build regressions/improvements in v4.18-rc5
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 16, 2018 at 1:36 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> JFYI, when comparing v4.18-rc5[1] to v4.18-rc4[3], the summaries are:
+>   - build errors: +93/-0
 
-* Vincent Guittot <vincent.guittot@linaro.org> wrote:
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+adv7842.c: undefined reference to `__ucmpdi2':  => .text+0x600),
+.text+0x18ae)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+alloc.c: undefined reference to `__ashldi3':  => .text+0xe3d8)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+attrib.c: undefined reference to `__ashrdi3':  => .text+0x4166),
+.text+0x3694), .text+0x4162), .text+0x42f2)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+cadence_ttc_timer.c: undefined reference to `__lshrdi3':  =>
+.init.text+0x1c6)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+cec-pin-error-inj.c: undefined reference to `__ashldi3':  =>
+.text+0x5b4)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dev-replace.c: undefined reference to `__ucmpdi2':  => .text+0x1878)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dir.c: undefined reference to `__ashldi3':  => .text+0x4e82)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+direct-io.c: undefined reference to `__ashldi3': .text+0x1858) =>
+.text+0x1076), .text+0x1858), .text+0x16de), .text+0x16e2),
+.text+0x1880)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dm-integrity.c: undefined reference to `__ashldi3':  => .text+0x4d4c)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dm-verity-target.c: undefined reference to `__ashldi3':  =>
+.text+0x12ec), .text+0x1880), .text+0x187c), .text+0x13a2),
+.text+0x139e)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dm-verity-target.c: undefined reference to `__lshrdi3':  =>
+.text+0x180c), .text+0x12f8), .text+0x189c), .text+0x12fc),
+.text+0x1810), .text+0x1898), .text+0x13b0), .text+0x13ac)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dm-writecache.c: undefined reference to `__ashldi3':  => .text+0x19c4)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dm-zoned-metadata.c: undefined reference to `__ashldi3':  =>
+.text+0x3a40), .text.unlikely+0x44)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+dm-zoned-target.c: undefined reference to `__lshrdi3':  =>
+.text+0x13f6), .text+0x1660), .text+0x10aa), .text+0x13f2)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+do_mounts_rd.c: undefined reference to `__ashldi3':  =>
+.init.text+0x3e2)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+drm_ioctl.c: undefined reference to `__ucmpdi2':  => .text+0x1e4),
+.text+0x94)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+extent-tree.c: undefined reference to `__ucmpdi2':  => .text+0x4ca2)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+extent_io.c: undefined reference to `__lshrdi3':  => .text+0x6bd0)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+extents.c: undefined reference to `__lshrdi3':  => .text+0x630),
+.text+0x6ae), .text+0x6b2)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+file.c: undefined reference to `__ashldi3':  => .text+0x3812),
+.text+0x3816), .text+0x2c9c)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+hdpvr-core.c: undefined reference to `__ashldi3':  => .text+0x478)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+inode.c: undefined reference to `__ashldi3':  => .text+0x1260)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+inode.c: undefined reference to `__ashrdi3':  => .text+0x24b2)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+journal.c: undefined reference to `__lshrdi3':  => .text+0x1394)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+kernel/futex.o: relocation truncated to fit: R_NDS32_25_PCREL_RELA
+against `.text':  => (.fixup+0xb0), (.fixup+0xbc), (.fixup+0xaa),
+(.fixup+0xc4), (.fixup+0x4), (.fixup+0xb6)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+mballoc.c: undefined reference to `__ashldi3':  => .text+0x20c8),
+.text+0x20e4), .text+0x20cc), .text+0x20e8)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+mballoc.c: undefined reference to `__ashrdi3': .text+0x1bc2) =>
+.text+0x209e), .text+0x1bc2), .text+0x20a2), .text+0x2062)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+mmio.c: undefined reference to `__lshrdi3': .init.text+0x60) =>
+.init.text+0x64), .init.text+0x60), .init.text+0x58)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+namei.c: undefined reference to `__ashldi3':  => .text+0x2f50),
+.text+0x2f4c), .text+0x3124), .text+0x2e24)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+nand_base.c: undefined reference to `__lshrdi3':  => .text+0x6320)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+nand_bbt.c: undefined reference to `__ashldi3':  => .text+0x15f0),
+.text.unlikely+0x12e), .text.unlikely+0x132), .text+0x578),
+.text+0x165e)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+nand_bbt.c: undefined reference to `__lshrdi3':  =>
+.text.unlikely+0x11a), .text.unlikely+0x116), .text.unlikely+0xd0)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+nandsim.c: undefined reference to `__ashldi3':  => .init.text+0xdbe)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+nandsim.c: undefined reference to `__lshrdi3':  => .init.text+0xe5a),
+.init.text+0xdd0), .init.text+0xe56), .init.text+0xdcc)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+onenand_base.c: undefined reference to `__ashldi3':  => .text+0x1098),
+.text+0x109c), .text+0x1080)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+onenand_base.c: undefined reference to `__ashrdi3':  => .text+0x211c),
+.text+0x215e), .text+0x2162), .text+0x244a)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+sharpslpart.c: undefined reference to `__lshrdi3':  =>
+.text.unlikely+0x24), .text.unlikely+0x48), .text.unlikely+0x44)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+sidewinder.c: undefined reference to `__ashldi3':  =>
+.text.unlikely+0x70)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+super.c: undefined reference to `__ashldi3':  => .text+0xfc70),
+.text+0xfc74)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+super.c: undefined reference to `__ashrdi3': .text+0x6504) =>
+.text+0xe038), .text+0x6504)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+super.c: undefined reference to `__lshrdi3':  => .text+0xfab8),
+.text+0xfab4)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+super.c: undefined reference to `__ucmpdi2':  => .text+0x522c)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+sysfs.c: undefined reference to `__ashldi3':  => .init.text+0x1ca)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+tee_core.c: undefined reference to `__ucmpdi2':  => .text+0x34),
+.text+0x11ac)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+timekeeping.c: undefined reference to `__ashldi3': .init.text+0x1ac)
+=> .init.text+0x1ac), .init.text+0x144)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+timekeeping.c: undefined reference to `__lshrdi3': .init.text+0x1ec),
+.init.text+0x1f0) => .init.text+0x1f0), .init.text+0x1ec),
+.init.text+0x182), .init.text+0x17e)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+xfs_fsmap.c: undefined reference to `__ucmpdi2':  => .text+0xb80)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+xfs_ialloc.c: undefined reference to `__ashldi3':  => .text+0x3f68),
+.text+0x3f6c), .text+0x3c6c)
+  + error: /opt/cross/kisskb/korg/gcc-8.1.0-nolibc/nds32le-linux/bin/nds32le-linux-ld:
+xfs_iomap.c: undefined reference to `__lshrdi3':  => .text+0x81c)
+  + error: adv7842.c: undefined reference to `__ucmpdi2':  =>
+.text+0x18aa), .text+0x5fc)
+  + error: alloc.c: undefined reference to `__ashldi3':  => .text+0xe3d4)
+  + error: attrib.c: undefined reference to `__ashrdi3':  => .text+0x3690)
+  + error: cadence_ttc_timer.c: undefined reference to `__lshrdi3':
+=> .init.text+0x1c2)
+  + error: cec-pin-error-inj.c: undefined reference to `__ashldi3':
+=> .text+0x5b0)
+  + error: dev-replace.c: undefined reference to `__ucmpdi2':  => .text+0x1874)
+  + error: dir.c: undefined reference to `__ashldi3':  => .text+0x4e7e)
+  + error: direct-io.c: undefined reference to `__ashldi3':
+.text+0x185c), .text+0x16a0), .text+0x16a4) => .text+0x16a0),
+.text+0x185c), .text+0x1072), .text+0x16a4)
+  + error: diskonchip.c: undefined reference to `__lshrdi3':  =>
+.init.text+0x1f8)
+  + error: dm-integrity.c: undefined reference to `__ashldi3':  => .text+0x4d48)
+  + error: dm-verity-target.c: undefined reference to `__ashldi3':  =>
+.text+0x12e8)
+  + error: dm-writecache.c: undefined reference to `__ashldi3':  =>
+.text+0x19c0)
+  + error: dm-zoned-metadata.c: undefined reference to `__ashldi3':
+=> .text+0x3a3c), .text.unlikely+0x40)
+  + error: dm-zoned-target.c: undefined reference to `__lshrdi3':  =>
+.text+0x10a6)
+  + error: do_mounts_rd.c: undefined reference to `__ashldi3':  =>
+.init.text+0x3de)
+  + error: drm_ioctl.c: undefined reference to `__ucmpdi2':  =>
+.text+0x1e0), .text+0x90)
+  + error: extent-tree.c: undefined reference to `__ucmpdi2':  => .text+0x4c9e)
+  + error: extent_io.c: undefined reference to `__lshrdi3':  => .text+0x6bcc)
+  + error: extents.c: undefined reference to `__lshrdi3':  => .text+0x62c)
+  + error: file.c: undefined reference to `__ashldi3':  => .text+0x2c98)
+  + error: hdpvr-core.c: undefined reference to `__ashldi3':  => .text+0x474)
+  + error: inode.c: undefined reference to `__ashldi3':  =>
+.text+0x125c), .text+0x34ee)
+  + error: inode.c: undefined reference to `__ashrdi3':  => .text+0x24ae)
+  + error: journal.c: undefined reference to `__lshrdi3':  => .text+0x1390)
+  + error: mballoc.c: undefined reference to `__ashrdi3':
+.text+0x1c0e), .text+0x1bbe), .text+0x1c12) => .text+0x1c0e),
+.text+0x205e), .text+0x1c12), .text+0x1bbe)
+  + error: mmio.c: undefined reference to `__lshrdi3':
+.init.text+0x5c) => .init.text+0x54), .init.text+0x5c),
+.init.text+0x60)
+  + error: namei.c: undefined reference to `__ashldi3':  => .text+0x2e20)
+  + error: nand_base.c: undefined reference to `__lshrdi3':  => .text+0x631c)
+  + error: nand_bbt.c: undefined reference to `__ashldi3':  =>
+.text+0x574), .text+0x15ec)
+  + error: nand_bbt.c: undefined reference to `__lshrdi3':  =>
+.text.unlikely+0xcc)
+  + error: nandsim.c: undefined reference to `__ashldi3':  => .init.text+0xdba)
+  + error: onenand_base.c: undefined reference to `__ashldi3':  => .text+0x107c)
+  + error: onenand_base.c: undefined reference to `__ashrdi3':  => .text+0x2118)
+  + error: samsung_pwm_timer.c: undefined reference to `__lshrdi3':
+=> .init.text+0x2e4)
+  + error: sharpslpart.c: undefined reference to `__lshrdi3':  =>
+.text.unlikely+0x20)
+  + error: sidewinder.c: undefined reference to `__ashldi3':  =>
+.text.unlikely+0x6c)
+  + error: super.c: undefined reference to `__ashrdi3': .text+0x6500)
+=> .text+0x6500), .text+0xe034)
+  + error: super.c: undefined reference to `__ucmpdi2':  => .text+0x5228)
+  + error: sysfs.c: undefined reference to `__ashldi3':  => .init.text+0x1c6)
+  + error: tee_core.c: undefined reference to `__ucmpdi2':  =>
+.text+0x11a8), .text+0x30), .text+0x144e)
+  + error: timekeeping.c: undefined reference to `__ashldi3':
+.init.text+0x1a8) => .init.text+0x1a8), .init.text+0x140)
+  + error: xfs_fsmap.c: undefined reference to `__ucmpdi2':  => .text+0xb7c)
+  + error: xfs_ialloc.c: undefined reference to `__ashldi3':  => .text+0x3c68)
+  + error: xfs_iomap.c: undefined reference to `__lshrdi3':  => .text+0x818)
 
-> > If the compiler refuses to optimize this away (due to the zero and overflow
-> > cases), try to find something more clever?
-> 
-> Thanks for the fix.
-> I'm off for now and will look at your proposal above once back
+All nds32Gr{oetje,eeting}s,
 
-Sounds good, there's no rush, we've still got time until ~rc7.
+                        Geert
 
-Thanks,
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-	Ingo
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
