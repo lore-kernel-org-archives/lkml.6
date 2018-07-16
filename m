@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DADCCECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86671ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A086020864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A086020864
+	by mail.kernel.org (Postfix) with ESMTP id 4C94C20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C94C20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbeGPIBs (ORCPT
+        id S1730056AbeGPIBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:01:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46526 "EHLO
+        Mon, 16 Jul 2018 04:01:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46538 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726301AbeGPIBr (ORCPT
+        with ESMTP id S1726301AbeGPIBu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:01:47 -0400
+        Mon, 16 Jul 2018 04:01:50 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 930BACA8;
-        Mon, 16 Jul 2018 07:35:47 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A620CAF;
+        Mon, 16 Jul 2018 07:35:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qing Xia <xiaqing17@hisilicon.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.17 10/67] mmc: dw_mmc: fix card threshold control configuration
-Date:   Mon, 16 Jul 2018 09:34:39 +0200
-Message-Id: <20180716073444.689906772@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
+Subject: [PATCH 4.17 02/67] MIPS: Call dump_stack() from show_regs()
+Date:   Mon, 16 Jul 2018 09:34:31 +0200
+Message-Id: <20180716073443.563127118@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -50,49 +52,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: x00270170 <xiaqing17@hisilicon.com>
+From: Paul Burton <paul.burton@mips.com>
 
-commit 7a6b9f4d601dfce8cb68f0dcfd834270280e31e6 upstream.
+commit 5a267832c2ec47b2dad0fdb291a96bb5b8869315 upstream.
 
-Card write threshold control is supposed to be set since controller
-version 2.80a for data write in HS400 mode and data read in
-HS200/HS400/SDR104 mode. However the current code returns without
-configuring it in the case of data writing in HS400 mode.
-Meanwhile the patch fixes that the current code goes to
-'disable' when doing data reading in HS400 mode.
+The generic nmi_cpu_backtrace() function calls show_regs() when a struct
+pt_regs is available, and dump_stack() otherwise. If we were to make use
+of the generic nmi_cpu_backtrace() with MIPS' current implementation of
+show_regs() this would mean that we see only register data with no
+accompanying stack information, in contrast with our current
+implementation which calls dump_stack() regardless of whether register
+state is available.
 
-Fixes: 7e4bf1bc9543 ("mmc: dw_mmc: add the card write threshold for HS400 mode")
-Signed-off-by: Qing Xia <xiaqing17@hisilicon.com>
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+In preparation for making use of the generic nmi_cpu_backtrace() to
+implement arch_trigger_cpumask_backtrace(), have our implementation of
+show_regs() call dump_stack() and drop the explicit dump_stack() call in
+arch_dump_stack() which is invoked by arch_trigger_cpumask_backtrace().
+
+This will allow the output we produce to remain the same after a later
+patch switches to using nmi_cpu_backtrace(). It may mean that we produce
+extra stack output in other uses of show_regs(), but this:
+
+  1) Seems harmless.
+  2) Is good for consistency between arch_trigger_cpumask_backtrace()
+     and other users of show_regs().
+  3) Matches the behaviour of the ARM & PowerPC architectures.
+
+Marked for stable back to v4.9 as a prerequisite of the following patch
+"MIPS: Call dump_stack() from show_regs()".
+
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/19596/
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org # v4.9+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/dw_mmc.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/mips/kernel/process.c |    4 ++--
+ arch/mips/kernel/traps.c   |    1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1065,8 +1065,8 @@ static void dw_mci_ctrl_thld(struct dw_m
- 	 * It's used when HS400 mode is enabled.
- 	 */
- 	if (data->flags & MMC_DATA_WRITE &&
--		!(host->timing != MMC_TIMING_MMC_HS400))
--		return;
-+		host->timing != MMC_TIMING_MMC_HS400)
-+		goto disable;
+--- a/arch/mips/kernel/process.c
++++ b/arch/mips/kernel/process.c
+@@ -663,8 +663,8 @@ static void arch_dump_stack(void *info)
  
- 	if (data->flags & MMC_DATA_WRITE)
- 		enable = SDMMC_CARD_WR_THR_EN;
-@@ -1074,7 +1074,8 @@ static void dw_mci_ctrl_thld(struct dw_m
- 		enable = SDMMC_CARD_RD_THR_EN;
+ 	if (regs)
+ 		show_regs(regs);
+-
+-	dump_stack();
++	else
++		dump_stack();
+ }
  
- 	if (host->timing != MMC_TIMING_MMC_HS200 &&
--	    host->timing != MMC_TIMING_UHS_SDR104)
-+	    host->timing != MMC_TIMING_UHS_SDR104 &&
-+	    host->timing != MMC_TIMING_MMC_HS400)
- 		goto disable;
+ void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
+--- a/arch/mips/kernel/traps.c
++++ b/arch/mips/kernel/traps.c
+@@ -351,6 +351,7 @@ static void __show_regs(const struct pt_
+ void show_regs(struct pt_regs *regs)
+ {
+ 	__show_regs((struct pt_regs *)regs);
++	dump_stack();
+ }
  
- 	blksz_depth = blksz / (1 << host->data_shift);
+ void show_registers(struct pt_regs *regs)
 
 
