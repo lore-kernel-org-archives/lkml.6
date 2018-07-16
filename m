@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4DDECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB758ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B9A82075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B9A82075B
+	by mail.kernel.org (Postfix) with ESMTP id 764F5206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764F5206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389182AbeGPIJz (ORCPT
+        id S2389197AbeGPIJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48068 "EHLO
+        Mon, 16 Jul 2018 04:09:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48078 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbeGPIJy (ORCPT
+        with ESMTP id S2388375AbeGPIJ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:54 -0400
+        Mon, 16 Jul 2018 04:09:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1B0D9C03;
-        Mon, 16 Jul 2018 07:43:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE471C03;
+        Mon, 16 Jul 2018 07:43:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 20/32] ALSA: hda - Handle pm failure during hotplug
-Date:   Mon, 16 Jul 2018 09:36:28 +0200
-Message-Id: <20180716073507.082209267@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 11/32] USB: serial: ch341: fix type promotion bug in ch341_control_in()
+Date:   Mon, 16 Jul 2018 09:36:19 +0200
+Message-Id: <20180716073505.802427083@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -50,103 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit aaa23f86001bdb82d2f937c5c7bce0a1e11a6c5b upstream.
+commit e33eab9ded328ccc14308afa51b5be7cbe78d30b upstream.
 
-Obtaining the runtime pm wakeref can fail, especially in a hotplug
-scenario where i915.ko has been unloaded. If we do not catch the
-failure, we end up with an unbalanced pm.
+The "r" variable is an int and "bufsize" is an unsigned int so the
+comparison is type promoted to unsigned.  If usb_control_msg() returns a
+negative that is treated as a high positive value and the error handling
+doesn't work.
 
-v2 additions by tiwai:
-hdmi_present_sense() checks the return value and handle only a
-negative error case and bails out only if it's really still suspended.
-Also, snd_hda_power_down() is called at the error path so that the
-refcount is balanced.
-
-Along with it, the spec->pcm_lock is taken outside
-hdmi_present_sense() in the caller side, so that it won't cause
-deadlock at reentrace via runtime resume.
-
-v3 fix by tiwai:
-Missing linux/pm_runtime.h is included.
-
-References: 222bde03881c ("ALSA: hda - Fix mutex deadlock at HDMI/DP hotplug")
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 2d5a9c72d0c4 ("USB: serial: ch341: fix control-message error handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_hdmi.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/usb/serial/ch341.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_hdmi.c
-+++ b/sound/pci/hda/patch_hdmi.c
-@@ -33,6 +33,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
- #include <sound/core.h>
- #include <sound/jack.h>
- #include <sound/asoundef.h>
-@@ -731,8 +732,10 @@ static void check_presence_and_report(st
- 
- 	if (pin_idx < 0)
- 		return;
-+	mutex_lock(&spec->pcm_lock);
- 	if (hdmi_present_sense(get_pin(spec, pin_idx), 1))
- 		snd_hda_jack_report_sync(codec);
-+	mutex_unlock(&spec->pcm_lock);
- }
- 
- static void jack_callback(struct hda_codec *codec,
-@@ -1521,21 +1524,23 @@ static void sync_eld_via_acomp(struct hd
- static bool hdmi_present_sense(struct hdmi_spec_per_pin *per_pin, int repoll)
- {
- 	struct hda_codec *codec = per_pin->codec;
--	struct hdmi_spec *spec = codec->spec;
- 	int ret;
- 
- 	/* no temporary power up/down needed for component notifier */
--	if (!codec_has_acomp(codec))
--		snd_hda_power_up_pm(codec);
-+	if (!codec_has_acomp(codec)) {
-+		ret = snd_hda_power_up_pm(codec);
-+		if (ret < 0 && pm_runtime_suspended(hda_codec_dev(codec))) {
-+			snd_hda_power_down_pm(codec);
-+			return false;
-+		}
-+	}
- 
--	mutex_lock(&spec->pcm_lock);
- 	if (codec_has_acomp(codec)) {
- 		sync_eld_via_acomp(codec, per_pin);
- 		ret = false; /* don't call snd_hda_jack_report_sync() */
- 	} else {
- 		ret = hdmi_present_sense_via_verbs(per_pin, repoll);
- 	}
--	mutex_unlock(&spec->pcm_lock);
- 
- 	if (!codec_has_acomp(codec))
- 		snd_hda_power_down_pm(codec);
-@@ -1547,12 +1552,16 @@ static void hdmi_repoll_eld(struct work_
- {
- 	struct hdmi_spec_per_pin *per_pin =
- 	container_of(to_delayed_work(work), struct hdmi_spec_per_pin, work);
-+	struct hda_codec *codec = per_pin->codec;
-+	struct hdmi_spec *spec = codec->spec;
- 
- 	if (per_pin->repoll_count++ > 6)
- 		per_pin->repoll_count = 0;
- 
-+	mutex_lock(&spec->pcm_lock);
- 	if (hdmi_present_sense(per_pin, per_pin->repoll_count))
- 		snd_hda_jack_report_sync(per_pin->codec);
-+	mutex_unlock(&spec->pcm_lock);
- }
- 
- static void intel_haswell_fixup_connect_list(struct hda_codec *codec,
+--- a/drivers/usb/serial/ch341.c
++++ b/drivers/usb/serial/ch341.c
+@@ -118,7 +118,7 @@ static int ch341_control_in(struct usb_d
+ 	r = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), request,
+ 			    USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
+ 			    value, index, buf, bufsize, DEFAULT_TIMEOUT);
+-	if (r < bufsize) {
++	if (r < (int)bufsize) {
+ 		if (r >= 0) {
+ 			dev_err(&dev->dev,
+ 				"short control message received (%d < %u)\n",
 
 
