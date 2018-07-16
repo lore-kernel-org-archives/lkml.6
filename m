@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7F4ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FCDECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 433E220854
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60C3420854
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:12:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="chD4O5nq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 433E220854
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LM3k4IiQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C3420854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbeGPFfe (ORCPT
+        id S1727376AbeGPFh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 01:35:34 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:38810 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbeGPFfd (ORCPT
+        Mon, 16 Jul 2018 01:37:56 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45673 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726833AbeGPFhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 01:35:33 -0400
-Received: by mail-pl0-f68.google.com with SMTP id b1-v6so14741731pls.5
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 22:10:00 -0700 (PDT)
+        Mon, 16 Jul 2018 01:37:55 -0400
+Received: by mail-pf0-f195.google.com with SMTP id i26-v6so14293046pfo.12
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 22:12:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=F0UnHrDuIsT1+I0lKILxiKGYZdUg0AMu06Dp82pbQEA=;
-        b=chD4O5nqdXwLk98APJ/vf5lpxOEW+kCVjgsGkLUxrnB78THoTPV43PPeWATayzibN9
-         OI48YkhOR7/+WirFvIi9dIg6KvWwRSfGPHBTgA07dPgw7iicp+4zHkVDbhg/mbygY9Ha
-         y55II5ofGgOYI4+UVtrk113N1kOKlod7fo6m8=
+        bh=QgkMnEFIxJGAje2UsBQPMQ+CWvoYqiNzv1pFlMeT8HQ=;
+        b=LM3k4IiQLn9/Z83NtCuYPKzdH/6S7TBi+yQW04HtoYVGe+dqTxS/fEw3tdB8sZTSZL
+         bKUizRlWWy/kQn5UGtRKaip035f7wsNmHP8HXdvpkwxsIXSI+EG2AZhL8JisLa28eofI
+         SDCFSyvgjzqGr5KnDYBGTJawKnOJmdXwNuV2k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F0UnHrDuIsT1+I0lKILxiKGYZdUg0AMu06Dp82pbQEA=;
-        b=QDq4OOnHffKt6F3TR9rBgq7GG+MgHNpnlC62R+6apr0fbX/gq9DVS81SDUplCgBGDN
-         aF+NXXebk1WEByr+dbZ32bMVJDoxyUR+5ElY3Q7Rc2OWR6e2bEfUaS1EUNf6m0SWcAtu
-         Gu2XYb4TOa9zV262WRu5Iez63NQM9+XfSO/lGz5YiHOKD8K2hnZP9pu7U+mlr06/5kQt
-         UUTCzEZvrbxNVWusIRcqI3bU99G0Upraoamdw57TGYpXzM5ekf4sN/yj/7ouxYpsXGUr
-         dU1mZa2YLwJmmujBTXwNMKPTw9BRz72JdlPmHR7a/nUZNUA2fkI4Hs+pf3vV41Z+l8PE
-         B96A==
-X-Gm-Message-State: AOUpUlEhtm3Q0q6in9+a9RY8m1b78xVDTfJ4qbFeLJPNnvQ7PriZaVwm
-        QKn72lIFzbQ+fiGHlhmtK7t1GA==
-X-Google-Smtp-Source: AAOMgpcRWkJedBQA68nOFNz8hLSouPyLO4Fry3LAXD/Wdbq9GsbUDkCGW5lh2jEyfMpi1zRUcHOIwQ==
-X-Received: by 2002:a17:902:22e:: with SMTP id 43-v6mr15607492plc.82.1531717800367;
-        Sun, 15 Jul 2018 22:10:00 -0700 (PDT)
+        bh=QgkMnEFIxJGAje2UsBQPMQ+CWvoYqiNzv1pFlMeT8HQ=;
+        b=iuX7GyG7blkr6Dmy/k2jPha07lRb7ZBNrjHJhp1l2uzU0yHYUNQxm9CEX9a8FkV0iY
+         6AK96IUWZN6dCmXpWuXcSNClbJo3YObSDw2zRJmSa8GxOHsce8p942QvYUfaVLO6fGgW
+         2yJ2DUf8XiZbcPmvxACM2ZW5OzlLhjU6edo55CSIjtJXrL3JQTkJL5P6+acEo9/WwRyh
+         7FIJplryJDUw0DJ/MI8HFIIl3P5RmeuUXwrwx8blidhyDF7SclY6aaPRfrx5o2X0Z6cb
+         gGc4gGy8woDCZZJUkGZXv8TxhZd/BEcuL49zq/MF+kFdCJFDltA+ZAmcE9Hn6+c5fGbw
+         QzZg==
+X-Gm-Message-State: AOUpUlFFV/jPEbnhwgpfLNBSZVzcrUAUPnia/66pIpT+vq/aaio2/7A7
+        u9RC/YDHJDBucNML1Tm32PyJmw==
+X-Google-Smtp-Source: AAOMgpcM24mn5U99twXWRphZ4pNFIDGj7SWuKCqNwNXExmeZvjB5VrOV0VMUKOWCh2EzXJnR+JxI0w==
+X-Received: by 2002:a65:62d8:: with SMTP id m24-v6mr13252094pgv.307.1531717941736;
+        Sun, 15 Jul 2018 22:12:21 -0700 (PDT)
 Received: from localhost ([122.171.235.75])
-        by smtp.gmail.com with ESMTPSA id x2-v6sm51990806pgq.33.2018.07.15.22.09.58
+        by smtp.gmail.com with ESMTPSA id s90-v6sm36204890pfa.178.2018.07.15.22.12.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 15 Jul 2018 22:09:59 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 10:39:57 +0530
+        Sun, 15 Jul 2018 22:12:21 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 10:42:19 +0530
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Taniya Das <tdas@codeaurora.org>
 Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
@@ -68,7 +68,7 @@ Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         evgreen@google.com
 Subject: Re: [PATCH v5 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
  driver
-Message-ID: <20180716050957.bujhcfxrfbnnvn4v@vireshk-i7>
+Message-ID: <20180716051219.36rdvxux3lz3rjed@vireshk-i7>
 References: <1531418745-19742-1-git-send-email-tdas@codeaurora.org>
  <1531418745-19742-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
@@ -82,21 +82,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 12-07-18, 23:35, Taniya Das wrote:
-> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this hardware engine.
-> 
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm       |  10 ++
->  drivers/cpufreq/Makefile          |   1 +
->  drivers/cpufreq/qcom-cpufreq-hw.c | 344 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 355 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+> +				   struct device_node *np, unsigned int cpu)
+> +{
+> +	struct cpufreq_qcom *c;
+> +	struct resource res;
+> +	struct device *dev = &pdev->dev;
+> +	unsigned int offset, cpu_r;
+> +	int ret;
+> +
+> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+> +	if (!c)
+> +		return -ENOMEM;
+> +
+> +	c->reg_offset = of_device_get_match_data(&pdev->dev);
+> +	if (!c->reg_offset)
+> +		return -EINVAL;
+> +
+> +	if (of_address_to_resource(np, 0, &res))
+> +		return -ENOMEM;
+> +
+> +	c->base = devm_ioremap(dev, res.start, resource_size(&res));
+> +	if (!c->base) {
+> +		dev_err(dev, "Unable to map %s base\n", np->name);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	offset = c->reg_offset[REG_ENABLE];
+> +
+> +	/* HW should be in enabled state to proceed */
+> +	if (!(readl_relaxed(c->base + offset) & 0x1)) {
+> +		dev_err(dev, "%s cpufreq hardware not enabled\n", np->name);
+> +		return -ENODEV;
+> +	}
+> +
+> +	ret = qcom_get_related_cpus(np, &c->related_cpus);
+> +	if (ret) {
+> +		dev_err(dev, "%s failed to get related CPUs\n", np->name);
+> +		return ret;
+> +	}
+> +
+> +	c->max_cores = cpumask_weight(&c->related_cpus);
+> +	if (!c->max_cores)
+> +		return -ENOENT;
+> +
+> +	ret = qcom_read_lut(pdev, c);
+> +	if (ret) {
+> +		dev_err(dev, "%s failed to read LUT\n", np->name);
+> +		return ret;
+> +	}
+> +
+> +	qcom_freq_domain_map[cpu] = c;
+> +
+> +	/* Related CPUs to keep a single copy */
+> +	cpu_r = cpumask_first(&c->related_cpus);
+> +	if (cpu != cpu_r) {
+> +		qcom_freq_domain_map[cpu] = qcom_freq_domain_map[cpu_r];
+> +		devm_kfree(dev, c);
+> +	}
 
-Have you addressed my concerns that I raised for this patch in the
-previous version ? You never replied to me as well.
+Sorry about missing this, you have actually worked on my comments.
+
+But I think this isn't the clever way of doing it. You allocate the
+structures, fill everything and then finally free them because we were
+related. Why can't we have similar check at the top of this routine
+and skip everything then ?
 
 -- 
 viresh
