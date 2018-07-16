@@ -2,226 +2,292 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5353EECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99020ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B2A220871
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:15:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B2A220871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E2CB20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:16:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XcphlLL7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2CB20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbeGPNnU convert rfc822-to-8bit (ORCPT
+        id S1729934AbeGPNny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:43:20 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:36469 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728359AbeGPNnT (ORCPT
+        Mon, 16 Jul 2018 09:43:54 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:36400 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728574AbeGPNnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 09:43:19 -0400
-Received: from [192.168.0.117] (188.146.201.191.nat.umts.dynamic.t-mobile.pl [188.146.201.191])
-        by mail.holtmann.org (Postfix) with ESMTPSA id E07EACF2A1;
-        Mon, 16 Jul 2018 15:22:46 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH] Bluetooth: avoid killing an already killed socket
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180715193650.24747-1-sudipm.mukherjee@gmail.com>
-Date:   Mon, 16 Jul 2018 15:15:52 +0200
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        netdev@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <AD0D779C-80D0-4212-A282-0B09CADEEAF4@holtmann.org>
-References: <20180715193650.24747-1-sudipm.mukherjee@gmail.com>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Mon, 16 Jul 2018 09:43:53 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6GDDUZb172535;
+        Mon, 16 Jul 2018 13:16:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=HwvmoxJc90L5ORuaIMFg3/pIzzrVSj3wwF3/WubEUuk=;
+ b=XcphlLL7KsJdTYDO6G2FmZliVcdFUt/FGHov8R8Mk0ojPzufTbiu8vsltUEujajyRjCm
+ Gu1GqVNsla5dvQS/zpZOVkMe6iBfpmZ5xrEjXdhfDZ9FsVuOzs017hW40wxEedyGSk23
+ 01iXKTJAWDlwpBIRndEIJaDAa3s6zlbFQ5yVZ6cx5sSCRNCCc5zcZyt7cJf8gGuRrMdI
+ i00BMr8RUQC22uFO+QQ3xq2hvzLaY+bKL/3FWrhlLPEUebrwW7rip7fD6vlvuJPfQmoq
+ rfUWMnpdmm1m/1/nZLlpgpGKcta9j4pT3MuUJP9EFzLNLY9BB7brOWri5dbVAorzr5s+ Ew== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2k7a3svbx8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Jul 2018 13:16:27 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6GDGQNj029378
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Jul 2018 13:16:27 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6GDGQIV022933;
+        Mon, 16 Jul 2018 13:16:26 GMT
+Received: from mail-oi0-f52.google.com (/209.85.218.52)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 16 Jul 2018 06:16:26 -0700
+Received: by mail-oi0-f52.google.com with SMTP id y207-v6so74662348oie.13;
+        Mon, 16 Jul 2018 06:16:26 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHVEnsaJXyXlnNk1uqF3zYUlk1tCK8+VrApitRWQp0WXYNm8cnJ
+        A7TRsA1AwLfzQ+J1w5QAlsER8SQ1ZHzNBb8uEpg=
+X-Google-Smtp-Source: AAOMgpdMr0IOaEkg3ElXSc+Mp67Qf1BiVxtzjUyzKMh8WDqW5jvDB4DXaDGc7dspxDzbNIYA4KWB80bH/WjXfFBrRwQ=
+X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr19496973oia.156.1531746985986;
+ Mon, 16 Jul 2018 06:16:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <5b4a9633.1c69fb81.17984.f7b3@mx.google.com> <0ab16066-5498-374b-5391-3dd7979044aa@collabora.com>
+ <20180716105451.GA20734@sirena.org.uk> <20180716110208.GA25227@kroah.com> <CAGM2reY7RDLKR3vyr9bne3kVo58qn_F58oYHtUZaA0BChzsQGw@mail.gmail.com>
+In-Reply-To: <CAGM2reY7RDLKR3vyr9bne3kVo58qn_F58oYHtUZaA0BChzsQGw@mail.gmail.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Mon, 16 Jul 2018 09:15:50 -0400
+X-Gmail-Original-Message-ID: <CAGM2reaZaJU1WQTyzGiT1zOpjHLv6=hxNfA75JLM4AdbiajrtQ@mail.gmail.com>
+Message-ID: <CAGM2reaZaJU1WQTyzGiT1zOpjHLv6=hxNfA75JLM4AdbiajrtQ@mail.gmail.com>
+Subject: Re: mainline/master boot: 177 boots: 2 failed, 174 passed with 1
+ conflict (v4.18-rc4-160-gf353078f028f)
+To:     gregkh@linuxfoundation.org
+Cc:     broonie@kernel.org, guillaume.tucker@collabora.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kernel@collabora.com, LKML <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, kernel-build-reports@lists.linaro.org,
+        Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8955 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=10 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807160156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sudip,
+I have figured out what is going with x86-32.  Since it has FLATMEM
+memory layout, the memmap is now allocated after zero_resv_unavail():
 
-> slub debug reported:
-> 
-> [  440.648642] =============================================================================
-> [  440.648649] BUG kmalloc-1024 (Tainted: G    BU     O   ): Poison overwritten
-> [  440.648651] -----------------------------------------------------------------------------
-> 
-> [  440.648655] INFO: 0xe70f4bec-0xe70f4bec. First byte 0x6a instead of 0x6b
-> [  440.648665] INFO: Allocated in sk_prot_alloc+0x6b/0xc6 age=33155 cpu=1 pid=1047
-> [  440.648671] 	___slab_alloc.constprop.24+0x1fc/0x292
-> [  440.648675] 	__slab_alloc.isra.18.constprop.23+0x1c/0x25
-> [  440.648677] 	__kmalloc+0xb6/0x17f
-> [  440.648680] 	sk_prot_alloc+0x6b/0xc6
-> [  440.648683] 	sk_alloc+0x1e/0xa1
-> [  440.648700] 	sco_sock_alloc.constprop.6+0x26/0xaf [bluetooth]
-> [  440.648716] 	sco_connect_cfm+0x166/0x281 [bluetooth]
-> [  440.648731] 	hci_conn_request_evt.isra.53+0x258/0x281 [bluetooth]
-> [  440.648746] 	hci_event_packet+0x28b/0x2326 [bluetooth]
-> [  440.648759] 	hci_rx_work+0x161/0x291 [bluetooth]
-> [  440.648764] 	process_one_work+0x163/0x2b2
-> [  440.648767] 	worker_thread+0x1a9/0x25c
-> [  440.648770] 	kthread+0xf8/0xfd
-> [  440.648774] 	ret_from_fork+0x2e/0x38
-> [  440.648779] INFO: Freed in __sk_destruct+0xd3/0xdf age=3815 cpu=1 pid=1047
-> [  440.648782] 	__slab_free+0x4b/0x27a
-> [  440.648784] 	kfree+0x12e/0x155
-> [  440.648787] 	__sk_destruct+0xd3/0xdf
-> [  440.648790] 	sk_destruct+0x27/0x29
-> [  440.648793] 	__sk_free+0x75/0x91
-> [  440.648795] 	sk_free+0x1c/0x1e
-> [  440.648810] 	sco_sock_kill+0x5a/0x5f [bluetooth]
-> [  440.648825] 	sco_conn_del+0x8e/0xba [bluetooth]
-> [  440.648840] 	sco_disconn_cfm+0x3a/0x41 [bluetooth]
-> [  440.648855] 	hci_event_packet+0x45e/0x2326 [bluetooth]
-> [  440.648868] 	hci_rx_work+0x161/0x291 [bluetooth]
-> [  440.648872] 	process_one_work+0x163/0x2b2
-> [  440.648875] 	worker_thread+0x1a9/0x25c
-> [  440.648877] 	kthread+0xf8/0xfd
-> [  440.648880] 	ret_from_fork+0x2e/0x38
-> [  440.648884] INFO: Slab 0xf4718580 objects=27 used=27 fp=0x  (null) flags=0x40008100
-> [  440.648886] INFO: Object 0xe70f4b88 @offset=19336 fp=0xe70f54f8
-> 
-> When KASAN was enabled, it reported:
-> 
-> [  210.096613] ==================================================================
-> [  210.096634] BUG: KASAN: use-after-free in ex_handler_refcount+0x5b/0x127
-> [  210.096641] Write of size 4 at addr ffff880107e17160 by task kworker/u9:1/2040
-> 
-> [  210.096651] CPU: 1 PID: 2040 Comm: kworker/u9:1 Tainted: G     U     O    4.14.47-20180606+ #2
-> [  210.096654] Hardware name: , BIOS 2017.01-00087-g43e04de 08/30/2017
-> [  210.096693] Workqueue: hci0 hci_rx_work [bluetooth]
-> [  210.096698] Call Trace:
-> [  210.096711]  dump_stack+0x46/0x59
-> [  210.096722]  print_address_description+0x6b/0x23b
-> [  210.096729]  ? ex_handler_refcount+0x5b/0x127
-> [  210.096736]  kasan_report+0x220/0x246
-> [  210.096744]  ex_handler_refcount+0x5b/0x127
-> [  210.096751]  ? ex_handler_clear_fs+0x85/0x85
-> [  210.096757]  fixup_exception+0x8c/0x96
-> [  210.096766]  do_trap+0x66/0x2c1
-> [  210.096773]  do_error_trap+0x152/0x180
-> [  210.096781]  ? fixup_bug+0x78/0x78
-> [  210.096817]  ? hci_debugfs_create_conn+0x244/0x26a [bluetooth]
-> [  210.096824]  ? __schedule+0x113b/0x1453
-> [  210.096830]  ? sysctl_net_exit+0xe/0xe
-> [  210.096837]  ? __wake_up_common+0x343/0x343
-> [  210.096843]  ? insert_work+0x107/0x163
-> [  210.096850]  invalid_op+0x1b/0x40
-> [  210.096888] RIP: 0010:hci_debugfs_create_conn+0x244/0x26a [bluetooth]
-> [  210.096892] RSP: 0018:ffff880094a0f970 EFLAGS: 00010296
-> [  210.096898] RAX: 0000000000000000 RBX: ffff880107e170e8 RCX: ffff880107e17160
-> [  210.096902] RDX: 000000000000002f RSI: ffff88013b80ed40 RDI: ffffffffa058b940
-> [  210.096906] RBP: ffff88011b2b0578 R08: 00000000852f0ec9 R09: ffffffff81cfcf9b
-> [  210.096909] R10: 00000000d21bdad7 R11: 0000000000000001 R12: ffff8800967b0488
-> [  210.096913] R13: ffff880107e17168 R14: 0000000000000068 R15: ffff8800949c0008
-> [  210.096920]  ? __sk_destruct+0x2c6/0x2d4
-> [  210.096959]  hci_event_packet+0xff5/0x7de2 [bluetooth]
-> [  210.096969]  ? __local_bh_enable_ip+0x43/0x5b
-> [  210.097004]  ? l2cap_sock_recv_cb+0x158/0x166 [bluetooth]
-> [  210.097039]  ? hci_le_meta_evt+0x2bb3/0x2bb3 [bluetooth]
-> [  210.097075]  ? l2cap_ertm_init+0x94e/0x94e [bluetooth]
-> [  210.097093]  ? xhci_urb_enqueue+0xbd8/0xcf5 [xhci_hcd]
-> [  210.097102]  ? __accumulate_pelt_segments+0x24/0x33
-> [  210.097109]  ? __accumulate_pelt_segments+0x24/0x33
-> [  210.097115]  ? __update_load_avg_se.isra.2+0x217/0x3a4
-> [  210.097122]  ? set_next_entity+0x7c3/0x12cd
-> [  210.097128]  ? pick_next_entity+0x25e/0x26c
-> [  210.097135]  ? pick_next_task_fair+0x2ca/0xc1a
-> [  210.097141]  ? switch_mm_irqs_off+0x346/0xb4f
-> [  210.097147]  ? __switch_to+0x769/0xbc4
-> [  210.097153]  ? compat_start_thread+0x66/0x66
-> [  210.097188]  ? hci_conn_check_link_mode+0x1cd/0x1cd [bluetooth]
-> [  210.097195]  ? finish_task_switch+0x392/0x431
-> [  210.097228]  ? hci_rx_work+0x154/0x487 [bluetooth]
-> [  210.097260]  hci_rx_work+0x154/0x487 [bluetooth]
-> [  210.097269]  process_one_work+0x579/0x9e9
-> [  210.097277]  worker_thread+0x68f/0x804
-> [  210.097285]  kthread+0x31c/0x32b
-> [  210.097292]  ? rescuer_thread+0x70c/0x70c
-> [  210.097299]  ? kthread_create_on_node+0xa3/0xa3
-> [  210.097306]  ret_from_fork+0x35/0x40
-> 
-> [  210.097314] Allocated by task 2040:
-> [  210.097323]  kasan_kmalloc.part.1+0x51/0xc7
-> [  210.097328]  __kmalloc+0x17f/0x1b6
-> [  210.097335]  sk_prot_alloc+0xf2/0x1a3
-> [  210.097340]  sk_alloc+0x22/0x297
-> [  210.097375]  sco_sock_alloc.constprop.7+0x23/0x202 [bluetooth]
-> [  210.097410]  sco_connect_cfm+0x2d0/0x566 [bluetooth]
-> [  210.097443]  hci_conn_request_evt.isra.53+0x6d3/0x762 [bluetooth]
-> [  210.097476]  hci_event_packet+0x85e/0x7de2 [bluetooth]
-> [  210.097507]  hci_rx_work+0x154/0x487 [bluetooth]
-> [  210.097512]  process_one_work+0x579/0x9e9
-> [  210.097517]  worker_thread+0x68f/0x804
-> [  210.097523]  kthread+0x31c/0x32b
-> [  210.097529]  ret_from_fork+0x35/0x40
-> 
-> [  210.097533] Freed by task 2040:
-> [  210.097539]  kasan_slab_free+0xb3/0x15e
-> [  210.097544]  kfree+0x103/0x1a9
-> [  210.097549]  __sk_destruct+0x2c6/0x2d4
-> [  210.097584]  sco_conn_del.isra.1+0xba/0x10e [bluetooth]
-> [  210.097617]  hci_event_packet+0xff5/0x7de2 [bluetooth]
-> [  210.097648]  hci_rx_work+0x154/0x487 [bluetooth]
-> [  210.097653]  process_one_work+0x579/0x9e9
-> [  210.097658]  worker_thread+0x68f/0x804
-> [  210.097663]  kthread+0x31c/0x32b
-> [  210.097670]  ret_from_fork+0x35/0x40
-> 
-> [  210.097676] The buggy address belongs to the object at ffff880107e170e8
-> which belongs to the cache kmalloc-1024 of size 1024
-> [  210.097681] The buggy address is located 120 bytes inside of
-> 1024-byte region [ffff880107e170e8, ffff880107e174e8)
-> [  210.097683] The buggy address belongs to the page:
-> [  210.097689] page:ffffea00041f8400 count:1 mapcount:0 mapping:          (null) index:0xffff880107e15b68 compound_mapcount: 0
-> [  210.110194] flags: 0x8000000000008100(slab|head)
-> [  210.115441] raw: 8000000000008100 0000000000000000 ffff880107e15b68 0000000100170016
-> [  210.115448] raw: ffffea0004a47620 ffffea0004b48e20 ffff88013b80ed40 0000000000000000
-> [  210.115451] page dumped because: kasan: bad access detected
-> 
-> [  210.115454] Memory state around the buggy address:
-> [  210.115460]  ffff880107e17000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [  210.115465]  ffff880107e17080: fc fc fc fc fc fc fc fc fc fc fc fc fc fb fb fb
-> [  210.115469] >ffff880107e17100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  210.115472]                                                        ^
-> [  210.115477]  ffff880107e17180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  210.115481]  ffff880107e17200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  210.115483] ==================================================================
-> 
-> And finally when BT_DBG() and ftrace was enabled it showed:
-> 
->       <...>-14979 [001] ....   186.104191: sco_sock_kill <-sco_sock_close
->       <...>-14979 [001] ....   186.104191: sco_sock_kill <-sco_sock_release
->       <...>-14979 [001] ....   186.104192: sco_sock_kill: sk ef0497a0 state 9
->       <...>-14979 [001] ....   186.104193: bt_sock_unlink <-sco_sock_kill
-> kworker/u9:2-792   [001] ....   186.104246: sco_sock_kill <-sco_conn_del
-> kworker/u9:2-792   [001] ....   186.104248: sco_sock_kill: sk ef0497a0 state 9
-> kworker/u9:2-792   [001] ....   186.104249: bt_sock_unlink <-sco_sock_kill
-> kworker/u9:2-792   [001] ....   186.104250: sco_sock_destruct <-__sk_destruct
-> kworker/u9:2-792   [001] ....   186.104250: sco_sock_destruct: sk ef0497a0
-> kworker/u9:2-792   [001] ....   186.104860: hci_conn_del <-hci_event_packet
-> kworker/u9:2-792   [001] ....   186.104864: hci_conn_del: hci0 hcon ef0484c0 handle 266
-> 
-> Only in the failed case, sco_sock_kill() gets called with the same sock
-> pointer two times. Add a check for SOCK_DEAD to avoid continue killing
-> a socket which has already been killed.
-> 
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> ---
-> net/bluetooth/sco.c | 3 ++-
-> 1 file changed, 2 insertions(+), 1 deletion(-)
+Now, we have something like this:
 
-patch has been applied to bluetooth-next tree.
+zero_resv_unavail()
+free_area_init_node()
+ #ifdef CONFIG_FLAT_NODE_MEM_MAP
+  alloc_node_mem_map()
+#endif
 
-Regards
+At the time when zero_resv_unavail() is called, memmap for
+FLAT_NODE_MEM_MAP is not yet allocated. On the other hand,
+alloc_node_mem_map() calls memblock_virt_alloc_node_nopanic() which
+calls memset(0), so zero_resv_unavail()
+ is not needed for this layout.
 
-Marcel
+The fix is:
 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 5d800d61ddb7..9ec34218713b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6847,7 +6847,9 @@ void __init free_area_init_nodes(unsigned long
+*max_zone_pfn)
+        /* Initialise every node */
+        mminit_verify_pageflags_layout();
+        setup_nr_node_ids();
++#ifndef CONFIG_FLAT_NODE_MEM_MAP
+        zero_resv_unavail();
++#endif
+        for_each_online_node(nid) {
+                pg_data_t *pgdat = NODE_DATA(nid);
+                free_area_init_node(nid, NULL,
+
+This is just a temporary fix, I will do a proper fix later, when I
+will get rid of zero_resv_unavail(), but that will require more
+thinking, on how to ensure that no section in memmap is skipped while
+we go through memmap_init_zone().
+
+Should I submit an updated patch for "mm: zero unavailable pages
+before memmap init", or just this incremental fix?
+
+Thank  you,
+Pavel
+
+On Mon, Jul 16, 2018 at 7:56 AM Pavel Tatashin
+<pasha.tatashin@oracle.com> wrote:
+>
+> I have reproduced the problem on mainline. Use x86_32 defcontig +
+> qemu, and problem is reproduced immediately.  I will send an update
+> once I figure out what is going on.
+>
+> Pavel
+> On Mon, Jul 16, 2018 at 7:02 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Jul 16, 2018 at 11:54:51AM +0100, Mark Brown wrote:
+> > > On Mon, Jul 16, 2018 at 11:40:06AM +0100, Guillaume Tucker wrote:
+> > > > On 15/07/18 01:32, kernelci.org bot wrote:
+> > > > > mainline/master boot: 177 boots: 2 failed, 174 passed with 1 conflict (v4.18-rc4-160-gf353078f028f)
+> > > > >
+> > > > > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
+> > > > > Full Build Summary: https://kernelci.org/build/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
+> > > > >
+> > > > > Tree: mainline
+> > > > > Branch: master
+> > > > > Git Describe: v4.18-rc4-160-gf353078f028f
+> > > > > Git Commit: f353078f028fbfe9acd4b747b4a19c69ef6846cd
+> > > > > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> > > > > Tested: 67 unique boards, 25 SoC families, 21 builds out of 199
+> > > > >
+> > > > > Boot Regressions Detected:
+> > > > [...]
+> > > > > x86:
+> > > > >
+> > > > >      i386_defconfig:
+> > > > >          x86-celeron:
+> > > > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
+> > > > >          x86-pentium4:
+> > > > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
+> > > >
+> > > > Please see below an automated bisection report for this
+> > > > regression.  Several bisections were run on other x86 platforms
+> > > > with i386_defconfig on a few revisions up to v4.18-rc5, they all
+> > > > reached the same "bad" commit.
+> > > >
+> > > >
+> > > > Unfortunately there isn't much to learn from the kernelci.org
+> > > > boot logs as the kernel seems to crash very early on:
+> > > >
+> > > >     https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc5/
+> > > >     https://storage.kernelci.org/mainline/master/v4.18-rc4-160-gf353078f028f/x86/i386_defconfig/lab-mhart/lava-x86-celeron.html
+> > > >
+> > > >
+> > > > It looks like stable-rc/linux-4.17.y is also broken with
+> > > > i386_defconfig, which tends to confirm the "bad" commit found by
+> > > > the automated bisection which was applied there as well:
+> > > >
+> > > >     https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.17.y/kernel/v4.17.6-68-gbc0bd9e05fa1/
+> > >
+> > > Adding Greg directly to the CCs due to the stable impact, not deleting
+> > > context for his benefit.
+> >
+> > Hey, I read all stable emails, who else would?  :)
+> >
+> > > > The automated bisection on kernelci.org is still quite new, so
+> > > > please take the results with a pinch of salt as the "bad" commit
+> > > > found may not be the actual root cause of the boot failure.
+> > > >
+> > > > Hope this helps!
+> > > >
+> > > > Best wishes,
+> > > > Guillaume
+> > > >
+> > > >
+> > > > --------------------------------------8<--------------------------------------
+> > > >
+> > > >
+> > > >
+> > > > Bisection result for mainline/master (v4.18-rc4-160-gf353078f028f) on x86-celeron
+> > > >
+> > > >   Good:       2db39a2f491a Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
+> > > >   Bad:        f353078f028f Merge branch 'akpm' (patches from Andrew)
+> > > >   Found:      e181ae0c5db9 mm: zero unavailable pages before memmap init
+> > > >
+> > > > Checks:
+> > > >   revert:     PASS
+> > > >   verify:     PASS
+> > > >
+> > > > Parameters:
+> > > >   Tree:       mainline
+> > > >   URL:        http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> > > >   Branch:     master
+> > > >   Target:     x86-celeron
+> > > >   Lab:        lab-mhart
+> > > >   Config:     i386_defconfig
+> > > >   Plan:       boot
+> > > >
+> > > > Breaking commit found:
+> > > >
+> > > > -------------------------------------------------------------------------------
+> > > > commit e181ae0c5db9544de9c53239eb22bc012ce75033
+> > > > Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > > Date:   Sat Jul 14 09:15:07 2018 -0400
+> > > >
+> > > >     mm: zero unavailable pages before memmap init
+> > > >     We must zero struct pages for memory that is not backed by physical
+> > > >     memory, or kernel does not have access to.
+> > > >     Recently, there was a change which zeroed all memmap for all holes in
+> > > >     e820.  Unfortunately, it introduced a bug that is discussed here:
+> > > >       https://www.spinics.net/lists/linux-mm/msg156764.html
+> > > >     Linus, also saw this bug on his machine, and confirmed that reverting
+> > > >     commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
+> > > >     memblock.reserved") fixes the issue.
+> > > >     The problem is that we incorrectly zero some struct pages after they
+> > > >     were setup.
+> > > >     The fix is to zero unavailable struct pages prior to initializing of
+> > > >     struct pages.
+> > > >     A more detailed fix should come later that would avoid double zeroing
+> > > >     cases: one in __init_single_page(), the other one in
+> > > >     zero_resv_unavail().
+> > > >     Fixes: 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into memblock.reserved")
+> > > >     Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > > >     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > > >
+> > > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > > index 1521100f1e63..5d800d61ddb7 100644
+> > > > --- a/mm/page_alloc.c
+> > > > +++ b/mm/page_alloc.c
+> > > > @@ -6847,6 +6847,7 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+> > > >     /* Initialise every node */
+> > > >     mminit_verify_pageflags_layout();
+> > > >     setup_nr_node_ids();
+> > > > +   zero_resv_unavail();
+> > > >     for_each_online_node(nid) {
+> > > >             pg_data_t *pgdat = NODE_DATA(nid);
+> > > >             free_area_init_node(nid, NULL,
+> > > > @@ -6857,7 +6858,6 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+> > > >                     node_set_state(nid, N_MEMORY);
+> > > >             check_for_memory(pgdat, nid);
+> > > >     }
+> > > > -   zero_resv_unavail();
+> > > >  }
+> > > >  static int __init cmdline_parse_core(char *p, unsigned long *core,
+> > > > @@ -7033,9 +7033,9 @@ void __init set_dma_reserve(unsigned long new_dma_reserve)
+> > > >  void __init free_area_init(unsigned long *zones_size)
+> > > >  {
+> > > > +   zero_resv_unavail();
+> > > >     free_area_init_node(0, zones_size,
+> > > >                     __pa(PAGE_OFFSET) >> PAGE_SHIFT, NULL);
+> > > > -   zero_resv_unavail();
+> > > >  }
+> > > >  static int page_alloc_cpu_dead(unsigned int cpu)
+> > > > -------------------------------------------------------------------------------
+> >
+> > So this patch breaks i386, ick.  I'll wait for the fix to hit Linus's
+> > tree as that's a bit more important to have the large majority of the
+> > x86-64 boxes fixed with this patch for now.
+> >
+> > thanks,
+> >
+> > greg k-h
+> >
