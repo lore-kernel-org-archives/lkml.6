@@ -6,34 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E9AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49520ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A14420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A14420864
+	by mail.kernel.org (Postfix) with ESMTP id 054BD206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054BD206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388889AbeGPII6 (ORCPT
+        id S2388902AbeGPIJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:08:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47880 "EHLO
+        Mon, 16 Jul 2018 04:09:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47888 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPII5 (ORCPT
+        with ESMTP id S1730161AbeGPIJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:08:57 -0400
+        Mon, 16 Jul 2018 04:09:00 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44B5DCA0;
-        Mon, 16 Jul 2018 07:42:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D133CCA1;
+        Mon, 16 Jul 2018 07:42:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olli Salonen <olli.salonen@iki.fi>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 12/32] USB: serial: cp210x: add another USB ID for Qivicon ZigBee stick
-Date:   Mon, 16 Jul 2018 09:36:20 +0200
-Message-Id: <20180716073505.883308890@linuxfoundation.org>
+        stable@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 21/32] fs, elf: make sure to page align bss in load_elf_library
+Date:   Mon, 16 Jul 2018 09:36:29 +0200
+Message-Id: <20180716073507.187864821@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -50,31 +56,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Olli Salonen <olli.salonen@iki.fi>
+From: Oscar Salvador <osalvador@suse.de>
 
-commit 367b160fe4717c14a2a978b6f9ffb75a7762d3ed upstream.
+commit 24962af7e1041b7e50c1bc71d8d10dc678c556b5 upstream.
 
-There are two versions of the Qivicon Zigbee stick in circulation. This
-adds the second USB ID to the cp210x driver.
+The current code does not make sure to page align bss before calling
+vm_brk(), and this can lead to a VM_BUG_ON() in __mm_populate() due to
+the requested lenght not being correctly aligned.
 
-Signed-off-by: Olli Salonen <olli.salonen@iki.fi>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Let us make sure to align it properly.
+
+Kees: only applicable to CONFIG_USELIB kernels: 32-bit and configured
+for libc5.
+
+Link: http://lkml.kernel.org/r/20180705145539.9627-1-osalvador@techadventures.net
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reported-by: syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com
+Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Acked-by: Kees Cook <keescook@chromium.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/binfmt_elf.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -146,6 +146,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
- 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
- 	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
-+	{ USB_DEVICE(0x10C4, 0x89FB) }, /* Qivicon ZigBee USB Radio Stick */
- 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
- 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1217,9 +1217,8 @@ static int load_elf_library(struct file
+ 		goto out_free_ph;
+ 	}
+ 
+-	len = ELF_PAGESTART(eppnt->p_filesz + eppnt->p_vaddr +
+-			    ELF_MIN_ALIGN - 1);
+-	bss = eppnt->p_memsz + eppnt->p_vaddr;
++	len = ELF_PAGEALIGN(eppnt->p_filesz + eppnt->p_vaddr);
++	bss = ELF_PAGEALIGN(eppnt->p_memsz + eppnt->p_vaddr);
+ 	if (bss > len) {
+ 		error = vm_brk(len, bss - len);
+ 		if (error)
 
 
