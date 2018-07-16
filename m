@@ -5,55 +5,83 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 410FFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4820DECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB86A208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:38:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB86A208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 091712098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:38:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091712098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbeGPVHL (ORCPT
+        id S1730301AbeGPVH4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:07:11 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:59746 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728075AbeGPVHL (ORCPT
+        Mon, 16 Jul 2018 17:07:56 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53094 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728075AbeGPVH4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:07:11 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DA6EA13EA806D;
-        Mon, 16 Jul 2018 13:38:06 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 13:38:06 -0700 (PDT)
-Message-Id: <20180716.133806.688126159749738885.davem@davemloft.net>
-To:     yuehaibing@huawei.com
-Cc:     michael.chan@broadcom.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH net-next] bnxt_en: remove redundant debug register dma
- mem allocation
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180713030204.884-1-yuehaibing@huawei.com>
-References: <20180713030204.884-1-yuehaibing@huawei.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 16 Jul 2018 13:38:07 -0700 (PDT)
+        Mon, 16 Jul 2018 17:07:56 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1ffAGW-0003tX-Ku; Mon, 16 Jul 2018 22:38:40 +0200
+Date:   Mon, 16 Jul 2018 22:38:40 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Rich Felker <dalias@libc.org>
+cc:     Alan Cox <alan@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: cpu_no_speculation omissions?
+In-Reply-To: <20180716195444.GN1392@brightrain.aerifal.cx>
+Message-ID: <alpine.DEB.2.21.1807162237530.1693@nanos.tec.linutronix.de>
+References: <20180716160513.GA6080@brightrain.aerifal.cx> <alpine.DEB.2.21.1807161851290.1693@nanos.tec.linutronix.de> <193fb2f5-8f6c-8fe6-298f-a6af4fae862a@linux.intel.com> <1531767303.4364.109.camel@linux.intel.com> <alpine.DEB.2.21.1807162120181.1693@nanos.tec.linutronix.de>
+ <20180716195444.GN1392@brightrain.aerifal.cx>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Fri, 13 Jul 2018 11:02:04 +0800
-
-> hwrm_dbg_resp_addr and hwrm_dbg_resp_dma_addr are never used
-> and can be removed.
+On Mon, 16 Jul 2018, Rich Felker wrote:
+> On Mon, Jul 16, 2018 at 09:20:58PM +0200, Thomas Gleixner wrote:
+> > On Mon, 16 Jul 2018, Alan Cox wrote:
+> > > On Mon, 2018-07-16 at 10:28 -0700, Dave Hansen wrote:
+> > > > On 07/16/2018 09:56 AM, Thomas Gleixner wrote:
+> > > > > On Mon, 16 Jul 2018, Rich Felker wrote:
+> > > > > > At least the Centerton (late-generation Bonnell uarch) Atom
+> > > > > > family is
+> > > > > > omitted from the cpu_no_speculation table added by commit
+> > > > > > fec9434a12f3
+> > > > > > to arch/x86/kernel/cpu/common.c. Is this intentional? Would a
+> > > > > > patch
+> > > > > > adding it and possibly other omissions be welcome?
+> > > > > 
+> > > > > Probably. Dave?
+> > > > 
+> > > > IIRC, Alan Cox was compiling a list on what is affected vs. not.  He
+> > > > would know way better than I.
+> > > 
+> > > The pre Silvermont atom cores are in order. When I did the original
+> > > list I didn't bother with all the 32bit cores as we didn't have any
+> > > 32bit mitigations then.
+> > 
+> > At least we should give the users that warm and fuzzy feeling that they are
+> > not affected.
 > 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> It's not just fuzzies -- my box was actually affected by slowdown for
 
-Applied.
+I was talking about 32bit. Yours seem to be 64bit.
+
+Thanks,
+
+	tglx
