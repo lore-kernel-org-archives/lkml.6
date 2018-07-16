@@ -2,298 +2,87 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E48ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9A5ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDC192089B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:19:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GJDdRRe2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC192089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 5AC64208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:20:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC64208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbeGPPqw (ORCPT
+        id S1729927AbeGPPsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:46:52 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47002 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeGPPqw (ORCPT
+        Mon, 16 Jul 2018 11:48:23 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:44677 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727464AbeGPPsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:46:52 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6GFDfx9075486;
-        Mon, 16 Jul 2018 15:18:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=o4QSTBJCcTDCbhQRgfgUKF2qzlGj5n0J9/s8izCB6do=;
- b=GJDdRRe2XT65RgNnBObK6QmzgVg0A+v0mqo5evzsrKD4Nm9+LSBALY5HE4a2HDaLU2DL
- VPWGXOjL2P+dmewVTshvvC5gLjWDlwAGakLHqKCkkgxvbTT7LQCKxkxODJ82uUvz7sgV
- pM2YKeP+TwyLKZRq+mqsGGvTg5d2yEGNHXRq6rT36sG1W3hBUAA+qvz5IbQBTEpDkAAj
- crcLXrVvxQ2Rm3busGszlQqBiE36gZAyBglToYVIrLPnb/736xltcxUaC4vj728Qmw8v
- OIpmMO+ZuQZF6MiJkwzh4WnPY/IumddpjyOplOrNVnGIib1/9MoiH5oxOXCWlgDopgj1 WA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2k7a3svx9n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Jul 2018 15:18:57 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6GFIueg026959
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 16 Jul 2018 15:18:57 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6GFIuMs010121;
-        Mon, 16 Jul 2018 15:18:56 GMT
-Received: from mail-oi0-f48.google.com (/209.85.218.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 16 Jul 2018 08:18:56 -0700
-Received: by mail-oi0-f48.google.com with SMTP id k81-v6so75448197oib.4;
-        Mon, 16 Jul 2018 08:18:56 -0700 (PDT)
-X-Gm-Message-State: AOUpUlG8L4JNQx5QIpRn3IDRlolopMCm8HiVA8HcOKTpBuiMlLds67pv
-        B+zi7nJtkrCfcaH2xpgSgAG6rSNeLyiLOyedOWw=
-X-Google-Smtp-Source: AAOMgpfp0CwkP+3x1WrLJeQe4vef5zOmrjEZiNjdMeIYz0CXeWdtdlaQJhuS1yG5C2S2FI7fY5rOmyvR6k7HQSUwVSU=
-X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr20032064oia.156.1531754335997;
- Mon, 16 Jul 2018 08:18:55 -0700 (PDT)
+        Mon, 16 Jul 2018 11:48:23 -0400
+Received: by mail-oi0-f66.google.com with SMTP id s198-v6so75495509oih.11;
+        Mon, 16 Jul 2018 08:20:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gRMAQj+aJRwnopcQOX1V+gMwZocMe5UDtASeixyQ554=;
+        b=SQ+Lk9i50zgy2/7U5tKMTp7Q/gUXEAbMIkIhq401TY5lzOJQUaOXaqep5OPsSPIKTY
+         FNKhNy0USvp9qZNVLj6m6j/IKoRqRBzMvwxGadqv/fhPk8Soz8Ma5e51mwz3J4gicDYx
+         OPKHPZ/DzRJYCY91+j7jSUaeqk17uUU13koF0byKRblmzGlcO0tFgmPGbn2yOaONOx/I
+         ZGwrC937xmXcx5bA/QIpCpKsgAQOfILb38Vx/qADMyxINL0CUlj+b52qhc95tKn+/Gwu
+         cKl/7f0PldaDiI7KkUsY7SKKWZTOm8fxes0DvP3+5UgPy0LnrT0h1U8/MUH3NSL1WIRG
+         omoA==
+X-Gm-Message-State: AOUpUlG+2hymiPIISMEmX3JkxwHMkl4YZXzIeTUnH2f/SaXF/QuMM9T4
+        Xky43sx8kgjmRg4GXWQfAA==
+X-Google-Smtp-Source: AAOMgpdtqnHUBYsrhmimC/Vlbv0gQT+h42fEN5XupOBbpCzJ7EnUes2lo7FMhbgO1CmAd2y0g7jfTA==
+X-Received: by 2002:aca:b207:: with SMTP id b7-v6mr17626622oif.148.1531754429119;
+        Mon, 16 Jul 2018 08:20:29 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id l204-v6sm6011738oia.45.2018.07.16.08.20.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 08:20:28 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 09:20:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Saravanan Sekar <sravanhome@gmail.com>
+Cc:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
+        sboyd@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux@cubietech.com, support@cubietech.com,
+        catalin.marinas@arm.com, mturquette@baylibre.com,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        thomas.liau@actions-semi.com, darren@cubietech.com,
+        jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
+Subject: Re: [PATCH v6 2/5] dt-bindings: clock: Add S700 support for Actions
+ Semi Soc's
+Message-ID: <20180716152027.GA28696@rob-hp-laptop>
+References: <20180715203524.11948-1-sravanhome@gmail.com>
+ <20180715203524.11948-3-sravanhome@gmail.com>
 MIME-Version: 1.0
-References: <5b4a9633.1c69fb81.17984.f7b3@mx.google.com> <0ab16066-5498-374b-5391-3dd7979044aa@collabora.com>
- <20180716105451.GA20734@sirena.org.uk> <20180716110208.GA25227@kroah.com>
- <CAGM2reY7RDLKR3vyr9bne3kVo58qn_F58oYHtUZaA0BChzsQGw@mail.gmail.com> <CAGM2reaZaJU1WQTyzGiT1zOpjHLv6=hxNfA75JLM4AdbiajrtQ@mail.gmail.com>
-In-Reply-To: <CAGM2reaZaJU1WQTyzGiT1zOpjHLv6=hxNfA75JLM4AdbiajrtQ@mail.gmail.com>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Mon, 16 Jul 2018 11:18:20 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZybMKjOH3v_Gfxvhj8JvebxSp9uKBA3Op9EbYAHe7R5w@mail.gmail.com>
-Message-ID: <CAGM2reZybMKjOH3v_Gfxvhj8JvebxSp9uKBA3Op9EbYAHe7R5w@mail.gmail.com>
-Subject: Re: mainline/master boot: 177 boots: 2 failed, 174 passed with 1
- conflict (v4.18-rc4-160-gf353078f028f)
-To:     gregkh@linuxfoundation.org
-Cc:     broonie@kernel.org, guillaume.tucker@collabora.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kernel@collabora.com, LKML <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org, kernel-build-reports@lists.linaro.org,
-        Michal Hocko <mhocko@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=10 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807160177
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180715203524.11948-3-sravanhome@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have posted a patch for the above issue:
-http://lkml.kernel.org/r/20180716151630.770-1-pasha.tatashin@oracle.com
-On Mon, Jul 16, 2018 at 9:15 AM Pavel Tatashin
-<pasha.tatashin@oracle.com> wrote:
->
-> I have figured out what is going with x86-32.  Since it has FLATMEM
-> memory layout, the memmap is now allocated after zero_resv_unavail():
->
-> Now, we have something like this:
->
-> zero_resv_unavail()
-> free_area_init_node()
->  #ifdef CONFIG_FLAT_NODE_MEM_MAP
->   alloc_node_mem_map()
-> #endif
->
-> At the time when zero_resv_unavail() is called, memmap for
-> FLAT_NODE_MEM_MAP is not yet allocated. On the other hand,
-> alloc_node_mem_map() calls memblock_virt_alloc_node_nopanic() which
-> calls memset(0), so zero_resv_unavail()
->  is not needed for this layout.
->
-> The fix is:
->
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 5d800d61ddb7..9ec34218713b 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6847,7 +6847,9 @@ void __init free_area_init_nodes(unsigned long
-> *max_zone_pfn)
->         /* Initialise every node */
->         mminit_verify_pageflags_layout();
->         setup_nr_node_ids();
-> +#ifndef CONFIG_FLAT_NODE_MEM_MAP
->         zero_resv_unavail();
-> +#endif
->         for_each_online_node(nid) {
->                 pg_data_t *pgdat = NODE_DATA(nid);
->                 free_area_init_node(nid, NULL,
->
-> This is just a temporary fix, I will do a proper fix later, when I
-> will get rid of zero_resv_unavail(), but that will require more
-> thinking, on how to ensure that no section in memmap is skipped while
-> we go through memmap_init_zone().
->
-> Should I submit an updated patch for "mm: zero unavailable pages
-> before memmap init", or just this incremental fix?
->
-> Thank  you,
-> Pavel
->
-> On Mon, Jul 16, 2018 at 7:56 AM Pavel Tatashin
-> <pasha.tatashin@oracle.com> wrote:
-> >
-> > I have reproduced the problem on mainline. Use x86_32 defcontig +
-> > qemu, and problem is reproduced immediately.  I will send an update
-> > once I figure out what is going on.
-> >
-> > Pavel
-> > On Mon, Jul 16, 2018 at 7:02 AM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Mon, Jul 16, 2018 at 11:54:51AM +0100, Mark Brown wrote:
-> > > > On Mon, Jul 16, 2018 at 11:40:06AM +0100, Guillaume Tucker wrote:
-> > > > > On 15/07/18 01:32, kernelci.org bot wrote:
-> > > > > > mainline/master boot: 177 boots: 2 failed, 174 passed with 1 conflict (v4.18-rc4-160-gf353078f028f)
-> > > > > >
-> > > > > > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
-> > > > > > Full Build Summary: https://kernelci.org/build/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
-> > > > > >
-> > > > > > Tree: mainline
-> > > > > > Branch: master
-> > > > > > Git Describe: v4.18-rc4-160-gf353078f028f
-> > > > > > Git Commit: f353078f028fbfe9acd4b747b4a19c69ef6846cd
-> > > > > > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> > > > > > Tested: 67 unique boards, 25 SoC families, 21 builds out of 199
-> > > > > >
-> > > > > > Boot Regressions Detected:
-> > > > > [...]
-> > > > > > x86:
-> > > > > >
-> > > > > >      i386_defconfig:
-> > > > > >          x86-celeron:
-> > > > > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
-> > > > > >          x86-pentium4:
-> > > > > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
-> > > > >
-> > > > > Please see below an automated bisection report for this
-> > > > > regression.  Several bisections were run on other x86 platforms
-> > > > > with i386_defconfig on a few revisions up to v4.18-rc5, they all
-> > > > > reached the same "bad" commit.
-> > > > >
-> > > > >
-> > > > > Unfortunately there isn't much to learn from the kernelci.org
-> > > > > boot logs as the kernel seems to crash very early on:
-> > > > >
-> > > > >     https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc5/
-> > > > >     https://storage.kernelci.org/mainline/master/v4.18-rc4-160-gf353078f028f/x86/i386_defconfig/lab-mhart/lava-x86-celeron.html
-> > > > >
-> > > > >
-> > > > > It looks like stable-rc/linux-4.17.y is also broken with
-> > > > > i386_defconfig, which tends to confirm the "bad" commit found by
-> > > > > the automated bisection which was applied there as well:
-> > > > >
-> > > > >     https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.17.y/kernel/v4.17.6-68-gbc0bd9e05fa1/
-> > > >
-> > > > Adding Greg directly to the CCs due to the stable impact, not deleting
-> > > > context for his benefit.
-> > >
-> > > Hey, I read all stable emails, who else would?  :)
-> > >
-> > > > > The automated bisection on kernelci.org is still quite new, so
-> > > > > please take the results with a pinch of salt as the "bad" commit
-> > > > > found may not be the actual root cause of the boot failure.
-> > > > >
-> > > > > Hope this helps!
-> > > > >
-> > > > > Best wishes,
-> > > > > Guillaume
-> > > > >
-> > > > >
-> > > > > --------------------------------------8<--------------------------------------
-> > > > >
-> > > > >
-> > > > >
-> > > > > Bisection result for mainline/master (v4.18-rc4-160-gf353078f028f) on x86-celeron
-> > > > >
-> > > > >   Good:       2db39a2f491a Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
-> > > > >   Bad:        f353078f028f Merge branch 'akpm' (patches from Andrew)
-> > > > >   Found:      e181ae0c5db9 mm: zero unavailable pages before memmap init
-> > > > >
-> > > > > Checks:
-> > > > >   revert:     PASS
-> > > > >   verify:     PASS
-> > > > >
-> > > > > Parameters:
-> > > > >   Tree:       mainline
-> > > > >   URL:        http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> > > > >   Branch:     master
-> > > > >   Target:     x86-celeron
-> > > > >   Lab:        lab-mhart
-> > > > >   Config:     i386_defconfig
-> > > > >   Plan:       boot
-> > > > >
-> > > > > Breaking commit found:
-> > > > >
-> > > > > -------------------------------------------------------------------------------
-> > > > > commit e181ae0c5db9544de9c53239eb22bc012ce75033
-> > > > > Author: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > > > > Date:   Sat Jul 14 09:15:07 2018 -0400
-> > > > >
-> > > > >     mm: zero unavailable pages before memmap init
-> > > > >     We must zero struct pages for memory that is not backed by physical
-> > > > >     memory, or kernel does not have access to.
-> > > > >     Recently, there was a change which zeroed all memmap for all holes in
-> > > > >     e820.  Unfortunately, it introduced a bug that is discussed here:
-> > > > >       https://www.spinics.net/lists/linux-mm/msg156764.html
-> > > > >     Linus, also saw this bug on his machine, and confirmed that reverting
-> > > > >     commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
-> > > > >     memblock.reserved") fixes the issue.
-> > > > >     The problem is that we incorrectly zero some struct pages after they
-> > > > >     were setup.
-> > > > >     The fix is to zero unavailable struct pages prior to initializing of
-> > > > >     struct pages.
-> > > > >     A more detailed fix should come later that would avoid double zeroing
-> > > > >     cases: one in __init_single_page(), the other one in
-> > > > >     zero_resv_unavail().
-> > > > >     Fixes: 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into memblock.reserved")
-> > > > >     Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > > > >     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > > > >
-> > > > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > > > > index 1521100f1e63..5d800d61ddb7 100644
-> > > > > --- a/mm/page_alloc.c
-> > > > > +++ b/mm/page_alloc.c
-> > > > > @@ -6847,6 +6847,7 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
-> > > > >     /* Initialise every node */
-> > > > >     mminit_verify_pageflags_layout();
-> > > > >     setup_nr_node_ids();
-> > > > > +   zero_resv_unavail();
-> > > > >     for_each_online_node(nid) {
-> > > > >             pg_data_t *pgdat = NODE_DATA(nid);
-> > > > >             free_area_init_node(nid, NULL,
-> > > > > @@ -6857,7 +6858,6 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
-> > > > >                     node_set_state(nid, N_MEMORY);
-> > > > >             check_for_memory(pgdat, nid);
-> > > > >     }
-> > > > > -   zero_resv_unavail();
-> > > > >  }
-> > > > >  static int __init cmdline_parse_core(char *p, unsigned long *core,
-> > > > > @@ -7033,9 +7033,9 @@ void __init set_dma_reserve(unsigned long new_dma_reserve)
-> > > > >  void __init free_area_init(unsigned long *zones_size)
-> > > > >  {
-> > > > > +   zero_resv_unavail();
-> > > > >     free_area_init_node(0, zones_size,
-> > > > >                     __pa(PAGE_OFFSET) >> PAGE_SHIFT, NULL);
-> > > > > -   zero_resv_unavail();
-> > > > >  }
-> > > > >  static int page_alloc_cpu_dead(unsigned int cpu)
-> > > > > -------------------------------------------------------------------------------
-> > >
-> > > So this patch breaks i386, ick.  I'll wait for the fix to hit Linus's
-> > > tree as that's a bit more important to have the large majority of the
-> > > x86-64 boxes fixed with this patch for now.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > >
+On Sun, Jul 15, 2018 at 10:35:21PM +0200, Saravanan Sekar wrote:
+> Add clock bindings constants for action S700
+> Maintain common clock dt-bindings for Actions Semi SoC's
+> S700 and S900.
+> 
+> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+> ---
+>  ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +--
+>  include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++++++++++++++++
+>  2 files changed, 129 insertions(+), 9 deletions(-)
+>  rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
+>  create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
