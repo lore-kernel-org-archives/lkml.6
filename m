@@ -5,81 +5,116 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F93ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6F12ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C1B20BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:08:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5C1B20BED
+	by mail.kernel.org (Postfix) with ESMTP id 9789A20BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:09:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9789A20BED
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730724AbeGQAic (ORCPT
+        id S1730232AbeGQAj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 20:38:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49876 "EHLO mx1.redhat.com"
+        Mon, 16 Jul 2018 20:39:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60764 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729466AbeGQAib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 20:38:31 -0400
+        id S1729466AbeGQAjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 20:39:25 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A0D704022414;
-        Mon, 16 Jul 2018 23:59:54 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5F36D40122A1;
+        Mon, 16 Jul 2018 23:59:55 +0000 (UTC)
 Received: from whitewolf.lyude.net.com (ovpn-124-27.rdu2.redhat.com [10.10.124.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AB7C02026D65;
-        Mon, 16 Jul 2018 23:59:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB52F2026D65;
+        Mon, 16 Jul 2018 23:59:54 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org
 Cc:     Karol Herbst <karolherbst@gmail.com>, stable@vger.kernel.org,
-        "David Airlie" <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, "Ben Skeggs" <bskeggs@redhat.com>,
-        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        "Daniel Vetter" <daniel.vetter@ffwll.ch>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, "Lyude Paul" <lyude@redhat.com>
-Subject: [PATCH 0/5] drm/nouveau: Fix a lot of nasty RPM bugs and deadlocks
-Date:   Mon, 16 Jul 2018 19:59:24 -0400
-Message-Id: <20180716235936.11268-1-lyude@redhat.com>
+        Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] drm/nouveau: Prevent RPM callback recursion in suspend/resume paths
+Date:   Mon, 16 Jul 2018 19:59:25 -0400
+Message-Id: <20180716235936.11268-2-lyude@redhat.com>
+In-Reply-To: <20180716235936.11268-1-lyude@redhat.com>
+References: <20180716235936.11268-1-lyude@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 23:59:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 23:59:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 23:59:55 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 16 Jul 2018 23:59:55 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes quite a number of runtime PM bugs I found that have been
-causing some pretty nasty issues such as:
- - Deadlocking on boot
- - Connector probing potentially not working while the GPU is in runtime
-   suspend
- - i2c char dev not working while the GPU is in runtime suspend
- - aux char dev not working while the GPU is in runtime suspend
+In order to fix all of the spots that need to have runtime PM get/puts()
+added, we need to ensure that it's possible for us to call
+pm_runtime_get/put() in any context, regardless of how deep, since
+almost all of the spots that are currently missing refs can potentially
+get called in the runtime suspend/resume path. Otherwise, we'll try to
+resume the GPU as we're trying to resume the GPU (and vice-versa) and
+cause the kernel to deadlock.
 
-There's definitely more parts of nouveau that need to be fixed to use
-runtime power management correctly, such as the hwmon portions, but this
-series just handles the more important fixes that should get into stable
-for the time being.
+With this, it should be safe to call the pm runtime functions in any
+context in nouveau with one condition: any point in the driver that
+calls pm_runtime_get*() cannot hold any locks owned by nouveau that
+would be acquired anywhere inside nouveau_pmops_runtime_resume().
+This includes modesetting locks, i2c bus locks, etc.
 
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 Cc: Karol Herbst <karolherbst@gmail.com>
 Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Lyude Paul (5):
-  drm/nouveau: Prevent RPM callback recursion in suspend/resume paths
-  drm/nouveau: Grab RPM ref while probing outputs
-  drm/nouveau: Add missing RPM get/put() when probing connectors
-  drm/nouveau: Grab RPM ref when i2c bus is in use
-  drm/nouveau: Grab RPM ref when aux bus is in use
-
- drivers/gpu/drm/nouveau/dispnv50/disp.c       | 12 +++++++++--
- drivers/gpu/drm/nouveau/nouveau_connector.c   | 21 +++++++++++++++++--
- drivers/gpu/drm/nouveau/nouveau_connector.h   |  3 +++
- drivers/gpu/drm/nouveau/nouveau_drm.c         | 10 ++++++++-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c | 12 ++++++++++-
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c | 12 ++++++++++-
- 6 files changed, 63 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index c7ec86d6c3c9..e851ef7b6373 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -835,6 +835,8 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ 		return -EBUSY;
+ 	}
+ 
++	dev->power.disable_depth++;
++
+ 	drm_kms_helper_poll_disable(drm_dev);
+ 	nouveau_switcheroo_optimus_dsm();
+ 	ret = nouveau_do_suspend(drm_dev, true);
+@@ -843,6 +845,8 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ 	pci_ignore_hotplug(pdev);
+ 	pci_set_power_state(pdev, PCI_D3cold);
+ 	drm_dev->switch_power_state = DRM_SWITCH_POWER_DYNAMIC_OFF;
++
++	dev->power.disable_depth--;
+ 	return ret;
+ }
+ 
+@@ -859,11 +863,13 @@ nouveau_pmops_runtime_resume(struct device *dev)
+ 		return -EBUSY;
+ 	}
+ 
++	dev->power.disable_depth++;
++
+ 	pci_set_power_state(pdev, PCI_D0);
+ 	pci_restore_state(pdev);
+ 	ret = pci_enable_device(pdev);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 	pci_set_master(pdev);
+ 
+ 	ret = nouveau_do_resume(drm_dev, true);
+@@ -875,6 +881,8 @@ nouveau_pmops_runtime_resume(struct device *dev)
+ 	/* Monitors may have been connected / disconnected during suspend */
+ 	schedule_work(&nouveau_drm(drm_dev)->hpd_work);
+ 
++out:
++	dev->power.disable_depth--;
+ 	return ret;
+ }
+ 
 -- 
 2.17.1
 
