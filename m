@@ -2,130 +2,84 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5B4ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0793ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A87208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:56:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="F69KNs65"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A87208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 93FC3208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:57:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FC3208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeGPIWS (ORCPT
+        id S1727530AbeGPIXv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:22:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:49071 "EHLO ozlabs.org"
+        Mon, 16 Jul 2018 04:23:51 -0400
+Received: from muru.com ([72.249.23.125]:51568 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbeGPIWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:22:17 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41TbMD0wFpz9ryt;
-        Mon, 16 Jul 2018 17:56:08 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531727768;
-        bh=oTJdxMAy9UumQi6IHTkchMNRFGrFcubKOHbsuMVQPW0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=F69KNs65vJVsVZLtN/h45K2rjdBst+kD2QrsHdup85V8UA6ImIN0QWTWESDgNqjqd
-         sHeKQa9z2+fCVytkl5NBmWZqefX4Rcsrw32eSwifeGogLbhMuFDIlGLU+zyYDHZSQ/
-         vSr2d1GiYBaSkzk9pL+FDOII8wAwdbIFBPgxzp3yyrC3twDxHtDHhf65pCpoR7pGxh
-         hZC8mrCEjmrpoFqB54Q3W7PQdyxIkFnlzdPR2b8+R6ngoexgh0SYFEnlbgP5QilE+6
-         /XvoBxoaqVJlLX030w1ixHBH8R46ShVwLbQcONTpHPHgka5AUGVZjDV2i0Lo0oI0CJ
-         iHSMFYLiOEnsQ==
-Date:   Mon, 16 Jul 2018 17:56:07 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Jul 16
-Message-ID: <20180716175607.66099a5f@canb.auug.org.au>
+        id S1726190AbeGPIXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:23:50 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id A37CD80EE;
+        Mon, 16 Jul 2018 08:00:52 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 00:57:40 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
+        merlijn@wizzup.org
+Subject: Re: [PATCH] pwm-omap: handle timers not ready in probe
+Message-ID: <20180716075740.GT99251@atomide.com>
+References: <20180709081534.GA6799@amd>
+ <20180709214910.tes6u4ivxomd3aja@earth.universe>
+ <20180709220211.GA7760@amd>
+ <20180710101147.lyu65ro4czvrs2da@earth.universe>
+ <20180710133040.GA4391@amd>
+ <20180710161123.azym6sbboriuj4yc@earth.universe>
+ <20180711080218.GA21225@amd>
+ <20180711132739.GL99251@atomide.com>
+ <20180711142526.dto6iost57zx5t5l@earth.universe>
+ <20180716071323.GB23110@amd>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FKS3XK1H8Uv.3a0NTAZfCtd"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180716071323.GB23110@amd>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/FKS3XK1H8Uv.3a0NTAZfCtd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+* Pavel Machek <pavel@ucw.cz> [180716 07:16]:
+> 
+> When all the drivers are built-in, timers are not ready and probing
+> fails. Fix that with -EPROBE_DEFFER.
+> 
+> Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> 
+> diff --git a/drivers/pwm/pwm-omap-dmtimer.c b/drivers/pwm/pwm-omap-dmtimer.c
+> index 665da3c..debeb70 100644
+> --- a/drivers/pwm/pwm-omap-dmtimer.c
+> +++ b/drivers/pwm/pwm-omap-dmtimer.c
+> @@ -265,7 +271,7 @@ static int pwm_omap_dmtimer_probe(struct platform_device *pdev)
+>  	timer_pdata = dev_get_platdata(&timer_pdev->dev);
+>  	if (!timer_pdata) {
+>  		dev_err(&pdev->dev, "dmtimer pdata structure NULL\n");
+> -		ret = -EINVAL;
+> +		ret = -EPROBE_DEFER;
+>  		goto put;
+>  	}
 
-Hi all,
+There seems to be an earlier similar patch, care to take a look
+at "[PATCH] pwm: pwm-omap-dmtimer: return -EPROBE_DEFER if no
+dmtimer platform data"?
 
-Changes since 20180713:
+Regards,
 
-The arm-soc tree gained a build failure so I used the version from
-next-20180713.
-
-Non-merge commits (relative to Linus' tree): 6029
- 5901 files changed, 216652 insertions(+), 121372 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log
-files in the Next directory.  Between each merge, the tree was built
-with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-multi_v7_defconfig for arm and a native build of tools/perf. After
-the final fixups (if any), I do an x86_64 modules_install followed by
-builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-and sparc64 defconfig. And finally, a simple boot test of the powerpc
-pseries_le_defconfig kernel in qemu (with and without kvm enabled).
-
-Below is a summary of the state of the merge.
-
-I am currently merging 283 trees (counting Linus' and 65 trees of bug
-fix patches pending for the current merge release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FKS3XK1H8Uv.3a0NTAZfCtd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltMT5cACgkQAVBC80lX
-0GzLiwgApCVFePPQyCCuY8PHZlwQB1tY5HiyvHDJGqdk7SgBJN49TQDbWGB6aJy7
-ACLznX8IGPNwqFNhD2hj9uOhPrpJFGkAim1YeFYmdaGhAkTp3x8QvqLJxLGl3qYp
-CmXANRq5mE0MRha+pq+LfyZf6a/Z8BRGWXlN4ws/+g9ugcZ2y1wS5UEy7UK7ybqr
-oaRISl+crSI2Axd+tDMqGlYLpJowhr7iJywGbFSlwgUTqErgxsMER71M/IF7GY6D
-vXFBxGYPXIrVwmGIJ20mcKEtiBZytw4rpadNLeH9txqz5yBb3cnPU5kLrJRewmiG
-cvQ8E2F4BKxwBjZfj8yDx5hfk9uwbQ==
-=+lIO
------END PGP SIGNATURE-----
-
---Sig_/FKS3XK1H8Uv.3a0NTAZfCtd--
+Tony
