@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBD8ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5DCECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8DF208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:24:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFE58208C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:24:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="g8PWLytU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8DF208C3
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="L7eZ07D9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE58208C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbeGPSwi (ORCPT
+        id S1731154AbeGPSwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 14:52:38 -0400
-Received: from sonic308-15.consmr.mail.gq1.yahoo.com ([98.137.68.39]:42018
+        Mon, 16 Jul 2018 14:52:44 -0400
+Received: from sonic308-15.consmr.mail.gq1.yahoo.com ([98.137.68.39]:45688
         "EHLO sonic308-15.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728522AbeGPSwi (ORCPT
+        by vger.kernel.org with ESMTP id S1728466AbeGPSwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 14:52:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1531765441; bh=agKtOuvHSYavxNQGK177rtMCEDsRwkMcBfjk/a+Mr5A=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=g8PWLytUyTkcHe4bvTThyPrexQgNW78QOOO8DCWMuAQmQK21ARobrgwp0A54nHtAWa8mRTxugDgdHTaC6ux0hVNT9gl8vrGZaXPYJqk+Bw4eAPHj8iUk/TyZAPWM8jX+jPP5kWfOsW23bhuk/2L65oWaWUqR512B5SkpT7U9JQgodx17QYthxagguXimInlyBo3gswIzR5rfriEaJ9FYlmbNR/yRksM2uvQlPGgSpeK3hN7XXc8glrYyKI9aXIb8ERrT+MUnX/fVWHrgaWGhzuHLkw6oX9Kfxk3DbZBugTF9QqHAr33Wf4xRmAIcNStlf6lSMUHGG+EcyQWCRBPZ1A==
-X-YMail-OSG: wg_8wZUVM1lRux2Ds.n4VCU5bsILGwmaq7AhtB1Spd4gjK69S05fHkOGWjrpplM
- I7wLWO5HdCUMeRbmPWlOwixILvNZoX494N30WpXHg6YXABhkHKfun12jQWHtqrn6RjYMEm.GrO.C
- l7sCqpMnRBBfCp4jP.tvTfJp1oJ.Ra6tfpWVPkTEDl1gSYv8EkGnocmTrXnemJbDdlUlYJyhW1Jx
- qfkL8__nucE1jxIPRAN7uP6pdMwf6gEgPK.RZ0mcnU.8wGKqArdqJguxDySg6Xc_QpBrpWiG7gpx
- QLRCOmLB3k48O6TldsQx_Qp1LIDJDs9VsRUjl8RKJrl5eGMUuPAmzYW8IrWZZovfYiMufw55N8_1
- O5peaG_JhOwHvihDBfzfrX3OnFApG3b5wWt.Ds6fbAYB8QjBsrLY7amS5atg7AnBBtIVv7jhJKJR
- egIPrSrKn3GFcNMPoeBwK2Q7d_RpmokP.GxMxM2TVpY_gzZXEl_eezQSxj7P_rMEBJvKXwm9a4ny
- ZEJV43Gu7_5sGvxbjmaK8EDG3sagNTltm_2zEcLik551qqRuYxQ_jBt7u11D0L9o71paPgWjDdr9
- xLDWH1uGE94ra5rRc.Tf6qHgVEL0NOsaLN_qNpWS0F.kfl03PGDqnP4ypuN48f7wpCrKiigb.Si8
- n423jo1HVSSiI0jYeR3D4Lyze92901yW79geF6arTj7xRkeVEYwdXuxCPEp.9V3pQrR4X_NKJDO.
- 8GgxxkGo7TeL24KoYQhS.sdlA2NVy_FcD0fNBAVvIDn2tJyyzeIC8E3uPW45JGG_I0qziVYpQXBR
- .ArsKjSngKBNa9Srbodpn7akqRIIXGkmLYo_4xMuYUFQBrqCqb1yNXeO1swvAvIbCO3yuy66.XUu
- UPiNeBRccVFoODFB0hAOdrPKTCxsdl2EYA8g_9KFr9y7ANK.l5P2mzCZ9VXChFHAWaIvRukNkm.R
- Zp1M0kNebK_aLqhSocTWCLum3ziRV1zDVoMo_pV7L_4bxwrcfwQet1JQvZEvyDZzuYNKWUt4oJI6
- 5MdbehNTu7Vzy.26yGT3DPn1d_51UMzc-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Mon, 16 Jul 2018 18:24:01 +0000
+        Mon, 16 Jul 2018 14:52:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1531765446; bh=K3faEMpjoT0yIT+hjTC+Hc8UfBnvQ/CmJCHPkG00jeI=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=L7eZ07D9TUoMJ2EEyJAYl84wGXIyVce+4vxo2HthohoVUmLNG1qXipiCD8rkJymeGtrGodq3YERLEyi8iZzpP/tg2VGuma0cJWqtq/YziE389UTv29P1zlmP57Zoq9RqSvV1n6vyzgVOxqCjZC7ZqdF63HLte6weAofcWZgXT13f6O4ZpcuT6oCBdOmQKbzt5P3kHMPn9137ZbwyzAhCKw2ZlegLuPkKyuzSpoz2qtdhuAqlWlai6Zir3VSfYG/aAwU8vfYEHN7f6ZW8icRZIwR2c7n4EbRfR3J/8MuKyxyPg8kj2VIIB6paXfmCxZTM+Fx6Wmp2uWeaa5H4yrrEQQ==
+X-YMail-OSG: AQUQ3xoVM1ludED.M4dtr7UAuxMwkMX6poFPtzketMqM9wSYi2AeRU9zZtUmOHQ
+ j9Zx2LIR8sX11GK3TlgyJ_miusdYAgUG5JG7YR.0tM88VJfSVlnWtL3eGfuzY1FIigmE.BWSK7rq
+ PGntJNzfQojGrxqdIxm49xTpt4CMEI.u.Kr1fm35nZgvTTgmPn04cp9Ob6yD3LbtBKAMKOi67.DN
+ 47sMvJUC_8GefHqMjOn27755YMNcLazSKffzosQ6vXnELUllxon29siIXHvGfDWKXvA0qflixuKS
+ gG4uhYvy9U3nHBzXFFoWZXFwXQ71weaLPWX0hNZUW.CfWXjGuDfqirFg1C0qypQmC3t8Hp8aF3_Y
+ rsgXbnZ17b3P3y483Pubo3lvNwhMpt3ABk89Elu3Xp9fnI84w1M0uAaE6W0VyHec.NMOyICvsJLf
+ mo01EpjT5NFpP_Ui0slJmibB4QDLaDDC8dEC1q72lrsIbVitQjsLqrsIcytmrit5gBmoG3xPhOur
+ yBeWgfLLxCtQO_oXEv5SzbytwqawoIve5GbiMdGIITvcQbga2eej2sDru0jphJoJQuAD_Bh3wP5f
+ T1EJ7qvue2Rubg5k3bLUL.OYCExfI7PPvHbW1K1_1ZxYySq5t9SKfF_TwNpGA_K_PI3mnb_gbFSB
+ diQtnfZj_Gd3GlttDjw99jHk..IU0uOnMArPRO7BnsxYFf.uGXSm1Fr2XePlqqH9il2s8RMNB27G
+ fFhc1b8vwKmlWjJU3WkhapmEN1poHXroswaEKLvf4XRwhrsIHZK1Q8uAF952Z4LCwR03Jbntr6fk
+ 2ma8awbyb9L07Lc_kYSJEU0otgomsbDfdAooZYgEui0zgoVHHG7x.3A7BC03XgFN6CABoI2vvNVS
+ a49Un2kaDtnbLMuKKAc3l_F7ZReSpFh7QhZZk5Nnm.qIUGVbviXrETg2aCMjJHNzj7XoAljk.1qj
+ YMj6udHykjIgymJR5TJC3lhW9K7o.pGlSsATj_3H13.6luBt5OGQMvlbhDMAR3B.hndSr3UP9WmX
+ lL_UY1KEIw3TXzATkB09KU2hywWjcNeM-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Mon, 16 Jul 2018 18:24:06 +0000
 Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp418.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 54f5350d52bb2137bea1b85439ad84cf;
-          Mon, 16 Jul 2018 18:23:57 +0000 (UTC)
-Subject: [PATCH v1 13/22] LSM: Infrastructure management of the ipc security
+          by smtp428.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 1e0f0a8cbf320a1753bef11666eff08e;
+          Mon, 16 Jul 2018 18:24:02 +0000 (UTC)
+Subject: [PATCH v1 14/22] LSM: Infrastructure management of the key security
  blob
 To:     LSM <linux-security-module@vger.kernel.org>,
         LKLM <linux-kernel@vger.kernel.org>,
@@ -61,8 +61,8 @@ Cc:     "Schaufler, Casey" <casey.schaufler@intel.com>,
         Casey Schaufler <casey@schaufler-ca.com>
 References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
 From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <9761013c-3261-e5df-55c4-6b8e577fc29f@schaufler-ca.com>
-Date:   Mon, 16 Jul 2018 11:23:54 -0700
+Message-ID: <73337db4-af36-0007-63a0-9e5a6fb7a43e@schaufler-ca.com>
+Date:   Mon, 16 Jul 2018 11:23:59 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -75,637 +75,315 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LSM: Infrastructure management of the ipc security blob
+[PATCH 14/22] LSM: Infrastructure management of the key security blob
 
-Move management of the kern_ipc_perm->security and
-msg_msg->security blobs out of the individual security
-modules and into the security infrastructure. Instead
-of allocating the blobs from within the modules the modules
-tell the infrastructure how much space is required, and
-the space is allocated there.
+Move management of the key->security blob out of the
+individual security modules and into the security
+infrastructure. Instead of allocating the blobs from within
+the modules the modules tell the infrastructure how much
+space is required, and the space is allocated there.
 
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/lsm_hooks.h         |   2 +
- security/security.c               |  91 +++++++++++++++++++++--
- security/selinux/hooks.c          | 116 ++++++------------------------
- security/selinux/include/objsec.h |  12 ++++
- security/smack/smack.h            |  10 +++
- security/smack/smack_lsm.c        |  46 ++++--------
- 6 files changed, 146 insertions(+), 131 deletions(-)
+ include/linux/lsm_hooks.h         |  1 +
+ security/security.c               | 40 ++++++++++++++++++++++++++++++-
+ security/selinux/hooks.c          | 23 +++++-------------
+ security/selinux/include/objsec.h |  7 ++++++
+ security/smack/smack.h            |  7 ++++++
+ security/smack/smack_lsm.c        | 33 ++++++++++++-------------
+ 6 files changed, 75 insertions(+), 36 deletions(-)
 
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 5660c0f72d68..6e6967abc5b7 100644
+index 6e6967abc5b7..fe14a86c6df0 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -2025,6 +2025,8 @@ struct lsm_blob_sizes {
- 	int	lbs_cred;
+@@ -2026,6 +2026,7 @@ struct lsm_blob_sizes {
  	int	lbs_file;
  	int	lbs_inode;
-+	int	lbs_ipc;
-+	int	lbs_msg_msg;
+ 	int	lbs_ipc;
++	int	lbs_key;
+ 	int	lbs_msg_msg;
  	int	lbs_sock;
  	int	lbs_superblock;
- 	int	lbs_task;
 diff --git a/security/security.c b/security/security.c
-index 07ae8750cf28..500fb19d5aea 100644
+index 500fb19d5aea..b95a151f7347 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -28,6 +28,7 @@
- #include <linux/personality.h>
- #include <linux/backing-dev.h>
- #include <linux/string.h>
-+#include <linux/msg.h>
- #include <net/flow.h>
- #include <net/sock.h>
- 
-@@ -115,6 +116,8 @@ int __init security_init(void)
- 	pr_info("LSM: cred blob size       = %d\n", blob_sizes.lbs_cred);
+@@ -117,6 +117,9 @@ int __init security_init(void)
  	pr_info("LSM: file blob size       = %d\n", blob_sizes.lbs_file);
  	pr_info("LSM: inode blob size      = %d\n", blob_sizes.lbs_inode);
-+	pr_info("LSM: ipc blob size        = %d\n", blob_sizes.lbs_ipc);
-+	pr_info("LSM: msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
+ 	pr_info("LSM: ipc blob size        = %d\n", blob_sizes.lbs_ipc);
++#ifdef CONFIG_KEYS
++	pr_info("LSM: key blob size        = %d\n", blob_sizes.lbs_key);
++#endif /* CONFIG_KEYS */
+ 	pr_info("LSM: msg_msg blob size    = %d\n", blob_sizes.lbs_msg_msg);
  	pr_info("LSM: sock blob size       = %d\n", blob_sizes.lbs_sock);
  	pr_info("LSM: superblock blob size = %d\n", blob_sizes.lbs_superblock);
- 	pr_info("LSM: task blob size       = %d\n", blob_sizes.lbs_task);
-@@ -293,6 +296,8 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
- {
+@@ -297,6 +300,9 @@ void __init security_add_blobs(struct lsm_blob_sizes *needed)
  	lsm_set_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
  	lsm_set_size(&needed->lbs_file, &blob_sizes.lbs_file);
-+	lsm_set_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
-+	lsm_set_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+ 	lsm_set_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
++#ifdef CONFIG_KEYS
++	lsm_set_size(&needed->lbs_key, &blob_sizes.lbs_key);
++#endif
+ 	lsm_set_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
  	lsm_set_size(&needed->lbs_sock, &blob_sizes.lbs_sock);
  	lsm_set_size(&needed->lbs_superblock, &blob_sizes.lbs_superblock);
- 	lsm_set_size(&needed->lbs_task, &blob_sizes.lbs_task);
-@@ -406,6 +411,48 @@ void lsm_early_inode(struct inode *inode)
- 		panic("%s: Early inode alloc failed.\n", __func__);
- }
- 
-+/**
-+ * lsm_ipc_alloc - allocate a composite ipc blob
-+ * @kip: the ipc that needs a blob
-+ *
-+ * Allocate the ipc blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+int lsm_ipc_alloc(struct kern_ipc_perm *kip)
-+{
-+	if (blob_sizes.lbs_ipc == 0) {
-+		kip->security = NULL;
-+		return 0;
-+	}
-+
-+	kip->security = kzalloc(blob_sizes.lbs_ipc, GFP_KERNEL);
-+	if (kip->security == NULL)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+/**
-+ * lsm_msg_msg_alloc - allocate a composite msg_msg blob
-+ * @mp: the msg_msg that needs a blob
-+ *
-+ * Allocate the ipc blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
-+ */
-+int lsm_msg_msg_alloc(struct msg_msg *mp)
-+{
-+	if (blob_sizes.lbs_msg_msg == 0) {
-+		mp->security = NULL;
-+		return 0;
-+	}
-+
-+	mp->security = kzalloc(blob_sizes.lbs_msg_msg, GFP_KERNEL);
-+	if (mp->security == NULL)
-+		return -ENOMEM;
-+	return 0;
-+}
-+
- /**
-  * lsm_sock_alloc - allocate a composite sock blob
-  * @sock: the sock that needs a blob
-@@ -1504,22 +1551,40 @@ void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
- 
- int security_msg_msg_alloc(struct msg_msg *msg)
- {
--	return call_int_hook(msg_msg_alloc_security, 0, msg);
-+	int rc = lsm_msg_msg_alloc(msg);
-+
-+	if (unlikely(rc))
-+		return rc;
-+	rc = call_int_hook(msg_msg_alloc_security, 0, msg);
-+	if (unlikely(rc))
-+		security_msg_msg_free(msg);
-+	return rc;
- }
- 
- void security_msg_msg_free(struct msg_msg *msg)
- {
- 	call_void_hook(msg_msg_free_security, msg);
-+	kfree(msg->security);
-+	msg->security = NULL;
- }
- 
- int security_msg_queue_alloc(struct kern_ipc_perm *msq)
- {
--	return call_int_hook(msg_queue_alloc_security, 0, msq);
-+	int rc = lsm_ipc_alloc(msq);
-+
-+	if (unlikely(rc))
-+		return rc;
-+	rc = call_int_hook(msg_queue_alloc_security, 0, msq);
-+	if (unlikely(rc))
-+		security_msg_queue_free(msq);
-+	return rc;
- }
- 
- void security_msg_queue_free(struct kern_ipc_perm *msq)
- {
- 	call_void_hook(msg_queue_free_security, msq);
-+	kfree(msq->security);
-+	msq->security = NULL;
- }
- 
- int security_msg_queue_associate(struct kern_ipc_perm *msq, int msqflg)
-@@ -1546,12 +1611,21 @@ int security_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *msg,
- 
- int security_shm_alloc(struct kern_ipc_perm *shp)
- {
--	return call_int_hook(shm_alloc_security, 0, shp);
-+	int rc = lsm_ipc_alloc(shp);
-+
-+	if (unlikely(rc))
-+		return rc;
-+	rc = call_int_hook(shm_alloc_security, 0, shp);
-+	if (unlikely(rc))
-+		security_shm_free(shp);
-+	return rc;
- }
- 
- void security_shm_free(struct kern_ipc_perm *shp)
- {
- 	call_void_hook(shm_free_security, shp);
-+	kfree(shp->security);
-+	shp->security = NULL;
- }
- 
- int security_shm_associate(struct kern_ipc_perm *shp, int shmflg)
-@@ -1571,12 +1645,21 @@ int security_shm_shmat(struct kern_ipc_perm *shp, char __user *shmaddr, int shmf
- 
- int security_sem_alloc(struct kern_ipc_perm *sma)
- {
--	return call_int_hook(sem_alloc_security, 0, sma);
-+	int rc = lsm_ipc_alloc(sma);
-+
-+	if (unlikely(rc))
-+		return rc;
-+	rc = call_int_hook(sem_alloc_security, 0, sma);
-+	if (unlikely(rc))
-+		security_sem_free(sma);
-+	return rc;
- }
- 
- void security_sem_free(struct kern_ipc_perm *sma)
- {
- 	call_void_hook(sem_free_security, sma);
-+	kfree(sma->security);
-+	sma->security = NULL;
- }
- 
- int security_sem_associate(struct kern_ipc_perm *sma, int semflg)
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 5f7f2d3b14cd..ede12c1720a4 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5803,51 +5803,22 @@ static int selinux_netlink_send(struct sock *sk, struct sk_buff *skb)
- 	return selinux_nlmsg_perm(sk, skb);
- }
- 
--static int ipc_alloc_security(struct kern_ipc_perm *perm,
--			      u16 sclass)
-+static void ipc_init_security(struct ipc_security_struct *isec, u16 sclass)
- {
--	struct ipc_security_struct *isec;
--
--	isec = kzalloc(sizeof(struct ipc_security_struct), GFP_KERNEL);
--	if (!isec)
--		return -ENOMEM;
--
- 	isec->sclass = sclass;
- 	isec->sid = current_sid();
--	perm->security = isec;
--
--	return 0;
--}
--
--static void ipc_free_security(struct kern_ipc_perm *perm)
--{
--	struct ipc_security_struct *isec = perm->security;
--	perm->security = NULL;
--	kfree(isec);
- }
- 
- static int msg_msg_alloc_security(struct msg_msg *msg)
- {
- 	struct msg_security_struct *msec;
- 
--	msec = kzalloc(sizeof(struct msg_security_struct), GFP_KERNEL);
--	if (!msec)
--		return -ENOMEM;
--
-+	msec = selinux_msg_msg(msg);
- 	msec->sid = SECINITSID_UNLABELED;
--	msg->security = msec;
- 
+@@ -432,6 +438,29 @@ int lsm_ipc_alloc(struct kern_ipc_perm *kip)
  	return 0;
  }
  
--static void msg_msg_free_security(struct msg_msg *msg)
--{
--	struct msg_security_struct *msec = msg->security;
--
--	msg->security = NULL;
--	kfree(msec);
--}
--
- static int ipc_has_perm(struct kern_ipc_perm *ipc_perms,
- 			u32 perms)
++#ifdef CONFIG_KEYS
++/**
++ * lsm_key_alloc - allocate a composite key blob
++ * @key: the key that needs a blob
++ *
++ * Allocate the key blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++int lsm_key_alloc(struct key *key)
++{
++	if (blob_sizes.lbs_key == 0) {
++		key->security = NULL;
++		return 0;
++	}
++
++	key->security = kzalloc(blob_sizes.lbs_key, GFP_KERNEL);
++	if (key->security == NULL)
++		return -ENOMEM;
++	return 0;
++}
++#endif /* CONFIG_KEYS */
++
+ /**
+  * lsm_msg_msg_alloc - allocate a composite msg_msg blob
+  * @mp: the msg_msg that needs a blob
+@@ -2143,12 +2172,21 @@ EXPORT_SYMBOL(security_skb_classify_flow);
+ int security_key_alloc(struct key *key, const struct cred *cred,
+ 		       unsigned long flags)
  {
-@@ -5855,7 +5826,7 @@ static int ipc_has_perm(struct kern_ipc_perm *ipc_perms,
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = ipc_perms->security;
-+	isec = selinux_ipc(ipc_perms);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = ipc_perms->key;
-@@ -5869,11 +5840,6 @@ static int selinux_msg_msg_alloc_security(struct msg_msg *msg)
- 	return msg_msg_alloc_security(msg);
- }
- 
--static void selinux_msg_msg_free_security(struct msg_msg *msg)
--{
--	msg_msg_free_security(msg);
--}
--
- /* message queue security operations */
- static int selinux_msg_queue_alloc_security(struct kern_ipc_perm *msq)
- {
-@@ -5882,11 +5848,8 @@ static int selinux_msg_queue_alloc_security(struct kern_ipc_perm *msq)
- 	u32 sid = current_sid();
- 	int rc;
- 
--	rc = ipc_alloc_security(msq, SECCLASS_MSGQ);
--	if (rc)
--		return rc;
--
--	isec = msq->security;
-+	isec = selinux_ipc(msq);
-+	ipc_init_security(isec, SECCLASS_MSGQ);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = msq->key;
-@@ -5894,16 +5857,7 @@ static int selinux_msg_queue_alloc_security(struct kern_ipc_perm *msq)
- 	rc = avc_has_perm(&selinux_state,
- 			  sid, isec->sid, SECCLASS_MSGQ,
- 			  MSGQ__CREATE, &ad);
--	if (rc) {
--		ipc_free_security(msq);
--		return rc;
--	}
--	return 0;
--}
--
--static void selinux_msg_queue_free_security(struct kern_ipc_perm *msq)
--{
--	ipc_free_security(msq);
+-	return call_int_hook(key_alloc, 0, key, cred, flags);
++	int rc = lsm_key_alloc(key);
++
++	if (unlikely(rc))
++		return rc;
++	rc = call_int_hook(key_alloc, 0, key, cred, flags);
++	if (unlikely(rc))
++		security_key_free(key);
 +	return rc;
  }
  
- static int selinux_msg_queue_associate(struct kern_ipc_perm *msq, int msqflg)
-@@ -5912,7 +5866,7 @@ static int selinux_msg_queue_associate(struct kern_ipc_perm *msq, int msqflg)
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = msq->security;
-+	isec = selinux_ipc(msq);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = msq->key;
-@@ -5961,8 +5915,8 @@ static int selinux_msg_queue_msgsnd(struct kern_ipc_perm *msq, struct msg_msg *m
- 	u32 sid = current_sid();
- 	int rc;
- 
--	isec = msq->security;
--	msec = msg->security;
-+	isec = selinux_ipc(msq);
-+	msec = selinux_msg_msg(msg);
- 
- 	/*
- 	 * First time through, need to assign label to the message
-@@ -6009,8 +5963,8 @@ static int selinux_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *m
- 	u32 sid = task_sid(target);
- 	int rc;
- 
--	isec = msq->security;
--	msec = msg->security;
-+	isec = selinux_ipc(msq);
-+	msec = selinux_msg_msg(msg);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = msq->key;
-@@ -6033,11 +5987,8 @@ static int selinux_shm_alloc_security(struct kern_ipc_perm *shp)
- 	u32 sid = current_sid();
- 	int rc;
- 
--	rc = ipc_alloc_security(shp, SECCLASS_SHM);
--	if (rc)
--		return rc;
--
--	isec = shp->security;
-+	isec = selinux_ipc(shp);
-+	ipc_init_security(isec, SECCLASS_SHM);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = shp->key;
-@@ -6045,16 +5996,7 @@ static int selinux_shm_alloc_security(struct kern_ipc_perm *shp)
- 	rc = avc_has_perm(&selinux_state,
- 			  sid, isec->sid, SECCLASS_SHM,
- 			  SHM__CREATE, &ad);
--	if (rc) {
--		ipc_free_security(shp);
--		return rc;
--	}
--	return 0;
--}
--
--static void selinux_shm_free_security(struct kern_ipc_perm *shp)
--{
--	ipc_free_security(shp);
-+	return rc;
- }
- 
- static int selinux_shm_associate(struct kern_ipc_perm *shp, int shmflg)
-@@ -6063,7 +6005,7 @@ static int selinux_shm_associate(struct kern_ipc_perm *shp, int shmflg)
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = shp->security;
-+	isec = selinux_ipc(shp);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = shp->key;
-@@ -6130,11 +6072,8 @@ static int selinux_sem_alloc_security(struct kern_ipc_perm *sma)
- 	u32 sid = current_sid();
- 	int rc;
- 
--	rc = ipc_alloc_security(sma, SECCLASS_SEM);
--	if (rc)
--		return rc;
--
--	isec = sma->security;
-+	isec = selinux_ipc(sma);
-+	ipc_init_security(isec, SECCLASS_SEM);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = sma->key;
-@@ -6142,16 +6081,7 @@ static int selinux_sem_alloc_security(struct kern_ipc_perm *sma)
- 	rc = avc_has_perm(&selinux_state,
- 			  sid, isec->sid, SECCLASS_SEM,
- 			  SEM__CREATE, &ad);
--	if (rc) {
--		ipc_free_security(sma);
--		return rc;
--	}
--	return 0;
--}
--
--static void selinux_sem_free_security(struct kern_ipc_perm *sma)
--{
--	ipc_free_security(sma);
-+	return rc;
- }
- 
- static int selinux_sem_associate(struct kern_ipc_perm *sma, int semflg)
-@@ -6160,7 +6090,7 @@ static int selinux_sem_associate(struct kern_ipc_perm *sma, int semflg)
- 	struct common_audit_data ad;
- 	u32 sid = current_sid();
- 
--	isec = sma->security;
-+	isec = selinux_ipc(sma);
- 
- 	ad.type = LSM_AUDIT_DATA_IPC;
- 	ad.u.ipc_id = sma->key;
-@@ -6246,7 +6176,7 @@ static int selinux_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- 
- static void selinux_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
+ void security_key_free(struct key *key)
  {
--	struct ipc_security_struct *isec = ipcp->security;
-+	struct ipc_security_struct *isec = selinux_ipc(ipcp);
- 	*secid = isec->sid;
+ 	call_void_hook(key_free, key);
++	kfree(key->security);
++	key->security = NULL;
  }
  
-@@ -6784,6 +6714,8 @@ struct lsm_blob_sizes selinux_blob_sizes = {
- 	.lbs_cred = sizeof(struct task_security_struct),
+ int security_key_permission(key_ref_t key_ref,
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index ede12c1720a4..452d0c774c75 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6441,11 +6441,7 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
+ 			     unsigned long flags)
+ {
+ 	const struct task_security_struct *tsec;
+-	struct key_security_struct *ksec;
+-
+-	ksec = kzalloc(sizeof(struct key_security_struct), GFP_KERNEL);
+-	if (!ksec)
+-		return -ENOMEM;
++	struct key_security_struct *ksec = selinux_key(k);
+ 
+ 	tsec = selinux_cred(cred);
+ 	if (tsec->keycreate_sid)
+@@ -6453,18 +6449,9 @@ static int selinux_key_alloc(struct key *k, const struct cred *cred,
+ 	else
+ 		ksec->sid = tsec->sid;
+ 
+-	k->security = ksec;
+ 	return 0;
+ }
+ 
+-static void selinux_key_free(struct key *k)
+-{
+-	struct key_security_struct *ksec = k->security;
+-
+-	k->security = NULL;
+-	kfree(ksec);
+-}
+-
+ static int selinux_key_permission(key_ref_t key_ref,
+ 				  const struct cred *cred,
+ 				  unsigned perm)
+@@ -6482,7 +6469,7 @@ static int selinux_key_permission(key_ref_t key_ref,
+ 	sid = cred_sid(cred);
+ 
+ 	key = key_ref_to_ptr(key_ref);
+-	ksec = key->security;
++	ksec = selinux_key(key);
+ 
+ 	return avc_has_perm(&selinux_state,
+ 			    sid, ksec->sid, SECCLASS_KEY, perm, NULL);
+@@ -6490,7 +6477,7 @@ static int selinux_key_permission(key_ref_t key_ref,
+ 
+ static int selinux_key_getsecurity(struct key *key, char **_buffer)
+ {
+-	struct key_security_struct *ksec = key->security;
++	struct key_security_struct *ksec = selinux_key(key);
+ 	char *context = NULL;
+ 	unsigned len;
+ 	int rc;
+@@ -6715,6 +6702,9 @@ struct lsm_blob_sizes selinux_blob_sizes = {
  	.lbs_file = sizeof(struct file_security_struct),
  	.lbs_inode = sizeof(struct inode_security_struct),
-+	.lbs_ipc = sizeof(struct ipc_security_struct),
-+	.lbs_msg_msg = sizeof(struct msg_security_struct),
+ 	.lbs_ipc = sizeof(struct ipc_security_struct),
++#ifdef CONFIG_KEYS
++	.lbs_key = sizeof(struct key_security_struct),
++#endif /* CONFIG_KEYS */
+ 	.lbs_msg_msg = sizeof(struct msg_security_struct),
  	.lbs_sock = sizeof(struct sk_security_struct),
  	.lbs_superblock = sizeof(struct superblock_security_struct),
- };
-@@ -6894,24 +6826,20 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ipc_getsecid, selinux_ipc_getsecid),
+@@ -6925,7 +6915,6 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
  
- 	LSM_HOOK_INIT(msg_msg_alloc_security, selinux_msg_msg_alloc_security),
--	LSM_HOOK_INIT(msg_msg_free_security, selinux_msg_msg_free_security),
- 
- 	LSM_HOOK_INIT(msg_queue_alloc_security,
- 			selinux_msg_queue_alloc_security),
--	LSM_HOOK_INIT(msg_queue_free_security, selinux_msg_queue_free_security),
- 	LSM_HOOK_INIT(msg_queue_associate, selinux_msg_queue_associate),
- 	LSM_HOOK_INIT(msg_queue_msgctl, selinux_msg_queue_msgctl),
- 	LSM_HOOK_INIT(msg_queue_msgsnd, selinux_msg_queue_msgsnd),
- 	LSM_HOOK_INIT(msg_queue_msgrcv, selinux_msg_queue_msgrcv),
- 
- 	LSM_HOOK_INIT(shm_alloc_security, selinux_shm_alloc_security),
--	LSM_HOOK_INIT(shm_free_security, selinux_shm_free_security),
- 	LSM_HOOK_INIT(shm_associate, selinux_shm_associate),
- 	LSM_HOOK_INIT(shm_shmctl, selinux_shm_shmctl),
- 	LSM_HOOK_INIT(shm_shmat, selinux_shm_shmat),
- 
- 	LSM_HOOK_INIT(sem_alloc_security, selinux_sem_alloc_security),
--	LSM_HOOK_INIT(sem_free_security, selinux_sem_free_security),
- 	LSM_HOOK_INIT(sem_associate, selinux_sem_associate),
- 	LSM_HOOK_INIT(sem_semctl, selinux_sem_semctl),
- 	LSM_HOOK_INIT(sem_semop, selinux_sem_semop),
+ #ifdef CONFIG_KEYS
+ 	LSM_HOOK_INIT(key_alloc, selinux_key_alloc),
+-	LSM_HOOK_INIT(key_free, selinux_key_free),
+ 	LSM_HOOK_INIT(key_permission, selinux_key_permission),
+ 	LSM_HOOK_INIT(key_getsecurity, selinux_key_getsecurity),
+ #endif
 diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
-index 92010a72d153..848ba24921c9 100644
+index 848ba24921c9..96cecdbcd3fb 100644
 --- a/security/selinux/include/objsec.h
 +++ b/security/selinux/include/objsec.h
-@@ -181,6 +181,18 @@ static inline struct superblock_security_struct *selinux_superblock(
- 	return superblock->s_security;
+@@ -193,6 +193,13 @@ static inline struct ipc_security_struct *selinux_ipc(
+ 	return ipc->security;
  }
  
-+static inline struct msg_security_struct *selinux_msg_msg(
-+						const struct msg_msg *msg_msg)
++#ifdef CONFIG_KEYS
++static inline struct key_security_struct *selinux_key(const struct key *key)
 +{
-+	return msg_msg->security;
++	return key->security;
 +}
-+
-+static inline struct ipc_security_struct *selinux_ipc(
-+						const struct kern_ipc_perm *ipc)
-+{
-+	return ipc->security;
-+}
++#endif /* CONFIG_KEYS */
 +
  static inline struct sk_security_struct *selinux_sock(const struct sock *sock)
  {
  	return sock->sk_security;
 diff --git a/security/smack/smack.h b/security/smack/smack.h
-index f457dd3b4aa0..42c36e37b0bd 100644
+index 42c36e37b0bd..e50ed4945a40 100644
 --- a/security/smack/smack.h
 +++ b/security/smack/smack.h
-@@ -383,6 +383,16 @@ static inline struct superblock_smack *smack_superblock(
- 	return superblock->s_security;
+@@ -393,6 +393,13 @@ static inline struct smack_known **smack_ipc(const struct kern_ipc_perm *ipc)
+ 	return ipc->security;
  }
  
-+static inline struct smack_known **smack_msg_msg(const struct msg_msg *msg)
++#ifdef CONFIG_KEYS
++static inline struct smack_known **smack_key(const struct key *key)
 +{
-+	return msg->security;
++	return key->security;
 +}
-+
-+static inline struct smack_known **smack_ipc(const struct kern_ipc_perm *ipc)
-+{
-+	return ipc->security;
-+}
++#endif /* CONFIG_KEYS */
 +
  /*
   * Is the directory transmuting?
   */
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index d0375e3bd36b..f8c4b3e95e67 100644
+index f8c4b3e95e67..319450174c17 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -2854,23 +2854,12 @@ static int smack_flags_to_may(int flags)
-  */
- static int smack_msg_msg_alloc_security(struct msg_msg *msg)
+@@ -4153,23 +4153,13 @@ static void smack_inet_csk_clone(struct sock *sk,
+ static int smack_key_alloc(struct key *key, const struct cred *cred,
+ 			   unsigned long flags)
  {
--	struct smack_known *skp = smk_of_current();
-+	struct smack_known **blob = smack_msg_msg(msg);
++	struct smack_known **blob = smack_key(key);
+ 	struct smack_known *skp = smk_of_task(smack_cred(cred));
  
--	msg->security = skp;
-+	*blob = smk_of_current();
+-	key->security = skp;
++	*blob = skp;
  	return 0;
  }
  
 -/**
-- * smack_msg_msg_free_security - Clear the security blob for msg_msg
-- * @msg: the object
+- * smack_key_free - Clear the key security blob
+- * @key: the object
 - *
-- * Clears the blob pointer
+- * Clear the blob pointer
 - */
--static void smack_msg_msg_free_security(struct msg_msg *msg)
+-static void smack_key_free(struct key *key)
 -{
--	msg->security = NULL;
+-	key->security = NULL;
 -}
 -
  /**
-  * smack_of_ipc - the smack pointer for the ipc
-  * @isp: the object
-@@ -2879,7 +2868,9 @@ static void smack_msg_msg_free_security(struct msg_msg *msg)
-  */
- static struct smack_known *smack_of_ipc(struct kern_ipc_perm *isp)
+  * smack_key_permission - Smack access on a key
+  * @key_ref: gets to the object
+@@ -4182,6 +4172,8 @@ static void smack_key_free(struct key *key)
+ static int smack_key_permission(key_ref_t key_ref,
+ 				const struct cred *cred, unsigned perm)
  {
--	return (struct smack_known *)isp->security;
-+	struct smack_known **blob = smack_ipc(isp);
-+
-+	return *blob;
- }
- 
- /**
-@@ -2890,23 +2881,12 @@ static struct smack_known *smack_of_ipc(struct kern_ipc_perm *isp)
-  */
- static int smack_ipc_alloc_security(struct kern_ipc_perm *isp)
- {
--	struct smack_known *skp = smk_of_current();
-+	struct smack_known **blob = smack_ipc(isp);
- 
--	isp->security = skp;
-+	*blob = smk_of_current();
- 	return 0;
- }
- 
--/**
-- * smack_ipc_free_security - Clear the security blob for ipc
-- * @isp: the object
-- *
-- * Clears the blob pointer
-- */
--static void smack_ipc_free_security(struct kern_ipc_perm *isp)
--{
--	isp->security = NULL;
--}
--
- /**
-  * smk_curacc_shm : check if current has access on shm
-  * @isp : the object
-@@ -3204,7 +3184,8 @@ static int smack_msg_queue_msgrcv(struct kern_ipc_perm *isp, struct msg_msg *msg
-  */
- static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
- {
--	struct smack_known *iskp = ipp->security;
-+	struct smack_known **blob = smack_ipc(ipp);
-+	struct smack_known *iskp = *blob;
- 	int may = smack_flags_to_may(flag);
++	struct smack_known **blob;
++	struct smack_known *skp;
+ 	struct key *keyp;
  	struct smk_audit_info ad;
- 	int rc;
-@@ -3225,7 +3206,8 @@ static int smack_ipc_permission(struct kern_ipc_perm *ipp, short flag)
-  */
- static void smack_ipc_getsecid(struct kern_ipc_perm *ipp, u32 *secid)
- {
--	struct smack_known *iskp = ipp->security;
-+	struct smack_known **blob = smack_ipc(ipp);
-+	struct smack_known *iskp = *blob;
- 
- 	*secid = iskp->smk_secid;
+ 	struct smack_known *tkp = smk_of_task(smack_cred(cred));
+@@ -4195,7 +4187,9 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	 * If the key hasn't been initialized give it access so that
+ 	 * it may do so.
+ 	 */
+-	if (keyp->security == NULL)
++	blob = smack_key(keyp);
++	skp = *blob;
++	if (skp == NULL)
+ 		return 0;
+ 	/*
+ 	 * This should not occur
+@@ -4215,8 +4209,8 @@ static int smack_key_permission(key_ref_t key_ref,
+ 		request = MAY_READ;
+ 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+ 		request = MAY_WRITE;
+-	rc = smk_access(tkp, keyp->security, request, &ad);
+-	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
++	rc = smk_access(tkp, skp, request, &ad);
++	rc = smk_bu_note("key access", tkp, skp, request, rc);
+ 	return rc;
  }
-@@ -4537,6 +4519,8 @@ struct lsm_blob_sizes smack_blob_sizes = {
- 	.lbs_cred = sizeof(struct task_smack),
+ 
+@@ -4231,11 +4225,12 @@ static int smack_key_permission(key_ref_t key_ref,
+  */
+ static int smack_key_getsecurity(struct key *key, char **_buffer)
+ {
+-	struct smack_known *skp = key->security;
++	struct smack_known **blob = smack_key(key);
++	struct smack_known *skp = *blob;
+ 	size_t length;
+ 	char *copy;
+ 
+-	if (key->security == NULL) {
++	if (skp == NULL) {
+ 		*_buffer = NULL;
+ 		return 0;
+ 	}
+@@ -4520,6 +4515,9 @@ struct lsm_blob_sizes smack_blob_sizes = {
  	.lbs_file = sizeof(struct smack_known *),
  	.lbs_inode = sizeof(struct inode_smack),
-+	.lbs_ipc = sizeof(struct smack_known *),
-+	.lbs_msg_msg = sizeof(struct smack_known *),
+ 	.lbs_ipc = sizeof(struct smack_known *),
++#ifdef CONFIG_KEYS
++	.lbs_key = sizeof(struct smack_known *),
++#endif /* CONFIG_KEYS */
+ 	.lbs_msg_msg = sizeof(struct smack_known *),
  	.lbs_sock = sizeof(struct socket_smack),
  	.lbs_superblock = sizeof(struct superblock_smack),
- };
-@@ -4609,23 +4593,19 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ipc_getsecid, smack_ipc_getsecid),
- 
- 	LSM_HOOK_INIT(msg_msg_alloc_security, smack_msg_msg_alloc_security),
--	LSM_HOOK_INIT(msg_msg_free_security, smack_msg_msg_free_security),
- 
- 	LSM_HOOK_INIT(msg_queue_alloc_security, smack_ipc_alloc_security),
--	LSM_HOOK_INIT(msg_queue_free_security, smack_ipc_free_security),
- 	LSM_HOOK_INIT(msg_queue_associate, smack_msg_queue_associate),
- 	LSM_HOOK_INIT(msg_queue_msgctl, smack_msg_queue_msgctl),
- 	LSM_HOOK_INIT(msg_queue_msgsnd, smack_msg_queue_msgsnd),
- 	LSM_HOOK_INIT(msg_queue_msgrcv, smack_msg_queue_msgrcv),
- 
- 	LSM_HOOK_INIT(shm_alloc_security, smack_ipc_alloc_security),
--	LSM_HOOK_INIT(shm_free_security, smack_ipc_free_security),
- 	LSM_HOOK_INIT(shm_associate, smack_shm_associate),
- 	LSM_HOOK_INIT(shm_shmctl, smack_shm_shmctl),
- 	LSM_HOOK_INIT(shm_shmat, smack_shm_shmat),
- 
- 	LSM_HOOK_INIT(sem_alloc_security, smack_ipc_alloc_security),
--	LSM_HOOK_INIT(sem_free_security, smack_ipc_free_security),
- 	LSM_HOOK_INIT(sem_associate, smack_sem_associate),
- 	LSM_HOOK_INIT(sem_semctl, smack_sem_semctl),
- 	LSM_HOOK_INIT(sem_semop, smack_sem_semop),
+@@ -4639,7 +4637,6 @@ static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
+  /* key management security hooks */
+ #ifdef CONFIG_KEYS
+ 	LSM_HOOK_INIT(key_alloc, smack_key_alloc),
+-	LSM_HOOK_INIT(key_free, smack_key_free),
+ 	LSM_HOOK_INIT(key_permission, smack_key_permission),
+ 	LSM_HOOK_INIT(key_getsecurity, smack_key_getsecurity),
+ #endif /* CONFIG_KEYS */
 -- 
 2.17.1
 
