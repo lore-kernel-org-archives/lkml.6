@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F45EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39365ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 460D920693
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460D920693
+	by mail.kernel.org (Postfix) with ESMTP id F3C1F20693
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3C1F20693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387691AbeGPIEm (ORCPT
+        id S1728495AbeGPIEp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46972 "EHLO
+        Mon, 16 Jul 2018 04:04:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46982 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729595AbeGPIEl (ORCPT
+        with ESMTP id S1728947AbeGPIEo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:41 -0400
+        Mon, 16 Jul 2018 04:04:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3313FC03;
-        Mon, 16 Jul 2018 07:38:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2D3D3C03;
+        Mon, 16 Jul 2018 07:38:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nico Sneck <snecknico@gmail.com>
-Subject: [PATCH 4.17 29/67] usb: quirks: add delay quirks for Corsair Strafe
-Date:   Mon, 16 Jul 2018 09:34:58 +0200
-Message-Id: <20180716073447.736793795@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Peter Rosin <peda@axentia.se>,
+        Wolfram Sang <wsa@the-dreams.de>, stable@kernel.org
+Subject: [PATCH 4.17 47/67] i2c: recovery: if possible send STOP with recovery pulses
+Date:   Mon, 16 Jul 2018 09:35:16 +0200
+Message-Id: <20180716073450.669892751@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -49,38 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nico Sneck <snecknico@gmail.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit bba57eddadda936c94b5dccf73787cb9e159d0a5 upstream.
+commit abe41184abac487264a4904bfcff2d5500dccce6 upstream.
 
-Corsair Strafe appears to suffer from the same issues
-as the Corsair Strafe RGB.
-Apply the same quirks (control message delay and init delay)
-that the RGB version has to 1b1c:1b15.
+I2C clients may misunderstand recovery pulses if they can't read SDA to
+bail out early. In the worst case, as a write operation. To avoid that
+and if we can write SDA, try to send STOP to avoid the
+misinterpretation.
 
-With these quirks in place the keyboard works correctly upon
-booting the system, and no longer requires reattaching the device.
-
-Signed-off-by: Nico Sneck <snecknico@gmail.com>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Peter Rosin <peda@axentia.se>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/quirks.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/i2c/i2c-core-base.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -378,6 +378,10 @@ static const struct usb_device_id usb_qu
- 	/* Corsair K70 RGB */
- 	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
+--- a/drivers/i2c/i2c-core-base.c
++++ b/drivers/i2c/i2c-core-base.c
+@@ -198,7 +198,16 @@ int i2c_generic_scl_recovery(struct i2c_
  
-+	/* Corsair Strafe */
-+	{ USB_DEVICE(0x1b1c, 0x1b15), .driver_info = USB_QUIRK_DELAY_INIT |
-+	  USB_QUIRK_DELAY_CTRL_MSG },
+ 		val = !val;
+ 		bri->set_scl(adap, val);
+-		ndelay(RECOVERY_NDELAY);
 +
- 	/* Corsair Strafe RGB */
- 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
- 	  USB_QUIRK_DELAY_CTRL_MSG },
++		/*
++		 * If we can set SDA, we will always create STOP here to ensure
++		 * the additional pulses will do no harm. This is achieved by
++		 * letting SDA follow SCL half a cycle later.
++		 */
++		ndelay(RECOVERY_NDELAY / 2);
++		if (bri->set_sda)
++			bri->set_sda(adap, val);
++		ndelay(RECOVERY_NDELAY / 2);
+ 	}
+ 
+ 	/* check if recovery actually succeeded */
 
 
