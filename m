@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB038ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D46FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6469C206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6469C206B7
+	by mail.kernel.org (Postfix) with ESMTP id 1058420864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1058420864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388470AbeGPIHZ (ORCPT
+        id S1733014AbeGPIH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:07:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47542 "EHLO
+        Mon, 16 Jul 2018 04:07:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47550 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbeGPIHY (ORCPT
+        with ESMTP id S1728440AbeGPIH2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:07:24 -0400
+        Mon, 16 Jul 2018 04:07:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0B9DECA8;
-        Mon, 16 Jul 2018 07:41:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BF704CA1;
+        Mon, 16 Jul 2018 07:41:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Kashyap Desai <kashyap.desai@broadcom.com>,
         Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 26/54] scsi: megaraid_sas: use adapter_type for all gen controllers
-Date:   Mon, 16 Jul 2018 09:35:23 +0200
-Message-Id: <20180716073455.823209514@linuxfoundation.org>
+Subject: [PATCH 4.14 27/54] scsi: megaraid_sas: replace instance->ctrl_context checks with instance->adapter_type
+Date:   Mon, 16 Jul 2018 09:35:24 +0200
+Message-Id: <20180716073456.006560412@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -53,11 +53,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
 
-commit c365178f3147f38d26c15bdf43a363bacb5406ec upstream.
+commit e7d36b88435077847e1ea992919c600f3fa9321c upstream.
 
-No functional change.
-Refactor adapter_type to set for all generation controllers, not
-just for fusion controllers.
+Increase code readability. No functional change.
 
 Signed-off-by: Kashyap Desai <kashyap.desai@broadcom.com>
 Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
@@ -65,302 +63,252 @@ Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/megaraid/megaraid_sas.h        |    8 ++
- drivers/scsi/megaraid/megaraid_sas_base.c   |   88 +++++++++++++++++-----------
- drivers/scsi/megaraid/megaraid_sas_fp.c     |   10 +--
- drivers/scsi/megaraid/megaraid_sas_fusion.c |   18 ++---
- drivers/scsi/megaraid/megaraid_sas_fusion.h |    7 --
- 5 files changed, 76 insertions(+), 55 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c |   64 +++++++++++++++++-------------
+ 1 file changed, 37 insertions(+), 27 deletions(-)
 
---- a/drivers/scsi/megaraid/megaraid_sas.h
-+++ b/drivers/scsi/megaraid/megaraid_sas.h
-@@ -1504,6 +1504,13 @@ enum FW_BOOT_CONTEXT {
- 
- #define MR_CAN_HANDLE_SYNC_CACHE_OFFSET		0X01000000
- 
-+enum MR_ADAPTER_TYPE {
-+	MFI_SERIES = 1,
-+	THUNDERBOLT_SERIES = 2,
-+	INVADER_SERIES = 3,
-+	VENTURA_SERIES = 4,
-+};
-+
- /*
- * register set for both 1068 and 1078 controllers
- * structure extended for 1078 registers
-@@ -2242,6 +2249,7 @@ struct megasas_instance {
- 	/* preffered count to send as LDIO irrspective of FP capable.*/
- 	u8  r1_ldio_hint_default;
- 	u32 nvme_page_size;
-+	u8 adapter_type;
- };
- struct MR_LD_VF_MAP {
- 	u32 size;
 --- a/drivers/scsi/megaraid/megaraid_sas_base.c
 +++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -5229,7 +5229,8 @@ static int megasas_init_fw(struct megasa
- 			(&instance->reg_set->outbound_scratch_pad_2);
- 		/* Check max MSI-X vectors */
- 		if (fusion) {
--			if (fusion->adapter_type == THUNDERBOLT_SERIES) { /* Thunderbolt Series*/
-+			if (instance->adapter_type == THUNDERBOLT_SERIES) {
-+				/* Thunderbolt Series*/
- 				instance->msix_vectors = (scratch_pad_2
- 					& MR_MAX_REPLY_QUEUES_OFFSET) + 1;
- 				fw_msix_count = instance->msix_vectors;
-@@ -5965,6 +5966,46 @@ fail_set_dma_mask:
- 	return 1;
- }
+@@ -2023,7 +2023,7 @@ void megaraid_sas_kill_hba(struct megasa
+ 	msleep(1000);
+ 	if ((instance->pdev->device == PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
+ 		(instance->pdev->device == PCI_DEVICE_ID_LSI_SAS0071SKINNY) ||
+-		(instance->ctrl_context)) {
++		(instance->adapter_type != MFI_SERIES)) {
+ 		writel(MFI_STOP_ADP, &instance->reg_set->doorbell);
+ 		/* Flush */
+ 		readl(&instance->reg_set->doorbell);
+@@ -2494,7 +2494,8 @@ int megasas_sriov_start_heartbeat(struct
+ 	dev_warn(&instance->pdev->dev, "SR-IOV: Starting heartbeat for scsi%d\n",
+ 	       instance->host->host_no);
  
-+/*
-+ * megasas_set_adapter_type -	Set adapter type.
-+ *				Supported controllers can be divided in
-+ *				4 categories-  enum MR_ADAPTER_TYPE {
-+ *							MFI_SERIES = 1,
-+ *							THUNDERBOLT_SERIES = 2,
-+ *							INVADER_SERIES = 3,
-+ *							VENTURA_SERIES = 4,
-+ *						};
-+ * @instance:			Adapter soft state
-+ * return:			void
-+ */
-+static inline void megasas_set_adapter_type(struct megasas_instance *instance)
-+{
-+	switch (instance->pdev->device) {
-+	case PCI_DEVICE_ID_LSI_VENTURA:
-+	case PCI_DEVICE_ID_LSI_HARPOON:
-+	case PCI_DEVICE_ID_LSI_TOMCAT:
-+	case PCI_DEVICE_ID_LSI_VENTURA_4PORT:
-+	case PCI_DEVICE_ID_LSI_CRUSADER_4PORT:
-+		instance->adapter_type = VENTURA_SERIES;
-+		break;
-+	case PCI_DEVICE_ID_LSI_FUSION:
-+	case PCI_DEVICE_ID_LSI_PLASMA:
-+		instance->adapter_type = THUNDERBOLT_SERIES;
-+		break;
-+	case PCI_DEVICE_ID_LSI_INVADER:
-+	case PCI_DEVICE_ID_LSI_INTRUDER:
-+	case PCI_DEVICE_ID_LSI_INTRUDER_24:
-+	case PCI_DEVICE_ID_LSI_CUTLASS_52:
-+	case PCI_DEVICE_ID_LSI_CUTLASS_53:
-+	case PCI_DEVICE_ID_LSI_FURY:
-+		instance->adapter_type = INVADER_SERIES;
-+		break;
-+	default: /* For all other supported controllers */
-+		instance->adapter_type = MFI_SERIES;
-+		break;
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		retval = megasas_issue_blocked_cmd(instance, cmd,
+ 			MEGASAS_ROUTINE_WAIT_TIME_VF);
+ 	else
+@@ -2790,7 +2791,9 @@ static int megasas_reset_bus_host(struct
+ 	/*
+ 	 * First wait for all commands to complete
+ 	 */
+-	if (instance->ctrl_context) {
++	if (instance->adapter_type == MFI_SERIES) {
++		ret = megasas_generic_reset(scmd);
++	} else {
+ 		struct megasas_cmd_fusion *cmd;
+ 		cmd = (struct megasas_cmd_fusion *)scmd->SCp.ptr;
+ 		if (cmd)
+@@ -2798,8 +2801,7 @@ static int megasas_reset_bus_host(struct
+ 				MEGA_MPI2_RAID_DEFAULT_IO_FRAME_SIZE);
+ 		ret = megasas_reset_fusion(scmd->device->host,
+ 				SCSIIO_TIMEOUT_OCR);
+-	} else
+-		ret = megasas_generic_reset(scmd);
 +	}
-+}
-+
- /**
-  * megasas_probe_one -	PCI hotplug entry point
-  * @pdev:		PCI device structure
-@@ -5977,7 +6018,6 @@ static int megasas_probe_one(struct pci_
- 	struct Scsi_Host *host;
- 	struct megasas_instance *instance;
- 	u16 control = 0;
--	struct fusion_context *fusion = NULL;
  
- 	/* Reset MSI-X in the kdump kernel */
- 	if (reset_devices) {
-@@ -6022,39 +6062,10 @@ static int megasas_probe_one(struct pci_
- 	atomic_set(&instance->fw_reset_no_pci_access, 0);
- 	instance->pdev = pdev;
+ 	return ret;
+ }
+@@ -2816,7 +2818,7 @@ static int megasas_task_abort(struct scs
  
--	switch (instance->pdev->device) {
--	case PCI_DEVICE_ID_LSI_VENTURA:
--	case PCI_DEVICE_ID_LSI_HARPOON:
--	case PCI_DEVICE_ID_LSI_TOMCAT:
--	case PCI_DEVICE_ID_LSI_VENTURA_4PORT:
--	case PCI_DEVICE_ID_LSI_CRUSADER_4PORT:
--	     instance->is_ventura = true;
--	case PCI_DEVICE_ID_LSI_FUSION:
--	case PCI_DEVICE_ID_LSI_PLASMA:
--	case PCI_DEVICE_ID_LSI_INVADER:
--	case PCI_DEVICE_ID_LSI_FURY:
--	case PCI_DEVICE_ID_LSI_INTRUDER:
--	case PCI_DEVICE_ID_LSI_INTRUDER_24:
--	case PCI_DEVICE_ID_LSI_CUTLASS_52:
--	case PCI_DEVICE_ID_LSI_CUTLASS_53:
--	{
--		if (megasas_alloc_fusion_context(instance)) {
--			megasas_free_fusion_context(instance);
--			goto fail_alloc_dma_buf;
--		}
--		fusion = instance->ctrl_context;
--
--		if ((instance->pdev->device == PCI_DEVICE_ID_LSI_FUSION) ||
--			(instance->pdev->device == PCI_DEVICE_ID_LSI_PLASMA))
--			fusion->adapter_type = THUNDERBOLT_SERIES;
--		else if (instance->is_ventura)
--			fusion->adapter_type = VENTURA_SERIES;
--		else
--			fusion->adapter_type = INVADER_SERIES;
--	}
--	break;
--	default: /* For all other supported controllers */
-+	megasas_set_adapter_type(instance);
+ 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
  
-+	switch (instance->adapter_type) {
-+	case MFI_SERIES:
- 		instance->producer =
- 			pci_alloc_consistent(pdev, sizeof(u32),
- 					     &instance->producer_h);
-@@ -6070,7 +6081,16 @@ static int megasas_probe_one(struct pci_
+-	if (instance->ctrl_context)
++	if (instance->adapter_type != MFI_SERIES)
+ 		ret = megasas_task_abort_fusion(scmd);
+ 	else {
+ 		sdev_printk(KERN_NOTICE, scmd->device, "TASK ABORT not supported\n");
+@@ -2838,7 +2840,7 @@ static int megasas_reset_target(struct s
  
- 		*instance->producer = 0;
- 		*instance->consumer = 0;
-+
- 		break;
-+	case VENTURA_SERIES:
-+		instance->is_ventura = 1;
-+	case THUNDERBOLT_SERIES:
-+	case INVADER_SERIES:
-+		if (megasas_alloc_fusion_context(instance)) {
-+			megasas_free_fusion_context(instance);
-+			goto fail_alloc_dma_buf;
-+		}
+ 	instance = (struct megasas_instance *)scmd->device->host->hostdata;
+ 
+-	if (instance->ctrl_context)
++	if (instance->adapter_type != MFI_SERIES)
+ 		ret = megasas_reset_target_fusion(scmd);
+ 	else {
+ 		sdev_printk(KERN_NOTICE, scmd->device, "TARGET RESET not supported\n");
+@@ -3715,7 +3717,7 @@ megasas_transition_to_ready(struct megas
+ 				PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
+ 				(instance->pdev->device ==
+ 				 PCI_DEVICE_ID_LSI_SAS0071SKINNY) ||
+-				(instance->ctrl_context))
++				(instance->adapter_type != MFI_SERIES))
+ 				writel(
+ 				  MFI_INIT_CLEAR_HANDSHAKE|MFI_INIT_HOTPLUG,
+ 				  &instance->reg_set->doorbell);
+@@ -3733,7 +3735,7 @@ megasas_transition_to_ready(struct megas
+ 			     PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
+ 				(instance->pdev->device ==
+ 				 PCI_DEVICE_ID_LSI_SAS0071SKINNY) ||
+-				(instance->ctrl_context))
++				(instance->adapter_type != MFI_SERIES))
+ 				writel(MFI_INIT_HOTPLUG,
+ 				       &instance->reg_set->doorbell);
+ 			else
+@@ -3753,11 +3755,11 @@ megasas_transition_to_ready(struct megas
+ 				PCI_DEVICE_ID_LSI_SAS0073SKINNY) ||
+ 				(instance->pdev->device ==
+ 				PCI_DEVICE_ID_LSI_SAS0071SKINNY)  ||
+-				(instance->ctrl_context)) {
++				(instance->adapter_type != MFI_SERIES)) {
+ 				writel(MFI_RESET_FLAGS,
+ 					&instance->reg_set->doorbell);
+ 
+-				if (instance->ctrl_context) {
++				if (instance->adapter_type != MFI_SERIES) {
+ 					for (i = 0; i < (10 * 1000); i += 20) {
+ 						if (readl(
+ 							    &instance->
+@@ -3924,7 +3926,8 @@ static int megasas_create_frame_pool(str
+ 	 * max_sge_sz  = 12 byte (sizeof  megasas_sge64)
+ 	 * Total 192 byte (3 MFI frame of 64 byte)
+ 	 */
+-	frame_count = instance->ctrl_context ? (3 + 1) : (15 + 1);
++	frame_count = (instance->adapter_type == MFI_SERIES) ?
++			(15 + 1) : (3 + 1);
+ 	instance->mfi_frame_size = MEGAMFI_FRAME_SIZE * frame_count;
+ 	/*
+ 	 * Use DMA pool facility provided by PCI layer
+@@ -3979,7 +3982,7 @@ static int megasas_create_frame_pool(str
+ 		memset(cmd->frame, 0, instance->mfi_frame_size);
+ 		cmd->frame->io.context = cpu_to_le32(cmd->index);
+ 		cmd->frame->io.pad_0 = 0;
+-		if (!instance->ctrl_context && reset_devices)
++		if ((instance->adapter_type == MFI_SERIES) && reset_devices)
+ 			cmd->frame->hdr.cmd = MFI_CMD_INVALID;
  	}
  
- 	/* Crash dump feature related initialisation*/
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -755,8 +755,8 @@ static u8 mr_spanset_get_phy_params(stru
- 		}
- 	} else {
- 		if ((raid->level >= 5) &&
--			((fusion->adapter_type == THUNDERBOLT_SERIES)  ||
--			((fusion->adapter_type == INVADER_SERIES) &&
-+			((instance->adapter_type == THUNDERBOLT_SERIES)  ||
-+			((instance->adapter_type == INVADER_SERIES) &&
- 			(raid->regTypeReqOnRead != REGION_TYPE_UNUSED))))
- 			pRAID_Context->reg_lock_flags = REGION_TYPE_EXCLUSIVE;
- 		else if (raid->level == 1) {
-@@ -871,8 +871,8 @@ u8 MR_GetPhyParams(struct megasas_instan
- 		}
- 	} else {
- 		if ((raid->level >= 5) &&
--			((fusion->adapter_type == THUNDERBOLT_SERIES)  ||
--			((fusion->adapter_type == INVADER_SERIES) &&
-+			((instance->adapter_type == THUNDERBOLT_SERIES)  ||
-+			((instance->adapter_type == INVADER_SERIES) &&
- 			(raid->regTypeReqOnRead != REGION_TYPE_UNUSED))))
- 			pRAID_Context->reg_lock_flags = REGION_TYPE_EXCLUSIVE;
- 		else if (raid->level == 1) {
-@@ -1096,7 +1096,7 @@ MR_BuildRaidContext(struct megasas_insta
- 		cpu_to_le16(raid->fpIoTimeoutForLd ?
- 			    raid->fpIoTimeoutForLd :
- 			    map->raidMap.fpPdIoTimeoutSec);
--	if (fusion->adapter_type == INVADER_SERIES)
-+	if (instance->adapter_type == INVADER_SERIES)
- 		pRAID_Context->reg_lock_flags = (isRead) ?
- 			raid->regTypeReqOnRead : raid->regTypeReqOnWrite;
- 	else if (!instance->is_ventura)
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -838,7 +838,7 @@ megasas_ioc_init_fusion(struct megasas_i
- 	drv_ops = (MFI_CAPABILITIES *) &(init_frame->driver_operations);
+@@ -4099,7 +4102,7 @@ int megasas_alloc_cmds(struct megasas_in
+ inline int
+ dcmd_timeout_ocr_possible(struct megasas_instance *instance) {
  
- 	/* driver support Extended MSIX */
--	if (fusion->adapter_type >= INVADER_SERIES)
-+	if (instance->adapter_type >= INVADER_SERIES)
- 		drv_ops->mfi_capabilities.support_additional_msix = 1;
- 	/* driver supports HA / Remote LUN over Fast Path interface */
- 	drv_ops->mfi_capabilities.support_fp_remote_lun = 1;
-@@ -1789,7 +1789,7 @@ megasas_make_sgl_fusion(struct megasas_i
+-	if (!instance->ctrl_context)
++	if (instance->adapter_type == MFI_SERIES)
+ 		return KILL_ADAPTER;
+ 	else if (instance->unload ||
+ 			test_bit(MEGASAS_FUSION_IN_RESET, &instance->reset_flags))
+@@ -4143,7 +4146,8 @@ megasas_get_pd_info(struct megasas_insta
+ 	dcmd->sgl.sge32[0].phys_addr = cpu_to_le32(instance->pd_info_h);
+ 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct MR_PD_INFO));
  
- 	fusion = instance->ctrl_context;
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
+ 	else
+ 		ret = megasas_issue_polled(instance, cmd);
+@@ -4240,7 +4244,8 @@ megasas_get_pd_list(struct megasas_insta
+ 	dcmd->sgl.sge32[0].phys_addr = cpu_to_le32(ci_h);
+ 	dcmd->sgl.sge32[0].length = cpu_to_le32(MEGASAS_MAX_PD * sizeof(struct MR_PD_LIST));
  
--	if (fusion->adapter_type >= INVADER_SERIES) {
-+	if (instance->adapter_type >= INVADER_SERIES) {
- 		struct MPI25_IEEE_SGE_CHAIN64 *sgl_ptr_end = sgl_ptr;
- 		sgl_ptr_end += fusion->max_sge_in_main_msg - 1;
- 		sgl_ptr_end->Flags = 0;
-@@ -1799,7 +1799,7 @@ megasas_make_sgl_fusion(struct megasas_i
- 		sgl_ptr->Length = cpu_to_le32(sg_dma_len(os_sgl));
- 		sgl_ptr->Address = cpu_to_le64(sg_dma_address(os_sgl));
- 		sgl_ptr->Flags = 0;
--		if (fusion->adapter_type >= INVADER_SERIES)
-+		if (instance->adapter_type >= INVADER_SERIES)
- 			if (i == sge_count - 1)
- 				sgl_ptr->Flags = IEEE_SGE_FLAGS_END_OF_LIST;
- 		sgl_ptr++;
-@@ -1809,7 +1809,7 @@ megasas_make_sgl_fusion(struct megasas_i
- 		    (sge_count > fusion->max_sge_in_main_msg)) {
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		ret = megasas_issue_blocked_cmd(instance, cmd,
+ 			MFI_IO_TIMEOUT_SECS);
+ 	else
+@@ -4251,7 +4256,7 @@ megasas_get_pd_list(struct megasas_insta
+ 		dev_info(&instance->pdev->dev, "MR_DCMD_PD_LIST_QUERY "
+ 			"failed/not supported by firmware\n");
  
- 			struct MPI25_IEEE_SGE_CHAIN64 *sg_chain;
--			if (fusion->adapter_type >= INVADER_SERIES) {
-+			if (instance->adapter_type >= INVADER_SERIES) {
- 				if ((le16_to_cpu(cmd->io_request->IoFlags) &
- 					MPI25_SAS_DEVICE0_FLAGS_ENABLED_FAST_PATH) !=
- 					MPI25_SAS_DEVICE0_FLAGS_ENABLED_FAST_PATH)
-@@ -1825,7 +1825,7 @@ megasas_make_sgl_fusion(struct megasas_i
- 			sg_chain = sgl_ptr;
- 			/* Prepare chain element */
- 			sg_chain->NextChainOffset = 0;
--			if (fusion->adapter_type >= INVADER_SERIES)
-+			if (instance->adapter_type >= INVADER_SERIES)
- 				sg_chain->Flags = IEEE_SGE_FLAGS_CHAIN_ELEMENT;
- 			else
- 				sg_chain->Flags =
-@@ -2402,7 +2402,7 @@ megasas_build_ldio_fusion(struct megasas
- 		cmd->request_desc->SCSIIO.RequestFlags =
- 			(MPI2_REQ_DESCRIPT_FLAGS_FP_IO
- 			 << MEGASAS_REQ_DESCRIPT_FLAGS_TYPE_SHIFT);
--		if (fusion->adapter_type == INVADER_SERIES) {
-+		if (instance->adapter_type == INVADER_SERIES) {
- 			if (io_request->RaidContext.raid_context.reg_lock_flags ==
- 			    REGION_TYPE_UNUSED)
- 				cmd->request_desc->SCSIIO.RequestFlags =
-@@ -2467,7 +2467,7 @@ megasas_build_ldio_fusion(struct megasas
- 		cmd->request_desc->SCSIIO.RequestFlags =
- 			(MEGASAS_REQ_DESCRIPT_FLAGS_LD_IO
- 			 << MEGASAS_REQ_DESCRIPT_FLAGS_TYPE_SHIFT);
--		if (fusion->adapter_type == INVADER_SERIES) {
-+		if (instance->adapter_type == INVADER_SERIES) {
- 			if (io_info.do_fp_rlbypass ||
- 			(io_request->RaidContext.raid_context.reg_lock_flags
- 					== REGION_TYPE_UNUSED))
-@@ -2688,7 +2688,7 @@ megasas_build_syspd_fusion(struct megasa
- 		pRAID_Context->timeout_value =
- 			cpu_to_le16((os_timeout_value > timeout_limit) ?
- 			timeout_limit : os_timeout_value);
--		if (fusion->adapter_type >= INVADER_SERIES)
-+		if (instance->adapter_type >= INVADER_SERIES)
- 			io_request->IoFlags |=
- 				cpu_to_le16(MPI25_SAS_DEVICE0_FLAGS_ENABLED_FAST_PATH);
+-		if (instance->ctrl_context)
++		if (instance->adapter_type != MFI_SERIES)
+ 			megaraid_sas_kill_hba(instance);
+ 		else
+ 			instance->pd_list_not_supported = 1;
+@@ -4372,7 +4377,8 @@ megasas_get_ld_list(struct megasas_insta
+ 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct MR_LD_LIST));
+ 	dcmd->pad_0  = 0;
  
-@@ -3301,7 +3301,7 @@ build_mpt_mfi_pass_thru(struct megasas_i
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		ret = megasas_issue_blocked_cmd(instance, cmd,
+ 			MFI_IO_TIMEOUT_SECS);
+ 	else
+@@ -4491,7 +4497,8 @@ megasas_ld_list_query(struct megasas_ins
+ 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct MR_LD_TARGETID_LIST));
+ 	dcmd->pad_0  = 0;
  
- 	io_req = cmd->io_request;
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
+ 	else
+ 		ret = megasas_issue_polled(instance, cmd);
+@@ -4664,7 +4671,8 @@ megasas_get_ctrl_info(struct megasas_ins
+ 	dcmd->sgl.sge32[0].length = cpu_to_le32(sizeof(struct megasas_ctrl_info));
+ 	dcmd->mbox.b[0] = 1;
  
--	if (fusion->adapter_type >= INVADER_SERIES) {
-+	if (instance->adapter_type >= INVADER_SERIES) {
- 		struct MPI25_IEEE_SGE_CHAIN64 *sgl_ptr_end =
- 			(struct MPI25_IEEE_SGE_CHAIN64 *)&io_req->SGL;
- 		sgl_ptr_end += fusion->max_sge_in_main_msg - 1;
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.h
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.h
-@@ -104,12 +104,6 @@ enum MR_RAID_FLAGS_IO_SUB_TYPE {
- #define RAID_1_PEER_CMDS 2
- #define JBOD_MAPS_COUNT	2
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
+ 	else
+ 		ret = megasas_issue_polled(instance, cmd);
+@@ -4783,7 +4791,8 @@ int megasas_set_crash_dump_params(struct
+ 	dcmd->sgl.sge32[0].phys_addr = cpu_to_le32(instance->crash_dump_h);
+ 	dcmd->sgl.sge32[0].length = cpu_to_le32(CRASH_DMA_BUF_SIZE);
  
--enum MR_FUSION_ADAPTER_TYPE {
--	THUNDERBOLT_SERIES = 0,
--	INVADER_SERIES = 1,
--	VENTURA_SERIES = 2,
--};
--
- /*
-  * Raid Context structure which describes MegaRAID specific IO Parameters
-  * This resides at offset 0x60 where the SGL normally starts in MPT IO Frames
-@@ -1319,7 +1313,6 @@ struct fusion_context {
- 	struct LD_LOAD_BALANCE_INFO *load_balance_info;
- 	u32 load_balance_info_pages;
- 	LD_SPAN_INFO log_to_span[MAX_LOGICAL_DRIVES_EXT];
--	u8 adapter_type;
- 	struct LD_STREAM_DETECT **stream_detect_by_ld;
- };
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		ret = megasas_issue_blocked_cmd(instance, cmd, MFI_IO_TIMEOUT_SECS);
+ 	else
+ 		ret = megasas_issue_polled(instance, cmd);
+@@ -5170,7 +5179,7 @@ static int megasas_init_fw(struct megasa
  
+ 	reg_set = instance->reg_set;
+ 
+-	if (fusion)
++	if (instance->adapter_type != MFI_SERIES)
+ 		instance->instancet = &megasas_instance_template_fusion;
+ 	else {
+ 		switch (instance->pdev->device) {
+@@ -5805,7 +5814,8 @@ megasas_get_target_prop(struct megasas_i
+ 	dcmd->sgl.sge32[0].length =
+ 		cpu_to_le32(sizeof(struct MR_TARGET_PROPERTIES));
+ 
+-	if (instance->ctrl_context && !instance->mask_interrupts)
++	if ((instance->adapter_type != MFI_SERIES) &&
++	    !instance->mask_interrupts)
+ 		ret = megasas_issue_blocked_cmd(instance,
+ 						cmd, MFI_IO_TIMEOUT_SECS);
+ 	else
+@@ -6186,7 +6196,7 @@ static int megasas_probe_one(struct pci_
+ 	instance->disableOnlineCtrlReset = 1;
+ 	instance->UnevenSpanSupport = 0;
+ 
+-	if (instance->ctrl_context) {
++	if (instance->adapter_type != MFI_SERIES) {
+ 		INIT_WORK(&instance->work_init, megasas_fusion_ocr_wq);
+ 		INIT_WORK(&instance->crash_init, megasas_fusion_crash_dump_wq);
+ 	} else
+@@ -6266,7 +6276,7 @@ fail_io_attach:
+ 	instance->instancet->disable_intr(instance);
+ 	megasas_destroy_irqs(instance);
+ 
+-	if (instance->ctrl_context)
++	if (instance->adapter_type != MFI_SERIES)
+ 		megasas_release_fusion(instance);
+ 	else
+ 		megasas_release_mfi(instance);
+@@ -6500,7 +6510,7 @@ megasas_resume(struct pci_dev *pdev)
+ 	if (rval < 0)
+ 		goto fail_reenable_msix;
+ 
+-	if (instance->ctrl_context) {
++	if (instance->adapter_type != MFI_SERIES) {
+ 		megasas_reset_reply_desc(instance);
+ 		if (megasas_ioc_init_fusion(instance)) {
+ 			megasas_free_cmds(instance);
+@@ -6684,7 +6694,7 @@ skip_firing_dcmds:
+ 	}
+ 
+ 
+-	if (instance->ctrl_context) {
++	if (instance->adapter_type != MFI_SERIES) {
+ 		megasas_release_fusion(instance);
+ 			pd_seq_map_sz = sizeof(struct MR_PD_CFG_SEQ_NUM_SYNC) +
+ 				(sizeof(struct MR_PD_CFG_SEQ) *
 
 
