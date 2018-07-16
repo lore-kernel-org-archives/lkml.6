@@ -2,211 +2,160 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20855ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 23:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8E7ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 23:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA512089B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 23:03:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="IY7cxvV1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA512089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 59B66208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 23:12:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B66208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729967AbeGPXc7 (ORCPT
+        id S1729630AbeGPXm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 19:32:59 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46739 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729350AbeGPXc7 (ORCPT
+        Mon, 16 Jul 2018 19:42:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41464 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728794AbeGPXm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 19:32:59 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s11-v6so33464821wra.13;
-        Mon, 16 Jul 2018 16:03:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vfC0slHfjJ/bG581+iAy+InJEd/e/sJMf57IPi8PysU=;
-        b=IY7cxvV1EX9Z0q8Ij+XasGV4mEs7GCJOTU3Sb5IbDSS9tLcRfg3n+2qIkWIeTIsugW
-         mPukaCYpenaIoQKay9xEZZUeaNwF73cludig/WbujXko0iNQZ6M90btaJ2pfp79v426A
-         SJPHXD+eTF6g9SNJPh5vZ+hS7thWXRaVyhpsUgz4z76FhCjMo55VEwvsbS3g95chwJjs
-         PlksGxlblTv9Dagyk80WUtfbMM0hMwGczSIs0kMdF3zB1dg3O4c0cvx6Fxy1jTwzd0Jq
-         BQKNDktFrn2RCZfQMQOow69UXwDmPX/1Jb8h30rNZkJ2gKiIRLPUXAhYGax+8WggXKin
-         wKxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vfC0slHfjJ/bG581+iAy+InJEd/e/sJMf57IPi8PysU=;
-        b=lFiw0Ty/pNp+G07KvgBp/hn3sT7aXAcliJbKvsYGMDxgfgiaPGftLF8LGbwYK9MpBu
-         Gig4LmnjTh8Py5Av73H1k83Bi3oSm6RBNvMoD00bJMRfCc4o8JFTKrEqqhAWf0g19rPw
-         zkRiyH8ddmp8AO7WfvZLU7hIDe8PG+g1uNberJDltfcWYcMQemZxiQck59gS/szyZlf9
-         Cc6Jp33g8nYtp2rzHw2b+PXf10vS6UDvWK0KIier6SJ9LKTagqTUoRc8TqNvqEPxBQXv
-         yUKirL0TX4D2L1CQgO4oHfMYYGPsr9k8I8+dtLV3S/b/2FlZUvUWJJaPNXgu+HlFG2HR
-         d8tw==
-X-Gm-Message-State: AOUpUlE/ZVoS6OcbMe3Mxtvr9kDtFlGqASxLADgJzeNCuPGPHgMKGiIS
-        jAJvypw5WeVOHGh5A+tAew7Jf8S4
-X-Google-Smtp-Source: AAOMgpfmt8GGR4jmKgErUvo0O5ohWuYMbGuK5Y1lP8Gu0CexVJxEW+NgzIW/+omWi4eSWN1A6L4NzA==
-X-Received: by 2002:adf:bc03:: with SMTP id s3-v6mr14390615wrg.211.1531782203104;
-        Mon, 16 Jul 2018 16:03:23 -0700 (PDT)
-Received: from homedesk.Speedport_W_724V_09011603_05_013 (p2003006B0F046B23B14570EF68C4BDBB.dip0.t-ipconnect.de. [2003:6b:f04:6b23:b145:70ef:68c4:bdbb])
-        by smtp.gmail.com with ESMTPSA id u135-v6sm15324761wmf.2.2018.07.16.16.03.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 16:03:22 -0700 (PDT)
-From:   Carsten Behling <carsten.behling@googlemail.com>
-X-Google-Original-From: Carsten Behling <carsten.behling@gmail.com>
-Cc:     Carsten Behling <carsten.behling@gmail.com>,
-        Rob Clark <robdclark@gmail.com>,
+        Mon, 16 Jul 2018 19:42:28 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43400BE1;
+        Mon, 16 Jul 2018 23:12:50 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 16:12:49 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         David Airlie <airlied@linux.ie>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Steve Kowalik <steven@wedontsleep.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/msm/display: negative x/y in cursor move
-Date:   Tue, 17 Jul 2018 01:03:11 +0200
-Message-Id: <20180716230314.3527-1-carsten.behling@gmail.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <201807170504.KBRX6Bew%fengguang.wu@intel.com>
-References: <201807170504.KBRX6Bew%fengguang.wu@intel.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David Rientjes <rientjes@google.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-Id: <20180716161249.c76240cd487c070fb271d529@linux-foundation.org>
+In-Reply-To: <20180716115058.5559-1-mhocko@kernel.org>
+References: <20180716115058.5559-1-mhocko@kernel.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-modesetting X11 driver may provide negative x/y cordinates in
-mdp5_crtc_cursor_move call when rotation is enabled.
+On Mon, 16 Jul 2018 13:50:58 +0200 Michal Hocko <mhocko@kernel.org> wrote:
 
-Cursor buffer can overlap down to its negative width/height.
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> There are several blockable mmu notifiers which might sleep in
+> mmu_notifier_invalidate_range_start and that is a problem for the
+> oom_reaper because it needs to guarantee a forward progress so it cannot
+> depend on any sleepable locks.
+> 
+> Currently we simply back off and mark an oom victim with blockable mmu
+> notifiers as done after a short sleep. That can result in selecting a
+> new oom victim prematurely because the previous one still hasn't torn
+> its memory down yet.
+> 
+> We can do much better though. Even if mmu notifiers use sleepable locks
+> there is no reason to automatically assume those locks are held.
+> Moreover majority of notifiers only care about a portion of the address
+> space and there is absolutely zero reason to fail when we are unmapping an
+> unrelated range. Many notifiers do really block and wait for HW which is
+> harder to handle and we have to bail out though.
+> 
+> This patch handles the low hanging fruid. __mmu_notifier_invalidate_range_start
+> gets a blockable flag and callbacks are not allowed to sleep if the
+> flag is set to false. This is achieved by using trylock instead of the
+> sleepable lock for most callbacks and continue as long as we do not
+> block down the call chain.
 
-ROI has to be recalculated for negative x/y indicating using the
-lower/right corner of the cursor buffer and hotspot must be set
-in MDP5_LM_CURSOR_XY_SRC_Y MDP5_LM_CURSOR_XY_SRC_X.
+I assume device driver developers are wondering "what does this mean
+for me".  As I understand it, the only time they will see
+blockable==false is when their driver is being called in response to an
+out-of-memory condition, yes?  So it is a very rare thing.
 
-Signed-off-by: Carsten Behling <carsten.behling@gmail.com>
----
-Changes in v2:
-- fixed format specifier in debug message
+Any suggestions regarding how the driver developers can test this code
+path?  I don't think we presently have a way to fake an oom-killing
+event?  Perhaps we should add such a thing, given the problems we're
+having with that feature.
 
- drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 51 ++++++++++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 8 deletions(-)
+> I think we can improve that even further because there is a common
+> pattern to do a range lookup first and then do something about that.
+> The first part can be done without a sleeping lock in most cases AFAICS.
+> 
+> The oom_reaper end then simply retries if there is at least one notifier
+> which couldn't make any progress in !blockable mode. A retry loop is
+> already implemented to wait for the mmap_sem and this is basically the
+> same thing.
+> 
+> ...
+>
+> +static inline int mmu_notifier_invalidate_range_start_nonblock(struct mm_struct *mm,
+> +				  unsigned long start, unsigned long end)
+> +{
+> +	int ret = 0;
+> +	if (mm_has_notifiers(mm))
+> +		ret = __mmu_notifier_invalidate_range_start(mm, start, end, false);
+> +
+> +	return ret;
+>  }
 
-diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-index 10271359789e..a7f4a6688fec 100644
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
-@@ -65,7 +65,7 @@ struct mdp5_crtc {
- 		struct drm_gem_object *scanout_bo;
- 		uint64_t iova;
- 		uint32_t width, height;
--		uint32_t x, y;
-+		int x, y;
- 	} cursor;
- };
- #define to_mdp5_crtc(x) container_of(x, struct mdp5_crtc, base)
-@@ -760,20 +760,31 @@ static void get_roi(struct drm_crtc *crtc, uint32_t *roi_w, uint32_t *roi_h)
- 	 * Cursor Region Of Interest (ROI) is a plane read from cursor
- 	 * buffer to render. The ROI region is determined by the visibility of
- 	 * the cursor point. In the default Cursor image the cursor point will
--	 * be at the top left of the cursor image, unless it is specified
--	 * otherwise using hotspot feature.
-+	 * be at the top left of the cursor image.
- 	 *
-+	 * Without rotation:
- 	 * If the cursor point reaches the right (xres - x < cursor.width) or
- 	 * bottom (yres - y < cursor.height) boundary of the screen, then ROI
- 	 * width and ROI height need to be evaluated to crop the cursor image
- 	 * accordingly.
- 	 * (xres-x) will be new cursor width when x > (xres - cursor.width)
- 	 * (yres-y) will be new cursor height when y > (yres - cursor.height)
-+	 *
-+	 * With rotation:
-+	 * We get negative x and/or y coordinates.
-+	 * (cursor.width - abs(x)) will be new cursor width when x < 0
-+	 * (cursor.height - abs(y)) will be new cursor width when y < 0
- 	 */
--	*roi_w = min(mdp5_crtc->cursor.width, xres -
-+	if (mdp5_crtc->cursor.x >= 0)
-+		*roi_w = min(mdp5_crtc->cursor.width, xres -
- 			mdp5_crtc->cursor.x);
--	*roi_h = min(mdp5_crtc->cursor.height, yres -
-+	else
-+		*roi_w = mdp5_crtc->cursor.width - abs(mdp5_crtc->cursor.x);
-+	if (mdp5_crtc->cursor.y >= 0)
-+		*roi_h = min(mdp5_crtc->cursor.height, yres -
- 			mdp5_crtc->cursor.y);
-+	else
-+		*roi_h = mdp5_crtc->cursor.height - abs(mdp5_crtc->cursor.y);
- }
- 
- static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
-@@ -783,7 +794,7 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
- 	struct mdp5_kms *mdp5_kms = get_kms(crtc);
- 	const enum mdp5_cursor_alpha cur_alpha = CURSOR_ALPHA_PER_PIXEL;
- 	uint32_t blendcfg, stride;
--	uint32_t x, y, width, height;
-+	uint32_t x, y, src_x, src_y, width, height;
- 	uint32_t roi_w, roi_h;
- 	int lm;
- 
-@@ -800,6 +811,26 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
- 
- 	get_roi(crtc, &roi_w, &roi_h);
- 
-+	/* If cusror buffer overlaps due to rotation on the
-+	 * upper or left screen border the pixel offset inside
-+	 * the cursor buffer of the ROI is the positive overlap
-+	 * distance.
-+	 */
-+	if (mdp5_crtc->cursor.x < 0) {
-+		src_x = abs(mdp5_crtc->cursor.x);
-+		x = 0;
-+	} else {
-+		src_x = 0;
-+	}
-+	if (mdp5_crtc->cursor.y < 0) {
-+		src_y = abs(mdp5_crtc->cursor.y);
-+		y = 0;
-+	} else {
-+		src_y = 0;
-+	}
-+	DBG("%s: x=%u, y=%u roi_w=%u roi_h=%u src_x=%u src_y=%u",
-+		crtc->name, x, y, roi_w, roi_h, src_x, src_y);
-+
- 	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_STRIDE(lm), stride);
- 	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_FORMAT(lm),
- 			MDP5_LM_CURSOR_FORMAT_FORMAT(CURSOR_FMT_ARGB8888));
-@@ -812,6 +843,9 @@ static void mdp5_crtc_restore_cursor(struct drm_crtc *crtc)
- 	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_START_XY(lm),
- 			MDP5_LM_CURSOR_START_XY_Y_START(y) |
- 			MDP5_LM_CURSOR_START_XY_X_START(x));
-+	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_XY(lm),
-+			MDP5_LM_CURSOR_XY_SRC_Y(src_y) |
-+			MDP5_LM_CURSOR_XY_SRC_X(src_x));
- 	mdp5_write(mdp5_kms, REG_MDP5_LM_CURSOR_BASE_ADDR(lm),
- 			mdp5_crtc->cursor.iova);
- 
-@@ -932,8 +966,9 @@ static int mdp5_crtc_cursor_move(struct drm_crtc *crtc, int x, int y)
- 	if (unlikely(!crtc->state->enable))
- 		return 0;
- 
--	mdp5_crtc->cursor.x = x = max(x, 0);
--	mdp5_crtc->cursor.y = y = max(y, 0);
-+	/* accept negative x/y coordinates up to maximum cursor overlap */
-+	mdp5_crtc->cursor.x = x = max(x, -(int)mdp5_crtc->cursor.width);
-+	mdp5_crtc->cursor.y = y = max(y, -(int)mdp5_crtc->cursor.height);
- 
- 	get_roi(crtc, &roi_w, &roi_h);
- 
--- 
-2.14.1
+nit,
+
+{
+	if (mm_has_notifiers(mm))
+		return __mmu_notifier_invalidate_range_start(mm, start, end, false);
+	return 0;
+}
+
+would suffice.
+
+
+> 
+> ...
+>
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -3074,7 +3074,7 @@ void exit_mmap(struct mm_struct *mm)
+>  		 * reliably test it.
+>  		 */
+>  		mutex_lock(&oom_lock);
+> -		__oom_reap_task_mm(mm);
+> +		(void)__oom_reap_task_mm(mm);
+>  		mutex_unlock(&oom_lock);
+
+What does this do?
+
+>  		set_bit(MMF_OOM_SKIP, &mm->flags);
+> 
+> ...
+>
 
