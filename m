@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 045ECECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC321ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2FF22075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2FF22075B
+	by mail.kernel.org (Postfix) with ESMTP id 8B1752075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B1752075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389251AbeGPIKI (ORCPT
+        id S2389262AbeGPIKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48112 "EHLO
+        Mon, 16 Jul 2018 04:10:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48122 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbeGPIKI (ORCPT
+        with ESMTP id S2388375AbeGPIKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:08 -0400
+        Mon, 16 Jul 2018 04:10:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08372C03;
-        Mon, 16 Jul 2018 07:44:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9B23CA1;
+        Mon, 16 Jul 2018 07:44:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomasz Kramkowski <tk@the-tk.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 12/43] HID: usbhid: add quirk for innomedia INNEX GENESIS/ATARI adapter
-Date:   Mon, 16 Jul 2018 09:36:17 +0200
-Message-Id: <20180716073513.096899290@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 13/43] Fix up non-directory creation in SGID directories
+Date:   Mon, 16 Jul 2018 09:36:18 +0200
+Message-Id: <20180716073513.229883114@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -51,45 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomasz Kramkowski <tk@the-tk.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit 9547837bdccb4af127528b36a73377150658b4ac upstream.
+commit 0fa3ecd87848c9c93c2c828ef4c3a8ca36ce46c7 upstream.
 
-The (1292:4745) Innomedia INNEX GENESIS/ATARI adapter needs
-HID_QUIRK_MULTI_INPUT to split the device up into two controllers
-instead of inputs from both being merged into one.
+sgid directories have special semantics, making newly created files in
+the directory belong to the group of the directory, and newly created
+subdirectories will also become sgid.  This is historically used for
+group-shared directories.
 
-Signed-off-by: Tomasz Kramkowski <tk@the-tk.com>
-Acked-By: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+But group directories writable by non-group members should not imply
+that such non-group members can magically join the group, so make sure
+to clear the sgid bit on non-directories for non-members (but remember
+that sgid without group execute means "mandatory locking", just to
+confuse things even more).
+
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-ids.h           |    3 +++
- drivers/hid/usbhid/hid-quirks.c |    1 +
- 2 files changed, 4 insertions(+)
+ fs/inode.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -512,6 +512,9 @@
- #define USB_VENDOR_ID_IRTOUCHSYSTEMS	0x6615
- #define USB_DEVICE_ID_IRTOUCH_INFRARED_USB	0x0070
- 
-+#define USB_VENDOR_ID_INNOMEDIA			0x1292
-+#define USB_DEVICE_ID_INNEX_GENESIS_ATARI	0x4745
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1937,8 +1937,14 @@ void inode_init_owner(struct inode *inod
+ 	inode->i_uid = current_fsuid();
+ 	if (dir && dir->i_mode & S_ISGID) {
+ 		inode->i_gid = dir->i_gid;
 +
- #define USB_VENDOR_ID_ITE               0x048d
- #define USB_DEVICE_ID_ITE_LENOVO_YOGA   0x8386
- #define USB_DEVICE_ID_ITE_LENOVO_YOGA2  0x8350
---- a/drivers/hid/usbhid/hid-quirks.c
-+++ b/drivers/hid/usbhid/hid-quirks.c
-@@ -152,6 +152,7 @@ static const struct hid_blacklist {
- 	{ USB_VENDOR_ID_MULTIPLE_1781, USB_DEVICE_ID_RAPHNET_4NES4SNES_OLD, HID_QUIRK_MULTI_INPUT },
- 	{ USB_VENDOR_ID_DRACAL_RAPHNET, USB_DEVICE_ID_RAPHNET_2NES2SNES, HID_QUIRK_MULTI_INPUT },
- 	{ USB_VENDOR_ID_DRACAL_RAPHNET, USB_DEVICE_ID_RAPHNET_4NES4SNES, HID_QUIRK_MULTI_INPUT },
-+	{ USB_VENDOR_ID_INNOMEDIA, USB_DEVICE_ID_INNEX_GENESIS_ATARI, HID_QUIRK_MULTI_INPUT },
- 
- 	{ 0, 0 }
- };
++		/* Directories are special, and always inherit S_ISGID */
+ 		if (S_ISDIR(mode))
+ 			mode |= S_ISGID;
++		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
++			 !in_group_p(inode->i_gid) &&
++			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
++			mode &= ~S_ISGID;
+ 	} else
+ 		inode->i_gid = current_fsgid();
+ 	inode->i_mode = mode;
 
 
