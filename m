@@ -2,98 +2,99 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9858DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AF1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD102084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD102084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B37F2084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:41:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U+dn8b5v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B37F2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730812AbeGPNHh (ORCPT
+        id S1730310AbeGPNIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:07:37 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.131]:27259 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729607AbeGPNHc (ORCPT
+        Mon, 16 Jul 2018 09:08:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53212 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728524AbeGPNIr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 09:07:32 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 6C417402E
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 07:40:15 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id f2mvfXPpkbXuJf2nGffTpt; Mon, 16 Jul 2018 07:40:15 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=48026 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ff2mu-002L0q-6J; Mon, 16 Jul 2018 07:39:36 -0500
-Date:   Mon, 16 Jul 2018 07:39:33 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/i915/selftests: Remove redundant code
-Message-ID: <20180716123933.GA27121@embeddedor.com>
+        Mon, 16 Jul 2018 09:08:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zPEqDOFprwoXXn63mjwk15X67uYxvwTZxSf1rrlNs6M=; b=U+dn8b5vlK1cX8FCLp89UNn4R
+        IT1AyYuys9JF/h9mNac33UahDPjqSFWLtzgaIgoP+ONNNOHEL/yqsgMqnvrBb/XsR6YAUSc4MG7b8
+        NJ1I0yxOawJy4qIf7fP/QvVie/Ub3GhiscQEjE/VbeQaZMKJQS543fyYn1iay3B/DBQ2TRm9tvjhv
+        NXXo0XGf7ZvD2d5XST2nJLQWqQkm9BowyWE4TN/NUdIIFNpx8CH/nULl+cYBk8m2Kod3K6guoTRf6
+        7kiucijhA04b68KUVg/yYJjcaHoVMewJShkboMxqNPJ+hhjvEMqG0ziejIEw8TbfhVgRGT20NEai3
+        L2RYSeisQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ff2oV-0006nN-Pe; Mon, 16 Jul 2018 12:41:15 +0000
+Date:   Mon, 16 Jul 2018 05:41:15 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Larry Woodman <lwoodman@redhat.com>,
+        "Wangkai (Kevin,C)" <wangkai86@huawei.com>
+Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
+Message-ID: <20180716124115.GA7072@bombadil.infradead.org>
+References: <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
+ <1531336913.3260.18.camel@HansenPartnership.com>
+ <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
+ <1531411494.18255.6.camel@HansenPartnership.com>
+ <20180712164932.GA3475@bombadil.infradead.org>
+ <1531416080.18255.8.camel@HansenPartnership.com>
+ <CA+55aFzfQz7c8pcMfLDaRNReNF2HaKJGoWpgB6caQjNAyjg-hA@mail.gmail.com>
+ <1531425435.18255.17.camel@HansenPartnership.com>
+ <20180713003614.GW2234@dastard>
+ <20180716090901.GG17280@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1ff2mu-002L0q-6J
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:48026
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180716090901.GG17280@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-err is assigned to -EIO, but this value is never actually
-used and *err* is updated later on.
+On Mon, Jul 16, 2018 at 11:09:01AM +0200, Michal Hocko wrote:
+> On Fri 13-07-18 10:36:14, Dave Chinner wrote:
+> [...]
+> > By limiting the number of negative dentries in this case, internal
+> > slab fragmentation is reduced such that reclaim cost never gets out
+> > of control. While it appears to "fix" the symptoms, it doesn't
+> > address the underlying problem. It is a partial solution at best but
+> > at worst it's another opaque knob that nobody knows how or when to
+> > tune.
+> 
+> Would it help to put all the negative dentries into its own slab cache?
 
-Remove such reduntant code.
-
-Addresses-Coverity-ID: 1471816 ("Unused value")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/i915/selftests/intel_guc.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/selftests/intel_guc.c b/drivers/gpu/drm/i915/selftests/intel_guc.c
-index 407c98f..c10e75c 100644
---- a/drivers/gpu/drm/i915/selftests/intel_guc.c
-+++ b/drivers/gpu/drm/i915/selftests/intel_guc.c
-@@ -206,7 +206,6 @@ static int igt_guc_clients(void *args)
- 
- 	if (!available_dbs(guc, guc->execbuf_client->priority)) {
- 		pr_err("doorbell not available when it should\n");
--		err = -EIO;
- 		goto out_db;
- 	}
- 
--- 
-2.7.4
-
+Maybe the dcache should be more sensitive to its own needs.  In __d_alloc,
+it could check whether there are a high proportion of negative dentries
+and start recycling some existing negative dentries.
