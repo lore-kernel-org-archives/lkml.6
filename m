@@ -3,36 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8772CECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2267FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4795E20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4795E20864
+	by mail.kernel.org (Postfix) with ESMTP id D417720864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D417720864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731215AbeGPIDF (ORCPT
+        id S1731256AbeGPIDI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:03:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46650 "EHLO
+        Mon, 16 Jul 2018 04:03:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeGPIDF (ORCPT
+        with ESMTP id S1728460AbeGPIDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:03:05 -0400
+        Mon, 16 Jul 2018 04:03:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5355CCA0;
-        Mon, 16 Jul 2018 07:37:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21C43CA1;
+        Mon, 16 Jul 2018 07:37:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: [PATCH 4.17 12/67] ibmasm: dont write out of bounds in read handler
-Date:   Mon, 16 Jul 2018 09:34:41 +0200
-Message-Id: <20180716073444.989857144@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.17 21/67] ahci: Add Intel Ice Lake LP PCI ID
+Date:   Mon, 16 Jul 2018 09:34:50 +0200
+Message-Id: <20180716073446.361118401@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -49,63 +51,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-commit a0341fc1981a950c1e902ab901e98f60e0e243f3 upstream.
+commit ba44579141f9e2c0229e6e7eeb00b5fa68f0f74a upstream.
 
-This read handler had a lot of custom logic and wrote outside the bounds of
-the provided buffer. This could lead to kernel and userspace memory
-corruption. Just use simple_read_from_buffer() with a stack buffer.
+This should also be using the default LPM policy for mobile chipsets so
+add the PCI ID to the driver list of supported devices.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Jann Horn <jannh@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/ibmasm/ibmasmfs.c |   27 +++------------------------
- 1 file changed, 3 insertions(+), 24 deletions(-)
+ drivers/ata/ahci.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/misc/ibmasm/ibmasmfs.c
-+++ b/drivers/misc/ibmasm/ibmasmfs.c
-@@ -507,35 +507,14 @@ static int remote_settings_file_close(st
- static ssize_t remote_settings_file_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
- {
- 	void __iomem *address = (void __iomem *)file->private_data;
--	unsigned char *page;
--	int retval;
- 	int len = 0;
- 	unsigned int value;
--
--	if (*offset < 0)
--		return -EINVAL;
--	if (count == 0 || count > 1024)
--		return 0;
--	if (*offset != 0)
--		return 0;
--
--	page = (unsigned char *)__get_free_page(GFP_KERNEL);
--	if (!page)
--		return -ENOMEM;
-+	char lbuf[20];
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -400,6 +400,7 @@ static const struct pci_device_id ahci_p
+ 	{ PCI_VDEVICE(INTEL, 0x0f23), board_ahci_mobile }, /* Bay Trail AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x22a3), board_ahci_mobile }, /* Cherry Tr. AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x5ae3), board_ahci_mobile }, /* ApolloLake AHCI */
++	{ PCI_VDEVICE(INTEL, 0x34d3), board_ahci_mobile }, /* Ice Lake LP AHCI */
  
- 	value = readl(address);
--	len = sprintf(page, "%d\n", value);
--
--	if (copy_to_user(buf, page, len)) {
--		retval = -EFAULT;
--		goto exit;
--	}
--	*offset += len;
--	retval = len;
-+	len = snprintf(lbuf, sizeof(lbuf), "%d\n", value);
- 
--exit:
--	free_page((unsigned long)page);
--	return retval;
-+	return simple_read_from_buffer(buf, count, offset, lbuf, len);
- }
- 
- static ssize_t remote_settings_file_write(struct file *file, const char __user *ubuff, size_t count, loff_t *offset)
+ 	/* JMicron 360/1/3/5/6, match class to avoid IDE function */
+ 	{ PCI_VENDOR_ID_JMICRON, PCI_ANY_ID, PCI_ANY_ID, PCI_ANY_ID,
 
 
