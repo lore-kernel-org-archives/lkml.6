@@ -2,107 +2,258 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E43ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D492ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0DA208F7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:18:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0DA208F7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C3EC20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:35:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C3EC20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbeGPHor (ORCPT
+        id S1728742AbeGPIBl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 03:44:47 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9623 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728129AbeGPHor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 03:44:47 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 32BC4DBA53EE2;
-        Mon, 16 Jul 2018 15:18:37 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.382.0; Mon, 16 Jul 2018
- 15:18:36 +0800
-Subject: Re: [PATCH] f2fs: avoid potential deadlock in f2fs_sbi_store
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180715011017.11237-1-jaegeuk@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <8694e965-8da9-29ed-fa3e-c85957194363@huawei.com>
-Date:   Mon, 16 Jul 2018 15:18:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 16 Jul 2018 04:01:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46504 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726301AbeGPIBl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:01:41 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CDD9CA4;
+        Mon, 16 Jul 2018 07:35:40 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+3d0b2441dbb71751615e@syzkaller.appspotmail.com,
+        syzbot+c8504affd4fdd0c1b626@syzkaller.appspotmail.com,
+        syzbot+e5190cb881d8660fb1a3@syzkaller.appspotmail.com,
+        syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>, Edward Cree <ecree@solarflare.com>
+Subject: [PATCH 4.17 01/67] bpf: reject passing modified ctx to helper functions
+Date:   Mon, 16 Jul 2018 09:34:30 +0200
+Message-Id: <20180716073443.443235403@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
+References: <20180716073443.294323458@linuxfoundation.org>
+User-Agent: quilt/0.65
 MIME-Version: 1.0
-In-Reply-To: <20180715011017.11237-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/15 9:10, Jaegeuk Kim wrote:
-> [  155.018460] ======================================================
-> [  155.021431] WARNING: possible circular locking dependency detected
-> [  155.024339] 4.18.0-rc3+ #5 Tainted: G           OE
-> [  155.026879] ------------------------------------------------------
-> [  155.029783] umount/2901 is trying to acquire lock:
-> [  155.032187] 00000000c4282f1f (kn->count#130){++++}, at: kernfs_remove+0x1f/0x30
-> [  155.035439]
-> [  155.035439] but task is already holding lock:
-> [  155.038892] 0000000056e4307b (&type->s_umount_key#41){++++}, at: deactivate_super+0x33/0x50
-> [  155.042602]
-> [  155.042602] which lock already depends on the new lock.
-> [  155.042602]
-> [  155.047465]
-> [  155.047465] the existing dependency chain (in reverse order) is:
-> [  155.051354]
-> [  155.051354] -> #1 (&type->s_umount_key#41){++++}:
-> [  155.054768]        f2fs_sbi_store+0x61/0x460 [f2fs]
-> [  155.057083]        kernfs_fop_write+0x113/0x1a0
-> [  155.059277]        __vfs_write+0x36/0x180
-> [  155.061250]        vfs_write+0xbe/0x1b0
-> [  155.063179]        ksys_write+0x55/0xc0
-> [  155.065068]        do_syscall_64+0x60/0x1b0
-> [  155.067071]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [  155.069529]
-> [  155.069529] -> #0 (kn->count#130){++++}:
-> [  155.072421]        __kernfs_remove+0x26f/0x2e0
-> [  155.074452]        kernfs_remove+0x1f/0x30
-> [  155.076342]        kobject_del.part.5+0xe/0x40
-> [  155.078354]        f2fs_put_super+0x12d/0x290 [f2fs]
-> [  155.080500]        generic_shutdown_super+0x6c/0x110
-> [  155.082655]        kill_block_super+0x21/0x50
-> [  155.084634]        kill_f2fs_super+0x9c/0xc0 [f2fs]
-> [  155.086726]        deactivate_locked_super+0x3f/0x70
-> [  155.088826]        cleanup_mnt+0x3b/0x70
-> [  155.090584]        task_work_run+0x93/0xc0
-> [  155.092367]        exit_to_usermode_loop+0xf0/0x100
-> [  155.094466]        do_syscall_64+0x162/0x1b0
-> [  155.096312]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [  155.098603]
-> [  155.098603] other info that might help us debug this:
-> [  155.098603]
-> [  155.102418]  Possible unsafe locking scenario:
-> [  155.102418]
-> [  155.105134]        CPU0                    CPU1
-> [  155.107037]        ----                    ----
-> [  155.108910]   lock(&type->s_umount_key#41);
-> [  155.110674]                                lock(kn->count#130);
-> [  155.113010]                                lock(&type->s_umount_key#41);
-> [  155.115608]   lock(kn->count#130);
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+------------------
 
-Thanks,
+From: Daniel Borkmann <daniel@iogearbox.net>
+
+commit 58990d1ff3f7896ee341030e9a7c2e4002570683 upstream.
+
+As commit 28e33f9d78ee ("bpf: disallow arithmetic operations on
+context pointer") already describes, f1174f77b50c ("bpf/verifier:
+rework value tracking") removed the specific white-listed cases
+we had previously where we would allow for pointer arithmetic in
+order to further generalize it, and allow e.g. context access via
+modified registers. While the dereferencing of modified context
+pointers had been forbidden through 28e33f9d78ee, syzkaller did
+recently manage to trigger several KASAN splats for slab out of
+bounds access and use after frees by simply passing a modified
+context pointer to a helper function which would then do the bad
+access since verifier allowed it in adjust_ptr_min_max_vals().
+
+Rejecting arithmetic on ctx pointer in adjust_ptr_min_max_vals()
+generally could break existing programs as there's a valid use
+case in tracing in combination with passing the ctx to helpers as
+bpf_probe_read(), where the register then becomes unknown at
+verification time due to adding a non-constant offset to it. An
+access sequence may look like the following:
+
+  offset = args->filename;  /* field __data_loc filename */
+  bpf_probe_read(&dst, len, (char *)args + offset); // args is ctx
+
+There are two options: i) we could special case the ctx and as
+soon as we add a constant or bounded offset to it (hence ctx type
+wouldn't change) we could turn the ctx into an unknown scalar, or
+ii) we generalize the sanity test for ctx member access into a
+small helper and assert it on the ctx register that was passed
+as a function argument. Fwiw, latter is more obvious and less
+complex at the same time, and one case that may potentially be
+legitimate in future for ctx member access at least would be for
+ctx to carry a const offset. Therefore, fix follows approach
+from ii) and adds test cases to BPF kselftests.
+
+Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
+Reported-by: syzbot+3d0b2441dbb71751615e@syzkaller.appspotmail.com
+Reported-by: syzbot+c8504affd4fdd0c1b626@syzkaller.appspotmail.com
+Reported-by: syzbot+e5190cb881d8660fb1a3@syzkaller.appspotmail.com
+Reported-by: syzbot+efae31b384d5badbd620@syzkaller.appspotmail.com
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Yonghong Song <yhs@fb.com>
+Acked-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ kernel/bpf/verifier.c                       |   48 ++++++++++++++---------
+ tools/testing/selftests/bpf/test_verifier.c |   58 +++++++++++++++++++++++++++-
+ 2 files changed, 88 insertions(+), 18 deletions(-)
+
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -1610,6 +1610,30 @@ static int get_callee_stack_depth(struct
+ }
+ #endif
+ 
++static int check_ctx_reg(struct bpf_verifier_env *env,
++			 const struct bpf_reg_state *reg, int regno)
++{
++	/* Access to ctx or passing it to a helper is only allowed in
++	 * its original, unmodified form.
++	 */
++
++	if (reg->off) {
++		verbose(env, "dereference of modified ctx ptr R%d off=%d disallowed\n",
++			regno, reg->off);
++		return -EACCES;
++	}
++
++	if (!tnum_is_const(reg->var_off) || reg->var_off.value) {
++		char tn_buf[48];
++
++		tnum_strn(tn_buf, sizeof(tn_buf), reg->var_off);
++		verbose(env, "variable ctx access var_off=%s disallowed\n", tn_buf);
++		return -EACCES;
++	}
++
++	return 0;
++}
++
+ /* truncate register to smaller size (in bytes)
+  * must be called with size < BPF_REG_SIZE
+  */
+@@ -1679,24 +1703,11 @@ static int check_mem_access(struct bpf_v
+ 			verbose(env, "R%d leaks addr into ctx\n", value_regno);
+ 			return -EACCES;
+ 		}
+-		/* ctx accesses must be at a fixed offset, so that we can
+-		 * determine what type of data were returned.
+-		 */
+-		if (reg->off) {
+-			verbose(env,
+-				"dereference of modified ctx ptr R%d off=%d+%d, ctx+const is allowed, ctx+const+const is not\n",
+-				regno, reg->off, off - reg->off);
+-			return -EACCES;
+-		}
+-		if (!tnum_is_const(reg->var_off) || reg->var_off.value) {
+-			char tn_buf[48];
+ 
+-			tnum_strn(tn_buf, sizeof(tn_buf), reg->var_off);
+-			verbose(env,
+-				"variable ctx access var_off=%s off=%d size=%d",
+-				tn_buf, off, size);
+-			return -EACCES;
+-		}
++		err = check_ctx_reg(env, reg, regno);
++		if (err < 0)
++			return err;
++
+ 		err = check_ctx_access(env, insn_idx, off, size, t, &reg_type);
+ 		if (!err && t == BPF_READ && value_regno >= 0) {
+ 			/* ctx access returns either a scalar, or a
+@@ -1977,6 +1988,9 @@ static int check_func_arg(struct bpf_ver
+ 		expected_type = PTR_TO_CTX;
+ 		if (type != expected_type)
+ 			goto err_type;
++		err = check_ctx_reg(env, reg, regno);
++		if (err < 0)
++			return err;
+ 	} else if (arg_type_is_mem_ptr(arg_type)) {
+ 		expected_type = PTR_TO_STACK;
+ 		/* One exception here. In case function allows for NULL to be
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -8190,7 +8190,7 @@ static struct bpf_test tests[] = {
+ 				    offsetof(struct __sk_buff, mark)),
+ 			BPF_EXIT_INSN(),
+ 		},
+-		.errstr = "dereference of modified ctx ptr R1 off=68+8, ctx+const is allowed, ctx+const+const is not",
++		.errstr = "dereference of modified ctx ptr",
+ 		.result = REJECT,
+ 		.prog_type = BPF_PROG_TYPE_SCHED_CLS,
+ 	},
+@@ -11423,6 +11423,62 @@ static struct bpf_test tests[] = {
+ 		.errstr = "BPF_XADD stores into R2 packet",
+ 		.prog_type = BPF_PROG_TYPE_XDP,
+ 	},
++	{
++		"pass unmodified ctx pointer to helper",
++		.insns = {
++			BPF_MOV64_IMM(BPF_REG_2, 0),
++			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
++				     BPF_FUNC_csum_update),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_EXIT_INSN(),
++		},
++		.prog_type = BPF_PROG_TYPE_SCHED_CLS,
++		.result = ACCEPT,
++	},
++	{
++		"pass modified ctx pointer to helper, 1",
++		.insns = {
++			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, -612),
++			BPF_MOV64_IMM(BPF_REG_2, 0),
++			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
++				     BPF_FUNC_csum_update),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_EXIT_INSN(),
++		},
++		.prog_type = BPF_PROG_TYPE_SCHED_CLS,
++		.result = REJECT,
++		.errstr = "dereference of modified ctx ptr",
++	},
++	{
++		"pass modified ctx pointer to helper, 2",
++		.insns = {
++			BPF_ALU64_IMM(BPF_ADD, BPF_REG_1, -612),
++			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
++				     BPF_FUNC_get_socket_cookie),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_EXIT_INSN(),
++		},
++		.result_unpriv = REJECT,
++		.result = REJECT,
++		.errstr_unpriv = "dereference of modified ctx ptr",
++		.errstr = "dereference of modified ctx ptr",
++	},
++	{
++		"pass modified ctx pointer to helper, 3",
++		.insns = {
++			BPF_LDX_MEM(BPF_W, BPF_REG_3, BPF_REG_1, 0),
++			BPF_ALU64_IMM(BPF_AND, BPF_REG_3, 4),
++			BPF_ALU64_REG(BPF_ADD, BPF_REG_1, BPF_REG_3),
++			BPF_MOV64_IMM(BPF_REG_2, 0),
++			BPF_RAW_INSN(BPF_JMP | BPF_CALL, 0, 0, 0,
++				     BPF_FUNC_csum_update),
++			BPF_MOV64_IMM(BPF_REG_0, 0),
++			BPF_EXIT_INSN(),
++		},
++		.prog_type = BPF_PROG_TYPE_SCHED_CLS,
++		.result = REJECT,
++		.errstr = "variable ctx access var_off=(0x0; 0x4)",
++	},
+ };
+ 
+ static int probe_filter_length(const struct bpf_insn *fp)
+
 
