@@ -2,87 +2,226 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9A5ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8466AECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC64208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:20:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC64208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 33402208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:21:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=pks.im header.i=@pks.im header.b="exAqppZL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZxbwLD/f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33402208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pks.im
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729927AbeGPPsX (ORCPT
+        id S1730129AbeGPPs7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:48:23 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:44677 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727464AbeGPPsX (ORCPT
+        Mon, 16 Jul 2018 11:48:59 -0400
+Received: from wout5-smtp.messagingengine.com ([64.147.123.21]:37147 "EHLO
+        wout5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727387AbeGPPs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:48:23 -0400
-Received: by mail-oi0-f66.google.com with SMTP id s198-v6so75495509oih.11;
-        Mon, 16 Jul 2018 08:20:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gRMAQj+aJRwnopcQOX1V+gMwZocMe5UDtASeixyQ554=;
-        b=SQ+Lk9i50zgy2/7U5tKMTp7Q/gUXEAbMIkIhq401TY5lzOJQUaOXaqep5OPsSPIKTY
-         FNKhNy0USvp9qZNVLj6m6j/IKoRqRBzMvwxGadqv/fhPk8Soz8Ma5e51mwz3J4gicDYx
-         OPKHPZ/DzRJYCY91+j7jSUaeqk17uUU13koF0byKRblmzGlcO0tFgmPGbn2yOaONOx/I
-         ZGwrC937xmXcx5bA/QIpCpKsgAQOfILb38Vx/qADMyxINL0CUlj+b52qhc95tKn+/Gwu
-         cKl/7f0PldaDiI7KkUsY7SKKWZTOm8fxes0DvP3+5UgPy0LnrT0h1U8/MUH3NSL1WIRG
-         omoA==
-X-Gm-Message-State: AOUpUlG+2hymiPIISMEmX3JkxwHMkl4YZXzIeTUnH2f/SaXF/QuMM9T4
-        Xky43sx8kgjmRg4GXWQfAA==
-X-Google-Smtp-Source: AAOMgpdtqnHUBYsrhmimC/Vlbv0gQT+h42fEN5XupOBbpCzJ7EnUes2lo7FMhbgO1CmAd2y0g7jfTA==
-X-Received: by 2002:aca:b207:: with SMTP id b7-v6mr17626622oif.148.1531754429119;
-        Mon, 16 Jul 2018 08:20:29 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id l204-v6sm6011738oia.45.2018.07.16.08.20.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 08:20:28 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 09:20:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Saravanan Sekar <sravanhome@gmail.com>
-Cc:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
-        sboyd@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux@cubietech.com, support@cubietech.com,
-        catalin.marinas@arm.com, mturquette@baylibre.com,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        thomas.liau@actions-semi.com, darren@cubietech.com,
-        jeff.chen@actions-semi.com, pn@denx.de, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mp-cs@actions-semi.com
-Subject: Re: [PATCH v6 2/5] dt-bindings: clock: Add S700 support for Actions
- Semi Soc's
-Message-ID: <20180716152027.GA28696@rob-hp-laptop>
-References: <20180715203524.11948-1-sravanhome@gmail.com>
- <20180715203524.11948-3-sravanhome@gmail.com>
+        Mon, 16 Jul 2018 11:48:59 -0400
+X-Greylist: delayed 548 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Jul 2018 11:48:58 EDT
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+        by mailout.west.internal (Postfix) with ESMTP id 11DBD2D5;
+        Mon, 16 Jul 2018 11:11:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Mon, 16 Jul 2018 11:11:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pks.im; h=cc
+        :content-type:date:from:in-reply-to:message-id:mime-version
+        :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=XX4NfZn4kDkjAl0oM+QXjmkOtluHhcNIar1SfoTomf0=; b=exAqppZL
+        sHVfd3+2MGjwhhh0+9JVFsb5JO/AIsn8TiIE54k0jSJVp2C1PIqCu27a7rEFftud
+        oJ6a+qmkrEWP9lamIKhzkx4YvRYoNyzaJHwf6VyvVv7uc2btGjOo2mbrupdBqzNy
+        CArUJx1wB3zozL73jGOE8+4LuyU9nzo5jtonsslHS0Ci0tEnoL9Mdq2GDkrEDRiK
+        zPdLWlAXMmLJvfeu57mlO3/PCN8O8rZxyVidF3fUvvR0KKZ5d5BSoRrTg1os5Ok8
+        OCrntXg9uhQgNdC7RW/FaG75xPgh5cb2G6B2uChM+bADIjVBsDPz0dAMKVJPuc28
+        LmEEZm3vO9iYEQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm3; bh=XX4NfZn4kDkjAl0oM+QXjmkOtluHh
+        cNIar1SfoTomf0=; b=ZxbwLD/f/5agFj/8J7VAIuG/Fz+EEuytPNeKVJGacBM+c
+        IGw+EXlLsmSkxCyH0avmiHj/wI3V1/21E4vffEgn2pdm77BJK146ciPXNLyAgiMo
+        YkUfa1zA2Qwi+Gmr0Qb97FksXQHoaqVKGuG9ASPuFJ4F73I0cn/s3ZYJNLOzhYX6
+        Fp0WmqbFQLSQR7NtEn49WgS+7u3GqnMKZFk3fIv7TrNsUXuIG8ptSBeXUjjhFu6h
+        oz68FP+cu/DSEryMbDZzwfLyFPlaCTNeyOleJuN+ciq0nQFth7Zm3O2a59JkX9vG
+        m/2l4wpZuDrzbo9hNoOK2Swr1vNMAKwXsHH3Z9cfw==
+X-ME-Proxy: <xmx:u7VMW51ldqTSlgFQ219K0Ff1Wpp9eJBQXv4U8M-UnObsjtdyyel3tQ>
+    <xmx:u7VMW1IgciUVmhEY7RF7-GnJabjEhYGQzqcFPAjw8pQAoCTMJEJT-g>
+    <xmx:u7VMW260X026qYnTsqPFWVaRhUGF7xWPuY7AowUOKK_sl2pqoVav2A>
+    <xmx:u7VMW0hIcRxgP5_vGTl0r6Y1Notx9eTZdj7JtAo5kNVuYJO8E9AKGg>
+    <xmx:u7VMW9kNHbFrCe30OVxSdUiOkM2NUeCWfkcNiWArq8gYG22LjTnDMQ>
+    <xmx:u7VMWwWgQPpOVbBBl6mQ9mwd5Vkv7UXgJKA-MhBQWcZFcihlASV4hQ>
+X-ME-Sender: <xms:u7VMW7_cjOILfyt2RUYP8Ad397IERbvI2h7ITDd0bugOvo9Wx4Gi5Q>
+Received: from apu2.pks.im (x4db33da9.dyn.telefonica.de [77.179.61.169])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8E45BE473B;
+        Mon, 16 Jul 2018 11:11:54 -0400 (EDT)
+Received: from localhost (10.192.0.11 [10.192.0.11])
+        by apu2.pks.im (OpenSMTPD) with ESMTPSA id 1cb67304 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 16 Jul 2018 15:11:53 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 17:11:53 +0200
+From:   Patrick Steinhardt <ps@pks.im>
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] block: fix NPE when resuming SCSI devices using blk-mq
+Message-ID: <20180716151153.GC1787@ncase.pks.im>
+References: <b712b87a509dc64619a3aec7c673935ed09be5de.1531488173.git.ps@pks.im>
+ <CACVXFVPoO7kcEnUVmqGVWDgiTVYup2sD9puBZ8FzY+mDaMp-bQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ieNMXl1Fr3cevapt"
 Content-Disposition: inline
-In-Reply-To: <20180715203524.11948-3-sravanhome@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CACVXFVPoO7kcEnUVmqGVWDgiTVYup2sD9puBZ8FzY+mDaMp-bQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 10:35:21PM +0200, Saravanan Sekar wrote:
-> Add clock bindings constants for action S700
-> Maintain common clock dt-bindings for Actions Semi SoC's
-> S700 and S900.
-> 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> ---
->  ...tions,s900-cmu.txt => actions,owl-cmu.txt} |  20 +--
->  include/dt-bindings/clock/actions,s700-cmu.h  | 118 ++++++++++++++++++
->  2 files changed, 129 insertions(+), 9 deletions(-)
->  rename Documentation/devicetree/bindings/clock/{actions,s900-cmu.txt => actions,owl-cmu.txt} (68%)
->  create mode 100644 include/dt-bindings/clock/actions,s700-cmu.h
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+--ieNMXl1Fr3cevapt
+Content-Type: multipart/mixed; boundary="CblX+4bnyfN0pR09"
+Content-Disposition: inline
 
+
+--CblX+4bnyfN0pR09
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 13, 2018 at 09:41:41PM +0800, Ming Lei wrote:
+> On Fri, Jul 13, 2018 at 9:29 PM, Patrick Steinhardt <ps@pks.im> wrote:
+> > When power management for SCSI is enabled and if a device uses blk-mq,
+> > it is possible to trigger a `NULL` pointer exception when resuming that
+> > device. The NPE is triggered when trying to dereference the `request_fn`
+> > function pointer of the device's `request_queue`:
+> >
+> >     __blk_run_queue_uncond:470
+> >     __blk_run_queue:490
+> >     blk_post_runtime_resume:3889
+> >     sdev_runtime_resume:263
+> >     scsi_runtime_resume:275
+> >
+> > When the SCSI device is being allocated by `scsi_alloc_sdev`, the
+> > device's request queue will either be initialized via
+> > `scsi_mq_alloc_queue` or `scsi_old_alloc_queue`. But the `request_fn`
+> > member of the request queue is in fact only being set in
+> > `scsi_old_alloc_queue`, which will then later cause the mentioned NPE.
+> >
+> > Fix the issue by checking whether the `request_fn` is set in
+> > `__blk_run_queue_uncond`. In case it is unset, we'll silently return and
+> > not try to invoke the callback, thus fixing the NPE.
+> >
+> > Signed-off-by: Patrick Steinhardt <ps@pks.im>
+> > ---
+> >
+> > Since at least v4.14, I am easily able to trigger above NPE by
+> > unplugging USB mass storage devices on my computer (Skylake, ASUS
+> > Z170I) with CONFIG_SCSI_MQ_DEFAULT=3Dy. The attached patch fixes
+> > the issue, but keep in mind that this is my first patch, so the
+> > proposed fix may not be appropriate at all. Feedback would be
+> > highly appreciated.
+> >
+> >  block/blk-core.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/block/blk-core.c b/block/blk-core.c
+> > index f84a9b7b6f5a..0a2041660cd9 100644
+> > --- a/block/blk-core.c
+> > +++ b/block/blk-core.c
+> > @@ -456,7 +456,7 @@ inline void __blk_run_queue_uncond(struct request_q=
+ueue *q)
+> >         lockdep_assert_held(q->queue_lock);
+> >         WARN_ON_ONCE(q->mq_ops);
+> >
+> > -       if (unlikely(blk_queue_dead(q)))
+> > +       if (unlikely(!q->request_fn) || unlikely(blk_queue_dead(q)))
+> >                 return;
+> >
+>=20
+> Now runtime PM is disabled for blk-mq/scsi_mq, not sure how this issue is
+> triggered on your machine.
+>=20
+> Could you share the steps for reproducing this issue?
+
+I bet that the issue stems from custom hotplugging scripts then,
+which change the value of power/control. See the attachment of
+this mail for all sysfs changes that are being performed after
+plugging in the USB stick. Basically, the reproduction steps on
+my machine are:
+
+1. plug in USB stick (assumed to be /dev/sdb now)
+2. wait a short amount of time
+3. dd if=3D/dev/sdb of=3D/dev/null bs=3D4M
+4. wait a short amount of time
+5. unplug the USB stick, which immediately crashes the system
+
+The issue isn't always reproducible, I think there is some
+variance depending on how much time passes by at step 2 and/or 4.
+It probably is related to the autosuspend delay. From my
+experience the crash becomes more likely the longer I wait after
+step 4.
+
+Regards
+Patrick
+
+--CblX+4bnyfN0pR09
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="sysfs.log"
+
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/power/control -> on
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/scsi_host/host4/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/scsi_host/host4/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_device/4:0:0:0/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/bsg/4:0:0:0/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_device/4:0:0:0/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/bsg/4:0:0:0/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/power/control -> auto
+/sys//devices/virtual/bdi/8:16/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_disk/4:0:0:0/power/autosuspend_delay_ms -> 60000
+/sys//devices/virtual/bdi/8:16/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/scsi_disk/4:0:0:0/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb2/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb2/power/control -> auto
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb1/power/autosuspend_delay_ms -> 60000
+/sys//devices/pci0000:00/0000:00:14.0/usb2/2-2/2-2:1.0/host4/target4:0:0/4:0:0:0/block/sdb/sdb1/power/control -> auto
+
+--CblX+4bnyfN0pR09--
+
+--ieNMXl1Fr3cevapt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtmscHsieVjl9VyNUEXxntp6r8SwFAltMtbkACgkQEXxntp6r
+8SzTZw//eymI5QedFIbDBoPdIVsnBJJSdodpu/pMjHcOXIvaPoBAM0ma6V49YRtG
+slcAs69j6EA8zbpqwJTwJ6tKKaZSJW9m7BuYowvqtbbkHwDfbwmZWQi8ZwI+LisU
+dLHJyrR5cbPCF5it2VcBj0qI2nCmFA44jN5wu2AuUFLTwN7/N48lX57ghRajnOV/
+mbqYTrqU4IH9IveNXcJ/knkIrIBzXv630ujML28uuvU8nzCOIyeJ1Um1RNWR3HK4
+1yDJE2l3gUwNPFCQdm9Rj7/aRDMZUmDZl9VeAMDRR3EjHbP1yO4Fow6k2xTKH/l9
+KYXeBRkuRx8MQZElsEKJ45JknM9oWKpg9AqdFqa8hEPjmqx3MpmDNW3JPKz3k8nK
+4tdLVeM+URDwItfqI+WaRpBO66T268huSNgRdd5uROWro2GY0Hoy7hEx57JY6Rb1
+n1MEs0rN304iOVO7lhWrY7LUB+6XcP1QXOSYMGwv7/aahNO1aN2QRG923qViDcnY
+VpRFZqNIqvchQJhEHYsver5LqmzJ5pOvM9An0Feq3v7clJRknmBo6aXlh21W/1lA
+H3oFOKT6CTHHHejfB1g5UUjibPUm6kYCse43qMNHusgW0T1XxvgqeT5+YKCyIkfo
+v9xyM8wgaqZGJcpUjP+6RTKdMwve2zSHE2cHCFHWmspYuqZ7cdQ=
+=DaPo
+-----END PGP SIGNATURE-----
+
+--ieNMXl1Fr3cevapt--
