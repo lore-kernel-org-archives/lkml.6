@@ -4,101 +4,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB144ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A711ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5513820647
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B36F20647
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:28:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/pYlJcm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5513820647
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o3vRzYjs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B36F20647
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbeGPVz4 (ORCPT
+        id S1730079AbeGPV5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:55:56 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:41482 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728442AbeGPVzz (ORCPT
+        Mon, 16 Jul 2018 17:57:42 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:36720 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728413AbeGPV5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:55:55 -0400
-Received: by mail-yb0-f193.google.com with SMTP id s8-v6so16002395ybe.8
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:26:40 -0700 (PDT)
+        Mon, 16 Jul 2018 17:57:41 -0400
+Received: by mail-yw0-f195.google.com with SMTP id v197-v6so2304044ywg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:28:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=wj/mO8wUlyAFY1CUfsvUrVoPk+6veb4B9lCBsRoh374=;
-        b=a/pYlJcm3jY3WKFYtKqU+RNKP6SJVj7+NmrFY3cDgjzvzvIuTnRf8Liv+mY3DykamC
-         VsS9+gjxX86O/k+SgIfF9o9jOCfW+Oz8dW3mqxgNnz94iskXLdkJF36VVfGiIUNc/vA2
-         +L27w6NzQ1yGMkzknwhZhNOoVt3WOHnxeNOKUlZpH/OKRQ2dnnrxQ4iSCUlqj7afalzq
-         j/+A6AGteMy9438kPHDOyX6evd+JGOC8s65hrLWDtyU1C93h/qF+M3P5SjeWeWFf8CLK
-         gHaRayHs3Kgb6KtWEZeaZNohLr7uq7RA4WSxwWEl1AihHI+n+EevUiuB60ceJjzWajfa
-         5FHg==
+        bh=d53myzn0QbaJyHytaN8vLBqiiC4WT1n54JmZmVJ/TVo=;
+        b=o3vRzYjsU+58h1Ulw+ZghlW6gMPsj9TG6SPTdwauFc116l8L+OotC614SQIoNKbvem
+         fwL17SMemboqAy/T8M2zHxeTknqY68uPhB0it5WjFSQ8xEUPZKBus9hoIjXoq2rb2Qbx
+         tLKKeqUfBXt2tFf7NrESu4nvQ7RiacZmYxGV9VMhdISS21obD5DsjalOCO/+rV5U6MWs
+         LGLnCaCKDCa2qN9PbJNbpbZldHVeB+yUJWapSWM87l+Pk941u93wXrzhcRWg0rj/PZP3
+         QxQ9xQgoxpnM1gRLSSgt2l71K02Ej3GGM6DNr8sfGv84f/BKIPMLWl7ZPZCUXLer3v48
+         GDhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=wj/mO8wUlyAFY1CUfsvUrVoPk+6veb4B9lCBsRoh374=;
-        b=DkplbwkdWGFsIoeVseWyWFPIM6j8nUFE/jGtBpcB6AEc6Yhu3OvrvSZ8AAqaQSIPqP
-         Ac905Go8QuRWoNJe/yuZAe4ZT1zFs5utnsOi9R0aycQ6toVrwMPBfZGXQQHpHpa5Byoa
-         u9EEnVObnPzi6L6W5Ef6ZGZMKRN/OkU/no6W2R/B9fHJQuQcAOXD9y+waMHi/viY5bHn
-         oelE83u1jgMhMKZn/H8Gl1+uRQgxom8tjNVcdIKSqo3q3G1N1sObDkZKmZcyGuE+wgw8
-         lFSskvTS8h9vVVah5wXp6b+kVg/xIExSCi4ycT3IybR5G7WLkJxGDtA3m50MK4F2ucLr
-         9Hfw==
-X-Gm-Message-State: AOUpUlFiKSZL9YpxfT55tmZJrUfMx2/4NsBlmFadlb4nS+yhpntTHWHA
-        7/a1LPKE5Bl2rI9qwIxILzW9E2MwNGh+sqmxAAU=
-X-Google-Smtp-Source: AAOMgpdfRj9dgdj96KyoxXshm1ey43BCeaxet9nDZy4jEvAwIfrZSze2xVj4F3hUM5MHvgO4fRMA6KtXOeTQ9sT5EL0=
-X-Received: by 2002:a25:844f:: with SMTP id r15-v6mr9524448ybm.345.1531776400355;
- Mon, 16 Jul 2018 14:26:40 -0700 (PDT)
+        bh=d53myzn0QbaJyHytaN8vLBqiiC4WT1n54JmZmVJ/TVo=;
+        b=Mj9bPMgTO9/whDHJ6fjkko5FTitvxJOO3ezKkFqEG+bQXlT88GRyEX3SkF7O5IHO87
+         v6mnPDi/QHKCcjSLMjS+s3xo2lRzNeqMnrU23A/xHjVUaF7a/tPynLehrb0I/rzkzHiS
+         TOfaEN7wq3JKuChC5s9RJs0tXWbtqSkuRRIRGhz9rX7vRMaExEMkGFetVEs+FV6j6sRV
+         XG8c3ipvCOTXg8cqsC/xNc3+cwESxVQtOnfl5fqr9xGn4Jr2py56oJm6q9Q6jVOzlkRG
+         DXNBFDK/8Bb2NIc7IehxDi3+Iz0NiXa4FwuavC5CR++OSxxjDeXIUey99Ksd6QwUVb5u
+         y23A==
+X-Gm-Message-State: AOUpUlFr2zPaV1LWJzoYHqLczbFlb4p1VYNfba3+PDSP7fcxWgqAMgCY
+        9ZtD56k+vxraKDLLETK7qLNeR9VrDEsbHoZt7gU=
+X-Google-Smtp-Source: AAOMgpe80m44q4yhWXLm+EP2ioZ6Ej5T/AdLh8xIW0ZzTWA1lxX6C7nt+6qifYn0D17vLwWteXYZcHPWyzNAZWQrhig=
+X-Received: by 2002:a81:8c1:: with SMTP id 184-v6mr8955333ywi.126.1531776505445;
+ Mon, 16 Jul 2018 14:28:25 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 14:26:39
+Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 14:28:24
  -0700 (PDT)
-In-Reply-To: <20180715194150.GC2288@kroah.com>
-References: <20180714055816.223754-1-toddpoynor@gmail.com> <20180714055816.223754-12-toddpoynor@gmail.com>
- <20180715090544.GC23333@kroah.com> <CAE_wzQ_YosCJro46uuF1v6TQhVaTaXLdiLVD7gb94BwQx00SuQ@mail.gmail.com>
- <20180715093216.GA16003@kroah.com> <CAE_wzQ9rsw14EbFpt4kdt8bRJYyjDVvMrf45u3-y4Dzs4NKwRg@mail.gmail.com>
- <20180715100345.GA17618@kroah.com> <CAO3upoZeTGDZsGaYGhmQE_7GaihLYPym6miD9vMWM5Fzi46GMA@mail.gmail.com>
- <20180715194150.GC2288@kroah.com>
+In-Reply-To: <20180714063904.GH20451@kroah.com>
+References: <20180714055816.223754-1-toddpoynor@gmail.com> <20180714055816.223754-14-toddpoynor@gmail.com>
+ <20180714063904.GH20451@kroah.com>
 From:   Todd Poynor <toddpoynor@gmail.com>
-Date:   Mon, 16 Jul 2018 14:26:39 -0700
-Message-ID: <CAO3upobdbObTVy_p4u5SnQEVZ_yt_P5_HgDt7DWFLbjkjgh3Eg@mail.gmail.com>
-Subject: Re: [PATCH 11/18] staging: gasket: always allow root open for write
+Date:   Mon, 16 Jul 2018 14:28:24 -0700
+Message-ID: <CAO3upoaJ8R9svW1kTOu6aGdRpPzjM0i6+YL0YV29xCDwvgSqjA@mail.gmail.com>
+Subject: Re: [PATCH 13/18] staging: gasket: gasket_enable_dev fixups
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dmitry Torokhov <dtor@chromium.org>, devel@driverdev.osuosl.org,
-        Zhongze Hu <frankhu@chromium.org>,
+Cc:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Zhongze Hu <frankhu@chromium.org>,
         lkml <linux-kernel@vger.kernel.org>,
         Simon Que <sque@chromium.org>,
-        Rob Springer <rspringer@google.com>,
         Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 12:41 PM, Greg Kroah-Hartman
+On Fri, Jul 13, 2018 at 11:39 PM, Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
-> On Sun, Jul 15, 2018 at 11:15:26AM -0700, Todd Poynor wrote:
->> On Sun, Jul 15, 2018 at 3:03 AM, Greg Kroah-Hartman
->...
->> My own preference is to rewrite the apex driver entirely in-kernel and
->> pull in its userspace parts here.  If I don't receive significant
->> pushback on that I'll start doing that real soon.
+> On Fri, Jul 13, 2018 at 10:58:11PM -0700, Todd Poynor wrote:
+>> From: Todd Poynor <toddpoynor@google.com>
+>>
+>> Remove unnecessary variable.
+>>
+>> Bail out if no physical device.
+>>
+>> Signed-off-by: Todd Poynor <toddpoynor@google.com>
+>> ---
+>>  drivers/staging/gasket/gasket_core.c | 19 ++++++-------------
+>>  1 file changed, 6 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+>> index 65aa7cf454fb..f7d8f66e8746 100644
+>> --- a/drivers/staging/gasket/gasket_core.c
+>> +++ b/drivers/staging/gasket/gasket_core.c
+>> @@ -915,8 +915,6 @@ static int gasket_enable_dev(
+>>  {
+>>       int tbl_idx;
+>>       int ret;
+>> -     bool has_dma_ops;
+>> -     struct device *ddev;
+>>       const struct gasket_driver_desc *driver_desc =
+>>               internal_desc->driver_desc;
+>>
+>> @@ -934,26 +932,21 @@ static int gasket_enable_dev(
+>>               return ret;
+>>       }
+>>
+>> -     has_dma_ops = true;
+>> +     if (!gasket_dev->pci_dev) {
+>> +             gasket_log_error(gasket_dev,
+>> +                              "%s: no physical device", __func__);
+>> +             return -ENODEV;
+>> +     }
 >
-> Why would we object to that?
+> How can this ever be true?  I don't see where this can be removed to
+> enable this error check to be hit.  What am I missing?
 
-I've seen folks that have a preference for UIO whenever possible, but
-I'm of the "just do kernel-like stuff in the kernel" camp.  There are
-folks cc'ed who may have strong opinions about the subject for various
-reasons; absent any serious objections I'll put that on a longer-term
-todo list.  Thanks,
+Agree, I'll split this into two patches for the two things it does,
+and just remove the unnecessary check.  Thanks,
+
+>
+> thanks,
+>
+> greg k-h
+
+
 
 -- 
 Todd
