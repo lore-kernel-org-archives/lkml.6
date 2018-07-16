@@ -3,42 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF14FECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDDCECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B0402075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0402075B
+	by mail.kernel.org (Postfix) with ESMTP id B39CD20837
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B39CD20837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389327AbeGPIK0 (ORCPT
+        id S2389341AbeGPIK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48184 "EHLO
+        Mon, 16 Jul 2018 04:10:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48196 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388522AbeGPIKY (ORCPT
+        with ESMTP id S2388522AbeGPIK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:24 -0400
+        Mon, 16 Jul 2018 04:10:27 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DB5BCA5;
-        Mon, 16 Jul 2018 07:44:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3F5CCA4;
+        Mon, 16 Jul 2018 07:44:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
-        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
-        Alexey Makhalov <amakhalov@vmware.com>,
-        Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 18/43] x86/cpu: Provide a config option to disable static_cpu_has
-Date:   Mon, 16 Jul 2018 09:36:23 +0200
-Message-Id: <20180716073513.830018745@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: [PATCH 4.4 02/43] ibmasm: dont write out of bounds in read handler
+Date:   Mon, 16 Jul 2018 09:36:07 +0200
+Message-Id: <20180716073512.023441499@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -55,60 +49,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Jann Horn <jannh@google.com>
 
-commit 6e1315fe82308cd29e7550eab967262e8bbc71a3 upstream
+commit a0341fc1981a950c1e902ab901e98f60e0e243f3 upstream.
 
-This brings .text savings of about ~1.6K when building a tinyconfig. It
-is off by default so nothing changes for the default.
+This read handler had a lot of custom logic and wrote outside the bounds of
+the provided buffer. This could lead to kernel and userspace memory
+corruption. Just use simple_read_from_buffer() with a stack buffer.
 
-Kconfig help text from Josh.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Josh Triplett <josh@joshtriplett.org>
-Link: http://lkml.kernel.org/r/1449481182-27541-5-git-send-email-bp@alien8.de
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
-Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
-Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
-Reviewed-by: Bo Gan <ganb@vmware.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
+ drivers/misc/ibmasm/ibmasmfs.c |   27 +++------------------------
+ 1 file changed, 3 insertions(+), 24 deletions(-)
 
- arch/x86/Kconfig                  |   11 +++++++++++
- arch/x86/include/asm/cpufeature.h |    2 +-
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -346,6 +346,17 @@ config X86_FEATURE_NAMES
+--- a/drivers/misc/ibmasm/ibmasmfs.c
++++ b/drivers/misc/ibmasm/ibmasmfs.c
+@@ -507,35 +507,14 @@ static int remote_settings_file_close(st
+ static ssize_t remote_settings_file_read(struct file *file, char __user *buf, size_t count, loff_t *offset)
+ {
+ 	void __iomem *address = (void __iomem *)file->private_data;
+-	unsigned char *page;
+-	int retval;
+ 	int len = 0;
+ 	unsigned int value;
+-
+-	if (*offset < 0)
+-		return -EINVAL;
+-	if (count == 0 || count > 1024)
+-		return 0;
+-	if (*offset != 0)
+-		return 0;
+-
+-	page = (unsigned char *)__get_free_page(GFP_KERNEL);
+-	if (!page)
+-		return -ENOMEM;
++	char lbuf[20];
  
- 	  If in doubt, say Y.
+ 	value = readl(address);
+-	len = sprintf(page, "%d\n", value);
+-
+-	if (copy_to_user(buf, page, len)) {
+-		retval = -EFAULT;
+-		goto exit;
+-	}
+-	*offset += len;
+-	retval = len;
++	len = snprintf(lbuf, sizeof(lbuf), "%d\n", value);
  
-+config X86_FAST_FEATURE_TESTS
-+	bool "Fast CPU feature tests" if EMBEDDED
-+	default y
-+	---help---
-+	  Some fast-paths in the kernel depend on the capabilities of the CPU.
-+	  Say Y here for the kernel to patch in the appropriate code at runtime
-+	  based on the capabilities of the CPU. The infrastructure for patching
-+	  code at runtime takes up some additional space; space-constrained
-+	  embedded systems may wish to say N here to produce smaller, slightly
-+	  slower code.
-+
- config X86_X2APIC
- 	bool "Support x2apic"
- 	depends on X86_LOCAL_APIC && X86_64 && (IRQ_REMAP || HYPERVISOR_GUEST)
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -422,7 +422,7 @@ extern const char * const x86_bug_flags[
-  * fast paths and boot_cpu_has() otherwise!
-  */
+-exit:
+-	free_page((unsigned long)page);
+-	return retval;
++	return simple_read_from_buffer(buf, count, offset, lbuf, len);
+ }
  
--#if __GNUC__ >= 4
-+#if __GNUC__ >= 4 && defined(CONFIG_X86_FAST_FEATURE_TESTS)
- extern void warn_pre_alternatives(void);
- extern bool __static_cpu_has_safe(u16 bit);
- 
+ static ssize_t remote_settings_file_write(struct file *file, const char __user *ubuff, size_t count, loff_t *offset)
 
 
