@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37823ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44802ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B702086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE2F4208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:06:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xjHd1Kkn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8B702086B
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hlHW2Tcg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE2F4208E9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731312AbeGPSfH (ORCPT
+        id S1731215AbeGPSfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 16 Jul 2018 14:35:07 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41074 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730129AbeGPSfA (ORCPT
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45754 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730209AbeGPSfA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Jul 2018 14:35:00 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6GI6Ahg021287;
-        Mon, 16 Jul 2018 13:06:10 -0500
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6GI69BF048198;
+        Mon, 16 Jul 2018 13:06:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531764370;
-        bh=8LarZv+3o9tMxoOthalUBRO8fVUs6k7oJxBq16cigMw=;
+        s=ti-com-17Q1; t=1531764369;
+        bh=oTNZeWtAN/37nFSgI4mPhkGfGmqkVBwWsA1fYYcTg/M=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=xjHd1KknX6udRY8yP497YAxffkSzux4uZqIa8ZpaR9r8q30HFm/uF5STSVOv/wSQJ
-         3bzPmUEt23NxpaD+/IR+zt3RJuK45lJdFgPp7lQkZ4flcxjRM5p+PvOc2aLty2fg3P
-         3soKmxYTo+IoC795vzYK291PwgwWAYp3lDsk8WOc=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GI6876024986;
-        Mon, 16 Jul 2018 13:06:08 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+        b=hlHW2TcgK1Kj6LpqcnOeTXAFSvo6gEEpb9lYaag3bOYTyR04aN/kk6a/de03pfzKh
+         tSzBK/hMtiSZfLRCAzhQjgd0yWODXDLhux4uPUVcHUG754LT8h5kfrD2SMi/dGBQPU
+         l1SFO+4q/AnmsKcBTtVt/s19QuQU/lGHbSxtVBd8=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GI69Bi018328;
+        Mon, 16 Jul 2018 13:06:09 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 16
  Jul 2018 13:06:08 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
  Mon, 16 Jul 2018 13:06:08 -0500
 Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GI68wM025962;
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GI68TK024755;
         Mon, 16 Jul 2018 13:06:08 -0500
 From:   Nishanth Menon <nm@ti.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>,
@@ -57,9 +57,9 @@ CC:     Nishanth Menon <nm@ti.com>, Suman Anna <s-anna@ti.com>,
         Tero Kristo <t-kristo@ti.com>, <linux-kernel@vger.kernel.org>,
         <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH V2 2/6] mailbox: ti-msgmgr: Allocate Rx channel resources only on request
-Date:   Mon, 16 Jul 2018 13:06:03 -0500
-Message-ID: <20180716180607.16526-3-nm@ti.com>
+Subject: [PATCH V2 6/6] mailbox: ti-msgmgr: Add support for Secure Proxy
+Date:   Mon, 16 Jul 2018 13:06:07 -0500
+Message-ID: <20180716180607.16526-7-nm@ti.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180716180607.16526-1-nm@ti.com>
 References: <20180716180607.16526-1-nm@ti.com>
@@ -71,162 +71,477 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In a much bigger system SoCs, the number of Rx channels can be
-many and mostly unused based on the system of choice, and not all
-Rx channels need IRQs and allocating all memory at probe will be
-inefficient. Some SoCs could have total threads in the 100s and usage
-would be just 1 Rx thread.
+Secure Proxy is another communication scheme in Texas Instrument's
+devices intended to provide an unique communication path from various
+processors in the System on Chip(SoC) to a central System Controller.
 
-Thus, request and map the IRQs and allocate memory only when needed.
+Secure proxy is, in effect, an evolution of current generation Message
+Manager hardware block found in K2G devices. However the following
+changes have taken place:
 
-Since these channels are requested by client drivers on need, our
-utilization will be optimal.
+Secure Proxy instance exposes "threads" or "proxies" which is
+primary representation of "a" communication channel. Each thread is
+preconfigured by System controller configuration based on SoC usage
+requirements. Secure proxy by itself represents a single "queue" of
+communication but allows the proxies to be independently operated.
+
+Each Secure proxy thread can uniquely have their own error and threshold
+interrupts allowing for more fine control of IRQ handling.
+
+Provide the driver support for Secure Proxy and thread instances.
+
+NOTE: Secure proxy configuration is only done by System Controller,
+hence these are assumed to be pre-configured instances.
+
+See AM65x Technical Reference Manual (SPRUID7, April 2018)
+for further details: http://www.ti.com/lit/pdf/spruid7
 
 Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
 Changes since V1: None
-V1: https://patchwork.kernel.org/patch/10475301/
-RFC: https://patchwork.kernel.org/patch/10447701/
+V1: https://patchwork.kernel.org/patch/10475303/
+RFC: https://patchwork.kernel.org/patch/10447703/
 
- drivers/mailbox/ti-msgmgr.c | 91 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 61 insertions(+), 30 deletions(-)
+ drivers/mailbox/ti-msgmgr.c | 233 ++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 205 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/mailbox/ti-msgmgr.c b/drivers/mailbox/ti-msgmgr.c
-index 5fe6ce200264..91c955979008 100644
+index 7167cc708f44..5bceafbf6699 100644
 --- a/drivers/mailbox/ti-msgmgr.c
 +++ b/drivers/mailbox/ti-msgmgr.c
-@@ -310,6 +310,51 @@ static int ti_msgmgr_send_data(struct mbox_chan *chan, void *data)
- 	return 0;
+@@ -25,6 +25,17 @@
+ #define Q_STATE_OFFSET(queue)			((queue) * 0x4)
+ #define Q_STATE_ENTRY_COUNT_MASK		(0xFFF000)
+ 
++#define SPROXY_THREAD_OFFSET(tid) (0x1000 * (tid))
++#define SPROXY_THREAD_DATA_OFFSET(tid, reg) \
++	(SPROXY_THREAD_OFFSET(tid) + ((reg) * 0x4) + 0x4)
++
++#define SPROXY_THREAD_STATUS_OFFSET(tid) (SPROXY_THREAD_OFFSET(tid))
++
++#define SPROXY_THREAD_STATUS_COUNT_MASK (0xFF)
++
++#define SPROXY_THREAD_CTRL_OFFSET(tid) (0x1000 + SPROXY_THREAD_OFFSET(tid))
++#define SPROXY_THREAD_CTRL_DIR_MASK (0x1 << 31)
++
+ /**
+  * struct ti_msgmgr_valid_queue_desc - SoC valid queues meant for this processor
+  * @queue_id:	Queue Number for this path
+@@ -45,12 +56,15 @@ struct ti_msgmgr_valid_queue_desc {
+  * @data_first_reg:	First data register for proxy data region
+  * @data_last_reg:	Last data register for proxy data region
+  * @status_cnt_mask:	Mask for getting the status value
++ * @status_err_mask:	Mask for getting the error value, if applicable
+  * @tx_polled:		Do I need to use polled mechanism for tx
+  * @tx_poll_timeout_ms: Timeout in ms if polled
+  * @valid_queues:	List of Valid queues that the processor can access
+  * @data_region_name:	Name of the proxy data region
+  * @status_region_name:	Name of the proxy status region
++ * @ctrl_region_name:	Name of the proxy control region
+  * @num_valid_queues:	Number of valid queues
++ * @is_sproxy:		Is this an Secure Proxy instance?
+  *
+  * This structure is used in of match data to describe how integration
+  * for a specific compatible SoC is done.
+@@ -62,12 +76,15 @@ struct ti_msgmgr_desc {
+ 	u8 data_first_reg;
+ 	u8 data_last_reg;
+ 	u32 status_cnt_mask;
++	u32 status_err_mask;
+ 	bool tx_polled;
+ 	int tx_poll_timeout_ms;
+ 	const struct ti_msgmgr_valid_queue_desc *valid_queues;
+ 	const char *data_region_name;
+ 	const char *status_region_name;
++	const char *ctrl_region_name;
+ 	int num_valid_queues;
++	bool is_sproxy;
+ };
+ 
+ /**
+@@ -80,6 +97,7 @@ struct ti_msgmgr_desc {
+  * @queue_buff_start: First register of Data Buffer
+  * @queue_buff_end: Last (or confirmation) register of Data buffer
+  * @queue_state: Queue status register
++ * @queue_ctrl: Queue Control register
+  * @chan:	Mailbox channel
+  * @rx_buff:	Receive buffer pointer allocated at probe, max_message_size
+  */
+@@ -92,6 +110,7 @@ struct ti_queue_inst {
+ 	void __iomem *queue_buff_start;
+ 	void __iomem *queue_buff_end;
+ 	void __iomem *queue_state;
++	void __iomem *queue_ctrl;
+ 	struct mbox_chan *chan;
+ 	u32 *rx_buff;
+ };
+@@ -102,6 +121,7 @@ struct ti_queue_inst {
+  * @desc:	Description of the SoC integration
+  * @queue_proxy_region:	Queue proxy region where queue buffers are located
+  * @queue_state_debug_region:	Queue status register regions
++ * @queue_ctrl_region:	Queue Control register regions
+  * @num_valid_queues:	Number of valid queues defined for the processor
+  *		Note: other queues are probably reserved for other processors
+  *		in the SoC.
+@@ -114,6 +134,7 @@ struct ti_msgmgr_inst {
+ 	const struct ti_msgmgr_desc *desc;
+ 	void __iomem *queue_proxy_region;
+ 	void __iomem *queue_state_debug_region;
++	void __iomem *queue_ctrl_region;
+ 	u8 num_valid_queues;
+ 	struct ti_queue_inst *qinsts;
+ 	struct mbox_controller mbox;
+@@ -144,6 +165,31 @@ ti_msgmgr_queue_get_num_messages(const struct ti_msgmgr_desc *d,
+ 	return val;
  }
  
 +/**
-+ *  ti_msgmgr_queue_rx_irq_req() - RX IRQ request
-+ *  @dev:	device pointer
-+ *  @qinst:	Queue instance
-+ *  @chan:	Channel pointer
++ * ti_msgmgr_queue_is_error() - Check to see if there is queue error
++ * @d:		Description of message manager
++ * @qinst:	Queue instance for which we check the number of pending messages
++ *
++ * Return: true if error, else false
 + */
-+static int ti_msgmgr_queue_rx_irq_req(struct device *dev,
-+				      struct ti_queue_inst *qinst,
-+				      struct mbox_chan *chan)
++static inline bool ti_msgmgr_queue_is_error(const struct ti_msgmgr_desc *d,
++					    struct ti_queue_inst *qinst)
 +{
-+	int ret = 0;
-+	char of_rx_irq_name[7];
-+	struct device_node *np;
++	u32 val;
 +
-+	snprintf(of_rx_irq_name, sizeof(of_rx_irq_name),
-+		 "rx_%03d", qinst->queue_id);
++	/* Msgmgr has no error detection */
++	if (!d->is_sproxy)
++		return false;
 +
-+	/* Get the IRQ if not found */
-+	if (qinst->irq < 0) {
-+		np = of_node_get(dev->of_node);
-+		if (!np)
-+			return -ENODATA;
-+		qinst->irq = of_irq_get_byname(np, of_rx_irq_name);
-+		of_node_put(np);
++	/*
++	 * We cannot use relaxed operation here - update may happen
++	 * real-time.
++	 */
++	val = readl(qinst->queue_state) & d->status_err_mask;
 +
-+		if (qinst->irq < 0) {
-+			dev_err(dev,
-+				"QID %d PID %d:No IRQ[%s]: %d\n",
-+				qinst->queue_id, qinst->proxy_id,
-+				of_rx_irq_name, qinst->irq);
-+			return qinst->irq;
-+		}
-+	}
-+
-+	/* With the expectation that the IRQ might be shared in SoC */
-+	ret = request_irq(qinst->irq, ti_msgmgr_queue_rx_interrupt,
-+			  IRQF_SHARED, qinst->name, chan);
-+	if (ret) {
-+		dev_err(dev, "Unable to get IRQ %d on %s(res=%d)\n",
-+			qinst->irq, qinst->name, ret);
-+	}
-+
-+	return ret;
++	return val ? true : false;
 +}
 +
  /**
-  * ti_msgmgr_queue_startup() - Startup queue
-  * @chan:	Channel pointer
-@@ -318,19 +363,21 @@ static int ti_msgmgr_send_data(struct mbox_chan *chan, void *data)
-  */
- static int ti_msgmgr_queue_startup(struct mbox_chan *chan)
- {
--	struct ti_queue_inst *qinst = chan->con_priv;
+  * ti_msgmgr_queue_rx_interrupt() - Interrupt handler for receive Queue
+  * @irq:	Interrupt number
+@@ -178,6 +224,11 @@ static irqreturn_t ti_msgmgr_queue_rx_interrupt(int irq, void *p)
+ 	}
+ 
+ 	desc = inst->desc;
++	if (ti_msgmgr_queue_is_error(desc, qinst)) {
++		dev_err(dev, "Error on Rx channel %s\n", qinst->name);
++		return IRQ_NONE;
++	}
++
+ 	/* Do I actually have messages to read? */
+ 	msg_count = ti_msgmgr_queue_get_num_messages(desc, qinst);
+ 	if (!msg_count) {
+@@ -236,12 +287,18 @@ static bool ti_msgmgr_queue_peek_data(struct mbox_chan *chan)
+ 	struct ti_queue_inst *qinst = chan->con_priv;
  	struct device *dev = chan->mbox->dev;
-+	struct ti_msgmgr_inst *inst = dev_get_drvdata(dev);
-+	struct ti_queue_inst *qinst = chan->con_priv;
-+	const struct ti_msgmgr_desc *d = inst->desc;
+ 	struct ti_msgmgr_inst *inst = dev_get_drvdata(dev);
++	const struct ti_msgmgr_desc *desc = inst->desc;
+ 	int msg_count;
+ 
+ 	if (qinst->is_tx)
+ 		return false;
+ 
+-	msg_count = ti_msgmgr_queue_get_num_messages(inst->desc, qinst);
++	if (ti_msgmgr_queue_is_error(desc, qinst)) {
++		dev_err(dev, "Error on channel %s\n", qinst->name);
++		return false;
++	}
++
++	msg_count = ti_msgmgr_queue_get_num_messages(desc, qinst);
+ 
+ 	return msg_count ? true : false;
+ }
+@@ -257,12 +314,23 @@ static bool ti_msgmgr_last_tx_done(struct mbox_chan *chan)
+ 	struct ti_queue_inst *qinst = chan->con_priv;
+ 	struct device *dev = chan->mbox->dev;
+ 	struct ti_msgmgr_inst *inst = dev_get_drvdata(dev);
++	const struct ti_msgmgr_desc *desc = inst->desc;
+ 	int msg_count;
+ 
+ 	if (!qinst->is_tx)
+ 		return false;
+ 
+-	msg_count = ti_msgmgr_queue_get_num_messages(inst->desc, qinst);
++	if (ti_msgmgr_queue_is_error(desc, qinst)) {
++		dev_err(dev, "Error on channel %s\n", qinst->name);
++		return false;
++	}
++
++	msg_count = ti_msgmgr_queue_get_num_messages(desc, qinst);
++
++	if (desc->is_sproxy) {
++		/* In secure proxy, msg_count indicates how many we can send */
++		return msg_count ? true : false;
++	}
+ 
+ 	/* if we have any messages pending.. */
+ 	return msg_count ? false : true;
+@@ -292,6 +360,11 @@ static int ti_msgmgr_send_data(struct mbox_chan *chan, void *data)
+ 	}
+ 	desc = inst->desc;
+ 
++	if (ti_msgmgr_queue_is_error(desc, qinst)) {
++		dev_err(dev, "Error on channel %s\n", qinst->name);
++		return false;
++	}
++
+ 	if (desc->max_message_size < message->len) {
+ 		dev_err(dev, "Queue %s message length %zu > max %d\n",
+ 			qinst->name, message->len, desc->max_message_size);
+@@ -327,10 +400,12 @@ static int ti_msgmgr_send_data(struct mbox_chan *chan, void *data)
+ /**
+  *  ti_msgmgr_queue_rx_irq_req() - RX IRQ request
+  *  @dev:	device pointer
++ *  @d:		descriptor for ti_msgmgr
+  *  @qinst:	Queue instance
+  *  @chan:	Channel pointer
+  */
+ static int ti_msgmgr_queue_rx_irq_req(struct device *dev,
++				      const struct ti_msgmgr_desc *d,
+ 				      struct ti_queue_inst *qinst,
+ 				      struct mbox_chan *chan)
+ {
+@@ -339,7 +414,7 @@ static int ti_msgmgr_queue_rx_irq_req(struct device *dev,
+ 	struct device_node *np;
+ 
+ 	snprintf(of_rx_irq_name, sizeof(of_rx_irq_name),
+-		 "rx_%03d", qinst->queue_id);
++		 "rx_%03d", d->is_sproxy ? qinst->proxy_id : qinst->queue_id);
+ 
+ 	/* Get the IRQ if not found */
+ 	if (qinst->irq < 0) {
+@@ -382,6 +457,24 @@ static int ti_msgmgr_queue_startup(struct mbox_chan *chan)
+ 	struct ti_queue_inst *qinst = chan->con_priv;
+ 	const struct ti_msgmgr_desc *d = inst->desc;
  	int ret;
++	int msg_count;
++
++	/*
++	 * If sproxy is starting and can send messages, we are a Tx thread,
++	 * else Rx
++	 */
++	if (d->is_sproxy) {
++		qinst->is_tx = (readl(qinst->queue_ctrl) &
++				SPROXY_THREAD_CTRL_DIR_MASK) ? false : true;
++
++		msg_count = ti_msgmgr_queue_get_num_messages(d, qinst);
++
++		if (!msg_count && qinst->is_tx) {
++			dev_err(dev, "%s: Cannot transmit with 0 credits!\n",
++				qinst->name);
++			return -EINVAL;
++		}
++	}
  
  	if (!qinst->is_tx) {
--		/*
--		 * With the expectation that the IRQ might be shared in SoC
--		 */
--		ret = request_irq(qinst->irq, ti_msgmgr_queue_rx_interrupt,
--				  IRQF_SHARED, qinst->name, chan);
-+		/* Allocate usage buffer for rx */
-+		qinst->rx_buff = kzalloc(d->max_message_size, GFP_KERNEL);
-+		if (!qinst->rx_buff)
-+			return -ENOMEM;
-+		/* Request IRQ */
-+		ret = ti_msgmgr_queue_rx_irq_req(dev, qinst, chan);
+ 		/* Allocate usage buffer for rx */
+@@ -389,7 +482,7 @@ static int ti_msgmgr_queue_startup(struct mbox_chan *chan)
+ 		if (!qinst->rx_buff)
+ 			return -ENOMEM;
+ 		/* Request IRQ */
+-		ret = ti_msgmgr_queue_rx_irq_req(dev, qinst, chan);
++		ret = ti_msgmgr_queue_rx_irq_req(dev, d, qinst, chan);
  		if (ret) {
--			dev_err(dev, "Unable to get IRQ %d on %s(res=%d)\n",
--				qinst->irq, qinst->name, ret);
-+			kfree(qinst->rx_buff);
+ 			kfree(qinst->rx_buff);
  			return ret;
- 		}
+@@ -427,20 +520,38 @@ static struct mbox_chan *ti_msgmgr_of_xlate(struct mbox_controller *mbox,
+ 	struct ti_msgmgr_inst *inst;
+ 	int req_qid, req_pid;
+ 	struct ti_queue_inst *qinst;
+-	int i;
++	const struct ti_msgmgr_desc *d;
++	int i, ncells;
+ 
+ 	inst = container_of(mbox, struct ti_msgmgr_inst, mbox);
+ 	if (WARN_ON(!inst))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	/* #mbox-cells is 2 */
+-	if (p->args_count != 2) {
+-		dev_err(inst->dev, "Invalid arguments in dt[%d] instead of 2\n",
+-			p->args_count);
++	d = inst->desc;
++
++	if (d->is_sproxy)
++		ncells = 1;
++	else
++		ncells = 2;
++	if (p->args_count != ncells) {
++		dev_err(inst->dev, "Invalid arguments in dt[%d]. Must be %d\n",
++			p->args_count, ncells);
+ 		return ERR_PTR(-EINVAL);
  	}
-@@ -346,8 +393,10 @@ static void ti_msgmgr_queue_shutdown(struct mbox_chan *chan)
- {
- 	struct ti_queue_inst *qinst = chan->con_priv;
- 
--	if (!qinst->is_tx)
-+	if (!qinst->is_tx) {
- 		free_irq(qinst->irq, chan);
-+		kfree(qinst->rx_buff);
+-	req_qid = p->args[0];
+-	req_pid = p->args[1];
++	if (ncells == 1) {
++		req_qid = 0;
++		req_pid = p->args[0];
++	} else {
++		req_qid = p->args[0];
++		req_pid = p->args[1];
 +	}
- }
++
++	if (d->is_sproxy) {
++		if (req_pid > d->num_valid_queues)
++			goto err;
++		qinst = &inst->qinsts[req_pid];
++		return qinst->chan;
++	}
  
- /**
-@@ -425,27 +474,6 @@ static int ti_msgmgr_queue_setup(int idx, struct device *dev,
- 		 dev_name(dev), qinst->is_tx ? "tx" : "rx", qinst->queue_id,
- 		 qinst->proxy_id);
+ 	for (qinst = inst->qinsts, i = 0; i < inst->num_valid_queues;
+ 	     i++, qinst++) {
+@@ -448,6 +559,7 @@ static struct mbox_chan *ti_msgmgr_of_xlate(struct mbox_controller *mbox,
+ 			return qinst->chan;
+ 	}
  
--	if (!qinst->is_tx) {
--		char of_rx_irq_name[7];
++err:
+ 	dev_err(inst->dev, "Queue ID %d, Proxy ID %d is wrong on %s\n",
+ 		req_qid, req_pid, p->np->name);
+ 	return ERR_PTR(-ENOENT);
+@@ -474,6 +586,8 @@ static int ti_msgmgr_queue_setup(int idx, struct device *dev,
+ 				 struct ti_queue_inst *qinst,
+ 				 struct mbox_chan *chan)
+ {
++	char *dir;
++
+ 	qinst->proxy_id = qd->proxy_id;
+ 	qinst->queue_id = qd->queue_id;
+ 
+@@ -483,17 +597,38 @@ static int ti_msgmgr_queue_setup(int idx, struct device *dev,
+ 		return -ERANGE;
+ 	}
+ 
+-	qinst->is_tx = qd->is_tx;
+-	snprintf(qinst->name, sizeof(qinst->name), "%s %s_%03d_%03d",
+-		 dev_name(dev), qinst->is_tx ? "tx" : "rx", qinst->queue_id,
+-		 qinst->proxy_id);
 -
--		snprintf(of_rx_irq_name, sizeof(of_rx_irq_name),
--			 "rx_%03d", qinst->queue_id);
--
--		qinst->irq = of_irq_get_byname(np, of_rx_irq_name);
--		if (qinst->irq < 0) {
--			dev_crit(dev,
--				 "[%d]QID %d PID %d:No IRQ[%s]: %d\n",
--				 idx, qinst->queue_id, qinst->proxy_id,
--				 of_rx_irq_name, qinst->irq);
--			return qinst->irq;
--		}
--		/* Allocate usage buffer for rx */
--		qinst->rx_buff = devm_kzalloc(dev,
--					      d->max_message_size, GFP_KERNEL);
--		if (!qinst->rx_buff)
--			return -ENOMEM;
--	}
--
- 	qinst->queue_buff_start = inst->queue_proxy_region +
- 	    Q_DATA_OFFSET(qinst->proxy_id, qinst->queue_id, d->data_first_reg);
- 	qinst->queue_buff_end = inst->queue_proxy_region +
-@@ -454,6 +482,9 @@ static int ti_msgmgr_queue_setup(int idx, struct device *dev,
- 	    Q_STATE_OFFSET(qinst->queue_id);
+-	qinst->queue_buff_start = inst->queue_proxy_region +
+-	    Q_DATA_OFFSET(qinst->proxy_id, qinst->queue_id, d->data_first_reg);
+-	qinst->queue_buff_end = inst->queue_proxy_region +
+-	    Q_DATA_OFFSET(qinst->proxy_id, qinst->queue_id, d->data_last_reg);
+-	qinst->queue_state = inst->queue_state_debug_region +
+-	    Q_STATE_OFFSET(qinst->queue_id);
++	if (d->is_sproxy) {
++		qinst->queue_buff_start = inst->queue_proxy_region +
++		    SPROXY_THREAD_DATA_OFFSET(qinst->proxy_id,
++					      d->data_first_reg);
++		qinst->queue_buff_end = inst->queue_proxy_region +
++		    SPROXY_THREAD_DATA_OFFSET(qinst->proxy_id,
++					      d->data_last_reg);
++		qinst->queue_state = inst->queue_state_debug_region +
++		    SPROXY_THREAD_STATUS_OFFSET(qinst->proxy_id);
++		qinst->queue_ctrl = inst->queue_ctrl_region +
++		    SPROXY_THREAD_CTRL_OFFSET(qinst->proxy_id);
++
++		/* XXX: DONOT read registers here!.. Some may be unusable */
++		dir = "thr";
++		snprintf(qinst->name, sizeof(qinst->name), "%s %s_%03d",
++			 dev_name(dev), dir, qinst->proxy_id);
++	} else {
++		qinst->queue_buff_start = inst->queue_proxy_region +
++		    Q_DATA_OFFSET(qinst->proxy_id, qinst->queue_id,
++				  d->data_first_reg);
++		qinst->queue_buff_end = inst->queue_proxy_region +
++		    Q_DATA_OFFSET(qinst->proxy_id, qinst->queue_id,
++				  d->data_last_reg);
++		qinst->queue_state =
++		    inst->queue_state_debug_region +
++		    Q_STATE_OFFSET(qinst->queue_id);
++		qinst->is_tx = qd->is_tx;
++		dir = qinst->is_tx ? "tx" : "rx";
++		snprintf(qinst->name, sizeof(qinst->name), "%s %s_%03d_%03d",
++			 dev_name(dev), dir, qinst->queue_id, qinst->proxy_id);
++	}
++
  	qinst->chan = chan;
  
-+	/* Setup an error value for IRQ - Lazy allocation */
-+	qinst->irq = -EINVAL;
+ 	/* Setup an error value for IRQ - Lazy allocation */
+@@ -543,12 +678,29 @@ static const struct ti_msgmgr_desc k2g_desc = {
+ 	.tx_polled = false,
+ 	.valid_queues = k2g_valid_queues,
+ 	.num_valid_queues = ARRAY_SIZE(k2g_valid_queues),
++	.is_sproxy = false,
++};
 +
- 	chan->con_priv = qinst;
++static const struct ti_msgmgr_desc am654_desc = {
++	.queue_count = 190,
++	.num_valid_queues = 190,
++	.max_message_size = 60,
++	.data_region_name = "target_data",
++	.status_region_name = "rt",
++	.ctrl_region_name = "scfg",
++	.data_first_reg = 0,
++	.data_last_reg = 14,
++	.status_cnt_mask = SPROXY_THREAD_STATUS_COUNT_MASK,
++	.tx_polled = false,
++	.is_sproxy = true,
+ };
  
- 	dev_dbg(dev, "[%d] qidx=%d pidx=%d irq=%d q_s=%p q_e = %p\n",
+ static const struct of_device_id ti_msgmgr_of_match[] = {
+ 	{.compatible = "ti,k2g-message-manager", .data = &k2g_desc},
++	{.compatible = "ti,am654-secure-proxy", .data = &am654_desc},
+ 	{ /* Sentinel */ }
+ };
++
+ MODULE_DEVICE_TABLE(of, ti_msgmgr_of_match);
+ 
+ static int ti_msgmgr_probe(struct platform_device *pdev)
+@@ -599,6 +751,14 @@ static int ti_msgmgr_probe(struct platform_device *pdev)
+ 	if (IS_ERR(inst->queue_state_debug_region))
+ 		return PTR_ERR(inst->queue_state_debug_region);
+ 
++	if (desc->is_sproxy) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						   desc->ctrl_region_name);
++		inst->queue_ctrl_region = devm_ioremap_resource(dev, res);
++		if (IS_ERR(inst->queue_ctrl_region))
++			return PTR_ERR(inst->queue_ctrl_region);
++	}
++
+ 	dev_dbg(dev, "proxy region=%p, queue_state=%p\n",
+ 		inst->queue_proxy_region, inst->queue_state_debug_region);
+ 
+@@ -620,12 +780,29 @@ static int ti_msgmgr_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	inst->chans = chans;
+ 
+-	for (i = 0, queue_desc = desc->valid_queues;
+-	     i < queue_count; i++, qinst++, chans++, queue_desc++) {
+-		ret = ti_msgmgr_queue_setup(i, dev, np, inst,
+-					    desc, queue_desc, qinst, chans);
+-		if (ret)
+-			return ret;
++	if (desc->is_sproxy) {
++		struct ti_msgmgr_valid_queue_desc sproxy_desc;
++
++		/* All proxies may be valid in Secure Proxy instance */
++		for (i = 0; i < queue_count; i++, qinst++, chans++) {
++			sproxy_desc.queue_id = 0;
++			sproxy_desc.proxy_id = i;
++			ret = ti_msgmgr_queue_setup(i, dev, np, inst,
++						    desc, &sproxy_desc, qinst,
++						    chans);
++			if (ret)
++				return ret;
++		}
++	} else {
++		/* Only Some proxies are valid in Message Manager */
++		for (i = 0, queue_desc = desc->valid_queues;
++		     i < queue_count; i++, qinst++, chans++, queue_desc++) {
++			ret = ti_msgmgr_queue_setup(i, dev, np, inst,
++						    desc, queue_desc, qinst,
++						    chans);
++			if (ret)
++				return ret;
++		}
+ 	}
+ 
+ 	mbox = &inst->mbox;
 -- 
 2.15.1
 
