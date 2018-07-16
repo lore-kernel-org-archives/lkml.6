@@ -2,115 +2,99 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1FFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E45ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0F5F2098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:01:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0F5F2098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F5952098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:01:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PJH/my7L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F5952098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbeGPK15 (ORCPT
+        id S1730710AbeGPK2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:27:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57130 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728343AbeGPK14 (ORCPT
+        Mon, 16 Jul 2018 06:28:06 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52407 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728343AbeGPK2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:27:56 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6G9xPIO125340
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 06:01:17 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k8qacvvk6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 06:01:17 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
-        Mon, 16 Jul 2018 11:01:15 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 16 Jul 2018 11:01:14 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6GA1CWn45547568
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Jul 2018 10:01:12 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 113EB52057;
-        Mon, 16 Jul 2018 13:01:31 +0100 (BST)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id C32AC52063;
-        Mon, 16 Jul 2018 13:01:30 +0100 (BST)
-From:   Ursula Braun <ubraun@linux.ibm.com>
-To:     davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        raspl@linux.ibm.com, linux-kernel@vger.kernel.org,
-        eric.dumazet@gmail.com, lifeasageek@gmail.com
-Subject: [PATCH net 1/4] net/smc: take sock lock in smc_ioctl()
-Date:   Mon, 16 Jul 2018 12:01:01 +0200
-X-Mailer: git-send-email 2.16.4
-X-TM-AS-GCONF: 00
-x-cbid: 18071610-4275-0000-0000-0000029973EE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071610-4276-0000-0000-000037A1861F
-Message-Id: <20180716100101.79272-1-ubraun@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-16_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=707 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807160118
+        Mon, 16 Jul 2018 06:28:06 -0400
+Received: by mail-it0-f66.google.com with SMTP id p4-v6so20004062itf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 03:01:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ytCXDJ5cA1fpKfx69kXxfPQrxzXcVx3fvZmWr/KCvbE=;
+        b=PJH/my7Ll9OkLBdCBhkShrlxYEMXSENkxuiSsfWHFejBCtbcqGlx3Ajf4Mi7GXSVmO
+         4Fr9sFIARKJKvUt6K6PpSpfMHkkMNaO4HUzSa7vDljqb+Pl9ETwEwDI6lzp9mtVkfcRN
+         Q5J+dxuDBr+m1+3PyYD92dJGJ6RMxvYx5w+E4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ytCXDJ5cA1fpKfx69kXxfPQrxzXcVx3fvZmWr/KCvbE=;
+        b=l7531zIFxWvBZDCy5P07SB0ucKPC5X/oq7X2TMhDxmnCxcQrGt87rQ7FQ0nUi53mEq
+         7FOlix9CPI0XuDX/OC7o+2hCk5TkgewAwukPE47nKu6o/Or7Fm3aylktBVu/BZDwbwYr
+         GND9PIJ7ktxqdNKEPpRK8OZeylDAU57tsILfwcg3/svZgwwlVf6QcBP6SyTyrv/cWYwh
+         Hr3T2iIbXXDoEUXR/nUA6MkkTLj4Uix1PKlk2KIzp0TlvKRId4egVdNejqMG7d19R6Z8
+         UrKWFrVIxX0lqZX+aTkupCJkhABZDWCcZ8dtNKkFfkZ3qMujdYBkqYFj8XicKOycpzLn
+         PHcg==
+X-Gm-Message-State: AOUpUlHCTZt7fjrUc/cQ85IQ3RqsQh3fHpKHNbRJJ9XjcMUV+HdHYwHt
+        o2qPsKwQS+2HelMgfcvPso4rfnQffYxzVHn5HbfClg==
+X-Google-Smtp-Source: AAOMgpfOmyykKs9eyySI0mrkuywKrt4V8wRRkr3wEfpT1VUbGZkO4E5clQxk/ULo7rIpNpjypt6vezQMBhOm5oi4OCA=
+X-Received: by 2002:a24:1c09:: with SMTP id c9-v6mr12672089itc.38.1531735287706;
+ Mon, 16 Jul 2018 03:01:27 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 03:01:27
+ -0700 (PDT)
+In-Reply-To: <CA+55aFxONTOE8A+Mm=V2mieqnJ=Zypvu+NJeede2aR7kLu5SMA@mail.gmail.com>
+References: <1530601587-160436-1-git-send-email-xiaqing17@hisilicon.com>
+ <CAPDyKFrPw63KD5mESDmm2pya6bsz01jHiKguMP1GPhWDDZ644Q@mail.gmail.com> <CA+55aFxONTOE8A+Mm=V2mieqnJ=Zypvu+NJeede2aR7kLu5SMA@mail.gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 16 Jul 2018 12:01:27 +0200
+Message-ID: <CAPDyKFoh8STtMC-5jOy+1xuWf=dBENbZJ9GCkYT0=-eRFNMzAw@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: dw_mmc: fix card threshold control configuration
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Qing Xia <xiaqing17@hisilicon.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Evgeniy Didin <Evgeniy.Didin@synopsys.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ursula Braun <ursula.braun@linux.ibm.com>
+On 15 July 2018 at 22:31, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> On Tue, Jul 3, 2018 at 2:00 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>
+>> On 3 July 2018 at 09:06, Qing Xia <xiaqing17@hisilicon.com> wrote:
+>> > From: x00270170 <xiaqing17@hisilicon.com>
+>> >
+>> > Card write threshold control is supposed to be set since controller
+>>> [..]
+>> > Signed-off-by: Qing Xia <xiaqing17@hisilicon.com>
+>>
+>> Thanks, applied/moved to fixes for 4.18!
+>
+> .. and during making my 4.18-rc5 announcement, I saw the odd name in
+> the shortlog.
+>
+> Now Qing Xia is forever attributed as "x00270170". Very odd.
+>
+> Oh well.
 
-SMC ioctl processing requires the sock lock to work properly in
-all thinkable scenarios.
-Problem has been found with RaceFuzzer and fixes:
-   KASAN: null-ptr-deref Read in smc_ioctl
+Apologize, that slipped through, somehow. Will check more closely going forward.
 
-Reported-by: Byoungyoung Lee <lifeasageek@gmail.com>
-Reported-by: syzbot+35b2c5aa76fd398b9fd4@syzkaller.appspotmail.com
-Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
----
- net/smc/af_smc.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index 5334157f5065..a4381b38a521 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -1524,6 +1524,7 @@ static int smc_ioctl(struct socket *sock, unsigned int cmd,
- 			return -EBADF;
- 		return smc->clcsock->ops->ioctl(smc->clcsock, cmd, arg);
- 	}
-+	lock_sock(&smc->sk);
- 	switch (cmd) {
- 	case SIOCINQ: /* same as FIONREAD */
- 		if (smc->sk.sk_state == SMC_LISTEN)
-@@ -1573,8 +1574,10 @@ static int smc_ioctl(struct socket *sock, unsigned int cmd,
- 		}
- 		break;
- 	default:
-+		release_sock(&smc->sk);
- 		return -ENOIOCTLCMD;
- 	}
-+	release_sock(&smc->sk);
- 
- 	return put_user(answ, (int __user *)arg);
- }
--- 
-2.16.4
-
+Kind regards
+Uffe
