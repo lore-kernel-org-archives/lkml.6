@@ -2,202 +2,131 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4F5AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FB8ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E96208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:44:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E96208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 70B10208C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:48:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B7GzfF/2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70B10208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbeGPQMi (ORCPT
+        id S1729607AbeGPQQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 12:12:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59096 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727715AbeGPQMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 12:12:38 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5EB347C6A9;
-        Mon, 16 Jul 2018 15:44:37 +0000 (UTC)
-Received: from whitewolf.lyude.net.com (ovpn-124-27.rdu2.redhat.com [10.10.124.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 91A222026D65;
-        Mon, 16 Jul 2018 15:44:36 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@gmail.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/dp_helper: Add DP aux channel tracing
-Date:   Mon, 16 Jul 2018 11:44:32 -0400
-Message-Id: <20180716154432.13433-1-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 16 Jul 2018 15:44:37 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 16 Jul 2018 15:44:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Mon, 16 Jul 2018 12:16:10 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:44957 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727532AbeGPQQK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 12:16:10 -0400
+Received: by mail-pl0-f67.google.com with SMTP id m16-v6so15431786pls.11;
+        Mon, 16 Jul 2018 08:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=fP7rOYuQG4G8KhED01V0G5aV8vBJY/MpeTNEFJSl/Pk=;
+        b=B7GzfF/2D1bHlg2deGkTAuOYVD7Pb3ywSmxxgG+/1m5AJP6AFQ1K1gaXM5/gnMHT7f
+         LuJjFD3oYNlTZy1z+sR4rJlWfXfAWHqjpAp7I5gx1J4kKMFlKedQDYxvdTg+JEytVvSU
+         J/MqGI+piEraGNzZx8tcl/MarodJaXovC4n9og25nxcWJ7EqH8EWK2neJGXXaqS/zKNN
+         d0gPOXk2Hm3HdEOHSM6k7/FcLonZoMxEEpRXWs3M2rIPbxYCoUXi6/g7SUQ2L7AnRT9q
+         pwq7TjEnAmKEW+CRq3Le3LZYlGNqrP3rpeSEbOPJWZuiz6wElqct6Mi0TaFhkU66ieIg
+         6XzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fP7rOYuQG4G8KhED01V0G5aV8vBJY/MpeTNEFJSl/Pk=;
+        b=eqo0LTa248KtmOPhNlcMJFwhuuiSCxEnJaKdmo5updQmMZxoidPYRelGDB13h124cJ
+         jfhu0y1NcdnlHwOeHXqc3IIxV0PCXcg83WBOx5B9OU5ObZfPy14I6PHeDzG3jT2DzO6p
+         2zr+G340nEL26XNkTpOoSh7nrZ8nP9RMS64cqOqrLs9WjPSBmShf46IcQUTnsQpnc5Uy
+         wRQ96sYVv+RT4aCefwFL3l0KgSqpPyysDAMkh/ZOQ9tomEeLNYN+CbpTwRW1ly0zQHUc
+         sn8Ss1FU0COUWz/pztFKRxy17ezqkeyBzsacvBwUTR32zv2AOMZOCHIeqRoIKt2YPJis
+         aXLA==
+X-Gm-Message-State: AOUpUlFVkjEICwd8rqFe+w57qfFoIx4u/aurcHYx07XEvuE3zwyRgjCG
+        /3Aro/fCPQW1UnDyFKW5mMa2WQ==
+X-Google-Smtp-Source: AAOMgpd78iC+HZIRypJkio1Wdd2JtPoywnJkQ42QrdBPpzv//P9nDjoPM0qWWAFXHnblB13kmytdVA==
+X-Received: by 2002:a17:902:2983:: with SMTP id h3-v6mr17337636plb.232.1531756089383;
+        Mon, 16 Jul 2018 08:48:09 -0700 (PDT)
+Received: from localhost.localdomain ([240f:34:212d:1:91ac:ef2:819b:3d04])
+        by smtp.gmail.com with ESMTPSA id r64-v6sm6195001pfk.157.2018.07.16.08.48.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 16 Jul 2018 08:48:08 -0700 (PDT)
+From:   Akinobu Mita <akinobu.mita@gmail.com>
+To:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Peter Rosin <peda@axentia.se>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH -next v4 0/3] introduce SCCB regmap
+Date:   Tue, 17 Jul 2018 00:47:47 +0900
+Message-Id: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is something we've needed for a very long time now, as it makes
-debugging issues with faulty MST hubs along with debugging issues
-regarding us interfacing with hubs correctly vastly easier to debug.
-Currently this can actually be done if you trace the i2c devices for DP
-using ftrace but that's significantly less useful for a couple of
-reasons:
+This patchset introduces Serial Camera Control Bus (SCCB) support for
+regmap API and convert ov772x and ov9650 drivers to use it.
 
-- Tracing the i2c devices through ftrace means all of the traces are
-  going to contain a lot of "garbage" output that we're sending over the
-  i2c line. Most of this garbage comes from retrying transactions, DRM's
-  helper library adding extra transactions to work around bad hubs, etc.
-- Having a user set up ftrace so that they can provide debugging
-  information is a lot more difficult then being able to say "just boot
-  with drm.debug=0x100"
-- We can potentially expand upon this tracing in the future to print
-  debugging information in regards to other DP transactions like MST
-  sideband transactions
+This patchset was previously submitted as "introduce SCCB helpers"
+that provides three functions (sccb_is_available, sccb_read_byte, and
+sccb_write_byte).  This time, the helpers are replaced by regmap API,
+but internal code is not much changed from the previous version.
 
-This is inspired by a patch Rob Clark sent to do this a long time back.
-Neither of us could find the patch however, so we both assumed it would
-probably just be easier to rewrite it anyway.
+* v4
+- Introduce SCCB regmap instead of helper functions,
+  suggested by Sebastian Reichel
+- Change ov772x driver to use regmap instead of helper functions
+- Add register access conversion for ov9650 driver
 
-Cc: Rob Clark <robdclark@gmail.com>
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
----
-Changes since v1:
- - Adjust limit in drm_dp_dump_access() and get rid of unneeded "..."
-   suffix (danvet)
- - Remove extraneous whitespace
+* v3
+- Rewrite the helpers based on the code provided by Wolfram
+- Convert ov772x driver to use SCCB helpers
 
-I will be pushing this in just a moment, sending to list so it gets
-updated in patchwork first
+ v2
+- Convert all helpers into static inline functions, and remove C source
+  and Kconfig option.
+- Acquire i2c adapter lock while issuing two requests for sccb_read_byte
 
- drivers/gpu/drm/drm_dp_helper.c | 32 +++++++++++++++++++++++++++-----
- drivers/gpu/drm/drm_drv.c       | 15 ++++++++-------
- include/drm/drm_print.h         |  6 ++++++
- 3 files changed, 41 insertions(+), 12 deletions(-)
+Akinobu Mita (3):
+  regmap: add SCCB support
+  media: ov772x: use SCCB regmap
+  media: ov9650: use SCCB regmap
 
-diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index a7ba602a43a8..03f8f93c61ac 100644
---- a/drivers/gpu/drm/drm_dp_helper.c
-+++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -185,6 +185,20 @@ EXPORT_SYMBOL(drm_dp_bw_code_to_link_rate);
- 
- #define AUX_RETRY_INTERVAL 500 /* us */
- 
-+static inline void
-+drm_dp_dump_access(const struct drm_dp_aux *aux,
-+		   u8 request, uint offset, void *buffer, int ret)
-+{
-+	const char *arrow = request == DP_AUX_NATIVE_READ ? "->" : "<-";
-+
-+	if (ret > 0)
-+		drm_dbg(DRM_UT_DP, "%s: 0x%05x AUX %s (ret=%3d) %*ph\n",
-+			aux->name, offset, arrow, ret, min(ret, 20), buffer);
-+	else
-+		drm_dbg(DRM_UT_DP, "%s: 0x%05x AUX %s (ret=%3d)\n",
-+			aux->name, offset, arrow, ret);
-+}
-+
- /**
-  * DOC: dp helpers
-  *
-@@ -288,10 +302,14 @@ ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
- 	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, DP_DPCD_REV, buffer,
- 				 1);
- 	if (ret != 1)
--		return ret;
-+		goto out;
- 
--	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
--				  size);
-+	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
-+				 size);
-+
-+out:
-+	drm_dp_dump_access(aux, DP_AUX_NATIVE_READ, offset, buffer, ret);
-+	return ret;
- }
- EXPORT_SYMBOL(drm_dp_dpcd_read);
- 
-@@ -312,8 +330,12 @@ EXPORT_SYMBOL(drm_dp_dpcd_read);
- ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
- 			  void *buffer, size_t size)
- {
--	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
--				  size);
-+	int ret;
-+
-+	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
-+				 size);
-+	drm_dp_dump_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer, ret);
-+	return ret;
- }
- EXPORT_SYMBOL(drm_dp_dpcd_write);
- 
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index 7af748ed1c58..e555eb5de275 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -53,13 +53,14 @@ MODULE_AUTHOR("Gareth Hughes, Leif Delgass, José Fonseca, Jon Smirl");
- MODULE_DESCRIPTION("DRM shared core routines");
- MODULE_LICENSE("GPL and additional rights");
- MODULE_PARM_DESC(debug, "Enable debug output, where each bit enables a debug category.\n"
--"\t\tBit 0 (0x01) will enable CORE messages (drm core code)\n"
--"\t\tBit 1 (0x02) will enable DRIVER messages (drm controller code)\n"
--"\t\tBit 2 (0x04) will enable KMS messages (modesetting code)\n"
--"\t\tBit 3 (0x08) will enable PRIME messages (prime code)\n"
--"\t\tBit 4 (0x10) will enable ATOMIC messages (atomic code)\n"
--"\t\tBit 5 (0x20) will enable VBL messages (vblank code)\n"
--"\t\tBit 7 (0x80) will enable LEASE messages (leasing code)");
-+"\t\tBit 0 (0x01)  will enable CORE messages (drm core code)\n"
-+"\t\tBit 1 (0x02)  will enable DRIVER messages (drm controller code)\n"
-+"\t\tBit 2 (0x04)  will enable KMS messages (modesetting code)\n"
-+"\t\tBit 3 (0x08)  will enable PRIME messages (prime code)\n"
-+"\t\tBit 4 (0x10)  will enable ATOMIC messages (atomic code)\n"
-+"\t\tBit 5 (0x20)  will enable VBL messages (vblank code)\n"
-+"\t\tBit 7 (0x80)  will enable LEASE messages (leasing code)\n"
-+"\t\tBit 8 (0x100) will enable DP messages (displayport code)");
- module_param_named(debug, drm_debug, int, 0600);
- 
- static DEFINE_SPINLOCK(drm_minor_lock);
-diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-index e1a46e9991cc..767c90b654c5 100644
---- a/include/drm/drm_print.h
-+++ b/include/drm/drm_print.h
-@@ -195,6 +195,7 @@ static inline struct drm_printer drm_debug_printer(const char *prefix)
- #define DRM_UT_VBL		0x20
- #define DRM_UT_STATE		0x40
- #define DRM_UT_LEASE		0x80
-+#define DRM_UT_DP		0x100
- 
- __printf(3, 4)
- void drm_dev_printk(const struct device *dev, const char *level,
-@@ -307,6 +308,11 @@ void drm_err(const char *format, ...);
- #define DRM_DEBUG_LEASE(fmt, ...)					\
- 	drm_dbg(DRM_UT_LEASE, fmt, ##__VA_ARGS__)
- 
-+#define	DRM_DEV_DEBUG_DP(dev, fmt, ...)					\
-+	drm_dev_dbg(dev, DRM_UT_DP, fmt, ## __VA_ARGS__)
-+#define DRM_DEBUG_DP(dev, fmt, ...)					\
-+	drm_dbg(DRM_UT_DP, fmt, ## __VA_ARGS__)
-+
- #define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, category, fmt, ...)	\
- ({									\
- 	static DEFINE_RATELIMIT_STATE(_rs,				\
+ drivers/base/regmap/Kconfig       |   4 +
+ drivers/base/regmap/Makefile      |   1 +
+ drivers/base/regmap/regmap-sccb.c | 128 +++++++++++++++++++++++++
+ drivers/media/i2c/Kconfig         |   2 +
+ drivers/media/i2c/ov772x.c        | 192 ++++++++++++++++----------------------
+ drivers/media/i2c/ov9650.c        | 157 +++++++++++++++----------------
+ include/linux/regmap.h            |  35 +++++++
+ 7 files changed, 326 insertions(+), 193 deletions(-)
+ create mode 100644 drivers/base/regmap/regmap-sccb.c
+
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Peter Rosin <peda@axentia.se>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 -- 
-2.17.1
+2.7.4
 
