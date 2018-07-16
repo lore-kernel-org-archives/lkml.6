@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF15ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02164ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C6A82075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6A82075B
+	by mail.kernel.org (Postfix) with ESMTP id ADCBB2075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADCBB2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389301AbeGPIKT (ORCPT
+        id S2389317AbeGPIKW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48154 "EHLO
+        Mon, 16 Jul 2018 04:10:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48170 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388522AbeGPIKT (ORCPT
+        with ESMTP id S2388522AbeGPIKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:19 -0400
+        Mon, 16 Jul 2018 04:10:21 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8A0ECA4;
-        Mon, 16 Jul 2018 07:44:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F854CA0;
+        Mon, 16 Jul 2018 07:44:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 16/43] x86/cpufeature: Move some of the scattered feature bits to x86_capability
-Date:   Mon, 16 Jul 2018 09:36:21 +0200
-Message-Id: <20180716073513.570928133@linuxfoundation.org>
+Subject: [PATCH 4.4 17/43] x86/cpufeature: Cleanup get_cpu_cap()
+Date:   Mon, 16 Jul 2018 09:36:22 +0200
+Message-Id: <20180716073513.689921807@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -56,13 +56,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-commit 2ccd71f1b278d450a6f8c8c737c7fe237ca06dc6 upstream
+commit 39c06df4dc10a41de5fe706f4378ee5f09beba73 upstream
 
-Turn the CPUID leafs which are proper CPUID feature bit leafs into
-separate ->x86_capability words.
+Add an enum for the ->x86_capability array indices and cleanup
+get_cpu_cap() by killing some redundant local vars.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: http://lkml.kernel.org/r/1449481182-27541-2-git-send-email-bp@alien8.de
+Link: http://lkml.kernel.org/r/1449481182-27541-3-git-send-email-bp@alien8.de
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
@@ -71,156 +71,179 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/cpufeature.h |   54 ++++++++++++++++++++++----------------
- arch/x86/kernel/cpu/common.c      |    5 +++
- arch/x86/kernel/cpu/scattered.c   |   20 --------------
- 3 files changed, 37 insertions(+), 42 deletions(-)
+ arch/x86/include/asm/cpufeature.h |   20 ++++++++++++++++
+ arch/x86/kernel/cpu/centaur.c     |    2 -
+ arch/x86/kernel/cpu/common.c      |   47 +++++++++++++++++---------------------
+ arch/x86/kernel/cpu/transmeta.c   |    4 +--
+ 4 files changed, 45 insertions(+), 28 deletions(-)
 
 --- a/arch/x86/include/asm/cpufeature.h
 +++ b/arch/x86/include/asm/cpufeature.h
-@@ -12,7 +12,7 @@
- #include <asm/disabled-features.h>
- #endif
+@@ -299,6 +299,26 @@
+ #include <asm/asm.h>
+ #include <linux/bitops.h>
  
--#define NCAPINTS	14	/* N 32-bit words worth of info */
-+#define NCAPINTS	16	/* N 32-bit words worth of info */
- #define NBUGINTS	1	/* N 32-bit bug flags */
- 
- /*
-@@ -181,23 +181,18 @@
- 
- /*
-  * Auxiliary flags: Linux defined - For features scattered in various
-- * CPUID levels like 0x6, 0xA etc, word 7
-+ * CPUID levels like 0x6, 0xA etc, word 7.
-+ *
-+ * Reuse free bits when adding new feature flags!
-  */
--#define X86_FEATURE_IDA		( 7*32+ 0) /* Intel Dynamic Acceleration */
--#define X86_FEATURE_ARAT	( 7*32+ 1) /* Always Running APIC Timer */
++enum cpuid_leafs
++{
++	CPUID_1_EDX		= 0,
++	CPUID_8000_0001_EDX,
++	CPUID_8086_0001_EDX,
++	CPUID_LNX_1,
++	CPUID_1_ECX,
++	CPUID_C000_0001_EDX,
++	CPUID_8000_0001_ECX,
++	CPUID_LNX_2,
++	CPUID_LNX_3,
++	CPUID_7_0_EBX,
++	CPUID_D_1_EAX,
++	CPUID_F_0_EDX,
++	CPUID_F_1_EDX,
++	CPUID_8000_0008_EBX,
++	CPUID_6_EAX,
++	CPUID_8000_000A_EDX,
++};
 +
- #define X86_FEATURE_CPB		( 7*32+ 2) /* AMD Core Performance Boost */
- #define X86_FEATURE_EPB		( 7*32+ 3) /* IA32_ENERGY_PERF_BIAS support */
- #define X86_FEATURE_INVPCID_SINGLE ( 7*32+ 4) /* Effectively INVPCID && CR4.PCIDE=1 */
--#define X86_FEATURE_PLN		( 7*32+ 5) /* Intel Power Limit Notification */
--#define X86_FEATURE_PTS		( 7*32+ 6) /* Intel Package Thermal Status */
--#define X86_FEATURE_DTHERM	( 7*32+ 7) /* Digital Thermal Sensor */
-+
- #define X86_FEATURE_HW_PSTATE	( 7*32+ 8) /* AMD HW-PState */
- #define X86_FEATURE_PROC_FEEDBACK ( 7*32+ 9) /* AMD ProcFeedbackInterface */
--#define X86_FEATURE_HWP		( 7*32+ 10) /* "hwp" Intel HWP */
--#define X86_FEATURE_HWP_NOTIFY	( 7*32+ 11) /* Intel HWP_NOTIFY */
--#define X86_FEATURE_HWP_ACT_WINDOW ( 7*32+ 12) /* Intel HWP_ACT_WINDOW */
--#define X86_FEATURE_HWP_EPP	( 7*32+13) /* Intel HWP_EPP */
--#define X86_FEATURE_HWP_PKG_REQ ( 7*32+14) /* Intel HWP_PKG_REQ */
-+
- #define X86_FEATURE_INTEL_PT	( 7*32+15) /* Intel Processor Trace */
- #define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* Fill RSB on context switches */
- 
-@@ -212,16 +207,7 @@
- #define X86_FEATURE_FLEXPRIORITY ( 8*32+ 2) /* Intel FlexPriority */
- #define X86_FEATURE_EPT         ( 8*32+ 3) /* Intel Extended Page Table */
- #define X86_FEATURE_VPID        ( 8*32+ 4) /* Intel Virtual Processor ID */
--#define X86_FEATURE_NPT		( 8*32+ 5) /* AMD Nested Page Table support */
--#define X86_FEATURE_LBRV	( 8*32+ 6) /* AMD LBR Virtualization support */
--#define X86_FEATURE_SVML	( 8*32+ 7) /* "svm_lock" AMD SVM locking MSR */
--#define X86_FEATURE_NRIPS	( 8*32+ 8) /* "nrip_save" AMD SVM next_rip save */
--#define X86_FEATURE_TSCRATEMSR  ( 8*32+ 9) /* "tsc_scale" AMD TSC scaling support */
--#define X86_FEATURE_VMCBCLEAN   ( 8*32+10) /* "vmcb_clean" AMD VMCB clean bits support */
--#define X86_FEATURE_FLUSHBYASID ( 8*32+11) /* AMD flush-by-ASID support */
--#define X86_FEATURE_DECODEASSISTS ( 8*32+12) /* AMD Decode Assists support */
--#define X86_FEATURE_PAUSEFILTER ( 8*32+13) /* AMD filtered pause intercept */
--#define X86_FEATURE_PFTHRESHOLD ( 8*32+14) /* AMD pause filter threshold */
-+
- #define X86_FEATURE_VMMCALL     ( 8*32+15) /* Prefer vmmcall to vmcall */
- #define X86_FEATURE_XENPV       ( 8*32+16) /* "" Xen paravirtual guest */
- 
-@@ -266,6 +252,30 @@
- /* AMD-defined CPU features, CPUID level 0x80000008 (ebx), word 13 */
- #define X86_FEATURE_CLZERO	(13*32+0) /* CLZERO instruction */
- 
-+/* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
-+#define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
-+#define X86_FEATURE_IDA		(14*32+ 1) /* Intel Dynamic Acceleration */
-+#define X86_FEATURE_ARAT	(14*32+ 2) /* Always Running APIC Timer */
-+#define X86_FEATURE_PLN		(14*32+ 4) /* Intel Power Limit Notification */
-+#define X86_FEATURE_PTS		(14*32+ 6) /* Intel Package Thermal Status */
-+#define X86_FEATURE_HWP		(14*32+ 7) /* Intel Hardware P-states */
-+#define X86_FEATURE_HWP_NOTIFY	(14*32+ 8) /* HWP Notification */
-+#define X86_FEATURE_HWP_ACT_WINDOW (14*32+ 9) /* HWP Activity Window */
-+#define X86_FEATURE_HWP_EPP	(14*32+10) /* HWP Energy Perf. Preference */
-+#define X86_FEATURE_HWP_PKG_REQ (14*32+11) /* HWP Package Level Request */
-+
-+/* AMD SVM Feature Identification, CPUID level 0x8000000a (edx), word 15 */
-+#define X86_FEATURE_NPT		(15*32+ 0) /* Nested Page Table support */
-+#define X86_FEATURE_LBRV	(15*32+ 1) /* LBR Virtualization support */
-+#define X86_FEATURE_SVML	(15*32+ 2) /* "svm_lock" SVM locking MSR */
-+#define X86_FEATURE_NRIPS	(15*32+ 3) /* "nrip_save" SVM next_rip save */
-+#define X86_FEATURE_TSCRATEMSR  (15*32+ 4) /* "tsc_scale" TSC scaling support */
-+#define X86_FEATURE_VMCBCLEAN   (15*32+ 5) /* "vmcb_clean" VMCB clean bits support */
-+#define X86_FEATURE_FLUSHBYASID (15*32+ 6) /* flush-by-ASID support */
-+#define X86_FEATURE_DECODEASSISTS (15*32+ 7) /* Decode Assists support */
-+#define X86_FEATURE_PAUSEFILTER (15*32+10) /* filtered pause intercept */
-+#define X86_FEATURE_PFTHRESHOLD (15*32+12) /* pause filter threshold */
-+
- /*
-  * BUG word(s)
-  */
+ #ifdef CONFIG_X86_FEATURE_NAMES
+ extern const char * const x86_cap_flags[NCAPINTS*32];
+ extern const char * const x86_power_flags[32];
+--- a/arch/x86/kernel/cpu/centaur.c
++++ b/arch/x86/kernel/cpu/centaur.c
+@@ -43,7 +43,7 @@ static void init_c3(struct cpuinfo_x86 *
+ 		/* store Centaur Extended Feature Flags as
+ 		 * word 5 of the CPU capability bit array
+ 		 */
+-		c->x86_capability[5] = cpuid_edx(0xC0000001);
++		c->x86_capability[CPUID_C000_0001_EDX] = cpuid_edx(0xC0000001);
+ 	}
+ #ifdef CONFIG_X86_32
+ 	/* Cyrix III family needs CX8 & PGE explicitly enabled. */
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -695,6 +695,8 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+@@ -676,52 +676,47 @@ static void apply_forced_caps(struct cpu
+ 
+ void get_cpu_cap(struct cpuinfo_x86 *c)
+ {
+-	u32 tfms, xlvl;
+-	u32 ebx;
++	u32 eax, ebx, ecx, edx;
+ 
+ 	/* Intel-defined flags: level 0x00000001 */
+ 	if (c->cpuid_level >= 0x00000001) {
+-		u32 capability, excap;
++		cpuid(0x00000001, &eax, &ebx, &ecx, &edx);
+ 
+-		cpuid(0x00000001, &tfms, &ebx, &excap, &capability);
+-		c->x86_capability[0] = capability;
+-		c->x86_capability[4] = excap;
++		c->x86_capability[CPUID_1_ECX] = ecx;
++		c->x86_capability[CPUID_1_EDX] = edx;
+ 	}
+ 
+ 	/* Additional Intel-defined flags: level 0x00000007 */
+ 	if (c->cpuid_level >= 0x00000007) {
+-		u32 eax, ebx, ecx, edx;
+-
  		cpuid_count(0x00000007, 0, &eax, &ebx, &ecx, &edx);
  
- 		c->x86_capability[9] = ebx;
-+
-+		c->x86_capability[14] = cpuid_eax(0x00000006);
+-		c->x86_capability[9] = ebx;
++		c->x86_capability[CPUID_7_0_EBX] = ebx;
+ 
+-		c->x86_capability[14] = cpuid_eax(0x00000006);
++		c->x86_capability[CPUID_6_EAX] = cpuid_eax(0x00000006);
  	}
  
  	/* Extended state features: level 0x0000000d */
-@@ -756,6 +758,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 	if (c->extended_cpuid_level >= 0x80000007)
+ 	if (c->cpuid_level >= 0x0000000d) {
+-		u32 eax, ebx, ecx, edx;
+-
+ 		cpuid_count(0x0000000d, 1, &eax, &ebx, &ecx, &edx);
+ 
+-		c->x86_capability[10] = eax;
++		c->x86_capability[CPUID_D_1_EAX] = eax;
+ 	}
+ 
+ 	/* Additional Intel-defined flags: level 0x0000000F */
+ 	if (c->cpuid_level >= 0x0000000F) {
+-		u32 eax, ebx, ecx, edx;
+ 
+ 		/* QoS sub-leaf, EAX=0Fh, ECX=0 */
+ 		cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
+-		c->x86_capability[11] = edx;
++		c->x86_capability[CPUID_F_0_EDX] = edx;
++
+ 		if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
+ 			/* will be overridden if occupancy monitoring exists */
+ 			c->x86_cache_max_rmid = ebx;
+ 
+ 			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
+ 			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
+-			c->x86_capability[12] = edx;
++			c->x86_capability[CPUID_F_1_EDX] = edx;
++
+ 			if (cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC)) {
+ 				c->x86_cache_max_rmid = ecx;
+ 				c->x86_cache_occ_scale = ebx;
+@@ -733,22 +728,24 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 	}
+ 
+ 	/* AMD-defined flags: level 0x80000001 */
+-	xlvl = cpuid_eax(0x80000000);
+-	c->extended_cpuid_level = xlvl;
++	eax = cpuid_eax(0x80000000);
++	c->extended_cpuid_level = eax;
++
++	if ((eax & 0xffff0000) == 0x80000000) {
++		if (eax >= 0x80000001) {
++			cpuid(0x80000001, &eax, &ebx, &ecx, &edx);
+ 
+-	if ((xlvl & 0xffff0000) == 0x80000000) {
+-		if (xlvl >= 0x80000001) {
+-			c->x86_capability[1] = cpuid_edx(0x80000001);
+-			c->x86_capability[6] = cpuid_ecx(0x80000001);
++			c->x86_capability[CPUID_8000_0001_ECX] = ecx;
++			c->x86_capability[CPUID_8000_0001_EDX] = edx;
+ 		}
+ 	}
+ 
+ 	if (c->extended_cpuid_level >= 0x80000008) {
+-		u32 eax = cpuid_eax(0x80000008);
++		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
+ 
+ 		c->x86_virt_bits = (eax >> 8) & 0xff;
+ 		c->x86_phys_bits = eax & 0xff;
+-		c->x86_capability[13] = cpuid_ebx(0x80000008);
++		c->x86_capability[CPUID_8000_0008_EBX] = ebx;
+ 	}
+ #ifdef CONFIG_X86_32
+ 	else if (cpu_has(c, X86_FEATURE_PAE) || cpu_has(c, X86_FEATURE_PSE36))
+@@ -759,7 +756,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
  		c->x86_power = cpuid_edx(0x80000007);
  
-+	if (c->extended_cpuid_level >= 0x8000000a)
-+		c->x86_capability[15] = cpuid_edx(0x8000000a);
-+
+ 	if (c->extended_cpuid_level >= 0x8000000a)
+-		c->x86_capability[15] = cpuid_edx(0x8000000a);
++		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
+ 
  	init_scattered_cpuid_features(c);
  }
+--- a/arch/x86/kernel/cpu/transmeta.c
++++ b/arch/x86/kernel/cpu/transmeta.c
+@@ -12,7 +12,7 @@ static void early_init_transmeta(struct
+ 	xlvl = cpuid_eax(0x80860000);
+ 	if ((xlvl & 0xffff0000) == 0x80860000) {
+ 		if (xlvl >= 0x80860001)
+-			c->x86_capability[2] = cpuid_edx(0x80860001);
++			c->x86_capability[CPUID_8086_0001_EDX] = cpuid_edx(0x80860001);
+ 	}
+ }
  
---- a/arch/x86/kernel/cpu/scattered.c
-+++ b/arch/x86/kernel/cpu/scattered.c
-@@ -31,32 +31,12 @@ void init_scattered_cpuid_features(struc
- 	const struct cpuid_bit *cb;
+@@ -82,7 +82,7 @@ static void init_transmeta(struct cpuinf
+ 	/* Unhide possibly hidden capability flags */
+ 	rdmsr(0x80860004, cap_mask, uk);
+ 	wrmsr(0x80860004, ~0, uk);
+-	c->x86_capability[0] = cpuid_edx(0x00000001);
++	c->x86_capability[CPUID_1_EDX] = cpuid_edx(0x00000001);
+ 	wrmsr(0x80860004, cap_mask, uk);
  
- 	static const struct cpuid_bit cpuid_bits[] = {
--		{ X86_FEATURE_DTHERM,		CR_EAX, 0, 0x00000006, 0 },
--		{ X86_FEATURE_IDA,		CR_EAX, 1, 0x00000006, 0 },
--		{ X86_FEATURE_ARAT,		CR_EAX, 2, 0x00000006, 0 },
--		{ X86_FEATURE_PLN,		CR_EAX, 4, 0x00000006, 0 },
--		{ X86_FEATURE_PTS,		CR_EAX, 6, 0x00000006, 0 },
--		{ X86_FEATURE_HWP,		CR_EAX, 7, 0x00000006, 0 },
--		{ X86_FEATURE_HWP_NOTIFY,	CR_EAX, 8, 0x00000006, 0 },
--		{ X86_FEATURE_HWP_ACT_WINDOW,	CR_EAX, 9, 0x00000006, 0 },
--		{ X86_FEATURE_HWP_EPP,		CR_EAX,10, 0x00000006, 0 },
--		{ X86_FEATURE_HWP_PKG_REQ,	CR_EAX,11, 0x00000006, 0 },
- 		{ X86_FEATURE_INTEL_PT,		CR_EBX,25, 0x00000007, 0 },
- 		{ X86_FEATURE_APERFMPERF,	CR_ECX, 0, 0x00000006, 0 },
- 		{ X86_FEATURE_EPB,		CR_ECX, 3, 0x00000006, 0 },
- 		{ X86_FEATURE_HW_PSTATE,	CR_EDX, 7, 0x80000007, 0 },
- 		{ X86_FEATURE_CPB,		CR_EDX, 9, 0x80000007, 0 },
- 		{ X86_FEATURE_PROC_FEEDBACK,	CR_EDX,11, 0x80000007, 0 },
--		{ X86_FEATURE_NPT,		CR_EDX, 0, 0x8000000a, 0 },
--		{ X86_FEATURE_LBRV,		CR_EDX, 1, 0x8000000a, 0 },
--		{ X86_FEATURE_SVML,		CR_EDX, 2, 0x8000000a, 0 },
--		{ X86_FEATURE_NRIPS,		CR_EDX, 3, 0x8000000a, 0 },
--		{ X86_FEATURE_TSCRATEMSR,	CR_EDX, 4, 0x8000000a, 0 },
--		{ X86_FEATURE_VMCBCLEAN,	CR_EDX, 5, 0x8000000a, 0 },
--		{ X86_FEATURE_FLUSHBYASID,	CR_EDX, 6, 0x8000000a, 0 },
--		{ X86_FEATURE_DECODEASSISTS,	CR_EDX, 7, 0x8000000a, 0 },
--		{ X86_FEATURE_PAUSEFILTER,	CR_EDX,10, 0x8000000a, 0 },
--		{ X86_FEATURE_PFTHRESHOLD,	CR_EDX,12, 0x8000000a, 0 },
- 		{ 0, 0, 0, 0, 0 }
- 	};
- 
+ 	/* All Transmeta CPUs have a constant TSC */
 
 
