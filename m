@@ -2,84 +2,79 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6BBECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 04:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 768C2ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 04:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57AFB2086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 04:22:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57AFB2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 02ABF208E7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 04:26:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9SpB93Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02ABF208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbeGPErh (ORCPT
+        id S1727343AbeGPEwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 00:47:37 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:16018 "EHLO mxhk.zte.com.cn"
+        Mon, 16 Jul 2018 00:52:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726811AbeGPErh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 00:47:37 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id DBE1357C184BBA45FAF7;
-        Mon, 16 Jul 2018 12:06:37 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w6G46ZE0071034;
-        Mon, 16 Jul 2018 12:06:35 +0800 (GMT-8)
-        (envelope-from jiang.biao2@zte.com.cn)
-Received: from localhost.localdomain ([10.75.10.200])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018071612063671-486044 ;
-          Mon, 16 Jul 2018 12:06:36 +0800 
-From:   Jiang Biao <jiang.biao2@zte.com.cn>
-To:     tglx@linutronix.de, mingo@redhat.com
-Cc:     dave.hansen@linux.intel.com, luto@kernel.org, hpa@zytor.com,
-        x86@kernel.org, albcamus@gmail.com, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, jiang.biao2@zte.com.cn
-Subject: [PATCH 2/5] x86/pti: check the return value of pti_user_pagetable_walk_pmd
-Date:   Mon, 16 Jul 2018 12:03:37 +0800
-Message-Id: <1531713820-24544-3-git-send-email-jiang.biao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1531713820-24544-1-git-send-email-jiang.biao2@zte.com.cn>
-References: <1531713820-24544-1-git-send-email-jiang.biao2@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-07-16 12:06:36,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-07-16 12:06:34,
-        Serialize complete at 2018-07-16 12:06:34
-X-MAIL: mse01.zte.com.cn w6G46ZE0071034
+        id S1725848AbeGPEwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 00:52:19 -0400
+Received: from localhost (unknown [122.178.242.94])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 014AA2075C;
+        Mon, 16 Jul 2018 04:26:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531715212;
+        bh=MZ9yeJJKab2CMM5G1EgqI1i8GQaed6UEVMRZM6clYF4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S9SpB93Q2a15zHG6XcjLkrHYvnAtcGxx+laJoLBwS8vYMQmICpVq2bzdJWw+C3sKy
+         pXIb5cyICJR6UHGL6O0sDliksppT5bG22CTNHCfuxX8zVPa1LUQYFjP+p1El54tu1c
+         ja56K2Fj9kpsWaH1K1ubuo87Ix7Wcz+XVK9QHEXE=
+Date:   Mon, 16 Jul 2018 09:56:43 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com,
+        alsa-devel@alsa-project.org, perex@perex.cz, tiwai@suse.com,
+        linux-kernel@vger.kernel.org, rohitkr@codeaurora.org,
+        bgoswami@codeaurora.org
+Subject: Re: [PATCH v2 0/5] ASoC: core: add support to card re-bind using
+ component framework
+Message-ID: <20180716042643.GA3219@vkoul-mobl>
+References: <20180713153632.32511-1-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180713153632.32511-1-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pti_user_pagetable_walk_pmd() may return NULL, we should check the
-return value in pti_user_pagetable_walk_pte() to avoid NULL pointer
-dereference like it is checked in pti_clone_pmds().
+On 13-07-18, 16:36, Srinivas Kandagatla wrote:
+> During discussion regarding card re-binding when components unregister
+> and register back at https://lkml.org/lkml/2018/7/9/785 it was suggested
+> that component framework can be added into core to provide this feature.
+> 
+> With this new changes the card will re-bind once the dependent component
+> re-registers after unregistering. This works based on the match done
+> from component name using component framework.
+> 
+> I have tested this patch with qdsp start-stop and module-load-unload usecase
+> for more than 10000 times in loop on Qcom platforms.
 
-Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
----
- arch/x86/mm/pti.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>  6 files changed, 89 insertions(+), 156 deletions(-)
 
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index be9e5bc..bb6f608 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -239,8 +239,10 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
- static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
- {
- 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
--	pmd_t *pmd = pti_user_pagetable_walk_pmd(address);
- 	pte_t *pte;
-+	pmd_t *pmd = pti_user_pagetable_walk_pmd(address);
-+	if (WARN_ON(!pmd))
-+		return NULL;
- 
- 	/* We can't do anything sensible if we hit a large mapping. */
- 	if (pmd_large(*pmd)) {
+Looks good to me with a nice diff stat.
+
+FWIW:
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+
 -- 
-2.7.4
-
+~Vinod
