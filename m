@@ -2,143 +2,96 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F4BECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB5CECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC4D208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC4D208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AF22208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NL8c10aJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF22208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729228AbeGPRlm (ORCPT
+        id S1729612AbeGPRmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 13:41:42 -0400
-Received: from mga14.intel.com ([192.55.52.115]:5539 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727652AbeGPRlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 13:41:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:13:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,362,1526367600"; 
-   d="scan'208";a="245695082"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga005.fm.intel.com with ESMTP; 16 Jul 2018 10:10:35 -0700
-Subject: [PATCH v2 03/14] mm: Teach memmap_init_zone() to initialize
- ZONE_DEVICE pages
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        vishal.l.verma@intel.com, linux-mm@kvack.org, jack@suse.cz,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Date:   Mon, 16 Jul 2018 10:00:37 -0700
-Message-ID: <153176043742.12695.12733023097134464039.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Mon, 16 Jul 2018 13:42:14 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:34592 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727652AbeGPRmO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 13:42:14 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6GHDXFx006659;
+        Mon, 16 Jul 2018 12:13:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531761213;
+        bh=DOrv5+vHb5fHcjc6ln4J5DOq6NdM3TWEvT1YcWhq8mY=;
+        h=From:To:CC:Subject:Date;
+        b=NL8c10aJ5DO1r3Q7/exriNqqS71dqVRoKrFWgH4SnzPcrmKNGSKwGi+eucR4Gcu0J
+         WSipo6fF3yTH5THfxGnDG3MVtlZfR1jMFDEQAkF9O13Rx0514Jwe7eX24BXN3feXxN
+         HT01iYRSpzVSulFUbIJniOMYqQ7hieOvO5eIu4BE=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GHDXBU006587;
+        Mon, 16 Jul 2018 12:13:33 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 16
+ Jul 2018 12:13:32 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 16 Jul 2018 12:13:32 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GHDWN4027924;
+        Mon, 16 Jul 2018 12:13:32 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>
+CC:     Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <geert@linux-m68k.org>
+Subject: [PATCH V2 0/2] firmware: ti_sci: Add host-id as an optional parameter
+Date:   Mon, 16 Jul 2018 12:13:26 -0500
+Message-ID: <20180716171328.11674-1-nm@ti.com>
+X-Mailer: git-send-email 2.15.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than run a loop over the freshly initialized pages in
-devm_memremap_pages() *after* arch_add_memory() returns, teach
-memmap_init_zone() to return the pages fully initialized. This is in
-preparation for multi-threading page initialization work, but it also
-has some straight line performance benefits to not incur another loop of
-cache misses across a large (100s of GBs to TBs) address range.
+Please find attached series to enable host-id as an optional dt property.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- kernel/memremap.c |   16 +---------------
- mm/page_alloc.c   |   19 +++++++++++++++++++
- 2 files changed, 20 insertions(+), 15 deletions(-)
+This is a minor update to V1 -> Mostly to pick up Greet's feedback and Rob's Ack.
 
-diff --git a/kernel/memremap.c b/kernel/memremap.c
-index b861fe909932..85e4a7c576b2 100644
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -173,8 +173,8 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap,
- 	struct vmem_altmap *altmap = pgmap->altmap_valid ?
- 			&pgmap->altmap : NULL;
- 	struct resource *res = &pgmap->res;
--	unsigned long pfn, pgoff, order;
- 	pgprot_t pgprot = PAGE_KERNEL;
-+	unsigned long pgoff, order;
- 	int error, nid, is_ram;
- 
- 	if (!pgmap->ref || !kill)
-@@ -251,20 +251,6 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap,
- 	if (error)
- 		goto err_add_memory;
- 
--	for_each_device_pfn(pfn, pgmap) {
--		struct page *page = pfn_to_page(pfn);
--
--		/*
--		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
--		 * pointer.  It is a bug if a ZONE_DEVICE page is ever
--		 * freed or placed on a driver-private list.  Seed the
--		 * storage with LIST_POISON* values.
--		 */
--		list_del(&page->lru);
--		page->pgmap = pgmap;
--		percpu_ref_get(pgmap->ref);
--	}
--
- 	pgmap->kill = kill;
- 	error = devm_add_action_or_reset(dev, devm_memremap_pages_release,
- 			pgmap);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index f83682ef006e..fb45cfeb4a50 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5548,6 +5548,25 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
- 			cond_resched();
- 		}
-+
-+		if (is_zone_device_page(page)) {
-+			if (WARN_ON_ONCE(!pgmap))
-+				continue;
-+
-+			/* skip invalid device pages */
-+			if (altmap && (pfn < (altmap->base_pfn
-+						+ vmem_altmap_offset(altmap))))
-+				continue;
-+			/*
-+			 * ZONE_DEVICE pages union ->lru with a ->pgmap back
-+			 * pointer.  It is a bug if a ZONE_DEVICE page is ever
-+			 * freed or placed on a driver-private list.  Seed the
-+			 * storage with poison.
-+			 */
-+			page->lru.prev = LIST_POISON2;
-+			page->pgmap = pgmap;
-+			percpu_ref_get(pgmap->ref);
-+		}
- 	}
- }
- 
+V1: https://patchwork.ozlabs.org/cover/931822/
+
+The series is based on v4.18-rc1 and is available here:
+https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.18-rc1/k3-1-am6-tisci
+
+Consolidated all patches (including all series) are available here:
+https://github.com/nmenon/linux-2.6-playground/commits/upstream/v4.18-rc1/k3-am6-integ
+
+Full Boot log (integrated of all series for AM654) is available here:
+   https://pastebin.ubuntu.com/p/bBFmnzYtCd/
+
+Nishanth Menon (2):
+  Documentation: dt: keystone: ti-sci: Add optional host-id parameter
+  firmware: ti_sci: Provide host-id as an optional dt parameter
+
+ .../devicetree/bindings/arm/keystone/ti,sci.txt    |  4 ++++
+ drivers/firmware/ti_sci.c                          | 24 ++++++++++++++++++----
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+-- 
+2.15.1
 
