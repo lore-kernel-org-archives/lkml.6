@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AD5ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB585ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B087C20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B087C20864
+	by mail.kernel.org (Postfix) with ESMTP id AD70D208FE
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD70D208FE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388167AbeGPIGT (ORCPT
+        id S2388203AbeGPIGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:06:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47308 "EHLO
+        Mon, 16 Jul 2018 04:06:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47318 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729810AbeGPIGT (ORCPT
+        with ESMTP id S2388193AbeGPIGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:06:19 -0400
+        Mon, 16 Jul 2018 04:06:25 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E650CCA4;
-        Mon, 16 Jul 2018 07:40:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DB818C03;
+        Mon, 16 Jul 2018 07:40:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 19/54] USB: serial: mos7840: fix status-register error handling
-Date:   Mon, 16 Jul 2018 09:35:16 +0200
-Message-Id: <20180716073454.399908493@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH 4.14 21/54] xhci: xhci-mem: off by one in xhci_stream_id_to_ring()
+Date:   Mon, 16 Jul 2018 09:35:18 +0200
+Message-Id: <20180716073454.821150973@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -49,34 +49,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 794744abfffef8b1f3c0c8a4896177d6d13d653d upstream.
+commit 313db3d6488bb03b61b99de9dbca061f1fd838e1 upstream.
 
-Add missing transfer-length sanity check to the status-register
-completion handler to avoid leaking bits of uninitialised slab data to
-user space.
+The > should be >= here so that we don't read one element beyond the end
+of the ep->stream_info->stream_rings[] array.
 
-Fixes: 3f5429746d91 ("USB: Moschip 7840 USB-Serial Driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.19
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: e9df17eb1408 ("USB: xhci: Correct assumptions about number of rings per endpoint.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/mos7840.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/host/xhci-mem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/mos7840.c
-+++ b/drivers/usb/serial/mos7840.c
-@@ -481,6 +481,9 @@ static void mos7840_control_callback(str
- 	}
+--- a/drivers/usb/host/xhci-mem.c
++++ b/drivers/usb/host/xhci-mem.c
+@@ -604,7 +604,7 @@ struct xhci_ring *xhci_stream_id_to_ring
+ 	if (!ep->stream_info)
+ 		return NULL;
  
- 	dev_dbg(dev, "%s urb buffer size is %d\n", __func__, urb->actual_length);
-+	if (urb->actual_length < 1)
-+		goto out;
-+
- 	dev_dbg(dev, "%s mos7840_port->MsrLsr is %d port %d\n", __func__,
- 		mos7840_port->MsrLsr, mos7840_port->port_num);
- 	data = urb->transfer_buffer;
+-	if (stream_id > ep->stream_info->num_streams)
++	if (stream_id >= ep->stream_info->num_streams)
+ 		return NULL;
+ 	return ep->stream_info->stream_rings[stream_id];
+ }
 
 
