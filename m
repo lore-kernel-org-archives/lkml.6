@@ -2,909 +2,149 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5190ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E69ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C2D7208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFAC520877
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:05:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyG7IJq0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C2D7208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhC0yavg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFAC520877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbeGPPcy (ORCPT
+        id S1729607AbeGPPdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:32:54 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38959 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727342AbeGPPcy (ORCPT
+        Mon, 16 Jul 2018 11:33:45 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43870 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727342AbeGPPdp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:32:54 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w14-v6so30227127eds.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 08:05:01 -0700 (PDT)
+        Mon, 16 Jul 2018 11:33:45 -0400
+Received: by mail-ed1-f67.google.com with SMTP id b20-v6so4687554edt.10
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 08:05:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=sKC+tVLujk7sH9vJt7Q9+v/ycHg5dsHhr3u1heIQxTQ=;
-        b=RyG7IJq01/h0/urP07zaN1jFaCciRUMvyQL8oxeMarQooYD4hMXqJ69KWCgkzxhFaj
-         lOjO2fS99aQWZ1bdHNuh9P7dSCftsx34YmFRmTUIwstlsIuyQQjPTFi7pddG5aJxXbVD
-         u53QllNGSndNSHLxRRM1Enw1bLCUaB2UminVJ235TXTEHdDnsITBT3e48vNI8m1u9X4M
-         FoHzbKMhNnCEM+IETQZP8WXP33x8gf1dn1cZxz6KOO9BedR2C0ifaK/C3e4uqffGY96v
-         YGI/I7cbFNOEFxfvaIyQSxfDWpn1R7HAj7P/gsxLqEWG6VtLPci5IuBRIZHc2Vrtmdbl
-         gm+w==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zBmkILqKihgkRZVX3+qLNdQ1ZzqWv0eU3DJ/7Ud1jAI=;
+        b=bhC0yavgO7Wqu2SQ1V6wUqicoZPdIYMHCOs2lVRhkXEbkKxqryT7lmO5cX7XL9rJ9h
+         N0kvTYUkKeke7UyLwsu5rWU7xeKOPHxfw1Kas+HTnIZ4XKulkqTAbcxJHA+3A3OJrS6t
+         WQ8v1dkTPwpqvFpYOwVzf4C05f+vA+HLGXjWE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sKC+tVLujk7sH9vJt7Q9+v/ycHg5dsHhr3u1heIQxTQ=;
-        b=Eq0srqIouFzKM+ylMOk91re9XwOI4fepya6m1dQSChVr39a3EJ7pDKKCOa6TxQJ2+t
-         Wf7vdbGKGJ8NlMKx7C6tj89JdP9ejqt/hVBUD5mdaEglnLxNpgSjk1GkheuXs7Psgrir
-         UYemUZWFR0LAGTltfo+beCvmgeyouTovmqObEjDQsyDBaA0vtvD3Ga87Zvb7pLsMcM0o
-         j1mWS2DLWFeopf8LlN3nak6GIK6Ntv5d7dqpncFjNXl2XO2DM01afHn2VObCmIHnrzQu
-         LWr3e1y90sOooeIctSKY00BnLnGn5efkFSSmDXinc/vmFCaO3dhDgWCS8f+HcFHTKYu2
-         3JOQ==
-X-Gm-Message-State: AOUpUlGgrv+h5D0ZgUWBIjEzgDiZ9hTRlJ/6+mvtOZrz5GqamOjApBHa
-        jtxRE/G/0ENnlD/g+mXAfjX0lts/
-X-Google-Smtp-Source: AAOMgpesakf1hLvRv11sviA8VskKT9G3iAVZh5waC8G6Q/2oHqmcsEfh2OSabFIwIZve+lzN9+zj4A==
-X-Received: by 2002:a50:aa43:: with SMTP id p3-v6mr17753936edc.233.1531753500857;
-        Mon, 16 Jul 2018 08:05:00 -0700 (PDT)
-Received: from arch.localdomain (x4db296c4.dyn.telefonica.de. [77.178.150.196])
-        by smtp.gmail.com with ESMTPSA id l89-v6sm9367621ede.13.2018.07.16.08.04.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 08:05:00 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: remove blank lines
-Date:   Mon, 16 Jul 2018 17:04:49 +0200
-Message-Id: <20180716150449.15449-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zBmkILqKihgkRZVX3+qLNdQ1ZzqWv0eU3DJ/7Ud1jAI=;
+        b=kaaAk2/vNh5GNA1oTFM56RHDac8hJkVuHFua6onHczZufR3p2qvlHiX/OCX0nD+pwg
+         lB79mlmKugN1qDvUOQYCNY2k8sp3C4+3TqUadlDKZLYsQEha4rGVYKh4j8INHFoNF7BM
+         v5BGw/HoDOJheDNXecNqfQ7yTTLtUnTosrvPXBsTlVySl32DxfvHy+lbO+lAag6sKQDP
+         gHbfBg8ezDIqruUzmS1RHoYWX5R6+2/qMFFGlV6eKwykZG6agax+Z/pICH180ddQrAq5
+         nKHl4vOLis1Yfyrsz8dWgk3UA/N9XU06RLmKAhzFUzuPTFfs5HNksrMji3MBE+rlmOjX
+         DK4g==
+X-Gm-Message-State: AOUpUlH3QlrxmLIlELgNEualNf9/eVPqJLXcdrC5qhyWObwZ+i5JLO7O
+        eAO3/of6/nV3s+3qBiAUdDiqrUUsxYhK5VX2c1t0mQ==
+X-Google-Smtp-Source: AAOMgpe9tTbmZkn2Ksalnm/735OFqHbiig/UgC0rx/wS/i0b3TZpdWWY4DY7C3+MuckQoM7MwYK+1qbVKQx3TqjbXEc=
+X-Received: by 2002:a50:b505:: with SMTP id y5-v6mr17186927edd.195.1531753554294;
+ Mon, 16 Jul 2018 08:05:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <1531318599-8840-1-git-send-email-suzuki.poulose@arm.com>
+ <1531318599-8840-7-git-send-email-suzuki.poulose@arm.com> <20180712205740.GA22128@xps15>
+ <cf11b93e-6e57-7309-5364-6c1d00ff8381@arm.com>
+In-Reply-To: <cf11b93e-6e57-7309-5364-6c1d00ff8381@arm.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Mon, 16 Jul 2018 09:05:43 -0600
+Message-ID: <CANLsYkzMoU=9JibeuK6dUrK+umxPEuFaYyEStY5h2p=V5ujBUA@mail.gmail.com>
+Subject: Re: [PATCH 6/6] coresight: etm-perf: Add support for ETR backend
+To:     "Suzuki K. Poulose" <Suzuki.Poulose@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        coresight@lists.linaro.org, Robert Walker <robert.walker@arm.com>,
+        Mike Leach <mike.leach@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unrequired blank lines as reported by checkpatch.
+On Fri, 13 Jul 2018 at 05:23, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+>
+> On 12/07/18 21:57, Mathieu Poirier wrote:
+> > Hi Suzuki,
+> >
+> > On Wed, Jul 11, 2018 at 03:16:39PM +0100, Suzuki K Poulose wrote:
+> >> Add support for using TMC-ETR as backend for ETM perf tracing.
+> >> We use software double buffering at the moment. i.e, the TMC-ETR
+> >> uses a separate buffer than the perf ring buffer. The data is
+> >> copied to the perf ring buffer once a session completes.
+> >>
+> >> The TMC-ETR would try to match the larger of perf ring buffer
+> >> or the ETR buffer size configured via sysfs, scaling down to
+> >> a minimum limit of 1MB.
+> >>
+> >> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >> ---
+> >>   drivers/hwtracing/coresight/coresight-tmc-etr.c | 265 +++++++++++++++++++++++-
+> >>   drivers/hwtracing/coresight/coresight-tmc.h     |   2 +
+> >>   2 files changed, 265 insertions(+), 2 deletions(-)
+>
+> >> +/*
+> >> + * tmc_etr_sync_perf_buffer: Copy the actual trace data from the hardware
+> >> + * buffer to the perf ring buffer.
+> >> + */
+> >> +static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
+> >> +{
+> >> +    long bytes, to_copy;
+> >> +    long pg_idx, pg_offset, src_offset;
+> >> +    unsigned long head = etr_perf->head;
+> >> +    char **dst_pages, *src_buf;
+> >> +    struct etr_buf *etr_buf = etr_perf->etr_buf;
+> >> +
+> >> +    head = PERF_IDX2OFF(etr_perf->head, etr_perf);
+> >
+> > I'm puzzled here.  Since etr_perf->head is set in tmc_etr_set_perf_buffer() to
+> > the value of handle->head, its value is always within the range of the perf ring
+>
+> IIUC, the handle->head is not necessarily guaranteed to be within the aux-ring buffer.
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- .../staging/rtl8188eu/core/rtw_ieee80211.c    |  8 ----
- .../staging/rtl8188eu/core/rtw_ioctl_set.c    | 18 --------
- drivers/staging/rtl8188eu/core/rtw_led.c      |  1 -
- drivers/staging/rtl8188eu/core/rtw_mlme.c     |  5 ---
- drivers/staging/rtl8188eu/core/rtw_mlme_ext.c | 45 -------------------
- drivers/staging/rtl8188eu/core/rtw_pwrctrl.c  |  6 ---
- drivers/staging/rtl8188eu/core/rtw_xmit.c     | 27 -----------
- 7 files changed, 110 deletions(-)
+I just looked at the ETB code and you are correct.
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-index fed33d9acf60..b7188fa5364a 100644
---- a/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_ieee80211.c
-@@ -57,7 +57,6 @@ static u8	WIFI_OFDMRATES[] = {
- 	 IEEE80211_OFDM_RATE_54MB
- 	};
- 
--
- int rtw_get_bit_value_from_ieee_value(u8 val)
- {
- 	unsigned char dot11_rate_table[] = {
-@@ -218,7 +217,6 @@ int rtw_generate_ie(struct registry_priv *pregistrypriv)
- 	struct wlan_bssid_ex *pdev_network = &pregistrypriv->dev_network;
- 	u8 *ie = pdev_network->ies;
- 
--
- 	/* timestamp will be inserted by hardware */
- 	sz += 8;
- 	ie += sz;
-@@ -356,7 +354,6 @@ int rtw_get_wpa2_cipher_suite(u8 *s)
- 	return 0;
- }
- 
--
- int rtw_parse_wpa_ie(u8 *wpa_ie, int wpa_ie_len, int *group_cipher, int *pairwise_cipher, int *is_8021x)
- {
- 	int i, ret = _SUCCESS;
-@@ -369,7 +366,6 @@ int rtw_parse_wpa_ie(u8 *wpa_ie, int wpa_ie_len, int *group_cipher, int *pairwis
- 		return _FAIL;
- 	}
- 
--
- 	if ((*wpa_ie != _WPA_IE_ID_) || (*(wpa_ie + 1) != (u8)(wpa_ie_len - 2)) ||
- 	    (memcmp(wpa_ie + 2, RTW_WPA_OUI_TYPE, WPA_SELECTOR_LEN)))
- 		return _FAIL;
-@@ -379,7 +375,6 @@ int rtw_parse_wpa_ie(u8 *wpa_ie, int wpa_ie_len, int *group_cipher, int *pairwis
- 	pos += 8;
- 	left = wpa_ie_len - 8;
- 
--
- 	/* group_cipher */
- 	if (left >= WPA_SELECTOR_LEN) {
- 		*group_cipher = rtw_get_wpa_cipher_suite(pos);
-@@ -438,7 +433,6 @@ int rtw_parse_wpa2_ie(u8 *rsn_ie, int rsn_ie_len, int *group_cipher, int *pairwi
- 		return _FAIL;
- 	}
- 
--
- 	if ((*rsn_ie != _WPA2_IE_ID_) || (*(rsn_ie + 1) != (u8)(rsn_ie_len - 2)))
- 		return _FAIL;
- 
-@@ -501,7 +495,6 @@ int rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie,
- 	u8 wpa_oui[4] = {0x0, 0x50, 0xf2, 0x01};
- 	uint	cnt;
- 
--
- 	/* Search required WPA or WPA2 IE and copy to sec_ie[] */
- 
- 	cnt = _TIMESTAMP_ + _BEACON_ITERVAL_ + _CAPABILITY_;
-@@ -554,7 +547,6 @@ int rtw_get_sec_ie(u8 *in_ie, uint in_len, u8 *rsn_ie, u16 *rsn_len, u8 *wpa_ie,
- 		}
- 	}
- 
--
- 	return *rsn_len + *wpa_len;
- }
- 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-index 733fefec134d..c040f185074b 100644
---- a/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_ioctl_set.c
-@@ -21,7 +21,6 @@ u8 rtw_do_join(struct adapter *padapter)
- 	struct __queue *queue	= &(pmlmepriv->scanned_queue);
- 	u8 ret = _SUCCESS;
- 
--
- 	spin_lock_bh(&(pmlmepriv->scanned_queue.lock));
- 	phead = get_list_head(queue);
- 	plist = phead->next;
-@@ -115,8 +114,6 @@ u8 rtw_do_join(struct adapter *padapter)
- 	}
- 
- exit:
--
--
- 	return ret;
- }
- 
-@@ -126,7 +123,6 @@ u8 rtw_set_802_11_bssid(struct adapter *padapter, u8 *bssid)
- 	u32 cur_time = 0;
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 
--
- 	DBG_88E_LEVEL(_drv_info_, "set bssid:%pM\n", bssid);
- 
- 	if ((bssid[0] == 0x00 && bssid[1] == 0x00 && bssid[2] == 0x00 &&
-@@ -139,7 +135,6 @@ u8 rtw_set_802_11_bssid(struct adapter *padapter, u8 *bssid)
- 
- 	spin_lock_bh(&pmlmepriv->lock);
- 
--
- 	DBG_88E("Set BSSID under fw_state = 0x%08x\n", get_fwstate(pmlmepriv));
- 	if (check_fwstate(pmlmepriv, _FW_UNDER_SURVEY) == true)
- 		goto handle_tkip_countermeasure;
-@@ -201,7 +196,6 @@ u8 rtw_set_802_11_bssid(struct adapter *padapter, u8 *bssid)
- 	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_,
- 		 ("%s: status=%d\n", __func__, status));
- 
--
- 	return status;
- }
- 
-@@ -213,7 +207,6 @@ u8 rtw_set_802_11_ssid(struct adapter *padapter, struct ndis_802_11_ssid *ssid)
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 	struct wlan_network *pnetwork = &pmlmepriv->cur_network;
- 
--
- 	DBG_88E_LEVEL(_drv_info_, "set ssid [%s] fw_state=0x%08x\n",
- 		      ssid->Ssid, get_fwstate(pmlmepriv));
- 
-@@ -319,7 +312,6 @@ u8 rtw_set_802_11_infrastructure_mode(struct adapter *padapter,
- 	struct	wlan_network	*cur_network = &pmlmepriv->cur_network;
- 	enum ndis_802_11_network_infra *pold_state = &(cur_network->network.InfrastructureMode);
- 
--
- 	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_notice_,
- 		 ("+rtw_set_802_11_infrastructure_mode: old =%d new =%d fw_state = 0x%08x\n",
- 		  *pold_state, networktype, get_fwstate(pmlmepriv)));
-@@ -376,16 +368,13 @@ u8 rtw_set_802_11_infrastructure_mode(struct adapter *padapter,
- 		spin_unlock_bh(&pmlmepriv->lock);
- 	}
- 
--
- 	return true;
- }
- 
--
- u8 rtw_set_802_11_disassociate(struct adapter *padapter)
- {
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
- 
--
- 	spin_lock_bh(&pmlmepriv->lock);
- 
- 	if (check_fwstate(pmlmepriv, _FW_LINKED)) {
-@@ -400,7 +389,6 @@ u8 rtw_set_802_11_disassociate(struct adapter *padapter)
- 
- 	spin_unlock_bh(&pmlmepriv->lock);
- 
--
- 	return true;
- }
- 
-@@ -409,7 +397,6 @@ u8 rtw_set_802_11_bssid_list_scan(struct adapter *padapter, struct ndis_802_11_s
- 	struct	mlme_priv		*pmlmepriv = &padapter->mlmepriv;
- 	u8	res = true;
- 
--
- 	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_err_, ("+%s(), fw_state =%x\n", __func__, get_fwstate(pmlmepriv)));
- 
- 	if (!padapter) {
-@@ -448,8 +435,6 @@ u8 rtw_set_802_11_bssid_list_scan(struct adapter *padapter, struct ndis_802_11_s
- 		spin_unlock_bh(&pmlmepriv->lock);
- 	}
- exit:
--
--
- 	return res;
- }
- 
-@@ -459,7 +444,6 @@ u8 rtw_set_802_11_authentication_mode(struct adapter *padapter, enum ndis_802_11
- 	int res;
- 	u8 ret;
- 
--
- 	RT_TRACE(_module_rtl871x_ioctl_set_c_, _drv_info_, ("set_802_11_auth.mode(): mode =%x\n", authmode));
- 
- 	psecuritypriv->ndisauthtype = authmode;
-@@ -478,7 +462,6 @@ u8 rtw_set_802_11_authentication_mode(struct adapter *padapter, enum ndis_802_11
- 	else
- 		ret = false;
- 
--
- 	return ret;
- }
- 
-@@ -488,7 +471,6 @@ u8 rtw_set_802_11_add_wep(struct adapter *padapter, struct ndis_802_11_wep *wep)
- 	struct security_priv *psecuritypriv = &(padapter->securitypriv);
- 	u8		ret = _SUCCESS;
- 
--
- 	keyid = wep->KeyIndex & 0x3fffffff;
- 
- 	if (keyid >= 4) {
-diff --git a/drivers/staging/rtl8188eu/core/rtw_led.c b/drivers/staging/rtl8188eu/core/rtw_led.c
-index 3e3038bc628e..cbef871a7679 100644
---- a/drivers/staging/rtl8188eu/core/rtw_led.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_led.c
-@@ -69,7 +69,6 @@ void InitLed871x(struct adapter *padapter, struct LED_871x *pLed)
- 	INIT_WORK(&pLed->BlinkWorkItem, BlinkWorkItemCallback);
- }
- 
--
- /*  */
- /*	Description: */
- /*		DeInitialize an LED_871x object. */
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index 5929edcc07aa..80f55937e3be 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -201,7 +201,6 @@ struct wlan_network *rtw_find_network(struct __queue *scanned_queue, u8 *addr)
- 	return pnetwork;
- }
- 
--
- void rtw_free_network_queue(struct adapter *padapter, u8 isfreeall)
- {
- 	struct list_head *phead, *plist;
-@@ -257,7 +256,6 @@ u8 *rtw_get_capability_from_ie(u8 *ie)
- 	return ie + 8 + 2;
- }
- 
--
- u16 rtw_get_capability(struct wlan_bssid_ex *bss)
- {
- 	__le16	val;
-@@ -526,7 +524,6 @@ static int rtw_is_desired_network(struct adapter *adapter, struct wlan_network *
- 			bselected = false;
- 	}
- 
--
- 	if ((desired_encmode != Ndis802_11EncryptionDisabled) && (privacy == 0)) {
- 		DBG_88E("desired_encmode: %d, privacy: %d\n", desired_encmode, privacy);
- 		bselected = false;
-@@ -762,7 +759,6 @@ void rtw_free_assoc_resources_locked(struct adapter *adapter)
- 		rtw_init_bcmc_stainfo(adapter);
- 	}
- 
--
- 	pwlan = rtw_find_network(&pmlmepriv->scanned_queue, tgt_network->network.MacAddress);
- 	if (pwlan)
- 		pwlan->fixed = false;
-@@ -936,7 +932,6 @@ static void rtw_joinbss_update_network(struct adapter *padapter, struct wlan_net
- 		 ("\nfw_state:%x, BSSID:%pM\n",
- 		 get_fwstate(pmlmepriv), pnetwork->network.MacAddress));
- 
--
- 	/*  why not use ptarget_wlan?? */
- 	memcpy(&cur_network->network, &pnetwork->network, pnetwork->network.Length);
- 	/*  some ies in pnetwork is wrong, so we should use ptarget_wlan ies */
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-index f05658c9239e..1115050077e4 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme_ext.c
-@@ -342,7 +342,6 @@ static void issue_beacon(struct adapter *padapter, int timeout_ms)
- 	pframe = (u8 *)(pmgntframe->buf_addr) + TXDESC_OFFSET;
- 	pwlanhdr = (struct ieee80211_hdr *)pframe;
- 
--
- 	fctrl = &pwlanhdr->frame_control;
- 	*(fctrl) = 0;
- 
-@@ -585,7 +584,6 @@ static void issue_probersp(struct adapter *padapter, unsigned char *da)
- 			pframe = rtw_set_ie(pframe, _ERPINFO_IE_, 1, &erpinfo, &pattrib->pktlen);
- 		}
- 
--
- 		/*  EXTERNDED SUPPORTED RATE */
- 		if (rate_len > 8)
- 			pframe = rtw_set_ie(pframe, _EXT_SUPPORTEDRATES_IE_, (rate_len - 8), (cur_network->SupportedRates + 8), &pattrib->pktlen);
-@@ -625,7 +623,6 @@ static int issue_probereq(struct adapter *padapter,
- 	pattrib = &pmgntframe->attrib;
- 	update_mgntframe_attrib(padapter, pattrib);
- 
--
- 	memset(pmgntframe->buf_addr, 0, WLANHDR_OFFSET + TXDESC_OFFSET);
- 
- 	pframe = (u8 *)(pmgntframe->buf_addr) + TXDESC_OFFSET;
-@@ -777,7 +774,6 @@ static void issue_auth(struct adapter *padapter, struct sta_info *psta,
- 	pframe += sizeof(struct ieee80211_hdr_3addr);
- 	pattrib->pktlen = sizeof(struct ieee80211_hdr_3addr);
- 
--
- 	if (psta) {/*  for AP mode */
- #ifdef CONFIG_88EU_AP_MODE
- 
-@@ -787,7 +783,6 @@ static void issue_auth(struct adapter *padapter, struct sta_info *psta,
- 		ether_addr_copy(pwlanhdr->addr3,
- 				myid(&(padapter->eeprompriv)));
- 
--
- 		/*  setting auth algo number */
- 		val16 = (u16)psta->authalg;
- 
-@@ -853,7 +848,6 @@ static void issue_auth(struct adapter *padapter, struct sta_info *psta,
- 		pframe = rtw_set_fixed_ie(pframe, _AUTH_SEQ_NUM_, &le_tmp16,
- 					  &pattrib->pktlen);
- 
--
- 		/*  setting status code... */
- 		le_tmp16 = cpu_to_le16(status);
- 		pframe = rtw_set_fixed_ie(pframe, _STATUS_CODE_, &le_tmp16,
-@@ -882,7 +876,6 @@ static void issue_auth(struct adapter *padapter, struct sta_info *psta,
- 	dump_mgntframe(padapter, pmgntframe);
- }
- 
--
- #ifdef CONFIG_88EU_AP_MODE
- static void issue_asocrsp(struct adapter *padapter, unsigned short status,
- 			  struct sta_info *pstat, int pkt_type)
-@@ -911,7 +904,6 @@ static void issue_asocrsp(struct adapter *padapter, unsigned short status,
- 	pattrib = &pmgntframe->attrib;
- 	update_mgntframe_attrib(padapter, pattrib);
- 
--
- 	memset(pmgntframe->buf_addr, 0, WLANHDR_OFFSET + TXDESC_OFFSET);
- 
- 	pframe = (u8 *)(pmgntframe->buf_addr) + TXDESC_OFFSET;
-@@ -925,7 +917,6 @@ static void issue_asocrsp(struct adapter *padapter, unsigned short status,
- 			myid(&(padapter->eeprompriv)));
- 	ether_addr_copy((void *)GetAddr3Ptr(pwlanhdr), pnetwork->MacAddress);
- 
--
- 	SetSeqNum(pwlanhdr, pmlmeext->mgnt_seq);
- 	pmlmeext->mgnt_seq++;
- 	if ((pkt_type == WIFI_ASSOCRSP) || (pkt_type == WIFI_REASSOCRSP))
-@@ -1115,7 +1106,6 @@ static void issue_assocreq(struct adapter *padapter)
- 		goto exit; /* don't connect to AP if no joint supported rate */
- 	}
- 
--
- 	if (bssrate_len > 8) {
- 		pframe = rtw_set_ie(pframe, _SUPPORTEDRATES_IE_, 8, bssrate, &(pattrib->pktlen));
- 		pframe = rtw_set_ie(pframe, _EXT_SUPPORTEDRATES_IE_, (bssrate_len - 8), (bssrate + 8), &(pattrib->pktlen));
-@@ -1261,7 +1251,6 @@ static int _issue_nulldata(struct adapter *padapter, unsigned char *da,
- 	return ret;
- }
- 
--
- /* when wait_ms > 0 , this function should be called at process context */
- /* da == NULL for station mode */
- int issue_nulldata(struct adapter *padapter, unsigned char *da,
-@@ -1489,7 +1478,6 @@ static int _issue_deauth(struct adapter *padapter, unsigned char *da,
- 
- 	pattrib->last_txcmdsz = pattrib->pktlen;
- 
--
- 	if (wait_ack) {
- 		ret = dump_mgntframe_and_wait_ack(padapter, pmgntframe);
- 	} else {
-@@ -1727,10 +1715,8 @@ static void issue_action_BSSCoexistPacket(struct adapter *padapter)
- 	if (pmlmeinfo->bwmode_updated)
- 		return;
- 
--
- 	DBG_88E("%s\n", __func__);
- 
--
- 	category = RTW_WLAN_CATEGORY_PUBLIC;
- 	action = ACT_PUBLIC_BSSCOEXIST;
- 
-@@ -1764,7 +1750,6 @@ static void issue_action_BSSCoexistPacket(struct adapter *padapter)
- 	pframe = rtw_set_fixed_ie(pframe, 1, &(category), &(pattrib->pktlen));
- 	pframe = rtw_set_fixed_ie(pframe, 1, &(action), &(pattrib->pktlen));
- 
--
- 	/*  */
- 	if (pmlmepriv->num_FortyMHzIntolerant > 0) {
- 		u8 iedata = 0;
-@@ -1774,7 +1759,6 @@ static void issue_action_BSSCoexistPacket(struct adapter *padapter)
- 		pframe = rtw_set_ie(pframe, EID_BSSCoexistence,  1, &iedata, &(pattrib->pktlen));
- 	}
- 
--
- 	/*  */
- 	memset(ICS, 0, sizeof(ICS));
- 	if (pmlmepriv->num_sta_no_ht > 0) {
-@@ -1832,7 +1816,6 @@ static void issue_action_BSSCoexistPacket(struct adapter *padapter)
- 		}
- 	}
- 
--
- 	pattrib->last_txcmdsz = pattrib->pktlen;
- 
- 	dump_mgntframe(padapter, pmgntframe);
-@@ -1935,7 +1918,6 @@ static void site_survey(struct adapter *padapter)
- 		ScanType = (ch->flags & RTW_IEEE80211_CHAN_PASSIVE_SCAN) ? SCAN_PASSIVE : SCAN_ACTIVE;
- 	}
- 
--
- 	if (survey_channel != 0) {
- 		/* PAUSE 4-AC Queue when site_survey */
- 		/* rtw_hal_get_hwreg(padapter, HW_VAR_TXPAUSE, (u8 *)(&val8)); */
-@@ -1979,7 +1961,6 @@ static void site_survey(struct adapter *padapter)
- 
- 		set_survey_timer(pmlmeext, pmlmeext->chan_scan_time);
- 	} else {
--
- 		/*  20100721:Interrupt scan operation here. */
- 		/*  For SW antenna diversity before link, it needs to switch to another antenna and scan again. */
- 		/*  It compares the scan result and select better one to do connection. */
-@@ -2321,7 +2302,6 @@ static void start_clnt_auth(struct adapter *padapter)
- 	pmlmeinfo->link_count = 0;
- 	pmlmeext->retry = 0;
- 
--
- 	/*  Because of AP's not receiving deauth before */
- 	/*  AP may: 1)not response auth or 2)deauth us after link is complete */
- 	/*  issue deauth before issuing auth to deal with the situation */
-@@ -2335,7 +2315,6 @@ static void start_clnt_auth(struct adapter *padapter)
- 	set_link_timer(pmlmeext, REAUTH_TO);
- }
- 
--
- static void start_clnt_assoc(struct adapter *padapter)
- {
- 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
-@@ -2957,7 +2936,6 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 		ie_offset = _REASOCREQ_IE_OFFSET_;
- 	}
- 
--
- 	if (pkt_len < IEEE80211_3ADDR_LEN + ie_offset) {
- 		DBG_88E("handle_assoc(reassoc=%d) - too short payload (len=%lu)"
- 		       "\n", reassoc, (unsigned long)pkt_len);
-@@ -2975,7 +2953,6 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 	left = pkt_len - (IEEE80211_3ADDR_LEN + ie_offset);
- 	pos = pframe + (IEEE80211_3ADDR_LEN + ie_offset);
- 
--
- 	DBG_88E("%s\n", __func__);
- 
- 	/*  check if this stat has been successfully authenticated/assocated */
-@@ -3001,7 +2978,6 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 		goto OnAssocReqFail;
- 	}
- 
--
- 	/*  now we should check all the fields... */
- 	/*  checking SSID */
- 	p = rtw_get_ie(pframe + WLAN_HDR_A3_LEN + ie_offset, _SSID_IE_, &ie_len,
-@@ -3130,7 +3106,6 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 			pstat->flags |= WLAN_STA_MAYBE_WPS;
- 		}
- 
--
- 		/*  AP support WPA/RSN, and sta is going to do WPS, but AP is not ready */
- 		/*  that the selected registrar of AP is _FLASE */
- 		if ((psecuritypriv->wpa_psk > 0) && (pstat->flags & (WLAN_STA_WPS|WLAN_STA_MAYBE_WPS))) {
-@@ -3270,8 +3245,6 @@ static unsigned int OnAssocReq(struct adapter *padapter,
- 	else
- 		pstat->flags &= ~WLAN_STA_SHORT_PREAMBLE;
- 
--
--
- 	if (status != _STATS_SUCCESSFUL_)
- 		goto OnAssocReqFail;
- 
-@@ -3493,7 +3466,6 @@ static unsigned int OnDeAuth(struct adapter *padapter,
- 			associated_clients_update(padapter, updated);
- 		}
- 
--
- 		return _SUCCESS;
- 	} else
- #endif
-@@ -4089,7 +4061,6 @@ int	init_mlme_ext_priv(struct adapter *padapter)
- 	pmlmeext->chan_scan_time = SURVEY_TO;
- 	pmlmeext->mlmeext_init = true;
- 
--
- 	pmlmeext->active_keep_alive_check = true;
- 
- 	return _SUCCESS;
-@@ -4222,7 +4193,6 @@ void report_survey_event(struct adapter *padapter,
- 	pmlmeext = &padapter->mlmeextpriv;
- 	pcmdpriv = &padapter->cmdpriv;
- 
--
- 	pcmd_obj = kzalloc(sizeof(struct cmd_obj), GFP_ATOMIC);
- 	if (!pcmd_obj)
- 		return;
-@@ -4349,10 +4319,8 @@ void report_join_res(struct adapter *padapter, int res)
- 
- 	DBG_88E("%s(%d)\n", __func__, res);
- 
--
- 	rtw_joinbss_event_prehandle(padapter, (u8 *)&pjoinbss_evt->network);
- 
--
- 	rtw_enqueue_cmd(pcmdpriv, pcmd_obj);
- }
- 
-@@ -4398,7 +4366,6 @@ void report_del_sta_event(struct adapter *padapter, unsigned char *MacAddr,
- 	ether_addr_copy((unsigned char *)(&(pdel_sta_evt->macaddr)), MacAddr);
- 	memcpy((unsigned char *)(pdel_sta_evt->rsvd), (unsigned char *)(&reason), 2);
- 
--
- 	psta = rtw_get_stainfo(&padapter->stapriv, MacAddr);
- 	if (psta)
- 		mac_id = (int)psta->mac_id;
-@@ -4457,7 +4424,6 @@ void report_add_sta_event(struct adapter *padapter, unsigned char *MacAddr,
- 	rtw_enqueue_cmd(pcmdpriv, pcmd_obj);
- }
- 
--
- /****************************************************************************
- 
- Following are the event callback functions
-@@ -4502,7 +4468,6 @@ void update_sta_info(struct adapter *padapter, struct sta_info *psta)
- 	if (pmlmepriv->qospriv.qos_option)
- 		psta->qos_option = true;
- 
--
- 	psta->state = _FW_LINKED;
- }
- 
-@@ -4537,7 +4502,6 @@ void mlmeext_joinbss_event_callback(struct adapter *padapter, int join_res)
- 		}
- 	}
- 
--
- 	/* turn on dynamic functions */
- 	Switch_DM_Func(padapter, DYNAMIC_ALL_FUNC_ENABLE, true);
- 
-@@ -4643,7 +4607,6 @@ void mlmeext_sta_del_event_callback(struct adapter *padapter)
- 		/* SelectChannel(padapter, pmlmeext->cur_channel, pmlmeext->cur_ch_offset); */
- 		set_channel_bwmode(padapter, pmlmeext->cur_channel, pmlmeext->cur_ch_offset, pmlmeext->cur_bwmode);
- 
--
- 		flush_all_cam_entry(padapter);
- 
- 		pmlmeinfo->state = WIFI_FW_NULL_STATE;
-@@ -4831,7 +4794,6 @@ void survey_timer_hdl(struct timer_list *t)
- 		rtw_enqueue_cmd(pcmdpriv, ph2c);
- 	}
- 
--
- exit_survey_timer_hdl:
- 	return;
- }
-@@ -4923,7 +4885,6 @@ u8 createbss_hdl(struct adapter *padapter, u8 *pbuf)
- 	struct wlan_bssid_ex *pparm = (struct wlan_bssid_ex *)pbuf;
- 	/* u32	initialgain; */
- 
--
- 	if (pparm->InfrastructureMode == Ndis802_11APMode) {
- #ifdef CONFIG_88EU_AP_MODE
- 
-@@ -5002,7 +4963,6 @@ u8 join_cmd_hdl(struct adapter *padapter, u8 *pbuf)
- 		/* set MSR to nolink -> infra. mode */
- 		Set_MSR(padapter, _HW_STATE_STATION_);
- 
--
- 		rtw_hal_set_hwreg(padapter, HW_VAR_MLME_DISCONNECT, NULL);
- 	}
- 
-@@ -5113,7 +5073,6 @@ u8 disconnect_hdl(struct adapter *padapter, unsigned char *pbuf)
- 		rtw_hal_set_hwreg(padapter, HW_VAR_BCN_FUNC, (u8 *)(&val8));
- 	}
- 
--
- 	/* set MSR to no link state -> infra. mode */
- 	Set_MSR(padapter, _HW_STATE_STATION_);
- 
-@@ -5386,7 +5345,6 @@ u8 set_tx_beacon_cmd(struct adapter *padapter)
- 	u8 res = _SUCCESS;
- 	int len_diff = 0;
- 
--
- 	ph2c = kzalloc(sizeof(struct cmd_obj), GFP_ATOMIC);
- 	if (!ph2c) {
- 		res = _FAIL;
-@@ -5410,10 +5368,7 @@ u8 set_tx_beacon_cmd(struct adapter *padapter)
- 
- 	res = rtw_enqueue_cmd(pcmdpriv, ph2c);
- 
--
- exit:
--
--
- 	return res;
- }
- 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-index 213a10c8576a..5ab6fc22a156 100644
---- a/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_pwrctrl.c
-@@ -17,7 +17,6 @@ static int rtw_hw_suspend(struct adapter *padapter)
- 	struct pwrctrl_priv *pwrpriv = &padapter->pwrctrlpriv;
- 	struct net_device *pnetdev = padapter->pnetdev;
- 
--
- 	if ((!padapter->bup) || (padapter->bDriverStopped) ||
- 	    (padapter->bSurpriseRemoved)) {
- 		DBG_88E("padapter->bup=%d bDriverStopped=%d bSurpriseRemoved = %d\n",
-@@ -79,7 +78,6 @@ static int rtw_hw_resume(struct adapter *padapter)
- 	struct pwrctrl_priv *pwrpriv = &padapter->pwrctrlpriv;
- 	struct net_device *pnetdev = padapter->pnetdev;
- 
--
- 	/* system resume */
- 	DBG_88E("==> %s\n", __func__);
- 	mutex_lock(&pwrpriv->mutex_lock);
-@@ -107,7 +105,6 @@ static int rtw_hw_resume(struct adapter *padapter)
- 
- 	mutex_unlock(&pwrpriv->mutex_lock);
- 
--
- 	return 0;
- error_exit:
- 	DBG_88E("%s, Open net dev failed\n", __func__);
-@@ -162,7 +159,6 @@ int ips_leave(struct adapter *padapter)
- 	int result = _SUCCESS;
- 	int keyid;
- 
--
- 	mutex_lock(&pwrpriv->mutex_lock);
- 
- 	if ((pwrpriv->rf_pwrstate == rf_off) && (!pwrpriv->bips_processing)) {
-@@ -342,7 +338,6 @@ static u8 PS_RDY_CHECK(struct adapter *padapter)
- 	struct pwrctrl_priv	*pwrpriv = &padapter->pwrctrlpriv;
- 	struct mlme_priv	*pmlmepriv = &(padapter->mlmepriv);
- 
--
- 	curr_time = jiffies;
- 	delta_time = curr_time - pwrpriv->DelayLPSLastTimeStamp;
- 
-@@ -412,7 +407,6 @@ s32 LPS_RF_ON_check(struct adapter *padapter, u32 delay_ms)
- 	u8 bAwake = false;
- 	s32 err = 0;
- 
--
- 	start_time = jiffies;
- 	while (1) {
- 		rtw_hal_get_hwreg(padapter, HW_VAR_FWLPS_RF_ON, &bAwake);
-diff --git a/drivers/staging/rtl8188eu/core/rtw_xmit.c b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-index d16a7fa32a25..89843201a338 100644
---- a/drivers/staging/rtl8188eu/core/rtw_xmit.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_xmit.c
-@@ -44,7 +44,6 @@ s32	_rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
- 	u32 max_xmit_extbuf_size = MAX_XMIT_EXTBUF_SZ;
- 	u32 num_xmit_extbuf = NR_XMIT_EXTBUFF;
- 
--
- 	/*  We don't need to memset padapter->XXX to zero, because adapter is allocated by vzalloc(). */
- 
- 	spin_lock_init(&pxmitpriv->lock);
-@@ -200,8 +199,6 @@ s32	_rtw_init_xmit_priv(struct xmit_priv *pxmitpriv, struct adapter *padapter)
- 	rtw_hal_init_xmit_priv(padapter);
- 
- exit:
--
--
- 	return res;
- }
- 
-@@ -585,8 +582,6 @@ static s32 update_attrib(struct adapter *padapter, struct sk_buff *pkt, struct p
- 	update_attrib_phy_info(pattrib, psta);
- 
- exit:
--
--
- 	return res;
- }
- 
-@@ -608,7 +603,6 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
- 	else
- 		stainfo = rtw_get_stainfo(&padapter->stapriv, &pattrib->ra[0]);
- 
--
- 	hw_hdr_offset = TXDESC_SIZE + (pxmitframe->pkt_offset * PACKET_OFFSET_SZ);
- 
- 	if (pattrib->encrypt == _TKIP_) {/* if (psecuritypriv->dot11PrivacyAlgrthm == _TKIP_PRIVACY_) */
-@@ -705,7 +699,6 @@ static s32 xmitframe_addmic(struct adapter *padapter, struct xmit_frame *pxmitfr
- 			}
- 	}
- 
--
- 	return _SUCCESS;
- }
- 
-@@ -713,7 +706,6 @@ static s32 xmitframe_swencrypt(struct adapter *padapter, struct xmit_frame *pxmi
- {
- 	struct	pkt_attrib	 *pattrib = &pxmitframe->attrib;
- 
--
- 	if (pattrib->bswenc) {
- 		RT_TRACE(_module_rtl871x_xmit_c_, _drv_alert_, ("### %s\n", __func__));
- 		switch (pattrib->encrypt) {
-@@ -734,7 +726,6 @@ static s32 xmitframe_swencrypt(struct adapter *padapter, struct xmit_frame *pxmi
- 		RT_TRACE(_module_rtl871x_xmit_c_, _drv_notice_, ("### xmitframe_hwencrypt\n"));
- 	}
- 
--
- 	return _SUCCESS;
- }
- 
-@@ -754,7 +745,6 @@ s32 rtw_make_wlanhdr(struct adapter *padapter, u8 *hdr, struct pkt_attrib *pattr
- 
- 	int bmcst = IS_MCAST(pattrib->ra);
- 
--
- 	if (pattrib->psta) {
- 		psta = pattrib->psta;
- 	} else {
-@@ -1075,8 +1065,6 @@ s32 rtw_xmitframe_coalesce(struct adapter *padapter, struct sk_buff *pkt, struct
- 		pattrib->vcs_mode = NONE_VCS;
- 
- exit:
--
--
- 	return res;
- }
- 
-@@ -1092,7 +1080,6 @@ s32 rtw_put_snap(u8 *data, u16 h_proto)
- 	struct ieee80211_snap_hdr *snap;
- 	u8 *oui;
- 
--
- 	snap = (struct ieee80211_snap_hdr *)data;
- 	snap->dsap = 0xaa;
- 	snap->ssap = 0xaa;
-@@ -1109,7 +1096,6 @@ s32 rtw_put_snap(u8 *data, u16 h_proto)
- 
- 	*(__be16 *)(data + SNAP_SIZE) = htons(h_proto);
- 
--
- 	return SNAP_SIZE + sizeof(u16);
- }
- 
-@@ -1120,7 +1106,6 @@ void rtw_update_protection(struct adapter *padapter, u8 *ie, uint ie_len)
- 	struct	xmit_priv *pxmitpriv = &padapter->xmitpriv;
- 	struct	registry_priv *pregistrypriv = &padapter->registrypriv;
- 
--
- 	switch (pxmitpriv->vcs_setting) {
- 	case DISABLE_VCS:
- 		pxmitpriv->vcs = NONE_VCS;
-@@ -1196,7 +1181,6 @@ s32 rtw_free_xmitbuf_ext(struct xmit_priv *pxmitpriv, struct xmit_buf *pxmitbuf)
- 	unsigned long irql;
- 	struct __queue *pfree_queue = &pxmitpriv->free_xmit_extbuf_queue;
- 
--
- 	if (!pxmitbuf)
- 		return _FAIL;
- 
-@@ -1209,7 +1193,6 @@ s32 rtw_free_xmitbuf_ext(struct xmit_priv *pxmitpriv, struct xmit_buf *pxmitbuf)
- 
- 	spin_unlock_irqrestore(&pfree_queue->lock, irql);
- 
--
- 	return _SUCCESS;
- }
- 
-@@ -1264,7 +1247,6 @@ s32 rtw_free_xmitbuf(struct xmit_priv *pxmitpriv, struct xmit_buf *pxmitbuf)
- 		spin_unlock_irqrestore(&pfree_xmitbuf_queue->lock, irql);
- 	}
- 
--
- 	return _SUCCESS;
- }
- 
-@@ -1333,7 +1315,6 @@ s32 rtw_free_xmitframe(struct xmit_priv *pxmitpriv, struct xmit_frame *pxmitfram
- 	struct adapter *padapter = pxmitpriv->adapter;
- 	struct sk_buff *pndis_pkt = NULL;
- 
--
- 	if (!pxmitframe) {
- 		RT_TRACE(_module_rtl871x_xmit_c_, _drv_err_, ("====== %s:pxmitframe == NULL!!!!!!!!!!\n", __func__));
- 		goto exit;
-@@ -1359,8 +1340,6 @@ s32 rtw_free_xmitframe(struct xmit_priv *pxmitpriv, struct xmit_frame *pxmitfram
- 		rtw_os_pkt_complete(padapter, pndis_pkt);
- 
- exit:
--
--
- 	return _SUCCESS;
- }
- 
-@@ -1369,7 +1348,6 @@ void rtw_free_xmitframe_queue(struct xmit_priv *pxmitpriv, struct __queue *pfram
- 	struct list_head *plist, *phead;
- 	struct	xmit_frame	*pxmitframe;
- 
--
- 	spin_lock_bh(&pframequeue->lock);
- 
- 	phead = get_list_head(pframequeue);
-@@ -1428,7 +1406,6 @@ struct xmit_frame *rtw_dequeue_xframe(struct xmit_priv *pxmitpriv, struct hw_xmi
- 	struct registry_priv	*pregpriv = &padapter->registrypriv;
- 	int i, inx[4];
- 
--
- 	inx[0] = 0; inx[1] = 1; inx[2] = 2; inx[3] = 3;
- 
- 	if (pregpriv->wifi_spec == 1) {
-@@ -1502,7 +1479,6 @@ struct tx_servq *rtw_get_sta_pending(struct adapter *padapter, struct sta_info *
- 	break;
- 	}
- 
--
- 	return ptxservq;
- }
- 
-@@ -1520,7 +1496,6 @@ s32 rtw_xmit_classifier(struct adapter *padapter, struct xmit_frame *pxmitframe)
- 	struct hw_xmit	*phwxmits =  padapter->xmitpriv.hwxmits;
- 	int res = _SUCCESS;
- 
--
- 	if (pattrib->psta)
- 		psta = pattrib->psta;
- 	else
-@@ -1542,8 +1517,6 @@ s32 rtw_xmit_classifier(struct adapter *padapter, struct xmit_frame *pxmitframe)
- 	ptxservq->qcnt++;
- 	phwxmits[ac_index].accnt++;
- exit:
--
--
- 	return res;
- }
- 
--- 
-2.18.0
+>
+> > buffer.  In tmc_etr_alloc_perf_buffer() etr_perf->nr_pages is set to the number
+> > of pages present in that ring buffer.  As such I'm not sure as to why we need
+> > the PERF_IDX2OFF() macro.
+> >
+> > It seems to me that "head = etr_perf->head;" above is sufficient.
+> >
+>
+> We need to do the step at some point, which could be moved to set_perf_buffer.
 
+That's a good idea.
+
+>
+> >> +    pg_idx = head >> PAGE_SHIFT;
+> >> +    pg_offset = head & (PAGE_SIZE - 1);
+> >> +    dst_pages = (char **)etr_perf->pages;
+> >> +    src_offset = etr_buf->offset;
+> >> +    to_copy = etr_buf->len;
+> >> +
+> >> +    while (to_copy > 0) {
+> >> +            /*
+> >> +             * We can copy minimum of :
+> >
+> > s/We can copy minimum of :/In one iteration we can copy a minimum of:/
+> >
+> > If I'm wrong about the PERF_IDX2OFF(), don't bother respinning just for that.
+>
+> I have some more fixes for handling the different modes (sysfs vs perf),
+> which I can include in the v2.
+
+Very well.
+
+>
+> Suzuki
