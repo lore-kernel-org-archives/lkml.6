@@ -3,92 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A321ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FDFECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5620A206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5620A206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0761E206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0761E206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbeGPIHj (ORCPT
+        id S2388553AbeGPIHm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:07:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47598 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbeGPIHi (ORCPT
+        Mon, 16 Jul 2018 04:07:42 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43519 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730161AbeGPIHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:07:38 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A44FC03;
-        Mon, 16 Jul 2018 07:41:35 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 31/54] ALSA: hda/realtek - two more lenovo models need fixup of MIC_LOCATION
-Date:   Mon, 16 Jul 2018 09:35:28 +0200
-Message-Id: <20180716073456.793668192@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
-References: <20180716073450.534886211@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 16 Jul 2018 04:07:41 -0400
+Received: from wicke.hi.pengutronix.de ([2001:67c:670:100:2e4d:54ff:fe9d:8eb7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1fexsk-0006Eh-48; Mon, 16 Jul 2018 09:25:18 +0200
+Received: from mfe by wicke.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1fexsi-0006Y0-Kq; Mon, 16 Jul 2018 09:25:16 +0200
+Date:   Mon, 16 Jul 2018 09:25:16 +0200
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        fabio.estevam@nxp.com, Anson.Huang@nxp.com, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: pfuze100: add optional disable
+ switch-regulators binding
+Message-ID: <20180716072516.bvsp54yoeqp3ih6s@pengutronix.de>
+References: <20180713125002.24331-1-m.felsch@pengutronix.de>
+ <20180713125002.24331-2-m.felsch@pengutronix.de>
+ <20180713150314.GD16228@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180713150314.GD16228@sirena.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:2e4d:54ff:fe9d:8eb7
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Mark,
 
-------------------
+thanks for the review.
 
-From: Hui Wang <hui.wang@canonical.com>
+On 18-07-13 16:03, Mark Brown wrote:
+> On Fri, Jul 13, 2018 at 02:50:01PM +0200, Marco Felsch wrote:
+> 
+> > +Optional properties:
+> > +- fsl,pfuze-support-disable: Boolean, if present disable all unused switch
+> > +  regulators to save power consumption. Attention, till 4.18 these regulators
+> 
+> The property name sounds like it affects all the regulators but really
+> it's just the sw ones - how about adding -sw at the end?  Bit of a
+> bikeshed but it does end up in an ABI.
 
-commit c6b17f1020d956f4113d478cae6171b9093817ba upstream.
+You're right, it sounds better. So the new binding will be
+fsl,pfuze-support-disable-sw. Are there any other comments about the
+implementation?
 
-We have two new lenovo desktop models which need to apply the fixup of
-ALC294_FIXUP_LENOVO_MIC_LOCATION, and they have the same pin cfg as
-the machine with subsystem id:0x17aa3136, now use the pincfg table
-to apply the fixup for them.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- sound/pci/hda/patch_realtek.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6445,7 +6445,6 @@ static const struct snd_pci_quirk alc269
- 	SND_PCI_QUIRK(0x17aa, 0x310c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x312a, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x312f, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
--	SND_PCI_QUIRK(0x17aa, 0x3136, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x313c, "ThinkCentre Station", ALC294_FIXUP_LENOVO_MIC_LOCATION),
- 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
- 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
-@@ -6628,6 +6627,11 @@ static const struct snd_hda_pin_quirk al
- 		{0x1a, 0x02a11040},
- 		{0x1b, 0x01014020},
- 		{0x21, 0x0221101f}),
-+	SND_HDA_PIN_QUIRK(0x10ec0235, 0x17aa, "Lenovo", ALC294_FIXUP_LENOVO_MIC_LOCATION,
-+		{0x14, 0x90170110},
-+		{0x19, 0x02a11020},
-+		{0x1a, 0x02a11030},
-+		{0x21, 0x0221101f}),
- 	SND_HDA_PIN_QUIRK(0x10ec0236, 0x1028, "Dell", ALC255_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		{0x12, 0x90a60140},
- 		{0x14, 0x90170150},
-
-
+Regards,
+Marco
