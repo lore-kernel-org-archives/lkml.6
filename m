@@ -2,95 +2,196 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A902ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89401ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43708208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:01:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYrtRwvn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43708208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 437A3208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:02:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437A3208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbeGPL2a (ORCPT
+        id S1729811AbeGPL3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 07:28:30 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46034 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727712AbeGPL2a (ORCPT
+        Mon, 16 Jul 2018 07:29:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42396 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727712AbeGPL3G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 07:28:30 -0400
-Received: by mail-lj1-f193.google.com with SMTP id q5-v6so29533984ljh.12;
-        Mon, 16 Jul 2018 04:01:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=jPWgGz67s5DYmr9dcacDNKeXx6qo4aIrk1hpzOtFaDY=;
-        b=XYrtRwvnuIZtYu76KL33QV2uQp1BNUMrKAXQWuOo0vZIGspOo8JFwbdjkuXDNrVFHY
-         N3ywoGh8uESe5VkK3CiYH1pLhqw/ws4dWHKTJvAN1wdYjiNNs77lblDv945a6hm5E3Lo
-         6NIw4k5HvQgJDO6yZ3mtka0SX0fotQm+ZFPDY1NxvbbO8V7Ryq5vf6IbLajzjKFmZ4UA
-         rdAYqWXafpIX0W5/iuij47M5x0TwJPnmgm3sIwBBC3p3VTOCcj6jH4Ntl5L81JtHKMcR
-         4MTnvqQFU8BzZ5xxpaoWNatsaC3SVQwRYiDIkQ37xGib5QYaIZq4oJo3yapZQz57/zAr
-         5ynw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=jPWgGz67s5DYmr9dcacDNKeXx6qo4aIrk1hpzOtFaDY=;
-        b=Kt8mvWMHFYthxYZtqQ+KIx/iRG742hELJVKFUbPTb2yZNVIQS30OD2LoLx4S3+C8sE
-         1zgR6MtlvSZzTMSkrVVPx+FW+f4d6b8m6+rRCB/42CNy+LZyo1XfolBUwnOVd2gQOTT6
-         TRe8oG8puvGkmQ44s6kTd0dIJ3g+tUThxrKrDqiWlXROhBh4y66/8g5lksnfBZL349ZP
-         BLLBaoRptAWDHhHm1L8RYaIp1LPRrTKTiDTUoaiNWdgFuPlPypqRbg2Q1VJjCpDzj9iH
-         gL2e02/BTbZf3GMfwsgtiGqHawCwuFbPoptMWxmhjseVN0VqkD8IeqiwJ+II7LEwv2Dx
-         DcUQ==
-X-Gm-Message-State: AOUpUlHBywH4885GYv7nVyNJ5EZK6odIOkwynydGUWBtKXwdGpFHPVNJ
-        +Ylzc0WuxTlOO8TIkWZLRZTKiup3uSivkcrcjRY=
-X-Google-Smtp-Source: AAOMgpcPZTfS/EE8WEywz2WFSBm/fnI8xQ88e7qAxopBtJERujlLvcRWZG1q/Ay58IDffczCWJf6hPkDD4m4c9MkaqU=
-X-Received: by 2002:a2e:118f:: with SMTP id 15-v6mr9653842ljr.38.1531738895666;
- Mon, 16 Jul 2018 04:01:35 -0700 (PDT)
+        Mon, 16 Jul 2018 07:29:06 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08C16C18;
+        Mon, 16 Jul 2018 11:02:10 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 13:02:08 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, kernel-build-reports@lists.linaro.org
+Subject: Re: mainline/master boot: 177 boots: 2 failed, 174 passed with 1
+ conflict (v4.18-rc4-160-gf353078f028f)
+Message-ID: <20180716110208.GA25227@kroah.com>
+References: <5b4a9633.1c69fb81.17984.f7b3@mx.google.com>
+ <0ab16066-5498-374b-5391-3dd7979044aa@collabora.com>
+ <20180716105451.GA20734@sirena.org.uk>
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 04:01:34
- -0700 (PDT)
-In-Reply-To: <20180716040516.GA32783@beast>
-References: <20180716040516.GA32783@beast>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 16 Jul 2018 13:01:34 +0200
-X-Google-Sender-Auth: gnmpyU9MRA09LY0w1bVyKt_HGuw
-Message-ID: <CAK8P3a1tph9VPJnYYhBvH_1wZ79wXDvfnJt_CEruj3T-TBG1jg@mail.gmail.com>
-Subject: Re: [PATCH] ppp: mppe: Remove VLA usage
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Paul Mackerras <paulus@samba.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Eric Biggers <ebiggers@google.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-ppp@vger.kernel.org, Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716105451.GA20734@sirena.org.uk>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 6:05 AM, Kees Cook <keescook@chromium.org> wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> removes the discouraged use of AHASH_REQUEST_ON_STACK (and associated
-> VLA) by switching to shash directly and keeping the associated descriptor
-> allocated with the regular state on the heap.
->
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+On Mon, Jul 16, 2018 at 11:54:51AM +0100, Mark Brown wrote:
+> On Mon, Jul 16, 2018 at 11:40:06AM +0100, Guillaume Tucker wrote:
+> > On 15/07/18 01:32, kernelci.org bot wrote:
+> > > mainline/master boot: 177 boots: 2 failed, 174 passed with 1 conflict (v4.18-rc4-160-gf353078f028f)
+> > > 
+> > > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
+> > > Full Build Summary: https://kernelci.org/build/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
+> > > 
+> > > Tree: mainline
+> > > Branch: master
+> > > Git Describe: v4.18-rc4-160-gf353078f028f
+> > > Git Commit: f353078f028fbfe9acd4b747b4a19c69ef6846cd
+> > > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> > > Tested: 67 unique boards, 25 SoC families, 21 builds out of 199
+> > > 
+> > > Boot Regressions Detected:
+> > [...]
+> > > x86:
+> > > 
+> > >      i386_defconfig:
+> > >          x86-celeron:
+> > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
+> > >          x86-pentium4:
+> > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
+> > 
+> > Please see below an automated bisection report for this
+> > regression.  Several bisections were run on other x86 platforms
+> > with i386_defconfig on a few revisions up to v4.18-rc5, they all
+> > reached the same "bad" commit.
+> > 
+> > 
+> > Unfortunately there isn't much to learn from the kernelci.org
+> > boot logs as the kernel seems to crash very early on:
+> > 
+> >     https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc5/
+> >     https://storage.kernelci.org/mainline/master/v4.18-rc4-160-gf353078f028f/x86/i386_defconfig/lab-mhart/lava-x86-celeron.html
+> > 
+> > 
+> > It looks like stable-rc/linux-4.17.y is also broken with
+> > i386_defconfig, which tends to confirm the "bad" commit found by
+> > the automated bisection which was applied there as well:
+> > 
+> >     https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.17.y/kernel/v4.17.6-68-gbc0bd9e05fa1/
+> 
+> Adding Greg directly to the CCs due to the stable impact, not deleting
+> context for his benefit.
 
-I had concerns at first that this approach might make it slower, but
-upon reading through implementation of the shash_ahash_ implementation,
-I concluded that it can only be better than before, improving both
-performance and stack usage.
+Hey, I read all stable emails, who else would?  :)
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > The automated bisection on kernelci.org is still quite new, so
+> > please take the results with a pinch of salt as the "bad" commit
+> > found may not be the actual root cause of the boot failure.
+> > 
+> > Hope this helps!
+> > 
+> > Best wishes,
+> > Guillaume
+> > 
+> > 
+> > --------------------------------------8<--------------------------------------
+> > 
+> > 
+> > 
+> > Bisection result for mainline/master (v4.18-rc4-160-gf353078f028f) on x86-celeron
+> > 
+> >   Good:       2db39a2f491a Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
+> >   Bad:        f353078f028f Merge branch 'akpm' (patches from Andrew)
+> >   Found:      e181ae0c5db9 mm: zero unavailable pages before memmap init
+> > 
+> > Checks:
+> >   revert:     PASS
+> >   verify:     PASS
+> > 
+> > Parameters:
+> >   Tree:       mainline
+> >   URL:        http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> >   Branch:     master
+> >   Target:     x86-celeron
+> >   Lab:        lab-mhart
+> >   Config:     i386_defconfig
+> >   Plan:       boot
+> > 
+> > Breaking commit found:
+> > 
+> > -------------------------------------------------------------------------------
+> > commit e181ae0c5db9544de9c53239eb22bc012ce75033
+> > Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > Date:   Sat Jul 14 09:15:07 2018 -0400
+> > 
+> >     mm: zero unavailable pages before memmap init
+> >     We must zero struct pages for memory that is not backed by physical
+> >     memory, or kernel does not have access to.
+> >     Recently, there was a change which zeroed all memmap for all holes in
+> >     e820.  Unfortunately, it introduced a bug that is discussed here:
+> >       https://www.spinics.net/lists/linux-mm/msg156764.html
+> >     Linus, also saw this bug on his machine, and confirmed that reverting
+> >     commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
+> >     memblock.reserved") fixes the issue.
+> >     The problem is that we incorrectly zero some struct pages after they
+> >     were setup.
+> >     The fix is to zero unavailable struct pages prior to initializing of
+> >     struct pages.
+> >     A more detailed fix should come later that would avoid double zeroing
+> >     cases: one in __init_single_page(), the other one in
+> >     zero_resv_unavail().
+> >     Fixes: 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into memblock.reserved")
+> >     Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> >     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > 
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 1521100f1e63..5d800d61ddb7 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -6847,6 +6847,7 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+> >  	/* Initialise every node */
+> >  	mminit_verify_pageflags_layout();
+> >  	setup_nr_node_ids();
+> > +	zero_resv_unavail();
+> >  	for_each_online_node(nid) {
+> >  		pg_data_t *pgdat = NODE_DATA(nid);
+> >  		free_area_init_node(nid, NULL,
+> > @@ -6857,7 +6858,6 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+> >  			node_set_state(nid, N_MEMORY);
+> >  		check_for_memory(pgdat, nid);
+> >  	}
+> > -	zero_resv_unavail();
+> >  }
+> >  static int __init cmdline_parse_core(char *p, unsigned long *core,
+> > @@ -7033,9 +7033,9 @@ void __init set_dma_reserve(unsigned long new_dma_reserve)
+> >  void __init free_area_init(unsigned long *zones_size)
+> >  {
+> > +	zero_resv_unavail();
+> >  	free_area_init_node(0, zones_size,
+> >  			__pa(PAGE_OFFSET) >> PAGE_SHIFT, NULL);
+> > -	zero_resv_unavail();
+> >  }
+> >  static int page_alloc_cpu_dead(unsigned int cpu)
+> > -------------------------------------------------------------------------------
+
+So this patch breaks i386, ick.  I'll wait for the fix to hit Linus's
+tree as that's a bit more important to have the large majority of the
+x86-64 boxes fixed with this patch for now.
+
+thanks,
+
+greg k-h
