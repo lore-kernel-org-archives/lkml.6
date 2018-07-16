@@ -2,116 +2,171 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8755BECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA17AECDFB4
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B2A420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2A420864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6668E208FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1c9itRP9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6668E208FC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732102AbeGPIEK (ORCPT
+        id S1732115AbeGPIEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46848 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeGPIEJ (ORCPT
+        Mon, 16 Jul 2018 04:04:11 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35942 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729883AbeGPIEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:09 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2E860CA0;
-        Mon, 16 Jul 2018 07:38:08 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Yandong Zhao <yandong77520@gmail.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.17 43/67] arm64: neon: Fix function may_use_simd() return error status
-Date:   Mon, 16 Jul 2018 09:35:12 +0200
-Message-Id: <20180716073449.988372943@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
-References: <20180716073443.294323458@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 16 Jul 2018 04:04:11 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h9-v6so30794068wro.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 00:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=NKVl5/dfUUjD8D6v1yU5DkP4sZOIsXUJunNZ7FkybOA=;
+        b=1c9itRP9EU0xj4HVUZYtGGNBSt13Q28uIy6hT3KuEVQ6L/LOZ8AgFeJKfc7BJce4s/
+         hI2k5Db5umk3+bvCfrqAt2N/NdywxjB5g9dqDRYCnzRB/KyfiOTLMgZaMi4jMqp6oi2Q
+         ZtSil1LsxAz8gwOhpwKNGibs1hHdTNmj57Q7PRM4pQaLo2/4S8Y+LvT3sMS3IQgNXqtO
+         sEFjr72BqQjAINlMeOJGg6jamHJFYIQaKHgmjXpz58FXXGZWP2ECwla0+oOfSTSkJcKo
+         C6uXcjXLppQThumerrUatHwkf9bCtSFaNED26RH/S76CzMzGiYHA78lt6rcXyh2W/fXe
+         OwvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=NKVl5/dfUUjD8D6v1yU5DkP4sZOIsXUJunNZ7FkybOA=;
+        b=U/x7WS4/uWl6/QxnuZyaz7LmDP60tPj4RaQ41QxQKI0Bgx8Tnkvl+4PPEwB1WX9ArI
+         yO6RM8fNf+7v/+kbA1wc3htDWpDpW4fqSt2IN4sf1elavKq5VWE2AY98e6YjQBqsIYqR
+         mi0WJWnLypQOMltUMRNo2y7UTcXorPsRhT0uHKqzrd8uaULGRCJuSjcJ6rFYo2OZw5kb
+         N/dSwYcEWVvq08a4/XRbCOgvIw2Ez+mggrjWVb+4s3YVG4YyMWZHlbdcoYiCVjqmhrE7
+         ohl8q9LpQ5iJ/TrUWZe5d7hcPRwVYbtzkMYrsswi+0KwnpRfTCVs4doF28+aDZR6gN57
+         AG0g==
+X-Gm-Message-State: AOUpUlF02IngPsaKvhCGnnUjrkFk4yh5fiCZn/0RWNwnRKYmqupveybE
+        6+3X+Rk57Gb6MpMOCGAm9ZiZCg==
+X-Google-Smtp-Source: AAOMgpd/U3L8BXGEU6ZDyFFaM+YJ0zjesrZp61nlVUmjpAs1e1HkzCV7boDH263Oftp+BJNHBI6sbw==
+X-Received: by 2002:adf:adae:: with SMTP id w43-v6mr11860075wrc.251.1531726688935;
+        Mon, 16 Jul 2018 00:38:08 -0700 (PDT)
+Received: from [192.168.1.24] (AMarseille-156-1-200-251.w109-208.abo.wanadoo.fr. [109.208.203.251])
+        by smtp.gmail.com with ESMTPSA id u3-v6sm19930030wre.21.2018.07.16.00.38.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Jul 2018 00:38:08 -0700 (PDT)
+Subject: Re: [GIT PULL] Immutable branch between MFD and DRM/i915, Media and
+ Platform due for the v4.19 merge window
+To:     airlied@linux.ie, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     Lee Jones <lee.jones@linaro.org>, hans.verkuil@cisco.com,
+        olof@lixom.net, seanpaul@google.com, sadolfsson@google.com,
+        felixe@google.com, bleung@google.com, darekm@google.com,
+        marcheu@chromium.org, fparent@baylibre.com,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        eballetbo@gmail.com
+References: <1530716901-30164-1-git-send-email-narmstrong@baylibre.com>
+ <20180713074620.GW4641@dell>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <274ecbb8-7fa7-b706-6572-cb32f379001b@baylibre.com>
+Date:   Mon, 16 Jul 2018 09:38:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180713074620.GW4641@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Hi Dave, Rodrigo.
 
-------------------
+On 13/07/2018 09:46, Lee Jones wrote:
+> Enjoy!
+> 
+> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+> 
+>   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-i915-media-platform-v4.19
+> 
+> for you to fetch changes up to cd70de2d356ee692477276bd5d6bc88c71a48733:
+> 
+>   media: platform: Add ChromeOS EC CEC driver (2018-07-13 08:44:46 +0100)
+> 
+> ----------------------------------------------------------------
+> Immutable branch between MFD and DRM/i915, Media and Platform due for the v4.19 merge window
 
-From: Yandong Zhao <yandong77520@gmail.com>
 
-commit 2fd8eb4ad87104c54800ef3cea498c92eb15c78a upstream.
+This PR is here to solve a complex interdependency over this patchset,
+Hans agreed all the media patches go to the MFD tree and Rodrigo acked the i915
+patch so it could be applied to another tree,
+but who is suposed to take this PR to the DRM tree ?
 
-It does not matter if the caller of may_use_simd() migrates to
-another cpu after the call, but it is still important that the
-kernel_neon_busy percpu instance that is read matches the cpu the
-task is running on at the time of the read.
+Neil
 
-This means that raw_cpu_read() is not sufficient.  kernel_neon_busy
-may appear true if the caller migrates during the execution of
-raw_cpu_read() and the next task to be scheduled in on the initial
-cpu calls kernel_neon_begin().
-
-This patch replaces raw_cpu_read() with this_cpu_read() to protect
-against this race.
-
-Cc: <stable@vger.kernel.org>
-Fixes: cb84d11e1625 ("arm64: neon: Remove support for nested or hardirq kernel-mode NEON")
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-Reviewed-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Yandong Zhao <yandong77520@gmail.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/arm64/include/asm/simd.h |   19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
-
---- a/arch/arm64/include/asm/simd.h
-+++ b/arch/arm64/include/asm/simd.h
-@@ -29,20 +29,15 @@ DECLARE_PER_CPU(bool, kernel_neon_busy);
- static __must_check inline bool may_use_simd(void)
- {
- 	/*
--	 * The raw_cpu_read() is racy if called with preemption enabled.
--	 * This is not a bug: kernel_neon_busy is only set when
--	 * preemption is disabled, so we cannot migrate to another CPU
--	 * while it is set, nor can we migrate to a CPU where it is set.
--	 * So, if we find it clear on some CPU then we're guaranteed to
--	 * find it clear on any CPU we could migrate to.
--	 *
--	 * If we are in between kernel_neon_begin()...kernel_neon_end(),
--	 * the flag will be set, but preemption is also disabled, so we
--	 * can't migrate to another CPU and spuriously see it become
--	 * false.
-+	 * kernel_neon_busy is only set while preemption is disabled,
-+	 * and is clear whenever preemption is enabled. Since
-+	 * this_cpu_read() is atomic w.r.t. preemption, kernel_neon_busy
-+	 * cannot change under our feet -- if it's set we cannot be
-+	 * migrated, and if it's clear we cannot be migrated to a CPU
-+	 * where it is set.
- 	 */
- 	return !in_irq() && !irqs_disabled() && !in_nmi() &&
--		!raw_cpu_read(kernel_neon_busy);
-+		!this_cpu_read(kernel_neon_busy);
- }
- 
- #else /* ! CONFIG_KERNEL_MODE_NEON */
-
+> 
+> ----------------------------------------------------------------
+> Neil Armstrong (6):
+>       media: cec-notifier: Get notifier by device and connector name
+>       drm/i915: hdmi: add CEC notifier to intel_hdmi
+>       mfd: cros-ec: Increase maximum mkbp event size
+>       mfd: cros-ec: Introduce CEC commands and events definitions.
+>       mfd: cros_ec_dev: Add CEC sub-device registration
+>       media: platform: Add ChromeOS EC CEC driver
+> 
+>  drivers/gpu/drm/i915/Kconfig                     |   1 +
+>  drivers/gpu/drm/i915/intel_display.h             |  24 ++
+>  drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+>  drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
+>  drivers/media/cec/cec-notifier.c                 |  11 +-
+>  drivers/media/platform/Kconfig                   |  11 +
+>  drivers/media/platform/Makefile                  |   2 +
+>  drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+>  drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+>  drivers/mfd/cros_ec_dev.c                        |  16 ++
+>  drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
+>  include/linux/mfd/cros_ec.h                      |   2 +-
+>  include/linux/mfd/cros_ec_commands.h             |  97 +++++++
+>  include/media/cec-notifier.h                     |  27 +-
+>  14 files changed, 578 insertions(+), 16 deletions(-)
+>  create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+>  create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
+> 
 
