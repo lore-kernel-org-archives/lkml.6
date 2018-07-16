@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10286ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB038ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F85206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F85206B7
+	by mail.kernel.org (Postfix) with ESMTP id 6469C206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6469C206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388456AbeGPIHX (ORCPT
+        id S2388470AbeGPIHZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:07:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47532 "EHLO
+        Mon, 16 Jul 2018 04:07:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47542 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728440AbeGPIHW (ORCPT
+        with ESMTP id S1728440AbeGPIHY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:07:22 -0400
+        Mon, 16 Jul 2018 04:07:24 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 489CACA5;
-        Mon, 16 Jul 2018 07:41:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0B9DECA8;
+        Mon, 16 Jul 2018 07:41:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kamenee Arumugam <kamenee.arumugam@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 41/54] IB/hfi1: Fix incorrect mixing of ERR_PTR and NULL return values
-Date:   Mon, 16 Jul 2018 09:35:38 +0200
-Message-Id: <20180716073458.726387844@linuxfoundation.org>
+        stable@vger.kernel.org, Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 26/54] scsi: megaraid_sas: use adapter_type for all gen controllers
+Date:   Mon, 16 Jul 2018 09:35:23 +0200
+Message-Id: <20180716073455.823209514@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -54,120 +51,316 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
 
-commit b697d7d8c741f27b728a878fc55852b06d0f6f5e upstream.
+commit c365178f3147f38d26c15bdf43a363bacb5406ec upstream.
 
-The __get_txreq() function can return a pointer, ERR_PTR(-EBUSY), or NULL.
-All of the relevant call sites look for IS_ERR, so the NULL return would
-lead to a NULL pointer exception.
+No functional change.
+Refactor adapter_type to set for all generation controllers, not
+just for fusion controllers.
 
-Do not use the ERR_PTR mechanism for this function.
-
-Update all call sites to handle the return value correctly.
-
-Clean up error paths to reflect return value.
-
-Fixes: 45842abbb292 ("staging/rdma/hfi1: move txreq header code")
-Cc: <stable@vger.kernel.org> # 4.9.x+
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Kamenee Arumugam <kamenee.arumugam@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Kashyap Desai <kashyap.desai@broadcom.com>
+Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/rc.c          |    2 +-
- drivers/infiniband/hw/hfi1/uc.c          |    4 ++--
- drivers/infiniband/hw/hfi1/ud.c          |    4 ++--
- drivers/infiniband/hw/hfi1/verbs_txreq.c |    4 ++--
- drivers/infiniband/hw/hfi1/verbs_txreq.h |    4 ++--
- 5 files changed, 9 insertions(+), 9 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas.h        |    8 ++
+ drivers/scsi/megaraid/megaraid_sas_base.c   |   88 +++++++++++++++++-----------
+ drivers/scsi/megaraid/megaraid_sas_fp.c     |   10 +--
+ drivers/scsi/megaraid/megaraid_sas_fusion.c |   18 ++---
+ drivers/scsi/megaraid/megaraid_sas_fusion.h |    7 --
+ 5 files changed, 76 insertions(+), 55 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/rc.c
-+++ b/drivers/infiniband/hw/hfi1/rc.c
-@@ -273,7 +273,7 @@ int hfi1_make_rc_req(struct rvt_qp *qp,
+--- a/drivers/scsi/megaraid/megaraid_sas.h
++++ b/drivers/scsi/megaraid/megaraid_sas.h
+@@ -1504,6 +1504,13 @@ enum FW_BOOT_CONTEXT {
  
- 	lockdep_assert_held(&qp->s_lock);
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
+ #define MR_CAN_HANDLE_SYNC_CACHE_OFFSET		0X01000000
  
- 	ps->s_txreq->phdr.hdr.hdr_type = priv->hdr_type;
---- a/drivers/infiniband/hw/hfi1/uc.c
-+++ b/drivers/infiniband/hw/hfi1/uc.c
-@@ -1,5 +1,5 @@
++enum MR_ADAPTER_TYPE {
++	MFI_SERIES = 1,
++	THUNDERBOLT_SERIES = 2,
++	INVADER_SERIES = 3,
++	VENTURA_SERIES = 4,
++};
++
  /*
-- * Copyright(c) 2015, 2016 Intel Corporation.
-+ * Copyright(c) 2015 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -72,7 +72,7 @@ int hfi1_make_uc_req(struct rvt_qp *qp,
- 	int middle = 0;
+ * register set for both 1068 and 1078 controllers
+ * structure extended for 1078 registers
+@@ -2242,6 +2249,7 @@ struct megasas_instance {
+ 	/* preffered count to send as LDIO irrspective of FP capable.*/
+ 	u8  r1_ldio_hint_default;
+ 	u32 nvme_page_size;
++	u8 adapter_type;
+ };
+ struct MR_LD_VF_MAP {
+ 	u32 size;
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -5229,7 +5229,8 @@ static int megasas_init_fw(struct megasa
+ 			(&instance->reg_set->outbound_scratch_pad_2);
+ 		/* Check max MSI-X vectors */
+ 		if (fusion) {
+-			if (fusion->adapter_type == THUNDERBOLT_SERIES) { /* Thunderbolt Series*/
++			if (instance->adapter_type == THUNDERBOLT_SERIES) {
++				/* Thunderbolt Series*/
+ 				instance->msix_vectors = (scratch_pad_2
+ 					& MR_MAX_REPLY_QUEUES_OFFSET) + 1;
+ 				fw_msix_count = instance->msix_vectors;
+@@ -5965,6 +5966,46 @@ fail_set_dma_mask:
+ 	return 1;
+ }
  
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
++/*
++ * megasas_set_adapter_type -	Set adapter type.
++ *				Supported controllers can be divided in
++ *				4 categories-  enum MR_ADAPTER_TYPE {
++ *							MFI_SERIES = 1,
++ *							THUNDERBOLT_SERIES = 2,
++ *							INVADER_SERIES = 3,
++ *							VENTURA_SERIES = 4,
++ *						};
++ * @instance:			Adapter soft state
++ * return:			void
++ */
++static inline void megasas_set_adapter_type(struct megasas_instance *instance)
++{
++	switch (instance->pdev->device) {
++	case PCI_DEVICE_ID_LSI_VENTURA:
++	case PCI_DEVICE_ID_LSI_HARPOON:
++	case PCI_DEVICE_ID_LSI_TOMCAT:
++	case PCI_DEVICE_ID_LSI_VENTURA_4PORT:
++	case PCI_DEVICE_ID_LSI_CRUSADER_4PORT:
++		instance->adapter_type = VENTURA_SERIES;
++		break;
++	case PCI_DEVICE_ID_LSI_FUSION:
++	case PCI_DEVICE_ID_LSI_PLASMA:
++		instance->adapter_type = THUNDERBOLT_SERIES;
++		break;
++	case PCI_DEVICE_ID_LSI_INVADER:
++	case PCI_DEVICE_ID_LSI_INTRUDER:
++	case PCI_DEVICE_ID_LSI_INTRUDER_24:
++	case PCI_DEVICE_ID_LSI_CUTLASS_52:
++	case PCI_DEVICE_ID_LSI_CUTLASS_53:
++	case PCI_DEVICE_ID_LSI_FURY:
++		instance->adapter_type = INVADER_SERIES;
++		break;
++	default: /* For all other supported controllers */
++		instance->adapter_type = MFI_SERIES;
++		break;
++	}
++}
++
+ /**
+  * megasas_probe_one -	PCI hotplug entry point
+  * @pdev:		PCI device structure
+@@ -5977,7 +6018,6 @@ static int megasas_probe_one(struct pci_
+ 	struct Scsi_Host *host;
+ 	struct megasas_instance *instance;
+ 	u16 control = 0;
+-	struct fusion_context *fusion = NULL;
  
- 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_SEND_OK)) {
---- a/drivers/infiniband/hw/hfi1/ud.c
-+++ b/drivers/infiniband/hw/hfi1/ud.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2015, 2016 Intel Corporation.
-+ * Copyright(c) 2015 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -479,7 +479,7 @@ int hfi1_make_ud_req(struct rvt_qp *qp,
- 	u32 lid;
+ 	/* Reset MSI-X in the kdump kernel */
+ 	if (reset_devices) {
+@@ -6022,39 +6062,10 @@ static int megasas_probe_one(struct pci_
+ 	atomic_set(&instance->fw_reset_no_pci_access, 0);
+ 	instance->pdev = pdev;
  
- 	ps->s_txreq = get_txreq(ps->dev, qp);
--	if (IS_ERR(ps->s_txreq))
-+	if (!ps->s_txreq)
- 		goto bail_no_tx;
+-	switch (instance->pdev->device) {
+-	case PCI_DEVICE_ID_LSI_VENTURA:
+-	case PCI_DEVICE_ID_LSI_HARPOON:
+-	case PCI_DEVICE_ID_LSI_TOMCAT:
+-	case PCI_DEVICE_ID_LSI_VENTURA_4PORT:
+-	case PCI_DEVICE_ID_LSI_CRUSADER_4PORT:
+-	     instance->is_ventura = true;
+-	case PCI_DEVICE_ID_LSI_FUSION:
+-	case PCI_DEVICE_ID_LSI_PLASMA:
+-	case PCI_DEVICE_ID_LSI_INVADER:
+-	case PCI_DEVICE_ID_LSI_FURY:
+-	case PCI_DEVICE_ID_LSI_INTRUDER:
+-	case PCI_DEVICE_ID_LSI_INTRUDER_24:
+-	case PCI_DEVICE_ID_LSI_CUTLASS_52:
+-	case PCI_DEVICE_ID_LSI_CUTLASS_53:
+-	{
+-		if (megasas_alloc_fusion_context(instance)) {
+-			megasas_free_fusion_context(instance);
+-			goto fail_alloc_dma_buf;
+-		}
+-		fusion = instance->ctrl_context;
+-
+-		if ((instance->pdev->device == PCI_DEVICE_ID_LSI_FUSION) ||
+-			(instance->pdev->device == PCI_DEVICE_ID_LSI_PLASMA))
+-			fusion->adapter_type = THUNDERBOLT_SERIES;
+-		else if (instance->is_ventura)
+-			fusion->adapter_type = VENTURA_SERIES;
+-		else
+-			fusion->adapter_type = INVADER_SERIES;
+-	}
+-	break;
+-	default: /* For all other supported controllers */
++	megasas_set_adapter_type(instance);
  
- 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_NEXT_SEND_OK)) {
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.c
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2016 - 2017 Intel Corporation.
-+ * Copyright(c) 2016 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -94,7 +94,7 @@ struct verbs_txreq *__get_txreq(struct h
- 				struct rvt_qp *qp)
- 	__must_hold(&qp->s_lock)
- {
--	struct verbs_txreq *tx = ERR_PTR(-EBUSY);
-+	struct verbs_txreq *tx = NULL;
++	switch (instance->adapter_type) {
++	case MFI_SERIES:
+ 		instance->producer =
+ 			pci_alloc_consistent(pdev, sizeof(u32),
+ 					     &instance->producer_h);
+@@ -6070,7 +6081,16 @@ static int megasas_probe_one(struct pci_
  
- 	write_seqlock(&dev->txwait_lock);
- 	if (ib_rvt_state_ops[qp->state] & RVT_PROCESS_RECV_OK) {
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.h
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright(c) 2016 Intel Corporation.
-+ * Copyright(c) 2016 - 2018 Intel Corporation.
-  *
-  * This file is provided under a dual BSD/GPLv2 license.  When using or
-  * redistributing this file, you may do so under either license.
-@@ -83,7 +83,7 @@ static inline struct verbs_txreq *get_tx
- 	if (unlikely(!tx)) {
- 		/* call slow path to get the lock */
- 		tx = __get_txreq(dev, qp);
--		if (IS_ERR(tx))
-+		if (!tx)
- 			return tx;
+ 		*instance->producer = 0;
+ 		*instance->consumer = 0;
++
+ 		break;
++	case VENTURA_SERIES:
++		instance->is_ventura = 1;
++	case THUNDERBOLT_SERIES:
++	case INVADER_SERIES:
++		if (megasas_alloc_fusion_context(instance)) {
++			megasas_free_fusion_context(instance);
++			goto fail_alloc_dma_buf;
++		}
  	}
- 	tx->qp = qp;
+ 
+ 	/* Crash dump feature related initialisation*/
+--- a/drivers/scsi/megaraid/megaraid_sas_fp.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
+@@ -755,8 +755,8 @@ static u8 mr_spanset_get_phy_params(stru
+ 		}
+ 	} else {
+ 		if ((raid->level >= 5) &&
+-			((fusion->adapter_type == THUNDERBOLT_SERIES)  ||
+-			((fusion->adapter_type == INVADER_SERIES) &&
++			((instance->adapter_type == THUNDERBOLT_SERIES)  ||
++			((instance->adapter_type == INVADER_SERIES) &&
+ 			(raid->regTypeReqOnRead != REGION_TYPE_UNUSED))))
+ 			pRAID_Context->reg_lock_flags = REGION_TYPE_EXCLUSIVE;
+ 		else if (raid->level == 1) {
+@@ -871,8 +871,8 @@ u8 MR_GetPhyParams(struct megasas_instan
+ 		}
+ 	} else {
+ 		if ((raid->level >= 5) &&
+-			((fusion->adapter_type == THUNDERBOLT_SERIES)  ||
+-			((fusion->adapter_type == INVADER_SERIES) &&
++			((instance->adapter_type == THUNDERBOLT_SERIES)  ||
++			((instance->adapter_type == INVADER_SERIES) &&
+ 			(raid->regTypeReqOnRead != REGION_TYPE_UNUSED))))
+ 			pRAID_Context->reg_lock_flags = REGION_TYPE_EXCLUSIVE;
+ 		else if (raid->level == 1) {
+@@ -1096,7 +1096,7 @@ MR_BuildRaidContext(struct megasas_insta
+ 		cpu_to_le16(raid->fpIoTimeoutForLd ?
+ 			    raid->fpIoTimeoutForLd :
+ 			    map->raidMap.fpPdIoTimeoutSec);
+-	if (fusion->adapter_type == INVADER_SERIES)
++	if (instance->adapter_type == INVADER_SERIES)
+ 		pRAID_Context->reg_lock_flags = (isRead) ?
+ 			raid->regTypeReqOnRead : raid->regTypeReqOnWrite;
+ 	else if (!instance->is_ventura)
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -838,7 +838,7 @@ megasas_ioc_init_fusion(struct megasas_i
+ 	drv_ops = (MFI_CAPABILITIES *) &(init_frame->driver_operations);
+ 
+ 	/* driver support Extended MSIX */
+-	if (fusion->adapter_type >= INVADER_SERIES)
++	if (instance->adapter_type >= INVADER_SERIES)
+ 		drv_ops->mfi_capabilities.support_additional_msix = 1;
+ 	/* driver supports HA / Remote LUN over Fast Path interface */
+ 	drv_ops->mfi_capabilities.support_fp_remote_lun = 1;
+@@ -1789,7 +1789,7 @@ megasas_make_sgl_fusion(struct megasas_i
+ 
+ 	fusion = instance->ctrl_context;
+ 
+-	if (fusion->adapter_type >= INVADER_SERIES) {
++	if (instance->adapter_type >= INVADER_SERIES) {
+ 		struct MPI25_IEEE_SGE_CHAIN64 *sgl_ptr_end = sgl_ptr;
+ 		sgl_ptr_end += fusion->max_sge_in_main_msg - 1;
+ 		sgl_ptr_end->Flags = 0;
+@@ -1799,7 +1799,7 @@ megasas_make_sgl_fusion(struct megasas_i
+ 		sgl_ptr->Length = cpu_to_le32(sg_dma_len(os_sgl));
+ 		sgl_ptr->Address = cpu_to_le64(sg_dma_address(os_sgl));
+ 		sgl_ptr->Flags = 0;
+-		if (fusion->adapter_type >= INVADER_SERIES)
++		if (instance->adapter_type >= INVADER_SERIES)
+ 			if (i == sge_count - 1)
+ 				sgl_ptr->Flags = IEEE_SGE_FLAGS_END_OF_LIST;
+ 		sgl_ptr++;
+@@ -1809,7 +1809,7 @@ megasas_make_sgl_fusion(struct megasas_i
+ 		    (sge_count > fusion->max_sge_in_main_msg)) {
+ 
+ 			struct MPI25_IEEE_SGE_CHAIN64 *sg_chain;
+-			if (fusion->adapter_type >= INVADER_SERIES) {
++			if (instance->adapter_type >= INVADER_SERIES) {
+ 				if ((le16_to_cpu(cmd->io_request->IoFlags) &
+ 					MPI25_SAS_DEVICE0_FLAGS_ENABLED_FAST_PATH) !=
+ 					MPI25_SAS_DEVICE0_FLAGS_ENABLED_FAST_PATH)
+@@ -1825,7 +1825,7 @@ megasas_make_sgl_fusion(struct megasas_i
+ 			sg_chain = sgl_ptr;
+ 			/* Prepare chain element */
+ 			sg_chain->NextChainOffset = 0;
+-			if (fusion->adapter_type >= INVADER_SERIES)
++			if (instance->adapter_type >= INVADER_SERIES)
+ 				sg_chain->Flags = IEEE_SGE_FLAGS_CHAIN_ELEMENT;
+ 			else
+ 				sg_chain->Flags =
+@@ -2402,7 +2402,7 @@ megasas_build_ldio_fusion(struct megasas
+ 		cmd->request_desc->SCSIIO.RequestFlags =
+ 			(MPI2_REQ_DESCRIPT_FLAGS_FP_IO
+ 			 << MEGASAS_REQ_DESCRIPT_FLAGS_TYPE_SHIFT);
+-		if (fusion->adapter_type == INVADER_SERIES) {
++		if (instance->adapter_type == INVADER_SERIES) {
+ 			if (io_request->RaidContext.raid_context.reg_lock_flags ==
+ 			    REGION_TYPE_UNUSED)
+ 				cmd->request_desc->SCSIIO.RequestFlags =
+@@ -2467,7 +2467,7 @@ megasas_build_ldio_fusion(struct megasas
+ 		cmd->request_desc->SCSIIO.RequestFlags =
+ 			(MEGASAS_REQ_DESCRIPT_FLAGS_LD_IO
+ 			 << MEGASAS_REQ_DESCRIPT_FLAGS_TYPE_SHIFT);
+-		if (fusion->adapter_type == INVADER_SERIES) {
++		if (instance->adapter_type == INVADER_SERIES) {
+ 			if (io_info.do_fp_rlbypass ||
+ 			(io_request->RaidContext.raid_context.reg_lock_flags
+ 					== REGION_TYPE_UNUSED))
+@@ -2688,7 +2688,7 @@ megasas_build_syspd_fusion(struct megasa
+ 		pRAID_Context->timeout_value =
+ 			cpu_to_le16((os_timeout_value > timeout_limit) ?
+ 			timeout_limit : os_timeout_value);
+-		if (fusion->adapter_type >= INVADER_SERIES)
++		if (instance->adapter_type >= INVADER_SERIES)
+ 			io_request->IoFlags |=
+ 				cpu_to_le16(MPI25_SAS_DEVICE0_FLAGS_ENABLED_FAST_PATH);
+ 
+@@ -3301,7 +3301,7 @@ build_mpt_mfi_pass_thru(struct megasas_i
+ 
+ 	io_req = cmd->io_request;
+ 
+-	if (fusion->adapter_type >= INVADER_SERIES) {
++	if (instance->adapter_type >= INVADER_SERIES) {
+ 		struct MPI25_IEEE_SGE_CHAIN64 *sgl_ptr_end =
+ 			(struct MPI25_IEEE_SGE_CHAIN64 *)&io_req->SGL;
+ 		sgl_ptr_end += fusion->max_sge_in_main_msg - 1;
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.h
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.h
+@@ -104,12 +104,6 @@ enum MR_RAID_FLAGS_IO_SUB_TYPE {
+ #define RAID_1_PEER_CMDS 2
+ #define JBOD_MAPS_COUNT	2
+ 
+-enum MR_FUSION_ADAPTER_TYPE {
+-	THUNDERBOLT_SERIES = 0,
+-	INVADER_SERIES = 1,
+-	VENTURA_SERIES = 2,
+-};
+-
+ /*
+  * Raid Context structure which describes MegaRAID specific IO Parameters
+  * This resides at offset 0x60 where the SGL normally starts in MPT IO Frames
+@@ -1319,7 +1313,6 @@ struct fusion_context {
+ 	struct LD_LOAD_BALANCE_INFO *load_balance_info;
+ 	u32 load_balance_info_pages;
+ 	LD_SPAN_INFO log_to_span[MAX_LOGICAL_DRIVES_EXT];
+-	u8 adapter_type;
+ 	struct LD_STREAM_DETECT **stream_detect_by_ld;
+ };
+ 
 
 
