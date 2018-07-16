@@ -2,100 +2,104 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 812E6ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C70ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 306C72098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:34:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 306C72098A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 628AF20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628AF20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbeGPKAk (ORCPT
+        id S1728742AbeGPKDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:00:40 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:25256 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbeGPKAk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:00:40 -0400
-X-IronPort-AV: E=Sophos;i="5.51,360,1526367600"; 
-   d="scan'208";a="13606723"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Jul 2018 02:34:07 -0700
-Received: from [10.145.4.138] (10.10.76.4) by chn-sv-exch02.mchp-main.com
- (10.10.76.38) with Microsoft SMTP Server id 14.3.352.0; Mon, 16 Jul 2018
- 02:34:06 -0700
-Subject: Re: [PATCH] ARM: dts: at91: fix typo for PIN_PB22
-To:     Ludovic Desroches <ludovic.desroches@microchip.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1531326337-15504-1-git-send-email-claudiu.beznea@microchip.com>
- <20180712063021.h7t424iksdulj74a@M43218.corp.atmel.com>
-From:   Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <f5cdc41d-8c6e-0f7f-9fbe-2b4057008720@microchip.com>
-Date:   Mon, 16 Jul 2018 12:34:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 16 Jul 2018 06:03:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35264 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727606AbeGPKDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 06:03:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0FF9AAD24;
+        Mon, 16 Jul 2018 09:36:32 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 11:36:30 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Roman Gushchin <guro@fb.com>, linux-mm@vger.kernel.org,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v13 0/7] cgroup-aware OOM killer
+Message-ID: <20180716093630.GJ17280@dhcp22.suse.cz>
+References: <20171130152824.1591-1-guro@fb.com>
+ <20180605114729.GB19202@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1807131438380.194789@chino.kir.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20180712063021.h7t424iksdulj74a@M43218.corp.atmel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1807131438380.194789@chino.kir.corp.google.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ludovic,
+On Fri 13-07-18 14:59:59, David Rientjes wrote:
+> On Tue, 5 Jun 2018, Michal Hocko wrote:
+> 
+> > 1) comparision root with tail memcgs during the OOM killer is not fair
+> > because we are comparing tasks with memcgs.
+> > 
+> > This is true, but I do not think this matters much for workloads which
+> > are going to use the feature. Why? Because the main consumers of the new
+> > feature seem to be containers which really need some fairness when
+> > comparing _workloads_ rather than processes. Those are unlikely to
+> > contain any significant memory consumers in the root memcg. That would
+> > be mostly common infrastructure.
+> > 
+> 
+> There are users (us) who want to use the feature and not all processes are 
+> attached to leaf mem cgroups.  The functionality can be provided in a 
+> generally useful way that doesn't require any specific hierarchy, and I 
+> implemented this in my patch series at 
+> https://marc.info/?l=linux-mm&m=152175563004458&w=2.  That proposal to fix 
+> *all* of my concerns with the cgroup-aware oom killer as it sits in -mm, 
+> in it's entirety, only extends it so it is generally useful and does not 
+> remove any functionality.  I'm not sure why we are discussing ways of 
+> moving forward when that patchset has been waiting for review for almost 
+> four months and, to date, I haven't seen an objection to.
 
-On 12.07.2018 09:30, Ludovic Desroches wrote:
-> Hi Claudiu,
-> 
-> On Wed, Jul 11, 2018 at 07:25:37PM +0300, Claudiu Beznea wrote:
->> Fix typo for PIN_PB22 on TD function.
-> 
-> In fact, this typo is present in several places in this file. It could
-> be worth fixing all those occurences in a single patch.
+Well, I didn't really get to your patches yet. The last time I've
+checked I had some pretty serious concerns about the consistency of your
+proposal. Those might have been fixed in the lastest version of your
+patchset I haven't seen. But I still strongly suspect that you are
+largerly underestimating the complexity of more generic oom policies
+which you are heading to.
 
-Sure, I will look over all those occurrences.
+Considering user API failures from the past (oom_*adj fiasco for
+example) suggests that we should start with smaller steps and only
+provide a clear and simple API. oom_group is such a simple and
+semantically consistent thing which is the reason I am OK with it much
+more than your "we can be more generic" approach. I simply do not trust
+we can agree on sane and consistent api in a reasonable time.
 
-Thank you,
-Claudiu
-
-> 
-> Regards
-> 
-> Ludovic
-> 
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
->> ---
->>  arch/arm/boot/dts/sama5d2-pinfunc.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/sama5d2-pinfunc.h b/arch/arm/boot/dts/sama5d2-pinfunc.h
->> index e57191fb83de..ac61491c9d7f 100644
->> --- a/arch/arm/boot/dts/sama5d2-pinfunc.h
->> +++ b/arch/arm/boot/dts/sama5d2-pinfunc.h
->> @@ -375,7 +375,7 @@
->>  #define PIN_PB22__GPIO			PINMUX_PIN(PIN_PB22, 0, 0)
->>  #define PIN_PB22__LCDDAT11		PINMUX_PIN(PIN_PB22, 1, 1)
->>  #define PIN_PB22__A11			PINMUX_PIN(PIN_PB22, 2, 1)
->> -#define PIN_PB22__TDO			PINMUX_PIN(PIN_PB22, 3, 1)
->> +#define PIN_PB22__TD0			PINMUX_PIN(PIN_PB22, 3, 1)
->>  #define PIN_PB22__TIOA2			PINMUX_PIN(PIN_PB22, 4, 2)
->>  #define PIN_PB22__FLEXCOM3_IO1		PINMUX_PIN(PIN_PB22, 5, 3)
->>  #define PIN_PB22__GMDC			PINMUX_PIN(PIN_PB22, 6, 3)
->> -- 
->> 2.7.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+And it is quite mind boggling that a simpler approach has been basically
+blocked for months because there are some concerns for workloads which
+are not really asking for the feature. Sure your usecase might need to
+handle root memcg differently. That is a fair point but that shouldn't
+really block containers users who can use the proposed solution without
+any further changes. If we ever decide to handle root memcg differently
+we are free to do so because the oom selection policy is not carved in
+stone by any api.
+ 
+[...]
+-- 
+Michal Hocko
+SUSE Labs
