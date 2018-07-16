@@ -2,181 +2,232 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78844ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EB1ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F71208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:14:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="q75or7bH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33F71208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 2653D208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:15:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2653D208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbeGPRmy (ORCPT
+        id S1729151AbeGPRoI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 13:42:54 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:37482 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbeGPRmx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 13:42:53 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6GHDXfk012022;
-        Mon, 16 Jul 2018 12:13:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531761213;
-        bh=yNiU62+LUUJjJ8oHNHDm+GTgqiqakLC7jsxAqpeTzxg=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=q75or7bHcJa6B0yrNXPVcyn9NMVU4QYvBL9JkzsWXaVst4JUvjMmtTglKi/GTuzkB
-         qs20Sxgc4o+WpBC7kJS63snMI/qMXOdaSso8kePVQcBiP0jeBiuggLo9UW0nFKbl7O
-         G07RUx5JtXfI1EpV0V9ZYOPHe4zpy3YA9YfBcLxE=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GHDXKL006593;
-        Mon, 16 Jul 2018 12:13:33 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 16
- Jul 2018 12:13:32 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Mon, 16 Jul 2018 12:13:32 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6GHDWdR002791;
-        Mon, 16 Jul 2018 12:13:32 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>
-CC:     Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <geert@linux-m68k.org>
-Subject: [PATCH V2 2/2] firmware: ti_sci: Provide host-id as an optional dt parameter
-Date:   Mon, 16 Jul 2018 12:13:28 -0500
-Message-ID: <20180716171328.11674-3-nm@ti.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180716171328.11674-1-nm@ti.com>
-References: <20180716171328.11674-1-nm@ti.com>
+        Mon, 16 Jul 2018 13:44:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42810 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727514AbeGPRoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 13:44:08 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 22064821C3;
+        Mon, 16 Jul 2018 17:15:46 +0000 (UTC)
+Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 95F7F5D9C8;
+        Mon, 16 Jul 2018 17:15:43 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 11:15:43 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v6 4/4] PCI: Introduce the disable_acs_redir parameter
+Message-ID: <20180716111543.6ddf584c@t450s.home>
+In-Reply-To: <20180713233158.19528-5-logang@deltatee.com>
+References: <20180713233158.19528-1-logang@deltatee.com>
+        <20180713233158.19528-5-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 16 Jul 2018 17:15:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Texas Instrument's System Control Interface (TISCI) permits the
-ability for Operating Systems to running in virtual machines to be
-able to independently communicate with the firmware without the need
-going through an hypervisor.
+On Fri, 13 Jul 2018 17:31:58 -0600
+Logan Gunthorpe <logang@deltatee.com> wrote:
 
-The "host-id" in effect is the hardware representation of the
-host (example: VMs locked to a core) as identified to the System
-Controller.
+> In order to support P2P traffic on a segment of the PCI hierarchy,
+> we must be able to disable the ACS redirect bits for select
+> PCI bridges. The bridges must be selected before the devices are
+> discovered by the kernel and the IOMMU groups created. Therefore,
+> a kernel command line parameter is created to specify devices
+> which must have their ACS bits disabled.
+> 
+> The new parameter takes a list of devices separated by a semicolon.
+> Each device specified will have it's ACS redirect bits disabled.
+> This is similar to the existing 'resource_alignment' parameter.
+> 
+> The ACS Request P2P Request Redirect, P2P Completion Redirect and P2P
+> Egress Control bits are disabled which is sufficient to always allow
+> passing P2P traffic uninterrupted. The bits are set after the kernel
+> (optionally) enables the ACS bits itself. It is also done regardless of
+> whether the kernel sets the bits or not seeing some BIOS firmware is known
+> to set the bits on boot.
+> 
+> If the user tries to disable the ACS redirct for a device without the
+> ACS capability, a warning is printed to dmesg.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Stephen Bates <sbates@raithlin.com>
+> Acked-by: Christian König <christian.koenig@amd.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  9 +++
+>  drivers/pci/pci.c                               | 76 ++++++++++++++++++++++++-
+>  2 files changed, 83 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index a69947d9e14e..02634c4ab181 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3192,6 +3192,15 @@
+>  				Adding the window is slightly risky (it may
+>  				conflict with unreported devices), so this
+>  				taints the kernel.
+> +		disable_acs_redir=<pci_dev>[; ...]
+> +				Specify one or more PCI devices (in the format
+> +				specified above) separated by semicolons.
+> +				Each device specified will have the PCI ACS
+> +				redirect capabilities forced off which will
+> +				allow P2P traffic between devices through
+> +				bridges without forcing it upstream. Note:
+> +				this removes isolation between devices and
+> +				will make the IOMMU groups less granular.
+>  
+>  	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
+>  			Management.
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 59638075b4df..195b93824e6c 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2983,6 +2983,66 @@ void pci_request_acs(void)
+>  	pci_acs_enable = 1;
+>  }
+>  
+> +static const char *disable_acs_redir_param;
+> +
+> +/**
+> + * pci_disable_acs_redir - disable ACS redirect capabilities
+> + * @dev: the PCI device
+> + *
+> + * For only devices specified in the disable_acs_redir parameter.
+> + */
+> +static void pci_disable_acs_redir(struct pci_dev *dev)
+> +{
+> +	int ret = 0;
+> +	const char *p;
+> +	int pos;
+> +	u16 ctrl;
+> +
+> +	if (!disable_acs_redir_param)
+> +		return;
+> +
+> +	p = disable_acs_redir_param;
+> +	while (*p) {
+> +		ret = pci_dev_str_match(dev, p, &p);
+> +		if (ret < 0) {
+> +			pr_info_once("PCI: Can't parse disable_acs_redir parameter: %s\n",
+> +				     disable_acs_redir_param);
+> +
+> +			break;
+> +		} else if (ret == 1) {
+> +			/* Found a match */
+> +			break;
+> +		}
+> +
+> +		if (*p != ';' && *p != ',') {
+> +			/* End of param or invalid format */
+> +			break;
+> +		}
+> +		p++;
+> +	}
+> +
+> +	if (ret != 1)
+> +		return;
+> +
+> +	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
+> +	if (!pos) {
+> +		pci_warn(dev, "cannot disable ACS redirect for this hardware as it does not have ACS capabilities\n");
+> +		return;
+> +	}
+> +
+> +	if (!pci_dev_specific_disable_acs_redir(dev))
+> +		return;
 
-Provide support as an optional parameter implementation and use the
-compatible data as default if one is not provided by device tree.
+Shouldn't this come before the above ACS capability test?  The PCH
+quirk without a disable_acs_redir callback will fall out with the
+pci_warn() above either way, but this ordering precludes that a quirk
+could be written for that device since it doesn't have an ACS
+capability.  Otherwise the series looks ok to me.  Thanks,
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
----
-Changes since V1:
-* None
+Alex
 
-V1: https://patchwork.kernel.org/patch/10475309/
-RFC: https://patchwork.kernel.org/patch/10447715/
-
- drivers/firmware/ti_sci.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
-index 7fa744793bc5..69ed1464175c 100644
---- a/drivers/firmware/ti_sci.c
-+++ b/drivers/firmware/ti_sci.c
-@@ -66,14 +66,14 @@ struct ti_sci_xfers_info {
- 
- /**
-  * struct ti_sci_desc - Description of SoC integration
-- * @host_id:		Host identifier representing the compute entity
-+ * @default_host_id:	Host identifier representing the compute entity
-  * @max_rx_timeout_ms:	Timeout for communication with SoC (in Milliseconds)
-  * @max_msgs: Maximum number of messages that can be pending
-  *		  simultaneously in the system
-  * @max_msg_size: Maximum size of data per message that can be handled.
-  */
- struct ti_sci_desc {
--	u8 host_id;
-+	u8 default_host_id;
- 	int max_rx_timeout_ms;
- 	int max_msgs;
- 	int max_msg_size;
-@@ -94,6 +94,7 @@ struct ti_sci_desc {
-  * @chan_rx:	Receive mailbox channel
-  * @minfo:	Message info
-  * @node:	list head
-+ * @host_id:	Host ID
-  * @users:	Number of users of this instance
-  */
- struct ti_sci_info {
-@@ -110,6 +111,7 @@ struct ti_sci_info {
- 	struct mbox_chan *chan_rx;
- 	struct ti_sci_xfers_info minfo;
- 	struct list_head node;
-+	u8 host_id;
- 	/* protected by ti_sci_list_mutex */
- 	int users;
- 
-@@ -370,7 +372,7 @@ static struct ti_sci_xfer *ti_sci_get_one_xfer(struct ti_sci_info *info,
- 
- 	hdr->seq = xfer_id;
- 	hdr->type = msg_type;
--	hdr->host = info->desc->host_id;
-+	hdr->host = info->host_id;
- 	hdr->flags = msg_flags;
- 
- 	return xfer;
-@@ -1793,7 +1795,7 @@ static int tisci_reboot_handler(struct notifier_block *nb, unsigned long mode,
- 
- /* Description for K2G */
- static const struct ti_sci_desc ti_sci_pmmc_k2g_desc = {
--	.host_id = 2,
-+	.default_host_id = 2,
- 	/* Conservative duration */
- 	.max_rx_timeout_ms = 1000,
- 	/* Limited by MBOX_TX_QUEUE_LEN. K2G can handle upto 128 messages! */
-@@ -1819,6 +1821,7 @@ static int ti_sci_probe(struct platform_device *pdev)
- 	int ret = -EINVAL;
- 	int i;
- 	int reboot = 0;
-+	u32 h_id;
- 
- 	of_id = of_match_device(ti_sci_of_match, dev);
- 	if (!of_id) {
-@@ -1833,6 +1836,19 @@ static int ti_sci_probe(struct platform_device *pdev)
- 
- 	info->dev = dev;
- 	info->desc = desc;
-+	ret = of_property_read_u32(dev->of_node, "ti,host-id", &h_id);
-+	/* if the property is not present in DT, use a default from desc */
-+	if (ret < 0) {
-+		info->host_id = info->desc->default_host_id;
-+	} else {
-+		if (!h_id) {
-+			dev_warn(dev, "Host ID 0 is reserved for firmware\n");
-+			info->host_id = info->desc->default_host_id;
-+		} else {
-+			info->host_id = h_id;
-+		}
-+	}
-+
- 	reboot = of_property_read_bool(dev->of_node,
- 				       "ti,system-reboot-controller");
- 	INIT_LIST_HEAD(&info->node);
--- 
-2.15.1
+> +
+> +	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
+> +
+> +	/* P2P Request & Completion Redirect */
+> +	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
+> +
+> +	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
+> +
+> +	pci_info(dev, "disabled ACS redirect\n");
+> +}
+> +
+>  /**
+>   * pci_std_enable_acs - enable ACS on devices using standard ACS capabilites
+>   * @dev: the PCI device
+> @@ -3022,12 +3082,22 @@ static void pci_std_enable_acs(struct pci_dev *dev)
+>  void pci_enable_acs(struct pci_dev *dev)
+>  {
+>  	if (!pci_acs_enable)
+> -		return;
+> +		goto disable_acs_redir;
+>  
+>  	if (!pci_dev_specific_enable_acs(dev))
+> -		return;
+> +		goto disable_acs_redir;
+>  
+>  	pci_std_enable_acs(dev);
+> +
+> +disable_acs_redir:
+> +	/*
+> +	 * Note: pci_disable_acs_redir() must be called even if
+> +	 * ACS is not enabled by the kernel because the firmware
+> +	 * may have unexpectedly set the flags. So if we are told
+> +	 * to disable it, we should always disable it after setting
+> +	 * the kernel's default preferences.
+> +	 */
+> +	pci_disable_acs_redir(dev);
+>  }
+>  
+>  static bool pci_acs_flags_enabled(struct pci_dev *pdev, u16 acs_flags)
+> @@ -5967,6 +6037,8 @@ static int __init pci_setup(char *str)
+>  				pcie_bus_config = PCIE_BUS_PEER2PEER;
+>  			} else if (!strncmp(str, "pcie_scan_all", 13)) {
+>  				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
+> +			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
+> +				disable_acs_redir_param = str + 18;
+>  			} else {
+>  				printk(KERN_ERR "PCI: Unknown option `%s'\n",
+>  						str);
 
