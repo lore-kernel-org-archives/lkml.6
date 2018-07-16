@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48543ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3A2ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6F6206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D6F6206B7
+	by mail.kernel.org (Postfix) with ESMTP id D7699206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:40:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7699206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388140AbeGPIGN (ORCPT
+        id S2388155AbeGPIGR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:06:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47296 "EHLO
+        Mon, 16 Jul 2018 04:06:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47300 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729810AbeGPIGM (ORCPT
+        with ESMTP id S1729810AbeGPIGQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:06:12 -0400
+        Mon, 16 Jul 2018 04:06:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8C66ECA1;
-        Mon, 16 Jul 2018 07:40:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D635CA1;
+        Mon, 16 Jul 2018 07:40:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 17/54] USB: serial: keyspan_pda: fix modem-status error handling
-Date:   Mon, 16 Jul 2018 09:35:14 +0200
-Message-Id: <20180716073454.069898185@linuxfoundation.org>
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: [PATCH 4.14 18/54] USB: yurex: fix out-of-bounds uaccess in read handler
+Date:   Mon, 16 Jul 2018 09:35:15 +0200
+Message-Id: <20180716073454.213120098@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -49,35 +49,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Jann Horn <jannh@google.com>
 
-commit 01b3cdfca263a17554f7b249d20a247b2a751521 upstream.
+commit f1e255d60ae66a9f672ff9a207ee6cd8e33d2679 upstream.
 
-Fix broken modem-status error handling which could lead to bits of slab
-data leaking to user space.
+In general, accessing userspace memory beyond the length of the supplied
+buffer in VFS read/write handlers can lead to both kernel memory corruption
+(via kernel_read()/kernel_write(), which can e.g. be triggered via
+sys_splice()) and privilege escalation inside userspace.
 
-Fixes: 3b36a8fd6777 ("usb: fix uninitialized variable warning in keyspan_pda")
-Cc: stable <stable@vger.kernel.org>     # 2.6.27
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fix it by using simple_read_from_buffer() instead of custom logic.
+
+Fixes: 6bc235a2e24a ("USB: add driver for Meywa-Denki & Kayac YUREX")
+Signed-off-by: Jann Horn <jannh@google.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/keyspan_pda.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/misc/yurex.c |   23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
---- a/drivers/usb/serial/keyspan_pda.c
-+++ b/drivers/usb/serial/keyspan_pda.c
-@@ -373,8 +373,10 @@ static int keyspan_pda_get_modem_info(st
- 			     3, /* get pins */
- 			     USB_TYPE_VENDOR|USB_RECIP_INTERFACE|USB_DIR_IN,
- 			     0, 0, data, 1, 2000);
--	if (rc >= 0)
-+	if (rc == 1)
- 		*value = *data;
-+	else if (rc >= 0)
-+		rc = -EIO;
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -400,8 +400,7 @@ static ssize_t yurex_read(struct file *f
+ 			  loff_t *ppos)
+ {
+ 	struct usb_yurex *dev;
+-	int retval = 0;
+-	int bytes_read = 0;
++	int len = 0;
+ 	char in_buffer[20];
+ 	unsigned long flags;
  
- 	kfree(data);
- 	return rc;
+@@ -409,26 +408,16 @@ static ssize_t yurex_read(struct file *f
+ 
+ 	mutex_lock(&dev->io_mutex);
+ 	if (!dev->interface) {		/* already disconnected */
+-		retval = -ENODEV;
+-		goto exit;
++		mutex_unlock(&dev->io_mutex);
++		return -ENODEV;
+ 	}
+ 
+ 	spin_lock_irqsave(&dev->lock, flags);
+-	bytes_read = snprintf(in_buffer, 20, "%lld\n", dev->bbu);
++	len = snprintf(in_buffer, 20, "%lld\n", dev->bbu);
+ 	spin_unlock_irqrestore(&dev->lock, flags);
+-
+-	if (*ppos < bytes_read) {
+-		if (copy_to_user(buffer, in_buffer + *ppos, bytes_read - *ppos))
+-			retval = -EFAULT;
+-		else {
+-			retval = bytes_read - *ppos;
+-			*ppos += bytes_read;
+-		}
+-	}
+-
+-exit:
+ 	mutex_unlock(&dev->io_mutex);
+-	return retval;
++
++	return simple_read_from_buffer(buffer, count, ppos, in_buffer, len);
+ }
+ 
+ static ssize_t yurex_write(struct file *file, const char __user *user_buffer,
 
 
