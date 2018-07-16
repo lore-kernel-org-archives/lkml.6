@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D30ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9862AECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 917DE206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 917DE206B7
+	by mail.kernel.org (Postfix) with ESMTP id 5D15C206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D15C206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388927AbeGPIJG (ORCPT
+        id S2388957AbeGPIJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47916 "EHLO
+        Mon, 16 Jul 2018 04:09:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47932 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIJF (ORCPT
+        with ESMTP id S1730161AbeGPIJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:05 -0400
+        Mon, 16 Jul 2018 04:09:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 930CBCA4;
-        Mon, 16 Jul 2018 07:43:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0778C03;
+        Mon, 16 Jul 2018 07:43:07 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH 4.9 23/32] i2c: tegra: Fix NACK error handling
-Date:   Mon, 16 Jul 2018 09:36:31 +0200
-Message-Id: <20180716073507.436974213@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Black <christian.d.black@intel.com>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Scott Bauer <scott.bauer@intel.com>
+Subject: [PATCH 4.9 25/32] nvme-pci: Remap CMB SQ entries on every controller reset
+Date:   Mon, 16 Jul 2018 09:36:33 +0200
+Message-Id: <20180716073507.676609755@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -51,72 +54,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Keith Busch <keith.busch@intel.com>
 
-commit 54836e2d03e76d80aec3399368ffaf5b7caadd1b upstream.
+commit 815c6704bf9f1c59f3a6be380a4032b9c57b12f1 upstream.
 
-On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
-resume from suspend (which is caused by the reset signal for the I2C
-mux not being configured correctl). However, this NACK is causing the
-Tegra30 to hang on resuming from suspend which is not expected as we
-detect NACKs and handle them. The hang observed appears to occur when
-resetting the I2C controller to recover from the NACK.
+The controller memory buffer is remapped into a kernel address on each
+reset, but the driver was setting the submission queue base address
+only on the very first queue creation. The remapped address is likely to
+change after a reset, so accessing the old address will hit a kernel bug.
 
-Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
-additional error handling for some error cases including NACK, however,
-it appears that this change conflicts with an early fix by commit
-f70893d08338 ("i2c: tegra: Add delay before resetting the controller
-after NACK"). After commit 77821b4678f9 was made we now disable 'packet
-mode' before the delay from commit f70893d08338 happens. Testing shows
-that moving the delay to before disabling 'packet mode' fixes the hang
-observed on Tegra30. The delay was added to give the I2C controller
-chance to send a stop condition and so it makes sense to move this to
-before we disable packet mode. Please note that packet mode is always
-enabled for Tegra.
+This patch fixes that by setting the queue's CMB base address each time
+the queue is created.
 
-Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@vger.kernel.org
+Fixes: f63572dff1421 ("nvme: unmap CMB and remove sysfs file in reset path")
+Reported-by: Christian Black <christian.d.black@intel.com>
+Cc: Jon Derrick <jonathan.derrick@intel.com>
+Cc: <stable@vger.kernel.org> # 4.9+
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Scott Bauer <scott.bauer@intel.com>
+Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/i2c/busses/i2c-tegra.c |   17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/nvme/host/pci.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -547,6 +547,14 @@ static int tegra_i2c_disable_packet_mode
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1034,17 +1034,15 @@ static int nvme_cmb_qdepth(struct nvme_d
+ static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
+ 				int qid, int depth)
  {
- 	u32 cnfg;
- 
-+	/*
-+	 * NACK interrupt is generated before the I2C controller generates
-+	 * the STOP condition on the bus. So wait for 2 clock periods
-+	 * before disabling the controller so that the STOP condition has
-+	 * been delivered properly.
-+	 */
-+	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
+-	if (qid && dev->cmb && use_cmb_sqes && NVME_CMB_SQS(dev->cmbsz)) {
+-		unsigned offset = (qid - 1) * roundup(SQ_SIZE(depth),
+-						      dev->ctrl.page_size);
+-		nvmeq->sq_dma_addr = dev->cmb_bus_addr + offset;
+-		nvmeq->sq_cmds_io = dev->cmb + offset;
+-	} else {
+-		nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
+-					&nvmeq->sq_dma_addr, GFP_KERNEL);
+-		if (!nvmeq->sq_cmds)
+-			return -ENOMEM;
+-	}
 +
- 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
- 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
- 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
-@@ -708,15 +716,6 @@ static int tegra_i2c_xfer_msg(struct teg
- 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
- 		return 0;
++	/* CMB SQEs will be mapped before creation */
++	if (qid && dev->cmb && use_cmb_sqes && NVME_CMB_SQS(dev->cmbsz))
++		return 0;
++
++	nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
++					    &nvmeq->sq_dma_addr, GFP_KERNEL);
++	if (!nvmeq->sq_cmds)
++		return -ENOMEM;
  
--	/*
--	 * NACK interrupt is generated before the I2C controller generates
--	 * the STOP condition on the bus. So wait for 2 clock periods
--	 * before resetting the controller so that the STOP condition has
--	 * been delivered properly.
--	 */
--	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
--		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
--
- 	tegra_i2c_init(i2c_dev);
- 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
- 		if (msg->flags & I2C_M_IGNORE_NAK)
+ 	return 0;
+ }
+@@ -1117,6 +1115,13 @@ static int nvme_create_queue(struct nvme
+ 	struct nvme_dev *dev = nvmeq->dev;
+ 	int result;
+ 
++	if (qid && dev->cmb && use_cmb_sqes && NVME_CMB_SQS(dev->cmbsz)) {
++		unsigned offset = (qid - 1) * roundup(SQ_SIZE(nvmeq->q_depth),
++						      dev->ctrl.page_size);
++		nvmeq->sq_dma_addr = dev->cmb_bus_addr + offset;
++		nvmeq->sq_cmds_io = dev->cmb + offset;
++	}
++
+ 	nvmeq->cq_vector = qid - 1;
+ 	result = adapter_alloc_cq(dev, qid, nvmeq);
+ 	if (result < 0)
 
 
