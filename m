@@ -2,81 +2,98 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A24ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9858DECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589142084E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589142084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BD102084E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:40:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD102084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbeGPNHd (ORCPT
+        id S1730812AbeGPNHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:07:33 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728437AbeGPNHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 09:07:37 -0400
+Received: from gateway22.websitewelcome.com ([192.185.46.131]:27259 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729607AbeGPNHc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Jul 2018 09:07:32 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2AC5977885;
-        Mon, 16 Jul 2018 12:40:16 +0000 (UTC)
-Received: from treble (ovpn-122-49.rdu2.redhat.com [10.10.122.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 39B83111DD03;
-        Mon, 16 Jul 2018 12:40:15 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 07:40:13 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Kamalesh Babulal <kamalesh@linux.vnet.ibm.com>
-Cc:     Miroslav Benes <mbenes@suse.cz>, Jiri Kosina <jkosina@suse.cz>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] livepatch: Remove reliable stacktrace check in
- klp_try_switch_task()
-Message-ID: <20180716124013.uiyyzr3wabgdshea@treble>
-References: <1531382706-9732-1-git-send-email-kamalesh@linux.vnet.ibm.com>
- <20180713183756.gfddtn3gbwkwpqbj@treble>
- <dbd9bdf6-7cb1-cde1-5f7d-d3a5449c560d@linux.vnet.ibm.com>
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id 6C417402E
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 07:40:15 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id f2mvfXPpkbXuJf2nGffTpt; Mon, 16 Jul 2018 07:40:15 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=48026 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ff2mu-002L0q-6J; Mon, 16 Jul 2018 07:39:36 -0500
+Date:   Mon, 16 Jul 2018 07:39:33 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] drm/i915/selftests: Remove redundant code
+Message-ID: <20180716123933.GA27121@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dbd9bdf6-7cb1-cde1-5f7d-d3a5449c560d@linux.vnet.ibm.com>
-User-Agent: NeoMutt/20180323
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 16 Jul 2018 12:40:16 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 16 Jul 2018 12:40:16 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jpoimboe@redhat.com' RCPT:''
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1ff2mu-002L0q-6J
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:48026
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 01:05:56PM +0530, Kamalesh Babulal wrote:
-> On Saturday 14 July 2018 12:07 AM, Josh Poimboeuf wrote:
-> > > We bail out during patch registration for architectures, those don't
-> > > support reliable stack trace.
-> > 
-> > Does anybody know if that change was intentional?  I thought the plan
-> > was to allow non-consistency-model arches to still use livepatch, and
-> > that they'd just have to 'force' patches to completion instead.  That
-> > seems a little more forgiving.
-> > 
-> 
-> The initial proposal was to allow 'force' feature on architectures
-> without HAVE_RELIABLE_STACKTRACE support and use pr_notice() to warn
-> user about the non-availability of consistency model. It was argued
-> against, as it will encourage people to use it as an alternative instead
-> of adding HAVE_RELIABLE_STACKTRACE support to the kernel.
+err is assigned to -EIO, but this value is never actually
+used and *err* is updated later on.
 
-Ok, looking through the archives, I found it:
+Remove such reduntant code.
 
-  https://lkml.kernel.org/r/20171221151428.rt4dlizxb5nqhb3h@pathway.suse.cz
+Addresses-Coverity-ID: 1471816 ("Unused value")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/i915/selftests/intel_guc.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I'm not sure I agree with that conclusion, but nobody has complained
-about it, so it's probably fine...
-
+diff --git a/drivers/gpu/drm/i915/selftests/intel_guc.c b/drivers/gpu/drm/i915/selftests/intel_guc.c
+index 407c98f..c10e75c 100644
+--- a/drivers/gpu/drm/i915/selftests/intel_guc.c
++++ b/drivers/gpu/drm/i915/selftests/intel_guc.c
+@@ -206,7 +206,6 @@ static int igt_guc_clients(void *args)
+ 
+ 	if (!available_dbs(guc, guc->execbuf_client->priority)) {
+ 		pr_err("doorbell not available when it should\n");
+-		err = -EIO;
+ 		goto out_db;
+ 	}
+ 
 -- 
-Josh
+2.7.4
+
