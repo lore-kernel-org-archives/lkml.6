@@ -2,87 +2,146 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B94EECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8AAECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB3D320871
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:03:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GolFZH5t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB3D320871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 828AC20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:04:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 828AC20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbeGPNbQ (ORCPT
+        id S1730763AbeGPNcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:31:16 -0400
-Received: from mail-it0-f53.google.com ([209.85.214.53]:37839 "EHLO
-        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728734AbeGPNbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 09:31:16 -0400
-Received: by mail-it0-f53.google.com with SMTP id p17-v6so21179753itc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 06:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iMnw6wD8ayCsAY3s5wGqnXZGrWKraHxbSHUhkbBz+84=;
-        b=GolFZH5tXgGG0T7e5HLJwkEAGeRswobtJMimBgLxkvWDVWFMwwGb/a6UAC/qtaavEM
-         DkghDLoeJ+ZC8XxwfoTVHJMfAiXC3BzP9uYFm/sdUCmoCKiYnvrqzBlnuRXR1bVR56JZ
-         Q/ZaFFgRaUvcmw267VUn1MlYKltWf4v2jgzoY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iMnw6wD8ayCsAY3s5wGqnXZGrWKraHxbSHUhkbBz+84=;
-        b=gTVfVA6dUOkKYOGruoqz9ztiDKr2nKVJ0Rs3ZpdpE5scHrGytYf9+uwrjA516tZ0V/
-         90Y3ve8wH7vVNAhbzzmtRh4X/ES6235gbD0BDjqo55Ai4wL0N5xsfL2XIbD5k0H719NI
-         t3cVY3FWWwa+7U4UT9Yz7vu+ef0dEYFVRtjVAKeY3P5sNJBRkPXtEYjnIL6dCLRYE8Q4
-         9e0HON44Qv2eFOwtRr3zw3G6a4KU98CCI/KiW5ZwrA+Ekvg9dBBI9/DNYn39rouDTtQL
-         vOaZlRQ+YDDY8+v0W6xdljXhvocag9obksMr9RU3U7kpYH7JlwWlu+HVk6GntCNK8lRb
-         fTZg==
-X-Gm-Message-State: AOUpUlH611eTBSWOM0s6tJeoffOE25mMuaU8PDCFoWUo0S2oJr6DQSoF
-        Ru5OqIYIeB5Sjd87bbrJgOYpHubWianx1trjgy3CRKoH
-X-Google-Smtp-Source: AAOMgpeZSLed5oJhhJ6ItOGV54ucex/54lLuA5uD1pCjxH3R11kHQNnAdVGdzyu4xVNIgRAmh9ZA+TI/Fah313BuCmk=
-X-Received: by 2002:a24:2c49:: with SMTP id i70-v6mr12760439iti.135.1531746234147;
- Mon, 16 Jul 2018 06:03:54 -0700 (PDT)
+        Mon, 16 Jul 2018 09:32:17 -0400
+Received: from mga04.intel.com ([192.55.52.120]:5228 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728719AbeGPNcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 09:32:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 06:04:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,361,1526367600"; 
+   d="scan'208";a="240662441"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga005.jf.intel.com with ESMTP; 16 Jul 2018 06:04:35 -0700
+Subject: Re: [PATCH V3 2/7] mmc: sdhci: made changes for System Address
+ register of SDMA
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
+References: <1531106398-14062-1-git-send-email-zhang.chunyan@linaro.org>
+ <1531106398-14062-3-git-send-email-zhang.chunyan@linaro.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <1653583c-8d5b-6781-e923-9dcfd1e96403@intel.com>
+Date:   Mon, 16 Jul 2018 16:03:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-References: <20180716081018.21bfe495@canb.auug.org.au> <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
- <CAMuHMdVRfEcxo0SVW7VkmE-1bjsESKeL9nRk41W32_2V6rpA-A@mail.gmail.com>
-In-Reply-To: <CAMuHMdVRfEcxo0SVW7VkmE-1bjsESKeL9nRk41W32_2V6rpA-A@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 16 Jul 2018 15:03:42 +0200
-Message-ID: <CACRpkdbC6Z6NY2LAki2cwyGs4ohokWoXYBBR+gAx4DPU0S-YsA@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl tree
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531106398-14062-3-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 9:59 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On 09/07/18 06:19, Chunyan Zhang wrote:
+> According to the SD host controller specification version 4.10, when
+> Host Version 4 is enabled, SDMA uses ADMA System Address register
+> (05Fh-058h) instead of using SDMA System Address register to
+> support both 32-bit and 64-bit addressing.
 
-> The previous issue was a missing commit from the _author_, not committer.
-> As you rebased the branch, _you_ are now the committer, not me anymore.
-> So now your SoBs must be present, too.
+The commit message is good but the subject is not so good.  What about
+"Change SDMA address register for V4 mode"
 
-Yeah I figured. Sorry.
+> 
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> ---
+>  drivers/mmc/host/sdhci.c | 25 ++++++++++++++++++-------
+>  1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 525862f..c7de6a5 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -701,7 +701,7 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
+>  	}
+>  }
+>  
+> -static u32 sdhci_sdma_address(struct sdhci_host *host)
+> +static dma_addr_t sdhci_sdma_address(struct sdhci_host *host)
+>  {
+>  	if (host->bounce_buffer)
+>  		return host->bounce_addr;
+> @@ -709,6 +709,18 @@ static u32 sdhci_sdma_address(struct sdhci_host *host)
+>  		return sg_dma_address(host->data->sg);
+>  }
+>  
+> +static void sdhci_set_sdma_addr(struct sdhci_host *host, dma_addr_t addr)
+> +{
+> +	if (host->v4_mode) {
+> +		sdhci_writel(host, addr, SDHCI_ADMA_ADDRESS);
+> +		if (host->flags & SDHCI_USE_64_BIT_DMA)
+> +			sdhci_writel(host, (u64)addr >> 32, SDHCI_ADMA_ADDRESS_HI);
+> +	} else {
+> +		sdhci_writel(host, addr, SDHCI_DMA_ADDRESS);
+> +	}
+> +
+> +}
+> +
+>  static unsigned int sdhci_target_timeout(struct sdhci_host *host,
+>  					 struct mmc_command *cmd,
+>  					 struct mmc_data *data)
+> @@ -968,8 +980,7 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+>  					     SDHCI_ADMA_ADDRESS_HI);
+>  		} else {
+>  			WARN_ON(sg_cnt != 1);
+> -			sdhci_writel(host, sdhci_sdma_address(host),
+> -				     SDHCI_DMA_ADDRESS);
+> +			sdhci_set_sdma_addr(host, sdhci_sdma_address(host));
+>  		}
+>  	}
+>  
+> @@ -2796,7 +2807,7 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
+>  		 * some controllers are faulty, don't trust them.
+>  		 */
+>  		if (intmask & SDHCI_INT_DMA_END) {
+> -			u32 dmastart, dmanow;
+> +			dma_addr_t dmastart, dmanow;
+>  
+>  			dmastart = sdhci_sdma_address(host);
+>  			dmanow = dmastart + host->data->bytes_xfered;
+> @@ -2807,9 +2818,9 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
+>  				~(SDHCI_DEFAULT_BOUNDARY_SIZE - 1)) +
 
-> As I already told you I had fixed up the author SoB, and updated the tag,
-> just drop the above commits, pull sh-pfc-for-v4.19-tag1 again, and be done
-> with it ;-)
+That isn't going to work with 64-bit addresses.  Need to cast
+SDHCI_DEFAULT_BOUNDARY_SIZE to dma_addr_t
 
-But it's no fun if I can't do all mistakes myself! ;)
+>  				SDHCI_DEFAULT_BOUNDARY_SIZE;
+>  			host->data->bytes_xfered = dmanow - dmastart;
+> -			DBG("DMA base 0x%08x, transferred 0x%06x bytes, next 0x%08x\n",
+> -			    dmastart, host->data->bytes_xfered, dmanow);
+> -			sdhci_writel(host, dmanow, SDHCI_DMA_ADDRESS);
+> +			DBG("DMA base 0x%016llx, transferred 0x%06x bytes, next 0x%016llx\n",
 
-Yours,
-Linus Walleij
+Can you use %pad for dma_addr_t
+
+> +			    (u64)dmastart, host->data->bytes_xfered, (u64)dmanow);
+> +			sdhci_set_sdma_addr(host, dmanow);
+>  		}
+>  
+>  		if (intmask & SDHCI_INT_DATA_END) {
+> 
+
