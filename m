@@ -2,1017 +2,168 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED53DECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF86ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C47920BED
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:51:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C47920BED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8320320BED
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:55:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NyTSfZKN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8320320BED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbeGPMST (ORCPT
+        id S1730063AbeGPMXC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:18:19 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43087 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbeGPMST (ORCPT
+        Mon, 16 Jul 2018 08:23:02 -0400
+Received: from mail-qt0-f179.google.com ([209.85.216.179]:32839 "EHLO
+        mail-qt0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728025AbeGPMXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:18:19 -0400
-Received: by mail-ed1-f67.google.com with SMTP id b20-v6so4191707edt.10;
-        Mon, 16 Jul 2018 04:51:10 -0700 (PDT)
+        Mon, 16 Jul 2018 08:23:02 -0400
+Received: by mail-qt0-f179.google.com with SMTP id c15-v6so12214451qtp.0;
+        Mon, 16 Jul 2018 04:55:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=maBIJUQybzJG/mP/mn5Dgsx4u3boUn2IiroNR+dHHFw=;
+        b=NyTSfZKNkdZYyzhlUkrO7F5HGT6aIQYWfyLSWSJvsTNHKhHH63r0qHQ3gZRHRv+Y4B
+         5+YxUSs96nVp2Rz08DITK9bAeA8TQLqQ1feefFFW2JiE6e9CU+Z4TtAegi1W8DQIKqoJ
+         sHWj9SOxmC39a5O7/CSXr8/6xtzPEzjxxJ+AMxCPqNMEky8R9v3FwrlltSc7DOCeYeWq
+         DJKxrRIFn0Nv8gnBvS7PWIv+cs7df/Bp8YKBpJdYbNZTWAOD7OaMiQ8uvZMw5dI44ec3
+         xlywYGFDCcWyqzbDQ6pKFnCflyB5AEuQO/uDX3tX/64a+C+t7DcoupVjNNve/ESJ0fHt
+         0xiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=yZQYW96hcBYgtIT4wvLccZa8Gw+DTsaiuUJjpwYTQLg=;
-        b=K5P56FIrskxf3lIW4GZxm5x27QIC1kX+DRkdPjhpH3cVgGeH2pWshwDklBn/Fw1Gqz
-         6p2rUe01AXxtgThgw84q+z4Iyk8sBNTMgWMMa8Q1SnOtAuWSv1a2HcV/zVY735gp7G9J
-         RNtjbROqdwk3ms2OCsCcO12+F9eSs7/meOZYQZIw/1GUEtn7DlKfk2zY5Mstxy8EK4+o
-         E2w61d3AjPURJGZv6F4gCx5gs30pG3DhD4r/iACbVcmkWtwEzTGYoFTEVUY0mItkVfNs
-         n1Gpm4pep44mKKLJsY4ZW+xC3pqJSd0WiZ8PtkmqZW4cjj4d11SDjV/ibFkXY73orWWH
-         IY6g==
-X-Gm-Message-State: AOUpUlFXuAezizqS+uwfP+jSIhT1ed+uipxMGBoldgvj3cZA1ajEZL9O
-        3d+GVuPww7qv7F0uLv0ueecLLg==
-X-Google-Smtp-Source: AAOMgpfuejQzQ5+yFn50SrSqc5X/muYzI/eZjwyWE/KoSGpsUfjPuFf8l/IIQWcuvrAfFV9p6b/JKg==
-X-Received: by 2002:aa7:c0c9:: with SMTP id j9-v6mr17213574edp.135.1531741869717;
-        Mon, 16 Jul 2018 04:51:09 -0700 (PDT)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id a5-v6sm6470219edr.1.2018.07.16.04.51.08
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=maBIJUQybzJG/mP/mn5Dgsx4u3boUn2IiroNR+dHHFw=;
+        b=WyqrY8I4G51BOVjj39nIlfHfN0/wHAKD3EINNBcvTpYIAspPloRftL9bqbs3JpWddP
+         t2apN5nTNpfbi7HzXq1FLnYkb7aU9mrJXcnKIU3urKDYXA8TPUkMKT5a0Wqmsu9tY19G
+         7S7ODG15RRNogYAsUfg28uKfwpI11DTLAD7ycvb9YJINTeD5HmVbN0P26/PIkFbZ4kie
+         yipeP3P5AWLX0HDMAUICTN+6Ev9viLB1Sk94T6FjWivtCtySk+QXts5qmgQhUnZJ81bs
+         UNfKw6Xd8s7XBHIib1BJ/FxFvJW9tyw6Gs6CEhXZgOTSTpDka4BvhHpb0yf0icyRDoGr
+         sFtw==
+X-Gm-Message-State: AOUpUlGoVhFma40kO/gzOi4e+drjmSjpijz/RBZAe4jkn4DOpWEmay7f
+        IuOqGf/ZWfgFi6w+fOT+KdM=
+X-Google-Smtp-Source: AAOMgpd15brXQnR9YbfTipRK8dzcapUt/nqCKM9v6OyCpfvqEqjZpd7+EZ3qKVyYZyGx4BeCCQqryQ==
+X-Received: by 2002:a0c:f9c8:: with SMTP id j8-v6mr17685994qvo.177.1531742155587;
+        Mon, 16 Jul 2018 04:55:55 -0700 (PDT)
+Received: from [10.178.50.179] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id f17-v6sm18338359qtp.1.2018.07.16.04.55.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 04:51:09 -0700 (PDT)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Date:   Mon, 16 Jul 2018 13:50:58 +0200
-Message-Id: <20180716115058.5559-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.18.0
+        Mon, 16 Jul 2018 04:55:54 -0700 (PDT)
+Subject: Re: linux-next: Signed-off-by missing for commits in the arm-soc tree
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Anholt <eric@anholt.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180716075718.4e5ef491@canb.auug.org.au>
+ <CAOesGMhVeo6Wc=nMcEnusa+FfwQBWJnxs0LY-zXm4HMau+SMhg@mail.gmail.com>
+ <6a9fa6f3-7aef-a83b-72a6-dc9492964b5e@gmail.com>
+ <CAGb2v667K4Z6o-KEQROWuCbgJbKLNX_OCpCBOWaECb_qfRMBpw@mail.gmail.com>
+ <20180716095700.GC17271@n2100.armlinux.org.uk>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <6a6d47fa-cc7f-b977-339e-ea215bc40541@gmail.com>
+Date:   Mon, 16 Jul 2018 04:55:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180716095700.GC17271@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
-
-There are several blockable mmu notifiers which might sleep in
-mmu_notifier_invalidate_range_start and that is a problem for the
-oom_reaper because it needs to guarantee a forward progress so it cannot
-depend on any sleepable locks.
-
-Currently we simply back off and mark an oom victim with blockable mmu
-notifiers as done after a short sleep. That can result in selecting a
-new oom victim prematurely because the previous one still hasn't torn
-its memory down yet.
-
-We can do much better though. Even if mmu notifiers use sleepable locks
-there is no reason to automatically assume those locks are held.
-Moreover majority of notifiers only care about a portion of the address
-space and there is absolutely zero reason to fail when we are unmapping an
-unrelated range. Many notifiers do really block and wait for HW which is
-harder to handle and we have to bail out though.
-
-This patch handles the low hanging fruid. __mmu_notifier_invalidate_range_start
-gets a blockable flag and callbacks are not allowed to sleep if the
-flag is set to false. This is achieved by using trylock instead of the
-sleepable lock for most callbacks and continue as long as we do not
-block down the call chain.
-
-I think we can improve that even further because there is a common
-pattern to do a range lookup first and then do something about that.
-The first part can be done without a sleeping lock in most cases AFAICS.
-
-The oom_reaper end then simply retries if there is at least one notifier
-which couldn't make any progress in !blockable mode. A retry loop is
-already implemented to wait for the mmap_sem and this is basically the
-same thing.
-
-Changes since rfc v1
-- gpu notifiers can sleep while waiting for HW (evict_process_queues_cpsch
-  on a lock and amdgpu_mn_invalidate_node on unbound timeout) make sure
-  we bail out when we have an intersecting range for starter
-- note that a notifier failed to the log for easier debugging
-- back off early in ib_umem_notifier_invalidate_range_start if the
-  callback is called
-- mn_invl_range_start waits for completion down the unmap_grant_pages
-  path so we have to back off early on overlapping ranges
-
-Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: David Airlie <airlied@linux.ie>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Cc: Sudeep Dutt <sudeep.dutt@intel.com>
-Cc: Ashutosh Dixit <ashutosh.dixit@intel.com>
-Cc: Dimitri Sivanich <sivanich@sgi.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Felix Kuehling <felix.kuehling@amd.com>
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: amd-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: intel-gfx@lists.freedesktop.org
-Cc: linux-rdma@vger.kernel.org
-Cc: xen-devel@lists.xenproject.org
-Cc: linux-mm@kvack.org
-Acked-by: Christian König <christian.koenig@amd.com> # AMD notifiers
-Acked-by: Leon Romanovsky <leonro@mellanox.com> # mlx and umem_odp
-Reported-by: David Rientjes <rientjes@google.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
-
-Hi,
-there were no major objections when I sent this as an RFC the last time
-[1]. I was hoping for more feedback in the drivers land because I am
-touching the code I have no way to test. On the other hand the pattern
-is quite simple and consistent over all users so there shouldn't be
-any large surprises hopefully.
-
-Any further review would be highly appreciate of course. But is this
-something to put into the mm tree now?
-
-[1] http://lkml.kernel.org/r/20180627074421.GF32348@dhcp22.suse.cz
 
 
- arch/x86/kvm/x86.c                      |  7 ++--
- drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  | 43 +++++++++++++++++++-----
- drivers/gpu/drm/i915/i915_gem_userptr.c | 13 ++++++--
- drivers/gpu/drm/radeon/radeon_mn.c      | 22 +++++++++++--
- drivers/infiniband/core/umem_odp.c      | 33 +++++++++++++++----
- drivers/infiniband/hw/hfi1/mmu_rb.c     | 11 ++++---
- drivers/infiniband/hw/mlx5/odp.c        |  2 +-
- drivers/misc/mic/scif/scif_dma.c        |  7 ++--
- drivers/misc/sgi-gru/grutlbpurge.c      |  7 ++--
- drivers/xen/gntdev.c                    | 44 ++++++++++++++++++++-----
- include/linux/kvm_host.h                |  4 +--
- include/linux/mmu_notifier.h            | 35 +++++++++++++++-----
- include/linux/oom.h                     |  2 +-
- include/rdma/ib_umem_odp.h              |  3 +-
- mm/hmm.c                                |  7 ++--
- mm/mmap.c                               |  2 +-
- mm/mmu_notifier.c                       | 19 ++++++++---
- mm/oom_kill.c                           | 29 ++++++++--------
- virt/kvm/kvm_main.c                     | 15 ++++++---
- 19 files changed, 225 insertions(+), 80 deletions(-)
+On 07/16/2018 02:57 AM, Russell King - ARM Linux wrote:
+> On Mon, Jul 16, 2018 at 05:24:08PM +0800, Chen-Yu Tsai wrote:
+>> On Mon, Jul 16, 2018 at 5:13 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>>>
+>>>
+>>> On 07/15/2018 03:50 PM, Olof Johansson wrote:
+>>>> Thanks Stephen, I keep saying every time you catch these that I need
+>>>> to run the same script. :(
+>>>>
+>>>> Florian, I wonder if this happened when you rebased to squash in the fix?
+>>>
+>>> Humm, could be, all I did (and it was not the first time) was to do an
+>>> interactive rebase with --preserve-merges. AFAICT, all of these commits
+>>> came from Eric's pull request, so what I typically do is just sign off
+>>> on the merge commit, but do not apply my SoB to all commits coming from
+>>> that pull request if that makes sense?
+>>
+>> When you rebase, if the commit is re-applied, the committer changes to
+>> you, so you need to add your SoB to all commits you rebased.
+>>
+>> I suppose you could override it with GIT_COMMITTER_NAME and
+>> GIT_COMMITTER_EMAIL environment variables, but that sort of distorts
+>> the SoB if any changes were added due to rebasing, such as resolution
+>> of merge conflicts.
+> 
+> A different point: should *anyone* be rebasing commits that they did not
+> themselves commit.  Discuss.
+> 
+> IMHO no - the commits were made public, and anyone could pull the tree
+> from which they came in order to do further work before submitting that.
+> Rebasing changes the commit IDs, which can lead to duplicate commits
+> ending up in mainline.  With other changes on top, this causes totally
+> unnecessary conflicts.
+> 
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 6bcecc325e7e..ac08f5d711be 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7203,8 +7203,9 @@ static void vcpu_load_eoi_exitmap(struct kvm_vcpu *vcpu)
- 	kvm_x86_ops->load_eoi_exitmap(vcpu, eoi_exit_bitmap);
- }
- 
--void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
--		unsigned long start, unsigned long end)
-+int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-+		unsigned long start, unsigned long end,
-+		bool blockable)
- {
- 	unsigned long apic_address;
- 
-@@ -7215,6 +7216,8 @@ void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
- 	apic_address = gfn_to_hva(kvm, APIC_DEFAULT_PHYS_BASE >> PAGE_SHIFT);
- 	if (start <= apic_address && apic_address < end)
- 		kvm_make_all_cpus_request(kvm, KVM_REQ_APIC_PAGE_RELOAD);
-+
-+	return 0;
- }
- 
- void kvm_vcpu_reload_apic_access_page(struct kvm_vcpu *vcpu)
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-index 83e344fbb50a..3399a4a927fb 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c
-@@ -136,12 +136,18 @@ void amdgpu_mn_unlock(struct amdgpu_mn *mn)
-  *
-  * Take the rmn read side lock.
-  */
--static void amdgpu_mn_read_lock(struct amdgpu_mn *rmn)
-+static int amdgpu_mn_read_lock(struct amdgpu_mn *rmn, bool blockable)
- {
--	mutex_lock(&rmn->read_lock);
-+	if (blockable)
-+		mutex_lock(&rmn->read_lock);
-+	else if (!mutex_trylock(&rmn->read_lock))
-+		return -EAGAIN;
-+
- 	if (atomic_inc_return(&rmn->recursion) == 1)
- 		down_read_non_owner(&rmn->lock);
- 	mutex_unlock(&rmn->read_lock);
-+
-+	return 0;
- }
- 
- /**
-@@ -197,10 +203,11 @@ static void amdgpu_mn_invalidate_node(struct amdgpu_mn_node *node,
-  * We block for all BOs between start and end to be idle and
-  * unmap them by move them into system domain again.
-  */
--static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-+static int amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
- 						 struct mm_struct *mm,
- 						 unsigned long start,
--						 unsigned long end)
-+						 unsigned long end,
-+						 bool blockable)
- {
- 	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
- 	struct interval_tree_node *it;
-@@ -208,17 +215,28 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
- 	/* notification is exclusive, but interval is inclusive */
- 	end -= 1;
- 
--	amdgpu_mn_read_lock(rmn);
-+	/* TODO we should be able to split locking for interval tree and
-+	 * amdgpu_mn_invalidate_node
-+	 */
-+	if (amdgpu_mn_read_lock(rmn, blockable))
-+		return -EAGAIN;
- 
- 	it = interval_tree_iter_first(&rmn->objects, start, end);
- 	while (it) {
- 		struct amdgpu_mn_node *node;
- 
-+		if (!blockable) {
-+			amdgpu_mn_read_unlock(rmn);
-+			return -EAGAIN;
-+		}
-+
- 		node = container_of(it, struct amdgpu_mn_node, it);
- 		it = interval_tree_iter_next(it, start, end);
- 
- 		amdgpu_mn_invalidate_node(node, start, end);
- 	}
-+
-+	return 0;
- }
- 
- /**
-@@ -233,10 +251,11 @@ static void amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
-  * necessitates evicting all user-mode queues of the process. The BOs
-  * are restorted in amdgpu_mn_invalidate_range_end_hsa.
-  */
--static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
-+static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 						 struct mm_struct *mm,
- 						 unsigned long start,
--						 unsigned long end)
-+						 unsigned long end,
-+						 bool blockable)
- {
- 	struct amdgpu_mn *rmn = container_of(mn, struct amdgpu_mn, mn);
- 	struct interval_tree_node *it;
-@@ -244,13 +263,19 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 	/* notification is exclusive, but interval is inclusive */
- 	end -= 1;
- 
--	amdgpu_mn_read_lock(rmn);
-+	if (amdgpu_mn_read_lock(rmn, blockable))
-+		return -EAGAIN;
- 
- 	it = interval_tree_iter_first(&rmn->objects, start, end);
- 	while (it) {
- 		struct amdgpu_mn_node *node;
- 		struct amdgpu_bo *bo;
- 
-+		if (!blockable) {
-+			amdgpu_mn_read_unlock(rmn);
-+			return -EAGAIN;
-+		}
-+
- 		node = container_of(it, struct amdgpu_mn_node, it);
- 		it = interval_tree_iter_next(it, start, end);
- 
-@@ -262,6 +287,8 @@ static void amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
- 				amdgpu_amdkfd_evict_userptr(mem, mm);
- 		}
- 	}
-+
-+	return 0;
- }
- 
- /**
-diff --git a/drivers/gpu/drm/i915/i915_gem_userptr.c b/drivers/gpu/drm/i915/i915_gem_userptr.c
-index 854bd51b9478..9cbff68f6b41 100644
---- a/drivers/gpu/drm/i915/i915_gem_userptr.c
-+++ b/drivers/gpu/drm/i915/i915_gem_userptr.c
-@@ -112,10 +112,11 @@ static void del_object(struct i915_mmu_object *mo)
- 	mo->attached = false;
- }
- 
--static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
-+static int i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 						       struct mm_struct *mm,
- 						       unsigned long start,
--						       unsigned long end)
-+						       unsigned long end,
-+						       bool blockable)
- {
- 	struct i915_mmu_notifier *mn =
- 		container_of(_mn, struct i915_mmu_notifier, mn);
-@@ -124,7 +125,7 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 	LIST_HEAD(cancelled);
- 
- 	if (RB_EMPTY_ROOT(&mn->objects.rb_root))
--		return;
-+		return 0;
- 
- 	/* interval ranges are inclusive, but invalidate range is exclusive */
- 	end--;
-@@ -132,6 +133,10 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 	spin_lock(&mn->lock);
- 	it = interval_tree_iter_first(&mn->objects, start, end);
- 	while (it) {
-+		if (!blockable) {
-+			spin_unlock(&mn->lock);
-+			return -EAGAIN;
-+		}
- 		/* The mmu_object is released late when destroying the
- 		 * GEM object so it is entirely possible to gain a
- 		 * reference on an object in the process of being freed
-@@ -154,6 +159,8 @@ static void i915_gem_userptr_mn_invalidate_range_start(struct mmu_notifier *_mn,
- 
- 	if (!list_empty(&cancelled))
- 		flush_workqueue(mn->wq);
-+
-+	return 0;
- }
- 
- static const struct mmu_notifier_ops i915_gem_userptr_notifier = {
-diff --git a/drivers/gpu/drm/radeon/radeon_mn.c b/drivers/gpu/drm/radeon/radeon_mn.c
-index abd24975c9b1..f8b35df44c60 100644
---- a/drivers/gpu/drm/radeon/radeon_mn.c
-+++ b/drivers/gpu/drm/radeon/radeon_mn.c
-@@ -118,19 +118,27 @@ static void radeon_mn_release(struct mmu_notifier *mn,
-  * We block for all BOs between start and end to be idle and
-  * unmap them by move them into system domain again.
-  */
--static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
-+static int radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
- 					     struct mm_struct *mm,
- 					     unsigned long start,
--					     unsigned long end)
-+					     unsigned long end,
-+					     bool blockable)
- {
- 	struct radeon_mn *rmn = container_of(mn, struct radeon_mn, mn);
- 	struct ttm_operation_ctx ctx = { false, false };
- 	struct interval_tree_node *it;
-+	int ret = 0;
- 
- 	/* notification is exclusive, but interval is inclusive */
- 	end -= 1;
- 
--	mutex_lock(&rmn->lock);
-+	/* TODO we should be able to split locking for interval tree and
-+	 * the tear down.
-+	 */
-+	if (blockable)
-+		mutex_lock(&rmn->lock);
-+	else if (!mutex_trylock(&rmn->lock))
-+		return -EAGAIN;
- 
- 	it = interval_tree_iter_first(&rmn->objects, start, end);
- 	while (it) {
-@@ -138,6 +146,11 @@ static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
- 		struct radeon_bo *bo;
- 		long r;
- 
-+		if (!blockable) {
-+			ret = -EAGAIN;
-+			goto out_unlock;
-+		}
-+
- 		node = container_of(it, struct radeon_mn_node, it);
- 		it = interval_tree_iter_next(it, start, end);
- 
-@@ -166,7 +179,10 @@ static void radeon_mn_invalidate_range_start(struct mmu_notifier *mn,
- 		}
- 	}
- 	
-+out_unlock:
- 	mutex_unlock(&rmn->lock);
-+
-+	return ret;
- }
- 
- static const struct mmu_notifier_ops radeon_mn_ops = {
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index 182436b92ba9..6ec748eccff7 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -186,6 +186,7 @@ static void ib_umem_notifier_release(struct mmu_notifier *mn,
- 	rbt_ib_umem_for_each_in_range(&context->umem_tree, 0,
- 				      ULLONG_MAX,
- 				      ib_umem_notifier_release_trampoline,
-+				      true,
- 				      NULL);
- 	up_read(&context->umem_rwsem);
- }
-@@ -207,22 +208,31 @@ static int invalidate_range_start_trampoline(struct ib_umem *item, u64 start,
- 	return 0;
- }
- 
--static void ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+static int ib_umem_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 						    struct mm_struct *mm,
- 						    unsigned long start,
--						    unsigned long end)
-+						    unsigned long end,
-+						    bool blockable)
- {
- 	struct ib_ucontext *context = container_of(mn, struct ib_ucontext, mn);
-+	int ret;
- 
- 	if (!context->invalidate_range)
--		return;
-+		return 0;
-+
-+	if (blockable)
-+		down_read(&context->umem_rwsem);
-+	else if (!down_read_trylock(&context->umem_rwsem))
-+		return -EAGAIN;
- 
- 	ib_ucontext_notifier_start_account(context);
--	down_read(&context->umem_rwsem);
--	rbt_ib_umem_for_each_in_range(&context->umem_tree, start,
-+	ret = rbt_ib_umem_for_each_in_range(&context->umem_tree, start,
- 				      end,
--				      invalidate_range_start_trampoline, NULL);
-+				      invalidate_range_start_trampoline,
-+				      blockable, NULL);
- 	up_read(&context->umem_rwsem);
-+
-+	return ret;
- }
- 
- static int invalidate_range_end_trampoline(struct ib_umem *item, u64 start,
-@@ -242,10 +252,15 @@ static void ib_umem_notifier_invalidate_range_end(struct mmu_notifier *mn,
- 	if (!context->invalidate_range)
- 		return;
- 
-+	/*
-+	 * TODO: we currently bail out if there is any sleepable work to be done
-+	 * in ib_umem_notifier_invalidate_range_start so we shouldn't really block
-+	 * here. But this is ugly and fragile.
-+	 */
- 	down_read(&context->umem_rwsem);
- 	rbt_ib_umem_for_each_in_range(&context->umem_tree, start,
- 				      end,
--				      invalidate_range_end_trampoline, NULL);
-+				      invalidate_range_end_trampoline, true, NULL);
- 	up_read(&context->umem_rwsem);
- 	ib_ucontext_notifier_end_account(context);
- }
-@@ -798,6 +813,7 @@ EXPORT_SYMBOL(ib_umem_odp_unmap_dma_pages);
- int rbt_ib_umem_for_each_in_range(struct rb_root_cached *root,
- 				  u64 start, u64 last,
- 				  umem_call_back cb,
-+				  bool blockable,
- 				  void *cookie)
- {
- 	int ret_val = 0;
-@@ -809,6 +825,9 @@ int rbt_ib_umem_for_each_in_range(struct rb_root_cached *root,
- 
- 	for (node = rbt_ib_umem_iter_first(root, start, last - 1);
- 			node; node = next) {
-+		/* TODO move the blockable decision up to the callback */
-+		if (!blockable)
-+			return -EAGAIN;
- 		next = rbt_ib_umem_iter_next(node, start, last - 1);
- 		umem = container_of(node, struct ib_umem_odp, interval_tree);
- 		ret_val = cb(umem->umem, start, last, cookie) || ret_val;
-diff --git a/drivers/infiniband/hw/hfi1/mmu_rb.c b/drivers/infiniband/hw/hfi1/mmu_rb.c
-index 70aceefe14d5..e1c7996c018e 100644
---- a/drivers/infiniband/hw/hfi1/mmu_rb.c
-+++ b/drivers/infiniband/hw/hfi1/mmu_rb.c
-@@ -67,9 +67,9 @@ struct mmu_rb_handler {
- 
- static unsigned long mmu_node_start(struct mmu_rb_node *);
- static unsigned long mmu_node_last(struct mmu_rb_node *);
--static void mmu_notifier_range_start(struct mmu_notifier *,
-+static int mmu_notifier_range_start(struct mmu_notifier *,
- 				     struct mm_struct *,
--				     unsigned long, unsigned long);
-+				     unsigned long, unsigned long, bool);
- static struct mmu_rb_node *__mmu_rb_search(struct mmu_rb_handler *,
- 					   unsigned long, unsigned long);
- static void do_remove(struct mmu_rb_handler *handler,
-@@ -284,10 +284,11 @@ void hfi1_mmu_rb_remove(struct mmu_rb_handler *handler,
- 	handler->ops->remove(handler->ops_arg, node);
- }
- 
--static void mmu_notifier_range_start(struct mmu_notifier *mn,
-+static int mmu_notifier_range_start(struct mmu_notifier *mn,
- 				     struct mm_struct *mm,
- 				     unsigned long start,
--				     unsigned long end)
-+				     unsigned long end,
-+				     bool blockable)
- {
- 	struct mmu_rb_handler *handler =
- 		container_of(mn, struct mmu_rb_handler, mn);
-@@ -313,6 +314,8 @@ static void mmu_notifier_range_start(struct mmu_notifier *mn,
- 
- 	if (added)
- 		queue_work(handler->wq, &handler->del_work);
-+
-+	return 0;
- }
- 
- /*
-diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
-index f1a87a690a4c..d216e0d2921d 100644
---- a/drivers/infiniband/hw/mlx5/odp.c
-+++ b/drivers/infiniband/hw/mlx5/odp.c
-@@ -488,7 +488,7 @@ void mlx5_ib_free_implicit_mr(struct mlx5_ib_mr *imr)
- 
- 	down_read(&ctx->umem_rwsem);
- 	rbt_ib_umem_for_each_in_range(&ctx->umem_tree, 0, ULLONG_MAX,
--				      mr_leaf_free, imr);
-+				      mr_leaf_free, true, imr);
- 	up_read(&ctx->umem_rwsem);
- 
- 	wait_event(imr->q_leaf_free, !atomic_read(&imr->num_leaf_free));
-diff --git a/drivers/misc/mic/scif/scif_dma.c b/drivers/misc/mic/scif/scif_dma.c
-index 63d6246d6dff..6369aeaa7056 100644
---- a/drivers/misc/mic/scif/scif_dma.c
-+++ b/drivers/misc/mic/scif/scif_dma.c
-@@ -200,15 +200,18 @@ static void scif_mmu_notifier_release(struct mmu_notifier *mn,
- 	schedule_work(&scif_info.misc_work);
- }
- 
--static void scif_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+static int scif_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 						     struct mm_struct *mm,
- 						     unsigned long start,
--						     unsigned long end)
-+						     unsigned long end,
-+						     bool blockable)
- {
- 	struct scif_mmu_notif	*mmn;
- 
- 	mmn = container_of(mn, struct scif_mmu_notif, ep_mmu_notifier);
- 	scif_rma_destroy_tcw(mmn, start, end - start);
-+
-+	return 0;
- }
- 
- static void scif_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
-diff --git a/drivers/misc/sgi-gru/grutlbpurge.c b/drivers/misc/sgi-gru/grutlbpurge.c
-index a3454eb56fbf..be28f05bfafa 100644
---- a/drivers/misc/sgi-gru/grutlbpurge.c
-+++ b/drivers/misc/sgi-gru/grutlbpurge.c
-@@ -219,9 +219,10 @@ void gru_flush_all_tlb(struct gru_state *gru)
- /*
-  * MMUOPS notifier callout functions
-  */
--static void gru_invalidate_range_start(struct mmu_notifier *mn,
-+static int gru_invalidate_range_start(struct mmu_notifier *mn,
- 				       struct mm_struct *mm,
--				       unsigned long start, unsigned long end)
-+				       unsigned long start, unsigned long end,
-+				       bool blockable)
- {
- 	struct gru_mm_struct *gms = container_of(mn, struct gru_mm_struct,
- 						 ms_notifier);
-@@ -231,6 +232,8 @@ static void gru_invalidate_range_start(struct mmu_notifier *mn,
- 	gru_dbg(grudev, "gms %p, start 0x%lx, end 0x%lx, act %d\n", gms,
- 		start, end, atomic_read(&gms->ms_range_active));
- 	gru_flush_tlb_range(gms, start, end - start);
-+
-+	return 0;
- }
- 
- static void gru_invalidate_range_end(struct mmu_notifier *mn,
-diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-index bd56653b9bbc..55b4f0e3f4d6 100644
---- a/drivers/xen/gntdev.c
-+++ b/drivers/xen/gntdev.c
-@@ -441,18 +441,25 @@ static const struct vm_operations_struct gntdev_vmops = {
- 
- /* ------------------------------------------------------------------ */
- 
-+static bool in_range(struct grant_map *map,
-+			      unsigned long start, unsigned long end)
-+{
-+	if (!map->vma)
-+		return false;
-+	if (map->vma->vm_start >= end)
-+		return false;
-+	if (map->vma->vm_end <= start)
-+		return false;
-+
-+	return true;
-+}
-+
- static void unmap_if_in_range(struct grant_map *map,
- 			      unsigned long start, unsigned long end)
- {
- 	unsigned long mstart, mend;
- 	int err;
- 
--	if (!map->vma)
--		return;
--	if (map->vma->vm_start >= end)
--		return;
--	if (map->vma->vm_end <= start)
--		return;
- 	mstart = max(start, map->vma->vm_start);
- 	mend   = min(end,   map->vma->vm_end);
- 	pr_debug("map %d+%d (%lx %lx), range %lx %lx, mrange %lx %lx\n",
-@@ -465,21 +472,40 @@ static void unmap_if_in_range(struct grant_map *map,
- 	WARN_ON(err);
- }
- 
--static void mn_invl_range_start(struct mmu_notifier *mn,
-+static int mn_invl_range_start(struct mmu_notifier *mn,
- 				struct mm_struct *mm,
--				unsigned long start, unsigned long end)
-+				unsigned long start, unsigned long end,
-+				bool blockable)
- {
- 	struct gntdev_priv *priv = container_of(mn, struct gntdev_priv, mn);
- 	struct grant_map *map;
-+	int ret = 0;
-+
-+	/* TODO do we really need a mutex here? */
-+	if (blockable)
-+		mutex_lock(&priv->lock);
-+	else if (!mutex_trylock(&priv->lock))
-+		return -EAGAIN;
- 
--	mutex_lock(&priv->lock);
- 	list_for_each_entry(map, &priv->maps, next) {
-+		if (in_range(map, start, end)) {
-+			ret = -EAGAIN;
-+			goto out_unlock;
-+		}
- 		unmap_if_in_range(map, start, end);
- 	}
- 	list_for_each_entry(map, &priv->freeable_maps, next) {
-+		if (in_range(map, start, end)) {
-+			ret = -EAGAIN;
-+			goto out_unlock;
-+		}
- 		unmap_if_in_range(map, start, end);
- 	}
-+
-+out_unlock:
- 	mutex_unlock(&priv->lock);
-+
-+	return ret;
- }
- 
- static void mn_release(struct mmu_notifier *mn,
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 4ee7bc548a83..148935085194 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1275,8 +1275,8 @@ static inline long kvm_arch_vcpu_async_ioctl(struct file *filp,
- }
- #endif /* CONFIG_HAVE_KVM_VCPU_ASYNC_IOCTL */
- 
--void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
--		unsigned long start, unsigned long end);
-+int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-+		unsigned long start, unsigned long end, bool blockable);
- 
- #ifdef CONFIG_HAVE_KVM_VCPU_RUN_PID_CHANGE
- int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu);
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 392e6af82701..2eb1a2d01759 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -151,13 +151,15 @@ struct mmu_notifier_ops {
- 	 * address space but may still be referenced by sptes until
- 	 * the last refcount is dropped.
- 	 *
--	 * If both of these callbacks cannot block, and invalidate_range
--	 * cannot block, mmu_notifier_ops.flags should have
--	 * MMU_INVALIDATE_DOES_NOT_BLOCK set.
-+	 * If blockable argument is set to false then the callback cannot
-+	 * sleep and has to return with -EAGAIN. 0 should be returned
-+	 * otherwise.
-+	 *
- 	 */
--	void (*invalidate_range_start)(struct mmu_notifier *mn,
-+	int (*invalidate_range_start)(struct mmu_notifier *mn,
- 				       struct mm_struct *mm,
--				       unsigned long start, unsigned long end);
-+				       unsigned long start, unsigned long end,
-+				       bool blockable);
- 	void (*invalidate_range_end)(struct mmu_notifier *mn,
- 				     struct mm_struct *mm,
- 				     unsigned long start, unsigned long end);
-@@ -229,8 +231,9 @@ extern int __mmu_notifier_test_young(struct mm_struct *mm,
- 				     unsigned long address);
- extern void __mmu_notifier_change_pte(struct mm_struct *mm,
- 				      unsigned long address, pte_t pte);
--extern void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
--				  unsigned long start, unsigned long end);
-+extern int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
-+				  unsigned long start, unsigned long end,
-+				  bool blockable);
- extern void __mmu_notifier_invalidate_range_end(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end,
- 				  bool only_end);
-@@ -281,7 +284,17 @@ static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end)
- {
- 	if (mm_has_notifiers(mm))
--		__mmu_notifier_invalidate_range_start(mm, start, end);
-+		__mmu_notifier_invalidate_range_start(mm, start, end, true);
-+}
-+
-+static inline int mmu_notifier_invalidate_range_start_nonblock(struct mm_struct *mm,
-+				  unsigned long start, unsigned long end)
-+{
-+	int ret = 0;
-+	if (mm_has_notifiers(mm))
-+		ret = __mmu_notifier_invalidate_range_start(mm, start, end, false);
-+
-+	return ret;
- }
- 
- static inline void mmu_notifier_invalidate_range_end(struct mm_struct *mm,
-@@ -461,6 +474,12 @@ static inline void mmu_notifier_invalidate_range_start(struct mm_struct *mm,
- {
- }
- 
-+static inline int mmu_notifier_invalidate_range_start_nonblock(struct mm_struct *mm,
-+				  unsigned long start, unsigned long end)
-+{
-+	return 0;
-+}
-+
- static inline void mmu_notifier_invalidate_range_end(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end)
- {
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index 6adac113e96d..92f70e4c6252 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -95,7 +95,7 @@ static inline int check_stable_address_space(struct mm_struct *mm)
- 	return 0;
- }
- 
--void __oom_reap_task_mm(struct mm_struct *mm);
-+bool __oom_reap_task_mm(struct mm_struct *mm);
- 
- extern unsigned long oom_badness(struct task_struct *p,
- 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
-diff --git a/include/rdma/ib_umem_odp.h b/include/rdma/ib_umem_odp.h
-index 6a17f856f841..381cdf5a9bd1 100644
---- a/include/rdma/ib_umem_odp.h
-+++ b/include/rdma/ib_umem_odp.h
-@@ -119,7 +119,8 @@ typedef int (*umem_call_back)(struct ib_umem *item, u64 start, u64 end,
-  */
- int rbt_ib_umem_for_each_in_range(struct rb_root_cached *root,
- 				  u64 start, u64 end,
--				  umem_call_back cb, void *cookie);
-+				  umem_call_back cb,
-+				  bool blockable, void *cookie);
- 
- /*
-  * Find first region intersecting with address range.
-diff --git a/mm/hmm.c b/mm/hmm.c
-index de7b6bf77201..81fd57bd2634 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -177,16 +177,19 @@ static void hmm_release(struct mmu_notifier *mn, struct mm_struct *mm)
- 	up_write(&hmm->mirrors_sem);
- }
- 
--static void hmm_invalidate_range_start(struct mmu_notifier *mn,
-+static int hmm_invalidate_range_start(struct mmu_notifier *mn,
- 				       struct mm_struct *mm,
- 				       unsigned long start,
--				       unsigned long end)
-+				       unsigned long end,
-+				       bool blockable)
- {
- 	struct hmm *hmm = mm->hmm;
- 
- 	VM_BUG_ON(!hmm);
- 
- 	atomic_inc(&hmm->sequence);
-+
-+	return 0;
- }
- 
- static void hmm_invalidate_range_end(struct mmu_notifier *mn,
-diff --git a/mm/mmap.c b/mm/mmap.c
-index d1eb87ef4b1a..336bee8c4e25 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3074,7 +3074,7 @@ void exit_mmap(struct mm_struct *mm)
- 		 * reliably test it.
- 		 */
- 		mutex_lock(&oom_lock);
--		__oom_reap_task_mm(mm);
-+		(void)__oom_reap_task_mm(mm);
- 		mutex_unlock(&oom_lock);
- 
- 		set_bit(MMF_OOM_SKIP, &mm->flags);
-diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index eff6b88a993f..103b2b450043 100644
---- a/mm/mmu_notifier.c
-+++ b/mm/mmu_notifier.c
-@@ -174,18 +174,29 @@ void __mmu_notifier_change_pte(struct mm_struct *mm, unsigned long address,
- 	srcu_read_unlock(&srcu, id);
- }
- 
--void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
--				  unsigned long start, unsigned long end)
-+int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
-+				  unsigned long start, unsigned long end,
-+				  bool blockable)
- {
- 	struct mmu_notifier *mn;
-+	int ret = 0;
- 	int id;
- 
- 	id = srcu_read_lock(&srcu);
- 	hlist_for_each_entry_rcu(mn, &mm->mmu_notifier_mm->list, hlist) {
--		if (mn->ops->invalidate_range_start)
--			mn->ops->invalidate_range_start(mn, mm, start, end);
-+		if (mn->ops->invalidate_range_start) {
-+			int _ret = mn->ops->invalidate_range_start(mn, mm, start, end, blockable);
-+			if (_ret) {
-+				pr_info("%pS callback failed with %d in %sblockable context.\n",
-+						mn->ops->invalidate_range_start, _ret,
-+						!blockable ? "non-": "");
-+				ret = _ret;
-+			}
-+		}
- 	}
- 	srcu_read_unlock(&srcu, id);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range_start);
- 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 84081e77bc51..5a936cf24d79 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -479,9 +479,10 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
- static struct task_struct *oom_reaper_list;
- static DEFINE_SPINLOCK(oom_reaper_lock);
- 
--void __oom_reap_task_mm(struct mm_struct *mm)
-+bool __oom_reap_task_mm(struct mm_struct *mm)
- {
- 	struct vm_area_struct *vma;
-+	bool ret = true;
- 
- 	/*
- 	 * Tell all users of get_user/copy_from_user etc... that the content
-@@ -511,12 +512,17 @@ void __oom_reap_task_mm(struct mm_struct *mm)
- 			struct mmu_gather tlb;
- 
- 			tlb_gather_mmu(&tlb, mm, start, end);
--			mmu_notifier_invalidate_range_start(mm, start, end);
-+			if (mmu_notifier_invalidate_range_start_nonblock(mm, start, end)) {
-+				ret = false;
-+				continue;
-+			}
- 			unmap_page_range(&tlb, vma, start, end, NULL);
- 			mmu_notifier_invalidate_range_end(mm, start, end);
- 			tlb_finish_mmu(&tlb, start, end);
- 		}
- 	}
-+
-+	return ret;
- }
- 
- static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
-@@ -545,18 +551,6 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 		goto unlock_oom;
- 	}
- 
--	/*
--	 * If the mm has invalidate_{start,end}() notifiers that could block,
--	 * sleep to give the oom victim some more time.
--	 * TODO: we really want to get rid of this ugly hack and make sure that
--	 * notifiers cannot block for unbounded amount of time
--	 */
--	if (mm_has_blockable_invalidate_notifiers(mm)) {
--		up_read(&mm->mmap_sem);
--		schedule_timeout_idle(HZ);
--		goto unlock_oom;
--	}
--
- 	/*
- 	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
- 	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
-@@ -571,7 +565,12 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 
- 	trace_start_task_reaping(tsk->pid);
- 
--	__oom_reap_task_mm(mm);
-+	/* failed to reap part of the address space. Try again later */
-+	if (!__oom_reap_task_mm(mm)) {
-+		up_read(&mm->mmap_sem);
-+		ret = false;
-+		goto unlock_oom;
-+	}
- 
- 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
- 			task_pid_nr(tsk), tsk->comm,
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index ada21f47f22b..16ce38f178d1 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -135,9 +135,10 @@ static void kvm_uevent_notify_change(unsigned int type, struct kvm *kvm);
- static unsigned long long kvm_createvm_count;
- static unsigned long long kvm_active_vms;
- 
--__weak void kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
--		unsigned long start, unsigned long end)
-+__weak int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
-+		unsigned long start, unsigned long end, bool blockable)
- {
-+	return 0;
- }
- 
- bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
-@@ -354,13 +355,15 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
- 	srcu_read_unlock(&kvm->srcu, idx);
- }
- 
--static void kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
-+static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 						    struct mm_struct *mm,
- 						    unsigned long start,
--						    unsigned long end)
-+						    unsigned long end,
-+						    bool blockable)
- {
- 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
- 	int need_tlb_flush = 0, idx;
-+	int ret;
- 
- 	idx = srcu_read_lock(&kvm->srcu);
- 	spin_lock(&kvm->mmu_lock);
-@@ -378,9 +381,11 @@ static void kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
- 
- 	spin_unlock(&kvm->mmu_lock);
- 
--	kvm_arch_mmu_notifier_invalidate_range(kvm, start, end);
-+	ret = kvm_arch_mmu_notifier_invalidate_range(kvm, start, end, blockable);
- 
- 	srcu_read_unlock(&kvm->srcu, idx);
-+
-+	return ret;
- }
- 
- static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+Well in that case, I thought it would be cleaner to just squash Arnd's
+build fix since the commit had not been merged into arm-soc, but I will
+keep in mind not to do that anymore.
 -- 
-2.18.0
-
+Florian
