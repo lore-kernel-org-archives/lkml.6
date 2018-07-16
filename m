@@ -2,147 +2,229 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB50ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F937ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B322086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B322086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4142A2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gKees4RR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4142A2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbeGPDeQ (ORCPT
+        id S1727661AbeGPDe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 23:34:16 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:34267 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbeGPDeP (ORCPT
+        Sun, 15 Jul 2018 23:34:28 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36773 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbeGPDe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 23:34:15 -0400
-Received: by mail-io0-f199.google.com with SMTP id f9-v6so3820671ioh.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 20:09:02 -0700 (PDT)
+        Sun, 15 Jul 2018 23:34:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h9-v6so30338480wro.3
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 20:09:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6adc+8TGMip+6Rk9agAReGocOxCRnLsVn54Qv77eWqI=;
+        b=gKees4RR/qW6zEWtYNHBGPeO24/iK61PvkSk8jXfE4M7AsNgbKRTSHNq5x6ahC1po1
+         fF7dBDoXFfIkkDvKscwDetORn21fuJtuolxlJ7KLAbBLR/0qj6J6itQD8yRFFVd+qU0y
+         9VBBtyntvnOaFD/gh0JdsE5Jw8x1K5wkyLUCY/EgLk1eqrtQWlnV3NMpPZK18NS0oQQs
+         j+HaanHFxTYB65oTHcZGgU8xC6Vr6K6EgBrpX9YkgXw2m87Z/bDPsallcBP5B5YNWNBC
+         T0u+dct4joDwEnVE0DcEPSLVnm/Ub4X9AcY0efolsagctl3K2WKapgGIlTrRHkOSm876
+         oWwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VQDft/MFek4HGfQwj3aPVgccku64xjpUP9X4lWrmCzk=;
-        b=oXoT4MBABoZ21f7LPXi7BFBEVTm7N7YTIVaZp4jXj0injlgE17BuGDolk48ZbiHFk+
-         Z+EyWmeJhe8TK3gC0Sdndm7kbYVu7KOXikIzG8ENH3TGdz7Pa0f9SgMgKoA+c/JYOelF
-         7RSWEIdIdYkHQIbmOct2Y4QVX1YONd/lfEhudkQlqpe6kM7d0lHmWauN8pKd7svdGOla
-         RsCOc2uoO+zvGDalSZzZ9rQtdbXMN+FZZ0ONuPbnAaUC7XGveOXyfV2TwaMq95v4EBMi
-         fVMJIrvEaPY6xvCAWiXhsXZjKStWPW6dYvk/9X/kSK0kGEDcCQ6COf0BsMgJe5MvixKE
-         pEPw==
-X-Gm-Message-State: AOUpUlHkb+agfH3ypCWEz4v3+ImcYBdicw+Iu08agwWsj3bOSyzU3of2
-        tHcPovnr/hTcuYpit6xcjH2xyS4/fZ/hGX35hqyrLHMumU75
-X-Google-Smtp-Source: AAOMgpcnX755aWzzEP1gDpedi6svO0hSYUCTKp5eSMJD7rtX1jLVhNUh3xoZv/AZyqbWF2iRhxXJzYUGkpPQGYkt6gfoqNXevbCU
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6adc+8TGMip+6Rk9agAReGocOxCRnLsVn54Qv77eWqI=;
+        b=C9j+6o/ecmk7YxXrsJQ5gLzoifQO7KXgZjU8WWTVPERaq1Imjl7hNSKfcH2q4Tuc1L
+         Rop3k3QeSvKqxMz56vJ3ezPflQ1bcrLWDAch2YA3dFX+fqbjkZRXP8TZxzmqPrIvGuyK
+         PhVS1fOxjRw+lpDK+4ePeZDyjSO4iBtU/421u5rbzoUWvNBtnOjEjtYry8jcfV7hpsUw
+         cmWthfZ6NxyeAdNHCFAhoZc2tO/HWlr3R3UoWAoZi8pFiVjSuKQSmuJ2NFOPpbQsE9Px
+         +Kfa/nOEjLiinEmMxzkypys1KJmXNws1XDci5u04ZHHBjsd3xQsz8OODYqdvTP3SKtis
+         B4YA==
+X-Gm-Message-State: AOUpUlHtSJaKx/g77sUlGLtP7tLKusXH//PSfMqBr2dFju6cxiGYY0OV
+        s3IGpwB6g+y9n6rs4p2T4a5t6ud7bpd+wHHHjLNUMA==
+X-Google-Smtp-Source: AAOMgpeLy1s5+1FjjUZyJJhrphpgBeGi8Dlc6dRyTqY2F69R+z3O5Qpas3pBI4XOcv3yVuwbQeWtFF9GCo6TkggjgsI=
+X-Received: by 2002:adf:b112:: with SMTP id l18-v6mr11447765wra.101.1531710553273;
+ Sun, 15 Jul 2018 20:09:13 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:4e0b:: with SMTP id c11-v6mr6413802iob.22.1531710542342;
- Sun, 15 Jul 2018 20:09:02 -0700 (PDT)
-Date:   Sun, 15 Jul 2018 20:09:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c678690571152620@google.com>
-Subject: WARNING: kmalloc bug in krealloc
-From:   syzbot <syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+ <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
+ <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
+ <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
+ <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com>
+ <CALvZod6F4vM_U0obH1aU3iJqRs-3JEfR4cHKZoB9JVLTgdSmSQ@mail.gmail.com>
+ <CALOAHbByKH9t_c266Bi+Kv2r=07LLpa6UEQgsc7BNi2dZoeNhQ@mail.gmail.com>
+ <CALvZod6SVJQz84sxMkvRY7K4iZ2_uzbmMq85URBznsu7+ZP9OA@mail.gmail.com> <CALOAHbAnVvKR2AQ4TAkwUuC8XVK5UaD3vt80OC_M4OK2j6b_Yg@mail.gmail.com>
+In-Reply-To: <CALOAHbAnVvKR2AQ4TAkwUuC8XVK5UaD3vt80OC_M4OK2j6b_Yg@mail.gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Sun, 15 Jul 2018 20:09:01 -0700
+Message-ID: <CALvZod4jx1r4k6gMrqFq+PzDT3D37_DFGyyokgPSsZFXbMV0ZA@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, Roman Gushchin <guro@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sun, Jul 15, 2018 at 6:50 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>
+> On Sun, Jul 15, 2018 at 11:04 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> > On Sun, Jul 15, 2018 at 1:02 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+> >>
+> >> On Sun, Jul 15, 2018 at 2:34 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> >> > On Sat, Jul 14, 2018 at 10:26 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+> >> >>
+> >> >> On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> >> >> > On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+> >> >> >>
+> >> >> >> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> >> >> >> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+> >> >> >> >>
+> >> >> >> >> try_charge maybe executed in packet receive path, which is in interrupt
+> >> >> >> >> context.
+> >> >> >> >> In this situation, the 'current' is the interrupted task, which may has
+> >> >> >> >> no relation to the rx softirq, So it is nonsense to use 'current'.
+> >> >> >> >>
+> >> >> >> >
+> >> >> >> > Have you actually seen this occurring?
+> >> >> >>
+> >> >> >> Hi Shakeel,
+> >> >> >>
+> >> >> >> I'm trying to produce this issue, but haven't find it occur yet.
+> >> >> >>
+> >> >> >> > I am not very familiar with the
+> >> >> >> > network code but I can think of two ways try_charge() can be called
+> >> >> >> > from network code. Either through kmem charging or through
+> >> >> >> > mem_cgroup_charge_skmem() and both locations correctly handle
+> >> >> >> > interrupt context.
+> >> >> >> >
+> >> >> >>
+> >> >> >> Why do you say that mem_cgroup_charge_skmem() correctly hanle
+> >> >> >> interrupt context ?
+> >> >> >>
+> >> >> >> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
+> >> >> >> context correctly.
+> >> >> >>
+> >> >> >> mem_cgroup_charge_skmem() is calling  try_charge() twice.
+> >> >> >> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
+> >> >> >> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
+> >> >> >>
+> >> >> >> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
+> >> >> >> Then mem_cgroup_charge_skmem() will call try_charge() once more with
+> >> >> >> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
+> >> >> >> again the '
+> >> >> >> force' label in  try_charge() will be executed and 0 is returned.
+> >> >> >>
+> >> >> >> No matter what, the 'current' will be used and touched, that is
+> >> >> >> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
+> >> >> >> correctly.
+> >> >> >>
+> >> >> >
+> >> >> > Hi Yafang,
+> >> >> >
+> >> >> > If you check mem_cgroup_charge_skmem(), the memcg passed is not
+> >> >> > 'current' but is from the sock object i.e. sk->sk_memcg for which the
+> >> >> > network buffer is allocated for.
+> >> >> >
+> >> >>
+> >> >> That's correct, the memcg if from the sock object.
+> >> >> But the point is, in this situation why 'current' is used in try_charge() ?
+> >> >> As 'current' is not related with the memcg, which is just a interrupted task.
+> >> >>
+> >> >
+> >> > Hmm so you mean the behavior of memcg charging in the interrupt
+> >> > context depends on the state of the interrupted task.
+> >>
+> >> Yes.
+> >>
+> >> > As you have
+> >> > noted, mem_cgroup_charge_skmem() tries charging again with
+> >> > __GFP_NOFAIL and the charge succeeds. Basically the memcg charging by
+> >> > mem_cgroup_charge_skmem() will always succeed irrespective of the
+> >> > state of the interrupted task. However mem_cgroup_charge_skmem() can
+> >> > return true if the interrupted task was exiting or a fatal signal is
+> >> > pending or oom victim or reclaiming memory. Can you please explain why
+> >> > this is bad?
+> >> >
+> >>
+> >> Let me show you the possible issues cause by this behavoir.
+> >> 1.  In mem_cgroup_oom(), some  members in 'current' is set.
+> >>      That means an innocent task will be in  task_in_memcg_oom state.
+> >>      But this task may be in a different memcg, I mean the memcg of
+> >> the 'current' may be differenct with the sk->sk_memcg.
+> >>      Then when this innocent 'current' do try_charge it will hit  "if
+> >> (unlikely(task_in_memcg_oom(current)))" and  -ENOMEM is returned,
+> >> While there're maybe some free memory (or some memory could be freed )
+> >> in the memcg of the innocent 'task'.
+> >>
+> >
+> > No memory will be freed as try_charge() is in interrupt context.
+> >
+>
+> I mean when this interrupted 'current' is running, that's in process context.
+> In process context it should call try_to_free_mem_cgroup_pages() to
+> free some memory,
+> but it will hit "if (unlikely(task_in_memcg_oom(current)))"  before as
+> it is set in the interrupt context.
+>
+> That's an obviously issue. Do you understand ?
+>
 
-syzbot found the following crash on:
+Not really. I couldn't find where current->memcg_in_oom can be set in
+the interrupt context.
 
-HEAD commit:    483d835c8189 Add linux-next specific files for 20180713
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13689bb2400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=60e5ac2478928314
-dashboard link: https://syzkaller.appspot.com/bug?extid=8574471d8734457d98aa
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17babf0c400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1285cf94400000
+> >> 2.  If the interrupted task was exiting or a fatal signal is  pending
+> >> or oom victim,
+> >>      it will directly goto force and 0 is returned, and then
+> >> mem_cgroup_charge_skmem() will return true.
+> >>      But mem_cgroup_charge_skmem() maybe need to try the second time
+> >> and return false.
+> >>
+> >> That are all unexpected behavoir.
+> >>
+> >
+> > Yes, this is inconsistent behavior. Can you explain how this will
+> > affect network traffic? Basically mem_cgroup_charge_skmem() was
+> > supposed to return false but sometime based on the interrupted task,
+> > mem_cgroup_charge_skmem() returns true. How is this behavior bad for
+> > network traffic?
+> >
+>
+> You could see the funtion  __sk_mem_raise_allocated().
+> If mem_cgroup_charge_skmem() return false, it will goto
+> suppress_allocation and uncharge skmem,
+> while when mem_cgroup_charge_skmem() return true, it will charge skmem
+> sucessfully.
+>
+> The consequence behavior is  sk_rmem_schedule may fail while it should sucess.
+> And then it will call  tcp_prune_queue() and tcp collapse may take a long time.
+>
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
+Is that a good thing or bad? From what I understand with your change
+if charge fails, sk_rmem_schedule will always fail. However without
+your change the interrupted task's state might help sk_rmem_schedule
+to pass. I am all for consistent behavior but I wanted to make sure if
+that is what you are aiming for.
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-WARNING: CPU: 0 PID: 4406 at mm/slab_common.c:1031 kmalloc_slab+0x56/0x70  
-mm/slab_common.c:1031
-Kernel panic - not syncing: panic_on_warn set ...
+Anyways, from what I remember Facebook is using the cgroup-v2's tcpmem
+accounting. Johannes or Roman can shed some light if they have
+observed this issue in production and might have opinion on how to
+solve it.
 
-CPU: 0 PID: 4406 Comm: syz-executor177 Not tainted  
-4.18.0-rc4-next-20180713+ #7
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:996
-RIP: 0010:kmalloc_slab+0x56/0x70 mm/slab_common.c:1031
-Code: c5 c0 1a d1 88 5d c3 b8 10 00 00 00 48 85 ff 74 f4 83 ef 01 c1 ef 03  
-0f b6 87 e0 19 d1 88 eb d8 31 c0 81 e6 00 02 00 00 75 db <0f> 0b 5d c3 48  
-8b 04 c5 00 1a d1 88 5d c3 66 90 66 2e 0f 1f 84 00
-RSP: 0018:ffff8801af0ef830 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81d098cd
-RDX: ffffffff81d09964 RSI: 0000000000000000 RDI: 0000000000550001
-RBP: ffff8801af0ef830 R08: ffff8801b640c6c0 R09: fffffbfff12569a0
-R10: fffffbfff12569a0 R11: ffffffff892b4d03 R12: 0000000000550001
-R13: 0000000000600040 R14: ffff8801af0ef998 R15: 0000000000600040
-  __do_kmalloc mm/slab.c:3713 [inline]
-  __kmalloc_track_caller+0x21/0x760 mm/slab.c:3733
-  __do_krealloc mm/slab_common.c:1468 [inline]
-  krealloc+0x65/0xb0 mm/slab_common.c:1515
-  vfs_getxattr_alloc+0x274/0x3c0 fs/xattr.c:288
-  cap_inode_getsecurity+0x104/0x820 security/commoncap.c:396
-  security_inode_getsecurity+0xe1/0x130 security/security.c:866
-  xattr_getsecurity fs/xattr.c:243 [inline]
-  vfs_getxattr+0x1db/0x390 fs/xattr.c:331
-  getxattr+0x139/0x2c0 fs/xattr.c:537
-  path_getxattr+0x103/0x1b0 fs/xattr.c:565
-  __do_sys_getxattr fs/xattr.c:577 [inline]
-  __se_sys_getxattr fs/xattr.c:574 [inline]
-  __x64_sys_getxattr+0x9d/0x100 fs/xattr.c:574
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440639
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdc307f058 EFLAGS: 00000217 ORIG_RAX: 00000000000000bf
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 0000000000440639
-RDX: 00000000200002c0 RSI: 0000000020000500 RDI: 00000000200004c0
-RBP: 64663d736e617274 R08: 00007ffdc307f1d8 R09: 00007ffdc307f1d8
-R10: 0000000000000143 R11: 0000000000000217 R12: 0000000000401ec0
-R13: 0000000000401f50 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+thanks,
+Shakeel
