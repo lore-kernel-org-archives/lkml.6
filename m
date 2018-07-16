@@ -2,341 +2,330 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F186ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA13ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07D8208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:10:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B07D8208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C3ED208C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:10:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WksxxkjM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3ED208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731179AbeGPLhJ (ORCPT
+        id S1729778AbeGPLho (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 07:37:09 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57234 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728525AbeGPLhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 07:37:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C325315B2;
-        Mon, 16 Jul 2018 04:10:13 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67DFF3F589;
-        Mon, 16 Jul 2018 04:10:13 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     kvmarm@lists.cs.columbia.edu
-Cc:     Punit Agrawal <punit.agrawal@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com, will.deacon@arm.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v6 8/8] KVM: arm64: Add support for creating PUD hugepages at stage 2
-Date:   Mon, 16 Jul 2018 12:08:57 +0100
-Message-Id: <20180716110857.19310-9-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180716110857.19310-1-punit.agrawal@arm.com>
-References: <20180716110857.19310-1-punit.agrawal@arm.com>
-X-ARM-No-Footer: FoSSMail
+        Mon, 16 Jul 2018 07:37:44 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44333 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbeGPLho (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 07:37:44 -0400
+Received: by mail-pf0-f196.google.com with SMTP id k21-v6so1218623pff.11
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=ICzV9qxVeY7tlybwwnBRqlnZ3pEe8EtG5FKFXsBr8PE=;
+        b=WksxxkjMkZyjwH57XRF1sAxkyclS2Ymi0bMsdsM6Rjffu9MZbMbcvJw0HFzW7qysG9
+         k1bSR2tJyN9at41TJwkViA6YWSp11oPLXczMtBmlfUMwnlwiinBRZJY3xcjh8rqygGYn
+         ySst/ch0wCIb7Nf0rlZ2oehJ5y2Ln+hpVvqKE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ICzV9qxVeY7tlybwwnBRqlnZ3pEe8EtG5FKFXsBr8PE=;
+        b=X+/EjJsSvMoMUFYtwPFvgoxmriwEak3ItxtHELGZo9g2VwigsDItJs2Y3aZMY/q1GN
+         COUj7hNyZwxSb3x2eb/PmQl+vI5ZMXI52MOvFKywQB9Oz+883ibT6b3CC4gH64HtyWxv
+         saAP6aRfuvCjF4dA64h+oo8sXu54y41jaPOgbVg/3U0QsGrQ74hdfupVbym5Q6tbEFDn
+         ARArPNzXGL5npB6P3qQJdms0I8SSpj55u1zM0Fb5RcAHFZR/saEySFz4xMyamXziPWhe
+         qRaYv8pjaVSaC+xPK7WVQgMU9DDRY0Sjw3QmUrmUv5bNGkNgV4KyiXTCig9R3F5gh6tC
+         E4sg==
+X-Gm-Message-State: AOUpUlFQ0lrMBdxnOtkOVoajjvPGq+BG5J2St5NPKMM82b8By0kwEE/g
+        3xRt3pfqKCCx7Lpb6BPhdWAlcQ==
+X-Google-Smtp-Source: AAOMgpeeFN+gBlaxHm/C0Bkt4fMMj/z+FWx6sgseV/AgeWeTq3kq+4tbRpIrX9PVTrqKM/rFEyI0uA==
+X-Received: by 2002:a63:1b5c:: with SMTP id b28-v6mr15562544pgm.204.1531739448389;
+        Mon, 16 Jul 2018 04:10:48 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id w72-v6sm51286894pfa.26.2018.07.16.04.10.45
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 16 Jul 2018 04:10:47 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     jacek.anaszewski@gmail.com, pavel@ucw.cz
+Cc:     baolin.wang@linaro.org, bjorn.andersson@linaro.org,
+        david@lechnology.com, broonie@kernel.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 1/2] leds: core: Introduce generic pattern interface
+Date:   Mon, 16 Jul 2018 19:10:14 +0800
+Message-Id: <05c235df7bbcc4b898e7b263bf38338d9c822005.1531711385.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM only supports PMD hugepages at stage 2. Now that the various page
-handling routines are updated, extend the stage 2 fault handling to
-map in PUD hugepages.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Addition of PUD hugepage support enables additional page sizes (e.g.,
-1G with 4K granule) which can be useful on cores that support mapping
-larger block sizes in the TLB entries.
+Some LED controllers have support for autonomously controlling
+brightness over time, according to some preprogrammed pattern or
+function.
 
-Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+This adds a new optional operator that LED class drivers can implement
+if they support such functionality as well as a new device attribute to
+configure the pattern for a given LED.
+
+[Baolin Wang did some improvements.]
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- arch/arm/include/asm/kvm_mmu.h         | 19 +++++
- arch/arm64/include/asm/kvm_mmu.h       | 15 ++++
- arch/arm64/include/asm/pgtable-hwdef.h |  2 +
- arch/arm64/include/asm/pgtable.h       |  2 +
- virt/kvm/arm/mmu.c                     | 98 ++++++++++++++++++++++++--
- 5 files changed, 131 insertions(+), 5 deletions(-)
+Changes from v4:
+ - Fix some typos.
+ - Check if pattern_clear() is initialized.
 
-diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index 8225ec15cae7..665c746c46ce 100644
---- a/arch/arm/include/asm/kvm_mmu.h
-+++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -77,11 +77,14 @@ void kvm_clear_hyp_idmap(void);
- 
- #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
-+#define kvm_pfn_pud(pfn, prot)	(__pud(0))
- 
- #define kvm_pud_pfn(pud)	({ BUG(); 0; })
- 
- 
- #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
-+/* No support for pud hugepages */
-+#define kvm_pud_mkhuge(pud)	(pud)
- 
- /*
-  * The following kvm_*pud*() functions are provided strictly to allow
-@@ -98,6 +101,22 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
- 	return false;
+Changes from v3:
+ - Move the check in pattern_show() to of_led_classdev_register().
+ - Add more documentation to explain how to set/clear one pattern.
+
+Changes from v2:
+ - Change kernel version to 4.19.
+ - Force user to return error pointer if failed to issue pattern_get().
+ - Use strstrip() to trim trailing newline.
+ - Other optimization.
+
+Changes from v1:
+ - Add some comments suggested by Pavel.
+ - Change 'delta_t' can be 0.
+
+Note: I removed the pattern repeat check and will get the repeat number by adding
+one extra file named 'pattern_repeat' according to previous discussion.
+---
+ Documentation/ABI/testing/sysfs-class-led |   20 +++++
+ drivers/leds/led-class.c                  |  118 +++++++++++++++++++++++++++++
+ include/linux/leds.h                      |   19 +++++
+ 3 files changed, 157 insertions(+)
+
+diff --git a/Documentation/ABI/testing/sysfs-class-led b/Documentation/ABI/testing/sysfs-class-led
+index 5f67f7a..a040fd0 100644
+--- a/Documentation/ABI/testing/sysfs-class-led
++++ b/Documentation/ABI/testing/sysfs-class-led
+@@ -61,3 +61,23 @@ Description:
+ 		gpio and backlight triggers. In case of the backlight trigger,
+ 		it is useful when driving a LED which is intended to indicate
+ 		a device in a standby like state.
++
++What: /sys/class/leds/<led>/pattern
++Date:		July 2018
++KernelVersion:	4.19
++Description:
++		Specify a pattern for the LED, for LED hardware that support
++		altering the brightness as a function of time.
++
++		The pattern is given by a series of tuples, of brightness and
++		duration (ms). The LED is expected to traverse the series and
++		each brightness value for the specified duration. Duration of
++		0 means brightness should immediately change to new value.
++
++		As LED hardware might have different capabilities and precision
++		the requested pattern might be slighly adjusted by the driver
++		and the resulting pattern of such operation should be returned
++		when this file is read.
++
++		Writing non-empty string to this file will activate the pattern,
++		and empty string will disable the pattern.
+diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+index 3c7e348..5c6d2e9 100644
+--- a/drivers/leds/led-class.c
++++ b/drivers/leds/led-class.c
+@@ -74,6 +74,118 @@ static ssize_t max_brightness_show(struct device *dev,
  }
+ static DEVICE_ATTR_RO(max_brightness);
  
-+static inline void kvm_set_pud(pud_t *pud, pud_t new_pud)
++static ssize_t pattern_show(struct device *dev,
++			    struct device_attribute *attr, char *buf)
 +{
-+	BUG();
-+}
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct led_pattern *pattern;
++	size_t offset = 0;
++	int count, n, i;
 +
-+static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-+{
-+	BUG();
-+	return pud;
-+}
++	pattern = led_cdev->pattern_get(led_cdev, &count);
++	if (IS_ERR(pattern))
++		return PTR_ERR(pattern);
 +
-+static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-+{
-+	BUG();
-+	return pud;
-+}
- 
- static inline bool kvm_s2pud_exec(pud_t *pud)
- {
-diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index c542052fb199..dd8a23159463 100644
---- a/arch/arm64/include/asm/kvm_mmu.h
-+++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -171,13 +171,16 @@ void kvm_clear_hyp_idmap(void);
- 
- #define	kvm_set_pte(ptep, pte)		set_pte(ptep, pte)
- #define	kvm_set_pmd(pmdp, pmd)		set_pmd(pmdp, pmd)
-+#define kvm_set_pud(pudp, pud)		set_pud(pudp, pud)
- 
- #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
-+#define kvm_pfn_pud(pfn, prot)		pfn_pud(pfn, prot)
- 
- #define kvm_pud_pfn(pud)		pud_pfn(pud)
- 
- #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
-+#define kvm_pud_mkhuge(pud)		pud_mkhuge(pud)
- 
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
- {
-@@ -191,6 +194,12 @@ static inline pmd_t kvm_s2pmd_mkwrite(pmd_t pmd)
- 	return pmd;
- }
- 
-+static inline pud_t kvm_s2pud_mkwrite(pud_t pud)
-+{
-+	pud_val(pud) |= PUD_S2_RDWR;
-+	return pud;
-+}
++	for (i = 0; i < count; i++) {
++		n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
++			     pattern[i].brightness, pattern[i].delta_t);
 +
- static inline pte_t kvm_s2pte_mkexec(pte_t pte)
- {
- 	pte_val(pte) &= ~PTE_S2_XN;
-@@ -203,6 +212,12 @@ static inline pmd_t kvm_s2pmd_mkexec(pmd_t pmd)
- 	return pmd;
- }
- 
-+static inline pud_t kvm_s2pud_mkexec(pud_t pud)
-+{
-+	pud_val(pud) &= ~PUD_S2_XN;
-+	return pud;
-+}
++		if (offset + n >= PAGE_SIZE)
++			goto err_nospc;
 +
- static inline void kvm_set_s2pte_readonly(pte_t *ptep)
- {
- 	pteval_t old_pteval, pteval;
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index 10ae592b78b8..e327665e94d1 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -193,6 +193,8 @@
- #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
- #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
- 
-+#define PUD_S2_RDONLY		(_AT(pudval_t, 1) << 6)   /* HAP[2:1] */
-+#define PUD_S2_RDWR		(_AT(pudval_t, 3) << 6)   /* HAP[2:1] */
- #define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0] */
- 
- /*
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 4d9476e420d9..0afc34f94ff5 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -389,6 +389,8 @@ static inline int pmd_protnone(pmd_t pmd)
- #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
- #define pud_write(pud)		pte_write(pud_pte(pud))
- 
-+#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
-+
- #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
- #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
- #define pud_pfn(pud)		((__pud_to_phys(pud) & PUD_MASK) >> PAGE_SHIFT)
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index c00155fe05c3..552fceb0521b 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -116,6 +116,25 @@ static void stage2_dissolve_pmd(struct kvm *kvm, phys_addr_t addr, pmd_t *pmd)
- 	put_page(virt_to_page(pmd));
- }
- 
-+/**
-+ * stage2_dissolve_pud() - clear and flush huge PUD entry
-+ * @kvm:	pointer to kvm structure.
-+ * @addr:	IPA
-+ * @pud:	pud pointer for IPA
-+ *
-+ * Function clears a PUD entry, flushes addr 1st and 2nd stage TLBs. Marks all
-+ * pages in the range dirty.
-+ */
-+static void stage2_dissolve_pud(struct kvm *kvm, phys_addr_t addr, pud_t *pudp)
-+{
-+	if (!stage2_pud_huge(*pudp))
-+		return;
-+
-+	stage2_pud_clear(pudp);
-+	kvm_tlb_flush_vmid_ipa(kvm, addr);
-+	put_page(virt_to_page(pudp));
-+}
-+
- static int mmu_topup_memory_cache(struct kvm_mmu_memory_cache *cache,
- 				  int min, int max)
- {
-@@ -993,7 +1012,7 @@ static pmd_t *stage2_get_pmd(struct kvm *kvm, struct kvm_mmu_memory_cache *cache
- 	pmd_t *pmd;
- 
- 	pud = stage2_get_pud(kvm, cache, addr);
--	if (!pud)
-+	if (!pud || stage2_pud_huge(*pud))
- 		return NULL;
- 
- 	if (stage2_pud_none(*pud)) {
-@@ -1038,6 +1057,26 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
- 	return 0;
- }
- 
-+static int stage2_set_pud_huge(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
-+			       phys_addr_t addr, const pud_t *new_pudp)
-+{
-+	pud_t *pudp, old_pud;
-+
-+	pudp = stage2_get_pud(kvm, cache, addr);
-+	VM_BUG_ON(!pudp);
-+
-+	old_pud = *pudp;
-+	if (stage2_pud_present(old_pud)) {
-+		stage2_pud_clear(pudp);
-+		kvm_tlb_flush_vmid_ipa(kvm, addr);
-+	} else {
-+		get_page(virt_to_page(pudp));
++		offset += n;
 +	}
 +
-+	kvm_set_pud(pudp, *new_pudp);
-+	return 0;
++	buf[offset - 1] = '\n';
++
++	kfree(pattern);
++	return offset;
++
++err_nospc:
++	kfree(pattern);
++	return -ENOSPC;
 +}
 +
- /*
-  * stage2_get_leaf_entry - walk the stage2 VM page tables and return
-  * true if a valid and present leaf-entry is found. A pointer to the
-@@ -1104,6 +1143,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
- 			  phys_addr_t addr, const pte_t *new_pte,
- 			  unsigned long flags)
- {
-+	pud_t *pud;
- 	pmd_t *pmd;
- 	pte_t *pte, old_pte;
- 	bool iomap = flags & KVM_S2PTE_FLAG_IS_IOMAP;
-@@ -1112,7 +1152,31 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
- 	VM_BUG_ON(logging_active && !cache);
- 
- 	/* Create stage-2 page table mapping - Levels 0 and 1 */
--	pmd = stage2_get_pmd(kvm, cache, addr);
-+	pud = stage2_get_pud(kvm, cache, addr);
-+	if (!pud) {
-+		/*
-+		 * Ignore calls from kvm_set_spte_hva for unallocated
-+		 * address ranges.
-+		 */
-+		return 0;
++static ssize_t pattern_store(struct device *dev,
++			     struct device_attribute *attr,
++			     const char *buf, size_t size)
++{
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++	struct led_pattern *pattern = NULL;
++	char *sbegin, *elem, *s;
++	unsigned long val;
++	int ret = 0, len = 0;
++	bool odd = true;
++
++	sbegin = kstrndup(buf, size, GFP_KERNEL);
++	if (!sbegin)
++		return -ENOMEM;
++
++	/*
++	 * Trim trailing newline, if the remaining string is empty,
++	 * clear the pattern.
++	 */
++	s = strstrip(sbegin);
++	if (!*s) {
++		ret = led_cdev->pattern_clear(led_cdev);
++		goto out;
++	}
++
++	pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
++	if (!pattern) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	/* Parse out the brightness & delta_t touples */
++	while ((elem = strsep(&s, " ")) != NULL) {
++		ret = kstrtoul(elem, 10, &val);
++		if (ret)
++			goto out;
++
++		if (odd) {
++			pattern[len].brightness = val;
++		} else {
++			pattern[len].delta_t = val;
++			len++;
++		}
++
++		odd = !odd;
 +	}
 +
 +	/*
-+	 * While dirty page logging - dissolve huge PUD, then continue
-+	 * on to allocate page.
++	 * Fail if we didn't find any data points or last data point was partial
 +	 */
-+	if (logging_active)
-+		stage2_dissolve_pud(kvm, addr, pud);
-+
-+	if (stage2_pud_none(*pud)) {
-+		if (!cache)
-+			return 0; /* ignore calls from kvm_set_spte_hva */
-+		pmd = mmu_memory_cache_alloc(cache);
-+		stage2_pud_populate(pud, pmd);
-+		get_page(virt_to_page(pud));
++	if (!len || !odd) {
++		ret = -EINVAL;
++		goto out;
 +	}
 +
-+	pmd = stage2_pmd_offset(pud, addr);
- 	if (!pmd) {
- 		/*
- 		 * Ignore calls from kvm_set_spte_hva for unallocated
-@@ -1504,9 +1568,12 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	}
++	ret = led_cdev->pattern_set(led_cdev, pattern, len);
++
++out:
++	kfree(pattern);
++	kfree(sbegin);
++	return ret < 0 ? ret : size;
++}
++static DEVICE_ATTR_RW(pattern);
++
++static umode_t led_class_attrs_mode(struct kobject *kobj,
++				    struct attribute *attr, int index)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct led_classdev *led_cdev = dev_get_drvdata(dev);
++
++	if (attr == &dev_attr_brightness.attr)
++		return attr->mode;
++	if (attr == &dev_attr_max_brightness.attr)
++		return attr->mode;
++	if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
++		return attr->mode;
++
++	return 0;
++}
++
+ #ifdef CONFIG_LEDS_TRIGGERS
+ static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
+ static struct attribute *led_trigger_attrs[] = {
+@@ -88,11 +200,13 @@ static ssize_t max_brightness_show(struct device *dev,
+ static struct attribute *led_class_attrs[] = {
+ 	&dev_attr_brightness.attr,
+ 	&dev_attr_max_brightness.attr,
++	&dev_attr_pattern.attr,
+ 	NULL,
+ };
  
- 	vma_pagesize = vma_kernel_pagesize(vma);
--	if (vma_pagesize == PMD_SIZE && !logging_active) {
-+	if ((vma_pagesize == PMD_SIZE || vma_pagesize == PUD_SIZE) &&
-+	    !logging_active) {
-+		struct hstate *h = hstate_vma(vma);
-+
- 		hugetlb = true;
--		gfn = (fault_ipa & PMD_MASK) >> PAGE_SHIFT;
-+		gfn = (fault_ipa & huge_page_mask(h)) >> PAGE_SHIFT;
- 	} else {
- 		/*
- 		 * Pages belonging to memslots that don't have the same
-@@ -1604,7 +1671,28 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	needs_exec = exec_fault ||
- 		(fault_status == FSC_PERM && stage2_is_exec(kvm, fault_ipa));
+ static const struct attribute_group led_group = {
+ 	.attrs = led_class_attrs,
++	.is_visible = led_class_attrs_mode,
+ };
  
--	if (hugetlb && vma_pagesize == PMD_SIZE) {
-+	if (hugetlb && vma_pagesize == PUD_SIZE) {
-+		/*
-+		 * Assuming that PUD level always exists at Stage 2 -
-+		 * this is true for 4k pages with 40 bits IPA
-+		 * currently supported.
-+		 *
-+		 * When using 64k pages, 40bits of IPA results in
-+		 * using only 2-levels at Stage 2. Overlooking this
-+		 * problem for now as a PUD hugepage with 64k pages is
-+		 * too big (4TB) to be practical.
-+		 */
-+		pud_t new_pud = kvm_pfn_pud(pfn, mem_type);
-+
-+		new_pud = kvm_pud_mkhuge(new_pud);
-+		if (writable)
-+			new_pud = kvm_s2pud_mkwrite(new_pud);
-+
-+		if (needs_exec)
-+			new_pud = kvm_s2pud_mkexec(new_pud);
-+
-+		ret = stage2_set_pud_huge(kvm, memcache, fault_ipa, &new_pud);
-+	} else if (hugetlb && vma_pagesize == PMD_SIZE) {
- 		pmd_t new_pmd = kvm_pfn_pmd(pfn, mem_type);
+ static const struct attribute_group *led_groups[] = {
+@@ -256,6 +370,10 @@ int of_led_classdev_register(struct device *parent, struct device_node *np,
+ 	char name[LED_MAX_NAME_SIZE];
+ 	int ret;
  
- 		new_pmd = kvm_pmd_mkhuge(new_pmd);
++	if (led_cdev->pattern_set &&
++	    (!led_cdev->pattern_get || !led_cdev->pattern_clear))
++		return -EINVAL;
++
+ 	ret = led_classdev_next_name(led_cdev->name, name, sizeof(name));
+ 	if (ret < 0)
+ 		return ret;
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index b7e8255..5f1c751 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -22,6 +22,7 @@
+ #include <linux/workqueue.h>
+ 
+ struct device;
++struct led_pattern;
+ /*
+  * LED Core
+  */
+@@ -88,6 +89,14 @@ struct led_classdev {
+ 				     unsigned long *delay_on,
+ 				     unsigned long *delay_off);
+ 
++	int (*pattern_set)(struct led_classdev *led_cdev,
++			   struct led_pattern *pattern, int len);
++
++	int (*pattern_clear)(struct led_classdev *led_cdev);
++
++	struct led_pattern *(*pattern_get)(struct led_classdev *led_cdev,
++					   int *len);
++
+ 	struct device		*dev;
+ 	const struct attribute_group	**groups;
+ 
+@@ -446,4 +455,14 @@ static inline void led_classdev_notify_brightness_hw_changed(
+ 	struct led_classdev *led_cdev, enum led_brightness brightness) { }
+ #endif
+ 
++/**
++ * struct led_pattern - brightness value in a pattern
++ * @delta_t: delay until next entry, in milliseconds
++ * @brightness: brightness at time = 0
++ */
++struct led_pattern {
++	int delta_t;
++	int brightness;
++};
++
+ #endif		/* __LINUX_LEDS_H_INCLUDED */
 -- 
-2.17.1
+1.7.9.5
 
