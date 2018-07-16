@@ -2,214 +2,113 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D03ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C0DECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBA51208EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:47:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMKxML5f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA51208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B46D20839
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:50:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B46D20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbeGPVQW (ORCPT
+        id S1729595AbeGPVTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:16:22 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:33319 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728413AbeGPVQW (ORCPT
+        Mon, 16 Jul 2018 17:19:49 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:53275 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728123AbeGPVTt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:16:22 -0400
-Received: by mail-vk0-f68.google.com with SMTP id y70-v6so20091214vkc.0;
-        Mon, 16 Jul 2018 13:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=etkEXwGfXyUJQa+sYW985/GS+26wbrqrTfhHlLeZzlU=;
-        b=SMKxML5fwDle0VbDSeVOkxwWGKQablH/tgkPs6ns2ENPvrg4zfWBV9EF/nOQ1yHOII
-         mJGUCBG8LDoZLvGwsyE4ax2AELEvVTvxXwqujOmNNT5D3yW74zNx5XHGk9jgEEjStZEn
-         iXfecMav+eWgcogaBXXPkbrS1Igqpgq4kvgaDMkDmzZrmq/TyupFrt+gMnU45YpM2NcO
-         ZEmgdjKiznH/USjyqL0+x7NDTwLpOs70T/irfOZ0Qol7UIHLBanwJNkaWP1dKeJD7RN2
-         KT0fyglhbFYkV4k3H/nPyhs+KhrBIbew9eMRu//dF/5Z5e/VRIp4ow4sOEZyMWt14VCM
-         HvMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=etkEXwGfXyUJQa+sYW985/GS+26wbrqrTfhHlLeZzlU=;
-        b=MiioyBBfCbjzTBKk+cR7psT7+pELstkL4UjFFa+1uJUmTtmprK7T/cGBnHIvOVr0i4
-         8vpibAj9xqPemYwQx428HWcxwUxLki0krCLHSRhpNfsA321KE+l0+8Mjb0ZeIqOOglKl
-         0iSwcbCBue6rwcGkdodTNV5cAEMEtubp4xsOX0tu3x7Xe9Tx9sduXMEASZGxwHP1x83d
-         4Gckm7pt1rMcSwhaQmEAO0d8FO+fLoNQAHNj7PpIlo3Z2V2nssbmI7aPnYcsfv3PjaeY
-         bBkmEmksEWmVIjl0MISPf7+4rFZg7giBl3yt63vHM0537ZivXDTmcRisUdZMSlQc0uFQ
-         KW6w==
-X-Gm-Message-State: AOUpUlF6X1yNRb/6MupSiLd0mbzmnL98TM51/0TZdJVPSb2oQ5aBCLQT
-        nRq2vr43qS74gGWgdmvCeo2mQlKsGyg0k3P9sKeROCKx
-X-Google-Smtp-Source: AAOMgpcjaVxbo2eXRPi8mCoEIXu4xoQyNmw9eJ8g3JvMljZc3D65nTmQJNfyvp4XdYcjZwvjCTnvYovZc8lokDLJ6rs=
-X-Received: by 2002:a1f:50c:: with SMTP id 12-v6mr10318562vkf.26.1531774034622;
- Mon, 16 Jul 2018 13:47:14 -0700 (PDT)
+        Mon, 16 Jul 2018 17:19:49 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1ffAS7-0004AM-3T; Mon, 16 Jul 2018 22:50:39 +0200
+Date:   Mon, 16 Jul 2018 22:50:38 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Mukesh Ojha <mojha@codeaurora.org>
+cc:     john.stultz@linaro.org, linux-kernel@vger.kernel.org,
+        gkohli@codeaurora.org, cpandya@codeaurora.org,
+        neeraju@codeaurora.org
+Subject: Re: [PATCH v4] time: Fix extra sleeptime injection when suspend
+ fails
+In-Reply-To: <1531773650-30424-1-git-send-email-mojha@codeaurora.org>
+Message-ID: <alpine.DEB.2.21.1807162241470.1693@nanos.tec.linutronix.de>
+References: <1531773650-30424-1-git-send-email-mojha@codeaurora.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 13:47:14
- -0700 (PDT)
-In-Reply-To: <20180716165507.23100-5-colyli@suse.de>
-References: <20180716165507.23100-1-colyli@suse.de> <20180716165507.23100-5-colyli@suse.de>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 16 Jul 2018 23:47:14 +0300
-Message-ID: <CAHp75VchQOrUU1pA3GRraXO=gdhr9Uwibxo-ri1W_mwtehRtyw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] lib/test_crc: Add test cases for crc calculation
-To:     Coly Li <colyli@suse.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Luis R . Rodriguez" <mcgrof@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 7:55 PM, Coly Li <colyli@suse.de> wrote:
-> This patch adds a kernel module to test the consistency of multiple crc
-> calculation in Linux kernel. It is enabled with CONFIG_TEST_CRC enabled.
->
-> The test results are printed into kernel message, which look like,
->
-> test_crc: crc64_le: PASSED (0x4e6b> +
-1ff972fa8c55, expval 0x4e6b1ff972fa8c55)
-> test_crc: crc64_le_bch: PASSED (0x0e4f1391d7a4a62e, expval 0x0e4f1391d7a4a62e)
-> test_crc: crc64_le_update: FAILED (0x03d4d0d85685d9a1, expval 0x3d4d0d85685d9a1f)
->
-> kernel 0day system has framework to check kernel message, then the above
-> result can be handled by 0day system. If crc calculation inconsistency
-> happens, it can be detected quite soon.
->
-> lib/test_crc.c can is a testing frame work for all crc consistency
-> testings. For now, there are only test caes for 3 crc routines,
-> - crc64_le()
-> - crc64_le_bch()
-> - crc64_le_update()
+On Tue, 17 Jul 2018, Mukesh Ojha wrote:
+> @@ -102,7 +102,7 @@ static int rtc_resume(struct device *dev)
+>  	struct timespec64	sleep_time;
+>  	int err;
+>  
+> -	if (timekeeping_rtc_skipresume())
+> +	if (!timekeeping_rtc_skipresume())
+>  		return 0;
 
-> +config TEST_CRC
-> +       tristate "CRC calculation test driver"
+That does not make any sense at all, really. 
 
-> +       default n
+>  /* Flag for if there is a persistent clock on this platform */
+>  static bool persistent_clock_exists;
+> @@ -1610,7 +1622,7 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
+>   */
+>  bool timekeeping_rtc_skipresume(void)
+>  {
+> -	return sleeptime_injected;
+> +	return suspend_timing_needed;
 
-Default default is n.
+Just make this !suspend_timing_needed and the function name and its return
+value still makes sense.
 
-> +       depends on CRC64
+> @@ -1701,13 +1714,13 @@ void timekeeping_resume(void)
+>  					      tk->tkr_mono.mask);
+>  		nsec = mul_u64_u32_shr(cyc_delta, clock->mult, clock->shift);
+>  		ts_delta = ns_to_timespec64(nsec);
+> -		sleeptime_injected = true;
+> +		suspend_timing_needed = false;
+>  	} else if (timespec64_compare(&ts_new, &timekeeping_suspend_time) > 0) {
+>  		ts_delta = timespec64_sub(ts_new, timekeeping_suspend_time);
+> -		sleeptime_injected = true;
+> +		suspend_timing_needed = false;
+>  	}
+>  
+> -	if (sleeptime_injected)
+> +	if (!suspend_timing_needed)
+>  		__timekeeping_inject_sleeptime(tk, &ts_delta);
 
-> +#include <linux/init.h>
-> +#include <linux/list.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/fs.h>
-> +#include <linux/miscdevice.h>
-> +#include <linux/slab.h>
-> +#include <linux/uaccess.h>
-> +#include <linux/async.h>
-> +#include <linux/delay.h>
-> +#include <linux/vmalloc.h>
-> +#include <linux/crc64.h>
+This reads odd as well. I'd rather keep a local variable inject_sleeptime
+or such and set that in the code pathes above.
 
-Perhaps in order?
+   	if (...) {
+	   	...
+		inject_sleeptime = true;
+   	} else if (...) {
+	   	...
+		inject_sleeptime = true;
+	}
 
-Moreover, either init.h or module.h depending on the Kconfig (here
-seems module.h is a right choice).
+	if (inject_sleeptime) {
+		suspend_timing_needed = false;
+		__timekeeping_inject_sleeptime();
+	}
 
-> +struct crc_test_record {
+Hmm? Just blindly converting everything results in functional, but
+nonsensical code. Think about what happens when you look at that stuff 6
+month from now...
 
-> +
+Thanks,
 
-Redundant.
+	tglx
 
-> +       char    *name;
-> +       __le64  data[4];
-> +       __le64  initval;
-> +       __le64  expval;
-> +       int     (*handler)(struct crc_test_record *rec);
-> +};
-> +
-> +static int chk_and_msg(const char *name, __le64 crc, __le64 expval)
-> +{
-> +       int ret = 0;
-> +
-> +       if (crc == expval) {
-> +               pr_info("test_crc: %s: PASSED:(0x%016llx, expval 0x%016llx)",
-> +                       name, crc, expval);
-> +       } else {
-> +               pr_err("test_crc: %s: FAILED:(0x%016llx, expval 0x%016llx)",
-> +                       name, crc, expval);
-> +               ret = -EINVAL;
-> +       }
-> +
-> +       return ret;
-
-Perhaps collect statistics instead how it's done in many other tests?
-
-> +}
-> +
-> +/* Add your crc test caese here */
-
-caese ?
-
-> +static int test_crc64_le(struct crc_test_record *rec)
-> +{
-> +       __le64 crc;
-> +
-> +       crc = crc64_le(rec->data, sizeof(rec->data));
-> +       return chk_and_msg(rec->name, crc, rec->expval);
-
-> +
-
-Redundant.
-
-> +}
-
-> +       { .name = NULL, }
-
-Simple {} would work.
-
-> +static int __init test_crc_init(void)
-> +{
-> +       int i;
-> +       int v, ret = 0;
-> +
-> +       pr_info("Kernel crc consitency testing:");
-> +       for (i = 0; test_data[i].name; i++) {
-
-> +               v = test_data[i].handler(&test_data[i]);
-> +               if (v < 0 && ret == 0)
-> +                       ret = -EINVAL;
-
-A bit strange. Anyway, better to collect statistics and print it at
-the end with corresponding return code.
-
-> +       }
-> +
-> +       return ret;
-> +}
-
-> +late_initcall(test_crc_init);
-
-Why?
-
-> +static void __exit test_crc_exit(void) { }
-> +module_exit(test_crc_exit);
-
-> +MODULE_LICENSE("GPL");
-
-It's not the same as in SPDX.
-
--- 
-With Best Regards,
-Andy Shevchenko
