@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE635ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62396ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55C95206B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C95206B8
+	by mail.kernel.org (Postfix) with ESMTP id 144FF208C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 144FF208C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbeGPRjb (ORCPT
+        id S1730638AbeGPRjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 13:39:31 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30103 "EHLO mga01.intel.com"
+        Mon, 16 Jul 2018 13:39:37 -0400
+Received: from mga07.intel.com ([134.134.136.100]:7574 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728129AbeGPRjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 13:39:31 -0400
+        id S1727970AbeGPRjh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 13:39:37 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:11:12 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:11:17 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,362,1526367600"; 
-   d="scan'208";a="55423834"
+   d="scan'208";a="65094363"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Jul 2018 10:11:12 -0700
-Subject: [PATCH v2 10/14] filesystem-dax: Do not request a pfn when not
- required
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2018 10:11:18 -0700
+Subject: [PATCH v2 11/14] filesystem-dax: Make mount time pfn validation a
+ debug check
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Huaisheng Ye <yehs1@lenovo.com>, Jan Kara <jack@suse.cz>,
-        vishal.l.verma@intel.com, hch@lst.de, linux-mm@kvack.org,
-        jack@suse.cz, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 16 Jul 2018 10:01:14 -0700
-Message-ID: <153176047420.12695.9821577651771886595.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc:     Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        vishal.l.verma@intel.com, linux-mm@kvack.org, jack@suse.cz,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Date:   Mon, 16 Jul 2018 10:01:19 -0700
+Message-ID: <153176047958.12695.16209413909835344164.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -52,72 +52,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+Do not ask for dax_direct_access() to retrieve a pfn in the
+DAX_DRIVER_DEBUG=n case. This avoids an early call to memmap_sync() in
+the driver.
 
-Some functions within fs/dax don't need to get pfn from direct_access.
-In support of allowing memmap initialization to run in the background
-elide requests for pfns when not required.
+Now that QUEUE_FLAG_DAX usage has been fixed the validation of the pfn
+is only useful for dax driver developers. It is safe to assume that
+pmem, dcssblk, and device-mapper-dax are correct with respect to dax
+operation, so only retrieve the pfn for debug builds when qualifying a
+new dax driver, if one ever arrives.
 
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+The moves the first consumption of a pfn from ->direct_access() to the
+first dax mapping fault, rather than initial filesystem mount. I.e. more
+time for memmap init to run in the background.
+
+Cc: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- fs/dax.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/dax/Kconfig |   10 ++++++++
+ drivers/dax/super.c |   64 ++++++++++++++++++++++++++++++++-------------------
+ 2 files changed, 50 insertions(+), 24 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 641192808bb6..28264ff4e343 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -647,7 +647,6 @@ static int copy_user_dax(struct block_device *bdev, struct dax_device *dax_dev,
+diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
+index e0700bf4893a..b32f8827b983 100644
+--- a/drivers/dax/Kconfig
++++ b/drivers/dax/Kconfig
+@@ -9,6 +9,16 @@ menuconfig DAX
+ 
+ if DAX
+ 
++config DAX_DRIVER_DEBUG
++	bool "DAX: driver debug"
++	help
++	  Enable validation of the page frame objects returned from a
++	  driver's 'direct_access' operation. This validation is
++	  performed relative to the requirements of the FS_DAX and
++	  FS_DAX_LIMITED configuration options. If you are validating
++	  the implementation of a dax device driver say Y otherwise
++	  say N.
++
+ config DEV_DAX
+ 	tristate "Device DAX: direct access mapping device"
+ 	depends on TRANSPARENT_HUGEPAGE
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 903d9c473749..65851919e59a 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -72,6 +72,41 @@ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
+ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+ #endif
+ 
++static bool validate_dax_pfn(pfn_t *pfn)
++{
++	bool dax_enabled = false;
++
++	/*
++	 * Unless debugging a new dax driver, or new dax architecture
++	 * support there is no need to check the pfn. Delay the kernel's
++	 * first need for a dax pfn until first userspace dax fault.
++	 */
++	if (!pfn)
++		return true;
++
++	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(*pfn)) {
++		/*
++		 * An arch that has enabled the pmem api should also
++		 * have its drivers support pfn_t_devmap()
++		 *
++		 * This is a developer warning and should not trigger in
++		 * production. dax_flush() will crash since it depends
++		 * on being able to do (page_address(pfn_to_page())).
++		 */
++		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
++		dax_enabled = true;
++	} else if (pfn_t_devmap(*pfn)) {
++		struct dev_pagemap *pgmap;
++
++		pgmap = get_dev_pagemap(pfn_t_to_pfn(*pfn), NULL);
++		if (pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX)
++			dax_enabled = true;
++		put_dev_pagemap(pgmap);
++	}
++
++	return dax_enabled;
++}
++
+ /**
+  * __bdev_dax_supported() - Check if the device supports dax for filesystem
+  * @bdev: block device to check
+@@ -85,11 +120,10 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
  {
- 	void *vto, *kaddr;
+ 	struct dax_device *dax_dev;
+-	bool dax_enabled = false;
++	pfn_t _pfn, *pfn;
  	pgoff_t pgoff;
+ 	int err, id;
+ 	void *kaddr;
 -	pfn_t pfn;
- 	long rc;
- 	int id;
+ 	long len;
+ 	char buf[BDEVNAME_SIZE];
  
-@@ -656,7 +655,7 @@ static int copy_user_dax(struct block_device *bdev, struct dax_device *dax_dev,
- 		return rc;
+@@ -113,8 +147,10 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 		return false;
+ 	}
  
++	pfn = IS_ENABLED(CONFIG_DAX_DRIVER_DEBUG) ? &_pfn : NULL;
++
  	id = dax_read_lock();
--	rc = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size), &kaddr, &pfn);
-+	rc = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size), &kaddr, NULL);
- 	if (rc < 0) {
- 		dax_read_unlock(id);
- 		return rc;
-@@ -1052,15 +1051,13 @@ int __dax_zero_page_range(struct block_device *bdev,
- 		pgoff_t pgoff;
- 		long rc, id;
- 		void *kaddr;
--		pfn_t pfn;
+-	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
++	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, pfn);
+ 	dax_read_unlock(id);
  
- 		rc = bdev_dax_pgoff(bdev, sector, PAGE_SIZE, &pgoff);
- 		if (rc)
- 			return rc;
+ 	put_dax(dax_dev);
+@@ -125,27 +161,7 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ 		return false;
+ 	}
  
- 		id = dax_read_lock();
--		rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr,
--				&pfn);
-+		rc = dax_direct_access(dax_dev, pgoff, 1, &kaddr, NULL);
- 		if (rc < 0) {
- 			dax_read_unlock(id);
- 			return rc;
-@@ -1116,7 +1113,6 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 		ssize_t map_len;
- 		pgoff_t pgoff;
- 		void *kaddr;
--		pfn_t pfn;
- 
- 		if (fatal_signal_pending(current)) {
- 			ret = -EINTR;
-@@ -1128,7 +1124,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 			break;
- 
- 		map_len = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size),
--				&kaddr, &pfn);
-+				&kaddr, NULL);
- 		if (map_len < 0) {
- 			ret = map_len;
- 			break;
+-	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
+-		/*
+-		 * An arch that has enabled the pmem api should also
+-		 * have its drivers support pfn_t_devmap()
+-		 *
+-		 * This is a developer warning and should not trigger in
+-		 * production. dax_flush() will crash since it depends
+-		 * on being able to do (page_address(pfn_to_page())).
+-		 */
+-		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
+-		dax_enabled = true;
+-	} else if (pfn_t_devmap(pfn)) {
+-		struct dev_pagemap *pgmap;
+-
+-		pgmap = get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
+-		if (pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX)
+-			dax_enabled = true;
+-		put_dev_pagemap(pgmap);
+-	}
+-
+-	if (!dax_enabled) {
++	if (!validate_dax_pfn(pfn)) {
+ 		pr_debug("%s: error: dax support not enabled\n",
+ 				bdevname(bdev, buf));
+ 		return false;
 
