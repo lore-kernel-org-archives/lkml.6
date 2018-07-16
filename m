@@ -2,141 +2,221 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B662ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 01:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB01ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 01:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1845920871
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 01:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC1D820871
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 01:50:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S8WI4ePf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1845920871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bbPllNd6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1D820871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeGPCLO (ORCPT
+        id S1727521AbeGPCPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 22:11:14 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38546 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727248AbeGPCLO (ORCPT
+        Sun, 15 Jul 2018 22:15:18 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51003 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbeGPCPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 22:11:14 -0400
-Received: by mail-it0-f65.google.com with SMTP id v71-v6so18960623itb.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 18:46:14 -0700 (PDT)
+        Sun, 15 Jul 2018 22:15:18 -0400
+Received: by mail-it0-f68.google.com with SMTP id w16-v6so18703340ita.0;
+        Sun, 15 Jul 2018 18:50:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fV4IPbi9QFdqz+94u/qiNK+fp5o/FS8395LUNRnDDVM=;
-        b=S8WI4ePfDfR7mzf/Qe0IpbkhrHkJwX66zkgkPaqxE0qvL1vS4qyutok0LrA/LQHwI5
-         iihaxKHbJt9OZTqRejcn0973gk+KrfLrJjUh0NxaeTzUmN8M7eToTX+kNBuASLw7TFQX
-         Au4QZ2MY0zOcFUdCzbLVL8ZJAZTi11bkGOFZ4=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=F3tn+sBKFOsK6edypcuY8Qe4Kz5RtkgR7vuGwPHNjsQ=;
+        b=bbPllNd6w8j+fZjhln0iDcbNv//79yI1iRZwev+4X7dMvmLvQZZse2BVS5yZ533Ok1
+         liTdeMudiJL7E9/JU4vAj8yCUiBScHQVTHHk4o2njXiIU0Scptf4RHM7eu37WraIfJiW
+         SOZ3kuiPo0K0J4wLE80hiM7GbvcTm5BqMefxRVBkx5T49AP5lIMdl6wnMyIWZdRfVpvR
+         QxUMPbQMqKCNaa3E7i7PGqDVrqoeWqWab20cXnEyF3WUI/VdD+T/ArQQdgApD2j6y/EQ
+         a25QdySOOPipoUqBtMj8+Y8DIeSidmmU1P2XesyeeRW3slYnxVZBrmWhBweprsUT/jiQ
+         1Wvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fV4IPbi9QFdqz+94u/qiNK+fp5o/FS8395LUNRnDDVM=;
-        b=ie0sVz048KORo69xe8U8PXY6LBeO+d3g8oDNO+qDI2UoqLo671eczrNKExvz1chha8
-         UIdcw6yL1vxB3RWjCMc59VJHE14gNMj2X1elr2xdZ+tth2hLLj0ENYymW1lw2rVIjb/O
-         kkOD8eRVq61804zKqoA/3xqmPU/7V1kZH9vQh/yazRbd109ZazfevHTvUh4IYiv5w4Yx
-         VyiVrYxZ141sMrkyGwzvUTYB0EqB5Kb/JbHMT4D9SWXAgRS8XPmnkZTu90OYpppnnbTy
-         F0gSBEnk8BajYTWfCbvu9LiJtbcPVa2dbaxmwXPd731kGKn2xKHtUjYb0F+JKJFL9v6Z
-         QU8Q==
-X-Gm-Message-State: AOUpUlGVEC6a02mNiw4RdBgAUtQk7tWWbbQRU7rJbi2QvJVw6OwkCR71
-        bWwoRqG5Ux4YC348pIwL6MDkt/UA0JT/FjTUa6k=
-X-Google-Smtp-Source: AAOMgpf1KYW89gd5qWKMgQ+/tXYLOk4slQ9CijosGbuNLnCQZbc7uJA5so0+DhsKX8+FrrSbmMGlgk/oODz4Bq2XuPI=
-X-Received: by 2002:a24:94f:: with SMTP id 76-v6mr11018257itm.113.1531705574302;
- Sun, 15 Jul 2018 18:46:14 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=F3tn+sBKFOsK6edypcuY8Qe4Kz5RtkgR7vuGwPHNjsQ=;
+        b=pI9kQ2Z2KgGX+MXjVckMe05EEgMyM0DpiYeXjVHQf7fseeIDQ9HzZX8tht3qg6B/Mf
+         iWzarbc0sGNIgnLyjDFVcMM7LanNqF9uxxMmYrueWSR7Juh8cN2ehJD7U2U38cK0n/tK
+         8KzCMO6d+6HzufpN5OI8/sL9xtVnp4UH0pFtKb8Qxq2kntZpIVqsS7SClznbfJqB0LuN
+         hX05w5uwzEXKOBM74lDdRrHOwowfFxckDO0E6DPNnI/QY+tumKQ7xV3MmnFULVcz9rJ2
+         4XsJ6ZCIjgoVUrtTIzc/B2krlyk4lqEnUUdwHniD6H3SqQOBP9sfGlAFkQE5B15ZNfv2
+         HvHQ==
+X-Gm-Message-State: AOUpUlFUy0H+j9OgZJa7wGnliU5ycOAJxw9dyYHb6yuq2Oc9j29k2vfA
+        RzZbAxf8dhrjwvNWhJO0PxfkeMYb1RhV20ZPvVI=
+X-Google-Smtp-Source: AAOMgpfUFrZMf6UAk9OeUSJuQ4gn/eIpR+5s0RfLQ3PZHGsJpX3XfA5uV05DYosynIdMOT5kv47gwoOqxxHVq72GUsg=
+X-Received: by 2002:a24:9194:: with SMTP id i142-v6mr11284102ite.142.1531705817823;
+ Sun, 15 Jul 2018 18:50:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180706215003.156702-1-jannh@google.com> <f9c8cf81df29006bc9c79932f3bcd599b559b408.camel@linux.intel.com>
- <CAG48ez105Jan3BDAKssThnbNcr3yBMFTbdQHEHwXdmZUvE5VQw@mail.gmail.com>
- <20180715220339.GA15435@gmail.com> <CAG48ez16CXanHX3JgybWk5RBjiFYMcO3EjBCXerr5nZUtWEGqQ@mail.gmail.com>
-In-Reply-To: <CAG48ez16CXanHX3JgybWk5RBjiFYMcO3EjBCXerr5nZUtWEGqQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 15 Jul 2018 18:46:03 -0700
-Message-ID: <CA+55aFyVBvW65avVaevMaDA5LuuSrFoOnBY_UBskjCKeC24s4Q@mail.gmail.com>
-Subject: Re: [PATCH] x86/mtrr: don't copy out-of-bounds data in mtrr_write
-To:     Jann Horn <jannh@google.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>
+Received: by 2002:a6b:7a47:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 18:49:37
+ -0700 (PDT)
+In-Reply-To: <CALvZod6SVJQz84sxMkvRY7K4iZ2_uzbmMq85URBznsu7+ZP9OA@mail.gmail.com>
+References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+ <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
+ <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
+ <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
+ <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com>
+ <CALvZod6F4vM_U0obH1aU3iJqRs-3JEfR4cHKZoB9JVLTgdSmSQ@mail.gmail.com>
+ <CALOAHbByKH9t_c266Bi+Kv2r=07LLpa6UEQgsc7BNi2dZoeNhQ@mail.gmail.com> <CALvZod6SVJQz84sxMkvRY7K4iZ2_uzbmMq85URBznsu7+ZP9OA@mail.gmail.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 16 Jul 2018 09:49:37 +0800
+Message-ID: <CALOAHbAnVvKR2AQ4TAkwUuC8XVK5UaD3vt80OC_M4OK2j6b_Yg@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 6:33 PM Jann Horn <jannh@google.com> wrote:
+On Sun, Jul 15, 2018 at 11:04 PM, Shakeel Butt <shakeelb@google.com> wrote:
+> On Sun, Jul 15, 2018 at 1:02 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>>
+>> On Sun, Jul 15, 2018 at 2:34 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> > On Sat, Jul 14, 2018 at 10:26 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >>
+>> >> On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> >> > On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >> >>
+>> >> >> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
+>> >> >> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> >> >> >>
+>> >> >> >> try_charge maybe executed in packet receive path, which is in interrupt
+>> >> >> >> context.
+>> >> >> >> In this situation, the 'current' is the interrupted task, which may has
+>> >> >> >> no relation to the rx softirq, So it is nonsense to use 'current'.
+>> >> >> >>
+>> >> >> >
+>> >> >> > Have you actually seen this occurring?
+>> >> >>
+>> >> >> Hi Shakeel,
+>> >> >>
+>> >> >> I'm trying to produce this issue, but haven't find it occur yet.
+>> >> >>
+>> >> >> > I am not very familiar with the
+>> >> >> > network code but I can think of two ways try_charge() can be called
+>> >> >> > from network code. Either through kmem charging or through
+>> >> >> > mem_cgroup_charge_skmem() and both locations correctly handle
+>> >> >> > interrupt context.
+>> >> >> >
+>> >> >>
+>> >> >> Why do you say that mem_cgroup_charge_skmem() correctly hanle
+>> >> >> interrupt context ?
+>> >> >>
+>> >> >> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
+>> >> >> context correctly.
+>> >> >>
+>> >> >> mem_cgroup_charge_skmem() is calling  try_charge() twice.
+>> >> >> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
+>> >> >> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
+>> >> >>
+>> >> >> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
+>> >> >> Then mem_cgroup_charge_skmem() will call try_charge() once more with
+>> >> >> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
+>> >> >> again the '
+>> >> >> force' label in  try_charge() will be executed and 0 is returned.
+>> >> >>
+>> >> >> No matter what, the 'current' will be used and touched, that is
+>> >> >> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
+>> >> >> correctly.
+>> >> >>
+>> >> >
+>> >> > Hi Yafang,
+>> >> >
+>> >> > If you check mem_cgroup_charge_skmem(), the memcg passed is not
+>> >> > 'current' but is from the sock object i.e. sk->sk_memcg for which the
+>> >> > network buffer is allocated for.
+>> >> >
+>> >>
+>> >> That's correct, the memcg if from the sock object.
+>> >> But the point is, in this situation why 'current' is used in try_charge() ?
+>> >> As 'current' is not related with the memcg, which is just a interrupted task.
+>> >>
+>> >
+>> > Hmm so you mean the behavior of memcg charging in the interrupt
+>> > context depends on the state of the interrupted task.
+>>
+>> Yes.
+>>
+>> > As you have
+>> > noted, mem_cgroup_charge_skmem() tries charging again with
+>> > __GFP_NOFAIL and the charge succeeds. Basically the memcg charging by
+>> > mem_cgroup_charge_skmem() will always succeed irrespective of the
+>> > state of the interrupted task. However mem_cgroup_charge_skmem() can
+>> > return true if the interrupted task was exiting or a fatal signal is
+>> > pending or oom victim or reclaiming memory. Can you please explain why
+>> > this is bad?
+>> >
+>>
+>> Let me show you the possible issues cause by this behavoir.
+>> 1.  In mem_cgroup_oom(), some  members in 'current' is set.
+>>      That means an innocent task will be in  task_in_memcg_oom state.
+>>      But this task may be in a different memcg, I mean the memcg of
+>> the 'current' may be differenct with the sk->sk_memcg.
+>>      Then when this innocent 'current' do try_charge it will hit  "if
+>> (unlikely(task_in_memcg_oom(current)))" and  -ENOMEM is returned,
+>> While there're maybe some free memory (or some memory could be freed )
+>> in the memcg of the innocent 'task'.
+>>
 >
-> +Linus, Andy, Al from the other thread
+> No memory will be freed as try_charge() is in interrupt context.
 >
-> On Mon, Jul 16, 2018 at 12:03 AM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > BTW., a naive question: would it make sense to simply disallow 'special=
-'
-> > fds to be passed to setuid binaries, and fix any user-space that breaks=
-?
-> > (i.e. only allow regular files and pipes/sockets.)
+
+I mean when this interrupted 'current' is running, that's in process context.
+In process context it should call try_to_free_mem_cgroup_pages() to
+free some memory,
+but it will hit "if (unlikely(task_in_memcg_oom(current)))"  before as
+it is set in the interrupt context.
+
+That's an obviously issue. Do you understand ?
+
+>> 2.  If the interrupted task was exiting or a fatal signal is  pending
+>> or oom victim,
+>>      it will directly goto force and 0 is returned, and then
+>> mem_cgroup_charge_skmem() will return true.
+>>      But mem_cgroup_charge_skmem() maybe need to try the second time
+>> and return false.
+>>
+>> That are all unexpected behavoir.
+>>
 >
-> If we do that, we'd probably want to do the same for file descriptor
-> passing through /dev/binder and SCM_RIGHTS. There are already LSM
-> hooks for most of that because SELinux filters these.
-
-I think it's unlikely to make much sense to try to limit fd passing. I
-can't really see any sane model for doing so. By definition, the file
-descriptor was opened by the "weak" party (non-suid), and dammit,
-that's supposed to be the real permission boundary.
-
-So I don't think "don't pass fd to suid binary" makes any sense at
-all. It might break things, and all it does is to paper over the real
-issue. It smells like a pointless hack that makes little sense.
-
-The fact that we have had problems in this area is sad, but I'm hoping
-people are at least a bit more aware of it.
-
-However:
-
-> > Also, don't allow splice() on special files either, except if the drive=
-r
-> > explicitly opts in to it.
+> Yes, this is inconsistent behavior. Can you explain how this will
+> affect network traffic? Basically mem_cgroup_charge_skmem() was
+> supposed to return false but sometime based on the interrupted task,
+> mem_cgroup_charge_skmem() returns true. How is this behavior bad for
+> network traffic?
 >
-> In the thread "[PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
-> superblock creation [ver #9]", Andy Lutomirski suggested something
-> similar (https://lore.kernel.org/lkml/338BC3C4-F3E7-48F0-A82E-2C7295B6640=
-E@amacapital.net/):
-> handler
-> | (Al- can=E2=80=99t we just stop allowing splice() at all on things that
-> don=E2=80=99t use iov_iter?)
+
+You could see the funtion  __sk_mem_raise_allocated().
+If mem_cgroup_charge_skmem() return false, it will goto
+suppress_allocation and uncharge skmem,
+while when mem_cgroup_charge_skmem() return true, it will charge skmem
+sucessfully.
+
+The consequence behavior is  sk_rmem_schedule may fail while it should sucess.
+And then it will call  tcp_prune_queue() and tcp collapse may take a long time.
+
+> Please note that I am not against this patch. I just want that the
+> motivation/reason behind it is very clear.
 >
-> Linus suggested
-> (https://lore.kernel.org/lkml/CA+55aFxGqLfu1pjT5421k7KbSd94NWU4fw0H-zJe-q=
-SWwBfAeQ@mail.gmail.com/):
->
-> | We could add a FMODE_SPLICE_READ/WRITE bit, and let people opt in to
-> | splice. We probably should have.
 
-Right. We already use FMODE_xyz to limit various operations (ie we can
-already say "this file is not seekable" etc), and I have to say, the
-special magiuc splice() behavior has been an issue.
+As I have explained before, there're two motivations.
+One is the random interrupted task may fail to charge when it is
+scheduled to run.
+The other one is it may take long time to receive this skb.
 
-We did the "FMODE_PREAD/PWRITE" flags exactly because we wanted to
-have the right ESPIPE behavior from file descriptors that simply
-couldn't do lseek. And splice() is very much another "some file
-descriptors do not like it".
-
-So adding FMODE_SPLICE_READ/WRITE and then just forcing subsystems to
-opt in to it sounds fairly simple. The people who really want splice
-tend to just want pipes, regular files and network sockets, so
-starting out with those opted it should pretty much cover it.
-
-            Linus
+Thanks
+Yafang
