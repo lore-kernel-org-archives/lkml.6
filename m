@@ -2,79 +2,98 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A12ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F85ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3391C20779
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3391C20779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id EC0FA2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:04:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P+ulBqU+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC0FA2098A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeGPJ3q (ORCPT
+        id S1729854AbeGPJat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:29:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43335 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbeGPJ3p (ORCPT
+        Mon, 16 Jul 2018 05:30:49 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:55446 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727192AbeGPJas (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:29:45 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fezPX-00048K-UC; Mon, 16 Jul 2018 09:03:16 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: cs46xx: remove redundant pointer 'ins'
-Date:   Mon, 16 Jul 2018 10:03:15 +0100
-Message-Id: <20180716090315.16267-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 16 Jul 2018 05:30:48 -0400
+Received: by mail-it0-f54.google.com with SMTP id 16-v6so19767187itl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 02:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=8JnC4jV05+jNEHhFc3Lh1nVhk9Iyy2BosQk7PPmxx2U=;
+        b=P+ulBqU+BaV+5R/Y8mVDOuGUyZ1/YU6/dRT4+mvFoplropbsK956SkbagZqNuGi0tV
+         6Csq1kfIGKu4t3te3G381xqQvOSewblIMmgJWUeZdSyVPRZUlJgvpLe+uMGQC52fAV33
+         JPSOmlD7Nin+ErlhQFmc+dOE8nHKzVd/3O/8I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=8JnC4jV05+jNEHhFc3Lh1nVhk9Iyy2BosQk7PPmxx2U=;
+        b=DGQ0LwTSWdmrlFkKF0BAeALYhDBHdwrXAnUGQ185hNT10yKuZXcZN6c1VCfrpmwfGY
+         8vPG1f0HpR6I7hozGFP9gNsoV/td6Ye0L/ajHf5eW7slzbjaBnPRcTHIC2MHf+Nsoha4
+         SErFkP0KcguRf9QYm9KQ/7HScrHcs8Ao9NolnbOvU9wCuvVbQPCPz2XorMdQvVV0IQ4Q
+         1K2z69UVvomCRX1R84Zc3UYG9m6WMDmDw4esCHjxOS+lzy/bh8mS4LMFdTwJ/kC/LjAT
+         PwflXeFfO1bP0xmpt9ZDGAH4K5MTwkZTyN7h5x6an6+xAMFfDO09hXXpMN5oLwYEuCvo
+         fbaQ==
+X-Gm-Message-State: AOUpUlGkbyZlu3aJUxY9S9aUqNU5WBHe0Wm5WeDoO7u1ApHUE1wH74KB
+        +2DW309zJpH/IM8w+NCipBH6e9GLG0EjAgg/DabOLw==
+X-Google-Smtp-Source: AAOMgpcuP8NudvdrYVAC5f9I3FFeXe0Cv26tjJ9xG32/Hni54YK5N4a7y1jOwYATJJgYt7v06kbtRQFDL3+rrTFBowk=
+X-Received: by 2002:a24:90c4:: with SMTP id x187-v6mr434421itd.97.1531731863447;
+ Mon, 16 Jul 2018 02:04:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 02:04:22
+ -0700 (PDT)
+In-Reply-To: <20180716043203.gyedmithp4xa7p3u@vireshk-i7>
+References: <cover.1530252803.git.viresh.kumar@linaro.org> <20180716043203.gyedmithp4xa7p3u@vireshk-i7>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 16 Jul 2018 11:04:22 +0200
+Message-ID: <CAPDyKFriy50XL6O0=4TUremONNqrWUDa5Sm3tzqhnuRMc=BArw@mail.gmail.com>
+Subject: Re: [PATCH 00/10] OPP: Support multiple power-domains per device
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Nishanth Menon <nm@ti.com>,
+        Pavel Machek <pavel@ucw.cz>, Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 16 July 2018 at 06:32, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 29-06-18, 11:49, Viresh Kumar wrote:
+>> Hi,
+>>
+>> This series improves the OPP core (and a bit of genpd core as well) to
+>> support multiple phandles in the "required-opps" property, which are
+>> only used for multiple power-domains per device for now.
+>>
+>> We still don't propagate the changes to master domains for the
+>> sub-domains, but this patchset is an important stepping stone for that
+>> to happen.
+>>
+>> Tested on Hikey960 after faking some power domains for CPUs.
+>
+> Ulf, can you please help review this stuff ?
 
-Pointer 'ins' is being assigned but is never used hence it is
-redundant and can be removed.
+I am in holiday mode, so I needs some more time before I can review
+this. Apologize for the inconvenience.
 
-Cleans up clang warning:
-warning: variable 'ins' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- sound/pci/cs46xx/dsp_spos_scb_lib.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/sound/pci/cs46xx/dsp_spos_scb_lib.c b/sound/pci/cs46xx/dsp_spos_scb_lib.c
-index abb01ce66983..8d0a3d357345 100644
---- a/sound/pci/cs46xx/dsp_spos_scb_lib.c
-+++ b/sound/pci/cs46xx/dsp_spos_scb_lib.c
-@@ -73,13 +73,10 @@ static void cs46xx_dsp_proc_scb_info_read (struct snd_info_entry *entry,
- {
- 	struct proc_scb_info * scb_info  = entry->private_data;
- 	struct dsp_scb_descriptor * scb = scb_info->scb_desc;
--	struct dsp_spos_instance * ins;
- 	struct snd_cs46xx *chip = scb_info->chip;
- 	int j,col;
- 	void __iomem *dst = chip->region.idx[1].remap_addr + DSP_PARAMETER_BYTE_OFFSET;
- 
--	ins = chip->dsp_spos_instance;
--
- 	mutex_lock(&chip->spos_mutex);
- 	snd_iprintf(buffer,"%04x %s:\n",scb->address,scb->scb_name);
- 
--- 
-2.17.1
-
+Kind regards
+Uffe
