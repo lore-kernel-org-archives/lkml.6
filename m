@@ -2,163 +2,139 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6350DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3B1ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06CC3208FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 039A1208FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:56:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pNyQco+P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06CC3208FC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iHtViZUH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039A1208FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729591AbeGPJWI (ORCPT
+        id S1729952AbeGPJXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:22:08 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:46978 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbeGPJWI (ORCPT
+        Mon, 16 Jul 2018 05:23:12 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:56162 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727811AbeGPJXM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:22:08 -0400
-Received: by mail-oi0-f66.google.com with SMTP id y207-v6so73336036oie.13;
-        Mon, 16 Jul 2018 01:55:45 -0700 (PDT)
+        Mon, 16 Jul 2018 05:23:12 -0400
+Received: by mail-wm0-f68.google.com with SMTP id f21-v6so2162782wmc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 01:56:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=yZApqhWIm/YEiS8PZ9W9x7CV5xZ7QBWqPpr20gRI5BM=;
-        b=pNyQco+PcQLCKjEYnPDHU4kEOwcaMRbq9dZvQoi7gpTHiebgEv6alGxTmONIdeBSZq
-         37RQaDCam3jjxWdN6k3ugW7jfmmgT9EAMAsCKGtdMFs9b9OanvF7+ZbeQOPxDaeNbXzj
-         bErMNUKvqoiduONx01TNcHo/BSvkTWAzt19aTkBojwRZfvpgAe4Qex0r+Lt8n6wjLmw2
-         2E3yzhnmKce4dKrqxcVd2ce2qEfjk3NfKFou+autAm0u+jp5h6OaVL+hnZ+ipd8Xl5z6
-         310sJnSQ/+xK9E3wpWASohcUJuJF5NooR6lNqjloHSM/65sXxVb+2JGMWy0olroy8iRl
-         sfNg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IKhCvJ8GLRbnK4Ts7jTCw8XOdnXHtRR+2Bac1oVPFPY=;
+        b=iHtViZUHTuSNCH+mVlWBPw0wX8pO5UdTpURrs5vWGbCITZ/LDW9kpFqZAMP3Yum9dm
+         qd7IpxUgXLzJrMTvG8m+FqD7Nsh6gN+4tNxYsHGm+bpBGU4D8gdVwDvSq1PsGknyjvH+
+         CLmCIy5HcaGQvfY7idqay/K04qJAz1F7DMf1o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=yZApqhWIm/YEiS8PZ9W9x7CV5xZ7QBWqPpr20gRI5BM=;
-        b=dz9s2ZYK/ljW0BlDpl29uELNZKLQ5pzCSyIAq21/K9hKMQCEuA7YPhK9Do1q9cmGq4
-         IM3t5HQHoX6zlrJHIUh8rN5LOPvX78xgOVZlZY0h5by5t99oxED1AJPYRo2qf7dLaM3k
-         W8QYusSq6izapZRxGn5QA4tSsunAv4aFtrRN+/LJmjAUzmyW16y95UPF+0pru+C4gfne
-         nPCcDJh1/QugNNETJo7DMIi0A3T9dsOMHVnLVJcr/AsZ4AB4IARBov3hUz3KpAqWMkLd
-         NUm/PWgQti9yyF5Un3rgytWrHXAbf2WDOvC0S3LzhRplsbBFuTNAi+LPq4Xehjw601Zh
-         0tjw==
-X-Gm-Message-State: AOUpUlGH/+pEq5rIwYzY4fgobnyH9xdBzibOBOqTJ8FxrUrckoy9Tjrj
-        ItwTeQh/XDZiYplLqQQPffqSsrKLiFNbyEPJApM=
-X-Google-Smtp-Source: AAOMgpcksMsNpPvNfUHQuvPcpteLZARGJXBf1MKyovW1QHA3ZSOscBIHdvz1YEnqGv9Se/8nyTw0FXQuwV44H9/fVZQ=
-X-Received: by 2002:aca:ecd0:: with SMTP id k199-v6mr18380909oih.227.1531731344848;
- Mon, 16 Jul 2018 01:55:44 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IKhCvJ8GLRbnK4Ts7jTCw8XOdnXHtRR+2Bac1oVPFPY=;
+        b=NVYHwn4xem/dWThZiNN5bQZsOMtxGdCnhcLOB1hjAjPMi3aCll6mi33XqgUkSJQSJs
+         rKfEM0aRQzmVb5dETtyiFrj+NEdPb6ovRSgV1qPZrqqFQbLusKvwBy9wmQDaL3xBTf6Z
+         MPh41aJsYh8K85+GYLuB0nHJCdMQxqfTrq3+d13eyMY7StbN7vLDlmaWr6s7zy0fuifq
+         XA0B08NRMX0FJEZZvMXUD/qNMgZ0MEUBnW5o/DAB/FrDWrYYsz+Sk+3sFNW6326QXmf7
+         ZupmPJ8RAcuGVtODAa0pyA1igkqCfbud3fp5NqTKxyoWG4tJvx6Bn/g+67CNXAPcBOGs
+         P3+A==
+X-Gm-Message-State: AOUpUlHoPifBpM5dxvzbzCGMLNCV/binN0tkWG3x5m0mAyPpcWUlWrAn
+        jKN6LhQ1frnsWeBkjChdawZQXw==
+X-Google-Smtp-Source: AAOMgpf0DWt/FETT02evyoqjnh90BUAdszT03eBUfoByWVy0rLlE7N6fLnd3mvl7LVe1YwTMWs7emA==
+X-Received: by 2002:a1c:5b09:: with SMTP id p9-v6mr10271019wmb.0.1531731407935;
+        Mon, 16 Jul 2018 01:56:47 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id d15-v6sm13434192wmb.0.2018.07.16.01.56.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Jul 2018 01:56:47 -0700 (PDT)
+Subject: Re: [PATCH v4 08/18] net: davinci_emac: potentially get the MAC
+ address from MTD
+To:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Ladislav Michl <ladis@linux-mips.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180629094039.7543-1-brgl@bgdev.pl>
+ <20180629094039.7543-9-brgl@bgdev.pl>
+ <03b77e24-9ab9-fa01-2387-9de0408a9942@gmail.com>
+ <20180704070919.GA14051@lenoch>
+ <CAMRc=McOYG9=naT2=4c4hnhJwxcqBCATEZOGXXv9u9zuvXyDXw@mail.gmail.com>
+ <c0ffc590-8064-3b02-9b5c-fcc24628d390@ti.com>
+ <CAMRc=McO8H9Aw8a7h318a=hJjKBOgeC+9_hreBnOY3Tc3Fh7sg@mail.gmail.com>
+ <d7f03763-982f-5e3e-d0ad-54e024b10f97@ti.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <a70aebb0-408c-c61f-897a-227114888585@linaro.org>
+Date:   Mon, 16 Jul 2018 09:56:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 01:55:44
- -0700 (PDT)
-In-Reply-To: <CAFp+6iFTgEhPLYQEyBX_Fb0k3n0OzGhKuSoBNV5XzpD01+V8qw@mail.gmail.com>
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
- <20180708173413.1965-4-vivek.gautam@codeaurora.org> <5179668.PHK6S3sxLu@aspire.rjw.lan>
- <741cc78b-59a7-5289-e42f-1511ebedb15d@codeaurora.org> <CAFp+6iFTgEhPLYQEyBX_Fb0k3n0OzGhKuSoBNV5XzpD01+V8qw@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Mon, 16 Jul 2018 10:55:44 +0200
-X-Google-Sender-Auth: -ILpbuGrA8a_6ZqJJ_3LL0zD_Vc
-Message-ID: <CAJZ5v0iQ2wxsXvuaLK2M9a_Jwe_fnwR2Afrq_Oa8h0--Ch7-5g@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Lukas Wunner <lukas@wunner.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <d7f03763-982f-5e3e-d0ad-54e024b10f97@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 2:41 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> Hi Rafael,
->
->
-> On Wed, Jul 11, 2018 at 4:06 PM, Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
->> Hi Rafael,
->>
->>
->>
->> On 7/11/2018 3:23 PM, Rafael J. Wysocki wrote:
->>>
->>> On Sunday, July 8, 2018 7:34:12 PM CEST Vivek Gautam wrote:
->>>>
->>>> From: Sricharan R <sricharan@codeaurora.org>
->>>>
->>>> Finally add the device link between the master device and
->>>> smmu, so that the smmu gets runtime enabled/disabled only when the
->>>> master needs it. This is done from add_device callback which gets
->>>> called once when the master is added to the smmu.
->>>>
->>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->>>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->>>> Cc: Lukas Wunner <lukas@wunner.de>
->>>> ---
->>>>
->>>>   - Change since v11
->>>>     * Replaced DL_FLAG_AUTOREMOVE flag with DL_FLAG_AUTOREMOVE_SUPPLIER.
->>>>
->>>>   drivers/iommu/arm-smmu.c | 12 ++++++++++++
->>>>   1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>>> index 09265e206e2d..916cde4954d2 100644
->>>> --- a/drivers/iommu/arm-smmu.c
->>>> +++ b/drivers/iommu/arm-smmu.c
->>>> @@ -1461,8 +1461,20 @@ static int arm_smmu_add_device(struct device *dev)
->>>>         iommu_device_link(&smmu->iommu, dev);
->>>>   +     if (pm_runtime_enabled(smmu->dev) &&
->>>
->>> Why does the creation of the link depend on whether or not runtime PM
->>> is enabled for the MMU device?
->>
->>
->> The main purpose of this device link is to handle the runtime PM
->> synchronization
->> between the supplier (iommu) and consumer (client devices, such as
->> GPU/display).
->> Moreover, the runtime pm is conditionally enabled for smmu devices that
->> support
->> such [1].
->
-> Is there something you would like me to modify in this patch?
 
-Not really, as long as you are sure that it is correct. :-)
 
-You need to remember, however, that if you add system-wide PM
-callbacks to the driver, the ordering between them and the client
-device callbacks during system-wide suspend matters as well.  Don't
-you need the link the ensure the correct system-wide suspend ordering
-too?
+On 16/07/18 09:50, Sekhar Nori wrote:
+> On Friday 13 July 2018 11:30 PM, Bartosz Golaszewski wrote:
+> 
+>> We're getting close to rc5 so I'd like to make a case for this series again.
+>>
+>> I understand that there's more to do than just the changes introduced
+>> here, but we shouldn't try to fix several problems in many different
+>> places at once. There's just too many moving pieces. I'd rather start
+>> merging small improvements right away.
+>>
+>> The idea behind this series is to remove (almost) all users of
+>> at24_platform_data. The davinci_emac patches are there only because we
+>> need to remove some MAC adress reading stuff from the board files.
+>> Having this code there and calling it back from EEPROM/MTD drivers is
+>> already wrong and we should work towards using nvmem for that anyway.
+>>
+>> Currently for MTD the nvmem support series seems to be dead and it's
+>> going to take some time before anything gets upstream.
+>>
+>> So I'd like to again ask you to consider picking up the patches from
+>> this series to your respective trees or at the very least: I'd like to
+>> ask Srinivas to pick up the nvmem patches and Sekhar to take the
+>> first, non-controversial batch of davinci platform changes so that
+>> we'll have less code to carry for the next release.
+> 
+> I think those are patches 3-7. I can take those if I get an immutable
+> commit over v4.18-rc1 from Srinivas with patches 1 & 2 applied.
+nvmem patches go via Greg KH char-misc tree, if it makes things easy I 
+can provide Ack on nvmem patches, so that you can take these patches via 
+your tree?
+
+Let me know.
+
+--srini
+> 
+> Thanks,
+> Sekhar
+> 
