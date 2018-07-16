@@ -2,79 +2,143 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B31DAECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F4BECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 604B7206B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 604B7206B8
+	by mail.kernel.org (Postfix) with ESMTP id 6BC4D208C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:13:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC4D208C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbeGPRlW (ORCPT
+        id S1729228AbeGPRlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 13:41:22 -0400
-Received: from mga06.intel.com ([134.134.136.31]:13253 "EHLO mga06.intel.com"
+        Mon, 16 Jul 2018 13:41:42 -0400
+Received: from mga14.intel.com ([192.55.52.115]:5539 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727652AbeGPRlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 13:41:21 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1727652AbeGPRlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 13:41:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:13:02 -0700
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:13:23 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,362,1526367600"; 
-   d="scan'208";a="65094666"
-Received: from spredd1-mobl1.amr.corp.intel.com (HELO intel.com) ([10.252.137.181])
-  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2018 10:12:41 -0700
-Date:   Mon, 16 Jul 2018 10:12:39 -0700
-From:   Rodrigo Vivi <rodrigo.vivi@intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/connector: Fix typo in drm_connector_list_iter_next()
-Message-ID: <20180716171239.GD4262@intel.com>
-References: <20180716161645.2715-1-lyude@redhat.com>
+   d="scan'208";a="245695082"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Jul 2018 10:10:35 -0700
+Subject: [PATCH v2 03/14] mm: Teach memmap_init_zone() to initialize
+ ZONE_DEVICE pages
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     akpm@linux-foundation.org
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        vishal.l.verma@intel.com, linux-mm@kvack.org, jack@suse.cz,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Date:   Mon, 16 Jul 2018 10:00:37 -0700
+Message-ID: <153176043742.12695.12733023097134464039.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716161645.2715-1-lyude@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 12:16:45PM -0400, Lyude Paul wrote:
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+Rather than run a loop over the freshly initialized pages in
+devm_memremap_pages() *after* arch_add_memory() returns, teach
+memmap_init_zone() to return the pages fully initialized. This is in
+preparation for multi-threading page initialization work, but it also
+has some straight line performance benefits to not incur another loop of
+cache misses across a large (100s of GBs to TBs) address range.
 
-Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ kernel/memremap.c |   16 +---------------
+ mm/page_alloc.c   |   19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+), 15 deletions(-)
 
-> ---
->  drivers/gpu/drm/drm_connector.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index 9b9ba5d5ec0c..2e0312e4645a 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -577,7 +577,7 @@ __drm_connector_put_safe(struct drm_connector *conn)
->  
->  /**
->   * drm_connector_list_iter_next - return next connector
-> - * @iter: connectr_list iterator
-> + * @iter: connector_list iterator
->   *
->   * Returns the next connector for @iter, or NULL when the list walk has
->   * completed.
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/kernel/memremap.c b/kernel/memremap.c
+index b861fe909932..85e4a7c576b2 100644
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -173,8 +173,8 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap,
+ 	struct vmem_altmap *altmap = pgmap->altmap_valid ?
+ 			&pgmap->altmap : NULL;
+ 	struct resource *res = &pgmap->res;
+-	unsigned long pfn, pgoff, order;
+ 	pgprot_t pgprot = PAGE_KERNEL;
++	unsigned long pgoff, order;
+ 	int error, nid, is_ram;
+ 
+ 	if (!pgmap->ref || !kill)
+@@ -251,20 +251,6 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap,
+ 	if (error)
+ 		goto err_add_memory;
+ 
+-	for_each_device_pfn(pfn, pgmap) {
+-		struct page *page = pfn_to_page(pfn);
+-
+-		/*
+-		 * ZONE_DEVICE pages union ->lru with a ->pgmap back
+-		 * pointer.  It is a bug if a ZONE_DEVICE page is ever
+-		 * freed or placed on a driver-private list.  Seed the
+-		 * storage with LIST_POISON* values.
+-		 */
+-		list_del(&page->lru);
+-		page->pgmap = pgmap;
+-		percpu_ref_get(pgmap->ref);
+-	}
+-
+ 	pgmap->kill = kill;
+ 	error = devm_add_action_or_reset(dev, devm_memremap_pages_release,
+ 			pgmap);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index f83682ef006e..fb45cfeb4a50 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5548,6 +5548,25 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+ 			cond_resched();
+ 		}
++
++		if (is_zone_device_page(page)) {
++			if (WARN_ON_ONCE(!pgmap))
++				continue;
++
++			/* skip invalid device pages */
++			if (altmap && (pfn < (altmap->base_pfn
++						+ vmem_altmap_offset(altmap))))
++				continue;
++			/*
++			 * ZONE_DEVICE pages union ->lru with a ->pgmap back
++			 * pointer.  It is a bug if a ZONE_DEVICE page is ever
++			 * freed or placed on a driver-private list.  Seed the
++			 * storage with poison.
++			 */
++			page->lru.prev = LIST_POISON2;
++			page->pgmap = pgmap;
++			percpu_ref_get(pgmap->ref);
++		}
+ 	}
+ }
+ 
+
