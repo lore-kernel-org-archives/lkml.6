@@ -3,120 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE0A7ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B625ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97DB1208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:30:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97DB1208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id F2F0220862
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:57:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F0220862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbeGPW7u (ORCPT
+        id S1729808AbeGPX0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 18:59:50 -0400
-Received: from www62.your-server.de ([213.133.104.62]:40060 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728524AbeGPW7u (ORCPT
+        Mon, 16 Jul 2018 19:26:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41122 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728947AbeGPX0v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 18:59:50 -0400
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1ffC0Z-0006uN-5I; Tue, 17 Jul 2018 00:30:19 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1ffC0Y-0000ui-UC; Tue, 17 Jul 2018 00:30:19 +0200
-Subject: Re: [PATCH v2 bpf 3/5] bpf: bpf_prog_array_free() should take a
- generic non-rcu pointer
-To:     Roman Gushchin <guro@fb.com>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Alexei Starovoitov <ast@kernel.org>
-References: <20180713194114.2711-1-guro@fb.com>
- <20180713194114.2711-3-guro@fb.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <41b5f919-3155-5bd4-2774-84efd58650e2@iogearbox.net>
-Date:   Tue, 17 Jul 2018 00:30:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180713194114.2711-3-guro@fb.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Mon, 16 Jul 2018 19:26:51 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C1532BE1;
+        Mon, 16 Jul 2018 22:57:17 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 15:57:16 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-mm@kvack.org,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 3/6] bdi: Use refcount_t for reference counting instead
+ atomic_t
+Message-Id: <20180716155716.1f7ac43d211133a8cb476637@linux-foundation.org>
+In-Reply-To: <20180703200141.28415-4-bigeasy@linutronix.de>
+References: <20180703200141.28415-1-bigeasy@linutronix.de>
+        <20180703200141.28415-4-bigeasy@linutronix.de>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24759/Mon Jul 16 22:54:23 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/13/2018 09:41 PM, Roman Gushchin wrote:
-> bpf_prog_array_free() should take a generic non-rcu pointer
-> as an argument, as freeing the objects assumes that we're
-> holding an exclusive rights on it.
-> 
-> rcu_access_pointer() can be used to convert a __rcu pointer to
-> a generic pointer before passing it to bpf_prog_array_free(),
-> if necessary.
-> 
-> This patch eliminates the following sparse warning:
-> kernel/bpf/core.c:1556:9: warning: incorrect type in argument 1 (different address spaces)
-> kernel/bpf/core.c:1556:9:    expected struct callback_head *head
-> kernel/bpf/core.c:1556:9:    got struct callback_head [noderef] <asn:4>*<noident>
-> 
-> Fixes: 324bda9e6c5a ("bpf: multi program support for cgroup+bpf")
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> ---
->  drivers/media/rc/bpf-lirc.c |  6 +++---
->  include/linux/bpf.h         |  2 +-
->  kernel/bpf/cgroup.c         | 11 ++++++-----
->  kernel/bpf/core.c           |  5 ++---
->  kernel/trace/bpf_trace.c    |  8 ++++----
->  5 files changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/media/rc/bpf-lirc.c b/drivers/media/rc/bpf-lirc.c
-> index fcfab6635f9c..509b262aa0dc 100644
-> --- a/drivers/media/rc/bpf-lirc.c
-> +++ b/drivers/media/rc/bpf-lirc.c
-> @@ -135,7 +135,7 @@ static int lirc_bpf_attach(struct rc_dev *rcdev, struct bpf_prog *prog)
->  		goto unlock;
->  
->  	rcu_assign_pointer(raw->progs, new_array);
-> -	bpf_prog_array_free(old_array);
-> +	bpf_prog_array_free(rcu_access_pointer(old_array));
+On Tue,  3 Jul 2018 22:01:38 +0200 Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-Taking this one as an example, why can't we already do the rcu_dereference() on the
-'old_array = raw->progs' where we fetch the old_array initially? Then we also wouldn't
-need the rcu_access_pointer() on bpf_prog_array_free() and yet another rcu_dereference()
-inside the bpf_prog_array_copy() from your later patch?
-
-Regarding former, rcu_access_pointer() should also only be used for testing the pointer
-value, but deeper in bpf_prog_array_free() we also deref it, etc.
-
->  unlock:
->  	mutex_unlock(&ir_raw_handler_lock);
-> @@ -173,7 +173,7 @@ static int lirc_bpf_detach(struct rc_dev *rcdev, struct bpf_prog *prog)
->  		goto unlock;
+> refcount_t type and corresponding API should be used instead of atomic_t when
+> the variable is used as a reference counter. This allows to avoid accidental
+> refcounter overflows that might lead to use-after-free situations.
+> 
+> ...
+>
+> --- a/mm/backing-dev.c
+> +++ b/mm/backing-dev.c
+> @@ -438,10 +438,10 @@ wb_congested_get_create(struct backing_dev_info *bdi, int blkcg_id, gfp_t gfp)
+>  	if (new_congested) {
+>  		/* !found and storage for new one already allocated, insert */
+>  		congested = new_congested;
+> -		new_congested = NULL;
+>  		rb_link_node(&congested->rb_node, parent, node);
+>  		rb_insert_color(&congested->rb_node, &bdi->cgwb_congested_tree);
+> -		goto found;
+> +		spin_unlock_irqrestore(&cgwb_lock, flags);
+> +		return congested;
+>  	}
 >  
->  	rcu_assign_pointer(raw->progs, new_array);
-> -	bpf_prog_array_free(old_array);
-> +	bpf_prog_array_free(rcu_access_pointer(old_array));
->  unlock:
->  	mutex_unlock(&ir_raw_handler_lock);
->  	return ret;
-> @@ -204,7 +204,7 @@ void lirc_bpf_free(struct rc_dev *rcdev)
->  	while (*progs)
->  		bpf_prog_put(*progs++);
+>  	spin_unlock_irqrestore(&cgwb_lock, flags);
+> @@ -451,13 +451,13 @@ wb_congested_get_create(struct backing_dev_info *bdi, int blkcg_id, gfp_t gfp)
+>  	if (!new_congested)
+>  		return NULL;
 >  
-> -	bpf_prog_array_free(rcdev->raw->progs);
-> +	bpf_prog_array_free(rcu_access_pointer(rcdev->raw->progs));
->  }
+> -	atomic_set(&new_congested->refcnt, 0);
+> +	refcount_set(&new_congested->refcnt, 1);
+>  	new_congested->__bdi = bdi;
+>  	new_congested->blkcg_id = blkcg_id;
+>  	goto retry;
+>  
+>  found:
+> -	atomic_inc(&congested->refcnt);
+> +	refcount_inc(&congested->refcnt);
+>  	spin_unlock_irqrestore(&cgwb_lock, flags);
+>  	kfree(new_congested);
+>  	return congested;
+>
+> ...
+>
+
+I'm not sure that the restructuring of wb_congested_get_create() was
+desirable and it does make the patch harder to review.  But it looks
+OK to me.
