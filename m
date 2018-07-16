@@ -2,229 +2,126 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F937ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C5DECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4142A2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:09:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gKees4RR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4142A2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 37A09208DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 03:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A09208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeGPDe2 (ORCPT
+        id S1727620AbeGPDwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 23:34:28 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36773 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727521AbeGPDe2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 23:34:28 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9-v6so30338480wro.3
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 20:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6adc+8TGMip+6Rk9agAReGocOxCRnLsVn54Qv77eWqI=;
-        b=gKees4RR/qW6zEWtYNHBGPeO24/iK61PvkSk8jXfE4M7AsNgbKRTSHNq5x6ahC1po1
-         fF7dBDoXFfIkkDvKscwDetORn21fuJtuolxlJ7KLAbBLR/0qj6J6itQD8yRFFVd+qU0y
-         9VBBtyntvnOaFD/gh0JdsE5Jw8x1K5wkyLUCY/EgLk1eqrtQWlnV3NMpPZK18NS0oQQs
-         j+HaanHFxTYB65oTHcZGgU8xC6Vr6K6EgBrpX9YkgXw2m87Z/bDPsallcBP5B5YNWNBC
-         T0u+dct4joDwEnVE0DcEPSLVnm/Ub4X9AcY0efolsagctl3K2WKapgGIlTrRHkOSm876
-         oWwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6adc+8TGMip+6Rk9agAReGocOxCRnLsVn54Qv77eWqI=;
-        b=C9j+6o/ecmk7YxXrsJQ5gLzoifQO7KXgZjU8WWTVPERaq1Imjl7hNSKfcH2q4Tuc1L
-         Rop3k3QeSvKqxMz56vJ3ezPflQ1bcrLWDAch2YA3dFX+fqbjkZRXP8TZxzmqPrIvGuyK
-         PhVS1fOxjRw+lpDK+4ePeZDyjSO4iBtU/421u5rbzoUWvNBtnOjEjtYry8jcfV7hpsUw
-         cmWthfZ6NxyeAdNHCFAhoZc2tO/HWlr3R3UoWAoZi8pFiVjSuKQSmuJ2NFOPpbQsE9Px
-         +Kfa/nOEjLiinEmMxzkypys1KJmXNws1XDci5u04ZHHBjsd3xQsz8OODYqdvTP3SKtis
-         B4YA==
-X-Gm-Message-State: AOUpUlHtSJaKx/g77sUlGLtP7tLKusXH//PSfMqBr2dFju6cxiGYY0OV
-        s3IGpwB6g+y9n6rs4p2T4a5t6ud7bpd+wHHHjLNUMA==
-X-Google-Smtp-Source: AAOMgpeLy1s5+1FjjUZyJJhrphpgBeGi8Dlc6dRyTqY2F69R+z3O5Qpas3pBI4XOcv3yVuwbQeWtFF9GCo6TkggjgsI=
-X-Received: by 2002:adf:b112:: with SMTP id l18-v6mr11447765wra.101.1531710553273;
- Sun, 15 Jul 2018 20:09:13 -0700 (PDT)
+        Sun, 15 Jul 2018 23:52:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44044 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727374AbeGPDwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Jul 2018 23:52:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5F259ACD0;
+        Mon, 16 Jul 2018 03:26:51 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Mon, 16 Jul 2018 13:26:42 +1000
+Cc:     David Miller <davem@davemloft.net>, tgraf@suug.ch,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eric.dumazet@gmail.com
+Subject: Re: [PATCH - revised] rhashtable: detect when object movement might have invalidated a lookup
+In-Reply-To: <20180716021653.xtbyetdfc2uzxub3@gondor.apana.org.au>
+References: <20180601160613.7ud25g2ux55k3bma@gondor.apana.org.au> <87k1q8yh70.fsf@notabene.neil.brown.name> <20180711.224658.2077863065492745521.davem@davemloft.net> <20180711.224801.1129067473269289703.davem@davemloft.net> <87fu0kt5m0.fsf@notabene.neil.brown.name> <20180716005134.q4rfkfn3m5zzwt62@gondor.apana.org.au> <874lh0t1ls.fsf@notabene.neil.brown.name> <20180716021653.xtbyetdfc2uzxub3@gondor.apana.org.au>
+Message-ID: <871sc3uah9.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
- <CALvZod57QFRVQ7kM4LSNQJACQ+dGC_otJkqK-5+i-0b53Zq5aA@mail.gmail.com>
- <CALOAHbDV73+X-y7V2Z4nX1C7uCY6yzBPTPZhEvTpN3f7_qWwUw@mail.gmail.com>
- <CALvZod5d37v8fv=VCFLa7g+ntPvaT-h8jRQw1+iry2dxb=yXxQ@mail.gmail.com>
- <CALOAHbBQurMrE6ZCLLsdmbqFrUX3vFVpZtFLvvL_WGnPoF0OSA@mail.gmail.com>
- <CALvZod6F4vM_U0obH1aU3iJqRs-3JEfR4cHKZoB9JVLTgdSmSQ@mail.gmail.com>
- <CALOAHbByKH9t_c266Bi+Kv2r=07LLpa6UEQgsc7BNi2dZoeNhQ@mail.gmail.com>
- <CALvZod6SVJQz84sxMkvRY7K4iZ2_uzbmMq85URBznsu7+ZP9OA@mail.gmail.com> <CALOAHbAnVvKR2AQ4TAkwUuC8XVK5UaD3vt80OC_M4OK2j6b_Yg@mail.gmail.com>
-In-Reply-To: <CALOAHbAnVvKR2AQ4TAkwUuC8XVK5UaD3vt80OC_M4OK2j6b_Yg@mail.gmail.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Sun, 15 Jul 2018 20:09:01 -0700
-Message-ID: <CALvZod4jx1r4k6gMrqFq+PzDT3D37_DFGyyokgPSsZFXbMV0ZA@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg in softirq
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, Roman Gushchin <guro@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 6:50 PM Yafang Shao <laoar.shao@gmail.com> wrote:
->
-> On Sun, Jul 15, 2018 at 11:04 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> > On Sun, Jul 15, 2018 at 1:02 AM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >>
-> >> On Sun, Jul 15, 2018 at 2:34 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> >> > On Sat, Jul 14, 2018 at 10:26 PM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >> >>
-> >> >> On Sun, Jul 15, 2018 at 12:25 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> >> >> > On Sat, Jul 14, 2018 at 7:10 PM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >> >> >>
-> >> >> >> On Sat, Jul 14, 2018 at 11:38 PM, Shakeel Butt <shakeelb@google.com> wrote:
-> >> >> >> > On Sat, Jul 14, 2018 at 1:32 AM Yafang Shao <laoar.shao@gmail.com> wrote:
-> >> >> >> >>
-> >> >> >> >> try_charge maybe executed in packet receive path, which is in interrupt
-> >> >> >> >> context.
-> >> >> >> >> In this situation, the 'current' is the interrupted task, which may has
-> >> >> >> >> no relation to the rx softirq, So it is nonsense to use 'current'.
-> >> >> >> >>
-> >> >> >> >
-> >> >> >> > Have you actually seen this occurring?
-> >> >> >>
-> >> >> >> Hi Shakeel,
-> >> >> >>
-> >> >> >> I'm trying to produce this issue, but haven't find it occur yet.
-> >> >> >>
-> >> >> >> > I am not very familiar with the
-> >> >> >> > network code but I can think of two ways try_charge() can be called
-> >> >> >> > from network code. Either through kmem charging or through
-> >> >> >> > mem_cgroup_charge_skmem() and both locations correctly handle
-> >> >> >> > interrupt context.
-> >> >> >> >
-> >> >> >>
-> >> >> >> Why do you say that mem_cgroup_charge_skmem() correctly hanle
-> >> >> >> interrupt context ?
-> >> >> >>
-> >> >> >> Let me show you why mem_cgroup_charge_skmem isn't hanling interrupt
-> >> >> >> context correctly.
-> >> >> >>
-> >> >> >> mem_cgroup_charge_skmem() is calling  try_charge() twice.
-> >> >> >> The first one is with GFP_NOWAIT as the gfp_mask, and the second one
-> >> >> >> is with  (GFP_NOWAIT |  __GFP_NOFAIL) as the gfp_mask.
-> >> >> >>
-> >> >> >> If page_counter_try_charge() failes at the first time, -ENOMEM is returned.
-> >> >> >> Then mem_cgroup_charge_skmem() will call try_charge() once more with
-> >> >> >> __GFP_NOFAIL set, and this time if If page_counter_try_charge() failes
-> >> >> >> again the '
-> >> >> >> force' label in  try_charge() will be executed and 0 is returned.
-> >> >> >>
-> >> >> >> No matter what, the 'current' will be used and touched, that is
-> >> >> >> meaning mem_cgroup_charge_skmem() isn't hanling the interrupt context
-> >> >> >> correctly.
-> >> >> >>
-> >> >> >
-> >> >> > Hi Yafang,
-> >> >> >
-> >> >> > If you check mem_cgroup_charge_skmem(), the memcg passed is not
-> >> >> > 'current' but is from the sock object i.e. sk->sk_memcg for which the
-> >> >> > network buffer is allocated for.
-> >> >> >
-> >> >>
-> >> >> That's correct, the memcg if from the sock object.
-> >> >> But the point is, in this situation why 'current' is used in try_charge() ?
-> >> >> As 'current' is not related with the memcg, which is just a interrupted task.
-> >> >>
-> >> >
-> >> > Hmm so you mean the behavior of memcg charging in the interrupt
-> >> > context depends on the state of the interrupted task.
-> >>
-> >> Yes.
-> >>
-> >> > As you have
-> >> > noted, mem_cgroup_charge_skmem() tries charging again with
-> >> > __GFP_NOFAIL and the charge succeeds. Basically the memcg charging by
-> >> > mem_cgroup_charge_skmem() will always succeed irrespective of the
-> >> > state of the interrupted task. However mem_cgroup_charge_skmem() can
-> >> > return true if the interrupted task was exiting or a fatal signal is
-> >> > pending or oom victim or reclaiming memory. Can you please explain why
-> >> > this is bad?
-> >> >
-> >>
-> >> Let me show you the possible issues cause by this behavoir.
-> >> 1.  In mem_cgroup_oom(), some  members in 'current' is set.
-> >>      That means an innocent task will be in  task_in_memcg_oom state.
-> >>      But this task may be in a different memcg, I mean the memcg of
-> >> the 'current' may be differenct with the sk->sk_memcg.
-> >>      Then when this innocent 'current' do try_charge it will hit  "if
-> >> (unlikely(task_in_memcg_oom(current)))" and  -ENOMEM is returned,
-> >> While there're maybe some free memory (or some memory could be freed )
-> >> in the memcg of the innocent 'task'.
-> >>
-> >
-> > No memory will be freed as try_charge() is in interrupt context.
-> >
->
-> I mean when this interrupted 'current' is running, that's in process context.
-> In process context it should call try_to_free_mem_cgroup_pages() to
-> free some memory,
-> but it will hit "if (unlikely(task_in_memcg_oom(current)))"  before as
-> it is set in the interrupt context.
->
-> That's an obviously issue. Do you understand ?
->
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Not really. I couldn't find where current->memcg_in_oom can be set in
-the interrupt context.
+On Mon, Jul 16 2018, Herbert Xu wrote:
 
-> >> 2.  If the interrupted task was exiting or a fatal signal is  pending
-> >> or oom victim,
-> >>      it will directly goto force and 0 is returned, and then
-> >> mem_cgroup_charge_skmem() will return true.
-> >>      But mem_cgroup_charge_skmem() maybe need to try the second time
-> >> and return false.
-> >>
-> >> That are all unexpected behavoir.
-> >>
-> >
-> > Yes, this is inconsistent behavior. Can you explain how this will
-> > affect network traffic? Basically mem_cgroup_charge_skmem() was
-> > supposed to return false but sometime based on the interrupted task,
-> > mem_cgroup_charge_skmem() returns true. How is this behavior bad for
-> > network traffic?
-> >
+> On Mon, Jul 16, 2018 at 11:23:43AM +1000, NeilBrown wrote:
+>>
+>> kmem_cache_free() directly.  For this, I need rhashtable to be safe if
+>> an object is deleted and immediately re-inserted into the same hash
+>> chain.
 >
-> You could see the funtion  __sk_mem_raise_allocated().
-> If mem_cgroup_charge_skmem() return false, it will goto
-> suppress_allocation and uncharge skmem,
-> while when mem_cgroup_charge_skmem() return true, it will charge skmem
-> sucessfully.
+> This means that
 >
-> The consequence behavior is  sk_rmem_schedule may fail while it should sucess.
-> And then it will call  tcp_prune_queue() and tcp collapse may take a long time.
+> 	rcu_read_lock();
+> 	A =3D rhashtable_lookup();
+> 	use(A);
+> 	rcu_read_unlock();
 >
+> A can turn into object B when it is used.  That is just too strange
+> for words.  Can we see some actual code on how this works?
 
-Is that a good thing or bad? From what I understand with your change
-if charge fails, sk_rmem_schedule will always fail. However without
-your change the interrupted task's state might help sk_rmem_schedule
-to pass. I am all for consistent behavior but I wanted to make sure if
-that is what you are aiming for.
+Look in Documenation/RCU/rculist_nulls.txt.
+The very first example is a typical lookup for a nulls list.
+The above sample code would read:
 
-Anyways, from what I remember Facebook is using the cgroup-v2's tcpmem
-accounting. Johannes or Roman can shed some light if they have
-observed this issue in production and might have opinion on how to
-solve it.
+	rcu_read_lock();
+    begin:
+        A =3D rhashtable_lookup(table, key);
+        if (IS_ERR(A)) {
+        	rcu_read_unlock();
+        	goto not_found;
+        }
+        if (!try_get_ref(A))
+        	goto again;
+        if (A->key !=3D key) {
+        	put_ref(A);
+        	goto again;
+        }
+        rcu_read_unlock();
+        use(A);
 
-thanks,
-Shakeel
+If you particularly need to see real code rather than sample code, I can
+have something for you in a day or so.
+
+Thanks,
+NeilBrown
+
+>
+> For comparison, the existing net code where this happens A doesn't
+> actually change and it simply moves from one hashtable to another.
+>
+> I'm relucant to add semantics that would restrain on how rhashtable
+> works unless we have real and valid use-cases for it.
+>
+> Cheers,
+> --=20
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltMEHIACgkQOeye3VZi
+gbk5cxAAvpidPqQh63nN6GdyYYWEnwormiljs0uTGOlOplBwsJqWnBo0Nm08Epzt
+09nKdLbUQXKsQcZMN8E0TPUBKk3q0rUYADMnMASjT79l2qt1VV+Rhyxw9L10Nd1i
+2h/ScrDSW9XLFcINFgXKAhu3GCgH/NQvlIMffEQDc6Aol1q1wXxVlaI5CfdZAMt6
+Br5k6M0VHGDTz0A3pakc9Rz+EkpedSO5ftW/658nZISkZ06tje4DNS5bccYPPwlw
+99afEi0NNVhD21hDYsOezlZ9pk3XISe/2e8kWiE1Ann8fYfbxuwKV7E01w8YUcPE
+vmWgtYZlFyygRJewdRE04VoMRtUVEr2vywGWNlhgMRzYFwlcAFDSVWiJ/JHIoNfM
+Ni3nIMdTr7eZxD6AW4um7sgPSLhRGr4wfP4LTMWDF6NeJB5Hmn6hEhecfqCnaKIS
+GescQIMVGkPLiElIVT2J7CDjiGcG59k312PjGutk0G/sncPmYkmuEAbJz4eNHZhm
+oxcHlt1uA51dDfa5htjT0ek5FFA5IXiqCcmsA6jbDMxFuNy7I64ls3Ps6wBl8OCd
+hvnYDbCWv1AlqT61F9XfnsX1fDvWeKCVl2Czo0sdlWci8QufXD7ZdDQsOrCDxPFW
+cS3073e/ojrfCcRsfQNev1DN61ZXBKsItu1/54M4UzH5SmwNtnk=
+=E5JH
+-----END PGP SIGNATURE-----
+--=-=-=--
