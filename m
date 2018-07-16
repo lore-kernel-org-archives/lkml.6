@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FF4ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4FDECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9942F206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9942F206B7
+	by mail.kernel.org (Postfix) with ESMTP id 000A9206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000A9206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388040AbeGPIFp (ORCPT
+        id S2388053AbeGPIFs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:05:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47194 "EHLO
+        Mon, 16 Jul 2018 04:05:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729810AbeGPIFo (ORCPT
+        with ESMTP id S1729810AbeGPIFr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:05:44 -0400
+        Mon, 16 Jul 2018 04:05:47 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D386BC03;
-        Mon, 16 Jul 2018 07:39:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CA2FACA0;
+        Mon, 16 Jul 2018 07:39:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.17 64/67] f2fs: avoid bug_on on corrupted inode
-Date:   Mon, 16 Jul 2018 09:35:33 +0200
-Message-Id: <20180716073454.070271157@linuxfoundation.org>
+        stable@vger.kernel.org, Sean Young <sean@mess.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 01/54] media: rc: mce_kbd decoder: fix stuck keys
+Date:   Mon, 16 Jul 2018 09:34:58 +0200
+Message-Id: <20180716073450.679934084@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
-References: <20180716073443.294323458@linuxfoundation.org>
+In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
+References: <20180716073450.534886211@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,123 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Sean Young <sean@mess.org>
 
-commit 5d64600d4f337dc2bb89cd59da99f452f5e4f3c3 upstream.
+commit 63039c29f7a4ce8a8bd165173840543c0098d7b0 upstream.
 
-syzbot has tested the proposed patch but the reproducer still triggered crash:
-kernel BUG at fs/f2fs/inode.c:LINE!
+The MCE Remote sends a 0 scancode when keys are released. If this is not
+received or decoded, then keys can get "stuck"; the keyup event is not
+sent since the input_sync() is missing from the timeout handler.
 
-F2FS-fs (loop1): invalid crc value
-F2FS-fs (loop5): Magic Mismatch, valid(0xf2f52010) - read(0x0)
-F2FS-fs (loop5): Can't find valid F2FS filesystem in 1th superblock
-F2FS-fs (loop5): invalid crc value
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/inode.c:238!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4886 Comm: syz-executor1 Not tainted 4.17.0-rc1+ #1
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:do_read_inode fs/f2fs/inode.c:238 [inline]
-RIP: 0010:f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313
-RSP: 0018:ffff8801c44a70e8 EFLAGS: 00010293
-RAX: ffff8801ce208040 RBX: ffff8801b3621080 RCX: ffffffff82eace18
-F2FS-fs (loop2): Magic Mismatch, valid(0xf2f52010) - read(0x0)
-RDX: 0000000000000000 RSI: ffffffff82eaf047 RDI: 0000000000000007
-RBP: ffff8801c44a7410 R08: ffff8801ce208040 R09: ffffed0039ee4176
-R10: ffffed0039ee4176 R11: ffff8801cf720bb7 R12: ffff8801c0efa000
-R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f753aa9d700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-------------[ cut here ]------------
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kernel BUG at fs/f2fs/inode.c:238!
-CR2: 0000000001b03018 CR3: 00000001c8b74000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- f2fs_fill_super+0x4377/0x7bf0 fs/f2fs/super.c:2842
- mount_bdev+0x30c/0x3e0 fs/super.c:1165
- f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
- mount_fs+0xae/0x328 fs/super.c:1268
- vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
- vfs_kern_mount fs/namespace.c:1027 [inline]
- do_new_mount fs/namespace.c:2517 [inline]
- do_mount+0x564/0x3070 fs/namespace.c:2847
- ksys_mount+0x12d/0x140 fs/namespace.c:3063
- __do_sys_mount fs/namespace.c:3077 [inline]
- __se_sys_mount fs/namespace.c:3074 [inline]
- __x64_sys_mount+0xbe/0x150 fs/namespace.c:3074
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457daa
-RSP: 002b:00007f753aa9cba8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000000 RCX: 0000000000457daa
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f753aa9cbf0
-RBP: 0000000000000064 R08: 0000000020016a00 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-R13: 0000000000000064 R14: 00000000006fcb80 R15: 0000000000000000
-RIP: do_read_inode fs/f2fs/inode.c:238 [inline] RSP: ffff8801c44a70e8
-RIP: f2fs_iget+0x3307/0x3ca0 fs/f2fs/inode.c:313 RSP: ffff8801c44a70e8
-invalid opcode: 0000 [#2] SMP KASAN
----[ end trace 1cbcbec2156680bc ]---
-
-Reported-and-tested-by: syzbot+41a1b341571f0952badb@syzkaller.appspotmail.com
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Sean Young <sean@mess.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/f2fs/inode.c |   20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ drivers/media/rc/ir-mce_kbd-decoder.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -185,6 +185,21 @@ void f2fs_inode_chksum_set(struct f2fs_s
- 	ri->i_inode_checksum = cpu_to_le32(f2fs_inode_chksum(sbi, page));
+--- a/drivers/media/rc/ir-mce_kbd-decoder.c
++++ b/drivers/media/rc/ir-mce_kbd-decoder.c
+@@ -130,6 +130,8 @@ static void mce_kbd_rx_timeout(unsigned
+ 
+ 	for (i = 0; i < MCIR2_MASK_KEYS_START; i++)
+ 		input_report_key(mce_kbd->idev, kbd_keycodes[i], 0);
++
++	input_sync(mce_kbd->idev);
  }
  
-+static bool sanity_check_inode(struct inode *inode)
-+{
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)
-+			&& !f2fs_has_extra_attr(inode)) {
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"%s: corrupted inode ino=%lx, run fsck to fix.",
-+			__func__, inode->i_ino);
-+		return false;
-+	}
-+	return true;
-+}
-+
- static int do_read_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-@@ -235,7 +250,6 @@ static int do_read_inode(struct inode *i
- 					le16_to_cpu(ri->i_extra_isize) : 0;
- 
- 	if (f2fs_sb_has_flexible_inline_xattr(sbi->sb)) {
--		f2fs_bug_on(sbi, !f2fs_has_extra_attr(inode));
- 		fi->i_inline_xattr_size = le16_to_cpu(ri->i_inline_xattr_size);
- 	} else if (f2fs_has_inline_xattr(inode) ||
- 				f2fs_has_inline_dentry(inode)) {
-@@ -313,6 +327,10 @@ struct inode *f2fs_iget(struct super_blo
- 	ret = do_read_inode(inode);
- 	if (ret)
- 		goto bad_inode;
-+	if (!sanity_check_inode(inode)) {
-+		ret = -EINVAL;
-+		goto bad_inode;
-+	}
- make_now:
- 	if (ino == F2FS_NODE_INO(sbi)) {
- 		inode->i_mapping->a_ops = &f2fs_node_aops;
+ static enum mce_kbd_mode mce_kbd_mode(struct mce_kbd_dec *data)
 
 
