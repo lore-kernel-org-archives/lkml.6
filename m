@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A47EEECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 06:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0537AECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 06:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FCA02086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 06:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA1C32086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 06:28:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=towerbridgetechnology.onmicrosoft.com header.i=@towerbridgetechnology.onmicrosoft.com header.b="mmmwv4Eg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FCA02086B
+	dkim=pass (1024-bit key) header.d=towerbridgetechnology.onmicrosoft.com header.i=@towerbridgetechnology.onmicrosoft.com header.b="Mxx1v1Z4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1C32086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bayhubtech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbeGPGxh (ORCPT
+        id S1728787AbeGPGx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 02:53:37 -0400
-Received: from mail-by2nam01on0104.outbound.protection.outlook.com ([104.47.34.104]:49633
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Mon, 16 Jul 2018 02:53:58 -0400
+Received: from mail-sn1nam01on0091.outbound.protection.outlook.com ([104.47.32.91]:56224
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727647AbeGPGxh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 02:53:37 -0400
+        id S1726124AbeGPGx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 02:53:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=towerbridgetechnology.onmicrosoft.com; s=selector1-bayhubtech-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8EmeGFXcUZzWJVOspMA/0dXHpy4uA8TMoAw0tQmXB6U=;
- b=mmmwv4EgZYk3SUv2OYgt9zA4c91ZTpPZ8dcuuit8WN3R9kpWz0GtvXS6igF1JiRIT15HEqLX0N57jV7a/iBnteHoQ0GJIjixWinEYaxWrAwcGShtMHxDtmx5Kelpr3zlYDxfb4a3USXT7T8r/RdHmPDN7LAEZ0ksNxHRatqxyJc=
+ bh=t42d/JaSX3R1mdDkjNUCjmCP8UmTF0Cxrv+COT4TZww=;
+ b=Mxx1v1Z4dhKGyFCzJkrxvHjkSQX/+aui+S6v3CFoauWK9ktWksxB3jGNnhnR3AFRA69+BQ2M6W4HIf1cSaMG80jDx5hEXo1I/CKvAUkGxD2ECv1H2G+Lt2gXHW/SWt2IpfJ+KV120YZ+p1OFg8wR1wh7AjY0bxb6c0pDjDgIRko=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=ernest.zhang@bayhubtech.com; 
 Received: from localhost.localdomain (171.82.0.134) by
  SN6PR04MB4766.namprd04.prod.outlook.com (2603:10b6:805:b2::20) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.17; Mon, 16 Jul 2018 06:27:41 +0000
+ 15.20.952.17; Mon, 16 Jul 2018 06:27:47 +0000
 From:   "ernest.zhang" <ernest.zhang@bayhubtech.com>
 To:     Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
@@ -44,10 +44,12 @@ Cc:     ernest.zhang@bayhubtech.com, chuanjin.pang@bayhubtech.com,
         mike.li@bayhubtech.com, chevron.li@bayhubtech.com,
         shirley.her@bayhubtech.com, xiaoguang.yu@bayhubtech.com,
         bobby.wu@bayhubtech.com
-Subject: [PATCH V7 1/5] mmc: sdhci: Add support for O2 eMMC HS200 mode
-Date:   Mon, 16 Jul 2018 14:26:51 +0800
-Message-Id: <20180716062655.24703-1-ernest.zhang@bayhubtech.com>
+Subject: [PATCH V7 2/5] mmc: sdhci: Change O2 Host HS200 mode clock frequency to 200MHz
+Date:   Mon, 16 Jul 2018 14:26:52 +0800
+Message-Id: <20180716062655.24703-2-ernest.zhang@bayhubtech.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180716062655.24703-1-ernest.zhang@bayhubtech.com>
+References: <20180716062655.24703-1-ernest.zhang@bayhubtech.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [171.82.0.134]
@@ -55,49 +57,49 @@ X-ClientProxiedBy: SG2PR06CA0180.apcprd06.prod.outlook.com
  (2603:1096:1:1e::34) To SN6PR04MB4766.namprd04.prod.outlook.com
  (2603:10b6:805:b2::20)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: db1f1fd3-7433-40c8-9623-08d5eae53ed2
+X-MS-Office365-Filtering-Correlation-Id: 48697890-1068-43da-55db-08d5eae54ba9
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600053)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:SN6PR04MB4766;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;3:23G7QcDj2QTMBW9H0r5APhLx8W6Q4xcu+95gwPM6MtfEjNdEQ0hJgcYkKgpN3qAdce2N8lwTsfxK3Z3YQGWy9fqQRYbe/gcsGMCjXw6CbAy0ps8H6hi0M5JwGdqT3JhxsNi6TnrU9xKVDC84C+YPOOl+wn6KrG8qQ5sK9z8MGgcUz3/jIWsbpM9Babji2qT3a8+VWtOF3GUt/OIsmVWtVLkJqpPkPbO980FZh7CSOHykyhrTQIDQtM+pCC7pfC6b;25:8qo1neAhT8IvuUb+S6+B0WR3WYn8lRCaiW0RicMVkLn69IH97BvKc9qCOWo8UZdwwF0/wo8k4XPjCfiXliGl97BwUdg/LsXeH9tz2bDUpkrdhMr2xxOZQ6i7VjdqS9Mw92/VqpGQm6Jx07qaEq5Mp9Fr5KonCUNXan1lBYRN10Eb83leJu6hYpG29wRtccqtvIiD0GGcyebW8k3fdmOQDp9YFU99brSepbF+fEBq+EAb9mgZfv7Id7eTC60kWIiL3RxcHy5NdmShcXrB7Mp2gZVXwN0gIcY7vaLrfy1f12ZYmN2HkEGH9etndXSrRnYpuObRYeP184nfrRizGEODkw==;31:fbS1RbLGQuQShc+8Yp9bQXiu9tmTyb7V2GJfd4ZPTJLyN9fmDSCd6rXVTwYBzsean9+XIbYuAYHA19091p05x8Ks0X7jFr9LRIN3yMdX2u/vYKh9MuHM5Zu6I1C/Lp4HGtviOeSEalVrSROtIyrMmD1KOTmuus+/mXvQLayqIng4Z62yMsKJkqyJV/ZEQ4rXz4gib8FlDhnwq3me7LjVn9FVF+wkE99593oDFTkaOv4=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;3:pIly6hg1qI7cDXXe+xo97W8sw20ycVF4fVnA1/WpUSgitNOPtxPfHA0QgOEmC4VSXFzhGeTggshWYcWzuyCGpQjCZecjwDznXvY+jLHMF3E38O5aK0nYqt/WG8ZNBLVCysI6mglLvNbIll/XLHA+HO5qAJaK5uc19QHrkMQtiwEYfZ3kAe6yD/kmkxu4H1PNliQWboz5sut8RClobzbdR/wPQpKY/plkbaBqxG7rBSn8mih2wNDuDHGGLZfQGTtm;25:g23dp1t/+TP8lbunEa71lmLS90oTbpH8rFK/AZsjpDCsRvjqy0lvHUcsDMH8JlrB+l/8DY30O3RNYPsN7Zr8gkg2aSGycqyVvyLhnkuvpSUqeHmTxHVpVxOvJLJfOScKcyb/ecCv50yuQk+p+16svOtQ9SCWH+LJvXS+z7OO7ja7M8vg51KKIhZjDxcSevpWe97mcDEHFiP5vSrOch7GkLdmaLUIaW1vfi3fdgvp6LUiuL04QDwKqVd18IJ9uYE7tb7bAwF8JJMXoQnhxPdE7OUpyVnJPufc3YK5Pj6neLW6iSrBFaJGCBQqsMOO3RFCZU1/5WeH2QQ6zxFm4e5oyg==;31:Ia9WY9bm+3YTYOpwvc4IwzFQwgMRkR30Eh2QkunfNvsgnpcptfkvtpQbwLCExaRwTW0PosOMQuDGkNUsCOKOIPg5AyV46lHrUiduMMDHoLJAEAqU0ZFVqp6R2pmZPW8EffB9IWyabGI2PPjYTYgjSzJwxQ8C3xlaM0/hg+t8odYNbUjY/sEQdPvymLEoEqjLkxiINTG9MzkzyakIJ9ajWymhMhqgCZd0oOR3PFtlY6A=
 X-MS-TrafficTypeDiagnostic: SN6PR04MB4766:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;20:kTAtriY0tUT/vnFDV03lWR7Fi/E40V1eG9qisGNxzlQzHc9Fovdv1oykXyPtV8i860LB/T4cWJfDEjN6kbaGKSncWzlHzBBzrnYDTcyszSVwAm3REnLCtoOEJraXe8XN5CPIW2NYOBKV+v6E4hDi/1qda4BpkTVjLGoP0RKTlsaoH+kaJqadwMbu1/lx1N60HgzZ3Qst/sZyRImpryRPvDbFqpggTN5uYNAR5rx70PAiYoUFXm6C1VULTUVCookH7HsMoHdi/1/Vdgf7ybT2BG4shvcypfBqDW+NXSUQJJXVWFKWgomqjSeRNElLrOV+vLmAfTH56qhyD6APZZWmR8N0qY5Ir6YLzLz0CIk24PfALN80srbPBvLIVlj6LTXeZSJqBVSKMCaorVHRQSxv1x1YgALDOh+M7OXBG6RL2DI=;4:WcNc2LGGtxK4PpX2P1KmGxPyIvg/Bep43CRyqtV3lx0KBLf/ekfhADd/xbbL6QG5H19EEUt0aQ+gIWZgRYUy++fXnPWGXgybVkcAr3Pe+sT4gjyJ9Ee0fyZBKernztkws7JGZND0F4beDCimc9JtStgXhVl2MvZESU+Wway91gIzwg3Ii56Sykk+waGc0AV2LYwkkLp/O9BSPVL1fr8lPPRnUWdG8UKdRiWkd5h/kn4Kk7shre5RD82V711ufoxtVWIhzjxSI/Ijd58t38XW1kfYDtSEQpsLcTBPRoNry4kpqpC7mDSP3u/yyn4F4X9R
-X-Microsoft-Antispam-PRVS: <SN6PR04MB4766230B01A740DF089F319BE55D0@SN6PR04MB4766.namprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(198206253151910);
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;20:Jg2PN7b1f/t6xG+1j345OAqRRaLAjpqXg8e5y2iwUcvPdnX+J4hCdya2m9d96wgNs5p3kuKJs5c0i5xcKNiO4Ih81aSSKOhO29mh0j+9oU1d+j6VsNMEd6ZNUNWGwCYOFnfktU3aDWalpY7WERV32sTUXIDYGbBlgbPoin6vXhd1FLwW9Az1IB92ARXj/AxraIvrKkByU0OuTspFnNwHO+luCtZvLRWhgqSX1y+TKcE9Hd4R2qSuetBUcTypdHEbJIhEOoTgYprffxBpPdLT2np44m0YUWzXR4uhAcecQeYf0Q/Bun3psLwLjNlJMi3AUxcVc1trgDkEW19OfXW74bz7B6TsUXk6fGCkqYEH/dlCnxaJYo5B/BgdBen8S1Qj7deRNflLNF+1IygxtGI1QVMEzwUWb4la7boOeby2+Rc=;4:3d5W8At3JbP/Ym/9wdnj5ZpuAqh/DqSoz6eQciMAaDGFFdlL1BThIlx84WCrgiIoF7IVn38ukJK4k3cdEQ2aKZWFiAP2YjocVb63dFTBnvmqr9EzoSJwA+cY3T/rp8nj5Tf7F+p6SVGDk0K2Xqax5Eb+LldeMHte2Y6LHfBMqMBXx3D+kpkkHx3fjTmgrsIq2B+3C6AH9oXq085nV9WtI5txf8kjsw04DkiscUOhu005+vOdFk8ndmdniF0FYjGNxLK6yBkac82mfD4yqE8Evg==
+X-Microsoft-Antispam-PRVS: <SN6PR04MB4766E2985A3A7BA2B99C9E4CE55D0@SN6PR04MB4766.namprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(2016111802025)(20161123560045)(6043046)(6072148)(201708071742011)(7699016);SRVR:SN6PR04MB4766;BCL:0;PCL:0;RULEID:;SRVR:SN6PR04MB4766;
 X-Forefront-PRVS: 073515755F
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(136003)(396003)(366004)(346002)(39830400003)(376002)(189003)(199004)(54534003)(2906002)(97736004)(6116002)(305945005)(50226002)(47776003)(105586002)(478600001)(106356001)(66066001)(81166006)(3846002)(8676002)(6512007)(81156014)(68736007)(5660300001)(7736002)(53936002)(86362001)(956004)(2616005)(476003)(486006)(386003)(316002)(48376002)(25786009)(6506007)(186003)(26005)(16526019)(107886003)(50466002)(36756003)(52116002)(1076002)(6486002)(51416003)(14444005)(6666003)(8936002)(4326008)(16586007)(110136005)(2004002);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4766;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(136003)(396003)(366004)(346002)(39830400003)(376002)(189003)(199004)(2906002)(97736004)(6116002)(305945005)(50226002)(47776003)(105586002)(478600001)(106356001)(66066001)(81166006)(3846002)(8676002)(6512007)(81156014)(68736007)(5660300001)(7736002)(53936002)(86362001)(956004)(2616005)(476003)(11346002)(446003)(486006)(76176011)(386003)(316002)(48376002)(25786009)(6506007)(186003)(26005)(16526019)(107886003)(50466002)(36756003)(52116002)(1076002)(6486002)(51416003)(6666003)(8936002)(4326008)(16586007)(110136005);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4766;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: bayhubtech.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR04MB4766;23:FCZBG6A6yzqB7CQfA2l8lKDRr3DBmq38s2WKHQCQk?=
- =?us-ascii?Q?eNoyyq+h1k1UrvXTA9g89lGj/galxmemaAJefYiMYfEiLtf+xgFF9/z7SNlh?=
- =?us-ascii?Q?fWk9Gn0OYmiZttf1GnIpASG8HV7002zibhqDT80AuAQdJvJiM7jy9rNAtMok?=
- =?us-ascii?Q?jjgffapcC1l8zsuMBp33KdEj1jM1VI5zkMy3iT3BnnUJG2tYTFRFE46qCU1C?=
- =?us-ascii?Q?kJDVyib7ythWLbptut/Qbt6uMWGP0iMEWMthRrqiNX+yS7uXCInNCagvF4Tx?=
- =?us-ascii?Q?CVYTDaed6Li5TzxR3/hiq2JD1LaKolgV2bOAsjo94pCzhsnBhx6adFkdCYp+?=
- =?us-ascii?Q?xJh4wxEo0a5mkneWfHDy3cKTPUXe920JMnkmFVtObEmK2HDQcDejUKfRcdB8?=
- =?us-ascii?Q?xZhHwBCt3o49TflumymRD9XATiWVdRf39KngfLjkE6p5K3Mvh3GuiCOCZ1br?=
- =?us-ascii?Q?YQxjQRIBxGZsz/nXLnVurGgcIvefVXvkfmnRNqI/aZN3r8vOJarqx2d2RWW5?=
- =?us-ascii?Q?o9Nh1yklYRd0pQc2Gp74z1FkrZBUi5m1E7+NHSBVKzdWjQ239Nw0B3SVtWTR?=
- =?us-ascii?Q?roF63nD2ypZJDRbPign2GMrkUnWDgEKHg/JidIaemaN7MuLiPMoQJo1PztML?=
- =?us-ascii?Q?ENn/YOcbmP/Bg3O0xPjB4dB08Jqbv9PSbC1KrKJDTBqepCGsmL3XVkKVp+Ej?=
- =?us-ascii?Q?HJM/T4BLrjevoCQylvBQo2Sev4ZuL5u+kutG/A2Tz3iffQUr+EttJkGZSb67?=
- =?us-ascii?Q?KPcalI5vHaFKbC94IGgpJLkA9lh9b5Ehgk36CKSpLSNN6OP51DqkJXhHLEv8?=
- =?us-ascii?Q?7dMszbmJmt9qz08ks4MxGydHDkgWjWIyrZPgeOHt2AVsCygzG/UiVz+VnU5x?=
- =?us-ascii?Q?1jjY77VkRtmGr3bpN+ekG8eJuLJjiGCcRUHH5c6S1tKiZdsOMvmn9nroNvGv?=
- =?us-ascii?Q?7QV1wmodQPoYvwkTKrzVobbM5a990OUfOrT/LRxGwVgUj6D0EGsOWn2asr/p?=
- =?us-ascii?Q?Jvp0zug1Cmi11pbjlaYt33Fl20oi0WlqB/opvHWLyDT9J3p/17A9Z0+gug1I?=
- =?us-ascii?Q?z+I6eWSr9UgC0lO033fi1X4zbNPDRrTRqgjLnzGgfT//8I9WL3QzDIP/bhwC?=
- =?us-ascii?Q?jQmwfdSksFEiQKxFuHdjg6nxF5e8pti8RYP/logHOXSO/yuEzWPsTglj6/HK?=
- =?us-ascii?Q?ubzmtig65cNB+DPQFtrp7vMEMyA5JQsr1b9Xr78o8qFiOxIPX2J1EFs7A=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR04MB4766;23:G2xkqQktIaxFNi/7/ghIpyFRVE9zQC7wctaClRZTu?=
+ =?us-ascii?Q?AdlCVB5E5t6TqU6e79NColDltwsRFYjZU3S2dN/vcTE42w4Z87VzS2Bv1D1I?=
+ =?us-ascii?Q?BQ1d37VI/tk2uT46rWFlglQl5k2SPQkSeYos8WnWWW6Gz1BmZSUQTFTaIoQG?=
+ =?us-ascii?Q?aIYBhUoBc0jeY4xWWkBtM3ibfKJ+duEnctDxWWAnwyBpmleQ+hoIrDl5Hg+X?=
+ =?us-ascii?Q?qP+H3RH7HS0bCSpTgrz3vVAEWIFwZxz0fY9jUDN4zNY0x0ac+kh+fn4YBijC?=
+ =?us-ascii?Q?bcAWYPsxh+/SHoOOOap0P/I95xW/37M6mdaX9Fy2enspEzNGTx72GM+vHhnb?=
+ =?us-ascii?Q?qg7yQFfRYDm+pBuM25MKg68hKe85DU854aQ6JyveH/b6xpgN7Y07nRcHWMfb?=
+ =?us-ascii?Q?cBbnZBCJRXi5iZdkJ5B/Xc1gOf+pwLYxy/D8OpMDLwk4rOfnrE8E2ul76joF?=
+ =?us-ascii?Q?1JT51yjRXFMRlfjxHCO+UcvQp4DTbtVtGho6T7Kg9NRji4zCU7Te6i6Q9kwe?=
+ =?us-ascii?Q?kZydUFeCR2ANadrQDwf6Mvv1CZE8hmVJ8KhD5KVre6jArw2zmqnKsU4LhyAD?=
+ =?us-ascii?Q?8plg8ujDmBj2YFU6adYVALcZUKoWn4GQSb1Yd2y9/+Ab8bYtKDENAbLXY/ZN?=
+ =?us-ascii?Q?5uh3soDyxDs3/nvjvHYrZX9Q/lpZe4O1oA5c8NCwDvUhnZYpYHpMgOKVsWzS?=
+ =?us-ascii?Q?9NvGl/TetlUucgAO4RVM/3CUHa8GaLWKnpk44Aia2z0BiBb+FuLyKsDHErBo?=
+ =?us-ascii?Q?l9A+l/x7yk381Sin42KXHrQbpXxRazBQJnaHDAMyyiQdBq/pBklx8y7FrELS?=
+ =?us-ascii?Q?rq6XH+XR92KCzBwPJNdJoiruufn7AtrA2dlKOudzMkRkr3kz2VNmuH7/YKme?=
+ =?us-ascii?Q?5tuL1cki0xkgkQJzBeFl1PnDfzri34l4nfHiAyftbn3OiKvB/S2pX+tGveIi?=
+ =?us-ascii?Q?HTxAiILgMwz7dnFXCMipCt0Pd/owsMunnR+7pygli39bBx2GbN9HO1kPDS0q?=
+ =?us-ascii?Q?AUGVjAFm2Jqy5PQ0I4hIZ6OgCMbbN7GPn95SU5T7KtjWfjzJlPefHpmrOPxo?=
+ =?us-ascii?Q?0GUFfwC7CUt57FlsUdjyij39TebNtMJ+8P59WkOdlCYwPs4D4kn4cH1CAqNG?=
+ =?us-ascii?Q?PRjInQaMTS//1mnNrJuynA+X2za7dDwxOtwvnAPbCKrJ2bPUKGKQOSRadZcN?=
+ =?us-ascii?Q?S1xx5dsP0c+Vc2xRV9VdDOJ7ALLTQcsznHbU5EOtLkKv1amA/ppOiduLg=3D?=
  =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: a4uvVTxc0Ytn2Rq5ccdimXNFfhfn8DiHCtf6vz4esbl7vGN0VzHIuyKTld7fdabJdV0O35ehIpfG5QEHliTDYAD3zGGbOaUUyyZUrCNlRp4yq2bsBGBFK716FZrv+/AMmyF69Wb/rhkd7KiZBi452oaRbChMmjMj8nhgHR8JMNudfpVE8e5MbwAnKgtnnIOkzyCPlPdv3lXTpVP4BRjqJrKxGAXi1XBDYmogYray/7OqlGVslSzdpaIp7MZ5ncrPgABn72JOrBk5HnhIi1GEVzaeDa9eUwC8gLtg9ixN2T6va1vsge4d0n2tBUwNe5WiN2IsI0m44qpL71r7V0vUSnSwZiJ0UrykkC7JUieNGZk=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;6:CnshYCvB4ACvdSCmKu+i7k0jJlFnDeMM9Z1+jU9zNDFUPF+D32DK3/OIKorgwMqvVwPHOBzXCcXS8KbO2Fvb8gCRKumvDU5NKBLyyv6JS8U+BEWc7xGJFLx4hwBFyaFcRMcKAePVppY/241DGrrN/B5nZpkiFwA8aHcVOvsi9xjsUWlAZ8ssEAZqN7xQZ8MrMLoel52a5rrTtoBMbaqatapSYn2Pv6SSjWMVBft21SNURBLgOG3Pdjj1wjI+le7955xWODvBc/rejCzZdwEjVAFIT00Urg+FkMFi+l68Oy9XnYK4dZYoF4N3b4k8OpxfMSeI6w00+o/MMOrA7Xi8Q4iwHFCxBKIXgBAzd822WESLmG2A2w7g0qg0V17dfhDYSz8jlUZVjvxov5//xAKh4A1hXE1Ghw7Bo9V+HktW7zY8xux6g+LcfQcOfuo91gsP3FnntQj52pBcLTXvRFA69Q==;5:dt59A/foGnCpNFH3bnBbUYXnwJRiJq/74rvkjbXDZj14wmsOyDMnAKJFvPeVGBVIWvEjJmMGK1/juMrBJCxddyMCd6B3OYvVqZSQKyOaBy7PtxvtjTnwthS229uzz02cknlJ44YqUW3RUvjhm0UxzGITUr12e9TzHgX5IX5fTcs=;24:N5CFjSbd6Rmman4KQAjn5YPfYDHseOQIP9gGpHFOmk9LakVkxe36Zg7IIC47EDarkfkPz55FBjvtq/5SAM47P+Qd72gnP5jyxIYB5217K/g=
+X-Microsoft-Antispam-Message-Info: +49nd+k3PHhtngrVrKnHJC4UM7E0czs+de+vli30BBYAh2w69Dzr9OVmnFfWmd3kmUtBAjnW1BQbjdj4gK1a4f0FxdmzIwC7+UCWmBM9R3KCyHmNHhUdmpwt1iNkK30lOFEUgaGXO4WdPPkc+asEEyq3z7wZPX1RW/rGx2M5QmyzTc9Uveh4EzfOz8BH5efTfVYc6BHw6wFVJ99fp/+FHLUmcHsEk52/3x/W+7/xZJCvoULJbRkLgkfPYPMO9OFZcvXW4dfuw3d6opjLqpAeiav4+kOOE/QL14cQMBhlly3Tsq3cpLxDFet14HefMfRmzRuWDg2+SKggL4IbpHo8UbjsqSj7oVrI1dngTkck7zg=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;6:T9Mio38YnbbilqUuYrMsQuGE0uGa3Sdd8sTU992hggnOC+jExtWDIdTOOnNeO1569a3BYO9QcDNvIAbeN0VMOT0dJBnL2Ei72BIfKiTjMD7VkE+AAGX9dftiFErFP+QyoH7iYljRrA0jmeBguyX3l3p4zrpg9zPppb7oyLA4zvux3A4kwiTJLLgQT5kNWN3+bYCiuoGG4+qvRpG+bGvaGFIIorg3xgMO40biE1swAr8TDF17prmtPNY7QzFEgRlHNvS9psegt5DdPqRNpX/I6DeWsE0hJ4LKARnKTBEykLhgMjAVHwqJ4vyPyDJleAeMjL8BFLzrVLBW5PF8ZmaHodoaSM7NqjMrgsSBJpEGY2VPNE2XiYLMJyrbMI1noQArFfiUvoWHTF3yzAGLSc0u4eoRNBP02GlvbZRyqtJQW0GM6WhzmdZz8+r/IrlWMIOjmlsl+X1EQQ7oIusRS5k4HQ==;5:KXwyl1vXFlvv+OrSTQHQjbz/mqaBs703Tafg77efdh/12CeilEYh3AouTco9W0sGV0vTUaXum65lyqIGlAbqDGrWk9oiJEf3vSiFiVWhMrdZ+U0i4qaIz7kvMxsF+S6rF8fB3f2rQSiGF8xGi9ArCIUkbfDtRDzq4ksRwyakiRQ=;24:ZY+updkpImR+XcTzfriWl6vJTu952wmmH/Sd3KP7E4HRvIO5cfadNM/gMv9KJZ2Z8MeftNO9soHU6eijwuXnE0JVpkvTyzAb4ersR74PUxQ=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;7:9YbRc8kj1k/kgnSIK2VKOtn/D4Z/CIW8NUGkvF9qSaOt74adFR/3elLdOfxkEKltX+BAErYLmyEZtSs9bwQUjy70hGjbNEfTUFdVFJF43PpZE9UoErKVf5j6K/eiIM6hJikK8UTztHExO4/mGt8+xrNj4lgCNMwbZPilm0uhoLnKPJXnhj0UpQ0RqhqY8SMgSRYNgQg9O3V191SvZ5hCdl4/n/xTzHIzon2uutfCFNTJemiGN/hDcl9HjokaBWff
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR04MB4766;7:m0Rg5XULSbLqZ8JHrTe7sQYBLNBKrd5nU3akMLuaEjRHV1GTyVsG2knkdd9PL6EqtrEMRdp/pvogIXdQLZ1FIbeOQUjcZtLo3id9cfbiUEvs4WeI53FTXeo3YHILkpJG3j328C0S998vgMmqfcIkV+pjLqiqaTD7tPJ/RyY8rwoNXFXxEFCLKcY6PbEwLbjZQJG38342XYPyyt8foGBGjl/PwRv8y9yYqdQLmLfcIX1iqpD7PN1i3f1Ws8So09uX
 X-OriginatorOrg: bayhubtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2018 06:27:41.7618 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: db1f1fd3-7433-40c8-9623-08d5eae53ed2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2018 06:27:47.9461 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48697890-1068-43da-55db-08d5eae54ba9
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0a7aae2b-8f2e-44df-ba2f-42de7f93c642
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4766
@@ -106,92 +108,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When use eMMC as boot device, the eMMC signaling voltage is tied to 1.8v
-fixed output voltage, bios can set o2 sd host controller PCI configuration
-register 0x308 bit4 to 1 to let driver skip 3.3v signaling voltage and
-direct use 1.8v singling voltage in eMMC initialize process.
+O2 SD Host HS200 mode clock frequency current is 208MHz, should be changed
+to 200MHz to meet specification.
 
 Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
 ---
-Changes in V7:
-	Move V6 change item 2 to a seperate patch file
-
-Changes in V6:
-	1.Move change log to correct place.
-	2.Change HS200 mode clock frequency from 208MHz to 200MHz to meet
+Change in V7:
+	Change HS200 mode clock frequency from 208MHz to 200MHz to meet
 	Specification.
 
-Changes in V5:
-	Modify code format to pass checkpatch.pl check and add a summary
-	of what has changed in each version.
-
-Changes in V4:
-	Skip SDIO and SD initalization when register 0x308 bit 4 is set,
-	and modify some typo.
-
-Changes in V3:
-	Rebase the patch on the mmc tree 'next' branch.
-
-Changes in V2:
-	Modify code format, and delete unused code path.
-
-Changes in V1:
-	Check PCIe register 0x308 bit 4 and skip eMMC 3.3v initialization
-	process if it is set to 1.
+Change in V1~V6:
+	N/A
 ---
- drivers/mmc/host/sdhci-pci-o2micro.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/mmc/host/sdhci-pci-o2micro.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-index 555970a29c94..ba59db6a126c 100644
+index ba59db6a126c..94cf3cd75dd3 100644
 --- a/drivers/mmc/host/sdhci-pci-o2micro.c
 +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-@@ -3,6 +3,7 @@
-  *
-  * Authors: Peter Guo <peter.guo@bayhubtech.com>
-  *          Adam Lee <adam.lee@canonical.com>
-+ *          Ernest Zhang <ernest.zhang@bayhubtech.com>
-  *
-  * This software is licensed under the terms of the GNU General Public
-  * License version 2, as published by the Free Software Foundation, and
-@@ -39,6 +40,7 @@
- #define O2_SD_MISC_CTRL4	0xFC
- #define O2_SD_TUNING_CTRL	0x300
- #define O2_SD_PLL_SETTING	0x304
-+#define O2_SD_MISC_SETTING	0x308
- #define O2_SD_CLK_SETTING	0x328
- #define O2_SD_CAP_REG2		0x330
- #define O2_SD_CAP_REG0		0x334
-@@ -184,6 +186,7 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
- 	struct sdhci_pci_chip *chip;
- 	struct sdhci_host *host;
- 	u32 reg;
-+	int ret;
+@@ -311,7 +311,7 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
  
- 	chip = slot->chip;
- 	host = slot->host;
-@@ -197,6 +200,21 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
- 		if (reg & 0x1)
- 			host->quirks |= SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12;
+ 			/* Check Whether subId is 0x11 or 0x12 */
+ 			if ((scratch_32 == 0x11) || (scratch_32 == 0x12)) {
+-				scratch_32 = 0x2c280000;
++				scratch_32 = 0x25100000;
  
-+		if (chip->pdev->device == PCI_DEVICE_ID_O2_SEABIRD0) {
-+			ret = pci_read_config_dword(chip->pdev,
-+						    O2_SD_MISC_SETTING, &reg);
-+			if (ret)
-+				return -EIO;
-+			if (reg & (1 << 4)) {
-+				pr_info("%s: emmc 1.8v flag is set, force 1.8v signaling voltage\n",
-+					mmc_hostname(host->mmc));
-+				host->flags &= ~SDHCI_SIGNALING_330;
-+				host->flags |= SDHCI_SIGNALING_180;
-+				host->mmc->caps2 |= MMC_CAP2_NO_SD;
-+				host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
-+			}
-+		}
-+
- 		if (chip->pdev->device != PCI_DEVICE_ID_O2_FUJIN2)
- 			break;
- 		/* set dll watch dog timer */
+ 				/* Set Base Clock to 208MZ */
+ 				o2_pci_set_baseclk(chip, scratch_32);
+@@ -406,7 +406,7 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
+ 					       O2_SD_PLL_SETTING, scratch_32);
+ 		} else {
+ 			scratch_32 &= 0x0000FFFF;
+-			scratch_32 |= 0x2c280000;
++			scratch_32 |= 0x25100000;
+ 
+ 			pci_write_config_dword(chip->pdev,
+ 					       O2_SD_PLL_SETTING, scratch_32);
 -- 
 2.17.1
 
