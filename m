@@ -2,122 +2,143 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78169ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6E1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 209FC20846
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:03:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 209FC20846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 43D0820846
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 20:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43D0820846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbeGPUcN (ORCPT
+        id S1728947AbeGPUeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 16:32:13 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2551 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728116AbeGPUcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 16:32:12 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b4cf9fe0000>; Mon, 16 Jul 2018 13:03:10 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 16 Jul 2018 13:03:13 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 16 Jul 2018 13:03:13 -0700
-Received: from [10.26.11.196] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 16 Jul
- 2018 20:03:11 +0000
-Subject: Re: [PATCH] mmc: tegra: Force correct divider calculation on DDR50/52
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>
-CC:     <linux-mmc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <16caa6d0-4368-8931-a77c-23fb76bee200@nvidia.com>
-Date:   Mon, 16 Jul 2018 21:03:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 16 Jul 2018 16:34:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47176 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728116AbeGPUeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 16:34:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E9088ADA6;
+        Mon, 16 Jul 2018 20:05:22 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 22:05:17 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Young <dyoung@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jaewon Kim <jaewon31.kim@samsung.com>, Jan Kara <jack@suse.cz>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
+ device driver
+Message-ID: <20180716200517.GA16803@dhcp22.suse.cz>
+References: <20180524093121.GZ20441@dhcp22.suse.cz>
+ <c0b8bbd5-6c01-f550-ae13-ef80b2255ea6@redhat.com>
+ <20180524120341.GF20441@dhcp22.suse.cz>
+ <1a03ac4e-9185-ce8e-a672-c747c3e40ff2@redhat.com>
+ <20180524142241.GJ20441@dhcp22.suse.cz>
+ <819e45c5-6ae3-1dff-3f1d-c0411b6e2e1d@redhat.com>
+ <3748f033-f349-6d88-d189-d77c76565981@redhat.com>
+ <20180611115641.GL13364@dhcp22.suse.cz>
+ <71bd1b65-2a88-5de7-9789-bf4fac26507d@redhat.com>
+ <e9697e6f-e562-a96c-7080-9271dbfbbea9@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9697e6f-e562-a96c-7080-9271dbfbbea9@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 16/07/18 15:34, Aapo Vienamo wrote:
-> Tegra SDHCI controllers require the SDHCI clock divider to be configured
-> to divide the clock by two in DDR50/52 modes. Incorrectly configured
-> clock divider results in corrupted data.
+On Mon 16-07-18 21:48:59, David Hildenbrand wrote:
+> On 11.06.2018 14:33, David Hildenbrand wrote:
+> > On 11.06.2018 13:56, Michal Hocko wrote:
+> >> On Mon 11-06-18 13:53:49, David Hildenbrand wrote:
+> >>> On 24.05.2018 23:07, David Hildenbrand wrote:
+> >>>> On 24.05.2018 16:22, Michal Hocko wrote:
+> >>>>> I will go over the rest of the email later I just wanted to make this
+> >>>>> point clear because I suspect we are talking past each other.
+> >>>>
+> >>>> It sounds like we are now talking about how to solve the problem. I like
+> >>>> that :)
+> >>>>
+> >>>
+> >>> Hi Michal,
+> >>>
+> >>> did you have time to think about the details of your proposed idea?
+> >>
+> >> Not really. Sorry about that. It's been busy time. I am planning to
+> >> revisit after merge window closes.
+> >>
+> > 
+> > Sure no worries, I still have a bunch of other things to work on. But it
+> > would be nice to clarify soon in which direction I have to head to get
+> > this implemented and upstream (e.g. what I proposed, what you proposed
+> > or maybe something different).
+> > 
+> I would really like to make progress here.
 > 
-> Prevent the possibility of incorrectly calculating the divider value due
-> to clock rate rounding or low parent clock frequency by not assigning
-> host->max_clk to clk_get_rate() on tegra_sdhci_set_clock().
+> I pointed out basic problems/questions with the proposed alternative. I
+> think I answered all your questions. But you also said that you are not
+> going to accept the current approach. So some decision has to be made.
 > 
-> See the comments for further details.
+> Although it's very demotivating and frustrating (I hope not all work in
+> the MM area will be like this), if there is no guidance on how to
+> proceed, I'll have to switch to adding/removing/onlining/offlining whole
+> segments. This is not what I want, but maybe this has a higher chance of
+> getting reviews/acks.
 > 
-> Fixes: a8e326a ("mmc: tegra: implement module external clock change")
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index ddf00166..908b23e 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -210,9 +210,24 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  	if (!clock)
->  		return sdhci_set_clock(host, clock);
->  
-> +	/*
-> +	 * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI 
-> +	 * divider to be configured to divided the host clock by two. The SDHC
-> +	 * clock divider is calculated as part of sdhci_set_clock() by
-> +	 * sdhci_calc_clk(). The divider is calculated from host->max_clk and
-> +	 * the requested clock rate.
-> +	 *
-> +	 * By setting the host->max_clk to clock * 2 the divider calculation
-> +	 * will always result in the correct value for DDR50/52 modes,
-> +	 * regardless of clock rate rounding, which may happen if the value
-> +	 * from clk_get_rate() is used.
-> +	 */
->  	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
->  	clk_set_rate(pltfm_host->clk, host_clk);
-> -	host->max_clk = clk_get_rate(pltfm_host->clk);
-> +	if (tegra_host->ddr_signaling)
-> +		host->max_clk = host_clk;
-> +	else
-> +		host->max_clk = clk_get_rate(pltfm_host->clk);
->  
->  	sdhci_set_clock(host, clock);
->  
+> Understanding that you are busy, please if you make suggestions, follow
+> up on responses.
 
-I see what you are saying, but should we be concerned that we are not
-getting the rate we are requesting in the first place?
+I plan to get back to this. It's busy time with too many things
+happening both upstream and on my work table as well. Sorry about that.
+I do understand your frustration but there is only that much time I
+have. There are not that many people to review this code unfortunately.
 
-Maybe it would help if you could provide a specific example showing a
-case where we request rate X and get Y, and then this leads to a bad
-rate Z later.
- 
-Cheers
-Jon
-
+In principle though, I still maintain my position that the memory
+hotplug code is way too subtle to add more on top. Maybe the code can be
+reworked to be less section oriented but that will be a lot of work.
+If you _really_ need a smaller granularity I do not have a better
+suggestion than to emulate that on top of sections. I still have to go
+back to your last emails though.
 -- 
-nvpublic
+Michal Hocko
+SUSE Labs
