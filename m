@@ -1,122 +1,193 @@
 Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,T_DKIMWL_WL_MED,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52885ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D69FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E89D20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:41:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C4DA20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMTmUXy+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E89D20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h3yQWT5K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4DA20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728945AbeGPSJu (ORCPT
+        id S1729228AbeGPSKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 14:09:50 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35781 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbeGPSJu (ORCPT
+        Mon, 16 Jul 2018 14:10:53 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42562 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727811AbeGPSKx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 14:09:50 -0400
-Received: by mail-wr1-f68.google.com with SMTP id a3-v6so23536285wrt.2;
-        Mon, 16 Jul 2018 10:41:23 -0700 (PDT)
+        Mon, 16 Jul 2018 14:10:53 -0400
+Received: by mail-pf0-f194.google.com with SMTP id l9-v6so15001738pff.9
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 10:42:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wX3klOAhaUyPAlhcin/0pgE4AcbUtKmM5LNyo82N8P4=;
-        b=LMTmUXy+nZXeoNm+XH4oF6ZOvuc5pqjBGzPqpe948TGAZVRq4e1OXkdZdrITyOZwa4
-         UK8ZPn/b69tBDhLhbEOWdxAvnKvNQ04yHu1mX6hnmzCRdSWglHS999MJwXfelDWcsDkY
-         F++wZmbgJIpHfo8V47ebQ0bA1xxtC83ckKBuMA3O/O5zgtFmf/BeFBdFGuUe48szkq0D
-         GXiPrVPSNRNa24gr1oPY58HG9udpq8doQ0KXbtfPo1ygKL5WUA3Aj8QsSFvruIMNYPEU
-         z7FgGVhR8bUW6obSGtcuwTWxfdJ+1qpj6g3qdxBRhkzN1EdhCs5vMAhda0xCC1znMmLM
-         jBWQ==
+        bh=Ka6tAyjB4U0AXj6g1IdDWDcNjCgK1ubkeXIXwmrs3UI=;
+        b=h3yQWT5KqsKIVSb432htQWOV7DByZxDyIWcy6QROzV7iKfhsSn2v0QJ61lj0So7fTP
+         PfTf9Uol91xqBcmRATYps2XCkIYj+MLpv+wI4/Z/D6T4kc4kTFL/1sMQke0aSitfQsrI
+         SU0vROERVwex7Vfu17PdAUfwZn7OxudasXdFWspojX12TtErTyhny+FBoKr8MS2ZFS6Z
+         cJK1Dc26dZ/SyI4ddvQ2leGyMwrzoNIU3mAWl0hu6sRbUqMob7TU3XOZegYi3CFXPegu
+         4It1WPDv+XRyBvEe1c7bfQBJCImrny7HsLCdD2c4RzSNMWez25HoN1Q02G/K8zQNg3xJ
+         kLYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wX3klOAhaUyPAlhcin/0pgE4AcbUtKmM5LNyo82N8P4=;
-        b=kXCLykjgW7xO4RR9ep4CwWqiIIUFzMCFH9X32LphBhtYrM+F1kftjEFhYC4rnAjGqk
-         A05puX7E18a/kYgOZwODGrFlyDB94FLQf9ZpxF1yzM1eTeX5xwkFsygEDmF8WksHuUVx
-         kBSdU4ch7RbuCo9kXnaz5JX1+RtagE7tav2HA29dMpCtOYDxv7qmQNhxWiecjmjzDm9R
-         zvuMsj5kgvhxHycBIMXdNnU6br8QF4FtX1yl575+oAIW9+9p6sgZNC7Yiixw0XZSMP24
-         fVRfYg76MVLQ0R4nlB9iTvpNX4vmBQeytXqAOizPKwiz19xTUQrMSUd9zdfd5Lil6vT5
-         8hTA==
-X-Gm-Message-State: AOUpUlGNm4Bo//jnYGQ5gANnSZAS13dz6zTZgCrOoiSvz/641MfOsUyR
-        8hWlWo94VUEicG8dC7vkhRg=
-X-Google-Smtp-Source: AAOMgpfiT9PG60TchG0B4ORWoH6tChiGo8tEs70mPfxBRV/bIQ7KFLYf6XQctRTtAxer2gHs243K1Q==
-X-Received: by 2002:adf:862b:: with SMTP id 40-v6mr6841591wrv.255.1531762882421;
-        Mon, 16 Jul 2018 10:41:22 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id w9-v6sm37855645wrr.77.2018.07.16.10.41.20
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ka6tAyjB4U0AXj6g1IdDWDcNjCgK1ubkeXIXwmrs3UI=;
+        b=lQHBY03xULI8Ae1/UhlTJtnUd9dJk1wgdvT20yGA1FOltN8bths+iktavIvLi2C4+H
+         Re7AN6CX4kH2G4wM6u5aowbY2ARSJPxCQwRbsLe2yiXEyyz5stb0jjAhIL5sFu1pZv8x
+         cY2PE8U3Xc6slhptKMj+FpgGZvXAtpTQXHesUZrPSNAwBlOOv+ejJ3A5f+0vogwGDtpY
+         xlAAQmR8IA/G/eN705+OXpcbm/SyH2ZVQ0Xpq5SI6qBY2WbP/smBIbahPWPbyXvs8o/Y
+         RnQtNn3zfdI+fxQoEk+s74RrYdCK0HkJdrOgReYFrFdIVHUSc+bNHN55oXKqWl4maFDw
+         hcgQ==
+X-Gm-Message-State: AOUpUlGE65WWlsMHlj0EKYzEH1SqErAAnsR7roGApsouqLaQxuYUZ2mv
+        CVK0/+XqpXBEH6VjM/0XNdVpOQ==
+X-Google-Smtp-Source: AAOMgpePHQ5eB8bfXeEWTVqOtl6wtGQNQ/2UQW3n1hPYUCO8MckQDO/7rosyYYy9GcRiRrsfr32Bog==
+X-Received: by 2002:a62:3a9d:: with SMTP id v29-v6mr18934480pfj.215.1531762945836;
+        Mon, 16 Jul 2018 10:42:25 -0700 (PDT)
+Received: from google.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id q21-v6sm24281985pfl.156.2018.07.16.10.42.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 10:41:21 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 19:41:19 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     xlpang@linux.alibaba.com, tglx@linutronix.de, frederic@kernel.org,
-        lcapitulino@redhat.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tj@kernel.org,
-        linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:sched/core] sched/cputime: Ensure accurate utime and stime
- ratio in cputime_adjust()
-Message-ID: <20180716174119.GA4514@gmail.com>
-References: <20180709145843.126583-1-xlpang@linux.alibaba.com>
- <tip-8d4c00dc38a8aa30dae8402955e55e7b34e74bc8@git.kernel.org>
- <20180716133751.GC2494@hirez.programming.kicks-ass.net>
+        Mon, 16 Jul 2018 10:42:25 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 10:42:23 -0700
+From:   Eric Biggers <ebiggers@google.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rxrpc: Reuse SKCIPHER_REQUEST_ON_STACK buffer
+Message-ID: <20180716174223.GE77258@google.com>
+References: <20180716034947.GA32022@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180716133751.GC2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180716034947.GA32022@beast>
+User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Peter Zijlstra <peterz@infradead.org> wrote:
-
-> On Sun, Jul 15, 2018 at 04:36:17PM -0700, tip-bot for Xunlei Pang wrote:
-> > Commit-ID:  8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
-> > Gitweb:     https://git.kernel.org/tip/8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
-> > Author:     Xunlei Pang <xlpang@linux.alibaba.com>
-> > AuthorDate: Mon, 9 Jul 2018 22:58:43 +0800
-> > Committer:  Ingo Molnar <mingo@kernel.org>
-> > CommitDate: Mon, 16 Jul 2018 00:28:31 +0200
-> > 
-> > sched/cputime: Ensure accurate utime and stime ratio in cputime_adjust()
-> > 
-> > If users access "/proc/pid/stat", the utime and stime ratio in the
-> > current SAMPLE period are excepted, but currently cputime_adjust()
-> > always calculates with the ratio of the WHOLE lifetime of the process.
-> > 
-> > This results in inaccurate utime and stime in "/proc/pid/stat". For
-> > example,  a process runs for a while with "50% usr, 0% sys", then
-> > followed by "100% sys". For later while, the following is excepted:
-> > 
-> >   0.0 usr,  100.0 sys
-> > 
-> > but we get:
-> > 
-> >   10.0 usr,  90.0 sys
-> > 
-> > This patch uses the accurate ratio in cputime_adjust() to address the
-> > issue. A new 'task_cputime' type field is added in prev_cputime to record
-> > previous 'task_cputime' so that we can get the elapsed times as the accurate
-> > ratio.
+On Sun, Jul 15, 2018 at 08:49:47PM -0700, Kees Cook wrote:
+> The use of SKCIPHER_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
+> (when less than 2048) once the VLA is no longer hidden from the check:
 > 
-> Ingo, please make this one go away.
+> net/rxrpc/rxkad.c:398:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> net/rxrpc/rxkad.c:242:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> 
+> This passes the initial SKCIPHER_REQUEST_ON_STACK allocation to the leaf
+> functions for reuse. Two requests allocated on the stack are not needed
+> when only one is used at a time.
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  net/rxrpc/rxkad.c | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
+> 
+> diff --git a/net/rxrpc/rxkad.c b/net/rxrpc/rxkad.c
+> index 278ac0807a60..6393391fac86 100644
+> --- a/net/rxrpc/rxkad.c
+> +++ b/net/rxrpc/rxkad.c
+> @@ -146,10 +146,10 @@ static int rxkad_prime_packet_security(struct rxrpc_connection *conn)
+>  static int rxkad_secure_packet_auth(const struct rxrpc_call *call,
+>  				    struct sk_buff *skb,
+>  				    u32 data_size,
+> -				    void *sechdr)
+> +				    void *sechdr,
+> +				    struct skcipher_request *req)
+>  {
+>  	struct rxrpc_skb_priv *sp = rxrpc_skb(skb);
+> -	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+>  	struct rxkad_level1_hdr hdr;
+>  	struct rxrpc_crypt iv;
+>  	struct scatterlist sg;
+> @@ -183,12 +183,12 @@ static int rxkad_secure_packet_auth(const struct rxrpc_call *call,
+>  static int rxkad_secure_packet_encrypt(const struct rxrpc_call *call,
+>  				       struct sk_buff *skb,
+>  				       u32 data_size,
+> -				       void *sechdr)
+> +				       void *sechdr,
+> +				       struct skcipher_request *req)
+>  {
+>  	const struct rxrpc_key_token *token;
+>  	struct rxkad_level2_hdr rxkhdr;
+>  	struct rxrpc_skb_priv *sp;
+> -	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+>  	struct rxrpc_crypt iv;
+>  	struct scatterlist sg[16];
+>  	struct sk_buff *trailer;
+> @@ -296,11 +296,12 @@ static int rxkad_secure_packet(struct rxrpc_call *call,
+>  		ret = 0;
+>  		break;
+>  	case RXRPC_SECURITY_AUTH:
+> -		ret = rxkad_secure_packet_auth(call, skb, data_size, sechdr);
+> +		ret = rxkad_secure_packet_auth(call, skb, data_size, sechdr,
+> +					       req);
+>  		break;
+>  	case RXRPC_SECURITY_ENCRYPT:
+>  		ret = rxkad_secure_packet_encrypt(call, skb, data_size,
+> -						  sechdr);
+> +						  sechdr, req);
+>  		break;
+>  	default:
+>  		ret = -EPERM;
+> @@ -316,10 +317,10 @@ static int rxkad_secure_packet(struct rxrpc_call *call,
+>   */
+>  static int rxkad_verify_packet_1(struct rxrpc_call *call, struct sk_buff *skb,
+>  				 unsigned int offset, unsigned int len,
+> -				 rxrpc_seq_t seq)
+> +				 rxrpc_seq_t seq,
+> +				 struct skcipher_request *req)
+>  {
+>  	struct rxkad_level1_hdr sechdr;
+> -	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+>  	struct rxrpc_crypt iv;
+>  	struct scatterlist sg[16];
+>  	struct sk_buff *trailer;
+> @@ -402,11 +403,11 @@ static int rxkad_verify_packet_1(struct rxrpc_call *call, struct sk_buff *skb,
+>   */
+>  static int rxkad_verify_packet_2(struct rxrpc_call *call, struct sk_buff *skb,
+>  				 unsigned int offset, unsigned int len,
+> -				 rxrpc_seq_t seq)
+> +				 rxrpc_seq_t seq,
+> +				 struct skcipher_request *req)
+>  {
+>  	const struct rxrpc_key_token *token;
+>  	struct rxkad_level2_hdr sechdr;
+> -	SKCIPHER_REQUEST_ON_STACK(req, call->conn->cipher);
+>  	struct rxrpc_crypt iv;
+>  	struct scatterlist _sg[4], *sg;
+>  	struct sk_buff *trailer;
+> @@ -549,9 +550,9 @@ static int rxkad_verify_packet(struct rxrpc_call *call, struct sk_buff *skb,
+>  	case RXRPC_SECURITY_PLAIN:
+>  		return 0;
+>  	case RXRPC_SECURITY_AUTH:
+> -		return rxkad_verify_packet_1(call, skb, offset, len, seq);
+> +		return rxkad_verify_packet_1(call, skb, offset, len, seq, req);
+>  	case RXRPC_SECURITY_ENCRYPT:
+> -		return rxkad_verify_packet_2(call, skb, offset, len, seq);
+> +		return rxkad_verify_packet_2(call, skb, offset, len, seq, req);
+>  	default:
+>  		return -ENOANO;
+>  	}
+> -- 
+> 2.17.1
 
-Sure, I've removed it from sched/core.
+How about doing the 'skcipher_request_set_tfm(req, call->conn->cipher)' and
+'skcipher_request_zero(req);' just once, in the top-level function
+rxkad_verify_packet(), instead of before/after every time the request is used?
 
-Thanks,
-
-	Ingo
+- Eric
