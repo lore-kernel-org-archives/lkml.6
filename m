@@ -2,87 +2,114 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DD9ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CDBECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 177B120873
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:22:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 177B120873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0359F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:23:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahlxezMY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0359F2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeGPOu1 (ORCPT
+        id S1728202AbeGPOvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 10:50:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55204 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727374AbeGPOu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 10:50:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 941C0AD31;
-        Mon, 16 Jul 2018 14:22:45 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 16:22:45 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: Fix vma_is_anonymous() false-positives
-Message-ID: <20180716142245.GT17280@dhcp22.suse.cz>
-References: <20180710134821.84709-1-kirill.shutemov@linux.intel.com>
- <20180710134821.84709-2-kirill.shutemov@linux.intel.com>
- <20180710134858.3506f097104859b533c81bf3@linux-foundation.org>
- <20180716133028.GQ17280@dhcp22.suse.cz>
- <20180716140440.fd3sjw5xys5wozw7@black.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716140440.fd3sjw5xys5wozw7@black.fi.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 16 Jul 2018 10:51:00 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37437 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727342AbeGPOvA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 10:51:00 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b10-v6so2904295eds.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 07:23:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=B1NeOrjJcGq/b2IjOTeSOJbGAv6ojqfK3iBRm+bbJAA=;
+        b=ahlxezMYA+zz9CagrPj/RBXMP7WwgOr/mG96ZuJPrymTqVHeIIUg0K5yxvfWOWye5S
+         8zymsV8pnoi7Pb7t8dOLwBIn6VQTCVmDORc2JUwabLlWDC7e9lX4UtkUnil+SbU/3wyv
+         XOfLDQsqop5LjHE1XgSPY72uOg3Ycl1FGs4S0zi6uQxl7X79Lr4ZmuLZ4H47Ro/i0Obp
+         5Och20nlLDzqmut7Ly4WSUj+6z54gMXoHmgkSCxGOQZl3ngW4IitzVvdW8Iu2lsr/kq4
+         6F/nIlPJ3ncK9NjVaG6aHhk83Hm4tZLb4GPp21LAdqoS9e1zIFApDmXJGEP+gXgo17XY
+         TMBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=B1NeOrjJcGq/b2IjOTeSOJbGAv6ojqfK3iBRm+bbJAA=;
+        b=DiX5H/INrj10HEJW/XyGUZwanSyL7tgtCqkStVEIFz5gokF7OAfcCmnas4ZEGO8ocn
+         686gA0YyRIhlTKoFcnbtdD6/mNGdFXaFZKg7CWFJyG3jYWojUadNuysIAgYiu79y/Af9
+         CnK0Yn7zSOvv/5K+tuipXb8MKbojSzXwO8qtl2fi3YTtw5i+a95AwG++ZPZajIXqgH5u
+         RKkSn/XAdasCt1ONupP6QmmAxrUrW2GMmouHetQIet5XpSwG/fkeVO4aSuV2sEbFMjL/
+         eOlYjtBzrLpeZr9axH5jm2qP8qULiqn7Zfume4uLPgTkD+D96GDSPBywg9Y9t5SDYvpX
+         +g2A==
+X-Gm-Message-State: AOUpUlH3xisXpkCIW5rN27ipEIvypJvogqDwrPUoYF4npRjy5s+quZtj
+        JB6KGsKkpWIzxXSDQWLAMcg=
+X-Google-Smtp-Source: AAOMgpc6BhvgOu/f0JB/fK26DHgs8Lbz5kqSWJVze8tYrO8TfkrzYROUJw4vPqW2GGwsF80w6RXeZw==
+X-Received: by 2002:a50:9069:: with SMTP id z38-v6mr17898463edz.79.1531750999106;
+        Mon, 16 Jul 2018 07:23:19 -0700 (PDT)
+Received: from arch.localdomain (x4db296c4.dyn.telefonica.de. [77.178.150.196])
+        by smtp.gmail.com with ESMTPSA id o12-v6sm3264874edj.54.2018.07.16.07.23.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Jul 2018 07:23:18 -0700 (PDT)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 1/2] staging: rtl8188eu: remove MacAddr_isBcst macro
+Date:   Mon, 16 Jul 2018 16:23:02 +0200
+Message-Id: <20180716142303.1627-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 16-07-18 17:04:41, Kirill A. Shutemov wrote:
-> On Mon, Jul 16, 2018 at 01:30:28PM +0000, Michal Hocko wrote:
-> > On Tue 10-07-18 13:48:58, Andrew Morton wrote:
-> > > On Tue, 10 Jul 2018 16:48:20 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
-> > > 
-> > > > vma_is_anonymous() relies on ->vm_ops being NULL to detect anonymous
-> > > > VMA. This is unreliable as ->mmap may not set ->vm_ops.
-> > > > 
-> > > > False-positive vma_is_anonymous() may lead to crashes:
-> > > > 
-> > > > ...
-> > > > 
-> > > > This can be fixed by assigning anonymous VMAs own vm_ops and not relying
-> > > > on it being NULL.
-> > > > 
-> > > > If ->mmap() failed to set ->vm_ops, mmap_region() will set it to
-> > > > dummy_vm_ops. This way we will have non-NULL ->vm_ops for all VMAs.
-> > > 
-> > > Is there a smaller, simpler fix which we can use for backporting
-> > > purposes and save the larger rework for development kernels?
-> > 
-> > Why cannot we simply keep anon vma with null vm_ops and set dummy_vm_ops
-> > for all users who do not initialize it in their mmap callbacks?
-> > Basically have a sanity check&fixup in call_mmap?
-> 
-> As I said, there's a corner case of MAP_PRIVATE of /dev/zero.
+Use is_broadcast_ether_addr instead of the MacAddr_isBcst macro.
+The macro is not used anywhere else, so remove it.
 
-This is really creative. I really didn't think about that. I am
-wondering whether this really has to be handled as a private anonymous
-mapping implicitly. Why does vma_is_anonymous has to succeed for these
-mappings? Why cannot we simply handle it as any other file backed
-PRIVATE mapping?
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/rtl8188eu/core/rtw_recv.c | 2 +-
+ drivers/staging/rtl8188eu/include/wifi.h  | 7 -------
+ 2 files changed, 1 insertion(+), 8 deletions(-)
 
+diff --git a/drivers/staging/rtl8188eu/core/rtw_recv.c b/drivers/staging/rtl8188eu/core/rtw_recv.c
+index 53c65d5463c0..2edc3a8242b1 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_recv.c
++++ b/drivers/staging/rtl8188eu/core/rtw_recv.c
+@@ -549,7 +549,7 @@ static void count_rx_stats(struct adapter *padapter,
+ 
+ 	padapter->mlmepriv.LinkDetectInfo.NumRxOkInPeriod++;
+ 
+-	if ((!MacAddr_isBcst(pattrib->dst)) && (!IS_MCAST(pattrib->dst)))
++	if (!is_broadcast_ether_addr(pattrib->dst) && !IS_MCAST(pattrib->dst))
+ 		padapter->mlmepriv.LinkDetectInfo.NumRxUnicastOkInPeriod++;
+ 
+ 	if (sta)
+diff --git a/drivers/staging/rtl8188eu/include/wifi.h b/drivers/staging/rtl8188eu/include/wifi.h
+index a41e8eda02fb..4a56e54e38f6 100644
+--- a/drivers/staging/rtl8188eu/include/wifi.h
++++ b/drivers/staging/rtl8188eu/include/wifi.h
+@@ -257,13 +257,6 @@ enum WIFI_REG_DOMAIN {
+ 
+ #define GetAddr4Ptr(pbuf)	((unsigned char *)((size_t)(pbuf) + 24))
+ 
+-#define MacAddr_isBcst(addr) \
+-	( \
+-	((addr[0] == 0xff) && (addr[1] == 0xff) && \
+-	(addr[2] == 0xff) && (addr[3] == 0xff) && \
+-	(addr[4] == 0xff) && (addr[5] == 0xff))  ? true : false \
+-)
+-
+ static inline int IS_MCAST(unsigned char *da)
+ {
+ 	if ((*da) & 0x01)
 -- 
-Michal Hocko
-SUSE Labs
+2.18.0
+
