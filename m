@@ -7,203 +7,147 @@ X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6944AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9357ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4A32089B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:19:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94339208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RXlkVtvB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4A32089B
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="axfM/pUs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94339208AD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeGPRsH (ORCPT
+        id S1728417AbeGPRua (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 13:48:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45315 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727479AbeGPRsH (ORCPT
+        Mon, 16 Jul 2018 13:50:30 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:32957 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727797AbeGPRua (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 13:48:07 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z14-v6so1477591pgv.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 10:19:45 -0700 (PDT)
+        Mon, 16 Jul 2018 13:50:30 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 6-v6so15541531plb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 10:22:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vnACoDNnNygQvcyj6ioYnCfcBtKnNbDb0QgZcL3FLnU=;
-        b=RXlkVtvBHJNM2PtI9Y2jfUw6l8nCJmgMXzNMwRymSbZHRX32Pfb/XVG/69U09CuJrY
-         689UzKQ25vobM9TI4+mczsNMX3elLqzWH3GLwfmdkwJ60X0TAC3VwMYcc5vlmNwkAMJD
-         8DuMjVfJdyvnBq4QmM961frkxRuOEvkUbv4jPtfWfmm5d3OZA8gveHynCCFK684qMiC8
-         2TqBgCErLR/eQYGKAoAv2kAwyfckFdsd9bangZdO/FdN7TxU14kyZ0CeXEKKZyh7esA2
-         IcT5zY4rIe9mRjuI07B9c1QbigpT8TuhAXiuXEn9DIxLkvCEEAPgDIrYNBjebXLi3Z6y
-         ZK7A==
+        bh=86Rtw6gUDAo9afBakUKMWAaoAkmK617VGGybLbfNr4c=;
+        b=axfM/pUsRPaih1r+3OtlM9L9SHmHvXyTNtt/cBPdHNCN//zkYF12gjGpbeDw7CVKF1
+         qaFwM9yPwYIS4qHS1B9h04N0kvz8/RGd/SvHh2iWTost7AxekxJLZjQsp7dhQTW5iiKi
+         sl2cRApGlrzc9LJ35+CFUgxijDHF/+VvQEPyr5ESnwHyFlA7IyXTyV2uFqCu5OGJs9rD
+         7qDeB8+na51nTumWx7oqVwxt7Eyd13M7t2389RvzygWg9QjGh3nmhytgKu9mtOlzEZbP
+         ygIGmVBy7nawwnlCLXgRopm46X5ImQVYwSI7fNTwgCxxMYwsXA3+EC/mj1ExOmsjOggy
+         bFPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vnACoDNnNygQvcyj6ioYnCfcBtKnNbDb0QgZcL3FLnU=;
-        b=PT2fU0AdHq/LuIkTDsD9bOSB8bpzRwxuiOCMTEJVrxFIsBnS28L106DmBSS6wLva1I
-         r5YdduBl23MPMJejalxvO+AxIYumfb3E4+9JqVq504aCPdSrocKAxq5msLPbbBd8qgJz
-         egxyiCdhzWad419BANXXSX9q+/tJvfoUFe1N46vbSkMDCwJauXk0tusdwXv14XEsskQC
-         fq/1v2gX4S9OyLWKBEfYlu0Qsa3z9pDmiMkSOo0mNe/lgzTKZlraHd9eJmGtcbK/WfQu
-         9alrBaCfweM9++ajmbYHugLDZK8J888eXROHyTdwWFu+2JxQw9Im1IjkXY2VSKuLilTZ
-         F3rw==
-X-Gm-Message-State: AOUpUlFSR3c/miNiEzNUoceoqc5/gPZBS5RexICdQXvcGrPTn8Ddnv3W
-        vvTh5FXgpCRoRgV1x042byz7ew==
-X-Google-Smtp-Source: AAOMgpfA1kcNSykN4KxrXMM4ApM+N4vuRuooGxbQF5OfLgVWXu+6nQdfQRTyFJVNhgB/As6srNyEmA==
-X-Received: by 2002:a62:c8c2:: with SMTP id i63-v6mr19033313pfk.73.1531761584824;
-        Mon, 16 Jul 2018 10:19:44 -0700 (PDT)
+        bh=86Rtw6gUDAo9afBakUKMWAaoAkmK617VGGybLbfNr4c=;
+        b=jHG6B+sSawWxsZzNqNCB/ZWIZ74VlZJ7ifba/PZ3rMpvpplrkavaZ4wJSLfA3fzluM
+         04O2J8qPgA0yqny+fq7n2OmnLTRzGPzCzwSncOLZ8R0nLUvR/oI4B7rWHedrqD5tjETs
+         N3EFgx+7WcdAFQVXz0m961GBl5NcgXLQRukPU22c2eXQS4PoCJB6IqhUnj7LgfOzVj01
+         m/JcxrEulZnocZxIdJgHOvYbvxyOB7ZXGdR0P8G/jb1lsa9RyQPfUE268bMV3Y4LTwAH
+         sHbJGnKw8x6q/z86x7/b7RTqxCC7XGjwN2P8/yuy3HLCl9HYxuG8lGyLaLt2nojUDkKv
+         B4ZA==
+X-Gm-Message-State: AOUpUlGKgncuqZeXTsSQAllxwJdwxiU4kPGtXrIHUmWK3uJw8JgrzEse
+        H1PXFOl8ncu78wC38ceQLUdeyg==
+X-Google-Smtp-Source: AAOMgpfJDdbdbkuqVadhG3XON0Hwigy83P8pPqrRdAa/FFiT+aWADUJxakFIiialK07iRid7WteDIQ==
+X-Received: by 2002:a17:902:20ca:: with SMTP id v10-v6mr17244505plg.255.1531761727529;
+        Mon, 16 Jul 2018 10:22:07 -0700 (PDT)
 Received: from google.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id g25-v6sm50599189pge.52.2018.07.16.10.19.43
+        by smtp.gmail.com with ESMTPSA id r25-v6sm39207303pge.81.2018.07.16.10.22.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 10:19:44 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 10:19:42 -0700
+        Mon, 16 Jul 2018 10:22:06 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 10:22:05 -0700
 From:   Eric Biggers <ebiggers@google.com>
 To:     Kees Cook <keescook@chromium.org>
-Cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Arnd Bergmann <arnd@arndb.de>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dm crypt: Convert essiv from ahash to shash
-Message-ID: <20180716171942.GA77258@google.com>
-References: <20180716035912.GA32261@beast>
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/power/64: Remove VLA usage
+Message-ID: <20180716172205.GB77258@google.com>
+References: <20180716035657.GA32180@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180716035912.GA32261@beast>
+In-Reply-To: <20180716035657.GA32180@beast>
 User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 08:59:12PM -0700, Kees Cook wrote:
-> In preparing to remove all stack VLA usage from the kernel[1], this
-> removes the discouraged use of AHASH_REQUEST_ON_STACK in favor of
-> the smaller SHASH_DESC_ON_STACK by converting from ahash-wrapped-shash
-> to direct shash. The stack allocation will be made a fixed size in a
-> later patch to the crypto subsystem.
+On Sun, Jul 15, 2018 at 08:56:57PM -0700, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> removes the discouraged use of AHASH_REQUEST_ON_STACK by switching to
+> shash directly and allocating the descriptor in heap memory (which should
+> be fine: the tfm has already been allocated there too).
 > 
 > [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 > 
 > Signed-off-by: Kees Cook <keescook@chromium.org>
-
-Reviewed-by: Eric Biggers <ebiggers@google.com>
-
 > ---
->  drivers/md/dm-crypt.c | 31 ++++++++++++++-----------------
->  1 file changed, 14 insertions(+), 17 deletions(-)
+>  arch/x86/power/hibernate_64.c | 35 +++++++++++++++++++----------------
+>  1 file changed, 19 insertions(+), 16 deletions(-)
 > 
-> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-> index b61b069c33af..c4c922990090 100644
-> --- a/drivers/md/dm-crypt.c
-> +++ b/drivers/md/dm-crypt.c
-> @@ -99,7 +99,7 @@ struct crypt_iv_operations {
->  };
->  
->  struct iv_essiv_private {
-> -	struct crypto_ahash *hash_tfm;
-> +	struct crypto_shash *hash_tfm;
->  	u8 *salt;
->  };
->  
-> @@ -327,25 +327,22 @@ static int crypt_iv_plain64be_gen(struct crypt_config *cc, u8 *iv,
->  static int crypt_iv_essiv_init(struct crypt_config *cc)
+> diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+> index 67ccf64c8bd8..0ed01bb935a6 100644
+> --- a/arch/x86/power/hibernate_64.c
+> +++ b/arch/x86/power/hibernate_64.c
+> @@ -233,28 +233,31 @@ struct restore_data_record {
+>   */
+>  static int get_e820_md5(struct e820_table *table, void *buf)
 >  {
->  	struct iv_essiv_private *essiv = &cc->iv_gen_private.essiv;
-> -	AHASH_REQUEST_ON_STACK(req, essiv->hash_tfm);
 > -	struct scatterlist sg;
-> +	SHASH_DESC_ON_STACK(desc, essiv->hash_tfm);
->  	struct crypto_cipher *essiv_tfm;
->  	int err;
+> -	struct crypto_ahash *tfm;
+> +	struct crypto_shash *tfm;
+> +	struct shash_desc *desc;
+>  	int size;
+>  	int ret = 0;
 >  
-> -	sg_init_one(&sg, cc->key, cc->key_size);
-> -	ahash_request_set_tfm(req, essiv->hash_tfm);
-> -	ahash_request_set_callback(req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL, NULL);
-> -	ahash_request_set_crypt(req, &sg, essiv->salt, cc->key_size);
-> +	desc->tfm = essiv->hash_tfm;
-> +	desc->flags = CRYPTO_TFM_REQ_MAY_SLEEP;
+> -	tfm = crypto_alloc_ahash("md5", 0, CRYPTO_ALG_ASYNC);
+> +	tfm = crypto_alloc_shash("md5", 0, 0);
+>  	if (IS_ERR(tfm))
+>  		return -ENOMEM;
 >  
-> -	err = crypto_ahash_digest(req);
-> -	ahash_request_zero(req);
-> +	err = crypto_shash_digest(desc, cc->key, cc->key_size, essiv->salt);
-> +	shash_desc_zero(desc);
->  	if (err)
->  		return err;
+> -	{
+> -		AHASH_REQUEST_ON_STACK(req, tfm);
+> -		size = offsetof(struct e820_table, entries) + sizeof(struct e820_entry) * table->nr_entries;
+> -		ahash_request_set_tfm(req, tfm);
+> -		sg_init_one(&sg, (u8 *)table, size);
+> -		ahash_request_set_callback(req, 0, NULL, NULL);
+> -		ahash_request_set_crypt(req, &sg, buf, size);
+> -
+> -		if (crypto_ahash_digest(req))
+> -			ret = -EINVAL;
+> -		ahash_request_zero(req);
+> -	}
+> -	crypto_free_ahash(tfm);
+> +	desc = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(tfm),
+> +		       GFP_KERNEL);
+> +	if (!desc)
+> +		return -ENOMEM;
+
+Need crypto_free_shash(tfm) if the kmalloc() here fails.
+
+> +
+> +	desc->tfm = tfm;
+> +	desc->flags = 0;
+> +
+> +	size = offsetof(struct e820_table, entries) +
+> +		sizeof(struct e820_entry) * table->nr_entries;
+> +
+> +	if (crypto_shash_digest(desc, (u8 *)table, size, buf))
+> +		ret = -EINVAL;
+> +
+> +	kzfree(desc);
+> +	crypto_free_shash(tfm);
 >  
->  	essiv_tfm = cc->iv_private;
->  
->  	err = crypto_cipher_setkey(essiv_tfm, essiv->salt,
-> -			    crypto_ahash_digestsize(essiv->hash_tfm));
-> +			    crypto_shash_digestsize(essiv->hash_tfm));
->  	if (err)
->  		return err;
->  
-> @@ -356,7 +353,7 @@ static int crypt_iv_essiv_init(struct crypt_config *cc)
->  static int crypt_iv_essiv_wipe(struct crypt_config *cc)
->  {
->  	struct iv_essiv_private *essiv = &cc->iv_gen_private.essiv;
-> -	unsigned salt_size = crypto_ahash_digestsize(essiv->hash_tfm);
-> +	unsigned salt_size = crypto_shash_digestsize(essiv->hash_tfm);
->  	struct crypto_cipher *essiv_tfm;
->  	int r, err = 0;
->  
-> @@ -408,7 +405,7 @@ static void crypt_iv_essiv_dtr(struct crypt_config *cc)
->  	struct crypto_cipher *essiv_tfm;
->  	struct iv_essiv_private *essiv = &cc->iv_gen_private.essiv;
->  
-> -	crypto_free_ahash(essiv->hash_tfm);
-> +	crypto_free_shash(essiv->hash_tfm);
->  	essiv->hash_tfm = NULL;
->  
->  	kzfree(essiv->salt);
-> @@ -426,7 +423,7 @@ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
->  			      const char *opts)
->  {
->  	struct crypto_cipher *essiv_tfm = NULL;
-> -	struct crypto_ahash *hash_tfm = NULL;
-> +	struct crypto_shash *hash_tfm = NULL;
->  	u8 *salt = NULL;
->  	int err;
->  
-> @@ -436,14 +433,14 @@ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
->  	}
->  
->  	/* Allocate hash algorithm */
-> -	hash_tfm = crypto_alloc_ahash(opts, 0, CRYPTO_ALG_ASYNC);
-> +	hash_tfm = crypto_alloc_shash(opts, 0, 0);
->  	if (IS_ERR(hash_tfm)) {
->  		ti->error = "Error initializing ESSIV hash";
->  		err = PTR_ERR(hash_tfm);
->  		goto bad;
->  	}
->  
-> -	salt = kzalloc(crypto_ahash_digestsize(hash_tfm), GFP_KERNEL);
-> +	salt = kzalloc(crypto_shash_digestsize(hash_tfm), GFP_KERNEL);
->  	if (!salt) {
->  		ti->error = "Error kmallocing salt storage in ESSIV";
->  		err = -ENOMEM;
-> @@ -454,7 +451,7 @@ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
->  	cc->iv_gen_private.essiv.hash_tfm = hash_tfm;
->  
->  	essiv_tfm = alloc_essiv_cipher(cc, ti, salt,
-> -				       crypto_ahash_digestsize(hash_tfm));
-> +				       crypto_shash_digestsize(hash_tfm));
->  	if (IS_ERR(essiv_tfm)) {
->  		crypt_iv_essiv_dtr(cc);
->  		return PTR_ERR(essiv_tfm);
-> @@ -465,7 +462,7 @@ static int crypt_iv_essiv_ctr(struct crypt_config *cc, struct dm_target *ti,
->  
->  bad:
->  	if (hash_tfm && !IS_ERR(hash_tfm))
-> -		crypto_free_ahash(hash_tfm);
-> +		crypto_free_shash(hash_tfm);
->  	kfree(salt);
->  	return err;
+>  	return ret;
 >  }
 > -- 
 > 2.17.1
