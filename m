@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1931AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51120ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13D32075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13D32075B
+	by mail.kernel.org (Postfix) with ESMTP id 1183020837
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1183020837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389379AbeGPIKg (ORCPT
+        id S2389392AbeGPIKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48218 "EHLO
+        Mon, 16 Jul 2018 04:10:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48226 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388522AbeGPIKf (ORCPT
+        with ESMTP id S2388522AbeGPIKi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:35 -0400
+        Mon, 16 Jul 2018 04:10:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14CAEC03;
-        Mon, 16 Jul 2018 07:44:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAEB2C03;
+        Mon, 16 Jul 2018 07:44:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Olli Salonen <olli.salonen@iki.fi>,
         Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 05/43] USB: serial: ch341: fix type promotion bug in ch341_control_in()
-Date:   Mon, 16 Jul 2018 09:36:10 +0200
-Message-Id: <20180716073512.359855760@linuxfoundation.org>
+Subject: [PATCH 4.4 06/43] USB: serial: cp210x: add another USB ID for Qivicon ZigBee stick
+Date:   Mon, 16 Jul 2018 09:36:11 +0200
+Message-Id: <20180716073512.473205847@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -50,35 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Olli Salonen <olli.salonen@iki.fi>
 
-commit e33eab9ded328ccc14308afa51b5be7cbe78d30b upstream.
+commit 367b160fe4717c14a2a978b6f9ffb75a7762d3ed upstream.
 
-The "r" variable is an int and "bufsize" is an unsigned int so the
-comparison is type promoted to unsigned.  If usb_control_msg() returns a
-negative that is treated as a high positive value and the error handling
-doesn't work.
+There are two versions of the Qivicon Zigbee stick in circulation. This
+adds the second USB ID to the cp210x driver.
 
-Fixes: 2d5a9c72d0c4 ("USB: serial: ch341: fix control-message error handling")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Olli Salonen <olli.salonen@iki.fi>
 Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/ch341.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/cp210x.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/usb/serial/ch341.c
-+++ b/drivers/usb/serial/ch341.c
-@@ -118,7 +118,7 @@ static int ch341_control_in(struct usb_d
- 	r = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), request,
- 			    USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
- 			    value, index, buf, bufsize, DEFAULT_TIMEOUT);
--	if (r < bufsize) {
-+	if (r < (int)bufsize) {
- 		if (r >= 0) {
- 			dev_err(&dev->dev,
- 				"short control message received (%d < %u)\n",
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -145,6 +145,7 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
+ 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
+ 	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
++	{ USB_DEVICE(0x10C4, 0x89FB) }, /* Qivicon ZigBee USB Radio Stick */
+ 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
+ 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
+ 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
 
 
