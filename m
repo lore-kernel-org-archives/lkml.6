@@ -2,92 +2,127 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F07ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B93FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D12232075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:13:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="JJTUF+Nn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12232075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id E50A12084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 14:15:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50A12084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbeGPOk4 (ORCPT
+        id S1727610AbeGPOmz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 10:40:56 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37043 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeGPOk4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 10:40:56 -0400
-Received: by mail-it0-f65.google.com with SMTP id p17-v6so21536730itc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 07:13:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ifd6FACa1oqyOiNPBHG0MWueg09zbV1i74QE3bbEbF4=;
-        b=JJTUF+Nn8szVP6a20e43btq3CIrU5YmmMxEYue3SqAEFL4tETXEw8PzRH+erJ4wuUr
-         EraYOKpxiVXg69qwTCc2EMkS/+fKHQAW4ZoBqaC4+rebkO1Q3uCGvXe7NwMpCLBZoHMJ
-         MHf9Zl5MLRpHoZXpGBfIQKcnwbSD/cLWO57opp1L+RK15pYdx1MJwXbgIHlxfkEaJDDI
-         HYAC0UFekUhX5YvabcOhnPc9k96TW7XtrT7U48slpnXbXb8bh2p8Q0FM6K5jj8+j66Th
-         et34si3tLM+mXhKESdFHWu0wrczvmJm0nBgn2py+OdaS0WFU8CWB7QGifG9Yy250OMu0
-         gsvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ifd6FACa1oqyOiNPBHG0MWueg09zbV1i74QE3bbEbF4=;
-        b=uETciGTbOSPaW3/YvkHccjLhZjvx2Xg1Qhel4uX6+1NNcoS/Lb6IfykdBsIn3xlsE9
-         TdKItqATCRnDVzwzdOFFu4bsM3ejIzAfKjH59jfCKeK871FkUHyWaS8sUNkeZOFrbcYt
-         Dj3b72LbqXkkJ1wWlUy3Z27Tx1JKFDehBkX1MNuX0UG7oB/Qrc9my+JkJoLY1A4zEVTQ
-         p6lrbQ6PNJMOrLLKz0/h9BKPBdnn27jK+nkVVU2TfhMyVqSA1LEE20/SOco2cXIdsCLI
-         mMKa3G463Do/Zj9jCCM1Yor7p0YskXu4d5c7yVVjH/eTZqNcA4g4yWl+txH3AnhxBvoZ
-         WhGg==
-X-Gm-Message-State: AOUpUlGn3tendVf0ossLBvnhFbWnBMsyHFrg5i3y2CwX077GsCgvvQGt
-        JJYqL83UsipzD3eYHS1Rww+WFZ9qUAYYNMbqNV4PVeJ/
-X-Google-Smtp-Source: AAOMgpezsLp+efC/CS4eHgHg26ASyIz9uRHTD9qlc2ro5v1Nzt8+EQQgCn9iZeIakO1aowODhyqfJdqS//4ebnbjebI=
-X-Received: by 2002:a24:d80a:: with SMTP id b10-v6mr12724880itg.141.1531750397970;
- Mon, 16 Jul 2018 07:13:17 -0700 (PDT)
+        Mon, 16 Jul 2018 10:42:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35633 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726571AbeGPOmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 10:42:55 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DB11D2073D; Mon, 16 Jul 2018 16:15:14 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 92AB1206ED;
+        Mon, 16 Jul 2018 16:15:04 +0200 (CEST)
+Date:   Mon, 16 Jul 2018 16:15:04 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        alsa-devel@alsa-project.org, nicolas.ferre@microchip.com,
+        boris.brezillon@bootlin.com, robh+dt@kernel.org,
+        broonie@kernel.org, sboyd@kernel.org,
+        Cristian.Birsan@microchip.com,
+        Cyrille Pitchen <cyrille.pitchen@atmel.com>
+Subject: Re: [PATCH v5 4/5] ARM: dts: at91: sama5d2: add nodes for I2S
+ controllers
+Message-ID: <20180716141504.GB3180@piout.net>
+References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+ <20180618141239.10892-5-codrin.ciubotariu@microchip.com>
+ <20180706193923.GC16084@piout.net>
+ <e056ed7d-521d-54ab-2e5d-0f5259a09ec6@microchip.com>
 MIME-Version: 1.0
-Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 07:13:17
- -0700 (PDT)
-In-Reply-To: <CACRpkdaWGwhJ1D683R+7TV0JsUg-pNYZ2xm_0+16O2NgnBo+4g@mail.gmail.com>
-References: <20180716083424.11157-1-brgl@bgdev.pl> <20180716083424.11157-2-brgl@bgdev.pl>
- <CACRpkdaWGwhJ1D683R+7TV0JsUg-pNYZ2xm_0+16O2NgnBo+4g@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 16 Jul 2018 16:13:17 +0200
-Message-ID: <CAMRc=MeZX0r1khVBY72_XgyUfW=GLFG-=hUuqZHWYgCRwFkUrQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpiolib: don't allow userspace to set values of input lines
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e056ed7d-521d-54ab-2e5d-0f5259a09ec6@microchip.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-16 15:40 GMT+02:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Mon, Jul 16, 2018 at 10:34 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
->> User space can currently both read and set values of input lines using
->> the character device. This was not allowed by the old sysfs interface
->> nor is it a correct behavior.
->>
->> Check the first descriptor in the set for the OUT flag when asked to
->> set values and return -EPERM if the line is input.
->>
->> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->
-> Patch applied! Thanks for fixing this.
->
+Hello,
 
-Thanks. Do you think we should Cc stable on that one?
+On 09/07/2018 16:29:43+0300, Codrin Ciubotariu wrote:
+> On 06.07.2018 22:39, Alexandre Belloni wrote:
+> > Hi Codrin,
+> > 
+> > On 18/06/2018 17:12:38+0300, Codrin Ciubotariu wrote:
+> > > From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> > > 
+> > > This patch adds DT nodes for I2S0 and I2S1. It also adds an alias for
+> > > each I2S node.
+> > > 
+> > > Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+> > > [codrin.ciubotariu@microchip.com: added phandle to new mux clock]
+> > > Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+> > > ---
+> > > 
+> > > The bindings for the I2S node are applied to broonie/sound.git .
+> > > 
+> > > Changes in v5:
+> > > 	- the previous name was:
+> > > 	  [PATCH v4 6/7] ARM: dts: at91: sama5d2: add nodes for I2S controllers
+> > > 
+> > >   arch/arm/boot/dts/sama5d2.dtsi | 34 ++++++++++++++++++++++++++++++++++
+> > >   1 file changed, 34 insertions(+)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+> > > index eeb6afa1cda7..eca73ce40bc5 100644
+> > > --- a/arch/arm/boot/dts/sama5d2.dtsi
+> > > +++ b/arch/arm/boot/dts/sama5d2.dtsi
+> > > @@ -58,6 +58,8 @@
+> > >   		serial1 = &uart3;
+> > >   		tcb0 = &tcb0;
+> > >   		tcb1 = &tcb1;
+> > > +		i2s0 = &i2s0;
+> > > +		i2s1 = &i2s1;
+> > >   	};
+> > >   	cpus {
+> > > @@ -1313,6 +1315,22 @@
+> > >   				clocks = <&clk32k>;
+> > >   			};
+> > > +			i2s0: i2s@f8050000 {
+> > > +				compatible = "atmel,sama5d2-i2s";
+> > > +				reg = <0xf8050000 0x100>;
+> > > +				interrupts = <54 IRQ_TYPE_LEVEL_HIGH 7>;
+> > > +				dmas = <&dma0
+> > > +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+> > > +					 AT91_XDMAC_DT_PERID(31))>,
+> > > +				       <&dma0
+> > > +					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+> > > +					 AT91_XDMAC_DT_PERID(32))>;
+> > > +				dma-names = "tx", "rx";
+> > > +				clocks = <&i2s0_clk>, <&i2s0_gclk>, <&audio_pll_pmc>, <&i2s0muxck>;
+> > > +				clock-names = "pclk", "gclk", "aclk", "muxclk";
+> > > +				status = "disabled";
+> > > +			};
+> > > +
+> > 
+> > Can you resend the DTS patches after removing the unnecessary clocks?
+> 
+> I will. Should I also make the "muxclk" clock an assigned clock to assign
+> its parent ?
+> 
 
-Bart
+It would be better if that allows to remove the corresponding code in
+the driver.
+
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
