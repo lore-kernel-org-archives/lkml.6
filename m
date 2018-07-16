@@ -2,78 +2,278 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0D2ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866F1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 407F7208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:52:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 407F7208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2536B208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:54:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="wc0/6NZb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2536B208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728524AbeGPLTH (ORCPT
+        id S1728833AbeGPLVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 07:19:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:56800 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727953AbeGPLTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 07:19:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D11418A;
-        Mon, 16 Jul 2018 03:52:16 -0700 (PDT)
-Received: from [10.1.210.39] (ostrya.cambridge.arm.com [10.1.210.39])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 98BCF3F589;
-        Mon, 16 Jul 2018 03:52:14 -0700 (PDT)
-Subject: Re: [PATCH 00/10] iommu/vt-d: Add scalable mode support
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        yi.y.sun@intel.com, jacob.jun.pan@intel.com
-References: <1531723793-14607-1-git-send-email-baolu.lu@linux.intel.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <07fe2e3f-4f4a-58db-ee2a-2620183d93b2@arm.com>
-Date:   Mon, 16 Jul 2018 11:51:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 16 Jul 2018 07:21:48 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57102 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728324AbeGPLVs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 07:21:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Pyq2XKMW6P+L5i7VDpSqcdi8VV2sSqTLaMAOZVKYZ+s=; b=wc0/6NZbkZ2t+nuYGIcmGZUn+
+        V2GNaCxqoEnFqq0yw7QYE+T2bUjly71zdcwohv7/838gg27Cs0qXm9w9O5UYiD6e9lKHsJ6zjDp8T
+        uQtGlVBIDLRZ1vwHsVrEdqZnfyfeFg/FYlNn+3sarSh6YYuCYZYi8Zd0AYY2sbOwUuLWk=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ff19Y-0000If-Pg; Mon, 16 Jul 2018 10:54:52 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ff19X-0007b0-VG; Mon, 16 Jul 2018 11:54:51 +0100
+Date:   Mon, 16 Jul 2018 11:54:51 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>
+Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        kernel@collabora.com, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, kernel-build-reports@lists.linaro.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: mainline/master boot: 177 boots: 2 failed, 174 passed with 1
+ conflict (v4.18-rc4-160-gf353078f028f)
+Message-ID: <20180716105451.GA20734@sirena.org.uk>
+References: <5b4a9633.1c69fb81.17984.f7b3@mx.google.com>
+ <0ab16066-5498-374b-5391-3dd7979044aa@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <1531723793-14607-1-git-send-email-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Disposition: inline
+In-Reply-To: <0ab16066-5498-374b-5391-3dd7979044aa@collabora.com>
+X-Cookie: /* Halley */
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 16/07/18 07:49, Lu Baolu wrote:
-> Intel vt-d rev3.0 [1] introduces a new translation mode called
-> 'scalable mode', which enables PASID-granular translations for
-> first level, second level, nested and pass-through modes. The
-> vt-d scalable mode is the key ingredient to enable Scalable I/O
-> Virtualization (Scalable IOV) [2] [3], which allows sharing a
-> device in minimal possible granularity (ADI - Assignable Device
-> Interface). It also includes all the capabilities required to
-> enable Shared Virtual Addressing (SVA). As a result, previous
-> Extended Context (ECS) mode is deprecated (no production ever
-> implements ECS).
-> 
-> Each scalable mode pasid table entry is 64 bytes in length, with
-> fields point to the first level page table and the second level
-> page table. The PGTT (Pasid Granular Translation Type) field is
-> used by hardware to determine the translation type.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks promising! Since the 2nd level page tables are in the PASID entry,
-the hypervisor traps guest accesses to the PASID tables instead of
-passing through the whole PASID directory? Are you still planning to use
-the VFIO BIND_PASID_TABLE interface in this mode, or a slightly
-different one for individual PASIDs?
+On Mon, Jul 16, 2018 at 11:40:06AM +0100, Guillaume Tucker wrote:
+> On 15/07/18 01:32, kernelci.org bot wrote:
+> > mainline/master boot: 177 boots: 2 failed, 174 passed with 1 conflict (=
+v4.18-rc4-160-gf353078f028f)
+> >=20
+> > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/branch/ma=
+ster/kernel/v4.18-rc4-160-gf353078f028f/
+> > Full Build Summary: https://kernelci.org/build/mainline/branch/master/k=
+ernel/v4.18-rc4-160-gf353078f028f/
+> >=20
+> > Tree: mainline
+> > Branch: master
+> > Git Describe: v4.18-rc4-160-gf353078f028f
+> > Git Commit: f353078f028fbfe9acd4b747b4a19c69ef6846cd
+> > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
+git
+> > Tested: 67 unique boards, 25 SoC families, 21 builds out of 199
+> >=20
+> > Boot Regressions Detected:
+> [...]
+> > x86:
+> >=20
+> >      i386_defconfig:
+> >          x86-celeron:
+> >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f=
+491a)
+> >          x86-pentium4:
+> >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f=
+491a)
+>=20
+> Please see below an automated bisection report for this
+> regression.  Several bisections were run on other x86 platforms
+> with i386_defconfig on a few revisions up to v4.18-rc5, they all
+> reached the same "bad" commit.
+>=20
+>=20
+> Unfortunately there isn't much to learn from the kernelci.org
+> boot logs as the kernel seems to crash very early on:
+>=20
+>     https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18=
+-rc5/
+>     https://storage.kernelci.org/mainline/master/v4.18-rc4-160-gf353078f0=
+28f/x86/i386_defconfig/lab-mhart/lava-x86-celeron.html
+>=20
+>=20
+> It looks like stable-rc/linux-4.17.y is also broken with
+> i386_defconfig, which tends to confirm the "bad" commit found by
+> the automated bisection which was applied there as well:
+>=20
+>     https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.17.y/kerne=
+l/v4.17.6-68-gbc0bd9e05fa1/
 
-Thanks,
-Jean
+Adding Greg directly to the CCs due to the stable impact, not deleting
+context for his benefit.
+
+> The automated bisection on kernelci.org is still quite new, so
+> please take the results with a pinch of salt as the "bad" commit
+> found may not be the actual root cause of the boot failure.
+>=20
+> Hope this helps!
+>=20
+> Best wishes,
+> Guillaume
+>=20
+>=20
+> --------------------------------------8<---------------------------------=
+-----
+>=20
+>=20
+>=20
+> Bisection result for mainline/master (v4.18-rc4-160-gf353078f028f) on x86=
+-celeron
+>=20
+>   Good:       2db39a2f491a Merge branch 'i2c/for-current' of git://git.ke=
+rnel.org/pub/scm/linux/kernel/git/wsa/linux
+>   Bad:        f353078f028f Merge branch 'akpm' (patches from Andrew)
+>   Found:      e181ae0c5db9 mm: zero unavailable pages before memmap init
+>=20
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+>=20
+> Parameters:
+>   Tree:       mainline
+>   URL:        http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/lin=
+ux.git
+>   Branch:     master
+>   Target:     x86-celeron
+>   Lab:        lab-mhart
+>   Config:     i386_defconfig
+>   Plan:       boot
+>=20
+> Breaking commit found:
+>=20
+> -------------------------------------------------------------------------=
+------
+> commit e181ae0c5db9544de9c53239eb22bc012ce75033
+> Author: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Date:   Sat Jul 14 09:15:07 2018 -0400
+>=20
+>     mm: zero unavailable pages before memmap init
+>     We must zero struct pages for memory that is not backed by physical
+>     memory, or kernel does not have access to.
+>     Recently, there was a change which zeroed all memmap for all holes in
+>     e820.  Unfortunately, it introduced a bug that is discussed here:
+>       https://www.spinics.net/lists/linux-mm/msg156764.html
+>     Linus, also saw this bug on his machine, and confirmed that reverting
+>     commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
+>     memblock.reserved") fixes the issue.
+>     The problem is that we incorrectly zero some struct pages after they
+>     were setup.
+>     The fix is to zero unavailable struct pages prior to initializing of
+>     struct pages.
+>     A more detailed fix should come later that would avoid double zeroing
+>     cases: one in __init_single_page(), the other one in
+>     zero_resv_unavail().
+>     Fixes: 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into membl=
+ock.reserved")
+>     Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+>     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+>=20
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 1521100f1e63..5d800d61ddb7 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -6847,6 +6847,7 @@ void __init free_area_init_nodes(unsigned long *max=
+_zone_pfn)
+>  	/* Initialise every node */
+>  	mminit_verify_pageflags_layout();
+>  	setup_nr_node_ids();
+> +	zero_resv_unavail();
+>  	for_each_online_node(nid) {
+>  		pg_data_t *pgdat =3D NODE_DATA(nid);
+>  		free_area_init_node(nid, NULL,
+> @@ -6857,7 +6858,6 @@ void __init free_area_init_nodes(unsigned long *max=
+_zone_pfn)
+>  			node_set_state(nid, N_MEMORY);
+>  		check_for_memory(pgdat, nid);
+>  	}
+> -	zero_resv_unavail();
+>  }
+>  static int __init cmdline_parse_core(char *p, unsigned long *core,
+> @@ -7033,9 +7033,9 @@ void __init set_dma_reserve(unsigned long new_dma_r=
+eserve)
+>  void __init free_area_init(unsigned long *zones_size)
+>  {
+> +	zero_resv_unavail();
+>  	free_area_init_node(0, zones_size,
+>  			__pa(PAGE_OFFSET) >> PAGE_SHIFT, NULL);
+> -	zero_resv_unavail();
+>  }
+>  static int page_alloc_cpu_dead(unsigned int cpu)
+> -------------------------------------------------------------------------=
+------
+>=20
+>=20
+> Git bisection log:
+>=20
+> -------------------------------------------------------------------------=
+------
+> git bisect start
+> # good: [2db39a2f491a48ec740e0214a7dd584eefc2137d] Merge branch 'i2c/for-=
+current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
+> git bisect good 2db39a2f491a48ec740e0214a7dd584eefc2137d
+> # bad: [f353078f028fbfe9acd4b747b4a19c69ef6846cd] Merge branch 'akpm' (pa=
+tches from Andrew)
+> git bisect bad f353078f028fbfe9acd4b747b4a19c69ef6846cd
+> # good: [fa8cbda88db12e632a8987c94b66f5caf25bcec4] x86/purgatory: add mis=
+sing FORCE to Makefile target
+> git bisect good fa8cbda88db12e632a8987c94b66f5caf25bcec4
+> # good: [bb177a732c4369bb58a1fe1df8f552b6f0f7db5f] mm: do not bug_on on i=
+ncorrect length in __mm_populate()
+> git bisect good bb177a732c4369bb58a1fe1df8f552b6f0f7db5f
+> # good: [fe10e398e860955bac4d28ec031b701d358465e4] reiserfs: fix buffer o=
+verflow with long warning messages
+> git bisect good fe10e398e860955bac4d28ec031b701d358465e4
+> # bad: [e181ae0c5db9544de9c53239eb22bc012ce75033] mm: zero unavailable pa=
+ges before memmap init
+> git bisect bad e181ae0c5db9544de9c53239eb22bc012ce75033
+> # first bad commit: [e181ae0c5db9544de9c53239eb22bc012ce75033] mm: zero u=
+navailable pages before memmap init
+> -------------------------------------------------------------------------=
+------
+>=20
+> _______________________________________________
+> Kernel-build-reports mailing list
+> Kernel-build-reports@lists.linaro.org
+> https://lists.linaro.org/mailman/listinfo/kernel-build-reports
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltMeXkACgkQJNaLcl1U
+h9DNxgf/Xd/RQ1IcVZjmvJ1HklDHSUjCKbUIJuuYrCNoScafKUa8gfpF3XRcfWKC
+jakCBHyqRRdMBUo+gsxZixsp4Z5B0fxAtGQ9yP1EScJx5/FYpq9m+IpKccrwds9o
+eGhY3HmbOEAqlkiJUosFkRav20sdbdBAHEXOWTb4sRsk0eCv6nWc7r7nBtmmzeEg
+sKYWXDpb9Iah8jbsexORhyED1dYMewMJMgc64My961+lV7BQhuedMDXwwJhu/P7e
+UKkxuK3KA7sozqv2bemOxnFMShAZ0QRlavx8XD9JKOJcts/EfOZjRjcX+6vTfYPl
+vXWbEIkLAAjwEvPl34c3pGI1LAYunQ==
+=ljUU
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
