@@ -2,126 +2,109 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F5AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C51ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F41FF208FA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:58:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uYEUSNMD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F41FF208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76CBE208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:59:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76CBE208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbeGPQ03 (ORCPT
+        id S1729591AbeGPQ1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 12:26:29 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37903 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbeGPQ03 (ORCPT
+        Mon, 16 Jul 2018 12:27:44 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35976 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbeGPQ1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 12:26:29 -0400
-Received: by mail-pf0-f194.google.com with SMTP id v15-v6so6489335pff.5;
-        Mon, 16 Jul 2018 08:58:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=09zSuwGrVUb+Tv8WWFSr49gOMfXtRZgCQmlurziTdKo=;
-        b=uYEUSNMDTMV1WW10o7EEc+KvvAoUFvEIH3nu8cGDA/JqswNXaNIH9gIZL3OeMP57ax
-         akPMbVcsFvtsj4HSu3IUAppFw8VzkH28cUKceT6nLZJxNbQS8zRM8FgT/VYIN7QQjx+2
-         10lx5FDR8v4dzKIfJlROrFKmqXPjpMXckzJoOO2vOhlxVtTGyOgMfEjwKTJ6pP2J+t4R
-         1jLOb2m+edj5swt590V3BxmixxHujgIYCZtdzdEVA+aRCwOREvjRt35rYyO3ecBMVQLg
-         m5Glrelr1GgLbnl1mpkzoXKWd2HztzUeiDwUJrJDa7KzdRyYoPXhWrnb3D5TYXP8US4F
-         QuZQ==
+        Mon, 16 Jul 2018 12:27:44 -0400
+Received: by mail-oi0-f68.google.com with SMTP id r16-v6so75775918oie.3;
+        Mon, 16 Jul 2018 08:59:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=09zSuwGrVUb+Tv8WWFSr49gOMfXtRZgCQmlurziTdKo=;
-        b=YqD72RpxX4fg0UP4B7/f0E74/ssfLTuUuEmKBrAj6d9qN+pGgaGXFybp0IR7E7GJH1
-         xMp0yEPIkJcf9ii9jw/PaSN52R4x8mZUMn0eq01yC7aix3JIY+vxlEzbC1J0Ch+0CkH5
-         aDzZFISJLdBqEHLKn3mcSUbLXrAN2QaJglFlswi0WqDxvUIfsCd6MFmW7gEhsYfpZb9M
-         LJ/why+sVH4B8/vJKLJvwYJhvIWPSWwOFAaNPcCxZieDycRafGe6fQymTDKMb/MSLMbG
-         CZtPhaw1YBzSel90lifgxRrMq44CGAH7V73Bc7Siys+xtSZrf3dU4w27hLs2sdjfJh4v
-         2VkA==
-X-Gm-Message-State: AOUpUlF+oQBuRP4yXAE7rw8L186ARf1zSMZAgUma4UDYLeYVLIHuntga
-        k6WUZyc+tuSY2ezQZx/Mtp4=
-X-Google-Smtp-Source: AAOMgpewk0JU8P70cwpC3BhMyLpkDiCdnrQlCZ4idW5gcE6eMjvsakJjMewdP6tZuIzFEL2GVraSSQ==
-X-Received: by 2002:a63:a44a:: with SMTP id c10-v6mr15869675pgp.198.1531756706316;
-        Mon, 16 Jul 2018 08:58:26 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id q28-v6sm69936391pfg.144.2018.07.16.08.58.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 08:58:25 -0700 (PDT)
-Subject: Re: [net-next, 2/3] tcp: convert icsk_user_timeout from jiffies to
- msecs
-To:     Jon Maxwell <jmaxwell37@gmail.com>, davem@davemloft.net
-Cc:     edumazet@google.com, ncardwell@google.com, David.Laight@aculab.com,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmaxwell@redhat.com
-References: <20180713000241.17608-1-jmaxwell37@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <1f74d1b6-d404-dd18-5d8b-a08529599126@gmail.com>
-Date:   Mon, 16 Jul 2018 08:58:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/jBz9YIhaw41xr3ayLJOkvYzwFQGIs59UD3dZsB5x2c=;
+        b=JeHm84gixKbLPvbjzwugQTyAY/Qa9jocZUSZqO5Tbugg9IfyQOZvoXrb60wjGo9VOj
+         8c1axmBxGmuafLeaAppkvfZKORH6YST7vcaJNeeRt5PVwcb1RpiAHzcs/YFccMFK/9Tb
+         S8Z7jR37FaU56+BU6oM40pXFl8H9mAre6W8GnndHJWpGM/Km/lA+CHAbg26XRSMuTADv
+         j3wKytyYE4E8a+eIxuLZTEUuZvFwBeGFac/SAHD2Wr5LVVyIrgp2AJqdVhEaXFEBfVXH
+         QicXzfIGD11igsDa5kXIKqBvG2JQEKD1UdXlzs2UFgrsHp7OGnK4Emfcou2Um2lcea7l
+         X9gw==
+X-Gm-Message-State: AOUpUlFU44XEju4muw5FWNth4zNa3ZJjhYzJIuvIjrjVRhmkYvifGxQH
+        s/UME9Ma45qQ6ZcNk8hBwg==
+X-Google-Smtp-Source: AAOMgpeL9968Co1H3kiiKQsUrkjCumrVfD/USgqMT4e0pfksLPHCFmXW4W+kiTykGWkVOiUWO8p77w==
+X-Received: by 2002:aca:3045:: with SMTP id w66-v6mr19607826oiw.61.1531756780985;
+        Mon, 16 Jul 2018 08:59:40 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id n6-v6sm24202717oib.27.2018.07.16.08.59.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 08:59:40 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 09:59:38 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     hdegoede@redhat.com, linux@armlinux.org.uk, mark.rutland@arm.com,
+        maxime.ripard@free-electrons.com, tj@kernel.org, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, thierry.reding@gmail.com,
+        icenowy@aosc.io
+Subject: Re: [PATCH v3 7/9] dt-bindings: ata: ahci-platform: document
+ port-supply
+Message-ID: <20180716155938.GA6947@rob-hp-laptop>
+References: <1531479786-4911-1-git-send-email-clabbe@baylibre.com>
+ <1531479786-4911-8-git-send-email-clabbe@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20180713000241.17608-1-jmaxwell37@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531479786-4911-8-git-send-email-clabbe@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/12/2018 05:02 PM, Jon Maxwell wrote:
-> Create a seperate helper routine called tcp_retransmit_stamp() as per Neal 
-> Cardwells suggestion. To be used by the final commit in this series and 
-> retransmits_timed_out().
+On Fri, Jul 13, 2018 at 11:03:04AM +0000, Corentin Labbe wrote:
+> This patch document the new optional port-supply
 > 
-> Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 > ---
->  net/ipv4/tcp_timer.c | 25 +++++++++++++++++--------
->  1 file changed, 17 insertions(+), 8 deletions(-)
+>  Documentation/devicetree/bindings/ata/ahci-platform.txt | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-> index fa34984d0b12..8ab8c9645294 100644
-> --- a/net/ipv4/tcp_timer.c
-> +++ b/net/ipv4/tcp_timer.c
-> @@ -22,6 +22,20 @@
->  #include <linux/gfp.h>
->  #include <net/tcp.h>
+> diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> index 47652521a6ed..40a636b9851e 100644
+> --- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> +++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> @@ -31,6 +31,7 @@ Optional properties:
+>  - dma-coherent      : Present if dma operations are coherent
+>  - clocks            : a list of phandle + clock specifier pairs
+>  - target-supply     : regulator for SATA target power
+> +- port-supply       : regulator for SATA port
+
+Humm, I'm pretty sure that's what target-supply was supposed to be. If 
+anything, need to clearly define what is what.
+
+How does this work with multiple ports?
+
+>  - phys              : reference to the SATA PHY node
+>  - phy-names         : must be "sata-phy"
+>  - ahci-supply       : regulator for AHCI controller
+
+Also, please group all the supplies together.
+
+> @@ -51,6 +52,7 @@ Sub-nodes required properties:
+>  And at least one of the following properties:
+>  - phys		    : reference to the SATA PHY node
+>  - target-supply     : regulator for SATA target power
+> +- port-supply       : regulator for SATA port
 >  
-> +u32 tcp_retransmit_stamp(const struct sock *sk)
-> +{
-> +	u32 start_ts = tcp_sk(sk)->retrans_stamp;
-> +
-> +	if (unlikely(!start_ts)) {
-> +		struct sk_buff *head = tcp_rtx_queue_head(sk);
-> +
-> +	if (!head)
-> +		return 0;
-> +	start_ts = tcp_skb_timestamp(head);
-> +	}?
-
-
-Indentation is fuzzy.
-
-Can you send a new version, with a cover letter ?
-
-git format-patch -o ../output --cover-letter --subject-prefix "PATCH net-next" origin
-
-...
-
-Thanks !
+>  Examples:
+>          sata@ffe08000 {
+> -- 
+> 2.16.4
+> 
