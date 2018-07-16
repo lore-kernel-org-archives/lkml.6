@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77EEECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAC9ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974A1206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974A1206B7
+	by mail.kernel.org (Postfix) with ESMTP id 20F22206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F22206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389036AbeGPIJ2 (ORCPT
+        id S2389058AbeGPIJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48002 "EHLO
+        Mon, 16 Jul 2018 04:09:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48006 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIJ2 (ORCPT
+        with ESMTP id S2388675AbeGPIJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:28 -0400
+        Mon, 16 Jul 2018 04:09:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1D80AC03;
-        Mon, 16 Jul 2018 07:43:24 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ED252C03;
+        Mon, 16 Jul 2018 07:43:27 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 13/32] USB: serial: keyspan_pda: fix modem-status error handling
-Date:   Mon, 16 Jul 2018 09:36:21 +0200
-Message-Id: <20180716073505.993553231@linuxfoundation.org>
+        stable@vger.kernel.org, Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 31/32] RDMA/ucm: Mark UCM interface as BROKEN
+Date:   Mon, 16 Jul 2018 09:36:39 +0200
+Message-Id: <20180716073508.329161069@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -49,35 +50,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 01b3cdfca263a17554f7b249d20a247b2a751521 upstream.
+commit 7a8690ed6f5346f6738971892205e91d39b6b901 upstream.
 
-Fix broken modem-status error handling which could lead to bits of slab
-data leaking to user space.
+In commit 357d23c811a7 ("Remove the obsolete libibcm library")
+in rdma-core [1], we removed obsolete library which used the
+/dev/infiniband/ucmX interface.
 
-Fixes: 3b36a8fd6777 ("usb: fix uninitialized variable warning in keyspan_pda")
-Cc: stable <stable@vger.kernel.org>     # 2.6.27
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Following multiple syzkaller reports about non-sanitized
+user input in the UCMA module, the short audit reveals the same
+issues in UCM module too.
+
+It is better to disable this interface in the kernel,
+before syzkaller team invests time and energy to harden
+this unused interface.
+
+[1] https://github.com/linux-rdma/rdma-core/pull/279
+
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/keyspan_pda.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/infiniband/Kconfig       |   12 ++++++++++++
+ drivers/infiniband/core/Makefile |    4 ++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/keyspan_pda.c
-+++ b/drivers/usb/serial/keyspan_pda.c
-@@ -373,8 +373,10 @@ static int keyspan_pda_get_modem_info(st
- 			     3, /* get pins */
- 			     USB_TYPE_VENDOR|USB_RECIP_INTERFACE|USB_DIR_IN,
- 			     0, 0, data, 1, 2000);
--	if (rc >= 0)
-+	if (rc == 1)
- 		*value = *data;
-+	else if (rc >= 0)
-+		rc = -EIO;
+--- a/drivers/infiniband/Kconfig
++++ b/drivers/infiniband/Kconfig
+@@ -34,6 +34,18 @@ config INFINIBAND_USER_ACCESS
+ 	  libibverbs, libibcm and a hardware driver library from
+ 	  <http://www.openfabrics.org/git/>.
  
- 	kfree(data);
- 	return rc;
++config INFINIBAND_USER_ACCESS_UCM
++	bool "Userspace CM (UCM, DEPRECATED)"
++	depends on BROKEN
++	depends on INFINIBAND_USER_ACCESS
++	help
++	  The UCM module has known security flaws, which no one is
++	  interested to fix. The user-space part of this code was
++	  dropped from the upstream a long time ago.
++
++	  This option is DEPRECATED and planned to be removed.
++
++
+ config INFINIBAND_USER_MEM
+ 	bool
+ 	depends on INFINIBAND_USER_ACCESS != n
+--- a/drivers/infiniband/core/Makefile
++++ b/drivers/infiniband/core/Makefile
+@@ -4,8 +4,8 @@ user_access-$(CONFIG_INFINIBAND_ADDR_TRA
+ obj-$(CONFIG_INFINIBAND) +=		ib_core.o ib_cm.o iw_cm.o \
+ 					$(infiniband-y)
+ obj-$(CONFIG_INFINIBAND_USER_MAD) +=	ib_umad.o
+-obj-$(CONFIG_INFINIBAND_USER_ACCESS) +=	ib_uverbs.o ib_ucm.o \
+-					$(user_access-y)
++obj-$(CONFIG_INFINIBAND_USER_ACCESS) += ib_uverbs.o $(user_access-y)
++obj-$(CONFIG_INFINIBAND_USER_ACCESS_UCM) += ib_ucm.o $(user_access-y)
+ 
+ ib_core-y :=			packer.o ud_header.o verbs.o cq.o rw.o sysfs.o \
+ 				device.o fmr_pool.o cache.o netlink.o \
 
 
