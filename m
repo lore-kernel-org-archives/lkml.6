@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7983AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6BCECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36040208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:19:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36040208B2
+	by mail.kernel.org (Postfix) with ESMTP id 6B4EE208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:19:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4EE208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeGPAns (ORCPT
+        id S1727214AbeGPAns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 15 Jul 2018 20:43:48 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:48820 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727120AbeGPAns (ORCPT
+Received: from mail-it0-f70.google.com ([209.85.214.70]:36743 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbeGPAns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 15 Jul 2018 20:43:48 -0400
-Received: by mail-io0-f198.google.com with SMTP id t11-v6so33230636iog.15
+Received: by mail-it0-f70.google.com with SMTP id m185-v6so2873856itm.1
         for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 17:19:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ErpqBG56rCLnCXAVWUOx90RPLE8UgWWPG8WdlyKLWR0=;
-        b=d/CALJSuF/xnoCI8I4LQNVfBPsE2C4sEytue7s3VCeN268M+qNHFwh3tQOv9KuRYKH
-         VGmMHCIgfgesh/nByP25VPapkdPKYdd0aipQsZn57+E/17zyhaZX2XLrLiYiTjaU1cIF
-         L7VVJjVdpQqlAh+Yj8CGh9KWsY03jWqAe1nC7IVkFwla0ZB33lJJSAMf5SjspJW70qZ9
-         n1Zu7XzmsIvG+WOHqMWRi6FJ0YZCdkJD4rBXJBERIr2Hn0F/O+QbWA501SbgbzV5Xo0n
-         ZUNJye4HEarAp4tjvnT0f6THcPa4IHb5M54IjRPrVoqECswxMquwbOgjIvB+VbCZgz89
-         WO+g==
-X-Gm-Message-State: AOUpUlH3dMK2mLBox4MfUSOhcCCjA6sV+gwPJJHPgzFYxOxwZ68AMmjk
-        rhEyN4WfowIcETtfl+7v0r3wYYnE+DpA0wrGlpPf7i/Y+hRg
-X-Google-Smtp-Source: AAOMgpcjoLRVID3aqrdH8RGcMilON08oIdEg48zTOBXKBHPCMqIs8jxu+Oz56D/lfHC4a2DhTD/eqImppyulwC1sbSuOfBfZYNLq
+        bh=w+XHBFHBdbA07oO7oX5xM00bQGFkQ1uD7XXQr5QHoLU=;
+        b=RzgWTTuSPjh0QGlcE8LwF2398tYp64ejCgDnPypnhFA8MWefUUVFe4pC1Iim2WLkX+
+         ryAppM83YOQPczHS/s5VjE1NFXvwhT6T6w+2CP+wLR4XMme5Hgs+weuTOkSViMwah44K
+         GCaaKTbM2jfp24kvWbW2ck98QP/HY0Hi8AREcNsaaO/VM7u1QvhCknEo/rOgOhnM1Qdg
+         Wc0Dav14g2c2/JU2Gsyn+8P74x9Qedn3nChcAU++uNDslBMiIoE4BcVL5sopIz5qiJR0
+         cdaYRPbFcy8cgOueZCbSFdNqd0ANRCArCkaOq3MwhGEcD1QVCixYEa7jJNVnwgf3pImK
+         G1dQ==
+X-Gm-Message-State: AOUpUlH/C9TKfS23Ajtzw+A6Cs75yLzXDIEk2H7HLqNFIh/oCM+4YMDf
+        VWw3TckhTH0ST3eJiRlJTPE8BiQneh3gvSa2dfIvM9PYSpzD
+X-Google-Smtp-Source: AAOMgpe7jfgXh4Ei2uonUf3VRxuk4t7A2T0tu++zmXyw5YT/1ecgj2KmlYwBNMQjd0Jn8JSiSaZTcGaSjt4/uSiNBgjblRDkITY0
 MIME-Version: 1.0
-X-Received: by 2002:a24:45db:: with SMTP id c88-v6mr6013496itd.41.1531700343410;
+X-Received: by 2002:a24:5a14:: with SMTP id v20-v6mr6017825ita.41.1531700343252;
  Sun, 15 Jul 2018 17:19:03 -0700 (PDT)
 Date:   Sun, 15 Jul 2018 17:19:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000df12a6057112c6de@google.com>
-Subject: WARNING in __snd_rawmidi_transmit_ack
-From:   syzbot <syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com>
-To:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        perex@perex.cz, syzkaller-bugs@googlegroups.com, tiwai@suse.com,
-        viro@zeniv.linux.org.uk
+Message-ID: <000000000000dcb1a1057112c66a@google.com>
+Subject: kernel BUG at fs/userfaultfd.c:LINE! (2)
+From:   syzbot <syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,75 +61,79 @@ syzbot found the following crash on:
 
 HEAD commit:    37b5dca2898d Merge tag 'rtc-4.18-2' of git://git.kernel.or..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12204d62400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12aaf3b2400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
-dashboard link: https://syzkaller.appspot.com/bug?extid=52f83f0ea8df16932f7f
+dashboard link: https://syzkaller.appspot.com/bug?extid=121be635a7a35ddb7dcb
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=148ea9a4400000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11176d62400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1362b368400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+52f83f0ea8df16932f7f@syzkaller.appspotmail.com
+Reported-by: syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com
 
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
 random: sshd: uninitialized urandom read (32 bytes read)
-random: cc1: uninitialized urandom read (8 bytes read)
-IPVS: ftp: loaded support on port[0] = 21
-WARNING: CPU: 0 PID: 4608 at sound/core/rawmidi.c:1163  
-__snd_rawmidi_transmit_ack+0x263/0x2f0 sound/core/rawmidi.c:1163
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 0 PID: 4608 Comm: syz-executor0 Not tainted 4.18.0-rc4+ #51
+------------[ cut here ]------------
+kernel BUG at fs/userfaultfd.c:883!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 0 PID: 4708 Comm: syz-executor086 Not tainted 4.18.0-rc4+ #148
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+RIP: 0010:userfaultfd_release+0x5fb/0x770 fs/userfaultfd.c:882
+Code: 00 31 c0 48 8b 4d d0 65 48 33 0c 25 28 00 00 00 0f 85 a1 00 00 00 48  
+8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 be a0 ff <0f> 0b 4c 89 f7  
+e8 0b 9e de ff e9 11 fc ff ff 4c 89 e7 e8 5e 9d de
+RSP: 0018:ffff8801d8407a80 EFLAGS: 00010293
+RAX: ffff8801d8742080 RBX: dffffc0000000000 RCX: ffffffff81db4a59
+RDX: 0000000000000000 RSI: ffffffff81db4ccb RDI: 0000000000000000
+RBP: ffff8801d8407bd0 R08: ffff8801d8742080 R09: 0000000000000000
+R10: ffff8801d87428b8 R11: 16fb0df9f74494d6 R12: ffff8801d89a3b58
+R13: 0000000000000000 R14: ffff8801d89a3a50 R15: 0000000000000000
+FS:  0000000000ed6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f45c6b81e78 CR3: 00000001acb61000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:__snd_rawmidi_transmit_ack+0x263/0x2f0 sound/core/rawmidi.c:1163
-Code: ba 01 00 00 00 be 03 00 00 00 e8 88 4a 83 fb e8 43 fe a2 fb 89 d8 48  
-83 c4 18 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 2d fe a2 fb <0f> 0b e9 72 fe  
-ff ff e8 e1 dc e0 fb e9 1b ff ff ff bb ea ff ff ff
-RSP: 0018:ffff8801abb8f720 EFLAGS: 00010093
-RAX: ffff8801d8b500c0 RBX: 0000000000000002 RCX: ffffffff85d90b82
-RDX: 0000000000000000 RSI: ffffffff85d90d13 RDI: 0000000000000006
-RBP: ffff8801abb8f760 R08: ffff8801d8b500c0 R09: ffffed003b128cb4
-R10: ffffed003b128cb4 R11: ffff8801d89465a3 R12: ffff8801cd646240
-R13: 0000000000000802 R14: 0000000000000002 R15: ffff8801ab48e5c0
-  snd_virmidi_output_trigger+0x3ae/0x6b0 sound/core/seq/seq_virmidi.c:194
-  snd_rawmidi_output_trigger sound/core/rawmidi.c:150 [inline]
-  snd_rawmidi_kernel_write1+0x519/0x700 sound/core/rawmidi.c:1288
-  snd_rawmidi_write+0x2ea/0xde0 sound/core/rawmidi.c:1338
-  __vfs_write+0x117/0x9f0 fs/read_write.c:485
-  vfs_write+0x1f8/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __ia32_sys_write+0x71/0xb0 fs/read_write.c:607
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f5fcb9
-Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
-5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000f7f190ac EFLAGS: 00000282 ORIG_RAX: 0000000000000004
-RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 00000000200000c0
-RDX: 000000000000ff4c RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  __fput+0x355/0x8b0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x405471
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 54 17 00 00 c3 48  
+83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007ffcad3db600 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000405471
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+R10: 00007ffcad3db610 R11: 0000000000000293 R12: 00000000006dbc3c
+R13: 00000000006dbda0 R14: 0000000000000008 R15: 0000000000000001
+Modules linked in:
 Dumping ftrace buffer:
     (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+---[ end trace 638e68cedadb8eda ]---
+RIP: 0010:userfaultfd_release+0x5fb/0x770 fs/userfaultfd.c:882
+Code: 00 31 c0 48 8b 4d d0 65 48 33 0c 25 28 00 00 00 0f 85 a1 00 00 00 48  
+8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 be a0 ff <0f> 0b 4c 89 f7  
+e8 0b 9e de ff e9 11 fc ff ff 4c 89 e7 e8 5e 9d de
+RSP: 0018:ffff8801d8407a80 EFLAGS: 00010293
+RAX: ffff8801d8742080 RBX: dffffc0000000000 RCX: ffffffff81db4a59
+RDX: 0000000000000000 RSI: ffffffff81db4ccb RDI: 0000000000000000
+RBP: ffff8801d8407bd0 R08: ffff8801d8742080 R09: 0000000000000000
+R10: ffff8801d87428b8 R11: 16fb0df9f74494d6 R12: ffff8801d89a3b58
+R13: 0000000000000000 R14: ffff8801d89a3a50 R15: 0000000000000000
+FS:  0000000000ed6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f45c6b81e78 CR3: 00000001acb61000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
