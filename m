@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FB2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC935ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED682084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:28:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED682084C
+	by mail.kernel.org (Postfix) with ESMTP id ABA1D2084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:29:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA1D2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727566AbeGPFyV (ORCPT
+        id S1727672AbeGPFyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 01:54:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50282 "EHLO mx1.redhat.com"
+        Mon, 16 Jul 2018 01:54:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50298 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726343AbeGPFyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 01:54:21 -0400
+        id S1726343AbeGPFyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 01:54:38 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CDD9C40214E2;
-        Mon, 16 Jul 2018 05:28:44 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C148400E978;
+        Mon, 16 Jul 2018 05:29:02 +0000 (UTC)
 Received: from xz-mi (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 46CB02026D65;
-        Mon, 16 Jul 2018 05:28:38 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 13:28:35 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 46F252026D65;
+        Mon, 16 Jul 2018 05:28:55 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 13:28:53 +0800
 From:   Peter Xu <peterx@redhat.com>
 To:     Lu Baolu <baolu.lu@linux.intel.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
@@ -39,28 +39,26 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v5 2/9] iommu/vt-d: Avoid using idr_for_each_entry()
-Message-ID: <20180716052835.GB20520@xz-mi>
+Subject: Re: [PATCH v5 3/9] iommu/vt-d: Apply global PASID in SVA
+Message-ID: <20180716052853.GC20520@xz-mi>
 References: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
- <1531554422-6874-3-git-send-email-baolu.lu@linux.intel.com>
+ <1531554422-6874-4-git-send-email-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1531554422-6874-3-git-send-email-baolu.lu@linux.intel.com>
+In-Reply-To: <1531554422-6874-4-git-send-email-baolu.lu@linux.intel.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 16 Jul 2018 05:28:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 16 Jul 2018 05:28:44 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 16 Jul 2018 05:29:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 16 Jul 2018 05:29:02 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 03:46:55PM +0800, Lu Baolu wrote:
-> idr_for_each_entry() is used to iteratte over idr elements
-> of a given type. It isn't suitable for the globle pasid idr
-> since the pasid idr consumer could specify different types
-> of pointers to bind with a pasid.
+On Sat, Jul 14, 2018 at 03:46:56PM +0800, Lu Baolu wrote:
+> This patch applies the global pasid name space in the shared
+> virtual address (SVA) implementation.
 > 
 > Cc: Ashok Raj <ashok.raj@intel.com>
 > Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
