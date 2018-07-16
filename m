@@ -2,87 +2,112 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD3AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089F6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA6612086E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6612086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id B5D322086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:14:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3O/eEl/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5D322086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbeGPVnO (ORCPT
+        id S1730828AbeGPVnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:43:14 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:38590 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbeGPVnO (ORCPT
+        Mon, 16 Jul 2018 17:43:41 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:38164 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728290AbeGPVnl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:43:14 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6GLE07Q009901;
-        Tue, 17 Jul 2018 06:14:00 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Tue, 17 Jul 2018 06:14:00 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6GLDrUb009866
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 17 Jul 2018 06:14:00 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v13 0/7] cgroup-aware OOM killer
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Michal Hocko <mhocko@kernel.org>, Roman Gushchin <guro@fb.com>,
-        linux-mm@vger.kernel.org,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
-        cgroups@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20171130152824.1591-1-guro@fb.com>
- <20180605114729.GB19202@dhcp22.suse.cz>
- <alpine.DEB.2.21.1807131438380.194789@chino.kir.corp.google.com>
- <0a86d2a7-b78e-7e69-f628-aa2c75d91ff0@i-love.sakura.ne.jp>
-Message-ID: <0d018c7e-a3de-a23a-3996-bed8b28b1e4a@i-love.sakura.ne.jp>
-Date:   Tue, 17 Jul 2018 06:13:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 16 Jul 2018 17:43:41 -0400
+Received: by mail-yw0-f196.google.com with SMTP id r3-v6so14721129ywc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=3yMCA1M2W7gMct2yGQkZobLd76tOdtLn1ILDE9Pbs5I=;
+        b=l3O/eEl/TKgTgt7YX2M6OKah6N74o5WMf7U1EREDk3kOKDcvAqM2q/D2rz7mKJ9umc
+         CE6lvbbs5MEA4petq4FA6rFLRxfbe+CxyZBQTbsReGTryYc3jqSWov83HNunqr+hYZ0i
+         mLE7XEOqwtTtYC8u7SfHFwjyg8m/RNrJDRfIdwwIWxsS1EaLei4DM0OLkAz3jrJuS73E
+         xWavlb3GOQruqWSfAmADTx0iY/IqZlGNX0AA9OW6EZBWdEu3wVgnP7X3Plzmq9FnbD1u
+         iPz0l5VkaCHhV7kuW4NiNOYNpenjyRRCUS8dZdKXGgP8+zysUzTiEY1M1q/HqIZ2/DNH
+         mERQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=3yMCA1M2W7gMct2yGQkZobLd76tOdtLn1ILDE9Pbs5I=;
+        b=crdo3wK2obOg64rY3g5cJT8nKQhbjGS9LJKOv+gAd3pITyf5k3GeBCAZI03rvQ2WPR
+         Ut9Ca4DSDH3mAJJvUHIMeIPxwByxSvgSqgx7uvl/q06sNXdHXq6Am7Jt8hXhlPb3MTp8
+         9QvCE+8V+ub6hGapSx4x2S7rgHi/PFt1F0KrMr9UOhKv5536pfEYnaRRUAaxLHQmevqq
+         dzFDmPUtKQZ+7fGchR9c+C+L0gEI5lI8t0BVzM9Fz5bvjU8LUJm8BXuHFPgjT+YDMgm3
+         ZLwWXAvBEAvie/hZwicK3pSlg0dvK3UqWa3pGrbmVa9bI8kpmX8mBtazLguo8USHkLPu
+         ecbw==
+X-Gm-Message-State: AOUpUlE5LMvnDXUJjzOyU/wlPZuhD8JkKx1XoFRXloj31ppDvMgxkxNf
+        lU63tCwRaNbxoqkvVYXmYnzhwgJ2sapmg7t+G3s=
+X-Google-Smtp-Source: AAOMgpf1AhHMMUDiQenUBDcbEznB+feDPwqQgWragt0lZtp9ISjARXOThPXC+EWtpGcHRV+9n77UE3yeBiUQ6Ym3wNo=
+X-Received: by 2002:a81:86c4:: with SMTP id w187-v6mr8968277ywf.424.1531775668534;
+ Mon, 16 Jul 2018 14:14:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <0a86d2a7-b78e-7e69-f628-aa2c75d91ff0@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 14:14:27
+ -0700 (PDT)
+In-Reply-To: <20180714063224.GD20451@kroah.com>
+References: <20180714055816.223754-1-toddpoynor@gmail.com> <20180714055816.223754-6-toddpoynor@gmail.com>
+ <20180714063224.GD20451@kroah.com>
+From:   Todd Poynor <toddpoynor@gmail.com>
+Date:   Mon, 16 Jul 2018 14:14:27 -0700
+Message-ID: <CAO3upoZQ0QXc5OjvhJbwN42QE71m6ABvLb2WM_iFVWd64iGgSg@mail.gmail.com>
+Subject: Re: [PATCH 05/18] staging: gasket: sysfs mapping creation fixups
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>, devel@driverdev.osuosl.org,
+        Zhongze Hu <frankhu@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No response from Roman and David...
+On Fri, Jul 13, 2018 at 11:32 PM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Fri, Jul 13, 2018 at 10:58:03PM -0700, Todd Poynor wrote:
+>> From: Todd Poynor <toddpoynor@google.com>
+>>
+>> Return EBUSY for attempt to create a mapping already in use.
+>
+> Why?
 
-Andrew, will you once drop Roman's cgroup-aware OOM killer and David's patches?
-Roman's series has a bug which I mentioned and which can be avoided by my patch.
-David's patch is using MMF_UNSTABLE incorrectly such that it might start selecting
-next OOM victim without trying to reclaim any memory.
+The existing code returns EINVAL which often means something bogus was
+requested, whereas EBUSY is sometimes used for requesting something
+already in use.  If that's not an error typically returned in this
+situation I'm happy to drop it.
 
-Since they are not responding to my mail, I suggest once dropping from linux-next.
+>
+>> Remove stale pointers on error allocating attr array.
+>
+> This should be a different patch.
 
-https://www.spinics.net/lists/linux-mm/msg153212.html
-https://lore.kernel.org/lkml/201807130620.w6D6KiAJ093010@www262.sakura.ne.jp/T/#u
+Will do.
 
-On 2018/07/14 10:55, Tetsuo Handa wrote:
-> On 2018/07/14 6:59, David Rientjes wrote:
->> I'm not trying to preclude the cgroup-aware oom killer from being merged,
->> I'm the only person actively trying to get it merged.
-> 
-> Before merging the cgroup-aware oom killer, can we merge OOM lockup fixes
-> and my cleanup? The gap between linux.git and linux-next.git keeps us unable
-> to use agreed baseline.
-> 
+>
+> thanks,
+>
+> greg k-h
+
+
+
+-- 
+Todd
