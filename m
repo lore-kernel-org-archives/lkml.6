@@ -2,897 +2,131 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C569ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B261DECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B35320C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6155E20C07
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 16:02:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1NWhuavd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B35320C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="MantKi4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6155E20C07
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbeGPQaz (ORCPT
+        id S1729827AbeGPQa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 12:30:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727479AbeGPQaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 12:30:55 -0400
-Received: from localhost.localdomain (unknown [222.94.210.33])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06CF9208FA;
-        Mon, 16 Jul 2018 16:02:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531756970;
-        bh=urBghobGcIcwItlHyFquz35OjxLOg7iVwePaVw0jhYQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=1NWhuavdiL8Iax3wd0Qrm/0aEacKnWOQuj2X7uEGVBWv5HP4aSEx45qHOdhqqo4wP
-         yx8LWMQsiVsJuJo2eZH4luHnhrVJD9PVB2iFIupjGq3yw+LdIicUGDgDN0tVVdeNlo
-         DPEEMjmMNW+jV7yBU5nN3pnE8fexbF14vL2BN2u0=
-From:   Chao Yu <chao@kernel.org>
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v3 5/5] f2fs: fix to propagate error from __get_meta_page()
-Date:   Tue, 17 Jul 2018 00:02:17 +0800
-Message-Id: <20180716160217.3681-1-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
+        Mon, 16 Jul 2018 12:30:58 -0400
+Received: from mail-db5eur01on0135.outbound.protection.outlook.com ([104.47.2.135]:25850
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728061AbeGPQa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 12:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9OxGv054nUqSCtm/hoyDT93gdVchpC17Ks1ZPTDn+BI=;
+ b=MantKi4M8L5/gvNvIvqp9Hfkcb+TSlGzmcgddJWgmAxo/spA7jL1LMkw0ybOO39XHFyxzaJZJxxVjYAKFQnoaa4VF8mm5kU58BmX9cSkOZioxtUVPDIIupbUCY66t+3R2TbALi+UOImeiAGipjf97Mq16zskrauAlczVqfhmFrI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=aryabinin@virtuozzo.com; 
+Received: from i7.sw.ru (185.231.240.5) by
+ AM6PR08MB3255.eurprd08.prod.outlook.com (2603:10a6:209:47::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.17; Mon, 16 Jul 2018 16:02:31 +0000
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>
+Subject: [PATCH 2/2] fs/fuse, splice_write: reduce allocation size.
+Date:   Mon, 16 Jul 2018 19:03:44 +0300
+Message-Id: <20180716160344.7015-2-aryabinin@virtuozzo.com>
+X-Mailer: git-send-email 2.16.4
+In-Reply-To: <20180716160344.7015-1-aryabinin@virtuozzo.com>
+References: <20180716160344.7015-1-aryabinin@virtuozzo.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [185.231.240.5]
+X-ClientProxiedBy: VI1PR0501CA0032.eurprd05.prod.outlook.com
+ (2603:10a6:800:60::18) To AM6PR08MB3255.eurprd08.prod.outlook.com
+ (2603:10a6:209:47::20)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: af4ec184-480c-48de-8337-08d5eb3589fe
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM6PR08MB3255;
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;3:UieDKDUtpDGn5s69/mhPPR/ynDn8EitiCQfi9uszpRViaewZpS1Pwtc9dHQ8AQVxRfoboar+AvU6OWILGIREcC58CmIV3Fj1FwN3uTbs9kDUIKm5wYb16AESVd/JweNPrlKCIBfweSIk6b4aFozAFC7TIEnyrKDpL5+Or1s3irhxsEk2SrIB0TC2djbTwAcIy67jpVlbWq58ikosI5+y9D/SEf0UYQBqsYlHSySgLyx8HzbmowhLCNu5lpehIQ9H;25:8twfDhQOi4bENngVNivaiFU5E6mcefIEfjcKWnAU+NpITOciTY4XaJX2UK1vyxbJazleJ8z3B0/2PArp6QY0F9UJ5RwVpVjGbXmaQM1tkqdtFjamnm0n+zpEVKgxICoJJBMYJG4mK69jHZ4duqxF2Ms+3ArHtgDSHQ5eoEtLkvOBPwpYD84gA+E9CtMkJ2/WkYK/xARcUmJ0YjO0hIzw1X0hgmjnTb7pXade7sPD3z6oJ4U0dySON/7JKVuaUh7TM4lFgOGQ0Qlw/n/+W02DWSoUpebliPQ5PanfOti2ceTHHuT29Ft0sFViPqCSNge23aO//cBCKrTgRrRyuRcQvg==;31:maVjiLC+8FsL35aVd6FGuKeQUvsk4RhKJnosPKYZkF/A1Kc3YbM+K2jraNDmpI7TXtsSn417ssv4cy/eUG+G3eVkI80WQd/yCSk4K0TLs7cmqvV565xSXiCN1ADwz3Vluva7Z8SLUM3lZ8D/HAGbQUZntF6lfa69UTzVbjqK6yA53PWmTPyv/ZVbxI/XhJtYCGRksoy6WYMxBB4gyWybBoXHPJErFqkL/XwdrHzznz4=
+X-MS-TrafficTypeDiagnostic: AM6PR08MB3255:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;20:pkOCyRy2SAK9U4PaY1EliC77NrF/kjjXvRM7HnrzX05yGq1uuI1o8FTK/GoPZGeH3nMvN8o7tXT0SiuRP1HgJS9AsLWtJmp9hFWu2vzRWLYz0m/jAapisTOrWxRjZK0Y5rLd/5WzE/5I9J8gfDN9uhAmg9Rd5imzEvyMqenNkPQYUrxT8wrAeLwTDuBDK4FjknHmEIA8jwNRV0ISLE/IO0T1hwP4oeuNG4yB2KIMC8pbk616Lk02aP3LWLwjKP62XdH1R3LzV7EE8W/jzCQ+S5RN3TA1D0u/vSKA8BgY7pNKnCPU8slFWIuJIlxGzEgz8VkaVLfT4WZJHDZaS/Xe7v7V+cQjvDJqB/9UUkmutd+xn72et/JASuRdE0uBUZctPtfY1b4usy0e9CjfZNp0bFT8Jfg9yB2tXQfBqlM42Chpwj/56n7JM4/tk/WVSIxJLd3+g9dClK/pZFNCClEiNkk11fK0Th6K24HvdyFNVumt2wIBchrK/ME0REyHCwMn;4:m4Q4DTvAH/fKfIIBZ1lga/xkqAeHqkmRNki96Y2nhdehFvqzrJWQeHN3yOLl16HEKDRz4m/RolwA5RmInhDN+I2x17HnKcNN+Q/wzXUh0jjn0krYcO+xIcqhvHfK1dbLx/FkiNsld3z4Gdg9ECy6EfwVPn7E1dfU/VM30CLg16anS/XGdClh4POOfurYN67XgQq0i0Mc8WoPYpEupQTRkXWlkL2qKvnJweC/nJKrFa33MNNpUw5edebOEMbpgOilP3yHBOE2d/RZgyv6TTHKM2b0vNRJhbogvjo+hq6NJoOoXe/8+BWjmcsmKDgE+oH0
+X-Microsoft-Antispam-PRVS: <AM6PR08MB32558739EEB089DF15EB0668B05D0@AM6PR08MB3255.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(131327999870524);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM6PR08MB3255;BCL:0;PCL:0;RULEID:;SRVR:AM6PR08MB3255;
+X-Forefront-PRVS: 073515755F
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39840400004)(396003)(136003)(366004)(376002)(346002)(199004)(189003)(68736007)(305945005)(53416004)(6666003)(53936002)(36756003)(6512007)(1076002)(47776003)(48376002)(66066001)(4326008)(5660300001)(25786009)(6916009)(107886003)(50466002)(105586002)(106356001)(97736004)(3846002)(16586007)(6116002)(81166006)(478600001)(8936002)(81156014)(8676002)(11346002)(6486002)(2906002)(26005)(386003)(316002)(6506007)(486006)(16526019)(476003)(76176011)(446003)(186003)(50226002)(14444005)(52116002)(2616005)(86362001)(51416003)(7736002)(956004);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR08MB3255;H:i7.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR08MB3255;23:244cvAHpvbe8NMHQb2JY+rfdfzzIMfPH4lMxLS/BV?=
+ =?us-ascii?Q?Sb3wxWDfcW7RTt9Tr8wN7lKN/br/DkHcYwmWn1fFAFPaEQyVU6wmq/w1yuai?=
+ =?us-ascii?Q?9+QAHlm8XSjdzMtpmCyIWKXLOrxQTGKBuEwsyAFsg80IcfS2AA+xxP7yHKR8?=
+ =?us-ascii?Q?iTcIRSAJ3SmHxyrbArYruaY7MibtcOfIMIUyJ7B4/CHg/07a1zQj8Pmce3BC?=
+ =?us-ascii?Q?8Z7UFj97mLjQP/JcWUsTXBVlbpeF+zWQk8yVF7P1kTm1k2j9yXXcsbOKor1p?=
+ =?us-ascii?Q?VwUxDQHZ+w7RiRX0IFzcu02bhrJUGttDk/LNdT4UfdrmamSTMUW7n7DA46OS?=
+ =?us-ascii?Q?7To8GkshJE0RID0R/97uDTDo4CI7Kk0Z3PD+WlsLvhTdsN6T6Yn44j78K4Jg?=
+ =?us-ascii?Q?hyAalHg9B6t0+OwGPTm1Eae53+BuSb+TXwBpxhhOFx0ESMvOFj9WayUrD8QN?=
+ =?us-ascii?Q?MPsQHzh4cu8YemfE6l9JXQX7gi7AINNHaG2x/HpPALejovyd0CrPEVORyurJ?=
+ =?us-ascii?Q?SfuDxMzJ0mNoYrqrWRXCMLyelPAPauqtQtYWd8Yja9wvyRfghNrnqBTO9UL3?=
+ =?us-ascii?Q?OnAY4SOLB2CmgHJDVEfO2uwr+5Sq6KOawer379F+7g57ex1lnTm9dZa4JQj3?=
+ =?us-ascii?Q?ooA3BtFxLoyKBWYPvfWr00jQ+zODAnZBwC5STJ0KQzE0xHyN4VW6Oi8ax/bg?=
+ =?us-ascii?Q?dAoQJRjoyorATHR3Rjp8hv6C45ztsFgPRKsos7Sx0P/k+2EeHmQZCwQfYYNO?=
+ =?us-ascii?Q?oxMUVQ48YSSftRuHxgeQXN5LQwGUUVmNeFsDPn98tG8wknN5BeTOMs74iQdo?=
+ =?us-ascii?Q?0JmBSe2b4WIVufA/Shf5uWzNPb7kcOolrFNo1P6pmYJQUaiAEORSy68KRQib?=
+ =?us-ascii?Q?jQSI8bqlAXCUum7PYB0N1c9dzN4WxSJzQ1f049fBHd0CfS1DdyaEuonYMTd8?=
+ =?us-ascii?Q?/j+gipeANtQEUkcj2mQB6d6Zhj07dNGBSOu5jkEJKgTWg9/bc1FKBIWpWwyL?=
+ =?us-ascii?Q?yTRUnNCWEwOzA4UbDzKxhbR98hg6y8oopDfR2vx+bhPIrqpn/wXyNnp7wlvt?=
+ =?us-ascii?Q?QF1EsDn1VdahpdzgA0LZ71akscqMW809VMl3O7AWHjakqK0/Igg/7vouVhCu?=
+ =?us-ascii?Q?+LnPHmOaJhuIV0T3veBT421GVZ4u6T6RMOieuVInfAfW5c/fZnuEZ9Pl0Esu?=
+ =?us-ascii?Q?4EVrNgjDHbwk8onXNRhSvRIzdOjWIR+0Nh/KAFy/UCB3TNyuUhczbalJsR5v?=
+ =?us-ascii?Q?WXutyEbcHQcVt6MT5Y=3D?=
+X-Microsoft-Antispam-Message-Info: vE8lCrmKC4iaHTFgXuF9BsxrcI04z0cG9QdiaKkXHbMPjzdphXSCAdqd/DeMRJbG0Dp9qPzMlxZAXL9ii1m7qKa8xltKBxYTpEnQfD07wsMJnUNIo+saVXFCesVRiF5NP70YoOA0XK3j0ctJpg/o/PBG+ZsvMDyJ8foHvRr6KaaSLkAGARwef+Day3gZcDd5FKgDACgq5cLoZYOYa6BerkLQL/LDo1NWpTQXfXtTOwTd3a0jCKvVaqGa0kf7zgEvaoQN9aYZ932zldWjaVWm3mUBZ0mqOmuqy5l4k1xI/R/0WW3Buce2CkA9/zwIxr+I3qe9l5avGpgjzlW5CUjDAnpQ15ybgJiNwMITZJ2gMZc=
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;6:YKQ55bLCAE1p6lcMOME/+m9oUCnYKr9DsHmg5k9g8bPdW0pr/7CIlIWoDvq74csBhR8+kfrNzivqEHQEJ2TobeHd/tOMLToiH6H3LxT8bOL++ikd4C+ZywN0ev72qL6vYk1wp5KDf0srO/Mht1ZaZZy0BLMDE8c7GU4UI5JKX0x9P2DFDQtlYu+syapMl1BvuTR8gXlNAhXUEeLcOF75uZXBD60PXvtfQ3m8rmt4SwN3YzfG2N0re0gNypwKBdaQgY3ooYWUFjw2ciAwRcGy4sePILyYL2ULCa4uNSSiJTAUyvzkduC2dCHU4Nrtcy730AKUgG0bm6IKMBd7xYu7ic2pnmY2yNA37f2y382WZY+ERj8POp9x7jdUzVWosdONjGfdgcqO+uKpatFbbfuOVd7aCsHL/rNAaKqnZSIw0EdL/+Gx4nKVBByNMRbFU6ncKLZJPCNSJB6dUpU0qvJd7Q==;5:+5/wZYmlNRPS//KXlsaFWCUTeVnohwpS51lFEZyrZUycQ/WHCz+6Am2L5so02pX4ETRMAvlCS2i9hlLc0nvJypAYcxIDy1diu/1D8l69t2FV7QSpQAtTScmJVsravcSlyqT3apmJriiNp0C0OInetWGSY5cQsNesT2ftGUKL/As=;24:JRsshN5a/hCR6y/N80CbEQSOGj/qkRuDdeBEjMEGYGAeAnOqMTfU9k5WsvuiQlWRN32XHibypNvcaAL0sh+lNAauZrtAg71Fj0JxWGJo2iw=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR08MB3255;7:BQUi7m25IizWu0DBHbMklYzHS1cyqJW3eldQgAwmwTsRC8NT5JHPzdNqMbCJ+1AI2rGVb4eklWUM4zV9jwwa/i1Kxa+o3/NnEVwBpK4U+T/dIrpjV/Jix6M+aAO1mZTX8jL+KiHoCY0P9teciZy9I0HtLBxtsAkLgWA908u84yNAZxdOs8NHwnDJoa6pj1okHppBH68+jJLg/Cd5Cec9h/Q9IDVB41gwL2DrcLc+WWTPeThB4C4H3bY5Pv8ayPok;20:OUjGrOCsV4ZgcikpkeHe7qycx63lu0i/BJDTKd4mMlXQq9jwUOT347FNeT/+kgSS4/A3RILgHCWjlzd5R5FqyPjSRMWi0CJ7sxz38NB3r5g3Uy/eXD3gKSWoyQKV9rlEZZlzS41DYOEXjFHVHwilD5qUwXovfusT52MmZNa6qSM=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jul 2018 16:02:31.5609 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: af4ec184-480c-48de-8337-08d5eb3589fe
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR08MB3255
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+The 'bufs' array contains 'pipe->buffers' elements, but the
+fuse_dev_splice_write() uses only 'pipe->nrbufs' elements.
 
-If caller of __get_meta_page() can handle error, let's propagate error
-from __get_meta_page().
+So reduce the allocation size to 'pipe->nrbufs' elements.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 ---
-v3:
-- propagate error to f2fs_get_node_info()
-- introduce f2fs_get_meta_page_nofail()
- fs/f2fs/checkpoint.c | 55 ++++++++++++++++++++++++--------
- fs/f2fs/data.c       | 24 ++++++++++++--
- fs/f2fs/f2fs.h       |  8 +++--
- fs/f2fs/file.c       |  7 +++-
- fs/f2fs/gc.c         | 16 ++++++++--
- fs/f2fs/inline.c     | 14 +++++++-
- fs/f2fs/inode.c      | 12 +++++--
- fs/f2fs/node.c       | 90 +++++++++++++++++++++++++++++++++++++++++-----------
- fs/f2fs/recovery.c   | 13 +++++++-
- fs/f2fs/segment.c    | 37 +++++++++++++++------
- 10 files changed, 220 insertions(+), 56 deletions(-)
+ fs/fuse/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 09446ac38f5c..e1c0fef4ba9a 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -71,6 +71,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 		.encrypted_page = NULL,
- 		.is_meta = is_meta,
- 	};
-+	int err;
- 
- 	if (unlikely(!is_meta))
- 		fio.op_flags &= ~REQ_META;
-@@ -85,11 +86,10 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 
- 	fio.page = page;
- 
--	if (f2fs_submit_page_bio(&fio)) {
--		memset(page_address(page), 0, PAGE_SIZE);
--		f2fs_stop_checkpoint(sbi, false);
--		f2fs_bug_on(sbi, 1);
--		return page;
-+	err = f2fs_submit_page_bio(&fio);
-+	if (err) {
-+		f2fs_put_page(page, 1);
-+		return ERR_PTR(err);
- 	}
- 
- 	lock_page(page);
-@@ -98,14 +98,9 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 		goto repeat;
- 	}
- 
--	/*
--	 * if there is any IO error when accessing device, make our filesystem
--	 * readonly and make sure do not write checkpoint with non-uptodate
--	 * meta page.
--	 */
- 	if (unlikely(!PageUptodate(page))) {
--		memset(page_address(page), 0, PAGE_SIZE);
--		f2fs_stop_checkpoint(sbi, false);
-+		f2fs_put_page(page, 1);
-+		return ERR_PTR(-EIO);
- 	}
- out:
- 	return page;
-@@ -116,6 +111,25 @@ struct page *f2fs_get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index)
- 	return __get_meta_page(sbi, index, true);
- }
- 
-+struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index)
-+{
-+	struct page *page;
-+	int count = 0;
-+
-+retry:
-+	page = __get_meta_page(sbi, index, true);
-+	if (IS_ERR(page)) {
-+		if (PTR_ERR(page) == -EIO &&
-+				++count <= DEFAULT_RETRY_IO_COUNT)
-+			goto retry;
-+
-+		f2fs_stop_checkpoint(sbi, false);
-+		f2fs_bug_on(sbi, 1);
-+	}
-+
-+	return page;
-+}
-+
- /* for POR only */
- struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index)
- {
-@@ -607,7 +621,9 @@ static int recover_orphan_inode(struct f2fs_sb_info *sbi, nid_t ino)
- 	/* truncate all the data during iput */
- 	iput(inode);
- 
--	f2fs_get_node_info(sbi, ino, &ni);
-+	err = f2fs_get_node_info(sbi, ino, &ni);
-+	if (err)
-+		goto err_out;
- 
- 	/* ENOMEM was fully retried in f2fs_evict_inode. */
- 	if (ni.blk_addr != NULL_ADDR) {
-@@ -655,9 +671,15 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	f2fs_ra_meta_pages(sbi, start_blk, orphan_blocks, META_CP, true);
- 
- 	for (i = 0; i < orphan_blocks; i++) {
--		struct page *page = f2fs_get_meta_page(sbi, start_blk + i);
-+		struct page *page;
- 		struct f2fs_orphan_block *orphan_blk;
- 
-+		page = f2fs_get_meta_page(sbi, start_blk + i);
-+		if (IS_ERR(page)) {
-+			err = PTR_ERR(page);
-+			goto out;
-+		}
-+
- 		orphan_blk = (struct f2fs_orphan_block *)page_address(page);
- 		for (j = 0; j < le32_to_cpu(orphan_blk->entry_count); j++) {
- 			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
-@@ -748,6 +770,9 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 	__u32 crc = 0;
- 
- 	*cp_page = f2fs_get_meta_page(sbi, cp_addr);
-+	if (IS_ERR(*cp_page))
-+		return PTR_ERR(*cp_page);
-+
- 	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
- 
- 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
-@@ -873,6 +898,8 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 		unsigned char *ckpt = (unsigned char *)sbi->ckpt;
- 
- 		cur_page = f2fs_get_meta_page(sbi, cp_blk_no + i);
-+		if (IS_ERR(cur_page))
-+			goto free_fail_no_cp;
- 		sit_bitmap_ptr = page_address(cur_page);
- 		memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
- 		f2fs_put_page(cur_page, 1);
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index a1b55d8d31d5..572c91e43337 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -884,6 +884,10 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 	if (unlikely(is_inode_flag_set(dn->inode, FI_NO_ALLOC)))
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 74900571546d..39789f070cde 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1944,7 +1944,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
+ 	if (!fud)
  		return -EPERM;
  
-+	err = f2fs_get_node_info(sbi, dn->nid, &ni);
-+	if (err)
-+		return err;
-+
- 	dn->data_blkaddr = datablock_addr(dn->inode,
- 				dn->node_page, dn->ofs_in_node);
- 	if (dn->data_blkaddr == NEW_ADDR)
-@@ -893,7 +897,6 @@ static int __allocate_data_block(struct dnode_of_data *dn, int seg_type)
- 		return err;
- 
- alloc:
--	f2fs_get_node_info(sbi, dn->nid, &ni);
- 	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
- 
- 	f2fs_allocate_data_block(sbi, NULL, dn->data_blkaddr, &dn->data_blkaddr,
-@@ -1296,7 +1299,11 @@ static int f2fs_xattr_fiemap(struct inode *inode,
- 		if (!page)
- 			return -ENOMEM;
- 
--		f2fs_get_node_info(sbi, inode->i_ino, &ni);
-+		err = f2fs_get_node_info(sbi, inode->i_ino, &ni);
-+		if (err) {
-+			f2fs_put_page(page, 1);
-+			return err;
-+		}
- 
- 		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
- 		offset = offsetof(struct f2fs_inode, i_addr) +
-@@ -1323,7 +1330,11 @@ static int f2fs_xattr_fiemap(struct inode *inode,
- 		if (!page)
- 			return -ENOMEM;
- 
--		f2fs_get_node_info(sbi, xnid, &ni);
-+		err = f2fs_get_node_info(sbi, xnid, &ni);
-+		if (err) {
-+			f2fs_put_page(page, 1);
-+			return err;
-+		}
- 
- 		phys = (__u64)blk_to_logical(inode, ni.blk_addr);
- 		len = inode->i_sb->s_blocksize;
-@@ -1710,6 +1721,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 	struct inode *inode = page->mapping->host;
- 	struct dnode_of_data dn;
- 	struct extent_info ei = {0,0,0};
-+	struct node_info ni;
- 	bool ipu_force = false;
- 	int err = 0;
- 
-@@ -1778,6 +1790,12 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 		fio->need_lock = LOCK_REQ;
- 	}
- 
-+	err = f2fs_get_node_info(fio->sbi, dn.nid, &ni);
-+	if (err)
-+		goto out_writepage;
-+
-+	fio->version = ni.version;
-+
- 	err = encrypt_one_page(fio);
- 	if (err)
- 		goto out_writepage;
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 9f8c600442f0..806006ed0d0a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -518,6 +518,8 @@ enum {
- 					 */
- };
- 
-+#define DEFAULT_RETRY_IO_COUNT	8	/* maximum retry read IO count */
-+
- #define F2FS_LINK_MAX	0xffffffff	/* maximum link count per file */
- 
- #define MAX_DIR_RA_PAGES	4	/* maximum ra pages of dir */
-@@ -1024,6 +1026,7 @@ struct f2fs_io_info {
- 	bool retry;		/* need to reallocate block address */
- 	enum iostat_type io_type;	/* io type */
- 	struct writeback_control *io_wbc; /* writeback control */
-+	unsigned char version;		/* version of the node */
- };
- 
- #define is_read_io(rw) ((rw) == READ)
-@@ -2837,7 +2840,7 @@ void f2fs_reset_fsync_node_info(struct f2fs_sb_info *sbi);
- int f2fs_need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
- bool f2fs_need_inode_block_update(struct f2fs_sb_info *sbi, nid_t ino);
--void f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
-+int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 						struct node_info *ni);
- pgoff_t f2fs_get_next_page_offset(struct dnode_of_data *dn, pgoff_t pgofs);
- int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode);
-@@ -2866,7 +2869,7 @@ int f2fs_try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink);
- void f2fs_recover_inline_xattr(struct inode *inode, struct page *page);
- int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
- int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
--void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
-+int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 			unsigned int segno, struct f2fs_summary_block *sum);
- void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
- int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
-@@ -2944,6 +2947,7 @@ enum rw_hint f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
- void f2fs_stop_checkpoint(struct f2fs_sb_info *sbi, bool end_io);
- struct page *f2fs_grab_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
- struct page *f2fs_get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index);
-+struct page *f2fs_get_meta_page_nofail(struct f2fs_sb_info *sbi, pgoff_t index);
- struct page *f2fs_get_tmp_page(struct f2fs_sb_info *sbi, pgoff_t index);
- bool f2fs_is_valid_blkaddr(struct f2fs_sb_info *sbi,
- 					block_t blkaddr, int type);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 2e433958da69..d55fa25fc2f1 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1059,7 +1059,12 @@ static int __clone_blkaddrs(struct inode *src_inode, struct inode *dst_inode,
- 			if (ret)
- 				return ret;
- 
--			f2fs_get_node_info(sbi, dn.nid, &ni);
-+			ret = f2fs_get_node_info(sbi, dn.nid, &ni);
-+			if (ret) {
-+				f2fs_put_dnode(&dn);
-+				return ret;
-+			}
-+
- 			ilen = min((pgoff_t)
- 				ADDRS_PER_PAGE(dn.node_page, dst_inode) -
- 						dn.ofs_in_node, len - i);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 2ba470df419b..fe0da3e05ef1 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -517,7 +517,11 @@ static void gc_node_segment(struct f2fs_sb_info *sbi,
- 			continue;
- 		}
- 
--		f2fs_get_node_info(sbi, nid, &ni);
-+		if (f2fs_get_node_info(sbi, nid, &ni)) {
-+			f2fs_put_page(node_page, 1);
-+			continue;
-+		}
-+
- 		if (ni.blk_addr != start_addr + off) {
- 			f2fs_put_page(node_page, 1);
- 			continue;
-@@ -576,7 +580,10 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
- 	if (IS_ERR(node_page))
- 		return false;
- 
--	f2fs_get_node_info(sbi, nid, dni);
-+	if (f2fs_get_node_info(sbi, nid, dni)) {
-+		f2fs_put_page(node_page, 1);
-+		return false;
-+	}
- 
- 	if (sum->version != dni->version) {
- 		f2fs_msg(sbi->sb, KERN_WARNING,
-@@ -654,7 +661,10 @@ static void move_data_block(struct inode *inode, block_t bidx,
- 	 */
- 	f2fs_wait_on_page_writeback(page, DATA, true);
- 
--	f2fs_get_node_info(fio.sbi, dn.nid, &ni);
-+	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
-+	if (err)
-+		goto put_out;
-+
- 	set_summary(&sum, dn.nid, dn.ofs_in_node, ni.version);
- 
- 	/* read page */
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 2bcb2d36f024..115dc219344b 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -121,6 +121,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
- 		.encrypted_page = NULL,
- 		.io_type = FS_DATA_IO,
- 	};
-+	struct node_info ni;
- 	int dirty, err;
- 
- 	if (!f2fs_exist_data(dn->inode))
-@@ -130,6 +131,14 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
- 	if (err)
- 		return err;
- 
-+	err = f2fs_get_node_info(fio.sbi, dn->nid, &ni);
-+	if (err) {
-+		f2fs_put_dnode(dn);
-+		return err;
-+	}
-+
-+	fio.version = ni.version;
-+
- 	if (unlikely(dn->data_blkaddr != NEW_ADDR)) {
- 		f2fs_put_dnode(dn);
- 		set_sbi_flag(fio.sbi, SBI_NEED_FSCK);
-@@ -690,7 +699,10 @@ int f2fs_inline_data_fiemap(struct inode *inode,
- 		ilen = start + len;
- 	ilen -= start;
- 
--	f2fs_get_node_info(F2FS_I_SB(inode), inode->i_ino, &ni);
-+	err = f2fs_get_node_info(F2FS_I_SB(inode), inode->i_ino, &ni);
-+	if (err)
-+		goto out;
-+
- 	byteaddr = (__u64)ni.blk_addr << inode->i_sb->s_blocksize_bits;
- 	byteaddr += (char *)inline_data_addr(inode, ipage) -
- 					(char *)F2FS_INODE(ipage);
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 50a9e279dfed..f0fcfed817b5 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -727,6 +727,7 @@ void f2fs_handle_failed_inode(struct inode *inode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct node_info ni;
-+	int err;
- 
- 	/*
- 	 * clear nlink of inode in order to release resource of inode
-@@ -749,10 +750,16 @@ void f2fs_handle_failed_inode(struct inode *inode)
- 	 * so we can prevent losing this orphan when encoutering checkpoint
- 	 * and following suddenly power-off.
- 	 */
--	f2fs_get_node_info(sbi, inode->i_ino, &ni);
-+	err = f2fs_get_node_info(sbi, inode->i_ino, &ni);
-+	if (err) {
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+			"May loss orphan inode, run fsck to fix.");
-+		goto out;
-+	}
- 
- 	if (ni.blk_addr != NULL_ADDR) {
--		int err = f2fs_acquire_orphan_inode(sbi);
-+		err = f2fs_acquire_orphan_inode(sbi);
- 		if (err) {
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
- 			f2fs_msg(sbi->sb, KERN_WARNING,
-@@ -765,6 +772,7 @@ void f2fs_handle_failed_inode(struct inode *inode)
- 		set_inode_flag(inode, FI_FREE_NID);
- 	}
- 
-+out:
- 	f2fs_unlock_op(sbi);
- 
- 	/* iput will drop the inode object */
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index a794125058c9..99dc1a1d02e3 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -114,7 +114,7 @@ static void clear_node_page_dirty(struct page *page)
- static struct page *get_current_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
- {
- 	pgoff_t index = current_nat_addr(sbi, nid);
--	return f2fs_get_meta_page(sbi, index);
-+	return f2fs_get_meta_page_nofail(sbi, index);
- }
- 
- static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
-@@ -486,7 +486,7 @@ int f2fs_try_to_free_nats(struct f2fs_sb_info *sbi, int nr_shrink)
- /*
-  * This function always returns success
-  */
--void f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
-+int f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 						struct node_info *ni)
- {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-@@ -510,7 +510,7 @@ void f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 		ni->blk_addr = nat_get_blkaddr(e);
- 		ni->version = nat_get_version(e);
- 		up_read(&nm_i->nat_tree_lock);
--		return;
-+		return 0;
- 	}
- 
- 	memset(&ne, 0, sizeof(struct f2fs_nat_entry));
-@@ -533,6 +533,9 @@ void f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- 	up_read(&nm_i->nat_tree_lock);
- 
- 	page = f2fs_get_meta_page(sbi, index);
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
-+
- 	nat_blk = (struct f2fs_nat_block *)page_address(page);
- 	ne = nat_blk->entries[nid - start_nid];
- 	node_info_from_raw_nat(ni, &ne);
-@@ -540,6 +543,7 @@ void f2fs_get_node_info(struct f2fs_sb_info *sbi, nid_t nid,
- cache:
- 	/* cache nat entry */
- 	cache_nat_entry(sbi, nid, &ne);
-+	return 0;
- }
- 
- /*
-@@ -789,12 +793,15 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, pgoff_t index, int mode)
- 	return err;
- }
- 
--static void truncate_node(struct dnode_of_data *dn)
-+static int truncate_node(struct dnode_of_data *dn)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
- 	struct node_info ni;
-+	int err;
- 
--	f2fs_get_node_info(sbi, dn->nid, &ni);
-+	err = f2fs_get_node_info(sbi, dn->nid, &ni);
-+	if (err)
-+		return err;
- 
- 	/* Deallocate node address */
- 	f2fs_invalidate_blocks(sbi, ni.blk_addr);
-@@ -817,11 +824,14 @@ static void truncate_node(struct dnode_of_data *dn)
- 
- 	dn->node_page = NULL;
- 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
-+
-+	return 0;
- }
- 
- static int truncate_dnode(struct dnode_of_data *dn)
- {
- 	struct page *page;
-+	int err;
- 
- 	if (dn->nid == 0)
- 		return 1;
-@@ -837,7 +847,10 @@ static int truncate_dnode(struct dnode_of_data *dn)
- 	dn->node_page = page;
- 	dn->ofs_in_node = 0;
- 	f2fs_truncate_data_blocks(dn);
--	truncate_node(dn);
-+	err = truncate_node(dn);
-+	if (err)
-+		return err;
-+
- 	return 1;
- }
- 
-@@ -902,7 +915,9 @@ static int truncate_nodes(struct dnode_of_data *dn, unsigned int nofs,
- 	if (!ofs) {
- 		/* remove current indirect node */
- 		dn->node_page = page;
--		truncate_node(dn);
-+		ret = truncate_node(dn);
-+		if (ret)
-+			goto out_err;
- 		freed++;
- 	} else {
- 		f2fs_put_page(page, 1);
-@@ -960,7 +975,9 @@ static int truncate_partial_nodes(struct dnode_of_data *dn,
- 	if (offset[idx + 1] == 0) {
- 		dn->node_page = pages[idx];
- 		dn->nid = nid[idx];
--		truncate_node(dn);
-+		err = truncate_node(dn);
-+		if (err)
-+			goto fail;
- 	} else {
- 		f2fs_put_page(pages[idx], 1);
- 	}
-@@ -1081,6 +1098,7 @@ int f2fs_truncate_xattr_node(struct inode *inode)
- 	nid_t nid = F2FS_I(inode)->i_xattr_nid;
- 	struct dnode_of_data dn;
- 	struct page *npage;
-+	int err;
- 
- 	if (!nid)
- 		return 0;
-@@ -1089,10 +1107,15 @@ int f2fs_truncate_xattr_node(struct inode *inode)
- 	if (IS_ERR(npage))
- 		return PTR_ERR(npage);
- 
-+	set_new_dnode(&dn, inode, NULL, npage, nid);
-+	err = truncate_node(&dn);
-+	if (err) {
-+		f2fs_put_page(npage, 1);
-+		return err;
-+	}
-+
- 	f2fs_i_xnid_write(inode, 0);
- 
--	set_new_dnode(&dn, inode, NULL, npage, nid);
--	truncate_node(&dn);
- 	return 0;
- }
- 
-@@ -1126,7 +1149,11 @@ int f2fs_remove_inode_page(struct inode *inode)
- 			inode->i_blocks != 0 && inode->i_blocks != 8);
- 
- 	/* will put inode & node pages */
--	truncate_node(&dn);
-+	err = truncate_node(&dn);
-+	if (err) {
-+		f2fs_put_dnode(&dn);
-+		return err;
-+	}
- 	return 0;
- }
- 
-@@ -1159,7 +1186,11 @@ struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs)
- 		goto fail;
- 
- #ifdef CONFIG_F2FS_CHECK_FS
--	f2fs_get_node_info(sbi, dn->nid, &new_ni);
-+	err = f2fs_get_node_info(sbi, dn->nid, &new_ni);
-+	if (err) {
-+		dec_valid_node_count(sbi, dn->inode, !ofs);
-+		goto fail;
-+	}
- 	f2fs_bug_on(sbi, new_ni.blk_addr != NULL_ADDR);
- #endif
- 	new_ni.nid = dn->nid;
-@@ -1207,6 +1238,7 @@ static int read_node_page(struct page *page, int op_flags)
- 		.page = page,
- 		.encrypted_page = NULL,
- 	};
-+	int err;
- 
- 	if (PageUptodate(page)) {
- #ifdef CONFIG_F2FS_CHECK_FS
-@@ -1215,7 +1247,9 @@ static int read_node_page(struct page *page, int op_flags)
- 		return LOCKED_PAGE;
- 	}
- 
--	f2fs_get_node_info(sbi, page->index, &ni);
-+	err = f2fs_get_node_info(sbi, page->index, &ni);
-+	if (err)
-+		return err;
- 
- 	if (unlikely(ni.blk_addr == NULL_ADDR) ||
- 			is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN)) {
-@@ -1455,6 +1489,9 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 	nid = nid_of_node(page);
- 	f2fs_bug_on(sbi, page->index != nid);
- 
-+	if (f2fs_get_node_info(sbi, nid, &ni))
-+		goto redirty_out;
-+
- 	if (wbc->for_reclaim) {
- 		if (!down_read_trylock(&sbi->node_write))
- 			goto redirty_out;
-@@ -1462,8 +1499,6 @@ static int __write_node_page(struct page *page, bool atomic, bool *submitted,
- 		down_read(&sbi->node_write);
- 	}
- 
--	f2fs_get_node_info(sbi, nid, &ni);
--
- 	/* This page is already truncated */
- 	if (unlikely(ni.blk_addr == NULL_ADDR)) {
- 		ClearPageUptodate(page);
-@@ -2401,12 +2436,16 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page)
- 	struct dnode_of_data dn;
- 	struct node_info ni;
- 	struct page *xpage;
-+	int err;
- 
- 	if (!prev_xnid)
- 		goto recover_xnid;
- 
- 	/* 1: invalidate the previous xattr nid */
--	f2fs_get_node_info(sbi, prev_xnid, &ni);
-+	err = f2fs_get_node_info(sbi, prev_xnid, &ni);
-+	if (err)
-+		return err;
-+
- 	f2fs_invalidate_blocks(sbi, ni.blk_addr);
- 	dec_valid_node_count(sbi, inode, false);
- 	set_node_addr(sbi, &ni, NULL_ADDR, false);
-@@ -2441,8 +2480,11 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	nid_t ino = ino_of_node(page);
- 	struct node_info old_ni, new_ni;
- 	struct page *ipage;
-+	int err;
- 
--	f2fs_get_node_info(sbi, ino, &old_ni);
-+	err = f2fs_get_node_info(sbi, ino, &old_ni);
-+	if (err)
-+		return err;
- 
- 	if (unlikely(old_ni.blk_addr != NULL_ADDR))
- 		return -EINVAL;
-@@ -2496,7 +2538,7 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	return 0;
- }
- 
--void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
-+int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 			unsigned int segno, struct f2fs_summary_block *sum)
- {
- 	struct f2fs_node *rn;
-@@ -2518,6 +2560,9 @@ void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 		for (idx = addr; idx < addr + nrpages; idx++) {
- 			struct page *page = f2fs_get_tmp_page(sbi, idx);
- 
-+			if (IS_ERR(page))
-+				return PTR_ERR(page);
-+
- 			rn = F2FS_NODE(page);
- 			sum_entry->nid = rn->footer.nid;
- 			sum_entry->version = 0;
-@@ -2529,6 +2574,7 @@ void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 		invalidate_mapping_pages(META_MAPPING(sbi), addr,
- 							addr + nrpages);
- 	}
-+	return 0;
- }
- 
- static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
-@@ -2765,7 +2811,13 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 	nat_bits_addr = __start_cp_addr(sbi) + sbi->blocks_per_seg -
- 						nm_i->nat_bits_blocks;
- 	for (i = 0; i < nm_i->nat_bits_blocks; i++) {
--		struct page *page = f2fs_get_meta_page(sbi, nat_bits_addr++);
-+		struct page *page;
-+
-+		page = f2fs_get_meta_page(sbi, nat_bits_addr++);
-+		if (IS_ERR(page)) {
-+			disable_nat_bits(sbi, true);
-+			return PTR_ERR(page);
-+		}
- 
- 		memcpy(nm_i->nat_bits + (i << F2FS_BLKSIZE_BITS),
- 					page_address(page), F2FS_BLKSIZE);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 0d927ae26c48..956f34c87082 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -256,6 +256,10 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 			return 0;
- 
- 		page = f2fs_get_tmp_page(sbi, blkaddr);
-+		if (IS_ERR(page)) {
-+			err = PTR_ERR(page);
-+			break;
-+		}
- 
- 		if (!is_recoverable_dnode(page))
- 			break;
-@@ -471,7 +475,10 @@ static int do_recover_data(struct f2fs_sb_info *sbi, struct inode *inode,
- 
- 	f2fs_wait_on_page_writeback(dn.node_page, NODE, true);
- 
--	f2fs_get_node_info(sbi, dn.nid, &ni);
-+	err = f2fs_get_node_info(sbi, dn.nid, &ni);
-+	if (err)
-+		goto err;
-+
- 	f2fs_bug_on(sbi, ni.ino != ino_of_node(page));
- 	f2fs_bug_on(sbi, ofs_of_node(dn.node_page) != ofs_of_node(page));
- 
-@@ -574,6 +581,10 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		f2fs_ra_meta_pages_cond(sbi, blkaddr);
- 
- 		page = f2fs_get_tmp_page(sbi, blkaddr);
-+		if (IS_ERR(page)) {
-+			err = PTR_ERR(page);
-+			break;
-+		}
- 
- 		if (!is_recoverable_dnode(page)) {
- 			f2fs_put_page(page, 1);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index fd3272e51a6f..0adab2ec5c5e 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -250,7 +250,13 @@ static int __revoke_inmem_pages(struct inode *inode,
- 				err = -EAGAIN;
- 				goto next;
- 			}
--			f2fs_get_node_info(sbi, dn.nid, &ni);
-+
-+			err = f2fs_get_node_info(sbi, dn.nid, &ni);
-+			if (err) {
-+				f2fs_put_dnode(&dn);
-+				return err;
-+			}
-+
- 			if (cur->old_addr == NEW_ADDR) {
- 				f2fs_invalidate_blocks(sbi, dn.data_blkaddr);
- 				f2fs_update_data_blkaddr(&dn, NEW_ADDR);
-@@ -2097,7 +2103,7 @@ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra)
-  */
- struct page *f2fs_get_sum_page(struct f2fs_sb_info *sbi, unsigned int segno)
- {
--	return f2fs_get_meta_page(sbi, GET_SUM_BLOCK(sbi, segno));
-+	return f2fs_get_meta_page_nofail(sbi, GET_SUM_BLOCK(sbi, segno));
- }
- 
- void f2fs_update_meta_page(struct f2fs_sb_info *sbi,
-@@ -2957,11 +2963,9 @@ void f2fs_outplace_write_data(struct dnode_of_data *dn,
- {
- 	struct f2fs_sb_info *sbi = fio->sbi;
- 	struct f2fs_summary sum;
--	struct node_info ni;
- 
- 	f2fs_bug_on(sbi, dn->data_blkaddr == NULL_ADDR);
--	f2fs_get_node_info(sbi, dn->nid, &ni);
--	set_summary(&sum, dn->nid, dn->ofs_in_node, ni.version);
-+	set_summary(&sum, dn->nid, dn->ofs_in_node, fio->version);
- 	do_write_page(&sum, fio);
- 	f2fs_update_data_blkaddr(dn, fio->new_blkaddr);
- 
-@@ -3123,7 +3127,7 @@ void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
- 	}
- }
- 
--static void read_compacted_summaries(struct f2fs_sb_info *sbi)
-+static int read_compacted_summaries(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	struct curseg_info *seg_i;
-@@ -3135,6 +3139,8 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
- 	start = start_sum_block(sbi);
- 
- 	page = f2fs_get_meta_page(sbi, start++);
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
- 	kaddr = (unsigned char *)page_address(page);
- 
- 	/* Step 1: restore nat cache */
-@@ -3175,11 +3181,14 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
- 			page = NULL;
- 
- 			page = f2fs_get_meta_page(sbi, start++);
-+			if (IS_ERR(page))
-+				return PTR_ERR(page);
- 			kaddr = (unsigned char *)page_address(page);
- 			offset = 0;
- 		}
- 	}
- 	f2fs_put_page(page, 1);
-+	return 0;
- }
- 
- static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
-@@ -3191,6 +3200,7 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	unsigned short blk_off;
- 	unsigned int segno = 0;
- 	block_t blk_addr = 0;
-+	int err = 0;
- 
- 	/* get segment number and block addr */
- 	if (IS_DATASEG(type)) {
-@@ -3214,6 +3224,8 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	}
- 
- 	new = f2fs_get_meta_page(sbi, blk_addr);
-+	if (IS_ERR(new))
-+		return PTR_ERR(new);
- 	sum = (struct f2fs_summary_block *)page_address(new);
- 
- 	if (IS_NODESEG(type)) {
-@@ -3225,7 +3237,9 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 				ns->ofs_in_node = 0;
- 			}
- 		} else {
--			f2fs_restore_node_summary(sbi, segno, sum);
-+			err = f2fs_restore_node_summary(sbi, segno, sum);
-+			if (err)
-+				goto out;
- 		}
- 	}
- 
-@@ -3245,8 +3259,9 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	curseg->alloc_type = ckpt->alloc_type[type];
- 	curseg->next_blkoff = blk_off;
- 	mutex_unlock(&curseg->curseg_mutex);
-+out:
- 	f2fs_put_page(new, 1);
--	return 0;
-+	return err;
- }
- 
- static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
-@@ -3264,7 +3279,9 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
- 							META_CP, true);
- 
- 		/* restore for compacted data summary */
--		read_compacted_summaries(sbi);
-+		err = read_compacted_summaries(sbi);
-+		if (err)
-+			return err;
- 		type = CURSEG_HOT_NODE;
- 	}
- 
-@@ -3395,7 +3412,7 @@ int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
- static struct page *get_current_sit_page(struct f2fs_sb_info *sbi,
- 					unsigned int segno)
- {
--	return f2fs_get_meta_page(sbi, current_sit_addr(sbi, segno));
-+	return f2fs_get_meta_page_nofail(sbi, current_sit_addr(sbi, segno));
- }
- 
- static struct page *get_next_sit_page(struct f2fs_sb_info *sbi,
+-	bufs = kvmalloc_array(pipe->buffers, sizeof(struct pipe_buffer),
++	bufs = kvmalloc_array(pipe->nrbufs, sizeof(struct pipe_buffer),
+ 			      GFP_KERNEL);
+ 	if (!bufs)
+ 		return -ENOMEM;
 -- 
-2.16.2.17.g38e79b1fd
+2.16.4
 
