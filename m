@@ -2,38 +2,37 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51120ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58656ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1183020837
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1183020837
+	by mail.kernel.org (Postfix) with ESMTP id 1E0072075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E0072075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389392AbeGPIKj (ORCPT
+        id S2389407AbeGPIKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48226 "EHLO
+        Mon, 16 Jul 2018 04:10:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48234 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388522AbeGPIKi (ORCPT
+        with ESMTP id S2388522AbeGPIKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:38 -0400
+        Mon, 16 Jul 2018 04:10:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAEB2C03;
-        Mon, 16 Jul 2018 07:44:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C101CCA0;
+        Mon, 16 Jul 2018 07:44:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olli Salonen <olli.salonen@iki.fi>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 06/43] USB: serial: cp210x: add another USB ID for Qivicon ZigBee stick
-Date:   Mon, 16 Jul 2018 09:36:11 +0200
-Message-Id: <20180716073512.473205847@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 07/43] USB: serial: keyspan_pda: fix modem-status error handling
+Date:   Mon, 16 Jul 2018 09:36:12 +0200
+Message-Id: <20180716073512.561839542@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -50,31 +49,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Olli Salonen <olli.salonen@iki.fi>
+From: Johan Hovold <johan@kernel.org>
 
-commit 367b160fe4717c14a2a978b6f9ffb75a7762d3ed upstream.
+commit 01b3cdfca263a17554f7b249d20a247b2a751521 upstream.
 
-There are two versions of the Qivicon Zigbee stick in circulation. This
-adds the second USB ID to the cp210x driver.
+Fix broken modem-status error handling which could lead to bits of slab
+data leaking to user space.
 
-Signed-off-by: Olli Salonen <olli.salonen@iki.fi>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 3b36a8fd6777 ("usb: fix uninitialized variable warning in keyspan_pda")
+Cc: stable <stable@vger.kernel.org>     # 2.6.27
 Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/serial/keyspan_pda.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -145,6 +145,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
- 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
- 	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
-+	{ USB_DEVICE(0x10C4, 0x89FB) }, /* Qivicon ZigBee USB Radio Stick */
- 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
- 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+--- a/drivers/usb/serial/keyspan_pda.c
++++ b/drivers/usb/serial/keyspan_pda.c
+@@ -373,8 +373,10 @@ static int keyspan_pda_get_modem_info(st
+ 			     3, /* get pins */
+ 			     USB_TYPE_VENDOR|USB_RECIP_INTERFACE|USB_DIR_IN,
+ 			     0, 0, data, 1, 2000);
+-	if (rc >= 0)
++	if (rc == 1)
+ 		*value = *data;
++	else if (rc >= 0)
++		rc = -EIO;
+ 
+ 	kfree(data);
+ 	return rc;
 
 
