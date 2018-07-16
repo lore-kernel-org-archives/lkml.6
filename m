@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC8AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5DFECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064C1208FE
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 064C1208FE
+	by mail.kernel.org (Postfix) with ESMTP id 3F38C20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F38C20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731358AbeGPIDO (ORCPT
+        id S1731426AbeGPIDR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:03:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46674 "EHLO
+        Mon, 16 Jul 2018 04:03:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46682 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeGPIDN (ORCPT
+        with ESMTP id S1728460AbeGPIDQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:03:13 -0400
+        Mon, 16 Jul 2018 04:03:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9F3BC03;
-        Mon, 16 Jul 2018 07:37:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A3D7CA0;
+        Mon, 16 Jul 2018 07:37:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Christian Kellner <christian@kellner.me>,
-        Yehezkel Bernat <yehezkelshb@gmail.com>
-Subject: [PATCH 4.17 23/67] thunderbolt: Notify userspace when boot_acl is changed
-Date:   Mon, 16 Jul 2018 09:34:52 +0200
-Message-Id: <20180716073446.678897013@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.17 24/67] USB: serial: ch341: fix type promotion bug in ch341_control_in()
+Date:   Mon, 16 Jul 2018 09:34:53 +0200
+Message-Id: <20180716073446.814256215@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -52,40 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 007a74907deeceefef9dc3ec4679fbd7921eaa51 upstream.
+commit e33eab9ded328ccc14308afa51b5be7cbe78d30b upstream.
 
-The commit 9aaa3b8b4c56 ("thunderbolt: Add support for preboot ACL")
-introduced boot_acl attribute but missed the fact that now userspace
-needs to poll the attribute constantly to find out whether it has
-changed or not. Fix this by sending notification to the userspace
-whenever the boot_acl attribute is changed.
+The "r" variable is an int and "bufsize" is an unsigned int so the
+comparison is type promoted to unsigned.  If usb_control_msg() returns a
+negative that is treated as a high positive value and the error handling
+doesn't work.
 
-Fixes: 9aaa3b8b4c56 ("thunderbolt: Add support for preboot ACL")
-Reported-and-tested-by: Christian Kellner <christian@kellner.me>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Christian Kellner <christian@kellner.me>
-Acked-by: Yehezkel Bernat <yehezkelshb@gmail.com>
-Cc: stable@vger.kernel.org
+Fixes: 2d5a9c72d0c4 ("USB: serial: ch341: fix control-message error handling")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/thunderbolt/domain.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/serial/ch341.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/thunderbolt/domain.c
-+++ b/drivers/thunderbolt/domain.c
-@@ -213,6 +213,10 @@ static ssize_t boot_acl_store(struct dev
- 		goto err_free_acl;
- 	}
- 	ret = tb->cm_ops->set_boot_acl(tb, acl, tb->nboot_acl);
-+	if (!ret) {
-+		/* Notify userspace about the change */
-+		kobject_uevent(&tb->dev.kobj, KOBJ_CHANGE);
-+	}
- 	mutex_unlock(&tb->lock);
- 
- err_free_acl:
+--- a/drivers/usb/serial/ch341.c
++++ b/drivers/usb/serial/ch341.c
+@@ -128,7 +128,7 @@ static int ch341_control_in(struct usb_d
+ 	r = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), request,
+ 			    USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN,
+ 			    value, index, buf, bufsize, DEFAULT_TIMEOUT);
+-	if (r < bufsize) {
++	if (r < (int)bufsize) {
+ 		if (r >= 0) {
+ 			dev_err(&dev->dev,
+ 				"short control message received (%d < %u)\n",
 
 
