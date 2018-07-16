@@ -3,46 +3,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DADEECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D319EECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF99420B80
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:46:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF99420B80
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 64B8B20856
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:47:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B8B20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729967AbeGPNOE (ORCPT
+        id S1730008AbeGPNOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 09:14:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59030 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728719AbeGPNOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 09:14:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1CF7518A;
-        Mon, 16 Jul 2018 05:46:47 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDDA43F5B1;
-        Mon, 16 Jul 2018 05:46:45 -0700 (PDT)
-Subject: Re: [PATCH v6 2/8] KVM: arm/arm64: Re-factor setting the Stage 2
- entry to exec on fault
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com
-References: <20180716110857.19310-1-punit.agrawal@arm.com>
- <20180716110857.19310-3-punit.agrawal@arm.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <ee0a72a5-ffa9-6016-80e7-0abc6d65f514@arm.com>
-Date:   Mon, 16 Jul 2018 13:46:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 16 Jul 2018 09:14:47 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:63437 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728687AbeGPNOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 09:14:47 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6GClQV0059301;
+        Mon, 16 Jul 2018 21:47:26 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
+ Mon, 16 Jul 2018 21:47:26 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6GClLQ6059216
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Mon, 16 Jul 2018 21:47:26 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180707111209.GA27768@gmail.com>
+ <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
+Message-ID: <77efbc52-60d0-c41b-640c-dfd0577192a2@i-love.sakura.ne.jp>
+Date:   Mon, 16 Jul 2018 21:47:22 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180716110857.19310-3-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
+In-Reply-To: <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,18 +64,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/07/18 12:08, Punit Agrawal wrote:
-> Stage 2 fault handler marks a page as executable if it is handling an
-> execution fault or if it was a permission fault in which case the
-> executable bit needs to be preserved.
-> 
-> The logic to decide if the page should be marked executable is
-> duplicated for PMD and PTE entries. To avoid creating another copy
-> when support for PUD hugepages is introduced refactor the code to
-> share the checks needed to mark a page table entry as executable.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
+Ingo, is this patch acceptable?
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+On 2018/07/07 22:54, Tetsuo Handa wrote:
+>From 61752cef56fad2a910f6bfd277e1b9b028aeab43 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Sat, 7 Jul 2018 22:45:30 +0900
+> Subject: [PATCH v2] x86: Avoid pr_cont() in show_opcodes()
+> 
+> Since syzbot is confused by concurrent printk() messages [1], this patch
+> changes show_opcodes() to use snprintf(). By this change, the Code: line
+> will always be printed as one line even if multiple threads concurrently
+> called printk().
+> 
+> To save on-stack footprint, this patch shares opcodes[] and buf[] because
+> we sequentially reads from opcodes[] and sequentially writes to buf[].
+> 
+> When we start adding prefix to each line of printk() output,
+> we will be able to handle concurrent printk() messages.
+> 
+> [1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> ---
+>  arch/x86/kernel/dumpstack.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> index 666a284..6408123 100644
+> --- a/arch/x86/kernel/dumpstack.c
+> +++ b/arch/x86/kernel/dumpstack.c
+> @@ -94,25 +94,27 @@ static void printk_stack_address(unsigned long address, int reliable,
+>  void show_opcodes(u8 *rip, const char *loglvl)
+>  {
+>  	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
+> -	u8 opcodes[OPCODE_BUFSIZE];
+>  	u8 *ip;
+>  	int i;
+> -
+> -	printk("%sCode: ", loglvl);
+> +	int pos = 0;
+> +	char buf[(3 * OPCODE_BUFSIZE + 2) + 1];
+> +	u8 *opcodes = (u8 *) buf + sizeof(buf) - OPCODE_BUFSIZE;
+>  
+>  	ip = (u8 *)rip - code_prologue;
+>  	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
+> -		pr_cont("Bad RIP value.\n");
+> +		printk("%sCode: Bad RIP value.\n", loglvl);
+>  		return;
+>  	}
+>  
+>  	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
+>  		if (ip == rip)
+> -			pr_cont("<%02x> ", opcodes[i]);
+> +			pos += snprintf(buf + pos, sizeof(buf) - pos,
+> +					"<%02x> ", opcodes[i]);
+>  		else
+> -			pr_cont("%02x ", opcodes[i]);
+> +			pos += snprintf(buf + pos, sizeof(buf) - pos,
+> +					"%02x ", opcodes[i]);
+>  	}
+> -	pr_cont("\n");
+> +	printk("%sCode: %s\n", loglvl, buf);
+>  }
+>  
+>  void show_ip(struct pt_regs *regs, const char *loglvl)
+> 
+
