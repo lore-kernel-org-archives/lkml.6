@@ -6,34 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDEBECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 043CDECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D4A206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D4A206B7
+	by mail.kernel.org (Postfix) with ESMTP id AFAA0206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAA0206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388643AbeGPIIC (ORCPT
+        id S2388652AbeGPIIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:08:02 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47670 "EHLO
+        Mon, 16 Jul 2018 04:08:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47678 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIIB (ORCPT
+        with ESMTP id S1730161AbeGPIID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:08:01 -0400
+        Mon, 16 Jul 2018 04:08:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C903CA1;
-        Mon, 16 Jul 2018 07:41:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 37C47CA1;
+        Mon, 16 Jul 2018 07:42:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.14 44/54] xen: setup pv irq ops vector earlier
-Date:   Mon, 16 Jul 2018 09:35:41 +0200
-Message-Id: <20180716073459.116037092@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christian Black <christian.d.black@intel.com>,
+        Jon Derrick <jonathan.derrick@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Scott Bauer <scott.bauer@intel.com>
+Subject: [PATCH 4.14 45/54] nvme-pci: Remap CMB SQ entries on every controller reset
+Date:   Mon, 16 Jul 2018 09:35:42 +0200
+Message-Id: <20180716073459.249956442@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -50,98 +54,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Keith Busch <keith.busch@intel.com>
 
-commit 0ce0bba4e5e0eb9b753bb821785de5d23c494392 upstream.
+commit 815c6704bf9f1c59f3a6be380a4032b9c57b12f1 upstream.
 
-Setting pv_irq_ops for Xen PV domains should be done as early as
-possible in order to support e.g. very early printk() usage.
+The controller memory buffer is remapped into a kernel address on each
+reset, but the driver was setting the submission queue base address
+only on the very first queue creation. The remapped address is likely to
+change after a reset, so accessing the old address will hit a kernel bug.
 
-The same applies to xen_vcpu_info_reset(0), as it is needed for the
-pv irq ops.
+This patch fixes that by setting the queue's CMB base address each time
+the queue is created.
 
-Move the call of xen_setup_machphys_mapping() after initializing the
-pv functions as it contains a WARN_ON(), too.
-
-Remove the no longer necessary conditional in xen_init_irq_ops()
-from PVH V1 times to make clear this is a PV only function.
-
-Cc: <stable@vger.kernel.org> # 4.14
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: f63572dff1421 ("nvme: unmap CMB and remove sysfs file in reset path")
+Reported-by: Christian Black <christian.d.black@intel.com>
+Cc: Jon Derrick <jonathan.derrick@intel.com>
+Cc: <stable@vger.kernel.org> # 4.9+
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Scott Bauer <scott.bauer@intel.com>
+Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/enlighten_pv.c |   24 +++++++++++-------------
- arch/x86/xen/irq.c          |    4 +---
- 2 files changed, 12 insertions(+), 16 deletions(-)
+ drivers/nvme/host/pci.c |   27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -1230,12 +1230,20 @@ asmlinkage __visible void __init xen_sta
- 
- 	xen_setup_features();
- 
--	xen_setup_machphys_mapping();
--
- 	/* Install Xen paravirt ops */
- 	pv_info = xen_info;
- 	pv_init_ops.patch = paravirt_patch_default;
- 	pv_cpu_ops = xen_cpu_ops;
-+	xen_init_irq_ops();
-+
-+	/*
-+	 * Setup xen_vcpu early because it is needed for
-+	 * local_irq_disable(), irqs_disabled(), e.g. in printk().
-+	 *
-+	 * Don't do the full vcpu_info placement stuff until we have
-+	 * the cpu_possible_mask and a non-dummy shared_info.
-+	 */
-+	xen_vcpu_info_reset(0);
- 
- 	x86_platform.get_nmi_reason = xen_get_nmi_reason;
- 
-@@ -1247,6 +1255,7 @@ asmlinkage __visible void __init xen_sta
- 	 * Set up some pagetable state before starting to set any ptes.
- 	 */
- 
-+	xen_setup_machphys_mapping();
- 	xen_init_mmu_ops();
- 
- 	/* Prevent unwanted bits from being set in PTEs. */
-@@ -1271,20 +1280,9 @@ asmlinkage __visible void __init xen_sta
- 	get_cpu_cap(&boot_cpu_data);
- 	x86_configure_nx();
- 
--	xen_init_irq_ops();
--
- 	/* Let's presume PV guests always boot on vCPU with id 0. */
- 	per_cpu(xen_vcpu_id, 0) = 0;
- 
--	/*
--	 * Setup xen_vcpu early because idt_setup_early_handler needs it for
--	 * local_irq_disable(), irqs_disabled().
--	 *
--	 * Don't do the full vcpu_info placement stuff until we have
--	 * the cpu_possible_mask and a non-dummy shared_info.
--	 */
--	xen_vcpu_info_reset(0);
--
- 	idt_setup_early_handler();
- 
- 	xen_init_capabilities();
---- a/arch/x86/xen/irq.c
-+++ b/arch/x86/xen/irq.c
-@@ -128,8 +128,6 @@ static const struct pv_irq_ops xen_irq_o
- 
- void __init xen_init_irq_ops(void)
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1233,17 +1233,15 @@ static int nvme_cmb_qdepth(struct nvme_d
+ static int nvme_alloc_sq_cmds(struct nvme_dev *dev, struct nvme_queue *nvmeq,
+ 				int qid, int depth)
  {
--	/* For PVH we use default pv_irq_ops settings. */
--	if (!xen_feature(XENFEAT_hvm_callback_vector))
--		pv_irq_ops = xen_irq_ops;
-+	pv_irq_ops = xen_irq_ops;
- 	x86_init.irqs.intr_init = xen_init_IRQ;
+-	if (qid && dev->cmb && use_cmb_sqes && NVME_CMB_SQS(dev->cmbsz)) {
+-		unsigned offset = (qid - 1) * roundup(SQ_SIZE(depth),
+-						      dev->ctrl.page_size);
+-		nvmeq->sq_dma_addr = dev->cmb_bus_addr + offset;
+-		nvmeq->sq_cmds_io = dev->cmb + offset;
+-	} else {
+-		nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
+-					&nvmeq->sq_dma_addr, GFP_KERNEL);
+-		if (!nvmeq->sq_cmds)
+-			return -ENOMEM;
+-	}
++
++	/* CMB SQEs will be mapped before creation */
++	if (qid && dev->cmb && use_cmb_sqes && NVME_CMB_SQS(dev->cmbsz))
++		return 0;
++
++	nvmeq->sq_cmds = dma_alloc_coherent(dev->dev, SQ_SIZE(depth),
++					    &nvmeq->sq_dma_addr, GFP_KERNEL);
++	if (!nvmeq->sq_cmds)
++		return -ENOMEM;
+ 
+ 	return 0;
  }
+@@ -1320,6 +1318,13 @@ static int nvme_create_queue(struct nvme
+ 	struct nvme_dev *dev = nvmeq->dev;
+ 	int result;
+ 
++	if (qid && dev->cmb && use_cmb_sqes && NVME_CMB_SQS(dev->cmbsz)) {
++		unsigned offset = (qid - 1) * roundup(SQ_SIZE(nvmeq->q_depth),
++						      dev->ctrl.page_size);
++		nvmeq->sq_dma_addr = dev->cmb_bus_addr + offset;
++		nvmeq->sq_cmds_io = dev->cmb + offset;
++	}
++
+ 	nvmeq->cq_vector = qid - 1;
+ 	result = adapter_alloc_cq(dev, qid, nvmeq);
+ 	if (result < 0)
 
 
