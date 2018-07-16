@@ -2,188 +2,198 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEEEECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68547ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7518C208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:00:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7518C208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 216A1208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 216A1208E9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbeGPI0s (ORCPT
+        id S1729604AbeGPI1F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:26:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36880 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726343AbeGPI0s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:26:48 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6G7xYs0052114
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:00:39 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k8qacre26-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:00:38 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
-        Mon, 16 Jul 2018 09:00:36 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 16 Jul 2018 09:00:32 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6G80Wcs42008810
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Jul 2018 08:00:32 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0782E4205F;
-        Mon, 16 Jul 2018 11:00:51 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9094842057;
-        Mon, 16 Jul 2018 11:00:49 +0100 (BST)
-Received: from rapoport-lnx (unknown [9.148.8.99])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 16 Jul 2018 11:00:49 +0100 (BST)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 16 Jul 2018 11:00:29 +0300
-From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
-To:     Guan Xuetao <gxt@pku.edu.cn>
-Cc:     Michal Hocko <mhocko@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>
-Subject: [PATCH] unicore32: switch to NO_BOOTMEM
-Date:   Mon, 16 Jul 2018 11:00:24 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18071608-0020-0000-0000-000002A6F0C5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071608-0021-0000-0000-000020F34F0D
-Message-Id: <1531728024-13259-1-git-send-email-rppt@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-16_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=52 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=774 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807160096
+        Mon, 16 Jul 2018 04:27:05 -0400
+Received: from mga17.intel.com ([192.55.52.151]:35356 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbeGPI1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:27:05 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 01:00:57 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,360,1526367600"; 
+   d="asc'?scan'208";a="67300113"
+Received: from zhen-hp.sh.intel.com (HELO zhen-hp) ([10.239.13.143])
+  by fmsmga002.fm.intel.com with ESMTP; 16 Jul 2018 01:00:55 -0700
+Date:   Mon, 16 Jul 2018 15:53:09 +0800
+From:   Zhenyu Wang <zhenyuw@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org
+Subject: Re: [PATCH 1/1] Revert "iommu/vt-d: Clean up pasid quirk for
+ pre-production devices"
+Message-ID: <20180716075309.GN1267@zhen-hp.sh.intel.com>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+References: <1531031001-5783-1-git-send-email-baolu.lu@linux.intel.com>
+ <5B4C34E4.30004@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="kd7cwL6IYJrQFfWn"
+Content-Disposition: inline
+In-Reply-To: <5B4C34E4.30004@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The unicore32 already supports memblock and uses it for some early memory
-reservations, e.g initrd and the page tables.
 
-At some point unicore32 allocates the bootmem bitmap from the memblock and
-then hands over the memory reservations from memblock to bootmem.
+--kd7cwL6IYJrQFfWn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch removes the bootmem initialization and leaves memblock as the
-only boot time memory manager for unicore32.
+On 2018.07.16 14:02:12 +0800, Lu Baolu wrote:
+> Hi Joerg,
+>=20
+> The graphic guys are looking forward to having this in 4.18.
+> Is it possible to take it in the following rcs?
+>=20
 
-Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
----
+This breakes intel gfx driver in 4.18 when gfx dmar is on.
+Please include this fix ASAP.
 
-I couldn't get unicore32 toolchain as the only link I was able to find [1]
-gives me timeout, so the best I could do to check the changes was
+Tested-by: Zhenyu Wang <zhenyuw@linux.intel.com>
 
-	gcc <lots of flags> -c arch/unicore32/mm/init.c
+thanks!
 
-[1] http://mprc.pku.edu.cn/~guanxuetao/linux/uc4-1.0.5-hard.tgz
+>=20
+> On 07/08/2018 02:23 PM, Lu Baolu wrote:
+> > This reverts commit ab96746aaa344fb720a198245a837e266fad3b62.
+> >
+> > The commit ab96746aaa34 ("iommu/vt-d: Clean up pasid quirk for
+> > pre-production devices") triggers ECS mode on some platforms
+> > which have broken ECS support. As the result, graphic device
+> > will be inoperable on boot.
+> >
+> > Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=3D107017
+> >
+> > Cc: Ashok Raj <ashok.raj@intel.com>
+> > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> > ---
+> >  drivers/iommu/intel-iommu.c | 32 ++++++++++++++++++++++++++++++--
+> >  include/linux/intel-iommu.h |  1 +
+> >  2 files changed, 31 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> > index b344a88..115ff26 100644
+> > --- a/drivers/iommu/intel-iommu.c
+> > +++ b/drivers/iommu/intel-iommu.c
+> > @@ -484,14 +484,37 @@ static int dmar_forcedac;
+> >  static int intel_iommu_strict;
+> >  static int intel_iommu_superpage =3D 1;
+> >  static int intel_iommu_ecs =3D 1;
+> > +static int intel_iommu_pasid28;
+> >  static int iommu_identity_mapping;
+> > =20
+> >  #define IDENTMAP_ALL		1
+> >  #define IDENTMAP_GFX		2
+> >  #define IDENTMAP_AZALIA		4
+> > =20
+> > -#define ecs_enabled(iommu)	(intel_iommu_ecs && ecap_ecs(iommu->ecap))
+> > -#define pasid_enabled(iommu)	(ecs_enabled(iommu) && ecap_pasid(iommu->=
+ecap))
+> > +/* Broadwell and Skylake have broken ECS support =E2=80=94 normal so-c=
+alled "second
+> > + * level" translation of DMA requests-without-PASID doesn't actually h=
+appen
+> > + * unless you also set the NESTE bit in an extended context-entry. Whi=
+ch of
+> > + * course means that SVM doesn't work because it's trying to do nested
+> > + * translation of the physical addresses it finds in the process page =
+tables,
+> > + * through the IOVA->phys mapping found in the "second level" page tab=
+les.
+> > + *
+> > + * The VT-d specification was retroactively changed to change the defi=
+nition
+> > + * of the capability bits and pretend that Broadwell/Skylake never hap=
+pened...
+> > + * but unfortunately the wrong bit was changed. It's ECS which is brok=
+en, but
+> > + * for some reason it was the PASID capability bit which was redefined=
+ (from
+> > + * bit 28 on BDW/SKL to bit 40 in future).
+> > + *
+> > + * So our test for ECS needs to eschew those implementations which set=
+ the old
+> > + * PASID capabiity bit 28, since those are the ones on which ECS is br=
+oken.
+> > + * Unless we are working around the 'pasid28' limitations, that is, by=
+ putting
+> > + * the device into passthrough mode for normal DMA and thus masking th=
+e bug.
+> > + */
+> > +#define ecs_enabled(iommu) (intel_iommu_ecs && ecap_ecs(iommu->ecap) &=
+& \
+> > +			    (intel_iommu_pasid28 || !ecap_broken_pasid(iommu->ecap)))
+> > +/* PASID support is thus enabled if ECS is enabled and *either* of the=
+ old
+> > + * or new capability bits are set. */
+> > +#define pasid_enabled(iommu) (ecs_enabled(iommu) &&			\
+> > +			      (ecap_pasid(iommu->ecap) || ecap_broken_pasid(iommu->ecap)))
+> > =20
+> >  int intel_iommu_gfx_mapped;
+> >  EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
+> > @@ -554,6 +577,11 @@ static int __init intel_iommu_setup(char *str)
+> >  			printk(KERN_INFO
+> >  				"Intel-IOMMU: disable extended context table support\n");
+> >  			intel_iommu_ecs =3D 0;
+> > +		} else if (!strncmp(str, "pasid28", 7)) {
+> > +			printk(KERN_INFO
+> > +				"Intel-IOMMU: enable pre-production PASID support\n");
+> > +			intel_iommu_pasid28 =3D 1;
+> > +			iommu_identity_mapping |=3D IDENTMAP_GFX;
+> >  		} else if (!strncmp(str, "tboot_noforce", 13)) {
+> >  			printk(KERN_INFO
+> >  				"Intel-IOMMU: not forcing on after tboot. This could expose securi=
+ty risk for tboot\n");
+> > diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+> > index 1df9401..ef169d6 100644
+> > --- a/include/linux/intel-iommu.h
+> > +++ b/include/linux/intel-iommu.h
+> > @@ -121,6 +121,7 @@
+> >  #define ecap_srs(e)		((e >> 31) & 0x1)
+> >  #define ecap_ers(e)		((e >> 30) & 0x1)
+> >  #define ecap_prs(e)		((e >> 29) & 0x1)
+> > +#define ecap_broken_pasid(e)	((e >> 28) & 0x1)
+> >  #define ecap_dis(e)		((e >> 27) & 0x1)
+> >  #define ecap_nest(e)		((e >> 26) & 0x1)
+> >  #define ecap_mts(e)		((e >> 25) & 0x1)
+>=20
 
- arch/unicore32/Kconfig   |  1 +
- arch/unicore32/mm/init.c | 54 +-----------------------------------------------
- 2 files changed, 2 insertions(+), 53 deletions(-)
+--=20
+Open Source Technology Center, Intel ltd.
 
-diff --git a/arch/unicore32/Kconfig b/arch/unicore32/Kconfig
-index 03f991e..cff4b9d 100644
---- a/arch/unicore32/Kconfig
-+++ b/arch/unicore32/Kconfig
-@@ -5,6 +5,7 @@ config UNICORE32
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_MIGHT_HAVE_PC_SERIO
- 	select HAVE_MEMBLOCK
-+	select NO_BOOTMEM
- 	select HAVE_GENERIC_DMA_COHERENT
- 	select HAVE_KERNEL_GZIP
- 	select HAVE_KERNEL_BZIP2
-diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
-index f4950fb..44ccc15 100644
---- a/arch/unicore32/mm/init.c
-+++ b/arch/unicore32/mm/init.c
-@@ -84,58 +84,6 @@ static void __init find_limits(unsigned long *min, unsigned long *max_low,
- 	}
- }
- 
--static void __init uc32_bootmem_init(unsigned long start_pfn,
--	unsigned long end_pfn)
--{
--	struct memblock_region *reg;
--	unsigned int boot_pages;
--	phys_addr_t bitmap;
--	pg_data_t *pgdat;
--
--	/*
--	 * Allocate the bootmem bitmap page.  This must be in a region
--	 * of memory which has already been mapped.
--	 */
--	boot_pages = bootmem_bootmap_pages(end_pfn - start_pfn);
--	bitmap = memblock_alloc_base(boot_pages << PAGE_SHIFT, L1_CACHE_BYTES,
--				__pfn_to_phys(end_pfn));
--
--	/*
--	 * Initialise the bootmem allocator, handing the
--	 * memory banks over to bootmem.
--	 */
--	node_set_online(0);
--	pgdat = NODE_DATA(0);
--	init_bootmem_node(pgdat, __phys_to_pfn(bitmap), start_pfn, end_pfn);
--
--	/* Free the lowmem regions from memblock into bootmem. */
--	for_each_memblock(memory, reg) {
--		unsigned long start = memblock_region_memory_base_pfn(reg);
--		unsigned long end = memblock_region_memory_end_pfn(reg);
--
--		if (end >= end_pfn)
--			end = end_pfn;
--		if (start >= end)
--			break;
--
--		free_bootmem(__pfn_to_phys(start), (end - start) << PAGE_SHIFT);
--	}
--
--	/* Reserve the lowmem memblock reserved regions in bootmem. */
--	for_each_memblock(reserved, reg) {
--		unsigned long start = memblock_region_reserved_base_pfn(reg);
--		unsigned long end = memblock_region_reserved_end_pfn(reg);
--
--		if (end >= end_pfn)
--			end = end_pfn;
--		if (start >= end)
--			break;
--
--		reserve_bootmem(__pfn_to_phys(start),
--			(end - start) << PAGE_SHIFT, BOOTMEM_DEFAULT);
--	}
--}
--
- static void __init uc32_bootmem_free(unsigned long min, unsigned long max_low,
- 	unsigned long max_high)
- {
-@@ -232,7 +180,7 @@ void __init bootmem_init(void)
- 
- 	find_limits(&min, &max_low, &max_high);
- 
--	uc32_bootmem_init(min, max_low);
-+	node_set_online(0);
- 
- #ifdef CONFIG_SWIOTLB
- 	swiotlb_init(1);
--- 
-2.7.4
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
 
+--kd7cwL6IYJrQFfWn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCW0xO5QAKCRCxBBozTXgY
+JxcqAJ4q4apZs8P0KaW9SpeNJw7O+zpxQQCfXxLa3d/Ii8e/v/W8dEcKrZMlpxM=
+=r6f5
+-----END PGP SIGNATURE-----
+
+--kd7cwL6IYJrQFfWn--
