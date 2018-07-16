@@ -2,126 +2,129 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF2CECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280AEECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2302620647
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:31:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2302620647
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+	by mail.kernel.org (Postfix) with ESMTP id D54B3208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:33:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54B3208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbeGPP6v (ORCPT
+        id S1729615AbeGPQBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 11:58:51 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:34086 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbeGPP6v (ORCPT
+        Mon, 16 Jul 2018 12:01:07 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34590 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeGPQBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 11:58:51 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id BTWu1y00D3XaVaC01TWuJq; Mon, 16 Jul 2018 17:30:54 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ff5Sg-0007Mp-2K; Mon, 16 Jul 2018 17:30:54 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ff5Sg-0000UI-0P; Mon, 16 Jul 2018 17:30:54 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 0/3] regulator: bd9571mwv: Add support for toggle power switches
-Date:   Mon, 16 Jul 2018 17:30:49 +0200
-Message-Id: <20180716153052.1830-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mon, 16 Jul 2018 12:01:07 -0400
+Received: by mail-oi0-f68.google.com with SMTP id 13-v6so75591768ois.1;
+        Mon, 16 Jul 2018 08:33:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wl/hkASMuDEBUuX098udBNXtuOBN46mXEXqJr6BW3bQ=;
+        b=hWwhWb4z/iwcot1dseZNYFwSgS8wq2EzNScRlXmghcKqw9CO4A1A+t+7OukJQiALk5
+         F10V4KKMRd9Qxef05JWghmfqhkHVl7r+PQlgVkU+5QqDmzjKQ3+s63c9N72duSBhxowp
+         Udj6UGJ2s3F5kF7wEM5K7qEh7F7hksnrIEUhiSrWngEUWx83DtqPQ3/XeGPYiZrF+N3X
+         5ftbmW7IlDQbgyNE1u0RtM1jJEHMoljJBxak9q0G4prDziqt9ZRoB4koi9/Nh5tmGECE
+         ON/sQWLz5ezq6D4gu+ynVUIK8Wp2fbnlyd/v9CCg2IyiYTJHxRJOPE03kgwBiFCVmyQc
+         x/0A==
+X-Gm-Message-State: AOUpUlEYSDbAltvPguMS58s79UpRCyXFN7AeasakPcyRulgrqDi8Ak9Z
+        3eB6BOt7j2Z+BIAG2qYD9ABYBsg=
+X-Google-Smtp-Source: AAOMgpeX9nxGgWhAiSjZbtvfUwVfJsYh4py/l/8EBFQBqB74MgZP6AnBG9Xz1L9ftu9UBlgn3y4UiQ==
+X-Received: by 2002:aca:5583:: with SMTP id j125-v6mr19786056oib.2.1531755189761;
+        Mon, 16 Jul 2018 08:33:09 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id i204-v6sm24189743oia.41.2018.07.16.08.33.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 08:33:09 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 09:33:08 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: fsi: Document binding for the
+ fsi-master-ast-cf "device"
+Message-ID: <20180716153308.GA13044@rob-hp-laptop>
+References: <20180712034847.12878-1-benh@kernel.crashing.org>
+ <20180712034847.12878-2-benh@kernel.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712034847.12878-2-benh@kernel.crashing.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi all,
+On Thu, Jul 12, 2018 at 01:48:43PM +1000, Benjamin Herrenschmidt wrote:
+> This isn't per-se a real device, it's a pseudo-device that
+> represents the use of the Aspeed built-in ColdFire to
+> implement the FSI protocol by bitbanging the GPIOs instead
+> of doing it from the ARM core.
+> 
+> Thus it's a drop-in replacement for the existing
+> fsi-master-gpio pseudo-device for use on systems based
+> on the Aspeed chips. It has most of the same properties,
+> plus some more needed to operate the coprocessor.
+> 
+> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> ---
+>  .../bindings/fsi/fsi-master-ast-cf.txt        | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> new file mode 100644
+> index 000000000000..431bf8a423ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> @@ -0,0 +1,36 @@
+> +Device-tree bindings for ColdFire offloaded gpio-based FSI master driver
+> +------------------------------------------------------------------------
+> +
+> +Required properties:
+> + - compatible =
+> +	"aspeed,ast2400-cf-fsi-master" for an AST2400 based system
+> +   or
+> +	"aspeed,ast2500-cf-fsi-master" for an AST2500 based system
+> +
+> + - clock-gpios = <gpio-descriptor>;	: GPIO for FSI clock
+> + - data-gpios = <gpio-descriptor>;	: GPIO for FSI data signal
+> + - enable-gpios = <gpio-descriptor>;	: GPIO for enable signal
+> + - trans-gpios = <gpio-descriptor>;	: GPIO for voltage translator enable
+> + - mux-gpios = <gpio-descriptor>;	: GPIO for pin multiplexing with other
+> +                                          functions (eg, external FSI masters)
+> + - memory-region = <phandle>;		: Reference to the reserved memory for
+> +                                          the ColdFire. Must be 2M aligned on
+> +					  AST2400 and 1M aligned on AST2500
+> + - aspeed,sram = <phandle>;		: Reference to the SRAM node.
+> + - aspeed,cvic = <phandle>;		: Reference to the CVIC node.
+> +
+> +Examples:
+> +
+> +    fsi-master {
+> +        compatible = "aspeed,ast2500-cf-fsi-master", "fsi-master";
+> +
+> +	clock-gpios = <&gpio 0>;
+> +        data-gpios = <&gpio 1>;
+> +        enable-gpios = <&gpio 2>;
+> +        trans-gpios = <&gpio 3>;
+> +        mux-gpios = <&gpio 4>;
+> +
+> +	memory-region = <&coldfire_memory>;
+> +	sram = <&sram>;
+> +	cvic = <&cvic>;
 
-The ROHM BD9571MWV PMIC on the Renesas Salvator-X(S) and ULCB
-development boards supports DDR Backup Power, which means that the DDR
-power rails can be kept powered while the main SoC is powered down.
+Need to update the example. With that,
 
-This patch series extends the support for DDR backup mode (see commit
-6eb0bfae6973eb6a ("regulator: bd9571mwv: Add support for backup mode"))
-to systems with toggle instead of momentary power switches.
-
-With a toggle power switch (or level signal), the following steps must
-be followed exactly:
-   1. Configure PMIC for backup mode, which changes the role of the
-      power switch to a wake-up switch, 
-   2. Switch accessory power switch off, to prepare for system suspend,
-      which is a manual step not controlled by software,
-   3. Suspend system,
-   4. Switch accessory power switch on, to resume.
-
-Unlike on systems with a momentary toggle switch, an additional step 2
-must be performed in between step 1 and step 3.  Hence step 1 can no
-longer be handled in the PMIC's suspend callback.
-
-This patch series allows performing step 1 when the user writes
-"on" to the PMIC's "backup_mode" virtual file in sysfs, e.g.
-
-    echo on > /sys/bus/i2c/drivers/bd9571mwv/*/bd9571mwv-regulator*/backup_mode
-
-Conversely, writing "off" reverts the role of the accessory switch to a
-power switch.
-Note that unlike with momentary switches, backup mode is not enabled by
-default, as enabling it prevents the board from being powered off using
-the power switch, which may confuse the user.
-
-Changes compared to v3:
-  - Fix build error and warning if !CONFIG_PM_SLEEP,
-  - Improve patch description and comment,
-  - Add Acked-by.
-
-Changes compared to v2:
-  - Drop 'PM / wakeup: Add callback for wake-up change notification',
-  - New patch 'regulator: bd9571mwv: Use "backup_mode" sysfs file
-    instead of "wake_up"',
-  - Replace use of "wake_up" sysfs file and extra callback for wake-up
-    change notification by custom "backup_mode" sysfs file,
-  - New patch ;regulator: bd9571mwv: Document "backup_mode" sysfs file'.
-
-Changes compared to v1:
-  - Improve patch descriptions,
-  - Drop "return;" at end of function.
-
-This has been tested on Salvator-XS.
-
-For testing, this series is also available in the
-topic/bd9571-toggle-power-switch-v4 branch of my renesas-drivers git
-repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-Thanks for applying!
-
-Geert Uytterhoeven (3):
-  regulator: bd9571mwv: Use "backup_mode" sysfs file instead of
-    "wake_up"
-  regulator: bd9571mwv: Add support for toggle power switches
-  regulator: bd9571mwv: Document "backup_mode" sysfs file
-
- .../testing/sysfs-driver-bd9571mwv-regulator  | 27 +++++++
- drivers/regulator/bd9571mwv-regulator.c       | 72 +++++++++++++++++--
- 2 files changed, 94 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator
-
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
