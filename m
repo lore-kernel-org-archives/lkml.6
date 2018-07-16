@@ -2,111 +2,108 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD12ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52404ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05DD520844
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:19:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BE2420844
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:20:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJiieiMU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05DD520844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YibVELlP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE2420844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbeGPMqp (ORCPT
+        id S1730810AbeGPMr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:46:45 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54515 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730072AbeGPMqp (ORCPT
+        Mon, 16 Jul 2018 08:47:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37723 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729865AbeGPMr1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:46:45 -0400
-Received: by mail-wm0-f66.google.com with SMTP id c14-v6so4635687wmb.4;
-        Mon, 16 Jul 2018 05:19:33 -0700 (PDT)
+        Mon, 16 Jul 2018 08:47:27 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q10-v6so31679548wrd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 05:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=aXdgQOa4K3aE33M92Th56R4F8AMyuaxLHEjEXJdsbn8=;
-        b=lJiieiMUEcpJ6msN6e8ncXqn2GBuM9D/TyM3KIAzxceFQKNBFVdPBkg6ohp+FNalT1
-         U5AagopXgjN3Tpp9iB4Q9RKvFLcurLkIPACxD5mqSBwsXgjiKN02Q4XnYleJpOJRAUu4
-         NGbL0MYOSv7bbn6+J66i9z+Yy6+aSy4AG/Ws5eQz1I2fkLx38e1ybgx3AgPHj2WgQ3EP
-         avRFTQt9XMd1D8tv71qdDzlbUF1HICvg1D0EidP6wB78W5BusV4VnnFLl44WgJ3fE8xU
-         cCEpCHY3dIydgH34G0aIMx3rRgYhaimIpf6xlAqG9TaGPIbnom5Ifwqsyz2M5XSAkrLa
-         QtYg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=T/12huL75C8/ffmcGlYd7MBgq8LuvYKvjxW8yRl8lDU=;
+        b=YibVELlP+gZJtA8oLj15xrdlylrmNYiuV/Qc+Rx0RpR49HbXTJJ444hqdnnYRKLdT7
+         AggL40VBAGJSlYW47BkFko1nNCpBPMBbGbQOZz8T1eiPcDse21knGSeAtOOqQZ29c1O7
+         QsJ4SKLQ3oTXRcDE3tV/FHi1AHSFIkw0yz66E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=aXdgQOa4K3aE33M92Th56R4F8AMyuaxLHEjEXJdsbn8=;
-        b=RLieMG47CgQwqZY3p0obI0NfgA6Y4M1HNY/wTtNP5Trt+ZRdKIG435IzM5TIWZ6jAX
-         rEyepQYOo5CXiX/bigZIoK4t9vzC3U25NwHNCdqgsf8VUvwopVD7T7VUk87/3yYniPpR
-         Tx5n3g9v9ntQP3ELhbp4JbglLMuLhmbQR587Qx+CKSSxCC5TiRCG2/ghEaom5evkQTPL
-         lhQzmklIPPziH5khL6MqFmqtlHqsM7iWLrCamN715/uqLNAEJqdxrzJCcNLGAn84L4O+
-         zQEJUZ5f4SgG3pJ19/n1nkIVlZT2dx/polM/cmjKedRd5lChBQn5ygjLV9mQyR59SoHc
-         9T/g==
-X-Gm-Message-State: AOUpUlHh9quhKULmYxgao41/tvgjE/QWHGUtM0P3inan4lr0Ulh9n3yW
-        Jivua0nizRRsgRWBd4q5T7w=
-X-Google-Smtp-Source: AAOMgpe/Qt2EJN9tZ4/5h1lloFhjTzyxh7ylLWSSEXCE5iNTQ1IkgEw4ZO6BEvbriW/6RDJghRAYHQ==
-X-Received: by 2002:a1c:b586:: with SMTP id e128-v6mr6362333wmf.141.1531743572821;
-        Mon, 16 Jul 2018 05:19:32 -0700 (PDT)
-Received: from mdionisio-BM1AF-BP1AF-BM6AF.powersoft.it (net-93-146-228-90.cust.vodafonedsl.it. [93.146.228.90])
-        by smtp.gmail.com with ESMTPSA id z3-v6sm30264828wru.27.2018.07.16.05.19.31
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=T/12huL75C8/ffmcGlYd7MBgq8LuvYKvjxW8yRl8lDU=;
+        b=XvPcFBdH/P0aDAXDyPBYkof2/IeItCGz67q7lFovFS2r7pnizyXdMY9Y5+7J/xOScz
+         IbBA7C4PnFebP6gpNLVabFmZ6px1Ym1IhJ1a66slY1E0U9VLAiaKCtzz2QWcGifDkxfr
+         4nmZUthyTrAXfNJYwxNMRLhji1WP0o/9h2LlsBJslxHupXuqSaRtD7tM0BhLmJ54vkII
+         dfEOJIVsQHAaO+XgszCg940sZDbStEUtSssenL/reDZtk+ISyDVpNugcrnjEMFVG+thZ
+         l6b9/aVRsS8m0FvI7UHNfb9EiCQt/eC6Y3QzxQiZloPqSXdBvDMVS7qVqsDMvV5DSK5R
+         7rXA==
+X-Gm-Message-State: AOUpUlHJDMrljTigtF5pS11VS3hHq/egAgFhUlVWn5sNi3ZlfWVsxdcd
+        rfc3BD8LQMy0A/1fJzK8/oVX7A==
+X-Google-Smtp-Source: AAOMgpcz7SVDG+OaGl4ydBnh+wLUBDULxaGbG9QNxo3sgAA/cCT3MwLCnubTouXn14lEyJIittA1vg==
+X-Received: by 2002:adf:f585:: with SMTP id f5-v6mr8083830wro.59.1531743615494;
+        Mon, 16 Jul 2018 05:20:15 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id 79-v6sm10833372wmf.5.2018.07.16.05.20.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 05:19:32 -0700 (PDT)
-From:   michele.dionisio@gmail.com
-To:     wim@linux-watchdog.org, linux@roeck-us.net,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michele Dionisio <michele.dionisio@powersoft.com>,
-        Michele Dionisio <michele.dionisio@gmail.com>
-Subject: watchdog: davinci_wdt: add possibility to configure watchdog period
-Date:   Mon, 16 Jul 2018 14:19:09 +0200
-Message-Id: <20180716121909.4869-2-michele.dionisio@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180716121909.4869-1-michele.dionisio@gmail.com>
-References: <20180716121909.4869-1-michele.dionisio@gmail.com>
+        Mon, 16 Jul 2018 05:20:14 -0700 (PDT)
+Subject: Re: [PATCH v4 01/18] nvmem: add support for cell lookups
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180629094039.7543-1-brgl@bgdev.pl>
+ <20180629094039.7543-2-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <c460e73f-bfc4-abc6-e61c-26290632a3ab@linaro.org>
+Date:   Mon, 16 Jul 2018 13:20:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20180629094039.7543-2-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michele Dionisio <michele.dionisio@powersoft.com>
 
-It is not possible to implement setting of watchdog period because it is
-not possible to stop watchdog so it is nice to have possibility to
-configure watchdog period at module loading.
 
-Signed-off-by: Michele Dionisio <michele.dionisio@gmail.com>
+On 29/06/18 10:40, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski<bgolaszewski@baylibre.com>
+> 
+> We can currently only register nvmem cells from device tree or by
+> manually calling nvmem_add_cells(). The latter options however forces
+> users to make sure that the nvmem provider with which the cells are
+> associated is registered before the call.
+> 
+> This patch proposes a new solution inspired by other frameworks that
+> offer resource lookups (GPIO, PWM etc.). It adds functions that allow
+> machine code to register nvmem lookup which are later lazily used to
+> add corresponding nvmem cells and remove them if no longer needed.
+> 
+> Signed-off-by: Bartosz Golaszewski<bgolaszewski@baylibre.com>
 
-diff --git a/drivers/watchdog/davinci_wdt.c b/drivers/watchdog/davinci_wdt.c
-index 6c6594261cb7..5f95afa20fee 100644
---- a/drivers/watchdog/davinci_wdt.c
-+++ b/drivers/watchdog/davinci_wdt.c
-@@ -54,6 +54,10 @@
- #define WDKEY_SEQ0		(0xa5c6 << 16)
- #define WDKEY_SEQ1		(0xda7e << 16)
- 
-+static unsigned int init_timeout;
-+module_param(init_timeout, uint, 0);
-+MODULE_PARM_DESC(init_timeout, "initial watchdog timeout (in seconds)");
-+
- static int heartbeat;
- 
- /*
-@@ -223,8 +227,10 @@ static int davinci_wdt_probe(struct platform_device *pdev)
- 	wdd->ops		= &davinci_wdt_ops;
- 	wdd->min_timeout	= 1;
- 	wdd->max_timeout	= MAX_HEARTBEAT;
--	wdd->timeout		= DEFAULT_HEARTBEAT;
--	wdd->parent		= &pdev->dev;
-+	if ((init_timeout >= 1) && (init_timeout <= MAX_HEARTBEAT))
-+		wdd->timeout = init_timeout;
-+	else
-+		wdd->timeout = DEFAULT_HEARTBEAT;
- 
- 	watchdog_init_timeout(wdd, heartbeat, dev);
- 
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
