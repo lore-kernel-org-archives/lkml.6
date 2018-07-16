@@ -6,42 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B32FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C079FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22A55206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22A55206B7
+	by mail.kernel.org (Postfix) with ESMTP id 7ABEC206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:41:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABEC206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388565AbeGPIHp (ORCPT
+        id S2388578AbeGPIHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:07:45 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47616 "EHLO
+        Mon, 16 Jul 2018 04:07:48 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47630 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIHo (ORCPT
+        with ESMTP id S1730161AbeGPIHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:07:44 -0400
+        Mon, 16 Jul 2018 04:07:47 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73D3CCA4;
-        Mon, 16 Jul 2018 07:41:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 91E5FC03;
+        Mon, 16 Jul 2018 07:41:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 33/54] mm: do not drop unused pages when userfaultd is running
-Date:   Mon, 16 Jul 2018 09:35:30 +0200
-Message-Id: <20180716073457.056365615@linuxfoundation.org>
+Subject: [PATCH 4.14 24/54] Fix up non-directory creation in SGID directories
+Date:   Mon, 16 Jul 2018 09:35:21 +0200
+Message-Id: <20180716073455.452966215@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -58,68 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit bce73e4842390f7b7309c8e253e139db71288ac3 upstream.
+commit 0fa3ecd87848c9c93c2c828ef4c3a8ca36ce46c7 upstream.
 
-KVM guests on s390 can notify the host of unused pages.  This can result
-in pte_unused callbacks to be true for KVM guest memory.
+sgid directories have special semantics, making newly created files in
+the directory belong to the group of the directory, and newly created
+subdirectories will also become sgid.  This is historically used for
+group-shared directories.
 
-If a page is unused (checked with pte_unused) we might drop this page
-instead of paging it.  This can have side-effects on userfaultd, when
-the page in question was already migrated:
+But group directories writable by non-group members should not imply
+that such non-group members can magically join the group, so make sure
+to clear the sgid bit on non-directories for non-members (but remember
+that sgid without group execute means "mandatory locking", just to
+confuse things even more).
 
-The next access of that page will trigger a fault and a user fault
-instead of faulting in a new and empty zero page.  As QEMU does not
-expect a userfault on an already migrated page this migration will fail.
-
-The most straightforward solution is to ignore the pte_unused hint if a
-userfault context is active for this VMA.
-
-Link: http://lkml.kernel.org/r/20180703171854.63981-1-borntraeger@de.ibm.com
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Janosch Frank <frankja@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Cornelia Huck <cohuck@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/rmap.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/inode.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -64,6 +64,7 @@
- #include <linux/backing-dev.h>
- #include <linux/page_idle.h>
- #include <linux/memremap.h>
-+#include <linux/userfaultfd_k.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -1476,11 +1477,16 @@ static bool try_to_unmap_one(struct page
- 				set_pte_at(mm, address, pvmw.pte, pteval);
- 			}
- 
--		} else if (pte_unused(pteval)) {
-+		} else if (pte_unused(pteval) && !userfaultfd_armed(vma)) {
- 			/*
- 			 * The guest indicated that the page content is of no
- 			 * interest anymore. Simply discard the pte, vmscan
- 			 * will take care of the rest.
-+			 * A future reference will then fault in a new zero
-+			 * page. When userfaultfd is active, we must not drop
-+			 * this page though, as its main user (postcopy
-+			 * migration) will not expect userfaults on already
-+			 * copied pages.
- 			 */
- 			dec_mm_counter(mm, mm_counter(page));
- 		} else if (IS_ENABLED(CONFIG_MIGRATION) &&
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2006,8 +2006,14 @@ void inode_init_owner(struct inode *inod
+ 	inode->i_uid = current_fsuid();
+ 	if (dir && dir->i_mode & S_ISGID) {
+ 		inode->i_gid = dir->i_gid;
++
++		/* Directories are special, and always inherit S_ISGID */
+ 		if (S_ISDIR(mode))
+ 			mode |= S_ISGID;
++		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
++			 !in_group_p(inode->i_gid) &&
++			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
++			mode &= ~S_ISGID;
+ 	} else
+ 		inode->i_gid = current_fsgid();
+ 	inode->i_mode = mode;
 
 
