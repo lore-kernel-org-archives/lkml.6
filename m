@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EAFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4EFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FC71208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:04:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC71208E8
+	by mail.kernel.org (Postfix) with ESMTP id ADDD2208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:04:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADDD2208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730444AbeGPTci (ORCPT
+        id S1730811AbeGPTcw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 15:32:38 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:36168 "EHLO
+        Mon, 16 Jul 2018 15:32:52 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:36148 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730072AbeGPTch (ORCPT
+        with ESMTP id S1730063AbeGPTcg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 15:32:37 -0400
+        Mon, 16 Jul 2018 15:32:36 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1ff8ma-0003RH-Hd; Mon, 16 Jul 2018 15:03:40 -0400
+        id 1ff8ma-0003RH-IW; Mon, 16 Jul 2018 15:03:40 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, luto@kernel.org, efault@gmx.de, kernel-team@fb.com,
         mingo@kernel.org, dave.hansen@intel.com,
         Rik van Riel <riel@surriel.com>
-Subject: [PATCH 3/7] x86,mm: restructure switch_mm_irqs_off
-Date:   Mon, 16 Jul 2018 15:03:33 -0400
-Message-Id: <20180716190337.26133-4-riel@surriel.com>
+Subject: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+Date:   Mon, 16 Jul 2018 15:03:34 -0400
+Message-Id: <20180716190337.26133-5-riel@surriel.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180716190337.26133-1-riel@surriel.com>
 References: <20180716190337.26133-1-riel@surriel.com>
@@ -44,111 +44,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move some code that will be needed for the lazy -> !lazy state
-transition when a lazy TLB CPU has gotten out of date.
+Lazy TLB mode can result in an idle CPU being woken up by a TLB flush,
+when all it really needs to do is reload %CR3 at the next context switch,
+assuming no page table pages got freed.
 
-No functional changes, since the if (real_prev == next) branch
-always returns.
+Memory ordering is used to prevent race conditions between switch_mm_irqs_off,
+which checks whether .tlb_gen changed, and the TLB invalidation code, which
+increments .tlb_gen whenever page table entries get invalidated.
+
+The atomic increment in inc_mm_tlb_gen is its own barrier; the context
+switch code adds an explicit barrier between reading tlbstate.is_lazy and
+next->context.tlb_gen.
+
+Unlike the 2016 version of this patch, CPUs with cpu_tlbstate.is_lazy set
+are not removed from the mm_cpumask(mm), since that would prevent the TLB
+flush IPIs at page table free time from being sent to all the CPUs
+that need them.
+
+This patch reduces total CPU use in the system by about 1-2% for a
+memcache workload on two socket systems, and by about 1% for a heavily
+multi-process netperf between two systems.
 
 Signed-off-by: Rik van Riel <riel@surriel.com>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
+Tested-by: Song Liu <songliubraving@fb.com>
 ---
- arch/x86/mm/tlb.c | 60 +++++++++++++++++++++++++++----------------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ arch/x86/mm/tlb.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 59 insertions(+), 9 deletions(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 9a893673c56b..4b73fe835c95 100644
+index 4b73fe835c95..26542cc17043 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -187,6 +187,8 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+@@ -7,6 +7,7 @@
+ #include <linux/export.h>
+ #include <linux/cpu.h>
+ #include <linux/debugfs.h>
++#include <linux/gfp.h>
+ 
+ #include <asm/tlbflush.h>
+ #include <asm/mmu_context.h>
+@@ -185,6 +186,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ {
+ 	struct mm_struct *real_prev = this_cpu_read(cpu_tlbstate.loaded_mm);
  	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
++	bool was_lazy = this_cpu_read(cpu_tlbstate.is_lazy);
  	unsigned cpu = smp_processor_id();
  	u64 next_tlb_gen;
-+	bool need_flush;
-+	u16 new_asid;
+ 	bool need_flush;
+@@ -242,17 +244,40 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 			   next->context.ctx_id);
  
- 	/*
- 	 * NB: The scheduler will call us with prev == next when switching
-@@ -252,8 +254,6 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		/*
+-		 * We don't currently support having a real mm loaded without
+-		 * our cpu set in mm_cpumask().  We have all the bookkeeping
+-		 * in place to figure out whether we would need to flush
+-		 * if our cpu were cleared in mm_cpumask(), but we don't
+-		 * currently use it.
++		 * Even in lazy TLB mode, the CPU should stay set in the
++		 * mm_cpumask. The TLB shootdown code can figure out from
++		 * from cpu_tlbstate.is_lazy whether or not to send an IPI.
+ 		 */
+ 		if (WARN_ON_ONCE(real_prev != &init_mm &&
+ 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
+ 			cpumask_set_cpu(cpu, mm_cpumask(next));
  
- 		return;
+-		return;
++		/*
++		 * If the CPU is not in lazy TLB mode, we are just switching
++		 * from one thread in a process to another thread in the same
++		 * process. No TLB flush required.
++		 */
++		if (!was_lazy)
++			return;
++
++		/*
++		 * Read the tlb_gen to check whether a flush is needed.
++		 * If the TLB is up to date, just use it.
++		 * The barrier synchronizes with the tlb_gen increment in
++		 * the TLB shootdown code.
++		 */
++		smp_mb();
++		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
++		if (this_cpu_read(cpu_tlbstate.ctxs[prev_asid].tlb_gen) ==
++				next_tlb_gen)
++			return;
++
++		/*
++		 * TLB contents went out of date while we were in lazy
++		 * mode. Fall through to the TLB switching code below.
++		 */
++		new_asid = prev_asid;
++		need_flush = true;
  	} else {
--		u16 new_asid;
--		bool need_flush;
  		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
  
- 		/*
-@@ -297,41 +297,41 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
- 
- 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
-+	}
- 
--		if (need_flush) {
--			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
--			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
--			load_new_mm_cr3(next->pgd, new_asid, true);
--
--			/*
--			 * NB: This gets called via leave_mm() in the idle path
--			 * where RCU functions differently.  Tracing normally
--			 * uses RCU, so we need to use the _rcuidle variant.
--			 *
--			 * (There is no good reason for this.  The idle code should
--			 *  be rearranged to call this before rcu_idle_enter().)
--			 */
--			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
--		} else {
--			/* The new ASID is already up to date. */
--			load_new_mm_cr3(next->pgd, new_asid, false);
--
--			/* See above wrt _rcuidle. */
--			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
--		}
-+	if (need_flush) {
-+		this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
-+		this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
-+		load_new_mm_cr3(next->pgd, new_asid, true);
- 
- 		/*
--		 * Record last user mm's context id, so we can avoid
--		 * flushing branch buffer with IBPB if we switch back
--		 * to the same user.
-+		 * NB: This gets called via leave_mm() in the idle path
-+		 * where RCU functions differently.  Tracing normally
-+		 * uses RCU, so we need to use the _rcuidle variant.
+@@ -454,6 +479,9 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
+ 		 * paging-structure cache to avoid speculatively reading
+ 		 * garbage into our TLB.  Since switching to init_mm is barely
+ 		 * slower than a minimal flush, just switch to init_mm.
 +		 *
-+		 * (There is no good reason for this.  The idle code should
-+		 *  be rearranged to call this before rcu_idle_enter().)
++		 * This should be rare, with native_flush_tlb_others skipping
++		 * IPIs to lazy TLB mode CPUs.
  		 */
--		if (next != &init_mm)
--			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
-+		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
-+	} else {
-+		/* The new ASID is already up to date. */
-+		load_new_mm_cr3(next->pgd, new_asid, false);
- 
--		this_cpu_write(cpu_tlbstate.loaded_mm, next);
--		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
-+		/* See above wrt _rcuidle. */
-+		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+ 		switch_mm_irqs_off(NULL, &init_mm, NULL);
+ 		return;
+@@ -560,6 +588,9 @@ static void flush_tlb_func_remote(void *info)
+ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 			     const struct flush_tlb_info *info)
+ {
++	cpumask_var_t lazymask;
++	unsigned int cpu;
++
+ 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+ 	if (info->end == TLB_FLUSH_ALL)
+ 		trace_tlb_flush(TLB_REMOTE_SEND_IPI, TLB_FLUSH_ALL);
+@@ -583,8 +614,6 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 		 * that UV should be updated so that smp_call_function_many(),
+ 		 * etc, are optimal on UV.
+ 		 */
+-		unsigned int cpu;
+-
+ 		cpu = smp_processor_id();
+ 		cpumask = uv_flush_tlb_others(cpumask, info);
+ 		if (cpumask)
+@@ -592,8 +621,29 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
+ 					       (void *)info, 1);
+ 		return;
  	}
- 
+-	smp_call_function_many(cpumask, flush_tlb_func_remote,
++
 +	/*
-+	 * Record last user mm's context id, so we can avoid
-+	 * flushing branch buffer with IBPB if we switch back
-+	 * to the same user.
++	 * A temporary cpumask is used in order to skip sending IPIs
++	 * to CPUs in lazy TLB state, while keeping them in mm_cpumask(mm).
++	 * If the allocation fails, simply IPI every CPU in mm_cpumask.
 +	 */
-+	if (next != &init_mm)
-+		this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
++	if (!alloc_cpumask_var(&lazymask, GFP_ATOMIC)) {
++		smp_call_function_many(cpumask, flush_tlb_func_remote,
++			       (void *)info, 1);
++		return;
++	}
 +
-+	this_cpu_write(cpu_tlbstate.loaded_mm, next);
-+	this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
++	cpumask_copy(lazymask, cpumask);
 +
- 	load_mm_cr4(next);
- 	switch_ldt(real_prev, next);
++	for_each_cpu(cpu, lazymask) {
++		if (per_cpu(cpu_tlbstate.is_lazy, cpu))
++			cpumask_clear_cpu(cpu, lazymask);
++	}
++
++	smp_call_function_many(lazymask, flush_tlb_func_remote,
+ 			       (void *)info, 1);
++
++	free_cpumask_var(lazymask);
  }
+ 
+ /*
 -- 
 2.14.4
 
