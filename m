@@ -2,108 +2,89 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C36ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554BEECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 700DF208C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:37:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KXhqG2I1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 700DF208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A75920858
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:38:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A75920858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731533AbeGPMEw (ORCPT
+        id S1731093AbeGPMFt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:04:52 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34236 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728707AbeGPMEv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:04:51 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c13-v6so31509447wrt.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:37:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=DoHvK7B1TPVIp3+0qd1MQaEYt832YsDgc1ZBKYxMEdI=;
-        b=KXhqG2I1Hsiop51F1X85t9bI+38J9/Taz05awzUwzyVDEWWD1/lZLXesgkm0mpMiW9
-         a8t8hQfOJ+8GMrQoRoiVJYNxgiAbw4Dc+rGk/SNdYQwu2Dg0WLkbxhn/cmhsTDLKVl+U
-         6w7tWAK8X6182GwRapLsCHWW6UaS5wnctD+Ug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=DoHvK7B1TPVIp3+0qd1MQaEYt832YsDgc1ZBKYxMEdI=;
-        b=edLdpRnvtb/7B6uBUU5qT7zFXzRZ06qaBJhe6M2kxVJzwXNjW0Jl6cHRaHVWw4T0Zj
-         qIPzqrDZ9YRlttptb9l3qbeyc7DBIRmxm3w3G/1+xgKMoJ2yvlQJE5ioNOv0pYZfYOKf
-         PuhZTrrl0PtqIHBFZhjHFbODL0vuS/Ik4sa5Rh/oONysxv2maC5B+wZWZ3YmwYNE7owm
-         CjY7hB87+LS2nF9A+0NeweNJ9nd5qc1eg8ulWs6kTIXgzljN2OA04SAfzqm2Al7Mcqia
-         BD4jwEwlYHMeIAF9raVDIKfhoudK86P2xpJCauGCuFXN4O8ubMcIHvNwlzmEymwp3AaJ
-         J3aw==
-X-Gm-Message-State: AOUpUlGm2QI/9/sTCRj1CS0CawCdBMpcEDngLY9RYdeaE5WWCnsuhZl9
-        W2n6Y0hW03aG5W6AeEPlJme+Aw==
-X-Google-Smtp-Source: AAOMgpdn+eDbNiMGwcnRWtDETwcBGIEMH1PHzZIm7lo5FWYYRSVPwfT267+FCTRaVqowEHp4pi758g==
-X-Received: by 2002:a5d:69ca:: with SMTP id s10-v6mr9190355wrw.77.1531741068854;
-        Mon, 16 Jul 2018 04:37:48 -0700 (PDT)
-Received: from lmecxl0911.lme.st.com ([80.215.130.250])
-        by smtp.gmail.com with ESMTPSA id h61-v6sm17332068wrh.18.2018.07.16.04.37.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 16 Jul 2018 04:37:48 -0700 (PDT)
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     gregkh@linuxfoundation.org, broonie@kernel.org, p.paillet@st.com,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        rjw@rjwysocki.net
-Cc:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v3] base: core: Remove WARN_ON from link dependencies check
-Date:   Mon, 16 Jul 2018 13:37:44 +0200
-Message-Id: <20180716113744.13300-1-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
+        Mon, 16 Jul 2018 08:05:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53802 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728833AbeGPMFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 08:05:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 65715AD54;
+        Mon, 16 Jul 2018 11:38:46 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 13:38:45 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        yasu.isimatu@gmail.com, keescook@chromium.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        vbabka@suse.cz, mgorman@techsingularity.net
+Subject: Re: Bug report about KASLR and ZONE_MOVABLE
+Message-ID: <20180716113845.GM17280@dhcp22.suse.cz>
+References: <20180711094244.GA2019@localhost.localdomain>
+ <20180711104158.GE2070@MiWiFi-R3L-srv>
+ <20180711104944.GG1969@MiWiFi-R3L-srv>
+ <20180711124008.GF2070@MiWiFi-R3L-srv>
+ <72721138-ba6a-32c9-3489-f2060f40a4c9@cn.fujitsu.com>
+ <20180712060115.GD6742@localhost.localdomain>
+ <20180712123228.GK32648@dhcp22.suse.cz>
+ <20180712235240.GH2070@MiWiFi-R3L-srv>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712235240.GH2070@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some cases the link between between customer and supplier
-already exist, for example when a device use its parent as a supplier.
-Do not warn about already existing dependencies because device_link_add()
-takes care of this case.
+On Fri 13-07-18 07:52:40, Baoquan He wrote:
+> Hi Michal,
+> 
+> On 07/12/18 at 02:32pm, Michal Hocko wrote:
+[...]
+> > I am not able to find the beginning of the email thread right now. Could
+> > you summarize what is the actual problem please?
+> 
+> The bug is found on x86 now. 
+> 
+> When added "kernelcore=" or "movablecore=" into kernel command line,
+> kernel memory is spread evenly among nodes. However, this is right when
+> KASLR is not enabled, then kernel will be at 16M of place in x86 arch.
+> If KASLR enabled, it could be put any place from 16M to 64T randomly.
+>  
+> Consider a scenario, we have 10 nodes, and each node has 20G memory, and
+> we specify "kernelcore=50%", means each node will take 10G for
+> kernelcore, 10G for movable area. But this doesn't take kernel position
+> into consideration. E.g if kernel is put at 15G of 2nd node, namely
+> node1. Then we think on node1 there's 10G for kernelcore, 10G for
+> movable, in fact there's only 5G available for movable, just after
+> kernel.
 
-Link: http://lkml.kernel.org/r/20180709111753eucas1p1f32e66fb2f7ea3216097cd72a132355d~-rzycA5Rg0378203782eucas1p1C@eucas1p1.samsung.com
+OK, I guess I see that part. But who is going to use movablecore along
+with KASLR enabled? I mean do we really have to support those two
+obscure command line parameters for KASLR?
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Reviewed-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- drivers/base/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index df3e1a44707a..fcdc17f0f349 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -105,7 +105,7 @@ static int device_is_dependent(struct device *dev, void *target)
- 	struct device_link *link;
- 	int ret;
- 
--	if (WARN_ON(dev == target))
-+	if (dev == target)
- 		return 1;
- 
- 	ret = device_for_each_child(dev, target, device_is_dependent);
-@@ -113,7 +113,7 @@ static int device_is_dependent(struct device *dev, void *target)
- 		return ret;
- 
- 	list_for_each_entry(link, &dev->links.consumers, s_node) {
--		if (WARN_ON(link->consumer == target))
-+		if (link->consumer == target)
- 			return 1;
- 
- 		ret = device_is_dependent(link->consumer, target);
+In fact I would be much more concerned about memory hotplug and
+pre-defined movable nodes. Does the current KASLR code work in that
+case?
 -- 
-2.15.0
-
+Michal Hocko
+SUSE Labs
