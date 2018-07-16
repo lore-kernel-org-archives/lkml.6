@@ -6,49 +6,46 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3763EECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E4F3ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E359C2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:45:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E359C2075B
+	by mail.kernel.org (Postfix) with ESMTP id 0344E2075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:45:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0344E2075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389512AbeGPILE (ORCPT
+        id S2389525AbeGPILI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:11:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48404 "EHLO
+        Mon, 16 Jul 2018 04:11:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388939AbeGPILD (ORCPT
+        with ESMTP id S2388939AbeGPILH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:11:03 -0400
+        Mon, 16 Jul 2018 04:11:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61756CA8;
-        Mon, 16 Jul 2018 07:44:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4914CC03;
+        Mon, 16 Jul 2018 07:45:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Dave Hansen <dave@sr71.net>, Jiri Olsa <jolsa@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
         Ingo Molnar <mingo@kernel.org>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 32/43] x86/cpu: Add detection of AMD RAS Capabilities
-Date:   Mon, 16 Jul 2018 09:36:37 +0200
-Message-Id: <20180716073515.436640999@linuxfoundation.org>
+Subject: [PATCH 4.4 33/43] x86/cpufeature, x86/mm/pkeys: Fix broken compile-time disabling of pkeys
+Date:   Mon, 16 Jul 2018 09:36:38 +0200
+Message-Id: <20180716073515.536549288@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -65,32 +62,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yazen Ghannam <Yazen.Ghannam@amd.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit 71faad43060d3d2040583635fbf7d1bdb3d04118 upstream
+commit e8df1a95b685af84a81698199ee206e0e66a8b44 upstream
 
-Add a new CPUID leaf to hold the contents of CPUID 0x80000007_EBX (RasCap).
+When I added support for the Memory Protection Keys processor
+feature, I had to reindent the REQUIRED/DISABLED_MASK macros, and
+also consult the later cpufeature words.
 
-Define bits that are currently in use:
+I'm not quite sure how I bungled it, but I consulted the wrong
+word at the end.  This only affected required or disabled cpu
+features in cpufeature words 14, 15 and 16.  So, only Protection
+Keys itself was screwed over here.
 
- Bit 0: McaOverflowRecov
- Bit 1: SUCCOR
- Bit 3: ScalableMca
+The result was that if you disabled pkeys in your .config, you
+might still see some code show up that should have been compiled
+out.  There should be no functional problems, though.
 
-Signed-off-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
-[ Shorten comment. ]
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
+In verifying this patch I also realized that the DISABLE_PKU/OSPKE
+macros were defined backwards and that the cpu_has() check in
+setup_pku() was not doing the compile-time disabled checks.
+
+So also fix the macro for DISABLE_PKU/OSPKE and add a compile-time
+check for pkeys being enabled in setup_pku().
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: <stable@vger.kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Dave Hansen <dave@sr71.net>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/1462971509-3856-5-git-send-email-bp@alien8.de
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: dfb4a70f20c5 ("x86/cpufeature, x86/mm/pkeys: Add protection keys related CPUID definitions")
+Link: http://lkml.kernel.org/r/20160513221328.C200930B@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
@@ -99,69 +107,54 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/cpufeature.h  |    1 +
- arch/x86/include/asm/cpufeatures.h |    7 ++++++-
- arch/x86/kernel/cpu/common.c       |   10 +++++++---
- 3 files changed, 14 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/cpufeature.h        |   12 ++++++------
+ arch/x86/include/asm/disabled-features.h |    6 +++---
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
 --- a/arch/x86/include/asm/cpufeature.h
 +++ b/arch/x86/include/asm/cpufeature.h
-@@ -27,6 +27,7 @@ enum cpuid_leafs
- 	CPUID_6_EAX,
- 	CPUID_8000_000A_EDX,
- 	CPUID_7_ECX,
-+	CPUID_8000_0007_EBX,
- };
+@@ -64,9 +64,9 @@ extern const char * const x86_bug_flags[
+ 	   (((bit)>>5)==11 && (1UL<<((bit)&31) & REQUIRED_MASK11)) ||	\
+ 	   (((bit)>>5)==12 && (1UL<<((bit)&31) & REQUIRED_MASK12)) ||	\
+ 	   (((bit)>>5)==13 && (1UL<<((bit)&31) & REQUIRED_MASK13)) ||	\
+-	   (((bit)>>5)==13 && (1UL<<((bit)&31) & REQUIRED_MASK14)) ||	\
+-	   (((bit)>>5)==13 && (1UL<<((bit)&31) & REQUIRED_MASK15)) ||	\
+-	   (((bit)>>5)==14 && (1UL<<((bit)&31) & REQUIRED_MASK16)) )
++	   (((bit)>>5)==14 && (1UL<<((bit)&31) & REQUIRED_MASK14)) ||	\
++	   (((bit)>>5)==15 && (1UL<<((bit)&31) & REQUIRED_MASK15)) ||	\
++	   (((bit)>>5)==16 && (1UL<<((bit)&31) & REQUIRED_MASK16)) )
  
- #ifdef CONFIG_X86_FEATURE_NAMES
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -12,7 +12,7 @@
+ #define DISABLED_MASK_BIT_SET(bit)					\
+ 	 ( (((bit)>>5)==0  && (1UL<<((bit)&31) & DISABLED_MASK0 )) ||	\
+@@ -83,9 +83,9 @@ extern const char * const x86_bug_flags[
+ 	   (((bit)>>5)==11 && (1UL<<((bit)&31) & DISABLED_MASK11)) ||	\
+ 	   (((bit)>>5)==12 && (1UL<<((bit)&31) & DISABLED_MASK12)) ||	\
+ 	   (((bit)>>5)==13 && (1UL<<((bit)&31) & DISABLED_MASK13)) ||	\
+-	   (((bit)>>5)==13 && (1UL<<((bit)&31) & DISABLED_MASK14)) ||	\
+-	   (((bit)>>5)==13 && (1UL<<((bit)&31) & DISABLED_MASK15)) ||	\
+-	   (((bit)>>5)==14 && (1UL<<((bit)&31) & DISABLED_MASK16)) )
++	   (((bit)>>5)==14 && (1UL<<((bit)&31) & DISABLED_MASK14)) ||	\
++	   (((bit)>>5)==15 && (1UL<<((bit)&31) & DISABLED_MASK15)) ||	\
++	   (((bit)>>5)==16 && (1UL<<((bit)&31) & DISABLED_MASK16)) )
+ 
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -31,11 +31,11 @@
+ #endif /* CONFIG_X86_64 */
+ 
+ #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+-# define DISABLE_PKU		(1<<(X86_FEATURE_PKU))
+-# define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE))
+-#else
+ # define DISABLE_PKU		0
+ # define DISABLE_OSPKE		0
++#else
++# define DISABLE_PKU		(1<<(X86_FEATURE_PKU & 31))
++# define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE & 31))
+ #endif /* CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS */
+ 
  /*
-  * Defines x86 CPU feature bits
-  */
--#define NCAPINTS	17	/* N 32-bit words worth of info */
-+#define NCAPINTS	18	/* N 32-bit words worth of info */
- #define NBUGINTS	1	/* N 32-bit bug flags */
- 
- /*
-@@ -280,6 +280,11 @@
- #define X86_FEATURE_PKU		(16*32+ 3) /* Protection Keys for Userspace */
- #define X86_FEATURE_OSPKE	(16*32+ 4) /* OS Protection Keys Enable */
- 
-+/* AMD-defined CPU features, CPUID level 0x80000007 (ebx), word 17 */
-+#define X86_FEATURE_OVERFLOW_RECOV (17*32+0) /* MCA overflow recovery support */
-+#define X86_FEATURE_SUCCOR	(17*32+1) /* Uncorrectable error containment and recovery */
-+#define X86_FEATURE_SMCA	(17*32+3) /* Scalable MCA */
-+
- /*
-  * BUG word(s)
-  */
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -741,6 +741,13 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		}
- 	}
- 
-+	if (c->extended_cpuid_level >= 0x80000007) {
-+		cpuid(0x80000007, &eax, &ebx, &ecx, &edx);
-+
-+		c->x86_capability[CPUID_8000_0007_EBX] = ebx;
-+		c->x86_power = edx;
-+	}
-+
- 	if (c->extended_cpuid_level >= 0x80000008) {
- 		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
- 
-@@ -753,9 +760,6 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_phys_bits = 36;
- #endif
- 
--	if (c->extended_cpuid_level >= 0x80000007)
--		c->x86_power = cpuid_edx(0x80000007);
--
- 	if (c->extended_cpuid_level >= 0x8000000a)
- 		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
- 
 
 
