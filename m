@@ -2,105 +2,81 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEF1ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2CFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4CA12083E
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4CA12083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D2E02083E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 15:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D2E02083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730733AbeGPQB4 (ORCPT
+        id S1731012AbeGPQCB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 12:01:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60342 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbeGPQB4 (ORCPT
+        Mon, 16 Jul 2018 12:02:01 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42973 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727532AbeGPQCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 12:01:56 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 882ADD3A;
-        Mon, 16 Jul 2018 15:33:58 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 17:33:56 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Martijn Coenen <maco@android.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jessica Yu <jeyu@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-usb@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net, linux-scsi@vger.kernel.org,
-        linux-arch@vger.kernel.org, maco@google.com, sspatil@google.com,
-        malchev@google.com, joelaf@google.com
-Subject: Re: [PATCH 0/6] Symbol namespaces
-Message-ID: <20180716153356.GA8034@kroah.com>
-References: <20180716122125.175792-1-maco@android.com>
+        Mon, 16 Jul 2018 12:02:00 -0400
+Received: by mail-oi0-f67.google.com with SMTP id n84-v6so75564169oib.9;
+        Mon, 16 Jul 2018 08:34:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=oop0UZ8M9F/TCr442bJHE1NGgZgQ+hLD3pVnQ7Ts8T0=;
+        b=ZIwPwnoe6iAoKbX4V+8wtlSfQ2Yb+Nrbow2U9jGKxCJ5mBxYhoJ+kPC/dopBgvS/WY
+         Ws/WPUGJNPjzuAePpU1UdkhhBdjpFrFMcZ33NuLdqZ4p74ImxQPiMUd21cGFaHKYCw8J
+         yghpmqKKURoOMcdKxr+7kqq06rVKqY4VTo1MxYo1mQKM7IRVr7313ArC0XkrBnEW9t+t
+         TX0XkKt9ayTgNhiXtbFtpdefLS+wq0sQnUM3ckksai9hY0xVX6NpV99oc5d8HS78D/1O
+         E9OyE1JVaAH0lt3y8aSYf3d47IEBM8JTNU4V09HnsduwrlK3PCRFby/e12DJmXVrBSFR
+         meUg==
+X-Gm-Message-State: AOUpUlFC19X2iZROZpulID009EjPzWPn3OEu7AlJrLs4Un1yQ1KvJ2eR
+        Af2FXRYVO/ch4zsqvrWRaQ==
+X-Google-Smtp-Source: AAOMgpeLTweaLOJIbtjREotsBKQ6Mp1mdw3SSPpWQxOtdwk/lyGjH0/f91thOqmecFWqmXNuVm63ww==
+X-Received: by 2002:aca:afcc:: with SMTP id y195-v6mr19645355oie.322.1531755243419;
+        Mon, 16 Jul 2018 08:34:03 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id p132-v6sm9367636oia.31.2018.07.16.08.34.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 08:34:02 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 09:34:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Luis Araneda <luaraneda@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] dt-bindings: xilinx: zynq: Sort entries
+ alphabetically
+Message-ID: <20180716153402.GA14804@rob-hp-laptop>
+References: <20180712041024.20583-1-luaraneda@gmail.com>
+ <20180712041024.20583-5-luaraneda@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180716122125.175792-1-maco@android.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180712041024.20583-5-luaraneda@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 02:21:19PM +0200, Martijn Coenen wrote:
-> As of Linux 4.17, there are more than 30000 exported symbols
-> in the kernel. There seems to be some consensus amongst
-> kernel devs that the export surface is too large, and hard
-> to reason about.
+On Thu, Jul 12, 2018 at 12:10:22AM -0400, Luis Araneda wrote:
+> Sort additional compatible strings (boards) alphabetically
+> by their manufacturer and model number
 > 
-> Generally, these symbols fall in one of these categories:
-> 1) Symbols actually meant for drivers
-> 2) Symbols that are only exported because functionality is
->    split over multiple modules, yet they really shouldn't
->    be used by modules outside of their own subsystem
-> 3) Symbols really only meant for in-tree use
+> This will help when finding a board because they
+> will be grouped by their manufacturer
 > 
-> When module developers try to upstream their code, it
-> regularly turns out that they are using exported symbols
-> that they really shouldn't be using. This problem is even
-> bigger for drivers that are currently out-of-tree, which
-> may be using many symbols that they shouldn't be using,
-> and that break when those symbols are removed or modified.
-> 
-> This patch allows subsystem maintainers to partition their
-> exported symbols into separate namespaces, and module
-> authors to import such namespaces only when needed.
-> 
-> This allows subsystem maintainers to more easily limit
-> availability of these namespaced symbols to other parts of
-> the kernel. It can also be used to partition the set of
-> exported symbols for documentation purposes; for example,
-> a set of symbols that is really only used for debugging
-> could be in a "SUBSYSTEM_DEBUG" namespace.
+> Signed-off-by: Luis Araneda <luaraneda@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/xilinx.txt | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-To give people a bit more background here, this is something that both
-Andi Kleen and I talked about over a decade ago.  Martijn based his work
-on Andi's original patches and made them all work well, something that I
-was unable to do :)
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-His addition of using the build system to automatically generate a patch
-for a subsystem based on the symbol namespace changes is frickin
-amazing.
-
-Great work here, this is something that I have wanted for the kernel for
-a long time.
-
-greg k-h
