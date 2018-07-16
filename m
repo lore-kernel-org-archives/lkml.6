@@ -5,252 +5,95 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA650ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7648FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A197208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:24:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A197208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2864C208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:24:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2864C208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbeGPJue (ORCPT
+        id S1729615AbeGPJvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:50:34 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56194 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727594AbeGPJue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:50:34 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7801474218FFF;
-        Mon, 16 Jul 2018 17:23:58 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.382.0; Mon, 16 Jul 2018
- 17:23:55 +0800
-Subject: Re: [PATCH 1/3] f2fs: turn off atomic writes when deteting abnormal
- behaviors
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180715011112.11475-1-jaegeuk@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <29151284-ef34-2eb2-1060-7e214fe8834a@huawei.com>
-Date:   Mon, 16 Jul 2018 17:23:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 16 Jul 2018 05:51:00 -0400
+Received: from mail-ed1-f44.google.com ([209.85.208.44]:44261 "EHLO
+        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728466AbeGPJvA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 05:51:00 -0400
+Received: by mail-ed1-f44.google.com with SMTP id d17-v6so17339030eds.11;
+        Mon, 16 Jul 2018 02:24:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tEX94UruHi5M7fhHcQzP0s3zap3KuYMSd7VQqa34D+A=;
+        b=VqchS/rwYMasKQ+ybmnU3b9E6n0sAhq7OVIrZ+b/Lj8oepbEnliFHs2TpAYYBBycYH
+         Fx1l62bKIZLx4pn8Gsf+NkEbJUmiv99sey/DkdPT4SS64tt6IEAzFhDFtIkvdByBIGon
+         42uVTWSV2OxWyx8NHlwelKtcy8wnPxHKnZSJsoVdY8hRTgvpxLgDnN/a0blnQja3M0q1
+         eIhVmDDRikscSf7L+GpP4hzSEf0h9xjOyyfduH2VTyulpPpWQmFFl70VFmMg2RkgDuzH
+         cPoPJLX2BIilFmrrtwU0vA+eqJmkVpffetUAMe1KpkdWbev2Z9fTlfawTZXDuGcNa2FG
+         4gvQ==
+X-Gm-Message-State: AOUpUlGiNSoNkeFoGm11J5jeXrFJLzITWcmxRLB2DHcBNOk1Oaoq2z6H
+        fbzCSRYEdT9YOskGNXBHsV3outP7
+X-Google-Smtp-Source: AAOMgpfdsjLbVm70afrjSJktXWsgSvpPMSmEJebtQYt7NH0ZsJk446mb5ntQq0Is0EAtUKaRPlt8Jw==
+X-Received: by 2002:a50:955e:: with SMTP id v30-v6mr17121095eda.268.1531733069205;
+        Mon, 16 Jul 2018 02:24:29 -0700 (PDT)
+Received: from mail-wm0-f52.google.com (mail-wm0-f52.google.com. [74.125.82.52])
+        by smtp.gmail.com with ESMTPSA id r11-v6sm7687846edh.32.2018.07.16.02.24.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Jul 2018 02:24:28 -0700 (PDT)
+Received: by mail-wm0-f52.google.com with SMTP id f21-v6so2250239wmc.5;
+        Mon, 16 Jul 2018 02:24:28 -0700 (PDT)
+X-Received: by 2002:a1c:6fdd:: with SMTP id c90-v6mr9070719wmi.16.1531733068591;
+ Mon, 16 Jul 2018 02:24:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180715011112.11475-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 02:24:08
+ -0700 (PDT)
+In-Reply-To: <6a9fa6f3-7aef-a83b-72a6-dc9492964b5e@gmail.com>
+References: <20180716075718.4e5ef491@canb.auug.org.au> <CAOesGMhVeo6Wc=nMcEnusa+FfwQBWJnxs0LY-zXm4HMau+SMhg@mail.gmail.com>
+ <6a9fa6f3-7aef-a83b-72a6-dc9492964b5e@gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 16 Jul 2018 17:24:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v667K4Z6o-KEQROWuCbgJbKLNX_OCpCBOWaECb_qfRMBpw@mail.gmail.com>
+Message-ID: <CAGb2v667K4Z6o-KEQROWuCbgJbKLNX_OCpCBOWaECb_qfRMBpw@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the arm-soc tree
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Eric Anholt <eric@anholt.net>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/15 9:11, Jaegeuk Kim wrote:
-> In order to prevent abusing atomic writes by abnormal users, we've added a
-> threshold, 20% over memory footprint, which disallows further atomic writes.
-> Previously, however, SQLite doesn't know the files became normal, so that
-> it could write stale data and commit on revoked normal database file.
-> 
-> Once f2fs detects such the abnormal behavior, this patch simply disables
-> all the atomic operations such as:
-> - write_begin() gives EINVAL to avoid stale data writes, and SQLite will call
->   F2FS_IOC_ABORT_VOLATILE_WRITE to notify aborting the transaction,
-> - F2FS_IOC_START_ATOMIC_WRITE gives EINVAL for SQLite to fall back normal
->   journal_mode,
-> - F2FS_IOC_COMMIT_ATOMIC_WRITE gives EINVAL, if the file was revoked, so that
->   Framework retries to submit the transaction given propagated SQLite error.
-> 
-> Note that, this patch also turns off atomic operations, if foreground GC tries
-> to move atomic files too frequently.
+On Mon, Jul 16, 2018 at 5:13 PM, Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+> On 07/15/2018 03:50 PM, Olof Johansson wrote:
+>> Thanks Stephen, I keep saying every time you catch these that I need
+>> to run the same script. :(
+>>
+>> Florian, I wonder if this happened when you rebased to squash in the fix?
+>
+> Humm, could be, all I did (and it was not the first time) was to do an
+> interactive rebase with --preserve-merges. AFAICT, all of these commits
+> came from Eric's pull request, so what I typically do is just sign off
+> on the merge commit, but do not apply my SoB to all commits coming from
+> that pull request if that makes sense?
 
-Well, how about just keeping original implementation: shutdown atomic write for
-those files which are really affect fggc? Since intention of the original
-behavior is targeting to abnormal atomic write usage, e.g. open atomic_write
-file for very long time, then fggc will be blocked each time when moving its
-block. So shutdown it, fggc will recover.
+When you rebase, if the commit is re-applied, the committer changes to
+you, so you need to add your SoB to all commits you rebased.
 
-Thanks,
+I suppose you could override it with GIT_COMMITTER_NAME and
+GIT_COMMITTER_EMAIL environment variables, but that sort of distorts
+the SoB if any changes were added due to rebasing, such as resolution
+of merge conflicts.
 
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/data.c    |  7 ++++---
->  fs/f2fs/f2fs.h    |  4 ++--
->  fs/f2fs/file.c    |  6 +++++-
->  fs/f2fs/gc.c      |  4 +---
->  fs/f2fs/segment.c | 21 +++++++++++----------
->  5 files changed, 23 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 5e53d210e222..c9e75aa61c24 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2247,8 +2247,9 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
->  	trace_f2fs_write_begin(inode, pos, len, flags);
->  
->  	if (f2fs_is_atomic_file(inode) &&
-> -			!f2fs_available_free_memory(sbi, INMEM_PAGES)) {
-> -		err = -ENOMEM;
-> +			(is_sbi_flag_set(sbi, SBI_DISABLE_ATOMIC_WRITE) ||
-> +			!f2fs_available_free_memory(sbi, INMEM_PAGES))) {
-> +		err = -EINVAL;
->  		drop_atomic = true;
->  		goto fail;
->  	}
-> @@ -2331,7 +2332,7 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
->  	f2fs_put_page(page, 1);
->  	f2fs_write_failed(mapping, pos + len);
->  	if (drop_atomic)
-> -		f2fs_drop_inmem_pages_all(sbi, false);
-> +		f2fs_disable_atomic_write(sbi);
->  	return err;
->  }
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 4d8b1de83143..1d5c8d543eda 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -621,7 +621,6 @@ enum {
->  
->  enum {
->  	GC_FAILURE_PIN,
-> -	GC_FAILURE_ATOMIC,
->  	MAX_GC_FAILURE
->  };
->  
-> @@ -1066,6 +1065,7 @@ enum {
->  	SBI_POR_DOING,				/* recovery is doing or not */
->  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
->  	SBI_NEED_CP,				/* need to checkpoint */
-> +	SBI_DISABLE_ATOMIC_WRITE,		/* turn off atomic write */
->  };
->  
->  enum {
-> @@ -2833,7 +2833,7 @@ void f2fs_destroy_node_manager_caches(void);
->   */
->  bool f2fs_need_SSR(struct f2fs_sb_info *sbi);
->  void f2fs_register_inmem_page(struct inode *inode, struct page *page);
-> -void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure);
-> +void f2fs_disable_atomic_write(struct f2fs_sb_info *sbi);
->  void f2fs_drop_inmem_pages(struct inode *inode);
->  void f2fs_drop_inmem_page(struct inode *inode, struct page *page);
->  int f2fs_commit_inmem_pages(struct inode *inode);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 6880c6f78d58..b029a4ed3bb0 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -1682,6 +1682,9 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
->  	if (!S_ISREG(inode->i_mode))
->  		return -EINVAL;
->  
-> +	if (is_sbi_flag_set(F2FS_I_SB(inode), SBI_DISABLE_ATOMIC_WRITE))
-> +		return -EINVAL;
-> +
->  	ret = mnt_want_write_file(filp);
->  	if (ret)
->  		return ret;
-> @@ -1750,7 +1753,6 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
->  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
->  		if (!ret) {
->  			clear_inode_flag(inode, FI_ATOMIC_FILE);
-> -			F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
->  			stat_dec_atomic_write(inode);
->  		}
->  	} else {
-> @@ -1853,6 +1855,8 @@ static int f2fs_ioc_abort_volatile_write(struct file *filp)
->  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 0, true);
->  	}
->  
-> +	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
-> +
->  	inode_unlock(inode);
->  
->  	mnt_drop_write_file(filp);
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index 9093be6e7a7d..6d762f3cdfc7 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -629,7 +629,6 @@ static void move_data_block(struct inode *inode, block_t bidx,
->  		goto out;
->  
->  	if (f2fs_is_atomic_file(inode)) {
-> -		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
->  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
->  		goto out;
->  	}
-> @@ -745,7 +744,6 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
->  		goto out;
->  
->  	if (f2fs_is_atomic_file(inode)) {
-> -		F2FS_I(inode)->i_gc_failures[GC_FAILURE_ATOMIC]++;
->  		F2FS_I_SB(inode)->skipped_atomic_files[gc_type]++;
->  		goto out;
->  	}
-> @@ -1100,7 +1098,7 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
->  		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
->  			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
->  				skipped_round * 2 >= round)
-> -				f2fs_drop_inmem_pages_all(sbi, true);
-> +				f2fs_disable_atomic_write(sbi);
->  			segno = NULL_SEGNO;
->  			goto gc_more;
->  		}
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 9efce174c51a..05877a2f1894 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -274,11 +274,14 @@ static int __revoke_inmem_pages(struct inode *inode,
->  	return err;
->  }
->  
-> -void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
-> +void f2fs_disable_atomic_write(struct f2fs_sb_info *sbi)
->  {
->  	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
->  	struct inode *inode;
->  	struct f2fs_inode_info *fi;
-> +
-> +	/* just turn it off */
-> +	set_sbi_flag(sbi, SBI_DISABLE_ATOMIC_WRITE);
->  next:
->  	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
->  	if (list_empty(head)) {
-> @@ -290,17 +293,16 @@ void f2fs_drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
->  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
->  
->  	if (inode) {
-> -		if (gc_failure) {
-> -			if (fi->i_gc_failures[GC_FAILURE_ATOMIC])
-> -				goto drop;
-> -			goto skip;
-> +		inode_lock(inode);
-> +		/* need to check whether it was already revoked */
-> +		if (f2fs_is_atomic_file(inode)) {
-> +			f2fs_drop_inmem_pages(inode);
-> +			set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
->  		}
-> -drop:
-> -		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
-> -		f2fs_drop_inmem_pages(inode);
-> +		inode_unlock(inode);
->  		iput(inode);
->  	}
-> -skip:
-> +
->  	congestion_wait(BLK_RW_ASYNC, HZ/50);
->  	cond_resched();
->  	goto next;
-> @@ -320,7 +322,6 @@ void f2fs_drop_inmem_pages(struct inode *inode)
->  	mutex_unlock(&fi->inmem_lock);
->  
->  	clear_inode_flag(inode, FI_ATOMIC_FILE);
-> -	fi->i_gc_failures[GC_FAILURE_ATOMIC] = 0;
->  	stat_dec_atomic_write(inode);
->  }
->  
-> 
-
+ChenYu
