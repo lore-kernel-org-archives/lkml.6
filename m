@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51927ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAF4ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0593820864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0593820864
+	by mail.kernel.org (Postfix) with ESMTP id 67AF620864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67AF620864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbeGPIDr (ORCPT
+        id S1731999AbeGPIDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:03:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46766 "EHLO
+        Mon, 16 Jul 2018 04:03:50 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46774 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728460AbeGPIDr (ORCPT
+        with ESMTP id S1728460AbeGPIDt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:03:47 -0400
+        Mon, 16 Jul 2018 04:03:49 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3EF0CA0;
-        Mon, 16 Jul 2018 07:37:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4EF0C03;
+        Mon, 16 Jul 2018 07:37:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.17 19/67] tracing/kprobe: Release kprobe print_fmt properly
-Date:   Mon, 16 Jul 2018 09:34:48 +0200
-Message-Id: <20180716073446.154544715@linuxfoundation.org>
+        stable@vger.kernel.org, Xavier Deguillard <xdeguillard@vmware.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH 4.17 20/67] vmw_balloon: fix inflation with batching
+Date:   Mon, 16 Jul 2018 09:34:49 +0200
+Message-Id: <20180716073446.256595404@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -52,50 +50,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Nadav Amit <namit@vmware.com>
 
-commit 0fc8c3581dd42bc8f530314ca86db2d861485731 upstream.
+commit 90d72ce079791399ac255c75728f3c9e747b093d upstream.
 
-We don't release tk->tp.call.print_fmt when destroying
-local uprobe. Also there's missing print_fmt kfree in
-create_local_trace_kprobe error path.
+Embarrassingly, the recent fix introduced worse problem than it solved,
+causing the balloon not to inflate. The VM informed the hypervisor that
+the pages for lock/unlock are sitting in the wrong address, as it used
+the page that is used the uninitialized page variable.
 
-Link: http://lkml.kernel.org/r/20180709141906.2390-1-jolsa@kernel.org
-
+Fixes: b23220fe054e9 ("vmw_balloon: fixing double free when batching mode is off")
 Cc: stable@vger.kernel.org
-Fixes: e12f03d7031a ("perf/core: Implement the 'perf_kprobe' PMU")
-Acked-by: Song Liu <songliubraving@fb.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_kprobe.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/misc/vmw_balloon.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1451,8 +1451,10 @@ create_local_trace_kprobe(char *func, vo
- 	}
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -467,7 +467,7 @@ static int vmballoon_send_batched_lock(s
+ 		unsigned int num_pages, bool is_2m_pages, unsigned int *target)
+ {
+ 	unsigned long status;
+-	unsigned long pfn = page_to_pfn(b->page);
++	unsigned long pfn = PHYS_PFN(virt_to_phys(b->batch_page));
  
- 	ret = __register_trace_kprobe(tk);
--	if (ret < 0)
-+	if (ret < 0) {
-+		kfree(tk->tp.call.print_fmt);
- 		goto error;
-+	}
+ 	STATS_INC(b->stats.lock[is_2m_pages]);
  
- 	return &tk->tp.call;
- error:
-@@ -1472,6 +1474,8 @@ void destroy_local_trace_kprobe(struct t
- 	}
+@@ -515,7 +515,7 @@ static bool vmballoon_send_batched_unloc
+ 		unsigned int num_pages, bool is_2m_pages, unsigned int *target)
+ {
+ 	unsigned long status;
+-	unsigned long pfn = page_to_pfn(b->page);
++	unsigned long pfn = PHYS_PFN(virt_to_phys(b->batch_page));
  
- 	__unregister_trace_kprobe(tk);
-+
-+	kfree(tk->tp.call.print_fmt);
- 	free_trace_kprobe(tk);
- }
- #endif /* CONFIG_PERF_EVENTS */
+ 	STATS_INC(b->stats.unlock[is_2m_pages]);
+ 
 
 
