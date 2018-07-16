@@ -2,35 +2,35 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DBFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FB2ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A34208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:28:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A34208E3
+	by mail.kernel.org (Postfix) with ESMTP id DED682084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:28:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED682084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbeGPFyC (ORCPT
+        id S1727566AbeGPFyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 01:54:02 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40946 "EHLO mx1.redhat.com"
+        Mon, 16 Jul 2018 01:54:21 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50282 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726343AbeGPFyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 01:54:02 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        id S1726343AbeGPFyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 01:54:21 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A96244023337;
-        Mon, 16 Jul 2018 05:28:25 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id CDD9C40214E2;
+        Mon, 16 Jul 2018 05:28:44 +0000 (UTC)
 Received: from xz-mi (ovpn-12-94.pek2.redhat.com [10.72.12.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6F54C76CE;
-        Mon, 16 Jul 2018 05:28:20 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 13:28:15 +0800
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 46CB02026D65;
+        Mon, 16 Jul 2018 05:28:38 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 13:28:35 +0800
 From:   Peter Xu <peterx@redhat.com>
 To:     Lu Baolu <baolu.lu@linux.intel.com>
 Cc:     Joerg Roedel <joro@8bytes.org>,
@@ -39,36 +39,33 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v5 1/9] iommu/vt-d: Global PASID name space
-Message-ID: <20180716052815.GA20520@xz-mi>
+Subject: Re: [PATCH v5 2/9] iommu/vt-d: Avoid using idr_for_each_entry()
+Message-ID: <20180716052835.GB20520@xz-mi>
 References: <1531554422-6874-1-git-send-email-baolu.lu@linux.intel.com>
- <1531554422-6874-2-git-send-email-baolu.lu@linux.intel.com>
+ <1531554422-6874-3-git-send-email-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1531554422-6874-2-git-send-email-baolu.lu@linux.intel.com>
+In-Reply-To: <1531554422-6874-3-git-send-email-baolu.lu@linux.intel.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 05:28:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 05:28:25 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 16 Jul 2018 05:28:44 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 16 Jul 2018 05:28:44 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 14, 2018 at 03:46:54PM +0800, Lu Baolu wrote:
-> This adds the system wide PASID name space for the PASID
-> allocation. Currently we are using per IOMMU PASID name
-> spaces which are not suitable for some use cases. For an
-> example, one application (associated with a PASID) might
-> talk to two physical devices simultaneously while the two
-> devices could reside behind two different IOMMU units.
+On Sat, Jul 14, 2018 at 03:46:55PM +0800, Lu Baolu wrote:
+> idr_for_each_entry() is used to iteratte over idr elements
+> of a given type. It isn't suitable for the globle pasid idr
+> since the pasid idr consumer could specify different types
+> of pointers to bind with a pasid.
 > 
 > Cc: Ashok Raj <ashok.raj@intel.com>
 > Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 > Cc: Kevin Tian <kevin.tian@intel.com>
 > Cc: Liu Yi L <yi.l.liu@intel.com>
-> Suggested-by: Ashok Raj <ashok.raj@intel.com>
 > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 > Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
