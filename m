@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F2DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7890EECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC23206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC23206B7
+	by mail.kernel.org (Postfix) with ESMTP id 3C160206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C160206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388016AbeGPIFj (ORCPT
+        id S2388027AbeGPIFm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:05:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47176 "EHLO
+        Mon, 16 Jul 2018 04:05:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47186 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729810AbeGPIFj (ORCPT
+        with ESMTP id S1729810AbeGPIFl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:05:39 -0400
+        Mon, 16 Jul 2018 04:05:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4EA0CC03;
-        Mon, 16 Jul 2018 07:39:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FD0BC03;
+        Mon, 16 Jul 2018 07:39:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.17 66/67] f2fs: sanity check for total valid node blocks
-Date:   Mon, 16 Jul 2018 09:35:35 +0200
-Message-Id: <20180716073454.497004582@linuxfoundation.org>
+        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+        Baruch Siach <baruch@tkos.co.il>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>
+Subject: [PATCH 4.17 67/67] ARM: dts: armada-38x: use the new thermal binding
+Date:   Mon, 16 Jul 2018 09:35:36 +0200
+Message-Id: <20180716073454.729656115@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -51,147 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Baruch Siach <baruch@tkos.co.il>
 
-commit 8a29c1260e24e7c9c6ab138aa0017558d8b28208 upstream.
+commit 568cc2f07c8ea5f71a0486464bd9703e4671045f upstream.
 
-This patch enhances sanity check for SIT entries.
+Commit 2f28e4c24b10e (thermal: armada: Clarify control registers
+accesses) introduced the new thermal binding. The new binding extends
+the second registers field size to 8. Switch to the new binding to fix
+thermal reading values. Without this change the fix for errata #132698
+introduced in commit 8c0b888f661 (thermal: armada: Change sensors trim
+default value) has no effect.
 
-syzbot hit the following crash on upstream commit
-83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=bf9253040425feb155ad
-
-syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5692130282438656
-Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5095924598571008
-Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for details.
-If you forward the report, please keep this part and the footer.
-
-F2FS-fs (loop0): invalid crc value
-F2FS-fs (loop0): Try to recover 1th superblock, ret: 0
-F2FS-fs (loop0): Mounted with checkpoint version = d
-F2FS-fs (loop0): Bitmap was wrongly cleared, blk:9740
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/segment.c:1884!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4508 Comm: syz-executor0 Not tainted 4.17.0-rc1+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882
-RSP: 0018:ffff8801af526708 EFLAGS: 00010282
-RAX: ffffed0035ea4cc0 RBX: ffff8801ad454f90 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff82eeb87e RDI: ffffed0035ea4cb6
-RBP: ffff8801af526760 R08: ffff8801ad4a2480 R09: ffffed003b5e4f90
-R10: ffffed003b5e4f90 R11: ffff8801daf27c87 R12: ffff8801adb8d380
-R13: 0000000000000001 R14: 0000000000000008 R15: 00000000ffffffff
-FS:  00000000014af940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f06bc223000 CR3: 00000001adb02000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- allocate_data_block+0x66f/0x2050 fs/f2fs/segment.c:2663
- do_write_page+0x105/0x1b0 fs/f2fs/segment.c:2727
- write_node_page+0x129/0x350 fs/f2fs/segment.c:2770
- __write_node_page+0x7da/0x1370 fs/f2fs/node.c:1398
- sync_node_pages+0x18cf/0x1eb0 fs/f2fs/node.c:1652
- block_operations+0x429/0xa60 fs/f2fs/checkpoint.c:1088
- write_checkpoint+0x3ba/0x5380 fs/f2fs/checkpoint.c:1405
- f2fs_sync_fs+0x2fb/0x6a0 fs/f2fs/super.c:1077
- __sync_filesystem fs/sync.c:39 [inline]
- sync_filesystem+0x265/0x310 fs/sync.c:67
- generic_shutdown_super+0xd7/0x520 fs/super.c:429
- kill_block_super+0xa4/0x100 fs/super.c:1191
- kill_f2fs_super+0x9f/0xd0 fs/f2fs/super.c:3030
- deactivate_locked_super+0x97/0x100 fs/super.c:316
- deactivate_super+0x188/0x1b0 fs/super.c:347
- cleanup_mnt+0xbf/0x160 fs/namespace.c:1174
- __cleanup_mnt+0x16/0x20 fs/namespace.c:1181
- task_work_run+0x1e4/0x290 kernel/task_work.c:113
- tracehook_notify_resume include/linux/tracehook.h:191 [inline]
- exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
- prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
- syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
- do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457d97
-RSP: 002b:00007ffd46f9c8e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000457d97
-RDX: 00000000014b09a3 RSI: 0000000000000002 RDI: 00007ffd46f9da50
-RBP: 00007ffd46f9da50 R08: 0000000000000000 R09: 0000000000000009
-R10: 0000000000000005 R11: 0000000000000246 R12: 00000000014b0940
-R13: 0000000000000000 R14: 0000000000000002 R15: 000000000000658e
-RIP: update_sit_entry+0x1215/0x1590 fs/f2fs/segment.c:1882 RSP: ffff8801af526708
----[ end trace f498328bb02610a2 ]---
-
-Reported-and-tested-by: syzbot+bf9253040425feb155ad@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+7d6d31d3bc702f566ce3@syzkaller.appspotmail.com
-Reported-and-tested-by: syzbot+0a725420475916460f12@syzkaller.appspotmail.com
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: stable@vger.kernel.org # v4.16+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/segment.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/armada-38x.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3600,6 +3600,7 @@ static int build_sit_entries(struct f2fs
- 	unsigned int i, start, end;
- 	unsigned int readed, start_blk = 0;
- 	int err = 0;
-+	block_t total_node_blocks = 0;
+--- a/arch/arm/boot/dts/armada-38x.dtsi
++++ b/arch/arm/boot/dts/armada-38x.dtsi
+@@ -547,7 +547,7 @@
  
- 	do {
- 		readed = ra_meta_pages(sbi, start_blk, BIO_MAX_PAGES,
-@@ -3622,6 +3623,8 @@ static int build_sit_entries(struct f2fs
- 			if (err)
- 				return err;
- 			seg_info_from_raw_sit(se, &sit);
-+			if (IS_NODESEG(se->type))
-+				total_node_blocks += se->valid_blocks;
- 
- 			/* build discard map only one time */
- 			if (f2fs_discard_en(sbi)) {
-@@ -3663,11 +3666,15 @@ static int build_sit_entries(struct f2fs
- 		sit = sit_in_journal(journal, i);
- 
- 		old_valid_blocks = se->valid_blocks;
-+		if (IS_NODESEG(se->type))
-+			total_node_blocks -= old_valid_blocks;
- 
- 		err = check_block_count(sbi, start, &sit);
- 		if (err)
- 			break;
- 		seg_info_from_raw_sit(se, &sit);
-+		if (IS_NODESEG(se->type))
-+			total_node_blocks += se->valid_blocks;
- 
- 		if (f2fs_discard_en(sbi)) {
- 			if (is_set_ckpt_flags(sbi, CP_TRIMMED_FLAG)) {
-@@ -3686,6 +3693,15 @@ static int build_sit_entries(struct f2fs
- 				se->valid_blocks - old_valid_blocks;
- 	}
- 	up_read(&curseg->journal_rwsem);
-+
-+	if (!err && total_node_blocks != valid_node_count(sbi)) {
-+		f2fs_msg(sbi->sb, KERN_ERR,
-+			"SIT is corrupted node# %u vs %u",
-+			total_node_blocks, valid_node_count(sbi));
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		err = -EINVAL;
-+	}
-+
- 	return err;
- }
+ 			thermal: thermal@e8078 {
+ 				compatible = "marvell,armada380-thermal";
+-				reg = <0xe4078 0x4>, <0xe4074 0x4>;
++				reg = <0xe4078 0x4>, <0xe4070 0x8>;
+ 				status = "okay";
+ 			};
  
 
 
