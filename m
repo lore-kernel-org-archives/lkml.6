@@ -2,109 +2,201 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D61FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9E8ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 110B8208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD413208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:41:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="XuImGWWp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110B8208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pX/AsCTY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD413208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727248AbeGPBDv (ORCPT
+        id S1727339AbeGPBGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 21:03:51 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37198 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbeGPBDv (ORCPT
+        Sun, 15 Jul 2018 21:06:05 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:34541 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727154AbeGPBGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 21:03:51 -0400
-Received: by mail-lf0-f67.google.com with SMTP id j8-v6so31002878lfb.4
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 17:39:02 -0700 (PDT)
+        Sun, 15 Jul 2018 21:06:04 -0400
+Received: by mail-qt0-f196.google.com with SMTP id m13-v6so31616343qth.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 17:41:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nnl8PLyKOFtm1c2ugX6205P8sI3pRaDCKnNp5Wt7laY=;
-        b=XuImGWWp0KQdpXjPgA55lg3fDYvXhdppjbMBueGDIJryM5odqPSnsFlGlGv2Mb6ELT
-         jI2WLpsZ3ZTFW2ywsI29bgdKvGb9jKHZAyK1ZUGo0OW78s+Tf9FzE3avdS5pN8sDP5Ja
-         EDF4r6+gFeROvIFtrF7V6hn5MMjBa1nGJxOVkJIvBkIMyfhb9fzo5vfoEHDmeJn6j0qd
-         VmCeNLLVsoVnuKXmq40Aiw74/YP/a4KE43jDIHoqTrZt7xlFIKOkYYNTulNKlMUNbc+S
-         WaGNQ+xQK4osV/cQIPZ7oxY37+uonHOe9jXOQqECFPBNDh6IYo7Ti+yMZIHC4jaYpgxj
-         ZRCw==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=IPjY7InebTg6JvJBqWpvICjhFmFedMQuoO7nSAvP3Us=;
+        b=pX/AsCTYK4YVSjV7NVOvvtD0PH47t67xLXhr/BH6awmmiXNjf5Qvc76dRpmLHYBpVk
+         GwjUo6FS/1Q0taYMygGvJ9VGOj+KX6KS16f3kV0EmAKEn6hU4FPPwWK0lqrJNI+Gg37B
+         RNrcAVAWSSkIUJuRwhy2xZClaoGbb+/nsWPpFaFtrJgG3StWdJzVky0lz223Zo/Yha4l
+         w5ooYCDX/k07FeFfJBZOMOnnsQOCQd1DOEMWfNRE14tZAeQFiKtznau/idxtaxKzdl1m
+         4mYIRCZyA4cC2rhOP2IVEManMgNELTPt0VBoiS00t2teK1usrujjgh90JFxTWBcU2VWl
+         jzGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nnl8PLyKOFtm1c2ugX6205P8sI3pRaDCKnNp5Wt7laY=;
-        b=PwTkNlrXaPK29JVjj6W8HSt+QMibj9g4i4sMwyi1+kWm2TTKQZp5PHWf5H/qGFCZL/
-         um3aiwVUHFBAwReI97jKO3963P7vQsLrBt7IHsQrKr86+vr4TYsFyZOn2oBeeRUn7Frg
-         h0df5UYNWkON9rileSONkAyKoJ4qcPkn35y5/rBwA+8Z3AHKK0A2D6b5Cw5mRyU8Z6Wn
-         Eu+Gbf6zyI9xefDwoaiQD57B+WfZznmnZgP0WGk8348KnOdtTkHFYiks22Noq4gVpgCF
-         whfeIEgP81KDqwX2zZgS1KfMcgRMgMeAJQQnP+v7eAT21YktaGK4DqDfGVkC5zYEEfUg
-         WC2Q==
-X-Gm-Message-State: AOUpUlFLAuWr1GW/NCuqtE+XpxSdOPOSuOvZ0kiszD6oitPxtNdHbATe
-        Dx8PfE/Viz1zxN4eRSUjMtiwbfYuVCp2K8w/BGzlMA==
-X-Google-Smtp-Source: AAOMgpcUkpVUascnrIJm50VBLyyokoxvp+yDTHbfDcU/5ixFz9g3ycu9H3vBSLPzBez/wGZu8yDZLqri6RKV7aW1vYA=
-X-Received: by 2002:a19:4344:: with SMTP id m4-v6mr10923020lfj.111.1531701541489;
- Sun, 15 Jul 2018 17:39:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=IPjY7InebTg6JvJBqWpvICjhFmFedMQuoO7nSAvP3Us=;
+        b=AnkvjUtsZsI4JKWeq8A7KV7Wx/kO9ImabcTks3KHjKvxW5pSQ8B1xSa3EWMk9vkcTs
+         aeCqe49eKOrNGfpXHcQwHpzjFZX/97MrRlb2NhRHZym+EHIvWRDy+8BnupQiSM69jIJR
+         ub9YDOJB1d6PXz++YFF/AAVDNAEDzciHEHGCseSWY1G0jtNlVNXl91RsY3axEiv++ljU
+         KP/Y09Y3jSuDklYi54N4j5OGBbs5EtBz7Gjx+K4gLFTzlTD62VL6IDPurULpQtGLlOW3
+         NWOLFc3Pu3Sm8iLcxX1ip0X23tZdS2CDMAfEAoJF1qLqgKRlZveA+J1AbM7EzYGcQBqL
+         FiHQ==
+X-Gm-Message-State: AOUpUlGkJagWBaODom1UAkN7cbcTJ/D/lwiWQc+Bju/LebTLRf+AcSRj
+        Gx6nS09W2tUR3C5d8sMAW3iBY9/vhbLWrcjCQAMHmw==
+X-Google-Smtp-Source: AAOMgpfiaR5Y+y9PQ+2Qe4KA2osBKxM2BQTTi1Oi8UZoyXVLm94et1Vc52NzwEm6025E179eV5f+GxfW3A/B6hk9wEk=
+X-Received: by 2002:ac8:38ac:: with SMTP id f41-v6mr13291581qtc.190.1531701675659;
+ Sun, 15 Jul 2018 17:41:15 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 17:38:59
+Received: by 2002:ac8:3666:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 17:41:15
  -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:180::1:b025]
-In-Reply-To: <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
-References: <20180716091337.6c1b2a4d@canb.auug.org.au> <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Sun, 15 Jul 2018 17:38:59 -0700
-Message-ID: <CAOesGMgWu4P+n9Bm_OJS-DjGysbtytaVVZp9W81Rb9yrLfw26g@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the arm-soc tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Vinod Koul <vkoul@kernel.org>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Mon, 16 Jul 2018 10:41:15 +1000
+Message-ID: <CAPM=9tzwffMdqNuqeMTosei7TZZiC=QCpawQC+-8_WWqZnN=QA@mail.gmail.com>
+Subject: [git pull] drm-fixes for 4.18-rc6 (well it was for -rc5)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 4:50 PM, Olof Johansson <olof@lixom.net> wrote:
-> On Sun, Jul 15, 2018 at 4:13 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> After merging the arm-soc tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> sound/arm/pxa2xx-pcm-lib.c: In function '__pxa2xx_pcm_open':
->> sound/arm/pxa2xx-pcm-lib.c:129:6: error: 'pxad_filter_fn' undeclared (first use in this function); did you mean 'dma_filter_fn'?
->>       pxad_filter_fn,
->>       ^~~~~~~~~~~~~~
->>       dma_filter_fn
->>
->> Caused by commit
->>
->>   0d0b16b8e008 ("dmaengine: pxa: make the filter function internal")
->>
->> I have used the arm-soc tree from next-20180713 for today.
->
-> It's a known issue due to dependencies with a driver tree. :(
->
-> Robert, this is unfortunate. What's the dependent patches? We can pick
-> them up in our tree as duplicates if needed.
+Hi Linus,
 
-Ok, it was easy to drop PXA this time around, so I've done that.
-Stephen; arm-soc/for-next should be building again (for tomorrow).
+Not actually back online fully, but I've managed to find a few minutes
+to pull in all the fixes that were meant for rc5 but have leaked over.
 
+There are two AGP fixes in here, as well as a bunch of mostly amdgpu
+fixes, along with a sun4i build fix, two armada fixes and some tegra
+fixes, one i915 core and one i915 gvt fix.
+
+Hopefully be back on schedule for rc6.
 
 Thanks,
+Dave.
 
--Olof
+drm-fixes-2018-07-16-1:
+i915, amdgpu, armada, sun4i and tegra fixes
+The following changes since commit dc81aab1be9fac2e11f31fe7538a50705eba08cf=
+:
+
+  MAINTAINERS: update drm tree (2018-07-10 10:59:58 +1000)
+
+are available in the Git repository at:
+
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-07-16-1
+
+for you to fetch changes up to bf642e3a1996f1ed8f083c5ecd4b51270a9e11bc:
+
+  Merge tag 'drm-intel-fixes-2018-07-12' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes (2018-07-16
+10:32:28 +1000)
+
+----------------------------------------------------------------
+i915, amdgpu, armada, sun4i and tegra fixes
+
+----------------------------------------------------------------
+Alex Deucher (2):
+      Revert "drm/amd/display: Don't return ddc result and read_bytes
+in same return value"
+      drm/amdgpu/pp/smu7: use a local variable for toc indexing
+
+Andrey Grodzovsky (1):
+      drm/amdgpu: Verify root PD is mapped into kernel address space (v4)
+
+Arnd Bergmann (1):
+      drm/sun4i: link in front-end code if needed
+
+Christian K=C3=B6nig (1):
+      drm/amd/display: fix invalid function table override
+
+Dave Airlie (6):
+      Merge tag 'drm-intel-fixes-2018-07-10' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge branch 'drm-fixes-4.18' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge tag 'drm/tegra/for-4.18-rc5' of
+git://anongit.freedesktop.org/tegra/linux into drm-fixes
+      Merge tag 'drm-misc-fixes-2018-07-13' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge branch 'drm-armada-fixes' of
+git://git.armlinux.org.uk/~rmk/linux-arm into drm-fixes
+      Merge tag 'drm-intel-fixes-2018-07-12' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+
+David Francis (1):
+      amd/dc/dce100: On dce100, set clocks to 0 on suspend
+
+Dmitry Osipenko (2):
+      gpu: host1x: Skip IOMMU initialization if firewall is enabled
+      gpu: host1x: Check whether size of unpin isn't 0
+
+Gustavo A. R. Silva (1):
+      char: amd64-agp: Use 64-bit arithmetic instead of 32-bit
+
+Hang Yuan (1):
+      drm/i915/gvt: update vreg on inhibit context lri command
+
+Harry Wentland (1):
+      drm/amd/display: Convert 10kHz clks from PPLib into kHz for Vega
+
+Michel D=C3=A4nzer (1):
+      drm/amdgpu: Reserve VM root shared fence slot for command submission =
+(v3)
+
+Mikko Perttunen (1):
+      drm/tegra: Fix comparison operator for buffer size
+
+Rodrigo Vivi (1):
+      Merge tag 'gvt-fixes-2018-07-11' of
+https://github.com/intel/gvt-linux into drm-intel-fixes
+
+Russell King (2):
+      drm/armada: fix colorkey mode property
+      drm/armada: fix irq handling
+
+Souptick Joarder (1):
+      char: agp: Change return type to vm_fault_t
+
+Ville Syrj=C3=A4l=C3=A4 (1):
+      drm/i915: Fix hotplug irq ack on i965/g4x
+
+ drivers/char/agp/alpha-agp.c                       |  2 +-
+ drivers/char/agp/amd64-agp.c                       |  4 +--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |  4 +++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c             |  4 ++-
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 20 ++++++--------
+ .../drm/amd/display/amdgpu_dm/amdgpu_dm_services.c |  5 ++--
+ drivers/gpu/drm/amd/display/dc/core/dc_link_ddc.c  | 10 ++-----
+ drivers/gpu/drm/amd/display/dc/dce/dce_mem_input.c | 27 ++++++++++++++++--
+ .../drm/amd/display/dc/dce100/dce100_resource.c    | 19 +++++++++++--
+ drivers/gpu/drm/amd/display/dc/inc/dc_link_ddc.h   |  5 ++--
+ drivers/gpu/drm/amd/powerplay/smumgr/smu7_smumgr.c | 23 ++++++++--------
+ drivers/gpu/drm/armada/armada_crtc.c               | 12 ++++++--
+ drivers/gpu/drm/armada/armada_hw.h                 |  1 +
+ drivers/gpu/drm/armada/armada_overlay.c            | 30 ++++++++++++++----=
+--
+ drivers/gpu/drm/i915/gvt/cmd_parser.c              | 23 ++++++++++++++++
+ drivers/gpu/drm/i915/gvt/gvt.h                     | 29 ++++++++++++++++++=
+++
+ drivers/gpu/drm/i915/gvt/handlers.c                | 24 ++++++++++++++++
+ drivers/gpu/drm/i915/gvt/mmio.h                    |  2 ++
+ drivers/gpu/drm/i915/gvt/mmio_context.c            |  4 ++-
+ drivers/gpu/drm/i915/i915_irq.c                    | 32 ++++++++++++++++++=
+++--
+ drivers/gpu/drm/sun4i/Makefile                     |  5 +++-
+ drivers/gpu/drm/tegra/drm.c                        |  2 +-
+ drivers/gpu/host1x/dev.c                           |  3 ++
+ drivers/gpu/host1x/job.c                           |  3 +-
+ 24 files changed, 233 insertions(+), 60 deletions(-)
