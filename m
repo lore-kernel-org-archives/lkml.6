@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C40ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EDEBECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83501206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83501206B7
+	by mail.kernel.org (Postfix) with ESMTP id 04D4A206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D4A206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388630AbeGPIH7 (ORCPT
+        id S2388643AbeGPIIC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:07:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47664 "EHLO
+        Mon, 16 Jul 2018 04:08:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47670 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIH7 (ORCPT
+        with ESMTP id S1730161AbeGPIIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:07:59 -0400
+        Mon, 16 Jul 2018 04:08:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A8AE9CA1;
-        Mon, 16 Jul 2018 07:41:55 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7C903CA1;
+        Mon, 16 Jul 2018 07:41:58 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4.14 54/54] f2fs: give message and set need_fsck given broken node id
-Date:   Mon, 16 Jul 2018 09:35:51 +0200
-Message-Id: <20180716073500.490203513@linuxfoundation.org>
+        stable@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: [PATCH 4.14 44/54] xen: setup pv irq ops vector earlier
+Date:   Mon, 16 Jul 2018 09:35:41 +0200
+Message-Id: <20180716073459.116037092@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073450.534886211@linuxfoundation.org>
 References: <20180716073450.534886211@linuxfoundation.org>
@@ -51,193 +50,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Juergen Gross <jgross@suse.com>
 
-commit a4f843bd004d775cbb360cd375969b8a479568a9 upstream.
+commit 0ce0bba4e5e0eb9b753bb821785de5d23c494392 upstream.
 
-syzbot hit the following crash on upstream commit
-83beed7b2b26f232d782127792dd0cd4362fdc41 (Fri Apr 20 17:56:32 2018 +0000)
-Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal
-syzbot dashboard link: https://syzkaller.appspot.com/bug?extid=d154ec99402c6f628887
+Setting pv_irq_ops for Xen PV domains should be done as early as
+possible in order to support e.g. very early printk() usage.
 
-C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5414336294027264
-syzkaller reproducer: https://syzkaller.appspot.com/x/repro.syz?id=5471683234234368
-Raw console output: https://syzkaller.appspot.com/x/log.txt?id=5436660795834368
-Kernel config: https://syzkaller.appspot.com/x/.config?id=1808800213120130118
-compiler: gcc (GCC) 8.0.1 20180413 (experimental)
+The same applies to xen_vcpu_info_reset(0), as it is needed for the
+pv irq ops.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com
-It will help syzbot understand when the bug is fixed. See footer for details.
-If you forward the report, please keep this part and the footer.
+Move the call of xen_setup_machphys_mapping() after initializing the
+pv functions as it contains a WARN_ON(), too.
 
-F2FS-fs (loop0): Magic Mismatch, valid(0xf2f52010) - read(0x0)
-F2FS-fs (loop0): Can't find valid F2FS filesystem in 1th superblock
-F2FS-fs (loop0): invalid crc value
-------------[ cut here ]------------
-kernel BUG at fs/f2fs/node.c:1185!
-invalid opcode: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-   (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4549 Comm: syzkaller704305 Not tainted 4.17.0-rc1+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185
-RSP: 0018:ffff8801d960e820 EFLAGS: 00010293
-RAX: ffff8801d88205c0 RBX: 0000000000000003 RCX: ffffffff82f6cc06
-RDX: 0000000000000000 RSI: ffffffff82f6d5e8 RDI: 0000000000000004
-RBP: ffff8801d960ec30 R08: ffff8801d88205c0 R09: ffffed003b5e46c2
-R10: 0000000000000003 R11: 0000000000000003 R12: ffff8801a86e00c0
-R13: 0000000000000001 R14: ffff8801a86e0530 R15: ffff8801d9745240
-FS:  000000000072c880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3d403209b8 CR3: 00000001d8f3f000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- get_node_page fs/f2fs/node.c:1237 [inline]
- truncate_xattr_node+0x152/0x2e0 fs/f2fs/node.c:1014
- remove_inode_page+0x200/0xaf0 fs/f2fs/node.c:1039
- f2fs_evict_inode+0xe86/0x1710 fs/f2fs/inode.c:547
- evict+0x4a6/0x960 fs/inode.c:557
- iput_final fs/inode.c:1519 [inline]
- iput+0x62d/0xa80 fs/inode.c:1545
- f2fs_fill_super+0x5f4e/0x7bf0 fs/f2fs/super.c:2849
- mount_bdev+0x30c/0x3e0 fs/super.c:1164
- f2fs_mount+0x34/0x40 fs/f2fs/super.c:3020
- mount_fs+0xae/0x328 fs/super.c:1267
- vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
- vfs_kern_mount fs/namespace.c:1027 [inline]
- do_new_mount fs/namespace.c:2518 [inline]
- do_mount+0x564/0x3070 fs/namespace.c:2848
- ksys_mount+0x12d/0x140 fs/namespace.c:3064
- __do_sys_mount fs/namespace.c:3078 [inline]
- __se_sys_mount fs/namespace.c:3075 [inline]
- __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
- do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x443dea
-RSP: 002b:00007ffcc7882368 EFLAGS: 00000297 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000c00 RCX: 0000000000443dea
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffcc7882370
-RBP: 0000000000000003 R08: 0000000020016a00 R09: 000000000000000a
-R10: 0000000000000000 R11: 0000000000000297 R12: 0000000000000004
-R13: 0000000000402ce0 R14: 0000000000000000 R15: 0000000000000000
-RIP: __get_node_page+0xb68/0x16e0 fs/f2fs/node.c:1185 RSP: ffff8801d960e820
----[ end trace 4edbeb71f002bb76 ]---
+Remove the no longer necessary conditional in xen_init_irq_ops()
+from PVH V1 times to make clear this is a PV only function.
 
-Reported-and-tested-by: syzbot+d154ec99402c6f628887@syzkaller.appspotmail.com
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: <stable@vger.kernel.org> # 4.14
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/f2fs/f2fs.h  |   13 +------------
- fs/f2fs/inode.c |   13 ++++++-------
- fs/f2fs/node.c  |   21 +++++++++++++++++++--
- 3 files changed, 26 insertions(+), 21 deletions(-)
+ arch/x86/xen/enlighten_pv.c |   24 +++++++++++-------------
+ arch/x86/xen/irq.c          |    4 +---
+ 2 files changed, 12 insertions(+), 16 deletions(-)
 
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1471,18 +1471,6 @@ static inline bool __exist_node_summarie
- }
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -1230,12 +1230,20 @@ asmlinkage __visible void __init xen_sta
  
- /*
-- * Check whether the given nid is within node id range.
-- */
--static inline int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
--{
--	if (unlikely(nid < F2FS_ROOT_INO(sbi)))
--		return -EINVAL;
--	if (unlikely(nid >= NM_I(sbi)->max_nid))
--		return -EINVAL;
--	return 0;
--}
+ 	xen_setup_features();
+ 
+-	xen_setup_machphys_mapping();
 -
--/*
-  * Check whether the inode has blocks or not
-  */
- static inline int F2FS_HAS_BLOCKS(struct inode *inode)
-@@ -2470,6 +2458,7 @@ f2fs_hash_t f2fs_dentry_hash(const struc
- struct dnode_of_data;
- struct node_info;
- 
-+int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid);
- bool available_free_memory(struct f2fs_sb_info *sbi, int type);
- int need_dentry_mark(struct f2fs_sb_info *sbi, nid_t nid);
- bool is_checkpointed_node(struct f2fs_sb_info *sbi, nid_t nid);
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -188,12 +188,8 @@ static int do_read_inode(struct inode *i
- 	projid_t i_projid;
- 
- 	/* Check if ino is within scope */
--	if (check_nid_range(sbi, inode->i_ino)) {
--		f2fs_msg(inode->i_sb, KERN_ERR, "bad inode number: %lu",
--			 (unsigned long) inode->i_ino);
--		WARN_ON(1);
-+	if (check_nid_range(sbi, inode->i_ino))
- 		return -EINVAL;
--	}
- 
- 	node_page = get_node_page(sbi, inode->i_ino);
- 	if (IS_ERR(node_page))
-@@ -538,8 +534,11 @@ no_delete:
- 		alloc_nid_failed(sbi, inode->i_ino);
- 		clear_inode_flag(inode, FI_FREE_NID);
- 	} else {
--		f2fs_bug_on(sbi, err &&
--			!exist_written_data(sbi, inode->i_ino, ORPHAN_INO));
-+		/*
-+		 * If xattr nid is corrupted, we can reach out error condition,
-+		 * err & !exist_written_data(sbi, inode->i_ino, ORPHAN_INO)).
-+		 * In that case, check_nid_range() is enough to give a clue.
-+		 */
- 	}
- out_clear:
- 	fscrypt_put_encryption_info(inode, NULL);
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -29,6 +29,21 @@ static struct kmem_cache *nat_entry_slab
- static struct kmem_cache *free_nid_slab;
- static struct kmem_cache *nat_entry_set_slab;
- 
-+/*
-+ * Check whether the given nid is within node id range.
-+ */
-+int check_nid_range(struct f2fs_sb_info *sbi, nid_t nid)
-+{
-+	if (unlikely(nid < F2FS_ROOT_INO(sbi) || nid >= NM_I(sbi)->max_nid)) {
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		f2fs_msg(sbi->sb, KERN_WARNING,
-+				"%s: out-of-range nid=%x, run fsck to fix.",
-+				__func__, nid);
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
+ 	/* Install Xen paravirt ops */
+ 	pv_info = xen_info;
+ 	pv_init_ops.patch = paravirt_patch_default;
+ 	pv_cpu_ops = xen_cpu_ops;
++	xen_init_irq_ops();
 +
- bool available_free_memory(struct f2fs_sb_info *sbi, int type)
++	/*
++	 * Setup xen_vcpu early because it is needed for
++	 * local_irq_disable(), irqs_disabled(), e.g. in printk().
++	 *
++	 * Don't do the full vcpu_info placement stuff until we have
++	 * the cpu_possible_mask and a non-dummy shared_info.
++	 */
++	xen_vcpu_info_reset(0);
+ 
+ 	x86_platform.get_nmi_reason = xen_get_nmi_reason;
+ 
+@@ -1247,6 +1255,7 @@ asmlinkage __visible void __init xen_sta
+ 	 * Set up some pagetable state before starting to set any ptes.
+ 	 */
+ 
++	xen_setup_machphys_mapping();
+ 	xen_init_mmu_ops();
+ 
+ 	/* Prevent unwanted bits from being set in PTEs. */
+@@ -1271,20 +1280,9 @@ asmlinkage __visible void __init xen_sta
+ 	get_cpu_cap(&boot_cpu_data);
+ 	x86_configure_nx();
+ 
+-	xen_init_irq_ops();
+-
+ 	/* Let's presume PV guests always boot on vCPU with id 0. */
+ 	per_cpu(xen_vcpu_id, 0) = 0;
+ 
+-	/*
+-	 * Setup xen_vcpu early because idt_setup_early_handler needs it for
+-	 * local_irq_disable(), irqs_disabled().
+-	 *
+-	 * Don't do the full vcpu_info placement stuff until we have
+-	 * the cpu_possible_mask and a non-dummy shared_info.
+-	 */
+-	xen_vcpu_info_reset(0);
+-
+ 	idt_setup_early_handler();
+ 
+ 	xen_init_capabilities();
+--- a/arch/x86/xen/irq.c
++++ b/arch/x86/xen/irq.c
+@@ -128,8 +128,6 @@ static const struct pv_irq_ops xen_irq_o
+ 
+ void __init xen_init_irq_ops(void)
  {
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
-@@ -1122,7 +1137,8 @@ void ra_node_page(struct f2fs_sb_info *s
- 
- 	if (!nid)
- 		return;
--	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
-+	if (check_nid_range(sbi, nid))
-+		return;
- 
- 	rcu_read_lock();
- 	apage = radix_tree_lookup(&NODE_MAPPING(sbi)->page_tree, nid);
-@@ -1146,7 +1162,8 @@ static struct page *__get_node_page(stru
- 
- 	if (!nid)
- 		return ERR_PTR(-ENOENT);
--	f2fs_bug_on(sbi, check_nid_range(sbi, nid));
-+	if (check_nid_range(sbi, nid))
-+		return ERR_PTR(-EINVAL);
- repeat:
- 	page = f2fs_grab_cache_page(NODE_MAPPING(sbi), nid, false);
- 	if (!page)
+-	/* For PVH we use default pv_irq_ops settings. */
+-	if (!xen_feature(XENFEAT_hvm_callback_vector))
+-		pv_irq_ops = xen_irq_ops;
++	pv_irq_ops = xen_irq_ops;
+ 	x86_init.irqs.intr_init = xen_init_IRQ;
+ }
 
 
