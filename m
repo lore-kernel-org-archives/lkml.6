@@ -1,194 +1,137 @@
 Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A0AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E15ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CDCB20873
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:57:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nd3vZOpO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ul30tepI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CDCB20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 619F120873
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 05:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 619F120873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbeGPGXj (ORCPT
+        id S1728202AbeGPGYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 02:23:39 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39810 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbeGPGXj (ORCPT
+        Mon, 16 Jul 2018 02:24:46 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:60373 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeGPGYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 02:23:39 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 04329606AC; Mon, 16 Jul 2018 05:57:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531720677;
-        bh=oJxSJBD1pZLIUrr4owORWCT2fHuFxWTv7v4AUkeeJ7U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nd3vZOpOnWTqonfyFbmDa92MGx3I70LzA+mt3aqthB+ln2ei8sBFtBB3AbxGyZtDS
-         ARw4D+MYmDNa20j0nbBztVI+NPI4WTaelQ8pXzkTb3Buo04MIHilTwKCnA5Bd+tZdS
-         K86Jr6Aoa1959Xd8GCrY9YKKe3WnCOv3CotDW3HM=
-Received: from [10.79.169.10] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D9BE060227;
-        Mon, 16 Jul 2018 05:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531720676;
-        bh=oJxSJBD1pZLIUrr4owORWCT2fHuFxWTv7v4AUkeeJ7U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Ul30tepI13fAqDYVLWgK4SuLFvUQvNE/IYLnmkjoE0MdxGvFqs5wGogtyvXNkmyLd
-         peyMFFLdOStsLOqn30lFV83dDNObCPjfnlu5WoefSq9d71qnx1lRVkhPN4GDdHjo74
-         xjkNXMPuOTIYmnrqL2LVhEe0oZbJ11TTI571f3wk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D9BE060227
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
- SDM845
-To:     spanda@codeaurora.org, Stephen Boyd <sboyd@kernel.org>
-Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        ryadav@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
- <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
- <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
- <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
- <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
- <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
- <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
- <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
- <153114876561.143105.465317097490450694@swboyd.mtv.corp.google.com>
- <e0203471-85ef-456a-d7f3-85c66a82b8c1@codeaurora.org>
- <153142449680.48062.13809855257701591509@swboyd.mtv.corp.google.com>
- <9509c88c112d59874e28459d8f87509f@codeaurora.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <9210818b-ed68-bbfc-2140-a872a6621f0e@codeaurora.org>
-Date:   Mon, 16 Jul 2018 11:27:48 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 16 Jul 2018 02:24:46 -0400
+Received: by mail-it0-f70.google.com with SMTP id a10-v6so4019718itc.9
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 22:59:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=qQ6EahEjQPBk77jfxiCJPLwjXu1Hn1X1APuwfCkAbeM=;
+        b=Gb6smTySOZ7CaH0RVGqDAjNqRj8kkCPcsltphcaFp6xMia14CUQrSCqoJtpSLnZ8Uy
+         OsOnM1+qQ9VtvlmHZ3kBKZGE8bJOFo4hDPUfa23hhJHnycCQD5WhkmCfgSihYKCeYdn9
+         5EwI6fraB5Zh9EWAYN8cbKNGeMyPej1aDnd0zRo491V1w85Q5wzz/yCVr9sAeO2qSB1U
+         8AFwp3kAkYeYceOQzytCo8GkoEZoDU2k7FKFZeRelPuU/g8JOwMa7OZZ3FYYApH1v/se
+         6OkvBNZ4fn2FVd7o2Xd4FCpLd9AOk+y3BBo1Zs5XCornQRN3Yg4ebl9tiou99aS+e+gr
+         8FDg==
+X-Gm-Message-State: AOUpUlF43c3cqiKl84hcglE4GNksPNaaslcCgU8WuL7Q3BJRA/hbp613
+        4N2ZD0GLRU12Y1LduLGY3SGrxFYFMHMbpkD3FnEX76/PdGQF
+X-Google-Smtp-Source: AAOMgpd85W3kv3PHsLrT5yi+nzJJciFlCIP71eZEwJW8vbgrTe/AStNHOewfQ/nkYAgE57Ls30ySX5MzTcK4/DLxxd5FJXOjv0ee
 MIME-Version: 1.0
-In-Reply-To: <9509c88c112d59874e28459d8f87509f@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a02:3f2c:: with SMTP id d44-v6mr6952449jaa.60.1531720743147;
+ Sun, 15 Jul 2018 22:59:03 -0700 (PDT)
+Date:   Sun, 15 Jul 2018 22:59:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ca61cd0571178677@google.com>
+Subject: BUG: corrupted list in p9_read_work
+From:   syzbot <syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, ericvh@gmail.com,
+        linux-kernel@vger.kernel.org, lucho@ionkov.net,
+        netdev@vger.kernel.org, rminnich@sandia.gov,
+        syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+Hello,
 
-On 7/13/2018 1:55 PM, spanda@codeaurora.org wrote:
-> On 2018-07-13 01:11, Stephen Boyd wrote:
->> Quoting Taniya Das (2018-07-12 10:21:33)
->>> ++ Display driver team,
->>>
->>> On 7/9/2018 8:36 PM, Stephen Boyd wrote:
->>> > Quoting Taniya Das (2018-07-09 02:34:07)
->>> >>
->>> >>
->>> >> On 7/9/2018 1:07 PM, Stephen Boyd wrote:
->>> >>> Quoting Taniya Das (2018-07-09 00:07:21)
->>> >>>>
->>> >>>>
->>> >>>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
->>> >>>>>>
->>> >>>>>>     > Why is the nocache flag needed? Applies to all clks in 
->>> this file.
->>> >>>>>>     >
->>> >>>>>>
->>> >>>>>> This flag is required for all RCGs whose PLLs are controlled 
->>> outside the
->>> >>>>>> clock controller. The display code would require the 
->>> recalculated rate
->>> >>>>>> always.
->>> >>>>>
->>> >>>>> Right. Why is the PLL controlled outside of the clock 
->>> controller? The
->>> >>>>> rate should propagate upward to the PLL from here, so who's going
->>> >>>>> outside of that?
->>> >>>>>
->>> >>>> The DSI0/1 PLL are not part of the display clock controller, but 
->>> in the
->>> >>>> display subsystem which are managed by the DRM drivers. When DRM 
->>> drivers
->>> >>>> query for the rate clock driver should always return the non 
->>> cached rates.
->>> >>>
->>> >>> Why? Is the DSI PLL changing rate all the time, randomly, without 
->>> going
->>> >>> through the clk APIs to do so?
->>> >>>
->>> >>
->>> >> Hmm, I am afraid I do not have an answer for this, but this was the
->>> >> requirement to always return the non cached rates from the clock 
->>> driver.
->>> >>
->>> >
->>> > Ok. Who knows about this requirement? Can we add someone from the
->>> > display driver to understand more?
->>> >
->>> As per my discussions offline with the display teams,
->>>
->>> There is a use-case where the clock framework is unaware of the PLL VCO
->>> frequency change and thus the drivers would query to get the actual HW
->>> frequency rather than the cached one.
->>>
->>> Do you think keeping these flags would have any impact other than always
->>> getting the non-cached rates?
->>>
->>
->> The flag will make it so clk_get_rate() works in spite of something
->> changing the frequency behind the framework's back, but I want to
->> understand what and why it's changing without framework involvement. We
->> shouldn't need the flag here, because this flag is typically for clks
->> that are controlled by some other entity that the kernel doesn't have
->> control over. In this case, it seems like we have full control of the
->> clk tree for the display PLL down to this clk, so it should be perfectly
->> fine to not have this flag. The presence of the flag means that the
->> display driver is doing something wrong.
-> 
-> These clocks are sourced from DSI PLL. In dsi command mode there is an 
-> idle use case when there
-> is no activity on display, we switch of the source DSI PLL to save power 
-> by calling clk_disable_unprepare().
-> In this scenario if some client queries the clk_get_rate(), then if 
-> NO_CACHE flag is used the clk
-> driver will return the cached rate which is some non-zero value set when 
-> we last called clk_set_rate(),
-> before enabling the clock, whereas actually in HW this clk is disabled. 
-> So we used the NO_CACHE flag
-> for the call to land in clk_recalc_rate and we return zero if the PLL is 
-> disabled.
-> I remember some customer had scripts that runs through all the clocks 
-> during idle screen scenario
-> and call clk_get_rate(), where they complained display clk_get_rate 
-> returns none zero value.
-> 
-> 
+syzbot found the following crash on:
 
-Do you think the clock driver needs any update for flag for the next series?
+HEAD commit:    37b5dca2898d Merge tag 'rtc-4.18-2' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b3e770400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+dashboard link: https://syzkaller.appspot.com/bug?extid=2222c34dc40b515f30dc
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Unfortunately, I don't have any reproducer for this crash yet.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2222c34dc40b515f30dc@syzkaller.appspotmail.com
 
---
+list_del corruption, ffff8801931d8e28->next is LIST_POISON1  
+(dead000000000100)
+------------[ cut here ]------------
+kernel BUG at lib/list_debug.c:47!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 0 PID: 27 Comm: kworker/0:2 Not tainted 4.18.0-rc4+ #148
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: events p9_read_work
+RIP: 0010:__list_del_entry_valid.cold.1+0x26/0x58 lib/list_debug.c:45
+Code: 02 fe 0f 0b 4c 89 e2 48 89 de 48 c7 c7 60 68 1a 88 e8 ba 69 02 fe 0f  
+0b 4c 89 ea 48 89 de 48 c7 c7 00 68 1a 88 e8 a6 69 02 fe <0f> 0b 48 89 de  
+48 c7 c7 20 69 1a 88 e8 95 69 02 fe 0f 0b 48 89 de
+RSP: 0018:ffff8801d94575b0 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffff8801931d8e28 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81631821 RDI: 0000000000000001
+RBP: ffff8801d94575c8 R08: ffff8801d9448700 R09: ffffed003b5c4fc0
+R10: ffffed003b5c4fc0 R11: ffff8801dae27e07 R12: dead000000000200
+R13: dead000000000100 R14: ffff8801931d8e00 R15: ffff8801996f7a10
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9e4e7e0000 CR3: 00000001aeeae000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __list_del_entry include/linux/list.h:117 [inline]
+  list_del include/linux/list.h:125 [inline]
+  p9_read_work+0xa29/0x1060 net/9p/trans_fd.c:375
+  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
+  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace 4e7d7b3b542c6c1e ]---
+RIP: 0010:__list_del_entry_valid.cold.1+0x26/0x58 lib/list_debug.c:45
+Code: 02 fe 0f 0b 4c 89 e2 48 89 de 48 c7 c7 60 68 1a 88 e8 ba 69 02 fe 0f  
+0b 4c 89 ea 48 89 de 48 c7 c7 00 68 1a 88 e8 a6 69 02 fe <0f> 0b 48 89 de  
+48 c7 c7 20 69 1a 88 e8 95 69 02 fe 0f 0b 48 89 de
+RSP: 0018:ffff8801d94575b0 EFLAGS: 00010286
+RAX: 000000000000004e RBX: ffff8801931d8e28 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81631821 RDI: 0000000000000001
+RBP: ffff8801d94575c8 R08: ffff8801d9448700 R09: ffffed003b5c4fc0
+R10: ffffed003b5c4fc0 R11: ffff8801dae27e07 R12: dead000000000200
+R13: dead000000000100 R14: ffff8801931d8e00 R15: ffff8801996f7a10
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f9e4e7e0000 CR3: 00000001aeeae000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
