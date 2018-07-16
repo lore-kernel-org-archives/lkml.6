@@ -2,562 +2,151 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65993ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F63ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E939320849
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:52:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F34C320849
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 13:52:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ie6JoIVF";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S2MAHlZx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E939320849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Pbv4mDAW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F34C320849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbeGPOTd (ORCPT
+        id S1730002AbeGPOUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 10:19:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57668 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbeGPOTc (ORCPT
+        Mon, 16 Jul 2018 10:20:11 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:38927 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727405AbeGPOUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 10:19:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C41066060A; Mon, 16 Jul 2018 13:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531749118;
-        bh=lcReW5KPRgMaW3/GrJgG916mMf13ZVYrZ4J1jC4gFBU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ie6JoIVFt29R7bdZPvaCr1e2msc/w8+WcKgpBILyphIjXrsSXiGn+FpPaARXZNiqJ
-         b6wJpS4aPu0jcJM761NrMiGtBiOk2OupmtUzBaSElxf2gt5SCpygO7YC26HVJj12Fn
-         UpEMT+/G9qrWnsBEM8cBgq1qeP+LeLi5cK11hg+k=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id DC49F60541;
-        Mon, 16 Jul 2018 13:51:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531749116;
-        bh=lcReW5KPRgMaW3/GrJgG916mMf13ZVYrZ4J1jC4gFBU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S2MAHlZxhvcrD0ZservQeLnh8Ajkx3l+BkKbCil9QGK0ZgYmq0BuKi59LA7DJddEm
-         gPR4NzEcotc4n0itS8lSCM0isSj+YN5XR2oGotZnKbj2biTJgQkk1Mw1gxZ1wAzWv1
-         /Gv4qGSe/p+BJ7g7yVOSq3iGNlEEhOHhjJ9scuTU=
+        Mon, 16 Jul 2018 10:20:11 -0400
+Received: by mail-io0-f193.google.com with SMTP id e13-v6so37856163iof.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 06:52:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:organization:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=+LQPMd7yphzHpob9zy1jy3cSemPJODxQWuXbD7HqplA=;
+        b=Pbv4mDAWL+W0dMSS7QHEz2R3NkH4CZ+I8QuDY9UuTJw4MOpVeQk7ngRcdCIky8bvUy
+         ZNfPCjubLiHqwrc119FHTwMZkEK46e46uqXfYnu7JmiI0GVKksq2cDXj7EVTPOI97ZUh
+         RcS4LlBE8K2Lfk35thyLx32MTGbg3cUF9W14WxrrAjaU+yJtRRR9YLHO1rLgpZhLj7SC
+         7q9I9tJQg6lxNVS8tFBStg1ky3b2d2zGH/zwRuHNnbDthjISkl17Ad+15IEJ1OHR/s9B
+         GjMUoTY86XUDjt0C5YuyDcdr73E9l21LskdNIzjwXPEWfC/tuke+LEQHOZxH0acTfCNZ
+         +6qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:organization:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=+LQPMd7yphzHpob9zy1jy3cSemPJODxQWuXbD7HqplA=;
+        b=J+5JCnDxcza1pu514HLKR1/XaWWsoazCWiRsuoZlFuHz6H9uvUaN3yAa6UTDWJcA8n
+         7nXSioM+OX09AlsmE7JoMmrOaAJq9b7gl5URw7sKFgSeuP8XJ3i+1OTzoxekAGa9aUN1
+         KVoZiHu9zFbdcVsF0ez8z4WOZOkhBGuAHQGnMueSOFBrJ9ejDIvik4P2sj68x0hER2cc
+         UMlK0SK6wQUGXZ6P0KfIIlYgbihkSCZNNVX5wo6bfhoSEzWPCmtuogBn1VxPv9pCMji2
+         /zZ/X+o+feRiToQc9bNV4GpqTGB4wV4WwB993URy2VYHsoHbUv0JGIz1rPiWo1bI3xic
+         nhSQ==
+X-Gm-Message-State: APt69E365xPim8loE85ZIr4ftg3PDGjpfRswWKcCx1kw+1R+lmZZBnzi
+        Z8d1GJMUyt+trewtMGJK5sqXlw==
+X-Google-Smtp-Source: AAOMgpfa1W1xgg6r7f8F5pP5OXAz0sT31FC3ubJ7eUcjQlyufLFmgRHFvbD2yFlgto1MNAp+4cEkcw==
+X-Received: by 2002:a6b:a715:: with SMTP id q21-v6mr39625422ioe.61.1531749157867;
+        Mon, 16 Jul 2018 06:52:37 -0700 (PDT)
+Received: from localhost (c-24-118-241-30.hsd1.mn.comcast.net. [24.118.241.30])
+        by smtp.googlemail.com with ESMTPSA id z71-v6sm3525943ioz.34.2018.07.16.06.52.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 06:52:37 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] ARM64: dts: meson-axg: add saradc support
+Organization: BayLibre
+References: <20180702222515.13924-1-yixun.lan@amlogic.com>
+        <1531326349.2708.136.camel@baylibre.com>
+Date:   Mon, 16 Jul 2018 08:52:36 -0500
+In-Reply-To: <1531326349.2708.136.camel@baylibre.com> (Jerome Brunet's message
+        of "Wed, 11 Jul 2018 18:25:49 +0200")
+Message-ID: <7h7elvmgnv.fsf@baylibre.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 16 Jul 2018 19:21:56 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v9 7/7] Bluetooth: hci_qca: Add support for Qualcomm
- Bluetooth chip wcn3990
-In-Reply-To: <20180706222110.GK129942@google.com>
-References: <20180705165515.13340-1-bgodavar@codeaurora.org>
- <20180705165515.13340-8-bgodavar@codeaurora.org>
- <20180706222110.GK129942@google.com>
-Message-ID: <ecc9d46aadb05d36f43ca9649cf44bf4@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-On 2018-07-07 03:51, Matthias Kaehlcke wrote:
-> On Thu, Jul 05, 2018 at 10:25:15PM +0530, Balakrishna Godavarthi wrote:
->> Add support to set voltage/current of various regulators
->> to power up/down Bluetooth chip wcn3990.
+> On Mon, 2018-07-02 at 22:25 +0000, Yixun Lan wrote:
+>> From: Xingyu Chen <xingyu.chen@amlogic.com>
 >> 
->> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> Add the DT info for SAR ADC of the Amlogic's Meson-AXG SoC.
+>> 
+>> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
 >> ---
->> changes in v9:
->>     * moved flow control to vendor and set_baudarte functions.
->>     * removed parent regs.
+>> Hi kevin
+>>   I just re-send this patch which rebased to your khilman/v4.18/integ branch
+>>   Thanks
+>> Yixun
 >> 
->> changes in v8:
->>     * closing qca buffer, if qca_power_setup fails
->>     * chnaged ibs start timer function call location.
->>     * updated review comments.
+>> nothing changed since patch v1 [1]:
+>>  -
 >> 
->> changes in v7:
->>     * addressed review comments.
->> 
->> changes in v6:
->>     * Hooked up qca_power to qca_serdev.
->>     * renamed all the naming inconsistency functions with qca_*
->>     * leveraged common code of ROME for wcn3990.
->>     * created wrapper functions for re-usable blocks.
->>     * updated function of _*regulator_enable and _*regualtor_disable.
->>     * removed redundant comments and functions.
->>     * addressed review comments.
->> 
->> Changes in v5:
->>     * updated regulator vddpa min_uV to 1304000.
->>       * addressed review comments.
->> 
->> Changes in v4:
->>     * Segregated the changes of btqca from hci_qca
->>     * rebased all changes on top of bluetooth-next.
->>     * addressed review comments.
+>> [1] https://lkml.kernel.org/r/20180326092117.208416-1-yixun.lan@amlogic.com
 >> 
 >> ---
->>  drivers/bluetooth/btqca.h   |   3 +
->>  drivers/bluetooth/hci_qca.c | 387 
->> +++++++++++++++++++++++++++++++-----
->>  2 files changed, 345 insertions(+), 45 deletions(-)
+>>  .../arm64/boot/dts/amlogic/meson-axg-s400.dts |  5 +++++
+>>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi    | 21 +++++++++++++++++++
+>>  2 files changed, 26 insertions(+)
 >> 
->> diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
->> index a9c2779f3e07..0c01f375fe83 100644
->> --- a/drivers/bluetooth/btqca.h
->> +++ b/drivers/bluetooth/btqca.h
->> @@ -37,6 +37,9 @@
->>  #define EDL_TAG_ID_HCI			(17)
->>  #define EDL_TAG_ID_DEEP_SLEEP		(27)
->> 
->> +#define QCA_WCN3990_POWERON_PULSE	0xFC
->> +#define QCA_WCN3990_POWEROFF_PULSE	0xC0
->> +
->>  enum qca_bardrate {
->>  	QCA_BAUDRATE_115200 	= 0,
->>  	QCA_BAUDRATE_57600,
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index 7ebfaa0edf3f..d62c7785a618 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -5,7 +5,7 @@
->>   *  protocol extension to H4.
->>   *
->>   *  Copyright (C) 2007 Texas Instruments, Inc.
->> - *  Copyright (c) 2010, 2012 The Linux Foundation. All rights 
->> reserved.
->> + *  Copyright (c) 2010, 2012, 2018 The Linux Foundation. All rights 
->> reserved.
->>   *
->>   *  Acknowledgements:
->>   *  This file is based on hci_ll.c, which was...
->> @@ -31,9 +31,14 @@
->>  #include <linux/kernel.h>
->>  #include <linux/clk.h>
->>  #include <linux/debugfs.h>
->> +#include <linux/delay.h>
->> +#include <linux/device.h>
->>  #include <linux/gpio/consumer.h>
->>  #include <linux/mod_devicetable.h>
->>  #include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regulator/consumer.h>
->>  #include <linux/serdev.h>
->> 
->>  #include <net/bluetooth/bluetooth.h>
->> @@ -124,12 +129,46 @@ enum qca_speed_type {
->>  	QCA_OPER_SPEED
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+>> index 4b3331fbfe39..6041f68b32ae 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-axg-s400.dts
+>> @@ -153,3 +153,8 @@
+>>  		compatible = "brcm,bcm4329-fmac";
+>>  	};
 >>  };
->> 
->> +/*
->> + * Voltage regulator information required for configuring the
->> + * QCA Bluetooth chipset
->> + */
->> +struct qca_vreg {
->> +	const char *name;
->> +	unsigned int min_uV;
->> +	unsigned int max_uV;
->> +	unsigned int load_uA;
+>> +
+>> +&saradc {
+>> +	status = "okay";
+>> +	vref-supply = <&vddio_ao18>;
 >> +};
->> +
->> +struct qca_vreg_data {
->> +	enum qca_btsoc_type soc_type;
->> +	struct qca_vreg *vregs;
->> +	size_t num_vregs;
->> +};
->> +
->> +/*
->> + * Platform data for the QCA Bluetooth power driver.
->> + */
->> +struct qca_power {
->> +	struct device *dev;
->> +	const struct qca_vreg_data *vreg_data;
->> +	struct regulator_bulk_data *vreg_bulk;
->> +	bool vregs_on;
->> +};
->> +
->>  struct qca_serdev {
->>  	struct hci_uart	 serdev_hu;
->>  	struct gpio_desc *bt_en;
->>  	struct clk	 *susclk;
->> +	enum qca_btsoc_type btsoc_type;
->> +	struct qca_power *bt_power;
->> +	u32 init_speed;
->> +	u32 oper_speed;
->>  };
->> 
->> +static int qca_power_setup(struct hci_uart *hu, bool on);
->> +static void qca_power_shutdown(struct hci_uart *hu);
->> +
->>  static void __serial_clock_on(struct tty_struct *tty)
->>  {
->>  	/* TODO: Some chipset requires to enable UART clock on client
->> @@ -407,6 +446,7 @@ static int qca_open(struct hci_uart *hu)
->>  {
->>  	struct qca_serdev *qcadev;
->>  	struct qca_data *qca;
->> +	int ret;
->> 
->>  	BT_DBG("hu %p qca_open", hu);
->> 
->> @@ -458,19 +498,32 @@ static int qca_open(struct hci_uart *hu)
->> 
->>  	hu->priv = qca;
->> 
->> -	timer_setup(&qca->wake_retrans_timer, hci_ibs_wake_retrans_timeout, 
->> 0);
->> -	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
->> -
->> -	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
->> -	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
->> -
->>  	if (hu->serdev) {
->>  		serdev_device_open(hu->serdev);
->> 
->>  		qcadev = serdev_device_get_drvdata(hu->serdev);
->> -		gpiod_set_value_cansleep(qcadev->bt_en, 1);
->> +		if (qcadev->btsoc_type != QCA_WCN3990) {
->> +			gpiod_set_value_cansleep(qcadev->bt_en, 1);
->> +		} else {
->> +			hu->init_speed = qcadev->init_speed;
->> +			hu->oper_speed = qcadev->oper_speed;
->> +			ret = qca_power_setup(hu, true);
->> +			if (ret) {
->> +				destroy_workqueue(qca->workqueue);
->> +				kfree_skb(qca->rx_skb);
->> +				hu->priv = NULL;
->> +				kfree(qca);
->> +				return ret;
->> +			}
->> +		}
->>  	}
->> 
->> +	timer_setup(&qca->wake_retrans_timer, hci_ibs_wake_retrans_timeout, 
->> 0);
->> +	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
->> +
->> +	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
->> +	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
->> +
->>  	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
->>  	       qca->tx_idle_delay, qca->wake_retrans);
->> 
->> @@ -554,10 +607,13 @@ static int qca_close(struct hci_uart *hu)
->>  	qca->hu = NULL;
->> 
->>  	if (hu->serdev) {
->> -		serdev_device_close(hu->serdev);
->> -
->>  		qcadev = serdev_device_get_drvdata(hu->serdev);
->> -		gpiod_set_value_cansleep(qcadev->bt_en, 0);
->> +		if (qcadev->btsoc_type == QCA_WCN3990)
->> +			qca_power_shutdown(hu);
->> +		else
->> +			gpiod_set_value_cansleep(qcadev->bt_en, 0);
->> +
->> +		serdev_device_close(hu->serdev);
->>  	}
->> 
->>  	kfree_skb(qca->rx_skb);
->> @@ -891,6 +947,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
->> uint8_t baudrate)
->>  	struct hci_uart *hu = hci_get_drvdata(hdev);
->>  	struct qca_data *qca = hu->priv;
->>  	struct sk_buff *skb;
->> +	struct qca_serdev *qcadev;
->>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
->> 
->>  	if (baudrate > QCA_BAUDRATE_3200000)
->> @@ -904,6 +961,13 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
->> uint8_t baudrate)
->>  		return -ENOMEM;
->>  	}
->> 
->> +	/* Disabling hardware flow control is mandate while
-> 
-> nit: s/mandate/mandatory|required/
-> 
->> +	 * sending change baudrate request to wcn3990 SoC.
->> +	 */
->> +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> +	if (qcadev->btsoc_type == QCA_WCN3990)
->> +		hci_uart_set_flow_control(hu, true);
->> +
->>  	/* Assign commands to change baudrate and packet type. */
->>  	skb_put_data(skb, cmd, sizeof(cmd));
->>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> @@ -919,6 +983,9 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
->> uint8_t baudrate)
->>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
->>  	set_current_state(TASK_RUNNING);
->> 
->> +	if (qcadev->btsoc_type == QCA_WCN3990)
->> +		hci_uart_set_flow_control(hu, false);
->> +
->>  	return 0;
->>  }
->> 
->> @@ -930,6 +997,36 @@ static inline void host_set_baudrate(struct 
->> hci_uart *hu, unsigned int speed)
->>  		hci_uart_set_baudrate(hu, speed);
->>  }
->> 
->> +static int qca_send_vendor_cmd(struct hci_dev *hdev, u8 cmd)
->> +{
->> +	struct hci_uart *hu = hci_get_drvdata(hdev);
->> +	struct qca_data *qca = hu->priv;
->> +	struct sk_buff *skb;
->> +
->> +	bt_dev_dbg(hdev, "sending command %02x to SoC", cmd);
->> +
->> +	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
->> +	if (!skb)
->> +		return -ENOMEM;
->> +
->> +	/* Disabling hardware flow control is mandate while
-> 
-> Same nit as above
-> 
->> +	 * sending vendor power on and off pulse to SoC.
->> +	 */
-> 
-> The function is called qca_send_vendor_cmd(), the comment about power
-> on/off pulses seems misplaced here. Are there other 'vendor commands'
-> that require a different flow control behavior?
-> 
-> Perhaps the function should have a different name or we need another
-> wrapper.
-> 
->> +	hci_uart_set_flow_control(hu, true);
-> 
-> Should the changing of the flow control be limited to wcn3990? As of
-> now the function is only called for wcn3990, however this is not
-> stated as a requirement and might change in the future.
-> 
->> +	skb_put_u8(skb, cmd);
->> +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> +
->> +	skb_queue_tail(&qca->txq, skb);
->> +	hci_uart_tx_wakeup(hu);
->> +
->> +	/* Wait for 100 uS for SoC to settle down */
->> +	usleep_range(100, 200);
-> 
-> Is this needed for any 'vendor command' or directly related with the
-> power on/off pulses?
-> 
->> +	hci_uart_set_flow_control(hu, false);
->> +
->> +	return 0;
->> +}
->> +
->>  static unsigned int qca_get_speed(struct hci_uart *hu,
->>  				  enum qca_speed_type speed_type)
->>  {
->> @@ -952,10 +1049,19 @@ static unsigned int qca_get_speed(struct 
->> hci_uart *hu,
->> 
->>  static int qca_check_speeds(struct hci_uart *hu)
->>  {
->> -	/* One or the other speeds should be non zero. */
->> -	if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
->> -	    !qca_get_speed(hu, QCA_OPER_SPEED))
->> +	struct qca_serdev *qcadev;
->> +
->> +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> +	if ((qcadev->btsoc_type == QCA_WCN3990 &&
->> +	    !qca_get_speed(hu, QCA_INIT_SPEED)) ||
->> +	    !qca_get_speed(hu, QCA_OPER_SPEED)) {
->> +		/* Both INIT and OPER speed should be non zero. */
->>  		return -EINVAL;
->> +	} else if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
->> +		    !qca_get_speed(hu, QCA_OPER_SPEED)) {
->> +		/* One or the other speeds should be non zero. */
->> +		return -EINVAL;
->> +	}
-> 
-> It is questionable if the comments are useful, they are basically
-> stating the same as the conditions.
-> 
-> if-else statements with a single statement in all branches shouldn't
-> use curly braces. Personally I don't dislike them in this case with
-> the multi-line conditions, but in principle they shoulnd't be there.
-> 
-> nit: this would be easier to read with nested if statements:
-> 
-> 	if (qcadev->btsoc_type == QCA_WCN3990)
-> 		if (!qca_get_speed(hu, QCA_INIT_SPEED)) ||
-> 		    !qca_get_speed(hu, QCA_OPER_SPEED))
-> 			return -EINVAL;
-> 	else
-> 		if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
-> 		    !qca_get_speed(hu, QCA_OPER_SPEED)) {
-> 			return -EINVAL;
-> 
->>  	return 0;
->>  }
->> @@ -986,15 +1092,40 @@ static int qca_set_speed(struct hci_uart *hu, 
->> enum qca_speed_type speed_type)
->>  	return 0;
->>  }
->> 
->> +static int qca_wcn3990_init(struct hci_uart *hu)
->> +{
->> +	int ret;
->> +
->> +	ret = qca_send_vendor_cmd(hu->hdev, QCA_WCN3990_POWERON_PULSE);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Wait for 100 ms for SoC to boot up */
->> +	msleep(100);
->> +	serdev_device_close(hu->serdev);
->> +	ret = serdev_device_open(hu->serdev);
->> +	if (ret) {
->> +		bt_dev_err(hu->hdev, "failed to open port");
->> +		return ret;
->> +	}
->> +
->> +	/* Setup initial baudrate */
->> +	qca_set_speed(hu, QCA_INIT_SPEED);
-> 
-> The comment is a bit redundant.
-> 
->> +	hci_uart_set_flow_control(hu, false);
->> +
->> +	return 0;
->> +}
->> +
->>  static int qca_setup(struct hci_uart *hu)
->>  {
->>  	struct hci_dev *hdev = hu->hdev;
->>  	struct qca_data *qca = hu->priv;
->>  	unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
->> +	struct qca_serdev *qcadev;
->>  	int ret;
->>  	int soc_ver = 0;
->> 
->> -	bt_dev_info(hdev, "ROME setup");
->> +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> 
->>  	ret = qca_check_speeds(hu);
->>  	if (ret)
->> @@ -1006,6 +1137,21 @@ static int qca_setup(struct hci_uart *hu)
->>  	/* Setup initial baudrate */
->>  	qca_set_speed(hu, QCA_INIT_SPEED);
->> 
->> +	if (qcadev->btsoc_type == QCA_WCN3990) {
->> +		bt_dev_dbg(hdev, "setting up wcn3990");
-> 
-> Seems like this should be bt_dev_info() for consistency with Rome.
-> 
->> +		ret = qca_wcn3990_init(hu);
->> +		if (ret)
->> +			return ret;
->> +
->> +		ret = qca_read_soc_version(hdev, &soc_ver);
->> +		if (ret < 0 || soc_ver == 0) {
->> +			bt_dev_err(hdev, "Failed to get version %d", ret);
->> +			return ret;
->> +		}
->> +	} else {
->> +		bt_dev_info(hdev, "ROME setup");
->> +	}
->> +
->>  	/* Setup user speed if needed */
->>  	speed = qca_get_speed(hu, QCA_OPER_SPEED);
->>  	if (speed) {
->> @@ -1016,16 +1162,18 @@ static int qca_setup(struct hci_uart *hu)
->>  		qca_baudrate = qca_get_baudrate_value(speed);
->>  	}
->> 
->> -	/* Get QCA version information */
->> -	ret = qca_read_soc_version(hdev, &soc_ver);
->> -	if (ret < 0 || soc_ver == 0) {
->> -		bt_dev_err(hdev, "QCA Failed to get version (%d)", ret);
->> -		return ret;
->> +	if (!soc_ver) {
-> 
-> 
-> The following would probably be clearer:
-> 
->   	if (qcadev->btsoc_type != QCA_WCN3990) {
-> 
->> +		/* Get QCA version information */
->> +		ret = qca_read_soc_version(hdev, &soc_ver);
->> +		if (ret < 0 || soc_ver == 0) {
->> +			bt_dev_err(hdev, "QCA Failed to get version (%d)", ret);
->> +			return ret;
->> +		}
->> +		bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
-> 
-> Couldn't we hide some of this in qca_read_soc_version()?
-> 
-> qca_read_soc_version() could at least do the logging in the error case
-> (the 'soc_ver == 0' case could be handled there as well), which would
-> leave us with:
-> 
-> 
-> 	ret = qca_read_soc_version(hdev, &soc_ver);
-> 	if (ret)
-> 		return ret;
-> 
-> And the same above.
-> 
-> The controller version can be logged outside of the branch for both
-> wcn3990 and Rome.
-> 
->>  	}
->> -	bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
->> 
->>  	/* Setup patch / NVM configurations */
->> -	ret = qca_uart_setup(hdev, qca_baudrate, QCA_ROME, soc_ver);
->> +	ret = qca_uart_setup(hdev, qca_baudrate, qcadev->btsoc_type, 
->> soc_ver);
->>  	if (!ret) {
->>  		set_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
->>  		qca_debugfs_init(hdev);
->> @@ -1061,9 +1209,123 @@ static struct hci_uart_proto qca_proto = {
->>  	.dequeue	= qca_dequeue,
->>  };
->> 
->> +static const struct qca_vreg_data qca_soc_data = {
->> +	.soc_type = QCA_WCN3990,
->> +	.vregs = (struct qca_vreg []) {
->> +		{ "vddio",   1800000, 1800000,  0 },
->> +		{ "vddxo",   1800000, 1800000,  1 },
->> +		{ "vddrf",   1304000, 1304000,  1 },
->> +		{ "vddch0",  3000000, 3312000,  1 },
->> +	},
->> +	.num_vregs = 4,
->> +};
-> 
-> I didn't chime in earlier in the discussion with Stephen on the
-> regulators (https://patchwork.kernel.org/patch/10467911/), however I
-> agree with him that specifying at load of 1uA doesn't seem to make
-> much sense. What would happen if the load remained unspecified (or 0)?
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> index 67d7115e4eff..52678a69dbf8 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> @@ -91,6 +91,13 @@
+>>  		method = "smc";
+>>  	};
+>>  
+>> +	vddio_ao18: regulator-vddio_ao18 {
+>> +		compatible = "regulator-fixed";
+>> +		regulator-name = "VDDIO_AO18";
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <1800000>;
+>> +	};
+>
+> Kevin, Yixun,
+>
+> I find odd that we are adding a regulator to SoC device tree file.
+> Those regulator are usually part of board file
+>
+> Unless the regulator is actually inside the SoC, this is not the place for it.
+>
+> Sorry for not catching this earlier.
 
-[Bala]: On RPMh based designs, calling a regulator_set_load with a 
-non-zero value moves the regulator to NPM (high power mode) which is 
-required for BT communication.
-         and call with 0uA  moves it to low-power-mode (vote from APPS). 
-Basically whenever BT wants these in NPM  it calls set-load with 1.
+You're right, I should've noticed this earlier also.
 
--- 
-Regards
-Balakrishna.
+Yixun, can you resend this with the regulators in the board file please?
+
+In the mean time, I've dropped this from v4.19/dt64 branch,
+
+Kevin
