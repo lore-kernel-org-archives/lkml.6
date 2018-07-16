@@ -2,94 +2,120 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48180ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D828ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00BE020862
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:16:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00BE020862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EE5562098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 22:16:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE5562098A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbeGPWpZ (ORCPT
+        id S1730818AbeGPWqE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 18:45:25 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:43673 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729245AbeGPWpZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 18:45:25 -0400
-Received: by mail-oi0-f67.google.com with SMTP id b15-v6so77772118oib.10;
-        Mon, 16 Jul 2018 15:15:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NE5JQd3XDT/c7L7J6bLRzznKIMqJyEMxXF316nZWc/o=;
-        b=IuUwYpVfR1yDw05DfILfyCHvVhMuCVgY30QSLKMICYmgEc4KGqU+MwRZmyAqav6kKl
-         XDKAPQLR69jLdh03qPEem4D8iyVKWpjNqr4EVImmgAbJc+mUQhUf9SyWgWEG6JG6Z6bk
-         KepjHPH63ZsjhrHAQ1JkZ1/d8/kTb8G6ZR+1V3liOUqYPZOUS7FxRg1vdk6ESInE13JL
-         QlvXGu0YrM/++NM36y6SLa7n0T6ftQ5uq2fl95jNDDRB0HFKXueaLBv/U7cGtsfdTCfI
-         Mzjaq5yjslKfFV+7bkE9DXwg43t4Q9Op1VFh+pFGLHUxYoJnch8jk/x22ceaKbvF96jC
-         cVhQ==
-X-Gm-Message-State: AOUpUlGcWnZMxFQ0iNwQk5EvPetqahE/zlEHhFZg0oIKKmKH4SucQnhM
-        8KuLA+VDdtFHntGjE4i3SA==
-X-Google-Smtp-Source: AAOMgpd5Ql+Iu1nIb33KuUUBCzJcMhSUiK8dO4O+Op9fGNmOpUKARuRMYQrHZoyP3ODQ4vdjmSqtjw==
-X-Received: by 2002:aca:b641:: with SMTP id g62-v6mr1349961oif.71.1531779359504;
-        Mon, 16 Jul 2018 15:15:59 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id z196-v6sm65332466oig.12.2018.07.16.15.15.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 15:15:58 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 16:15:58 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Pascal PAILLET-LME <p.paillet@st.com>
-Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>
-Subject: Re: [PATCH 2/8] mfd: stpmu1: add stpmu1 pmic driver
-Message-ID: <20180716221558.GA3786@rob-hp-laptop>
-References: <1530803657-17684-1-git-send-email-p.paillet@st.com>
- <1530803657-17684-3-git-send-email-p.paillet@st.com>
+        Mon, 16 Jul 2018 18:46:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33072 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728794AbeGPWqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 18:46:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 04935ADE6;
+        Mon, 16 Jul 2018 22:16:36 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Date:   Tue, 17 Jul 2018 08:16:23 +1000
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wei Wang <wvw@google.com>, Stefan Agner <stefan@agner.ch>,
+        Andrei Vagin <avagin@openvz.org>,
+        Yisheng Xie <ysxie@foxmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH] kernel.h: Add for_each_if()
+In-Reply-To: <f361dcc9c25e46819100ba1634f56db1c867f1b8.camel@linux.intel.com>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch> <20180709162509.29343-1-daniel.vetter@ffwll.ch> <20180709163001.8fb8148223a57bc46a13fbda@linux-foundation.org> <20180710075328.GG3008@phenom.ffwll.local> <871scbwfd4.fsf@notabene.neil.brown.name> <CAKMK7uFEYyD2ChWnO_0PS_rkK180dDoQ1g4J0UWRfchnYQxOTA@mail.gmail.com> <20180711160547.59f086a587c7f3c8d3c40f0f@linux-foundation.org> <87bmbavhai.fsf@notabene.neil.brown.name> <79133322-b04b-f005-f1f6-25c28c5058e4@infradead.org> <f361dcc9c25e46819100ba1634f56db1c867f1b8.camel@linux.intel.com>
+Message-ID: <87muuqsu6g.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530803657-17684-3-git-send-email-p.paillet@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 05, 2018 at 03:14:22PM +0000, Pascal PAILLET-LME wrote:
-> From: pascal paillet <p.paillet@st.com>
-> 
-> stpmu1 is a pmic from STMicroelectronics. The stpmu1 integrates 10
-> regulators and 3 switches with various capabilities.
-> 
-> Signed-off-by: pascal paillet <p.paillet@st.com>
-> ---
->  drivers/mfd/Kconfig                 |  14 ++
->  drivers/mfd/Makefile                |   1 +
->  drivers/mfd/stpmu1.c                | 490 ++++++++++++++++++++++++++++++++++++
->  include/dt-bindings/mfd/st,stpmu1.h |  46 ++++
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-This belongs with patch 1.
+On Mon, Jul 16 2018, Andy Shevchenko wrote:
 
->  include/linux/mfd/stpmu1.h          | 220 ++++++++++++++++
->  5 files changed, 771 insertions(+)
->  create mode 100644 drivers/mfd/stpmu1.c
->  create mode 100644 include/dt-bindings/mfd/st,stpmu1.h
->  create mode 100644 include/linux/mfd/stpmu1.h
+> On Fri, 2018-07-13 at 16:42 -0700, Randy Dunlap wrote:
+>> On 07/13/2018 04:37 PM, NeilBrown wrote:
+>
+>>=20
+>> coding-style.rst says:
+>> Also, use braces when a loop contains more than a single simple
+>> statement:
+>
+> Independently on a) would we use some macro for condition, or b) fix
+> macros against this kind of nested conditions, there is another
+> weirdness we would like to avoid, i.e.
+>
+> for_each_foo() {
+>  ...
+> } else {
+>  ...
+> }
+>
+> It is written according to coding style, but too much weird.
+
+Agreed.  Too weird.
+
+>
+> So, summarize this discussion I think we would
+> - keep for_each_if() in DRM subsystem alone
+> - fix macros which are using positive condition 'if (cond)' by replacing
+> with 'if (!cond) {} else' form for sake of robustness.
+>
+> Do you agree on that?
+
+I agree.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltNGTcACgkQOeye3VZi
+gbnFDQ//SB2gVd+uNlfPffgUJ2DEQdQOAitY6PtSLZWC66UlgkUMmpLm3zOytIIW
+Zbn9FYbz9MKLiwwkDvQP/8EpzgCHq2SUi5j5sdWm47Qalhg81ngPk2HvVVbfErTm
+SmnoVj3TZdem9jmlqpq9gmOsbtmZbcZQBGM9XmQQBjeBT/cZOfBequRROOZeFp2e
+higfsKn8vvMqATk2jwdvefrvAkaNfEawFZcPeAkGuMlFxB88R2OlLL8wg2F/3+qM
+RH4oOJ5FhTudBcxGP2gHCWDT0PGtC2JTL+jI0wmwYV9d8Jcoz8I+P26SyskxnYWJ
+CjtGBWxRHZqGfwDYVzi3i4A9aQFm5dKLTau7XgC+HMiXLdPwC0/8bRXJUv7Wezbx
+HyJ4aVYXBVZdjmtTslLt1RSZh1WSrh/gO7AQsbyhgJj9vGKnBPx7QX7fYfCzBMhM
+KEfviX5Umv1Kjayl7gKqNpcUgBKGGEMqgBTttwpOotuA9CuX0UWcXwBY1Ao/nbWT
+6JY/DUlxpH0WwtZ+j/CZzUHVtToVVDzrE1+TQkWUHnjXAh78Rr2Mv1ImhydP0o89
+9a7Nc1VaLZhw+SIzhcNGxVPzUH70vH6bKvZo3e1SNAjGvmS5OPS8nkRKMSXhGNKI
+4ACxN5GAhA1d1NhAaklJhxbl4Uf/VGCITiQLdCxHt4/l9Dy3Nds=
+=WTCR
+-----END PGP SIGNATURE-----
+--=-=-=--
