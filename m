@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF278ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563DBECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4EA1206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4EA1206B7
+	by mail.kernel.org (Postfix) with ESMTP id F271020864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:39:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F271020864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387968AbeGPIF3 (ORCPT
+        id S2387989AbeGPIFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:05:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47134 "EHLO
+        Mon, 16 Jul 2018 04:05:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47156 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbeGPIF2 (ORCPT
+        with ESMTP id S1729810AbeGPIFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:05:28 -0400
+        Mon, 16 Jul 2018 04:05:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1E3C8CA0;
-        Mon, 16 Jul 2018 07:39:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C5FCBCA0;
+        Mon, 16 Jul 2018 07:39:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.17 54/67] netfilter: nf_queue: augment nfqa_cfg_policy
-Date:   Mon, 16 Jul 2018 09:35:23 +0200
-Message-Id: <20180716073452.147348088@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.17 46/67] i2c: tegra: Fix NACK error handling
+Date:   Mon, 16 Jul 2018 09:35:15 +0200
+Message-Id: <20180716073450.499931251@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -51,94 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-commit ba062ebb2cd561d404e0fba8ee4b3f5ebce7cbfc upstream.
+commit 54836e2d03e76d80aec3399368ffaf5b7caadd1b upstream.
 
-Three attributes are currently not verified, thus can trigger KMSAN
-warnings such as :
+On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
+resume from suspend (which is caused by the reset signal for the I2C
+mux not being configured correctl). However, this NACK is causing the
+Tegra30 to hang on resuming from suspend which is not expected as we
+detect NACKs and handle them. The hang observed appears to occur when
+resetting the I2C controller to recover from the NACK.
 
-BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
-BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-BUG: KMSAN: uninit-value in nfqnl_recv_config+0x939/0x17d0 net/netfilter/nfnetlink_queue.c:1268
-CPU: 1 PID: 4521 Comm: syz-executor120 Not tainted 4.17.0+ #5
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1117
- __msan_warning_32+0x70/0xc0 mm/kmsan/kmsan_instr.c:620
- __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
- __fswab32 include/uapi/linux/swab.h:59 [inline]
- nfqnl_recv_config+0x939/0x17d0 net/netfilter/nfnetlink_queue.c:1268
- nfnetlink_rcv_msg+0xb2e/0xc80 net/netfilter/nfnetlink.c:212
- netlink_rcv_skb+0x37e/0x600 net/netlink/af_netlink.c:2448
- nfnetlink_rcv+0x2fe/0x680 net/netfilter/nfnetlink.c:513
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1680/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec8/0x1320 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43fd59
-RSP: 002b:00007ffde0e30d28 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd59
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401680
-R13: 0000000000401710 R14: 0000000000000000 R15: 0000000000000000
+Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
+additional error handling for some error cases including NACK, however,
+it appears that this change conflicts with an early fix by commit
+f70893d08338 ("i2c: tegra: Add delay before resetting the controller
+after NACK"). After commit 77821b4678f9 was made we now disable 'packet
+mode' before the delay from commit f70893d08338 happens. Testing shows
+that moving the delay to before disabling 'packet mode' fixes the hang
+observed on Tegra30. The delay was added to give the I2C controller
+chance to send a stop condition and so it makes sense to move this to
+before we disable packet mode. Please note that packet mode is always
+enabled for Tegra.
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2753 [inline]
- __kmalloc_node_track_caller+0xb35/0x11b0 mm/slub.c:4395
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:988 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
- netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec8/0x1320 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: fdb694a01f1f ("netfilter: Add fail-open support")
-Fixes: 829e17a1a602 ("[NETFILTER]: nfnetlink_queue: allow changing queue length through netlink")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nfnetlink_queue.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/i2c/busses/i2c-tegra.c |   17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -1223,6 +1223,9 @@ static int nfqnl_recv_unsupp(struct net
- static const struct nla_policy nfqa_cfg_policy[NFQA_CFG_MAX+1] = {
- 	[NFQA_CFG_CMD]		= { .len = sizeof(struct nfqnl_msg_config_cmd) },
- 	[NFQA_CFG_PARAMS]	= { .len = sizeof(struct nfqnl_msg_config_params) },
-+	[NFQA_CFG_QUEUE_MAXLEN]	= { .type = NLA_U32 },
-+	[NFQA_CFG_MASK]		= { .type = NLA_U32 },
-+	[NFQA_CFG_FLAGS]	= { .type = NLA_U32 },
- };
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -547,6 +547,14 @@ static int tegra_i2c_disable_packet_mode
+ {
+ 	u32 cnfg;
  
- static const struct nf_queue_handler nfqh = {
++	/*
++	 * NACK interrupt is generated before the I2C controller generates
++	 * the STOP condition on the bus. So wait for 2 clock periods
++	 * before disabling the controller so that the STOP condition has
++	 * been delivered properly.
++	 */
++	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
++
+ 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
+ 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
+ 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
+@@ -708,15 +716,6 @@ static int tegra_i2c_xfer_msg(struct teg
+ 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+ 		return 0;
+ 
+-	/*
+-	 * NACK interrupt is generated before the I2C controller generates
+-	 * the STOP condition on the bus. So wait for 2 clock periods
+-	 * before resetting the controller so that the STOP condition has
+-	 * been delivered properly.
+-	 */
+-	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
+-		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
+-
+ 	tegra_i2c_init(i2c_dev);
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
 
 
