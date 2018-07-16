@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1F2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3B8ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51B95206B8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51B95206B8
+	by mail.kernel.org (Postfix) with ESMTP id 7BFCA206B8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 17:11:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BFCA206B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730875AbeGPRjs (ORCPT
+        id S1731006AbeGPRjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 13:39:48 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30117 "EHLO mga01.intel.com"
+        Mon, 16 Jul 2018 13:39:52 -0400
+Received: from mga17.intel.com ([192.55.52.151]:13702 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727970AbeGPRjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 13:39:47 -0400
+        id S1727970AbeGPRjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 13:39:52 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:11:28 -0700
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 10:11:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,362,1526367600"; 
-   d="scan'208";a="73221304"
+   d="scan'208";a="67428810"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga001.jf.intel.com with ESMTP; 16 Jul 2018 10:11:28 -0700
-Subject: [PATCH v2 13/14] device-dax: Initialize the memmap in the background
+  by fmsmga002.fm.intel.com with ESMTP; 16 Jul 2018 10:11:06 -0700
+Subject: [PATCH v2 09/14] s390,
+ dcssblk: Allow a NULL-pfn to ->direct_access()
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Dave Jiang <dave.jiang@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>, hch@lst.de,
-        linux-mm@kvack.org, jack@suse.cz, linux-nvdimm@lists.01.org,
+Cc:     Huaisheng Ye <yehs1@lenovo.com>, Jan Kara <jack@suse.cz>,
+        vishal.l.verma@intel.com, hch@lst.de, linux-mm@kvack.org,
+        jack@suse.cz, linux-nvdimm@lists.01.org,
         linux-kernel@vger.kernel.org
-Date:   Mon, 16 Jul 2018 10:01:30 -0700
-Message-ID: <153176049055.12695.8641863597388682690.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Mon, 16 Jul 2018 10:01:08 -0700
+Message-ID: <153176046886.12695.7487453664953251895.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -52,153 +52,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given that the nd_dax shares device data with nd_pfn devices, arrange
-for the nd_pfn memmap_async_state instance to be registered by the
-devm_memremap_pages() call in the dax-pmem driver. Then, provide the
-generic dev_pagemap instance to the device-dax driver so that it can
-utilize memmap_sync() before dax-mapping pfns.
+From: Huaisheng Ye <yehs1@lenovo.com>
 
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
+dcssblk_direct_access() needs to check the validity of pointer pfn for
+NULL assignment. If pfn equals to NULL, it doesn't need to calculate the
+value. This is in support of asynchronous memmap init and avoid page
+lookups when possible.
+
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/dax/dax-private.h |    2 ++
- drivers/dax/device-dax.h  |    2 +-
- drivers/dax/device.c      |   16 +++++++++++++++-
- drivers/dax/pmem.c        |    5 ++++-
- 4 files changed, 22 insertions(+), 3 deletions(-)
+ drivers/s390/block/dcssblk.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
-index b6fc4f04636d..35bda544b334 100644
---- a/drivers/dax/dax-private.h
-+++ b/drivers/dax/dax-private.h
-@@ -25,6 +25,7 @@
-  * @align: allocation and mapping alignment for child dax devices
-  * @res: physical address range of the region
-  * @pfn_flags: identify whether the pfns are paged back or not
-+ * @pgmap: backing page map for the device address range
-  */
- struct dax_region {
- 	int id;
-@@ -35,6 +36,7 @@ struct dax_region {
- 	unsigned int align;
- 	struct resource res;
- 	unsigned long pfn_flags;
-+	struct dev_pagemap *pgmap;
- };
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index ed607288e696..a645b2c93c34 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -923,8 +923,9 @@ __dcssblk_direct_access(struct dcssblk_dev_info *dev_info, pgoff_t pgoff,
  
- /**
-diff --git a/drivers/dax/device-dax.h b/drivers/dax/device-dax.h
-index 688b051750bd..1a2da8072a6e 100644
---- a/drivers/dax/device-dax.h
-+++ b/drivers/dax/device-dax.h
-@@ -19,7 +19,7 @@ struct dax_region;
- void dax_region_put(struct dax_region *dax_region);
- struct dax_region *alloc_dax_region(struct device *parent,
- 		int region_id, struct resource *res, unsigned int align,
--		void *addr, unsigned long flags);
-+		void *addr, struct dev_pagemap *pgmap, unsigned long flags);
- struct dev_dax *devm_create_dev_dax(struct dax_region *dax_region,
- 		int id, struct resource *res, int count);
- #endif /* __DEVICE_DAX_H__ */
-diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-index de2f8297a210..2802d21a6e26 100644
---- a/drivers/dax/device.c
-+++ b/drivers/dax/device.c
-@@ -10,6 +10,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  * General Public License for more details.
-  */
-+#include <linux/memmap_async.h>
- #include <linux/pagemap.h>
- #include <linux/module.h>
- #include <linux/device.h>
-@@ -101,7 +102,7 @@ static void dax_region_unregister(void *region)
+ 	dev_sz = dev_info->end - dev_info->start + 1;
+ 	*kaddr = (void *) dev_info->start + offset;
+-	*pfn = __pfn_to_pfn_t(PFN_DOWN(dev_info->start + offset),
+-			PFN_DEV|PFN_SPECIAL);
++	if (pfn)
++		*pfn = __pfn_to_pfn_t(PFN_DOWN(dev_info->start + offset),
++				PFN_DEV|PFN_SPECIAL);
  
- struct dax_region *alloc_dax_region(struct device *parent, int region_id,
- 		struct resource *res, unsigned int align, void *addr,
--		unsigned long pfn_flags)
-+		struct dev_pagemap *pgmap, unsigned long pfn_flags)
- {
- 	struct dax_region *dax_region;
- 
-@@ -130,6 +131,7 @@ struct dax_region *alloc_dax_region(struct device *parent, int region_id,
- 	dax_region->id = region_id;
- 	ida_init(&dax_region->ida);
- 	dax_region->align = align;
-+	dax_region->pgmap = pgmap;
- 	dax_region->dev = parent;
- 	dax_region->base = addr;
- 	if (sysfs_create_groups(&parent->kobj, dax_region_attribute_groups)) {
-@@ -244,6 +246,15 @@ __weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
- 	return -1;
+ 	return (dev_sz - offset) / PAGE_SIZE;
  }
- 
-+static void dax_pfn_sync(struct dax_region *dax_region, pfn_t pfn,
-+		unsigned long size)
-+{
-+	struct dev_pagemap *pgmap = dax_region->pgmap;
-+	struct memmap_async_state *async = pgmap->async;
-+
-+	memmap_sync(pfn, PHYS_PFN(size), async);
-+}
-+
- static int __dev_dax_pte_fault(struct dev_dax *dev_dax, struct vm_fault *vmf)
- {
- 	struct device *dev = &dev_dax->dev;
-@@ -273,6 +284,7 @@ static int __dev_dax_pte_fault(struct dev_dax *dev_dax, struct vm_fault *vmf)
- 	}
- 
- 	pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
-+	dax_pfn_sync(dax_region, pfn, PAGE_SIZE);
- 
- 	rc = vm_insert_mixed(vmf->vma, vmf->address, pfn);
- 
-@@ -328,6 +340,7 @@ static int __dev_dax_pmd_fault(struct dev_dax *dev_dax, struct vm_fault *vmf)
- 	}
- 
- 	pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
-+	dax_pfn_sync(dax_region, pfn, PMD_SIZE);
- 
- 	return vmf_insert_pfn_pmd(vmf->vma, vmf->address, vmf->pmd, pfn,
- 			vmf->flags & FAULT_FLAG_WRITE);
-@@ -379,6 +392,7 @@ static int __dev_dax_pud_fault(struct dev_dax *dev_dax, struct vm_fault *vmf)
- 	}
- 
- 	pfn = phys_to_pfn_t(phys, dax_region->pfn_flags);
-+	dax_pfn_sync(dax_region, pfn, PUD_SIZE);
- 
- 	return vmf_insert_pfn_pud(vmf->vma, vmf->address, vmf->pud, pfn,
- 			vmf->flags & FAULT_FLAG_WRITE);
-diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
-index 54cba20c8ba6..a05be7a03d02 100644
---- a/drivers/dax/pmem.c
-+++ b/drivers/dax/pmem.c
-@@ -11,6 +11,7 @@
-  * General Public License for more details.
-  */
- #include <linux/percpu-refcount.h>
-+#include <linux/memmap_async.h>
- #include <linux/memremap.h>
- #include <linux/module.h>
- #include <linux/pfn_t.h>
-@@ -110,6 +111,7 @@ static int dax_pmem_probe(struct device *dev)
- 		return rc;
- 
- 	dax_pmem->pgmap.ref = &dax_pmem->ref;
-+	dax_pmem->pgmap.async = &nd_pfn->async;
- 	addr = devm_memremap_pages(dev, &dax_pmem->pgmap, dax_pmem_percpu_kill);
- 	if (IS_ERR(addr))
- 		return PTR_ERR(addr);
-@@ -123,7 +125,8 @@ static int dax_pmem_probe(struct device *dev)
- 		return -EINVAL;
- 
- 	dax_region = alloc_dax_region(dev, region_id, &res,
--			le32_to_cpu(pfn_sb->align), addr, PFN_DEV|PFN_MAP);
-+			le32_to_cpu(pfn_sb->align), addr, &dax_pmem->pgmap,
-+			PFN_DEV|PFN_MAP);
- 	if (!dax_region)
- 		return -ENOMEM;
- 
 
