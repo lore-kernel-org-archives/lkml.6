@@ -6,38 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02164ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF14FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADCBB2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADCBB2075B
+	by mail.kernel.org (Postfix) with ESMTP id 8B0402075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B0402075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389317AbeGPIKW (ORCPT
+        id S2389327AbeGPIK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48170 "EHLO
+        Mon, 16 Jul 2018 04:10:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48184 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388522AbeGPIKV (ORCPT
+        with ESMTP id S2388522AbeGPIKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:21 -0400
+        Mon, 16 Jul 2018 04:10:24 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6F854CA0;
-        Mon, 16 Jul 2018 07:44:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DB5BCA5;
+        Mon, 16 Jul 2018 07:44:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Josh Triplett <josh@joshtriplett.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
         "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
         Alexey Makhalov <amakhalov@vmware.com>,
         Bo Gan <ganb@vmware.com>
-Subject: [PATCH 4.4 17/43] x86/cpufeature: Cleanup get_cpu_cap()
-Date:   Mon, 16 Jul 2018 09:36:22 +0200
-Message-Id: <20180716073513.689921807@linuxfoundation.org>
+Subject: [PATCH 4.4 18/43] x86/cpu: Provide a config option to disable static_cpu_has
+Date:   Mon, 16 Jul 2018 09:36:23 +0200
+Message-Id: <20180716073513.830018745@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
 References: <20180716073511.796555857@linuxfoundation.org>
@@ -56,13 +57,16 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-commit 39c06df4dc10a41de5fe706f4378ee5f09beba73 upstream
+commit 6e1315fe82308cd29e7550eab967262e8bbc71a3 upstream
 
-Add an enum for the ->x86_capability array indices and cleanup
-get_cpu_cap() by killing some redundant local vars.
+This brings .text savings of about ~1.6K when building a tinyconfig. It
+is off by default so nothing changes for the default.
+
+Kconfig help text from Josh.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: http://lkml.kernel.org/r/1449481182-27541-3-git-send-email-bp@alien8.de
+Reviewed-by: Josh Triplett <josh@joshtriplett.org>
+Link: http://lkml.kernel.org/r/1449481182-27541-5-git-send-email-bp@alien8.de
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
 Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
@@ -71,179 +75,40 @@ Reviewed-by: Bo Gan <ganb@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
 
- arch/x86/include/asm/cpufeature.h |   20 ++++++++++++++++
- arch/x86/kernel/cpu/centaur.c     |    2 -
- arch/x86/kernel/cpu/common.c      |   47 +++++++++++++++++---------------------
- arch/x86/kernel/cpu/transmeta.c   |    4 +--
- 4 files changed, 45 insertions(+), 28 deletions(-)
+ arch/x86/Kconfig                  |   11 +++++++++++
+ arch/x86/include/asm/cpufeature.h |    2 +-
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -346,6 +346,17 @@ config X86_FEATURE_NAMES
+ 
+ 	  If in doubt, say Y.
+ 
++config X86_FAST_FEATURE_TESTS
++	bool "Fast CPU feature tests" if EMBEDDED
++	default y
++	---help---
++	  Some fast-paths in the kernel depend on the capabilities of the CPU.
++	  Say Y here for the kernel to patch in the appropriate code at runtime
++	  based on the capabilities of the CPU. The infrastructure for patching
++	  code at runtime takes up some additional space; space-constrained
++	  embedded systems may wish to say N here to produce smaller, slightly
++	  slower code.
++
+ config X86_X2APIC
+ 	bool "Support x2apic"
+ 	depends on X86_LOCAL_APIC && X86_64 && (IRQ_REMAP || HYPERVISOR_GUEST)
 --- a/arch/x86/include/asm/cpufeature.h
 +++ b/arch/x86/include/asm/cpufeature.h
-@@ -299,6 +299,26 @@
- #include <asm/asm.h>
- #include <linux/bitops.h>
+@@ -422,7 +422,7 @@ extern const char * const x86_bug_flags[
+  * fast paths and boot_cpu_has() otherwise!
+  */
  
-+enum cpuid_leafs
-+{
-+	CPUID_1_EDX		= 0,
-+	CPUID_8000_0001_EDX,
-+	CPUID_8086_0001_EDX,
-+	CPUID_LNX_1,
-+	CPUID_1_ECX,
-+	CPUID_C000_0001_EDX,
-+	CPUID_8000_0001_ECX,
-+	CPUID_LNX_2,
-+	CPUID_LNX_3,
-+	CPUID_7_0_EBX,
-+	CPUID_D_1_EAX,
-+	CPUID_F_0_EDX,
-+	CPUID_F_1_EDX,
-+	CPUID_8000_0008_EBX,
-+	CPUID_6_EAX,
-+	CPUID_8000_000A_EDX,
-+};
-+
- #ifdef CONFIG_X86_FEATURE_NAMES
- extern const char * const x86_cap_flags[NCAPINTS*32];
- extern const char * const x86_power_flags[32];
---- a/arch/x86/kernel/cpu/centaur.c
-+++ b/arch/x86/kernel/cpu/centaur.c
-@@ -43,7 +43,7 @@ static void init_c3(struct cpuinfo_x86 *
- 		/* store Centaur Extended Feature Flags as
- 		 * word 5 of the CPU capability bit array
- 		 */
--		c->x86_capability[5] = cpuid_edx(0xC0000001);
-+		c->x86_capability[CPUID_C000_0001_EDX] = cpuid_edx(0xC0000001);
- 	}
- #ifdef CONFIG_X86_32
- 	/* Cyrix III family needs CX8 & PGE explicitly enabled. */
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -676,52 +676,47 @@ static void apply_forced_caps(struct cpu
+-#if __GNUC__ >= 4
++#if __GNUC__ >= 4 && defined(CONFIG_X86_FAST_FEATURE_TESTS)
+ extern void warn_pre_alternatives(void);
+ extern bool __static_cpu_has_safe(u16 bit);
  
- void get_cpu_cap(struct cpuinfo_x86 *c)
- {
--	u32 tfms, xlvl;
--	u32 ebx;
-+	u32 eax, ebx, ecx, edx;
- 
- 	/* Intel-defined flags: level 0x00000001 */
- 	if (c->cpuid_level >= 0x00000001) {
--		u32 capability, excap;
-+		cpuid(0x00000001, &eax, &ebx, &ecx, &edx);
- 
--		cpuid(0x00000001, &tfms, &ebx, &excap, &capability);
--		c->x86_capability[0] = capability;
--		c->x86_capability[4] = excap;
-+		c->x86_capability[CPUID_1_ECX] = ecx;
-+		c->x86_capability[CPUID_1_EDX] = edx;
- 	}
- 
- 	/* Additional Intel-defined flags: level 0x00000007 */
- 	if (c->cpuid_level >= 0x00000007) {
--		u32 eax, ebx, ecx, edx;
--
- 		cpuid_count(0x00000007, 0, &eax, &ebx, &ecx, &edx);
- 
--		c->x86_capability[9] = ebx;
-+		c->x86_capability[CPUID_7_0_EBX] = ebx;
- 
--		c->x86_capability[14] = cpuid_eax(0x00000006);
-+		c->x86_capability[CPUID_6_EAX] = cpuid_eax(0x00000006);
- 	}
- 
- 	/* Extended state features: level 0x0000000d */
- 	if (c->cpuid_level >= 0x0000000d) {
--		u32 eax, ebx, ecx, edx;
--
- 		cpuid_count(0x0000000d, 1, &eax, &ebx, &ecx, &edx);
- 
--		c->x86_capability[10] = eax;
-+		c->x86_capability[CPUID_D_1_EAX] = eax;
- 	}
- 
- 	/* Additional Intel-defined flags: level 0x0000000F */
- 	if (c->cpuid_level >= 0x0000000F) {
--		u32 eax, ebx, ecx, edx;
- 
- 		/* QoS sub-leaf, EAX=0Fh, ECX=0 */
- 		cpuid_count(0x0000000F, 0, &eax, &ebx, &ecx, &edx);
--		c->x86_capability[11] = edx;
-+		c->x86_capability[CPUID_F_0_EDX] = edx;
-+
- 		if (cpu_has(c, X86_FEATURE_CQM_LLC)) {
- 			/* will be overridden if occupancy monitoring exists */
- 			c->x86_cache_max_rmid = ebx;
- 
- 			/* QoS sub-leaf, EAX=0Fh, ECX=1 */
- 			cpuid_count(0x0000000F, 1, &eax, &ebx, &ecx, &edx);
--			c->x86_capability[12] = edx;
-+			c->x86_capability[CPUID_F_1_EDX] = edx;
-+
- 			if (cpu_has(c, X86_FEATURE_CQM_OCCUP_LLC)) {
- 				c->x86_cache_max_rmid = ecx;
- 				c->x86_cache_occ_scale = ebx;
-@@ -733,22 +728,24 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 	}
- 
- 	/* AMD-defined flags: level 0x80000001 */
--	xlvl = cpuid_eax(0x80000000);
--	c->extended_cpuid_level = xlvl;
-+	eax = cpuid_eax(0x80000000);
-+	c->extended_cpuid_level = eax;
-+
-+	if ((eax & 0xffff0000) == 0x80000000) {
-+		if (eax >= 0x80000001) {
-+			cpuid(0x80000001, &eax, &ebx, &ecx, &edx);
- 
--	if ((xlvl & 0xffff0000) == 0x80000000) {
--		if (xlvl >= 0x80000001) {
--			c->x86_capability[1] = cpuid_edx(0x80000001);
--			c->x86_capability[6] = cpuid_ecx(0x80000001);
-+			c->x86_capability[CPUID_8000_0001_ECX] = ecx;
-+			c->x86_capability[CPUID_8000_0001_EDX] = edx;
- 		}
- 	}
- 
- 	if (c->extended_cpuid_level >= 0x80000008) {
--		u32 eax = cpuid_eax(0x80000008);
-+		cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
- 
- 		c->x86_virt_bits = (eax >> 8) & 0xff;
- 		c->x86_phys_bits = eax & 0xff;
--		c->x86_capability[13] = cpuid_ebx(0x80000008);
-+		c->x86_capability[CPUID_8000_0008_EBX] = ebx;
- 	}
- #ifdef CONFIG_X86_32
- 	else if (cpu_has(c, X86_FEATURE_PAE) || cpu_has(c, X86_FEATURE_PSE36))
-@@ -759,7 +756,7 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
- 		c->x86_power = cpuid_edx(0x80000007);
- 
- 	if (c->extended_cpuid_level >= 0x8000000a)
--		c->x86_capability[15] = cpuid_edx(0x8000000a);
-+		c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
- 
- 	init_scattered_cpuid_features(c);
- }
---- a/arch/x86/kernel/cpu/transmeta.c
-+++ b/arch/x86/kernel/cpu/transmeta.c
-@@ -12,7 +12,7 @@ static void early_init_transmeta(struct
- 	xlvl = cpuid_eax(0x80860000);
- 	if ((xlvl & 0xffff0000) == 0x80860000) {
- 		if (xlvl >= 0x80860001)
--			c->x86_capability[2] = cpuid_edx(0x80860001);
-+			c->x86_capability[CPUID_8086_0001_EDX] = cpuid_edx(0x80860001);
- 	}
- }
- 
-@@ -82,7 +82,7 @@ static void init_transmeta(struct cpuinf
- 	/* Unhide possibly hidden capability flags */
- 	rdmsr(0x80860004, cap_mask, uk);
- 	wrmsr(0x80860004, ~0, uk);
--	c->x86_capability[0] = cpuid_edx(0x00000001);
-+	c->x86_capability[CPUID_1_EDX] = cpuid_edx(0x00000001);
- 	wrmsr(0x80860004, cap_mask, uk);
- 
- 	/* All Transmeta CPUs have a constant TSC */
 
 
