@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9536ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A1FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE5CB20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE5CB20864
+	by mail.kernel.org (Postfix) with ESMTP id CE60620864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE60620864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbeGPICF (ORCPT
+        id S1731164AbeGPIDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:02:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46596 "EHLO
+        Mon, 16 Jul 2018 04:03:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46640 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728470AbeGPICE (ORCPT
+        with ESMTP id S1728460AbeGPIDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:02:04 -0400
+        Mon, 16 Jul 2018 04:03:02 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 052E5CA4;
-        Mon, 16 Jul 2018 07:36:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 99CB1CA4;
+        Mon, 16 Jul 2018 07:37:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4.17 07/67] drm/etnaviv: bring back progress check in job timeout handler
-Date:   Mon, 16 Jul 2018 09:34:36 +0200
-Message-Id: <20180716073444.276938236@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.17 09/67] mmc: sdhci-esdhc-imx: allow 1.8V modes without 100/200MHz pinctrl states
+Date:   Mon, 16 Jul 2018 09:34:38 +0200
+Message-Id: <20180716073444.563739900@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -51,84 +50,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Stefan Agner <stefan@agner.ch>
 
-commit 2c83a726d6fbb5d130d8f2edd82a258adb675ac3 upstream.
+commit 92748beac07c471d995fbec642b63572dc01b3dc upstream.
 
-When the hangcheck handler was replaced by the DRM scheduler timeout
-handling we dropped the forward progress check, as this might allow
-clients to hog the GPU for a long time with a big job.
+If pinctrl nodes for 100/200MHz are missing, the controller should
+not select any mode which need signal frequencies 100MHz or higher.
+To prevent such speed modes the driver currently uses the quirk flag
+SDHCI_QUIRK2_NO_1_8_V. This works nicely for SD cards since 1.8V
+signaling is required for all faster modes and slower modes use 3.3V
+signaling only.
 
-It turns out that even reasonably well behaved clients like the
-Armada Xorg driver occasionally trip over the 500ms timeout. Bring
-back the forward progress check to get rid of the userspace regression.
+However, there are eMMC modes which use 1.8V signaling and run below
+100MHz, e.g. DDR52 at 1.8V. With using SDHCI_QUIRK2_NO_1_8_V this
+mode is prevented. When using a fixed 1.8V regulator as vqmmc-supply
+the stack has no valid mode to use. In this tenuous situation the
+kernel continuously prints voltage switching errors:
+  mmc1: Switching to 3.3V signalling voltage failed
 
-We would still like to fix userspace to submit smaller batches
-if possible, but that is for another day.
+Avoid using SDHCI_QUIRK2_NO_1_8_V and prevent faster modes by
+altering the SDHCI capability register. With that the stack is able
+to select 1.8V modes even if no faster pinctrl states are available:
+  # cat /sys/kernel/debug/mmc1/ios
+  ...
+  timing spec:    8 (mmc DDR52)
+  signal voltage: 1 (1.80 V)
+  ...
 
-Cc: <stable@vger.kernel.org>
-Fixes: 6d7a20c07760 (drm/etnaviv: replace hangcheck with scheduler timeout)
-Reported-by: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Eric Anholt <eric@anholt.net>
+Link: http://lkml.kernel.org/r/20180628081331.13051-1-stefan@agner.ch
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Fixes: ad93220de7da ("mmc: sdhci-esdhc-imx: change pinctrl state according
+to uhs mode")
+Cc: <stable@vger.kernel.org> # v4.13+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/etnaviv/etnaviv_gpu.h   |    3 +++
- drivers/gpu/drm/etnaviv/etnaviv_sched.c |   24 ++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ drivers/mmc/host/sdhci-esdhc-imx.c |   21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
---- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.h
-@@ -142,6 +142,9 @@ struct etnaviv_gpu {
- 	struct work_struct sync_point_work;
- 	int sync_point_event;
+--- a/drivers/mmc/host/sdhci-esdhc-imx.c
++++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -306,6 +306,15 @@ static u32 esdhc_readl_le(struct sdhci_h
  
-+	/* hang detection */
-+	u32 hangcheck_dma_addr;
+ 			if (imx_data->socdata->flags & ESDHC_FLAG_HS400)
+ 				val |= SDHCI_SUPPORT_HS400;
 +
- 	void __iomem *mmio;
- 	int irq;
++			/*
++			 * Do not advertise faster UHS modes if there are no
++			 * pinctrl states for 100MHz/200MHz.
++			 */
++			if (IS_ERR_OR_NULL(imx_data->pins_100mhz) ||
++			    IS_ERR_OR_NULL(imx_data->pins_200mhz))
++				val &= ~(SDHCI_SUPPORT_SDR50 | SDHCI_SUPPORT_DDR50
++					 | SDHCI_SUPPORT_SDR104 | SDHCI_SUPPORT_HS400);
+ 		}
+ 	}
  
---- a/drivers/gpu/drm/etnaviv/etnaviv_sched.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_sched.c
-@@ -21,6 +21,7 @@
- #include "etnaviv_gem.h"
- #include "etnaviv_gpu.h"
- #include "etnaviv_sched.h"
-+#include "state.xml.h"
+@@ -1136,18 +1145,6 @@ sdhci_esdhc_imx_probe_dt(struct platform
+ 						ESDHC_PINCTRL_STATE_100MHZ);
+ 		imx_data->pins_200mhz = pinctrl_lookup_state(imx_data->pinctrl,
+ 						ESDHC_PINCTRL_STATE_200MHZ);
+-		if (IS_ERR(imx_data->pins_100mhz) ||
+-				IS_ERR(imx_data->pins_200mhz)) {
+-			dev_warn(mmc_dev(host->mmc),
+-				"could not get ultra high speed state, work on normal mode\n");
+-			/*
+-			 * fall back to not supporting uhs by specifying no
+-			 * 1.8v quirk
+-			 */
+-			host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+-		}
+-	} else {
+-		host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
+ 	}
  
- static int etnaviv_job_hang_limit = 0;
- module_param_named(job_hang_limit, etnaviv_job_hang_limit, int , 0444);
-@@ -96,6 +97,29 @@ static void etnaviv_sched_timedout_job(s
- {
- 	struct etnaviv_gem_submit *submit = to_etnaviv_submit(sched_job);
- 	struct etnaviv_gpu *gpu = submit->gpu;
-+	u32 dma_addr;
-+	int change;
-+
-+	/*
-+	 * If the GPU managed to complete this jobs fence, the timout is
-+	 * spurious. Bail out.
-+	 */
-+	if (fence_completed(gpu, submit->out_fence->seqno))
-+		return;
-+
-+	/*
-+	 * If the GPU is still making forward progress on the front-end (which
-+	 * should never loop) we shift out the timeout to give it a chance to
-+	 * finish the job.
-+	 */
-+	dma_addr = gpu_read(gpu, VIVS_FE_DMA_ADDRESS);
-+	change = dma_addr - gpu->hangcheck_dma_addr;
-+	if (change < 0 || change > 16) {
-+		gpu->hangcheck_dma_addr = dma_addr;
-+		schedule_delayed_work(&sched_job->work_tdr,
-+				      sched_job->sched->timeout);
-+		return;
-+	}
- 
- 	/* block scheduler */
- 	kthread_park(gpu->sched.thread);
+ 	/* call to generic mmc_of_parse to support additional capabilities */
 
 
