@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C781BECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADACECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0EE206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0EE206B7
+	by mail.kernel.org (Postfix) with ESMTP id EFE5220864
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE5220864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388980AbeGPIJR (ORCPT
+        id S2388942AbeGPIJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47960 "EHLO
+        Mon, 16 Jul 2018 04:09:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47924 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIJR (ORCPT
+        with ESMTP id S1730161AbeGPIJI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:17 -0400
+        Mon, 16 Jul 2018 04:09:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C3299CA0;
-        Mon, 16 Jul 2018 07:43:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 40087CA0;
+        Mon, 16 Jul 2018 07:43:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 27/32] netfilter: nf_queue: augment nfqa_cfg_policy
-Date:   Mon, 16 Jul 2018 09:36:35 +0200
-Message-Id: <20180716073507.867342751@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 24/32] iw_cxgb4: correctly enforce the max reg_mr depth
+Date:   Mon, 16 Jul 2018 09:36:32 +0200
+Message-Id: <20180716073507.565316911@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -51,94 +50,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Steve Wise <swise@opengridcomputing.com>
 
-commit ba062ebb2cd561d404e0fba8ee4b3f5ebce7cbfc upstream.
+commit 7b72717a20bba8bdd01b14c0460be7d15061cd6b upstream.
 
-Three attributes are currently not verified, thus can trigger KMSAN
-warnings such as :
+The code was mistakenly using the length of the page array memory instead
+of the depth of the page array.
 
-BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
-BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-BUG: KMSAN: uninit-value in nfqnl_recv_config+0x939/0x17d0 net/netfilter/nfnetlink_queue.c:1268
-CPU: 1 PID: 4521 Comm: syz-executor120 Not tainted 4.17.0+ #5
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x185/0x1d0 lib/dump_stack.c:113
- kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1117
- __msan_warning_32+0x70/0xc0 mm/kmsan/kmsan_instr.c:620
- __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
- __fswab32 include/uapi/linux/swab.h:59 [inline]
- nfqnl_recv_config+0x939/0x17d0 net/netfilter/nfnetlink_queue.c:1268
- nfnetlink_rcv_msg+0xb2e/0xc80 net/netfilter/nfnetlink.c:212
- netlink_rcv_skb+0x37e/0x600 net/netlink/af_netlink.c:2448
- nfnetlink_rcv+0x2fe/0x680 net/netfilter/nfnetlink.c:513
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1680/0x1750 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec8/0x1320 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43fd59
-RSP: 002b:00007ffde0e30d28 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fd59
-RDX: 0000000000000000 RSI: 0000000020000080 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000213 R12: 0000000000401680
-R13: 0000000000401710 R14: 0000000000000000 R15: 0000000000000000
+This would cause MR creation to fail in some cases.
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
- kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
- kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2753 [inline]
- __kmalloc_node_track_caller+0xb35/0x11b0 mm/slub.c:4395
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:988 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
- netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
- sock_sendmsg_nosec net/socket.c:629 [inline]
- sock_sendmsg net/socket.c:639 [inline]
- ___sys_sendmsg+0xec8/0x1320 net/socket.c:2117
- __sys_sendmsg net/socket.c:2155 [inline]
- __do_sys_sendmsg net/socket.c:2164 [inline]
- __se_sys_sendmsg net/socket.c:2162 [inline]
- __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
- do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:287
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: fdb694a01f1f ("netfilter: Add fail-open support")
-Fixes: 829e17a1a602 ("[NETFILTER]: nfnetlink_queue: allow changing queue length through netlink")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 8376b86de7d3 ("iw_cxgb4: Support the new memory registration API")
+Cc: stable@vger.kernel.org
+Signed-off-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nfnetlink_queue.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/infiniband/hw/cxgb4/mem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -1210,6 +1210,9 @@ static int nfqnl_recv_unsupp(struct net
- static const struct nla_policy nfqa_cfg_policy[NFQA_CFG_MAX+1] = {
- 	[NFQA_CFG_CMD]		= { .len = sizeof(struct nfqnl_msg_config_cmd) },
- 	[NFQA_CFG_PARAMS]	= { .len = sizeof(struct nfqnl_msg_config_params) },
-+	[NFQA_CFG_QUEUE_MAXLEN]	= { .type = NLA_U32 },
-+	[NFQA_CFG_MASK]		= { .type = NLA_U32 },
-+	[NFQA_CFG_FLAGS]	= { .type = NLA_U32 },
- };
+--- a/drivers/infiniband/hw/cxgb4/mem.c
++++ b/drivers/infiniband/hw/cxgb4/mem.c
+@@ -724,7 +724,7 @@ static int c4iw_set_page(struct ib_mr *i
+ {
+ 	struct c4iw_mr *mhp = to_c4iw_mr(ibmr);
  
- static const struct nf_queue_handler nfqh = {
+-	if (unlikely(mhp->mpl_len == mhp->max_mpl_len))
++	if (unlikely(mhp->mpl_len == mhp->attr.pbl_size))
+ 		return -ENOMEM;
+ 
+ 	mhp->mpl[mhp->mpl_len++] = addr;
 
 
