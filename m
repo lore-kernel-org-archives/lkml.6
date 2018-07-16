@@ -3,36 +3,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23965ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79761ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA33E206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA33E206B7
+	by mail.kernel.org (Postfix) with ESMTP id 3D06320837
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D06320837
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389100AbeGPIJk (ORCPT
+        id S2389115AbeGPIJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48030 "EHLO
+        Mon, 16 Jul 2018 04:09:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48034 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731619AbeGPIJj (ORCPT
+        with ESMTP id S2388375AbeGPIJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:39 -0400
+        Mon, 16 Jul 2018 04:09:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A6562C03;
-        Mon, 16 Jul 2018 07:43:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 921BBC03;
+        Mon, 16 Jul 2018 07:43:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 15/32] USB: serial: mos7840: fix status-register error handling
-Date:   Mon, 16 Jul 2018 09:36:23 +0200
-Message-Id: <20180716073506.246221923@linuxfoundation.org>
+        stable@vger.kernel.org, Nico Sneck <snecknico@gmail.com>
+Subject: [PATCH 4.9 16/32] usb: quirks: add delay quirks for Corsair Strafe
+Date:   Mon, 16 Jul 2018 09:36:24 +0200
+Message-Id: <20180716073506.606523387@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -49,34 +49,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Nico Sneck <snecknico@gmail.com>
 
-commit 794744abfffef8b1f3c0c8a4896177d6d13d653d upstream.
+commit bba57eddadda936c94b5dccf73787cb9e159d0a5 upstream.
 
-Add missing transfer-length sanity check to the status-register
-completion handler to avoid leaking bits of uninitialised slab data to
-user space.
+Corsair Strafe appears to suffer from the same issues
+as the Corsair Strafe RGB.
+Apply the same quirks (control message delay and init delay)
+that the RGB version has to 1b1c:1b15.
 
-Fixes: 3f5429746d91 ("USB: Moschip 7840 USB-Serial Driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.19
-Signed-off-by: Johan Hovold <johan@kernel.org>
+With these quirks in place the keyboard works correctly upon
+booting the system, and no longer requires reattaching the device.
+
+Signed-off-by: Nico Sneck <snecknico@gmail.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/mos7840.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/core/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/usb/serial/mos7840.c
-+++ b/drivers/usb/serial/mos7840.c
-@@ -482,6 +482,9 @@ static void mos7840_control_callback(str
- 	}
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -231,6 +231,10 @@ static const struct usb_device_id usb_qu
+ 	/* Corsair K70 RGB */
+ 	{ USB_DEVICE(0x1b1c, 0x1b13), .driver_info = USB_QUIRK_DELAY_INIT },
  
- 	dev_dbg(dev, "%s urb buffer size is %d\n", __func__, urb->actual_length);
-+	if (urb->actual_length < 1)
-+		goto out;
++	/* Corsair Strafe */
++	{ USB_DEVICE(0x1b1c, 0x1b15), .driver_info = USB_QUIRK_DELAY_INIT |
++	  USB_QUIRK_DELAY_CTRL_MSG },
 +
- 	dev_dbg(dev, "%s mos7840_port->MsrLsr is %d port %d\n", __func__,
- 		mos7840_port->MsrLsr, mos7840_port->port_num);
- 	data = urb->transfer_buffer;
+ 	/* Corsair Strafe RGB */
+ 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
+ 	  USB_QUIRK_DELAY_CTRL_MSG },
 
 
