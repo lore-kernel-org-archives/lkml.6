@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 162BFECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB184ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9CB920864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9CB920864
+	by mail.kernel.org (Postfix) with ESMTP id ADD58206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:42:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD58206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388790AbeGPIIf (ORCPT
+        id S2388805AbeGPIIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:08:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47804 "EHLO
+        Mon, 16 Jul 2018 04:08:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47816 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIIe (ORCPT
+        with ESMTP id S1730161AbeGPIIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:08:34 -0400
+        Mon, 16 Jul 2018 04:08:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4B70CA0;
-        Mon, 16 Jul 2018 07:42:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9E45BCA1;
+        Mon, 16 Jul 2018 07:42:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
         James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Huacai Chen <chenhc@lemote.com>, linux-mips@linux-mips.org
-Subject: [PATCH 4.9 03/32] MIPS: Use async IPIs for arch_trigger_cpumask_backtrace()
-Date:   Mon, 16 Jul 2018 09:36:11 +0200
-Message-Id: <20180716073504.871411055@linuxfoundation.org>
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Subject: [PATCH 4.9 04/32] MIPS: Fix ioremap() RAM check
+Date:   Mon, 16 Jul 2018 09:36:12 +0200
+Message-Id: <20180716073504.973257167@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -54,178 +54,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paul Burton <paul.burton@mips.com>
 
-commit b63e132b6433a41cf311e8bc382d33fd2b73b505 upstream.
+commit 523402fa9101090c91d2033b7ebdfdcf65880488 upstream.
 
-The current MIPS implementation of arch_trigger_cpumask_backtrace() is
-broken because it attempts to use synchronous IPIs despite the fact that
-it may be run with interrupts disabled.
+We currently attempt to check whether a physical address range provided
+to __ioremap() may be in use by the page allocator by examining the
+value of PageReserved for each page in the region - lowmem pages not
+marked reserved are presumed to be in use by the page allocator, and
+requests to ioremap them fail.
 
-This means that when arch_trigger_cpumask_backtrace() is invoked, for
-example by the RCU CPU stall watchdog, we may:
+The way we check this has been broken since commit 92923ca3aace ("mm:
+meminit: only set page reserved in the memblock region"), because
+memblock will typically not have any knowledge of non-RAM pages and
+therefore those pages will not have the PageReserved flag set. Thus when
+we attempt to ioremap a region outside of RAM we incorrectly fail
+believing that the region is RAM that may be in use.
 
-  - Deadlock due to use of synchronous IPIs with interrupts disabled,
-    causing the CPU that's attempting to generate the backtrace output
-    to hang itself.
+In most cases ioremap() on MIPS will take a fast-path to use the
+unmapped kseg1 or xkphys virtual address spaces and never hit this path,
+so the only way to hit it is for a MIPS32 system to attempt to ioremap()
+an address range in lowmem with flags other than _CACHE_UNCACHED.
+Perhaps the most straightforward way to do this is using
+ioremap_uncached_accelerated(), which is how the problem was discovered.
 
-  - Not succeed in generating the desired output from remote CPUs.
+Fix this by making use of walk_system_ram_range() to test the address
+range provided to __ioremap() against only RAM pages, rather than all
+lowmem pages. This means that if we have a lowmem I/O region, which is
+very common for MIPS systems, we're free to ioremap() address ranges
+within it. A nice bonus is that the test is no longer limited to lowmem.
 
-  - Produce warnings about this from smp_call_function_many(), for
-    example:
-
-    [42760.526910] INFO: rcu_sched detected stalls on CPUs/tasks:
-    [42760.535755]  0-...!: (1 GPs behind) idle=ade/140000000000000/0 softirq=526944/526945 fqs=0
-    [42760.547874]  1-...!: (0 ticks this GP) idle=e4a/140000000000000/0 softirq=547885/547885 fqs=0
-    [42760.559869]  (detected by 2, t=2162 jiffies, g=266689, c=266688, q=33)
-    [42760.568927] ------------[ cut here ]------------
-    [42760.576146] WARNING: CPU: 2 PID: 1216 at kernel/smp.c:416 smp_call_function_many+0x88/0x20c
-    [42760.587839] Modules linked in:
-    [42760.593152] CPU: 2 PID: 1216 Comm: sh Not tainted 4.15.4-00373-gee058bb4d0c2 #2
-    [42760.603767] Stack : 8e09bd20 8e09bd20 8e09bd20 fffffff0 00000007 00000006 00000000 8e09bca8
-    [42760.616937]         95b2b379 95b2b379 807a0080 00000007 81944518 0000018a 00000032 00000000
-    [42760.630095]         00000000 00000030 80000000 00000000 806eca74 00000009 8017e2b8 000001a0
-    [42760.643169]         00000000 00000002 00000000 8e09baa4 00000008 808b8008 86d69080 8e09bca0
-    [42760.656282]         8e09ad50 805e20aa 00000000 00000000 00000000 8017e2b8 00000009 801070ca
-    [42760.669424]         ...
-    [42760.673919] Call Trace:
-    [42760.678672] [<27fde568>] show_stack+0x70/0xf0
-    [42760.685417] [<84751641>] dump_stack+0xaa/0xd0
-    [42760.692188] [<699d671c>] __warn+0x80/0x92
-    [42760.698549] [<68915d41>] warn_slowpath_null+0x28/0x36
-    [42760.705912] [<f7c76c1c>] smp_call_function_many+0x88/0x20c
-    [42760.713696] [<6bbdfc2a>] arch_trigger_cpumask_backtrace+0x30/0x4a
-    [42760.722216] [<f845bd33>] rcu_dump_cpu_stacks+0x6a/0x98
-    [42760.729580] [<796e7629>] rcu_check_callbacks+0x672/0x6ac
-    [42760.737476] [<059b3b43>] update_process_times+0x18/0x34
-    [42760.744981] [<6eb94941>] tick_sched_handle.isra.5+0x26/0x38
-    [42760.752793] [<478d3d70>] tick_sched_timer+0x1c/0x50
-    [42760.759882] [<e56ea39f>] __hrtimer_run_queues+0xc6/0x226
-    [42760.767418] [<e88bbcae>] hrtimer_interrupt+0x88/0x19a
-    [42760.775031] [<6765a19e>] gic_compare_interrupt+0x2e/0x3a
-    [42760.782761] [<0558bf5f>] handle_percpu_devid_irq+0x78/0x168
-    [42760.790795] [<90c11ba2>] generic_handle_irq+0x1e/0x2c
-    [42760.798117] [<1b6d462c>] gic_handle_local_int+0x38/0x86
-    [42760.805545] [<b2ada1c7>] gic_irq_dispatch+0xa/0x14
-    [42760.812534] [<90c11ba2>] generic_handle_irq+0x1e/0x2c
-    [42760.820086] [<c7521934>] do_IRQ+0x16/0x20
-    [42760.826274] [<9aef3ce6>] plat_irq_dispatch+0x62/0x94
-    [42760.833458] [<6a94b53c>] except_vec_vi_end+0x70/0x78
-    [42760.840655] [<22284043>] smp_call_function_many+0x1ba/0x20c
-    [42760.848501] [<54022b58>] smp_call_function+0x1e/0x2c
-    [42760.855693] [<ab9fc705>] flush_tlb_mm+0x2a/0x98
-    [42760.862730] [<0844cdd0>] tlb_flush_mmu+0x1c/0x44
-    [42760.869628] [<cb259b74>] arch_tlb_finish_mmu+0x26/0x3e
-    [42760.877021] [<1aeaaf74>] tlb_finish_mmu+0x18/0x66
-    [42760.883907] [<b3fce717>] exit_mmap+0x76/0xea
-    [42760.890428] [<c4c8a2f6>] mmput+0x80/0x11a
-    [42760.896632] [<a41a08f4>] do_exit+0x1f4/0x80c
-    [42760.903158] [<ee01cef6>] do_group_exit+0x20/0x7e
-    [42760.909990] [<13fa8d54>] __wake_up_parent+0x0/0x1e
-    [42760.917045] [<46cf89d0>] smp_call_function_many+0x1a2/0x20c
-    [42760.924893] [<8c21a93b>] syscall_common+0x14/0x1c
-    [42760.931765] ---[ end trace 02aa09da9dc52a60 ]---
-    [42760.938342] ------------[ cut here ]------------
-    [42760.945311] WARNING: CPU: 2 PID: 1216 at kernel/smp.c:291 smp_call_function_single+0xee/0xf8
-    ...
-
-This patch switches MIPS' arch_trigger_cpumask_backtrace() to use async
-IPIs & smp_call_function_single_async() in order to resolve this
-problem. We ensure use of the pre-allocated call_single_data_t
-structures is serialized by maintaining a cpumask indicating that
-they're busy, and refusing to attempt to send an IPI when a CPU's bit is
-set in this mask. This should only happen if a CPU hasn't responded to a
-previous backtrace IPI - ie. if it's hung - and we print a warning to
-the console in this case.
-
-I've marked this for stable branches as far back as v4.9, to which it
-applies cleanly. Strictly speaking the faulty MIPS implementation can be
-traced further back to commit 856839b76836 ("MIPS: Add
-arch_trigger_all_cpu_backtrace() function") in v3.19, but kernel
-versions v3.19 through v4.8 will require further work to backport due to
-the rework performed in commit 9a01c3ed5cdb ("nmi_backtrace: add more
-trigger_*_cpu_backtrace() methods").
+The approach here matches the way x86 performed the same test after
+commit c81c8a1eeede ("x86, ioremap: Speed up check for RAM pages") until
+x86 moved towards a slightly more complicated check using walk_mem_res()
+for unrelated reasons with commit 0e4c12b45aa8 ("x86/mm, resource: Use
+PAGE_KERNEL protection for ioremap of memory pages").
 
 Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/19597/
+Reported-by: Serge Semin <fancer.lancer@gmail.com>
+Tested-by: Serge Semin <fancer.lancer@gmail.com>
+Fixes: 92923ca3aace ("mm: meminit: only set page reserved in the memblock region")
 Cc: James Hogan <jhogan@kernel.org>
 Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Huacai Chen <chenhc@lemote.com>
 Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # v4.9+
-Fixes: 856839b76836 ("MIPS: Add arch_trigger_all_cpu_backtrace() function")
-Fixes: 9a01c3ed5cdb ("nmi_backtrace: add more trigger_*_cpu_backtrace() methods")
+Cc: stable@vger.kernel.org # v4.2+
+Patchwork: https://patchwork.linux-mips.org/patch/19786/
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/kernel/process.c |   45 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 30 insertions(+), 15 deletions(-)
+ arch/mips/mm/ioremap.c |   37 +++++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
 
---- a/arch/mips/kernel/process.c
-+++ b/arch/mips/kernel/process.c
-@@ -26,6 +26,7 @@
- #include <linux/kallsyms.h>
- #include <linux/random.h>
- #include <linux/prctl.h>
-+#include <linux/nmi.h>
- 
- #include <asm/asm.h>
- #include <asm/bootinfo.h>
-@@ -633,28 +634,42 @@ unsigned long arch_align_stack(unsigned
- 	return sp & ALMASK;
+--- a/arch/mips/mm/ioremap.c
++++ b/arch/mips/mm/ioremap.c
+@@ -9,6 +9,7 @@
+ #include <linux/export.h>
+ #include <asm/addrspace.h>
+ #include <asm/byteorder.h>
++#include <linux/ioport.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+@@ -97,6 +98,20 @@ static int remap_area_pages(unsigned lon
+ 	return error;
  }
  
--static void arch_dump_stack(void *info)
--{
--	struct pt_regs *regs;
-+static DEFINE_PER_CPU(call_single_data_t, backtrace_csd);
-+static struct cpumask backtrace_csd_busy;
- 
--	regs = get_irq_regs();
--
--	if (regs)
--		show_regs(regs);
--	else
--		dump_stack();
-+static void handle_backtrace(void *info)
++static int __ioremap_check_ram(unsigned long start_pfn, unsigned long nr_pages,
++			       void *arg)
 +{
-+	nmi_cpu_backtrace(get_irq_regs());
-+	cpumask_clear_cpu(smp_processor_id(), &backtrace_csd_busy);
- }
- 
--void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
-+static void raise_backtrace(cpumask_t *mask)
- {
--	long this_cpu = get_cpu();
-+	call_single_data_t *csd;
-+	int cpu;
- 
--	if (cpumask_test_cpu(this_cpu, mask) && !exclude_self)
--		dump_stack();
-+	for_each_cpu(cpu, mask) {
-+		/*
-+		 * If we previously sent an IPI to the target CPU & it hasn't
-+		 * cleared its bit in the busy cpumask then it didn't handle
-+		 * our previous IPI & it's not safe for us to reuse the
-+		 * call_single_data_t.
-+		 */
-+		if (cpumask_test_and_set_cpu(cpu, &backtrace_csd_busy)) {
-+			pr_warn("Unable to send backtrace IPI to CPU%u - perhaps it hung?\n",
-+				cpu);
-+			continue;
-+		}
- 
--	smp_call_function_many(mask, arch_dump_stack, NULL, 1);
-+		csd = &per_cpu(backtrace_csd, cpu);
-+		csd->func = handle_backtrace;
-+		smp_call_function_single_async(cpu, csd);
++	unsigned long i;
++
++	for (i = 0; i < nr_pages; i++) {
++		if (pfn_valid(start_pfn + i) &&
++		    !PageReserved(pfn_to_page(start_pfn + i)))
++			return 1;
 +	}
++
++	return 0;
 +}
++
+ /*
+  * Generic mapping function (not visible outside):
+  */
+@@ -115,8 +130,8 @@ static int remap_area_pages(unsigned lon
  
--	put_cpu();
-+void arch_trigger_cpumask_backtrace(const cpumask_t *mask, bool exclude_self)
-+{
-+	nmi_trigger_cpumask_backtrace(mask, exclude_self, raise_backtrace);
- }
+ void __iomem * __ioremap(phys_addr_t phys_addr, phys_addr_t size, unsigned long flags)
+ {
++	unsigned long offset, pfn, last_pfn;
+ 	struct vm_struct * area;
+-	unsigned long offset;
+ 	phys_addr_t last_addr;
+ 	void * addr;
  
- int mips_get_process_fp_mode(struct task_struct *task)
+@@ -136,18 +151,16 @@ void __iomem * __ioremap(phys_addr_t phy
+ 		return (void __iomem *) CKSEG1ADDR(phys_addr);
+ 
+ 	/*
+-	 * Don't allow anybody to remap normal RAM that we're using..
++	 * Don't allow anybody to remap RAM that may be allocated by the page
++	 * allocator, since that could lead to races & data clobbering.
+ 	 */
+-	if (phys_addr < virt_to_phys(high_memory)) {
+-		char *t_addr, *t_end;
+-		struct page *page;
+-
+-		t_addr = __va(phys_addr);
+-		t_end = t_addr + (size - 1);
+-
+-		for(page = virt_to_page(t_addr); page <= virt_to_page(t_end); page++)
+-			if(!PageReserved(page))
+-				return NULL;
++	pfn = PFN_DOWN(phys_addr);
++	last_pfn = PFN_DOWN(last_addr);
++	if (walk_system_ram_range(pfn, last_pfn - pfn + 1, NULL,
++				  __ioremap_check_ram) == 1) {
++		WARN_ONCE(1, "ioremap on RAM at %pa - %pa\n",
++			  &phys_addr, &last_addr);
++		return NULL;
+ 	}
+ 
+ 	/*
 
 
