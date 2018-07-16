@@ -2,83 +2,120 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3EEECDFB1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440D9ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB54E208E1
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:17:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB54E208E1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id EDD82208E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 02:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD82208E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727653AbeGPCmJ (ORCPT
+        id S1727494AbeGPCvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 22:42:09 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:34542 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727296AbeGPCmI (ORCPT
+        Sun, 15 Jul 2018 22:51:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59412 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbeGPCvQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 22:42:08 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fet4M-0003I9-Ol; Mon, 16 Jul 2018 10:16:58 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fet4H-0001ux-Mp; Mon, 16 Jul 2018 10:16:53 +0800
-Date:   Mon, 16 Jul 2018 10:16:53 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     NeilBrown <neilb@suse.com>
-Cc:     David Miller <davem@davemloft.net>, tgraf@suug.ch,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eric.dumazet@gmail.com
-Subject: Re: [PATCH - revised] rhashtable: detect when object movement might
- have invalidated a lookup
-Message-ID: <20180716021653.xtbyetdfc2uzxub3@gondor.apana.org.au>
-References: <20180601160613.7ud25g2ux55k3bma@gondor.apana.org.au>
- <87k1q8yh70.fsf@notabene.neil.brown.name>
- <20180711.224658.2077863065492745521.davem@davemloft.net>
- <20180711.224801.1129067473269289703.davem@davemloft.net>
- <87fu0kt5m0.fsf@notabene.neil.brown.name>
- <20180716005134.q4rfkfn3m5zzwt62@gondor.apana.org.au>
- <874lh0t1ls.fsf@notabene.neil.brown.name>
+        Sun, 15 Jul 2018 22:51:16 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fetD7-0001Cb-2L; Mon, 16 Jul 2018 02:26:01 +0000
+Date:   Mon, 16 Jul 2018 03:26:01 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Jann Horn <jannh@google.com>, andriy.shevchenko@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/mtrr: don't copy out-of-bounds data in mtrr_write
+Message-ID: <20180716022600.GN30522@ZenIV.linux.org.uk>
+References: <20180706215003.156702-1-jannh@google.com>
+ <f9c8cf81df29006bc9c79932f3bcd599b559b408.camel@linux.intel.com>
+ <CAG48ez105Jan3BDAKssThnbNcr3yBMFTbdQHEHwXdmZUvE5VQw@mail.gmail.com>
+ <20180715220339.GA15435@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <874lh0t1ls.fsf@notabene.neil.brown.name>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180715220339.GA15435@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 11:23:43AM +1000, NeilBrown wrote:
->
-> kmem_cache_free() directly.  For this, I need rhashtable to be safe if
-> an object is deleted and immediately re-inserted into the same hash
-> chain.
+On Mon, Jul 16, 2018 at 12:03:39AM +0200, Ingo Molnar wrote:
+> 
+> * Jann Horn <jannh@google.com> wrote:
+> 
+> >  - A malicious user can pass an arbitrary file to a setuid binary as
+> > stdin/stdout/stderr. When the setuid binary (expecting stdin/stdout to
+> > be something normal, like a proper file or a pipe) then calls read(0,
+> > <buf>, <len>), if the kernel disregards the length argument and writes
+> > beyond the end of the buffer, it can corrupt adjacent userspace data,
+> > potentially allowing a user to escalate their privileges; a write
+> > handler is somewhat less interesting because it can probably (as in
+> > this case) only leak out-of-bounds data from the caller, not corrupt
+> > it, but it's still a concern in theory.
+> 
+> BTW., a naive question: would it make sense to simply disallow 'special'
+> fds to be passed to setuid binaries, and fix any user-space that breaks?
+> (i.e. only allow regular files and pipes/sockets.)
 
-This means that
+*Ugh*
 
-	rcu_read_lock();
-	A = rhashtable_lookup();
-	use(A);
-	rcu_read_unlock();
+You do realize that there's a lot of magical mystery shite that looks like
+regular files?  And what's wrong with directories, BTW?
 
-A can turn into object B when it is used.  That is just too strange
-for words.  Can we see some actual code on how this works?
+While we are at it, "passed" in which sense?  Via SCM_RIGHTS?  Those are
+only get accepted if recepient explicitly asks for those - simple read()
+or recv() will have them quietly discarded, special or not.
 
-For comparison, the existing net code where this happens A doesn't
-actually change and it simply moves from one hashtable to another.
+And if it's "inherit over execve()"...  Your definition *will* break.
+Instantly.  Right as you try to run su or sudo, with stdin/stdout/stderr
+all going to a character device.  Terminal, that is.
 
-I'm relucant to add semantics that would restrain on how rhashtable
-works unless we have real and valid use-cases for it.
+Frankly, something like
+	copyin_limited(buf, len, kbuf, size)
+and several similar helpers would be a lot more productive than open-coding
+these checks over and over or trying to come up with definitions of "special"
+that would work.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+BTW, what's the point open-coding
+	if (sscanf(line, "base=%ull size=%ull type=%s", &base, &size, &type) != 3)
+		return -EINVAL;
+        if ((base & 0xfff) || (size & 0xfff))
+                return -EINVAL;
+	i = match_string(mtrr_strings, MTRR_NUM_TYPES, type);
+        if (i < 0)
+                return i;
+as
+        if (strncmp(line, "base=", 5))
+                return -EINVAL;
+
+        base = simple_strtoull(line + 5, &ptr, 0);
+        ptr = skip_spaces(ptr);
+
+        if (strncmp(ptr, "size=", 5))
+                return -EINVAL;
+
+        size = simple_strtoull(ptr + 5, &ptr, 0);
+        if ((base & 0xfff) || (size & 0xfff))
+                return -EINVAL;
+        ptr = skip_spaces(ptr);
+
+        if (strncmp(ptr, "type=", 5))
+                return -EINVAL;
+        ptr = skip_spaces(ptr + 5);
+
+        i = match_string(mtrr_strings, MTRR_NUM_TYPES, ptr);
+        if (i < 0)
+                return i;
+
+Saving the copying of 'type' (which we need since '%n' is declared useless)?
