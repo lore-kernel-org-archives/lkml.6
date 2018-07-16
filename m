@@ -2,164 +2,225 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92653ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF15ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58C9D20837
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C9D20837
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7C6A82075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:44:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6A82075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389287AbeGPIKQ (ORCPT
+        id S2389301AbeGPIKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:10:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42030 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388522AbeGPIKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:10:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 105D4AD7B;
-        Mon, 16 Jul 2018 07:44:11 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 09:44:10 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [patch -mm] mm, oom: remove oom_lock from exit_mmap
-Message-ID: <20180716074410.GB17280@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1807121432370.170100@chino.kir.corp.google.com>
- <20180713142612.GD19960@dhcp22.suse.cz>
- <44d26c25-6e09-49de-5e90-3c16115eb337@i-love.sakura.ne.jp>
- <20180716061317.GA17280@dhcp22.suse.cz>
- <916d7e1d-66ea-00d9-c943-ef3d2e082584@i-love.sakura.ne.jp>
+        Mon, 16 Jul 2018 04:10:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48154 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388522AbeGPIKT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:10:19 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B8A0ECA4;
+        Mon, 16 Jul 2018 07:44:15 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Srivatsa S. Bhat" <srivatsa@csail.mit.edu>,
+        "Matt Helsley (VMware)" <matt.helsley@gmail.com>,
+        Alexey Makhalov <amakhalov@vmware.com>,
+        Bo Gan <ganb@vmware.com>
+Subject: [PATCH 4.4 16/43] x86/cpufeature: Move some of the scattered feature bits to x86_capability
+Date:   Mon, 16 Jul 2018 09:36:21 +0200
+Message-Id: <20180716073513.570928133@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180716073511.796555857@linuxfoundation.org>
+References: <20180716073511.796555857@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <916d7e1d-66ea-00d9-c943-ef3d2e082584@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 16-07-18 16:04:26, Tetsuo Handa wrote:
-> On 2018/07/16 15:13, Michal Hocko wrote:
-> > On Sat 14-07-18 06:18:58, Tetsuo Handa wrote:
-> >>> @@ -3073,9 +3073,7 @@ void exit_mmap(struct mm_struct *mm)
-> >>>  		 * which clears VM_LOCKED, otherwise the oom reaper cannot
-> >>>  		 * reliably test it.
-> >>>  		 */
-> >>> -		mutex_lock(&oom_lock);
-> >>>  		__oom_reap_task_mm(mm);
-> >>> -		mutex_unlock(&oom_lock);
-> >>>  
-> >>>  		set_bit(MMF_OOM_SKIP, &mm->flags);
-> >>
-> >> David and Michal are using different version as a baseline here.
-> >> David is making changes using timeout based back off (in linux-next.git)
-> >> which is inappropriately trying to use MMF_UNSTABLE for two purposes.
-> >>
-> >> Michal is making changes using current code (in linux.git) which does not
-> >> address David's concern.
-> > 
-> > Yes I have based it on top of Linus tree because the point of this patch
-> > is to get rid of the locking which is no longer needed. I do not see
-> > what concern are you talking about.
-> 
-> I'm saying that applying your patch does not work on linux-next.git
-> because David's patch already did s/MMF_OOM_SKIP/MMF_UNSTABLE/ .
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-This patch has been nacked by me AFAIR so I assume it should be dropped
-from the mmotm tree.
+------------------
+
+From: Borislav Petkov <bp@suse.de>
+
+commit 2ccd71f1b278d450a6f8c8c737c7fe237ca06dc6 upstream
+
+Turn the CPUID leafs which are proper CPUID feature bit leafs into
+separate ->x86_capability words.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Link: http://lkml.kernel.org/r/1449481182-27541-2-git-send-email-bp@alien8.de
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Srivatsa S. Bhat <srivatsa@csail.mit.edu>
+Reviewed-by: Matt Helsley (VMware) <matt.helsley@gmail.com>
+Reviewed-by: Alexey Makhalov <amakhalov@vmware.com>
+Reviewed-by: Bo Gan <ganb@vmware.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+
+ arch/x86/include/asm/cpufeature.h |   54 ++++++++++++++++++++++----------------
+ arch/x86/kernel/cpu/common.c      |    5 +++
+ arch/x86/kernel/cpu/scattered.c   |   20 --------------
+ 3 files changed, 37 insertions(+), 42 deletions(-)
+
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -12,7 +12,7 @@
+ #include <asm/disabled-features.h>
+ #endif
  
-> >> My version ( https://marc.info/?l=linux-mm&m=153119509215026 ) is
-> >> making changes using current code which also provides oom-badness
-> >> based back off in order to address David's concern.
-> >>
-> >>>  		down_write(&mm->mmap_sem);
-> >>
-> >> Anyway, I suggest doing
-> >>
-> >>   mutex_lock(&oom_lock);
-> >>   set_bit(MMF_OOM_SKIP, &mm->flags);
-> >>   mutex_unlock(&oom_lock);
-> > 
-> > Why do we need it?
-> > 
-> >> like I mentioned at
-> >> http://lkml.kernel.org/r/201807130620.w6D6KiAJ093010@www262.sakura.ne.jp
-> >> even if we make changes on top of linux-next's timeout based back off.
-> > 
-> > says
-> > : (3) Prevent from selecting new OOM victim when there is an !MMF_OOM_SKIP mm
-> > :     which current thread should wait for.
-> > [...]
-> > : Regarding (A), we can reduce the range oom_lock serializes from
-> > : "__oom_reap_task_mm()" to "setting MMF_OOM_SKIP", for oom_lock is useful for (3).
-> > 
-> > But why there is a lock needed for this? This doesn't make much sense to
-> > me. If we do not have MMF_OOM_SKIP set we still should have mm_is_oom_victim
-> > so no new task should be selected. If we race with the oom reaper than
-> > ok, we would just not select a new victim and retry later.
-> > 
-> 
-> How mm_is_oom_victim() helps? mm_is_oom_victim() is used by exit_mmap() whether
-> current thread should call __oom_reap_task_mm().
-> 
-> I'm talking about below sequence (i.e. after returning from __oom_reap_task_mm()).
-> 
->   CPU 0                                   CPU 1
->   
->   mutex_trylock(&oom_lock) in __alloc_pages_may_oom() succeeds.
->   get_page_from_freelist() fails.
->   Enters out_of_memory().
-> 
->                                           __oom_reap_task_mm() reclaims some memory.
->                                           Sets MMF_OOM_SKIP.
-> 
->   select_bad_process() selects new victim because MMF_OOM_SKIP is already set.
->   Kills a new OOM victim without retrying last second allocation attempt.
->   Leaves out_of_memory().
->   mutex_unlock(&oom_lock) in __alloc_pages_may_oom() is called.
+-#define NCAPINTS	14	/* N 32-bit words worth of info */
++#define NCAPINTS	16	/* N 32-bit words worth of info */
+ #define NBUGINTS	1	/* N 32-bit bug flags */
+ 
+ /*
+@@ -181,23 +181,18 @@
+ 
+ /*
+  * Auxiliary flags: Linux defined - For features scattered in various
+- * CPUID levels like 0x6, 0xA etc, word 7
++ * CPUID levels like 0x6, 0xA etc, word 7.
++ *
++ * Reuse free bits when adding new feature flags!
+  */
+-#define X86_FEATURE_IDA		( 7*32+ 0) /* Intel Dynamic Acceleration */
+-#define X86_FEATURE_ARAT	( 7*32+ 1) /* Always Running APIC Timer */
++
+ #define X86_FEATURE_CPB		( 7*32+ 2) /* AMD Core Performance Boost */
+ #define X86_FEATURE_EPB		( 7*32+ 3) /* IA32_ENERGY_PERF_BIAS support */
+ #define X86_FEATURE_INVPCID_SINGLE ( 7*32+ 4) /* Effectively INVPCID && CR4.PCIDE=1 */
+-#define X86_FEATURE_PLN		( 7*32+ 5) /* Intel Power Limit Notification */
+-#define X86_FEATURE_PTS		( 7*32+ 6) /* Intel Package Thermal Status */
+-#define X86_FEATURE_DTHERM	( 7*32+ 7) /* Digital Thermal Sensor */
++
+ #define X86_FEATURE_HW_PSTATE	( 7*32+ 8) /* AMD HW-PState */
+ #define X86_FEATURE_PROC_FEEDBACK ( 7*32+ 9) /* AMD ProcFeedbackInterface */
+-#define X86_FEATURE_HWP		( 7*32+ 10) /* "hwp" Intel HWP */
+-#define X86_FEATURE_HWP_NOTIFY	( 7*32+ 11) /* Intel HWP_NOTIFY */
+-#define X86_FEATURE_HWP_ACT_WINDOW ( 7*32+ 12) /* Intel HWP_ACT_WINDOW */
+-#define X86_FEATURE_HWP_EPP	( 7*32+13) /* Intel HWP_EPP */
+-#define X86_FEATURE_HWP_PKG_REQ ( 7*32+14) /* Intel HWP_PKG_REQ */
++
+ #define X86_FEATURE_INTEL_PT	( 7*32+15) /* Intel Processor Trace */
+ #define X86_FEATURE_RSB_CTXSW	( 7*32+19) /* Fill RSB on context switches */
+ 
+@@ -212,16 +207,7 @@
+ #define X86_FEATURE_FLEXPRIORITY ( 8*32+ 2) /* Intel FlexPriority */
+ #define X86_FEATURE_EPT         ( 8*32+ 3) /* Intel Extended Page Table */
+ #define X86_FEATURE_VPID        ( 8*32+ 4) /* Intel Virtual Processor ID */
+-#define X86_FEATURE_NPT		( 8*32+ 5) /* AMD Nested Page Table support */
+-#define X86_FEATURE_LBRV	( 8*32+ 6) /* AMD LBR Virtualization support */
+-#define X86_FEATURE_SVML	( 8*32+ 7) /* "svm_lock" AMD SVM locking MSR */
+-#define X86_FEATURE_NRIPS	( 8*32+ 8) /* "nrip_save" AMD SVM next_rip save */
+-#define X86_FEATURE_TSCRATEMSR  ( 8*32+ 9) /* "tsc_scale" AMD TSC scaling support */
+-#define X86_FEATURE_VMCBCLEAN   ( 8*32+10) /* "vmcb_clean" AMD VMCB clean bits support */
+-#define X86_FEATURE_FLUSHBYASID ( 8*32+11) /* AMD flush-by-ASID support */
+-#define X86_FEATURE_DECODEASSISTS ( 8*32+12) /* AMD Decode Assists support */
+-#define X86_FEATURE_PAUSEFILTER ( 8*32+13) /* AMD filtered pause intercept */
+-#define X86_FEATURE_PFTHRESHOLD ( 8*32+14) /* AMD pause filter threshold */
++
+ #define X86_FEATURE_VMMCALL     ( 8*32+15) /* Prefer vmmcall to vmcall */
+ #define X86_FEATURE_XENPV       ( 8*32+16) /* "" Xen paravirtual guest */
+ 
+@@ -266,6 +252,30 @@
+ /* AMD-defined CPU features, CPUID level 0x80000008 (ebx), word 13 */
+ #define X86_FEATURE_CLZERO	(13*32+0) /* CLZERO instruction */
+ 
++/* Thermal and Power Management Leaf, CPUID level 0x00000006 (eax), word 14 */
++#define X86_FEATURE_DTHERM	(14*32+ 0) /* Digital Thermal Sensor */
++#define X86_FEATURE_IDA		(14*32+ 1) /* Intel Dynamic Acceleration */
++#define X86_FEATURE_ARAT	(14*32+ 2) /* Always Running APIC Timer */
++#define X86_FEATURE_PLN		(14*32+ 4) /* Intel Power Limit Notification */
++#define X86_FEATURE_PTS		(14*32+ 6) /* Intel Package Thermal Status */
++#define X86_FEATURE_HWP		(14*32+ 7) /* Intel Hardware P-states */
++#define X86_FEATURE_HWP_NOTIFY	(14*32+ 8) /* HWP Notification */
++#define X86_FEATURE_HWP_ACT_WINDOW (14*32+ 9) /* HWP Activity Window */
++#define X86_FEATURE_HWP_EPP	(14*32+10) /* HWP Energy Perf. Preference */
++#define X86_FEATURE_HWP_PKG_REQ (14*32+11) /* HWP Package Level Request */
++
++/* AMD SVM Feature Identification, CPUID level 0x8000000a (edx), word 15 */
++#define X86_FEATURE_NPT		(15*32+ 0) /* Nested Page Table support */
++#define X86_FEATURE_LBRV	(15*32+ 1) /* LBR Virtualization support */
++#define X86_FEATURE_SVML	(15*32+ 2) /* "svm_lock" SVM locking MSR */
++#define X86_FEATURE_NRIPS	(15*32+ 3) /* "nrip_save" SVM next_rip save */
++#define X86_FEATURE_TSCRATEMSR  (15*32+ 4) /* "tsc_scale" TSC scaling support */
++#define X86_FEATURE_VMCBCLEAN   (15*32+ 5) /* "vmcb_clean" VMCB clean bits support */
++#define X86_FEATURE_FLUSHBYASID (15*32+ 6) /* flush-by-ASID support */
++#define X86_FEATURE_DECODEASSISTS (15*32+ 7) /* Decode Assists support */
++#define X86_FEATURE_PAUSEFILTER (15*32+10) /* filtered pause intercept */
++#define X86_FEATURE_PFTHRESHOLD (15*32+12) /* pause filter threshold */
++
+ /*
+  * BUG word(s)
+  */
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -695,6 +695,8 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 		cpuid_count(0x00000007, 0, &eax, &ebx, &ecx, &edx);
+ 
+ 		c->x86_capability[9] = ebx;
++
++		c->x86_capability[14] = cpuid_eax(0x00000006);
+ 	}
+ 
+ 	/* Extended state features: level 0x0000000d */
+@@ -756,6 +758,9 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
+ 	if (c->extended_cpuid_level >= 0x80000007)
+ 		c->x86_power = cpuid_edx(0x80000007);
+ 
++	if (c->extended_cpuid_level >= 0x8000000a)
++		c->x86_capability[15] = cpuid_edx(0x8000000a);
++
+ 	init_scattered_cpuid_features(c);
+ }
+ 
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -31,32 +31,12 @@ void init_scattered_cpuid_features(struc
+ 	const struct cpuid_bit *cb;
+ 
+ 	static const struct cpuid_bit cpuid_bits[] = {
+-		{ X86_FEATURE_DTHERM,		CR_EAX, 0, 0x00000006, 0 },
+-		{ X86_FEATURE_IDA,		CR_EAX, 1, 0x00000006, 0 },
+-		{ X86_FEATURE_ARAT,		CR_EAX, 2, 0x00000006, 0 },
+-		{ X86_FEATURE_PLN,		CR_EAX, 4, 0x00000006, 0 },
+-		{ X86_FEATURE_PTS,		CR_EAX, 6, 0x00000006, 0 },
+-		{ X86_FEATURE_HWP,		CR_EAX, 7, 0x00000006, 0 },
+-		{ X86_FEATURE_HWP_NOTIFY,	CR_EAX, 8, 0x00000006, 0 },
+-		{ X86_FEATURE_HWP_ACT_WINDOW,	CR_EAX, 9, 0x00000006, 0 },
+-		{ X86_FEATURE_HWP_EPP,		CR_EAX,10, 0x00000006, 0 },
+-		{ X86_FEATURE_HWP_PKG_REQ,	CR_EAX,11, 0x00000006, 0 },
+ 		{ X86_FEATURE_INTEL_PT,		CR_EBX,25, 0x00000007, 0 },
+ 		{ X86_FEATURE_APERFMPERF,	CR_ECX, 0, 0x00000006, 0 },
+ 		{ X86_FEATURE_EPB,		CR_ECX, 3, 0x00000006, 0 },
+ 		{ X86_FEATURE_HW_PSTATE,	CR_EDX, 7, 0x80000007, 0 },
+ 		{ X86_FEATURE_CPB,		CR_EDX, 9, 0x80000007, 0 },
+ 		{ X86_FEATURE_PROC_FEEDBACK,	CR_EDX,11, 0x80000007, 0 },
+-		{ X86_FEATURE_NPT,		CR_EDX, 0, 0x8000000a, 0 },
+-		{ X86_FEATURE_LBRV,		CR_EDX, 1, 0x8000000a, 0 },
+-		{ X86_FEATURE_SVML,		CR_EDX, 2, 0x8000000a, 0 },
+-		{ X86_FEATURE_NRIPS,		CR_EDX, 3, 0x8000000a, 0 },
+-		{ X86_FEATURE_TSCRATEMSR,	CR_EDX, 4, 0x8000000a, 0 },
+-		{ X86_FEATURE_VMCBCLEAN,	CR_EDX, 5, 0x8000000a, 0 },
+-		{ X86_FEATURE_FLUSHBYASID,	CR_EDX, 6, 0x8000000a, 0 },
+-		{ X86_FEATURE_DECODEASSISTS,	CR_EDX, 7, 0x8000000a, 0 },
+-		{ X86_FEATURE_PAUSEFILTER,	CR_EDX,10, 0x8000000a, 0 },
+-		{ X86_FEATURE_PFTHRESHOLD,	CR_EDX,12, 0x8000000a, 0 },
+ 		{ 0, 0, 0, 0, 0 }
+ 	};
+ 
 
-OK, that wasn't clear from your above wording. As you explicitly
-mentioned !MMF_OOM_SKIP mm.
 
-> If setting MMF_OOM_SKIP is guarded by oom_lock, we can enforce
-> last second allocation attempt like below.
->
->   CPU 0                                   CPU 1
->   
->   mutex_trylock(&oom_lock) in __alloc_pages_may_oom() succeeds.
->   get_page_from_freelist() fails.
->   Enters out_of_memory().
-> 
->                                           __oom_reap_task_mm() reclaims some memory.
->                                           mutex_lock(&oom_lock);
-> 
->   select_bad_process() does not select new victim because MMF_OOM_SKIP is not yet set.
->   Leaves out_of_memory().
->   mutex_unlock(&oom_lock) in __alloc_pages_may_oom() is called.
-> 
->                                           Sets MMF_OOM_SKIP.
->                                           mutex_unlock(&oom_lock);
-> 
->   get_page_from_freelist() likely succeeds before reaching __alloc_pages_may_oom() again.
->   Saved one OOM victim from being needlessly killed.
-> 
-> That is, guarding setting MMF_OOM_SKIP works as if synchronize_rcu(); it waits for anybody
-> who already acquired (or started waiting for) oom_lock to release oom_lock, in order to
-> prevent select_bad_process() from needlessly selecting new OOM victim.
-
-Hmm, is this a practical problem though? Do we really need to have a
-broader locking context just to defeat this race? How about this goes
-into a separate patch with some data justifying it?
--- 
-Michal Hocko
-SUSE Labs
