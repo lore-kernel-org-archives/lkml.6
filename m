@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A302ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9782ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2DD420871
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2DD420871
+	by mail.kernel.org (Postfix) with ESMTP id ABC4620871
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 12:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABC4620871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731196AbeGPM6r (ORCPT
+        id S1731282AbeGPM65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 08:58:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34186 "EHLO mx1.suse.de"
+        Mon, 16 Jul 2018 08:58:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34310 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727857AbeGPM6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 08:58:47 -0400
+        id S1727857AbeGPM64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 08:58:56 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D4F78ADC9;
-        Mon, 16 Jul 2018 12:31:31 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 14:31:31 +0200
-Message-ID: <s5ho9f75plo.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 5F121AE6A;
+        Mon, 16 Jul 2018 12:31:41 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 14:31:41 +0200
+Message-ID: <s5hmuur5ple.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Colin King" <colin.king@canonical.com>
 Cc:     <alsa-devel@alsa-project.org>, "Jaroslav Kysela" <perex@perex.cz>,
         <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: gus: remove redundant pointer private_data
-In-Reply-To: <20180716084938.15733-1-colin.king@canonical.com>
-References: <20180716084938.15733-1-colin.king@canonical.com>
+Subject: Re: [PATCH] ALSA: sb8: remove redundant pointer runtime
+In-Reply-To: <20180716085256.15878-1-colin.king@canonical.com>
+References: <20180716085256.15878-1-colin.king@canonical.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -45,16 +45,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Jul 2018 10:49:38 +0200,
+On Mon, 16 Jul 2018 10:52:56 +0200,
 Colin King wrote:
 > 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> Pointer private_data is being assigned but is never used hence it is
+> Pointer runtime is being assigned but is never used hence it is
 > redundant and can be removed.
 > 
 > Cleans up clang warning:
-> warning: variable 'private_data' set but not used [-Wunused-but-set-variable]
+> warning: variable 'runtime' set but not used [-Wunused-but-set-variable]
 > 
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
