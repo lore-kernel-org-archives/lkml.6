@@ -2,145 +2,92 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E99AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419B6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37DE7208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98101208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:11:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZDxQNZJn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37DE7208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="b7NO99/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98101208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731341AbeGPKiZ (ORCPT
+        id S1731455AbeGPKih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:38:25 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34239 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731292AbeGPKiZ (ORCPT
+        Mon, 16 Jul 2018 06:38:37 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54709 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730444AbeGPKig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:38:25 -0400
-Received: by mail-io0-f193.google.com with SMTP id l7-v6so37282207ioj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 03:11:44 -0700 (PDT)
+        Mon, 16 Jul 2018 06:38:36 -0400
+Received: by mail-wm0-f68.google.com with SMTP id c14-v6so4249687wmb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 03:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3E4IEqiA8AC59YBk2YxsVK6XczwOI0hkUk4+3CDUEa0=;
-        b=ZDxQNZJn8cvaa0ss0KxhBBMMfZGWIfzDxq+mzPj0Y5Z23MLDEl7nkGCO7Vx0CGn07c
-         p5yASIe6jjweexcrhPMPZOU+t+a19JTbVRvHTzha5bvQtj59Q9o1lQOsRoKMom1a9uT4
-         M4dAxIt7aa7c9nvHJQEvialrey6gUzu9sLkFY=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=0W+SGp39jUTDdnKGSK29HVkK602riYY2JV4k0VDsS/4=;
+        b=b7NO99/z+NE1MUzkFzxe2/sXLK4Vdp3pHN3I4nPOtTC2G7Wx+R2rlTRbw95XFE+sfE
+         Bs/65n9ArzwEHDBBLxBCd3j/IGvWV09YhCSDDIxwuErOh4B7zTsD3+AVO6FU6xcrdzSy
+         Z/LhQOHGMEBQhEySdhI3ScaFHKGuKCzm9UqGTu+9oc4UrMONOQjyeK0wIopc7CY3B1y6
+         s+56GK5r3/ezu/SLoex0A1OWS4mWznojF3MhlQdky/wCQE3JdAQvD7+PjR22hmaN8/f7
+         7VFFyt1ebVnZ5MqS61cv67mPU1k9b69m7GG+jEDqgihlFv7CQDhwbUZz2UrO3Ajj0TFo
+         LBuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3E4IEqiA8AC59YBk2YxsVK6XczwOI0hkUk4+3CDUEa0=;
-        b=NlpjgmicyKc+iUDDWM19LwMYGdjDwZzizwZP8yFwz27zGwgYRYK/QN0AOw3mVtFjpA
-         LG7+5RmR1qk5kUaVh1njsGsZ9nNSCjQGZXZ6zPeEOmByd+YHuen3N+i3G4LoyRi1B0OH
-         3KWzsOrlsvFDk8O+p2iJMckRhwP1RqN22D19HQqIuloGanzUCdkZYWT7NcjmrxdSuoIn
-         5gKlFcCsm2/bQBY7uvoxEcOEuYZFOxF6PB+5YT0uh37CxwsVs5vMIhCfcBdxyjunBSjn
-         1QX51u/J3DWPnDtmLSGyxOFPL4EDjaQ8SZj08s7AfPOiPGShzk9nztOKu2JKWcIJFiMj
-         sMAQ==
-X-Gm-Message-State: APt69E1sgOCV65uag7XhsujGsGVW+vdplU9m1cyVn8XlqoYGQNZ+EqMO
-        IlAOyGnBByZokK6IWa1oBDAMxbRhwm+RAemAWhg/dg==
-X-Google-Smtp-Source: AAOMgpdHzQL8jMm5cUyfui2Id/do5KhKRiWZxrv1zL7PCc7N7MbhWdcDj4311d1DKOK1FIxepfcUV5/Mbe/fetOLRU0=
-X-Received: by 2002:a6b:e403:: with SMTP id u3-v6mr37731083iog.131.1531735904331;
- Mon, 16 Jul 2018 03:11:44 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:2b03:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 03:11:43
- -0700 (PDT)
-In-Reply-To: <1531487865-17427-1-git-send-email-avienamo@nvidia.com>
-References: <1531487865-17427-1-git-send-email-avienamo@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 16 Jul 2018 12:11:43 +0200
-Message-ID: <CAPDyKFqY31RSebKxUtiPsXFZD35aJFxerakHgjyq7gqrRCHmBA@mail.gmail.com>
-Subject: Re: [PATCH] mmc: tegra: Add and use tegra_sdhci_get_max_clock()
-To:     Aapo Vienamo <avienamo@nvidia.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=0W+SGp39jUTDdnKGSK29HVkK602riYY2JV4k0VDsS/4=;
+        b=K9eZz5YjwRjy8C6sh+UtOh8js5zDB55pfaQ08Z/+6fjD1K+GFeIe3+x+ShTEge1yvS
+         CxBwXfyoPQntrizfRZrZgd0R8bRQP7ElNlwptkY1FjhZ9hcR6nvAW7K1l8NZzaWNdPGm
+         X/l2oCfYvFs+4rsL94hliJdmGzHPzAwzRCVICIqpN+NkW3FmWIEkiivMHtuUK72DFIhO
+         RkvnbxSltGsZUP020C15a/fv95vlf6U8AkMiMCWZ6GNbsSQoSezeBxUNOhxt+lh00QeM
+         Ay0YwE9RXGhV6pgbp7Z66ayywptpJQDWMoE097UozNufDGOpZmNvrTkm8s5qHID01At6
+         pqpA==
+X-Gm-Message-State: AOUpUlHl2/nXy4uTn3UURqywoVwqeAtfpE9cR2a1UK5YB/TI4T/Cwihr
+        01j/wCUQ8dQP/6O1gZxyGkSJqA==
+X-Google-Smtp-Source: AAOMgpcxopY/+un66MMBTcKoZuqoNmQBLQzxlK5xgeOl2DeWR/D28yfvoNMxetLvPTB9ADOqQWeFjA==
+X-Received: by 2002:a1c:aa0c:: with SMTP id t12-v6mr8952490wme.109.1531735914608;
+        Mon, 16 Jul 2018 03:11:54 -0700 (PDT)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id h14-v6sm10219094wro.15.2018.07.16.03.11.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 03:11:54 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 0/6] ARM64: dts: meson-axg: updates
+Date:   Mon, 16 Jul 2018 12:11:45 +0200
+Message-Id: <20180716101151.31109-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Stefan
+This patchset groups several updates targeted on amlogic's AXG
+device tree. Patch 1, 2 and 6 had been posted previously but I thought
+it would be more convenient for Kevin to get them as a single series.
 
-On 13 July 2018 at 15:17, Aapo Vienamo <avienamo@nvidia.com> wrote:
-> Implement and use tegra_sdhci_get_max_clock() which returns the true
-> maximum host clock rate. The issue with tegra_sdhci_get_max_clock() is
-> that it returns the current clock rate of the host instead of the
-> maximum one, which can lead to unnecessarily small clock rates.
->
-> This differs from the previous implementation of
-> tegra_sdhci_get_max_clock() in that it doesn't divide the result by two.
->
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+Jerome Brunet (6):
+  ARM64: dts: meson-axg: remove vddio_ao18 from SoC dtsi
+  ARM64: dts: meson-axg: add adc buttons the S400
+  ARM64: dts: meson-axg: remove spdif out from gpio a7
+  ARM64: dts: meson-axg: add spdif input pins
+  ARM64: dts: meson-axg: add pdm pins
+  ARM64: dts: meson-axg: add the audio clock controller
 
-Thanks, applied for next!
+ arch/arm64/boot/dts/amlogic/meson-axg-s400.dts |  44 +++++++++
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi     | 127 ++++++++++++++++++++++---
+ 2 files changed, 157 insertions(+), 14 deletions(-)
 
-I realize there are some discussions and tests going on in regards to
-the changes for tegra driver. However, I decided to apply all pending
-patches from Stefan and you, to get them tested in next for a while to
-see how it plays.
+-- 
+2.14.4
 
-Please tell if you want me to drop some changes - or if you prefer to
-send patches on top to fix further related issues.
-
-Kind regards
-Uffe
-
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 28b98e2..ddf00166 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -235,6 +235,13 @@ static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
->         sdhci_set_uhs_signaling(host, timing);
->  }
->
-> +static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
-> +{
-> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +
-> +       return clk_round_rate(pltfm_host->clk, UINT_MAX);
-> +}
-> +
->  static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned int tap)
->  {
->         u32 reg;
-> @@ -299,7 +306,7 @@ static const struct sdhci_ops tegra_sdhci_ops = {
->         .platform_execute_tuning = tegra_sdhci_execute_tuning,
->         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
->         .voltage_switch = tegra_sdhci_voltage_switch,
-> -       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
-> +       .get_max_clock = tegra_sdhci_get_max_clock,
->  };
->
->  static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
-> @@ -356,7 +363,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
->         .platform_execute_tuning = tegra_sdhci_execute_tuning,
->         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
->         .voltage_switch = tegra_sdhci_voltage_switch,
-> -       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
-> +       .get_max_clock = tegra_sdhci_get_max_clock,
->  };
->
->  static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
-> --
-> 2.7.4
->
