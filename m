@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E58DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 000D9ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12FB6208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:04:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12FB6208E9
+	by mail.kernel.org (Postfix) with ESMTP id AFD9C208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 18:04:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFD9C208E9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbeGPScX (ORCPT
+        id S1729952AbeGPScW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 14:32:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54918 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728129AbeGPScX (ORCPT
+        Mon, 16 Jul 2018 14:32:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38636 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728556AbeGPScV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 14:32:23 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6GHxCj8083066
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:03:50 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k901xrjh3-1
+        Mon, 16 Jul 2018 14:32:21 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6GHxGeV039773
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:03:49 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k8xyuuaum-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 14:03:49 -0400
 Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 16 Jul 2018 14:03:49 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Mon, 16 Jul 2018 14:03:48 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Mon, 16 Jul 2018 14:03:44 -0400
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6GI3h1p58458140
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6GI3hYs14615010
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Mon, 16 Jul 2018 18:03:43 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7B3BDB206E;
+        by IMSVA (Postfix) with ESMTP id 667E9B2068;
         Mon, 16 Jul 2018 14:03:36 -0400 (EDT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47F60B2065;
+        by IMSVA (Postfix) with ESMTP id 3F237B2073;
         Mon, 16 Jul 2018 14:03:36 -0400 (EDT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Mon, 16 Jul 2018 14:03:36 -0400 (EDT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6F70D16C86CF; Mon, 16 Jul 2018 11:06:06 -0700 (PDT)
+        id 5EE3316C86B8; Mon, 16 Jul 2018 11:06:06 -0700 (PDT)
 From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         mingo@kernel.org
@@ -61,27 +61,28 @@ Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
         npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
         luc.maranget@inria.fr, akiyks@gmail.com,
         Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Ingo Molnar <mingo@redhat.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH memory-model 14/14] tools/memory-model: Rename litmus tests to comply to norm7
-Date:   Mon, 16 Jul 2018 11:06:05 -0700
+Subject: [PATCH memory-model 11/14] locking: Clarify requirements for smp_mb__after_spinlock()
+Date:   Mon, 16 Jul 2018 11:06:02 -0700
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180716180540.GA14222@linux.vnet.ibm.com>
 References: <20180716180540.GA14222@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18071618-0068-0000-0000-00000318FA53
+x-cbid: 18071618-0060-0000-0000-0000028D098B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009375; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01061729; UDB=6.00545095; IPR=6.00839634;
- MB=3.00022159; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-16 18:03:47
+ PH=3.00000004; SC=3.00000266; SDB=6.01061730; UDB=6.00545095; IPR=6.00839634;
+ MB=3.00022159; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-16 18:03:48
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071618-0069-0000-0000-0000450D92F6
-Message-Id: <20180716180605.16115-14-paulmck@linux.vnet.ibm.com>
+x-cbparentid: 18071618-0061-0000-0000-000045D1E2B7
+Message-Id: <20180716180605.16115-11-paulmck@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-16_05:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=456 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807160205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -90,324 +91,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-norm7 produces the 'normalized' name of a litmus test,  when the test
-can be generated from a single cycle that passes through each process
-exactly once. The commit renames such tests in order to comply to the
-naming scheme implemented by this tool.
+There are 11 interpretations of the requirements described in the header
+comment for smp_mb__after_spinlock(): one for each LKMM maintainer, and
+one currently encoded in the Cat file. Stick to the latter (until a more
+satisfactory solution is available).
 
+This also reworks some snippets related to the barrier to illustrate the
+requirements and to link them to the idioms which are relied upon at its
+call sites.
+
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
 Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
 ---
- tools/memory-model/Documentation/recipes.txt  |  8 ++++----
- tools/memory-model/README                     | 20 +++++++++----------
- ... => IRIW+fencembonceonces+OnceOnce.litmus} |  2 +-
- ...=> LB+fencembonceonce+ctrlonceonce.litmus} |  2 +-
- ...+fencewmbonceonce+fencermbonceonce.litmus} |  2 +-
- ...onces.litmus => R+fencembonceonces.litmus} |  2 +-
- tools/memory-model/litmus-tests/README        | 16 +++++++--------
- ...> S+fencewmbonceonce+poacquireonce.litmus} |  2 +-
- ...nces.litmus => SB+fencembonceonces.litmus} |  2 +-
- ...ooncerelease+fencermbonceonce+Once.litmus} |  2 +-
- ...e+poacquirerelease+fencembonceonce.litmus} |  2 +-
- 11 files changed, 30 insertions(+), 30 deletions(-)
- rename tools/memory-model/litmus-tests/{IRIW+mbonceonces+OnceOnce.litmus => IRIW+fencembonceonces+OnceOnce.litmus} (95%)
- rename tools/memory-model/litmus-tests/{LB+ctrlonceonce+mbonceonce.litmus => LB+fencembonceonce+ctrlonceonce.litmus} (95%)
- rename tools/memory-model/litmus-tests/{MP+wmbonceonce+rmbonceonce.litmus => MP+fencewmbonceonce+fencermbonceonce.litmus} (91%)
- rename tools/memory-model/litmus-tests/{R+mbonceonces.litmus => R+fencembonceonces.litmus} (95%)
- rename tools/memory-model/litmus-tests/{S+wmbonceonce+poacquireonce.litmus => S+fencewmbonceonce+poacquireonce.litmus} (90%)
- rename tools/memory-model/litmus-tests/{SB+mbonceonces.litmus => SB+fencembonceonces.litmus} (95%)
- rename tools/memory-model/litmus-tests/{WRC+pooncerelease+rmbonceonce+Once.litmus => WRC+pooncerelease+fencermbonceonce+Once.litmus} (93%)
- rename tools/memory-model/litmus-tests/{Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus => Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus} (94%)
+ include/linux/spinlock.h | 53 +++++++++++++++++++++++++++-------------
+ kernel/sched/core.c      | 41 ++++++++++++++++---------------
+ 2 files changed, 57 insertions(+), 37 deletions(-)
 
-diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
-index 1fea8ef2b184..af72700cc20a 100644
---- a/tools/memory-model/Documentation/recipes.txt
-+++ b/tools/memory-model/Documentation/recipes.txt
-@@ -126,7 +126,7 @@ However, it is not necessarily the case that accesses ordered by
- locking will be seen as ordered by CPUs not holding that lock.
- Consider this example:
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 1e8a46435838..d70a06ff2bdd 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -114,29 +114,48 @@ do {								\
+ #endif /*arch_spin_is_contended*/
  
--	/* See Z6.0+pooncelock+pooncelock+pombonce.litmus. */
-+	/* See Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus. */
- 	void CPU0(void)
- 	{
- 		spin_lock(&mylock);
-@@ -292,7 +292,7 @@ and to use smp_load_acquire() instead of smp_rmb().  However, the older
- smp_wmb() and smp_rmb() APIs are still heavily used, so it is important
- to understand their use cases.  The general approach is shown below:
+ /*
+- * This barrier must provide two things:
++ * smp_mb__after_spinlock() provides the equivalent of a full memory barrier
++ * between program-order earlier lock acquisitions and program-order later
++ * memory accesses.
+  *
+- *   - it must guarantee a STORE before the spin_lock() is ordered against a
+- *     LOAD after it, see the comments at its two usage sites.
++ * This guarantees that the following two properties hold:
+  *
+- *   - it must ensure the critical section is RCsc.
++ *   1) Given the snippet:
+  *
+- * The latter is important for cases where we observe values written by other
+- * CPUs in spin-loops, without barriers, while being subject to scheduling.
++ *	  { X = 0;  Y = 0; }
+  *
+- * CPU0			CPU1			CPU2
++ *	  CPU0				CPU1
+  *
+- *			for (;;) {
+- *			  if (READ_ONCE(X))
+- *			    break;
+- *			}
+- * X=1
+- *			<sched-out>
+- *						<sched-in>
+- *						r = X;
++ *	  WRITE_ONCE(X, 1);		WRITE_ONCE(Y, 1);
++ *	  spin_lock(S);			smp_mb();
++ *	  smp_mb__after_spinlock();	r1 = READ_ONCE(X);
++ *	  r0 = READ_ONCE(Y);
++ *	  spin_unlock(S);
+  *
+- * without transitivity it could be that CPU1 observes X!=0 breaks the loop,
+- * we get migrated and CPU2 sees X==0.
++ *      it is forbidden that CPU0 does not observe CPU1's store to Y (r0 = 0)
++ *      and CPU1 does not observe CPU0's store to X (r1 = 0); see the comments
++ *      preceding the call to smp_mb__after_spinlock() in __schedule() and in
++ *      try_to_wake_up().
++ *
++ *   2) Given the snippet:
++ *
++ *  { X = 0;  Y = 0; }
++ *
++ *  CPU0		CPU1				CPU2
++ *
++ *  spin_lock(S);	spin_lock(S);			r1 = READ_ONCE(Y);
++ *  WRITE_ONCE(X, 1);	smp_mb__after_spinlock();	smp_rmb();
++ *  spin_unlock(S);	r0 = READ_ONCE(X);		r2 = READ_ONCE(X);
++ *			WRITE_ONCE(Y, 1);
++ *			spin_unlock(S);
++ *
++ *      it is forbidden that CPU0's critical section executes before CPU1's
++ *      critical section (r0 = 1), CPU2 observes CPU1's store to Y (r1 = 1)
++ *      and CPU2 does not observe CPU0's store to X (r2 = 0); see the comments
++ *      preceding the calls to smp_rmb() in try_to_wake_up() for similar
++ *      snippets but "projected" onto two CPUs.
++ *
++ * Property (2) upgrades the lock to an RCsc lock.
+  *
+  * Since most load-store architectures implement ACQUIRE with an smp_mb() after
+  * the LL/SC loop, they need no further barriers. Similarly all our TSO
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 78d8facba456..7db0662360f1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1999,21 +1999,20 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	 * be possible to, falsely, observe p->on_rq == 0 and get stuck
+ 	 * in smp_cond_load_acquire() below.
+ 	 *
+-	 * sched_ttwu_pending()                 try_to_wake_up()
+-	 *   [S] p->on_rq = 1;                  [L] P->state
+-	 *       UNLOCK rq->lock  -----.
+-	 *                              \
+-	 *				 +---   RMB
+-	 * schedule()                   /
+-	 *       LOCK rq->lock    -----'
+-	 *       UNLOCK rq->lock
++	 * sched_ttwu_pending()			try_to_wake_up()
++	 *   STORE p->on_rq = 1			  LOAD p->state
++	 *   UNLOCK rq->lock
++	 *
++	 * __schedule() (switch to task 'p')
++	 *   LOCK rq->lock			  smp_rmb();
++	 *   smp_mb__after_spinlock();
++	 *   UNLOCK rq->lock
+ 	 *
+ 	 * [task p]
+-	 *   [S] p->state = UNINTERRUPTIBLE     [L] p->on_rq
++	 *   STORE p->state = UNINTERRUPTIBLE	  LOAD p->on_rq
+ 	 *
+-	 * Pairs with the UNLOCK+LOCK on rq->lock from the
+-	 * last wakeup of our task and the schedule that got our task
+-	 * current.
++	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
++	 * __schedule().  See the comment for smp_mb__after_spinlock().
+ 	 */
+ 	smp_rmb();
+ 	if (p->on_rq && ttwu_remote(p, wake_flags))
+@@ -2027,15 +2026,17 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	 * One must be running (->on_cpu == 1) in order to remove oneself
+ 	 * from the runqueue.
+ 	 *
+-	 *  [S] ->on_cpu = 1;	[L] ->on_rq
+-	 *      UNLOCK rq->lock
+-	 *			RMB
+-	 *      LOCK   rq->lock
+-	 *  [S] ->on_rq = 0;    [L] ->on_cpu
++	 * __schedule() (switch to task 'p')	try_to_wake_up()
++	 *   STORE p->on_cpu = 1		  LOAD p->on_rq
++	 *   UNLOCK rq->lock
++	 *
++	 * __schedule() (put 'p' to sleep)
++	 *   LOCK rq->lock			  smp_rmb();
++	 *   smp_mb__after_spinlock();
++	 *   STORE p->on_rq = 0			  LOAD p->on_cpu
+ 	 *
+-	 * Pairs with the full barrier implied in the UNLOCK+LOCK on rq->lock
+-	 * from the consecutive calls to schedule(); the first switching to our
+-	 * task, the second putting it to sleep.
++	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
++	 * __schedule().  See the comment for smp_mb__after_spinlock().
+ 	 */
+ 	smp_rmb();
  
--	/* See MP+wmbonceonce+rmbonceonce.litmus. */
-+	/* See MP+fencewmbonceonce+fencermbonceonce.litmus. */
- 	void CPU0(void)
- 	{
- 		WRITE_ONCE(x, 1);
-@@ -360,7 +360,7 @@ can be seen in the LB+poonceonces.litmus litmus test.
- One way of avoiding the counter-intuitive outcome is through the use of a
- control dependency paired with a full memory barrier:
- 
--	/* See LB+ctrlonceonce+mbonceonce.litmus. */
-+	/* See LB+fencembonceonce+ctrlonceonce.litmus. */
- 	void CPU0(void)
- 	{
- 		r0 = READ_ONCE(x);
-@@ -476,7 +476,7 @@ that one CPU first stores to one variable and then loads from a second,
- while another CPU stores to the second variable and then loads from the
- first.  Preserving order requires nothing less than full barriers:
- 
--	/* See SB+mbonceonces.litmus. */
-+	/* See SB+fencembonceonces.litmus. */
- 	void CPU0(void)
- 	{
- 		WRITE_ONCE(x, 1);
-diff --git a/tools/memory-model/README b/tools/memory-model/README
-index 734f7feaa5dc..ee987ce20aae 100644
---- a/tools/memory-model/README
-+++ b/tools/memory-model/README
-@@ -35,13 +35,13 @@ BASIC USAGE: HERD7
- The memory model is used, in conjunction with "herd7", to exhaustively
- explore the state space of small litmus tests.
- 
--For example, to run SB+mbonceonces.litmus against the memory model:
-+For example, to run SB+fencembonceonces.litmus against the memory model:
- 
--  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+mbonceonces.litmus
-+  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+fencembonceonces.litmus
- 
- Here is the corresponding output:
- 
--  Test SB+mbonceonces Allowed
-+  Test SB+fencembonceonces Allowed
-   States 3
-   0:r0=0; 1:r0=1;
-   0:r0=1; 1:r0=0;
-@@ -50,8 +50,8 @@ Here is the corresponding output:
-   Witnesses
-   Positive: 0 Negative: 3
-   Condition exists (0:r0=0 /\ 1:r0=0)
--  Observation SB+mbonceonces Never 0 3
--  Time SB+mbonceonces 0.01
-+  Observation SB+fencembonceonces Never 0 3
-+  Time SB+fencembonceonces 0.01
-   Hash=d66d99523e2cac6b06e66f4c995ebb48
- 
- The "Positive: 0 Negative: 3" and the "Never 0 3" each indicate that
-@@ -67,16 +67,16 @@ BASIC USAGE: KLITMUS7
- The "klitmus7" tool converts a litmus test into a Linux kernel module,
- which may then be loaded and run.
- 
--For example, to run SB+mbonceonces.litmus against hardware:
-+For example, to run SB+fencembonceonces.litmus against hardware:
- 
-   $ mkdir mymodules
--  $ klitmus7 -o mymodules litmus-tests/SB+mbonceonces.litmus
-+  $ klitmus7 -o mymodules litmus-tests/SB+fencembonceonces.litmus
-   $ cd mymodules ; make
-   $ sudo sh run.sh
- 
- The corresponding output includes:
- 
--  Test SB+mbonceonces Allowed
-+  Test SB+fencembonceonces Allowed
-   Histogram (3 states)
-   644580  :>0:r0=1; 1:r0=0;
-   644328  :>0:r0=0; 1:r0=1;
-@@ -86,8 +86,8 @@ The corresponding output includes:
-   Positive: 0, Negative: 2000000
-   Condition exists (0:r0=0 /\ 1:r0=0) is NOT validated
-   Hash=d66d99523e2cac6b06e66f4c995ebb48
--  Observation SB+mbonceonces Never 0 2000000
--  Time SB+mbonceonces 0.16
-+  Observation SB+fencembonceonces Never 0 2000000
-+  Time SB+fencembonceonces 0.16
- 
- The "Positive: 0 Negative: 2000000" and the "Never 0 2000000" indicate
- that during two million trials, the state specified in this litmus
-diff --git a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-rename to tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
-index 98a3716efa37..e729d2776e89 100644
---- a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-+++ b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
-@@ -1,4 +1,4 @@
--C IRIW+mbonceonces+OnceOnce
-+C IRIW+fencembonceonces+OnceOnce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-rename to tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
-index de6708229dd1..4727f5aaf03b 100644
---- a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
-@@ -1,4 +1,4 @@
--C LB+ctrlonceonce+mbonceonce
-+C LB+fencembonceonce+ctrlonceonce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
-similarity index 91%
-rename from tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-rename to tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
-index c078f38ff27a..a273da9faa6d 100644
---- a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
-@@ -1,4 +1,4 @@
--C MP+wmbonceonce+rmbonceonce
-+C MP+fencewmbonceonce+fencermbonceonce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/R+mbonceonces.litmus b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/R+mbonceonces.litmus
-rename to tools/memory-model/litmus-tests/R+fencembonceonces.litmus
-index a0e884ad2132..222a0b850b4a 100644
---- a/tools/memory-model/litmus-tests/R+mbonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
-@@ -1,4 +1,4 @@
--C R+mbonceonces
-+C R+fencembonceonces
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-index 00140aaf58b7..4581ec2d3c57 100644
---- a/tools/memory-model/litmus-tests/README
-+++ b/tools/memory-model/litmus-tests/README
-@@ -18,7 +18,7 @@ CoWW+poonceonce.litmus
- 	Test of write-write coherence, that is, whether or not two
- 	successive writes to the same variable are ordered.
- 
--IRIW+mbonceonces+OnceOnce.litmus
-+IRIW+fencembonceonces+OnceOnce.litmus
- 	Test of independent reads from independent writes with smp_mb()
- 	between each pairs of reads.  In other words, is smp_mb()
- 	sufficient to cause two different reading processes to agree on
-@@ -47,7 +47,7 @@ ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
- 	Can a release-acquire chain order a prior store against
- 	a later load?
- 
--LB+ctrlonceonce+mbonceonce.litmus
-+LB+fencembonceonce+ctrlonceonce.litmus
- 	Does a control dependency and an smp_mb() suffice for the
- 	load-buffering litmus test, where each process reads from one
- 	of two variables then writes to the other?
-@@ -88,14 +88,14 @@ MP+porevlocks.litmus
- 	As below, but with the first access of the writer process
- 	and the second access of reader process protected by a lock.
- 
--MP+wmbonceonce+rmbonceonce.litmus
-+MP+fencewmbonceonce+fencermbonceonce.litmus
- 	Does a smp_wmb() (between the stores) and an smp_rmb() (between
- 	the loads) suffice for the message-passing litmus test, where one
- 	process writes data and then a flag, and the other process reads
- 	the flag and then the data.  (This is similar to the ISA2 tests,
- 	but with two processes instead of three.)
- 
--R+mbonceonces.litmus
-+R+fencembonceonces.litmus
- 	This is the fully ordered (via smp_mb()) version of one of
- 	the classic counterintuitive litmus tests that illustrates the
- 	effects of store propagation delays.
-@@ -103,7 +103,7 @@ R+mbonceonces.litmus
- R+poonceonces.litmus
- 	As above, but without the smp_mb() invocations.
- 
--SB+mbonceonces.litmus
-+SB+fencembonceonces.litmus
- 	This is the fully ordered (again, via smp_mb() version of store
- 	buffering, which forms the core of Dekker's mutual-exclusion
- 	algorithm.
-@@ -123,12 +123,12 @@ SB+rfionceonce-poonceonces.litmus
- S+poonceonces.litmus
- 	As below, but without the smp_wmb() and acquire load.
- 
--S+wmbonceonce+poacquireonce.litmus
-+S+fencewmbonceonce+poacquireonce.litmus
- 	Can a smp_wmb(), instead of a release, and an acquire order
- 	a prior store against a subsequent store?
- 
- WRC+poonceonces+Once.litmus
--WRC+pooncerelease+rmbonceonce+Once.litmus
-+WRC+pooncerelease+fencermbonceonce+Once.litmus
- 	These two are members of an extension of the MP litmus-test
- 	class in which the first write is moved to a separate process.
- 	The second is forbidden because smp_store_release() is
-@@ -143,7 +143,7 @@ Z6.0+pooncelock+poonceLock+pombonce.litmus
- 	As above, but with smp_mb__after_spinlock() immediately
- 	following the spin_lock().
- 
--Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-+Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
- 	Is the ordering provided by a release-acquire chain sufficient
- 	to make ordering apparent to accesses by a process that does
- 	not participate in that release-acquire chain?
-diff --git a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
-similarity index 90%
-rename from tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-rename to tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
-index c53350205d28..18479823cd6c 100644
---- a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-+++ b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
-@@ -1,4 +1,4 @@
--C S+wmbonceonce+poacquireonce
-+C S+fencewmbonceonce+poacquireonce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-rename to tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
-index 74b874ffa8da..ed5fff18d223 100644
---- a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
-@@ -1,4 +1,4 @@
--C SB+mbonceonces
-+C SB+fencembonceonces
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
-similarity index 93%
-rename from tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-rename to tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
-index ad3448b941e6..e9947250d7de 100644
---- a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-+++ b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
-@@ -1,4 +1,4 @@
--C WRC+pooncerelease+rmbonceonce+Once
-+C WRC+pooncerelease+fencermbonceonce+Once
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
-similarity index 94%
-rename from tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-rename to tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
-index a20fc3fafb53..88e70b87a683 100644
---- a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
-@@ -1,4 +1,4 @@
--C Z6.0+pooncerelease+poacquirerelease+mbonceonce
-+C Z6.0+pooncerelease+poacquirerelease+fencembonceonce
- 
- (*
-  * Result: Sometimes
 -- 
 2.17.1
 
