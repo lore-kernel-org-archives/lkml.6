@@ -2,196 +2,92 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89401ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACA9ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437A3208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:02:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437A3208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E401E208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 11:02:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E401E208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729811AbeGPL3G (ORCPT
+        id S1729881AbeGPL3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 07:29:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42396 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727712AbeGPL3G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 07:29:06 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 08C16C18;
-        Mon, 16 Jul 2018 11:02:10 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 13:02:08 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        kernel@collabora.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, kernel-build-reports@lists.linaro.org
-Subject: Re: mainline/master boot: 177 boots: 2 failed, 174 passed with 1
- conflict (v4.18-rc4-160-gf353078f028f)
-Message-ID: <20180716110208.GA25227@kroah.com>
-References: <5b4a9633.1c69fb81.17984.f7b3@mx.google.com>
- <0ab16066-5498-374b-5391-3dd7979044aa@collabora.com>
- <20180716105451.GA20734@sirena.org.uk>
+        Mon, 16 Jul 2018 07:29:07 -0400
+Received: from asrmicro.com ([210.13.118.86]:24521 "EHLO mail2012.asrmicro.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727775AbeGPL3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 07:29:07 -0400
+Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
+ (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 16 Jul
+ 2018 19:01:34 +0800
+Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
+ mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
+ 15.00.0847.030; Mon, 16 Jul 2018 19:01:34 +0800
+From:   =?utf-8?B?RmFuZyBIb25namllKOaWuea0quadsCk=?= 
+        <hongjiefang@asrmicro.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Jin Qian <jinqian@google.com>, Chanho Min <chanho.min@lge.com>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V2] mmc: core: improve reasonableness of bus width
+ setting for HS400es
+Thread-Topic: [PATCH V2] mmc: core: improve reasonableness of bus width
+ setting for HS400es
+Thread-Index: AQHUGMNhtrBnhjWARU2PBNkn39YK8aSRIzQAgACSntA=
+Date:   Mon, 16 Jul 2018 11:01:33 +0000
+Message-ID: <d3ffea436c92408098e5e85fb0dd4cd8@mail2012.asrmicro.com>
+References: <1531278049-22213-1-git-send-email-hongjiefang@asrmicro.com>
+ <CAPDyKFpv_zedwgDRmHTUadaDYb-xBQLFRV0sAk116YbjOhY+GA@mail.gmail.com>
+In-Reply-To: <CAPDyKFpv_zedwgDRmHTUadaDYb-xBQLFRV0sAk116YbjOhY+GA@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.1.170.195]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716105451.GA20734@sirena.org.uk>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 11:54:51AM +0100, Mark Brown wrote:
-> On Mon, Jul 16, 2018 at 11:40:06AM +0100, Guillaume Tucker wrote:
-> > On 15/07/18 01:32, kernelci.org bot wrote:
-> > > mainline/master boot: 177 boots: 2 failed, 174 passed with 1 conflict (v4.18-rc4-160-gf353078f028f)
-> > > 
-> > > Full Boot Summary: https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
-> > > Full Build Summary: https://kernelci.org/build/mainline/branch/master/kernel/v4.18-rc4-160-gf353078f028f/
-> > > 
-> > > Tree: mainline
-> > > Branch: master
-> > > Git Describe: v4.18-rc4-160-gf353078f028f
-> > > Git Commit: f353078f028fbfe9acd4b747b4a19c69ef6846cd
-> > > Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> > > Tested: 67 unique boards, 25 SoC families, 21 builds out of 199
-> > > 
-> > > Boot Regressions Detected:
-> > [...]
-> > > x86:
-> > > 
-> > >      i386_defconfig:
-> > >          x86-celeron:
-> > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
-> > >          x86-pentium4:
-> > >              lab-mhart: new failure (last pass: v4.18-rc4-147-g2db39a2f491a)
-> > 
-> > Please see below an automated bisection report for this
-> > regression.  Several bisections were run on other x86 platforms
-> > with i386_defconfig on a few revisions up to v4.18-rc5, they all
-> > reached the same "bad" commit.
-> > 
-> > 
-> > Unfortunately there isn't much to learn from the kernelci.org
-> > boot logs as the kernel seems to crash very early on:
-> > 
-> >     https://kernelci.org/boot/all/job/mainline/branch/master/kernel/v4.18-rc5/
-> >     https://storage.kernelci.org/mainline/master/v4.18-rc4-160-gf353078f028f/x86/i386_defconfig/lab-mhart/lava-x86-celeron.html
-> > 
-> > 
-> > It looks like stable-rc/linux-4.17.y is also broken with
-> > i386_defconfig, which tends to confirm the "bad" commit found by
-> > the automated bisection which was applied there as well:
-> > 
-> >     https://kernelci.org/boot/all/job/stable-rc/branch/linux-4.17.y/kernel/v4.17.6-68-gbc0bd9e05fa1/
-> 
-> Adding Greg directly to the CCs due to the stable impact, not deleting
-> context for his benefit.
-
-Hey, I read all stable emails, who else would?  :)
-
-> > The automated bisection on kernelci.org is still quite new, so
-> > please take the results with a pinch of salt as the "bad" commit
-> > found may not be the actual root cause of the boot failure.
-> > 
-> > Hope this helps!
-> > 
-> > Best wishes,
-> > Guillaume
-> > 
-> > 
-> > --------------------------------------8<--------------------------------------
-> > 
-> > 
-> > 
-> > Bisection result for mainline/master (v4.18-rc4-160-gf353078f028f) on x86-celeron
-> > 
-> >   Good:       2db39a2f491a Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux
-> >   Bad:        f353078f028f Merge branch 'akpm' (patches from Andrew)
-> >   Found:      e181ae0c5db9 mm: zero unavailable pages before memmap init
-> > 
-> > Checks:
-> >   revert:     PASS
-> >   verify:     PASS
-> > 
-> > Parameters:
-> >   Tree:       mainline
-> >   URL:        http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> >   Branch:     master
-> >   Target:     x86-celeron
-> >   Lab:        lab-mhart
-> >   Config:     i386_defconfig
-> >   Plan:       boot
-> > 
-> > Breaking commit found:
-> > 
-> > -------------------------------------------------------------------------------
-> > commit e181ae0c5db9544de9c53239eb22bc012ce75033
-> > Author: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > Date:   Sat Jul 14 09:15:07 2018 -0400
-> > 
-> >     mm: zero unavailable pages before memmap init
-> >     We must zero struct pages for memory that is not backed by physical
-> >     memory, or kernel does not have access to.
-> >     Recently, there was a change which zeroed all memmap for all holes in
-> >     e820.  Unfortunately, it introduced a bug that is discussed here:
-> >       https://www.spinics.net/lists/linux-mm/msg156764.html
-> >     Linus, also saw this bug on his machine, and confirmed that reverting
-> >     commit 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into
-> >     memblock.reserved") fixes the issue.
-> >     The problem is that we incorrectly zero some struct pages after they
-> >     were setup.
-> >     The fix is to zero unavailable struct pages prior to initializing of
-> >     struct pages.
-> >     A more detailed fix should come later that would avoid double zeroing
-> >     cases: one in __init_single_page(), the other one in
-> >     zero_resv_unavail().
-> >     Fixes: 124049decbb1 ("x86/e820: put !E820_TYPE_RAM regions into memblock.reserved")
-> >     Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> >     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > 
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 1521100f1e63..5d800d61ddb7 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -6847,6 +6847,7 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
-> >  	/* Initialise every node */
-> >  	mminit_verify_pageflags_layout();
-> >  	setup_nr_node_ids();
-> > +	zero_resv_unavail();
-> >  	for_each_online_node(nid) {
-> >  		pg_data_t *pgdat = NODE_DATA(nid);
-> >  		free_area_init_node(nid, NULL,
-> > @@ -6857,7 +6858,6 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
-> >  			node_set_state(nid, N_MEMORY);
-> >  		check_for_memory(pgdat, nid);
-> >  	}
-> > -	zero_resv_unavail();
-> >  }
-> >  static int __init cmdline_parse_core(char *p, unsigned long *core,
-> > @@ -7033,9 +7033,9 @@ void __init set_dma_reserve(unsigned long new_dma_reserve)
-> >  void __init free_area_init(unsigned long *zones_size)
-> >  {
-> > +	zero_resv_unavail();
-> >  	free_area_init_node(0, zones_size,
-> >  			__pa(PAGE_OFFSET) >> PAGE_SHIFT, NULL);
-> > -	zero_resv_unavail();
-> >  }
-> >  static int page_alloc_cpu_dead(unsigned int cpu)
-> > -------------------------------------------------------------------------------
-
-So this patch breaks i386, ick.  I'll wait for the fix to hit Linus's
-tree as that's a bit more important to have the large majority of the
-x86-64 boxes fixed with this patch for now.
-
-thanks,
-
-greg k-h
+PiBPbiAxMSBKdWx5IDIwMTggYXQgMDU6MDAsIEhvbmdqaWUgRmFuZyA8aG9uZ2ppZWZhbmdAYXNy
+bWljcm8uY29tPiB3cm90ZToNCj4gPiBtbWNfc2VsZWN0X2hzNDAwZXMoKSBjYWxscyBtbWNfc2Vs
+ZWN0X2J1c193aWR0aCgpIHdoaWNoIHdpbGwgY29udGludWUNCj4gPiB0byBzZXQgNGJpdCB0cmFu
+c2ZlciBtb2RlIGlmIGZhaWwgdG8gc2V0IDhiaXQgbW9kZS4gVGhlIGJ1cyB3aWR0aA0KPiA+IHNo
+b3VsZCBub3QgYmUgc2V0IHRvIDRiaXQgaW4gSFM0MDBlcy4NCj4gPg0KPiA+IFdoZW4gZmFpbCB0
+byBzZXQgOGJpdCBtb2RlLCBuZWVkIHJldHVybiBlcnJvciBkaXJlY3RseSBmb3IgSFM0MDBlcy4N
+Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEhvbmdqaWUgRmFuZyA8aG9uZ2ppZWZhbmdAYXNybWlj
+cm8uY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL21tYy9jb3JlL21tYy5jIHwgNSArKysrLQ0K
+PiA+ICAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4N
+Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tbWMvY29yZS9tbWMuYyBiL2RyaXZlcnMvbW1jL2Nv
+cmUvbW1jLmMNCj4gPiBpbmRleCA0NDY2ZjVkLi40YmQ2YzA5IDEwMDY0NA0KPiA+IC0tLSBhL2Ry
+aXZlcnMvbW1jL2NvcmUvbW1jLmMNCj4gPiArKysgYi9kcml2ZXJzL21tYy9jb3JlL21tYy5jDQo+
+ID4gQEAgLTEwMjEsOCArMTAyMSwxMSBAQCBzdGF0aWMgaW50IG1tY19zZWxlY3RfYnVzX3dpZHRo
+KHN0cnVjdCBtbWNfY2FyZCAqY2FyZCkNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBFWFRfQ1NEX0JVU19XSURUSCwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBleHRfY3NkX2JpdHNbaWR4XSwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICBjYXJkLT5leHRfY3NkLmdlbmVyaWNfY21kNl90aW1lKTsNCj4gPiAtICAgICAgICAgICAg
+ICAgaWYgKGVycikNCj4gPiArICAgICAgICAgICAgICAgaWYgKGVycikgew0KPiA+ICsgICAgICAg
+ICAgICAgICAgICAgICAgIGlmIChjYXJkLT5tbWNfYXZhaWxfdHlwZSAmIEVYVF9DU0RfQ0FSRF9U
+WVBFX0hTNDAwRVMpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4g
+ZXJyOw0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOw0KPiA+ICsgICAgICAg
+ICAgICAgICB9DQo+IA0KPiBJIHdvdWxkIHJhdGhlciBsZXQgbW1jX3NlbGVjdF9oczQwMGVzKCkg
+Y2hlY2sgdGhlIHJldHVybiBjb2RlIGZyb20NCj4gbW1jX3NlbGVjdF9idXNfd2lkdGgoKS4NCj4g
+DQo+IFNvLCBpZiB0aGUgcmV0dXJuIGNvZGUgaXNuJ3QgTU1DX0JVU19XSURUSF84LCBtbWNfc2Vs
+ZWN0X2hzNDAwZXMoKQ0KPiBzaG91bGQgYmFpbCBvdXQuDQoNClllYWgsIGl0IGlzIGJldHRlciB0
+aGF0IGxldCBtbWNfc2VsZWN0X2hzNDAwZXMoKSBjaGVjayB0aGUgcmV0dXJuIHZhbHVlLg0KSSB3
+aWxsIHVwZGF0ZSB0aGUgcGF0Y2guDQoNCj4gDQo+IFsuLi5dDQo+IA0KPiBLaW5kIHJlZ2FyZHMN
+Cj4gVWZmZQ0KDQoNCkImUg0KSG9uZ2ppZQ0K
