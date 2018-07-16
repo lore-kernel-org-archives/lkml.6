@@ -7,92 +7,202 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82B9ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7123EECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8207F208EC
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:05:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 219F6208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:05:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y70OBVTV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8207F208EC
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbJBrHmR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219F6208E8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbeGPTeK (ORCPT
+        id S1730638AbeGPTeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 15:34:10 -0400
-Received: from mail-ed1-f42.google.com ([209.85.208.42]:45089 "EHLO
-        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728787AbeGPTeK (ORCPT
+        Mon, 16 Jul 2018 15:34:13 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33002 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728787AbeGPTeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 15:34:10 -0400
-Received: by mail-ed1-f42.google.com with SMTP id i20-v6so17740258eds.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 12:05:24 -0700 (PDT)
+        Mon, 16 Jul 2018 15:34:12 -0400
+Received: by mail-ed1-f66.google.com with SMTP id x5-v6so27092523edr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 12:05:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0v3l1kNCatU6AGmaOr95xAIrHZ0QRpqReY2/nqJA/q0=;
-        b=Y70OBVTVMgQgAlhxBadgyAe/xHLQkEUNejB52sC7w9/lkYjeuLiwWbJUXXS83W0TaI
-         eSdzv1eO+8ZR2VAjL+dGEfo6qxckjH71vUiNtsFlZ+zixF+lbphsSKvGsTnzdU3uSXyG
-         JyxdRNx9cxY0SRFpPHYnxXpjPD4NRKa95npCz/iW83D30YMkhiK35knOuoVL22K31e1c
-         rd3xeOD8qLC1U/Le053L8He//znA7+P7wjlOMUs7Ilyb347qYUKCV3X6L92ftZDrDLwP
-         Pn3c6PCj3wmCwTnBF+MTMof1UtC1/Nm0RX2nroBYHThWpFyO6pNPQRRjg4knkWkmsEEj
-         2iJA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=k4eb4Jb3WykGakdORN21CNONfIk85/BHh/e+DE1bS5U=;
+        b=FbJBrHmR7MS42n0pWqjW1962piwgyIH6qFYnKPFtPo8Ic7RQpIDQGkeS9wjOHAvpp0
+         zcsrncAYggmVTrPEJoJoGCiW4l2LB+iAnTAT5x9K6zsEgMrgStu3qnpPVgaJcEPXpOcL
+         eCK13YJjcJq3ETHFkeus+IZuEXXwxlCiswvsw/Sej+fu6kWnLmkYqGsV4AlHxrsomx+7
+         xYnwoPFfum1RYLKsa7KsxDpi/00C6r/l/zmZ3/nj5fFu0f3YcQMiOY9opVC8xCB/AOiQ
+         9tNdg78PBRj8dD1jc5uydKkdHwOrdteC8kQIdFL8pnPVNwvkAxZNOKPRBkfIzYsSNKiK
+         MIcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0v3l1kNCatU6AGmaOr95xAIrHZ0QRpqReY2/nqJA/q0=;
-        b=pliTh9msK/upI/Hrxz3nKWv4Nm79XTB1Tlkjo87wsobk5q5az8T2cWc7CME6xhUONC
-         sMwOaCsSsX3ZpDK6UG82vkiAnb+p9hMsAssitEMEb60JrRxQ0e6Y8/WjgTJAl9bQOdjS
-         nu+4jJHMKOOWWT2oWd7qk04H5Zk4fIBec+Qd1O9nrzXPY89bbkiaNrfYvg6vBDHVcYI/
-         7fW77ipeWUbpsaoOc3NVlZb47+WlGI1NbZX8w6K21kuVL7Tm+GH7gBFBY/oarUyDk/RP
-         PL4XT0t1lwqQjnSz9aevKDWxdYAPv5h2ERFjvUfKxvUzZyhE8R1Jp5yVnlTONwfO1lnZ
-         BIQg==
-X-Gm-Message-State: AOUpUlH2NpMMCyg7lKYo5+LLXsi5h5Cq4TsAR6DsiZyz3j7ZAdQs/pa5
-        Pxj97Z/E+Rk3q5FgZEMzZXfGgQ==
-X-Google-Smtp-Source: AAOMgpcRW14+CG7T/KD5OYdmVxYVTnc2tnXGDIB7AfpsRdsi3s7f8hP+J4leiS0b6SDTFLYaIIkb+w==
-X-Received: by 2002:a50:b807:: with SMTP id j7-v6mr18309228ede.206.1531767923252;
-        Mon, 16 Jul 2018 12:05:23 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=k4eb4Jb3WykGakdORN21CNONfIk85/BHh/e+DE1bS5U=;
+        b=c3k1JHevW/mso8XaAtyJyrS0W4OhnnhGoW99f/7LSsZx6Y5xWkpGt68BWMaHfqwXWz
+         nOAufcCBlU4DCPekN5sAhUV4uQeW0y0NVjMZsQ4ldOdPAt+V5QOV7RjqhdDWN+UCl+qn
+         uS7/KG3YxBb+TeeeKHj9K3wZCJ6yp+Bva6v+pFnpwbk7tcRsyYGm056q1LwpwwxQb3SH
+         qOYfjjr5hBoqSM997Sef3acAHtX1ZnTbDsOXZUVVodr7D2rh8/70IOHkJ6wfCLfLNkNs
+         2EMnpb9h/NMz9OmmZ070VleyhX4GCAaSaCGg5D/TLcWnZdSz0Gb8M1mZbbnisaKlbA7C
+         2ySg==
+X-Gm-Message-State: AOUpUlE+F3phgoW2pRAb/oHWhvKnpJFrEtJX/vZucgxKA5hk9jXP4OqJ
+        gG7jiFR3RGHONPu2FjNil6Kmkg==
+X-Google-Smtp-Source: AAOMgpcrvbXo4Z5Ga3ihegjx3PSfis5Mby9XyCrXKQoj/QC4g6j+Rm+fIEMKmn2T1RqelQmOLRDxdw==
+X-Received: by 2002:aa7:d6c6:: with SMTP id x6-v6mr19059176edr.148.1531767924897;
+        Mon, 16 Jul 2018 12:05:24 -0700 (PDT)
 Received: from localhost.localdomain ([109.77.251.220])
-        by smtp.gmail.com with ESMTPSA id g14-v6sm19098643edm.25.2018.07.16.12.05.21
+        by smtp.gmail.com with ESMTPSA id g14-v6sm19098643edm.25.2018.07.16.12.05.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 12:05:22 -0700 (PDT)
+        Mon, 16 Jul 2018 12:05:24 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH v2 00/10] staging:rtl8192u: Coding style changes.
-Date:   Mon, 16 Jul 2018 20:04:44 +0100
-Message-Id: <20180716190454.31489-1-johnfwhitmore@gmail.com>
+Subject: [PATCH v2 01/10] staging:rtl8192u: remove typedef of enumeration TR_SELECT - Style
+Date:   Mon, 16 Jul 2018 20:04:45 +0100
+Message-Id: <20180716190454.31489-2-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180716190454.31489-1-johnfwhitmore@gmail.com>
+References: <20180716190454.31489-1-johnfwhitmore@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Simple coding style changes to avoid CamelCase.
+To clear a checkpatch issue removed the typedef of the enumeration TR_SELECT
+this should not impact runtime code as it's only a coding style change.
 
-John Whitmore (10):
-  staging:rtl8192u: remove typedef of enumeration TR_SELECT - Style
-  staging:rtl8192u: remove typedef of struct TS_COMMON_INFO - Style
-  staging:rtl8192u: Rename List > list - Coding style
-  staging:rtl8192u: rename SetupTimer > setup_timer - Style
-  staging:rtl8192u: Rename InactTimer > inact_timer - Style
-  staging:rtl8192u: Rename Addr > addr - Style
-  staging:rtl8192u: Rename TSpec > t_spec - Style
-  staging:rtl8192u: Rename TClass > t_class - Style
-  staging:trl8192u: Rename TClasProc > t_clas_proc - Style
-  staging:rtl8192u: Rename TClasNum > t_clas_num - Style
+Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
+---
+ drivers/staging/rtl8192u/ieee80211/ieee80211.h      |  4 ++--
+ drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c | 10 +++++-----
+ drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h     |  4 ++--
+ drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c |  6 +++---
+ 4 files changed, 12 insertions(+), 12 deletions(-)
 
- .../staging/rtl8192u/ieee80211/ieee80211.h    |   6 +-
- .../staging/rtl8192u/ieee80211/ieee80211_rx.c |   4 +-
- .../staging/rtl8192u/ieee80211/ieee80211_tx.c |   4 +-
- .../rtl8192u/ieee80211/rtl819x_BAProc.c       |  30 ++--
- .../staging/rtl8192u/ieee80211/rtl819x_TS.h   |  28 ++--
- .../rtl8192u/ieee80211/rtl819x_TSProc.c       | 142 +++++++++---------
- 6 files changed, 107 insertions(+), 107 deletions(-)
-
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211.h b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+index 3b7968681f77..e65c9967b627 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211.h
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211.h
+@@ -2391,7 +2391,7 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb);
+ void TsInitAddBA(struct ieee80211_device *ieee, PTX_TS_RECORD pTS,
+ 		 u8 Policy, u8 bOverwritePending);
+ void TsInitDelBA(struct ieee80211_device *ieee,
+-		 PTS_COMMON_INFO pTsCommonInfo, TR_SELECT TxRxSelect);
++		 PTS_COMMON_INFO pTsCommonInfo, enum tr_select TxRxSelect);
+ void BaSetupTimeOut(struct timer_list *t);
+ void TxBaInactTimeout(struct timer_list *t);
+ void RxBaInactTimeout(struct timer_list *t);
+@@ -2402,7 +2402,7 @@ bool GetTs(
+ 	PTS_COMMON_INFO                 *ppTS,
+ 	u8                              *Addr,
+ 	u8                              TID,
+-	TR_SELECT                       TxRxSelect,  //Rx:1, Tx:0
++	enum tr_select                  TxRxSelect,  //Rx:1, Tx:0
+ 	bool                            bAddNewTs
+ 	);
+ void TSInitialize(struct ieee80211_device *ieee);
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
+index 2dc4d0e93948..04779da803e4 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
+@@ -174,7 +174,7 @@ static struct sk_buff *ieee80211_ADDBA(struct ieee80211_device *ieee, u8 *Dst, P
+  *function:  construct DELBA frame
+  *   input:  u8*		dst	//DELBA frame's destination
+  *	     PBA_RECORD		pBA	//BA_RECORD entry which stores the necessary information for BA
+- *	     TR_SELECT	        TxRxSelect  //TX RX direction
++ *	     enum tr_select	TxRxSelect  //TX RX direction
+  *	     u16		ReasonCode  //status code.
+  *  output:  none
+  *  return:  sk_buff*		skb     //return constructed skb to xmit
+@@ -183,7 +183,7 @@ static struct sk_buff *ieee80211_DELBA(
+ 	struct ieee80211_device  *ieee,
+ 	u8		         *dst,
+ 	PBA_RECORD		 pBA,
+-	TR_SELECT		 TxRxSelect,
++	enum tr_select		 TxRxSelect,
+ 	u16			 ReasonCode
+ 	)
+ {
+@@ -290,14 +290,14 @@ static void ieee80211_send_ADDBARsp(struct ieee80211_device *ieee, u8 *dst,
+  *function: send ADDBARSP frame out
+  *   input:  u8*		dst	//DELBA frame's destination
+  *	     PBA_RECORD		pBA	//BA_RECORD entry which stores the necessary information for BA
+- *	     TR_SELECT          TxRxSelect //TX or RX
++ *	     enum tr_select     TxRxSelect //TX or RX
+  *	     u16		ReasonCode //DEL ReasonCode
+  *  output:  none
+  *  notice: If any possible, please hide pBA in ieee. And temporarily use Manage Queue as softmac_mgmt_xmit() usually does
+  ********************************************************************************************************************/
+ 
+ static void ieee80211_send_DELBA(struct ieee80211_device *ieee, u8 *dst,
+-				 PBA_RECORD pBA, TR_SELECT TxRxSelect,
++				 PBA_RECORD pBA, enum tr_select TxRxSelect,
+ 				 u16 ReasonCode)
+ {
+ 	struct sk_buff *skb;
+@@ -638,7 +638,7 @@ TsInitAddBA(
+ }
+ 
+ void
+-TsInitDelBA(struct ieee80211_device *ieee, PTS_COMMON_INFO pTsCommonInfo, TR_SELECT TxRxSelect)
++TsInitDelBA(struct ieee80211_device *ieee, PTS_COMMON_INFO pTsCommonInfo, enum tr_select TxRxSelect)
+ {
+ 	if (TxRxSelect == TX_DIR) {
+ 		PTX_TS_RECORD	pTxTs = (PTX_TS_RECORD)pTsCommonInfo;
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
+index 3a0ff08c687a..c6a5ac1e647c 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
+@@ -10,10 +10,10 @@
+ #define TCLAS_NUM		4
+ 
+ /*  This define the Tx/Rx directions */
+-typedef enum _TR_SELECT {
++enum tr_select {
+ 	TX_DIR = 0,
+ 	RX_DIR = 1,
+-} TR_SELECT, *PTR_SELECT;
++};
+ 
+ typedef struct _TS_COMMON_INFO {
+ 	struct list_head		List;
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
+index e60a26250682..d6ba9201028f 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
+@@ -204,7 +204,7 @@ static void AdmitTS(struct ieee80211_device *ieee,
+ 
+ static PTS_COMMON_INFO SearchAdmitTRStream(struct ieee80211_device *ieee,
+ 					   u8 *Addr, u8 TID,
+-					   TR_SELECT TxRxSelect)
++					   enum tr_select TxRxSelect)
+ {
+ 	//DIRECTION_VALUE	dir;
+ 	u8	dir;
+@@ -291,7 +291,7 @@ bool GetTs(
+ 	PTS_COMMON_INFO			*ppTS,
+ 	u8				*Addr,
+ 	u8				TID,
+-	TR_SELECT			TxRxSelect,  //Rx:1, Tx:0
++	enum tr_select			TxRxSelect,  //Rx:1, Tx:0
+ 	bool				bAddNewTs
+ 	)
+ {
+@@ -408,7 +408,7 @@ bool GetTs(
+ }
+ 
+ static void RemoveTsEntry(struct ieee80211_device *ieee, PTS_COMMON_INFO pTs,
+-			  TR_SELECT TxRxSelect)
++			  enum tr_select TxRxSelect)
+ {
+ 	//u32 flags = 0;
+ 	unsigned long flags = 0;
 -- 
 2.18.0
 
