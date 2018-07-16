@@ -6,42 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4784ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2121ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9816320864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9816320864
+	by mail.kernel.org (Postfix) with ESMTP id 7826220693
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7826220693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbeGPIEb (ORCPT
+        id S1732909AbeGPIEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46918 "EHLO
+        Mon, 16 Jul 2018 04:04:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46930 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732677AbeGPIEa (ORCPT
+        with ESMTP id S1732677AbeGPIEd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:30 -0400
+        Mon, 16 Jul 2018 04:04:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96920CA1;
-        Mon, 16 Jul 2018 07:38:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C02EEC03;
+        Mon, 16 Jul 2018 07:38:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Thomas Lindroth <thomas.lindroth@gmail.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 35/67] mm: do not drop unused pages when userfaultd is running
-Date:   Mon, 16 Jul 2018 09:35:04 +0200
-Message-Id: <20180716073448.643250194@linuxfoundation.org>
+Subject: [PATCH 4.17 36/67] fs/proc/task_mmu.c: fix Locked field in /proc/pid/smaps*
+Date:   Mon, 16 Jul 2018 09:35:05 +0200
+Message-Id: <20180716073448.807781923@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -58,68 +54,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit bce73e4842390f7b7309c8e253e139db71288ac3 upstream.
+commit e70cc2bd579e8a9d6d153762f0fe294d0e652ff0 upstream.
 
-KVM guests on s390 can notify the host of unused pages.  This can result
-in pte_unused callbacks to be true for KVM guest memory.
+Thomas reports:
+ "While looking around in /proc on my v4.14.52 system I noticed that all
+  processes got a lot of "Locked" memory in /proc/*/smaps. A lot more
+  memory than a regular user can usually lock with mlock().
 
-If a page is unused (checked with pte_unused) we might drop this page
-instead of paging it.  This can have side-effects on userfaultd, when
-the page in question was already migrated:
+  Commit 493b0e9d945f (in v4.14-rc1) seems to have changed the behavior
+  of "Locked".
 
-The next access of that page will trigger a fault and a user fault
-instead of faulting in a new and empty zero page.  As QEMU does not
-expect a userfault on an already migrated page this migration will fail.
+  Before that commit the code was like this. Notice the VM_LOCKED check.
 
-The most straightforward solution is to ignore the pte_unused hint if a
-userfault context is active for this VMA.
+           (vma->vm_flags & VM_LOCKED) ?
+                (unsigned long)(mss.pss >> (10 + PSS_SHIFT)) : 0);
 
-Link: http://lkml.kernel.org/r/20180703171854.63981-1-borntraeger@de.ibm.com
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Janosch Frank <frankja@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Cornelia Huck <cohuck@redhat.com>
+  After that commit Locked is now the same as Pss:
+
+	  (unsigned long)(mss->pss >> (10 + PSS_SHIFT)));
+
+  This looks like a mistake."
+
+Indeed, the commit has added mss->pss_locked with the correct value that
+depends on VM_LOCKED, but forgot to actually use it.  Fix it.
+
+Link: http://lkml.kernel.org/r/ebf6c7fb-fec3-6a26-544f-710ed193c154@suse.cz
+Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Reported-by: Thomas Lindroth <thomas.lindroth@gmail.com>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Daniel Colascione <dancol@google.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/rmap.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/proc/task_mmu.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -64,6 +64,7 @@
- #include <linux/backing-dev.h>
- #include <linux/page_idle.h>
- #include <linux/memremap.h>
-+#include <linux/userfaultfd_k.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -1481,11 +1482,16 @@ static bool try_to_unmap_one(struct page
- 				set_pte_at(mm, address, pvmw.pte, pteval);
- 			}
- 
--		} else if (pte_unused(pteval)) {
-+		} else if (pte_unused(pteval) && !userfaultfd_armed(vma)) {
- 			/*
- 			 * The guest indicated that the page content is of no
- 			 * interest anymore. Simply discard the pte, vmscan
- 			 * will take care of the rest.
-+			 * A future reference will then fault in a new zero
-+			 * page. When userfaultfd is active, we must not drop
-+			 * this page though, as its main user (postcopy
-+			 * migration) will not expect userfaults on already
-+			 * copied pages.
- 			 */
- 			dec_mm_counter(mm, mm_counter(page));
- 			/* We have to invalidate as we cleared the pte */
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -831,7 +831,8 @@ static int show_smap(struct seq_file *m,
+ 		SEQ_PUT_DEC(" kB\nSwap:           ", mss->swap);
+ 		SEQ_PUT_DEC(" kB\nSwapPss:        ",
+ 						mss->swap_pss >> PSS_SHIFT);
+-		SEQ_PUT_DEC(" kB\nLocked:         ", mss->pss >> PSS_SHIFT);
++		SEQ_PUT_DEC(" kB\nLocked:         ",
++						mss->pss_locked >> PSS_SHIFT);
+ 		seq_puts(m, " kB\n");
+ 	}
+ 	if (!rollup_mode) {
 
 
