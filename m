@@ -2,160 +2,132 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4E8ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6ECECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D79320779
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D79320779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F55F20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N/j4ZUKw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F55F20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbeGPI4D (ORCPT
+        id S1731551AbeGPI4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:56:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:54386 "EHLO foss.arm.com"
+        Mon, 16 Jul 2018 04:56:06 -0400
+Received: from ozlabs.org ([203.11.71.1]:39947 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731402AbeGPI4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:56:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FD1815A1;
-        Mon, 16 Jul 2018 01:29:47 -0700 (PDT)
-Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.210.68])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 837DB3F5A0;
-        Mon, 16 Jul 2018 01:29:44 -0700 (PDT)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v2 06/12] sched/cpufreq: uclamp: add utilization clamping for RT tasks
-Date:   Mon, 16 Jul 2018 09:29:00 +0100
-Message-Id: <20180716082906.6061-7-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180716082906.6061-1-patrick.bellasi@arm.com>
-References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+        id S1730828AbeGPI4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:56:04 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Tc6147TGz9rvt;
+        Mon, 16 Jul 2018 18:29:45 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531729786;
+        bh=GVJ+ssWzQ6Xh+MBla7fdLVY+H0CuoyWsuRoi5fYCSIo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=N/j4ZUKwVWjKQwBEILLXmGbJzWBFDJmBcteS4J8L1fYYSUgn/vk46XseJDyZ7gjhq
+         SlXtCphj70uMYC7Bc4dlPLNFqLDQAprMj9cuchKyX0Frtn2FQa+cuQY8aszC9TjcBe
+         hIzTslmCcz5AYhkgkaMnYGgYUChQI3cYly3BBtqz8zGGE/TmBUyhV1aWm+iiSFpKY9
+         69+l5RCwudUh8LWFtZRz1AFqQNu6x6kMY8Vs+t2xZtCFSNsUvaM7TbC/hS4JBLp1PL
+         PhJrGAfG16uUVaKmB0//TId+ZxJXsPVXrsYa5+rf92xNj8Z/tIf90adGuydVsgP/iq
+         vEeqzW1VMl8yA==
+Date:   Mon, 16 Jul 2018 18:29:44 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl
+ tree
+Message-ID: <20180716182944.593cca3c@canb.auug.org.au>
+In-Reply-To: <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+References: <20180716081018.21bfe495@canb.auug.org.au>
+        <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kLgnjxYTczi979.lb9L=53H"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently schedutil enforces a maximum frequency when RT tasks are
-RUNNABLE.  Such a mandatory policy can be made more tunable from
-userspace thus allowing for example to define a max frequency which is
-still reasonable for the execution of a specific RT workload. This
-will contribute to make the RT class more friendly for power/energy
-sensitive use-cases.
+--Sig_/kLgnjxYTczi979.lb9L=53H
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch extends the usage of util_{min,max} to the RT scheduling
-class.  Whenever a task in this class is RUNNABLE, the util required is
-defined by the constraints of the CPU control group the task belongs to.
+Hi Linus,
 
-The IO wait boost value is thus subject to clamping for RT tasks too.
-This is to ensure that RT tasks as well as CFS ones are always subject
-to the set of current utilization clamping constraints.
-It's worth to notice that, by default, clamp values are
-    min_util, max_util = (0, SCHED_CAPACITY_SCALE)
-and thus, RT tasks always run at the maximum OPP if not otherwise
-constrained by userspace.
+On Mon, 16 Jul 2018 09:52:44 +0200 Linus Walleij <linus.walleij@linaro.org>=
+ wrote:
+>
+> On Mon, Jul 16, 2018 at 12:10 AM Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> > Commits
+> >
+> >   bc319333c156 ("pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and=
+ functions")
+> >   99500c6a4836 ("pinctrl: sh-pfc: r8a77990: Revise USB ID pin name")
+> >   3d3c62d3458a ("pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and=
+ functions")
+> >   1e0f13198edf ("pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and=
+ functions")
+> >
+> > are missing a Signed-off-by from their committer. =20
+>=20
+> I am looking at this and I just feel confused. Top to bottom:
+>=20
+  ...
+>=20
+> This is very confusing, it looks correct to me.
+>=20
+> As usual it must be some minor syntactic thing like a character missing or
+> something, I am just soo.... what's wrong here, really?
 
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
----
- kernel/sched/cpufreq_schedutil.c | 42 +++++++++++++++++++-------------
- 1 file changed, 25 insertions(+), 17 deletions(-)
+In the tree I fetched this morning, those commits are all committed by
+you, but you did not add a Signed-off-by to then.  This usually happens
+when you rebase a branch/tree.
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 70aea6ec3c08..b05a63055e70 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -188,27 +188,35 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
- 	sg_cpu->util_dl  = cpu_util_dl(rq);
- }
- 
-+/**
-+ * sugov_aggregate_util() - Aggregate scheduling classes requests.
-+ * @sg_cpu: the sugov data for the CPU to get utilization from
-+ *
-+ * Utilization required by DEADLINE must always be granted while, for
-+ * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
-+ * gracefully reduce the frequency when no tasks show up for longer
-+ * periods of time.
-+ *
-+ * Ideally we would like to set util_dl as min/guaranteed freq and
-+ * util_cfs + util_dl as requested freq. However, cpufreq is not yet
-+ * ready for such an interface. So, we only do the latter for now.
-+ *
-+ * RT and CFS utilization are clamped, according to the current CPU
-+ * constrains. They are individually clamped to ensure fairness across
-+ * classes, meaning that CFS always gets (if possible) the (minimum)
-+ * required bandwidth on top of that required by higher priority
-+ * classes.
-+ */
- static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
- {
-+	unsigned long util = sg_cpu->util_dl;
- 	struct rq *rq = cpu_rq(sg_cpu->cpu);
--	unsigned long util_cfs;
- 
- 	if (rt_rq_is_runnable(&rq->rt))
--		return sg_cpu->max;
--
--	/*
--	 * Utilization required by DEADLINE must always be granted while, for
--	 * FAIR, we use blocked utilization of IDLE CPUs as a mechanism to
--	 * gracefully reduce the frequency when no tasks show up for longer
--	 * periods of time.
--	 *
--	 * Ideally we would like to set util_dl as min/guaranteed freq and
--	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
--	 * ready for such an interface. So, we only do the latter for now.
--	 */
--	util_cfs = uclamp_util(sg_cpu->cpu, sg_cpu->util_cfs);
-+		util += uclamp_util(sg_cpu->cpu, sg_cpu->max);
-+	util += uclamp_util(sg_cpu->cpu, sg_cpu->util_cfs);
- 
--	return min(sg_cpu->max, (sg_cpu->util_dl + util_cfs));
-+	return min(sg_cpu->max, util);
- }
- 
- /**
-@@ -276,8 +284,8 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
- 	 *
- 	 * Since DL tasks have a much more advanced bandwidth control, it's
- 	 * safe to assume that IO boost does not apply to those tasks.
--	 * Instead, since for RT tasks we are already going to max, we don't
--	 * rally care about clamping the IO boost max value for them too.
-+	 * Instead, for CFS and RT tasks we clamp the IO boost max value
-+	 * considering the current constraints for the CPU.
- 	 */
- 	max_boost = sg_cpu->iowait_boost_max;
- 	max_boost = uclamp_util(sg_cpu->cpu, max_boost);
--- 
-2.17.1
+$ git show --pretty=3Dfull bc319333c156
+Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Commit: Linus Walleij <linus.walleij@linaro.org>
 
+    pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions
+   =20
+    This patch adds HSCIF{0,1,2,3,4} pins, groups and functions to
+    the R8A77965 SoC.
+   =20
+    Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+...
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/kLgnjxYTczi979.lb9L=53H
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltMV3gACgkQAVBC80lX
+0GxMWwf/YZvd4hqOAfL2UhJyun7iZGlsrpadv91AJ4UhAUAa2HSlvZxm2+tzvKIz
+8rtPPKdGAfdD7Vat+ERMnXGqopUPB/nDWS6sHgkvcYOocPbrfpD6B2bwx6vGlD/V
+E83iWksEpWSdw1DxI+CApncqY5CZl57H0rpatsgZ8Nz5Q6iGHbD7JGBddPpyiYU1
+gQtV9E8Tu/DMHyRbUbwdKzdVHWztWOgckHuMeMrcoLhFLyA1J0/OfRAujlWqubkG
+kvryf1/WdOvNbhi4VDlYhoPnAzxpLZDIANihK/lUELPVmLtf1GRtCY86Ro0sRY9o
+rjp2hE6Ao3zEAmQOG70PDMlz8HcYsw==
+=l3ht
+-----END PGP SIGNATURE-----
+
+--Sig_/kLgnjxYTczi979.lb9L=53H--
