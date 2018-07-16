@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED35ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285FDECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A47208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:47:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24A47208E9
+	by mail.kernel.org (Postfix) with ESMTP id BD795208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:47:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD795208E9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731141AbeGPJOD (ORCPT
+        id S1731213AbeGPJOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:14:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38654 "EHLO
+        Mon, 16 Jul 2018 05:14:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41052 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726552AbeGPJOD (ORCPT
+        by vger.kernel.org with ESMTP id S1726552AbeGPJOH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:14:03 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6G8hZOV019294
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:47:42 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k8jaam1sr-1
+        Mon, 16 Jul 2018 05:14:07 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6G8hc6C022726
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:47:46 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k8pm4buve-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:47:42 -0400
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 04:47:46 -0400
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 16 Jul 2018 09:47:40 +0100
+        Mon, 16 Jul 2018 09:47:43 +0100
 Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 16 Jul 2018 09:47:34 +0100
+        Mon, 16 Jul 2018 09:47:39 +0100
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6G8lXHP39583810
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6G8lcdP39125016
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Jul 2018 08:47:33 GMT
+        Mon, 16 Jul 2018 08:47:38 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0E4F4C040;
-        Mon, 16 Jul 2018 11:47:52 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 62F274C050;
+        Mon, 16 Jul 2018 11:47:57 +0100 (BST)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C571C4C04A;
-        Mon, 16 Jul 2018 11:47:49 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 426D94C046;
+        Mon, 16 Jul 2018 11:47:54 +0100 (BST)
 Received: from bangoria.in.ibm.com (unknown [9.124.31.217])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 16 Jul 2018 11:47:49 +0100 (BST)
+        Mon, 16 Jul 2018 11:47:54 +0100 (BST)
 From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 To:     srikar@linux.vnet.ibm.com, oleg@redhat.com, rostedt@goodmis.org,
         mhiramat@kernel.org
@@ -62,16 +62,16 @@ Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
         linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
         Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v6 5/6] Uprobes/sdt: Prevent multiple reference counter for same uprobe
-Date:   Mon, 16 Jul 2018 14:17:05 +0530
+Subject: [PATCH v6 6/6] perf probe: Support SDT markers having reference counter (semaphore)
+Date:   Mon, 16 Jul 2018 14:17:06 +0530
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180716084706.28244-1-ravi.bangoria@linux.ibm.com>
 References: <20180716084706.28244-1-ravi.bangoria@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18071608-0012-0000-0000-0000028A9B76
+x-cbid: 18071608-0028-0000-0000-000002DC08CF
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071608-0013-0000-0000-000020BC52BA
-Message-Id: <20180716084706.28244-6-ravi.bangoria@linux.ibm.com>
+x-cbparentid: 18071608-0029-0000-0000-00002393C4AF
+Message-Id: <20180716084706.28244-7-ravi.bangoria@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-16_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -84,131 +84,306 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We assume to have only one reference counter for one uprobe. Don't
-allow user to register multiple uprobes having same inode+offset
-but different reference counter.
+With this, perf buildid-cache will save SDT markers with reference
+counter in probe cache. Perf probe will be able to probe markers
+having reference counter. Ex,
 
-Though, existing tools which already support SDT events creates
-normal uprobe and updates reference counter on their own. Allow 0 as
-a special value for reference counter offset. I.e. two uprobes, one
-having ref_ctr_offset=0 and the other having non-zero ref_ctr_offset
-can coexists. This gives user a flexibility to either depend on
-kernel uprobe infrastructure to maintain reference counter or just
-use normal uprobe and maintain reference counter on his own.
+  # readelf -n /tmp/tick | grep -A1 loop2
+    Name: loop2
+    ... Semaphore: 0x0000000010020036
+
+  # ./perf buildid-cache --add /tmp/tick
+  # ./perf probe sdt_tick:loop2
+  # ./perf stat -e sdt_tick:loop2 /tmp/tick
+    hi: 0
+    hi: 1
+    hi: 2
+    ^C
+     Performance counter stats for '/tmp/tick':
+                 3      sdt_tick:loop2
+       2.561851452 seconds time elapsed
 
 Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Acked-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 ---
- kernel/events/uprobes.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 50 insertions(+), 2 deletions(-)
+ tools/perf/util/probe-event.c | 39 ++++++++++++++++++++++++++++++++----
+ tools/perf/util/probe-event.h |  1 +
+ tools/perf/util/probe-file.c  | 34 ++++++++++++++++++++++++++------
+ tools/perf/util/probe-file.h  |  1 +
+ tools/perf/util/symbol-elf.c  | 46 ++++++++++++++++++++++++++++++++-----------
+ tools/perf/util/symbol.h      |  7 +++++++
+ 6 files changed, 106 insertions(+), 22 deletions(-)
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 84da8512a974..563cc3e625b3 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -63,6 +63,8 @@ static struct percpu_rw_semaphore dup_mmap_sem;
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index f119eb628dbb..e86f8be89157 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -1819,6 +1819,12 @@ int parse_probe_trace_command(const char *cmd, struct probe_trace_event *tev)
+ 			tp->offset = strtoul(fmt2_str, NULL, 10);
+ 	}
  
- /* Have a copy of original instruction */
- #define UPROBE_COPY_INSN	0
-+/* Reference counter offset is reloaded with non-zero value. */
-+#define REF_CTR_OFF_RELOADED	1
- 
- struct uprobe {
- 	struct rb_node		rb_node;	/* node in the rb tree */
-@@ -476,9 +478,23 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
- 		return ret;
- 
- 	ret = verify_opcode(old_page, vaddr, &opcode);
--	if (ret <= 0)
-+	if (ret < 0)
- 		goto put_old;
- 
-+	/*
-+	 * If instruction is already patched but reference counter offset
-+	 * has been reloaded to non-zero value, increment the reference
-+	 * counter and return.
-+	 */
-+	if (ret == 0) {
-+		if (is_register &&
-+		    test_bit(REF_CTR_OFF_RELOADED, &uprobe->flags)) {
-+			WARN_ON(!uprobe->ref_ctr_offset);
-+			ret = update_ref_ctr(uprobe, mm, true);
-+		}
-+		goto put_old;
++	if (tev->uprobes) {
++		fmt2_str = strchr(p, '(');
++		if (fmt2_str)
++			tp->ref_ctr_offset = strtoul(fmt2_str + 1, NULL, 0);
 +	}
 +
- 	/* We are going to replace instruction, update ref_ctr. */
- 	if (!ref_ctr_updated && uprobe->ref_ctr_offset) {
- 		ret = update_ref_ctr(uprobe, mm, is_register);
-@@ -679,6 +695,30 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
- 	cur_uprobe = insert_uprobe(uprobe);
- 	/* a uprobe exists for this inode:offset combination */
- 	if (cur_uprobe) {
-+		/*
-+		 * If inode+offset matches, ref_ctr_offset must match as
-+		 * well. Though, 0 is a special value for ref_ctr_offset.
-+		 */
-+		if (cur_uprobe->ref_ctr_offset != uprobe->ref_ctr_offset &&
-+		    cur_uprobe->ref_ctr_offset != 0 &&
-+		    uprobe->ref_ctr_offset != 0) {
-+			pr_warn("Err: Reference counter mismatch.\n");
-+			put_uprobe(cur_uprobe);
-+			kfree(uprobe);
-+			return ERR_PTR(-EINVAL);
-+		}
-+
-+		/*
-+		 * If existing uprobe->ref_ctr_offset is 0 and user is
-+		 * registering same uprobe with non-zero ref_ctr_offset,
-+		 * set new ref_ctr_offset to existing uprobe.
-+		 */
-+
-+		if (!cur_uprobe->ref_ctr_offset && uprobe->ref_ctr_offset) {
-+			cur_uprobe->ref_ctr_offset = uprobe->ref_ctr_offset;
-+			set_bit(REF_CTR_OFF_RELOADED, &cur_uprobe->flags);
-+		}
-+
- 		kfree(uprobe);
- 		uprobe = cur_uprobe;
- 	}
-@@ -971,6 +1011,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
- 	bool is_register = !!new;
- 	struct map_info *info;
- 	int err = 0;
-+	bool installed = false;
- 
- 	percpu_down_write(&dup_mmap_sem);
- 	info = build_map_info(uprobe->inode->i_mapping,
-@@ -1000,8 +1041,10 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
- 		if (is_register) {
- 			/* consult only the "caller", new consumer. */
- 			if (consumer_filter(new,
--					UPROBE_FILTER_REGISTER, mm))
-+					UPROBE_FILTER_REGISTER, mm)) {
- 				err = install_breakpoint(uprobe, mm, vma, info->vaddr);
-+				installed = true;
-+			}
- 		} else if (test_bit(MMF_HAS_UPROBES, &mm->flags)) {
- 			if (!filter_chain(uprobe,
- 					UPROBE_FILTER_UNREGISTER, mm))
-@@ -1016,6 +1059,8 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
- 	}
-  out:
- 	percpu_up_write(&dup_mmap_sem);
-+	if (installed)
-+		clear_bit(REF_CTR_OFF_RELOADED, &uprobe->flags);
+ 	tev->nargs = argc - 2;
+ 	tev->args = zalloc(sizeof(struct probe_trace_arg) * tev->nargs);
+ 	if (tev->args == NULL) {
+@@ -2012,6 +2018,22 @@ static int synthesize_probe_trace_arg(struct probe_trace_arg *arg,
  	return err;
  }
  
-@@ -1093,6 +1138,9 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
- 	uprobe = alloc_uprobe(inode, offset, ref_ctr_offset);
- 	if (!uprobe)
- 		return -ENOMEM;
-+	if (IS_ERR(uprobe))
-+		return PTR_ERR(uprobe);
++static int
++synthesize_uprobe_trace_def(struct probe_trace_event *tev, struct strbuf *buf)
++{
++	struct probe_trace_point *tp = &tev->point;
++	int err;
 +
- 	/*
- 	 * We can race with uprobe_unregister()->delete_uprobe().
- 	 * Check uprobe_is_active() and retry if it is false.
++	err = strbuf_addf(buf, "%s:0x%lx", tp->module, tp->address);
++
++	if (err >= 0 && tp->ref_ctr_offset) {
++		if (!uprobe_ref_ctr_is_supported())
++			return -1;
++		err = strbuf_addf(buf, "(0x%lx)", tp->ref_ctr_offset);
++	}
++	return err >= 0 ? 0 : -1;
++}
++
+ char *synthesize_probe_trace_command(struct probe_trace_event *tev)
+ {
+ 	struct probe_trace_point *tp = &tev->point;
+@@ -2041,15 +2063,17 @@ char *synthesize_probe_trace_command(struct probe_trace_event *tev)
+ 	}
+ 
+ 	/* Use the tp->address for uprobes */
+-	if (tev->uprobes)
+-		err = strbuf_addf(&buf, "%s:0x%lx", tp->module, tp->address);
+-	else if (!strncmp(tp->symbol, "0x", 2))
++	if (tev->uprobes) {
++		err = synthesize_uprobe_trace_def(tev, &buf);
++	} else if (!strncmp(tp->symbol, "0x", 2)) {
+ 		/* Absolute address. See try_to_find_absolute_address() */
+ 		err = strbuf_addf(&buf, "%s%s0x%lx", tp->module ?: "",
+ 				  tp->module ? ":" : "", tp->address);
+-	else
++	} else {
+ 		err = strbuf_addf(&buf, "%s%s%s+%lu", tp->module ?: "",
+ 				tp->module ? ":" : "", tp->symbol, tp->offset);
++	}
++
+ 	if (err)
+ 		goto error;
+ 
+@@ -2633,6 +2657,13 @@ static void warn_uprobe_event_compat(struct probe_trace_event *tev)
+ {
+ 	int i;
+ 	char *buf = synthesize_probe_trace_command(tev);
++	struct probe_trace_point *tp = &tev->point;
++
++	if (tp->ref_ctr_offset && !uprobe_ref_ctr_is_supported()) {
++		pr_warning("A semaphore is associated with %s:%s and "
++			   "seems your kernel doesn't support it.\n",
++			   tev->group, tev->event);
++	}
+ 
+ 	/* Old uprobe event doesn't support memory dereference */
+ 	if (!tev->uprobes || tev->nargs == 0 || !buf)
+diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
+index 45b14f020558..15a98c3a2a2f 100644
+--- a/tools/perf/util/probe-event.h
++++ b/tools/perf/util/probe-event.h
+@@ -27,6 +27,7 @@ struct probe_trace_point {
+ 	char		*symbol;	/* Base symbol */
+ 	char		*module;	/* Module name */
+ 	unsigned long	offset;		/* Offset from symbol */
++	unsigned long	ref_ctr_offset;	/* SDT reference counter offset */
+ 	unsigned long	address;	/* Actual address of the trace point */
+ 	bool		retprobe;	/* Return probe flag */
+ };
+diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+index b76088fadf3d..aac7817d9e14 100644
+--- a/tools/perf/util/probe-file.c
++++ b/tools/perf/util/probe-file.c
+@@ -696,8 +696,16 @@ int probe_cache__add_entry(struct probe_cache *pcache,
+ #ifdef HAVE_GELF_GETNOTE_SUPPORT
+ static unsigned long long sdt_note__get_addr(struct sdt_note *note)
+ {
+-	return note->bit32 ? (unsigned long long)note->addr.a32[0]
+-		 : (unsigned long long)note->addr.a64[0];
++	return note->bit32 ?
++		(unsigned long long)note->addr.a32[SDT_NOTE_IDX_LOC] :
++		(unsigned long long)note->addr.a64[SDT_NOTE_IDX_LOC];
++}
++
++static unsigned long long sdt_note__get_ref_ctr_offset(struct sdt_note *note)
++{
++	return note->bit32 ?
++		(unsigned long long)note->addr.a32[SDT_NOTE_IDX_REFCTR] :
++		(unsigned long long)note->addr.a64[SDT_NOTE_IDX_REFCTR];
+ }
+ 
+ static const char * const type_to_suffix[] = {
+@@ -775,14 +783,21 @@ static char *synthesize_sdt_probe_command(struct sdt_note *note,
+ {
+ 	struct strbuf buf;
+ 	char *ret = NULL, **args;
+-	int i, args_count;
++	int i, args_count, err;
++	unsigned long long ref_ctr_offset;
+ 
+ 	if (strbuf_init(&buf, 32) < 0)
+ 		return NULL;
+ 
+-	if (strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
+-				sdtgrp, note->name, pathname,
+-				sdt_note__get_addr(note)) < 0)
++	err = strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
++			sdtgrp, note->name, pathname,
++			sdt_note__get_addr(note));
++
++	ref_ctr_offset = sdt_note__get_ref_ctr_offset(note);
++	if (ref_ctr_offset && err >= 0)
++		err = strbuf_addf(&buf, "(0x%llx)", ref_ctr_offset);
++
++	if (err < 0)
+ 		goto error;
+ 
+ 	if (!note->args)
+@@ -998,6 +1013,7 @@ int probe_cache__show_all_caches(struct strfilter *filter)
+ enum ftrace_readme {
+ 	FTRACE_README_PROBE_TYPE_X = 0,
+ 	FTRACE_README_KRETPROBE_OFFSET,
++	FTRACE_README_UPROBE_REF_CTR,
+ 	FTRACE_README_END,
+ };
+ 
+@@ -1009,6 +1025,7 @@ static struct {
+ 	[idx] = {.pattern = pat, .avail = false}
+ 	DEFINE_TYPE(FTRACE_README_PROBE_TYPE_X, "*type: * x8/16/32/64,*"),
+ 	DEFINE_TYPE(FTRACE_README_KRETPROBE_OFFSET, "*place (kretprobe): *"),
++	DEFINE_TYPE(FTRACE_README_UPROBE_REF_CTR, "*ref_ctr_offset*"),
+ };
+ 
+ static bool scan_ftrace_readme(enum ftrace_readme type)
+@@ -1064,3 +1081,8 @@ bool kretprobe_offset_is_supported(void)
+ {
+ 	return scan_ftrace_readme(FTRACE_README_KRETPROBE_OFFSET);
+ }
++
++bool uprobe_ref_ctr_is_supported(void)
++{
++	return scan_ftrace_readme(FTRACE_README_UPROBE_REF_CTR);
++}
+diff --git a/tools/perf/util/probe-file.h b/tools/perf/util/probe-file.h
+index 63f29b1d22c1..2a249182f2a6 100644
+--- a/tools/perf/util/probe-file.h
++++ b/tools/perf/util/probe-file.h
+@@ -69,6 +69,7 @@ struct probe_cache_entry *probe_cache__find_by_name(struct probe_cache *pcache,
+ int probe_cache__show_all_caches(struct strfilter *filter);
+ bool probe_type_is_available(enum probe_type type);
+ bool kretprobe_offset_is_supported(void);
++bool uprobe_ref_ctr_is_supported(void);
+ #else	/* ! HAVE_LIBELF_SUPPORT */
+ static inline struct probe_cache *probe_cache__new(const char *tgt __maybe_unused, struct nsinfo *nsi __maybe_unused)
+ {
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 29770ea61768..0281d5e2cd67 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1947,6 +1947,34 @@ void kcore_extract__delete(struct kcore_extract *kce)
+ }
+ 
+ #ifdef HAVE_GELF_GETNOTE_SUPPORT
++
++static void sdt_adjust_loc(struct sdt_note *tmp, GElf_Addr base_off)
++{
++	if (!base_off)
++		return;
++
++	if (tmp->bit32)
++		tmp->addr.a32[SDT_NOTE_IDX_LOC] =
++			tmp->addr.a32[SDT_NOTE_IDX_LOC] + base_off -
++			tmp->addr.a32[SDT_NOTE_IDX_BASE];
++	else
++		tmp->addr.a64[SDT_NOTE_IDX_LOC] =
++			tmp->addr.a64[SDT_NOTE_IDX_LOC] + base_off -
++			tmp->addr.a64[SDT_NOTE_IDX_BASE];
++}
++
++static void sdt_adjust_refctr(struct sdt_note *tmp, GElf_Addr base_addr,
++			      GElf_Addr base_off)
++{
++	if (!base_off)
++		return;
++
++	if (tmp->bit32 && tmp->addr.a32[SDT_NOTE_IDX_REFCTR])
++		tmp->addr.a32[SDT_NOTE_IDX_REFCTR] -= (base_addr - base_off);
++	else if (tmp->addr.a64[SDT_NOTE_IDX_REFCTR])
++		tmp->addr.a64[SDT_NOTE_IDX_REFCTR] -= (base_addr - base_off);
++}
++
+ /**
+  * populate_sdt_note : Parse raw data and identify SDT note
+  * @elf: elf of the opened file
+@@ -1964,7 +1992,6 @@ static int populate_sdt_note(Elf **elf, const char *data, size_t len,
+ 	const char *provider, *name, *args;
+ 	struct sdt_note *tmp = NULL;
+ 	GElf_Ehdr ehdr;
+-	GElf_Addr base_off = 0;
+ 	GElf_Shdr shdr;
+ 	int ret = -EINVAL;
+ 
+@@ -2060,17 +2087,12 @@ static int populate_sdt_note(Elf **elf, const char *data, size_t len,
+ 	 * base address in the description of the SDT note. If its different,
+ 	 * then accordingly, adjust the note location.
+ 	 */
+-	if (elf_section_by_name(*elf, &ehdr, &shdr, SDT_BASE_SCN, NULL)) {
+-		base_off = shdr.sh_offset;
+-		if (base_off) {
+-			if (tmp->bit32)
+-				tmp->addr.a32[0] = tmp->addr.a32[0] + base_off -
+-					tmp->addr.a32[1];
+-			else
+-				tmp->addr.a64[0] = tmp->addr.a64[0] + base_off -
+-					tmp->addr.a64[1];
+-		}
+-	}
++	if (elf_section_by_name(*elf, &ehdr, &shdr, SDT_BASE_SCN, NULL))
++		sdt_adjust_loc(tmp, shdr.sh_offset);
++
++	/* Adjust reference counter offset */
++	if (elf_section_by_name(*elf, &ehdr, &shdr, SDT_PROBES_SCN, NULL))
++		sdt_adjust_refctr(tmp, shdr.sh_addr, shdr.sh_offset);
+ 
+ 	list_add_tail(&tmp->note_list, sdt_notes);
+ 	return 0;
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index f25fae4b5743..20f49779116b 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -379,12 +379,19 @@ int get_sdt_note_list(struct list_head *head, const char *target);
+ int cleanup_sdt_note_list(struct list_head *sdt_notes);
+ int sdt_notes__get_count(struct list_head *start);
+ 
++#define SDT_PROBES_SCN ".probes"
+ #define SDT_BASE_SCN ".stapsdt.base"
+ #define SDT_NOTE_SCN  ".note.stapsdt"
+ #define SDT_NOTE_TYPE 3
+ #define SDT_NOTE_NAME "stapsdt"
+ #define NR_ADDR 3
+ 
++enum {
++	SDT_NOTE_IDX_LOC = 0,
++	SDT_NOTE_IDX_BASE,
++	SDT_NOTE_IDX_REFCTR,
++};
++
+ struct mem_info *mem_info__new(void);
+ struct mem_info *mem_info__get(struct mem_info *mi);
+ void   mem_info__put(struct mem_info *mi);
 -- 
 2.14.4
 
