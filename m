@@ -2,132 +2,183 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6ECECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3984ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F55F20779
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="N/j4ZUKw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F55F20779
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 6E57C20779
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:29:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E57C20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731551AbeGPI4G (ORCPT
+        id S1731587AbeGPI4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 16 Jul 2018 04:56:07 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54406 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731402AbeGPI4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Jul 2018 04:56:06 -0400
-Received: from ozlabs.org ([203.11.71.1]:39947 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730828AbeGPI4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:56:04 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Tc6147TGz9rvt;
-        Mon, 16 Jul 2018 18:29:45 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531729786;
-        bh=GVJ+ssWzQ6Xh+MBla7fdLVY+H0CuoyWsuRoi5fYCSIo=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=N/j4ZUKwVWjKQwBEILLXmGbJzWBFDJmBcteS4J8L1fYYSUgn/vk46XseJDyZ7gjhq
-         SlXtCphj70uMYC7Bc4dlPLNFqLDQAprMj9cuchKyX0Frtn2FQa+cuQY8aszC9TjcBe
-         hIzTslmCcz5AYhkgkaMnYGgYUChQI3cYly3BBtqz8zGGE/TmBUyhV1aWm+iiSFpKY9
-         69+l5RCwudUh8LWFtZRz1AFqQNu6x6kMY8Vs+t2xZtCFSNsUvaM7TbC/hS4JBLp1PL
-         PhJrGAfG16uUVaKmB0//TId+ZxJXsPVXrsYa5+rf92xNj8Z/tIf90adGuydVsgP/iq
-         vEeqzW1VMl8yA==
-Date:   Mon, 16 Jul 2018 18:29:44 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the pinctrl
- tree
-Message-ID: <20180716182944.593cca3c@canb.auug.org.au>
-In-Reply-To: <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
-References: <20180716081018.21bfe495@canb.auug.org.au>
-        <CACRpkdZ5BA1wn=TPn4yWkwWd3pAKh9wuMHd9woBF=+6+L1jtFA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kLgnjxYTczi979.lb9L=53H"; protocol="application/pgp-signature"
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03F661682;
+        Mon, 16 Jul 2018 01:29:51 -0700 (PDT)
+Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.210.68])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 374123F5A0;
+        Mon, 16 Jul 2018 01:29:48 -0700 (PDT)
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH v2 07/12] sched/core: uclamp: enforce last task UCLAMP_MAX
+Date:   Mon, 16 Jul 2018 09:29:01 +0100
+Message-Id: <20180716082906.6061-8-patrick.bellasi@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180716082906.6061-1-patrick.bellasi@arm.com>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/kLgnjxYTczi979.lb9L=53H
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When a util_max clamped task sleeps, its clamp constraints are removed
+from the CPU. However, the blocked utilization on that CPU can still be
+higher than the max clamp value enforced while that task was running.
+This max clamp removal when a CPU is going to be idle could thus allow
+unwanted CPU frequency increases, right while the task is not running.
 
-Hi Linus,
+This can happen, for example, where there is another (smaller) task
+running on a different CPU of the same frequency domain.
+In this case, when we aggregates the utilization of all the CPUs in a
+shared frequency domain, schedutil can still see the full non clamped
+blocked utilization of all the CPUs and thus eventually increase the
+frequency.
 
-On Mon, 16 Jul 2018 09:52:44 +0200 Linus Walleij <linus.walleij@linaro.org>=
- wrote:
->
-> On Mon, Jul 16, 2018 at 12:10 AM Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> > Commits
-> >
-> >   bc319333c156 ("pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and=
- functions")
-> >   99500c6a4836 ("pinctrl: sh-pfc: r8a77990: Revise USB ID pin name")
-> >   3d3c62d3458a ("pinctrl: sh-pfc: r8a77990: Add USB2.0 pins, groups and=
- functions")
-> >   1e0f13198edf ("pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and=
- functions")
-> >
-> > are missing a Signed-off-by from their committer. =20
->=20
-> I am looking at this and I just feel confused. Top to bottom:
->=20
-  ...
->=20
-> This is very confusing, it looks correct to me.
->=20
-> As usual it must be some minor syntactic thing like a character missing or
-> something, I am just soo.... what's wrong here, really?
+Let's fix this by using:
 
-In the tree I fetched this morning, those commits are all committed by
-you, but you did not add a Signed-off-by to then.  This usually happens
-when you rebase a branch/tree.
+   uclamp_cpu_put_id(UCLAMP_MAX)
+      uclamp_cpu_update(last_clamp_value)
 
-$ git show --pretty=3Dfull bc319333c156
-Author: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-Commit: Linus Walleij <linus.walleij@linaro.org>
+to detect when a CPU has no more RUNNABLE clamped tasks and to flag this
+condition. Thus, while a CPU is idle, we can still enforce the last used
+clamp value for it.
 
-    pinctrl: sh-pfc: r8a77965: Add HSCIF pins, groups, and functions
-   =20
-    This patch adds HSCIF{0,1,2,3,4} pins, groups and functions to
-    the R8A77965 SoC.
-   =20
-    Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
-    Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+To the contrary, we do not track any UCLAMP_MIN since, while a CPU is
+idle, we don't want to enforce any minimum frequency
+Indeed, we relay just on blocked load decay to smoothly reduce the
+frequency.
 
-...
---=20
-Cheers,
-Stephen Rothwell
+Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+---
+ kernel/sched/core.c  | 30 ++++++++++++++++++++++++++----
+ kernel/sched/sched.h |  2 ++
+ 2 files changed, 28 insertions(+), 4 deletions(-)
 
---Sig_/kLgnjxYTczi979.lb9L=53H
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index b2424eea7990..0cb6e0aa4faa 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -930,7 +930,8 @@ uclamp_group_find(int clamp_id, unsigned int clamp_value)
+  * For the specified clamp index, this method computes the new CPU utilization
+  * clamp to use until the next change on the set of RUNNABLE tasks on that CPU.
+  */
+-static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
++static inline void uclamp_cpu_update(struct rq *rq, int clamp_id,
++				     unsigned int last_clamp_value)
+ {
+ 	struct uclamp_group *uc_grp = &rq->uclamp.group[clamp_id][0];
+ 	int max_value = UCLAMP_NONE;
+@@ -948,6 +949,19 @@ static inline void uclamp_cpu_update(struct rq *rq, int clamp_id)
+ 		if (max_value >= SCHED_CAPACITY_SCALE)
+ 			break;
+ 	}
++
++	/*
++	 * Just for the UCLAMP_MAX value, in case there are no RUNNABLE
++	 * task, we keep the CPU clamped to the last task's clamp value.
++	 * This avoids frequency spikes to MAX when one CPU, with an high
++	 * blocked utilization, sleeps and another CPU, in the same frequency
++	 * domain, do not see anymore the clamp on the first CPU.
++	 */
++	if (clamp_id == UCLAMP_MAX && max_value == UCLAMP_NONE) {
++		rq->uclamp.flags |= UCLAMP_FLAG_IDLE;
++		max_value = last_clamp_value;
++	}
++
+ 	rq->uclamp.value[clamp_id] = max_value;
+ }
+ 
+@@ -977,13 +991,21 @@ static inline void uclamp_cpu_get_id(struct task_struct *p,
+ 	uc_grp = &rq->uclamp.group[clamp_id][0];
+ 	uc_grp[group_id].tasks += 1;
+ 
++	/* Force clamp update on idle exit */
++	uc_cpu = &rq->uclamp;
++	clamp_value = p->uclamp[clamp_id].value;
++	if (unlikely(uc_cpu->flags & UCLAMP_FLAG_IDLE)) {
++		if (clamp_id == UCLAMP_MAX)
++			uc_cpu->flags &= ~UCLAMP_FLAG_IDLE;
++		uc_cpu->value[clamp_id] = clamp_value;
++		return;
++	}
++
+ 	/*
+ 	 * If this is the new max utilization clamp value, then we can update
+ 	 * straight away the CPU clamp value. Otherwise, the current CPU clamp
+ 	 * value is still valid and we are done.
+ 	 */
+-	uc_cpu = &rq->uclamp;
+-	clamp_value = p->uclamp[clamp_id].value;
+ 	if (uc_cpu->value[clamp_id] < clamp_value)
+ 		uc_cpu->value[clamp_id] = clamp_value;
+ }
+@@ -1028,7 +1050,7 @@ static inline void uclamp_cpu_put_id(struct task_struct *p,
+ 	uc_cpu = &rq->uclamp;
+ 	clamp_value = uc_grp[group_id].value;
+ 	if (clamp_value >= uc_cpu->value[clamp_id])
+-		uclamp_cpu_update(rq, clamp_id);
++		uclamp_cpu_update(rq, clamp_id, clamp_value);
+ }
+ 
+ /**
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 1207add36478..7e4f10c507b7 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -783,6 +783,8 @@ struct uclamp_group {
+  * values, i.e. no min/max clamping at all.
+  */
+ struct uclamp_cpu {
++#define UCLAMP_FLAG_IDLE 0x01
++	int flags;
+ 	int value[UCLAMP_CNT];
+ 	struct uclamp_group group[UCLAMP_CNT][CONFIG_UCLAMP_GROUPS_COUNT + 1];
+ };
+-- 
+2.17.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltMV3gACgkQAVBC80lX
-0GxMWwf/YZvd4hqOAfL2UhJyun7iZGlsrpadv91AJ4UhAUAa2HSlvZxm2+tzvKIz
-8rtPPKdGAfdD7Vat+ERMnXGqopUPB/nDWS6sHgkvcYOocPbrfpD6B2bwx6vGlD/V
-E83iWksEpWSdw1DxI+CApncqY5CZl57H0rpatsgZ8Nz5Q6iGHbD7JGBddPpyiYU1
-gQtV9E8Tu/DMHyRbUbwdKzdVHWztWOgckHuMeMrcoLhFLyA1J0/OfRAujlWqubkG
-kvryf1/WdOvNbhi4VDlYhoPnAzxpLZDIANihK/lUELPVmLtf1GRtCY86Ro0sRY9o
-rjp2hE6Ao3zEAmQOG70PDMlz8HcYsw==
-=l3ht
------END PGP SIGNATURE-----
-
---Sig_/kLgnjxYTczi979.lb9L=53H--
