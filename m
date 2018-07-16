@@ -2,147 +2,109 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF6BCECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D61FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4EE208B2
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:19:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4EE208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 110B8208B2
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 00:39:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="XuImGWWp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 110B8208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727214AbeGPAns (ORCPT
+        id S1727248AbeGPBDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 20:43:48 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:36743 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeGPAns (ORCPT
+        Sun, 15 Jul 2018 21:03:51 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37198 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbeGPBDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 20:43:48 -0400
-Received: by mail-it0-f70.google.com with SMTP id m185-v6so2873856itm.1
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 17:19:03 -0700 (PDT)
+        Sun, 15 Jul 2018 21:03:51 -0400
+Received: by mail-lf0-f67.google.com with SMTP id j8-v6so31002878lfb.4
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 17:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=nnl8PLyKOFtm1c2ugX6205P8sI3pRaDCKnNp5Wt7laY=;
+        b=XuImGWWp0KQdpXjPgA55lg3fDYvXhdppjbMBueGDIJryM5odqPSnsFlGlGv2Mb6ELT
+         jI2WLpsZ3ZTFW2ywsI29bgdKvGb9jKHZAyK1ZUGo0OW78s+Tf9FzE3avdS5pN8sDP5Ja
+         EDF4r6+gFeROvIFtrF7V6hn5MMjBa1nGJxOVkJIvBkIMyfhb9fzo5vfoEHDmeJn6j0qd
+         VmCeNLLVsoVnuKXmq40Aiw74/YP/a4KE43jDIHoqTrZt7xlFIKOkYYNTulNKlMUNbc+S
+         WaGNQ+xQK4osV/cQIPZ7oxY37+uonHOe9jXOQqECFPBNDh6IYo7Ti+yMZIHC4jaYpgxj
+         ZRCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=w+XHBFHBdbA07oO7oX5xM00bQGFkQ1uD7XXQr5QHoLU=;
-        b=RzgWTTuSPjh0QGlcE8LwF2398tYp64ejCgDnPypnhFA8MWefUUVFe4pC1Iim2WLkX+
-         ryAppM83YOQPczHS/s5VjE1NFXvwhT6T6w+2CP+wLR4XMme5Hgs+weuTOkSViMwah44K
-         GCaaKTbM2jfp24kvWbW2ck98QP/HY0Hi8AREcNsaaO/VM7u1QvhCknEo/rOgOhnM1Qdg
-         Wc0Dav14g2c2/JU2Gsyn+8P74x9Qedn3nChcAU++uNDslBMiIoE4BcVL5sopIz5qiJR0
-         cdaYRPbFcy8cgOueZCbSFdNqd0ANRCArCkaOq3MwhGEcD1QVCixYEa7jJNVnwgf3pImK
-         G1dQ==
-X-Gm-Message-State: AOUpUlH/C9TKfS23Ajtzw+A6Cs75yLzXDIEk2H7HLqNFIh/oCM+4YMDf
-        VWw3TckhTH0ST3eJiRlJTPE8BiQneh3gvSa2dfIvM9PYSpzD
-X-Google-Smtp-Source: AAOMgpe7jfgXh4Ei2uonUf3VRxuk4t7A2T0tu++zmXyw5YT/1ecgj2KmlYwBNMQjd0Jn8JSiSaZTcGaSjt4/uSiNBgjblRDkITY0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=nnl8PLyKOFtm1c2ugX6205P8sI3pRaDCKnNp5Wt7laY=;
+        b=PwTkNlrXaPK29JVjj6W8HSt+QMibj9g4i4sMwyi1+kWm2TTKQZp5PHWf5H/qGFCZL/
+         um3aiwVUHFBAwReI97jKO3963P7vQsLrBt7IHsQrKr86+vr4TYsFyZOn2oBeeRUn7Frg
+         h0df5UYNWkON9rileSONkAyKoJ4qcPkn35y5/rBwA+8Z3AHKK0A2D6b5Cw5mRyU8Z6Wn
+         Eu+Gbf6zyI9xefDwoaiQD57B+WfZznmnZgP0WGk8348KnOdtTkHFYiks22Noq4gVpgCF
+         whfeIEgP81KDqwX2zZgS1KfMcgRMgMeAJQQnP+v7eAT21YktaGK4DqDfGVkC5zYEEfUg
+         WC2Q==
+X-Gm-Message-State: AOUpUlFLAuWr1GW/NCuqtE+XpxSdOPOSuOvZ0kiszD6oitPxtNdHbATe
+        Dx8PfE/Viz1zxN4eRSUjMtiwbfYuVCp2K8w/BGzlMA==
+X-Google-Smtp-Source: AAOMgpcUkpVUascnrIJm50VBLyyokoxvp+yDTHbfDcU/5ixFz9g3ycu9H3vBSLPzBez/wGZu8yDZLqri6RKV7aW1vYA=
+X-Received: by 2002:a19:4344:: with SMTP id m4-v6mr10923020lfj.111.1531701541489;
+ Sun, 15 Jul 2018 17:39:01 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:5a14:: with SMTP id v20-v6mr6017825ita.41.1531700343252;
- Sun, 15 Jul 2018 17:19:03 -0700 (PDT)
-Date:   Sun, 15 Jul 2018 17:19:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dcb1a1057112c66a@google.com>
-Subject: kernel BUG at fs/userfaultfd.c:LINE! (2)
-From:   syzbot <syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Sun, 15 Jul 2018 17:38:59
+ -0700 (PDT)
+X-Originating-IP: [2620:10d:c090:180::1:b025]
+In-Reply-To: <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
+References: <20180716091337.6c1b2a4d@canb.auug.org.au> <CAOesGMgicOOi0Nr+m_UHEGYL+ryRW65YAPwVsN+CZpo6kc2FLA@mail.gmail.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Sun, 15 Jul 2018 17:38:59 -0700
+Message-ID: <CAOesGMgWu4P+n9Bm_OJS-DjGysbtytaVVZp9W81Rb9yrLfw26g@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the arm-soc tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Vinod Koul <vkoul@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sun, Jul 15, 2018 at 4:50 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Sun, Jul 15, 2018 at 4:13 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi all,
+>>
+>> After merging the arm-soc tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> sound/arm/pxa2xx-pcm-lib.c: In function '__pxa2xx_pcm_open':
+>> sound/arm/pxa2xx-pcm-lib.c:129:6: error: 'pxad_filter_fn' undeclared (first use in this function); did you mean 'dma_filter_fn'?
+>>       pxad_filter_fn,
+>>       ^~~~~~~~~~~~~~
+>>       dma_filter_fn
+>>
+>> Caused by commit
+>>
+>>   0d0b16b8e008 ("dmaengine: pxa: make the filter function internal")
+>>
+>> I have used the arm-soc tree from next-20180713 for today.
+>
+> It's a known issue due to dependencies with a driver tree. :(
+>
+> Robert, this is unfortunate. What's the dependent patches? We can pick
+> them up in our tree as duplicates if needed.
 
-syzbot found the following crash on:
-
-HEAD commit:    37b5dca2898d Merge tag 'rtc-4.18-2' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12aaf3b2400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
-dashboard link: https://syzkaller.appspot.com/bug?extid=121be635a7a35ddb7dcb
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11176d62400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1362b368400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-------------[ cut here ]------------
-kernel BUG at fs/userfaultfd.c:883!
-invalid opcode: 0000 [#1] SMP KASAN
-CPU: 0 PID: 4708 Comm: syz-executor086 Not tainted 4.18.0-rc4+ #148
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:userfaultfd_release+0x5fb/0x770 fs/userfaultfd.c:882
-Code: 00 31 c0 48 8b 4d d0 65 48 33 0c 25 28 00 00 00 0f 85 a1 00 00 00 48  
-8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 be a0 ff <0f> 0b 4c 89 f7  
-e8 0b 9e de ff e9 11 fc ff ff 4c 89 e7 e8 5e 9d de
-RSP: 0018:ffff8801d8407a80 EFLAGS: 00010293
-RAX: ffff8801d8742080 RBX: dffffc0000000000 RCX: ffffffff81db4a59
-RDX: 0000000000000000 RSI: ffffffff81db4ccb RDI: 0000000000000000
-RBP: ffff8801d8407bd0 R08: ffff8801d8742080 R09: 0000000000000000
-R10: ffff8801d87428b8 R11: 16fb0df9f74494d6 R12: ffff8801d89a3b58
-R13: 0000000000000000 R14: ffff8801d89a3a50 R15: 0000000000000000
-FS:  0000000000ed6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f45c6b81e78 CR3: 00000001acb61000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __fput+0x355/0x8b0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
-  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x405471
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 54 17 00 00 c3 48  
-83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffcad3db600 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000405471
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 00007ffcad3db610 R11: 0000000000000293 R12: 00000000006dbc3c
-R13: 00000000006dbda0 R14: 0000000000000008 R15: 0000000000000001
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 638e68cedadb8eda ]---
-RIP: 0010:userfaultfd_release+0x5fb/0x770 fs/userfaultfd.c:882
-Code: 00 31 c0 48 8b 4d d0 65 48 33 0c 25 28 00 00 00 0f 85 a1 00 00 00 48  
-8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 be a0 ff <0f> 0b 4c 89 f7  
-e8 0b 9e de ff e9 11 fc ff ff 4c 89 e7 e8 5e 9d de
-RSP: 0018:ffff8801d8407a80 EFLAGS: 00010293
-RAX: ffff8801d8742080 RBX: dffffc0000000000 RCX: ffffffff81db4a59
-RDX: 0000000000000000 RSI: ffffffff81db4ccb RDI: 0000000000000000
-RBP: ffff8801d8407bd0 R08: ffff8801d8742080 R09: 0000000000000000
-R10: ffff8801d87428b8 R11: 16fb0df9f74494d6 R12: ffff8801d89a3b58
-R13: 0000000000000000 R14: ffff8801d89a3a50 R15: 0000000000000000
-FS:  0000000000ed6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f45c6b81e78 CR3: 00000001acb61000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Ok, it was easy to drop PXA this time around, so I've done that.
+Stephen; arm-soc/for-next should be building again (for tomorrow).
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-Olof
