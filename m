@@ -2,169 +2,109 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2B4ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06464ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28F292098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:17:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m77uBRp2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28F292098A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B0B3E2086E
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 21:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0B3E2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730107AbeGPVqW (ORCPT
+        id S1730362AbeGPVrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 17:46:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43832 "EHLO mail.kernel.org"
+        Mon, 16 Jul 2018 17:47:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33818 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728413AbeGPVqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 17:46:22 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728290AbeGPVrM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 17:47:12 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 724A92086E;
-        Mon, 16 Jul 2018 21:17:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531775828;
-        bh=6DBwRiLN2FUonYoUzeBIDnNc4XDFdg+X5pLq2DQM5xs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m77uBRp2pDv5NFrm9LZ806z2162srD0QGV9Y/+MJQ2UYOik+JKwj8Q60iFYV3zIrH
-         wQTT1As+zHn/ot29iL4VZSUW9S1kvfkuUP4zPikCMAkniglJiiQ6TmoKylEou384gL
-         TFhGkhGuIZbZtp41f0ipIs+YajnlmMG220kvru6E=
-Date:   Mon, 16 Jul 2018 16:17:06 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc:     bhelgaas@google.com, alex_gagniuc@dellteam.com,
-        austin_bolen@dell.com, shyam_iyer@dell.com, keith.busch@intel.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ganesh Goudar <ganeshgr@chelsio.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Tal Gilboa <talgi@mellanox.com>,
-        Dave Airlie <airlied@gmail.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: Re: [PATCH v3] PCI: Check for PCIe downtraining conditions
-Message-ID: <20180716211706.GB12391@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180604155523.14906-1-mr.nuke.me@gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id E2E4C80F9E;
+        Mon, 16 Jul 2018 21:17:58 +0000 (UTC)
+Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 49F3D600C9;
+        Mon, 16 Jul 2018 21:17:58 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 15:17:57 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Ashok Raj <ashok.raj@intel.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Gage Eads <gage.eads@intel.com>
+Subject: Re: [PATCH] x86/pci: Some buggy virtual functions incorrectly
+ report 1 for intx.
+Message-ID: <20180716151757.28206fae@t450s.home>
+In-Reply-To: <1531773745-41876-1-git-send-email-ashok.raj@intel.com>
+References: <1531773745-41876-1-git-send-email-ashok.raj@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180604155523.14906-1-mr.nuke.me@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 16 Jul 2018 21:17:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc maintainers of drivers that already use pcie_print_link_status()
-and GPU folks]
+On Mon, 16 Jul 2018 13:42:25 -0700
+Ashok Raj <ashok.raj@intel.com> wrote:
 
-On Mon, Jun 04, 2018 at 10:55:21AM -0500, Alexandru Gagniuc wrote:
-> PCIe downtraining happens when both the device and PCIe port are
-> capable of a larger bus width or higher speed than negotiated.
-> Downtraining might be indicative of other problems in the system, and
-> identifying this from userspace is neither intuitive, nor straigh
-> forward.
-
-s/straigh/straight/
-In this context, I think "straightforward" should be closed up
-(without the space).
-
-> The easiest way to detect this is with pcie_print_link_status(),
-> since the bottleneck is usually the link that is downtrained. It's not
-> a perfect solution, but it works extremely well in most cases.
-
-This is an interesting idea.  I have two concerns:
-
-Some drivers already do this on their own, and we probably don't want
-duplicate output for those devices.  In most cases (ixgbe and mlx* are
-exceptions), the drivers do this unconditionally so we *could* remove
-it from the driver if we add it to the core.  The dmesg order would
-change, and the message wouldn't be associated with the driver as it
-now is.
-
-Also, I think some of the GPU devices might come up at a lower speed,
-then download firmware, then reset the device so it comes up at a
-higher speed.  I think this patch will make us complain about about
-the low initial speed, which might confuse users.
-
-So I'm not sure whether it's better to do this in the core for all
-devices, or if we should just add it to the high-performance drivers
-that really care.
-
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> PCI_INTERRUPT_PIN should always read  0 for SRIOV Virtual Functions.
+> 
+> Some SRIOV devices have some bugs in RTL and VF's end up reading 1
+> instead of 0 for the PIN.
+> 
+> We could enforce it by default in vfio_pci_nointx.
+> 
+> Reported-by: Gage Eads <gage.eads@intel.com>
+> Tested-by: Gage Eads <gage.eads@intel.com>
+> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> Cc: iommu@lists.linux-foundation.org
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Bjorn Helgaas <helgaas@kernel.org>
+> Cc: Gage Eads <gage.eads@intel.com>
 > ---
+>  drivers/vfio/pci/vfio_pci.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> Changes since v2:
->  - Check dev->is_virtfn flag
-> 
-> Changes since v1:
->  - Use pcie_print_link_status() instead of reimplementing logic
->  
->  drivers/pci/probe.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index ac91b6fd0bcd..a88ec8c25dd5 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2146,6 +2146,25 @@ static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
->  	return dev;
->  }
->  
-> +static void pcie_check_upstream_link(struct pci_dev *dev)
-> +{
-> +
-> +	if (!pci_is_pcie(dev))
-> +		return;
-> +
-> +	/* Look from the device up to avoid downstream ports with no devices. */
-> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
-> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
-> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
-> +		return;
-
-Do we care about Upstream Ports here?  I suspect that ultimately we
-only care about the bandwidth to Endpoints, and if an Endpoint is
-constrained by a slow link farther up the tree,
-pcie_print_link_status() is supposed to identify that slow link.
-
-I would find this test easier to read as
-
-  if (!(type == PCI_EXP_TYPE_ENDPOINT || type == PCI_EXP_TYPE_LEG_END))
-    return;
-
-But maybe I'm the only one that finds the conjunction of inequalities
-hard to read.  No big deal either way.
-
-> +	/* Multi-function PCIe share the same link/status. */
-> +	if ((PCI_FUNC(dev->devfn) != 0) || dev->is_virtfn)
-> +		return;
-> +
-> +	pcie_print_link_status(dev);
-> +}
-> +
->  static void pci_init_capabilities(struct pci_dev *dev)
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index b423a30..bc3f4fa 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -192,6 +192,13 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev);
+>   */
+>  static bool vfio_pci_nointx(struct pci_dev *pdev)
 >  {
->  	/* Enhanced Allocation */
-> @@ -2181,6 +2200,9 @@ static void pci_init_capabilities(struct pci_dev *dev)
->  	/* Advanced Error Reporting */
->  	pci_aer_init(dev);
->  
-> +	/* Check link and detect downtrain errors */
-> +	pcie_check_upstream_link(dev);
+> +	/*
+> +	 * Per PCI, no VF's should have INTx
+> +	 * Simply disable it here
+> +	 */
+> +	if (pdev->is_virtfn)
+> +		return true;
 > +
->  	if (pci_probe_reset_function(dev) == 0)
->  		dev->reset_fn = 1;
->  }
-> -- 
-> 2.14.4
-> 
+>  	switch (pdev->vendor) {
+>  	case PCI_VENDOR_ID_INTEL:
+>  		switch (pdev->device) {
+
+Nak, this is not what vfio_pci_nointx() is meant for, it's been tried
+before and it was broken:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/vfio/pci/vfio_pci.c?id=834814e80268c818f354c8f402e0c6604ed75589
+
+This would cause *every* VF to print:
+
+	dev_info(&pdev->dev, "Masking broken INTx support\n");
+
+If the device is incapable of generating INTx then it's probably better
+to drop it at vfio_pci_get_irq_count().  Please also note the subject is
+misidentified, this is a "vfio/pci" patch, not an "x86/pci" patch.
+kvm@vger is the official list for vfio patches.  Thanks,
+
+Alex
