@@ -2,88 +2,72 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC68ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C83ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BCBE208E9
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:58:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BCBE208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 26690208E9
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:59:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26690208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbeGPIYp (ORCPT
+        id S1728160AbeGPIZh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:24:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45896 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726190AbeGPIYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:24:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 98E96ADBC;
-        Mon, 16 Jul 2018 07:58:36 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 09:58:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: avoid bothering interrupted task when charge memcg
- in softirq
-Message-ID: <20180716075836.GC17280@dhcp22.suse.cz>
-References: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+        Mon, 16 Jul 2018 04:25:37 -0400
+Received: from muru.com ([72.249.23.125]:51588 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727163AbeGPIZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 04:25:37 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 75D6F80EE;
+        Mon, 16 Jul 2018 08:02:38 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 00:59:26 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
+        merlijn@wizzup.org
+Subject: Re: Vibrations on Droid 4?
+Message-ID: <20180716075926.GU99251@atomide.com>
+References: <20180709081534.GA6799@amd>
+ <20180709214910.tes6u4ivxomd3aja@earth.universe>
+ <20180709220211.GA7760@amd>
+ <20180710101147.lyu65ro4czvrs2da@earth.universe>
+ <20180710133040.GA4391@amd>
+ <20180710161123.azym6sbboriuj4yc@earth.universe>
+ <20180711080218.GA21225@amd>
+ <20180711132739.GL99251@atomide.com>
+ <20180715201729.GB19675@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531557122-12540-1-git-send-email-laoar.shao@gmail.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180715201729.GB19675@amd>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 14-07-18 16:32:02, Yafang Shao wrote:
-> try_charge maybe executed in packet receive path, which is in interrupt
-> context.
-> In this situation, the 'current' is the interrupted task, which may has
-> no relation to the rx softirq, So it is nonsense to use 'current'.
+* Pavel Machek <pavel@ucw.cz> [180715 20:20]:
+> Yep, so I have two patches that make the device appear, but vibrations
+> still do not work for me.
 > 
-> Avoid bothering the interrupted if page_counter_try_charge failes.
+> a) any ideas how to debug that / get them to work?
 
-I agree with Shakeel that this changelog asks for more information about
-"why it matters". Small inconsistencies should be tolerable because the
-state we rely on is so rarely set that it shouldn't make a visible
-difference in practice.
+Hmm no new ideas except I wonder if there is also some other
+regression with the timer pdata not being passed properly now.
 
-> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> ---
->  mm/memcontrol.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 68ef266..13f95db 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2123,6 +2123,9 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  		goto retry;
->  	}
->  
-> +	if (in_softirq())
-> +		goto nomem;
-> +
+> b) do you want the patches anyway?
 
-If anything would it make more sense to use in_interrupt() to be more
-bullet proof for future?
+Yes for things that are obviously broken it makes sense.
 
->  	/*
->  	 * Unlike in global OOM situations, memcg is not in a physical
->  	 * memory shortage.  Allow dying and OOM-killed tasks to
-> -- 
-> 1.8.3.1
+Thanks,
 
--- 
-Michal Hocko
-SUSE Labs
+Tony
