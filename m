@@ -2,87 +2,171 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37237ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D157ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEB1C208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:49:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25C10208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:52:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="HTnMQsSJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB1C208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eXQ4rBPA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25C10208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729828AbeGPUSR (ORCPT
+        id S1729474AbeGPUVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 16:18:17 -0400
-Received: from sonic302-28.consmr.mail.gq1.yahoo.com ([98.137.68.154]:41677
-        "EHLO sonic302-28.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729603AbeGPUSR (ORCPT
+        Mon, 16 Jul 2018 16:21:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40248 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728061AbeGPUVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 16:18:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1531770562; bh=shKDbc3JO89/Ms6qUiE9NLYn3gQsmMgpLL+MePgpxPA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=HTnMQsSJ3+UypildF9/m2YMD5dsO3PQpDdlwV02/CS+ISrwiqwnjn8WKSJvFnAqZ/m5elD80M2mjF+PzwzmQhE18Yr83muNim+HW/yhiHMMU6HS8FNRUOguiRipBFSkdmZCCtvy6PiQYTD4NtU1mOujjCLYHvGMUEw/7yJIkabwOaxzyxKT4Ri5CHlETGwipU/bKuzOcj6iT4m7D7tWEt/im1OpO/PvpxLNwzNzOqJTYSiGhMssiGDVQHJU0NVFq0JAEIHM5uRscZYHz3OlmitLzYFRPPhOf01HV2hgpviK/yI/RzsGRziO1cqYz1vjyJAhlu/tf39h9VhlsN0znBA==
-X-YMail-OSG: 96vCdzQVM1nEPAvtfGtitAAIaZ7nOpuNqujw3wiJ8ymocpGnvE0AGqSTZSnM3s7
- 8j_HPphK8KoYbzM6mxO5RVj4vL4Eeyvl0NDIlgteJ6sYE8j7VyPCZNt4jDxxlYB4J5VpSmcU5z7D
- OqKSyUHnGYrhmmoGMqitWzcUJ5wk3Biw5Lfg63.a6Q3FMvCx1BO58EhrO14QRX6KVsUwYSL8irG9
- Ctw.__u6sKFv0XAz8BAznKnGOWeuLfBXR1OCd8IY20CHfQW4FQ7tevoYxqvTa84mrz1EtbHnz.V.
- yqgE0vqd76L9qx974YbsKQR7kD3x_xRWz7sbywrtv0wjpquUFQk9n7ONvdSTPy3kqgfDtQVH9zip
- 9.AYg4kMAtf_ALLetHYrBa4LYINOmjepfCAz_8DLmraKvNm_DDcr5GLiKFG8hY2DhvetTw4YK0Gf
- FgJHYFDB8K4k0tt4_4QWh7peD1V_oUovk2SrKxXNDAQ9jUnT_T0YV2Do_W5vHQftJ48po48D6ubG
- _qcpAExiY2D2g2LHoo9r0F9xC7A_7QfeWQ_CZJF8wIINDmytG3CT._07GI9RBy8qoMeKpy6PM9rT
- Aw6W5GIY.dekad_FgB7cFBKarfqepWXy.qnXGEqJogEnfl3xtU3QIhvDfQfwBaSbmjhzXV7aC4lF
- yz9ZZ8fhgs2ptp2G7nET6w.jMaxVADRP7eIKjFKkcq1zhFSB5NcsMSeIxNH9ojb4abiYt5Erb10c
- noF9Hp7KA8rD8nmrdWhMIlXI4Ztq._JocxxIwKA9fqTv5KYhjeDp5X4gy_qWBEkijF3gljTMLOMI
- VjpW.WP_NC8DUT7qhawY9eLwrvOswoSAZX4LYvWjEHCbyWMhwcN75ZmEPIlxJwoixDzac9y3yoMl
- S65q5ctKBtjPPEx2pS9oWtbQH9OQSI4krjRVaR6RNdIZuxDExfnMup08DsA6ZpBDImtXlHiqFJBK
- .iFIR_MwaAOskCWH9OiEBZEhmG_tzP5xBtH10kq29PNBv7ysJ1XYldNo6KjXpvIYdRYwNHR1wZc6
- wD5c-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.gq1.yahoo.com with HTTP; Mon, 16 Jul 2018 19:49:22 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp402.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 2e4f3b13a5faae174d9073d516f8a05d;
-          Mon, 16 Jul 2018 19:49:22 +0000 (UTC)
-Subject: Re: [PATCH v1 00/22] LSM: Full security module stacking
-To:     James Morris <jmorris@namei.org>
-Cc:     LSM <linux-security-module@vger.kernel.org>,
-        LKLM <linux-kernel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-References: <8a325db8-e7eb-9581-2b77-fc987a165df7@schaufler-ca.com>
- <alpine.LRH.2.21.1807170453400.18292@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <c189ed40-4b8e-de1a-6917-273fdad207c0@schaufler-ca.com>
-Date:   Mon, 16 Jul 2018 12:49:18 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 16 Jul 2018 16:21:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Vgru6mCXblOtVcGBcYglADQgqrK9xp8e8cVQc7K986Q=; b=eXQ4rBPAUBsHn2QUgW7KcYARb
+        TRJd5jYAOfh4PH/hmoBf0WS/2VlMDxKOxQD9bDQW9i3WLTE2h96zLDgBerDrPUb1CMe0Brh9UHvm9
+        TDzxQ6I+iY4NY6gjzxMNSWleq/sZ0Z9srqUu6ZvRkleAf/RzZAe1nd4OvcS+kFR7+om9A9Q58hKmh
+        o1e1OIfo/MdUqpxNrDLXZAzX/oL2U6AwYsLu14xTtsMWhRnho4y3AVIYifSAnKo4DhAyCEyh6g3pI
+        T32O9k1WRKIKUuEiuBPJ6vRWBaJOOU+aps1kMbAopCnxvxs6yMK+UO0PDtxhlYX4/jPq6C8HPW7d5
+        ytT2J5pLg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ff9Y9-0000EI-60; Mon, 16 Jul 2018 19:52:49 +0000
+Date:   Mon, 16 Jul 2018 12:52:49 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 1/5] radix tree test suite: fix mapshift build target
+Message-ID: <20180716195249.GA14380@bombadil.infradead.org>
+References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+ <20180503192430.7582-2-ross.zwisler@linux.intel.com>
+ <20180715230052.GA6486@bombadil.infradead.org>
+ <20180716160710.GA2287@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1807170453400.18292@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716160710.GA2287@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/16/2018 11:53 AM, James Morris wrote:
-> On Mon, 16 Jul 2018, Casey Schaufler wrote:
->
->> LSM: Full security module stacking
->>
->> I'm calling this v1 not because it's the first version
->> I've put out but because it's the first version I'm getting
->> serious external pressure to get upstream. 
-> >From whom?
+On Mon, Jul 16, 2018 at 10:07:10AM -0600, Ross Zwisler wrote:
+> On Sun, Jul 15, 2018 at 04:00:52PM -0700, Matthew Wilcox wrote:
+> > On Thu, May 03, 2018 at 01:24:26PM -0600, Ross Zwisler wrote:
+> > > Unfortunately, this phony target doesn't actually work as a dependency, so
+> > > you end up getting:
+> > > 
+> > > $ make
+> > > make: *** No rule to make target 'generated/map-shift.h', needed by 'main.o'.  Stop.
+> > > make: *** Waiting for unfinished jobs....
+> > > 
+> > > Fix this by making the file generated/map-shift.h our real makefile target,
+> > > and add this a dependency of the top level build target.
+> > 
+> > This commit breaks typing 'make SHIFT=6'.  It doesn't rebuild the
+> > test suite any more.  If I revert this patch, it works.  Also, I can't
+> > reproduce the problem you're reporting here.  So ... how do I reproduce
+> > it?  Otherwise, I'm just going to revert this patch since it regresses
+> > a feature I find useful.
+> 
+> The test suite builds fine for me in v4.17.  From a completely clean tree, in
+> tools/testing/radix-tree:
+> 
+>   $ make
+>   sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < ../../../lib/radix-tree.c > radix-tree.c
+>   sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < ../../../lib/idr.c > idr.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o main.o main.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o linux.o linux.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o test.o test.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o find_bit.o ../../lib/find_bit.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o regression1.o regression1.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o regression2.o regression2.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o regression3.o regression3.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o tag_check.o tag_check.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o multiorder.o multiorder.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o idr-test.o idr-test.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o iteration_check.o iteration_check.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o benchmark.o benchmark.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o idr.o idr.c
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o radix-tree.o radix-tree.c
+>   cc -fsanitize=address  multiorder.o radix-tree.o idr.o linux.o test.o find_bit.o  -lpthread -lurcu -o multiorder
+>   cc -fsanitize=address  main.o radix-tree.o idr.o linux.o test.o find_bit.o regression1.o regression2.o regression3.o tag_check.o multiorder.o idr-test.o iteration_check.o benchmark.o  -lpthread -lurcu -o main
+>   cc -fsanitize=address  idr-test.o radix-tree.o idr.o linux.o test.o find_bit.o  -lpthread -lurcu -o idr-test
+> 
+> and you can successfully run the radix tree test suite by running 'main'.
+> 
+> With the above mentioned commit reverted, this build fails:
+> 
+>   $ make
+>   make: *** No rule to make target 'generated/map-shift.h', needed by 'main.o'.  Stop.
+>   make: *** Waiting for unfinished jobs....
 
-S.A.R.A. , Ubuntu and a couple lesser embedded projects I'm working with.
+OK ... what version of make are you using?  Because this works fine for me:
 
+$ git clone linux clean
+$ cd clean
+$ git checkout v4.17
+$ cd tools/testing/radix-tree/ 
+$ git revert 8d9fa88edd5e360b71765feeadb915d4066c9684
+$ make
+
+$ make --version
+GNU Make 4.1
+Built for x86_64-pc-linux-gnu
+
+It's Debian's Version: 4.1-9.1
+
+> If you want generated/map-shift.h to be rebuilt each time you run 'make' so
+> that it can take a new SHIFT argument, that's fine, but let's not make users
+> run 'make mapshift' before an actual 'make' will work, which is where we're at
+> with v4.17 with my commit reverted.
+
+I don't want it to be rebuilt, I want it to be checked before each
+build, regenerated if SHIFT has changed, and everything to rebuild if
+it has changed.
+
+> Incidentally, in the current linux/master the radix tree test suite again
+> fails to build:
+> 
+>   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o radix-tree.o radix-tree.c
+>   idr.c:7:10: fatal error: linux/xarray.h: No such file or directory
+>    #include <linux/xarray.h>
+>             ^~~~~~~~~~~~~~~~
+>   compilation terminated.
+>   make: *** [<builtin>: idr.o] Error 1
+> 
+> Can you look into this?  
+
+Ah ... Andrew broke it fixing something else ;-)  The first commit in
+my xarray branch fixes it -- looks like I tested my own commits but not
+the commit I based on ;-)
+
+diff --git a/tools/testing/radix-tree/linux/xarray.h b/tools/testing/radix-tree/linux/xarray.h
+new file mode 100644
+index 000000000000..df3812cda376
+--- /dev/null
++++ b/tools/testing/radix-tree/linux/xarray.h
+@@ -0,0 +1,2 @@
++#include "generated/map-shift.h"
++#include "../../../../include/linux/xarray.h"
+
+
+> 0-day folks, would it be possible for you to add a radix tree build & test
+> runs to your automated tests?  We would really appreciate any help in reducing
+> this kind of breakage, which seems to happen pretty often.
+
+Yeah, that would be good.
