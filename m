@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058B8ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B6FECDFAA
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF05A20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF05A20864
+	by mail.kernel.org (Postfix) with ESMTP id 7E756208FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:38:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E756208FC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732132AbeGPIEN (ORCPT
+        id S1732150AbeGPIER (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:04:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46860 "EHLO
+        Mon, 16 Jul 2018 04:04:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729883AbeGPIEM (ORCPT
+        with ESMTP id S1729883AbeGPIEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:04:12 -0400
+        Mon, 16 Jul 2018 04:04:15 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B3FBCA0;
-        Mon, 16 Jul 2018 07:38:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 20D47CA4;
+        Mon, 16 Jul 2018 07:38:13 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.17 44/67] tools build: fix # escaping in .cmd files for future Make
-Date:   Mon, 16 Jul 2018 09:35:13 +0200
-Message-Id: <20180716073450.130547689@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Kamenee Arumugam <kamenee.arumugam@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.17 45/67] IB/hfi1: Fix incorrect mixing of ERR_PTR and NULL return values
+Date:   Mon, 16 Jul 2018 09:35:14 +0200
+Message-Id: <20180716073450.280022308@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073443.294323458@linuxfoundation.org>
 References: <20180716073443.294323458@linuxfoundation.org>
@@ -52,60 +54,120 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Menzel <pmenzel@molgen.mpg.de>
+From: Michael J. Ruhl <michael.j.ruhl@intel.com>
 
-commit 9feeb638cde083c737e295c0547f1b4f28e99583 upstream.
+commit b697d7d8c741f27b728a878fc55852b06d0f6f5e upstream.
 
-In 2016 GNU Make made a backwards incompatible change to the way '#'
-characters were handled in Makefiles when used inside functions or
-macros:
+The __get_txreq() function can return a pointer, ERR_PTR(-EBUSY), or NULL.
+All of the relevant call sites look for IS_ERR, so the NULL return would
+lead to a NULL pointer exception.
 
-http://git.savannah.gnu.org/cgit/make.git/commit/?id=c6966b323811c37acedff05b57
+Do not use the ERR_PTR mechanism for this function.
 
-Due to this change, when attempting to run `make prepare' I get a
-spurious make syntax error:
+Update all call sites to handle the return value correctly.
 
-    /home/earnest/linux/tools/objtool/.fixdep.o.cmd:1: *** missing separator.  Stop.
+Clean up error paths to reflect return value.
 
-When inspecting `.fixdep.o.cmd' it includes two lines which use
-unescaped comment characters at the top:
-
-    \# cannot find fixdep (/home/earnest/linux/tools/objtool//fixdep)
-    \# using basic dep data
-
-This is because `tools/build/Build.include' prints these '\#'
-characters:
-
-    printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
-    printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
-
-This completes commit 9564a8cf422d ("Kbuild: fix # escaping in .cmd files
-for future Make").
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197847
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: stable@vger.kernel.org
-Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Fixes: 45842abbb292 ("staging/rdma/hfi1: move txreq header code")
+Cc: <stable@vger.kernel.org> # 4.9.x+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Kamenee Arumugam <kamenee.arumugam@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/build/Build.include |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/hfi1/rc.c          |    2 +-
+ drivers/infiniband/hw/hfi1/uc.c          |    4 ++--
+ drivers/infiniband/hw/hfi1/ud.c          |    4 ++--
+ drivers/infiniband/hw/hfi1/verbs_txreq.c |    4 ++--
+ drivers/infiniband/hw/hfi1/verbs_txreq.h |    4 ++--
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
---- a/tools/build/Build.include
-+++ b/tools/build/Build.include
-@@ -63,8 +63,8 @@ dep-cmd = $(if $(wildcard $(fixdep)),
-            $(fixdep) $(depfile) $@ '$(make-cmd)' > $(dot-target).tmp;           \
-            rm -f $(depfile);                                                    \
-            mv -f $(dot-target).tmp $(dot-target).cmd,                           \
--           printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
--           printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
-+           printf '$(pound) cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
-+           printf '$(pound) using basic dep data\n\n' >> $(dot-target).cmd;           \
-            cat $(depfile) >> $(dot-target).cmd;                                 \
-            printf '\n%s\n' 'cmd_$@ := $(make-cmd)' >> $(dot-target).cmd)
+--- a/drivers/infiniband/hw/hfi1/rc.c
++++ b/drivers/infiniband/hw/hfi1/rc.c
+@@ -271,7 +271,7 @@ int hfi1_make_rc_req(struct rvt_qp *qp,
  
+ 	lockdep_assert_held(&qp->s_lock);
+ 	ps->s_txreq = get_txreq(ps->dev, qp);
+-	if (IS_ERR(ps->s_txreq))
++	if (!ps->s_txreq)
+ 		goto bail_no_tx;
+ 
+ 	if (priv->hdr_type == HFI1_PKT_TYPE_9B) {
+--- a/drivers/infiniband/hw/hfi1/uc.c
++++ b/drivers/infiniband/hw/hfi1/uc.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright(c) 2015, 2016 Intel Corporation.
++ * Copyright(c) 2015 - 2018 Intel Corporation.
+  *
+  * This file is provided under a dual BSD/GPLv2 license.  When using or
+  * redistributing this file, you may do so under either license.
+@@ -72,7 +72,7 @@ int hfi1_make_uc_req(struct rvt_qp *qp,
+ 	int middle = 0;
+ 
+ 	ps->s_txreq = get_txreq(ps->dev, qp);
+-	if (IS_ERR(ps->s_txreq))
++	if (!ps->s_txreq)
+ 		goto bail_no_tx;
+ 
+ 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_SEND_OK)) {
+--- a/drivers/infiniband/hw/hfi1/ud.c
++++ b/drivers/infiniband/hw/hfi1/ud.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright(c) 2015, 2016 Intel Corporation.
++ * Copyright(c) 2015 - 2018 Intel Corporation.
+  *
+  * This file is provided under a dual BSD/GPLv2 license.  When using or
+  * redistributing this file, you may do so under either license.
+@@ -482,7 +482,7 @@ int hfi1_make_ud_req(struct rvt_qp *qp,
+ 	u32 lid;
+ 
+ 	ps->s_txreq = get_txreq(ps->dev, qp);
+-	if (IS_ERR(ps->s_txreq))
++	if (!ps->s_txreq)
+ 		goto bail_no_tx;
+ 
+ 	if (!(ib_rvt_state_ops[qp->state] & RVT_PROCESS_NEXT_SEND_OK)) {
+--- a/drivers/infiniband/hw/hfi1/verbs_txreq.c
++++ b/drivers/infiniband/hw/hfi1/verbs_txreq.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright(c) 2016 - 2017 Intel Corporation.
++ * Copyright(c) 2016 - 2018 Intel Corporation.
+  *
+  * This file is provided under a dual BSD/GPLv2 license.  When using or
+  * redistributing this file, you may do so under either license.
+@@ -94,7 +94,7 @@ struct verbs_txreq *__get_txreq(struct h
+ 				struct rvt_qp *qp)
+ 	__must_hold(&qp->s_lock)
+ {
+-	struct verbs_txreq *tx = ERR_PTR(-EBUSY);
++	struct verbs_txreq *tx = NULL;
+ 
+ 	write_seqlock(&dev->txwait_lock);
+ 	if (ib_rvt_state_ops[qp->state] & RVT_PROCESS_RECV_OK) {
+--- a/drivers/infiniband/hw/hfi1/verbs_txreq.h
++++ b/drivers/infiniband/hw/hfi1/verbs_txreq.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright(c) 2016 Intel Corporation.
++ * Copyright(c) 2016 - 2018 Intel Corporation.
+  *
+  * This file is provided under a dual BSD/GPLv2 license.  When using or
+  * redistributing this file, you may do so under either license.
+@@ -83,7 +83,7 @@ static inline struct verbs_txreq *get_tx
+ 	if (unlikely(!tx)) {
+ 		/* call slow path to get the lock */
+ 		tx = __get_txreq(dev, qp);
+-		if (IS_ERR(tx))
++		if (!tx)
+ 			return tx;
+ 	}
+ 	tx->qp = qp;
 
 
