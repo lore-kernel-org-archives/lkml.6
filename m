@@ -6,68 +6,74 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D51AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBC1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56EB22098A
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:48:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56EB22098A
+	by mail.kernel.org (Postfix) with ESMTP id F1F4B2098A
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 09:50:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F4B2098A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729595AbeGPKPa (ORCPT
+        id S1729913AbeGPKQ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:15:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53732 "EHLO
+        Mon, 16 Jul 2018 06:16:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53778 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728061AbeGPKP3 (ORCPT
+        with ESMTP id S1726851AbeGPKQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:15:29 -0400
+        Mon, 16 Jul 2018 06:16:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BC07DAD2;
-        Mon, 16 Jul 2018 09:48:53 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 11:48:51 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 72CF9AD2;
+        Mon, 16 Jul 2018 09:50:20 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 11:50:18 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        Todd Kjos <tkjos@android.com>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Arve H <arve@android.com>, Martijn Coenen <maco@android.com>,
-        Tobias Lindskog <tobias.lindskog@sonymobile.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH] staging: android: ashmem: Shrink directly through
- shmem_fallocate
-Message-ID: <20180716094851.GA31480@kroah.com>
-References: <20180706214416.184691-1-joel@joelfernandes.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     sean.wang@mediatek.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        marcel@holtmann.org, johan.hedberg@gmail.com,
+        devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] serdev: add dev_pm_domain_attach|detach()
+Message-ID: <20180716095018.GA11078@kroah.com>
+References: <cover.1531150733.git.sean.wang@mediatek.com>
+ <d5904115ff1da38fe79b45fa3d59ef0688cea124.1531150733.git.sean.wang@mediatek.com>
+ <20180715085628.GI10204@localhost>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180706214416.184691-1-joel@joelfernandes.org>
+In-Reply-To: <20180715085628.GI10204@localhost>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 02:44:16PM -0700, Joel Fernandes wrote:
-> From: Tobias Lindskog <tobias.lindskog@sonymobile.com>
+On Sun, Jul 15, 2018 at 10:56:28AM +0200, Johan Hovold wrote:
+> On Mon, Jul 09, 2018 at 11:56:58PM +0800, sean.wang@mediatek.com wrote:
+> > From: Sean Wang <sean.wang@mediatek.com>
+> > 
+> > In order to open up the required power gate before any operation can be
+> > effectively performed over the serial bus between CPU and serdev, it's
+> > clearly essential to add common attach functions for PM domains to serdev
+> > at the probe phase.
+> > 
+> > Similarly, the relevant dettach function for the PM domains should be
+> > properly and reversely added at the remove phase.
+> > 
+> > Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Cc: Jiri Slaby <jslaby@suse.com>
+> > Cc: linux-serial@vger.kernel.org
 > 
-> When ashmem_shrink is called from direct reclaim on a user thread, a
-> call to do_fallocate will check for permissions against the security
-> policy of that user thread.  It can thus fail by chance if called on a
-> thread that isn't permitted to modify the relevant ashmem areas.
-> 
-> Because we know that we have a shmem file underneath, call the shmem
-> implementation of fallocate directly instead of going through the
-> user-space interface for fallocate.
-> 
-> Bug: 21951515
+> Reviewed-by: Johan Hovold <johan@kernel.org>
 
-What does this "Bug:" line mean to any of us?  :)
-
-I'll go delete it, and I fixed up the subject to have 'staging: android'
-in it as well.  Please do that next time.
-
-thanks,
+Thanks, now applied.
 
 greg k-h
