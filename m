@@ -6,89 +6,107 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 609EAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AA9ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A253208AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:09:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A253208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 34E61208AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 10:09:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E61208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729151AbeGPKfh (ORCPT
+        id S1730246AbeGPKgE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 06:35:37 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:50829 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727494AbeGPKfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 06:35:37 -0400
-Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 230f7a75d7260690; Mon, 16 Jul 2018 12:08:56 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     gregkh@linuxfoundation.org, broonie@kernel.org, p.paillet@st.com,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v2] base: core: Remove WARN_ON from link dependencies check
-Date:   Mon, 16 Jul 2018 12:07:20 +0200
-Message-ID: <1753469.EDefOSO2YU@aspire.rjw.lan>
-In-Reply-To: <20180716095952.22202-1-benjamin.gaignard@st.com>
-References: <20180716095952.22202-1-benjamin.gaignard@st.com>
+        Mon, 16 Jul 2018 06:36:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48888 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727494AbeGPKgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 06:36:04 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A88CF402315B;
+        Mon, 16 Jul 2018 10:09:23 +0000 (UTC)
+Received: from epycfail (ovpn-200-23.brq.redhat.com [10.40.200.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8228C1C589;
+        Mon, 16 Jul 2018 10:09:20 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 12:09:15 +0200
+From:   Stefano Brivio <sbrivio@redhat.com>
+To:     Ursula Braun <ubraun@linux.ibm.com>
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-s390@vger.kernel.org, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, raspl@linux.ibm.com,
+        linux-kernel@vger.kernel.org, eric.dumazet@gmail.com,
+        lifeasageek@gmail.com
+Subject: Re: [PATCH net 1/4] net/smc: take sock lock in smc_ioctl()
+Message-ID: <20180716120915.09d35dc0@epycfail>
+In-Reply-To: <20180716100101.79272-1-ubraun@linux.ibm.com>
+References: <20180716100101.79272-1-ubraun@linux.ibm.com>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 10:09:23 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 16 Jul 2018 10:09:23 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'sbrivio@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, July 16, 2018 11:59:52 AM CEST Benjamin Gaignard wrote:
-> In some cases the link between between customer and supplier
-> already exist, for example when a device use it parent as supplier [1].
+On Mon, 16 Jul 2018 12:01:01 +0200
+Ursula Braun <ubraun@linux.ibm.com> wrote:
 
-I think this should be "its parent as a supplier".
-
-> Do not warn about already existing dependencies because device_link_add()
-> take care of this case.
-
-"device_link_add() takes care of"
-
-> [1] https://lkml.org/lkml/2018/7/9/356
-
-There is the Link: tag for links and it is better to not use lkml.org
-as it is not reliable enough.  You can use lore.kernel.org/lkml/ instead.
-
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> From: Ursula Braun <ursula.braun@linux.ibm.com>
+> 
+> SMC ioctl processing requires the sock lock to work properly in
+> all thinkable scenarios.
+> Problem has been found with RaceFuzzer and fixes:
+>    KASAN: null-ptr-deref Read in smc_ioctl
+> 
+> Reported-by: Byoungyoung Lee <lifeasageek@gmail.com>
+> Reported-by: syzbot+35b2c5aa76fd398b9fd4@syzkaller.appspotmail.com
+> Signed-off-by: Ursula Braun <ubraun@linux.ibm.com>
 > ---
->  drivers/base/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  net/smc/af_smc.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index df3e1a44707a..fcdc17f0f349 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -105,7 +105,7 @@ static int device_is_dependent(struct device *dev, void *target)
->  	struct device_link *link;
->  	int ret;
->  
-> -	if (WARN_ON(dev == target))
-> +	if (dev == target)
->  		return 1;
->  
->  	ret = device_for_each_child(dev, target, device_is_dependent);
-> @@ -113,7 +113,7 @@ static int device_is_dependent(struct device *dev, void *target)
->  		return ret;
->  
->  	list_for_each_entry(link, &dev->links.consumers, s_node) {
-> -		if (WARN_ON(link->consumer == target))
-> +		if (link->consumer == target)
->  			return 1;
->  
->  		ret = device_is_dependent(link->consumer, target);
-> 
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 5334157f5065..a4381b38a521 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -1524,6 +1524,7 @@ static int smc_ioctl(struct socket *sock, unsigned int cmd,
+>  			return -EBADF;
+>  		return smc->clcsock->ops->ioctl(smc->clcsock, cmd, arg);
+>  	}
+> +	lock_sock(&smc->sk);
+>  	switch (cmd) {
+>  	case SIOCINQ: /* same as FIONREAD */
+>  		if (smc->sk.sk_state == SMC_LISTEN)
 
+                        return -EINVAL;
 
+you should also unlock here, and:
+
+        case SIOCOUTQ:
+                /* output queue size (not send + not acked) */
+                if (smc->sk.sk_state == SMC_LISTEN)
+                        return -EINVAL;
+
+here, and:
+
+        case SIOCOUTQNSD:
+                /* output queue size (not send only) */
+                if (smc->sk.sk_state == SMC_LISTEN)
+                        return -EINVAL;
+
+here, and:
+
+        case SIOCATMARK:
+                if (smc->sk.sk_state == SMC_LISTEN)
+                        return -EINVAL;
+
+here.
+
+-- 
+Stefano
