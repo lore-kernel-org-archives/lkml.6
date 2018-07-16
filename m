@@ -2,109 +2,81 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3265DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28734ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9408A208F7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:48:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9408A208F7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hofr.at
+	by mail.kernel.org (Postfix) with ESMTP id C97DD208FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 08:49:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C97DD208FC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbeGPJOW (ORCPT
+        id S1729814AbeGPJQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 05:14:22 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:46228 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726552AbeGPJOW (ORCPT
+        Mon, 16 Jul 2018 05:16:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43121 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbeGPJQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 05:14:22 -0400
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id 5C0EA5C0F64; Mon, 16 Jul 2018 08:46:26 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 08:46:26 +0000
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Patrice CHOTARD <patrice.chotard@st.com>
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: STi: at least warn if of_iomap fails
-Message-ID: <20180716084626.GA28893@osadl.at>
-References: <1531410530-24163-1-git-send-email-hofrat@osadl.org>
- <50a1ccc1-e64a-a35e-a7b5-eeb7082478e9@st.com>
+        Mon, 16 Jul 2018 05:16:04 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fezCM-0002XM-OS; Mon, 16 Jul 2018 08:49:38 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: gus: remove redundant pointer private_data
+Date:   Mon, 16 Jul 2018 09:49:38 +0100
+Message-Id: <20180716084938.15733-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <50a1ccc1-e64a-a35e-a7b5-eeb7082478e9@st.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 07:55:08AM +0000, Patrice CHOTARD wrote:
-> Hi Nicholas
-> 
-> On 07/12/2018 05:48 PM, Nicholas Mc Guire wrote:
-> > The call to of_iomap() is unchecked but scu_enable(), which the returned
-> > address is passed on to, assumes a valid mapping. If the mapping is
-> > invalid this could probably lead to undefined system state so at least
-> > a warning should be issued.
-> > 
-> > Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> > Fixes: commit 65ebcc115889 ("ARM: sti: Add STiH415 SOC support")
-> > ---
-> > Problem was found by an experimental coccinelle script
-> > 
-> > Patch was compile tested with: multi_v7_defconfig (implies
-> > CONFIG_ARCH_STI=y, CONFIG_SMP=y)
-> > 
-> > Patch is against 4.18-rc3 (localversion-next is next-20180712)
-> > 
-> >   arch/arm/mach-sti/platsmp.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/arch/arm/mach-sti/platsmp.c b/arch/arm/mach-sti/platsmp.c
-> > index 231f19e..89ae76f 100644
-> > --- a/arch/arm/mach-sti/platsmp.c
-> > +++ b/arch/arm/mach-sti/platsmp.c
-> > @@ -109,6 +109,7 @@ static void __init sti_smp_prepare_cpus(unsigned int max_cpus)
-> >   
-> >   	if (np) {
-> >   		scu_base = of_iomap(np, 0);
-> > +		WARN_ON(!scu_base);
-> >   		scu_enable(scu_base);
-> >   		of_node_put(np);
-> >   	}
-> > 
-> 
-> I should prefer to exit with an error to avoid unpredictable behavior,
-> something like this is better :
-> 
-> scu_base = of_iomap(np, 0);
-> of_node_put(np);
-> if (!scu_base) {
-> 	pr_err("No SCU remap\n");
-> 	return;
-> }
-> 
-> scu_enable(scu_base);
->
-even though it would be possible to locate that then from that message
-would it not be prefereable to provide the infos upfront like:
+From: Colin Ian King <colin.king@canonical.com>
 
-	pr_err("SCU remap failed at %s:%s():%d\n",
-               __FILE__, __func__, __LINE__);
+Pointer private_data is being assigned but is never used hence it is
+redundant and can be removed.
 
-if that makes sense I´ll resend - or is that considered too verbouse ?
+Cleans up clang warning:
+warning: variable 'private_data' set but not used [-Wunused-but-set-variable]
 
-thx!
-hofrat
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/isa/gus/gus_reset.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/sound/isa/gus/gus_reset.c b/sound/isa/gus/gus_reset.c
+index 3d1fed0c2620..59b3f683d49b 100644
+--- a/sound/isa/gus/gus_reset.c
++++ b/sound/isa/gus/gus_reset.c
+@@ -292,7 +292,6 @@ void snd_gf1_free_voice(struct snd_gus_card * gus, struct snd_gus_voice *voice)
+ {
+ 	unsigned long flags;
+ 	void (*private_free)(struct snd_gus_voice *voice);
+-	void *private_data;
  
+ 	if (voice == NULL || !voice->use)
+ 		return;
+@@ -300,7 +299,6 @@ void snd_gf1_free_voice(struct snd_gus_card * gus, struct snd_gus_voice *voice)
+ 	snd_gf1_clear_voices(gus, voice->number, voice->number);
+ 	spin_lock_irqsave(&gus->voice_alloc, flags);
+ 	private_free = voice->private_free;
+-	private_data = voice->private_data;
+ 	voice->private_free = NULL;
+ 	voice->private_data = NULL;
+ 	if (voice->pcm)
+-- 
+2.17.1
+
