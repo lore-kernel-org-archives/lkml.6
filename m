@@ -2,70 +2,93 @@ Return-Path: <SRS0=eGoB=KA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE766ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34955ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B917208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B917208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ut.ee
+	by mail.kernel.org (Postfix) with ESMTP id D937C208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 19:02:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uA/z4DbK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D937C208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbeGPT3a (ORCPT
+        id S1729854AbeGPTa5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 15:29:30 -0400
-Received: from smtp1.it.da.ut.ee ([193.40.5.66]:37644 "EHLO smtp1.it.da.ut.ee"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728550AbeGPT3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 15:29:30 -0400
-Received: from math.ut.ee (unknown [IPv6:2001:bb8:2002:2400:5054:ff:fe3b:8db9])
-        by smtp1.it.da.ut.ee (Postfix) with ESMTP id 9B90190021;
-        Mon, 16 Jul 2018 22:00:43 +0300 (EEST)
-Received: by math.ut.ee (Postfix, from userid 1014)
-        id 856DD2208EC; Mon, 16 Jul 2018 22:00:41 +0300 (EEST)
-Received: from localhost (localhost [127.0.0.1])
-        by math.ut.ee (Postfix) with ESMTP id 92D332204E9;
-        Mon, 16 Jul 2018 22:00:41 +0300 (EEST)
-Date:   Mon, 16 Jul 2018 22:00:41 +0300 (EEST)
-From:   Meelis Roos <mroos@ut.ee>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     Linux Kernel list <linux-kernel@vger.kernel.org>
-Subject: Re: 4.18-rc* regression: x86-32 troubles (with timers?)
-In-Reply-To: <alpine.LRH.2.21.1807161948380.27791@math.ut.ee>
-Message-ID: <alpine.LRH.2.21.1807162200180.27791@math.ut.ee>
-References: <alpine.LRH.2.21.1807041414080.3671@math.ut.ee> <CAK8P3a1RkNc_kShHBJ6QENrQheQi=C93DmnknC1S_uJDcTDqww@mail.gmail.com> <alpine.LRH.2.21.1807051254050.21817@math.ut.ee> <alpine.LRH.2.21.1807151803010.17406@math.ut.ee>
- <CAK8P3a2NtB_FmiSjrzZb=HoshEzo+MP2xwafC3QcMg79rffipg@mail.gmail.com> <alpine.LRH.2.21.1807161948380.27791@math.ut.ee>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 16 Jul 2018 15:30:57 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56648 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728787AbeGPTa5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 15:30:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=czifFcJx/CQBYKZTBidg5tH9DBcaKhBxu6yQ6nWtT88=; b=uA/z4DbKEHQbd0pbkGS15Nadi
+        dTp/sfq2dREuRFKz9Je5/uc/QGkwAhHwpKdp2A/KwvKf24QVlJXHUcrPcrJb93UeRT9ucpAwIxf/C
+        RykpdO77+FAl9swhWUSMK0lEgDET5RI7nnuNS/BcTIU64IUA7YsiYzfIBrJxqb9SaCJTeK/Zwx/Lu
+        xDrzkphPP4ciA6u+fTvmh9BuE9Urldx69nj9Gy8PAlVqzFgbM0LmOsmRa4HGKSfOCLNFhNTo4fBhu
+        mmnWfrxILfG2xF4bwixHVEruQIsFdA8sK7ELr+VJtGXSqU/tYYptuBel62Mg1FxmmVK58JzXIvaCh
+        GfJ6vmwDw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ff8ki-00048C-8R; Mon, 16 Jul 2018 19:01:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9091920289330; Mon, 16 Jul 2018 21:01:39 +0200 (CEST)
+Date:   Mon, 16 Jul 2018 21:01:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nick Piggin <npiggin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Message-ID: <20180716190139.GR2476@hirez.programming.kicks-ass.net>
+References: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
+ <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
+ <20180712172838.GU3593@linux.vnet.ibm.com>
+ <20180712180511.GP2476@hirez.programming.kicks-ass.net>
+ <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
+ <20180713110851.GY2494@hirez.programming.kicks-ass.net>
+ <87tvp3xonl.fsf@concordia.ellerman.id.au>
+ <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
+ <87601fz1kc.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87601fz1kc.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Everything below here is is 'bad', which can be an indication that you
-> > misclassified one of
-> > the commits above as 'good' when it should have been 'bad'. The most likely
-> > explanations are that you either typed the 'git bisect good' by accident, or
-> > that the failure is not 100% reliable, and it sometimes works fine even on a
-> > broken kernel.
-> > 
-> > 0bc5fe857274133ca0 follows directly after 3a443bd6dd7c, "net/9p: correct the
-> > variable name in v9fs_get_trans_by_name() comment", which is marked "good",
-> > and can't really be good if 0bc5fe85727413 is bad and you are not using the
-> > 'qed' driver.
-> > 
-> > I'd retest 3a443bd6dd7c again to see if that should have been 'bad', and
-> > if it was, test v4.17-rc4, which is what the net-next tree was based on.
+On Tue, Jul 17, 2018 at 12:40:19AM +1000, Michael Ellerman wrote:
 > 
-> Yes, the same prebuilt 3a443bd6dd7c appeared to be bad when retesting 
-> it. Building v4.17-rc4 now.
+> I guess arguably it's not a very macro benchmark, but we have a
+> context_switch benchmark in the tree[1] which we often use to tune
+> things, and it degrades badly. It just spins up two threads and has them
+> ping-pong using yield.
 
-v4.17-rc4 seems good after 2 reboots.
+The one advantage you'd get from putting it in lock() is that you could
+do away with smp_mb__after_spinlock().
 
--- 
-Meelis Roos (mroos@ut.ee)      http://www.cs.ut.ee/~mroos/
+But yes, I completely forgot about your IO thingy.. those bench results
+make me sad :/ a well.
