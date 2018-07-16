@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4628ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D30ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C3B1206B7
-	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3B1206B7
+	by mail.kernel.org (Postfix) with ESMTP id 917DE206B7
+	for <linux-kernel@archiver.kernel.org>; Mon, 16 Jul 2018 07:43:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 917DE206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388915AbeGPIJD (ORCPT
+        id S2388927AbeGPIJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 04:09:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47906 "EHLO
+        Mon, 16 Jul 2018 04:09:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47916 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbeGPIJD (ORCPT
+        with ESMTP id S1730161AbeGPIJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 04:09:03 -0400
+        Mon, 16 Jul 2018 04:09:05 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ABF9DCA1;
-        Mon, 16 Jul 2018 07:42:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 930CBCA4;
+        Mon, 16 Jul 2018 07:43:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH 4.9 22/32] tools build: fix # escaping in .cmd files for future Make
-Date:   Mon, 16 Jul 2018 09:36:30 +0200
-Message-Id: <20180716073507.301723219@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.9 23/32] i2c: tegra: Fix NACK error handling
+Date:   Mon, 16 Jul 2018 09:36:31 +0200
+Message-Id: <20180716073507.436974213@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180716073504.433996952@linuxfoundation.org>
 References: <20180716073504.433996952@linuxfoundation.org>
@@ -52,60 +51,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Menzel <pmenzel@molgen.mpg.de>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-commit 9feeb638cde083c737e295c0547f1b4f28e99583 upstream.
+commit 54836e2d03e76d80aec3399368ffaf5b7caadd1b upstream.
 
-In 2016 GNU Make made a backwards incompatible change to the way '#'
-characters were handled in Makefiles when used inside functions or
-macros:
+On Tegra30 Cardhu the PCA9546 I2C mux is not ACK'ing I2C commands on
+resume from suspend (which is caused by the reset signal for the I2C
+mux not being configured correctl). However, this NACK is causing the
+Tegra30 to hang on resuming from suspend which is not expected as we
+detect NACKs and handle them. The hang observed appears to occur when
+resetting the I2C controller to recover from the NACK.
 
-http://git.savannah.gnu.org/cgit/make.git/commit/?id=c6966b323811c37acedff05b57
+Commit 77821b4678f9 ("i2c: tegra: proper handling of error cases") added
+additional error handling for some error cases including NACK, however,
+it appears that this change conflicts with an early fix by commit
+f70893d08338 ("i2c: tegra: Add delay before resetting the controller
+after NACK"). After commit 77821b4678f9 was made we now disable 'packet
+mode' before the delay from commit f70893d08338 happens. Testing shows
+that moving the delay to before disabling 'packet mode' fixes the hang
+observed on Tegra30. The delay was added to give the I2C controller
+chance to send a stop condition and so it makes sense to move this to
+before we disable packet mode. Please note that packet mode is always
+enabled for Tegra.
 
-Due to this change, when attempting to run `make prepare' I get a
-spurious make syntax error:
-
-    /home/earnest/linux/tools/objtool/.fixdep.o.cmd:1: *** missing separator.  Stop.
-
-When inspecting `.fixdep.o.cmd' it includes two lines which use
-unescaped comment characters at the top:
-
-    \# cannot find fixdep (/home/earnest/linux/tools/objtool//fixdep)
-    \# using basic dep data
-
-This is because `tools/build/Build.include' prints these '\#'
-characters:
-
-    printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
-    printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
-
-This completes commit 9564a8cf422d ("Kbuild: fix # escaping in .cmd files
-for future Make").
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=197847
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Fixes: 77821b4678f9 ("i2c: tegra: proper handling of error cases")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Cc: stable@vger.kernel.org
-Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/build/Build.include |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c |   17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
---- a/tools/build/Build.include
-+++ b/tools/build/Build.include
-@@ -63,8 +63,8 @@ dep-cmd = $(if $(wildcard $(fixdep)),
-            $(fixdep) $(depfile) $@ '$(make-cmd)' > $(dot-target).tmp;           \
-            rm -f $(depfile);                                                    \
-            mv -f $(dot-target).tmp $(dot-target).cmd,                           \
--           printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
--           printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
-+           printf '$(pound) cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
-+           printf '$(pound) using basic dep data\n\n' >> $(dot-target).cmd;           \
-            cat $(depfile) >> $(dot-target).cmd;                                 \
-            printf '%s\n' 'cmd_$@ := $(make-cmd)' >> $(dot-target).cmd)
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -547,6 +547,14 @@ static int tegra_i2c_disable_packet_mode
+ {
+ 	u32 cnfg;
  
++	/*
++	 * NACK interrupt is generated before the I2C controller generates
++	 * the STOP condition on the bus. So wait for 2 clock periods
++	 * before disabling the controller so that the STOP condition has
++	 * been delivered properly.
++	 */
++	udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
++
+ 	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
+ 	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
+ 		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
+@@ -708,15 +716,6 @@ static int tegra_i2c_xfer_msg(struct teg
+ 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+ 		return 0;
+ 
+-	/*
+-	 * NACK interrupt is generated before the I2C controller generates
+-	 * the STOP condition on the bus. So wait for 2 clock periods
+-	 * before resetting the controller so that the STOP condition has
+-	 * been delivered properly.
+-	 */
+-	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
+-		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
+-
+ 	tegra_i2c_init(i2c_dev);
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
 
 
