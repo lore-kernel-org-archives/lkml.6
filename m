@@ -6,60 +6,62 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FA6ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB06ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B3CB20C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3CB20C10
+	by mail.kernel.org (Postfix) with ESMTP id 5336620C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:30:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5336620C10
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731662AbeGQOCk (ORCPT
+        id S1731683AbeGQODK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:02:40 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47786 "EHLO
+        Tue, 17 Jul 2018 10:03:10 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47820 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731371AbeGQOCj (ORCPT
+        by vger.kernel.org with ESMTP id S1731551AbeGQODK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:02:39 -0400
+        Tue, 17 Jul 2018 10:03:10 -0400
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6HDT4NC026364;
-        Tue, 17 Jul 2018 15:29:41 +0200
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6HDT12x026341;
+        Tue, 17 Jul 2018 15:30:10 +0200
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2k88qvs18v-1
+        by mx08-00178001.pphosted.com with ESMTP id 2k88qvs1au-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 17 Jul 2018 15:29:41 +0200
+        Tue, 17 Jul 2018 15:30:10 +0200
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3F44C31;
-        Tue, 17 Jul 2018 13:29:41 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E21C034;
+        Tue, 17 Jul 2018 13:30:09 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 241C85490;
-        Tue, 17 Jul 2018 13:29:41 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.49) by SFHDAG3NODE2.st.com
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AF6145497;
+        Tue, 17 Jul 2018 13:30:09 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.51) by SFHDAG3NODE2.st.com
  (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 17 Jul
- 2018 15:29:40 +0200
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: add syscfg mask parameter
-To:     Ludovic Barre <ludovic.Barre@st.com>,
-        Linus Walleij <linus.walleij@linaro.org>
+ 2018 15:30:08 +0200
+Subject: Re: [PATCH 2/2] pinctrl: stm32: add syscfg mask parameter
+To:     Ludovic BARRE <ludovic.barre@st.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
 CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         <linux-gpio@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
- <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
+ <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
+ <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
 From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <f78c73b4-2932-5304-d737-085b64c6f3af@st.com>
-Date:   Tue, 17 Jul 2018 15:29:39 +0200
+Message-ID: <c698126e-3b45-b5d1-b1eb-8503a06050aa@st.com>
+Date:   Tue, 17 Jul 2018 15:30:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1531821387-29845-2-git-send-email-ludovic.Barre@st.com>
+In-Reply-To: <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE2.st.com
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG8NODE3.st.com (10.75.127.24) To SFHDAG3NODE2.st.com
  (10.75.127.8)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_03:,,
  signatures=0
@@ -70,35 +72,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 07/17/2018 11:56 AM, Ludovic Barre wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
+On 07/17/2018 03:11 PM, Ludovic BARRE wrote:
+> Hi
 > 
-> This patch adds mask parameter to define IRQ mux field.
-> This field could vary depend of IRQ mux selection register.
-> This parameter is needed if the mask is different of 0xf.
+> add Rob, I forgotten rob's mail.
 > 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->   Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> index 9a06e1f..4d60119 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.txt
-> @@ -39,9 +39,10 @@ Optional properties:
->    - reset:	  : Reference to the reset controller
->    - interrupt-parent: phandle of the interrupt parent to which the external
->      GPIO interrupts are forwarded to.
-> - - st,syscfg: Should be phandle/offset pair. The phandle to the syscon node
-> -   which includes IRQ mux selection register, and the offset of the IRQ mux
-> -   selection register.
-> + - st,syscfg: Should be phandle/offset/mask.
-> +	-The phandle to the syscon node which includes IRQ mux selection register.
-> +	-The offset of the IRQ mux selection register
-> +	-The field mask of IRQ mux, needed if different of 0xf.
->    - gpio-ranges: Define a dedicated mapping between a pin-controller and
->      a gpio controller. Format is <&phandle a b c> with:
->   	-(phandle): phandle of pin-controller.
-> 
+> On 07/17/2018 11:56 AM, Ludovic Barre wrote:
+>> From: Ludovic Barre <ludovic.barre@st.com>
+>>
+>> This patch adds mask parameter to define IRQ mux field.
+>> This field could vary depend of IRQ mux selection register.
+>> To avoid backward compatibility, the drivers set
+>> the legacy value by default.
+>>
+>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+
 Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+
+
+>> ---
+>>   drivers/pinctrl/stm32/pinctrl-stm32.c | 16 ++++++++++++++--
+>>   1 file changed, 14 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c 
+>> b/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> index dfed609..f756232 100644
+>> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+>> @@ -46,6 +46,8 @@
+>>   #define STM32_GPIO_PINS_PER_BANK 16
+>>   #define STM32_GPIO_IRQ_LINE     16
+>> +#define SYSCFG_IRQMUX_MASK GENMASK(3, 0)
+>> +
+>>   #define gpio_range_to_bank(chip) \
+>>           container_of(chip, struct stm32_gpio_bank, range)
+>> @@ -1033,6 +1035,7 @@ static int stm32_pctrl_dt_setup_irq(struct 
+>> platform_device *pdev,
+>>       struct device *dev = &pdev->dev;
+>>       struct regmap *rm;
+>>       int offset, ret, i;
+>> +    int mask, mask_width;
+>>       parent = of_irq_find_parent(np);
+>>       if (!parent)
+>> @@ -1052,12 +1055,21 @@ static int stm32_pctrl_dt_setup_irq(struct 
+>> platform_device *pdev,
+>>       if (ret)
+>>           return ret;
+>> +    ret = of_property_read_u32_index(np, "st,syscfg", 2, &mask);
+>> +    if (ret)
+>> +        mask = SYSCFG_IRQMUX_MASK;
+>> +
+>> +    mask_width = fls(mask);
+>> +
+>>       for (i = 0; i < STM32_GPIO_PINS_PER_BANK; i++) {
+>>           struct reg_field mux;
+>>           mux.reg = offset + (i / 4) * 4;
+>> -        mux.lsb = (i % 4) * 4;
+>> -        mux.msb = mux.lsb + 3;
+>> +        mux.lsb = (i % 4) * mask_width;
+>> +        mux.msb = mux.lsb + mask_width - 1;
+>> +
+>> +        dev_dbg(dev, "irqmux%d: reg:%#x, lsb:%d, msb:%d\n",
+>> +            i, mux.reg, mux.lsb, mux.msb);
+>>           pctl->irqmux[i] = devm_regmap_field_alloc(dev, rm, mux);
+>>           if (IS_ERR(pctl->irqmux[i]))
+>>
