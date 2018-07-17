@@ -2,119 +2,91 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E4DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B218ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C11042086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:37:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C11042086B
+	by mail.kernel.org (Postfix) with ESMTP id ACEAE20862
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:38:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACEAE20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbeGQII0 (ORCPT
+        id S1729684AbeGQIJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:08:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55380 "EHLO mail.bootlin.com"
+        Tue, 17 Jul 2018 04:09:55 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55414 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727052AbeGQII0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:08:26 -0400
+        id S1727052AbeGQIJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 04:09:55 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5439520799; Tue, 17 Jul 2018 09:37:09 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 22945206ED;
-        Tue, 17 Jul 2018 09:36:59 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 09:36:59 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Koen Kooi <koen@dominion.thruhere.net>
-Cc:     linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        David Lechner <david@lechnology.com>,
-        Shawn Guo <shawnguo@kernel.org>, SZ Lin <sz.lin@moxa.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: Add vendor prefix for Sancloud
-Message-ID: <20180717073659.GB3100@piout.net>
-References: <1531808688-9716-1-git-send-email-koen@dominion.thruhere.net>
- <1531808688-9716-2-git-send-email-koen@dominion.thruhere.net>
- <20180717072028.GA3100@piout.net>
- <D3049450-5391-40CB-ADD1-E1330BFE0525@dominion.thruhere.net>
+        id 318EA20728; Tue, 17 Jul 2018 09:38:39 +0200 (CEST)
+Received: from bootlin.com (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DB6BC208C4;
+        Tue, 17 Jul 2018 09:38:01 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 09:38:01 +0200
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, netdev@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next] net: mvpp2: mvpp2_flow_get_hek_fields()
+ can be static
+Message-ID: <20180717093801.6bddd5b5@bootlin.com>
+In-Reply-To: <20180717011812.GZ10593@intel.com>
+References: <201807141506.hlrwYth1%fengguang.wu@intel.com>
+        <20180717011812.GZ10593@intel.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D3049450-5391-40CB-ADD1-E1330BFE0525@dominion.thruhere.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/2018 09:31:15+0200, Koen Kooi wrote:
-> 
-> 
-> > Op 17 jul. 2018, om 09:20 heeft Alexandre Belloni <alexandre.belloni@bootlin.com> het volgende geschreven:
-> > 
-> > Hi Koen,
-> > 
-> > I'm not sure how you expect that to be merged but you should probably
-> > send this patch to the TI maintainers along 2/2 because probably no one
-> > in copy of this patch will apply it.
-> 
-> Is that the linux-omap list and Tony? scripts/get_maintainer.pl didn’t pick them up, which is why they are missing.
-> 
+Hi,
 
-Yes, basically the same people that will apply the DT making use of this
-vendor prefix so both patches go in at the same time.
+On Tue, 17 Jul 2018 09:18:12 +0800
+kbuild test robot <lkp@intel.com> wrote:
 
-> regards,
+>Fixes: d33ec4525007 ("net: mvpp2: add an RSS classification step for each flow")
+>Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
+>---
+> mvpp2_cls.c |    2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>
+>diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+>index 723d0ba..fc9ec51 100644
+>--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+>+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+>@@ -618,7 +618,7 @@ static int mvpp2_port_rss_hash_opts_set(struct mvpp2_port *port, int flow_type,
+> 	return 0;
+> }
 > 
-> Koen
-> 
-> > 
-> > On 17/07/2018 08:24:45+0200, Koen Kooi wrote:
-> >> Add vendor prefix for Sancloud Ltd.
-> >> 
-> >> Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
-> >> Acked-by: Rob Herring <robh@kernel.org>
-> >> ---
-> >> 
-> >> v5: No changes
-> >> v4: Add Acked-by
-> >> v3: No changes
-> >> v2: No changes
-> >> v1: Initial submission
-> >> 
-> >> Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
-> >> 1 file changed, 1 insertion(+)
-> >> 
-> >> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> >> index 7cad066..c7aaa1f 100644
-> >> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> >> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> >> @@ -314,6 +314,7 @@ rohm	ROHM Semiconductor Co., Ltd
-> >> roofull	Shenzhen Roofull Technology Co, Ltd
-> >> samsung	Samsung Semiconductor
-> >> samtec	Samtec/Softing company
-> >> +sancloud	Sancloud Ltd
-> >> sandisk	Sandisk Corporation
-> >> sbs	Smart Battery System
-> >> schindler	Schindler
-> >> -- 
-> >> 2.0.1
-> >> 
-> > 
-> > -- 
-> > Alexandre Belloni, Bootlin (formerly Free Electrons)
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
-> 
+>-u16 mvpp2_flow_get_hek_fields(struct mvpp2_cls_flow_entry *fe)
+>+static u16 mvpp2_flow_get_hek_fields(struct mvpp2_cls_flow_entry *fe)
+> {
+> 	u16 hash_opts = 0;
+> 	int n_fields, i, field;
+
+That was a valid patch since it seems I forgot to make
+another function static in the RSS series.
+
+However this function is used in debugfs, so this patch isn't valid
+anymore.
+
+Sorry about that, but please don't apply this.
+
+Thanks,
+
+Maxime
 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
+Maxime Chevallier, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
 https://bootlin.com
