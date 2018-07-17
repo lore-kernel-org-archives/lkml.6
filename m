@@ -2,92 +2,113 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEEEECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:41:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A669ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97F4F20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:41:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="av1CxqpN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F4F20C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DA9EF20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:42:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9EF20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbeGQMOK (ORCPT
+        id S1731298AbeGQMOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:14:10 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:40438 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730897AbeGQMOJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:14:09 -0400
-Received: by mail-pf0-f194.google.com with SMTP id e13-v6so376848pff.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 04:41:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=zsxyWlJa5L1Gv7t8Xsms7pw8bNxF0HNNGy0CGtS1AO8=;
-        b=av1CxqpND9tL7sjaBogagecvcJetC3oAWvnNxypjEI9WMLUHQvnzFPijEUNYszrv2Z
-         fcgFtSx4HGUNSPkiwnabYDd/biIqVS3DHhJwsJum1NrX618ChCI1fmYhoUwYl04EPMII
-         EF4VtyW2IqiAaqIuji999n3sxPfB7zMbCPulTCS/56gRndKKCYvviemHYK5kZqFiHods
-         UWlYqIj3DbrTP1N5EUHDcvmoPnQCC5vhPek2CV5FoT/pFNVklwgtm/pkpasDbpyZqmIH
-         z9OyI6SgZCiyav+dRXcAhn9NFVAoNy5R9K1lQuKN3q8NkemfOrvDFM1IAQdG0++/eoYz
-         6FYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=zsxyWlJa5L1Gv7t8Xsms7pw8bNxF0HNNGy0CGtS1AO8=;
-        b=Z0FO5FdA0CI+wu2arJZEuX9xQQ5FcGJiUik7XKiU1JmgSsK7uzbUp/Zw18qf5rTQb+
-         p3Bz166pgKRdg13DpDa4H8r1idIYqRcbGKmftl2g5OzAD+NJAURglD5yehcpCWO/yaN/
-         cZoNlV4UuKbCAxxgMghCKx5yWh6T6QojFiwdk/CC5Z0Mo9ggx1h9SiOUe39TsM3vuct2
-         yC3+ugky9I6Q3DXqOUA9dyy1ALdSV8u+iMrUle+nCgAHaVa51VbbMf31Ga8a7YYUBWBK
-         VwWP52GrBe/EuFpJWGrV8SOG/+51AeQuGk+GZTsxtlARwoLEdTi6FUPJzIkeT21A/Bov
-         v8GA==
-X-Gm-Message-State: AOUpUlHZLH5xbP/7Q0CYcEWeNj3XXhSEo+NCvYs5uXuI+CH4m/zNQozX
-        slS1XvFqOQF84HgKRk7CEJ+HvnW9
-X-Google-Smtp-Source: AAOMgpdKSlpSxNSgGY0ksWmsXX+fvQbnKkweeoyQhZ6emF1MihY65ctxGtSX0uthlZTPNYhdhHCdIA==
-X-Received: by 2002:a62:748:: with SMTP id b69-v6mr302636pfd.177.1531827715681;
-        Tue, 17 Jul 2018 04:41:55 -0700 (PDT)
-Received: from raghu-VirtualBox ([116.197.184.12])
-        by smtp.gmail.com with ESMTPSA id y132-v6sm1608095pfb.91.2018.07.17.04.41.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 04:41:54 -0700 (PDT)
-From:   RAGHU Halharvi <raghuhack78@gmail.com>
-To:     linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Cc:     RAGHU Halharvi <raghuhack78@gmail.com>, jhogan@kernel.org,
-        ralf@linux-mips.org
-Subject: [PATCH] mips:sgi-ip22:Check return value from kzalloc
-Date:   Tue, 17 Jul 2018 17:11:45 +0530
-Message-Id: <20180717114145.21856-1-raghuhack78@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 17 Jul 2018 08:14:46 -0400
+Received: from nautica.notk.org ([91.121.71.147]:37120 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730875AbeGQMOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:14:46 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 40513C009; Tue, 17 Jul 2018 13:42:30 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 13:42:15 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     jiangyiwen <jiangyiwen@huawei.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: [V9fs-developer] [PATCH v2] net/9p: Fix a deadlock case in the
+ virtio transport
+Message-ID: <20180717114215.GA14414@nautica>
+References: <5B4DCD0A.8040600@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5B4DCD0A.8040600@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: RAGHU Halharvi <raghuhack78@gmail.com>
----
- arch/mips/sgi-ip22/ip22-gio.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/sgi-ip22/ip22-gio.c b/arch/mips/sgi-ip22/ip22-gio.c
-index b225033aade6..5aaf40a1743b 100644
---- a/arch/mips/sgi-ip22/ip22-gio.c
-+++ b/arch/mips/sgi-ip22/ip22-gio.c
-@@ -363,6 +363,8 @@ static void ip22_check_gio(int slotno, unsigned long addr, int irq)
- 		printk(KERN_INFO "GIO: slot %d : %s (id %x)\n",
- 		       slotno, name, id);
- 		gio_dev = kzalloc(sizeof *gio_dev, GFP_KERNEL);
-+		if (!gio_dev)
-+			return -ENOMEM;
- 		gio_dev->name = name;
- 		gio_dev->slotno = slotno;
- 		gio_dev->id.id = id;
+> Subject: net/9p: Fix a deadlock case in the virtio transport
+
+I hadn't noticed in the v1, but how is that a deadlock fix?
+The previous code doesn't look like it deadlocks to me, the commit
+message is more correct.
+
+jiangyiwen wrote on Tue, Jul 17, 2018:
+> When client has multiple threads that issue io requests
+> all the time, and the server has a very good performance,
+> it may cause cpu is running in the irq context for a long
+> time because it can check virtqueue has buf in the *while*
+> loop.
+> 
+> So we should keep chan->lock in the whole loop.
+> 
+> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+> ---
+>  net/9p/trans_virtio.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+> index 05006cb..e5fea8b 100644
+> --- a/net/9p/trans_virtio.c
+> +++ b/net/9p/trans_virtio.c
+> @@ -148,20 +148,15 @@ static void req_done(struct virtqueue *vq)
+> 
+>  	p9_debug(P9_DEBUG_TRANS, ": request done\n");
+> 
+> -	while (1) {
+> -		spin_lock_irqsave(&chan->lock, flags);
+> -		req = virtqueue_get_buf(chan->vq, &len);
+> -		if (req == NULL) {
+> -			spin_unlock_irqrestore(&chan->lock, flags);
+> -			break;
+> -		}
+> -		chan->ring_bufs_avail = 1;
+> -		spin_unlock_irqrestore(&chan->lock, flags);
+> -		/* Wakeup if anyone waiting for VirtIO ring space. */
+> -		wake_up(chan->vc_wq);
+> +	spin_lock_irqsave(&chan->lock, flags);
+> +	while ((req = virtqueue_get_buf(chan->vq, &len)) != NULL) {
+>  		if (len)
+>  			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
+>  	}
+> +	chan->ring_bufs_avail = 1;
+
+Do we have a guarantee that req_done is only called if there is at least
+one buf to read?
+For example, that there isn't two threads queueing the same callback but
+the first one reads everything and the second has nothing to read?
+
+If virtblk_done takes care of setting up a "req_done" bool to only
+notify waiters if something has been done I'd rather have a reason to do
+differently, even if you can argue that nothing bad will happen in case
+of a gratuitous wake_up
+
+> +	spin_unlock_irqrestore(&chan->lock, flags);
+> +	/* Wakeup if anyone waiting for VirtIO ring space. */
+> +	wake_up(chan->vc_wq);
+>  }
+
+Thanks,
 -- 
-2.17.1
-
+Dominique
