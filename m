@@ -2,92 +2,99 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A30ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA60CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EC1020C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:21:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESQnhNSC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EC1020C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9618B20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:21:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9618B20C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbeGQMxX (ORCPT
+        id S1731469AbeGQMx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:53:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37364 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 08:53:58 -0400
+Received: from mga02.intel.com ([134.134.136.20]:49636 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731314AbeGQMxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:53:23 -0400
-Received: from mail-wm0-f54.google.com (mail-wm0-f54.google.com [74.125.82.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF3AE2146E;
-        Tue, 17 Jul 2018 12:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531830059;
-        bh=xmXtyF9eQMvbP7iyzNNmVto0syQn1/2JCrYVijzkh0U=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=ESQnhNSCY9SF4t3UWqtr4U52yZM12r/iqsFdNiZTgGZAf6VClzYwsx3UQwv9jPKH9
-         VRCuyP+oGQIZK4zLDiEAptmc+IUffnxncO4AIaw4zXeQ8ROmBqIL5eAkKymX9hCF1H
-         fgcoUqYJDrrh2SUCV4mcv2BdTVmn1bQudkywLMBc=
-Received: by mail-wm0-f54.google.com with SMTP id s14-v6so1318139wmc.1;
-        Tue, 17 Jul 2018 05:20:58 -0700 (PDT)
-X-Gm-Message-State: AOUpUlH2Rna+Dm7ykDpmogrGqDJyiCpKu1fJchExZoytpgkyv7gg50TG
-        5WhueYWss3CBLbK5sciAfkSm5agE967MMu9/bWU=
-X-Google-Smtp-Source: AAOMgpdfnmdCLspzg3qXe3Yy8eBVKyShq7ToqHW11XnnmlPtQ7R9T96qfxJHHdGcbJUzvHNClzqsilRBzbuuDhZpgFQ=
-X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr1283856wmm.117.1531830057316;
- Tue, 17 Jul 2018 05:20:57 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:20:56
- -0700 (PDT)
-In-Reply-To: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
-References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 17 Jul 2018 14:20:56 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdP78VFQgSQ9z9WsgYY_YhEKPUt=0MOra6Pz6smQeiNGg@mail.gmail.com>
-Message-ID: <CAJKOXPdP78VFQgSQ9z9WsgYY_YhEKPUt=0MOra6Pz6smQeiNGg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] thermal: exynos: enable core tmu clk on exynos platform
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
+        id S1731314AbeGQMx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:53:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 05:21:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="57148412"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga007.jf.intel.com with ESMTP; 17 Jul 2018 05:21:21 -0700
+Message-ID: <08da5a79982a1ac2a2b6b4931d497edfe8fa6171.camel@linux.intel.com>
+Subject: Re: [PATCH 0/5] Add support for MSCC Ocelot i2c
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     Paul Burton <paul.burton@mips.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Allan Nielsen <allan.nielsen@microsemi.com>
+Date:   Tue, 17 Jul 2018 15:21:20 +0300
+In-Reply-To: <20180717114837.21839-1-alexandre.belloni@bootlin.com>
+References: <20180717114837.21839-1-alexandre.belloni@bootlin.com>
+Organization: Intel Finland Oy
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anand,
+On Tue, 2018-07-17 at 13:48 +0200, Alexandre Belloni wrote:
+> Hi,
+> 
+> Because the designware IP was not able to the the SDA hold time, MSCC
+> has
+> its own implementation. Add support for it and then add i2c on ocelot
+> boards.
+> 
+> I would expect patches 1 to 3 to go through the i2c tree and 4-5
+> through
+> the mips tree once patch 3 has been reviewed by the DT maintainers.
 
-Thanks for patch.
+Without reading datasheet it all feels like a wrong place to put.
 
-On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
-> clk_summary do not show tmu_apbif clk enable, so replace
-> the clk_prepare with clk_prepare_enables to enable tmu clk.
+But maybe that SoC (SoC family?) has some update to DesignWare IP.
+Btw, what the version of DW IP it's using? 2.00a? More older, more
+recent?
 
-This is not valid reason to do a change. What is clk_summary does not
-really matter. Your change has negative impact on power consumption as
-the clock stays enabled all the time. This is not what we want... so
-please explain it more - why you need the clock to be enabled all the
-time? What is broken (clk_summary is not broken in this case)?
 
-> simplify the enable of tmu_triminfo_apbif clk, also fixed
-> the order of goto error for failed cases.
+> Alexandre Belloni (5):
+>   i2c: designware: factorize setting SDA hold time
+>   i2c: designware: allow IP specific sda_hold_time
+>   i2c: designware: add MSCC Ocelot support
+>   mips: dts: mscc: Add i2c on ocelot
+>   mips: dts: mscc: enable i2c on ocelot_pcb123
+> 
+>  .../bindings/i2c/i2c-designware.txt           |  5 ++-
+>  arch/mips/boot/dts/mscc/ocelot.dtsi           | 19 +++++++++++
+>  arch/mips/boot/dts/mscc/ocelot_pcb123.dts     |  5 +++
+>  drivers/i2c/busses/i2c-designware-common.c    | 33
+> +++++++++++++++++++
+>  drivers/i2c/busses/i2c-designware-core.h      |  3 ++
+>  drivers/i2c/busses/i2c-designware-master.c    | 22 +------------
+>  drivers/i2c/busses/i2c-designware-platdrv.c   | 20 +++++++++++
+>  drivers/i2c/busses/i2c-designware-slave.c     | 22 +------------
+>  8 files changed, 86 insertions(+), 43 deletions(-)
+> 
 
-This has to be split into separate change.
-
-Best regards,
-Krzysztof
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
