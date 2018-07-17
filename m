@@ -2,90 +2,106 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB70AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A27ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF3A20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:58:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF3A20C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 3F23220C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:03:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F23220C10
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbeGQKa1 (ORCPT
+        id S1729755AbeGQKfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:30:27 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:65190 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729655AbeGQKa1 (ORCPT
+        Tue, 17 Jul 2018 06:35:22 -0400
+Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:48256 "EHLO
+        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729719AbeGQKfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:30:27 -0400
-Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 42182fbe77285237; Tue, 17 Jul 2018 11:58:37 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Cc:     gregkh@linuxfoundation.org, broonie@kernel.org, p.paillet@st.com,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v3] base: core: Remove WARN_ON from link dependencies check
-Date:   Tue, 17 Jul 2018 11:56:59 +0200
-Message-ID: <4236937.TuBsddNVuo@aspire.rjw.lan>
-In-Reply-To: <20180716113744.13300-1-benjamin.gaignard@st.com>
-References: <20180716113744.13300-1-benjamin.gaignard@st.com>
+        Tue, 17 Jul 2018 06:35:22 -0400
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id D11EA1C24B3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 11:03:30 +0100 (IST)
+Received: (qmail 21430 invoked from network); 17 Jul 2018 10:03:30 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.66])
+  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 17 Jul 2018 10:03:30 -0000
+Date:   Tue, 17 Jul 2018 11:03:30 +0100
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Jirka Hladky <jhladky@redhat.com>
+Cc:     Kamil Kolakowski <kkolakow@redhat.com>,
+        Jakub Racek <jracek@redhat.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
+ Stream, Linpack and NAS parallel benchmarks
+Message-ID: <20180717100329.yfy7igdsrpk5ujf4@techsingularity.net>
+References: <CAE4VaGAPOfy0RtQehKoe+443C1GRrJXCveBFgcAZ1nChVavp1g@mail.gmail.com>
+ <CAE4VaGBMeL82SJK53gtcWkor-9eXeLX6VP9juw=FW=BOyp+hMA@mail.gmail.com>
+ <20180621092331.p2pmaiu6563kp5u2@techsingularity.net>
+ <CAE4VaGCQV+cS-vhdLyMwzftbB-xBHPt4Y4chg_0ykLHTE9cRfw@mail.gmail.com>
+ <CAE4VaGDHcZbnDpJ+FiQLfA1DRftY0j_GJSnh3FDRi34OztVH6Q@mail.gmail.com>
+ <20180627084954.73ucqvac62v5gje4@techsingularity.net>
+ <CAE4VaGA9KzX05rdfw2PhEATLisV-NVMc9rOyjzSg-rX1rug9Dw@mail.gmail.com>
+ <CABuKy6MUNX85PBVchz_hqXy+FxXU2x0U9ZEZB13rVSLGpWOWvQ@mail.gmail.com>
+ <CAE4VaGD12BLS_kk=pRwgTKL8YOU63Nowwa42cEdZObQ=P1MFnA@mail.gmail.com>
+ <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, July 16, 2018 1:37:44 PM CEST Benjamin Gaignard wrote:
-> In some cases the link between between customer and supplier
-> already exist, for example when a device use its parent as a supplier.
-> Do not warn about already existing dependencies because device_link_add()
-> takes care of this case.
+On Tue, Jul 17, 2018 at 10:45:51AM +0200, Jirka Hladky wrote:
+> Hi Mel,
 > 
-> Link: http://lkml.kernel.org/r/20180709111753eucas1p1f32e66fb2f7ea3216097cd72a132355d~-rzycA5Rg0378203782eucas1p1C@eucas1p1.samsung.com
-> 
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-
-That's better. :-)
-
-Reviewed-by: Rafael J. Wysocki <rafael@kernel.org>
-
-> ---
->  drivers/base/core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index df3e1a44707a..fcdc17f0f349 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -105,7 +105,7 @@ static int device_is_dependent(struct device *dev, void *target)
->  	struct device_link *link;
->  	int ret;
->  
-> -	if (WARN_ON(dev == target))
-> +	if (dev == target)
->  		return 1;
->  
->  	ret = device_for_each_child(dev, target, device_is_dependent);
-> @@ -113,7 +113,7 @@ static int device_is_dependent(struct device *dev, void *target)
->  		return ret;
->  
->  	list_for_each_entry(link, &dev->links.consumers, s_node) {
-> -		if (WARN_ON(link->consumer == target))
-> +		if (link->consumer == target)
->  			return 1;
->  
->  		ret = device_is_dependent(link->consumer, target);
+> we have compared 4.18 + git://
+> git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git
+> sched-numa-fast-crossnode-v1r12 against 4.16 kernel and performance results
+> look very good!
 > 
 
+Excellent, thanks to both Kamil and yourself for collecting the data.
+It's helpful to have independent verification.
 
+> We see performance gains about 10-20% for SPECjbb2005. NAS results are a
+> little bit noisy but show overall performance gains as well (total runtime
+> for reduced from 6 hours 34 minutes to 6 hours 26 minutes to give you a
+> specific example).
+
+Great.
+
+> The only benchmark showing a slight regression is stream
+> - but the regression is just a few percents ( upto 10%) and I think it's
+> not a real concern given that it's an artificial benchmark.
+> 
+
+Agreed.
+
+> How is your testing going? Do you think
+> that sched-numa-fast-crossnode-v1r12 series can make it into the 4.18?
+> 
+
+My own testing completed and the results are within expectations and I
+saw no red flags. Unfortunately, I consider it unlikely they'll be merged
+for 4.18. Srikar Dronamraju's series is likely to need another update
+and I would need to rebase my patches on top of that. Given the scope
+and complexity, I find it unlikely they would be accepted for an -rc,
+particularly this late of an rc. Whether we hit the 4.19 merge window or
+not will depend on when Srikar's series gets updated.
+
+> Thanks a lot for your efforts to improve the performance!
+
+My pleasure.
+
+-- 
+Mel Gorman
+SUSE Labs
