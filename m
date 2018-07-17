@@ -1,131 +1,377 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5F2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 937C8ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E1920693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 274E620693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:45:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtKtcUjG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E1920693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bGMWN+NN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274E620693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbeGQRRb (ORCPT
+        id S1729934AbeGQRSy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:17:31 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32829 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729668AbeGQRRb (ORCPT
+        Tue, 17 Jul 2018 13:18:54 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:41206 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729710AbeGQRSy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:17:31 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r5-v6so692535pgv.0;
-        Tue, 17 Jul 2018 09:44:00 -0700 (PDT)
+        Tue, 17 Jul 2018 13:18:54 -0400
+Received: by mail-qt0-f196.google.com with SMTP id e19-v6so1454414qtp.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 09:45:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3LVliLGUXjJx6K5xTmsCB+TKQAknILrDDERvjEifRfM=;
-        b=KtKtcUjGAdjyGmcjyoFyYy9yiiwTnPn//AU3FLkUDu+U9wvuo0HQ/9b7A2oY+tnxz0
-         ngCGKFkzTG3vO/1QRSMWxW9cirTj7HHDqS3pIqkG2ll2Xfuds8aTRQvOysQYScrzF6aw
-         T0SBrOztOU4phES6xYtNLh1wWHsyX0vSTAfFCLs7C3VQD5GRMhXa0VbPY7o6EW4oqGwF
-         eNYdWqHZGx4ivzBKyHrKUi8cEBCI//K2voJw9x7d566s5hr5Fgc9HXsgNBuzaSz4+EqI
-         zB0p8XeqC9+fqfAUR/4kGePDeOraXgw0ybJY6fox5da2YVncboVhuq5oXfCefOyTPue8
-         zeGA==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=u9ga8HTmKGK6Pe1u61T+sGtdMHnMAPOGEgXgguJFlb4=;
+        b=bGMWN+NNX+IgRHeO5UYbfvNxFs+46oepM5wDqSvtOy+DaRoR/mPV9cT+iAN2RaCW9n
+         AJ1QQt7mbkWZznDirhlMOU7i0LWUL9PWyHpf2vAa5UjnR86Ssk8XXHQaFNwAn0tiXMSz
+         KKAtCpiEEhQkcUd/ADEC0BCyari+3tjwVlDQI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3LVliLGUXjJx6K5xTmsCB+TKQAknILrDDERvjEifRfM=;
-        b=NYFlO89s+2vV2rbZ+Czkubohimr0QoEqG7kkFkpWQgMHWDkExadSj7Urbj8WUbYksf
-         GQ9PtMmlhqoWEWMj/fBhKRiayHJSdHXJPNf1YIhutqF1Mu4EZ0XKyw/BAMiW0vLQ2tce
-         9V5g7nbZ046hB+woaDXYkscNGW3qFiIjOIIrjX7BHuRNYNELzvPicmUuPVAl78ZRdQI5
-         mUETmpUhjJV9EXzlaJ7spBW4/Fg3zm/ieodk3mk7aNFIf0XNMSNpRAFh9ERJFVGHoT8E
-         sdPHN8oRjY8LfQuTDlqvnPJtOH37bCAc9nYtZkSzNWibro7tkhoi6NdrFHlLvETuDPro
-         mX+g==
-X-Gm-Message-State: AOUpUlF3o8nqyF4yK3nmcHnxG67N2DFdOgY0VGIUdOTcWkhxuEdAcJCW
-        SSdK3Oc4wTNMJ9s+NF97rQY=
-X-Google-Smtp-Source: AAOMgpdkesPzs2KmkWA7XQgW35SdCiuaVtVX/ojOT0TQz09/Itp+qxP7Z4pGdV49dDSxdo+e2ArUlw==
-X-Received: by 2002:a65:66d7:: with SMTP id c23-v6mr2280659pgw.427.1531845840501;
-        Tue, 17 Jul 2018 09:44:00 -0700 (PDT)
-Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id l84-v6sm3862872pfg.3.2018.07.17.09.43.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 09:44:00 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 09:43:58 -0700
-From:   Eric Biggers <ebiggers3@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Eric Biggers <ebiggers@google.com>, qat-linux@intel.com,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        linux-crypto@vger.kernel.org, Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
-Subject: Re: [dm-devel] [PATCH v5 10/11] crypto: ahash: Remove VLA usage for
- AHASH_REQUEST_ON_STACK
-Message-ID: <20180717164358.GC75957@gmail.com>
-References: <20180717042150.37761-1-keescook@chromium.org>
- <20180717042150.37761-11-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717042150.37761-11-keescook@chromium.org>
-User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=u9ga8HTmKGK6Pe1u61T+sGtdMHnMAPOGEgXgguJFlb4=;
+        b=hbIwD9IPAprDac9yemccAi4IMa19EiE0j2pX3udhQSXcwJVXMoNRzAyBGnVyTcUAZs
+         FK4pUkvplOeSEVO3NPBwfIK0clAbinB0Ed2tdE8LrgGOx0TEEC3+ZozrQSRAo7yyRlq2
+         /ET3pa+tV0eAWTkGAbsidQ6EL5Wv4jF6VZjJy0ESwo3EPGeM+D7Tb2h/avTSPKHefk7q
+         /N+t1jql7SH2bTLpVWgcGcEsBNxl7lrUqHj690PBI/0fmKTEnzqLshZTSsgVteaVvqSV
+         Feu3GZU5DMZdbAPOS93NIgbf7dQThB67ZVMFbwebANGW4Kq62PZrR2pZ+GLmGO1p5iXm
+         MsGA==
+X-Gm-Message-State: AOUpUlGOxyNm2iKzNPv3Z50GcOpe+MtDmW5UwXlTxvGC51BZR9865s0v
+        3g7q3i6WLJ+L0Q/neX/1LvWjsg==
+X-Google-Smtp-Source: AAOMgpdNMeDrWJfcpgqLIOoXHdK5uZT+uqr2gqnT+q0mJ0qMH8EGUGXH4GRTMFr9BYThPlv9GA69Jw==
+X-Received: by 2002:a0c:f643:: with SMTP id s3-v6mr2585073qvm.131.1531845922707;
+        Tue, 17 Jul 2018 09:45:22 -0700 (PDT)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id 8-v6sm1040624qtz.46.2018.07.17.09.45.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 17 Jul 2018 09:45:21 -0700 (PDT)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Jon Mason <jonmason@broadcom.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH] mmc: host: iproc: Add ACPI support to IPROC SDHCI
+Date:   Tue, 17 Jul 2018 22:15:07 +0530
+Message-Id: <1531845907-26213-1-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 09:21:49PM -0700, Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this caps
-> the ahash request size similar to the other limits and adds a sanity
-> check at initialization. AHASH_REQUEST_ON_STACK is special, though: it
-> is only ever used for shash-wrapped ahash, so its size is bounded only
-> by non-async hashes. A manual inspection of this shows the largest to be:
-> sizeof(struct shash_desc) + SHASH_MAX_DESCSIZE
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  crypto/shash.c        |  9 ++++++++-
->  include/crypto/hash.h | 10 +++++++++-
->  2 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/crypto/shash.c b/crypto/shash.c
-> index 8d4746b14dd5..e344560458cb 100644
-> --- a/crypto/shash.c
-> +++ b/crypto/shash.c
-> @@ -355,6 +355,7 @@ int crypto_init_shash_ops_async(struct crypto_tfm *tfm)
->  	struct crypto_ahash *crt = __crypto_ahash_cast(tfm);
->  	struct crypto_shash **ctx = crypto_tfm_ctx(tfm);
->  	struct crypto_shash *shash;
-> +	size_t reqsize;
->  
->  	if (!crypto_mod_get(calg))
->  		return -EAGAIN;
-> @@ -365,6 +366,12 @@ int crypto_init_shash_ops_async(struct crypto_tfm *tfm)
->  		return PTR_ERR(shash);
->  	}
->  
-> +	reqsize = sizeof(struct shash_desc) + crypto_shash_descsize(shash);
-> +	if (WARN_ON(reqsize > AHASH_MAX_REQSIZE)) {
-> +		crypto_mod_put(calg);
-> +		return -EINVAL;
-> +	}
+Add ACPI support to all IPROC SDHCI varients
 
-'crypto_free_shash(shash);' instead of 'crypto_mod_put(calg);'
+Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
+---
+ drivers/mmc/host/Kconfig       |   1 +
+ drivers/mmc/host/sdhci-iproc.c | 187 ++++++++++++++++++++++++++++-------------
+ 2 files changed, 128 insertions(+), 60 deletions(-)
 
-- Eric
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 0581c19..bc6702e 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -334,6 +334,7 @@ config MMC_SDHCI_IPROC
+ 	tristate "SDHCI support for the BCM2835 & iProc SD/MMC Controller"
+ 	depends on ARCH_BCM2835 || ARCH_BCM_IPROC || COMPILE_TEST
+ 	depends on MMC_SDHCI_PLTFM
++	depends on OF || ACPI
+ 	default ARCH_BCM_IPROC
+ 	select MMC_SDHCI_IO_ACCESSORS
+ 	help
+diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
+index d0e83db..7c5c923 100644
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -15,6 +15,7 @@
+  * iProc SDHCI platform driver
+  */
+ 
++#include <linux/acpi.h>
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/mmc/host.h>
+@@ -162,9 +163,19 @@ static void sdhci_iproc_writeb(struct sdhci_host *host, u8 val, int reg)
+ 	sdhci_iproc_writel(host, newval, reg & ~3);
+ }
+ 
++static unsigned int sdhci_iproc_get_max_clock(struct sdhci_host *host)
++{
++	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
++
++	if (pltfm_host->clk)
++		return sdhci_pltfm_clk_get_max_clock(host);
++	else
++		return pltfm_host->clock;
++}
++
+ static const struct sdhci_ops sdhci_iproc_ops = {
+ 	.set_clock = sdhci_set_clock,
+-	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
++	.get_max_clock = sdhci_iproc_get_max_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
+ 	.reset = sdhci_reset,
+ 	.set_uhs_signaling = sdhci_set_uhs_signaling,
+@@ -178,34 +189,24 @@ static const struct sdhci_ops sdhci_iproc_32only_ops = {
+ 	.write_w = sdhci_iproc_writew,
+ 	.write_b = sdhci_iproc_writeb,
+ 	.set_clock = sdhci_set_clock,
+-	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
++	.get_max_clock = sdhci_iproc_get_max_clock,
+ 	.set_bus_width = sdhci_set_bus_width,
+ 	.reset = sdhci_reset,
+ 	.set_uhs_signaling = sdhci_set_uhs_signaling,
+ };
+ 
++enum sdhci_pltfm_type {
++	SDHCI_PLTFM_IPROC_CYGNUS,
++	SDHCI_PLTFM_IPROC,
++	SDHCI_PLTFM_BCM2835,
++};
++
+ static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
+ 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
+ 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
+ 	.ops = &sdhci_iproc_32only_ops,
+ };
+ 
+-static const struct sdhci_iproc_data iproc_cygnus_data = {
+-	.pdata = &sdhci_iproc_cygnus_pltfm_data,
+-	.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+-			& SDHCI_MAX_BLOCK_MASK) |
+-		SDHCI_CAN_VDD_330 |
+-		SDHCI_CAN_VDD_180 |
+-		SDHCI_CAN_DO_SUSPEND |
+-		SDHCI_CAN_DO_HISPD |
+-		SDHCI_CAN_DO_ADMA2 |
+-		SDHCI_CAN_DO_SDMA,
+-	.caps1 = SDHCI_DRIVER_TYPE_C |
+-		 SDHCI_DRIVER_TYPE_D |
+-		 SDHCI_SUPPORT_DDR50,
+-	.mmc_caps = MMC_CAP_1_8V_DDR,
+-};
+-
+ static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
+ 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
+@@ -213,21 +214,6 @@ static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
+ 	.ops = &sdhci_iproc_ops,
+ };
+ 
+-static const struct sdhci_iproc_data iproc_data = {
+-	.pdata = &sdhci_iproc_pltfm_data,
+-	.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+-			& SDHCI_MAX_BLOCK_MASK) |
+-		SDHCI_CAN_VDD_330 |
+-		SDHCI_CAN_VDD_180 |
+-		SDHCI_CAN_DO_SUSPEND |
+-		SDHCI_CAN_DO_HISPD |
+-		SDHCI_CAN_DO_ADMA2 |
+-		SDHCI_CAN_DO_SDMA,
+-	.caps1 = SDHCI_DRIVER_TYPE_C |
+-		 SDHCI_DRIVER_TYPE_D |
+-		 SDHCI_SUPPORT_DDR50,
+-};
+-
+ static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
+ 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+@@ -237,38 +223,104 @@ static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
+ 	.ops = &sdhci_iproc_32only_ops,
+ };
+ 
+-static const struct sdhci_iproc_data bcm2835_data = {
+-	.pdata = &sdhci_bcm2835_pltfm_data,
+-	.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
+-			& SDHCI_MAX_BLOCK_MASK) |
+-		SDHCI_CAN_VDD_330 |
+-		SDHCI_CAN_DO_HISPD,
+-	.caps1 = SDHCI_DRIVER_TYPE_A |
+-		 SDHCI_DRIVER_TYPE_C,
+-	.mmc_caps = 0x00000000,
++static const struct sdhci_iproc_data sdhci_iproc_data_list[] = {
++	[SDHCI_PLTFM_IPROC_CYGNUS] = {
++		/* SDHCI IPROC CYGNUS */
++		.pdata = &sdhci_iproc_cygnus_pltfm_data,
++		.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
++				& SDHCI_MAX_BLOCK_MASK) |
++			SDHCI_CAN_VDD_330 |
++			SDHCI_CAN_VDD_180 |
++			SDHCI_CAN_DO_SUSPEND |
++			SDHCI_CAN_DO_HISPD |
++			SDHCI_CAN_DO_ADMA2 |
++			SDHCI_CAN_DO_SDMA,
++		.caps1 = SDHCI_DRIVER_TYPE_C |
++			SDHCI_DRIVER_TYPE_D |
++			SDHCI_SUPPORT_DDR50,
++		.mmc_caps = MMC_CAP_1_8V_DDR,
++	},
++	[SDHCI_PLTFM_IPROC] = {
++		/* SDHCI IPROC */
++		.pdata = &sdhci_iproc_pltfm_data,
++		.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
++				& SDHCI_MAX_BLOCK_MASK) |
++			SDHCI_CAN_VDD_330 |
++			SDHCI_CAN_VDD_180 |
++			SDHCI_CAN_DO_SUSPEND |
++			SDHCI_CAN_DO_HISPD |
++			SDHCI_CAN_DO_ADMA2 |
++			SDHCI_CAN_DO_SDMA,
++		.caps1 = SDHCI_DRIVER_TYPE_C |
++			SDHCI_DRIVER_TYPE_D |
++			SDHCI_SUPPORT_DDR50,
++	},
++	[SDHCI_PLTFM_BCM2835] = {
++		/* SDHCI BCM2835 */
++		.pdata = &sdhci_bcm2835_pltfm_data,
++		.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
++				& SDHCI_MAX_BLOCK_MASK) |
++			SDHCI_CAN_VDD_330 |
++			SDHCI_CAN_DO_HISPD,
++		.caps1 = SDHCI_DRIVER_TYPE_A |
++			SDHCI_DRIVER_TYPE_C,
++		.mmc_caps = 0x00000000,
++
++	},
+ };
+ 
+ static const struct of_device_id sdhci_iproc_of_match[] = {
+-	{ .compatible = "brcm,bcm2835-sdhci", .data = &bcm2835_data },
+-	{ .compatible = "brcm,sdhci-iproc-cygnus", .data = &iproc_cygnus_data},
+-	{ .compatible = "brcm,sdhci-iproc", .data = &iproc_data },
++	{
++		.compatible = "brcm,bcm2835-sdhci",
++		.data = (void *)SDHCI_PLTFM_BCM2835
++	},
++	{
++		.compatible = "brcm,sdhci-iproc-cygnus",
++		.data = (void *)SDHCI_PLTFM_IPROC_CYGNUS
++	},
++	{
++		.compatible = "brcm,sdhci-iproc",
++		.data = (void *)SDHCI_PLTFM_IPROC
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, sdhci_iproc_of_match);
+ 
++static const struct acpi_device_id sdhci_iproc_acpi_ids[] = {
++	{ .id = "BRCM5871", .driver_data = SDHCI_PLTFM_IPROC_CYGNUS },
++	{ .id = "BRCM5872", .driver_data = SDHCI_PLTFM_IPROC },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(acpi, sdhci_iproc_acpi_ids);
++
+ static int sdhci_iproc_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	const struct of_device_id *match;
++	const struct acpi_device_id *acpi_id;
+ 	const struct sdhci_iproc_data *iproc_data;
+ 	struct sdhci_host *host;
+ 	struct sdhci_iproc_host *iproc_host;
+ 	struct sdhci_pltfm_host *pltfm_host;
+ 	int ret;
++	enum sdhci_pltfm_type plat_type;
++
++	if (dev->of_node) {
++		match = of_match_device(sdhci_iproc_of_match, dev);
++		if (match)
++			plat_type = (enum sdhci_pltfm_type)match->data;
++		else
++			return -ENODEV;
++	} else if (has_acpi_companion(dev)) {
++		acpi_id = acpi_match_device(sdhci_iproc_acpi_ids, dev);
++		if (acpi_id)
++			plat_type = (enum sdhci_pltfm_type)acpi_id->driver_data;
++		else
++			return -ENODEV;
++	} else
++		return -ENODEV;
+ 
+-	match = of_match_device(sdhci_iproc_of_match, &pdev->dev);
+-	if (!match)
+-		return -EINVAL;
+-	iproc_data = match->data;
++	iproc_data = &sdhci_iproc_data_list[plat_type];
+ 
+ 	host = sdhci_pltfm_init(pdev, iproc_data->pdata, sizeof(*iproc_host));
+ 	if (IS_ERR(host))
+@@ -284,17 +336,30 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
+ 
+ 	host->mmc->caps |= iproc_host->data->mmc_caps;
+ 
+-	pltfm_host->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(pltfm_host->clk)) {
+-		ret = PTR_ERR(pltfm_host->clk);
+-		goto err;
+-	}
+-	ret = clk_prepare_enable(pltfm_host->clk);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to enable host clk\n");
+-		goto err;
++	if (dev->of_node) {
++		pltfm_host->clk = devm_clk_get(dev, NULL);
++		if (IS_ERR(pltfm_host->clk)) {
++			ret = PTR_ERR(pltfm_host->clk);
++			goto err;
++		}
++		ret = clk_prepare_enable(pltfm_host->clk);
++		if (ret) {
++			dev_err(dev, "failed to enable host clk\n");
++			goto err;
++		}
++	} else if (has_acpi_companion(dev)) {
++		/*
++		 * When Driver probe with ACPI device, clock devices
++		 * are not available, so sdhci clock get from
++		 * clock-frequency property given in _DSD object.
++		 */
++		device_property_read_u32(dev, "clock-frequency",
++					 &pltfm_host->clock);
++		if (!pltfm_host->clock) {
++			ret = -ENODEV;
++			goto err;
++		}
+ 	}
+-
+ 	if (iproc_host->data->pdata->quirks & SDHCI_QUIRK_MISSING_CAPS) {
+ 		host->caps = iproc_host->data->caps;
+ 		host->caps1 = iproc_host->data->caps1;
+@@ -307,7 +372,8 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_clk:
+-	clk_disable_unprepare(pltfm_host->clk);
++	if (dev->of_node)
++		clk_disable_unprepare(pltfm_host->clk);
+ err:
+ 	sdhci_pltfm_free(pdev);
+ 	return ret;
+@@ -317,6 +383,7 @@ static struct platform_driver sdhci_iproc_driver = {
+ 	.driver = {
+ 		.name = "sdhci-iproc",
+ 		.of_match_table = sdhci_iproc_of_match,
++		.acpi_match_table = ACPI_PTR(sdhci_iproc_acpi_ids),
+ 		.pm = &sdhci_pltfm_pmops,
+ 	},
+ 	.probe = sdhci_iproc_probe,
+-- 
+2.7.4
+
