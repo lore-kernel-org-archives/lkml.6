@@ -2,137 +2,254 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF40ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F75FECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D25720C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D25720C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 2663220C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2663220C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbeGQM7q (ORCPT
+        id S1731565AbeGQM7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:59:46 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:44824 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728489AbeGQM7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:59:46 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D60AE774A53CE;
-        Tue, 17 Jul 2018 20:27:16 +0800 (CST)
-Received: from [127.0.0.1] (10.177.16.168) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Tue, 17 Jul 2018
- 20:27:12 +0800
-Subject: Re: [V9fs-developer] [PATCH v2] net/9p: Fix a deadlock case in the
- virtio transport
-To:     Dominique Martinet <asmadeus@codewreck.org>
-References: <5B4DCD0A.8040600@huawei.com> <20180717114215.GA14414@nautica>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5B4DE09F.5000800@huawei.com>
-Date:   Tue, 17 Jul 2018 20:27:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20180717114215.GA14414@nautica>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+        Tue, 17 Jul 2018 08:59:52 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37859 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731465AbeGQM7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:59:52 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 76C2620884; Tue, 17 Jul 2018 14:27:25 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 24E3B206ED;
+        Tue, 17 Jul 2018 14:27:15 +0200 (CEST)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2] drm/sun4i: sun8i: Avoid clearing blending order at each atomic commit
+Date:   Tue, 17 Jul 2018 14:25:22 +0200
+Message-Id: <20180717122522.11327-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/17 19:42, Dominique Martinet wrote:
-> 
->> Subject: net/9p: Fix a deadlock case in the virtio transport
-> 
-> I hadn't noticed in the v1, but how is that a deadlock fix?
-> The previous code doesn't look like it deadlocks to me, the commit
-> message is more correct.
-> 
+Blending order is set based on the z position of each DRM plane. The
+blending order register is currently cleared at each atomic DRM commit,
+with the intent that each committed plane will set the appropriate
+bits (based on its z-pos) when enabling the plane.
 
-Hi Dominique,
+However, it sometimes happens that a particular plane is left unchanged
+by an atomic commit and thus will not be configured again. In that
+scenario, blending order is cleared and only the bits relevant for the
+planes affected by the commit are set. This leaves the planes that did
+not change without their blending order set in the register, leading
+to that plane not being displayed.
 
-If cpu is running in the irq context for a long time,
-NMI watchdog will detect the hard lockup in the cpu,
-and then it will cause kernel panic. So I use this
-subject to underline the scenario.
+Instead of clearing the blending order register at every atomic commit,
+this change moves the register's initial clear at bind time and only
+clears the bits for a specific plane when disabling it or changing its
+zpos.
 
-> jiangyiwen wrote on Tue, Jul 17, 2018:
->> When client has multiple threads that issue io requests
->> all the time, and the server has a very good performance,
->> it may cause cpu is running in the irq context for a long
->> time because it can check virtqueue has buf in the *while*
->> loop.
->>
->> So we should keep chan->lock in the whole loop.
->>
->> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
->> ---
->>  net/9p/trans_virtio.c | 17 ++++++-----------
->>  1 file changed, 6 insertions(+), 11 deletions(-)
->>
->> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
->> index 05006cb..e5fea8b 100644
->> --- a/net/9p/trans_virtio.c
->> +++ b/net/9p/trans_virtio.c
->> @@ -148,20 +148,15 @@ static void req_done(struct virtqueue *vq)
->>
->>  	p9_debug(P9_DEBUG_TRANS, ": request done\n");
->>
->> -	while (1) {
->> -		spin_lock_irqsave(&chan->lock, flags);
->> -		req = virtqueue_get_buf(chan->vq, &len);
->> -		if (req == NULL) {
->> -			spin_unlock_irqrestore(&chan->lock, flags);
->> -			break;
->> -		}
->> -		chan->ring_bufs_avail = 1;
->> -		spin_unlock_irqrestore(&chan->lock, flags);
->> -		/* Wakeup if anyone waiting for VirtIO ring space. */
->> -		wake_up(chan->vc_wq);
->> +	spin_lock_irqsave(&chan->lock, flags);
->> +	while ((req = virtqueue_get_buf(chan->vq, &len)) != NULL) {
->>  		if (len)
->>  			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
->>  	}
->> +	chan->ring_bufs_avail = 1;
-> 
-> Do we have a guarantee that req_done is only called if there is at least
-> one buf to read?
-> For example, that there isn't two threads queueing the same callback but
-> the first one reads everything and the second has nothing to read?
-> 
-> If virtblk_done takes care of setting up a "req_done" bool to only
-> notify waiters if something has been done I'd rather have a reason to do
-> differently, even if you can argue that nothing bad will happen in case
-> of a gratuitous wake_up
-> 
+This way, planes that are left untouched by a DRM atomic commit are
+no longer disabled.
 
-Sorry, I don't fully understand what your mean.
-I think even if the ring buffer don't have the data, wakeup operation
-will not cause any other problem, and the loss of performance can be
-ignored.
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c    | 15 +++------------
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 24 ++++++++++++++++++++----
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 24 ++++++++++++++++++++----
+ 3 files changed, 43 insertions(+), 20 deletions(-)
 
-Thanks.
-
->> +	spin_unlock_irqrestore(&chan->lock, flags);
->> +	/* Wakeup if anyone waiting for VirtIO ring space. */
->> +	wake_up(chan->vc_wq);
->>  }
-> 
-> Thanks,
-> 
-
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index 8e81c24d736e..12cb7183ce51 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -260,17 +260,6 @@ const struct de2_fmt_info *sun8i_mixer_format_info(u32 format)
+ 	return NULL;
+ }
+ 
+-static void sun8i_mixer_atomic_begin(struct sunxi_engine *engine,
+-				     struct drm_crtc_state *old_state)
+-{
+-	/*
+-	 * Disable all pipes at the beginning. They will be enabled
+-	 * again if needed in plane update callback.
+-	 */
+-	regmap_update_bits(engine->regs, SUN8I_MIXER_BLEND_PIPE_CTL,
+-			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
+-}
+-
+ static void sun8i_mixer_commit(struct sunxi_engine *engine)
+ {
+ 	DRM_DEBUG_DRIVER("Committing changes\n");
+@@ -322,7 +311,6 @@ static struct drm_plane **sun8i_layers_init(struct drm_device *drm,
+ }
+ 
+ static const struct sunxi_engine_ops sun8i_engine_ops = {
+-	.atomic_begin	= sun8i_mixer_atomic_begin,
+ 	.commit		= sun8i_mixer_commit,
+ 	.layers_init	= sun8i_layers_init,
+ };
+@@ -449,6 +437,9 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+ 		regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_MODE(i),
+ 			     SUN8I_MIXER_BLEND_MODE_DEF);
+ 
++	regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL,
++			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
++
+ 	return 0;
+ 
+ err_disable_bus_clk:
+diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+index 518e1921f47e..28c15c6ef1ef 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+@@ -27,7 +27,8 @@
+ #include "sun8i_ui_scaler.h"
+ 
+ static void sun8i_ui_layer_enable(struct sun8i_mixer *mixer, int channel,
+-				  int overlay, bool enable, unsigned int zpos)
++				  int overlay, bool enable, unsigned int zpos,
++				  unsigned int old_zpos)
+ {
+ 	u32 val;
+ 
+@@ -43,6 +44,18 @@ static void sun8i_ui_layer_enable(struct sun8i_mixer *mixer, int channel,
+ 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(channel, overlay),
+ 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN, val);
+ 
++	if (!enable || zpos != old_zpos) {
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_PIPE_CTL,
++				   SUN8I_MIXER_BLEND_PIPE_CTL_EN(old_zpos),
++				   0);
++
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_ROUTE,
++				   SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(old_zpos),
++				   0);
++	}
++
+ 	if (enable) {
+ 		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
+ 
+@@ -242,9 +255,11 @@ static void sun8i_ui_layer_atomic_disable(struct drm_plane *plane,
+ 					  struct drm_plane_state *old_state)
+ {
+ 	struct sun8i_ui_layer *layer = plane_to_sun8i_ui_layer(plane);
++	unsigned int old_zpos = old_state->normalized_zpos;
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+-	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay, false, 0);
++	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay, false, 0,
++			      old_zpos);
+ }
+ 
+ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
+@@ -252,11 +267,12 @@ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
+ {
+ 	struct sun8i_ui_layer *layer = plane_to_sun8i_ui_layer(plane);
+ 	unsigned int zpos = plane->state->normalized_zpos;
++	unsigned int old_zpos = old_state->normalized_zpos;
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+ 	if (!plane->state->visible) {
+ 		sun8i_ui_layer_enable(mixer, layer->channel,
+-				      layer->overlay, false, 0);
++				      layer->overlay, false, 0, old_zpos);
+ 		return;
+ 	}
+ 
+@@ -267,7 +283,7 @@ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
+ 	sun8i_ui_layer_update_buffer(mixer, layer->channel,
+ 				     layer->overlay, plane);
+ 	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay,
+-			      true, zpos);
++			      true, zpos, old_zpos);
+ }
+ 
+ static struct drm_plane_helper_funcs sun8i_ui_layer_helper_funcs = {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+index 17e0d00cfd8a..f4fe97813f94 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+@@ -21,7 +21,8 @@
+ #include "sun8i_vi_scaler.h"
+ 
+ static void sun8i_vi_layer_enable(struct sun8i_mixer *mixer, int channel,
+-				  int overlay, bool enable, unsigned int zpos)
++				  int overlay, bool enable, unsigned int zpos,
++				  unsigned int old_zpos)
+ {
+ 	u32 val;
+ 
+@@ -37,6 +38,18 @@ static void sun8i_vi_layer_enable(struct sun8i_mixer *mixer, int channel,
+ 			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR(channel, overlay),
+ 			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR_EN, val);
+ 
++	if (!enable || zpos != old_zpos) {
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_PIPE_CTL,
++				   SUN8I_MIXER_BLEND_PIPE_CTL_EN(old_zpos),
++				   0);
++
++		regmap_update_bits(mixer->engine.regs,
++				   SUN8I_MIXER_BLEND_ROUTE,
++				   SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(old_zpos),
++				   0);
++	}
++
+ 	if (enable) {
+ 		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
+ 
+@@ -270,9 +283,11 @@ static void sun8i_vi_layer_atomic_disable(struct drm_plane *plane,
+ 					  struct drm_plane_state *old_state)
+ {
+ 	struct sun8i_vi_layer *layer = plane_to_sun8i_vi_layer(plane);
++	unsigned int old_zpos = old_state->normalized_zpos;
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+-	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay, false, 0);
++	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay, false, 0,
++			      old_zpos);
+ }
+ 
+ static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
+@@ -280,11 +295,12 @@ static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
+ {
+ 	struct sun8i_vi_layer *layer = plane_to_sun8i_vi_layer(plane);
+ 	unsigned int zpos = plane->state->normalized_zpos;
++	unsigned int old_zpos = old_state->normalized_zpos;
+ 	struct sun8i_mixer *mixer = layer->mixer;
+ 
+ 	if (!plane->state->visible) {
+ 		sun8i_vi_layer_enable(mixer, layer->channel,
+-				      layer->overlay, false, 0);
++				      layer->overlay, false, 0, old_zpos);
+ 		return;
+ 	}
+ 
+@@ -295,7 +311,7 @@ static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
+ 	sun8i_vi_layer_update_buffer(mixer, layer->channel,
+ 				     layer->overlay, plane);
+ 	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay,
+-			      true, zpos);
++			      true, zpos, old_zpos);
+ }
+ 
+ static struct drm_plane_helper_funcs sun8i_vi_layer_helper_funcs = {
+-- 
+2.17.1
 
