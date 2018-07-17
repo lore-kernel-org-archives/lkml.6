@@ -2,376 +2,228 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937C8ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F97ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 274E620693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:45:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bGMWN+NN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 274E620693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CC0620652
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:53:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC0620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbeGQRSy (ORCPT
+        id S1729737AbeGQR0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:18:54 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41206 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729710AbeGQRSy (ORCPT
+        Tue, 17 Jul 2018 13:26:46 -0400
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:38804 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729688AbeGQR0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:18:54 -0400
-Received: by mail-qt0-f196.google.com with SMTP id e19-v6so1454414qtp.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 09:45:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=u9ga8HTmKGK6Pe1u61T+sGtdMHnMAPOGEgXgguJFlb4=;
-        b=bGMWN+NNX+IgRHeO5UYbfvNxFs+46oepM5wDqSvtOy+DaRoR/mPV9cT+iAN2RaCW9n
-         AJ1QQt7mbkWZznDirhlMOU7i0LWUL9PWyHpf2vAa5UjnR86Ssk8XXHQaFNwAn0tiXMSz
-         KKAtCpiEEhQkcUd/ADEC0BCyari+3tjwVlDQI=
+        Tue, 17 Jul 2018 13:26:46 -0400
+Received: by mail-qt0-f182.google.com with SMTP id y19-v6so1485449qto.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 09:53:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=u9ga8HTmKGK6Pe1u61T+sGtdMHnMAPOGEgXgguJFlb4=;
-        b=hbIwD9IPAprDac9yemccAi4IMa19EiE0j2pX3udhQSXcwJVXMoNRzAyBGnVyTcUAZs
-         FK4pUkvplOeSEVO3NPBwfIK0clAbinB0Ed2tdE8LrgGOx0TEEC3+ZozrQSRAo7yyRlq2
-         /ET3pa+tV0eAWTkGAbsidQ6EL5Wv4jF6VZjJy0ESwo3EPGeM+D7Tb2h/avTSPKHefk7q
-         /N+t1jql7SH2bTLpVWgcGcEsBNxl7lrUqHj690PBI/0fmKTEnzqLshZTSsgVteaVvqSV
-         Feu3GZU5DMZdbAPOS93NIgbf7dQThB67ZVMFbwebANGW4Kq62PZrR2pZ+GLmGO1p5iXm
-         MsGA==
-X-Gm-Message-State: AOUpUlGOxyNm2iKzNPv3Z50GcOpe+MtDmW5UwXlTxvGC51BZR9865s0v
-        3g7q3i6WLJ+L0Q/neX/1LvWjsg==
-X-Google-Smtp-Source: AAOMgpdNMeDrWJfcpgqLIOoXHdK5uZT+uqr2gqnT+q0mJ0qMH8EGUGXH4GRTMFr9BYThPlv9GA69Jw==
-X-Received: by 2002:a0c:f643:: with SMTP id s3-v6mr2585073qvm.131.1531845922707;
-        Tue, 17 Jul 2018 09:45:22 -0700 (PDT)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id 8-v6sm1040624qtz.46.2018.07.17.09.45.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 17 Jul 2018 09:45:21 -0700 (PDT)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Jon Mason <jonmason@broadcom.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH] mmc: host: iproc: Add ACPI support to IPROC SDHCI
-Date:   Tue, 17 Jul 2018 22:15:07 +0530
-Message-Id: <1531845907-26213-1-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:message-id:subject:from:reply-to:to:cc:date
+         :in-reply-to:references:organization:mime-version
+         :content-transfer-encoding;
+        bh=9sTvIk2IUS6/g/UajNlsVnuVZZ2JcB0MWHE3C1Z4ChA=;
+        b=HBtSD9aOG6TJuFmusRzEbEzC2QYBl6PWIAWuV7CtTuazBMOrviuuLldDs1Q/PEhq41
+         vWOjjt7YDQ9/OPAnVet62QDKOpW+zxE0psTDiwu9LArcNDO/LdarWR/4szCbhmK9Mzy7
+         BNotYPjtW2L6zunNb/vSwYJR8PC/MuNWqZ3iTNfI1AIYw60A6IVeyx1/NJ4a4Wa7/dl3
+         ft4MyaGpL0W1zYI2N3Y9QuqZAfcix/YHWZ0qLsZSxZYV4OqpAMghtVesyeIcMk3Cfa5I
+         lFzmvpQpuuaKQQ7m7GE1Rr9bBZ/ZGreoulfFo8L3NP2/gvqJFBJ4D/rOxflfeadTf1nG
+         StGw==
+X-Gm-Message-State: AOUpUlFLvF//adepLY/iZcqPzSpMbWGhxRLgSV/PtiRGlfGWk3dN55ip
+        k1TghM4LuU+fFy1dXBAKyyeVrg==
+X-Google-Smtp-Source: AAOMgpfDwxVoxRzzDR2YRBjPFHhWq/XgmZ3AVlKrSCRxZYYjF0R2RAnD6yB5gdxETsDJ3UUu8AMEaw==
+X-Received: by 2002:a0c:b24c:: with SMTP id k12-v6mr2670934qve.152.1531846393412;
+        Tue, 17 Jul 2018 09:53:13 -0700 (PDT)
+Received: from whitewolf.lyude.net (pool-72-74-165-95.bstnma.fios.verizon.net. [72.74.165.95])
+        by smtp.gmail.com with ESMTPSA id r185-v6sm605571qkf.53.2018.07.17.09.53.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 09:53:12 -0700 (PDT)
+Message-ID: <d7c25a7f41df70685c0c4726315592d1d9b561ff.camel@redhat.com>
+Subject: Re: [Nouveau] [PATCH 1/5] drm/nouveau: Prevent RPM callback
+ recursion in suspend/resume paths
+From:   Lyude Paul <lyude@redhat.com>
+Reply-To: lyude@redhat.com
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Ben Skeggs <bskeggs@redhat.com>, linux-pm@vger.kernel.org
+Date:   Tue, 17 Jul 2018 12:53:11 -0400
+In-Reply-To: <20180717071641.GA5411@wunner.de>
+References: <20180716235936.11268-1-lyude@redhat.com>
+         <20180716235936.11268-2-lyude@redhat.com> <20180717071641.GA5411@wunner.de>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add ACPI support to all IPROC SDHCI varients
+On Tue, 2018-07-17 at 09:16 +0200, Lukas Wunner wrote:
+> [cc += linux-pm]
+> 
+> Hi Lyude,
+> 
+> First of all, thanks a lot for looking into this. 
+> 
+> On Mon, Jul 16, 2018 at 07:59:25PM -0400, Lyude Paul wrote:
+> > In order to fix all of the spots that need to have runtime PM get/puts()
+> > added, we need to ensure that it's possible for us to call
+> > pm_runtime_get/put() in any context, regardless of how deep, since
+> > almost all of the spots that are currently missing refs can potentially
+> > get called in the runtime suspend/resume path. Otherwise, we'll try to
+> > resume the GPU as we're trying to resume the GPU (and vice-versa) and
+> > cause the kernel to deadlock.
+> > 
+> > With this, it should be safe to call the pm runtime functions in any
+> > context in nouveau with one condition: any point in the driver that
+> > calls pm_runtime_get*() cannot hold any locks owned by nouveau that
+> > would be acquired anywhere inside nouveau_pmops_runtime_resume().
+> > This includes modesetting locks, i2c bus locks, etc.
+> 
+> [snip]
+> > --- a/drivers/gpu/drm/nouveau/nouveau_drm.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+> > @@ -835,6 +835,8 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+> >  		return -EBUSY;
+> >  	}
+> >  
+> > +	dev->power.disable_depth++;
+> > +
+> 
+> I'm not sure if that variable is actually private to the PM core.
+> Grepping through the tree I only find a single occurrence where it's
+> accessed outside the PM core and that's in amdgpu.  So this looks
+> a little fishy TBH.  It may make sense to cc such patches to linux-pm
+> to get Rafael & other folks involved with the PM core to comment.
+> 
+> Also, the disable_depth variable only exists if the kernel was
+> compiled with CONFIG_PM enabled, but I can't find a "depends on PM"
+> or something like that in nouveau's Kconfig.  Actually, if PM is
+> not selected, all the nouveau_pmops_*() functions should be #ifdef'ed
+> away, but oddly there's no #ifdef CONFIG_PM anywhere in nouveau_drm.c.
+> 
+> Anywayn, if I understand the commit message correctly, you're hitting a
+> pm_runtime_get_sync() in a code path that itself is called during a
+> pm_runtime_get_sync().  Could you include stack traces in the commit
+> message?  My gut feeling is that this patch masks a deeper issue,
+> e.g. if the runtime_resume code path does in fact directly poll outputs,
+> that would seem wrong.  Runtime resume should merely make the card
+> accessible, i.e. reinstate power if necessary, put into PCI_D0,
+> restore registers, etc.  Output polling should be scheduled
+> asynchronously.
 
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Scott Branden <scott.branden@broadcom.com>
-Reviewed-by: Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>
----
- drivers/mmc/host/Kconfig       |   1 +
- drivers/mmc/host/sdhci-iproc.c | 187 ++++++++++++++++++++++++++++-------------
- 2 files changed, 128 insertions(+), 60 deletions(-)
+Since it is apparently internal to the RPM core (I should go fix the references
+to that which I added in amdgpu as well then, whoops...) I will have to figure
+out another way to do this.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 0581c19..bc6702e 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -334,6 +334,7 @@ config MMC_SDHCI_IPROC
- 	tristate "SDHCI support for the BCM2835 & iProc SD/MMC Controller"
- 	depends on ARCH_BCM2835 || ARCH_BCM_IPROC || COMPILE_TEST
- 	depends on MMC_SDHCI_PLTFM
-+	depends on OF || ACPI
- 	default ARCH_BCM_IPROC
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
-diff --git a/drivers/mmc/host/sdhci-iproc.c b/drivers/mmc/host/sdhci-iproc.c
-index d0e83db..7c5c923 100644
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -15,6 +15,7 @@
-  * iProc SDHCI platform driver
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/mmc/host.h>
-@@ -162,9 +163,19 @@ static void sdhci_iproc_writeb(struct sdhci_host *host, u8 val, int reg)
- 	sdhci_iproc_writel(host, newval, reg & ~3);
- }
- 
-+static unsigned int sdhci_iproc_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+
-+	if (pltfm_host->clk)
-+		return sdhci_pltfm_clk_get_max_clock(host);
-+	else
-+		return pltfm_host->clock;
-+}
-+
- static const struct sdhci_ops sdhci_iproc_ops = {
- 	.set_clock = sdhci_set_clock,
--	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
-+	.get_max_clock = sdhci_iproc_get_max_clock,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.reset = sdhci_reset,
- 	.set_uhs_signaling = sdhci_set_uhs_signaling,
-@@ -178,34 +189,24 @@ static const struct sdhci_ops sdhci_iproc_32only_ops = {
- 	.write_w = sdhci_iproc_writew,
- 	.write_b = sdhci_iproc_writeb,
- 	.set_clock = sdhci_set_clock,
--	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
-+	.get_max_clock = sdhci_iproc_get_max_clock,
- 	.set_bus_width = sdhci_set_bus_width,
- 	.reset = sdhci_reset,
- 	.set_uhs_signaling = sdhci_set_uhs_signaling,
- };
- 
-+enum sdhci_pltfm_type {
-+	SDHCI_PLTFM_IPROC_CYGNUS,
-+	SDHCI_PLTFM_IPROC,
-+	SDHCI_PLTFM_BCM2835,
-+};
-+
- static const struct sdhci_pltfm_data sdhci_iproc_cygnus_pltfm_data = {
- 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
- 	.quirks2 = SDHCI_QUIRK2_ACMD23_BROKEN | SDHCI_QUIRK2_HOST_OFF_CARD_ON,
- 	.ops = &sdhci_iproc_32only_ops,
- };
- 
--static const struct sdhci_iproc_data iproc_cygnus_data = {
--	.pdata = &sdhci_iproc_cygnus_pltfm_data,
--	.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
--			& SDHCI_MAX_BLOCK_MASK) |
--		SDHCI_CAN_VDD_330 |
--		SDHCI_CAN_VDD_180 |
--		SDHCI_CAN_DO_SUSPEND |
--		SDHCI_CAN_DO_HISPD |
--		SDHCI_CAN_DO_ADMA2 |
--		SDHCI_CAN_DO_SDMA,
--	.caps1 = SDHCI_DRIVER_TYPE_C |
--		 SDHCI_DRIVER_TYPE_D |
--		 SDHCI_SUPPORT_DDR50,
--	.mmc_caps = MMC_CAP_1_8V_DDR,
--};
--
- static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
- 	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
- 		  SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12,
-@@ -213,21 +214,6 @@ static const struct sdhci_pltfm_data sdhci_iproc_pltfm_data = {
- 	.ops = &sdhci_iproc_ops,
- };
- 
--static const struct sdhci_iproc_data iproc_data = {
--	.pdata = &sdhci_iproc_pltfm_data,
--	.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
--			& SDHCI_MAX_BLOCK_MASK) |
--		SDHCI_CAN_VDD_330 |
--		SDHCI_CAN_VDD_180 |
--		SDHCI_CAN_DO_SUSPEND |
--		SDHCI_CAN_DO_HISPD |
--		SDHCI_CAN_DO_ADMA2 |
--		SDHCI_CAN_DO_SDMA,
--	.caps1 = SDHCI_DRIVER_TYPE_C |
--		 SDHCI_DRIVER_TYPE_D |
--		 SDHCI_SUPPORT_DDR50,
--};
--
- static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
- 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
- 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-@@ -237,38 +223,104 @@ static const struct sdhci_pltfm_data sdhci_bcm2835_pltfm_data = {
- 	.ops = &sdhci_iproc_32only_ops,
- };
- 
--static const struct sdhci_iproc_data bcm2835_data = {
--	.pdata = &sdhci_bcm2835_pltfm_data,
--	.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
--			& SDHCI_MAX_BLOCK_MASK) |
--		SDHCI_CAN_VDD_330 |
--		SDHCI_CAN_DO_HISPD,
--	.caps1 = SDHCI_DRIVER_TYPE_A |
--		 SDHCI_DRIVER_TYPE_C,
--	.mmc_caps = 0x00000000,
-+static const struct sdhci_iproc_data sdhci_iproc_data_list[] = {
-+	[SDHCI_PLTFM_IPROC_CYGNUS] = {
-+		/* SDHCI IPROC CYGNUS */
-+		.pdata = &sdhci_iproc_cygnus_pltfm_data,
-+		.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
-+				& SDHCI_MAX_BLOCK_MASK) |
-+			SDHCI_CAN_VDD_330 |
-+			SDHCI_CAN_VDD_180 |
-+			SDHCI_CAN_DO_SUSPEND |
-+			SDHCI_CAN_DO_HISPD |
-+			SDHCI_CAN_DO_ADMA2 |
-+			SDHCI_CAN_DO_SDMA,
-+		.caps1 = SDHCI_DRIVER_TYPE_C |
-+			SDHCI_DRIVER_TYPE_D |
-+			SDHCI_SUPPORT_DDR50,
-+		.mmc_caps = MMC_CAP_1_8V_DDR,
-+	},
-+	[SDHCI_PLTFM_IPROC] = {
-+		/* SDHCI IPROC */
-+		.pdata = &sdhci_iproc_pltfm_data,
-+		.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
-+				& SDHCI_MAX_BLOCK_MASK) |
-+			SDHCI_CAN_VDD_330 |
-+			SDHCI_CAN_VDD_180 |
-+			SDHCI_CAN_DO_SUSPEND |
-+			SDHCI_CAN_DO_HISPD |
-+			SDHCI_CAN_DO_ADMA2 |
-+			SDHCI_CAN_DO_SDMA,
-+		.caps1 = SDHCI_DRIVER_TYPE_C |
-+			SDHCI_DRIVER_TYPE_D |
-+			SDHCI_SUPPORT_DDR50,
-+	},
-+	[SDHCI_PLTFM_BCM2835] = {
-+		/* SDHCI BCM2835 */
-+		.pdata = &sdhci_bcm2835_pltfm_data,
-+		.caps = ((0x1 << SDHCI_MAX_BLOCK_SHIFT)
-+				& SDHCI_MAX_BLOCK_MASK) |
-+			SDHCI_CAN_VDD_330 |
-+			SDHCI_CAN_DO_HISPD,
-+		.caps1 = SDHCI_DRIVER_TYPE_A |
-+			SDHCI_DRIVER_TYPE_C,
-+		.mmc_caps = 0x00000000,
-+
-+	},
- };
- 
- static const struct of_device_id sdhci_iproc_of_match[] = {
--	{ .compatible = "brcm,bcm2835-sdhci", .data = &bcm2835_data },
--	{ .compatible = "brcm,sdhci-iproc-cygnus", .data = &iproc_cygnus_data},
--	{ .compatible = "brcm,sdhci-iproc", .data = &iproc_data },
-+	{
-+		.compatible = "brcm,bcm2835-sdhci",
-+		.data = (void *)SDHCI_PLTFM_BCM2835
-+	},
-+	{
-+		.compatible = "brcm,sdhci-iproc-cygnus",
-+		.data = (void *)SDHCI_PLTFM_IPROC_CYGNUS
-+	},
-+	{
-+		.compatible = "brcm,sdhci-iproc",
-+		.data = (void *)SDHCI_PLTFM_IPROC
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, sdhci_iproc_of_match);
- 
-+static const struct acpi_device_id sdhci_iproc_acpi_ids[] = {
-+	{ .id = "BRCM5871", .driver_data = SDHCI_PLTFM_IPROC_CYGNUS },
-+	{ .id = "BRCM5872", .driver_data = SDHCI_PLTFM_IPROC },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(acpi, sdhci_iproc_acpi_ids);
-+
- static int sdhci_iproc_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	const struct of_device_id *match;
-+	const struct acpi_device_id *acpi_id;
- 	const struct sdhci_iproc_data *iproc_data;
- 	struct sdhci_host *host;
- 	struct sdhci_iproc_host *iproc_host;
- 	struct sdhci_pltfm_host *pltfm_host;
- 	int ret;
-+	enum sdhci_pltfm_type plat_type;
-+
-+	if (dev->of_node) {
-+		match = of_match_device(sdhci_iproc_of_match, dev);
-+		if (match)
-+			plat_type = (enum sdhci_pltfm_type)match->data;
-+		else
-+			return -ENODEV;
-+	} else if (has_acpi_companion(dev)) {
-+		acpi_id = acpi_match_device(sdhci_iproc_acpi_ids, dev);
-+		if (acpi_id)
-+			plat_type = (enum sdhci_pltfm_type)acpi_id->driver_data;
-+		else
-+			return -ENODEV;
-+	} else
-+		return -ENODEV;
- 
--	match = of_match_device(sdhci_iproc_of_match, &pdev->dev);
--	if (!match)
--		return -EINVAL;
--	iproc_data = match->data;
-+	iproc_data = &sdhci_iproc_data_list[plat_type];
- 
- 	host = sdhci_pltfm_init(pdev, iproc_data->pdata, sizeof(*iproc_host));
- 	if (IS_ERR(host))
-@@ -284,17 +336,30 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
- 
- 	host->mmc->caps |= iproc_host->data->mmc_caps;
- 
--	pltfm_host->clk = devm_clk_get(&pdev->dev, NULL);
--	if (IS_ERR(pltfm_host->clk)) {
--		ret = PTR_ERR(pltfm_host->clk);
--		goto err;
--	}
--	ret = clk_prepare_enable(pltfm_host->clk);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to enable host clk\n");
--		goto err;
-+	if (dev->of_node) {
-+		pltfm_host->clk = devm_clk_get(dev, NULL);
-+		if (IS_ERR(pltfm_host->clk)) {
-+			ret = PTR_ERR(pltfm_host->clk);
-+			goto err;
-+		}
-+		ret = clk_prepare_enable(pltfm_host->clk);
-+		if (ret) {
-+			dev_err(dev, "failed to enable host clk\n");
-+			goto err;
-+		}
-+	} else if (has_acpi_companion(dev)) {
-+		/*
-+		 * When Driver probe with ACPI device, clock devices
-+		 * are not available, so sdhci clock get from
-+		 * clock-frequency property given in _DSD object.
-+		 */
-+		device_property_read_u32(dev, "clock-frequency",
-+					 &pltfm_host->clock);
-+		if (!pltfm_host->clock) {
-+			ret = -ENODEV;
-+			goto err;
-+		}
- 	}
--
- 	if (iproc_host->data->pdata->quirks & SDHCI_QUIRK_MISSING_CAPS) {
- 		host->caps = iproc_host->data->caps;
- 		host->caps1 = iproc_host->data->caps1;
-@@ -307,7 +372,8 @@ static int sdhci_iproc_probe(struct platform_device *pdev)
- 	return 0;
- 
- err_clk:
--	clk_disable_unprepare(pltfm_host->clk);
-+	if (dev->of_node)
-+		clk_disable_unprepare(pltfm_host->clk);
- err:
- 	sdhci_pltfm_free(pdev);
- 	return ret;
-@@ -317,6 +383,7 @@ static struct platform_driver sdhci_iproc_driver = {
- 	.driver = {
- 		.name = "sdhci-iproc",
- 		.of_match_table = sdhci_iproc_of_match,
-+		.acpi_match_table = ACPI_PTR(sdhci_iproc_acpi_ids),
- 		.pm = &sdhci_pltfm_pmops,
- 	},
- 	.probe = sdhci_iproc_probe,
--- 
-2.7.4
+So: the reason that patch was added was mainly for the patches later in the
+series that add guards around the i2c bus and aux bus, since both of those
+require that the device be awake for it to work. Currently, the spot where it
+would recurse is:
 
+[   72.126859] nouveau 0000:01:00.0: DRM: suspending console...
+[   72.127161] nouveau 0000:01:00.0: DRM: suspending display...
+[  246.718589] INFO: task kworker/0:1:60 blocked for more than 120 seconds.
+[  246.719254]       Tainted: G           O      4.18.0-rc5Lyude-Test+ #3
+[  246.719411] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this
+message.
+[  246.719527] kworker/0:1     D    0    60      2 0x80000000
+[  246.719636] Workqueue: pm pm_runtime_work
+[  246.719772] Call Trace:
+[  246.719874]  __schedule+0x322/0xaf0
+[  246.722800]  schedule+0x33/0x90
+[  246.724269]  rpm_resume+0x19c/0x850
+[  246.725128]  ? finish_wait+0x90/0x90
+[  246.725990]  __pm_runtime_resume+0x4e/0x90
+[  246.726876]  nvkm_i2c_aux_acquire+0x39/0xc0 [nouveau]
+[  246.727713]  nouveau_connector_aux_xfer+0x5c/0xd0 [nouveau]
+[  246.728546]  drm_dp_dpcd_access+0x77/0x110 [drm_kms_helper]
+[  246.729349]  drm_dp_dpcd_write+0x2b/0xb0 [drm_kms_helper]
+[  246.730085]  drm_dp_mst_topology_mgr_suspend+0x4e/0x90 [drm_kms_helper]
+[  246.730828]  nv50_display_fini+0xa5/0xc0 [nouveau]
+[  246.731606]  nouveau_display_fini+0xc8/0x100 [nouveau]
+[  246.732375]  nouveau_display_suspend+0x62/0x110 [nouveau]
+[  246.733106]  nouveau_do_suspend+0x5e/0x2d0 [nouveau]
+[  246.733839]  nouveau_pmops_runtime_suspend+0x4f/0xb0 [nouveau]
+[  246.734585]  pci_pm_runtime_suspend+0x6b/0x190
+[  246.735297]  ? pci_has_legacy_pm_support+0x70/0x70
+[  246.736044]  __rpm_callback+0x7a/0x1d0
+[  246.736742]  ? pci_has_legacy_pm_support+0x70/0x70
+[  246.737467]  rpm_callback+0x24/0x80
+[  246.738165]  ? pci_has_legacy_pm_support+0x70/0x70
+[  246.738864]  rpm_suspend+0x142/0x6b0
+[  246.739593]  pm_runtime_work+0x97/0xc0
+[  246.740312]  process_one_work+0x231/0x620
+[  246.741028]  worker_thread+0x44/0x3a0
+[  246.741731]  kthread+0x12b/0x150
+[  246.742439]  ? wq_pool_ids_show+0x140/0x140
+[  246.743149]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  246.743846]  ret_from_fork+0x3a/0x50
+[  246.744601] 
+               Showing all locks held in the system:
+[  246.746010] 4 locks held by kworker/0:1/60:
+[  246.746757]  #0: 000000003bb334a6 ((wq_completion)"pm"){+.+.}, at:
+process_one_work+0x1b3/0x620
+[  246.747541]  #1: 000000002c55902b ((work_completion)(&dev-
+>power.work)){+.+.}, at: process_one_work+0x1b3/0x620
+[  246.748338]  #2: 000000002a39c817 (&mgr->lock){+.+.}, at:
+drm_dp_mst_topology_mgr_suspend+0x33/0x90 [drm_kms_helper]
+[  246.749120]  #3: 00000000b7d2f3c0 (&aux->hw_mutex){+.+.}, at:
+drm_dp_dpcd_access+0x64/0x110 [drm_kms_helper]
+[  246.749928] 1 lock held by khungtaskd/65:
+[  246.750715]  #0: 00000000407da5ec (rcu_read_lock){....}, at:
+debug_show_all_locks+0x23/0x185
+[  246.751535] 1 lock held by dmesg/1122:
+[  246.752328] 2 locks held by zsh/1149:
+[  246.753100]  #0: 000000000a27c37b (&tty->ldisc_sem){++++}, at:
+ldsem_down_read+0x37/0x40
+[  246.753901]  #1: 000000006cb043f7 (&ldata->atomic_read_lock){+.+.}, at:
+n_tty_read+0xc1/0x870
+
+[  246.755503] =============================================
+
+[  246.757068] NMI backtrace for cpu 1
+[  246.757858] CPU: 1 PID: 65 Comm: khungtaskd Tainted:
+G           O      4.18.0-rc5Lyude-Test+ #3
+[  246.758653] Hardware name: LENOVO 20EQS64N0B/20EQS64N0B, BIOS N1EET78W (1.51
+) 05/18/2018
+[  246.759427] Call Trace:
+[  246.760203]  dump_stack+0x8e/0xd3
+[  246.760977]  nmi_cpu_backtrace.cold.3+0x14/0x5a
+[  246.761729]  ? lapic_can_unplug_cpu.cold.27+0x42/0x42
+[  246.762462]  nmi_trigger_cpumask_backtrace+0xa1/0xae
+[  246.763183]  arch_trigger_cpumask_backtrace+0x19/0x20
+[  246.763908]  watchdog+0x316/0x580
+[  246.764644]  kthread+0x12b/0x150
+[  246.765350]  ? reset_hung_task_detector+0x20/0x20
+[  246.766052]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  246.766777]  ret_from_fork+0x3a/0x50
+[  246.767488] Sending NMI from CPU 1 to CPUs 0,2-7:
+[  246.768624] NMI backtrace for cpu 5 skipped: idling at intel_idle+0x7f/0x120
+[  246.768648] NMI backtrace for cpu 4 skipped: idling at intel_idle+0x7f/0x120
+[  246.768671] NMI backtrace for cpu 0 skipped: idling at intel_idle+0x7f/0x120
+[  246.768676] NMI backtrace for cpu 7 skipped: idling at intel_idle+0x7f/0x120
+[  246.768678] NMI backtrace for cpu 3 skipped: idling at intel_idle+0x7f/0x120
+[  246.768681] NMI backtrace for cpu 6 skipped: idling at intel_idle+0x7f/0x120
+[  246.768684] NMI backtrace for cpu 2 skipped: idling at intel_idle+0x7f/0x120
+[  246.769623] Kernel panic - not syncing: hung_task: blocked tasks
+
+Suspending the MST topology at that point should be the right thing to do though
+(and afaict, I don't -think- we reprobe connectors on resume by default), so I
+definitely think we need some sort of way to have a RPM barrier here that
+doesn't take effect in the suspend/resume path
+
+> 
+> Thanks,
+> 
+> Lukas
