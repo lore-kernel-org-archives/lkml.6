@@ -2,107 +2,104 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CABECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB40ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:56:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20DD20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:56:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBD4E20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:56:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xKWafQz4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20DD20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="bnVFtQv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBD4E20C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730151AbeGQK1t (ORCPT
+        id S1730180AbeGQK2K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:27:49 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:55812 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728610AbeGQK1t (ORCPT
+        Tue, 17 Jul 2018 06:28:10 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41259 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729652AbeGQK2J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:27:49 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6H9tsHt083977;
-        Tue, 17 Jul 2018 04:55:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531821354;
-        bh=SOx94hjLIuwq+7BkNC4RFQzJDf1hSRxpBxkmS/dcMn4=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=xKWafQz4XWa6wv9LmK85RvrLTN+qohczkf1RkjdywZPmJHJdPyLEIgq6/3OcEyOOO
-         UBK4/nOTDSJdXVT1JO8AR95IL1NdnTyhGzV4Y75LOqqR/OMEsOXnefP1fdg5Hpp6wa
-         lPjTsmlFZ0VMPJnaOXDTOjIhJr4pdIdOFyXz9dPU=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6H9tsR4023297;
-        Tue, 17 Jul 2018 04:55:54 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 17
- Jul 2018 04:55:54 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 17 Jul 2018 04:55:54 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6H9tpvQ028612;
-        Tue, 17 Jul 2018 04:55:51 -0500
-Subject: Re: [PATCH v2 4/4] ARM: dts: dra7: Fix up unaligned access setting
- for PCIe EP
-To:     Vignesh R <vigneshr@ti.com>, Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <20180627122919.23926-1-vigneshr@ti.com>
- <20180627122919.23926-5-vigneshr@ti.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>, <linux-omap@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <92691b59-1952-b00f-da5b-f308f94aa2b7@ti.com>
-Date:   Tue, 17 Jul 2018 15:25:50 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180627122919.23926-5-vigneshr@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 17 Jul 2018 06:28:09 -0400
+Received: by mail-wr1-f68.google.com with SMTP id j5-v6so597214wrr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:56:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=WOY/lEJiGJKSZxDYh+TqY5NCpNHto9BQ1ytET61YrzI=;
+        b=bnVFtQv4axdyVCtMn9WUImMlnmVQWZIW8JnGOMoGXxmBvuholpE3lP3Tq8IZGkFkr2
+         3Vqcy2Yj8qexgcwcFN1J+j8t9s7MRnpBSPdAs2Mm5UCSxr2ghu8ArvFQRX8BGS3tlyat
+         5MbM4xv/Y+2ijyW9gssXbkbYktCFD+0qFJ6+2vDro7sQynBiQ2TPEFQ4JWv/58yrJiNB
+         P0p1zJK0WRHSyukixye4aa45LZqRmQqd90uDDyENPTOV2F38HLW2neH2KEPwurYNlU8E
+         SXYzoeKjMVejk0kbx0UVHlILDL03TlZCCxN4n1e0dT0DztdpShBbzA+uZIba7NqjGGjc
+         SBAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WOY/lEJiGJKSZxDYh+TqY5NCpNHto9BQ1ytET61YrzI=;
+        b=l+c0hJte+cxSu+IozvGYUm3oGhxyXWQAEoTDxcToEFFi8glQ8oVHj4aKVW9+56LkYZ
+         bgoJNbqi0UpHgLvt9x7G3BDvECqRl13t85ZGkQHje/ApLqN7NwVNMwQKlwcZxjbmgH3t
+         n/cI6RSvRowSyJ6XqTIb84Q7im0z+iFrjcqO1N4b3+6l42qIA9vxLDozYiO6D8ndVhed
+         U368SxF+COzbn+C3+7JvzdhaiebqsJ9yj+KRLETlvJR9a/uwASqWosDoZHVtODsOtwkE
+         IIw2vvQ08QCp4FnAOFGoStARGbrU36yrZYrmLUFvEC7oS4iHwEVebDuIEJgrq2xVnhXC
+         EOKw==
+X-Gm-Message-State: AOUpUlEmMMhvV4NVqNWqaUFJRyzwBhkvhjlduJwf6g9bT2a4mm5wnzQC
+        3TYhHHAir+EUe/SZEQ0C9tpApQ==
+X-Google-Smtp-Source: AAOMgpfxWk3LXO1+PKvOV99p8bhh6J8LfcX2GbMyqSpn+I0gmOh4HUcHNUcNIjH2OQoCrN1MMhL74g==
+X-Received: by 2002:adf:8103:: with SMTP id 3-v6mr806017wrm.213.1531821380979;
+        Tue, 17 Jul 2018 02:56:20 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id b10-v6sm1199249wrp.49.2018.07.17.02.56.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 02:56:20 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/3] clk: meson: clk-pll driver update
+Date:   Tue, 17 Jul 2018 11:56:14 +0200
+Message-Id: <20180717095617.12240-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset is yet another round of update to the amlogic pll driver.
 
+ 1) Enable bit is added so we don't rely on the bootloader or the init
+    value to enable to pll device.
+ 2) OD post dividers are removed from the pll driver. This simplify the
+    driver and let us provide the clocks which exist between those
+    dividera. Some device are actually using these clocks.
+ 3) The rates hard coded in parameter tables are remove. Instead, we
+    only rely on the parent rate and the parameters to calculate the
+    output rate, which is a lot better.
 
-On Wednesday 27 June 2018 05:59 PM, Vignesh R wrote:
-> Bit positions of PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE and
-> PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE in CTRL_CORE_SMA_SW_7 are
-> incorrectly documented in the TRM. In fact, the bit positions are
-> swapped. Update the DT bindings for PCIe EP to reflect the same.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
+This series has been tested on the gxl libretech cc and axg s400.
+I did not test it on meson8b yet.
 
-Shouldn't this be sent to stable fixes?
+Jerome Brunet (3):
+  clk: meson: clk-pll: add enable bit
+  clk: meson: clk-pll: remove od parameters
+  clk: meson: clk-pll: drop hard-coded rates from pll tables
 
-Thanks
-Kishon
-> ---
->  arch/arm/boot/dts/dra7.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/dra7.dtsi b/arch/arm/boot/dts/dra7.dtsi
-> index 7bfe7f28e3bd..27ad193e1a87 100644
-> --- a/arch/arm/boot/dts/dra7.dtsi
-> +++ b/arch/arm/boot/dts/dra7.dtsi
-> @@ -355,7 +355,7 @@
->  				ti,hwmods = "pcie1";
->  				phys = <&pcie1_phy>;
->  				phy-names = "pcie-phy0";
-> -				ti,syscon-unaligned-access = <&scm_conf1 0x14 2>;
-> +				ti,syscon-unaligned-access = <&scm_conf1 0x14 1>;
->  				status = "disabled";
->  			};
->  		};
-> 
+ drivers/clk/meson/axg.c     | 320 ++++++++++++++++------------
+ drivers/clk/meson/axg.h     |   8 +-
+ drivers/clk/meson/clk-pll.c | 156 +++++++++-----
+ drivers/clk/meson/clkc.h    |  16 +-
+ drivers/clk/meson/gxbb.c    | 504 ++++++++++++++++++++++----------------------
+ drivers/clk/meson/gxbb.h    |  10 +-
+ drivers/clk/meson/meson8b.c | 167 ++++++++-------
+ drivers/clk/meson/meson8b.h |   5 +-
+ 8 files changed, 648 insertions(+), 538 deletions(-)
+
+-- 
+2.14.4
+
