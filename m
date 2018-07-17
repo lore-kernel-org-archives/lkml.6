@@ -2,130 +2,95 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5250BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5DCECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD2920C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:39:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TW4OVh5l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD2920C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4AF2C20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:40:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF2C20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbeGQML2 (ORCPT
+        id S1731154AbeGQMMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:11:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50194 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbeGQML2 (ORCPT
+        Tue, 17 Jul 2018 08:12:19 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34405 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730780AbeGQMMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:11:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uSl+pg/KU1ajAyGTPkJ3M3FKmuBXeJFv0lcSEru4HfA=; b=TW4OVh5l8vsZaIwDpJ6IH47mt
-        2a4TMh83GNBuvKeMljVecBTRJ9zzKdq7Ni1Ru6aQlXVQYGg/zkEsriUJg6RFIvr5knZZpyyTFVAXZ
-        TDLlIyjiZH73Yfx5GOiJXcWpsMnrNvf32KblN2oXOen3jLr7HLMpU2r87htJM31rtCBjvNzVLxiqq
-        am99yqOzN/M+bl5gDo+mz+PKQzsi5EJV92Z6A6Ze7fjuxN/GavjKWSe5OjBBlZ9cM4qhMZX64q6fH
-        cPWaL0FySorH5y9vCyO9wF4mcwWdIkSFtcGw0Dh2RN9zEuZweCFH245UZd5a34nMEWZS9NsIeQ07z
-        LRSdMVY6Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffOJw-00029R-E3; Tue, 17 Jul 2018 11:39:08 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id BF6E920289332; Tue, 17 Jul 2018 13:39:06 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 13:39:06 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, songliubraving@fb.com, hpa@zytor.com,
-        tglx@linutronix.de, torvalds@linux-foundation.org, riel@surriel.com
-Cc:     linux-tip-commits@vger.kernel.org
-Subject: Re: [tip:x86/mm] x86/mm/tlb: Only send page table free TLB flush to
- lazy TLB CPUs
-Message-ID: <20180717113906.GV2476@hirez.programming.kicks-ass.net>
-References: <20180716190337.26133-6-riel@surriel.com>
- <tip-64482aafe55fc7e84d0741c356f8176ee7bde357@git.kernel.org>
+        Tue, 17 Jul 2018 08:12:19 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6HBdx7u1495288
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 04:39:59 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6HBdwCq1495285;
+        Tue, 17 Jul 2018 04:39:58 -0700
+Date:   Tue, 17 Jul 2018 04:39:58 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for RAGHU Halharvi <tipbot@zytor.com>
+Message-ID: <tip-d91cfeb0aa79445fcfa9f523a5b57c5e9f4113ec@git.kernel.org>
+Cc:     raghuhack78@gmail.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, hpa@zytor.com, raghuhack78@gmail.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20180717102009.7708-1-raghuhack78@gmail.com>
+References: <20180717102009.7708-1-raghuhack78@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:irq/core] genirq: Remove redundant NULL pointer check in
+ __free_irq()
+Git-Commit-ID: d91cfeb0aa79445fcfa9f523a5b57c5e9f4113ec
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <tip-64482aafe55fc7e84d0741c356f8176ee7bde357@git.kernel.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 02:35:41AM -0700, tip-bot for Rik van Riel wrote:
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 26542cc17043..e4156e37aa71 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -712,15 +712,50 @@ void tlb_flush_remove_tables_local(void *arg)
->  	}
->  }
->  
-> +static void mm_fill_lazy_tlb_cpu_mask(struct mm_struct *mm,
-> +				      struct cpumask *lazy_cpus)
-> +{
-> +	int cpu;
-> +
-> +	for_each_cpu(cpu, mm_cpumask(mm)) {
-> +		if (!per_cpu(cpu_tlbstate.is_lazy, cpu))
-> +			cpumask_set_cpu(cpu, lazy_cpus);
+Commit-ID:  d91cfeb0aa79445fcfa9f523a5b57c5e9f4113ec
+Gitweb:     https://git.kernel.org/tip/d91cfeb0aa79445fcfa9f523a5b57c5e9f4113ec
+Author:     RAGHU Halharvi <raghuhack78@gmail.com>
+AuthorDate: Tue, 17 Jul 2018 15:50:09 +0530
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 17 Jul 2018 13:35:44 +0200
 
-That really wants to be __cpumask_set_cpu(). Using LOCK prefix
-instructions to set local bits is kinda pointless and expensive.
+genirq: Remove redundant NULL pointer check in __free_irq()
 
-> +	}
-> +}
-> +
->  void tlb_flush_remove_tables(struct mm_struct *mm)
->  {
->  	int cpu = get_cpu();
-> +	cpumask_var_t lazy_cpus;
-> +
-> +	if (cpumask_any_but(mm_cpumask(mm), cpu) >= nr_cpu_ids) {
-> +		put_cpu();
-> +		return;
-> +	}
-> +
-> +	if (!zalloc_cpumask_var(&lazy_cpus, GFP_ATOMIC)) {
-> +		/*
-> +		 * If the cpumask allocation fails, do a brute force flush
-> +		 * on all the CPUs that have this mm loaded.
-> +		 */
-> +		smp_call_function_many(mm_cpumask(mm),
-> +				tlb_flush_remove_tables_local, (void *)mm, 1);
-> +		put_cpu();
-> +		return;
-> +	}
-> +
->  	/*
-> -	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
-> +	 * CPUs with !is_lazy either received a TLB flush IPI while the user
-> +	 * pages in this address range were unmapped, or have context switched
-> +	 * and reloaded %CR3 since then.
-> +	 *
-> +	 * Shootdown IPIs at page table freeing time only need to be sent to
-> +	 * CPUs that may have out of date TLB contents.
->  	 */
-> -	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
-> -		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
-> -
-> +	mm_fill_lazy_tlb_cpu_mask(mm, lazy_cpus);
-> +	smp_call_function_many(lazy_cpus,
-> +				tlb_flush_remove_tables_local, (void *)mm, 1);
-> +	free_cpumask_var(lazy_cpus);
->  	put_cpu();
->  }
+The NULL pointer check in __free_irq() triggers a 'dereference before NULL
+pointer check' warning in static code analysis. It turns out that the check
+is redundant because all callers have a NULL pointer check already.
 
-Also, was there a reason to re-implement on_each_cpu_cond() ? (which btw
-also wants that __cpumask_set_bit fix).
+Remove it.
+
+Signed-off-by: RAGHU Halharvi <raghuhack78@gmail.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20180717102009.7708-1-raghuhack78@gmail.com
+
+---
+ kernel/irq/manage.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 1f8be33572a7..a66c58f91bff 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1570,9 +1570,6 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+ 
+ 	WARN(in_interrupt(), "Trying to free IRQ %d from IRQ context!\n", irq);
+ 
+-	if (!desc)
+-		return NULL;
+-
+ 	mutex_lock(&desc->request_mutex);
+ 	chip_bus_lock(desc);
+ 	raw_spin_lock_irqsave(&desc->lock, flags);
