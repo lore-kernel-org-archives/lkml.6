@@ -2,182 +2,243 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1618ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C225BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C8452083D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:42:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="hXNR3/wN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C8452083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7710D2077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:43:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7710D2077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730137AbeGQJOU (ORCPT
+        id S1729706AbeGQJPS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:14:20 -0400
-Received: from onstation.org ([52.200.56.107]:58256 "EHLO onstation.org"
+        Tue, 17 Jul 2018 05:15:18 -0400
+Received: from mga17.intel.com ([192.55.52.151]:5021 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728024AbeGQJNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:13:34 -0400
-Received: from xilitla.hsd1.wv.comcast.net (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 01230503;
-        Tue, 17 Jul 2018 08:42:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1531816924;
-        bh=f0CHoJaHBAxYjtngAY0Hbbyq/v0orDNg7GWXGNHhgFk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hXNR3/wNRHg53+V9ns/3CB9ppyxwyHFNCsKa1nmrj84BhlamcUx2ZTg48KpCstH27
-         60bFw2pBPgD2lhki4lFuV/gWDP5dJtMMMvGSMChX+rW+sNlXhqbKwsvhcp2i/4DWqL
-         75FTRBtqnW6eYGE/Dg2VqJyF+n8s+ZuBRqkmWSK8=
-From:   Brian Masney <masneyb@onstation.org>
-To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Cc:     jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
-        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com,
-        drew.paterson@ams.com
-Subject: [PATCH v2 2/7] ARM: dts: qcom: msm8974-hammerhead: add device tree bindings for mpu6515
-Date:   Tue, 17 Jul 2018 04:41:53 -0400
-Message-Id: <20180717084158.23532-3-masneyb@onstation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180717084158.23532-1-masneyb@onstation.org>
-References: <20180717084158.23532-1-masneyb@onstation.org>
+        id S1728610AbeGQJPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:15:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 01:43:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="73416481"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga001.jf.intel.com with ESMTP; 17 Jul 2018 01:43:41 -0700
+Subject: Re: [PATCH RFC 1/2] mmc: sdhci: Allow platform controlled voltage
+ switching
+To:     Vijay Viswanath <vviswana@codeaurora.org>, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, jeremymc@redhat.com,
+        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        vbadigan@codeaurora.org, dianders@google.com,
+        sayalil@codeaurora.org, Evan Green <evgreen@chromium.org>
+References: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
+ <1529583826-42020-2-git-send-email-vviswana@codeaurora.org>
+ <53c6d61f-47f5-2e4e-8280-6f76f707799e@intel.com>
+ <0d9b1934-d80d-a726-8094-688c97474afa@codeaurora.org>
+ <78dfa5db-712b-bb0c-ad03-761371beef10@intel.com>
+ <c721395a-0198-d533-5e40-42e4856f34e5@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <6e8c713f-6569-25f3-dec5-f08001b3c6f3@intel.com>
+Date:   Tue, 17 Jul 2018 11:42:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
+MIME-Version: 1.0
+In-Reply-To: <c721395a-0198-d533-5e40-42e4856f34e5@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds device tree bindings for the mpu6515 to the LG Nexus 5
-(hammerhead) phone. Confirmed that the gyroscope / accelerometer
-(mpu6515), magnetometer (ak8963), and temperature / pressure (bmp280)
-sensors are available on the phone.
+On 17/07/18 11:40, Vijay Viswanath wrote:
+> 
+> 
+> On 7/17/2018 1:00 PM, Adrian Hunter wrote:
+>> On 17/07/18 08:14, Vijay Viswanath wrote:
+>>>
+>>>
+>>> On 7/10/2018 4:37 PM, Adrian Hunter wrote:
+>>>> On 21/06/18 15:23, Vijay Viswanath wrote:
+>>>>> Some controllers can have internal mechanism to inform the SW that it
+>>>>> is ready for voltage switching. For such controllers, changing voltage
+>>>>> before the HW is ready can result in various issues.
+>>>>>
+>>>>> Add a quirk, which can be used by drivers of such controllers.
+>>>>>
+>>>>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+>>>>> ---
+>>>>>    drivers/mmc/host/sdhci.c | 20 +++++++++++++++-----
+>>>>>    drivers/mmc/host/sdhci.h |  2 ++
+>>>>>    2 files changed, 17 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>>> index 1c828e0..f0346d4 100644
+>>>>> --- a/drivers/mmc/host/sdhci.c
+>>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>>> @@ -1615,7 +1615,8 @@ void sdhci_set_power_noreg(struct sdhci_host *host,
+>>>>> unsigned char mode,
+>>>>>    void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+>>>>>                 unsigned short vdd)
+>>>>>    {
+>>>>> -    if (IS_ERR(host->mmc->supply.vmmc))
+>>>>> +    if (IS_ERR(host->mmc->supply.vmmc) ||
+>>>>> +            (host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>
+>>>> I think you should provide your own ->set_power() instead of this
+>>>>
+>>>
+>>> will do
+>>>
+>>>>>            sdhci_set_power_noreg(host, mode, vdd);
+>>>>>        else
+>>>>>            sdhci_set_power_reg(host, mode, vdd);
+>>>>> @@ -2009,7 +2010,9 @@ int sdhci_start_signal_voltage_switch(struct
+>>>>> mmc_host *mmc,
+>>>>>            ctrl &= ~SDHCI_CTRL_VDD_180;
+>>>>>            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>>>>    -        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
+>>>>> +                !(host->quirks2 &
+>>>>> +                    SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
+>>>>
+>>>> And your own ->start_signal_voltage_switch()
+>>>>
+>>>
+>>> sdhci_msm_start_signal_voltage_switch() would be an exact copy of
+>>> sdhci_start_signal_voltage_switch()..... will incorporate this if not using
+>>> quirk.
+>>>
+>>>>>                ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>                if (ret) {
+>>>>>                    pr_warn("%s: Switching to 3.3V signalling voltage
+>>>>> failed\n",
+>>>>> @@ -2032,7 +2035,8 @@ int sdhci_start_signal_voltage_switch(struct
+>>>>> mmc_host *mmc,
+>>>>>        case MMC_SIGNAL_VOLTAGE_180:
+>>>>>            if (!(host->flags & SDHCI_SIGNALING_180))
+>>>>>                return -EINVAL;
+>>>>> -        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
+>>>>> +            !(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
+>>>>>                ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>                if (ret) {
+>>>>>                    pr_warn("%s: Switching to 1.8V signalling voltage
+>>>>> failed\n",
+>>>>> @@ -3485,7 +3489,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>>>         * the host can take the appropriate action if regulators are not
+>>>>>         * available.
+>>>>>         */
+>>>>> -    ret = mmc_regulator_get_supply(mmc);
+>>>>> +    if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>
+>>>> Since we expect mmc_regulator_get_supply() to have been called, this could
+>>>> be:
+>>>>
+>>>>      if (!mmc->supply.vmmc) {
+>>>>          ret = mmc_regulator_get_supply(mmc);
+>>>>          enable_vqmmc = true;
+>>>>      } else {
+>>>>          ret = 0;
+>>>>      }
+>>>>>> +        ret = mmc_regulator_get_supply(mmc);
+>>>>> +    else
+>>>>> +        ret = 0;
+>>>>>        if (ret)
+>>>>>            return ret;
+>>>>>    @@ -3736,7 +3743,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>>>          /* If vqmmc regulator and no 1.8V signalling, then there's no
+>>>>> UHS */
+>>>>>        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>> -        ret = regulator_enable(mmc->supply.vqmmc);
+>>>>> +        if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>
+>>>> And this could be:
+>>>>
+>>>>          if (enable_vqmmc)
+>>>>              ret = regulator_enable(mmc->supply.vqmmc);
+>>>>          else
+>>>>              ret = 0;
+>>>>   > However, you still need to ensure
+>>>> regulator_disable(mmc->supply.vqmmc) is
+>>>> only called if regulator_enable() was called.
+>>> I missed this. Will cover it.
+>>>
+>>> Also I missed one more place where we are doing regulator_disable. During
+>>> sdhci-msm unbinding, we would end up doing an extra regulator disable
+>>> (thanks Evan for pointing it out) in sdhci_remove_host.
+>>>
+>>> To avoid the quirk( or having any flag), it would require copying the code
+>>> of sdhci_start_signal_voltage_switch() and sdhci_remove_host() and creating
+>>
+>> You do not need to duplicate sdhci_remove_host(), just change it so that it
+>> only  disables what was enabled i.e.
+>>
+>>     if (host->vqmmc_enabled)
+>>         regulator_disable(mmc->supply.vqmmc);
+>>
+> 
+> Ok, so we will be adding a new flag "vqmmc_enabled" in sdhci_host, ryt ?
 
-Interrupts are not working properly on the ak8963 magnetometer so they
-are currently not configured.
+Yes
 
-The bmp280 retuns temperature/pressure measurement skipped errors but
-will reliably work if I run:
-
-    echo 1 > in_pressure_oversampling_ratio
-    echo 1 > in_temp_oversampling_ratio
-
-Signed-off-by: Brian Masney <masneyb@onstation.org>
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
-I'll send follow up patch(es) once I investigate why the skipped errors
-are occurring with the bmp280 with the default oversampling ratios.
-
- .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 56 +++++++++++++++++++
- arch/arm/boot/dts/qcom-msm8974.dtsi           | 11 ++++
- 2 files changed, 67 insertions(+)
-
-diff --git a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-index c2dc9d09484a..928affae1885 100644
---- a/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-+++ b/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts
-@@ -241,6 +241,24 @@
- 				bias-pull-up;
- 			};
- 		};
-+
-+		i2c12_pins: i2c12 {
-+			mux {
-+				pins = "gpio87", "gpio88";
-+				function = "blsp_i2c12";
-+				drive-strength = <2>;
-+				bias-disable;
-+			};
-+		};
-+
-+		mpu6515_pin: mpu6515 {
-+			irq {
-+				pins = "gpio73";
-+				function = "gpio";
-+				bias-disable;
-+				input-enable;
-+			};
-+		};
- 	};
- 
- 	sdhci@f9824900 {
-@@ -277,6 +295,44 @@
- 			linux,code = <KEY_VOLUMEDOWN>;
- 		};
- 	};
-+
-+	i2c@f9968000 {
-+		status = "ok";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c12_pins>;
-+		clock-frequency = <100000>;
-+		qcom,src-freq = <50000000>;
-+
-+		mpu6515@68 {
-+			compatible = "invensense,mpu6515";
-+			reg = <0x68>;
-+			interrupts-extended = <&msmgpio 73 IRQ_TYPE_EDGE_FALLING>;
-+			vddio-supply = <&pm8941_lvs1>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&mpu6515_pin>;
-+
-+			i2c-gate {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				ak8963@f {
-+					compatible = "asahi-kasei,ak8963";
-+					reg = <0x0f>;
-+					// Currently only works in polling mode.
-+					// gpios = <&msmgpio 61 0>;
-+					vid-supply = <&pm8941_lvs1>;
-+					vdd-supply = <&pm8941_l17>;
-+				};
-+
-+				bmp280@76 {
-+					compatible = "bosch,bmp280";
-+					reg = <0x76>;
-+					vdda-supply = <&pm8941_lvs1>;
-+					vddd-supply = <&pm8941_l17>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &spmi_bus {
-diff --git a/arch/arm/boot/dts/qcom-msm8974.dtsi b/arch/arm/boot/dts/qcom-msm8974.dtsi
-index d9019a49b292..cebb6ae9143a 100644
---- a/arch/arm/boot/dts/qcom-msm8974.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8974.dtsi
-@@ -737,6 +737,17 @@
- 			dma-names = "tx", "rx";
- 		};
- 
-+		blsp_i2c12: i2c@f9968000 {
-+			status = "disabled";
-+			compatible = "qcom,i2c-qup-v2.1.1";
-+			reg = <0xf9968000 0x1000>;
-+			interrupts = <0 106 IRQ_TYPE_NONE>;
-+			clocks = <&gcc GCC_BLSP2_QUP6_I2C_APPS_CLK>, <&gcc GCC_BLSP2_AHB_CLK>;
-+			clock-names = "core", "iface";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+
- 		spmi_bus: spmi@fc4cf000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg-names = "core", "intr", "cnfg";
--- 
-2.17.1
+> Just wanted to clarify
+> 
+>>> 2 new functions in sdhci_msm layer which would do the exact same as above,
+>>> with just the regulator parts removed.
+>>>
+>>> This looks messy (considering any future changes to the 2 sdhci API will
+>>> need to be copied to their duplicate sdhci_msm API) and a bit overkill to
+>>> avoid quirk. At the same time, I don't know how useful such a quirk would be
+>>> to other platform drivers.
+>>>
+>>> Please let me know your view/suggestions.
+>>
+>> Let's try without the quirk.
+>>
+>>>>
+>>>>> +            ret = regulator_enable(mmc->supply.vqmmc);
+>>>>> +        else
+>>>>> +            ret = 0;
+>>>>>            if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
+>>>>>                                1950000))
+>>>>>                host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
+>>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>>>> index 23966f8..3b0c97a 100644
+>>>>> --- a/drivers/mmc/host/sdhci.h
+>>>>> +++ b/drivers/mmc/host/sdhci.h
+>>>>> @@ -450,6 +450,8 @@ struct sdhci_host {
+>>>>>     * obtainable timeout.
+>>>>>     */
+>>>>>    #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT            (1<<17)
+>>>>> +/* Regulator voltage changes are being done from platform layer */
+>>>>> +#define SDHCI_QUIRK2_INTERNAL_PWR_CTL                (1<<18)
+>>>>
+>>>> So maybe the quirk is not needed.
+>>>>
+>>>>>          int irq;        /* Device IRQ */
+>>>>>        void __iomem *ioaddr;    /* Mapped address */
+>>>>>
+>>>>
+>>>
+>>> Thanks for the review & suggestions!
+>>> Vijay
+>>>
+>>
+> 
 
