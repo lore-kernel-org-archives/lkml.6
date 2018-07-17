@@ -2,132 +2,226 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461C0ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 294ADECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3102083B
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:59:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="SQ2o/Rft"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3102083B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id D9FED2083B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:00:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9FED2083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731114AbeGQQcc (ORCPT
+        id S1730063AbeGQQd7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:32:32 -0400
-Received: from mail-eopbgr30101.outbound.protection.outlook.com ([40.107.3.101]:10642
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730758AbeGQQcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:32:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3l4qoQQt6fVrfDRBNuX/0Ss+mYNE6Sl7bypEiaF7SeE=;
- b=SQ2o/RftzYBnftRL0EgcwhMGFiP6A4LlJf268jEixRrUX2BwAXAvNDU/1GgO+8hHN6e2GWzfp8D4TjBS5kpCCtJ+Rfp9vZrE+BjRnlYnLqMqL+/5v+R+u7MUqbgZys+2v2VobiR+S7EoBoLERHy+C+oeoEwb6Bju+kwIP8/UK9Q=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=aryabinin@virtuozzo.com; 
-Received: from i7.sw.ru (185.231.240.5) by
- DB7PR08MB3258.eurprd08.prod.outlook.com (2603:10a6:5:1f::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.21; Tue, 17 Jul 2018 15:59:04 +0000
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>
-Subject: [PATCH v2 3/3] fs/fuse, splice_write: reduce allocation size.
-Date:   Tue, 17 Jul 2018 19:00:35 +0300
-Message-Id: <20180717160035.9422-3-aryabinin@virtuozzo.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180717160035.9422-1-aryabinin@virtuozzo.com>
-References: <CAJfpegvAAQTAjxLcQLefvFOQDJ6ug_G8Jggt=UZci+YnNP741A@mail.gmail.com>
- <20180717160035.9422-1-aryabinin@virtuozzo.com>
+        Tue, 17 Jul 2018 12:33:59 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49042 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729640AbeGQQd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:33:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38D377A9;
+        Tue, 17 Jul 2018 09:00:39 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 779C73F318;
+        Tue, 17 Jul 2018 09:00:33 -0700 (PDT)
+Subject: Re: [RFC PATCH v4 03/12] PM: Introduce an Energy Model management
+ framework
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+References: <20180628114043.24724-1-quentin.perret@arm.com>
+ <20180628114043.24724-4-quentin.perret@arm.com>
+ <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
+ <20180710083202.GD17598@e108498-lin.cambridge.arm.com>
+ <20180716102917.GA19311@e108498-lin.cambridge.arm.com>
+ <fe73f66d-7bed-f413-eb77-34f3d385dbc7@arm.com>
+ <20180717141955.GA4496@e108498-lin.cambridge.arm.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <6488e9a1-19d4-5d6b-1446-684881618fce@arm.com>
+Date:   Tue, 17 Jul 2018 18:00:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: VI1P193CA0005.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:800:bd::15) To DB7PR08MB3258.eurprd08.prod.outlook.com
- (2603:10a6:5:1f::20)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7c2d8296-6b19-4f5a-dc7d-08d5ebfe391d
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DB7PR08MB3258;
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;3:llcqzF8JIXIhzuipe0l5TC88svapSILN6HWZ0KFLIzFIyZ8LOxy5UBk/R+aZK5OUtLFcKOWpOgWwFNA2x/gM99hrBvMEgDSiKBvsbKAardjalR7x8j4M+YYL0QUWuCkG55DHJOGVJm/EpU/pfu7h9myuoRMY5PbTcr04JZND0S2ENEkzpJeTNpmKva1L+hVYKo91YIJjFCtBC2JTz8Ha+sZxMyvApncQiG32Fd7dBiT8pSEYMiP+587zKMmWI5Gb;25:W5Am0/bmwsJoG86IzWr5z+ti5N8LfpXmsAF6OcJVd+TY5LpqGlVtv0EQNMQmAjFdcmHKJPE5+0JqAE4gAUfgJU/qODJcUWvGGFkFf9ACz+qOAVCxw4mMcogfOG9on+rR/kyTtICsTn7Zq6RPyRNxxv7vqy8Gw/RoOmk+mFbXDC7T92hFFyPxXbpyw+N+PN5t14Or4eMT2DarvkoCSjj/JG2RcgGRn89bOPgf3Ip//338xvGkSoVdJij/PDJWZwOO748ofNExGv2fsAFR9+D11izCBGbpvKZzpEpqB+1zJqXeM8ESbUrILClubRhhINt/Id0oOxLd3fFXq1k8T0+yHw==;31:VQJl+62D4AwqpPc498+R0qwbcK0a1uQxn2dEFGUGMItS6kgvIMIQLM25f8U+YDaEPopmlPKWQtme1BcbSNLgpspdufO70bpvZebhsw6iSCJZxPH/xFzLhpYsSYNldHEY+QpsMWdw+4sGT55zYDVFfDAouptq1O7U5WNJw+QoyZNXhttIUSZeQtjTkozmzdukA1BYMqaoiUhzFo13hHrtKTWPkFIw6dzndhhQz47ieUA=
-X-MS-TrafficTypeDiagnostic: DB7PR08MB3258:
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;20:yBs6mCkpvsOWFJls00Bt1JobOdBQf2TPu8DK4E+UxdS4WXzn8C1AmO7uPeLrfWQD2H3h4u3i2zc53IMXQag0yUllwd8HU2tD+6oMgYisUc+I8vLpp1WIkCv0njo7YFcTWhu10kS1DpQIDlHQtXacKrJ/C13UFFmeg/ZHIZ4PIP4VAgRyc1g18HbTnUI+pGsXPWfbajJoZryPax21P54+IKlsEuiDWZNpLHucRSHlOecmOZ5GckA1vsgYDR9ZBIxypD3TMJvmBpk44Z8cVJbA3sj3oANMdORHAbGVVmyi++Mhr8k5QcNmni51GZetCY0oMHZwCLYppKnWeQSiTjd1w6fkvWVMDUFHJF77h5CepAhMWfslC6wk2F3ZAREvuZGKe9L3tbR4FiHKLcO7qHgJOaUtcVx93/YDeDTthvTca18aVjVX2PJO2YX8fSmLdJnjtCxq6d+/Apq68LRrfEMa2RLUFYoFV9RWFXd+i79n2m71lLjSLsJLJ+kEpRkOmgGV;4:jsPuaJFqwjPFYOIIRWE5dWHulSiVO05nwsNrLjqVs+ZAKvUiq9JFL/IClMEKxb5DFt5exTxULIdrY3/GykCpKugRtkJvayHqvK1pCSetngHjqdJ16bqN8fgRmWkjWdxK0MR0P2+dDS1VpI8WVL7+CxZ4/ZfiFYmPsywjBaFyW2yl/BVf44vy0CERIXRVoKm4gmVxUdOi6V9uETWblmSnkcamOJ44Fd8w7rnrkimRevx8RMVbz7E9BFdnPjETnvKuY+ySS/0ZD8K9yfrUCzuBlJcgR625ckSl+I21FXb72v0I924wo+73EfrZ6V/YKgwU
-X-Microsoft-Antispam-PRVS: <DB7PR08MB32582850A520BC71B04B6707B05C0@DB7PR08MB3258.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(131327999870524);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DB7PR08MB3258;BCL:0;PCL:0;RULEID:;SRVR:DB7PR08MB3258;
-X-Forefront-PRVS: 073631BD3D
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(376002)(39850400004)(136003)(346002)(366004)(199004)(189003)(48376002)(68736007)(6512007)(2616005)(5660300001)(36756003)(476003)(11346002)(6666003)(446003)(956004)(105586002)(106356001)(486006)(81156014)(8676002)(50226002)(81166006)(7736002)(16526019)(47776003)(8936002)(66066001)(50466002)(2906002)(186003)(6916009)(76176011)(4326008)(14444005)(52116002)(6486002)(97736004)(6116002)(6506007)(26005)(51416003)(16586007)(107886003)(1076002)(25786009)(53416004)(478600001)(316002)(86362001)(305945005)(53936002)(3846002)(386003);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3258;H:i7.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB7PR08MB3258;23:svSjI9UjcKXIwWewxUl84KOYjzQRuTn7KPrWGfoSx?=
- =?us-ascii?Q?8hKD93ov9glOW2tlyW27CKeOu6Z7zd2PO+ksiZxv/dO7T6FnMrj/QzSdp4F1?=
- =?us-ascii?Q?nONcjOP3w48puNuGl+ZxkV/rrAFQbeHAVuE4/9KFtTlT9400pcTyECBIBNne?=
- =?us-ascii?Q?ubpiJXZhTwwK6JncZLcEGU63oWVOJoVaPmgED0zRZ35R4/w2PTUDxY+RBvt7?=
- =?us-ascii?Q?Z1h9qeG3aBPLOqxzmqnPwNtzW+tBVO0NNNxvTSnEOxbUb1u9vfeVVLxL+ZFF?=
- =?us-ascii?Q?2RJnazPc2OUsAlzpa8W3VZA2kcN7VbMEMYxyc8FnaVn38wkkCxYTCbrIkRFx?=
- =?us-ascii?Q?8xedilHxC1Sr6IbyRWmN6c9WkuldXB4WGHDO/zWBXYr75FHTvN6ZwmnjFyWJ?=
- =?us-ascii?Q?q2b8wo3odxbBjnXCM1nqQbBTPh2rwNGW2Acz9I/CjQryFTVc2idjpBP0sFpr?=
- =?us-ascii?Q?jFPja6siDfMAunVdt6QaBbWv3YXO6km013f8OkDbz6YGJr/Rn9/X17bnO75S?=
- =?us-ascii?Q?flRlbbqENiT0ynNb5Amzp1PXDLS4Q2SLo8bKA1pHLC+3m+HzvXNiOv2ZkmIn?=
- =?us-ascii?Q?dw14brP3bFT8IVqWXNak8s6Hb23fBTXFgd2HinmUYJgAaIo8v6buh5EA1rAw?=
- =?us-ascii?Q?+WbxbVrrqJkgCJpKFx0iS7XJlzP3EqATHLFEzMaVXNlP9aO1S7zYVyuENtie?=
- =?us-ascii?Q?SBHUjx+Go0aGSL4PkiYPL7IbMuT/s/I+xeB8dvqFVxLa6F5qYZBw6aqyaIPw?=
- =?us-ascii?Q?nEJeeQ+jFxJFBy0+Q5oy/xCRFmJmPU09H9TI/dCKSvVP3qnSiL1pPWhq+gQF?=
- =?us-ascii?Q?3Jn9MKW/SjpwOftr1KTL72fICPE1Z+30Em1/JDNC6xLj1wPfYJED31wPCSPm?=
- =?us-ascii?Q?vXeI9317crPRy6AZ10Oc71IMrCGeyP4Zb70sKgCdtDS4CokW2eOC8a2Ik+8s?=
- =?us-ascii?Q?tMfKKgd7B7p9U7NdbYAkAXwM0f9z/0CxbBWUEemc3VSCUgVuBCIiXDMH/rB2?=
- =?us-ascii?Q?l4XQIBIuS5U9knnlYip+sRlQmr7kQlrFBXkxOHXl+XUfSRanFPlUwKOZ80DS?=
- =?us-ascii?Q?EqefB5P5Pv2qw3QAyV1JLMOQU7zZWhf5FfsJEmceJOZGvD/TAle+P4AN9Tfp?=
- =?us-ascii?Q?IVSlZWKSGG/bTyq9G8jV98G1aZwZ+9KR470LPYUQCapzycf7+8lBtLcB+WLT?=
- =?us-ascii?Q?9wTYvaCUvVpdyA2/fu08d1pbzSNDGkRvzP8cEP18++pK80btp2HhPB+qaB7/?=
- =?us-ascii?Q?iLwzduEZTvnWLkUWkg=3D?=
-X-Microsoft-Antispam-Message-Info: vNZqLlk50C0jNdNc82wO0wuS8BrwHFdSWwrugVs99eaaXBVA1IaqkLH49jBHsUjJBHmqXJ76JCdh7pP1ti6FMzBVRqoqIx+8mqsPtSasQzKbxx3QvScKkb2rftcJW1dyeC5OWFTcT3LYt4onqEEoSsNuD2RMVzwlcprDpxGi74pGk/XBezWVRZzYIc29SpeI6SBt0F9g3g3htXjFa43JY0yoAkYXB624T5B+DZwS+oZRoqkCWIhHMqOL+rcHTIKvyGrBNICYCYHTwDgg73F41PZhr2kziSXmxcqALFceT12PH1A6LGP1GC8Q5zfJhFIbkusxl3X6R8SjOAXH/ylNQqe5ReAuMz0ip8A8qpN43AE=
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;6:NjlZTnHf2iAHyse2IAY1U6jFdyZCd/0clJ4+HMr8x6haqCcEdewaFk3FlJOszo1DQmhmb/e1ANYFaPWQYndrqjwA4Rio9CUyLyu+9ZOw7k18NOAayKt+20gn76tMh50U7Z7bbpHh2GTgo4VQbx+pLOK6jr9cRGX/nbx/QblSmSV17Z/X+dbOVFgsfXQn7eNA7yKujEfxkjJobHpnj7GNZlUJJV+FNFx+ykHqkEXsf96Q+X8apfC2omy6fNfseJNQdxZDT5Av0R57XVFYfF5Wqrbes/d1T/2yerK8/m5lGe0ncerXGTPlIRYaEnJUZ8yn6vShimSfTSoB05oa/z1pRFRb5iURmw2xyE2yvzSiMYWuO/MAfC3Y6uvMutT2zUCP3PRa6pQ3G3kZX0RAQJO5dwD0GztcxbdtKpQyXfadU7Y4XzKA92BNZvn3i57kyebTkEBQq6QUB2Dg29DJsXFU+g==;5:1mpfp4hjOdCkf1vopmncLC8oXyFu9PeV1pLdfmvhbGnMDojZto8HCBtx6Eq81sSL/RtMocvHfpSvD2opn8EYb2/DKXoga663ytduplUMMzUQFEmeXs87vwSOc3DPxYVc6D+IBzl1DrrzqUbvAuJDF8fctfu33XovWOnmwErYCsg=;24:HpY0n1DIHmNB3WYdRzEDanUQWAJQb9TtvRN1e7+ocfVD87ASrnDdo1jpPhYw3WVJ3mL2IPDFb2RKYmy4NWYIks/hg/YcLfKrSDlgTxAfBlw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB7PR08MB3258;7:QK1ID5wD9KERElMbpnBGj15HP74pdIOvIcnxY8Uk69+E6C2YSTT6U3W2oBl8E2GVTdc2Yk0cv6qllWsiVi42cWkobfUxjGBqhmTda1t5ol8Y09QDmFxq3voYGP4ELOQ+PTNfZlLg3tKH0tAIoxK8qEUXFTGM1WvZ3n9LmdT76nM9MImYRinsn4hY5mBXjzA+eBDl+TCcIswFhIq9+2vE319/NYDfmbrx1GYKXkPDd9i9pft80D28L9FIucdZMV6W;20:m1KvYkwzUwY0D2Dj9NoN/L3OG7eI+uDPk0K2p/nPqHvPlh2I4VkOizM+pWFrXQcE/Mh8DUFbCgBrkxbZGVpOAcXxEUsdn2MpQ65h3g6xqt7aR99v94m+FirVWZtOMmwVmyso+5Tcp62k4fJ7yUMQ+gJqVOpJEq6SQJuMMMIg5rE=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2018 15:59:04.9538 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c2d8296-6b19-4f5a-dc7d-08d5ebfe391d
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3258
+In-Reply-To: <20180717141955.GA4496@e108498-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'bufs' array contains 'pipe->buffers' elements, but the
-fuse_dev_splice_write() uses only 'pipe->nrbufs' elements.
+On 07/17/2018 04:19 PM, Quentin Perret wrote:
+> Hi Dietmar,
+> 
+> On Tuesday 17 Jul 2018 at 10:57:13 (+0200), Dietmar Eggemann wrote:
+>> On 07/16/2018 12:29 PM, Quentin Perret wrote:
 
-So reduce the allocation size to 'pipe->nrbufs' elements.
+[...]
 
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
----
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> So, I guess you see this overhead because of the extra division involved
+> by computing 'cap = max_cap * cs->frequency / max_freq'. However, I
+> think there is an opportunity to optimize things a bit and avoid that
+> overhead entirely. My suggestion is to remove the 'capacity' field from
+> the em_cap_state struct and to add a 'cost' parameter instead:
+> 
+> struct em_cap_state {
+> 	unsigned long frequency;
+> 	unsigned long power;
+> 	unsigned long cost;
+> };
+> 
+> I define the 'cost' of a capacity state as:
+> 
+> 	cost = power * max_freq / freq;
+> 
+> Since 'power', 'max_freq' and 'freq' do not change at run-time (as opposed
+> to 'capacity'), this coefficient is static and computed when the table is
+> first created. Then, based on this, you can implement em_fd_energy() as
+> follows:
+> 
+> static inline unsigned long em_fd_energy(struct em_freq_domain *fd,
+> 				unsigned long max_util, unsigned long sum_util)
+> {
+> 	unsigned long freq, scale_cpu;
+> 	struct em_cap_state *cs;
+> 	int i, cpu;
+> 
+> 	/* Map the utilization value to a frequency */
+> 	cpu = cpumask_first(to_cpumask(fd->cpus));
+> 	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
+> 	cs = &fd->table[fd->nr_cap_states - 1];
+> 	freq = map_util_freq(max_util, cs->frequency, scale_cpu);
+> 
+> 	/* Find the lowest capacity state above this frequency */
+> 	for (i = 0; i < fd->nr_cap_states; i++) {
+> 		cs = &fd->table[i];
+> 		if (cs->frequency >= freq)
+> 			break;
+> 	}
+> 
+> 	/*
+> 	 * The capacity of a CPU at a specific performance state is defined as:
+> 	 *
+> 	 *     cap = freq * scale_cpu / max_freq
+> 	 *
+> 	 * The energy consumed by this CPU can be estimated as:
+> 	 *
+> 	 *     nrg = power * util / cap
+> 	 *
+> 	 * because (util / cap) represents the percentage of busy time of the
+> 	 * CPU. Based on those definitions, we have:
+> 	 *
+> 	 *     nrg = power * util * max_freq / (scale_cpu * freq)
+> 	 *
+> 	 * which can be re-arranged as a product of two terms:
+> 	 *
+> 	 *     nrg = (power * max_freq / freq) * (util / scale_cpu)
+> 	 *
+> 	 * The first term is static, and is stored in the em_cap_state struct
+> 	 * as 'cost'. The parameters of the second term change at run-time.
+> 	 */
+> 	return cs->cost * sum_util / scale_cpu;
+> }
+> 
+> With the above implementation, there is no additional division in
+> em_fd_energy() compared to v4, so I would expect to see no significant
+> difference in computation time.
+> 
+> I tried to reproduce your test case and I get the following numbers on
+> my Juno r0 (using the performance governor):
+> 
+> v4:
+> ***
+>    Function           Hit    Time            Avg             s^2
+> A53 - cpu [0,3-5]
+>    compute_energy    1796    12685.66 us     7.063 us        0.039 us
+>    compute_energy    4214    28060.02 us     6.658 us        0.919 us
+>    compute_energy    2743    20167.86 us     7.352 us        0.067 us
+>    compute_energy   13958    97122.68 us     6.958 us        9.255 us
+> A57 - cpu [1-2]
+>    compute_energy      86    448.800 us      5.218 us        0.106 us
+>    compute_energy     163    847.600 us      5.200 us        0.128 us
+> 
+> 
+> 'v5' (with 'cost'):
+> *******************
+>    Function           Hit    Time            Avg             s^2
+> A53 - cpu [0,3-5]
+>    compute_energy    1695    11153.54 us     6.580 us        0.022 us
+>    compute_energy   16823    113709.5 us     6.759 us        27.109 us
+>    compute_energy     677    4490.060 us     6.632 us        0.028 us
+>    compute_energy    1959    13595.66 us     6.940 us        0.029 us
+> A57 - cpu [1-2]
+>    compute_energy     211    1089.860 us     5.165 us        0.122 us
+>    compute_energy      83    420.860 us      5.070 us        0.075 us
+> 
+> 
+> So I don't observe any obvious regression with my optimization applied.
+> The v4 branch I used is the one mentioned in the cover letter:
+> http://www.linux-arm.org/git?p=linux-qp.git;a=shortlog;h=refs/heads/upstream/eas_v4
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index fd4a838c1673..d78af3c146f9 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1946,7 +1946,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 
- 	pipe_lock(pipe);
- 
--	bufs = kvmalloc_array(pipe->buffers, sizeof(struct pipe_buffer),
-+	bufs = kvmalloc_array(pipe->nrbufs, sizeof(struct pipe_buffer),
- 			      GFP_KERNEL);
- 	if (!bufs) {
- 		pipe_unlock(pipe);
--- 
-2.16.4
+Yeah, just realized that I used the wrong eas_v4 branch. With the one 
+you mentioned here I still get ~0.2-0.3us diff with the non-optimized 
+approach but at least values in the same ballpark as yours (performance 
+governor to keep s^2 low):
+
+v4:
+
+    Function             Hit    Time            Avg             s^2
+A53 - cpu [0,3-5]
+   compute_energy        233    1455.140 us     6.245 us        0.022 us
+...
+A57 - cpu [1-2]
+   compute_energy        130    602.980 us      4.638 us        0.043 us
+
+v4 + '(naive) calculating capacity on the fly':
+
+   Function              Hit    Time            Avg             s^2
+A53 - cpu [0,3-5]
+   compute_energy        531    3460.200 us     6.516 us        0.044 us
+A57 - cpu [1-2]
+   compute_energy        141    700.220 us      4.966 us        0.106 us
+
+> And I just pushed the WiP branch I used to compare against:
+> http://www.linux-arm.org/git?p=linux-qp.git;a=shortlog;h=refs/heads/upstream/eas_v5-WiP-compute_energy_profiling
+> 
+> Is this also fixing the regression on your side ?
+
+I assume with you 'unsigned long cost' optimization I will get the same 
+test result than you so I guess that's the optimization which assures 
+that we don't have to pay the simplification of the EM with scheduler 
+runtime.
+
+[...]
+
+>> IMO, em_rescale_cpu_capacity() is just the capacity related example what the
+>> EM needs if its values can be changed at runtime. There might be other use
+>> cases in the future like changing power values depending on temperature.
+>> So maybe it's a good idea to not have this 'EM values can change at runtime'
+>> feature in the first version of the EM and emphasize on simplicity of the
+>> code instead (if we can eliminate the extra runtime overhead).
+> 
+> I agree that it would be nice to keep it simple in the beginning. If
+> there is strong and demonstrated use-case for updating the EM at
+> run-time later, then we can re-introduce the RCU protection. But until
+> then, we can avoid the complex implementation at no obvious cost (given
+> my results above) so that sounds like a good trade-off to me :-)
+
+Agreed.
+
+[...]
 
