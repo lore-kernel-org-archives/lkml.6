@@ -2,133 +2,141 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26281ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91E6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42FB2146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:11:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42FB2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C6782146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:12:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C6782146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbeGQNoV (ORCPT
+        id S1731650AbeGQNoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:44:21 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16929 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728889AbeGQNoV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:44:21 -0400
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6HD98oq010817;
-        Tue, 17 Jul 2018 15:11:25 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2k85rehe9e-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 17 Jul 2018 15:11:25 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 56DDA34;
-        Tue, 17 Jul 2018 13:11:24 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 38A35540D;
-        Tue, 17 Jul 2018 13:11:24 +0000 (GMT)
-Received: from [10.48.0.237] (10.75.127.48) by SFHDAG6NODE1.st.com
- (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 17 Jul
- 2018 15:11:23 +0200
-Subject: Re: [PATCH 2/2] pinctrl: stm32: add syscfg mask parameter
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
- <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
-From:   Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
-Date:   Tue, 17 Jul 2018 15:11:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 17 Jul 2018 09:44:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56558 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731548AbeGQNoo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 09:44:44 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 09CEB83221;
+        Tue, 17 Jul 2018 13:12:06 +0000 (UTC)
+Received: from localhost (ovpn-117-28.ams2.redhat.com [10.36.117.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0929E111C481;
+        Tue, 17 Jul 2018 13:11:58 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 14:11:56 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, jack@suse.cz,
+        dan.j.williams@intel.com, riel@surriel.com,
+        haozhong.zhang@intel.com, nilal@redhat.com, kwolf@redhat.com,
+        pbonzini@redhat.com, ross.zwisler@intel.com, david@redhat.com,
+        xiaoguangrong.eric@gmail.com, hch@infradead.org, mst@redhat.com,
+        niteshnarayanlal@hotmail.com, lcapitulino@redhat.com,
+        imammedo@redhat.com, eblake@redhat.com
+Subject: Re: [RFC v3 2/2] virtio-pmem: Add virtio pmem driver
+Message-ID: <20180717131156.GA13498@stefanha-x1.localdomain>
+References: <20180713075232.9575-1-pagupta@redhat.com>
+ <20180713075232.9575-3-pagupta@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_03:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
+Content-Disposition: inline
+In-Reply-To: <20180713075232.9575-3-pagupta@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 17 Jul 2018 13:12:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 17 Jul 2018 13:12:06 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'stefanha@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
 
-add Rob, I forgotten rob's mail.
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 07/17/2018 11:56 AM, Ludovic Barre wrote:
-> From: Ludovic Barre <ludovic.barre@st.com>
-> 
-> This patch adds mask parameter to define IRQ mux field.
-> This field could vary depend of IRQ mux selection register.
-> To avoid backward compatibility, the drivers set
-> the legacy value by default.
-> 
-> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
-> ---
->   drivers/pinctrl/stm32/pinctrl-stm32.c | 16 ++++++++++++++--
->   1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> index dfed609..f756232 100644
-> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-> @@ -46,6 +46,8 @@
->   #define STM32_GPIO_PINS_PER_BANK 16
->   #define STM32_GPIO_IRQ_LINE	 16
->   
-> +#define SYSCFG_IRQMUX_MASK GENMASK(3, 0)
+
+On Fri, Jul 13, 2018 at 01:22:31PM +0530, Pankaj Gupta wrote:
+> + /* The request submission function */
+> +static int virtio_pmem_flush(struct device *dev)
+> +{
+> +	int err;
+> +	unsigned long flags;
+> +	struct scatterlist *sgs[2], sg, ret;
+> +	struct virtio_device *vdev = dev_to_virtio(dev->parent->parent);
+> +	struct virtio_pmem *vpmem = vdev->priv;
+> +	struct virtio_pmem_request *req = kmalloc(sizeof(*req), GFP_KERNEL);
 > +
->   #define gpio_range_to_bank(chip) \
->   		container_of(chip, struct stm32_gpio_bank, range)
->   
-> @@ -1033,6 +1035,7 @@ static int stm32_pctrl_dt_setup_irq(struct platform_device *pdev,
->   	struct device *dev = &pdev->dev;
->   	struct regmap *rm;
->   	int offset, ret, i;
-> +	int mask, mask_width;
->   
->   	parent = of_irq_find_parent(np);
->   	if (!parent)
-> @@ -1052,12 +1055,21 @@ static int stm32_pctrl_dt_setup_irq(struct platform_device *pdev,
->   	if (ret)
->   		return ret;
->   
-> +	ret = of_property_read_u32_index(np, "st,syscfg", 2, &mask);
-> +	if (ret)
-> +		mask = SYSCFG_IRQMUX_MASK;
+> +	req->done = false;
+> +	init_waitqueue_head(&req->acked);
+> +	spin_lock_irqsave(&vpmem->pmem_lock, flags);
 > +
-> +	mask_width = fls(mask);
-> +
->   	for (i = 0; i < STM32_GPIO_PINS_PER_BANK; i++) {
->   		struct reg_field mux;
->   
->   		mux.reg = offset + (i / 4) * 4;
-> -		mux.lsb = (i % 4) * 4;
-> -		mux.msb = mux.lsb + 3;
-> +		mux.lsb = (i % 4) * mask_width;
-> +		mux.msb = mux.lsb + mask_width - 1;
-> +
-> +		dev_dbg(dev, "irqmux%d: reg:%#x, lsb:%d, msb:%d\n",
-> +			i, mux.reg, mux.lsb, mux.msb);
->   
->   		pctl->irqmux[i] = devm_regmap_field_alloc(dev, rm, mux);
->   		if (IS_ERR(pctl->irqmux[i]))
-> 
+> +	sg_init_one(&sg, req, sizeof(req));
+
+What are you trying to do here?
+
+sizeof(req) == sizeof(struct virtio_pmem_request *) == sizeof(void *)
+
+Did you mean sizeof(*req)?
+
+But why map struct virtio_pmem_request to the device?  struct
+virtio_pmem_request is the driver-internal request state and is not part
+of the hardware interface.
+
+> +	sgs[0] = &sg;
+> +	sg_init_one(&ret, &req->ret, sizeof(req->ret));
+> +	sgs[1] = &ret;
+> +	err = virtqueue_add_sgs(vpmem->req_vq, sgs, 1, 1, req, GFP_ATOMIC);
+> +	if (err) {
+> +		dev_err(&vdev->dev, "failed to send command to virtio pmem device\n");
+
+This can happen if the virtqueue is full.  Printing a message and
+failing the flush isn't appropriate.  This thread needs to wait until
+virtqueue space becomes available.
+
+> +		spin_unlock_irqrestore(&vpmem->pmem_lock, flags);
+> +		return -ENOSPC;
+
+req is leaked.
+
+> +	virtio_device_ready(vdev);
+
+This call isn't needed.  Driver use it when they wish to submit buffers
+on virtqueues before ->probe() returns.
+
+> diff --git a/include/linux/virtio_pmem.h b/include/linux/virtio_pmem.h
+> new file mode 100644
+> index 0000000..0f83d9c
+> --- /dev/null
+> +++ b/include/linux/virtio_pmem.h
+
+include/ is for declarations (e.g. kernel APIs) needed by other
+compilation units.  The contents of this header are internal to the
+virtio_pmem driver implementation and can therefore be in virtio_pmem.c.
+include/linux/virtio_pmem.h isn't necessary since nothing besides
+virtio_pmem.c will need to include it.
+
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJbTescAAoJEJykq7OBq3PIwPQH/3keU8xWbvv1c729mwMrCSlT
+GRJkt3AyzE2iIoaXFkeBpnjnpARsajzX0vH/EheCEse46G6aOtia9fALOzf0Fo2l
+XRB1KM3WhEDIx+xNZuk4/WH5AaSHEJPjSBM6Isv410MASfrDJzyu0vuRSjzqEAT8
+augb75qojqCkqkDQm5iMcN6zGwgjJ0MLrXZdN8EKIpgsqeMW7QmwWCwlmWwCgXrq
+f5nor6oEl3jci/EYjw6ctjWsBCSKdDz813phHbQLCbcMD9IuEngGlZt5b9XwdfNY
+5u2SaC66cIPqMYyogb6duBFMZ2AOzkrSZjHbHyh1HArf7Lhd/aoYYMLABy/hwTs=
+=0jCu
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
