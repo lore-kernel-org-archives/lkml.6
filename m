@@ -2,168 +2,187 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E623ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096CDECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEE2E20C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:27:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE2E20C10
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9DDD920C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:28:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDD920C10
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731372AbeGQL76 (ORCPT
+        id S1731445AbeGQMAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:59:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43514 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730731AbeGQL75 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:59:57 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6HBNhIF105394
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:27:46 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k9euwj097-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:27:45 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
-        Tue, 17 Jul 2018 07:27:45 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 17 Jul 2018 07:27:40 -0400
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6HBRdQZ17891592
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Jul 2018 11:27:39 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 40CBD112066;
-        Tue, 17 Jul 2018 07:27:28 -0400 (EDT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F3B42112065;
-        Tue, 17 Jul 2018 07:27:27 -0400 (EDT)
-Received: from sofia.ibm.com (unknown [9.124.35.39])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 17 Jul 2018 07:27:27 -0400 (EDT)
-Received: by sofia.ibm.com (Postfix, from userid 1000)
-        id D43EB2E2F51; Tue, 17 Jul 2018 16:57:35 +0530 (IST)
-From:   "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Florian Weimer <fweimer@redhat.com>,
-        "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH] powerpc/powernv : Save/Restore SPRG3 on entry/exit from stop.
-Date:   Tue, 17 Jul 2018 16:57:29 +0530
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 18071711-0068-0000-0000-000003195B7D
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009379; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01062049; UDB=6.00545287; IPR=6.00839954;
- MB=3.00022167; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-17 11:27:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071711-0069-0000-0000-0000450FD9BB
-Message-Id: <1531826849-31838-1-git-send-email-ego@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807170119
+        Tue, 17 Jul 2018 08:00:11 -0400
+Received: from mx.socionext.com ([202.248.49.38]:10116 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730731AbeGQMAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:00:11 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 17 Jul 2018 20:27:58 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id BE0851800E5;
+        Tue, 17 Jul 2018 20:27:58 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 17 Jul 2018 20:27:58 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 3BB2B40375;
+        Tue, 17 Jul 2018 20:27:58 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 06D76120424;
+        Tue, 17 Jul 2018 20:27:58 +0900 (JST)
+Date:   Tue, 17 Jul 2018 20:27:57 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 2/4] phy: socionext: add USB3 PHY driver for UniPhier SoC
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+In-Reply-To: <52b96200-2234-9017-a317-f929eac9b266@ti.com>
+References: <20180711210514.BB32.4A936039@socionext.com> <52b96200-2234-9017-a317-f929eac9b266@ti.com>
+Message-Id: <20180717202757.858B.4A936039@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Hi Kishon,
 
-On 64-bit Servers, SPRN_SPRG3 and its userspace read-only mirror
-SPRN_USPRG3 are used as userspace VDSO write and read registers
-respectively.
+On Fri, 13 Jul 2018 12:45:06 +0530 <kishon@ti.com> wrote:
 
-SPRN_SPRG3 is lost when we enter stop4 and above, and is currently not
-restored.  As a result, any read from SPRN_USPRG3 returns zero on an
-exit from stop4 and above.
+> Hi,
+> 
+> On Wednesday 11 July 2018 05:35 PM, Kunihiko Hayashi wrote:
+> > On Mon, 9 Jul 2018 20:23:19 +0900 <hayashi.kunihiko@socionext.com> wrote:
+> > 
+> >> Hi Kishon,
+> >> Thank you for your comments.
+> >>
+> >> On Mon, 9 Jul 2018 10:49:50 +0530 <kishon@ti.com> wrote:
+> >>
+> >>> Hi,
+> >>>
+> >>> On Friday 29 June 2018 02:08 PM, Kunihiko Hayashi wrote:
+> >>>> Add a driver for PHY interface built into USB3 controller
+> >>>> implemented in UniPhier SoCs.
+> >>>> This driver supports High-Speed PHY and Super-Speed PHY.
+> >>>>
+> >>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> >>>> Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
+> >>>> Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
+> >>>> ---
+> >>>>  drivers/phy/Kconfig                         |   1 +
+> >>>>  drivers/phy/Makefile                        |   1 +
+> >>>>  drivers/phy/socionext/Kconfig               |  12 +
+> >>>>  drivers/phy/socionext/Makefile              |   6 +
+> >>>>  drivers/phy/socionext/phy-uniphier-usb3hs.c | 422 ++++++++++++++++++++++++++++
+> >>>>  drivers/phy/socionext/phy-uniphier-usb3ss.c | 369 ++++++++++++++++++++++++
+> >>>>  6 files changed, 811 insertions(+)
+> >>>>  create mode 100644 drivers/phy/socionext/Kconfig
+> >>>>  create mode 100644 drivers/phy/socionext/Makefile
+> >>>>  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
+> >>>>  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
+> >>
+> >> (snip...)
+> >>
+> >>>> --- /dev/null
+> >>>> +++ b/drivers/phy/socionext/phy-uniphier-usb3hs.c
+> >>>> @@ -0,0 +1,422 @@
+> >>>> +// SPDX-License-Identifier: GPL-2.0
+> >>>> +/*
+> >>>> + * phy-uniphier-usb3hs.c - HS-PHY driver for Socionext UniPhier USB3 controller
+> >>>> + * Copyright 2015-2018 Socionext Inc.
+> >>>> + * Author:
+> >>>> + *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> >>>> + * Contributors:
+> >>>> + *      Motoya Tanigawa <tanigawa.motoya@socionext.com>
+> >>>> + *      Masami Hiramatsu <masami.hiramatsu@linaro.org>
+> >>>> + */
+> >>>> +
+> >>>> +#include <linux/bitfield.h>
+> >>>> +#include <linux/bitops.h>
+> >>>> +#include <linux/clk.h>
+> >>>> +#include <linux/io.h>
+> >>>> +#include <linux/mfd/syscon.h>
+> >>>> +#include <linux/module.h>
+> >>>> +#include <linux/nvmem-consumer.h>
+> >>>> +#include <linux/of.h>
+> >>>> +#include <linux/of_platform.h>
+> >>>> +#include <linux/phy/phy.h>
+> >>>> +#include <linux/platform_device.h>
+> >>>> +#include <linux/reset.h>
+> >>>> +#include <linux/slab.h>
+> >>>> +
+> >>>> +#define HSPHY_CFG0		0x0
+> >>>> +#define HSPHY_CFG0_HS_I_MASK	GENMASK(31, 28)
+> >>>> +#define HSPHY_CFG0_HSDISC_MASK	GENMASK(27, 26)
+> >>>> +#define HSPHY_CFG0_SWING_MASK	GENMASK(17, 16)
+> >>>> +#define HSPHY_CFG0_SEL_T_MASK	GENMASK(15, 12)
+> >>>> +#define HSPHY_CFG0_RTERM_MASK	GENMASK(7, 6)
+> >>>> +#define HSPHY_CFG0_TRIMMASK	(HSPHY_CFG0_HS_I_MASK \
+> >>>> +				 | HSPHY_CFG0_SEL_T_MASK \
+> >>>> +				 | HSPHY_CFG0_RTERM_MASK)
+> >>>> +
+> >>>> +#define HSPHY_CFG1		0x4
+> >>>> +#define HSPHY_CFG1_DAT_EN	BIT(29)
+> >>>> +#define HSPHY_CFG1_ADR_EN	BIT(28)
+> >>>> +#define HSPHY_CFG1_ADR_MASK	GENMASK(27, 16)
+> >>>> +#define HSPHY_CFG1_DAT_MASK	GENMASK(23, 16)
+> >>>> +
+> >>>> +#define MAX_CLKS	3
+> >>>> +#define MAX_RSTS	2
+> >>>> +#define MAX_PHY_PARAMS	1
+> >>>> +
+> >>>> +struct uniphier_u3hsphy_param {
+> >>>> +	u32 addr;
+> >>>> +	u32 mask;
+> >>>> +	u32 val;
+> >>>> +};
+> >>>
+> >>> I'd like to avoid configure the PHY this way, since it's impossible to know
+> >>> which register is being configured.
+> >>
+> > 
+> > This way might be misunderstood.
+> > These HS-PHY and SS-PHY have "internal" registers, which are not memory-mapped.
+> > 
+> > And to access these internal registers, we need to specify the number
+> > corresponding to the register.
+> > 
+> > The "addr" in "uniphier_u3hsphy_param" is just the number of the register.
+> > The "mask" shows a bitfield of the register, that means one of PHY parameters.
+> > The "value" shows a parameter value to set to the bitfield.
+> 
+> What does each of these bitfields represent? Which PHY parameter does it
+> configure. Are they really PHY parameters or they also configure clocks/mux
+> etc? I would like the configurations to be more descriptive so that we get to
+> know at least what's getting configured here.
 
-Thus in this situation, any call from sched_getcpu() always returns
-zero, as on powerpc, we call __kernel_getcpu() which relies upon
-SPRN_USPRG3 to report the CPU and NUMA node information.
+These bitfields represent phy parameters only, not include clocks/mux etc.
+We can express the register (bitfield) name with macros.
 
-Fix this by saving the SPRN_SPRG3 before entering a deep stop state,
-and restoring it back on wakeup from the stop state.
+However, only recommended values are noted for the bitfields in the specsheet,
+because there are the trimmed values that aren't set as power-on values,
+and we should use the values for stable operation.
 
-Reported-by: Florian Weimer <fweimer@redhat.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Michael Neuling <mikey@neuling.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
-Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+This driver includes only minimal parameter set, so I think it's difficult
+to express them more configurable.
+
+Thank you,
+
 ---
- arch/powerpc/include/asm/cpuidle.h | 1 +
- arch/powerpc/kernel/asm-offsets.c  | 1 +
- arch/powerpc/kernel/idle_book3s.S  | 5 +++++
- 3 files changed, 7 insertions(+)
+Best Regards,
+Kunihiko Hayashi
 
-diff --git a/arch/powerpc/include/asm/cpuidle.h b/arch/powerpc/include/asm/cpuidle.h
-index e210a83..03fa904 100644
---- a/arch/powerpc/include/asm/cpuidle.h
-+++ b/arch/powerpc/include/asm/cpuidle.h
-@@ -77,6 +77,7 @@ struct stop_sprs {
- 	u64 mmcr1;
- 	u64 mmcr2;
- 	u64 mmcra;
-+	u64 sprg3;
- };
- 
- extern u32 pnv_fastsleep_workaround_at_entry[];
-diff --git a/arch/powerpc/kernel/asm-offsets.c b/arch/powerpc/kernel/asm-offsets.c
-index 89cf155..a35ebfc 100644
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -776,6 +776,7 @@ int main(void)
- 	STOP_SPR(STOP_MMCR1, mmcr1);
- 	STOP_SPR(STOP_MMCR2, mmcr2);
- 	STOP_SPR(STOP_MMCRA, mmcra);
-+	STOP_SPR(STOP_SPRG3, sprg3);
- #endif
- 
- 	DEFINE(PPC_DBELL_SERVER, PPC_DBELL_SERVER);
-diff --git a/arch/powerpc/kernel/idle_book3s.S b/arch/powerpc/kernel/idle_book3s.S
-index d85d551..5069d42 100644
---- a/arch/powerpc/kernel/idle_book3s.S
-+++ b/arch/powerpc/kernel/idle_book3s.S
-@@ -120,6 +120,9 @@ power9_save_additional_sprs:
- 	mfspr	r4, SPRN_MMCR2
- 	std	r3, STOP_MMCR1(r13)
- 	std	r4, STOP_MMCR2(r13)
-+
-+	mfspr	r3, SPRN_SPRG3
-+	std	r3, STOP_SPRG3(r13)
- 	blr
- 
- power9_restore_additional_sprs:
-@@ -144,7 +147,9 @@ power9_restore_additional_sprs:
- 	mtspr	SPRN_MMCR1, r4
- 
- 	ld	r3, STOP_MMCR2(r13)
-+	ld	r4, STOP_SPRG3(r13)
- 	mtspr	SPRN_MMCR2, r3
-+	mtspr	SPRN_SPRG3, r4
- 	blr
- 
- /*
--- 
-1.9.4
 
