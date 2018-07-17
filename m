@@ -2,191 +2,194 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 818AFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D70ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CFD020877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:09:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFD020877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id E917720877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:10:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bD3/zPmr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E917720877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeGQEkX (ORCPT
+        id S1728471AbeGQElL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 00:40:23 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:33140 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726357AbeGQEkW (ORCPT
+        Tue, 17 Jul 2018 00:41:11 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41373 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbeGQElK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 00:40:22 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R841e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0T4mLKVL_1531800516;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T4mLKVL_1531800516)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 17 Jul 2018 12:08:36 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [tip:sched/core] sched/cputime: Ensure accurate utime and stime
- ratio in cputime_adjust()
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     tglx@linutronix.de, frederic@kernel.org, lcapitulino@redhat.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, tj@kernel.org, linux-tip-commits@vger.kernel.org
-References: <20180709145843.126583-1-xlpang@linux.alibaba.com>
- <tip-8d4c00dc38a8aa30dae8402955e55e7b34e74bc8@git.kernel.org>
- <20180716133751.GC2494@hirez.programming.kicks-ass.net>
- <20180716174119.GA4514@gmail.com>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <464f4485-0e6b-17a2-1d54-6e2b24c95761@linux.alibaba.com>
-Date:   Tue, 17 Jul 2018 12:08:36 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 17 Jul 2018 00:41:10 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w8-v6so16239216ply.8
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 21:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=bS/dGDtps74Dnu1W9AyHmqv48Koii476PtexhRHToM8=;
+        b=bD3/zPmr+hQdSFXzjePpWRnWBIwFUjFdZIV3W0mImxBbvPk4Z2M/a5SmfVOQd+SDXA
+         RTaKnv4Kd+GlsxqN/7Anklhj+96PR86TBJPPm4VI0xg1LBkKHg8I4T7Vps5auhA02ggc
+         YQlzATzio5u5F3vxVvxF9peckOtLacwIMz5jA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=bS/dGDtps74Dnu1W9AyHmqv48Koii476PtexhRHToM8=;
+        b=QPU7me/4KWOLaPPbccyvHtRK6SDzxebJAEtRBhAPs73RZH71hNaJKsCZnMmdxGj33K
+         Ev5pz9/fpOiurTr0LtXhEgJhhNhQ1GrEJDNq8jKBYbFoIkQpdJXvGN0c+34hHuu6hXb5
+         xAxK5Un7pXFlBhckCj3Vpnly3xQWwficzlhvw/QIgGyGjFrbp20+JkmvJx6aQL8bX7lz
+         zuIAm14W5NaLpdX9JFnkxvaj6H4jv3wf9IrOqf2bj6AIB/QzWpGvwVkb0BzQNNrp6hvN
+         8tclXW7cC+OIF4kENC68T9paE8wiyjFMt2T4ZL41sPdzbIQkO6vJ4yvDpP/wvReu3RVs
+         npLA==
+X-Gm-Message-State: AOUpUlFvZZt3fZDlJQvbFodI7zOlsnL1mQlnACR0DDg86DdBycer/myo
+        68GSSCTuhV+X3c8qaHw5clGc4g==
+X-Google-Smtp-Source: AAOMgpdKn81PyTHz5ZX/Gjt4GFiJJJwlexFQb5agMQyHArX044DMEgdbIHuExdsZto89GoZz7vL1OA==
+X-Received: by 2002:a17:902:a40b:: with SMTP id p11-v6mr19293772plq.228.1531800638009;
+        Mon, 16 Jul 2018 21:10:38 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id h69-v6sm12840738pfh.13.2018.07.16.21.10.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Jul 2018 21:10:36 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 21:10:34 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        David Laight <David.Laight@aculab.com>
+Subject: [PATCH v2] net: dsa: Remove VLA usage
+Message-ID: <20180717041034.GA37382@beast>
 MIME-Version: 1.0
-In-Reply-To: <20180716174119.GA4514@gmail.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/18 1:41 AM, Ingo Molnar wrote:
-> 
-> * Peter Zijlstra <peterz@infradead.org> wrote:
-> 
->> On Sun, Jul 15, 2018 at 04:36:17PM -0700, tip-bot for Xunlei Pang wrote:
->>> Commit-ID:  8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
->>> Gitweb:     https://git.kernel.org/tip/8d4c00dc38a8aa30dae8402955e55e7b34e74bc8
->>> Author:     Xunlei Pang <xlpang@linux.alibaba.com>
->>> AuthorDate: Mon, 9 Jul 2018 22:58:43 +0800
->>> Committer:  Ingo Molnar <mingo@kernel.org>
->>> CommitDate: Mon, 16 Jul 2018 00:28:31 +0200
->>>
->>> sched/cputime: Ensure accurate utime and stime ratio in cputime_adjust()
->>>
->>> If users access "/proc/pid/stat", the utime and stime ratio in the
->>> current SAMPLE period are excepted, but currently cputime_adjust()
->>> always calculates with the ratio of the WHOLE lifetime of the process.
->>>
->>> This results in inaccurate utime and stime in "/proc/pid/stat". For
->>> example,  a process runs for a while with "50% usr, 0% sys", then
->>> followed by "100% sys". For later while, the following is excepted:
->>>
->>>   0.0 usr,  100.0 sys
->>>
->>> but we get:
->>>
->>>   10.0 usr,  90.0 sys
->>>
->>> This patch uses the accurate ratio in cputime_adjust() to address the
->>> issue. A new 'task_cputime' type field is added in prev_cputime to record
->>> previous 'task_cputime' so that we can get the elapsed times as the accurate
->>> ratio.
->>
->> Ingo, please make this one go away.
-> 
-> Sure, I've removed it from sched/core.
-> 
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
 
-Hi Ingo, Peter, Frederic,
+We avoid 2 VLAs by using a pre-allocated field in dsa_switch. We also
+try to avoid dynamic allocation whenever possible (when using fewer than
+bits-per-long ports, which is the common case).
 
-I captured some runtime data using trace to explain it, hope this can
-illustrate the motive behind my patch. Anyone could help improve my
-changelog is appreciated if you think so after reading.
+Link: http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Link: http://lkml.kernel.org/r/20180505185145.GB32630@lunn.ch
+Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+[kees: tweak commit subject and message slightly]
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/net/dsa.h |  3 +++
+ net/dsa/dsa2.c    | 14 ++++++++++++++
+ net/dsa/switch.c  | 22 ++++++++++------------
+ 3 files changed, 27 insertions(+), 12 deletions(-)
 
-
-Here are the simple trace_printk I added to capture the real data:
-
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 0796f938c4f0..b65c1f250941 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -611,6 +611,9 @@ void cputime_adjust(struct task_cputime *curr,
-struct prev_cputime *prev,
-        stime = curr->stime;
-        utime = curr->utime;
-
-+       if (!strncmp(current->comm, "cat", 3))
-+               trace_printk("task tick-based utime %lld stime %lld,
-scheduler rtime %lld\n", utime, stime, rtime);
+diff --git a/include/net/dsa.h b/include/net/dsa.h
+index fdbd6082945d..461e8a7661b7 100644
+--- a/include/net/dsa.h
++++ b/include/net/dsa.h
+@@ -259,6 +259,9 @@ struct dsa_switch {
+ 	/* Number of switch port queues */
+ 	unsigned int		num_tx_queues;
+ 
++	unsigned long		*bitmap;
++	unsigned long		_bitmap;
 +
-        /*
-         * If either stime or utime are 0, assume all runtime is userspace.
-         * Once a task gets some ticks, the monotonicy code at 'update:'
-@@ -651,9 +654,14 @@ void cputime_adjust(struct task_cputime *curr,
-struct prev_cputime *prev,
-                stime = rtime - utime;
-        }
-
-+       if (!strncmp(current->comm, "cat", 3))
-+               trace_printk("result: old utime %lld stime %lld, new
-utime %lld stime %lld\n",
-+                               prev->utime, prev->stime, utime, stime);
+ 	/* Dynamically allocated ports, keep last */
+ 	size_t num_ports;
+ 	struct dsa_port ports[];
+diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
+index dc5d9af3dc80..a1917025e155 100644
+--- a/net/dsa/dsa2.c
++++ b/net/dsa/dsa2.c
+@@ -775,6 +775,20 @@ struct dsa_switch *dsa_switch_alloc(struct device *dev, size_t n)
+ 	if (!ds)
+ 		return NULL;
+ 
++	/* We avoid allocating memory outside dsa_switch
++	 * if it is not needed.
++	 */
++	if (n <= sizeof(ds->_bitmap) * 8) {
++		ds->bitmap = &ds->_bitmap;
++	} else {
++		ds->bitmap = devm_kcalloc(dev,
++					  BITS_TO_LONGS(n),
++					  sizeof(unsigned long),
++					  GFP_KERNEL);
++		if (unlikely(!ds->bitmap))
++			return NULL;
++	}
 +
-        prev->stime = stime;
-        prev->utime = utime;
- out:
-        *ut = prev->utime;
-        *st = prev->stime;
-        raw_spin_unlock_irqrestore(&prev->lock, flags);
+ 	ds->dev = dev;
+ 	ds->num_ports = n;
+ 
+diff --git a/net/dsa/switch.c b/net/dsa/switch.c
+index b93511726069..142b294d3446 100644
+--- a/net/dsa/switch.c
++++ b/net/dsa/switch.c
+@@ -136,21 +136,20 @@ static int dsa_switch_mdb_add(struct dsa_switch *ds,
+ {
+ 	const struct switchdev_obj_port_mdb *mdb = info->mdb;
+ 	struct switchdev_trans *trans = info->trans;
+-	DECLARE_BITMAP(group, ds->num_ports);
+ 	int port;
+ 
+ 	/* Build a mask of Multicast group members */
+-	bitmap_zero(group, ds->num_ports);
++	bitmap_zero(ds->bitmap, ds->num_ports);
+ 	if (ds->index == info->sw_index)
+-		set_bit(info->port, group);
++		set_bit(info->port, ds->bitmap);
+ 	for (port = 0; port < ds->num_ports; port++)
+ 		if (dsa_is_dsa_port(ds, port))
+-			set_bit(port, group);
++			set_bit(port, ds->bitmap);
+ 
+ 	if (switchdev_trans_ph_prepare(trans))
+-		return dsa_switch_mdb_prepare_bitmap(ds, mdb, group);
++		return dsa_switch_mdb_prepare_bitmap(ds, mdb, ds->bitmap);
+ 
+-	dsa_switch_mdb_add_bitmap(ds, mdb, group);
++	dsa_switch_mdb_add_bitmap(ds, mdb, ds->bitmap);
+ 
+ 	return 0;
+ }
+@@ -204,21 +203,20 @@ static int dsa_switch_vlan_add(struct dsa_switch *ds,
+ {
+ 	const struct switchdev_obj_port_vlan *vlan = info->vlan;
+ 	struct switchdev_trans *trans = info->trans;
+-	DECLARE_BITMAP(members, ds->num_ports);
+ 	int port;
+ 
+ 	/* Build a mask of VLAN members */
+-	bitmap_zero(members, ds->num_ports);
++	bitmap_zero(ds->bitmap, ds->num_ports);
+ 	if (ds->index == info->sw_index)
+-		set_bit(info->port, members);
++		set_bit(info->port, ds->bitmap);
+ 	for (port = 0; port < ds->num_ports; port++)
+ 		if (dsa_is_cpu_port(ds, port) || dsa_is_dsa_port(ds, port))
+-			set_bit(port, members);
++			set_bit(port, ds->bitmap);
+ 
+ 	if (switchdev_trans_ph_prepare(trans))
+-		return dsa_switch_vlan_prepare_bitmap(ds, vlan, members);
++		return dsa_switch_vlan_prepare_bitmap(ds, vlan, ds->bitmap);
+ 
+-	dsa_switch_vlan_add_bitmap(ds, vlan, members);
++	dsa_switch_vlan_add_bitmap(ds, vlan, ds->bitmap);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
 
-Using the reproducer I described in the changelog, it runs for a while
-with "50% usr, 0% sys", then followed by "100% sys". A shell script
-accesses its /proc/pid/stat at the interval of one second, and got:
-50.0 usr,  0.0 sys
-51.0 usr,  0.0 sys
-50.0 usr,  0.0 sys
-...
-9.0 usr,  91.0 sys
-9.0 usr,  91.0 sys
-
-
-The trace data corresponds to the last sample period:
-trace entry 1:
-             cat-20755 [022] d...  1370.106496: cputime_adjust: task
-tick-based utime 362560000000 stime 2551000000, scheduler rtime 333060702626
-             cat-20755 [022] d...  1370.106497: cputime_adjust: result:
-old utime 330729718142 stime 2306983867, new utime 330733635372 stime
-2327067254
-
-trace entry 2:
-             cat-20773 [005] d...  1371.109825: cputime_adjust: task
-tick-based utime 362567000000 stime 3547000000, scheduler rtime 334063718912
-             cat-20773 [005] d...  1371.109826: cputime_adjust: result:
-old utime 330733635372 stime 2327067254, new utime 330827229702 stime
-3236489210
-
-1) expected behaviour
-Let's compare the last two trace entries(all the data below is in ns):
-task tick-based utime: 362560000000->362567000000 increased 7000000
-task tick-based stime: 2551000000  ->3547000000   increased 996000000
-scheduler rtime:       333060702626->334063718912 increased 1003016286
-
-The application actually runs almost 100%sys at the moment, we can
-use the task tick-based utime and stime increased to double check:
-996000000/(7000000+996000000) > 99%sys
-
-2) the current cputime_adjust() inaccurate result
-But for the current cputime_adjust(), we get the following adjusted
-utime and stime increase in this sample period:
-adjusted utime: 330733635372->330827229702 increased 93594330
-adjusted stime: 2327067254  ->3236489210   increased 909421956
-
-so 909421956/(93594330+909421956)=91%sys as the shell script shows above.
-
-3) root cause
-The root cause of the issue is that the current cputime_adjust() always
-passes the whole times to scale_stime() to split the whole utime and
-stime. In this patch, we pass all the increased deltas in 1) within
-user's sample period to scale_stime() instead and accumulate the
-corresponding results to the previous saved adjusted utime and stime,
-so guarantee the accurate usr and sys increase within the user sample
-period.
-
-
-Thanks,
-Xunlei
+-- 
+Kees Cook
+Pixel Security
