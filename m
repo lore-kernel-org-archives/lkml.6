@@ -2,251 +2,340 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0D4ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BC2ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:43:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F23A20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21FC420C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:43:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="GYrGLK/8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F23A20C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="CudWnus2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21FC420C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731675AbeGQOPI (ORCPT
+        id S1731697AbeGQOPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:15:08 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33342 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731497AbeGQOPI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:15:08 -0400
-Received: by mail-wr1-f67.google.com with SMTP id g6-v6so1338465wrp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 06:42:23 -0700 (PDT)
+        Tue, 17 Jul 2018 10:15:53 -0400
+Received: from mail-bn3nam01on0063.outbound.protection.outlook.com ([104.47.33.63]:51264
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731497AbeGQOPx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:15:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
-        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to;
-        bh=Iw23yyuugrmGx5lPI0/oR3zNAvACKUQj+cQNLtLMQ+U=;
-        b=GYrGLK/85NLIJepH5W4ysV0YqFWjUiKPtMTKaEJuoPvtqjspaAoIZGIqd834GJl9Vf
-         H5LY/dfmn0s0wqqfDtSb+WCw88frFK77xJ/RM3qGF7Okmn5kNa+rqpGKOsOKGpCkuFH8
-         jTrkATTB9FOI4WAxSp2YkQxL4+32l4yOFyZnpQ5LZ19X758EHUekp4oQSZVolMVXy3k+
-         PzLSGQCu5FtrDh8x1TUqeG84aiFbMiawXD2QfYY179FmT2fJulH5dBXOtmjXIc2kLort
-         buZGqmUXTKwpE4mVaxuJYC6MvjpNll/FMD9Bh/1TSsizNl0BcN+b6XEdmBBPDRqzt5g2
-         G/uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
-        bh=Iw23yyuugrmGx5lPI0/oR3zNAvACKUQj+cQNLtLMQ+U=;
-        b=kjuCgjb52W4GwaNPSLP1A+QbEJj8Vb9LWr/NABI/1MevBmwGORRxXgBOAn5CZ924VI
-         FZ3n2mZFh5Rsp+YKNFIxS1eC0gaEftwb5G8xw2zHCL2ywtAMb0p7TRX7WPz3msCUJy+T
-         m3rREFCMC97wtwSukIiwCnsoLXsjaQcnTFrE/RbPZ/BBa7gVAPXrHM1zEsc9LZclTtcz
-         kernSIixv4MZcfRM7WGuviimJvwUyWkJRx0ch8ajT48+Vlq1w246b+lzevUYQyAq876o
-         DeYXn2yahTKIFS8Q9lqz7aqUZC3ORpM+yhRiPIA3YiNNX5OWv6nZ8V+q4U7eglyF6XGa
-         qKXQ==
-X-Gm-Message-State: AOUpUlG+Jv5i8DABcKHgRYXrPsTbnfKyG6phElaFXxpC1PKFzXxsTwfu
-        pjP7yTsp88RlXEzmcFLNbRnJAw==
-X-Google-Smtp-Source: AAOMgpfyOFEYV2ro1VtS4qVdFmd4eD0MLrUdiGulUo6JT2FI3hGRrGizcvviZo0GtVO+RW87i27PBw==
-X-Received: by 2002:adf:b2a7:: with SMTP id g36-v6mr1437319wrd.218.1531834943285;
-        Tue, 17 Jul 2018 06:42:23 -0700 (PDT)
-Received: from [66.102.1.109] ([149.199.62.254])
-        by smtp.gmail.com with ESMTPSA id 127-v6sm2144558wmd.18.2018.07.17.06.42.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 06:42:22 -0700 (PDT)
-Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH] arm: zynq: Add mmc alias for zc702/zc706/zed/zybo
-To:     Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org
-Cc:     Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Rob Herring <robherring2@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Josh Cartwright <josh.cartwright@ni.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org
-References: <56003f03e66edecb64298317120d4a37b9944a3f.1516199896.git.michal.simek@xilinx.com>
-From:   Michal Simek <monstr@monstr.eu>
-Openpgp: preference=signencrypt
-Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
- 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
- RmzhqoTJlA==
-Message-ID: <deacca38-6626-a1fe-f158-fc0d58acfbce@monstr.eu>
-Date:   Tue, 17 Jul 2018 15:42:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lnXhlmMbJo8bOjO14chAZlDtIpLQI+VMwTptywPo0rw=;
+ b=CudWnus2SrrP7VgFQD0HmsrHET0tbmxiYFWosNIFTHBYkbAddFoe8YGH5fJRVKBfyDn6JXzVMM9CpTb2m7oj7Hg7Rr2awgPNuo5BJ+OKNnFtUknGp9lZxAo7I7dJp9/p8y5PuKx94DlK1kevFVVXY8Qq4xEAjVLdRN4+gnLkq/8=
+Received: from BN3PR03CA0085.namprd03.prod.outlook.com
+ (2a01:111:e400:7a4d::45) by DM2PR03MB559.namprd03.prod.outlook.com
+ (2a01:111:e400:241d::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.20; Tue, 17 Jul
+ 2018 13:43:05 +0000
+Received: from BN1AFFO11FD025.protection.gbl (2a01:111:f400:7c10::133) by
+ BN3PR03CA0085.outlook.office365.com (2a01:111:e400:7a4d::45) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.973.16 via Frontend Transport; Tue, 17 Jul 2018 13:43:04 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.55)
+ smtp.mailfrom=analog.com; linux-foundation.org; dkim=none (message not
+ signed) header.d=none;linux-foundation.org; dmarc=bestguesspass action=none
+ header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ BN1AFFO11FD025.mail.protection.outlook.com (10.58.52.85) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.952.20
+ via Frontend Transport; Tue, 17 Jul 2018 13:43:04 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id w6HDfhq0009486
+        (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 17 Jul 2018 06:43:03 -0700
+Received: from zeus.spd.analog.com (10.64.82.11) by NWD2HUBCAS7.ad.analog.com
+ (10.64.69.107) with Microsoft SMTP Server id 14.3.301.0; Tue, 17 Jul 2018
+ 09:42:26 -0400
+Received: from mircea-Latitude-E6540.analog.com ([10.50.1.102]) by
+ zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id w6HDgMUf005768;      Tue, 17 Jul
+ 2018 09:42:23 -0400
+From:   Mircea Caprioru <mircea.caprioru@analog.com>
+To:     <peda@axentia.se>
+CC:     <davem@davemloft.net>, <mchehab+samsung@kernel.org>,
+        <akpm@linux-foundation.org>, <rdunlap@infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Mircea Caprioru <mircea.caprioru@analog.com>
+Subject: [PATCH V2 1/2] =?UTF-8?q?mux:=20adgs1408:=20new=20driver=20for=20Ana?= =?UTF-8?q?log=20Devices=20ADGS1408/1409=20mux=20=E2=80=A6?=
+Date:   Tue, 17 Jul 2018 16:42:18 +0300
+Message-ID: <20180717134218.5642-1-mircea.caprioru@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <56003f03e66edecb64298317120d4a37b9944a3f.1516199896.git.michal.simek@xilinx.com>
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="VGDL6YPY5rto5H3s2HWSo80eIfn5r3mu7"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(376002)(39860400002)(2980300002)(438002)(199004)(189003)(54534003)(2906002)(77096007)(86362001)(1076002)(356003)(72206003)(2351001)(7696005)(106466001)(2870700001)(14444005)(186003)(107886003)(336012)(6916009)(6666003)(53416004)(5660300001)(305945005)(23676004)(8936002)(2616005)(476003)(4326008)(5820100001)(7636002)(50466002)(44832011)(486006)(50226002)(426003)(36756003)(47776003)(126002)(316002)(246002)(54906003)(478600001)(26005)(106002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM2PR03MB559;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD025;1:6X8mjIlsqRhujlniCrPC6hW0tI8MIlQhaWEEahLzL1NimIBmBzvFG8socuepstlW1Mvk8TUHQEoJ08Ph6X4+MAPM4hsEnI43jjUIGARyySJIJK6OAEHAfCk7SRtIhj86
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 2708920d-7040-41a8-a0d0-08d5ebeb38c3
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:DM2PR03MB559;
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB559;3:e9zMsA+8WntDQqB2qr9/Td2MbL9ed3Xa9VyhsV2V2j094ZCUSSxWGUVhuFtidP0vyiMl5JcdemPEATb979mueWqSe7jZxfa1tSAJ9XEnoK8b9F1pa8QxFdwrT1O+vme2QF9jRAkyXjxmV7UBKLFq40JvCFdCdo6xsHQBFYVOEGL8aR02MwUwB19yw8U/ivEcTXTKl4BP/QmoQwxLsNDAFDCWLjmQr3Ll2ZdoK0k4fYrZkkiCihgntt95HO9cqkGcqF3FoSBWJyXBKpdp2SKT0Q39QvwLZGFdE8kdlancV2h6nE7UjHwA2cfXzYptLpCfVm6f2GhradvEIG27KCQqGQ==;25:3+YPbzaU2YZWPnk4Gz+I/MGKNGlQrAyQZskyGBsK5TOz5zmDC5Bn2R0MdJG78hNNNoczy+m+dDxPI4TMZEGOC3C9fFp6ipWjfsZ/9PbO2HkV06bDwEvQbG6I07F+bQDXoOwsjTtxDR+SjB4YN5EzB+z1r6+VCR7N2a/yqsXy6+TwzrCv/mJO0yYrPWAwf9WIByJx4eOY3MGjvO0HZzntajJzEDgnhIEYmuwXQ2Dc/VMms6vR6pDDdL+TFY37f/zdWTgoV78gKoLl11nmDoZJ11M4Qi+5gZIGI2QQs0AsBkskO0UrLvvJKLjriQi3opPhtXZ+eWP658H/LdFJeuJZxg==;31:HcQYZIfDWIywDk2UcTGjobIT4tqJq0kBlIiArYRmGDtd/m75IJzcEEHiaIZJ8IUhxjlJHHvYDXzmobdtDwcu9Dc+v0d+2lbwjdcB3c7/s1J57GnfSpuyV9O9CacPQlsX4y5t1ebnj6qkW//p8rdyxOVsbK13OutmSy5BQg53YLOnKkHEtDMWKP7aoJrNwPh/2hJPJtaqxhDFzteRprVCt9Y1hrdBTigFCehwGH8GQic=
+X-MS-TrafficTypeDiagnostic: DM2PR03MB559:
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB559;20:CiZPEKrnO77dwO2nrMQyjfhZJcPYycq6NdFRDvcbiku2zb8aIGqCfb+HKcqZ3B1YNRvLra9lWRW8p0dFZ05ThXwCfk8HL1WCJA4b1GZw++hTa2oTjI2oZpPAt8m/hvLVVtaRRY2VVLNL+sKT1onIzR3HZhwo8HveVSRghlU4xETI1hjJdVDFp94sYbqEkGi0AMktczTWAMxdonFRFTOgrYFlnbAda1Pj+urpmwW/ROxvpZ3QJ+ZVPUa51hHaeQEbJ7WOGfnCUzhuuflvf5Un30nZbxTM81PQyUO+Q13TVJD2QQndhpJHWk/8Qymtv1+ySGSGfG+10oqgz23ezxwdyDLWOyWJorZptMTucmEdsvAx4nw53ERo3AKRMLPvjla8Glc3neTw73IcR5UY41CV4LaZkpJMVYMOobOGljcoexM4MngSugwsey8P2lDSKGtxc4eCeFbg07hfCUTrA9c4TOvVVzrIsfsI5JeOyxNfJu3CvTjJXiR8faTKZqiT94o/;4:uM6pu5Rkvhir8ukic2G/YnDiXEp13tJhbzRiZDPl8Jy2yDBm7BmuZQmPbpIofKDmPZ6wRmbs/tOcPdHvWtf3OJrTGAho1NP20Gz/CmlsO5++Op/3J5euqTlUFaDb+jqIvwsT7XefJHr7QmdljpDolsZztzdOfbpwbhlPBP7JPiP4UtqZ5SZV9rAbwskIAplqR9Tz688oU58IY7yHnLRhj1p5eE7NamGb4HkKJQI2a5UKZF2AbtZyd5rseA//bas+/73PB896Z08an4mkqIh/EpDMH2rsLlR6ucK+BSCNSejulhNmEbTSM19F+npjnIQ3OVVTJKmrkyLaIi0lDj2DFjOOKFjmisk59ya3HEKTEKE=
+X-Microsoft-Antispam-PRVS: <DM2PR03MB559001401F37CD77A4E13F0815C0@DM2PR03MB559.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(9452136761055)(232431446821674);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(10201501046)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM2PR03MB559;BCL:0;PCL:0;RULEID:;SRVR:DM2PR03MB559;
+X-Forefront-PRVS: 073631BD3D
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTJQUjAzTUI1NTk7MjM6ZFBjSkxBekY4d25PdDFwZ1QrOWVSRk5JMWhZ?=
+ =?utf-8?B?VEJEZjdzN0xjUDlIS3o2cXlCMEE1VXJ1bXErbzhqc0ErWE8yckdMa3dkVUVs?=
+ =?utf-8?B?WWJMUDByQS9UekcwL3pselkrK3dEUFhFcmU0Y0RUV1hKSEVmQzd5WGtGVm1a?=
+ =?utf-8?B?WjJkODdkaXpXYTAxWE5aTURRdnFWYlVQY0JLWVR2bVNSalc5b2NWYWE3QTZa?=
+ =?utf-8?B?SDZXblhTWi84YUFJL1pBSXJqZGdheGlxNHJ2TWFoZzduUXMyaVRiM1oxdGtt?=
+ =?utf-8?B?WENZZ281aEdwRjIzdjcyV2cxdlhFc3I2NU1LdHBCYkg2djkwVTdPeGk2Ylhi?=
+ =?utf-8?B?YXNXYkk3SXN2UHJUVDFBL3QvTnZQaisvSDdRSUY5eEJET2lENTA4N0xWMEhL?=
+ =?utf-8?B?dHQrdDR2TG9qeFUyTFQwbUdNY21mQXY1Z2swK25MenMrL0ZEeEs3cEN0bDIx?=
+ =?utf-8?B?SHNGZFhTNzJVc2FrR0lHeWdtWXlwN1R2VGp6aWMycHVZd3VMVUZvWk51YUVh?=
+ =?utf-8?B?VXpzTnROZlVsSGhnN083aXp0SUk4K3kycEpNdUFYSkFjSHNUUEk5K0dkeGw4?=
+ =?utf-8?B?ckNjWDNtb0lJRldXRllyamQrRXZ5bFNEZHZUUTBsSGlsRUhNU3lILzJGV0ZO?=
+ =?utf-8?B?L1hTTTdnUTlpYVZtYUZuYlJnajlQSkhybmxZSHdqQWlvc1c2L1BlTWNKWWt0?=
+ =?utf-8?B?MkZYUnEvaUVaaWxoYTJBQTl0bk54cG1qQlhZc3c1R0kvSHdNRTliLzdHRWhi?=
+ =?utf-8?B?TGdHMXdiaFIzc3BXMFhEL284R3RZSm1wU2JobkFtOVZMTFNrWTlwTWI5SDZt?=
+ =?utf-8?B?Mjh0TUFrLzdlWDg1dGZSbWxnR05INFFubUh3cFI2VXd1MmJ6R1RwR3BiR3No?=
+ =?utf-8?B?dmtOUU5MQm9SOHVTNm1aMVlKdnh1Y3BxaU5KWWFKWkgwTGV4TzlKRFhKN3VD?=
+ =?utf-8?B?Qk51QXVTUVh1c25sKzZ0TVhuRzc5MGFXVTYzb3p2YzZ1RURJOHd4eTBrY3pM?=
+ =?utf-8?B?L2w2SEpyYTJzYWFOY0lVV1NhTDAyalRYZXdzbEl2RzFFUFBvQ1pVVjUySmtN?=
+ =?utf-8?B?SUpWZVAxVGIrU1MxVTdQYjkrLy9BTldNUUlCaDlST2lBdTJOYnBBdE5tdndB?=
+ =?utf-8?B?QjFvSmI3K0JTMkhtU003VEJoSWpxTlE3WVRXRzJ0V3Jud29xaWlkQkxiWE9I?=
+ =?utf-8?B?NUlQdXZQbS9DaFJ0L2t6Lyt5cU16WlB1b056cXBwWC9jODMxamRnNWpvem9X?=
+ =?utf-8?B?NUpkTnJWdjU4SlAvc1J3d0lZYkxhQnpjdFdMVnNMVUNCVEkyajFFQ2hlME1o?=
+ =?utf-8?B?bnoxa2JFc1B1Snk5eFdjUjQzWnRMTlg4dnJvK0N2d3FyMzd5b2h5MnMzRWZv?=
+ =?utf-8?B?MkVrLzNNbXpzdENqVFV6VG1rUmpCdk1yOTBTVEVTc2ZwMU9xQ3gzZXVQamtD?=
+ =?utf-8?B?UlZqQnRwTThvUUIvdEpBTTJZQlZiWE05blZPbXpVWWxGdE9XWERHRzhpcElt?=
+ =?utf-8?Q?aI8t0fU9Ouc7VQducctLFxBM=3D?=
+X-Microsoft-Antispam-Message-Info: +HHKiww7IFrTjzFh7v6TSmOqTztiNQQ18grut/EIZSwuEu586vv9VsB0buYhnLGwih3yuQkQ/8r9D7nt1+4NN51GkeiUvpUuhej/rkTVFwlcP9nTYh1ia2wCG3/vPBImCOJtzBhvfuG+tA9d7IZUCTN1Llk8RybDrBA3EDGfoFgPQCv5bj5CqK1+YxRtUojTPYI18chGzuHeqdXWQnqgRGaO/BgSyxoxJIw/91FmqG3FyWnukZx6ED7ymOtYHxo+w5M0u/MbTYpHbfEZRMcsWAbzqLXwYbde4o9fHoR23Ywk22Hp361TLfT7/gXuP4VjuTG5KLB2MOvGGYPkx87YgjZPT6Pj5Q6zdbkDM0zNyiY=
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB559;6:xqk1TTHbMDzuziQwkuKELj/g8reFmXYvjhSUQk2yE+clXOH87tYe2P+zVBUKmyivF5mbbwuSZC4j9KWP90A+UrJBExIIPvJYIXkGGhC5O6/522/o+qRs3DnGa+tkv0hUI90gu4gi7WNpLwTHzU9kFxuOkxlViNEiGYWNhO+TvqlqXS/wxhb3gva1Jkm39c6WGwueO7dz5lWDQ6LfbToyWpfxJJIzRh+SfqBDkWuZ0tmdClj7ZDdvPqnhehHvviJDmEgIpKdsRQs02Gf5Cp57Xs4Fl2KyDUaz0FbesNMDUpDGFp4EYynes9UlecR7LOhF4fjelQK1lJCHsXZi4zc2+ZJ110Z/UnNCNIFl/RU7jeZc8odEQNf57JYBuNNFYt8h45wgJTH/LyUrTA/dwAs6p+PTM3YCHH9EFzroUHhrwFg8wU20TblZRtF+JTdXo5+kTtFUEJi3bDe07EA5Xno0DA==;5:YF9OHLB2PZAK+hFfUZ0nscKIIMcdlcfgSXpKTmM/D2o2J7rrtFokEewSFklhH9/8YZyIm7bomqxtHqKmsTpUDfp2kY/sVJXAJI/j1/EowNTOcqyTz2CsWn53ezusfyEGTLMH3Gq77dgU4v2rejTOhLTj/ug6bcfcIr7+8J4STtA=;24:P8MkaoJySXNxqiWZJK+Fd61AIf6/r8NJsMCRPm9RK5Y3QGq3rMmKDe/Rkqbc0badLcRMSdTDidtB3Ftz35l3nQ+MVOP/qyW9ZVAPGVHO6o8=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM2PR03MB559;7:mJ2uQkYH8O3Vo9U/W+l2ef6+q1NeStQuHrm28GcsEEYne3rsIACPPGtF/sjr0ur/Xoe9NiWyT6nPQ361MrqEANqGM8ienFjdtFcv7fYIWVYrXGtfS4HB8iJ4KaUwGy7mzX2AOQSJrwMdmzkPwFdIJFDK9OD1JMdANK3jbJml230oU4GW44xVkMV5vpbyfrpBooBpqQhf8/0bz/LXA02VrcGm8cV0N+b0IBth8MuEmRzvpJRVQrxJaIqqVUTmP+5D
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2018 13:43:04.3730
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2708920d-7040-41a8-a0d0-08d5ebeb38c3
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM2PR03MB559
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---VGDL6YPY5rto5H3s2HWSo80eIfn5r3mu7
-Content-Type: multipart/mixed; boundary="OucNRNKXVUYI61Qx977wOpVMb2IcdGp2B";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org
-Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>,
- linux-kernel@vger.kernel.org,
- Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
- Rob Herring <robh+dt@kernel.org>, Rob Herring <robherring2@gmail.com>,
- Mark Rutland <mark.rutland@arm.com>, Josh Cartwright
- <josh.cartwright@ni.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org
-Message-ID: <deacca38-6626-a1fe-f158-fc0d58acfbce@monstr.eu>
-Subject: Re: [PATCH] arm: zynq: Add mmc alias for zc702/zc706/zed/zybo
-References: <56003f03e66edecb64298317120d4a37b9944a3f.1516199896.git.michal.simek@xilinx.com>
-In-Reply-To: <56003f03e66edecb64298317120d4a37b9944a3f.1516199896.git.michal.simek@xilinx.com>
+This patch adds basic support for Analog Device ADGS1408/09 SPI mux
+controller.
 
---OucNRNKXVUYI61Qx977wOpVMb2IcdGp2B
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+The device is probed and set to a disabled state. It uses the new mux
+controller framework.
 
-On 17.1.2018 15:38, Michal Simek wrote:
-> Add missing mmc alias.
->=20
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
->=20
->  arch/arm/boot/dts/zynq-zc702.dts | 1 +
->  arch/arm/boot/dts/zynq-zc706.dts | 1 +
->  arch/arm/boot/dts/zynq-zed.dts   | 1 +
->  arch/arm/boot/dts/zynq-zybo.dts  | 1 +
->  4 files changed, 4 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/zynq-zc702.dts b/arch/arm/boot/dts/zynq-=
-zc702.dts
-> index dd1a731ae24c..46f14422b2e7 100644
-> --- a/arch/arm/boot/dts/zynq-zc702.dts
-> +++ b/arch/arm/boot/dts/zynq-zc702.dts
-> @@ -23,6 +23,7 @@
->  		ethernet0 =3D &gem0;
->  		i2c0 =3D &i2c0;
->  		serial0 =3D &uart1;
-> +		mmc0 =3D &sdhci0;
->  	};
-> =20
->  	memory@0 {
-> diff --git a/arch/arm/boot/dts/zynq-zc706.dts b/arch/arm/boot/dts/zynq-=
-zc706.dts
-> index 8a0c2ff4c5eb..9224b45f9418 100644
-> --- a/arch/arm/boot/dts/zynq-zc706.dts
-> +++ b/arch/arm/boot/dts/zynq-zc706.dts
-> @@ -23,6 +23,7 @@
->  		ethernet0 =3D &gem0;
->  		i2c0 =3D &i2c0;
->  		serial0 =3D &uart1;
-> +		mmc0 =3D &sdhci0;
->  	};
-> =20
->  	memory@0 {
-> diff --git a/arch/arm/boot/dts/zynq-zed.dts b/arch/arm/boot/dts/zynq-ze=
-d.dts
-> index 1015edd69ff3..c8fad19e07dd 100644
-> --- a/arch/arm/boot/dts/zynq-zed.dts
-> +++ b/arch/arm/boot/dts/zynq-zed.dts
-> @@ -22,6 +22,7 @@
->  	aliases {
->  		ethernet0 =3D &gem0;
->  		serial0 =3D &uart1;
-> +		mmc0 =3D &sdhci0;
->  	};
-> =20
->  	memory@0 {
-> diff --git a/arch/arm/boot/dts/zynq-zybo.dts b/arch/arm/boot/dts/zynq-z=
-ybo.dts
-> index c131dc45e4eb..b0ad94cb9e4a 100644
-> --- a/arch/arm/boot/dts/zynq-zybo.dts
-> +++ b/arch/arm/boot/dts/zynq-zybo.dts
-> @@ -22,6 +22,7 @@
->  	aliases {
->  		ethernet0 =3D &gem0;
->  		serial0 =3D &uart1;
-> +		mmc0 =3D &sdhci0;
->  	};
-> =20
->  	memory@0 {
->=20
+Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+---
+Changelog V1 -> V2
+- removed adgs140x wildcard
+- removed cells verification since only 0 configuration supported
+- added id enum for ADGS1408 and ADGS1409
+- sorted includes
 
-Applied.
+ MAINTAINERS            |   5 ++
+ drivers/mux/Kconfig    |  12 +++++
+ drivers/mux/Makefile   |   2 +
+ drivers/mux/adgs1408.c | 120 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 139 insertions(+)
+ create mode 100644 drivers/mux/adgs1408.c
 
-Thanks,
-Michal
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 192d7f73fd01..458d42d6f4f3 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -810,6 +810,11 @@ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/i2c/ad9389b*
+ 
++ANALOG DEVICES INC ADGS1408 DRIVER
++M:	Mircea Caprioru <mircea.caprioru@analog.com>
++S:	Supported
++F:	drivers/mux/adgs1408.c
++
+ ANALOG DEVICES INC ADV7180 DRIVER
+ M:	Lars-Peter Clausen <lars@metafoo.de>
+ L:	linux-media@vger.kernel.org
+diff --git a/drivers/mux/Kconfig b/drivers/mux/Kconfig
+index 6241678e99af..cf825e9f47ef 100644
+--- a/drivers/mux/Kconfig
++++ b/drivers/mux/Kconfig
+@@ -21,6 +21,18 @@ config MUX_ADG792A
+ 	  To compile the driver as a module, choose M here: the module will
+ 	  be called mux-adg792a.
+ 
++config MUX_ADGS1408
++	tristate "Analog Devices ADGS1408/ADGS1409 Multiplexers"
++	depends on SPI
++	help
++	  ADGS1408 8:1 multiplexer and ADGS1409 double 4:1 multiplexer
++	  switches.
++
++	  The driver supports driving each switch independently.
++
++	  To compile the driver as a module, choose M here: the module will
++	  be called mux-adgs1408.
++
+ config MUX_GPIO
+ 	tristate "GPIO-controlled Multiplexer"
+ 	depends on GPIOLIB || COMPILE_TEST
+diff --git a/drivers/mux/Makefile b/drivers/mux/Makefile
+index c3d883955fd5..6e9fa47daf56 100644
+--- a/drivers/mux/Makefile
++++ b/drivers/mux/Makefile
+@@ -5,10 +5,12 @@
+ 
+ mux-core-objs			:= core.o
+ mux-adg792a-objs		:= adg792a.o
++mux-adgs1408-objs		:= adgs1408.o
+ mux-gpio-objs			:= gpio.o
+ mux-mmio-objs			:= mmio.o
+ 
+ obj-$(CONFIG_MULTIPLEXER)	+= mux-core.o
+ obj-$(CONFIG_MUX_ADG792A)	+= mux-adg792a.o
++obj-$(CONFIG_MUX_ADGS1408)	+= mux-adgs1408.o
+ obj-$(CONFIG_MUX_GPIO)		+= mux-gpio.o
+ obj-$(CONFIG_MUX_MMIO)		+= mux-mmio.o
+diff --git a/drivers/mux/adgs1408.c b/drivers/mux/adgs1408.c
+new file mode 100644
+index 000000000000..a5192c5e484b
+--- /dev/null
++++ b/drivers/mux/adgs1408.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * ADG1408 SPI MUX driver
++ *
++ * Copyright 2018 Analog Devices Inc.
++ */
++
++#include <linux/err.h>
++#include <linux/spi/spi.h>
++#include <linux/module.h>
++#include <linux/mux/driver.h>
++#include <linux/of_platform.h>
++#include <linux/property.h>
++
++#define ADGS1408_SW_DATA       (0x01)
++#define ADGS1408_REG_READ(reg) ((reg) | 0x80)
++#define ADGS1408_DISABLE       (0x00)
++#define ADGS1408_MUX(state)    (((state) << 1) | 1)
++
++enum {
++	ADGS1408,
++	ADGS1409
++};
++
++static int adgs1408_spi_reg_write(struct spi_device *spi,
++				  u8 reg_addr, u8 reg_data)
++{
++	u8 tx_buf[2];
++
++	tx_buf[0] = reg_addr;
++	tx_buf[1] = reg_data;
++
++	return spi_write_then_read(spi, tx_buf, sizeof(tx_buf), NULL, 0);
++}
++
++static int adgs1408_set(struct mux_control *mux, int state)
++{
++	struct spi_device *spi = to_spi_device(mux->chip->dev.parent);
++	u8 reg;
++
++	if (state == MUX_IDLE_DISCONNECT)
++		reg = ADGS1408_DISABLE;
++	else
++		reg = ADGS1408_MUX(state);
++
++	return adgs1408_spi_reg_write(spi, ADGS1408_SW_DATA, reg);
++}
++
++static const struct mux_control_ops adgs1408_ops = {
++	.set = adgs1408_set,
++};
++
++static int adgs1408_probe(struct spi_device *spi)
++{
++	const struct spi_device_id *id = spi_get_device_id(spi);
++	struct device *dev = &spi->dev;
++	struct mux_chip *mux_chip;
++	struct mux_control *mux;
++	int ret, idle_state;
++
++	mux_chip = devm_mux_chip_alloc(dev, 1, 0);
++	if (IS_ERR(mux_chip))
++		return PTR_ERR(mux_chip);
++
++	mux_chip->ops = &adgs1408_ops;
++
++	ret = adgs1408_spi_reg_write(spi, ADGS1408_SW_DATA, ADGS1408_DISABLE);
++	if (ret < 0)
++		return ret;
++
++	ret = device_property_read_u32_array(dev, "idle-state",
++					     &idle_state,
++					     mux_chip->controllers);
++	if (ret < 0) {
++		idle_state = MUX_IDLE_AS_IS;
++	}
++
++	mux = mux_chip->mux;
++
++	if (id->driver_data == ADGS1408)
++		mux->states = 8;
++	else
++		mux->states = 4;
++
++	switch (idle_state) {
++	case MUX_IDLE_DISCONNECT:
++	case MUX_IDLE_AS_IS:
++	case 0 ... 7:
++		/* adgs1409 supports only 4 states */
++		if (id->driver_data == ADGS1409 && idle_state > 3)
++			return -EINVAL;
++		mux->idle_state = idle_state;
++		break;
++	default:
++		dev_err(dev, "invalid idle-state %d\n", idle_state);
++		return -EINVAL;
++	}
++
++	return devm_mux_chip_register(dev, mux_chip);
++}
++
++static const struct spi_device_id adgs1408_id[] = {
++	{ "adi,adgs1408", ADGS1408 },
++	{ "adi,adgs1409", ADGS1409 },
++	{ }
++};
++MODULE_DEVICE_TABLE(spi, adgs1408_id);
++
++static struct spi_driver adgs1408_driver = {
++	.driver = {
++		.name = "adgs1408",
++	},
++	.probe = adgs1408_probe,
++	.id_table = adgs1408_id,
++};
++module_spi_driver(adgs1408_driver);
++
++MODULE_AUTHOR("Mircea Caprioru <mircea.caprioru@analog.com>");
++MODULE_DESCRIPTION("Analog Devices ADGS1408 MUX driver");
++MODULE_LICENSE("GPL v2");
+-- 
+2.17.1
 
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---OucNRNKXVUYI61Qx977wOpVMb2IcdGp2B--
-
---VGDL6YPY5rto5H3s2HWSo80eIfn5r3mu7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAltN8jUACgkQykllyylKDCEqRwCeK6AnYIgeyUFXPCbUe7Py7/Sg
-takAoJ1c/Fc6DAXs/cmeoNqRAKR8ON1I
-=oupD
------END PGP SIGNATURE-----
-
---VGDL6YPY5rto5H3s2HWSo80eIfn5r3mu7--
