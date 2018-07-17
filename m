@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6204AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA08FECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14C0620C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E83C2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="cjFF80lA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14C0620C0A
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="SRCnZdnv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E83C2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731402AbeGQK7Q (ORCPT
+        id S1731438AbeGQK7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:59:16 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:39988 "EHLO
+        Tue, 17 Jul 2018 06:59:17 -0400
+Received: from smtprelay.synopsys.com ([198.182.47.9]:60753 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730567AbeGQK61 (ORCPT
+        with ESMTP id S1730072AbeGQK61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Jul 2018 06:58:27 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id BB48A10C17DB;
-        Tue, 17 Jul 2018 03:26:31 -0700 (PDT)
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6B88F24E05C8;
+        Tue, 17 Jul 2018 03:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531823191; bh=2i1jgzrWVw9fukpXVQwgW8TH+vHfGt8VbA8KSTa4M/g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=cjFF80lA+w0NOCfkQlyZqKP99Cbbw3wHWbRCZrCUFJRgqbo7kEsn1rW/vLNyT3uXY
-         LWEi4ZATXa2w9u6O5CHUo4szAVNuvq9TRnWApHue04XZimZIyEf/nlMZ0rrBF9JUfa
-         dN+4pNzijI/HFeSzqXMdWTvRvAc/VUUWEVUXipnazz/Par8a71aDb53ph1K6vo5Wyf
-         8bh2po1yvEgY7lu7FVDXTGsrSA2Sfnon9PvFh84SMPSw0NIvOpIqmbyubMiEzcvQsv
-         KpTGA2QM5+FEnw+e7jmitj46DLq2yWZK6VPUiQc55Ev/gw9yPK/S9saxDkE5mZBZN2
-         WYxSIJXPm9erw==
-Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 6FB6C3513;
-        Tue, 17 Jul 2018 03:26:31 -0700 (PDT)
+        t=1531823191; bh=Ze+QtjepikiNsEISY3Odaj+B8yZLxSQbMc1k2xa/AnQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SRCnZdnvmH3lEAgPt3egkfEVpaYNMba21+P0nu+0Igsu2GzG5DPYFsHdlrB8oW+Yh
+         KXK4XpryXp/22UY3IFYWZqyrRF/oNyhEOVlgxHgfFUjZ5QLa2WpgksmWy9Ki4YIdhr
+         IWySToL97AGrsBO/2JhNbcP3FJU0KFLL0GVFbsfW/EdHvOyHZUHUd8Ogf+XeK8ppVN
+         PS883rigBRR2qvXjMHuD8WaFKeanYFGm7XZVqRhYsIJbeckEUHPa756x231MRamMTu
+         A1XLOe9RHJQPecZLknETf3UhdLSHgC3VLUmXMQGEoJj5QemrRkkXjbJrhyXJeqINxd
+         ovUfmVapu9vIg==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id D982E553E;
+        Tue, 17 Jul 2018 03:26:29 -0700 (PDT)
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 959AD3C333;
+        by de02.synopsys.com (Postfix) with ESMTP id 05BCF3C318;
         Tue, 17 Jul 2018 12:26:29 +0200 (CEST)
 From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
@@ -52,142 +51,72 @@ To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
 Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v13 08/12] pci-epf-test/pci_endpoint_test: Use irq_type module parameter
-Date:   Tue, 17 Jul 2018 12:26:23 +0200
-Message-Id: <1833d44cc5dfe268aa664053add81f66c07e1f9f.1531822532.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v13 00/12] Add MSI-X support on pcitest tool
+Date:   Tue, 17 Jul 2018 12:26:15 +0200
+Message-Id: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new driver parameter to allow interruption type selection.
+Patch series made against Lorenzo's master branch.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
----
-Change v2->v3:
- - New patch file created base on the previous patch
-"misc: pci_endpoint_test: Add MSI-X support" patch file following
-Kishon's suggestion.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Nothing changed, just to follow the patch set version.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Removed unnecessary set to zero variable.
- - Removed empty line.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Nothing changed, just to follow the patch set version.
-Change v9->v10:
- - Nothing changed, just to follow the patch set version.
-Change v10->v11:
- - Nothing changed, just to follow the patch set version.
-Change v11->v12:
- - Nothing changed, just to follow the patch set version.
-Change v12->v13:
- - Re-sending the patch series.
+Fix EP link notification implementation.
 
- drivers/misc/pci_endpoint_test.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+Add MSI-X support on pcitest tool.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 35fbfbd..349794c 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -82,6 +82,10 @@ static bool no_msi;
- module_param(no_msi, bool, 0444);
- MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
- 
-+static int irq_type = IRQ_TYPE_MSI;
-+module_param(irq_type, int, 0444);
-+MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
-+
- enum pci_barno {
- 	BAR_0,
- 	BAR_1,
-@@ -108,7 +112,7 @@ struct pci_endpoint_test {
- struct pci_endpoint_test_data {
- 	enum pci_barno test_reg_bar;
- 	size_t alignment;
--	bool no_msi;
-+	int irq_type;
- };
- 
- static inline u32 pci_endpoint_test_readl(struct pci_endpoint_test *test,
-@@ -291,8 +295,7 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
- 				 size);
- 
--	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
--				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_COPY);
-@@ -361,8 +364,7 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
--	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
--				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_READ);
-@@ -419,8 +421,7 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
--	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
--				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE, irq_type);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_WRITE);
-@@ -505,11 +506,14 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	test->alignment = 0;
- 	test->pdev = pdev;
- 
-+	if (no_msi)
-+		irq_type = IRQ_TYPE_LEGACY;
-+
- 	data = (struct pci_endpoint_test_data *)ent->driver_data;
- 	if (data) {
- 		test_reg_bar = data->test_reg_bar;
- 		test->alignment = data->alignment;
--		no_msi = data->no_msi;
-+		irq_type = data->irq_type;
- 	}
- 
- 	init_completion(&test->irq_raised);
-@@ -529,11 +533,17 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 
- 	pci_set_master(pdev);
- 
--	if (!no_msi) {
-+	switch (irq_type) {
-+	case IRQ_TYPE_LEGACY:
-+		break;
-+	case IRQ_TYPE_MSI:
- 		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
- 		if (irq < 0)
- 			dev_err(dev, "Failed to get MSI interrupts\n");
- 		test->num_irqs = irq;
-+		break;
-+	default:
-+		dev_err(dev, "Invalid IRQ type selected\n");
- 	}
- 
- 	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
+Add new callbacks methods and handlers to trigger the MSI-X interrupts
+on the EP DesignWare IP driver.
+
+Allow to set/get MSI-X EP maximum capability number.
+
+Rework on set/get and triggering MSI methods on EP DesignWare IP driver.
+
+Add a new input parameter (msix) to pcitest tool to test MSI-X feature.
+
+Update the pcitest.sh script to support MSI-X feature tests.
+
+Update related documentation accordingly.
+
+Gustavo Pimentel (12):
+  PCI: dwc: Fix EP link notification implementation
+  PCI: endpoint: Add MSI-X interfaces
+  PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
+  PCI: dwc: Add MSI-X callbacks handler
+  PCI: dwc: Rework MSI callbacks handler
+  PCI: dwc: Add legacy interrupt callback handler
+  pci-epf-test/pci_endpoint_test: Cleanup PCI_ENDPOINT_TEST memspace
+  pci-epf-test/pci_endpoint_test: Use irq_type module parameter
+  pci-epf-test/pci_endpoint_test: Add MSI-X support
+  pci_endpoint_test: Add 2 ioctl commands
+  tools: PCI: Add MSI-X support
+  PCI: endpoint: Add MSI set maximum restriction
+
+ .../PCI/endpoint/function/binding/pci-test.txt     |   2 +
+ Documentation/PCI/endpoint/pci-endpoint.txt        |   4 +-
+ Documentation/PCI/endpoint/pci-test-function.txt   |  29 ++-
+ Documentation/PCI/endpoint/pci-test-howto.txt      |  30 ++-
+ Documentation/ioctl/ioctl-number.txt               |   1 +
+ Documentation/misc-devices/pci-endpoint-test.txt   |   6 +
+ drivers/misc/pci_endpoint_test.c                   | 277 ++++++++++++++++-----
+ drivers/pci/controller/dwc/pci-dra7xx.c            |   2 +-
+ drivers/pci/controller/dwc/pcie-artpec6.c          |   2 +-
+ drivers/pci/controller/dwc/pcie-designware-ep.c    | 210 ++++++++++++++--
+ drivers/pci/controller/dwc/pcie-designware-plat.c  |  11 +-
+ drivers/pci/controller/dwc/pcie-designware.h       |  29 ++-
+ drivers/pci/controller/pcie-cadence-ep.c           |   3 +-
+ drivers/pci/controller/pcie-rockchip-ep.c          |   2 +-
+ drivers/pci/endpoint/functions/pci-epf-test.c      |  86 +++++--
+ drivers/pci/endpoint/pci-ep-cfs.c                  |  24 ++
+ drivers/pci/endpoint/pci-epc-core.c                |  68 ++++-
+ include/linux/pci-epc.h                            |  16 +-
+ include/linux/pci-epf.h                            |   1 +
+ include/uapi/linux/pcitest.h                       |   3 +
+ tools/pci/pcitest.c                                |  51 +++-
+ tools/pci/pcitest.sh                               |  15 ++
+ 22 files changed, 722 insertions(+), 150 deletions(-)
+
 -- 
 2.7.4
 
