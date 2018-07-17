@@ -2,142 +2,80 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 857DAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9F7ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470D821470
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:12:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470D821470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D1FE821470
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:15:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1FE821470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbeGQJoI (ORCPT
+        id S1729695AbeGQJqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:44:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9681 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728983AbeGQJoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:44:07 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 82987EE45794C;
-        Tue, 17 Jul 2018 17:12:15 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Tue, 17 Jul 2018
- 17:12:11 +0800
-Subject: Re: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
-To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yunlong.song@icloud.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
- <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
- <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
- <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <6f842377-120f-4a96-af49-d85e3ac76aef@huawei.com>
-Date:   Tue, 17 Jul 2018 17:12:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 17 Jul 2018 05:46:36 -0400
+Received: from asrmicro.com ([210.13.118.86]:43229 "EHLO mail2012.asrmicro.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728843AbeGQJqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:46:36 -0400
+Received: from localhost (10.1.170.159) by mail2012.asrmicro.com (10.1.24.123)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 17 Jul 2018 17:14:27
+ +0800
+From:   Hongjie Fang <hongjiefang@asrmicro.com>
+To:     <ulf.hansson@linaro.org>
+CC:     <shawn.lin@rock-chips.com>, <adrian.hunter@intel.com>,
+        <linus.walleij@linaro.org>, <wsa+renesas@sang-engineering.com>,
+        <bst@pengutronix.de>, <chanho.min@lge.com>,
+        <kyle.roeschley@ni.com>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>
+Subject: [PATCH V4] mmc: core: improve reasonableness of bus width setting for HS400es
+Date:   Tue, 17 Jul 2018 17:14:25 +0800
+Message-ID: <1531818865-7387-1-git-send-email-hongjiefang@asrmicro.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.1.170.159]
+X-ClientProxiedBy: mail2012.asrmicro.com (10.1.24.123) To
+ mail2012.asrmicro.com (10.1.24.123)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/13 11:28, Yunlong Song wrote:
-> round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
-> then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
-> write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0, 
-> prefree of NO.2 is cleared, and no discard issued
-> 
-> round2: rm data block NO.0, NO.1, NO.3, NO.4
-> all invalid, but prefree bit of NO.2 is set and cleared in round1, then 
-> prefree_map: 1 1 0 1 1
-> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no 
-> valid blocks of this section, so discard issued
-> but this time prefree bit of NO.3 and NO.4 is skipped...
+mmc_select_hs400es() calls mmc_select_bus_width() which will continue
+to set 4bit transfer mode if fail to set 8bit mode. The bus width
+should not be set to 4bit in HS400es.
 
-due to start = start_segno + sbi->segs_per_sec;
+When fail to set 8bit mode, need return error directly for HS400es.
 
-> 
-> round3:
-> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 - > 
-> 0 0 0 0 0, no valid blocks of this section, so discard issued
-> this time prefree bit of NO.3 and NO.4 is cleared, but the discard of 
-> this section is sent again...
+Signed-off-by: Hongjie Fang <hongjiefang@asrmicro.com>
+---
+ drivers/mmc/core/mmc.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Could you add this into commit log?
-
-Thanks,
-
-> 
-> On 2018/7/13 11:13, Chao Yu wrote:
->> On 2018/7/12 23:09, Yunlong Song wrote:
->>> For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
->>> example, if the section prefree_map is ...previous section | current
->>> section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
->>> after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
->>> will skip x + 3 and x + 4, but their bitmap is still set, which will
->>> cause duplicated f2fs_issue_discard of this same section in the next
->>> write_checkpoint, so fix it.
->> I didn't get it, if # 2 segment is not prefree state, so it still has valid
->> blocks there, so we won't issue discard due to below condition, right?
->>
->> 		if (!IS_CURSEC(sbi, secno) &&
->> 			!get_valid_blocks(sbi, start, true))
->>
->> Thanks,
->>
->>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->>> ---
->>>   fs/f2fs/segment.c | 19 +++++++++++++++++--
->>>   1 file changed, 17 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 47b6595..fd38b61 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
->>>   		start = start_segno + sbi->segs_per_sec;
->>>   		if (start < end)
->>>   			goto next;
->>> -		else
->>> -			end = start - 1;
->>> +		else {
->>> +			start_segno = start;
->>> +
->>> +			while (1) {
->>> +				start = find_next_bit(prefree_map, start_segno,
->>> +									end + 1);
->>> +				if (start >= start_segno)
->>> +					break;
->>> +				end = find_next_zero_bit(prefree_map, start_segno,
->>> +										start + 1);
->>> +				for (i = start; i < end; i++)
->>> +					clear_bit(i, prefree_map);
->>> +				dirty_i->nr_dirty[PRE] -= end - start;
->>> +			}
->>> +
->>> +			end = start_segno - 1;
->>> +		}
->>>   	}
->>>   	mutex_unlock(&dirty_i->seglist_lock);
->>>   
->>>
->>
->> .
->>
-> 
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 4466f5d..0dbc512 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1338,8 +1338,12 @@ static int mmc_select_hs400es(struct mmc_card *card)
+ 		goto out_err;
+ 
+ 	err = mmc_select_bus_width(card);
+-	if (err < 0)
++	if (err != MMC_BUS_WIDTH_8) {
++		pr_err("%s: switch to 8bit bus width failed, err:%d\n",
++			mmc_hostname(host), err);
++		err = -EIO;
+ 		goto out_err;
++	}
+ 
+ 	/* Switch card to HS mode */
+ 	err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-- 
+1.9.1
 
