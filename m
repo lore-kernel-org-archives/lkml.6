@@ -2,198 +2,271 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 399E7ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E5B3ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73D320C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sqmjirrd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73D320C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E6F920C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E6F920C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730745AbeGQK2P (ORCPT
+        id S1730522AbeGQK2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:28:15 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:35389 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730659AbeGQK2P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:28:15 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w3-v6so250148plq.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=uYu9QLz9hYIGDMOObzr/jqhbQLEAPHa0Z3aW2JR+lyc=;
-        b=Sqmjirrd9rj+F5tzJu2d4Q9+h/lllgzstf//8LHvLlPvZ6j0W5lfSeQxdXIiWnCdpz
-         0KZpr7gEIqD0paZvaVC/1VN3osQ0TArOKBdoMh/Iu7q2ShFHI3duXqRlnb5MNv5w84uk
-         doKfYENpbFJyChv2SlIknihCIxvAENoGHK4ccxFunJGd7dgoH0D+vxZW4P7lQMqu2fq9
-         oWh/w4mfuQ9cC+KlkECKFbDWmfCS/wbT80btFNE3Ya+tdXxZN89Rbs2RIJxkQoNMveMz
-         bnlsnp2y68paC7WsyjaSNZ76EycxOJnkCMEby1wbfCiiMDR4lFQnObQvLkWgNrCTH+aA
-         7d3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=uYu9QLz9hYIGDMOObzr/jqhbQLEAPHa0Z3aW2JR+lyc=;
-        b=lOm3NyNlorARzpAWUWYHAlM4r1jxg++3KEUVT0WSkn82KVWhyaIADwm8cSmEYXo0Ck
-         Dncb7AL6ViYQplsAlf/aHK+WRUIuqMo/8OjZdMcavhQ424+FclPtobvs/2BCBlBHCEkI
-         L3iI8F9AWTHrr79j45NcbVtz4lPG07OzFEDUwZIcunE7dYeAwibSWygq9zMENQfiH3TZ
-         d4c5fuvzkKWVqYxWMHDiEK0Kcibx26YkR+4PosNeclrRQPHZXj5Eo6MRgAnd0y/Zppuw
-         EiS6XBaFpAqutbiErEBLdaV8I8kZXOUf8mtJ7Ra5LUNZZiG2eW8/AyKc3yUGa2w4pWGz
-         gDDw==
-X-Gm-Message-State: AOUpUlFGtdaEs54BSsjgmLsNqeEKS13h1lZNjbKz0eSx8XoKunLYf8GZ
-        wlXA7Eoh+GUYOShcp/8TGbU=
-X-Google-Smtp-Source: AAOMgpem6UH+FIXIsi53MWpoFJ5XXgnVGnLPkShzYRstgPpinqFsgWtJDBShuBJ0VMqzpehDUPinoA==
-X-Received: by 2002:a17:902:e85:: with SMTP id 5-v6mr962932plx.318.1531821386922;
-        Tue, 17 Jul 2018 02:56:26 -0700 (PDT)
-Received: from toy.corp.qihoo.net ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm1232542pfn.59.2018.07.17.02.56.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 02:56:26 -0700 (PDT)
-From:   Jun Yao <yaojun8558363@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/6] arm64/mm: Introduce init_pg_dir
-Date:   Tue, 17 Jul 2018 17:56:03 +0800
-Message-Id: <20180717095608.11008-2-yaojun8558363@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180717095608.11008-1-yaojun8558363@gmail.com>
-References: <20180717095608.11008-1-yaojun8558363@gmail.com>
+        Tue, 17 Jul 2018 06:28:13 -0400
+Received: from mga17.intel.com ([192.55.52.151]:8419 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730203AbeGQK2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 06:28:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 02:56:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="73008879"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 02:56:18 -0700
+Subject: Re: [PATCH RFC 1/2] mmc: sdhci: Allow platform controlled voltage
+ switching
+To:     Vijay Viswanath <vviswana@codeaurora.org>, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, jeremymc@redhat.com,
+        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        vbadigan@codeaurora.org, dianders@google.com,
+        sayalil@codeaurora.org, Evan Green <evgreen@chromium.org>
+References: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
+ <1529583826-42020-2-git-send-email-vviswana@codeaurora.org>
+ <53c6d61f-47f5-2e4e-8280-6f76f707799e@intel.com>
+ <0d9b1934-d80d-a726-8094-688c97474afa@codeaurora.org>
+ <78dfa5db-712b-bb0c-ad03-761371beef10@intel.com>
+ <c721395a-0198-d533-5e40-42e4856f34e5@codeaurora.org>
+ <6e8c713f-6569-25f3-dec5-f08001b3c6f3@intel.com>
+ <8c4fb768-3d4f-da45-3115-30bc5c1058a6@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <82109d4a-6e3c-eb80-6843-75bf7c89c113@intel.com>
+Date:   Tue, 17 Jul 2018 12:54:43 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
+MIME-Version: 1.0
+In-Reply-To: <8c4fb768-3d4f-da45-3115-30bc5c1058a6@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add init_pg_dir to vmlinux.lds.S and boiler-plate
-clearing/cleaning/invalidating it in head.S.
+On 17/07/18 12:45, Vijay Viswanath wrote:
+> 
+> 
+> On 7/17/2018 2:12 PM, Adrian Hunter wrote:
+>> On 17/07/18 11:40, Vijay Viswanath wrote:
+>>>
+>>>
+>>> On 7/17/2018 1:00 PM, Adrian Hunter wrote:
+>>>> On 17/07/18 08:14, Vijay Viswanath wrote:
+>>>>>
+>>>>>
+>>>>> On 7/10/2018 4:37 PM, Adrian Hunter wrote:
+>>>>>> On 21/06/18 15:23, Vijay Viswanath wrote:
+>>>>>>> Some controllers can have internal mechanism to inform the SW that it
+>>>>>>> is ready for voltage switching. For such controllers, changing voltage
+>>>>>>> before the HW is ready can result in various issues.
+>>>>>>>
+>>>>>>> Add a quirk, which can be used by drivers of such controllers.
+>>>>>>>
+>>>>>>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+>>>>>>> ---
+>>>>>>>     drivers/mmc/host/sdhci.c | 20 +++++++++++++++-----
+>>>>>>>     drivers/mmc/host/sdhci.h |  2 ++
+>>>>>>>     2 files changed, 17 insertions(+), 5 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>>>>> index 1c828e0..f0346d4 100644
+>>>>>>> --- a/drivers/mmc/host/sdhci.c
+>>>>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>>>>> @@ -1615,7 +1615,8 @@ void sdhci_set_power_noreg(struct sdhci_host
+>>>>>>> *host,
+>>>>>>> unsigned char mode,
+>>>>>>>     void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+>>>>>>>                  unsigned short vdd)
+>>>>>>>     {
+>>>>>>> -    if (IS_ERR(host->mmc->supply.vmmc))
+>>>>>>> +    if (IS_ERR(host->mmc->supply.vmmc) ||
+>>>>>>> +            (host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>>>
+>>>>>> I think you should provide your own ->set_power() instead of this
+>>>>>>
+>>>>>
+>>>>> will do
+>>>>>
+>>>>>>>             sdhci_set_power_noreg(host, mode, vdd);
+>>>>>>>         else
+>>>>>>>             sdhci_set_power_reg(host, mode, vdd);
+>>>>>>> @@ -2009,7 +2010,9 @@ int sdhci_start_signal_voltage_switch(struct
+>>>>>>> mmc_host *mmc,
+>>>>>>>             ctrl &= ~SDHCI_CTRL_VDD_180;
+>>>>>>>             sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>>>>>>     -        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
+>>>>>>> +                !(host->quirks2 &
+>>>>>>> +                    SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
+>>>>>>
+>>>>>> And your own ->start_signal_voltage_switch()
+>>>>>>
+>>>>>
+>>>>> sdhci_msm_start_signal_voltage_switch() would be an exact copy of
+>>>>> sdhci_start_signal_voltage_switch()..... will incorporate this if not
+>>>>> using
+>>>>> quirk.
+>>>>>
+>>>>>>>                 ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>>>                 if (ret) {
+>>>>>>>                     pr_warn("%s: Switching to 3.3V signalling voltage
+>>>>>>> failed\n",
+>>>>>>> @@ -2032,7 +2035,8 @@ int sdhci_start_signal_voltage_switch(struct
+>>>>>>> mmc_host *mmc,
+>>>>>>>         case MMC_SIGNAL_VOLTAGE_180:
+>>>>>>>             if (!(host->flags & SDHCI_SIGNALING_180))
+>>>>>>>                 return -EINVAL;
+>>>>>>> -        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
+>>>>>>> +            !(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
+>>>>>>>                 ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>>>                 if (ret) {
+>>>>>>>                     pr_warn("%s: Switching to 1.8V signalling voltage
+>>>>>>> failed\n",
+>>>>>>> @@ -3485,7 +3489,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>>>>>          * the host can take the appropriate action if regulators are
+>>>>>>> not
+>>>>>>>          * available.
+>>>>>>>          */
+>>>>>>> -    ret = mmc_regulator_get_supply(mmc);
+>>>>>>> +    if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>>>
+>>>>>> Since we expect mmc_regulator_get_supply() to have been called, this
+>>>>>> could
+>>>>>> be:
+>>>>>>
+>>>>>>       if (!mmc->supply.vmmc) {
+>>>>>>           ret = mmc_regulator_get_supply(mmc);
+>>>>>>           enable_vqmmc = true;
+>>>>>>       } else {
+>>>>>>           ret = 0;
+>>>>>>       }
+>>>>>>>> +        ret = mmc_regulator_get_supply(mmc);
+>>>>>>> +    else
+>>>>>>> +        ret = 0;
+>>>>>>>         if (ret)
+>>>>>>>             return ret;
+>>>>>>>     @@ -3736,7 +3743,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>>>>>           /* If vqmmc regulator and no 1.8V signalling, then there's no
+>>>>>>> UHS */
+>>>>>>>         if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>>> -        ret = regulator_enable(mmc->supply.vqmmc);
+>>>>>>> +        if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>>>
+>>>>>> And this could be:
+>>>>>>
+>>>>>>           if (enable_vqmmc)
+>>>>>>               ret = regulator_enable(mmc->supply.vqmmc);
+>>>>>>           else
+>>>>>>               ret = 0;
+>>>>>>    > However, you still need to ensure
+>>>>>> regulator_disable(mmc->supply.vqmmc) is
+>>>>>> only called if regulator_enable() was called.
+>>>>> I missed this. Will cover it.
+>>>>>
+>>>>> Also I missed one more place where we are doing regulator_disable. During
+>>>>> sdhci-msm unbinding, we would end up doing an extra regulator disable
+>>>>> (thanks Evan for pointing it out) in sdhci_remove_host.
+>>>>>
+>>>>> To avoid the quirk( or having any flag), it would require copying the code
+>>>>> of sdhci_start_signal_voltage_switch() and sdhci_remove_host() and
+>>>>> creating
+>>>>
+>>>> You do not need to duplicate sdhci_remove_host(), just change it so that it
+>>>> only  disables what was enabled i.e.
+>>>>
+>>>>      if (host->vqmmc_enabled)
+>>>>          regulator_disable(mmc->supply.vqmmc);
+>>>>
+>>>
+>>> Ok, so we will be adding a new flag "vqmmc_enabled" in sdhci_host, ryt ?
+>>
+>> Yes
+>>
+> 
+> Ok.
+> Any particular reason why we are avoiding quirk and instead adding a new flag ?
 
-Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
----
- arch/arm64/include/asm/assembler.h | 29 +++++++++++++++++++++++++++++
- arch/arm64/kernel/head.S           | 22 +++++++++++++++-------
- arch/arm64/kernel/vmlinux.lds.S    |  8 ++++++++
- 3 files changed, 52 insertions(+), 7 deletions(-)
+It moves more in the direction of letting drivers do what they want, rather
+than trying to make making SDHCI do everything.
 
-diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-index 0bcc98dbba56..eb363a915c0e 100644
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -456,6 +456,35 @@ USER(\label, ic	ivau, \tmp2)			// invalidate I line PoU
- 	b.ne	9998b
- 	.endm
- 
-+/*
-+ * clear_page - clear one page
-+ *
-+ *	start:	page aligned virtual address
-+ */
-+	.macro clear_page, start:req
-+9996:	stp	xzr, xzr, [\start], #16
-+	stp	xzr, xzr, [\start], #16
-+	stp	xzr, xzr, [\start], #16
-+	stp	xzr, xzr, [\start], #16
-+	tst	\start, #(PAGE_SIZE - 1)
-+	b.ne	9996b
-+	.endm
-+
-+/*
-+ * clear_pages - clear contiguous pages
-+ *
-+ *	start, end: page aligend virtual addresses
-+ */
-+	.macro clear_pages, start:req, end:req
-+	sub	\end, \end, \start
-+	lsr	\end, \end, #(PAGE_SHIFT)
-+9997:	cbz	\end, 9998f
-+	clear_page \start
-+	sub	\end, \end, #1
-+	b	9997b
-+9998:
-+	.endm
-+
- /*
-  * Annotate a function as position independent, i.e., safe to be called before
-  * the kernel virtual mapping is activated.
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index b0853069702f..2c83a8c47e3f 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -295,18 +295,21 @@ __create_page_tables:
- 	sub	x1, x1, x0
- 	bl	__inval_dcache_area
- 
-+	adrp	x0, init_pg_dir
-+	adrp	x1, init_pg_end
-+	sub	x1, x1, x0
-+	bl	__inval_dcache_area
-+
- 	/*
- 	 * Clear the idmap and swapper page tables.
- 	 */
- 	adrp	x0, idmap_pg_dir
- 	adrp	x1, swapper_pg_end
--	sub	x1, x1, x0
--1:	stp	xzr, xzr, [x0], #16
--	stp	xzr, xzr, [x0], #16
--	stp	xzr, xzr, [x0], #16
--	stp	xzr, xzr, [x0], #16
--	subs	x1, x1, #64
--	b.ne	1b
-+	clear_pages x0, x1
-+
-+	adrp	x0, init_pg_dir
-+	adrp	x1, init_pg_end
-+	clear_pages x0, x1
- 
- 	mov	x7, SWAPPER_MM_MMUFLAGS
- 
-@@ -395,6 +398,11 @@ __create_page_tables:
- 	dmb	sy
- 	bl	__inval_dcache_area
- 
-+	adrp	x0, init_pg_dir
-+	adrp	x1, init_pg_end
-+	sub	x1, x1, x0
-+	bl	__inval_dcache_area
-+
- 	ret	x28
- ENDPROC(__create_page_tables)
- 	.ltorg
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index 605d1b60469c..61d7cee3eaa6 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -68,6 +68,12 @@ jiffies = jiffies_64;
- #define TRAMP_TEXT
- #endif
- 
-+#define INIT_PG_TABLES					\
-+	. = ALIGN(PAGE_SIZE);                           \
-+	init_pg_dir = .;                                \
-+	. += SWAPPER_DIR_SIZE;                          \
-+	init_pg_end = .;
-+
- /*
-  * The size of the PE/COFF section that covers the kernel image, which
-  * runs from stext to _edata, must be a round multiple of the PE/COFF
-@@ -161,6 +167,8 @@ SECTIONS
- 	__inittext_end = .;
- 	__initdata_begin = .;
- 
-+	INIT_PG_TABLES
-+
- 	.init.data : {
- 		INIT_DATA
- 		INIT_SETUP(16)
--- 
-2.17.1
+> 
+>>> Just wanted to clarify
+>>>
+>>>>> 2 new functions in sdhci_msm layer which would do the exact same as above,
+>>>>> with just the regulator parts removed.
+>>>>>
+>>>>> This looks messy (considering any future changes to the 2 sdhci API will
+>>>>> need to be copied to their duplicate sdhci_msm API) and a bit overkill to
+>>>>> avoid quirk. At the same time, I don't know how useful such a quirk
+>>>>> would be
+>>>>> to other platform drivers.
+>>>>>
+>>>>> Please let me know your view/suggestions.
+>>>>
+>>>> Let's try without the quirk.
+>>>>
+>>>>>>
+>>>>>>> +            ret = regulator_enable(mmc->supply.vqmmc);
+>>>>>>> +        else
+>>>>>>> +            ret = 0;
+>>>>>>>             if (!regulator_is_supported_voltage(mmc->supply.vqmmc,
+>>>>>>> 1700000,
+>>>>>>>                                 1950000))
+>>>>>>>                 host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
+>>>>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>>>>>> index 23966f8..3b0c97a 100644
+>>>>>>> --- a/drivers/mmc/host/sdhci.h
+>>>>>>> +++ b/drivers/mmc/host/sdhci.h
+>>>>>>> @@ -450,6 +450,8 @@ struct sdhci_host {
+>>>>>>>      * obtainable timeout.
+>>>>>>>      */
+>>>>>>>     #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT            (1<<17)
+>>>>>>> +/* Regulator voltage changes are being done from platform layer */
+>>>>>>> +#define SDHCI_QUIRK2_INTERNAL_PWR_CTL                (1<<18)
+>>>>>>
+>>>>>> So maybe the quirk is not needed.
+>>>>>>
+>>>>>>>           int irq;        /* Device IRQ */
+>>>>>>>         void __iomem *ioaddr;    /* Mapped address */
+>>>>>>>
+>>>>>>
+>>>>>
+>>>>> Thanks for the review & suggestions!
+>>>>> Vijay
+>>>>>
+>>>>
+>>>
+>>
+>> -- 
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+> 
 
