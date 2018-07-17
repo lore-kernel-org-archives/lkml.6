@@ -3,42 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BACAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0127AC468C6
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48A3520C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:19:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48A3520C10
+	by mail.kernel.org (Postfix) with ESMTP id B1E9B21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:20:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1E9B21476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731831AbeGQOwN (ORCPT
+        id S1731851AbeGQOxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:52:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46476 "EHLO mx1.suse.de"
+        Tue, 17 Jul 2018 10:53:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46562 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731725AbeGQOwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:52:13 -0400
+        id S1731721AbeGQOxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:53:12 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AB28AADCA;
-        Tue, 17 Jul 2018 14:19:18 +0000 (UTC)
-Subject: Re: [PATCH v2 1/3] lib: add crc64 calculation routines
+        by mx1.suse.de (Postfix) with ESMTP id 2C082ADCA;
+        Tue, 17 Jul 2018 14:20:17 +0000 (UTC)
+Subject: Re: [PATCH 0/4] add crc64 calculation as kernel library
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org
+        Hannes Reinecke <hare@suse.de>, linux-kernel@vger.kernel.org
 Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Lyle <mlyle@lyle.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
         Kate Stewart <kstewart@linuxfoundation.org>
-References: <20180717065711.28281-1-colyli@suse.de>
- <20180717065711.28281-2-colyli@suse.de>
- <4a25d281a0e7f622872f1e9fe3abf44288ec87e4.camel@linux.intel.com>
+References: <20180716165507.23100-1-colyli@suse.de>
+ <8538b45b-bf30-926a-50fb-700b4bf1c636@suse.de>
+ <608100d7-6e98-13ec-57ab-5c672131e332@suse.de>
+ <b85806d5a6085f67fb430ca0808b286d0d4d737e.camel@linux.intel.com>
 From:   Coly Li <colyli@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
@@ -83,12 +84,12 @@ Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
  UmCNKa43mNFktMrwU21J5lVXEwBuTY6JlHOAl0Fgo28X+eTa8fx2Uiz9OVgWe03ebJGIGowe
  XTgqVWJMsKM1tmW+QFmgtczDGRYCZ6OQYpqt0SoTg1yx5MN4RzUtlLka2qLfPiOGUUN3qNJ5
  nP+spvF+s+dHtLjjhy7AL86N01a6S0rwaClVVv0XTucvIntwccIx0CZfUKlfn5BWnB64Ig==
-Message-ID: <173cb692-b6fd-7c10-c215-5f8c83c74891@suse.de>
-Date:   Tue, 17 Jul 2018 22:19:05 +0800
+Message-ID: <a2da98a9-65bb-e483-dbf3-410b5d682c11@suse.de>
+Date:   Tue, 17 Jul 2018 22:20:07 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
  Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <4a25d281a0e7f622872f1e9fe3abf44288ec87e4.camel@linux.intel.com>
+In-Reply-To: <b85806d5a6085f67fb430ca0808b286d0d4d737e.camel@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -97,88 +98,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/17 5:57 PM, Andy Shevchenko wrote:
-> On Tue, 2018-07-17 at 14:57 +0800, Coly Li wrote:
->> This patch adds the re-write crc64 calculation routines for Linux
->> kernel.
->> The CRC64 polynomical arithmetic follows ECMA-182 specification,
->> inspired
->> by CRC paper of Dr. Ross N. Williams
->> (see http://www.ross.net/crc/download/crc_v3.txt) and other public
->> domain
->> implementations.
+On 2018/7/17 4:37 PM, Andy Shevchenko wrote:
+> On Tue, 2018-07-17 at 14:19 +0800, Coly Li wrote:
+>> On 2018/7/17 1:46 PM, Hannes Reinecke wrote:
+> 
+>>> Actually, I would merge patch 1 & 2 together (pointless to introduce
+>>> an
+>>> option for which no code exists).
 >>
->> All the changes work in this way,
->> - When Linux kernel is built, host program lib/gen_crc64table.c will
->> be
->>   compiled to lib/gen_crc64table and executed.
->> - The output of gen_crc64table execution is an array called as lookup
->>   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64bits-long
->>   numbers, this talbe is dumped into header file lib/crc64table.h.
->> - Then the header file is included by lib/crc64.c for normal 64bit crc
->>   calculation.
->> - Function declaration of the crc64 calculation routines is placed in
->>   include/linux/crc64.h
 > 
->> + * crc64.h
->> + *
+> I was just about to say the same.
 > 
-> Do we need file name in the file?
+>> The patch 1 was originally from Andy Shevchenko, and I want to keep
+>> his
+>> contribute. If it seems not a good idea from me, I will merge them
+>> into
+>> 1 patch in v2 series.
 > 
-
-Not mandatory, I remove it in v3 series.
-
->> + * See lib/crc64.c for the related specification and polynomical
->> arithmetic.
->> + */
+> We have Co-developed-by tag, for example, which you may use here (if you
+> choose this way, leave my SoB as well).
 > 
->> +// SPDX-License-Identifier: GPL-2.0
-> 
->> +#include <linux/module.h>
->> +#include <uapi/linux/types.h>
-> 
-> Why not simple linux/types.h ?
-
-Yes linux/types.h works, I use this one.
-
-> 
->> +#include "crc64table.h"
->> +
->> +MODULE_DESCRIPTION("CRC64 calculations");
-> 
->> +MODULE_LICENSE("GPL");
-> 
-> License mismatch with SPDX.
-> 
-
-It is "GPL v2" in v3 series.
-
->> +#include <inttypes.h>
->> +#include <linux/swab.h>
->> +#include <stdio.h>
-> 
-> I would follow the common grouping of the headers, like more generic
-> first, more particular last:
-> 
-> inttupes
-> stdio
-> 
-> linux/foo
-> 
-> asm/bar
-> 
-
-Now it is in the following order,
-#include <inttypes.h>
-#include <stdio.h>
-#include <linux/swab.h>
-
->> +#include "../usr/include/asm/byteorder.h"
-> 
-> Hmm...
-In v3 series, I don't use __le64 and cpu_to_le64(), so this header is
-not necessary. It does not exist in v3 series.
-
-Thanks.
+Thanks for the hint. I add a Co-developed-by tag for you :-)
 
 Coly Li
