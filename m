@@ -2,88 +2,65 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6719ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A3BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A382086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:05:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FeDBDsQQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A382086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1354320850
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:05:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1354320850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731980AbeGQPiC (ORCPT
+        id S1731986AbeGQPig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:38:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43744 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731429AbeGQPiC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:38:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uS/bNO7OEQFQYbk+AM/okbMDh3fyHCh8zweXj8L6DkE=; b=FeDBDsQQAnEesRaRrTEjeAfOR
-        7apJcQNZoDnCIl0kNyigeYoxHv7cM9j2PxnQFrKamxrvczR6yARyX31q0PW5slQ8OIgGoPayc/1JD
-        QhEkN6sRZzEUFwe/kPwZ3bB2/LauojuEDhxe5AaRMwO3yJRAc7TKq+9cBmVQm71e9rBJkHmpai11R
-        i7XQ+tBu9XLkM73kxIIyWV9Tb/YJIDgUySXsbdczWI8lyFzYbtdAHY8qAg95TjoOlB6Jm0Uj6Kp+r
-        ruCwRwgzF7Xa6d9WTZXdZh7ylWgIZ4NUJyorSiQmrLK3aqYwDaY3XXJG1jPsWlNcK+zVpLFKNkyr5
-        2hrO3vezw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffRWq-0001Ax-UK; Tue, 17 Jul 2018 15:04:41 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A7CE320275F38; Tue, 17 Jul 2018 17:04:39 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 17:04:39 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Ingo Molnar <mingo@redhat.com>,
+        Tue, 17 Jul 2018 11:38:36 -0400
+Received: from verein.lst.de ([213.95.11.211]:51913 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731429AbeGQPig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 11:38:36 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 857046FC88; Tue, 17 Jul 2018 17:08:03 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 17:08:03 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jason Baron <jbaron@akamai.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: waitqueue lockdep annotation V3
-Message-ID: <20180717150439.GY2476@hirez.programming.kicks-ass.net>
-References: <20171214152344.6880-1-hch@lst.de>
- <20180712191753.fvk2qersdvhcoqzp@linux-r8p5>
- <20180717142437.GA20286@lst.de>
+        Michal Nazarewicz <mina86@mina86.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chris Zankel <chris@zankel.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 1/2] mm/cma: remove unsupported gfp_mask parameter from
+        cma_alloc()
+Message-ID: <20180717150803.GA22408@lst.de>
+References: <20180709121956.20200-1-m.szyprowski@samsung.com> <CGME20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29@eucas1p2.samsung.com> <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717142437.GA20286@lst.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 04:24:37PM +0200, Christoph Hellwig wrote:
-> On Thu, Jul 12, 2018 at 12:17:53PM -0700, Davidlohr Bueso wrote:
-> > On Thu, 14 Dec 2017, Christoph Hellwig wrote:
-> >
-> >> Hi all,
-> >>
-> >> this series adds a strategic lockdep_assert_held to __wake_up_common
-> >> to ensure callers really do hold the wait_queue_head lock when calling
-> >> the unlocked wake_up variants.  It turns out epoll did not do this
-> >> for a fairly common path (hit all the time by systemd during bootup),
-> >> so the second patch fixed this instance as well.
-> >
-> > I ran into these changes because of patch 1 getting rid of ep->lock. Is
-> > there any reason why this series was never picked up?
-> 
-> I'd love to see this merged, but I never heard back about it.
+Looks good:
 
-Seeing how it touched fs bits, I was expecting this to go through the
-vfs tree; was that not the intended target?
+Reviewed-by: Christoph Hellwig <hch@lst.de>
