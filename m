@@ -2,113 +2,91 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17454ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B860FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49C020C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:43:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B49C020C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 681FE20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:43:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 681FE20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731824AbeGQOQ0 (ORCPT
+        id S1731780AbeGQOQQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:16:26 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.13]:18753 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731603AbeGQOQZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:16:25 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id C471696C388
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 08:43:40 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fQG4fwbzAbXuJfQGIf4VGJ; Tue, 17 Jul 2018 08:43:40 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=41792 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ffQG3-001Aes-SY; Tue, 17 Jul 2018 08:43:16 -0500
-Date:   Tue, 17 Jul 2018 08:43:14 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] rtnetlink: fix uninitialized variable
-Message-ID: <20180717134314.GA31127@embeddedor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1ffQG3-001Aes-SY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:41792
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Tue, 17 Jul 2018 10:16:16 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40852 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731721AbeGQOQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:16:15 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 50FEA208C4; Tue, 17 Jul 2018 15:43:29 +0200 (CEST)
+Received: from mc-bl-xps13.lan (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1037120904;
+        Tue, 17 Jul 2018 15:43:19 +0200 (CEST)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com
+Subject: [PATCH 3/5] spi: imx: Use correct number of bytes per words
+Date:   Tue, 17 Jul 2018 15:43:09 +0200
+Message-Id: <20180717134311.26780-4-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180717134311.26780-1-maxime.chevallier@bootlin.com>
+References: <20180717134311.26780-1-maxime.chevallier@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, there are execution paths in which variable err is
-returned without being properly initialized previously:
+The SPI core enforces that we always use the next power-of-two number of
+bytes to store words. As a result, a 24 bits word will be stored in 4
+bytes.
 
-1417        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_SKB,
-1418                                IFLA_XDP_SKB_PROG_ID, rtnl_xdp_prog_skb))
-1419                goto err_cancel;
-1420        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_DRV,
-1421                                IFLA_XDP_DRV_PROG_ID, rtnl_xdp_prog_drv))
-1422                goto err_cancel;
-1423        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_HW,
-1424                                IFLA_XDP_HW_PROG_ID, rtnl_xdp_prog_hw))
-1425                goto err_cancel;
+This commit fixes the spi_imx_bytes_per_word function to return the
+correct number of bytes.
 
-Fix this by initializing variable err to -EMSGSIZE.
+This also allows to get rid of unnecessary checks in the can_dma
+function, since the SPI core validates that we always have a transfer
+length that is a multiple of the number of bytes per word.
 
-Addresses-Coverity-ID: 1471831 ("Uninitialized scalar variable")
-Fixes: a25717d2b604 ("xdp: support simultaneous driver and hw XDP attachment")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- net/core/rtnetlink.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/spi/spi-imx.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index e03258e..648c984 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1405,12 +1405,12 @@ static int rtnl_xdp_fill(struct sk_buff *skb, struct net_device *dev)
+diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c
+index ecafbda5ec94..3ae706dac660 100644
+--- a/drivers/spi/spi-imx.c
++++ b/drivers/spi/spi-imx.c
+@@ -202,7 +202,12 @@ static unsigned int spi_imx_clkdiv_2(unsigned int fin,
+ 
+ static int spi_imx_bytes_per_word(const int bits_per_word)
  {
- 	struct nlattr *xdp;
- 	u32 prog_id;
--	int err;
-+	int err = -EMSGSIZE;
- 	u8 mode;
+-	return DIV_ROUND_UP(bits_per_word, BITS_PER_BYTE);
++	if (bits_per_word <= 8)
++		return 1;
++	else if (bits_per_word <= 16)
++		return 2;
++	else
++		return 4;
+ }
  
- 	xdp = nla_nest_start(skb, IFLA_XDP);
- 	if (!xdp)
--		return -EMSGSIZE;
-+		return err;
+ static bool spi_imx_can_dma(struct spi_master *master, struct spi_device *spi,
+@@ -219,9 +224,6 @@ static bool spi_imx_can_dma(struct spi_master *master, struct spi_device *spi,
  
- 	prog_id = 0;
- 	mode = XDP_ATTACHED_NONE;
+ 	bytes_per_word = spi_imx_bytes_per_word(transfer->bits_per_word);
+ 
+-	if (bytes_per_word != 1 && bytes_per_word != 2 && bytes_per_word != 4)
+-		return false;
+-
+ 	for (i = spi_imx->devtype_data->fifo_size / 2; i > 0; i--) {
+ 		if (!(transfer->len % (i * bytes_per_word)))
+ 			break;
 -- 
-2.7.4
+2.11.0
 
