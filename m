@@ -6,80 +6,144 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08DCECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E61CFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6472A20C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6472A20C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id A8F7A20C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F7A20C10
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731748AbeGQOgy (ORCPT
+        id S1731768AbeGQOhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:36:54 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:49858 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbeGQOgx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:36:53 -0400
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="16331393"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 17 Jul 2018 07:04:04 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.76.4) by
- chn-sv-exch07.mchp-main.com (10.10.76.108) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 17 Jul 2018 07:04:04 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <ludovic.desroches@microchip.com>, <nicolas.ferre@microchip.com>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2] ARM: dts: at91: fix typos for SSC TD functions
-Date:   Tue, 17 Jul 2018 17:03:53 +0300
-Message-ID: <1531836233-31536-1-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 17 Jul 2018 10:37:41 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38514 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731548AbeGQOhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:37:41 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 437271E6625CE;
+        Tue, 17 Jul 2018 22:04:47 +0800 (CST)
+Received: from huawei.com (10.113.189.234) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Tue, 17 Jul 2018
+ 22:04:41 +0800
+From:   Yunlong Song <yunlong.song@huawei.com>
+To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] f2fs: issue discard align to section in LFS mode
+Date:   Tue, 17 Jul 2018 22:04:35 +0800
+Message-ID: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
 MIME-Version: 1.0
 Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix typo for TD function of pins PIN_PB22 and PIN_PC14
+For the case when sbi->segs_per_sec > 1 with lfs mode, take
+section:segment = 5 for example, if the section prefree_map is
+...previous section | current section (1 1 0 1 1) | next section...,
+then the start = x, end = x + 1, after start = start_segno +
+sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
+their bitmap is still set, which will cause duplicated
+f2fs_issue_discard of this same section in the next write_checkpoint:
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
+prefree of NO.2 is cleared, and no discard issued
+
+round 2: rm data block NO.0, NO.1, NO.3, NO.4
+all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
+prefree_map: 1 1 0 1 1
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
+valid blocks of this section, so discard issued, but this time prefree
+bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
+
+round 3:
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
+0 0 0 0 0, no valid blocks of this section, so discard issued,
+this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
+this section is sent again...
+
+To fix this problem, we can align the start and end value to section
+boundary for fstrim and real-time discard operation, and decide to issue
+discard only when the whole section is invalid, which can issue discard
+aligned to section size as much as possible and avoid redundant discard.
+
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
+ fs/f2fs/segment.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
-Changes in v2:
-- fix typo also for PC14 pin
-- change patch subject to reflect new changes
-
- arch/arm/boot/dts/sama5d2-pinfunc.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/sama5d2-pinfunc.h b/arch/arm/boot/dts/sama5d2-pinfunc.h
-index e57191fb83de..1c01a6f843d8 100644
---- a/arch/arm/boot/dts/sama5d2-pinfunc.h
-+++ b/arch/arm/boot/dts/sama5d2-pinfunc.h
-@@ -375,7 +375,7 @@
- #define PIN_PB22__GPIO			PINMUX_PIN(PIN_PB22, 0, 0)
- #define PIN_PB22__LCDDAT11		PINMUX_PIN(PIN_PB22, 1, 1)
- #define PIN_PB22__A11			PINMUX_PIN(PIN_PB22, 2, 1)
--#define PIN_PB22__TDO			PINMUX_PIN(PIN_PB22, 3, 1)
-+#define PIN_PB22__TD0			PINMUX_PIN(PIN_PB22, 3, 1)
- #define PIN_PB22__TIOA2			PINMUX_PIN(PIN_PB22, 4, 2)
- #define PIN_PB22__FLEXCOM3_IO1		PINMUX_PIN(PIN_PB22, 5, 3)
- #define PIN_PB22__GMDC			PINMUX_PIN(PIN_PB22, 6, 3)
-@@ -556,7 +556,7 @@
- #define PIN_PC14__LCDDAT6		PINMUX_PIN(PIN_PC14, 1, 2)
- #define PIN_PC14__GRX0			PINMUX_PIN(PIN_PC14, 2, 1)
- #define PIN_PC14__ISC_D5		PINMUX_PIN(PIN_PC14, 3, 1)
--#define PIN_PC14__TDO			PINMUX_PIN(PIN_PC14, 5, 2)
-+#define PIN_PC14__TD0			PINMUX_PIN(PIN_PC14, 5, 2)
- #define PIN_PC14__A3			PINMUX_PIN(PIN_PC14, 6, 2)
- #define PIN_PC15			79
- #define PIN_PC15__GPIO			PINMUX_PIN(PIN_PC15, 0, 0)
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index cfff7cf..ff5de34 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1710,6 +1710,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 	unsigned int start = 0, end = -1;
+ 	unsigned int secno, start_segno;
+ 	bool force = (cpc->reason & CP_DISCARD);
++	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
+ 
+ 	mutex_lock(&dirty_i->seglist_lock);
+ 
+@@ -1721,14 +1722,19 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+ 		end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
+ 								start + 1);
+ 
+-		for (i = start; i < end; i++)
+-			clear_bit(i, prefree_map);
+-
+-		dirty_i->nr_dirty[PRE] -= end - start;
+-
+ 		if (!test_opt(sbi, DISCARD))
+ 			continue;
+ 
++		if (need_align) {
++			start = rounddown(start, sbi->segs_per_sec);
++			end = roundup(end, sbi->segs_per_sec);
++		}
++
++		for (i = start; i < end; i++) {
++			if (test_and_clear_bit(i, prefree_map))
++				dirty_i->nr_dirty[PRE]--;
++		}
++
+ 		if (force && start >= cpc->trim_start &&
+ 					(end - 1) <= cpc->trim_end)
+ 				continue;
+@@ -2511,6 +2517,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	struct discard_policy dpolicy;
+ 	unsigned long long trimmed = 0;
+ 	int err = 0;
++	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
+ 
+ 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
+ 		return -EINVAL;
+@@ -2528,6 +2535,13 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
+ 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
+ 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
+ 						GET_SEGNO(sbi, end);
++	if (need_align) {
++		start_segno = rounddown(start_segno, sbi->segs_per_sec);
++		end_segno = roundup(end_segno, sbi->segs_per_sec);
++		if (start_segno == end_segno)
++			end_segno += sbi->segs_per_sec;
++		end_segno--;
++	}
+ 
+ 	cpc.reason = CP_DISCARD;
+ 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
 -- 
-2.7.4
+1.8.5.2
 
