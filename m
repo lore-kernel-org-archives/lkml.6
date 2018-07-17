@@ -3,102 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71633ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:57:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE8BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277E820684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:57:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7527420684
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:57:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="dC4eICP3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277E820684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	dkim=pass (1024-bit key) header.d=raithlin.onmicrosoft.com header.i=@raithlin.onmicrosoft.com header.b="YpsuTcRG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7527420684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=raithlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbeGQSbQ (ORCPT
+        id S1730008AbeGQSbh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 14:31:16 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:41403 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729708AbeGQSbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 14:31:16 -0400
-Received: by mail-qt0-f196.google.com with SMTP id e19-v6so1669633qtp.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 10:57:30 -0700 (PDT)
+        Tue, 17 Jul 2018 14:31:37 -0400
+Received: from mail-eopbgr660118.outbound.protection.outlook.com ([40.107.66.118]:56448
+        "EHLO CAN01-QB1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729688AbeGQSbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 14:31:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=bmAyHcDD/Xc2tb4UqnQcDKH5J0/3De7sxMrzFlHQ2p4=;
-        b=dC4eICP3eGZ+c5d22OChe8UTqQVXW5tJk0YYdB335OTslm4f/VEz5RZfSozX+gaava
-         7wVFqeedHKJ5GB0YtYiIaBpzEtu4QsoMTNqoHXqMX/lM5vBE1CyIV48lhaC3iytcl4BB
-         dlcOm5jX6c6qy+Ne/KIznOclHevgcYX/I59gDfiFDRyQIkpoUBvhks+2BIHTHGlf6P0M
-         kKVpNb9Y2qmItJtezrQkM/QxABb1Zm0nXGNa87ce6y5YHcRQVx+1kG5fxj17PCkDQRXG
-         Uet+4aPdpMvyvFrXz19QuAFJ8+7tg0+UgIpY3UeIHu/OPMDhV/sDllbDXxis39xzLW4k
-         /oHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=bmAyHcDD/Xc2tb4UqnQcDKH5J0/3De7sxMrzFlHQ2p4=;
-        b=DNlgsJDCE9MZKLSkaVVhxbGO+jiv9lVJWiazy0jliNDc7zEU1XNxi/CvCDu1dA4/tS
-         qyW4Oaf9/PJjLUffPF3yBXwjchTz70JMuvCIHo5CU3vQKo8oEEhAp2+cMQyJmqIXmnVF
-         SAnx4U6jzIH6EiI9v7WrexMK2fkoZix7nKnOZX2xmf/XoJKczxE/gUGbB9KFhV91NQ15
-         zWKJiExvp2fn7eAsyOUfvpXFu/d/U1hlqO0/Qh4lrf3k3sheUnhAJz3zpXKuSUQoBoAb
-         SU1MCToA+A/EreJpXqYqT7gVwGyFyusXHq7WH4RDNgcmK12s47T4TKZqhKCzsDAvMaEn
-         xFyw==
-X-Gm-Message-State: AOUpUlHGAzAhYBh0YcOaMDm7PWIf+zGRbZRD5BRKpgtw4XuaupboVteY
-        Ol+cwzmm/utIfbj2Lg/oVJdX+A==
-X-Google-Smtp-Source: AAOMgpeEOEJzw5lS4xVKsVovKVCDKmbbgRN3NPFs3u5gtIHeylT8jTEwHP7aipmpvqUD7RkXhIPw7A==
-X-Received: by 2002:ac8:234f:: with SMTP id b15-v6mr2634886qtb.336.1531850249641;
-        Tue, 17 Jul 2018 10:57:29 -0700 (PDT)
-Received: from cakuba.lan ([75.53.12.129])
-        by smtp.gmail.com with ESMTPSA id m12-v6sm1411170qkl.54.2018.07.17.10.57.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 10:57:29 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 10:57:25 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtnetlink: fix uninitialized variable
-Message-ID: <20180717105725.5cb8a405@cakuba.lan>
-In-Reply-To: <20180717134314.GA31127@embeddedor.com>
-References: <20180717134314.GA31127@embeddedor.com>
-Organization: Netronome Systems, Ltd.
+ d=raithlin.onmicrosoft.com; s=selector1-raithlin-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SFhPg4kGfuP4WiRbHzCW2hei+Xqp3iafW9qhiUobnVo=;
+ b=YpsuTcRGnXCGp5+m8fnV+XdkDaIZvfFdgPhONPPzK+tfLGgDEt3bJLDyuNPeNBPmG6E/JMRTgQN0XQBy1nAHkwbt3HXVSjo7ItSciUVvfG3sWJcqIyFFPezJAvM9hqRPAOo63noH7AjnvXQnMGtz8FdOUPgLJopQJ6Vl9zY26Fk=
+Received: from YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM (52.132.39.161) by
+ YTXPR0101MB1263.CANPRD01.PROD.OUTLOOK.COM (52.132.33.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.17; Tue, 17 Jul 2018 17:57:48 +0000
+Received: from YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::9855:3d86:374c:95b7]) by YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::9855:3d86:374c:95b7%3]) with mapi id 15.20.0952.021; Tue, 17 Jul 2018
+ 17:57:48 +0000
+From:   "Stephen  Bates" <sbates@raithlin.com>
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v7 4/4] PCI: Introduce the disable_acs_redir parameter
+Thread-Topic: [PATCH v7 4/4] PCI: Introduce the disable_acs_redir parameter
+Thread-Index: AQHUHe/v75a2v6FwDUisHhlkvKPSdKSTsPQAgAAAKAD//53FgA==
+Date:   Tue, 17 Jul 2018 17:57:47 +0000
+Message-ID: <ADC606E4-5A29-41AB-BE4D-51B89318B333@raithlin.com>
+References: <20180717170204.30470-1-logang@deltatee.com>
+ <20180717170204.30470-5-logang@deltatee.com>
+ <20180717114848.2914d547@t450s.home>
+ <a3197c27-1b41-7784-374b-948e43471789@deltatee.com>
+In-Reply-To: <a3197c27-1b41-7784-374b-948e43471789@deltatee.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.f.0.180709
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com; 
+x-originating-ip: [70.73.168.51]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1263;7:e4P9WvsEqWabiJSltuUiVnP6ZIULGdL3eAjzOsN/qh+DvjpISRWHlJ+pfqOW0T6zaliZqiPrx03vQ2wnUqRRtyVP6h0sgzphVFl7LcO3N3gT0YCbYqpC8/ZsPxVXgHJTdlaLle1Nmek5RJFsI/2U52U+0y14423VByqJmEsVKvFQrvopgTQ4Q9OrNsk0WOv5RjMMOaluvZ0+/tGgeiwAH8nlV8ee2Qh+RiaPM8Dn+avlFV/oWVJ0aME39Ml+jSoV
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: de3e747e-e012-4a6f-3812-08d5ec0ecea4
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(7021125)(8989117)(5600053)(711020)(4534165)(7022125)(4603075)(4627221)(201702281549075)(8990107)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTXPR0101MB1263;
+x-ms-traffictypediagnostic: YTXPR0101MB1263:
+x-microsoft-antispam-prvs: <YTXPR0101MB1263B94D531B7CFB7D243D4DAA5C0@YTXPR0101MB1263.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(2016111802025)(20161123564045)(20161123562045)(6043046)(6072148)(201708071742011)(7699016);SRVR:YTXPR0101MB1263;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1263;
+x-forefront-prvs: 073631BD3D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39830400003)(346002)(136003)(376002)(189003)(199004)(69224002)(229853002)(81166006)(305945005)(26005)(54906003)(6116002)(478600001)(7736002)(105586002)(186003)(558084003)(110136005)(25786009)(8936002)(6246003)(6512007)(97736004)(36756003)(3846002)(2906002)(6506007)(14454004)(81156014)(76176011)(33656002)(8676002)(6486002)(82746002)(93886005)(476003)(53936002)(68736007)(106356001)(102836004)(2616005)(11346002)(6436002)(4326008)(83716003)(5660300001)(99286004)(5250100002)(256004)(446003)(7416002)(58126008)(66066001)(486006)(316002)(2900100001)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1263;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: raithlin.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ZYxqI04DYc8R8oIsAKpKvxLF1iJwgicIRLIVzwTLUM0DPGlC7+cCTsvZKKkZu4TSQTtd/u3vCWKiUY7c9ItXV1mJjfbJvbqy3gayfI/vMi9R9EmxsFBw5MLI88e6mvnXnG7wAqzomikEstu+jJXirbyA02Tmu1lzlD/acjGpfs3wKjywaAcEKjs5IXcE5yesydGrSk/q+nqE1iFvJicdkPO9Ta7Q9GLuciivUtS5BfkUYOJx2SsqEk4hX7UNeBKUk6ghCttdghwuA21XyhmStXcuy61NcRTxGnHRr/KTd1vwtv1B2WLx4NIFMlI4jIp2SMwabrN9ICAvUpmh/UIRpr2ZjlAT0UM7C70RZ+zjVqo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <24B73FC6A8D2694AA351ED33AECBC101@CANPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de3e747e-e012-4a6f-3812-08d5ec0ecea4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2018 17:57:48.2988
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1263
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Jul 2018 08:43:14 -0500, Gustavo A. R. Silva wrote:
-> Currently, there are execution paths in which variable err is
-> returned without being properly initialized previously:
-> 
-> 1417        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_SKB,
-> 1418                                IFLA_XDP_SKB_PROG_ID, rtnl_xdp_prog_skb))
-> 1419                goto err_cancel;
-> 1420        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_DRV,
-> 1421                                IFLA_XDP_DRV_PROG_ID, rtnl_xdp_prog_drv))
-> 1422                goto err_cancel;
-> 1423        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_HW,
-> 1424                                IFLA_XDP_HW_PROG_ID, rtnl_xdp_prog_hw))
-> 1425                goto err_cancel;
-> 
-> Fix this by initializing variable err to -EMSGSIZE.
-> 
-> Addresses-Coverity-ID: 1471831 ("Uninitialized scalar variable")
-> Fixes: a25717d2b604 ("xdp: support simultaneous driver and hw XDP attachment")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Looks like duplicate of:
-
-http://patchwork.ozlabs.org/patch/944662/
-
-Strage GCC doesn't catch this even with W=1, the code is fairly
-straightforward :S
+Pj4gUmV2aWV3ZWQtYnk6IEFsZXggV2lsbGlhbXNvbiA8YWxleC53aWxsaWFtc29uQHJlZGhhdC5j
+b20+DQo+ICAgIA0KPiAgICANCj4gICAgVGhhbmtzIGZvciBhbGwgdGhlIHRob3JvdWdoIHJldmll
+dyENCg0KKzEhIFllcywgdGhhbmtzIEFsZXggZm9yIGFsbCB0aGUgZmVlZGJhY2sgb24gdGhpcyBz
+ZXJpZXMuDQoNCkJqb3JuZSwgaXMgQWxleCdzIHJldmlldyBlbm91Z2ggZm9yIHlvdSB0byB0YWtl
+IHRoaXMgc2VyaWVzPw0KDQpTdGVwaGVuDQogDQoNCg==
