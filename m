@@ -6,100 +6,104 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50C9ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3F3ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79BCE206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:28:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BCE206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 82681206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:30:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82681206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbeGQRCQ (ORCPT
+        id S1730245AbeGQRD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:02:16 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:39151 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729508AbeGQRCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:02:15 -0400
+        Tue, 17 Jul 2018 13:03:27 -0400
+Received: from mga03.intel.com ([134.134.136.65]:42868 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729657AbeGQRD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:03:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 09:30:00 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
-   d="scan'208";a="16346073"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 17 Jul 2018 09:28:48 -0700
-Received: from localhost.localdomain.com (10.10.76.4) by
- chn-sv-exch02.mchp-main.com (10.10.76.38) with Microsoft SMTP Server id
- 14.3.352.0; Tue, 17 Jul 2018 09:28:47 -0700
-From:   Tudor Ambarus <tudor.ambarus@microchip.com>
-To:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <richard@nod.at>
-CC:     <linux-mtd@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <anuragku@xilinx.com>,
-        <cyrille.pitchen@microchip.com>, <nicolas.ferre@microchip.com>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: [PATCH 3/3] mtd: spi-nor: add support for Microchip SST26 QSPI flash memories
-Date:   Tue, 17 Jul 2018 19:28:31 +0300
-Message-ID: <20180717162831.17947-3-tudor.ambarus@microchip.com>
-X-Mailer: git-send-email 2.9.4
-In-Reply-To: <20180717162831.17947-1-tudor.ambarus@microchip.com>
-References: <20180717162831.17947-1-tudor.ambarus@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+   d="scan'208";a="55701985"
+Received: from 2b52.sc.intel.com ([143.183.136.146])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Jul 2018 09:28:59 -0700
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H.J. Lu" <hjl.tools@gmail.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Subject: [PATCH] binfmt_elf: Fix core dump memory corruption
+Date:   Tue, 17 Jul 2018 09:25:02 -0700
+Message-Id: <20180717162502.32274-1-yu-cheng.yu@intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The flash memories are write-protected by default at power-on and
-must be unlocked first, before being erased, then programmed.
+In fill_note_info(), we kzalloc elf_thread_core_info.notes[] only
+for (core_note_type != 0) regsets.  However, in
+fill_thread_core_info(), we still leave empty notes and go beyond
+the allocated size.  Fix it.
 
-The erase block sizes are not uniform. The memory layout is uniform
-just for the 4K sector blocks.
-
-Based on initial work done by Cyrille Pitchen.
-
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ fs/binfmt_elf.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index eddf09f..06d7023 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1164,10 +1164,30 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "sst25wf040",  INFO(0xbf2504, 0, 64 * 1024,  8, SECT_4K | SST_WRITE) },
- 	{ "sst25wf080",  INFO(0xbf2505, 0, 64 * 1024, 16, SECT_4K | SST_WRITE) },
- 	{
-+		"sst26vf016b", INFO(0xbf2641, 0, 64 * 1024, 32,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
-+			UNLOCK_GLOBAL_BLOCK)
-+	},
-+	{
-+		"sst26vf032b", INFO(0xbf2642, 0, 64 * 1024, 64,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
-+			UNLOCK_GLOBAL_BLOCK)
-+	},
-+	{
- 		"sst26vf064b", INFO(0xbf2643, 0, 64 * 1024, 128,
- 			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
- 			UNLOCK_GLOBAL_BLOCK)
- 	},
-+	{
-+		"sst26vf040b", INFO(0xbf2654, 0, 64 * 1024, 8,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
-+			UNLOCK_GLOBAL_BLOCK)
-+	},
-+	{
-+		"sst26vf080b", INFO(0xbf2658, 0, 64 * 1024, 16,
-+			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
-+			UNLOCK_GLOBAL_BLOCK)
-+	},
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 816cc921cf36..6f42e05d2833 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1723,7 +1723,8 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
+ 				 const struct user_regset_view *view,
+ 				 long signr, size_t *total)
+ {
+-	unsigned int i;
++	unsigned int i; /* index to regsets */
++	unsigned int j; /* index to notes */
+ 	unsigned int regset0_size = regset_size(t->task, &view->regsets[0]);
  
- 	/* ST Microelectronics -- newer production may have feature updates */
- 	{ "m25p05",  INFO(0x202010,  0,  32 * 1024,   2, 0) },
+ 	/*
+@@ -1744,9 +1745,9 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
+ 
+ 	/*
+ 	 * Each other regset might generate a note too.  For each regset
+-	 * that has no core_note_type or is inactive, we leave t->notes[i]
+-	 * all zero and we'll know to skip writing it later.
++	 * that has no core_note_type or is inactive, we skip it.
+ 	 */
++	j = 1;
+ 	for (i = 1; i < view->n; ++i) {
+ 		const struct user_regset *regset = &view->regsets[i];
+ 		do_thread_regset_writeback(t->task, regset);
+@@ -1763,17 +1764,18 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
+ 				kfree(data);
+ 			else {
+ 				if (regset->core_note_type != NT_PRFPREG)
+-					fill_note(&t->notes[i], "LINUX",
++					fill_note(&t->notes[j], "LINUX",
+ 						  regset->core_note_type,
+ 						  size, data);
+ 				else {
+ 					SET_PR_FPVALID(&t->prstatus,
+ 							1, regset0_size);
+-					fill_note(&t->notes[i], "CORE",
++					fill_note(&t->notes[j], "CORE",
+ 						  NT_PRFPREG, size, data);
+ 				}
+-				*total += notesize(&t->notes[i]);
++				*total += notesize(&t->notes[j]);
+ 			}
++			j++;
+ 		}
+ 	}
+ 
 -- 
-2.9.4
+2.17.1
 
