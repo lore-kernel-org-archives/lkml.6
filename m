@@ -2,180 +2,139 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7BEECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CCFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A31120C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0723920C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:23:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AeZsVzIy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A31120C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5zmrpYB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0723920C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbeGQKyn (ORCPT
+        id S1730232AbeGQKzr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:54:43 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52634 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730008AbeGQKyn (ORCPT
+        Tue, 17 Jul 2018 06:55:47 -0400
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:39118 "EHLO
+        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729707AbeGQKzr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:54:43 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HAJD0F094478;
-        Tue, 17 Jul 2018 10:22:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=9W5RBjpTstN9Y+YKpXo+N/dGQKhvbQA66MOkcktD4ig=;
- b=AeZsVzIyLSwWq5gTXfEVjzsGq3I2DqL6cnHOOq43QaqWfvjtHrDab5G/822mp9RE8aUk
- JU1LqBo9w5qHK4lN3m7rQ2TElRuMecmiJ0YvNkE35+tRnL5pzJNXdG1c94bDuWm+Ka+g
- 49cYYSlsWFrpPmUchmFBqLn5P1eCLIByw9Y8PCLAAwPLCs/j5fVtQjAIJcsnIuCdTgyb
- RPWt6xXvNoUAe/HJLELZWryWF5DCS0uAGLzwuDwJ89twGnFLOub5MJlKw5/tuxEY4lbG
- htf72+K/P7Dl4bdmRlkzW7JkfYWC//QRJkATVLDlcfi+swSJwWQ4SrrguGfr11zNLVjz WA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2k7a3401kd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 10:22:44 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6HAMhu6003469
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 10:22:43 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6HAMhQZ017836;
-        Tue, 17 Jul 2018 10:22:43 GMT
-Received: from mwanda (/197.179.115.196)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 03:22:42 -0700
-Date:   Tue, 17 Jul 2018 13:22:34 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
-        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 16/32] staging: gasket: always allow root open for write
-Message-ID: <20180717102234.3spplwaf5n5wmpcl@mwanda>
-References: <20180717020926.176408-1-toddpoynor@gmail.com>
- <20180717020926.176408-17-toddpoynor@gmail.com>
+        Tue, 17 Jul 2018 06:55:47 -0400
+Received: by mail-oi0-f45.google.com with SMTP id d189-v6so1021577oib.6;
+        Tue, 17 Jul 2018 03:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=9LvtM9vBWUmjZKWE2Ji4MQjdGC7SdL4mvtTtqv6dHGY=;
+        b=R5zmrpYBEl/WnYd1NFn1ypIF5r5WzV1nsTGRCF1ShbD6iztjUPRAx1vD3tl1N0UKGu
+         5F6A0xjmvJYNhABYBjGQzt8tdigUzBACNz4VZK76NXc11jP7T8RMAFWIrTAVGFqUm1/x
+         eKsnY0FNOJGzYj5PFZOVO5g+ISts1r2N7Jw9FGRP6pwzzadHasOe0orbVFhL1ZpK785j
+         3YHf1ShysmCqTSwqBrWZLXc7AmJ0iEMAddG9pKTssXcNJ7FJQLsVNGgb/cGEJb0MZPDn
+         VsxbC4xWseBSYIVUlTp3mVT3L1/mf14sjB0diWtxIdrgjUQ0mmy5/iU7T8FrS7ThAAw+
+         hV0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=9LvtM9vBWUmjZKWE2Ji4MQjdGC7SdL4mvtTtqv6dHGY=;
+        b=FE6R/pUxU74WtEyKkMyH7lCzZFH62yJBBGjytn50OCwIZxQvABA5UBpZsoXJuMYKKs
+         imWTOQYOdj2CyZEu5SZsvcNUqB/iwshxOFurDto2eDAIa2qiNhVx357M6K/TTdwONuMq
+         6UmorDD5FPGLBqY/mUGciIfw/my4EOkZ3NGD+Yj5tXP5aA3ftpBOUzpxlR/5E2pEUhjZ
+         JOzCwOrsAD1vs3Hy3dNYxuCtuPGCkugeY6FbBr4tLM75OXZ/lAp1JY3ttzh5WMYzYNI3
+         nPNwphFH4hcqYilfzDIkKzsLnuSJONaCfDX2CgWPQYyc/L5wUniB9+Boa0+uROiA1V1C
+         D7Mw==
+X-Gm-Message-State: AOUpUlEEIzbIVnxXIH/f1Xv4f8TvDWVn4f/p609ack3f3eNarZtcJh4m
+        JEwf3fay3YOR3hShZ7cNB1GFmFmKsDAD7vkaIKw=
+X-Google-Smtp-Source: AAOMgpdj1aaJ+/BADQOoXXo9uPKoswHKo6unVUcSMNDATTGyK7ua7es+7RdP9KFVCi0j4B5IuubtA+K2lR1TAyhcpZ4=
+X-Received: by 2002:aca:ad4f:: with SMTP id w76-v6mr1033893oie.233.1531823031542;
+ Tue, 17 Jul 2018 03:23:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717020926.176408-17-toddpoynor@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807170107
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 03:23:51
+ -0700 (PDT)
+In-Reply-To: <20180717102136.snayvzmv2h3dcwiq@suselix>
+References: <20180717065048.74mmgk4t5utjaa6a@suselix> <20180717092721.onkaf3qsu7te6syi@suselix>
+ <20180717093620.ym6phfmr3rfvsxyo@suselix> <3724084.DyflrVPzDS@aspire.rjw.lan> <20180717102136.snayvzmv2h3dcwiq@suselix>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 17 Jul 2018 12:23:51 +0200
+X-Google-Sender-Auth: IDyg2PMHEiEFVq8KPiT5TWWP-4o
+Message-ID: <CAJZ5v0gdbopHE5Kbhw3h7Hj7bqmDKeoReNoRXJ2gYxQROQQ6iw@mail.gmail.com>
+Subject: Re: Commit 554c8aa8ecad causing severe performance degression with pcc-cpufreq
+To:     Andreas Herrmann <aherrmann@suse.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 07:09:10PM -0700, Todd Poynor wrote:
-> --- a/drivers/staging/gasket/apex_driver.c
-> +++ b/drivers/staging/gasket/apex_driver.c
-> @@ -630,13 +630,10 @@ static bool is_gcb_in_reset(struct gasket_dev *gasket_dev)
->  static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
+On Tue, Jul 17, 2018 at 12:21 PM, Andreas Herrmann <aherrmann@suse.com> wrote:
+> On Tue, Jul 17, 2018 at 12:09:21PM +0200, Rafael J. Wysocki wrote:
+>> On Tuesday, July 17, 2018 11:36:20 AM CEST Andreas Herrmann wrote:
+>> > On Tue, Jul 17, 2018 at 11:27:21AM +0200, Andreas Herrmann wrote:
+>> > > On Tue, Jul 17, 2018 at 11:23:25AM +0200, Rafael J. Wysocki wrote:
+>> > > > On Tue, Jul 17, 2018 at 11:11 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
+>> > > > > On Tue, Jul 17, 2018 at 11:06:29AM +0200, Rafael J. Wysocki wrote:
+>> > > > >> On Tue, Jul 17, 2018 at 10:50 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
+>> > > > >>
+>> > > > >> [cut]
+>> > > > >>
+>> > > > >> >
+>> > > > >> > On balance before this commit users could use pcc-cpufreq but had
+>> > > > >> > already suboptimal performance (compared to say intel_pstate driver
+>> > > > >> > which can be used changing BIOS options).
+>> > > > >>
+>> > > > >> BTW, I wonder why you need to change the BIOS options for intel_pstate to load.
+>> > > > >
+>> > > > > I think this is because of (in intel_pstate_init()):
+>> > > > >
+>> > > > >         /*
+>> > > > >          * The Intel pstate driver will be ignored if the platform
+>> > > > >          * firmware has its own power management modes.
+>> > > > >          */
+>> > > > >         if (intel_pstate_platform_pwr_mgmt_exists())
+>> > > > >                 return -ENODEV;
+>> > > > >
+>> > > >
+>> > > > OK, because of the "Proliant" entry, right?
+>> > > >
+>> > > > So it looks like we have an issue there.  We find the entry and we
+>> > > > look for _PSS.  It is not there, so we assume that the firmware is
+>> > > > expected to control performance, which is not the case.
+>> >
+>> > FYI, there is another BIOS setting on those systems. It's called
+>> > "Collaborative Power Control" (AFAIK enabled by default).
+>> >
+>> > Only if this is disabled, firmware is (alone) in control of
+>> > performance. (And of course in this case neither pcc-cpufreq nor
+>> > intel_pstate will be loaded).
+>>
+>> OK, the patch is below.
+>>
+>> First, I hope that if "Collaborative Power Control" is disabled, it will
+>> simply hide the PCCH object and so intel_pstate will still not load then.
+>
+> PCCH is hidden in that case.
 
-This function name is a bit of out of date.
+OK
 
->  {
->  	struct gasket_dev *gasket_dev = filp->private_data;
-> -	int root = capable(CAP_SYS_ADMIN);
-> -	int is_owner = gasket_dev->dev_info.ownership.is_owned &&
-> -		       current->tgid == gasket_dev->dev_info.ownership.owner;
-> +	fmode_t write;
->  
-> -	if (root || is_owner)
-> -		return 1;
-> -	return 0;
-> +	write = filp->f_mode & FMODE_WRITE;
-> +	return write;
+>> The main question basically is what the OS is expected to do if
+>> "Dynamic Power Savings Mode" is set.  If we are *expected* to use
+>> the PCC interface then, intel_pstate may not work in that case, but
+>> I suspect that the PCC interface allows extra energy to be saved
+>> over what is possible without it.
+>
+> I'll test it and see what happens.
 
-This doesn't match the comment because it returns 0x2 or zero.
-
-	return !!(filp->f_mode & FMODE_WRITE);
-
->  }
->  
->  /*
-> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-> index ae20b7ff9569b..9d1bb3caf6de2 100644
-> --- a/drivers/staging/gasket/gasket_core.c
-> +++ b/drivers/staging/gasket/gasket_core.c
-> @@ -1085,6 +1085,7 @@ static int gasket_open(struct inode *inode, struct file *filp)
->  	char task_name[TASK_COMM_LEN];
->  	struct gasket_cdev_info *dev_info =
->  	    container_of(inode->i_cdev, struct gasket_cdev_info, cdev);
-> +	int is_root = capable(CAP_SYS_ADMIN);
->  
->  	gasket_dev = dev_info->gasket_dev_ptr;
->  	driver_desc = gasket_dev->internal_desc->driver_desc;
-> @@ -1098,7 +1099,7 @@ static int gasket_open(struct inode *inode, struct file *filp)
->  		"Attempting to open with tgid %u (%s) (f_mode: 0%03o, "
->  		"fmode_write: %d is_root: %u)",
->  		current->tgid, task_name, filp->f_mode,
-> -		(filp->f_mode & FMODE_WRITE), capable(CAP_SYS_ADMIN));
-> +		(filp->f_mode & FMODE_WRITE), is_root);
->  
->  	/* Always allow non-writing accesses. */
->  	if (!(filp->f_mode & FMODE_WRITE)) {
-> @@ -1112,8 +1113,9 @@ static int gasket_open(struct inode *inode, struct file *filp)
->  		gasket_dev, "Current owner open count (owning tgid %u): %d.",
->  		ownership->owner, ownership->write_open_count);
->  
-> -	/* Opening a node owned by another TGID is an error (even root.) */
-> -	if (ownership->is_owned && ownership->owner != current->tgid) {
-> +	/* Opening a node owned by another TGID is an error (unless root) */
-> +	if (ownership->is_owned && ownership->owner != current->tgid &&
-> +	    !is_root) {
->  		gasket_log_error(
->  			gasket_dev,
->  			"Process %u is opening a node held by %u.",
-> diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
-> index 0c2f85cf54480..17431d14e6ef1 100644
-> --- a/drivers/staging/gasket/gasket_ioctl.c
-> +++ b/drivers/staging/gasket/gasket_ioctl.c
-> @@ -171,7 +171,7 @@ long gasket_is_supported_ioctl(uint cmd)
->   */
->  static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
->  {
-> -	uint alive, root, device_owner;
-> +	uint alive;
->  	fmode_t read, write;
->  	struct gasket_dev *gasket_dev = (struct gasket_dev *)filp->private_data;
->  
-> @@ -183,33 +183,30 @@ static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
->  			alive, gasket_dev->status);
->  	}
->  
-> -	root = capable(CAP_SYS_ADMIN);
->  	read = filp->f_mode & FMODE_READ;
->  	write = filp->f_mode & FMODE_WRITE;
-
-write = !!(filp->f_mode & FMODE_WRITE);
-
-> -	device_owner = (gasket_dev->dev_info.ownership.is_owned &&
-> -			current->tgid == gasket_dev->dev_info.ownership.owner);
->  
->  	switch (cmd) {
->  	case GASKET_IOCTL_RESET:
->  	case GASKET_IOCTL_CLEAR_INTERRUPT_COUNTS:
-> -		return root || (write && device_owner);
-> +		return write;
-
-regards,
-dan carpenter
-
+Thanks!
