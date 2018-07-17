@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCABECDFB4
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD25ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77C2B214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 608022083D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:42:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="mxh+DDIY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77C2B214C4
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="L9M2QZ6H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 608022083D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbeGQJNg (ORCPT
+        id S1729754AbeGQJNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:13:36 -0400
-Received: from onstation.org ([52.200.56.107]:58286 "EHLO onstation.org"
+        Tue, 17 Jul 2018 05:13:41 -0400
+Received: from onstation.org ([52.200.56.107]:58256 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729621AbeGQJNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:13:35 -0400
+        id S1729621AbeGQJNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:13:38 -0400
 Received: from xilitla.hsd1.wv.comcast.net (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id B83E198F;
-        Tue, 17 Jul 2018 08:42:04 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id EB6391A4E;
+        Tue, 17 Jul 2018 08:42:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1531816925;
-        bh=WH1HShxmGnpSCVymyQm04AytvCh4HYPhRUHsofvS1ac=;
+        s=default; t=1531816927;
+        bh=um2Z3W76lC47jafzSShwo7kXpT48l6auN67NjP+7Zl4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxh+DDIYfOBoXCjl/ChrSJoi4UDNbjHHA58w3Mc8cYNk1F7ckmS1fdQQYt9xwdQMT
-         mCl9GB1Vlob82OLRsYzywSKPL6aTsORkcL4AmWJC4ToviwKxOqwq25GZY92LZhI9nF
-         7iMLDe3JxXF0vUU+oCgNAoNj3a+b1rssNxoe1RAw=
+        b=L9M2QZ6Hy6id8paGR2MXyn7UFgZG4/izoXVHd8xvZwkMqduJlhnPs8bnukhNaS5ut
+         MnhBMM+WAalpyY/Hd5bEC+1B8CQVmDiovKyUYup4aXGgpLwiwrrTl1HYRDNDfU23p4
+         7Il/TGfVpx0Wfbawe/wBjy4UxbGbD+SmKmfSXohQ=
 From:   Brian Masney <masneyb@onstation.org>
 To:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         andy.gross@linaro.org, david.brown@linaro.org,
@@ -47,9 +47,9 @@ Cc:     jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
         lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
         fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com,
         drew.paterson@ams.com
-Subject: [PATCH v2 3/7] iio: tsl2772: add support for reading power settings from device tree
-Date:   Tue, 17 Jul 2018 04:41:54 -0400
-Message-Id: <20180717084158.23532-4-masneyb@onstation.org>
+Subject: [PATCH v2 6/7] iio: tsl2772: add device tree binding for avago,apds9930
+Date:   Tue, 17 Jul 2018 04:41:57 -0400
+Message-Id: <20180717084158.23532-7-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180717084158.23532-1-masneyb@onstation.org>
 References: <20180717084158.23532-1-masneyb@onstation.org>
@@ -58,133 +58,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for optionally reading the prox_diode and
-prox_power settings from device tree. This was tested using a LG
-Nexus 5 (hammerhead) which requires a different diode than the driver
-default for the IR LED.
+The Avago APDS9930 has the same register set as the TAOS/AMS TSL2772 so
+this patch adds the correct device tree bindings and the appropriate
+LUX table values based on the values in the datasheet. Driver was tested
+on a LG Nexus 5 (hammerhead) phone.
+
+avago,apds9930 datasheet:
+https://www.mouser.com/datasheet/2/678/avago_AV02-3190EN_DS_APDS-9930_2014-03-25[1]-1217273.pdf
+
+tsl2772 datasheet:
+https://ams.com/eng/content/download/291503/1066377/file/TSL2772_DS000181_2-00.pdf
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
-The next patch in the series removes the tsl2772 driver from the
-trivial-devices.txt file. I separated it out so that change can go
-through device tree.
-
- .../devicetree/bindings/iio/light/tsl2772.txt | 39 +++++++++++++++++++
- drivers/iio/light/tsl2772.c                   | 16 ++++++++
- include/dt-bindings/iio/amstaos,tsl2772.h     | 24 ++++++++++++
- 3 files changed, 79 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/light/tsl2772.txt
- create mode 100644 include/dt-bindings/iio/amstaos,tsl2772.h
+ .../devicetree/bindings/iio/light/tsl2772.txt  |  1 +
+ drivers/iio/light/tsl2772.c                    | 18 ++++++++++++++++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/iio/light/tsl2772.txt b/Documentation/devicetree/bindings/iio/light/tsl2772.txt
-new file mode 100644
-index 000000000000..ab553d52b9fc
---- /dev/null
+index bfde8b2c8790..e842db749ab2 100644
+--- a/Documentation/devicetree/bindings/iio/light/tsl2772.txt
 +++ b/Documentation/devicetree/bindings/iio/light/tsl2772.txt
-@@ -0,0 +1,39 @@
-+* AMS/TAOS ALS and proximity sensor
-+
-+Required properties:
-+
-+  - compatible: Should be one of
-+		"amstaos,tsl2571"
-+		"amstaos,tsl2671"
-+		"amstaos,tmd2671"
-+		"amstaos,tsl2771"
-+		"amstaos,tmd2771"
-+		"amstaos,tsl2572"
-+		"amstaos,tsl2672"
-+		"amstaos,tmd2672"
-+		"amstaos,tsl2772"
-+		"amstaos,tmd2772"
-+  - reg: the I2C address of the device
-+
-+Optional properties:
-+
-+  - amstaos,prox_diode - must be TSL2772_DIODE0, TSL2772_DIODE1, or
-+                         TSL2772_DIODE_BOTH.
-+  - amstaos,prox_power - must be TSL2772_100_mA, TSL2772_50_mA, TSL2772_25_mA,
-+                         or TSL2772_13_mA.
-+  - interrupt-parent: should be the phandle for the interrupt controller
-+  - interrupts: the sole interrupt generated by the device
-+
-+  Refer to interrupt-controller/interrupts.txt for generic interrupt client
-+  node bindings.
-+
-+Example:
-+
-+#include <dt-bindings/iio/amstaos,tsl2772.h>
-+
-+tsl2772@39 {
-+	compatible = "amstaos,tsl2772";
-+	reg = <0x39>;
-+	interrupts-extended = <&msmgpio 61 IRQ_TYPE_EDGE_FALLING>;
-+	amstaos,prox_diode = <TSL2772_DIODE0>;
-+};
+@@ -13,6 +13,7 @@ Required properties:
+ 		"amstaos,tmd2672"
+ 		"amstaos,tsl2772"
+ 		"amstaos,tmd2772"
++		"avago,apds9930"
+   - reg: the I2C address of the device
+ 
+ Optional properties:
 diff --git a/drivers/iio/light/tsl2772.c b/drivers/iio/light/tsl2772.c
-index 34d42a2504c9..0be57f2ecb02 100644
+index f6a27f8b3ca7..e5b449aec20c 100644
 --- a/drivers/iio/light/tsl2772.c
 +++ b/drivers/iio/light/tsl2772.c
-@@ -515,6 +515,18 @@ static int tsl2772_get_prox(struct iio_dev *indio_dev)
- 	return ret;
- }
+@@ -119,7 +119,8 @@ enum {
+ 	tsl2672,
+ 	tmd2672,
+ 	tsl2772,
+-	tmd2772
++	tmd2772,
++	apds9930,
+ };
  
-+#ifdef CONFIG_OF
-+static void tsl2772_parse_dt(struct tsl2772_chip *chip)
-+{
-+	struct device_node *of_node = chip->client->dev.of_node;
-+
-+	of_property_read_u32(of_node, "amstaos,prox_diode",
-+			     &chip->settings.prox_diode);
-+	of_property_read_u32(of_node, "amstaos,prox_power",
-+			     &chip->settings.prox_power);
-+}
-+#endif
-+
- /**
-  * tsl2772_defaults() - Populates the device nominal operating parameters
-  *                      with those provided by a 'platform' data struct or
-@@ -541,6 +553,10 @@ static void tsl2772_defaults(struct tsl2772_chip *chip)
- 		memcpy(chip->tsl2772_device_lux,
- 		       tsl2772_default_lux_table_group[chip->id],
- 		       TSL2772_DEFAULT_TABLE_BYTES);
-+
-+#ifdef CONFIG_OF
-+	tsl2772_parse_dt(chip);
-+#endif
- }
+ enum {
+@@ -201,6 +202,12 @@ static const struct tsl2772_lux tmd2x72_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
+ 	{     0,      0 },
+ };
  
- /**
-diff --git a/include/dt-bindings/iio/amstaos,tsl2772.h b/include/dt-bindings/iio/amstaos,tsl2772.h
-new file mode 100644
-index 000000000000..ad6f9fbc0845
---- /dev/null
-+++ b/include/dt-bindings/iio/amstaos,tsl2772.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * Device driver for monitoring ambient light intensity (lux)
-+ * and proximity (prox) within the TAOS TSL2772 family of devices.
-+ *
-+ * Copyright (c) 2012 TAOS Corporation.
-+ * Copyright (c) 2017-2018 Brian Masney <masneyb@onstation.org>
-+ */
++static const struct tsl2772_lux apds9930_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
++	{ 52000,  96824 },
++	{ 38792,  67132 },
++	{     0,      0 },
++};
 +
-+#ifndef _DT_BINDINGS_AMSTAOS_TSL2772_H
-+#define _DT_BINDINGS_AMSTAOS_TSL2772_H
-+
-+/* Proximity diode to use */
-+#define TSL2772_DIODE0                  0x01
-+#define TSL2772_DIODE1                  0x02
-+#define TSL2772_DIODE_BOTH              0x03
-+
-+/* LED Power */
-+#define TSL2772_100_mA                  0x00
-+#define TSL2772_50_mA                   0x01
-+#define TSL2772_25_mA                   0x02
-+#define TSL2772_13_mA                   0x03
-+
-+#endif /* _DT_BINDINGS_AMSTAOS_TSL2772_H */
+ static const struct tsl2772_lux *tsl2772_default_lux_table_group[] = {
+ 	[tsl2571] = tsl2x71_lux_table,
+ 	[tsl2671] = tsl2x71_lux_table,
+@@ -212,6 +219,7 @@ static const struct tsl2772_lux *tsl2772_default_lux_table_group[] = {
+ 	[tmd2672] = tmd2x72_lux_table,
+ 	[tsl2772] = tsl2x72_lux_table,
+ 	[tmd2772] = tmd2x72_lux_table,
++	[apds9930] = apds9930_lux_table,
+ };
+ 
+ static const struct tsl2772_settings tsl2772_default_settings = {
+@@ -262,6 +270,7 @@ static const int tsl2772_int_time_avail[][6] = {
+ 	[tmd2672] = { 0, 2730, 0, 2730, 0, 699000 },
+ 	[tsl2772] = { 0, 2730, 0, 2730, 0, 699000 },
+ 	[tmd2772] = { 0, 2730, 0, 2730, 0, 699000 },
++	[apds9930] = { 0, 2730, 0, 2730, 0, 699000 },
+ };
+ 
+ static int tsl2772_int_calibscale_avail[] = { 1, 8, 16, 120 };
+@@ -287,7 +296,8 @@ static const u8 device_channel_config[] = {
+ 	[tsl2672] = PRX2,
+ 	[tmd2672] = PRX2,
+ 	[tsl2772] = ALSPRX2,
+-	[tmd2772] = ALSPRX2
++	[tmd2772] = ALSPRX2,
++	[apds9930] = ALSPRX2,
+ };
+ 
+ static int tsl2772_read_status(struct tsl2772_chip *chip)
+@@ -501,6 +511,7 @@ static int tsl2772_get_prox(struct iio_dev *indio_dev)
+ 	case tmd2672:
+ 	case tsl2772:
+ 	case tmd2772:
++	case apds9930:
+ 		if (!(ret & TSL2772_STA_PRX_VALID)) {
+ 			ret = -EINVAL;
+ 			goto prox_poll_err;
+@@ -1325,6 +1336,7 @@ static int tsl2772_device_id_verif(int id, int target)
+ 	case tmd2672:
+ 	case tsl2772:
+ 	case tmd2772:
++	case apds9930:
+ 		return (id & 0xf0) == SWORDFISH_ID;
+ 	}
+ 
+@@ -1852,6 +1864,7 @@ static const struct i2c_device_id tsl2772_idtable[] = {
+ 	{ "tmd2672", tmd2672 },
+ 	{ "tsl2772", tsl2772 },
+ 	{ "tmd2772", tmd2772 },
++	{ "apds9930", apds9930},
+ 	{}
+ };
+ 
+@@ -1868,6 +1881,7 @@ static const struct of_device_id tsl2772_of_match[] = {
+ 	{ .compatible = "amstaos,tmd2672" },
+ 	{ .compatible = "amstaos,tsl2772" },
+ 	{ .compatible = "amstaos,tmd2772" },
++	{ .compatible = "avago,apds9930" },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, tsl2772_of_match);
 -- 
 2.17.1
 
