@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 289A3ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F638ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D544620C03
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:09:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD5EE20C07
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:09:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lY3LS5S/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D544620C03
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5siVEWS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD5EE20C07
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731558AbeGQCkF (ORCPT
+        id S1731593AbeGQCkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 22:40:05 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:44882 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731371AbeGQCkF (ORCPT
+        Mon, 16 Jul 2018 22:40:07 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36956 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731371AbeGQCkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 22:40:05 -0400
-Received: by mail-pf0-f195.google.com with SMTP id k21-v6so2324269pff.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 19:09:55 -0700 (PDT)
+        Mon, 16 Jul 2018 22:40:06 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n7-v6so1383619pgq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 19:09:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xAi+tz1xR+vTMPZHa4TPt80jizzIjIj8dZU0G1ekIfQ=;
-        b=lY3LS5S/vj43WdNtO+kBG7NRjmOGpFdE6SmNTqbQLxy8vUafEB0KbZndBJpmy/ZNaP
-         xESjZNqtjbx167WzsJD0ehKiOnaAVOLUfN3nJ0xoW7Z5eidPnseczw27a1BN4yVtKvTe
-         7V8f1u/weClUwNfSUN3dc/h7J/Qs8Q14uc1DmM2Bcpx8UPug1GIUytaGWZYGwbTxw1SE
-         lOEq4jx4ATQN/Z88+/9D7OH04TS0RpN/W4gehNzC5SntAO4mEsjD9Zg6pd6YbxBm8NzX
-         t8GbfwISqekLAls6gyAcU9J+lh+2XnX5JvbNxzRAACEEt8fiht8iALlH0Ri4jYfNzfqW
-         XdUw==
+        bh=sFOYZchG5aNHLXLp146UdEXMW7F8alJ8AxLF3XjI9+4=;
+        b=C5siVEWS7DD3BfSOu+qm43uSct5C0QoOs1Dqzbpyge1LkxcdN5QDJxJXWfnXJHmkpR
+         tNXbHsKOe02D1SSSAXTKlh8QE72kPF+ArsuJfqd2ib3JzoNTnsnjNantbM5Xjsvcsr3v
+         PbUFcuUh6nE1WZPjOuiPK4dEPGWYsi5BiX+YlL2YEyNSwxZTwqvw6Kby6zWW1zqp7S3v
+         aSjJOMAoPWO6BfvKUb2V0l8tIgyUhiH61c9B0Xq537AI1y3i1346hOE7EZMLi3FgoaR1
+         y3GozTtM/xK500kgzDeHALFS8Hiznk+28HK8xdXN/38LHo0283HfakmsecA9GkzE+cr9
+         NHWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xAi+tz1xR+vTMPZHa4TPt80jizzIjIj8dZU0G1ekIfQ=;
-        b=eHprX4fT0e/lxl7VyalcbCbRjMtbcpeq/QltO5fgwJSCTJ0y0VJXOO7R34lRbu6LRN
-         azF/JBVvo57UOZ9Iu7S2arQg4Beohtvh9X5g3qWfPaqLb7LNAWmlq2t9l+dHMKGhf1Ma
-         7fvKsgbJo7udM49hsqKSskJzEoRGyvSGfogYi1Bw9cRhHZGwaP+CUU0i/gm2F9D7oUo7
-         YwIcfqO5ShTrxw90kky6QcSY554ZXMIzJf28mBhwTKU7MKNSeP5gcEn7YJJ3Cahbbw9W
-         z218iveK0kCwAJTFjINB+6SZY27ocXtG4z7Whwm1k4KIBPJqaOQ5kizYs32mGrEgj0FN
-         m96g==
-X-Gm-Message-State: AOUpUlH5B2eWoIbDpVBWcmWOQAg9qCyfPImhn2T6bRzsv3ZrRoxFJmZ8
-        /O73umWogciZVB3NUuPcgJI=
-X-Google-Smtp-Source: AAOMgpfdWpUGVQcG88r3My6L+8rMrZyM9GjySAAMPaMtXj/bkhEuEt/NFpqHOG8hwSGp3Psfvd9G+A==
-X-Received: by 2002:a62:283:: with SMTP id 125-v6mr20383625pfc.51.1531793395058;
-        Mon, 16 Jul 2018 19:09:55 -0700 (PDT)
+        bh=sFOYZchG5aNHLXLp146UdEXMW7F8alJ8AxLF3XjI9+4=;
+        b=mwsCWHR8L8UVr5gzeAnETKCXo/gYeEZ2K4FSEJfXiVmZ8xL4/EdzMTrsPYjS26BQhx
+         k6p533tz8VK/KP4UxJyJ3bwYX7UEyluV8dRkPs+f85o/y5lk7xYJOagm52vtmaW4y3ew
+         4oiXgwcgY6FjaPGjfa6SwoozSuNdwNd7jqYn0EybWLdddwcjWRwVEaLoGTtKrGAVMDbV
+         B0v9cUg7gqJM0hGRu5C7isLbj1XM+c3bvjnsNjniT/YXt+j/yhlY10tf2rQZSth4YRSZ
+         /te+WtmYEsWAXnww8od+i1If3GF1iLkB2fDwrRPAvXZpxxao5/C5QDoxxH27jw6U8bND
+         KYoA==
+X-Gm-Message-State: AOUpUlHs2KkE3FdrJQRJk9JfJdDUaPqB3WucVd7wk1VwT4Pie7mFhtjA
+        +GsO3EozUEAifzSggH0iln4=
+X-Google-Smtp-Source: AAOMgpfkmq/0EacaRWzF3hWDDvHXVAwzzQsD8E0hBN1KMzJ0KxYQCmXuStU7vU3VpWG8V2tAIRovBA==
+X-Received: by 2002:a63:7f16:: with SMTP id a22-v6mr17551391pgd.255.1531793396832;
+        Mon, 16 Jul 2018 19:09:56 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id i20-v6sm41597152pfj.82.2018.07.16.19.09.54
+        by smtp.gmail.com with ESMTPSA id i20-v6sm41597152pfj.82.2018.07.16.19.09.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 19:09:54 -0700 (PDT)
+        Mon, 16 Jul 2018 19:09:56 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 08/32] staging: gasket: Remove stale pointers on error allocating attr array
-Date:   Mon, 16 Jul 2018 19:09:02 -0700
-Message-Id: <20180717020926.176408-9-toddpoynor@gmail.com>
+Subject: [PATCH 09/32] staging: gasket: convert gasket_mmap_has_permissions to bool return
+Date:   Mon, 16 Jul 2018 19:09:03 -0700
+Message-Id: <20180717020926.176408-10-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717020926.176408-1-toddpoynor@gmail.com>
 References: <20180717020926.176408-1-toddpoynor@gmail.com>
@@ -81,28 +81,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-If gasket_sysfs_create_mapping() hits errors allocating the attribute
-array, remove stale pointers to device info from the mapping object.
+gasket_mmap_has_permissions() should return a boolean value.
 
 Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_sysfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/gasket/gasket_core.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_sysfs.c b/drivers/staging/gasket/gasket_sysfs.c
-index dd4d3aaa57e2f..1c5f7502e0d5e 100644
---- a/drivers/staging/gasket/gasket_sysfs.c
-+++ b/drivers/staging/gasket/gasket_sysfs.c
-@@ -225,6 +225,8 @@ int gasket_sysfs_create_mapping(
- 	mapping->attribute_count = 0;
- 	if (!mapping->attributes) {
- 		gasket_nodev_error("Unable to allocate sysfs attribute array.");
-+		mapping->device = NULL;
-+		mapping->gasket_dev = NULL;
- 		mutex_unlock(&mapping->mutex);
- 		mutex_unlock(&function_mutex);
- 		return -ENOMEM;
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 2ff328652356a..248d717e1df65 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -1241,19 +1241,19 @@ static int gasket_release(struct inode *inode, struct file *file)
+  * that the provided descriptor/range is of adequate size to hold the range to
+  * be mapped.
+  */
+-static int gasket_mmap_has_permissions(
++static bool gasket_mmap_has_permissions(
+ 	struct gasket_dev *gasket_dev, struct vm_area_struct *vma,
+ 	int bar_permissions)
+ {
+ 	int requested_permissions;
+ 	/* Always allow sysadmin to access. */
+ 	if (capable(CAP_SYS_ADMIN))
+-		return 1;
++		return true;
+ 
+ 	/* Never allow non-sysadmins to access to a dead device. */
+ 	if (gasket_dev->status != GASKET_STATUS_ALIVE) {
+ 		gasket_log_info(gasket_dev, "Device is dead.");
+-		return 0;
++		return false;
+ 	}
+ 
+ 	/* Make sure that no wrong flags are set. */
+@@ -1265,7 +1265,7 @@ static int gasket_mmap_has_permissions(
+ 			"Attempting to map a region with requested permissions "
+ 			"0x%x, but region has permissions 0x%x.",
+ 			requested_permissions, bar_permissions);
+-		return 0;
++		return false;
+ 	}
+ 
+ 	/* Do not allow a non-owner to write. */
+@@ -1275,10 +1275,10 @@ static int gasket_mmap_has_permissions(
+ 			gasket_dev,
+ 			"Attempting to mmap a region for write without owning "
+ 			"device.");
+-		return 0;
++		return false;
+ 	}
+ 
+-	return 1;
++	return true;
+ }
+ 
+ /*
 -- 
 2.18.0.203.gfac676dfb9-goog
 
