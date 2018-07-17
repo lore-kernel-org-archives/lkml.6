@@ -2,87 +2,142 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1DFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857DAECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC4DB21470
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:12:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC4DB21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 470D821470
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:12:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470D821470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbeGQJoG (ORCPT
+        id S1729747AbeGQJoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:44:06 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:55584 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbeGQJoF (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 17 Jul 2018 05:44:05 -0400
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 17 Jul 2018 11:12:26 +0200
-Received: from suselix (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Tue, 17 Jul 2018 10:11:54 +0100
-Date:   Tue, 17 Jul 2018 11:11:52 +0200
-From:   Andreas Herrmann <aherrmann@suse.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Commit 554c8aa8ecad causing severe performance degression with
- pcc-cpufreq
-Message-ID: <20180717091152.l4ixicbp6imvqtsr@suselix>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix>
- <CAJZ5v0ihkNKPrtzKynt8jgQi1JjwCm+SdoUnu4XqoPSkOroHvA@mail.gmail.com>
- <CAJZ5v0gG5XNmpR_0U+6EOFHPeVz+EhunLoQ0-sXDCBg8QL3mQw@mail.gmail.com>
- <20180717085039.kqxwbkgruhj5qxtx@suselix>
- <CAJZ5v0ivJiPhuh7Gk3KpujKjvFGAY6EYQrNdu8=kao59xqsgHw@mail.gmail.com>
+        Tue, 17 Jul 2018 05:44:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9681 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728983AbeGQJoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:44:07 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 82987EE45794C;
+        Tue, 17 Jul 2018 17:12:15 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.382.0; Tue, 17 Jul 2018
+ 17:12:11 +0800
+Subject: Re: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
+To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
+ <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
+ <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
+ <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <6f842377-120f-4a96-af49-d85e3ac76aef@huawei.com>
+Date:   Tue, 17 Jul 2018 17:12:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0ivJiPhuh7Gk3KpujKjvFGAY6EYQrNdu8=kao59xqsgHw@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 11:06:29AM +0200, Rafael J. Wysocki wrote:
-> On Tue, Jul 17, 2018 at 10:50 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
+On 2018/7/13 11:28, Yunlong Song wrote:
+> round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+> then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+> write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0, 
+> prefree of NO.2 is cleared, and no discard issued
 > 
-> [cut]
+> round2: rm data block NO.0, NO.1, NO.3, NO.4
+> all invalid, but prefree bit of NO.2 is set and cleared in round1, then 
+> prefree_map: 1 1 0 1 1
+> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no 
+> valid blocks of this section, so discard issued
+> but this time prefree bit of NO.3 and NO.4 is skipped...
+
+due to start = start_segno + sbi->segs_per_sec;
+
 > 
-> >
-> > On balance before this commit users could use pcc-cpufreq but had
-> > already suboptimal performance (compared to say intel_pstate driver
-> > which can be used changing BIOS options).
+> round3:
+> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 - > 
+> 0 0 0 0 0, no valid blocks of this section, so discard issued
+> this time prefree bit of NO.3 and NO.4 is cleared, but the discard of 
+> this section is sent again...
+
+Could you add this into commit log?
+
+Thanks,
+
 > 
-> BTW, I wonder why you need to change the BIOS options for intel_pstate to load.
+> On 2018/7/13 11:13, Chao Yu wrote:
+>> On 2018/7/12 23:09, Yunlong Song wrote:
+>>> For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
+>>> example, if the section prefree_map is ...previous section | current
+>>> section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
+>>> after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
+>>> will skip x + 3 and x + 4, but their bitmap is still set, which will
+>>> cause duplicated f2fs_issue_discard of this same section in the next
+>>> write_checkpoint, so fix it.
+>> I didn't get it, if # 2 segment is not prefree state, so it still has valid
+>> blocks there, so we won't issue discard due to below condition, right?
+>>
+>> 		if (!IS_CURSEC(sbi, secno) &&
+>> 			!get_valid_blocks(sbi, start, true))
+>>
+>> Thanks,
+>>
+>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>> ---
+>>>   fs/f2fs/segment.c | 19 +++++++++++++++++--
+>>>   1 file changed, 17 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 47b6595..fd38b61 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+>>>   		start = start_segno + sbi->segs_per_sec;
+>>>   		if (start < end)
+>>>   			goto next;
+>>> -		else
+>>> -			end = start - 1;
+>>> +		else {
+>>> +			start_segno = start;
+>>> +
+>>> +			while (1) {
+>>> +				start = find_next_bit(prefree_map, start_segno,
+>>> +									end + 1);
+>>> +				if (start >= start_segno)
+>>> +					break;
+>>> +				end = find_next_zero_bit(prefree_map, start_segno,
+>>> +										start + 1);
+>>> +				for (i = start; i < end; i++)
+>>> +					clear_bit(i, prefree_map);
+>>> +				dirty_i->nr_dirty[PRE] -= end - start;
+>>> +			}
+>>> +
+>>> +			end = start_segno - 1;
+>>> +		}
+>>>   	}
+>>>   	mutex_unlock(&dirty_i->seglist_lock);
+>>>   
+>>>
+>>
+>> .
+>>
+> 
 
-I think this is because of (in intel_pstate_init()):
-
-        /*
-         * The Intel pstate driver will be ignored if the platform
-         * firmware has its own power management modes.
-         */
-        if (intel_pstate_platform_pwr_mgmt_exists())
-                return -ENODEV;
-
-
-> It should be initialized before pcc-cpufreq (according to their
-> respective initcall levels), so in theory intel_pstate should be used
-> by default on the affected systems anyway.
-
-> What BIOS settings need to be changed for that?
-
-Already answered in other mail.
-
-
-Andreas
