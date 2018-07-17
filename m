@@ -2,197 +2,145 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0EFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:02:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3481ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40231206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:02:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lsitec-org-br.20150623.gappssmtp.com header.i=@lsitec-org-br.20150623.gappssmtp.com header.b="e8X+uUgp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40231206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lsitec.org.br
+	by mail.kernel.org (Postfix) with ESMTP id 6A698206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:02:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A698206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbeGQRfh (ORCPT
+        id S1729907AbeGQRf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:35:37 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:44539 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729686AbeGQRfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:35:37 -0400
-Received: by mail-ed1-f65.google.com with SMTP id f23-v6so1802693edr.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 10:02:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lsitec-org-br.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=II8G7DF8YJv3MVxcD1/sjIvbzw/COx9EzfLiLBSZbRY=;
-        b=e8X+uUgpj6SN/fNVBCnDzn9OqNnwNgjmSBRiLwcdMCpmjM/tpw7Sk105pDA92p477G
-         5QvvyfJ8tMubRifart8Gga1htFybYn5ne9/BW9ZOo7fnphkSn271bs4eTvRdDrhg5+w0
-         LzNJNIn+dsqZUh30CVX1tQVzjjk6MGmCI5V/CqAIHkNBYOOx+CNKOvfJMwDfq9LBdbNl
-         xVgeTP56xxNFQYHh/1gfyZwlkeGrV7rhYv3NhGGO7pDbrdfZLp+0guVNVXWaDbLwNDtw
-         xSu0fRyBhTPfFzjIQ12gBqOlR29yU8nSGJG/g8NmmklOVGMKlZfGY+xFABPcLEoDRNPB
-         xN3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=II8G7DF8YJv3MVxcD1/sjIvbzw/COx9EzfLiLBSZbRY=;
-        b=By9S2CcPmVIA+VMcBGTrQLBDfqWbt5oiuHDH5MLztwLVcEELzR1Q+ZsUH8e9Vz/OiJ
-         tW+MLzBW2gAurpS5Cg2yU2ram6Sp96B6H6/H3Z+VZR+5AbagDKwMdgR8sfLSjxLjIoTe
-         sAvodLxJk95PXFt/uF1ktIdPwfzDwrWgqXk5ST1S/4JqAjb2nWMzJbi4UbLDfMG7+yIG
-         QdQ46cXTBUbIo0w/6V9/lG+NDTeeBLHXAgIcpOOkBIDUROQZsrdY5BubCTGQKyD9nMKJ
-         PHoz/9nkp1Tm7okEef0Uuem/6y9dqDlJ1eW1TtHkDf+QankQqMZ+G3rdVW4mtmYbaigB
-         0MOg==
-X-Gm-Message-State: AOUpUlG+DSEBM2PNFFAqVoQAh0u4l+0yap2DUn0iQme36vAsaQFkKFhB
-        9MPTKX14w0A52+bn4AzdnDsN/NTixo/WMQy2wZ8xAg==
-X-Google-Smtp-Source: AAOMgpcS2ZJCxbf1nXaBxK6NUZvQlZET5YDeeUNQIYx8b9M0YZSWBC+W2+Gbe+IoNWYw+S8ZiqExcfKMPDTGjPjSpoA=
-X-Received: by 2002:a50:9aa4:: with SMTP id p33-v6mr3464536edb.218.1531846921379;
- Tue, 17 Jul 2018 10:02:01 -0700 (PDT)
+        Tue, 17 Jul 2018 13:35:56 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:44588 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729689AbeGQRf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:35:56 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ffTMh-0006bv-TU; Tue, 17 Jul 2018 11:02:20 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ffTMT-0007wD-Le; Tue, 17 Jul 2018 11:02:05 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Tue, 17 Jul 2018 11:02:00 -0600
+Message-Id: <20180717170204.30470-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Received: by 2002:a17:906:d1cd:0:0:0:0 with HTTP; Tue, 17 Jul 2018 10:02:00
- -0700 (PDT)
-From:   Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Date:   Tue, 17 Jul 2018 14:02:00 -0300
-Message-ID: <CADHB5bAztBFgWe-1v5vFfsxJgW1S3OOpV1Jkjrgk2h+pJBFw9w@mail.gmail.com>
-Subject: [PATCH] clk: actions: Add custom delay option to Actions Semi OWL pll
- clock driver
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        daniel.lezcano@linaro.org, linux@armlinux.org.uk,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= 
-        <guilherme.simoes@lsitec.org.br>,
-        Jon maddog Hall <jon.maddog.hall@gmail.com>,
-        mkzuffo@lsi.usp.br,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
-        support@cubietech.com, catalin.marinas@arm.com,
-        mturquette@baylibre.com, will.deacon@arm.com,
-        thomas liau <thomas.liau@actions-semi.com>,
-        darren@cubietech.com, robh+dt@kernel.org,
-        jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v7 0/4] Add parameter for disabling ACS redirection for P2P
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds custom delay support to Actions Semi OWL pll clock driver.
-It is required for future Actions Semi Owl series S500 SoC clock support
+Changes since v6:
+* Fixed order of operations for device specific disable function as
+  noticed by Alex
+* Rebased onto v4.18-rc5 (no conflicts)
 
-Currently, the driver waits a fixed amount of time defined by the
-macro PLL_STABILITY_WAIT_US.
-The default delay (50us) is not enough for Actions Semi Owl S500 SoC.
-It needs up to 150us.
-A new field called "delay" was added to "struct owl_pll_hw". The rest
-of the code was updated accordingly.
-Old macros "OWL_PLL_HW", "OWL_PLL" and "OWL_PLL_NO_PARENT" were kept
-(same usage), but updated to set "delay" value to
-PLL_STABILITY_WAIT_US (50us).
-New macros "OWL_PLL_HW_DELAY", "OWL_PLL_DELAY" and
-"OWL_PLL_NO_PARENT_DELAY" were created with an extra argument to set a
-custom "delay".
-This does not break S700 and S900 code and was tested on S500 based
-Lemaker Guitar Board.
 
-Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Changes since v5:
+* Add a quirk to handle the Intel SPT PCH case (as pointed out by Alex)
+* Warn in the case that we try to disable ACS redirect on a device
+  that doesn't have the ACS capability (also suggested by Alex)
+* Collect reviewed-by tag from Alex
+* Rebased onto v4.18-rc4 (no conflicts)
 
-diff -uprN -X vanilla/Documentation/dontdiff
-vanilla/drivers/clk/actions/owl-pll.c
-linux/drivers/clk/actions/owl-pll.c
---- vanilla/drivers/clk/actions/owl-pll.c    2018-07-17 13:07:16.667704000 -0300
-+++ linux/drivers/clk/actions/owl-pll.c    2018-07-17 13:42:07.396785603 -0300
-@@ -179,7 +179,7 @@ static int owl_pll_set_rate(struct clk_h
+Changes since v4:
+* Fixed a couple documentation mistakes spotted by Randy
 
-     regmap_write(common->regmap, pll_hw->reg, reg);
+Changes since v3:
+* Removed some of the cruft that was copied from the resource_alignment
+  paramater (per Alex)
+* A number of docuemntation fixes as noticed by Alex and Willy
 
--    udelay(PLL_STABILITY_WAIT_US);
-+    udelay(pll_hw->delay);
+Changes since v2:
+* Rebased onto v4.18-rc1 (no conflicts)
+* Minor tweaks to the documentation per Andy
+* Removed the "path:" prefix and use the path parsing code
+  for simple devices (as it works the same). Per a suggestion from Alex
 
-     return 0;
- }
-diff -uprN -X vanilla/Documentation/dontdiff
-vanilla/drivers/clk/actions/owl-pll.h
-linux/drivers/clk/actions/owl-pll.h
---- vanilla/drivers/clk/actions/owl-pll.h    2018-07-17 13:07:16.667704000 -0300
-+++ linux/drivers/clk/actions/owl-pll.h    2018-07-17 13:42:11.116765089 -0300
-@@ -27,6 +27,7 @@ struct owl_pll_hw {
-     u8            width;
-     u8            min_mul;
-     u8            max_mul;
-+    u32            delay;
-     const struct clk_pll_table *table;
- };
+Changes since v1:
+* Reworked pci_dev_str_match_path using strrchr as suggested by Alex
+* Collected Christian's Acks
 
-@@ -35,6 +36,51 @@ struct owl_pll {
-     struct owl_clk_common    common;
- };
+--
 
-+#define PLL_STABILITY_WAIT_US    (50)
-+
-+#define OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,            \
-+           _width, _min_mul, _max_mul, _table, _delay)            \
-+    {                                \
-+        .reg        = _reg,                    \
-+        .bfreq        = _bfreq,                \
-+        .bit_idx    = _bit_idx,                \
-+        .shift        = _shift,                \
-+        .width        = _width,                \
-+        .min_mul    = _min_mul,                \
-+        .max_mul    = _max_mul,                \
-+        .table        = _table,                \
-+        .delay        = _delay,                \
-+    }
-+
-+#define OWL_PLL_DELAY(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
-+        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
-+    struct owl_pll _struct = {                    \
-+        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
-+                     _width, _min_mul,            \
-+                     _max_mul, _table, _delay),            \
-+        .common = {                        \
-+            .regmap = NULL,                    \
-+            .hw.init = CLK_HW_INIT(_name,            \
-+                           _parent,            \
-+                           &owl_pll_ops,        \
-+                           _flags),            \
-+        },                            \
-+    }
-+
-+#define OWL_PLL_NO_PARENT_DELAY(_struct, _name, _reg, _bfreq, _bit_idx,    \
-+        _shift, _width, _min_mul, _max_mul, _table, _flags, _delay)    \
-+    struct owl_pll _struct = {                    \
-+        .pll_hw    = OWL_PLL_HW_DELAY(_reg, _bfreq, _bit_idx, _shift,    \
-+                     _width, _min_mul,            \
-+                     _max_mul, _table, _delay),            \
-+        .common = {                        \
-+            .regmap = NULL,                    \
-+            .hw.init = CLK_HW_INIT_NO_PARENT(_name,        \
-+                           &owl_pll_ops,        \
-+                           _flags),            \
-+        },                            \
-+    }
-+
- #define OWL_PLL_HW(_reg, _bfreq, _bit_idx, _shift,            \
-            _width, _min_mul, _max_mul, _table)            \
-     {                                \
-@@ -46,6 +92,7 @@ struct owl_pll {
-         .min_mul    = _min_mul,                \
-         .max_mul    = _max_mul,                \
-         .table        = _table,                \
-+        .delay        = PLL_STABILITY_WAIT_US,\
-     }
+Hi,
 
- #define OWL_PLL(_struct, _name, _parent, _reg, _bfreq, _bit_idx,    \
-@@ -78,7 +125,6 @@ struct owl_pll {
-     }
+As discussed in our PCI P2PDMA series, we'd like to add a kernel
+parameter for selectively disabling ACS redirection for select
+bridges. Seeing this turned out to be a small series in itself, we've
+decided to send this separately from the P2P work.
 
- #define mul_mask(m)        ((1 << ((m)->width)) - 1)
--#define PLL_STABILITY_WAIT_US    (50)
+This series generalizes the code already done for the resource_alignment
+option that already exists. The first patch creates a helper function
+to match PCI devices against strings based on the code that already
+existed in pci_specified_resource_alignment().
 
- static inline struct owl_pll *hw_to_owl_pll(const struct clk_hw *hw)
- {
+The second patch expands the new helper to optionally take a path of
+PCI devfns. This is to address Alex's renumbering concern when using
+simple bus-devfns. The implementation is essentially how he described it and
+similar to the Intel VT-d spec (Section 8.3.1).
+
+The final patch adds the disable_acs_redir kernel parameter which takes
+a list of PCI devices and will disable the ACS P2P Request Redirect,
+ACS P2P Completion Redirect and ACS P2P Egress Control bits for the
+selected devices. This allows P2P traffic between selected bridges and
+seeing it's done at boot, before the IOMMU groups will be created, the
+groups will match the security provided by ACS.
+
+Thanks,
+
+Logan
+
+--
+
+Logan Gunthorpe (4):
+  PCI: Make specifying PCI devices in kernel parameters reusable
+  PCI: Allow specifying devices using a base bus and path of devfns
+  PCI: Introduce disable_acs_redir quirk
+  PCI: Introduce the disable_acs_redir parameter
+
+ Documentation/admin-guide/kernel-parameters.txt |  41 +++-
+ drivers/pci/pci.c                               | 310 +++++++++++++++++++-----
+ drivers/pci/quirks.c                            |  78 +++++-
+ include/linux/pci.h                             |   5 +
+ 4 files changed, 361 insertions(+), 73 deletions(-)
+
+--
+2.11.0
