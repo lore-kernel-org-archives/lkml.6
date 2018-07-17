@@ -2,299 +2,180 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA71ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7BEECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F2E20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A31120C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:22:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pd7LnDkS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cekgg0RH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F2E20C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AeZsVzIy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A31120C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730724AbeGQKyE (ORCPT
+        id S1730813AbeGQKyn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:54:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33026 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730460AbeGQKyE (ORCPT
+        Tue, 17 Jul 2018 06:54:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52634 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730008AbeGQKyn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:54:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 651CD60B72; Tue, 17 Jul 2018 10:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531822929;
-        bh=hTfJE3afyb21E7mNyL4a7VLPb57074I7XMx8qVgTGyM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Pd7LnDkSB3hTyJq4DXOc5c0zMTA57Dya1SnbdbOMgyh/8RzcMmConmraAyyFvfEp7
-         iuhzzHJPZbW8XL0H2iMXa60yaOkgKb55n4EXeXtn6Rm9qiXm8FzIg+5wadtMR/Hy0v
-         N//DpYxPuzhZptfx5eitHqYRMBCIYM1GQjePcWe4=
-Received: from [10.252.222.164] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vviswana@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8722D6060A;
-        Tue, 17 Jul 2018 10:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531822927;
-        bh=hTfJE3afyb21E7mNyL4a7VLPb57074I7XMx8qVgTGyM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cekgg0RHKqWllGNGHQ3frKJkQQnqTKDyGXOeJ5qOkRKu9nbZCoUdXcFVS6X/cSmjl
-         gqwl/OnmOM+GZNLYu/C+KP1G7noK2guzxX6TNgwcBIeoBPY6D+PI5jErDpb7L+tveI
-         ekiftGRW6oUDHdzmIF+3iRfMXwua0pXaOSqgk0nc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8722D6060A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-Subject: Re: [PATCH RFC 1/2] mmc: sdhci: Allow platform controlled voltage
- switching
-To:     Adrian Hunter <adrian.hunter@intel.com>, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, jeremymc@redhat.com,
-        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        vbadigan@codeaurora.org, dianders@google.com,
-        sayalil@codeaurora.org, Evan Green <evgreen@chromium.org>
-References: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
- <1529583826-42020-2-git-send-email-vviswana@codeaurora.org>
- <53c6d61f-47f5-2e4e-8280-6f76f707799e@intel.com>
- <0d9b1934-d80d-a726-8094-688c97474afa@codeaurora.org>
- <78dfa5db-712b-bb0c-ad03-761371beef10@intel.com>
- <c721395a-0198-d533-5e40-42e4856f34e5@codeaurora.org>
- <6e8c713f-6569-25f3-dec5-f08001b3c6f3@intel.com>
- <8c4fb768-3d4f-da45-3115-30bc5c1058a6@codeaurora.org>
- <82109d4a-6e3c-eb80-6843-75bf7c89c113@intel.com>
-From:   Vijay Viswanath <vviswana@codeaurora.org>
-Message-ID: <63819f9c-e4a6-1a71-5cca-3efcfa843206@codeaurora.org>
-Date:   Tue, 17 Jul 2018 15:52:00 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 17 Jul 2018 06:54:43 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HAJD0F094478;
+        Tue, 17 Jul 2018 10:22:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=9W5RBjpTstN9Y+YKpXo+N/dGQKhvbQA66MOkcktD4ig=;
+ b=AeZsVzIyLSwWq5gTXfEVjzsGq3I2DqL6cnHOOq43QaqWfvjtHrDab5G/822mp9RE8aUk
+ JU1LqBo9w5qHK4lN3m7rQ2TElRuMecmiJ0YvNkE35+tRnL5pzJNXdG1c94bDuWm+Ka+g
+ 49cYYSlsWFrpPmUchmFBqLn5P1eCLIByw9Y8PCLAAwPLCs/j5fVtQjAIJcsnIuCdTgyb
+ RPWt6xXvNoUAe/HJLELZWryWF5DCS0uAGLzwuDwJ89twGnFLOub5MJlKw5/tuxEY4lbG
+ htf72+K/P7Dl4bdmRlkzW7JkfYWC//QRJkATVLDlcfi+swSJwWQ4SrrguGfr11zNLVjz WA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2k7a3401kd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Jul 2018 10:22:44 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6HAMhu6003469
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Jul 2018 10:22:43 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6HAMhQZ017836;
+        Tue, 17 Jul 2018 10:22:43 GMT
+Received: from mwanda (/197.179.115.196)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Jul 2018 03:22:42 -0700
+Date:   Tue, 17 Jul 2018 13:22:34 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
+        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
+Subject: Re: [PATCH 16/32] staging: gasket: always allow root open for write
+Message-ID: <20180717102234.3spplwaf5n5wmpcl@mwanda>
+References: <20180717020926.176408-1-toddpoynor@gmail.com>
+ <20180717020926.176408-17-toddpoynor@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <82109d4a-6e3c-eb80-6843-75bf7c89c113@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717020926.176408-17-toddpoynor@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807170107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 16, 2018 at 07:09:10PM -0700, Todd Poynor wrote:
+> --- a/drivers/staging/gasket/apex_driver.c
+> +++ b/drivers/staging/gasket/apex_driver.c
+> @@ -630,13 +630,10 @@ static bool is_gcb_in_reset(struct gasket_dev *gasket_dev)
+>  static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
 
+This function name is a bit of out of date.
 
-On 7/17/2018 3:24 PM, Adrian Hunter wrote:
-> On 17/07/18 12:45, Vijay Viswanath wrote:
->>
->>
->> On 7/17/2018 2:12 PM, Adrian Hunter wrote:
->>> On 17/07/18 11:40, Vijay Viswanath wrote:
->>>>
->>>>
->>>> On 7/17/2018 1:00 PM, Adrian Hunter wrote:
->>>>> On 17/07/18 08:14, Vijay Viswanath wrote:
->>>>>>
->>>>>>
->>>>>> On 7/10/2018 4:37 PM, Adrian Hunter wrote:
->>>>>>> On 21/06/18 15:23, Vijay Viswanath wrote:
->>>>>>>> Some controllers can have internal mechanism to inform the SW that it
->>>>>>>> is ready for voltage switching. For such controllers, changing voltage
->>>>>>>> before the HW is ready can result in various issues.
->>>>>>>>
->>>>>>>> Add a quirk, which can be used by drivers of such controllers.
->>>>>>>>
->>>>>>>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->>>>>>>> ---
->>>>>>>>      drivers/mmc/host/sdhci.c | 20 +++++++++++++++-----
->>>>>>>>      drivers/mmc/host/sdhci.h |  2 ++
->>>>>>>>      2 files changed, 17 insertions(+), 5 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>>>>>>> index 1c828e0..f0346d4 100644
->>>>>>>> --- a/drivers/mmc/host/sdhci.c
->>>>>>>> +++ b/drivers/mmc/host/sdhci.c
->>>>>>>> @@ -1615,7 +1615,8 @@ void sdhci_set_power_noreg(struct sdhci_host
->>>>>>>> *host,
->>>>>>>> unsigned char mode,
->>>>>>>>      void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
->>>>>>>>                   unsigned short vdd)
->>>>>>>>      {
->>>>>>>> -    if (IS_ERR(host->mmc->supply.vmmc))
->>>>>>>> +    if (IS_ERR(host->mmc->supply.vmmc) ||
->>>>>>>> +            (host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>>>>>>
->>>>>>> I think you should provide your own ->set_power() instead of this
->>>>>>>
->>>>>>
->>>>>> will do
->>>>>>
->>>>>>>>              sdhci_set_power_noreg(host, mode, vdd);
->>>>>>>>          else
->>>>>>>>              sdhci_set_power_reg(host, mode, vdd);
->>>>>>>> @@ -2009,7 +2010,9 @@ int sdhci_start_signal_voltage_switch(struct
->>>>>>>> mmc_host *mmc,
->>>>>>>>              ctrl &= ~SDHCI_CTRL_VDD_180;
->>>>>>>>              sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>>>>>>      -        if (!IS_ERR(mmc->supply.vqmmc)) {
->>>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
->>>>>>>> +                !(host->quirks2 &
->>>>>>>> +                    SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
->>>>>>>
->>>>>>> And your own ->start_signal_voltage_switch()
->>>>>>>
->>>>>>
->>>>>> sdhci_msm_start_signal_voltage_switch() would be an exact copy of
->>>>>> sdhci_start_signal_voltage_switch()..... will incorporate this if not
->>>>>> using
->>>>>> quirk.
->>>>>>
->>>>>>>>                  ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>>>>>>                  if (ret) {
->>>>>>>>                      pr_warn("%s: Switching to 3.3V signalling voltage
->>>>>>>> failed\n",
->>>>>>>> @@ -2032,7 +2035,8 @@ int sdhci_start_signal_voltage_switch(struct
->>>>>>>> mmc_host *mmc,
->>>>>>>>          case MMC_SIGNAL_VOLTAGE_180:
->>>>>>>>              if (!(host->flags & SDHCI_SIGNALING_180))
->>>>>>>>                  return -EINVAL;
->>>>>>>> -        if (!IS_ERR(mmc->supply.vqmmc)) {
->>>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
->>>>>>>> +            !(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
->>>>>>>>                  ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>>>>>>                  if (ret) {
->>>>>>>>                      pr_warn("%s: Switching to 1.8V signalling voltage
->>>>>>>> failed\n",
->>>>>>>> @@ -3485,7 +3489,10 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>>>>>>           * the host can take the appropriate action if regulators are
->>>>>>>> not
->>>>>>>>           * available.
->>>>>>>>           */
->>>>>>>> -    ret = mmc_regulator_get_supply(mmc);
->>>>>>>> +    if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>>>>>>
->>>>>>> Since we expect mmc_regulator_get_supply() to have been called, this
->>>>>>> could
->>>>>>> be:
->>>>>>>
->>>>>>>        if (!mmc->supply.vmmc) {
->>>>>>>            ret = mmc_regulator_get_supply(mmc);
->>>>>>>            enable_vqmmc = true;
->>>>>>>        } else {
->>>>>>>            ret = 0;
->>>>>>>        }
->>>>>>>>> +        ret = mmc_regulator_get_supply(mmc);
->>>>>>>> +    else
->>>>>>>> +        ret = 0;
->>>>>>>>          if (ret)
->>>>>>>>              return ret;
->>>>>>>>      @@ -3736,7 +3743,10 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>>>>>>            /* If vqmmc regulator and no 1.8V signalling, then there's no
->>>>>>>> UHS */
->>>>>>>>          if (!IS_ERR(mmc->supply.vqmmc)) {
->>>>>>>> -        ret = regulator_enable(mmc->supply.vqmmc);
->>>>>>>> +        if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>>>>>>
->>>>>>> And this could be:
->>>>>>>
->>>>>>>            if (enable_vqmmc)
->>>>>>>                ret = regulator_enable(mmc->supply.vqmmc);
->>>>>>>            else
->>>>>>>                ret = 0;
->>>>>>>     > However, you still need to ensure
->>>>>>> regulator_disable(mmc->supply.vqmmc) is
->>>>>>> only called if regulator_enable() was called.
->>>>>> I missed this. Will cover it.
->>>>>>
->>>>>> Also I missed one more place where we are doing regulator_disable. During
->>>>>> sdhci-msm unbinding, we would end up doing an extra regulator disable
->>>>>> (thanks Evan for pointing it out) in sdhci_remove_host.
->>>>>>
->>>>>> To avoid the quirk( or having any flag), it would require copying the code
->>>>>> of sdhci_start_signal_voltage_switch() and sdhci_remove_host() and
->>>>>> creating
->>>>>
->>>>> You do not need to duplicate sdhci_remove_host(), just change it so that it
->>>>> only  disables what was enabled i.e.
->>>>>
->>>>>       if (host->vqmmc_enabled)
->>>>>           regulator_disable(mmc->supply.vqmmc);
->>>>>
->>>>
->>>> Ok, so we will be adding a new flag "vqmmc_enabled" in sdhci_host, ryt ?
->>>
->>> Yes
->>>
->>
->> Ok.
->> Any particular reason why we are avoiding quirk and instead adding a new flag ?
-> 
-> It moves more in the direction of letting drivers do what they want, rather
-> than trying to make making SDHCI do everything.
-> 
+>  {
+>  	struct gasket_dev *gasket_dev = filp->private_data;
+> -	int root = capable(CAP_SYS_ADMIN);
+> -	int is_owner = gasket_dev->dev_info.ownership.is_owned &&
+> -		       current->tgid == gasket_dev->dev_info.ownership.owner;
+> +	fmode_t write;
+>  
+> -	if (root || is_owner)
+> -		return 1;
+> -	return 0;
+> +	write = filp->f_mode & FMODE_WRITE;
+> +	return write;
 
-ok will incorporate the changes in next version.
+This doesn't match the comment because it returns 0x2 or zero.
 
->>
->>>> Just wanted to clarify
->>>>
->>>>>> 2 new functions in sdhci_msm layer which would do the exact same as above,
->>>>>> with just the regulator parts removed.
->>>>>>
->>>>>> This looks messy (considering any future changes to the 2 sdhci API will
->>>>>> need to be copied to their duplicate sdhci_msm API) and a bit overkill to
->>>>>> avoid quirk. At the same time, I don't know how useful such a quirk
->>>>>> would be
->>>>>> to other platform drivers.
->>>>>>
->>>>>> Please let me know your view/suggestions.
->>>>>
->>>>> Let's try without the quirk.
->>>>>
->>>>>>>
->>>>>>>> +            ret = regulator_enable(mmc->supply.vqmmc);
->>>>>>>> +        else
->>>>>>>> +            ret = 0;
->>>>>>>>              if (!regulator_is_supported_voltage(mmc->supply.vqmmc,
->>>>>>>> 1700000,
->>>>>>>>                                  1950000))
->>>>>>>>                  host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
->>>>>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>>>>>>> index 23966f8..3b0c97a 100644
->>>>>>>> --- a/drivers/mmc/host/sdhci.h
->>>>>>>> +++ b/drivers/mmc/host/sdhci.h
->>>>>>>> @@ -450,6 +450,8 @@ struct sdhci_host {
->>>>>>>>       * obtainable timeout.
->>>>>>>>       */
->>>>>>>>      #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT            (1<<17)
->>>>>>>> +/* Regulator voltage changes are being done from platform layer */
->>>>>>>> +#define SDHCI_QUIRK2_INTERNAL_PWR_CTL                (1<<18)
->>>>>>>
->>>>>>> So maybe the quirk is not needed.
->>>>>>>
->>>>>>>>            int irq;        /* Device IRQ */
->>>>>>>>          void __iomem *ioaddr;    /* Mapped address */
->>>>>>>>
->>>>>>>
->>>>>>
->>>>>> Thanks for the review & suggestions!
->>>>>> Vijay
->>>>>>
->>>>>
->>>>
->>>
->>> -- 
->>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
-> 
+	return !!(filp->f_mode & FMODE_WRITE);
 
-Thanks,
-Vijay
+>  }
+>  
+>  /*
+> diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+> index ae20b7ff9569b..9d1bb3caf6de2 100644
+> --- a/drivers/staging/gasket/gasket_core.c
+> +++ b/drivers/staging/gasket/gasket_core.c
+> @@ -1085,6 +1085,7 @@ static int gasket_open(struct inode *inode, struct file *filp)
+>  	char task_name[TASK_COMM_LEN];
+>  	struct gasket_cdev_info *dev_info =
+>  	    container_of(inode->i_cdev, struct gasket_cdev_info, cdev);
+> +	int is_root = capable(CAP_SYS_ADMIN);
+>  
+>  	gasket_dev = dev_info->gasket_dev_ptr;
+>  	driver_desc = gasket_dev->internal_desc->driver_desc;
+> @@ -1098,7 +1099,7 @@ static int gasket_open(struct inode *inode, struct file *filp)
+>  		"Attempting to open with tgid %u (%s) (f_mode: 0%03o, "
+>  		"fmode_write: %d is_root: %u)",
+>  		current->tgid, task_name, filp->f_mode,
+> -		(filp->f_mode & FMODE_WRITE), capable(CAP_SYS_ADMIN));
+> +		(filp->f_mode & FMODE_WRITE), is_root);
+>  
+>  	/* Always allow non-writing accesses. */
+>  	if (!(filp->f_mode & FMODE_WRITE)) {
+> @@ -1112,8 +1113,9 @@ static int gasket_open(struct inode *inode, struct file *filp)
+>  		gasket_dev, "Current owner open count (owning tgid %u): %d.",
+>  		ownership->owner, ownership->write_open_count);
+>  
+> -	/* Opening a node owned by another TGID is an error (even root.) */
+> -	if (ownership->is_owned && ownership->owner != current->tgid) {
+> +	/* Opening a node owned by another TGID is an error (unless root) */
+> +	if (ownership->is_owned && ownership->owner != current->tgid &&
+> +	    !is_root) {
+>  		gasket_log_error(
+>  			gasket_dev,
+>  			"Process %u is opening a node held by %u.",
+> diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+> index 0c2f85cf54480..17431d14e6ef1 100644
+> --- a/drivers/staging/gasket/gasket_ioctl.c
+> +++ b/drivers/staging/gasket/gasket_ioctl.c
+> @@ -171,7 +171,7 @@ long gasket_is_supported_ioctl(uint cmd)
+>   */
+>  static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
+>  {
+> -	uint alive, root, device_owner;
+> +	uint alive;
+>  	fmode_t read, write;
+>  	struct gasket_dev *gasket_dev = (struct gasket_dev *)filp->private_data;
+>  
+> @@ -183,33 +183,30 @@ static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
+>  			alive, gasket_dev->status);
+>  	}
+>  
+> -	root = capable(CAP_SYS_ADMIN);
+>  	read = filp->f_mode & FMODE_READ;
+>  	write = filp->f_mode & FMODE_WRITE;
+
+write = !!(filp->f_mode & FMODE_WRITE);
+
+> -	device_owner = (gasket_dev->dev_info.ownership.is_owned &&
+> -			current->tgid == gasket_dev->dev_info.ownership.owner);
+>  
+>  	switch (cmd) {
+>  	case GASKET_IOCTL_RESET:
+>  	case GASKET_IOCTL_CLEAR_INTERRUPT_COUNTS:
+> -		return root || (write && device_owner);
+> +		return write;
+
+regards,
+dan carpenter
+
