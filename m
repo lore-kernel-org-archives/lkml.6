@@ -2,107 +2,109 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168D1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37508ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B87F420693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C339E20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:58:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZtuZRdP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87F420693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="QDVasLyD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C339E20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731064AbeGQW3B (ORCPT
+        id S1730828AbeGQWdJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 18:29:01 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:40575 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729754AbeGQW3B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 18:29:01 -0400
-Received: by mail-vk0-f65.google.com with SMTP id s23-v6so1422883vks.7;
-        Tue, 17 Jul 2018 14:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=U/dnaiGtJuYHtI7VDkkqVBq5rgXXs7fzI/Uh6IC24OU=;
-        b=QZtuZRdPs8VFR4+yglZZIFU3/pvLS3IWAm+ZVa7j69l72QtI/DgHr1TfKdWNtZFgeE
-         yzBL54Hb3xRMgEUYit0/YRXaXC7f0KmQTXrwk2cSQXTbwmDVEpcRPFi1tAnhJf0pdGSP
-         FYbtGj9GTMOjnpLlPM6lUxlHBjQK7pJkpOk3Lxg3At3tzTTqy9FG6/JW4E5O5cPdB7SQ
-         8SKnQBeFnSCrlFI4V6FVtEhVac7a+6gzwIKZOFf9ScHvu0SNFkuQVpf+lOMz/TEI8iUL
-         87Pbx3qaluNYFh7TaL3C3Fcm9ArefNd+kenYPJBfJ0oW+ZiEe94f0+o7WRjFRuzgtvcS
-         kAYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=U/dnaiGtJuYHtI7VDkkqVBq5rgXXs7fzI/Uh6IC24OU=;
-        b=cZCmb1CUU7G57t42wfJKJBrMGlw79VoB4jXuqgauqpSl/hDlO2pxk10qDgNeARd5eI
-         vBcwl3IeuF3zc+bd0jJAv9Xxalw//R+z+litva95kVeeexyaCk45th/TiqpPIu6COWBo
-         is/NmfwVhIVohflP+f1uCj5ffBzHioaf+cMyeDa9hicMb9RA6jEu+u7SdHz2VO1YH267
-         ZmODyuKGYvncKBOofpc6/aDhn+HVLtZHgzgwpiDcLetMzqSaRrONRnlGgPn0LP+yAarn
-         0yMBFXhDohmKLxStctn9VY9ge0lbdFi1+ld1wJUng0idoxQ3EP0PClBmsloBDID/ICAX
-         t0yw==
-X-Gm-Message-State: AOUpUlHRHD4e1SpXP8wsP10L1/B7e1MEqRxXLVxuv9Yj0gexI1mIZnO1
-        dUmvwf98MhGm7HubtkI3iFqrzF1X1GFpXgCZtUk=
-X-Google-Smtp-Source: AAOMgpdWowQcVNvtWO/wfPgPZYdBf4FiUWOSGxGiqz0K+Fk8LMUWPVw6dMa4YUwX8H2W+NIX9qhsQSM85t/ccrveIcs=
-X-Received: by 2002:a1f:20d4:: with SMTP id g203-v6mr1995788vkg.176.1531864462359;
- Tue, 17 Jul 2018 14:54:22 -0700 (PDT)
+        Tue, 17 Jul 2018 18:33:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:43897 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729675AbeGQWdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 18:33:09 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41VZ0h00qpz9s21;
+        Wed, 18 Jul 2018 07:58:27 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531864708;
+        bh=6ICcQ9YZo4teDZJb2ctwvf0vwJZcv99WB+xtfaVDOUo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QDVasLyDFYjF0246NFoX/kSIEQhd+UWhZ/OuNjpfFEJttOappM9wBiv49l4Qkr6wg
+         aO+xN+K47yInU9a1rO+Scx3MC5RvgXBMd+BXV1a4Cs7sfpLFaVI/pZ0LUtXEVfdTT3
+         Z/W7lZJyQIkGjXFOs4I+0MHFs6PQ6lW/ufGUVO0IAlQZEgTei+lum6m4j/LWvuCobT
+         aB1DSoKfESfwpSTE4DE6nCviPmwErRIeNEH2QdEZalt/kBOTNdP7lsqQZ82SDHxeUk
+         YLkAqD062YI4KwxwlmCU+cwZ17HsKKKzMtBWIOBBiZoUWg4/OzMMINv7fDuzCZeh9S
+         qnecvY/aRlCUA==
+Date:   Wed, 18 Jul 2018 07:57:50 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commits in the h8300 tree
+Message-ID: <20180718075750.037fd403@canb.auug.org.au>
+In-Reply-To: <87o9f6l0ck.wl-ysato@users.sourceforge.jp>
+References: <20180717052419.11610795@canb.auug.org.au>
+        <87o9f6l0ck.wl-ysato@users.sourceforge.jp>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 14:54:21
- -0700 (PDT)
-In-Reply-To: <20180717214212.GE3211@piout.net>
-References: <20180717142314.32337-1-alexandre.belloni@bootlin.com>
- <20180717142314.32337-2-alexandre.belloni@bootlin.com> <CAHp75Vc4SrMXznc6PSrO2Lfrc3gspu_g1QYjuFDWT9-J=C+bjw@mail.gmail.com>
- <CAHp75VfRS_gSv6x22M1TiTariUftF04sLyd84dQpxudOmT0s7w@mail.gmail.com> <20180717214212.GE3211@piout.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 18 Jul 2018 00:54:21 +0300
-Message-ID: <CAHp75VdEkQ=AC8xUBno7qp0E+cXqwq03WOtVB3sX+Z6zthDJSw@mail.gmail.com>
-Subject: Re: [PATCH 1/5] spi: dw: fix possible race condition
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Mark Brown <broonie@kernel.org>, James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microsemi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ni.5GwuzH1_MzH_g4yD+hnb"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 12:42 AM, Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 18/07/2018 00:30:49+0300, Andy Shevchenko wrote:
->> On Wed, Jul 18, 2018 at 12:30 AM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->> > On Tue, Jul 17, 2018 at 5:23 PM, Alexandre Belloni
->> > <alexandre.belloni@bootlin.com> wrote:
->>
->> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->> >
->> >> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
->>
->> Shouldn't it have a Fixes tag?
->>
->
-> Well, I'm not sure how far this can be backported. It also seems nobody
-> ever hit that while our hardware will hit it at every boot.
->
-> I'll try to find out.
+--Sig_/ni.5GwuzH1_MzH_g4yD+hnb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-No-one enabled CONFIG_DEBUG_SHIRQ?
+Hi Yoshinori,
 
--- 
-With Best Regards,
-Andy Shevchenko
+On Tue, 17 Jul 2018 17:42:35 +0900 Yoshinori Sato <ysato@users.sourceforge.=
+jp> wrote:
+>
+> On Tue, 17 Jul 2018 04:24:19 +0900, Stephen Rothwell wrote:
+> >=20
+> > Commit
+> >=20
+> >   39f077046d46 ("h8300: switch to NO_BOOTMEM")
+> >=20
+> > is missing a Signed-off-by from its committer.
+> >=20
+> > Commits
+> >=20
+> >   d6bde68ad18e ("h8300: Add missing output register.")
+> >   5aa2f1573e0c ("h8300: gcc-8.1 fix")
+> >=20
+> > are missing a Signed-off-by from their author and committer.
+>=20
+> OK. Fixed.
+
+Not really, you now have those patches in your tree twice :-(  To fix
+the missing SOB lines you really needed to rewrite your branch without
+the original commits above.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ni.5GwuzH1_MzH_g4yD+hnb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltOZl4ACgkQAVBC80lX
+0GzCVwf/a7etmJTu01sQD63kSbLkW4nsah1W6eALEpuVwk9hGXiUNhAody4ShtAU
+dtz32oHrMEZeSW/IGUk9PVzzs6YuqJ7gGFuwpSiBf6bKDUtc77I41HKA8hjU6YhW
++cyjrdcP3QDySbvP8HIGz84pUJGz0iWgbwQBKO3xB/hPA6RipZwYUZ8/9CRpe3Pj
+tH29IcUZ9TwfIH2HndXctCKUATEuBuWnYiogeivKp3lbd4pCynUtRILPx9RcsnnY
+PjRWqrH+MrXc06RyDuZ/B39Gl91XmSFGuW8WnaDOj9JXoLNSi0s7n36/uuSoWqde
+tXpa8x1f+JColuvVsN32Ak5/B5lBxw==
+=ORMB
+-----END PGP SIGNATURE-----
+
+--Sig_/ni.5GwuzH1_MzH_g4yD+hnb--
