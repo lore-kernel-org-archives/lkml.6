@@ -2,104 +2,346 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E3CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E57ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2C620C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiTeHX1a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2C620C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 43C792083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C792083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731569AbeGQNCO (ORCPT
+        id S1731612AbeGQNCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:02:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728515AbeGQNCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:02:14 -0400
-Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8604420C0A;
-        Tue, 17 Jul 2018 12:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531830587;
-        bh=O3xvb6Wke7ojEh0Rmt4s5tVke9CS6pW1vIBvxLHz8nA=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=RiTeHX1aDP+yA3amjuaa5jNtsl6X2N8mTqCKk7Ti0PPBw27jLeGxE+CBVnXF0RpWC
-         n0UqF/XrCZQu8mjMzA1Md9ERLTucnKOZkiRBBKNBDtCntLvTNc2w1zLMkm0swG+PJ+
-         a4COLZ6JWGoN2BcOD4qShIjdoay/cQSpASxM1LEM=
-Received: by mail-wm0-f46.google.com with SMTP id s14-v6so1345815wmc.1;
-        Tue, 17 Jul 2018 05:29:47 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEzPwwTLB4Ppq70cMTKvf/WTOO2Ern+LS8fGvZWuZ7P7SrMSgWb
-        D/xgT9022+qN0CrlijM7NwOuP4KGiZEqf3ox+To=
-X-Google-Smtp-Source: AAOMgpelckraYnH3Y6FSecJQEh9+0IiSSQ2j9Efd2Cvd3jyp+GKfd3mNJazY9xgGm2poMZb82UBjoOLJ0zMZHcDcwZY=
-X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr1261579wma.72.1531830586094;
- Tue, 17 Jul 2018 05:29:46 -0700 (PDT)
+        Tue, 17 Jul 2018 09:02:18 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:52618 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728515AbeGQNCS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 09:02:18 -0400
+Received: from [IPv6:2001:983:e9a7:1:4d0:88d5:cbb8:db75] ([IPv6:2001:983:e9a7:1:4d0:88d5:cbb8:db75])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id fP6zfZE7joj71fP70fzGd3; Tue, 17 Jul 2018 14:29:50 +0200
+Subject: Re: [PATCH v7 3/6] cx25840: add pin to pad mapping and output format
+ configuration
+To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Cc:     Michael Krufky <mkrufky@linuxtv.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andy Walls <awalls@md.metrocast.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-media@vger.kernel.org
+References: <cover.1530565770.git.mail@maciej.szmigiero.name>
+ <984fbf6359a896f156ddf64b1fb8211c3cca54e3.1530565770.git.mail@maciej.szmigiero.name>
+ <3421f58a-3a60-28f1-830c-66f5d1bf5517@xs4all.nl>
+ <b9ab4947-b306-3f9e-1951-a4fd62987f8f@maciej.szmigiero.name>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <718c9066-07f0-2b80-f2eb-4f7681b6c9cd@xs4all.nl>
+Date:   Tue, 17 Jul 2018 14:29:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:29:45
- -0700 (PDT)
-In-Reply-To: <1531822342-4293-5-git-send-email-linux.amoon@gmail.com>
-References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com> <1531822342-4293-5-git-send-email-linux.amoon@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 17 Jul 2018 14:29:45 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPc256dCWWWaoJBOB9NUc=CUYtqgfeKh=LBOoFAfh_T8Ng@mail.gmail.com>
-Message-ID: <CAJKOXPc256dCWWWaoJBOB9NUc=CUYtqgfeKh=LBOoFAfh_T8Ng@mail.gmail.com>
-Subject: Re: [PATCH 5/5] ARM: dts: exynos: add tmu aliases nodes
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b9ab4947-b306-3f9e-1951-a4fd62987f8f@maciej.szmigiero.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfPBPLa6JcRR/50ZHz2XP0Gng0xUx14Bmdtwz9F9bDROmevOpHKhUiBjTvDv367TV92iZ7GptnCApYdacU41r1+9/ebxf8ZvZcLkfcVF42wO8xn3G7DxE
+ xOwP/CP/2cn2Cznh3eJtJT9FW96TGazR1YJ+gggSscereotvYl+f8vDreWla1fdzcLeT8zQ4bMPyCmHTdu0Orql7qng1bw0QzZowJp50/t7lqcWJEiEmOsnk
+ pIFM/86BD6gysE/YLxduZo6WQ9VEvx4Tu86UgPIhUi5DwRt+uWx6G0oWssS5nZJu9mUWF4D4B3rPPAjqZT1M8gsXzOg8bXgjNcyaYs/Qe4I8qz1RsOpB+y7M
+ 9s4+d+5psDiDPL3cQYwsjIVOdnifsTM6UtRr6JiGX7MWOFmHvP3rA+B0f0YZik4ZncsNb6gwsoz2zOC7hhDooiXqIbRbPVpUsEo+qJ3BRpnXJGKuWzM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
-> add tmuctrl aliases node for exynos542x
+On 10/07/18 23:47, Maciej S. Szmigiero wrote:
+> Hi Hans,
+> 
+> On 04.07.2018 11:05, Hans Verkuil wrote:
+>> On 02/07/18 23:23, Maciej S. Szmigiero wrote:
+> (..)
+>>> @@ -316,6 +319,260 @@ static int cx23885_s_io_pin_config(struct v4l2_subdev *sd, size_t n,
+>>>  	return 0;
+>>>  }
+>>>  
+>>> +static u8 cx25840_function_to_pad(struct i2c_client *client, u8 function)
+>>> +{
+>>> +	switch (function) {
+>>> +	case CX25840_PAD_ACTIVE:
+>>> +		return 1;
+>>> +
+>>> +	case CX25840_PAD_VACTIVE:
+>>> +		return 2;
+>>> +
+>>> +	case CX25840_PAD_CBFLAG:
+>>> +		return 3;
+>>> +
+>>> +	case CX25840_PAD_VID_DATA_EXT0:
+>>> +		return 4;
+>>> +
+>>> +	case CX25840_PAD_VID_DATA_EXT1:
+>>> +		return 5;
+>>> +
+>>> +	case CX25840_PAD_GPO0:
+>>> +		return 6;
+>>> +
+>>> +	case CX25840_PAD_GPO1:
+>>> +		return 7;
+>>> +
+>>> +	case CX25840_PAD_GPO2:
+>>> +		return 8;
+>>> +
+>>> +	case CX25840_PAD_GPO3:
+>>> +		return 9;
+>>> +
+>>> +	case CX25840_PAD_IRQ_N:
+>>> +		return 10;
+>>> +
+>>> +	case CX25840_PAD_AC_SYNC:
+>>> +		return 11;
+>>> +
+>>> +	case CX25840_PAD_AC_SDOUT:
+>>> +		return 12;
+>>> +
+>>> +	case CX25840_PAD_PLL_CLK:
+>>> +		return 13;
+>>> +
+>>> +	case CX25840_PAD_VRESET:
+>>> +		return 14;
+>>> +
+>>> +	default:
+>>> +		if (function != CX25840_PAD_DEFAULT)
+>>> +			v4l_err(client,
+>>> +				"invalid function %u, assuming default\n",
+>>> +				(unsigned int)function);
+>>> +		return 0;
+>>> +	}
+>>
+>> Unless I am mistaken this function boils down to:
+>>
+>> static u8 cx25840_function_to_pad(struct i2c_client *client, u8 function)
+>> {
+>> 	return function > CX25840_PAD_VRESET ? 0 : function;
+>> }
+> 
+> Yes, you are right these functions are equivalent (sans a warning when
+> a caller passes an invalid function).
+> 
+> However, these values (CX25840_PAD_*) were meant to be driver-internal.
+> If we use them also as register value constants (which is what
+> cx25840_function_to_pad() is supposed to return) then we'll need to add
+> a comment to their enum cx25840_io_pad so nobody shuffles them or changes
+> their values by mistake.
 
-Please use full sentence, starting with capital letter and ending with
-a dot. Also please explain why you need tmuctrl aliases.
+Right. Just add a comment and keep it simple.
 
->
-> CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  arch/arm/boot/dts/exynos5420-peach-pit.dts         |  8 ++++----
->  arch/arm/boot/dts/exynos5420.dtsi                  | 20 ++++++++++++--------
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 ++++----
->  arch/arm/boot/dts/exynos5422-odroidhc1.dts         |  8 ++++----
->  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  8 ++++----
->  arch/arm/boot/dts/exynos5800-peach-pi.dts          |  8 ++++----
->  6 files changed, 32 insertions(+), 28 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> index 57c2332..ff79f0b 100644
-> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-> @@ -1061,19 +1061,19 @@
->         status = "okay";
->  };
->
-> -&tmu_cpu0 {
-> +&tmu_cpu_0 {
+> 
+>>> @@ -1647,6 +1924,119 @@ static void log_audio_status(struct i2c_client *client)
+>>>  	}
+>>>  }
+>>>  
+>>> +#define CX25840_VCONFIG_OPTION(state, cfg_in, opt_msk)			\
+>>> +	do {								\
+>>> +		if ((cfg_in) & (opt_msk)) {				\
+>>> +			(state)->vid_config &= ~(opt_msk);		\
+>>> +			(state)->vid_config |= (cfg_in) & (opt_msk);	\
+>>> +		}							\
+>>> +	} while (0)
+>>> +
+>>> +#define CX25840_VCONFIG_SET_BIT(state, opt_msk, voc, idx, bit, oneval)	\
+>>> +	do {								\
+>>> +		if ((state)->vid_config & (opt_msk)) {			\
+>>> +			if (((state)->vid_config & (opt_msk)) ==	\
+>>> +			    (oneval))					\
+>>> +				(voc)[idx] |= BIT(bit);		\
+>>> +			else						\
+>>> +				(voc)[idx] &= ~BIT(bit);		\
+>>> +		}							\
+>>> +	} while (0)
+>>> +
+>>> +int cx25840_vconfig(struct i2c_client *client, u32 cfg_in)
+>>> +{
+>>> +	struct cx25840_state *state = to_state(i2c_get_clientdata(client));
+>>> +	u8 voutctrl[3];
+>>> +	unsigned int i;
+>>> +
+>>> +	/* apply incoming options to the current state */
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_FMT_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_RES_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_VBIRAW_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_ANCDATA_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_TASKBIT_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_ACTIVE_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_VALID_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_HRESETW_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_CLKGATE_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_DCMODE_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_IDID0S_MASK);
+>>> +	CX25840_VCONFIG_OPTION(state, cfg_in, CX25840_VCONFIG_VIPCLAMP_MASK);
+>>
+>> This appears to be a very complex way of saying:
+>>
+>> 	state->vid_config = cfg_in;
+> 
+> This is supposed to change in vid_config only these options that are set
+> in the incoming cfg_in, leaving the rest as-is.
+> 
+> If the code simply assigns cfg_in to vid_config it will also clear all the
+> existing options.
 
-This looks irrelevant to the topic of adding aliases.
+Ah yes, but see my reply below at the end.
 
-Best regards,
-Krzysztof
+> 
+>>
+>>> +
+>>> +	for (i = 0; i < 3; i++)
+>>> +		voutctrl[i] = cx25840_read(client, 0x404 + i);
+>>> +
+>>> +	/* apply state to hardware regs */
+>>> +	if (state->vid_config & CX25840_VCONFIG_FMT_MASK)
+>>> +		voutctrl[0] &= ~3;
+>>> +	switch (state->vid_config & CX25840_VCONFIG_FMT_MASK) {
+>>> +	case CX25840_VCONFIG_FMT_BT656:
+>>> +		voutctrl[0] |= 1;
+>>> +		break;
+>>> +
+>>> +	case CX25840_VCONFIG_FMT_VIP11:
+>>> +		voutctrl[0] |= 2;
+>>> +		break;
+>>> +
+>>> +	case CX25840_VCONFIG_FMT_VIP2:
+>>> +		voutctrl[0] |= 3;
+>>> +		break;
+>>> +
+>>> +	case CX25840_VCONFIG_FMT_BT601:
+>>> +		/* zero */
+>>> +	default:
+>>> +		break;
+>>> +	}
+>>> +
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_RES_MASK, voutctrl,
+>>> +				0, 2, CX25840_VCONFIG_RES_10BIT);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_VBIRAW_MASK, voutctrl,
+>>> +				0, 3, CX25840_VCONFIG_VBIRAW_ENABLED);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_ANCDATA_MASK, voutctrl,
+>>> +				0, 4, CX25840_VCONFIG_ANCDATA_ENABLED);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_TASKBIT_MASK, voutctrl,
+>>> +				0, 5, CX25840_VCONFIG_TASKBIT_ONE);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_ACTIVE_MASK, voutctrl,
+>>> +				1, 2, CX25840_VCONFIG_ACTIVE_HORIZONTAL);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_VALID_MASK, voutctrl,
+>>> +				1, 3, CX25840_VCONFIG_VALID_ANDACTIVE);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_HRESETW_MASK, voutctrl,
+>>> +				1, 4, CX25840_VCONFIG_HRESETW_PIXCLK);
+>>> +
+>>> +	if (state->vid_config & CX25840_VCONFIG_CLKGATE_MASK)
+>>> +		voutctrl[1] &= ~(3 << 6);
+>>> +	switch (state->vid_config & CX25840_VCONFIG_CLKGATE_MASK) {
+>>> +	case CX25840_VCONFIG_CLKGATE_VALID:
+>>> +		voutctrl[1] |= 2;
+>>> +		break;
+>>> +
+>>> +	case CX25840_VCONFIG_CLKGATE_VALIDACTIVE:
+>>> +		voutctrl[1] |= 3;
+>>> +		break;
+>>> +
+>>> +	case CX25840_VCONFIG_CLKGATE_NONE:
+>>> +		/* zero */
+>>> +	default:
+>>> +		break;
+>>> +	}
+>>> +
+>>> +
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_DCMODE_MASK, voutctrl,
+>>> +				2, 0, CX25840_VCONFIG_DCMODE_BYTES);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_IDID0S_MASK, voutctrl,
+>>> +				2, 1, CX25840_VCONFIG_IDID0S_LINECNT);
+>>> +	CX25840_VCONFIG_SET_BIT(state, CX25840_VCONFIG_VIPCLAMP_MASK, voutctrl,
+>>> +				2, 4, CX25840_VCONFIG_VIPCLAMP_ENABLED);
+>>> +
+>>> +	for (i = 0; i < 3; i++)
+>>> +		cx25840_write(client, 0x404 + i, voutctrl[i]);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>> +#undef CX25840_VCONFIG_SET_BIT
+>>> +#undef CX25840_VCONFIG_OPTION
+>>
+>> Why #undef? You would normally never do that.
+> 
+> The idea here is to catch (unintended) other users of these macros, other
+> than cx25840_vconfig() and to not pollute the macro namespace.
+> But these #undefs can be removed if they are against the coding style.
+
+Please remove. You do not normally use #undef unless you are redefining a
+macro.
+
+> 
+>>
+>>> +
+>>>  /* ----------------------------------------------------------------------- */
+>>>  
+>>>  /* This load_fw operation must be called to load the driver's firmware.
+>>> @@ -1836,6 +2226,9 @@ static int cx25840_s_video_routing(struct v4l2_subdev *sd,
+>>>  	if (is_cx23888(state))
+>>>  		cx23888_std_setup(client);
+>>>  
+>>> +	if (is_cx2584x(state) && state->generic_mode)
+>>> +		cx25840_vconfig(client, config);
+>>> +
+>>
+>> You do the vconfig configuration when the video routing changes. But isn't this
+>> configuration a one-time thing? E.g. something you do only when initializing the
+>> board?
+>>
+>> At least in the cxusb code the cfg_in value is constant and not dependent on what
+>> input is chosen.
+>>
+>> If this is true, then you should add the core init op instead. And as a bonus you
+>> can turn on generic_mode if the init op is called instead of having to add it
+>> to the platform data.
+>>
+> 
+> The problem here is that the Medion MD95700 has two modes:
+> digital (DVB-T) and analog.
+> When it is operating in the digital mode the device analog components
+> (including the cx25840 chip) have their power cut by the hardware.
+> 
+> This means that the cx25840 has to be fully reinitialized (firmware
+> loaded, format set, etc.) every time the user opens the Medion's v4l2
+> video or radio device node if the device has previously operated in the
+> DVB-T mode.
+> Mode switching is supported transparently by the driver without needing
+> to reload the module or reconnect the device.
+
+So? You call the core init op to initialize vconfig (just pass in all the
+bits to simplify things), and whenever s_video_routing it called the driver
+will just call cx25840_vconfig() with the vconfig value set by the core init op.
+
+As far as I can see all you want to do is to specify a specific vconfig value
+that should be applied whenever s_video_routing is called.
+
+So in cxusb_medion_analog_init() you call the core init op, then the
+video s_routing op to switch to COMPOSITE1.
+
+I like that much better since vconfig doesn't change when you switch inputs.
+It's only needed when you initialize the analog part.
+
+Regards,
+
+	Hans
+
+> 
+>>
+>> Regards,
+>>
+>> 	Hans
+>>
+> 
+> Thanks and best regards,
+> Maciej
+> 
+
