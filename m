@@ -2,168 +2,116 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFB0ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45BAECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B45BE21470
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:09:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45BE21470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 6209521470
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:09:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6209521470
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbeGQJkh (ORCPT
+        id S1729732AbeGQJk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:40:37 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:3542 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728720AbeGQJkg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:40:36 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b4db1f80000>; Tue, 17 Jul 2018 02:08:08 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 17 Jul 2018 02:08:58 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 17 Jul 2018 02:08:58 -0700
-Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 17 Jul
- 2018 09:08:55 +0000
-Date:   Tue, 17 Jul 2018 12:08:50 +0300
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-CC:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>, <linux-mmc@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mmc: tegra: Force correct divider calculation on
- DDR50/52
-Message-ID: <20180717120850.774c4e9d@dhcp-10-21-25-168>
-In-Reply-To: <16caa6d0-4368-8931-a77c-23fb76bee200@nvidia.com>
-References: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
-        <16caa6d0-4368-8931-a77c-23fb76bee200@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 17 Jul 2018 05:40:59 -0400
+Received: from sauhun.de ([88.99.104.3]:33922 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729060AbeGQJk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:40:58 -0400
+Received: from localhost (p54B33605.dip0.t-ipconnect.de [84.179.54.5])
+        by pokefinder.org (Postfix) with ESMTPSA id 3DD1A5E000F;
+        Tue, 17 Jul 2018 11:09:21 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 11:09:20 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Phil Reid <preid@electromag.com.au>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel@pengutronix.de,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH/RFT 1/6] i2c: designware: use open drain for recovery GPIO
+Message-ID: <20180717090920.zy6lkeqlcewhrfs5@ninjato>
+References: <20180713210920.3648-1-wsa+renesas@sang-engineering.com>
+ <20180713210920.3648-2-wsa+renesas@sang-engineering.com>
+ <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
- (172.20.187.10)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tg455teebzxcygml"
+Content-Disposition: inline
+In-Reply-To: <daaf702b-642f-e0fd-6a2e-7f0f817efba3@electromag.com.au>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Jul 2018 21:03:08 +0100
-Jon Hunter <jonathanh@nvidia.com> wrote:
 
-> On 16/07/18 15:34, Aapo Vienamo wrote:
-> > Tegra SDHCI controllers require the SDHCI clock divider to be configured
-> > to divide the clock by two in DDR50/52 modes. Incorrectly configured
-> > clock divider results in corrupted data.
-> > 
-> > Prevent the possibility of incorrectly calculating the divider value due
-> > to clock rate rounding or low parent clock frequency by not assigning
-> > host->max_clk to clk_get_rate() on tegra_sdhci_set_clock().
-> > 
-> > See the comments for further details.
-> > 
-> > Fixes: a8e326a ("mmc: tegra: implement module external clock change")
-> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> > ---
-> >  drivers/mmc/host/sdhci-tegra.c | 17 ++++++++++++++++-
-> >  1 file changed, 16 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> > index ddf00166..908b23e 100644
-> > --- a/drivers/mmc/host/sdhci-tegra.c
-> > +++ b/drivers/mmc/host/sdhci-tegra.c
-> > @@ -210,9 +210,24 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-> >  	if (!clock)
-> >  		return sdhci_set_clock(host, clock);
-> >  
-> > +	/*
-> > +	 * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI 
-> > +	 * divider to be configured to divided the host clock by two. The SDHC
-> > +	 * clock divider is calculated as part of sdhci_set_clock() by
-> > +	 * sdhci_calc_clk(). The divider is calculated from host->max_clk and
-> > +	 * the requested clock rate.
-> > +	 *
-> > +	 * By setting the host->max_clk to clock * 2 the divider calculation
-> > +	 * will always result in the correct value for DDR50/52 modes,
-> > +	 * regardless of clock rate rounding, which may happen if the value
-> > +	 * from clk_get_rate() is used.
-> > +	 */
-> >  	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
-> >  	clk_set_rate(pltfm_host->clk, host_clk);
-> > -	host->max_clk = clk_get_rate(pltfm_host->clk);
-> > +	if (tegra_host->ddr_signaling)
-> > +		host->max_clk = host_clk;
-> > +	else
-> > +		host->max_clk = clk_get_rate(pltfm_host->clk);
-> >  
-> >  	sdhci_set_clock(host, clock);
-> >    
-> 
-> I see what you are saying, but should we be concerned that we are not
-> getting the rate we are requesting in the first place?
+--tg455teebzxcygml
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The rates themselves aren't as critical as the divider on DDR50/52. It's
-true that in most sane configurations we should not hit the cases where
-the divider will not get configured correctly if the value from
-clk_get_rate() is used.
+Hi Phil,
 
-> Maybe it would help if you could provide a specific example showing a
-> case where we request rate X and get Y, and then this leads to a bad
-> rate Z later.
+> > -	gpio =3D devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH);
+> > +	gpio =3D devm_gpiod_get(dev->dev, "scl", GPIOD_OUT_HIGH_OPEN_DRAIN);
+> >   	if (IS_ERR(gpio)) {
+> >   		r =3D PTR_ERR(gpio);
+> >   		if (r =3D=3D -ENOENT || r =3D=3D -ENOSYS)
+> >=20
+>
+> This was intentional. The gpio we use to drive the i2c line is implemente=
+d in an
+> FPGA and signals a buffer attached to the GPIO to drive scl OPEN drain. T=
+he GPIO is output
+> only.
 
-There are two possible cases where the divider will get configured
-incorrectly: either to divide by one or anything greater than two. I
-verified that at least on t124 greater dividers also fail in practice.
+So, it is not possible to read SCL status then? Hmm, currently a working
+get_scl is required...
 
-One option is that the parent clock is unable to supply a rate low
-enough. Lets consider DDR50 mode: we request 100 MHz from the parent
-clock and let's say it gets rounded to 104 MHz. In this case we end up
-with a divider of four because 104 MHz / 2 <= 50 MHz is false, and the
-divider is incremented to the next step. This happens because the
-divider is calculated the following manner in sdhci_calc_clk(), where in
-this case host->max_clk would be 104 MHz and clock 50 MHz:
+> The gpio setup can still specify the the GPIO be allocated OPEN drain if =
+someone wishes
+> to use a "smarter" gpio.
+>=20
+> So while the scl is open drain, there may be hardware in between that isn=
+'t.
+> What would the correct way be to deal with that now?
 
-	for (div = 2; div < SDHCI_MAX_DIV_SPEC_300;
-	     div += 2) {
-		if ((host->max_clk / div) <= clock)
-			break;
-	}
+Well, I don't know much about this IP core and how/where it is used. I
+just wonder what happens if another user comes along using an
+open-drain GPIO. Is that possible?
 
-With the patch we would get DDR50 mode runinng at 52 MHz and without
-the patch all IO to the device would fail.
+I assume it is the same with SDA? Non open-drain? Output only?
 
-The less likely option is that divider of one is calculated if
-host->max_clk is less than or equal to clock. This would happen if the
-parent clock is unable to supply a high enough clock rate. So let's say
-we are setting up the clocks for DDR50 and request the parent clock to
-supply 100 MHz and we get say 50 MHz instead. In this case originally we
-would get I/O errors, but with the patch we end up with at DDR50 mode
-where the bus is actually run at 25 MHz.
+Regards,
 
-While at least the later case would most likely be a bug or
-misconfiguration, it would be still nice to have a mechanism for
-graceful dergadation instead of complete failure.
+   Wolfram
 
-Another option I considered was verifying the parent clock behaviour
-during probe and masking DDR50/52 out from the host capability bits
-depending on the results. The problem with that is that the exact rate
-requested is determined based on CSD register values read from the MMC
-device itself.
 
-It's really unfortunate that we have this quirk in the hardware as
-dealing with it in a robust manner results in a fair bit of complexity.
-Oh well.
+--tg455teebzxcygml
+Content-Type: application/pgp-signature; name="signature.asc"
 
- -Aapo
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltNskAACgkQFA3kzBSg
+KbZwbQ/+MJCShrVhonYuESLYY03BEi6p8a5WPFWHsZmTC4Nc8uuKXupxRvNP6qpy
+OdXYBJvLdhIjVRGbpV7MRQII/mYeXpC4hxaVoZhkInxpf07CwqMDUyNU9oiXC0yP
+kM0ONuHPZ/sjCWQSrASMZdu44JgMqZ61PV3FTWN+FBZZY/FEFy0jiem1LK4RupB3
+J3ZrvOBzNE53yv1GLhXm4JvmYqOexkmm5NV2xJW/e1DB4LGNQvxgBxHmz1/1mMNE
+SkUSu125FR/6nhSizpr6Ftq/SC4AACPYmH+SXLCYh7GOtWCwY3ru2eWc5gBFoHkb
+pgjPV5H2GxCO38+IFPVSilH+9lMfc+BB/ykpXdLlo9wcIYBFU0g5ws4cY7/H4ZLL
++FsJwFo3LZbNVVzA1xdT5OQmIQ5Y3ASN+Z2kJ5r3J0ZDRJrG6u5hUw0H/4/KVrm3
+XcWZxxDr0L4xetggo007TvqD7tIt9qpPI94cgwKnkzR4ky65szKDJDynyswrjXID
+D1YjDkHwB6h+FfpIM/c9pWtSaR76NJ4J+f1ouF53NWSVANlUt+O7gDx6ugwDV05w
+BFfxq0iWvIKYtBuD9TjyH2HnMjJysHEfvtTsAImjsXtVEVq87L040UIxlEMz09fV
+j50YUzVql9wE2eQLncmIj2CV+xMhakex6SjkE6m7vLgumtQciZk=
+=L2Mj
+-----END PGP SIGNATURE-----
+
+--tg455teebzxcygml--
