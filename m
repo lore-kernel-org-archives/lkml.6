@@ -2,264 +2,118 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45996ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BAFDECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039262086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:55:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 039262086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 4D9912086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:57:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="BZdg/Mwl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9912086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731993AbeGQP2u (ORCPT
+        id S1731803AbeGQPa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:28:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731617AbeGQP2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:28:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 185B2AE17;
-        Tue, 17 Jul 2018 14:55:45 +0000 (UTC)
-From:   Coly Li <colyli@suse.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Coly Li <colyli@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Subject: [PATCH v3 3/3] lib/test_crc: Add test cases for crc calculation
-Date:   Tue, 17 Jul 2018 22:55:25 +0800
-Message-Id: <20180717145525.50852-4-colyli@suse.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180717145525.50852-1-colyli@suse.de>
-References: <20180717145525.50852-1-colyli@suse.de>
+        Tue, 17 Jul 2018 11:30:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39556 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731429AbeGQPa2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 11:30:28 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h10-v6so1579521wre.6
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:57:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=E0je9mzxPuzSOvNRR+YAGKhegeLbQYsK2K8iE5XCpCA=;
+        b=BZdg/MwlOHlk7W2JEC9LSVj5NXPu/dnhiINxFQePooiyisl1+Y5mM2alMn7RgHk223
+         0blpyxvAResZoGF2XFiaQqIp4zIU4DFAv1XBJOedcz9tsk5oSCLcuDWAfcyIxHOlzLuX
+         Z1tTf+nLBefrW37DPqGMtdbMVWkCWXKG4EGzvysetMVyacjxEH3kLkRISJbGdDtEDZMw
+         3blOxIbFhJt94+fsGeyLq44FYGlhWIFM72hm6l1t3qyBoUVpQdJ9AbUR/FHaDxA1yC+K
+         locEkhiizCpgzjSNWALllOL9zAvD7b6Jncq2c0tn2KfLU2mvzwHBUKVW/37RCBSfMESz
+         1FBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=E0je9mzxPuzSOvNRR+YAGKhegeLbQYsK2K8iE5XCpCA=;
+        b=RBGNOBz3eZBL1lCVAHuUXXPYgkbqgR6xQQ/SKkpOxQLW4RFpBa71CCiAWUnTcXiQNz
+         ez2Jx4pCaAgeI1ydiGjN88JsP8rkp8O7kFEBrzC95n6FHcalqXuIRWd8mrG597LXK/NA
+         C/euapzoTEDrThG2dhS9BSqLZbcM6scnYg1Jpp1KTDT3xF4tg+AqvKacv19nuH+dI6kO
+         idpTI+PGsI8DT8v0SFiUDjTgJ0vfwNK/lAPnNQtB4z07M3OKhFU3d/FwNuv+QjB0NYxU
+         JRhRyLxiQA35VsEzGZMpgaA/NkZHHSmDd3g/63eJ/t91LikhoL21cFIbJNBe2DGY21Zi
+         Jafw==
+X-Gm-Message-State: AOUpUlEKUaj+61RQ2gfX9kPqkVcOy9uyEKshpQLQ9X9IqafBbV70qkYT
+        OTJrn49J0U7Iqo6ak9TB3d+Y1A==
+X-Google-Smtp-Source: AAOMgpdBUvF6Bk9+ndaA5ea60yDIr6yPuVqnHFQRY5JdPK6NMG2T53MMsk5tCuQQqGKqqGepJsZXyQ==
+X-Received: by 2002:a5d:4e49:: with SMTP id r9-v6mr1578938wrt.27.1531839444905;
+        Tue, 17 Jul 2018 07:57:24 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id e7-v6sm2619216wrm.14.2018.07.17.07.57.24
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Tue, 17 Jul 2018 07:57:24 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     devicetree@vger.kernel.org
+Cc:     monstr@monstr.eu, Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        u-boot@lists.denx.de, Tom Rini <trini@konsulko.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Albert Aribaud <albert.u.boot@aribaud.net>,
+        Rob Herring <robherring2@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm: zynq: Remove #address/#size-cells from gpio-keys
+Date:   Tue, 17 Jul 2018 16:57:23 +0200
+Message-Id: <af809c1d98451a14b981f8d2cc123b2e1016021c.1531839440.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a kernel module to test the consistency of multiple crc
-calculation in Linux kernel. It is enabled with CONFIG_TEST_CRC enabled.
+dts reports incorrect usage of these properties in gpio-keys node.
+Warning (avoid_unnecessary_addr_size): /gpio-keys: unnecessary
 
-The test results are printed into kernel message, which look like,
+The patch is removing these useless properties.
 
-test_crc: crc64: PASSED (0x4e6b1ff972fa8c55, expected 0x4e6b1ff972fa8c55)
-test_crc: crc64_bch: PASSED (0x0e4f1391d7a4a62e, expected 0x0e4f1391d7a4a62e)
-test_crc: crc64_update: FAILED (0x03d4d0d85685d9a1, expected 0x3d4d0d85685d9a1f)
-
-kernel 0day system has framework to check kernel message, then the above
-result can be handled by 0day system. If crc calculation inconsistency
-happens, it can be detected quite soon.
-
-lib/test_crc.c is a testing frame work for many crc consistency
-testings. For now, there are only test caes for 3 crc routines,
-- crc64()
-- crc64_bch()
-- crc64_update()
-
-Changelog:
-v3: Add test cases passed/failed statistic
-    More fixes for review comments of v2
-v2: Fixes for review comments of v1
-v1: Initial version.
-
-Signed-off-by: Coly Li <colyli@suse.de>
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- lib/Kconfig.debug |  10 ++++
- lib/Makefile      |   1 +
- lib/test_crc.c    | 138 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 149 insertions(+)
- create mode 100644 lib/test_crc.c
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 8838d1158d19..a9c1de0c2a7d 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1911,6 +1911,16 @@ config TEST_SYSCTL
+ arch/arm/boot/dts/zynq-zc702.dts | 2 --
+ arch/arm/boot/dts/zynq-zturn.dts | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/arch/arm/boot/dts/zynq-zc702.dts b/arch/arm/boot/dts/zynq-zc702.dts
+index 6653e34409cd..cc5a3dc2b4a0 100644
+--- a/arch/arm/boot/dts/zynq-zc702.dts
++++ b/arch/arm/boot/dts/zynq-zc702.dts
+@@ -29,8 +29,6 @@
  
- 	  If unsure, say N.
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 		autorepeat;
+ 		sw14 {
+ 			label = "sw14";
+diff --git a/arch/arm/boot/dts/zynq-zturn.dts b/arch/arm/boot/dts/zynq-zturn.dts
+index b25beaed874d..b38704657960 100644
+--- a/arch/arm/boot/dts/zynq-zturn.dts
++++ b/arch/arm/boot/dts/zynq-zturn.dts
+@@ -49,8 +49,6 @@
  
-+config TEST_CRC
-+	tristate "CRC calculation test driver"
-+	depends on CRC64
-+	help
-+	  This builds the "test_crc" module. This driver enables to test the
-+	  CRC calculation consistency to make sure new modification does not
-+	  break existing checksum calculation.
-+
-+	  if unsure, say N.
-+
- config TEST_UDELAY
- 	tristate "udelay test driver"
- 	default n
-diff --git a/lib/Makefile b/lib/Makefile
-index 40c215181687..224d047d026a 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -49,6 +49,7 @@ obj-$(CONFIG_FIND_BIT_BENCHMARK) += find_bit_benchmark.o
- obj-$(CONFIG_TEST_BPF) += test_bpf.o
- obj-$(CONFIG_TEST_FIRMWARE) += test_firmware.o
- obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
-+obj-$(CONFIG_TEST_CRC) += test_crc.o
- obj-$(CONFIG_TEST_HASH) += test_hash.o test_siphash.o
- obj-$(CONFIG_TEST_KASAN) += test_kasan.o
- CFLAGS_test_kasan.o += -fno-builtin
-diff --git a/lib/test_crc.c b/lib/test_crc.c
-new file mode 100644
-index 000000000000..441bf835fbd3
---- /dev/null
-+++ b/lib/test_crc.c
-@@ -0,0 +1,138 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * CRC test driver
-+ *
-+ * Copyright (C) 2018 Coly Li <colyli@suse.de>
-+ *
-+ * This module provides an simple framework to check the consistency of
-+ * Linux kernel CRC calculation routines in lib/crc*.c. This driver
-+ * requires CONFIG_CRC* items to be enabled if the associated routines are
-+ * tested here. The test results will be printed to kernel message
-+ * when this test driver is loaded.
-+ *
-+ * Current test routines are,
-+ * - crc64()
-+ * - crc64_bch()
-+ * - crc64_update()
-+ *
-+ */
-+
-+#include <linux/async.h>
-+#include <linux/delay.h>
-+#include <linux/fs.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+#include <linux/miscdevice.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include <linux/vmalloc.h>
-+#include <linux/crc64.h>
-+
-+struct crc_test_record {
-+	char	*name;
-+	u64	data[4];
-+	u64	initval;
-+	u64	expval;
-+	int	(*handler)(struct crc_test_record *rec);
-+};
-+
-+static int chk_and_msg(const char *name, u64 crc, u64 expval)
-+{
-+	int ret = 0;
-+
-+	if (crc == expval) {
-+		pr_info("test_crc: %s: PASSED:(0x%016llx, expected 0x%016llx)\n",
-+			name, crc, expval);
-+	} else {
-+		pr_err("test_crc: %s: FAILED:(0x%016llx, expected 0x%016llx)\n",
-+			name, crc, expval);
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+/* Add your crc test cases here */
-+static int test_crc64(struct crc_test_record *rec)
-+{
-+	u64 crc;
-+
-+	crc = crc64(rec->data, sizeof(rec->data));
-+	return chk_and_msg(rec->name, crc, rec->expval);
-+}
-+
-+static int test_crc64_bch(struct crc_test_record *rec)
-+{
-+	u64 crc;
-+
-+	crc = crc64_bch(rec->data, sizeof(rec->data));
-+	return chk_and_msg(rec->name, crc, rec->expval);
-+}
-+
-+static int test_crc64_update(struct crc_test_record *rec)
-+{
-+	u64 crc = rec->initval;
-+
-+	crc = crc64_update(crc, rec->data, sizeof(rec->data));
-+	return chk_and_msg(rec->name, crc, rec->expval);
-+}
-+
-+/*
-+ * Set up your crc test initial data here.
-+ * Do not change the existing items, they are hard coded with
-+ * pre-calculated values.
-+ */
-+static struct crc_test_record test_data[] = {
-+	{ .name		= "crc64",
-+	  .data		= { 0x42F0E1EBA9EA3693, 0x85E1C3D753D46D26,
-+			    0xC711223CFA3E5BB5, 0x493366450E42ECDF },
-+	  .initval	= 0,
-+	  .expval	= 0xe2b9911e7b997201,
-+	  .handler	= test_crc64,
-+	},
-+	{ .name		= "crc64_bch",
-+	  .data		= { 0x42F0E1EBA9EA3693, 0x85E1C3D753D46D26,
-+			    0xC711223CFA3E5BB5, 0x493366450E42ECDF },
-+	  .initval	= 0,
-+	  .expval	= 0xd2753a20fd862892,
-+	  .handler	= test_crc64_bch,
-+	},
-+	{ .name		= "crc64_update",
-+	  .data		= { 0x42F0E1EBA9EA3693, 0x85E1C3D753D46D26,
-+			    0xC711223CFA3E5BB5, 0x493366450E42ECDF },
-+	  .initval	= 0x61C8864680B583EB,
-+	  .expval	= 0xb2c863673f4292bf,
-+	  .handler	= test_crc64_update,
-+	},
-+	{}
-+};
-+
-+static int __init test_crc_init(void)
-+{
-+	int i;
-+	int v, err = 0;
-+
-+	pr_info("Kernel CRC consitency testing:\n");
-+	for (i = 0; test_data[i].name; i++) {
-+		v = test_data[i].handler(&test_data[i]);
-+		if (v < 0)
-+			err++;
-+	}
-+
-+	if (err == 0)
-+		pr_info("test_crc: all %d tests passed\n", i);
-+	else
-+		pr_err("test_crc: %d cases tested, %d passed, %d failed\n",
-+		       i, i - err, err);
-+
-+	return (err == 0) ? 0 : -EINVAL;
-+}
-+late_initcall(test_crc_init);
-+
-+static void __exit test_crc_exit(void) { }
-+module_exit(test_crc_exit);
-+
-+MODULE_DESCRIPTION("CRC consistency testing driver");
-+MODULE_AUTHOR("Coly Li <colyli@suse.de>");
-+MODULE_LICENSE("GPL v2");
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+ 		autorepeat;
+ 		K1 {
+ 			label = "K1";
 -- 
-2.17.1
+1.9.1
 
