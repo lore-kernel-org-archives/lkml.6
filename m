@@ -6,66 +6,69 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4C5ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62066ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC4B520877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:06:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC4B520877
+	by mail.kernel.org (Postfix) with ESMTP id 2221820877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:07:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2221820877
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731175AbeGQBgp (ORCPT
+        id S1731236AbeGQBhG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 21:36:45 -0400
-Received: from mga03.intel.com ([134.134.136.65]:42707 "EHLO mga03.intel.com"
+        Mon, 16 Jul 2018 21:37:06 -0400
+Received: from mga09.intel.com ([134.134.136.24]:49786 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730002AbeGQBgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 21:36:44 -0400
+        id S1730002AbeGQBhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 21:37:06 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 18:06:46 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jul 2018 18:07:08 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,363,1526367600"; 
-   d="scan'208";a="67534816"
+   d="scan'208";a="65189131"
 Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.138])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Jul 2018 18:06:45 -0700
-Date:   Tue, 17 Jul 2018 09:17:50 +0800
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Jul 2018 18:07:07 -0700
+Date:   Tue, 17 Jul 2018 09:18:12 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
 Cc:     kbuild-all@01.org, netdev@vger.kernel.org,
         Antoine Tenart <antoine.tenart@bootlin.com>,
+        kbuild test robot <fengguang.wu@intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [net-next:master 598/621]
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c:621:5: sparse: symbol
- 'mvpp2_flow_get_hek_fields' was not declared. Should it be static?
-Message-ID: <20180717011750.GY10593@intel.com>
+Subject: [RFC PATCH net-next] net: mvpp2: mvpp2_flow_get_hek_fields() can be
+ static
+Message-ID: <20180717011812.GZ10593@intel.com>
+References: <201807141506.hlrwYth1%fengguang.wu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <201807141506.hlrwYth1%fengguang.wu@intel.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git master
-head:   9cee8c4375431d5087466eacf6f8f436210e56ea
-commit: d33ec452500798868c430c5e2e4b5e8399ae70e3 [598/621] net: mvpp2: add an RSS classification step for each flow
-reproduce:
-        # apt-get install sparse
-        git checkout d33ec452500798868c430c5e2e4b5e8399ae70e3
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-:::::: branch date: 4 hours ago
-:::::: commit date: 31 hours ago
 
-   drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c:560:23: sparse: symbol 'mvpp2_cls_flow_get' was not declared. Should it be static?
->> drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c:621:5: sparse: symbol 'mvpp2_flow_get_hek_fields' was not declared. Should it be static?
-
-Please review and possibly fold the followup patch.
-
+Fixes: d33ec4525007 ("net: mvpp2: add an RSS classification step for each flow")
+Signed-off-by: kbuild test robot <fengguang.wu@intel.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ mvpp2_cls.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+index 723d0ba..fc9ec51 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
+@@ -618,7 +618,7 @@ static int mvpp2_port_rss_hash_opts_set(struct mvpp2_port *port, int flow_type,
+ 	return 0;
+ }
+ 
+-u16 mvpp2_flow_get_hek_fields(struct mvpp2_cls_flow_entry *fe)
++static u16 mvpp2_flow_get_hek_fields(struct mvpp2_cls_flow_entry *fe)
+ {
+ 	u16 hash_opts = 0;
+ 	int n_fields, i, field;
