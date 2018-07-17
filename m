@@ -3,111 +3,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED01ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 704DEECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C48F52146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C48F52146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 25E30206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25E30206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbeGQJYr (ORCPT
+        id S1729734AbeGQJYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:24:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57589 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730511AbeGQJYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:24:47 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DE7A620733; Tue, 17 Jul 2018 10:53:12 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 96E09207B4;
-        Tue, 17 Jul 2018 10:53:02 +0200 (CEST)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH 2/2] drm/sun4i: sun4i: Introduce a quirk for lowest plane alpha support
-Date:   Tue, 17 Jul 2018 10:52:30 +0200
-Message-Id: <20180717085230.17472-2-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180717085230.17472-1-paul.kocialkowski@bootlin.com>
-References: <20180717085230.17472-1-paul.kocialkowski@bootlin.com>
+        Tue, 17 Jul 2018 05:24:23 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:54274 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729684AbeGQJYW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:24:22 -0400
+X-UUID: 2d0defc04b1142d68848cf0204f720e3-20180717
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 529384790; Tue, 17 Jul 2018 16:52:36 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 17 Jul 2018 16:52:34 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Tue, 17 Jul 2018 16:52:34 +0800
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>
+CC:     CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v5 0/11] Add basic SoC support for mt6765
+Date:   Tue, 17 Jul 2018 16:52:21 +0800
+Message-ID: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not all sunxi platforms with the first version of the Display Engine
-support an alpha component on the plane with the lowest z position
-(as in: lowest z-pos), that gets blended with the background color.
+This patch adds basic SoC support for Mediatek's new 8-core SoC,
+MT6765, which is mainly for smartphone application.
 
-In particular, the A13 is known to have this limitation. However, it was
-recently discovered that the A20 and A33 are capable of having alpha on
-their lowest plane.
+Changes in V5:
+1. add clk support
 
-Thus, this introduces a specific quirk to indicate such support,
-per-platform. Since this was not tested on sun4i and sun6i platforms, a
-conservative approach is kept and this feature is not supported.
+Changes in V4:
+1. add gic's settings in reg properties
+2. remove some patches about dt-bindings since GKH already took them
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/gpu/drm/sun4i/sun4i_backend.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Changes in V3:
+1. split dt-binding document patchs
+2. fix mt6765.dtsi warnings with W=12
+3. remove uncessary PPI affinity for timer
+4. add gicc base for gic dt node
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
-index a3cc398d4d80..cdc4a8a91ea2 100644
---- a/drivers/gpu/drm/sun4i/sun4i_backend.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
-@@ -35,6 +35,8 @@
- struct sun4i_backend_quirks {
- 	/* backend <-> TCON muxing selection done in backend */
- 	bool needs_output_muxing;
-+	/* alpha at the lowest z position is not always supported */
-+	bool supports_lowest_plane_alpha;
- };
- 
- static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
-@@ -484,6 +486,7 @@ static void sun4i_backend_atomic_begin(struct sunxi_engine *engine,
- static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
- 				      struct drm_crtc_state *crtc_state)
- {
-+	struct sun4i_backend *backend = engine_to_sun4i_backend(engine);
- 	struct drm_plane_state *plane_states[SUN4I_BACKEND_NUM_LAYERS] = { 0 };
- 	struct drm_atomic_state *state = crtc_state->state;
- 	struct drm_device *drm = state->dev;
-@@ -584,8 +587,9 @@ static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
- 	}
- 
- 	/* We can't have an alpha plane at the lowest position */
--	if (plane_states[0]->fb->format->has_alpha ||
--	    (plane_states[0]->alpha != DRM_BLEND_ALPHA_OPAQUE))
-+	if ((plane_states[0]->fb->format->has_alpha ||
-+	    (plane_states[0]->alpha != DRM_BLEND_ALPHA_OPAQUE)) &&
-+	    !backend->quirks->supports_lowest_plane_alpha)
- 		return -EINVAL;
- 
- 	for (i = 1; i < num_planes; i++) {
-@@ -970,9 +974,11 @@ static const struct sun4i_backend_quirks sun6i_backend_quirks = {
- 
- static const struct sun4i_backend_quirks sun7i_backend_quirks = {
- 	.needs_output_muxing = true,
-+	.supports_lowest_plane_alpha = true,
- };
- 
- static const struct sun4i_backend_quirks sun8i_a33_backend_quirks = {
-+	.supports_lowest_plane_alpha = true,
- };
- 
- static const struct sun4i_backend_quirks sun9i_backend_quirks = {
--- 
-2.17.1
+Changes in V2:
+1. fix clk properties in uart dts node
+2. fix typo in submit title
+3. add simple-bus in mt6765.dtsi
+4. use correct SPDX license format
+
+Mars Cheng (7):
+  dt-bindings: clock: mediatek: document clk bindings for Mediatek
+    MT6765 SoC
+  dt-bindings: mediatek: Add smi dts binding for Mediatek MT6765 SoC
+  dt-bindings: mediatek: add MT6765 power dt-bindings
+  soc: mediatek: add MT6765 scpsys support
+  clk: mediatek: add mt6765 clock IDs
+  soc: mediatek: add MT6765 subdomain support
+  arm64: dts: mediatek: add mt6765 support
+
+Owen Chen (4):
+  soc: mediatek: add new flow for mtcmos power.
+  clk: mediatek: fix pll setting
+  clk: mediatek: add new clkmux register API
+  clk: mediatek: Add MT6765 clock support
+
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |   1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt      |  27 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |   1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |   1 +
+ .../bindings/arm/mediatek/mediatek,mipi0a.txt      |  23 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |   1 +
+ .../bindings/arm/mediatek/mediatek,pericfg.txt     |   1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |   1 +
+ .../bindings/arm/mediatek/mediatek,vcodecsys.txt   |  22 +
+ .../memory-controllers/mediatek,smi-common.txt     |   1 +
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |   6 +
+ arch/arm64/boot/dts/mediatek/Makefile              |   1 +
+ arch/arm64/boot/dts/mediatek/mt6765-evb.dts        |  33 +
+ arch/arm64/boot/dts/mediatek/mt6765.dtsi           | 253 ++++++
+ drivers/clk/mediatek/Kconfig                       |  87 ++
+ drivers/clk/mediatek/Makefile                      |   9 +-
+ drivers/clk/mediatek/clk-mt6765-audio.c            | 109 +++
+ drivers/clk/mediatek/clk-mt6765-cam.c              |  83 ++
+ drivers/clk/mediatek/clk-mt6765-img.c              |  79 ++
+ drivers/clk/mediatek/clk-mt6765-mipi0a.c           |  77 ++
+ drivers/clk/mediatek/clk-mt6765-mm.c               | 105 +++
+drivers/clk/mediatek/clk-mt6765-vcodec.c           |  79 ++
+ drivers/clk/mediatek/clk-mt6765.c                  | 963 +++++++++++++++++++++
+ drivers/clk/mediatek/clk-mtk.c                     |  41 +
+ drivers/clk/mediatek/clk-mtk.h                     |  87 +-
+ drivers/clk/mediatek/clk-mux.c                     | 236 +++++
+ drivers/clk/mediatek/clk-mux.h                     |  38 +
+ drivers/clk/mediatek/clk-pll.c                     |  45 +-
+ drivers/soc/mediatek/Makefile                      |   2 +-
+ drivers/soc/mediatek/mtk-infracfg.c                | 178 +++-
+ drivers/soc/mediatek/mtk-scpsys-ext.c              | 535 ++++++++++++
+ drivers/soc/mediatek/mtk-scpsys.c                  | 235 ++++-
+ include/dt-bindings/clock/mt6765-clk.h             | 313 +++++++
+ include/dt-bindings/power/mt6765-power.h           |  14 +
+ include/linux/soc/mediatek/infracfg.h              |   9 +-
+ include/linux/soc/mediatek/scpsys-ext.h            |  66 ++
+ 37 files changed, 3681 insertions(+), 82 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,mipi0a.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,vcodecsys.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-audio.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mipi0a.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-vcodec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765.c
+ create mode 100644 drivers/clk/mediatek/clk-mux.c
+ create mode 100644 drivers/clk/mediatek/clk-mux.h
+ create mode 100644 drivers/soc/mediatek/mtk-scpsys-ext.c
+ create mode 100644 include/dt-bindings/clock/mt6765-clk.h
+ create mode 100644 include/dt-bindings/power/mt6765-power.h
+ create mode 100644 include/linux/soc/mediatek/scpsys-ext.h
 
