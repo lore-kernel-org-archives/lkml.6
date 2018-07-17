@@ -2,216 +2,103 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130ADECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 534EFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C219B20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:10:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C219B20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F97120834
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:10:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fEAbbkjR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F97120834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbeGQUos (ORCPT
+        id S1730974AbeGQUox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:44:48 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56630 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729759AbeGQUos (ORCPT
+        Tue, 17 Jul 2018 16:44:53 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:42089 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730362AbeGQUox (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:44:48 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 8B67E26129D
-Message-ID: <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Hans de Goede <hdegoede@redhat.com>, hverkuil@xs4all.nl,
-        mchehab@kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
-        bhumirks@gmail.com, colin.king@canonical.com,
-        linux-media@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Tue, 17 Jul 2018 17:10:22 -0300
-In-Reply-To: <CAJs94EavBDcFHpd0KcCZJTgWf0JC=AEDY=X8b3P2nZvt8mBCPA@mail.gmail.com>
-References: <20180617143625.32133-1-matwey@sai.msu.ru>
-         <20180617143625.32133-2-matwey@sai.msu.ru>
-         <c02f92a8998fc62d3e3d48aa154fbaa7e223dd10.camel@collabora.com>
-         <CAJs94EavBDcFHpd0KcCZJTgWf0JC=AEDY=X8b3P2nZvt8mBCPA@mail.gmail.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 16:44:53 -0400
+Received: by mail-pl0-f65.google.com with SMTP id f4-v6so928399plb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=iFlZqAusiuiptPYJ+n9BZOWxMu3viScTErMsKjpysc0=;
+        b=fEAbbkjRlVSifUuWZQyUvCVOLkBAOuCc85YBlRLRQwswqJdYl6AM1xIGAaCSq3TwGT
+         XFBXNiG7+p5IJLFvS3r9aekU+uh+5wzGAQFWee364eD2nN/fqK4+9ynxLTIv55vzT1RQ
+         aQhNFF9JT4rwl7geB3Kc4QRmUmy3UybLib7/g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iFlZqAusiuiptPYJ+n9BZOWxMu3viScTErMsKjpysc0=;
+        b=FfPH3MLwhj7IZWfzKFwhdDXWYCZv3Bkpg+WzUEIL61flENZaphW5u+eTQpQtNbs8b1
+         Z10JujJxXiGgBFVRNfc+FjH94CT72IGFQo5K7T3J2HiZ/H7vlY+3IaP4yZdR6390NeZv
+         kqCtzcITfHE55z/NmqDuAmQGQxG0tMOPlB/73dbipwnnu877Fmf7mD/F0rHymBp/owuf
+         zTTLmcaw+uhrkvrAxYM0rWlGUxn/whd3ewOCfEQkdXhWUsgRfKr2Z+kY5LzawOviUkqj
+         kpx1ZdTZqIa+ZFaS+hZtsatlQ73eJQWNd5haL/VIW9fTP6kZ8rCyKoEY9ohcc9fhZIr6
+         DvQA==
+X-Gm-Message-State: AOUpUlFmlu4tLeP0awDMy1/kqyKFWg4353xA/ciKtraoo7grWLD46EQN
+        7s6zvBWc1J0NAl7ktVeXAxIZhg==
+X-Google-Smtp-Source: AAOMgpeA9pVCbKvSdEsWcZOAz8fa8ki2BgdpaaVQSfaDXyTNA7HDKc5C7ycLU8r4MHji0w6ikpslqQ==
+X-Received: by 2002:a17:902:a5:: with SMTP id a34-v6mr3052317pla.60.1531858239019;
+        Tue, 17 Jul 2018 13:10:39 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:0:1000:1501:38e4:86fe:ec0c:4007])
+        by smtp.gmail.com with ESMTPSA id d26-v6sm4532746pfl.159.2018.07.17.13.10.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 13:10:38 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc:     dmitry.torokhov@gmail.com,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] usb: dwc2: host: do not delay retries after successful transfer
+Date:   Tue, 17 Jul 2018 13:10:10 -0700
+Message-Id: <20180717201010.175491-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matwey,
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-First of all, sorry for the delay.
+When handling split transactions we should not be delaying retrying
+SSPLIT/CSPLIT after we successfully communicate with the device, so
+let's reset dtd->num_naks counter when handling XFERCOMPL.
 
-Adding Alan and Hans. Guys, do you have any feedback here?
+Fixes: 38d2b5fb75c1 ("usb: dwc2: host: Don't retry NAKed transactions right away")
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-See below for some feedback on my side.
+Changes in v2:
+- Move clearing num_naks to the start to avoid use after free
 
-On Mon, 2018-06-18 at 10:10 +0300, Matwey V. Kornilov wrote:
-> Hi Ezequiel,
-> 
-> 2018-06-18 8:11 GMT+03:00 Ezequiel Garcia <ezequiel@collabora.com>:
-> > + Laurent
-> > 
-> > On Sun, 2018-06-17 at 17:36 +0300, Matwey V. Kornilov wrote:
-> > > DMA cocherency slows the transfer down on systems without hardware
-> > > coherent DMA.
-> > > 
-> > > Based on previous commit the following performance benchmarks have been
-> > > carried out. Average memcpy() data transfer rate (rate) and handler
-> > > completion time (time) have been measured when running video stream at
-> > > 640x480 resolution at 10fps.
-> > > 
-> > > x86_64 based system (Intel Core i5-3470). This platform has hardware
-> > > coherent DMA support and proposed change doesn't make big difference here.
-> > > 
-> > >  * kmalloc:            rate = (4.4 +- 1.0) GBps
-> > >                        time = (2.4 +- 1.2) usec
-> > >  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
-> > >                        time = (2.5 +- 1.0) usec
-> > > 
-> > > We see that the measurements agree well within error ranges in this case.
-> > > So no performance downgrade is introduced.
-> > > 
-> > > armv7l based system (TI AM335x BeagleBone Black). This platform has no
-> > > hardware coherent DMA support. DMA coherence is implemented via disabled
-> > > page caching that slows down memcpy() due to memory controller behaviour.
-> > > 
-> > >  * kmalloc:            rate =  (190 +-  30) MBps
-> > >                        time =   (50 +-  10) usec
-> > >  * usb_alloc_coherent: rate =   (33 +-   4) MBps
-> > >                        time = (3000 +- 400) usec
-> > > 
-> > > Note, that quantative difference leads (this commit leads to 5 times
-> > > acceleration) to qualitative behavior change in this case. As it was
-> > > stated before, the video stream can not be successfully received at AM335x
-> > > platforms with MUSB based USB host controller due to performance issues
-> > > [1].
-> > > 
-> > > [1] https://www.spinics.net/lists/linux-usb/msg165735.html
-> > > 
-> > 
-> > This is quite interesting! I have receive similar complaints
-> > from users wanting to use stk1160 on BBB and Raspberrys,
-> > without much luck on either, due to insufficient isoc bandwidth.
-> > 
-> > I'm guessing other ARM platforms could be suffering
-> > from the same issue.
-> > 
-> > Note that stk1160 and uvcvideo drivers use kmalloc on platforms
-> > where DMA_NONCOHERENT is defined, but this is not the case
-> > on ARM platforms.
-> 
-> There are some ARMv7 platforms that have coherent DMA (for instance
-> Broadcome Horthstar Plus series), but the most of them don't have. It
-> is defined in device tree file, and there is no way to recover this
-> information at runtime in USB perepherial driver.
-> 
-> > 
-> > So, what is the benefit of using consistent
-> > for these URBs, as opposed to streaming?
-> 
-> I don't know, I think there is no real benefit and all we see is a
-> consequence of copy-pasta when some webcam drivers were inspired by
-> others and development priparily was going at x86 platforms.
+ drivers/usb/dwc2/hcd_intr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-You are probably right about the copy-pasta.
-
->  It would
-> be great if somebody corrected me here. DMA Coherence is quite strong
-> property and I cannot figure out how can it help when streaming video.
-> The CPU host always reads from the buffer and never writes to.
-> Hardware perepherial always writes to and never reads from. Moreover,
-> buffer access is mutually exclusive and separated in time by Interrupt
-> fireing and URB starting (when we reuse existing URB for new request).
-> Only single one memory barrier is really required here.
-> 
-
-Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
-create DMA mappings and use the streaming API. Which makes more
-sense in hardware without hardware coherency.
-
-The only thing that bothers me with this patch is that it's not
-really something specific to this driver. If this fix is valid
-for pwc, then it's valid for all the drivers allocating coherent
-memory.
-
-And also, this path won't prevent further copy-paste spread
-of the coherent allocation.
-
-Is there any chance we can introduce a helper to allocate
-isoc URBs, and then change all drivers to use it? No need
-to do all of them now, but it would be good to at least have
-a plan for it.
-
-Chances are, only a handful of platforms would care to use
-coherent mappings.
-
-> I understand that there are cases when DMA coherence is really needed,
-> for instane VirtIO VRing when we accessing same data structure in both
-> directions from the both sides, but this has nothing common with our
-> case.
-> 
-> > 
-> > If the choice is simply platform dependent,
-> > can't we somehow detect which mapping should
-> > be prefered?
-> 
-> Now, we don't have this way.
-> 
-> > 
-> > > Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> > > ---
-> > >  drivers/media/usb/pwc/pwc-if.c | 12 +++---------
-> > >  1 file changed, 3 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
-> > > index 5775d1f60668..6a3cd9680a7f 100644
-> > > --- a/drivers/media/usb/pwc/pwc-if.c
-> > > +++ b/drivers/media/usb/pwc/pwc-if.c
-> > > @@ -427,11 +427,8 @@ static int pwc_isoc_init(struct pwc_device *pdev)
-> > >               urb->interval = 1; // devik
-> > >               urb->dev = udev;
-> > >               urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
-> > > -             urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
-> > > -             urb->transfer_buffer = usb_alloc_coherent(udev,
-> > > -                                                       ISO_BUFFER_SIZE,
-> > > -                                                       GFP_KERNEL,
-> > > -                                                       &urb->transfer_dma);
-> > > +             urb->transfer_flags = URB_ISO_ASAP;
-> > > +             urb->transfer_buffer = kmalloc(ISO_BUFFER_SIZE, GFP_KERNEL);
-> > >               if (urb->transfer_buffer == NULL) {
-> > >                       PWC_ERROR("Failed to allocate urb buffer %d\n", i);
-> > >                       pwc_isoc_cleanup(pdev);
-> > > @@ -491,10 +488,7 @@ static void pwc_iso_free(struct pwc_device *pdev)
-> > >               if (pdev->urbs[i]) {
-> > >                       PWC_DEBUG_MEMORY("Freeing URB\n");
-> > >                       if (pdev->urbs[i]->transfer_buffer) {
-> > > -                             usb_free_coherent(pdev->udev,
-> > > -                                     pdev->urbs[i]->transfer_buffer_length,
-> > > -                                     pdev->urbs[i]->transfer_buffer,
-> > > -                                     pdev->urbs[i]->transfer_dma);
-> > > +                             kfree(pdev->urbs[i]->transfer_buffer);
-> > >                       }
-> > >                       usb_free_urb(pdev->urbs[i]);
-> > >                       pdev->urbs[i] = NULL;
-> 
-> 
-> 
+diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c
+index 8ce10caf3e19..4e1953b2955e 100644
+--- a/drivers/usb/dwc2/hcd_intr.c
++++ b/drivers/usb/dwc2/hcd_intr.c
+@@ -994,6 +994,8 @@ static void dwc2_hc_xfercomp_intr(struct dwc2_hsotg *hsotg,
+ 	int pipe_type;
+ 	int urb_xfer_done;
+ 
++	qtd->num_naks = 0;
++
+ 	if (dbg_hc(chan))
+ 		dev_vdbg(hsotg->dev,
+ 			 "--Host Channel %d Interrupt: Transfer Complete--\n",
+-- 
+2.18.0.203.gfac676dfb9-goog
 
