@@ -2,451 +2,326 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D4EECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD11ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FAC220779
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FAC220779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CDC120657
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NPngoSNi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CDC120657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731758AbeGQQRi (ORCPT
+        id S1731319AbeGQQQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:17:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:39460 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729743AbeGQQRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:17:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 08:44:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
-   d="scan'208";a="55040226"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Jul 2018 08:44:16 -0700
-Message-ID: <091e7e06e19a1fa8330409192d388d8cfeb40068.camel@linux.intel.com>
-Subject: Re: [PATCH v3 2/3] bcache: use routines from lib/crc64.c for CRC64
- calculation
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Michael Lyle <mlyle@lyle.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Date:   Tue, 17 Jul 2018 18:44:15 +0300
-In-Reply-To: <20180717145525.50852-3-colyli@suse.de>
-References: <20180717145525.50852-1-colyli@suse.de>
-         <20180717145525.50852-3-colyli@suse.de>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 12:16:34 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43073 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731221AbeGQQQd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:16:33 -0400
+Received: by mail-wr1-f65.google.com with SMTP id b15-v6so1716315wrv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 08:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=UPId3RG4WBsrstZqBfLByXfWIzs2ghU7EPNjAXXwXys=;
+        b=NPngoSNig8FPooJQra976pV6Jxs2r3iLZJBkOipANIztmOH9/SeU+TNNKpiANco//7
+         dxMoDjIEAHkB1xvHRcL3K4AoCApBrG84P/c+ihRXf1HbBe0MDyzu4VB3KRQdUK+Y5Vfz
+         oYWYQ09r2r6Auk6eYcKc63iMINhv/463TIKlnVSSXEAYnaPs9maomcyknQd8lJk+WJV5
+         1KWVBKPZrvAb7rj89ZcMjYlpgOL1z0/JV2lNpCpaaZXPpiQWUZx7ccr4aD/JbQotob5z
+         V6CrPi8Q7UGQdowm+Jmm0ZRnlTW8U02zAROgRdm5Q8OksNsQ5HKXs1jv8EhV7d0dvwiW
+         Rv9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=UPId3RG4WBsrstZqBfLByXfWIzs2ghU7EPNjAXXwXys=;
+        b=gPPsETwA1zgDUKtAnb6AG5KTXvp/qE+v1HzJb7vR2yDwxALCsE2ezcyy9dc29lLvrL
+         4r6cH/ztyd4CnHDeMwBwNzlbjGJgFQCMhzV52yprwp00is0afdPQ328BgXabtQNqdIJj
+         7iXPXfX8tJIEWM/3l7AVez72k/OICpZ6ZPnVxo7HTQEWQHixmqhInIsuQY2DpxxOM6dZ
+         pr8SupWRSbmH5nPRODxsWMuYj7xiz2VohSsdaFba6K0EPrMRmomXZ71kp38gdVGK4nAc
+         O6JKO19LSaNqbac9zp+ZcVVAXOHoIVpe1OHzIzUOG/oKih1xN5Bkm/dnKhRYMxFwvFz0
+         /VfQ==
+X-Gm-Message-State: AOUpUlF2v3amenb/P1kDMOgTSSDwwFCIVr0HGQQaaWWSekST4SkVUX1k
+        cWsnZu5HRKxX55AuLvStXDVbpQ==
+X-Google-Smtp-Source: AAOMgpezLSHQugvLidXTljEOPeCYtq0O1QNDfQuY0rBuGoYSjeCASZ2RJJrDuSoAMGqwvrSP7RD4YA==
+X-Received: by 2002:adf:e405:: with SMTP id g5-v6mr1837079wrm.96.1531842197623;
+        Tue, 17 Jul 2018 08:43:17 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id s12-v6sm17598252wmc.2.2018.07.17.08.43.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 08:43:16 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH RESEND 04/15] ASoC: meson: add axg toddr driver
+Date:   Tue, 17 Jul 2018 17:42:53 +0200
+Message-Id: <20180717154304.9973-5-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180717154304.9973-1-jbrunet@baylibre.com>
+References: <20180717154304.9973-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 22:55 +0800, Coly Li wrote:
-> Now we have crc64 calculation in lib/crc64.c, it is unnecessary for
-> bcache to use it own version. This patch changes bcache code to use
-> crc64 routines in lib/crc64.c.
-> 
+Add the capture memory interface of Amlogic's axg SoCs.
+TDM, SPDIF or PDM input devices place audio samples inside this FIFO.
+The FIFO content is then pushed to DDR
 
-Yes, no more PostgreSQL code in kernel!
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ sound/soc/meson/Kconfig     |   7 ++
+ sound/soc/meson/Makefile    |   2 +
+ sound/soc/meson/axg-toddr.c | 199 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 208 insertions(+)
+ create mode 100644 sound/soc/meson/axg-toddr.c
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> Signed-off-by: Coly Li <colyli@suse.de>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Michael Lyle <mlyle@lyle.org>
-> Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Kate Stewart <kstewart@linuxfoundation.org>
-> ---
->  drivers/md/bcache/Kconfig   |   1 +
->  drivers/md/bcache/bcache.h  |   7 +-
->  drivers/md/bcache/btree.c   |   2 +-
->  drivers/md/bcache/request.c |   2 +-
->  drivers/md/bcache/super.c   |   5 +-
->  drivers/md/bcache/util.c    | 131 ---------------------------------
-> ---
->  drivers/md/bcache/util.h    |   5 +-
->  7 files changed, 11 insertions(+), 142 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
-> index 17bf109c58e9..af247298409a 100644
-> --- a/drivers/md/bcache/Kconfig
-> +++ b/drivers/md/bcache/Kconfig
-> @@ -1,6 +1,7 @@
->  
->  config BCACHE
->  	tristate "Block device as cache"
-> +	select CRC64
->  	---help---
->  	Allows a block device to be used as cache for other devices;
-> uses
->  	a btree for indexing and the layout is optimized for SSDs.
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index d6bf294f3907..6d4d2356c3cc 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -189,6 +189,7 @@
->  #include <linux/types.h>
->  #include <linux/workqueue.h>
->  #include <linux/kthread.h>
-> +#include <linux/crc64.h>
->  
->  #include "bset.h"
->  #include "util.h"
-> @@ -803,9 +804,9 @@ static inline bool ptr_available(struct cache_set
-> *c, const struct bkey *k,
->   * jset: The checksum is _always_ the first 8 bytes of these structs
->   */
->  #define csum_set(i)							
-> \
-> -	bch_crc64(((void *) (i)) + sizeof(uint64_t),			
-> \
-> -		  ((void *) bset_bkey_last(i)) -			
-> \
-> -		  (((void *) (i)) + sizeof(uint64_t)))
-> +	crc64_bch(((void *) (i)) + sizeof(uint64_t),			
-> \
-> +		   ((void *) bset_bkey_last(i)) -			
-> \
-> +		   (((void *) (i)) + sizeof(uint64_t)))
->  
->  /* Error handling macros */
->  
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index 547c9eedc2f4..72619508c928 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -194,7 +194,7 @@ static uint64_t btree_csum_set(struct btree *b,
-> struct bset *i)
->  	uint64_t crc = b->key.ptr[0];
->  	void *data = (void *) i + 8, *end = bset_bkey_last(i);
->  
-> -	crc = bch_crc64_update(crc, data, end - data);
-> +	crc = crc64_update(crc, data, end - data);
->  	return crc ^ 0xffffffffffffffffULL;
->  }
->  
-> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-> index ae67f5fa8047..28b2fb11a3d5 100644
-> --- a/drivers/md/bcache/request.c
-> +++ b/drivers/md/bcache/request.c
-> @@ -45,7 +45,7 @@ static void bio_csum(struct bio *bio, struct bkey
-> *k)
->  
->  	bio_for_each_segment(bv, bio, iter) {
->  		void *d = kmap(bv.bv_page) + bv.bv_offset;
-> -		csum = bch_crc64_update(csum, d, bv.bv_len);
-> +		csum = crc64_update(csum, d, bv.bv_len);
->  		kunmap(bv.bv_page);
->  	}
->  
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index fa4058e43202..c425c52f0c42 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -549,7 +549,7 @@ void bch_prio_write(struct cache *ca)
->  
->  		p->next_bucket	= ca->prio_buckets[i + 1];
->  		p->magic	= pset_magic(&ca->sb);
-> -		p->csum		= bch_crc64(&p->magic,
-> bucket_bytes(ca) - 8);
-> +		p->csum		= crc64_bch(&p->magic,
-> bucket_bytes(ca) - 8);
->  
->  		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, true);
->  		BUG_ON(bucket == -1);
-> @@ -599,7 +599,8 @@ static void prio_read(struct cache *ca, uint64_t
-> bucket)
->  
->  			prio_io(ca, bucket, REQ_OP_READ, 0);
->  
-> -			if (p->csum != bch_crc64(&p->magic,
-> bucket_bytes(ca) - 8))
-> +			if (p->csum != crc64_bch(&p->magic,
-> +						   bucket_bytes(ca) -
-> 8))
->  				pr_warn("bad csum reading
-> priorities");
->  
->  			if (p->magic != pset_magic(&ca->sb))
-> diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
-> index fc479b026d6d..f912c372978c 100644
-> --- a/drivers/md/bcache/util.c
-> +++ b/drivers/md/bcache/util.c
-> @@ -279,134 +279,3 @@ int bch_bio_alloc_pages(struct bio *bio, gfp_t
-> gfp_mask)
->  
->  	return 0;
->  }
-> -
-> -/*
-> - * Portions Copyright (c) 1996-2001, PostgreSQL Global Development
-> Group (Any
-> - * use permitted, subject to terms of PostgreSQL license; see.)
-> -
-> - * If we have a 64-bit integer type, then a 64-bit CRC looks just
-> like the
-> - * usual sort of implementation. (See Ross Williams' excellent
-> introduction
-> - * A PAINLESS GUIDE TO CRC ERROR DETECTION ALGORITHMS, available from
-> - * ftp://ftp.rocksoft.com/papers/crc_v3.txt or several other net
-> sites.)
-> - * If we have no working 64-bit type, then fake it with two 32-bit
-> registers.
-> - *
-> - * The present implementation is a normal (not "reflected", in
-> Williams'
-> - * terms) 64-bit CRC, using initial all-ones register contents and a
-> final
-> - * bit inversion. The chosen polynomial is borrowed from the DLT1
-> spec
-> - * (ECMA-182, available from http://www.ecma.ch/ecma1/STAND/ECMA-182.
-> HTM):
-> - *
-> - * x^64 + x^62 + x^57 + x^55 + x^54 + x^53 + x^52 + x^47 + x^46 +
-> x^45 +
-> - * x^40 + x^39 + x^38 + x^37 + x^35 + x^33 + x^32 + x^31 + x^29 +
-> x^27 +
-> - * x^24 + x^23 + x^22 + x^21 + x^19 + x^17 + x^13 + x^12 + x^10 + x^9
-> +
-> - * x^7 + x^4 + x + 1
-> -*/
-> -
-> -static const uint64_t crc_table[256] = {
-> -	0x0000000000000000ULL, 0x42F0E1EBA9EA3693ULL,
-> 0x85E1C3D753D46D26ULL,
-> -	0xC711223CFA3E5BB5ULL, 0x493366450E42ECDFULL,
-> 0x0BC387AEA7A8DA4CULL,
-> -	0xCCD2A5925D9681F9ULL, 0x8E224479F47CB76AULL,
-> 0x9266CC8A1C85D9BEULL,
-> -	0xD0962D61B56FEF2DULL, 0x17870F5D4F51B498ULL,
-> 0x5577EEB6E6BB820BULL,
-> -	0xDB55AACF12C73561ULL, 0x99A54B24BB2D03F2ULL,
-> 0x5EB4691841135847ULL,
-> -	0x1C4488F3E8F96ED4ULL, 0x663D78FF90E185EFULL,
-> 0x24CD9914390BB37CULL,
-> -	0xE3DCBB28C335E8C9ULL, 0xA12C5AC36ADFDE5AULL,
-> 0x2F0E1EBA9EA36930ULL,
-> -	0x6DFEFF5137495FA3ULL, 0xAAEFDD6DCD770416ULL,
-> 0xE81F3C86649D3285ULL,
-> -	0xF45BB4758C645C51ULL, 0xB6AB559E258E6AC2ULL,
-> 0x71BA77A2DFB03177ULL,
-> -	0x334A9649765A07E4ULL, 0xBD68D2308226B08EULL,
-> 0xFF9833DB2BCC861DULL,
-> -	0x388911E7D1F2DDA8ULL, 0x7A79F00C7818EB3BULL,
-> 0xCC7AF1FF21C30BDEULL,
-> -	0x8E8A101488293D4DULL, 0x499B3228721766F8ULL,
-> 0x0B6BD3C3DBFD506BULL,
-> -	0x854997BA2F81E701ULL, 0xC7B97651866BD192ULL,
-> 0x00A8546D7C558A27ULL,
-> -	0x4258B586D5BFBCB4ULL, 0x5E1C3D753D46D260ULL,
-> 0x1CECDC9E94ACE4F3ULL,
-> -	0xDBFDFEA26E92BF46ULL, 0x990D1F49C77889D5ULL,
-> 0x172F5B3033043EBFULL,
-> -	0x55DFBADB9AEE082CULL, 0x92CE98E760D05399ULL,
-> 0xD03E790CC93A650AULL,
-> -	0xAA478900B1228E31ULL, 0xE8B768EB18C8B8A2ULL,
-> 0x2FA64AD7E2F6E317ULL,
-> -	0x6D56AB3C4B1CD584ULL, 0xE374EF45BF6062EEULL,
-> 0xA1840EAE168A547DULL,
-> -	0x66952C92ECB40FC8ULL, 0x2465CD79455E395BULL,
-> 0x3821458AADA7578FULL,
-> -	0x7AD1A461044D611CULL, 0xBDC0865DFE733AA9ULL,
-> 0xFF3067B657990C3AULL,
-> -	0x711223CFA3E5BB50ULL, 0x33E2C2240A0F8DC3ULL,
-> 0xF4F3E018F031D676ULL,
-> -	0xB60301F359DBE0E5ULL, 0xDA050215EA6C212FULL,
-> 0x98F5E3FE438617BCULL,
-> -	0x5FE4C1C2B9B84C09ULL, 0x1D14202910527A9AULL,
-> 0x93366450E42ECDF0ULL,
-> -	0xD1C685BB4DC4FB63ULL, 0x16D7A787B7FAA0D6ULL,
-> 0x5427466C1E109645ULL,
-> -	0x4863CE9FF6E9F891ULL, 0x0A932F745F03CE02ULL,
-> 0xCD820D48A53D95B7ULL,
-> -	0x8F72ECA30CD7A324ULL, 0x0150A8DAF8AB144EULL,
-> 0x43A04931514122DDULL,
-> -	0x84B16B0DAB7F7968ULL, 0xC6418AE602954FFBULL,
-> 0xBC387AEA7A8DA4C0ULL,
-> -	0xFEC89B01D3679253ULL, 0x39D9B93D2959C9E6ULL,
-> 0x7B2958D680B3FF75ULL,
-> -	0xF50B1CAF74CF481FULL, 0xB7FBFD44DD257E8CULL,
-> 0x70EADF78271B2539ULL,
-> -	0x321A3E938EF113AAULL, 0x2E5EB66066087D7EULL,
-> 0x6CAE578BCFE24BEDULL,
-> -	0xABBF75B735DC1058ULL, 0xE94F945C9C3626CBULL,
-> 0x676DD025684A91A1ULL,
-> -	0x259D31CEC1A0A732ULL, 0xE28C13F23B9EFC87ULL,
-> 0xA07CF2199274CA14ULL,
-> -	0x167FF3EACBAF2AF1ULL, 0x548F120162451C62ULL,
-> 0x939E303D987B47D7ULL,
-> -	0xD16ED1D631917144ULL, 0x5F4C95AFC5EDC62EULL,
-> 0x1DBC74446C07F0BDULL,
-> -	0xDAAD56789639AB08ULL, 0x985DB7933FD39D9BULL,
-> 0x84193F60D72AF34FULL,
-> -	0xC6E9DE8B7EC0C5DCULL, 0x01F8FCB784FE9E69ULL,
-> 0x43081D5C2D14A8FAULL,
-> -	0xCD2A5925D9681F90ULL, 0x8FDAB8CE70822903ULL,
-> 0x48CB9AF28ABC72B6ULL,
-> -	0x0A3B7B1923564425ULL, 0x70428B155B4EAF1EULL,
-> 0x32B26AFEF2A4998DULL,
-> -	0xF5A348C2089AC238ULL, 0xB753A929A170F4ABULL,
-> 0x3971ED50550C43C1ULL,
-> -	0x7B810CBBFCE67552ULL, 0xBC902E8706D82EE7ULL,
-> 0xFE60CF6CAF321874ULL,
-> -	0xE224479F47CB76A0ULL, 0xA0D4A674EE214033ULL,
-> 0x67C58448141F1B86ULL,
-> -	0x253565A3BDF52D15ULL, 0xAB1721DA49899A7FULL,
-> 0xE9E7C031E063ACECULL,
-> -	0x2EF6E20D1A5DF759ULL, 0x6C0603E6B3B7C1CAULL,
-> 0xF6FAE5C07D3274CDULL,
-> -	0xB40A042BD4D8425EULL, 0x731B26172EE619EBULL,
-> 0x31EBC7FC870C2F78ULL,
-> -	0xBFC9838573709812ULL, 0xFD39626EDA9AAE81ULL,
-> 0x3A28405220A4F534ULL,
-> -	0x78D8A1B9894EC3A7ULL, 0x649C294A61B7AD73ULL,
-> 0x266CC8A1C85D9BE0ULL,
-> -	0xE17DEA9D3263C055ULL, 0xA38D0B769B89F6C6ULL,
-> 0x2DAF4F0F6FF541ACULL,
-> -	0x6F5FAEE4C61F773FULL, 0xA84E8CD83C212C8AULL,
-> 0xEABE6D3395CB1A19ULL,
-> -	0x90C79D3FEDD3F122ULL, 0xD2377CD44439C7B1ULL,
-> 0x15265EE8BE079C04ULL,
-> -	0x57D6BF0317EDAA97ULL, 0xD9F4FB7AE3911DFDULL,
-> 0x9B041A914A7B2B6EULL,
-> -	0x5C1538ADB04570DBULL, 0x1EE5D94619AF4648ULL,
-> 0x02A151B5F156289CULL,
-> -	0x4051B05E58BC1E0FULL, 0x87409262A28245BAULL,
-> 0xC5B073890B687329ULL,
-> -	0x4B9237F0FF14C443ULL, 0x0962D61B56FEF2D0ULL,
-> 0xCE73F427ACC0A965ULL,
-> -	0x8C8315CC052A9FF6ULL, 0x3A80143F5CF17F13ULL,
-> 0x7870F5D4F51B4980ULL,
-> -	0xBF61D7E80F251235ULL, 0xFD913603A6CF24A6ULL,
-> 0x73B3727A52B393CCULL,
-> -	0x31439391FB59A55FULL, 0xF652B1AD0167FEEAULL,
-> 0xB4A25046A88DC879ULL,
-> -	0xA8E6D8B54074A6ADULL, 0xEA16395EE99E903EULL,
-> 0x2D071B6213A0CB8BULL,
-> -	0x6FF7FA89BA4AFD18ULL, 0xE1D5BEF04E364A72ULL,
-> 0xA3255F1BE7DC7CE1ULL,
-> -	0x64347D271DE22754ULL, 0x26C49CCCB40811C7ULL,
-> 0x5CBD6CC0CC10FAFCULL,
-> -	0x1E4D8D2B65FACC6FULL, 0xD95CAF179FC497DAULL,
-> 0x9BAC4EFC362EA149ULL,
-> -	0x158E0A85C2521623ULL, 0x577EEB6E6BB820B0ULL,
-> 0x906FC95291867B05ULL,
-> -	0xD29F28B9386C4D96ULL, 0xCEDBA04AD0952342ULL,
-> 0x8C2B41A1797F15D1ULL,
-> -	0x4B3A639D83414E64ULL, 0x09CA82762AAB78F7ULL,
-> 0x87E8C60FDED7CF9DULL,
-> -	0xC51827E4773DF90EULL, 0x020905D88D03A2BBULL,
-> 0x40F9E43324E99428ULL,
-> -	0x2CFFE7D5975E55E2ULL, 0x6E0F063E3EB46371ULL,
-> 0xA91E2402C48A38C4ULL,
-> -	0xEBEEC5E96D600E57ULL, 0x65CC8190991CB93DULL,
-> 0x273C607B30F68FAEULL,
-> -	0xE02D4247CAC8D41BULL, 0xA2DDA3AC6322E288ULL,
-> 0xBE992B5F8BDB8C5CULL,
-> -	0xFC69CAB42231BACFULL, 0x3B78E888D80FE17AULL,
-> 0x7988096371E5D7E9ULL,
-> -	0xF7AA4D1A85996083ULL, 0xB55AACF12C735610ULL,
-> 0x724B8ECDD64D0DA5ULL,
-> -	0x30BB6F267FA73B36ULL, 0x4AC29F2A07BFD00DULL,
-> 0x08327EC1AE55E69EULL,
-> -	0xCF235CFD546BBD2BULL, 0x8DD3BD16FD818BB8ULL,
-> 0x03F1F96F09FD3CD2ULL,
-> -	0x41011884A0170A41ULL, 0x86103AB85A2951F4ULL,
-> 0xC4E0DB53F3C36767ULL,
-> -	0xD8A453A01B3A09B3ULL, 0x9A54B24BB2D03F20ULL,
-> 0x5D45907748EE6495ULL,
-> -	0x1FB5719CE1045206ULL, 0x919735E51578E56CULL,
-> 0xD367D40EBC92D3FFULL,
-> -	0x1476F63246AC884AULL, 0x568617D9EF46BED9ULL,
-> 0xE085162AB69D5E3CULL,
-> -	0xA275F7C11F7768AFULL, 0x6564D5FDE549331AULL,
-> 0x279434164CA30589ULL,
-> -	0xA9B6706FB8DFB2E3ULL, 0xEB46918411358470ULL,
-> 0x2C57B3B8EB0BDFC5ULL,
-> -	0x6EA7525342E1E956ULL, 0x72E3DAA0AA188782ULL,
-> 0x30133B4B03F2B111ULL,
-> -	0xF7021977F9CCEAA4ULL, 0xB5F2F89C5026DC37ULL,
-> 0x3BD0BCE5A45A6B5DULL,
-> -	0x79205D0E0DB05DCEULL, 0xBE317F32F78E067BULL,
-> 0xFCC19ED95E6430E8ULL,
-> -	0x86B86ED5267CDBD3ULL, 0xC4488F3E8F96ED40ULL,
-> 0x0359AD0275A8B6F5ULL,
-> -	0x41A94CE9DC428066ULL, 0xCF8B0890283E370CULL,
-> 0x8D7BE97B81D4019FULL,
-> -	0x4A6ACB477BEA5A2AULL, 0x089A2AACD2006CB9ULL,
-> 0x14DEA25F3AF9026DULL,
-> -	0x562E43B4931334FEULL, 0x913F6188692D6F4BULL,
-> 0xD3CF8063C0C759D8ULL,
-> -	0x5DEDC41A34BBEEB2ULL, 0x1F1D25F19D51D821ULL,
-> 0xD80C07CD676F8394ULL,
-> -	0x9AFCE626CE85B507ULL,
-> -};
-> -
-> -uint64_t bch_crc64_update(uint64_t crc, const void *_data, size_t
-> len)
-> -{
-> -	const unsigned char *data = _data;
-> -
-> -	while (len--) {
-> -		int i = ((int) (crc >> 56) ^ *data++) & 0xFF;
-> -		crc = crc_table[i] ^ (crc << 8);
-> -	}
-> -
-> -	return crc;
-> -}
-> -
-> -uint64_t bch_crc64(const void *data, size_t len)
-> -{
-> -	uint64_t crc = 0xffffffffffffffffULL;
-> -
-> -	crc = bch_crc64_update(crc, data, len);
-> -
-> -	return crc ^ 0xffffffffffffffffULL;
-> -}
-> diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
-> index cced87f8eb27..b1deec0dc958 100644
-> --- a/drivers/md/bcache/util.h
-> +++ b/drivers/md/bcache/util.h
-> @@ -11,6 +11,7 @@
->  #include <linux/ratelimit.h>
->  #include <linux/vmalloc.h>
->  #include <linux/workqueue.h>
-> +#include <linux/crc64.h>
->  
->  #include "closure.h"
->  
-> @@ -561,8 +562,4 @@ static inline sector_t bdev_sectors(struct
-> block_device *bdev)
->  {
->  	return bdev->bd_inode->i_size >> 9;
->  }
-> -
-> -uint64_t bch_crc64_update(uint64_t, const void *, size_t);
-> -uint64_t bch_crc64(const void *, size_t);
-> -
->  #endif /* _BCACHE_UTIL_H */
-
+diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
+index cdd78f62e8d7..3916060edcae 100644
+--- a/sound/soc/meson/Kconfig
++++ b/sound/soc/meson/Kconfig
+@@ -12,4 +12,11 @@ config SND_MESON_AXG_FRDDR
+ 	  Select Y or M to add support for the frontend playback interfaces
+ 	  embedded in the Amlogic AXG SoC family
+ 
++config SND_MESON_AXG_TODDR
++	tristate "Amlogic AXG Capture FIFO support"
++	select SND_MESON_AXG_FIFO
++	help
++	  Select Y or M to add support for the frontend capture interfaces
++	  embedded in the Amlogic AXG SoC family
++
+ endmenu
+diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
+index 9c5d7d4a8e33..12edf2db2a24 100644
+--- a/sound/soc/meson/Makefile
++++ b/sound/soc/meson/Makefile
+@@ -2,6 +2,8 @@
+ 
+ snd-soc-meson-axg-fifo-objs := axg-fifo.o
+ snd-soc-meson-axg-frddr-objs := axg-frddr.o
++snd-soc-meson-axg-toddr-objs := axg-toddr.o
+ 
+ obj-$(CONFIG_SND_MESON_AXG_FIFO) += snd-soc-meson-axg-fifo.o
+ obj-$(CONFIG_SND_MESON_AXG_FRDDR) += snd-soc-meson-axg-frddr.o
++obj-$(CONFIG_SND_MESON_AXG_TODDR) += snd-soc-meson-axg-toddr.o
+diff --git a/sound/soc/meson/axg-toddr.c b/sound/soc/meson/axg-toddr.c
+new file mode 100644
+index 000000000000..c2c9bb312586
+--- /dev/null
++++ b/sound/soc/meson/axg-toddr.c
+@@ -0,0 +1,199 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++//
++// Copyright (c) 2018 BayLibre, SAS.
++// Author: Jerome Brunet <jbrunet@baylibre.com>
++
++/* This driver implements the frontend capture DAI of AXG based SoCs */
++
++#include <linux/clk.h>
++#include <linux/regmap.h>
++#include <linux/module.h>
++#include <linux/of_platform.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#include "axg-fifo.h"
++
++#define CTRL0_TODDR_SEL_RESAMPLE	BIT(30)
++#define CTRL0_TODDR_EXT_SIGNED		BIT(29)
++#define CTRL0_TODDR_PP_MODE		BIT(28)
++#define CTRL0_TODDR_TYPE_MASK		GENMASK(15, 13)
++#define CTRL0_TODDR_TYPE(x)		((x) << 13)
++#define CTRL0_TODDR_MSB_POS_MASK	GENMASK(12, 8)
++#define CTRL0_TODDR_MSB_POS(x)		((x) << 8)
++#define CTRL0_TODDR_LSB_POS_MASK	GENMASK(7, 3)
++#define CTRL0_TODDR_LSB_POS(x)		((x) << 3)
++
++static int axg_toddr_pcm_new(struct snd_soc_pcm_runtime *rtd,
++			     struct snd_soc_dai *dai)
++{
++	return axg_fifo_pcm_new(rtd, SNDRV_PCM_STREAM_CAPTURE);
++}
++
++static int axg_toddr_dai_hw_params(struct snd_pcm_substream *substream,
++				   struct snd_pcm_hw_params *params,
++				   struct snd_soc_dai *dai)
++{
++	struct axg_fifo *fifo = snd_soc_dai_get_drvdata(dai);
++	unsigned int type, width, msb = 31;
++
++	/*
++	 * NOTE:
++	 * Almost all backend will place the MSB at bit 31, except SPDIF Input
++	 * which will put it at index 28. When adding support for the SPDIF
++	 * Input, we'll need to find which type of backend we are connected to.
++	 */
++
++	switch (params_physical_width(params)) {
++	case 8:
++		type = 0; /* 8 samples of 8 bits */
++		break;
++	case 16:
++		type = 2; /* 4 samples of 16 bits - right justified */
++		break;
++	case 32:
++		type = 4; /* 2 samples of 32 bits - right justified */
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	width = params_width(params);
++
++	regmap_update_bits(fifo->map, FIFO_CTRL0,
++			   CTRL0_TODDR_TYPE_MASK |
++			   CTRL0_TODDR_MSB_POS_MASK |
++			   CTRL0_TODDR_LSB_POS_MASK,
++			   CTRL0_TODDR_TYPE(type) |
++			   CTRL0_TODDR_MSB_POS(msb) |
++			   CTRL0_TODDR_LSB_POS(msb - (width - 1)));
++
++	return 0;
++}
++
++static int axg_toddr_dai_startup(struct snd_pcm_substream *substream,
++				 struct snd_soc_dai *dai)
++{
++	struct axg_fifo *fifo = snd_soc_dai_get_drvdata(dai);
++	unsigned int fifo_threshold;
++	int ret;
++
++	/* Enable pclk to access registers and clock the fifo ip */
++	ret = clk_prepare_enable(fifo->pclk);
++	if (ret)
++		return ret;
++
++	/* Select orginal data - resampling not supported ATM */
++	regmap_update_bits(fifo->map, FIFO_CTRL0, CTRL0_TODDR_SEL_RESAMPLE, 0);
++
++	/* Only signed format are supported ATM */
++	regmap_update_bits(fifo->map, FIFO_CTRL0, CTRL0_TODDR_EXT_SIGNED,
++			   CTRL0_TODDR_EXT_SIGNED);
++
++	/* Apply single buffer mode to the interface */
++	regmap_update_bits(fifo->map, FIFO_CTRL0, CTRL0_TODDR_PP_MODE, 0);
++
++	/* TODDR does not have a configurable fifo depth */
++	fifo_threshold = AXG_FIFO_MIN_CNT - 1;
++	regmap_update_bits(fifo->map, FIFO_CTRL1, CTRL1_THRESHOLD_MASK,
++			   CTRL1_THRESHOLD(fifo_threshold));
++
++	return 0;
++}
++
++static void axg_toddr_dai_shutdown(struct snd_pcm_substream *substream,
++				   struct snd_soc_dai *dai)
++{
++	struct axg_fifo *fifo = snd_soc_dai_get_drvdata(dai);
++
++	clk_disable_unprepare(fifo->pclk);
++}
++
++static const struct snd_soc_dai_ops axg_toddr_ops = {
++	.hw_params	= axg_toddr_dai_hw_params,
++	.startup	= axg_toddr_dai_startup,
++	.shutdown	= axg_toddr_dai_shutdown,
++};
++
++static struct snd_soc_dai_driver axg_toddr_dai_drv = {
++	.name = "TODDR",
++	.capture = {
++		.stream_name	= "Capture",
++		.channels_min	= 1,
++		.channels_max	= AXG_FIFO_CH_MAX,
++		.rates		= AXG_FIFO_RATES,
++		.formats	= AXG_FIFO_FORMATS,
++	},
++	.ops		= &axg_toddr_ops,
++	.pcm_new	= axg_toddr_pcm_new,
++};
++
++static const char * const axg_toddr_sel_texts[] = {
++	"IN 0", "IN 1", "IN 2", "IN 3", "IN 4", "IN 6"
++};
++
++static const unsigned int axg_toddr_sel_values[] = {
++	0, 1, 2, 3, 4, 6
++};
++
++static SOC_VALUE_ENUM_SINGLE_DECL(axg_toddr_sel_enum, FIFO_CTRL0,
++				  CTRL0_SEL_SHIFT, CTRL0_SEL_MASK,
++				  axg_toddr_sel_texts, axg_toddr_sel_values);
++
++static const struct snd_kcontrol_new axg_toddr_in_mux =
++	SOC_DAPM_ENUM("Input Source", axg_toddr_sel_enum);
++
++static const struct snd_soc_dapm_widget axg_toddr_dapm_widgets[] = {
++	SND_SOC_DAPM_MUX("SRC SEL", SND_SOC_NOPM, 0, 0, &axg_toddr_in_mux),
++	SND_SOC_DAPM_AIF_IN("IN 0", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_IN("IN 1", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_IN("IN 2", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_IN("IN 3", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_IN("IN 4", NULL, 0, SND_SOC_NOPM, 0, 0),
++	SND_SOC_DAPM_AIF_IN("IN 6", NULL, 0, SND_SOC_NOPM, 0, 0),
++};
++
++static const struct snd_soc_dapm_route axg_toddr_dapm_routes[] = {
++	{ "Capture", NULL, "SRC SEL" },
++	{ "SRC SEL", "IN 0", "IN 0" },
++	{ "SRC SEL", "IN 1", "IN 1" },
++	{ "SRC SEL", "IN 2", "IN 2" },
++	{ "SRC SEL", "IN 3", "IN 3" },
++	{ "SRC SEL", "IN 4", "IN 4" },
++	{ "SRC SEL", "IN 6", "IN 6" },
++};
++
++static const struct snd_soc_component_driver axg_toddr_component_drv = {
++	.dapm_widgets		= axg_toddr_dapm_widgets,
++	.num_dapm_widgets	= ARRAY_SIZE(axg_toddr_dapm_widgets),
++	.dapm_routes		= axg_toddr_dapm_routes,
++	.num_dapm_routes	= ARRAY_SIZE(axg_toddr_dapm_routes),
++	.ops			= &axg_fifo_pcm_ops
++};
++
++static const struct axg_fifo_match_data axg_toddr_match_data = {
++	.component_drv	= &axg_toddr_component_drv,
++	.dai_drv	= &axg_toddr_dai_drv
++};
++
++static const struct of_device_id axg_toddr_of_match[] = {
++	{
++		.compatible = "amlogic,axg-toddr",
++		.data = &axg_toddr_match_data,
++	}, {}
++};
++MODULE_DEVICE_TABLE(of, axg_toddr_of_match);
++
++static struct platform_driver axg_toddr_pdrv = {
++	.probe = axg_fifo_probe,
++	.driver = {
++		.name = "axg-toddr",
++		.of_match_table = axg_toddr_of_match,
++	},
++};
++module_platform_driver(axg_toddr_pdrv);
++
++MODULE_DESCRIPTION("Amlogic AXG capture fifo driver");
++MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
++MODULE_LICENSE("GPL v2");
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.14.4
+
