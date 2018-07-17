@@ -2,160 +2,383 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DAFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F16A3ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E632320858
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:34:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGjPIRbo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E632320858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9515720858
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9515720858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbeGQIFI (ORCPT
+        id S1729720AbeGQIFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:05:08 -0400
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:42255 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729633AbeGQIFH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:05:07 -0400
-Received: by mail-oi0-f51.google.com with SMTP id n84-v6so233465oib.9;
-        Tue, 17 Jul 2018 00:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=1usDStjqjD66ye1i+IxPw1yoa6IStFJL5IA6CS9J4j4=;
-        b=NGjPIRboX6bvpmXppaonyTfmKtEpR3/ePED2S8vM6MgE70ztWl3/funVSzpBEVlYMG
-         BeAehDxsRpLGhZtEjxiWPayKc7Fs6nV2amwBBH05qTaO4r6nbC/D34LMBA08FOVplCQc
-         +V2xCQEnl4vY0FB6ASld3RAhB+ZiRNOzWxNUzIPwIfsXNaWQotn9ef73+xISHM0MLjY+
-         Mt82k3GvQeJdRF+xV+hDRksPfWHAPgQNtRGSbCXOeTM51C1us283QvRG5wiygTUcr51m
-         POgfvvIb+CzHNVSYKR7yAq4WFEYwfMzqmenzZ0DCxRecy+YwUx90Qa2tv8/7Z6rr5Gj4
-         Rkhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=1usDStjqjD66ye1i+IxPw1yoa6IStFJL5IA6CS9J4j4=;
-        b=l8f/cdti4MwPoUyQOe4eMiFFwHSbw/Bd7w0JeeCVUS+HtFxJBT3AY3qUytt8qbYoSg
-         9xEdUPNf5bVpHlyaCsaKO6mUxh3X7l7R0zGh2UyZBQWobXehsASeMtYNivXPclSlUhwv
-         QEn/gUaHGEBDuGkwVf56z+5LOzNTH+nRWuZ5gGgwdiFY9n1zL/aralVv/RtoyIIh4mm6
-         i7qGob5OEs5bOIBrv8vsozvJxFRRJ3wBLWt2hA5hGmt/JAUyORypE6Pf4gZtP1Hb8aq5
-         K8l1WngFP6kCf6C0wGoz8TpStSkmL3eAwdOG0kYEsMRQ5xOyidiwwYPVlLHbr4GRmr3M
-         /C5Q==
-X-Gm-Message-State: AOUpUlHTefdviug8LtNOJDzqGxAsE7rBcpC4z5NKm/7CcAJRPobovqd2
-        epncBZUlWTOTmEUhL4f4iVIeqpg3TsZra5UrOCo=
-X-Google-Smtp-Source: AAOMgpc2NKxOm/JoUBDZ3/ATVj/PiXU9EELpNGwcnZDPFk8sg2BUYO4FiwopU25tghBDSOyCP1ctEan1tqxPOaBpaM8=
-X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr472554oig.282.1531812833341;
- Tue, 17 Jul 2018 00:33:53 -0700 (PDT)
+        Tue, 17 Jul 2018 04:05:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53720 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728031AbeGQIFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 04:05:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 75302ACC3;
+        Tue, 17 Jul 2018 07:34:32 +0000 (UTC)
+Subject: Re: [PATCH 2/4] lib: add crc64 calculation routines
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+References: <20180716165507.23100-1-colyli@suse.de>
+ <20180716165507.23100-3-colyli@suse.de>
+ <20180717033425.GA1728@sol.localdomain>
+ <40ed7be1-fb4d-7ae0-53db-cce8461c66b9@suse.de>
+ <20180717071352.GB1728@sol.localdomain>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <07d8eaa0-8838-6297-95c4-0e1c97550b2b@suse.de>
+Date:   Tue, 17 Jul 2018 15:34:24 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 00:33:53
- -0700 (PDT)
-In-Reply-To: <20180717065048.74mmgk4t5utjaa6a@suselix>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 17 Jul 2018 09:33:53 +0200
-X-Google-Sender-Auth: Qp3tdQsI--DnehWWQY3o4vUlsP0
-Message-ID: <CAJZ5v0ihkNKPrtzKynt8jgQi1JjwCm+SdoUnu4XqoPSkOroHvA@mail.gmail.com>
-Subject: Re: Commit 554c8aa8ecad causing severe performance degression with pcc-cpufreq
-To:     Andreas Herrmann <aherrmann@suse.com>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180717071352.GB1728@sol.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2018/7/17 3:13 PM, Eric Biggers wrote:
+> On Tue, Jul 17, 2018 at 02:25:24PM +0800, Coly Li wrote:
+>> On 2018/7/17 11:34 AM, Eric Biggers wrote:
+>>> Hi Coly,
+>>>
+>>> On Tue, Jul 17, 2018 at 12:55:05AM +0800, Coly Li wrote:
+>>>> This patch adds the re-write crc64 calculation routines for Linux kernel.
+>>>> The CRC64 polynomical arithmetic follows ECMA-182 specification, inspired
+>>>> by CRC paper of Dr. Ross N. Williams
+>>>> (see http://www.ross.net/crc/download/crc_v3.txt) and other public domain
+>>>> implementations.
+>>>>
+>>>> All the changes work in this way,
+>>>> - When Linux kernel is built, host program lib/gen_crc64table.c will be
+>>>>   compiled to lib/gen_crc64table and executed.
+>>>> - The output of gen_crc64table execution is an array called as lookup
+>>>>   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64bits-long
+>>>>   numbers, this talbe is dumped into header file lib/crc64table.h.
+>>>> - Then the header file is included by lib/crc64.c for normal 64bit crc
+>>>>   calculation.
+>>>> - Function declaration of the crc64 calculation routines is placed in
+>>>>   include/linux/crc64.h
+>>>>
+>>> [...]
+>>>> diff --git a/lib/crc64.c b/lib/crc64.c
+>>>> new file mode 100644
+>>>> index 000000000000..03f078303bd3
+>>>> --- /dev/null
+>>>> +++ b/lib/crc64.c
+>>>> @@ -0,0 +1,71 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Normal 64bit CRC calculation.
+>>>> + *
+>>>> + * This is a basic crc64 implementation following ECMA-182 specification,
+>>>> + * which can be found from,
+>>>> + * http://www.ecma-international.org/publications/standards/Ecma-182.htm
+>>>> + *
+>>>> + * Dr. Ross N. Williams has a great document to introduce the idea of CRC
+>>>> + * algorithm, here the CRC64 code is also inspired by the table-driven
+>>>> + * algorithm and detail example from this paper. This paper can be found
+>>>> + * from,
+>>>> + * http://www.ross.net/crc/download/crc_v3.txt
+>>>> + *
+>>>> + * crc64table_le[256] is the lookup table of a table-driver 64bit CRC
+>>>> + * calculation, which is generated by gen_crc64table.c in kernel build
+>>>> + * time. The polynomial of crc64 arithmetic is from ECMA-182 specification
+>>>> + * as well, which is defined as,
+>>>> + *
+>>>> + * x^64 + x^62 + x^57 + x^55 + x^54 + x^53 + x^52 + x^47 + x^46 + x^45 +
+>>>> + * x^40 + x^39 + x^38 + x^37 + x^35 + x^33 + x^32 + x^31 + x^29 + x^27 +
+>>>> + * x^24 + x^23 + x^22 + x^21 + x^19 + x^17 + x^13 + x^12 + x^10 + x^9 +
+>>>> + * x^7 + x^4 + x + 1
+>>>> + *
+>>>> + * Copyright 2018 SUSE Linux.
+>>>> + *   Author: Coly Li <colyli@suse.de>
+>>>> + *
+>>>> + */
+>>>> +
+>>>> +#include <linux/module.h>
+>>>> +#include <uapi/linux/types.h>
+>>>> +#include "crc64table.h"
+>>>> +
+>>>> +MODULE_DESCRIPTION("CRC64 calculations");
+>>>> +MODULE_LICENSE("GPL");
+>>>> +
+>>>> +__le64 crc64_le_update(__le64 crc, const void *_p, size_t len)
+>>>> +{
+>>>> +	size_t i, t;
+>>>> +
+>>>> +	const unsigned char *p = _p;
+>>>> +
+>>>> +	for (i = 0; i < len; i++) {
+>>>> +		t = ((crc >> 56) ^ (__le64)(*p++)) & 0xFF;
+>>>> +		crc = crc64table_le[t] ^ (crc << 8);
+>>>> +	}
+>>>> +
+>>>> +	return crc;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(crc64_le_update);
+>>>> +
+>>>> +__le64 crc64_le(const void *p, size_t len)
+>>>> +{
+>>>> +	__le64 crc = 0x0000000000000000ULL;
+>>>> +
+>>>> +	crc = crc64_le_update(crc, p, len);
+>>>> +
+>>>> +	return crc;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(crc64_le);
+>>>> +
+>>>> +/* For checksum calculation in drivers/md/bcache/ */
+>>>> +__le64 crc64_le_bch(const void *p, size_t len)
+>>>> +{
+>>>> +	__le64 crc = 0xFFFFFFFFFFFFFFFFULL;
+>>>> +
+>>>> +	crc = crc64_le_update(crc, p, len);
+>>>> +
+>>>> +	return (crc ^ 0xFFFFFFFFFFFFFFFFULL);
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(crc64_le_bch);
+>>>
+>>
+>> Hi Eric,
+>>
+>>> Using __le64 here makes no sense, because that type indicates the endianness of
+>>> the *bytes*, whereas with CRC's "little endian" and "big endian" refer to the
+>>> order in which the *bits* are mapped to the polynomial coefficients.
+>>>
+>>> Also as you can see for lib/crc32.c you really only need to provide a function
+>>>
+>>> 	u64 __pure crc64_le(u64 crc, unsigned char const *p, size_t len);
+>>>
+>>> and the callers can invert at the beginning and/or end if needed.
+>>
+>> Let me explain why I explicit use __le64 here. When crc64 is used as
+>> on-disk checksum, the input of crc64 calculation should be in a explicit
+>> specific byte order. Currently check sum in bcache code assumes the CPU
+>> is in little endian and just feeds in-memory data into crc64
+>> calculation, then the code does not work on big endian machine like s390x.
+>>
+>> To solve such problem, before calculating CRC the in-memory data should
+>> be swapped into a specific byte order (in bcache case it should be
+>> little endian). For data storage or transfer, CRC calculation without
+>> explicit endian is more easy to introduce bugs.
+> 
+> No, the implementation never loads multi-byte values, so CPU endianness doesn't
+> matter for the input.  CPU endianness *does* matter when serializing the final
 
-Thanks for your report!
+If the checksum is generated on big endian machine and checked on little
+endian machine, non-specific endianness will be problematic.
 
-On Tue, Jul 17, 2018 at 8:50 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
-> Hello,
->
-> I've recently noticed that commit 554c8aa8ecad ("sched: idle: Select
-> idle state before stopping the tick") causes severe performance drop
-> for systems using pcc-cpufreq driver. Depending on the number of CPUs
-> the system might be almost unusable. The OS jitter for 4.17.y and
-> 4.18.-rcx kernels is off the charts, you can even spot it with top
-> command (issued when the system is supposedly idle), e.g.
->
->  top - 14:44:24 up 2 min,  1 user,  load average: 90.11, 38.20, 14.38
->  Tasks: 1199 total, 109 running, 541 sleeping,   0 stopped,   0 zombie
->  %Cpu(s):  1.2 us, 58.7 sy,  0.0 ni, 39.3 id,  0.6 wa,  0.0 hi,  0.3 si,  0.0 st
->  KiB Mem:  13137064+total,  1192168 used, 13017848+free,     2340 buffers
->  KiB Swap:  2104316 total,        0 used,  2104316 free.   522296 cached Mem
->
->    PID USER      PR  NI    VIRT    RES    SHR S    %CPU  %MEM     TIME+ COMMAND
->   3373 root      20   0  982024  49916  36120 R  96.691 0.038   0:19.54 kubelet
->     67 root      20   0       0      0      0 R  78.676 0.000   0:49.36 kworker/9:0
->     25 root      20   0       0      0      0 R  78.125 0.000   0:49.67 kworker/2:0
->    182 root      20   0       0      0      0 R  75.735 0.000   1:18.17 kworker/28:0
->     43 root      20   0       0      0      0 R  75.000 0.000   0:11.56 kworker/5:0
->    103 root      20   0       0      0      0 R  74.449 0.000   0:46.83 kworker/15:0
->    334 root      20   0       0      0      0 R  72.978 0.000   1:06.88 kworker/53:0
->    789 root      20   0       0      0      0 R  69.853 0.000   1:29.50 kworker/38:1
->    418 root      20   0       0      0      0 R  69.301 0.000   0:41.33 kworker/67:0
->    779 root      20   0       0      0      0 R  68.934 0.000   1:33.60 kworker/27:1
->    773 root      20   0       0      0      0 R  68.566 0.000   1:37.91 kworker/22:1
->    762 root      20   0       0      0      0 R  68.015 0.000   1:41.01 kworker/11:1
->    769 root      20   0       0      0      0 R  67.647 0.000   1:37.65 kworker/18:1
->    805 root      20   0       0      0      0 R  67.096 0.000   1:30.96 kworker/54:1
->    840 root      20   0       0      0      0 R  66.912 0.000   1:23.82 kworker/89:1
->    812 root      20   0       0      0      0 R  66.728 0.000   1:31.89 kworker/59:1
->    847 root      20   0       0      0      0 R  66.360 0.000   1:28.40 kworker/96:1
->    763 root      20   0       0      0      0 R  66.176 0.000   1:42.57 kworker/12:1
->    772 root      20   0       0      0      0 R  66.176 0.000   1:12.58 kworker/21:1
->    821 root      20   0       0      0      0 R  66.176 0.000   1:29.62 kworker/69:1
->    923 root      20   0       0      0      0 R  65.809 0.000   1:44.32 kworker/3:18
->   1284 root      20   0       0      0      0 R  65.809 0.000   1:23.50 kworker/101:2
->     61 root      20   0       0      0      0 R  65.625 0.000   1:29.37 kworker/8:0
->   3531 root      20   0   24384   3768   2356 R  65.625 0.003   0:08.91 top
->    771 root      20   0       0      0      0 R  65.074 0.000   1:37.90 kworker/20:1
->    767 root      20   0       0      0      0 R  64.706 0.000   1:38.01 kworker/16:1
->    764 root      20   0       0      0      0 R  64.522 0.000   1:40.28 kworker/13:1
->    765 root      20   0       0      0      0 R  64.154 0.000   1:40.13 kworker/14:1
->
-> When I apply below patch (trying to revert essential parts of commit
-> 554c8aa8ecad) behaviour seems back to normal.
+> calculated CRC into a byte array for storing on-disk, so maybe bcache gets that
+> part wrong, I don't know.  Either way, that has nothing to do with how the
+> polynomial coefficients (bits) are ordered *within bytes*, which is what the
+> "_be" and "_le" refer to in the CRC-32 implementation.  Yes, the naming is
+> unfortunate as it can easily be confused with the usual "bytewise" endianness,
+> but you need to understand it.
+> 
 
-Well, that basically defeats the purpose of the change in commit
-554c8aa8ecad, so it's not what I'd like to do to fix this problem.
+I see, it seems I misunderstand _le and _be in CRC-32 implementation.
+OK, I will find a way to fix the naming and data type issues in v3 series.
 
-Also it would be good to understand what actually happens.
+> Again, using __le64 makes absolutely no sense.  You're even doing operations
+> like shifts directly on a "__le64" which sparse will (correctly) complain about.
+> 
 
-> I know that pcc-cpufreq driver is not "state-of-the-art" when it comes
-> to cpufreq drivers and you better not use it.
+Sure, you are correct here :-)
 
-That's exactly right.
+>>
+>> When I declare the type of input and output value as __le64, on big
+>> endian machine, I expect a type mismatch warning if the input memory
+>> buffer is not swapped into little endian. For u64, there is no such type
+>> checking warning.
+>>
+>> This is the initial version of lib/crc64.c, people may add their crc64
+>> calculation routines when necessary, e.g. crc64_be() or crc64(). I only
+>> add crc64_le_update() and crc64_le_bch() because bcache code needs them.
+>>
+>> Indeed there is no user of crc64_le() for now, but the file is name as
+>> lib/crc64.c, I think there should be a crc64 calculation at least, so I
+>> add crc64_le().
+>>
+>>>
+>>> Also your function names make it sound like inverting the bits is the exception
+>>> or not recommended, since you called the function which does the inversions
+>>> "crc32_le_bch()" so it sounds like a bcache-specific hack, while the one that
+>>> doesn't do the inversions is simply called "crc32_le()".  But actually it's
+>>> normally recommended to do CRC's with the inversions, so that leading and
+>>> trailing zeroes affect the resulting CRC.
+>>>
+>>
+>> I notice this, normally there are two crc routines provided, with and
+>> without inversion. The reason that there is no inversion version is
+>> no-user in Linux kernel. Indeed there is no user of crc64_le() in Linnux
+>> kernel so far. For performance reason, I doubt whether there will be
+>> more user to do 64bit crc in kernel.
+>>
+>> I prefer two crc32 calculation for a 64bit value, but meta data checksum
+>> by crc64 calculation is used in bcache for years, the consistency has to
+>> be kept.
+> 
+> Well, your response didn't actually address my points.  But it raises the
+> question: if there won't be any other users, then why move CRC-64 to lib/ at
+> all?
+> 
 
-> But I wonder whether commit 554c8aa8ecad ("sched: idle: Select idle state before
-> stopping the tick") introduced bad behaviour for other cases as well.
+The only motivation I can see is becachefs, which share part of the code
+base with bcache, including crc64 calculation.
 
-It has been tested quite extensively in that respect, although
-admittedly not with the pcc-cpufreq driver.
+And before CPU supports build-in instructors for CRC64, I don't see the
+reason why people should use 64bit CRC other than 32bit ones.
 
-Nothing bad related to it has been has been reported so far, FWIW.
+>>
+>>
+>>>> diff --git a/lib/gen_crc64table.c b/lib/gen_crc64table.c
+>>>> new file mode 100644
+>>>> index 000000000000..5f292f287498
+>>>> --- /dev/null
+>>>> +++ b/lib/gen_crc64table.c
+>>>> @@ -0,0 +1,77 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Generate lookup table for the talbe-driven CRC64 calculation.
+>>>> + *
+>>>> + * gen_crc64table is executed in kernel build time and generates
+>>>> + * lib/crc64table.h. This header is included by lib/crc64.c for
+>>>> + * the table-driver CRC64 calculation.
+>>>> + *
+>>>> + * See lib/crc64.c for more information about which specification
+>>>> + * and polynomical arithmetic that gen_crc64table.c follows to
+>>>> + * generate the lookup table.
+>>>> + *
+>>>> + * Copyright 2018 SUSE Linux.
+>>>> + *   Author: Coly Li <colyli@suse.de>
+>>>> + *
+>>>> + */
+>>>> +
+>>>> +#include <inttypes.h>
+>>>> +#include <linux/swab.h>
+>>>> +#include <stdio.h>
+>>>> +#include "../usr/include/asm/byteorder.h"
+>>>> +
+>>>> +#define CRC64_ECMA182_POLY 0x42F0E1EBA9EA3693ULL
+>>>
+>>> Okay, that's actually the ECMA-182 polynomial in "big endian" form (highest
+>>> order bit is the coefficient of x^63, lowest order bit is the coefficient of
+>>> x^0), so you're actually doing a "big endian" CRC.  So everything in your patch
+>>> series that claims it's a little endian or "le" CRC is incorrect.
+>>>
+>>>> +
+>>>> +#ifdef __LITTLE_ENDIAN
+>>>> +#  define cpu_to_le64(x) ((__le64)(x))
+>>>> +#else
+>>>> +#  define cpu_to_le64(x) ((__le64)__swab64(x))
+>>>> +#endif
+>>>> +
+>>>> +static int64_t crc64_table[256] = {0,};
+>>>> +
+>>>> +static void generate_crc64_table(void)
+>>>> +{
+>>>> +	uint64_t i, j, c, crc;
+>>>> +
+>>>> +	for (i = 0; i < 256; i++) {
+>>>> +		crc = 0;
+>>>> +		c = i << 56;
+>>>> +
+>>>> +		for (j = 0; j < 8; j++) {
+>>>> +			if ((crc ^ c) & 0x8000000000000000ULL)
+>>>> +				crc = (crc << 1) ^ CRC64_ECMA182_POLY;
+>>>> +			else
+>>>> +				crc <<= 1;
+>>>> +			c <<= 1;
+>>>
+>>> See here, it's shifting out the most significant bit, which means it's the
+>>> coefficient of the x^63 term ("big endian" or "normal" convention), not the x^0
+>>> term ("little endian" or "reversed" convention).
+>>
+>> I see your point here. I am not expert in coding theory, the knowledge I
+>> have is from wikipedia, ECMA-182 and the document from Dr. Ross
+>> Williams. From ECMA-182 document, I don't see any word with 'big
+>> endian', so I take it as a standard poly and regardless the byte order.
+>>
+>> And on wikepedia page
+>> https://en.wikipedia.org/wiki/Cyclic_redundancy_check , CRC-64-ECMA
+>> references the same poly and call "0x42F0E1EBA9EA3693" as normal poly,
+>> which one links to polynomial
+>> 	"x^64 + x^62 + x^57 + x^55 + x^54 + ....x^7 + x^4 + x + 1"
+>> if I understand correctly. But from your information, it seems the
+>> polynomial in generate_crc64_table() is x^64 + x^61 ..... Maybe I
+>> misunderstand you, could you please give me more hint ?
+> 
+> As I said, the "normal" convention is the same as "big endian", and the
+> "reversed" convention is the same as "little endian" (again, meaning "bitwise"
+> endianness, not the usual "bytewise" endianness).  The polynomial is correct but
+> you are claiming the polynomial coefficients are mapped to bits in a different
+> order than they actually are.
 
-> I'll send some performance results to illustrate the issue asap. I've
-> also tried to modify pcc-cpufreq to reduce the amount of frequency
-> changes triggered by this driver but this does not help for kernels
-> where commit 554c8aa8ecad is applied.
+Copied, thanks for the hint :-)
 
-Can you replace pcc-cpufreq with a different cpufreq driver on the
-affected systems?  If so, do performance numbers look bad after that
-too?
+Coly Li
 
-Thanks,
-Rafael
