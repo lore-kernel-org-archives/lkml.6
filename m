@@ -4,99 +4,290 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92529ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D09ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4353120C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 514D320C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Z9Fl80E4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4353120C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="A38/71kR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514D320C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731275AbeGQK6r (ORCPT
+        id S1731081AbeGQK62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:58:47 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54948 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729752AbeGQK6r (ORCPT
+        Tue, 17 Jul 2018 06:58:28 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:60762 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730229AbeGQK61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:58:47 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HANwBO098047;
-        Tue, 17 Jul 2018 10:26:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=xywr/7YVgXemWvCN3THda6Xxh5CLGGvsKVi1dJsBYrA=;
- b=Z9Fl80E4JIXuLI/+kccipc2+4JozHl0ICImbvtlJKZ8EgKUXCylTdSRhdPytLVLiJcWJ
- QFg+xqMALdgoHIGF05Apu4y3UlycoyrkqzG2ITmCOZ3ln9VtAmBwYRKBAHZEHAr36Q2O
- SxJjKosK04VgLFcrL0VS7oQTTGG9CQeN/rCyUCI3PRYesEZHL+rp41EHCK9AJR99CAtQ
- Do9CSiEYq51I3zzdrj9zuQC7Gi38zMJdbDtvcdHeHVskEWEykntCw/2AjU0KVKNX/qJB
- QHbiKEhBiJ8JrGs27lZpt6QtHUQliHdvFNDr8SNa0P0HszXDiZIZzEPGX+D3303eP2gf yg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2k7a3401w2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 10:26:45 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6HAQjw3031633
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 10:26:45 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6HAQiqQ014556;
-        Tue, 17 Jul 2018 10:26:44 GMT
-Received: from mwanda (/197.179.115.196)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 03:26:44 -0700
-Date:   Tue, 17 Jul 2018 13:26:34 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
-        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 17/32] staging: gasket: annotate ioctl arg with __user
-Message-ID: <20180717102634.rmywmcjzoelok3b7@mwanda>
-References: <20180717020926.176408-1-toddpoynor@gmail.com>
- <20180717020926.176408-18-toddpoynor@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717020926.176408-18-toddpoynor@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=659
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807170108
+        Tue, 17 Jul 2018 06:58:27 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 830E124E04B9;
+        Tue, 17 Jul 2018 03:26:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531823191; bh=3MBEtH5TQpdodBmYEPsEyjmfStSPh5MgPCPvXngVQ8c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=A38/71kRllUFOqlGzvM5hyatBNNSa3aQ78Mmud6hUUWM6wZplfaLJFMfucbMezPS2
+         1X4zvmsuA6T4SZYbuBfS4IqQjsY4LWX2g1bsWFkmUcZkTr4uxRbmp1KUNyaQ4L3s4M
+         +6yb9tSVxXgxeDpDrFUr+hswVZ0QVwp4SKewrZRRtq3jJ+3+WgI+XMvqavE5WOigFY
+         SqMjsGlPgnnenlMF+RR5WxxeFK9wjTXGENvkd5t8NkYCnzEfFkD5nlTF19xoxYbFq8
+         J4MJPlVwPoHOlH0ORyxpOaGHZCG4HkzscUVatlpLnQxfWNc2R+3Y2y+zUGqV58l9sa
+         6YwmKrkayHt0w==
+Received: from de02.synopsys.com (germany.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 0716C3464;
+        Tue, 17 Jul 2018 03:26:30 -0700 (PDT)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id 2C73E3C31E;
+        Tue, 17 Jul 2018 12:26:29 +0200 (CEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com,
+        shawn.lin@rock-chips.com
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v13 02/12] PCI: endpoint: Add MSI-X interfaces
+Date:   Tue, 17 Jul 2018 12:26:17 +0200
+Message-Id: <008979e1aa4c70eb0257f341ca8878f541ac1fa2.1531822532.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
+References: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
+References: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 07:09:11PM -0700, Todd Poynor wrote:
-> @@ -629,7 +630,6 @@ static bool is_gcb_in_reset(struct gasket_dev *gasket_dev)
->   */
->  static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
->  {
-> -	struct gasket_dev *gasket_dev = filp->private_data;
->  	fmode_t write;
->  
->  	write = filp->f_mode & FMODE_WRITE;
+Add PCI_EPC_IRQ_MSIX type.
 
-This should have gone in the earlier patch.  When you spot something
-like that then create a separate patch for it and use `git rebase -i` to
-fold it back into the original.
+Add MSI-X callbacks signatures to the ops structure.
 
-regards,
-dan carpenter
+Add sysfs interface for set/get MSI-X capability maximum number.
+
+Update documentation accordingly.
+
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Moved pci_epc_raise_irq() signature changes to patch file #3.
+Change v3->v4:
+ - Rebased to Lorenzo's master branch v4.18-rc1.
+Change v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Change v5->v6:
+ - Nothing changed, just to follow the patch set version.
+Change v6->v7:
+ - Nothing changed, just to follow the patch set version.
+Change v7->v8:
+ - Re-sending the patch series.
+Change v8->v9:
+ - Nothing changed, just to follow the patch set version.
+Change v9->v10:
+ - Updated documentation.
+Change v10->v11:
+ - Nothing changed, just to follow the patch set version.
+Change v11->v12:
+ - Nothing changed, just to follow the patch set version.
+Change v12->v13:
+ - Re-sending the patch series.
+
+ .../PCI/endpoint/function/binding/pci-test.txt     |  2 +
+ drivers/pci/endpoint/pci-ep-cfs.c                  | 24 +++++++++
+ drivers/pci/endpoint/pci-epc-core.c                | 57 ++++++++++++++++++++++
+ include/linux/pci-epc.h                            |  9 ++++
+ include/linux/pci-epf.h                            |  1 +
+ 5 files changed, 93 insertions(+)
+
+diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+index 3b68b95..cd76ba4 100644
+--- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
++++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+@@ -15,3 +15,5 @@ subsys_id	 : don't care
+ interrupt_pin	 : Should be 1 - INTA, 2 - INTB, 3 - INTC, 4 -INTD
+ msi_interrupts	 : Should be 1 to 32 depending on the number of MSI interrupts
+ 		   to test
++msix_interrupts	 : Should be 1 to 2048 depending on the number of MSI-X
++		   interrupts to test
+diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+index 018ea34..d1288a0 100644
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -286,6 +286,28 @@ static ssize_t pci_epf_msi_interrupts_show(struct config_item *item,
+ 		       to_pci_epf_group(item)->epf->msi_interrupts);
+ }
+ 
++static ssize_t pci_epf_msix_interrupts_store(struct config_item *item,
++					     const char *page, size_t len)
++{
++	u16 val;
++	int ret;
++
++	ret = kstrtou16(page, 0, &val);
++	if (ret)
++		return ret;
++
++	to_pci_epf_group(item)->epf->msix_interrupts = val;
++
++	return len;
++}
++
++static ssize_t pci_epf_msix_interrupts_show(struct config_item *item,
++					    char *page)
++{
++	return sprintf(page, "%d\n",
++		       to_pci_epf_group(item)->epf->msix_interrupts);
++}
++
+ PCI_EPF_HEADER_R(vendorid)
+ PCI_EPF_HEADER_W_u16(vendorid)
+ 
+@@ -327,6 +349,7 @@ CONFIGFS_ATTR(pci_epf_, subsys_vendor_id);
+ CONFIGFS_ATTR(pci_epf_, subsys_id);
+ CONFIGFS_ATTR(pci_epf_, interrupt_pin);
+ CONFIGFS_ATTR(pci_epf_, msi_interrupts);
++CONFIGFS_ATTR(pci_epf_, msix_interrupts);
+ 
+ static struct configfs_attribute *pci_epf_attrs[] = {
+ 	&pci_epf_attr_vendorid,
+@@ -340,6 +363,7 @@ static struct configfs_attribute *pci_epf_attrs[] = {
+ 	&pci_epf_attr_subsys_id,
+ 	&pci_epf_attr_interrupt_pin,
+ 	&pci_epf_attr_msi_interrupts,
++	&pci_epf_attr_msix_interrupts,
+ 	NULL,
+ };
+ 
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index b0ee427..7d77bd0 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -218,6 +218,63 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ EXPORT_SYMBOL_GPL(pci_epc_set_msi);
+ 
+ /**
++ * pci_epc_get_msix() - get the number of MSI-X interrupt numbers allocated
++ * @epc: the EPC device to which MSI-X interrupts was requested
++ * @func_no: the endpoint function number in the EPC device
++ *
++ * Invoke to get the number of MSI-X interrupts allocated by the RC
++ */
++int pci_epc_get_msix(struct pci_epc *epc, u8 func_no)
++{
++	int interrupt;
++	unsigned long flags;
++
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
++		return 0;
++
++	if (!epc->ops->get_msix)
++		return 0;
++
++	spin_lock_irqsave(&epc->lock, flags);
++	interrupt = epc->ops->get_msix(epc, func_no);
++	spin_unlock_irqrestore(&epc->lock, flags);
++
++	if (interrupt < 0)
++		return 0;
++
++	return interrupt + 1;
++}
++EXPORT_SYMBOL_GPL(pci_epc_get_msix);
++
++/**
++ * pci_epc_set_msix() - set the number of MSI-X interrupt numbers required
++ * @epc: the EPC device on which MSI-X has to be configured
++ * @func_no: the endpoint function number in the EPC device
++ * @interrupts: number of MSI-X interrupts required by the EPF
++ *
++ * Invoke to set the required number of MSI-X interrupts.
++ */
++int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
++{
++	int ret;
++	unsigned long flags;
++
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
++	    interrupts < 1 || interrupts > 2048)
++		return -EINVAL;
++
++	if (!epc->ops->set_msix)
++		return 0;
++
++	spin_lock_irqsave(&epc->lock, flags);
++	ret = epc->ops->set_msix(epc, func_no, interrupts - 1);
++	spin_unlock_irqrestore(&epc->lock, flags);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pci_epc_set_msix);
++
++/**
+  * pci_epc_unmap_addr() - unmap CPU address from PCI address
+  * @epc: the EPC device on which address is allocated
+  * @func_no: the endpoint function number in the EPC device
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index 243eaa5..89f079f 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -17,6 +17,7 @@ enum pci_epc_irq_type {
+ 	PCI_EPC_IRQ_UNKNOWN,
+ 	PCI_EPC_IRQ_LEGACY,
+ 	PCI_EPC_IRQ_MSI,
++	PCI_EPC_IRQ_MSIX,
+ };
+ 
+ /**
+@@ -30,6 +31,10 @@ enum pci_epc_irq_type {
+  *	     capability register
+  * @get_msi: ops to get the number of MSI interrupts allocated by the RC from
+  *	     the MSI capability register
++ * @set_msix: ops to set the requested number of MSI-X interrupts in the
++ *	     MSI-X capability register
++ * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
++ *	     from the MSI-X capability register
+  * @raise_irq: ops to raise a legacy or MSI interrupt
+  * @start: ops to start the PCI link
+  * @stop: ops to stop the PCI link
+@@ -48,6 +53,8 @@ struct pci_epc_ops {
+ 			      phys_addr_t addr);
+ 	int	(*set_msi)(struct pci_epc *epc, u8 func_no, u8 interrupts);
+ 	int	(*get_msi)(struct pci_epc *epc, u8 func_no);
++	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
++	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+ 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
+ 			     enum pci_epc_irq_type type, u8 interrupt_num);
+ 	int	(*start)(struct pci_epc *epc);
+@@ -144,6 +151,8 @@ void pci_epc_unmap_addr(struct pci_epc *epc, u8 func_no,
+ 			phys_addr_t phys_addr);
+ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts);
+ int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
++int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
++int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
+ int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+ 		      enum pci_epc_irq_type type, u8 interrupt_num);
+ int pci_epc_start(struct pci_epc *epc);
+diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+index 4e77649..ec02f587 100644
+--- a/include/linux/pci-epf.h
++++ b/include/linux/pci-epf.h
+@@ -119,6 +119,7 @@ struct pci_epf {
+ 	struct pci_epf_header	*header;
+ 	struct pci_epf_bar	bar[6];
+ 	u8			msi_interrupts;
++	u16			msix_interrupts;
+ 	u8			func_no;
+ 
+ 	struct pci_epc		*epc;
+-- 
+2.7.4
 
