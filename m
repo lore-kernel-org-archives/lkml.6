@@ -2,56 +2,64 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 564A0ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BD7ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCA32146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:21:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CCA32146E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B32C02146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:22:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B32C02146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731859AbeGQOye (ORCPT
+        id S1731870AbeGQOy7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:54:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46818 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731701AbeGQOyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:54:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BBBA2ADCA;
-        Tue, 17 Jul 2018 14:21:39 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 16:21:38 +0200 (CEST)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mario.Limonciello@dell.com,
-        Peter Hutterer <peter.hutterer@who-t.net>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/12] Hid multitouch rewrite, support os system
- multi-axis devices, take 4
-In-Reply-To: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
-Message-ID: <nycvar.YFH.7.76.1807171534260.997@cbobk.fhfr.pm>
-References: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Tue, 17 Jul 2018 10:54:59 -0400
+Received: from verein.lst.de ([213.95.11.211]:51658 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731733AbeGQOy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:54:59 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id BD5596FC87; Tue, 17 Jul 2018 16:24:37 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 16:24:37 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Christoph Hellwig <hch@lst.de>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jason Baron <jbaron@akamai.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: waitqueue lockdep annotation V3
+Message-ID: <20180717142437.GA20286@lst.de>
+References: <20171214152344.6880-1-hch@lst.de> <20180712191753.fvk2qersdvhcoqzp@linux-r8p5>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712191753.fvk2qersdvhcoqzp@linux-r8p5>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Jul 2018, Benjamin Tissoires wrote:
+On Thu, Jul 12, 2018 at 12:17:53PM -0700, Davidlohr Bueso wrote:
+> On Thu, 14 Dec 2017, Christoph Hellwig wrote:
+>
+>> Hi all,
+>>
+>> this series adds a strategic lockdep_assert_held to __wake_up_common
+>> to ensure callers really do hold the wait_queue_head lock when calling
+>> the unlocked wake_up variants.  It turns out epoll did not do this
+>> for a fairly common path (hit all the time by systemd during bootup),
+>> so the second patch fixed this instance as well.
+>
+> I ran into these changes because of patch 1 getting rid of ep->lock. Is
+> there any reason why this series was never picked up?
 
-> this is the v4 of my hid-multitouch rewrite series.
-
-Nice work, thanks a lot. Applied,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+I'd love to see this merged, but I never heard back about it.
