@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5801FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B8BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13FAE206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84F5A20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPnWPuCm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13FAE206B7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vL6oJytm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F5A20693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbeGQVjQ (ORCPT
+        id S1731201AbeGQVjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:39:16 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:45734 "EHLO
+        Tue, 17 Jul 2018 17:39:18 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41181 "EHLO
         mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVjP (ORCPT
+        with ESMTP id S1729684AbeGQVjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:39:15 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 94-v6so979437ple.12
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:48 -0700 (PDT)
+        Tue, 17 Jul 2018 17:39:17 -0400
+Received: by mail-pl0-f67.google.com with SMTP id w8-v6so984261ply.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9R0fZXHvA6dRO6rGipkhbtrhhMhUZV5bWtE9katZt4A=;
-        b=XPnWPuCmT3qbnQFkLgLu/kxq2zcyRKLsxPKm6y8AWJIesTotjAdMcwToaucuQRm1ao
-         IOSxvOw78ONIsIBr+UsNe0ZJkV8C+nRcp89HMXusMzku4NiET1+fgsCjIsmlW4oPmw1l
-         95aDEQ24W8cycMzXN3x64/B/WwMUd3vR3ly7sUHBM313bDyneoQWWjMWzfOMmJk4tm0t
-         0RYjUvQ5nnJG1KKCmnm253/IX+0cA0/+nXsi2r3oMOS3BFi4lTunt5YBQv0wbacKuE+3
-         E7P694ngECD4H81Fwz4Lq/3O7T8kJlOgOgLxbqsHTYYpPIzRUzhyT27J6CtdaCsAmAY6
-         sssA==
+        bh=tTXbFz3WKwiG+9N0fxlLYmbI9e8jwvYVZrvo3SEj82E=;
+        b=vL6oJytmAP0Njvxeq8vDcReSa3TMArLVridpJ1gG+BVTULG7lvMYad3EwEVNCZ+0LR
+         2/KZmw3PeY+ySR05m8OYfYVOyusyEqKd0Zwy578JPo0C/XdDlTzfs7yTQjYEtJo7+cz9
+         2A0aeGw40KnY+N0115+FbeR94EoxwAEs/eBGGUtSefMTyFOVsJml3Cd0cNRpZk6Xi5YG
+         J4WDuoSemvitoTUbTpS8IU+BW+gLng9NloVcoGvJpcRiPLK+G+GbFhJa76nQH05CpOcO
+         mtEhWXKdtZ4taqeclHh0xD4iVoSAmn9I3S8w/znGngK51khsVtRzbaPlomFO5xT/TbT9
+         gc2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9R0fZXHvA6dRO6rGipkhbtrhhMhUZV5bWtE9katZt4A=;
-        b=Wfoycq7NJHldsglGKVO0kiwfVr+K4tnXJ1Hu/O/7TGIpSccf1YBzoEgqzyHY5B4M6I
-         tp1Rdb0V/FsnM7SMZQgpn3519ISgbnwZC8BB2hzoYJZ9tjVrKXbWFc3l5zGLToqMJZ4d
-         i8I/ziZxjBe6acWxNVofw/+yRfH6itjCD5NSitVJFOzphrtTzuIsDqmr0D/QzIpRzH5v
-         tuvnhSuyt2TYV3717Yeul3TQCyuNu2Kaa1GAxKPQJJ/NOS8Xzz5vQa4l/9hGL8/MJ31y
-         CuC/4SegmjV9VdJaq+Ov6VBuKlsktRLqCMJI0o6ZzewXPUJ9dRO73M+43aLIz/RoN8b2
-         2VSQ==
-X-Gm-Message-State: AOUpUlHiRAKdEGX3XYylRSz0Eh2N7wZRrg0jJdoVeWtH/FVg/rmOTWsz
-        3cUJMgpH75cxhf+7T6A3+Go=
-X-Google-Smtp-Source: AAOMgpeXx97IUmvv53Y/qNMxCtXkRyL+Jf0sVMItGpkoG47Spt6osp8E1sryEsFxYwDHfVHWbbpIDw==
-X-Received: by 2002:a17:902:be07:: with SMTP id r7-v6mr3219681pls.124.1531861488429;
-        Tue, 17 Jul 2018 14:04:48 -0700 (PDT)
+        bh=tTXbFz3WKwiG+9N0fxlLYmbI9e8jwvYVZrvo3SEj82E=;
+        b=r7LvyXIyVGNLV87xk85WsRF1i9yZpLJklq/gpSdZBZYgzne9MppyiY50hWF9T9NjmP
+         DAaP4DbI1AA8XbghXu4v0s17O204CLD3i6/qrTHO5crJoGMW/TpX1FExrCL6BnCQILjH
+         R6vvsj78Lif8nAs+38uYc46Ey0vKIPwUmW3ZictBP7V4vDjBkMoeL8ExemoMIAkY1Gyy
+         /vYbYbfVCnDOUOyKlqYg4dd/juYCcUiWIaH6w6WkIvrCTm+k7dBvS3Ehybc/PaXrlUgN
+         dlf6pjTzE+RJZA9tgenZOiHU9LSXXSKFC3/qSmgUCxcj9/7x1bTG1s4YSueztChj5Aqa
+         6MCg==
+X-Gm-Message-State: AOUpUlF+Nu4rBWhgs3l1t50leqRDtLMt1lQyFFbVbLcOFMuvMhNz4eUi
+        lTAKgnM6qaMRJAazgVVtYT4=
+X-Google-Smtp-Source: AAOMgpeXoi8R3MXH8hpnB5qk3pFE/918XLoh7CIWJlz7ZWYaDHgZkSRRkgXNEyVEr5e/Pm0RRNqKBA==
+X-Received: by 2002:a17:902:bc41:: with SMTP id t1-v6mr3181143plz.26.1531861489674;
+        Tue, 17 Jul 2018 14:04:49 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.47
+        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:04:47 -0700 (PDT)
+        Tue, 17 Jul 2018 14:04:48 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 03/32] staging: gasket: fix typo in gasket_core.h comments
-Date:   Tue, 17 Jul 2018 13:56:43 -0700
-Message-Id: <20180717205712.29495-4-toddpoynor@gmail.com>
+Subject: [PATCH 04/32] staging: gasket: whitespace fix in gasket_page_table_init
+Date:   Tue, 17 Jul 2018 13:56:44 -0700
+Message-Id: <20180717205712.29495-5-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
 References: <20180717205712.29495-1-toddpoynor@gmail.com>
@@ -81,27 +81,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Grammar fixup in gasket_core.h comments describing struct
-gasket_interrupt_desc.
+Tab replaced with space.
 
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.h | 2 +-
+ drivers/staging/gasket/gasket_page_table.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
-index e51acadc0fc4f..94a5537bff2c2 100644
---- a/drivers/staging/gasket/gasket_core.h
-+++ b/drivers/staging/gasket/gasket_core.h
-@@ -56,7 +56,7 @@ enum gasket_interrupt_type {
- 
- /* Used to describe a Gasket interrupt. Contains an interrupt index, a register,
-  * and packing data for that interrupt. The register and packing data
-- * fields is relevant only for PCI_MSIX interrupt type and can be
-+ * fields are relevant only for PCI_MSIX interrupt type and can be
-  * set to 0 for everything else.
-  */
- struct gasket_interrupt_desc {
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index dcd52e141f95d..36a560c87af36 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -347,7 +347,7 @@ int gasket_page_table_init(
+ 	    pg_tbl->config.mode == GASKET_PAGE_TABLE_MODE_SIMPLE) {
+ 		pg_tbl->num_simple_entries = total_entries;
+ 		pg_tbl->num_extended_entries = 0;
+-		pg_tbl->extended_flag =	1ull << page_table_config->extended_bit;
++		pg_tbl->extended_flag = 1ull << page_table_config->extended_bit;
+ 	} else {
+ 		pg_tbl->num_simple_entries = 0;
+ 		pg_tbl->num_extended_entries = total_entries;
 -- 
 2.18.0.203.gfac676dfb9-goog
 
