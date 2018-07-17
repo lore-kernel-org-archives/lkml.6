@@ -2,125 +2,198 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEF82ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399E7ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A931B2146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A931B2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E73D320C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:57:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sqmjirrd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73D320C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbeGQK3Q (ORCPT
+        id S1730745AbeGQK2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:29:16 -0400
-Received: from mga05.intel.com ([192.55.52.43]:50190 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729684AbeGQK3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:29:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 02:57:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="54965934"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga007.fm.intel.com with ESMTP; 17 Jul 2018 02:57:25 -0700
-Message-ID: <4a25d281a0e7f622872f1e9fe3abf44288ec87e4.camel@linux.intel.com>
-Subject: Re: [PATCH v2 1/3] lib: add crc64 calculation routines
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Lyle <mlyle@lyle.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Date:   Tue, 17 Jul 2018 12:57:24 +0300
-In-Reply-To: <20180717065711.28281-2-colyli@suse.de>
-References: <20180717065711.28281-1-colyli@suse.de>
-         <20180717065711.28281-2-colyli@suse.de>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 06:28:15 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:35389 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730659AbeGQK2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 06:28:15 -0400
+Received: by mail-pl0-f65.google.com with SMTP id w3-v6so250148plq.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:56:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=uYu9QLz9hYIGDMOObzr/jqhbQLEAPHa0Z3aW2JR+lyc=;
+        b=Sqmjirrd9rj+F5tzJu2d4Q9+h/lllgzstf//8LHvLlPvZ6j0W5lfSeQxdXIiWnCdpz
+         0KZpr7gEIqD0paZvaVC/1VN3osQ0TArOKBdoMh/Iu7q2ShFHI3duXqRlnb5MNv5w84uk
+         doKfYENpbFJyChv2SlIknihCIxvAENoGHK4ccxFunJGd7dgoH0D+vxZW4P7lQMqu2fq9
+         oWh/w4mfuQ9cC+KlkECKFbDWmfCS/wbT80btFNE3Ya+tdXxZN89Rbs2RIJxkQoNMveMz
+         bnlsnp2y68paC7WsyjaSNZ76EycxOJnkCMEby1wbfCiiMDR4lFQnObQvLkWgNrCTH+aA
+         7d3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=uYu9QLz9hYIGDMOObzr/jqhbQLEAPHa0Z3aW2JR+lyc=;
+        b=lOm3NyNlorARzpAWUWYHAlM4r1jxg++3KEUVT0WSkn82KVWhyaIADwm8cSmEYXo0Ck
+         Dncb7AL6ViYQplsAlf/aHK+WRUIuqMo/8OjZdMcavhQ424+FclPtobvs/2BCBlBHCEkI
+         L3iI8F9AWTHrr79j45NcbVtz4lPG07OzFEDUwZIcunE7dYeAwibSWygq9zMENQfiH3TZ
+         d4c5fuvzkKWVqYxWMHDiEK0Kcibx26YkR+4PosNeclrRQPHZXj5Eo6MRgAnd0y/Zppuw
+         EiS6XBaFpAqutbiErEBLdaV8I8kZXOUf8mtJ7Ra5LUNZZiG2eW8/AyKc3yUGa2w4pWGz
+         gDDw==
+X-Gm-Message-State: AOUpUlFGtdaEs54BSsjgmLsNqeEKS13h1lZNjbKz0eSx8XoKunLYf8GZ
+        wlXA7Eoh+GUYOShcp/8TGbU=
+X-Google-Smtp-Source: AAOMgpem6UH+FIXIsi53MWpoFJ5XXgnVGnLPkShzYRstgPpinqFsgWtJDBShuBJ0VMqzpehDUPinoA==
+X-Received: by 2002:a17:902:e85:: with SMTP id 5-v6mr962932plx.318.1531821386922;
+        Tue, 17 Jul 2018 02:56:26 -0700 (PDT)
+Received: from toy.corp.qihoo.net ([104.192.108.9])
+        by smtp.gmail.com with ESMTPSA id u2-v6sm1232542pfn.59.2018.07.17.02.56.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 02:56:26 -0700 (PDT)
+From:   Jun Yao <yaojun8558363@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 1/6] arm64/mm: Introduce init_pg_dir
+Date:   Tue, 17 Jul 2018 17:56:03 +0800
+Message-Id: <20180717095608.11008-2-yaojun8558363@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180717095608.11008-1-yaojun8558363@gmail.com>
+References: <20180717095608.11008-1-yaojun8558363@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 14:57 +0800, Coly Li wrote:
-> This patch adds the re-write crc64 calculation routines for Linux
-> kernel.
-> The CRC64 polynomical arithmetic follows ECMA-182 specification,
-> inspired
-> by CRC paper of Dr. Ross N. Williams
-> (see http://www.ross.net/crc/download/crc_v3.txt) and other public
-> domain
-> implementations.
-> 
-> All the changes work in this way,
-> - When Linux kernel is built, host program lib/gen_crc64table.c will
-> be
->   compiled to lib/gen_crc64table and executed.
-> - The output of gen_crc64table execution is an array called as lookup
->   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64bits-long
->   numbers, this talbe is dumped into header file lib/crc64table.h.
-> - Then the header file is included by lib/crc64.c for normal 64bit crc
->   calculation.
-> - Function declaration of the crc64 calculation routines is placed in
->   include/linux/crc64.h
+Add init_pg_dir to vmlinux.lds.S and boiler-plate
+clearing/cleaning/invalidating it in head.S.
 
-> + * crc64.h
-> + *
+Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
+---
+ arch/arm64/include/asm/assembler.h | 29 +++++++++++++++++++++++++++++
+ arch/arm64/kernel/head.S           | 22 +++++++++++++++-------
+ arch/arm64/kernel/vmlinux.lds.S    |  8 ++++++++
+ 3 files changed, 52 insertions(+), 7 deletions(-)
 
-Do we need file name in the file?
-
-> + * See lib/crc64.c for the related specification and polynomical
-> arithmetic.
-> + */
-
-> +// SPDX-License-Identifier: GPL-2.0
-
-> +#include <linux/module.h>
-> +#include <uapi/linux/types.h>
-
-Why not simple linux/types.h ?
-
-> +#include "crc64table.h"
-> +
-> +MODULE_DESCRIPTION("CRC64 calculations");
-
-> +MODULE_LICENSE("GPL");
-
-License mismatch with SPDX.
-
-> +#include <inttypes.h>
-> +#include <linux/swab.h>
-> +#include <stdio.h>
-
-I would follow the common grouping of the headers, like more generic
-first, more particular last:
-
-inttupes
-stdio
-
-linux/foo
-
-asm/bar
-
-> +#include "../usr/include/asm/byteorder.h"
-
-Hmm...
-
-
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 0bcc98dbba56..eb363a915c0e 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -456,6 +456,35 @@ USER(\label, ic	ivau, \tmp2)			// invalidate I line PoU
+ 	b.ne	9998b
+ 	.endm
+ 
++/*
++ * clear_page - clear one page
++ *
++ *	start:	page aligned virtual address
++ */
++	.macro clear_page, start:req
++9996:	stp	xzr, xzr, [\start], #16
++	stp	xzr, xzr, [\start], #16
++	stp	xzr, xzr, [\start], #16
++	stp	xzr, xzr, [\start], #16
++	tst	\start, #(PAGE_SIZE - 1)
++	b.ne	9996b
++	.endm
++
++/*
++ * clear_pages - clear contiguous pages
++ *
++ *	start, end: page aligend virtual addresses
++ */
++	.macro clear_pages, start:req, end:req
++	sub	\end, \end, \start
++	lsr	\end, \end, #(PAGE_SHIFT)
++9997:	cbz	\end, 9998f
++	clear_page \start
++	sub	\end, \end, #1
++	b	9997b
++9998:
++	.endm
++
+ /*
+  * Annotate a function as position independent, i.e., safe to be called before
+  * the kernel virtual mapping is activated.
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+index b0853069702f..2c83a8c47e3f 100644
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -295,18 +295,21 @@ __create_page_tables:
+ 	sub	x1, x1, x0
+ 	bl	__inval_dcache_area
+ 
++	adrp	x0, init_pg_dir
++	adrp	x1, init_pg_end
++	sub	x1, x1, x0
++	bl	__inval_dcache_area
++
+ 	/*
+ 	 * Clear the idmap and swapper page tables.
+ 	 */
+ 	adrp	x0, idmap_pg_dir
+ 	adrp	x1, swapper_pg_end
+-	sub	x1, x1, x0
+-1:	stp	xzr, xzr, [x0], #16
+-	stp	xzr, xzr, [x0], #16
+-	stp	xzr, xzr, [x0], #16
+-	stp	xzr, xzr, [x0], #16
+-	subs	x1, x1, #64
+-	b.ne	1b
++	clear_pages x0, x1
++
++	adrp	x0, init_pg_dir
++	adrp	x1, init_pg_end
++	clear_pages x0, x1
+ 
+ 	mov	x7, SWAPPER_MM_MMUFLAGS
+ 
+@@ -395,6 +398,11 @@ __create_page_tables:
+ 	dmb	sy
+ 	bl	__inval_dcache_area
+ 
++	adrp	x0, init_pg_dir
++	adrp	x1, init_pg_end
++	sub	x1, x1, x0
++	bl	__inval_dcache_area
++
+ 	ret	x28
+ ENDPROC(__create_page_tables)
+ 	.ltorg
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 605d1b60469c..61d7cee3eaa6 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -68,6 +68,12 @@ jiffies = jiffies_64;
+ #define TRAMP_TEXT
+ #endif
+ 
++#define INIT_PG_TABLES					\
++	. = ALIGN(PAGE_SIZE);                           \
++	init_pg_dir = .;                                \
++	. += SWAPPER_DIR_SIZE;                          \
++	init_pg_end = .;
++
+ /*
+  * The size of the PE/COFF section that covers the kernel image, which
+  * runs from stext to _edata, must be a round multiple of the PE/COFF
+@@ -161,6 +167,8 @@ SECTIONS
+ 	__inittext_end = .;
+ 	__initdata_begin = .;
+ 
++	INIT_PG_TABLES
++
+ 	.init.data : {
+ 		INIT_DATA
+ 		INIT_SETUP(16)
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.17.1
+
