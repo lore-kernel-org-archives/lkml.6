@@ -4,39 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A43ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 066B9ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01FBC20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:14:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B6E92075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:14:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Ui+DcP98"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01FBC20684
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="l3jcmX/d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6E92075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731288AbeGQRrx (ORCPT
+        id S1731443AbeGQRr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:47:53 -0400
+        Tue, 17 Jul 2018 13:47:56 -0400
 Received: from mail-eopbgr20058.outbound.protection.outlook.com ([40.107.2.58]:36100
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729748AbeGQRru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:47:50 -0400
+        id S1730745AbeGQRry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:47:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector1-arm-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jp2V96KK4tzf3I+EN+skOsOY8Hk1n6s9s9DYuU27Su0=;
- b=Ui+DcP98sBzrfNxnxWbMqgiu/NwcvoJQ3WGPeg9xEhNxwltAoGbL5uxmaUnOB4nzYuStTjaCeIwIpTRrHAO2bsFhpVYyW+I/3xDwmr+wKalrl1oRGCBNvVIneYldd9j/BcUo4qD6PuH/anMSCY0NdwnUBvcsisXEr/PZzna9dgM=
+ bh=3eiR6+gSZvB99/gdaUJMloiw6Ag5tahykAFCQU6EXKA=;
+ b=l3jcmX/dYc6+TFnOUHGqKvYqBemQgikDDyJ7qdeVh4SqxwGJpiw7D/NxdH43khDBNDkeAgvyTQI7OHkKncZhWLn/vDsv6oda4JpDl8I0J3rJdxGV/JFtxg5DnVIABM9YGLK/dHOeTHinI9zdhhzclHK2VCW3/DLUNykXgL0SeOw=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Ayan.Halder@arm.com; 
 Received: from e113505-lin.cambridge.arm.com (217.140.96.140) by
  AM5PR0801MB1377.eurprd08.prod.outlook.com (2603:10a6:203:1f::19) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.19; Tue, 17 Jul
- 2018 17:14:08 +0000
+ 2018 17:14:11 +0000
 From:   Ayan Kumar Halder <ayan.halder@arm.com>
 To:     ayan.halder@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
         gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
@@ -51,9 +51,9 @@ To:     ayan.halder@arm.com, liviu.dudau@arm.com, brian.starkey@arm.com,
         dri-devel@lists.freedesktop.org, maxime.ripard@bootlin.com,
         wens@csie.org, malidp@foss.arm.com
 Cc:     nd@arm.com
-Subject: [PATCH 2/5] drm/i915: Substitute intel_format_is_yuv() with format->is_yuv
-Date:   Tue, 17 Jul 2018 18:13:43 +0100
-Message-Id: <1531847626-22248-2-git-send-email-ayan.halder@arm.com>
+Subject: [PATCH 3/5] drm/rockchip: Substitute is_yuv_support() with format->is_yuv
+Date:   Tue, 17 Jul 2018 18:13:44 +0100
+Message-Id: <1531847626-22248-3-git-send-email-ayan.halder@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531847626-22248-1-git-send-email-ayan.halder@arm.com>
 References: <1531847626-22248-1-git-send-email-ayan.halder@arm.com>
@@ -64,52 +64,51 @@ X-ClientProxiedBy: MRXP264CA0012.FRAP264.PROD.OUTLOOK.COM
  (2603:10a6:500:15::24) To AM5PR0801MB1377.eurprd08.prod.outlook.com
  (2603:10a6:203:1f::19)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fb169a4c-6df5-4b59-3d6e-08d5ec08b636
+X-MS-Office365-Filtering-Correlation-Id: 5b8c3aa2-3a56-4865-f7e4-08d5ec08b7cf
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1377;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;3:npg3JN2ydkUUylephFOs6jEP5Te9n/rflsWQxcQaNSZjPiQIFZk+ZPv5tnSFIsMnxQj/Ib83x+2M//qBv/2l6n9j5bEy9hOBkLfPpz69DK48WHUeXp2bIeTM2AN8W7U7NQtGrx2c50D4Sjp0s7U1W35o5EJIB4zQzu8ucbqbVF65Lw45qX1Wp5jW39TMRNLMeHF8eJml0E4iCzh1urcA3KQraceKjiHefOvsQIbWfqixqHRqbJOULtKAAj8H0/mA;25:GwKDnidgcRqLCoYXlf7u9dRjKFduQb8jdra0A3tUHyukwgeLFo5IDo1QUZgUj6h70PcfoHJBiVUBjECmNgv9T2UANWWL2PZsFLy3ioAtTpX1Dcdwih6/NtNOCiNHGYGvS9AguVg62K5mJQ9modMUjzfco6QuMeXu0rHmWdPgEkHX7q8bnIoIC64tJFURBaGZ7If1EDc7ZLht8XMaNnmXBb7osVKnBKZef72FcLkl7S+c+4YyHHCm346aVB4SCi9krmLHKYI187wDH0gPQjSeANn2hU9LtkWaKzh7ZAtwaA1lPk22nJCuzPG2Z5XijcxazSEfS2QebWHK27UiySZ3rw==;31:cDjd60OVbZ+BwxjxEFRrTpTrS/cUCYp1PxBnGtteSqfXfdjwpel+0lxMZu+MvSWoOR2QX4bHlMCrOrQwuSM3iQ6kL/jazBjaqU1oYmX56BB6WnPE9q4S0mbwLgLQYIZSNel85LZn6yYZnsi/IOOomNv39oJQ4KYfdDdXrMJBbEEwAWHlbLXHIFMAjR4gV7JPuo08mMpGKmhUpBbu1VXEOBqMyrG5r2UOuk3DxwrpMeg=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;3:jduvcIniSv8wRhCyFhZrpB2rc1ERZj10pvpcCdsrReyjGt7ifEPYWravKx7NgERUJV8OzpFWTbVl06VKbGmipMTJG/oc21J2MR2PW0hebmpmTftIZ1j46+S+wmH4wL7E0bUutevPVZVI7IMLtjyktOOnfi276J2ySgCFhkA85XWDbOIKtXDidqRaKCRMIRMl2Vv+N7IVYemv63YutvVATvp3z5/fYecyaGDdqDOftrjd/wc3fgkVnS+N5QcE4nOq;25:E8kjsL629XBvyHQCke221ui8jGmla49fSVF/Zz+SKMmARhJJSl3HnyW/BnDCRKN7MrE+k44b5DLe9CqEbnFe2b/1HMkNGjV9cY49xoGL3rvC/fj709jNCEgcHKufXZOvB6tDyBOPEPp6GPnMZqbr3gQiJWz9NozarE/kcFC3mb4IL9NqzuuAtXzUxa2Q3EvSOiizem2Hv8yqHisSOCxM1ftbH949xaQoRzzuXhaFDxI5WWsAakVA/Fs9JjQUmk4sYOmsRHKh3cQV0hkIrTOTQW3kyqbnjPQEh3AhXJbGe4A/WqgcbX2JIzPjbRRFDQs9mb8sBlTmJEohJjJLfpQzUA==;31:Z7qYuJLJ5H+c/3G8HFi8Q4fqjqawqj1r4BNwrvA0AGitKmkutZNwrBvKDK/yblZt9juq+4yGkWH8wy+S/HgUdYgsL/0BOGXZ8dm6M4lNaxpHAJxvGs6fCHfOF1Yhsk/d8il5OZCrUUIJnthY6LobGTPbTguTKv/Neg3/pVj3NIEuTOlgyyTL/Ugf05Q16woIam2KZjT8xS8EmtJCT+MaQXjWEtpy/2vAm7jdPkM2AVU=
 X-MS-TrafficTypeDiagnostic: AM5PR0801MB1377:
 NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;20:D3CaItF/FVhNYqrwmigklMn8Ylon84C75E2o8jMjFnWWSGklWr/hgo3sn8/6we5qA2TZ1lVdua7I9AoWNR28/VSh82q6GjM1o4QrpTOmep1nUkSkmdII3POVEMM99cRoOA/RbncQlh5XMAYwDoRAjWSeNI/Xc23CRresGMltftA=;4:dAMMPAl3Rz2st0M8rjKS8YL9rBUdSccjTsV4e2MS0yFyKu5HOjZEj9z9syS4KpeSiheuTJMjj0aXzZ9l2bvNucLi/Ra3dA9FpUasvSA3JUBRqf/LjODZ3CJdtBCwerCsz/8aJ49vUC2o+WfuPsMmxrn5OcyOuKqE3NFzgHATw3e8VDXkc2/AGxyxfXyajLId20G01lms5AdXYLhpHjgfhLkqPjoWpk+IhjaM/R2BhjFCn9u+UGPDox7J9E1CDzOXeGQI1mc2rVvS+1YdhPtdcWxMULR7H4RbR1OyAITPGouBl6/qF4PbAM6q9RWHVy77
-X-Microsoft-Antispam-PRVS: <AM5PR0801MB1377F316BFC1AE55C5274DFFE45C0@AM5PR0801MB1377.eurprd08.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;20:MLkzc6hhY51rgzQstiM47aR9CdaM4dpvPDs5U7mbwndCmqjea1c6l4Rb7IZK13Aj3fSj2GWHcCNa0lnsPd1/2YHw7qjl25ONjxviSOVhkzLuhV2z0NEPN/rfccmvO6FzpwgxCOCVpZTL951B54MNtvjb0HaNvoMtW+vBNzNI/eE=;4:FGXXDlyYL18F676wFw1cvhd3joWVEjDLfHqbM0DN3XiJfxecZTcoZDVV4qfUXdqJ/kxN4DT6JVaPLKUONgUFIj6GLj+fw0Eg6HKkBeTO01EqOJz0S6uxoX9G0z8mfg5mPMNKoOXWjbSEoEcUN97FHfB8vcB4nkn4XhzQ+o/9VKNx9Y7wwxDyXyWP2URWEGcDk1d5XIDDMTnWfjV2JAHUyGQOWb0p4caMMieVMCS+6VU0W10wtcyAieAYLTDSyuigPEcNK/Qsc/9uhOPGTcVLdgGkrK1S0lENFeOP6797ov+MXmbEKMdSi5At4AJX9zgW
+X-Microsoft-Antispam-PRVS: <AM5PR0801MB13772EAAA7AF5D2C3E1D25C8E45C0@AM5PR0801MB1377.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0801MB1377;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1377;
 X-Forefront-PRVS: 073631BD3D
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(376002)(39860400002)(136003)(199004)(189003)(7416002)(316002)(305945005)(36756003)(5660300001)(76176011)(486006)(4326008)(446003)(50466002)(51416003)(48376002)(386003)(2906002)(52116002)(7696005)(476003)(53936002)(11346002)(2616005)(6486002)(66066001)(3846002)(575784001)(72206003)(68736007)(16586007)(478600001)(25786009)(956004)(105586002)(81156014)(8936002)(50226002)(26005)(86362001)(6116002)(47776003)(16526019)(8676002)(97736004)(14444005)(81166006)(7736002)(6666003)(106356001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0801MB1377;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(376002)(39860400002)(136003)(199004)(189003)(7416002)(316002)(305945005)(36756003)(5660300001)(76176011)(486006)(4326008)(446003)(50466002)(51416003)(48376002)(386003)(2906002)(52116002)(7696005)(476003)(53936002)(11346002)(2616005)(6486002)(66066001)(3846002)(72206003)(68736007)(16586007)(478600001)(25786009)(956004)(105586002)(81156014)(8936002)(50226002)(26005)(86362001)(6116002)(47776003)(16526019)(8676002)(97736004)(14444005)(81166006)(7736002)(6666003)(106356001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0801MB1377;H:e113505-lin.cambridge.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0801MB1377;23:22dMLYxen54lCGhLSlvhvTw655GvU7v5O/FBrf7?=
- =?us-ascii?Q?Skd0EUW8pe2nbxFGQAt98RXJUHagxjpnKDIRkJ/HzFZrcoQspeFfVa2Tizty?=
- =?us-ascii?Q?PyWQjjOqo4fZ1/Rzr8JvTjsrdqLWTXULK12P7ax95Ky3JllqC9/Hd9WF8R/q?=
- =?us-ascii?Q?MWnqzPuj2CCPamnBP8Elaqfi4nkxxSTKlB1fKBPdKMTf5iBzlMlFUmRqWyh5?=
- =?us-ascii?Q?h7oIuqzwasoZuk4A9bLTldtTqMuRH3yUkMd69uv/5i9zHkPkDeSe41zYJAXl?=
- =?us-ascii?Q?QhzvzHWqPAlwpe/SX01CisU1+esbHjNUQGwBirmGYJh7ab09bSsPZcVsvQfM?=
- =?us-ascii?Q?IvsptffNJb0Eaec4A1oOyDkzzxl7vCUEmrkme3rfV1orUsoGiiUxuB/94e9M?=
- =?us-ascii?Q?Yp2jApu+8Uj5orbSnZMqZv8nWa2NqDlHNETIrCaxQ3pF/CIz+v5iM+hJiG68?=
- =?us-ascii?Q?xK0fpB6v1i8llIF/Fx1gQIKuZL/6VviQGMBmb+O6EuG094JcO2Qcb9PzBl97?=
- =?us-ascii?Q?KawfpE24JxhJDS3fM076Xa5q5fk59zKoTMxfPcqwyudocjj+owV895PmHzBL?=
- =?us-ascii?Q?U0/vbjqauwW5R+lGEHyw5de74GenolR2ZRquRqRrOhUcc/JY1NqplV9ode4U?=
- =?us-ascii?Q?WF15OPbLM6Txi7fNDlOmGltR9hUkM5T0/xrKvf08USzt+PomONDnCE3SHcn8?=
- =?us-ascii?Q?R7g+9rzsIKfWBPYI0eTPj0sgO5/5X4D3yR/rLTEJKTxqwx9ptpkwxRuLV1sR?=
- =?us-ascii?Q?v+WRGZ6e0mUKdd2HLsgv4zLh5TOGOXM1cV4Ai9Y3vMLigNl2o15V2BbLDskI?=
- =?us-ascii?Q?uJGJXihgXbI+3U0nQlWwOSBgDrPBJSHQUnhRHJXD3SBndl4QfvJ9VQVzWY8r?=
- =?us-ascii?Q?V+eDarPUohVR4usTn5kfNkB95+yWpF3o/JzND1zbAhEMxhS/pKwCm2b8KUoE?=
- =?us-ascii?Q?sU1u6Zfvgc4rbFaZOg+JQOoUPGc16hI5shJgGpa8i79ODFCjBbzoh3w9eaC8?=
- =?us-ascii?Q?jt0Ps4eX5YyZvHBN/jPNULjVI+VdyiLaIcTQk+tgAQnrjWM6Uiakbumyq2be?=
- =?us-ascii?Q?7np4KUEz6vZ5lQZCAc/g98jIM8LPOpIvt4U/drKFTFb/qYOPMg64Jxwn3jlw?=
- =?us-ascii?Q?qAWyo6EwwS+ICkn50qInpi0AUrfnf8QiZmRAw7LInViPt8u59Dd9PGkzwHx2?=
- =?us-ascii?Q?F8H1T3AWj/0jHP5jj5ZqQIy2Bk87zQ6DdE6P/lW0sDfMgnj6tQ1/o5Ur6pA?=
- =?us-ascii?Q?=3D=3D?=
-X-Microsoft-Antispam-Message-Info: Vp8USI7BGfTRFJGwg17mhAPImHWCKaoh5bD7mteUA6Aec619LoJWC8hdFgwnDN0GdyQfPY5qRE9P0FgBtZ9mKcyB/seDFiRWxf1edhdilQIbGjEX2FZgUfPFZe1ZiYFii6OEHBVanushQPhk+mijTWqBrA/+7qQR0fJ9GaA3wap5u4MA4194vpOrCzzZZAO/60j/5+cYsltpmNRcMe74G9QZAmC4hYb3uXEQXhQbudoxbQXwr4gVxetpvE6rsnaQCAE33J1S2pjovhONtOBEJXad3IFKOxsWFhUaeNabbayvHZltqCCjVejC8kKITJ0YxZtklPHhyufKwY2ti9ELW9Xspqcc+kAJuOmwYHAMrpE=
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;6:cCLIVWRHlFvRpvgWks2p6B0aPGt9tJ4zvy4Df1IZfjIupNxlAxT9vmTiBaECA8cjrq//cW0UsKPU/bz65A9+eH5+it6HekJO6VsSKBuIPivjBpXtH0QBthtrV32kBTbRXBuKdW8wFkuABNofiTQA1oloUAH1Keatny60Ij/Mxn9H2L6iN7akAzIZXQRXdeeWh0hJhA2OdJxwZVmc0fpR95W04c57pQw7dop4V0UqHQfDRMbsq7zEmlSZnChJZ9PnMlFTB2HKOElnt39WrNflcJFnHIaJU7vmqKNgZHaaG+afnfGg6q0a3RbChlWMWV8FWKIEH31Vi9+Uoa6ePzSC8eVxfNSUwhJv2E+MkwtqlIqzzFulGiS7c89+xTQ6lsiB6jqxGTf0vlaECZTyFdzOoBpQ0lpsX9vPeeO1adC9Vbs7kmHlDUqYz5hq8AhVazZ+Uv2F3j58miALGzFnkfmR1w==;5:cXCXX3pC1kavkB+9j1Mv8ulTHt5kbEXw7OVQpwRhtxdoUpz2eqMvKIrUU23HR0UDBO4A1/ATShpoXEX3A97AOjygfGDc/nhRSG4AFMe9UR3H+0hc80fKXtkyZ7mu0JJpuwfwtojBHXDKFzBj0BowSP0dNAadeKp82p5E0K+Xbzs=;24:Cp3inLfCfiYlmvCKtFDDufH+i60h/Mbf0lIVq+kmvb6isG/ZQ1m/Qw2m+VrmLA7hwQaZW6SNxKsBF+VyDwEehpG1hs7h0y/n28gsMLUCXGY=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR0801MB1377;23:04wI+1uVkUm+lNYLvR4dO+yyMC37ipjcpqoW+eb?=
+ =?us-ascii?Q?+e8d0TT2NC3xoERguJotZHdm2IY8IQNAoFBnCdYvEPexV9vVUJlMCQSTy7oq?=
+ =?us-ascii?Q?nZxAKM5lLdyJTNnXbDT9jnpDVzXafIGVCVzyrtxZncxZDLVWZZJRaN0My6Lq?=
+ =?us-ascii?Q?ssO6+zE0MGadIHFoBAuKxln6jwgoYpmrtJiWabZSvhzp2GcDa3uqMFVN/taG?=
+ =?us-ascii?Q?JTKEXzcR9KnWjw3QIgRYAqN9bxgwujzvohOrXVf/QBJWoMus1UIxznYfvLi6?=
+ =?us-ascii?Q?ZE531Alzio+4s1879EI0NCsnbbgpsF2HNPlT0d67JIwByWyYJCu+iK/UJJ92?=
+ =?us-ascii?Q?9k3bp9N7fieO3HR/u4PgFUyz7dz0tLzWoPzA0Z2HzQG5FTgtM9DjzFlYXHYZ?=
+ =?us-ascii?Q?I2Jx6W5lrn1+DuW/HC5WI+Lo/AxildbZ2gdPaF4lhPbajAg0eLsdWKEqccxx?=
+ =?us-ascii?Q?2A0K7O0oKpHTkSLPWW3w8UH2mctDm9DDHsB00WJLFKavYx0yypDm5d+0UV5O?=
+ =?us-ascii?Q?IRCLFo/q8GJV3rAMM/Agc3Svggf4+7IV7CFWS9Pg4yUyyX9GP+PkYtqM17V0?=
+ =?us-ascii?Q?R7h1ouSd1NYIdn5mxtn4djjIxqB4VQQBHMg345/ntSWtMLYNVk+2XLYuFoCm?=
+ =?us-ascii?Q?TA9jFmNIHxW2yv92BoKTVcY0gF6omTYUAEmMRs/kQvXg9Q2m+nLetC8JF0Pl?=
+ =?us-ascii?Q?eRQU6k4lH8gC/2Vpsv1gMl7TZFIsQFn4MW8ysomGgofanzAXT+1GReR10u9A?=
+ =?us-ascii?Q?vKFRpe+VDlba8XNt5uoQ7qiACvuCL5wnVPhMdpKIsLU0fLDgTvM7ezOIPMYd?=
+ =?us-ascii?Q?xXTQ1PjsPyH+5dQgrVSr3cLrcet6DiVIrgJZYVYw70jF7+Ek1+8SzpdjkuJH?=
+ =?us-ascii?Q?+8LDAYbxNWe6DmDX3xztS8sQV+TUQZRNBZQpBEnjT7r/TeNyfog9EmaK8h6j?=
+ =?us-ascii?Q?dHa72uzPIP/7Dhz3BMm/r+J2rC3s4W/i1I/stkj/6wrOiO0xY6XDTAcm+X1/?=
+ =?us-ascii?Q?yPsORYbJ5aVC4nAsIlFTb00XLiHX6gjmfdNLAILf/hUn0q6Ynpm9OCaLWd82?=
+ =?us-ascii?Q?gohDm+Z0KyYkwEiHamEKGabpHo/taRbfWv5KrzaseDpVW1ZNf3lIfwnHs6z5?=
+ =?us-ascii?Q?KeDsKie+qH7ghFHUxyjdi5/AnNMocBJMJJFvYsFa5weTvxNKpyEffYn0BCgO?=
+ =?us-ascii?Q?TZnV4xpLnoNqX7gzV3Y32Qezgux30IKoebsiK?=
+X-Microsoft-Antispam-Message-Info: mfePAV6Zu1aVb1SQwFViXzIk1GPsrmOmG3HCrbtjEYodlMJJW5FJmt3cQxQTVJ6mNB+5uHM/IBj/aYmJRWu8Z+u4hMC/MbkZvA3b+trgAzIqjokpbGt3XKIbHgZWU+KjFrDg8AZEoj6nhmUWkgyAy7snNT5RurYk2jjmOWvjLVHd7MtMbiI3a5BuZ2n8QHlNxLmCM8f7JtBZ4HyYyVQhLj9IIV0otTkqYwticTuCjz9JgXf6+oow+nPCDJCCTWI5Ja0ohFrEIjBhsoFcpJ53l74pwKawh2hKwl8n6ZF0OSKlZONe3oUI5nHWlujq9pRMfW6YqGjaSSA4gF9d9exzV9Uftw9SPy4kgoSJYKR1x7E=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;6:2nSxjbRJwWEMqgD5ajxYwAaBvsqdw7qEdSkJHvVxzprQJhoOdNWKszbvvnQELjcU7CyEJXQGDll3m6t9w4tiSeDrZKzymZCKXfk35KxjOdebXyXthMbRSs2h2BKjRGWSPbFx9pet5Fwh01FEZrRfo45IK8RpHlmwFNErI8rAfFTs9f9n0GJjxIYrXYoazqQk2xL10dYSEJYJ0zCjsSlJUIEiXXILV2Cyzzbl0+hsIFedxbF3Df9v4HRU3iQA6oouksN5bhekDUfIfZ6QK3l9Nf4rZFboTY9G7eXQJRK1YsIfz+ic1i3pDYTUTfuDj5sxnUZ9dcJBq00meIMj+ceZ3+0lfRpCWP7ngRQMocJxBlyOIpruVGniYXU3A1EZp5gOKLk4SLSAm/Xvx5/Mno+/sVZmcV8o8mMrwDDkfFxde+P/8qQj03BFSoHUr+Yc/rdOlGd9pkLucML4uH/7uZVzQg==;5:/532OEKp5g7sfebrtm8TWaqSxNTTNB+wUvNLhb2ftFsw3x+3zil3lTcsYg07dXeRg98/vr9Pzu55fda9qsNKLlWZ9ELZptKPFpcKhYoNC2Vyjk40UoGQ0xdqhvKpoVuLBQKL8oGrt5jpzT+j7lzk/HlELZuy6FxkbzU4XDGeiQk=;24:/cggGIUzraU9L01MIY31HcYLa2nkKZYH1ugBwzBSTp1yRCBGRATFvd4jfwDWNrWD34zVB6t8CEmyn4CQHeY9xUGLOZq60o3F4apVoL4VSoI=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;7:2wXzgDNdNmjqhzWa8frupmsaCzYrinYi1hrobBBBUeZj/WE5nQYToDhjIB/cWA4A2BQIgoftiINN/B5bTBdUpyJDUJvZEPaDvtfg84z+wqRO0uZEFhnJGQOMCDUg4acrzcPmjQNpgdXLlzcw8FvGWEI4//S+hlnCiCvQys3M4cAZwVVZanoMtx8nxhppHsCg10Em8uZkzWjam42G4tdEI9X6hSqwdaYKu+PXjhAPd4SvOpbgbCJShc3qQ6s+MmXc
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1377;7:lNDNWQqcYNDlfoYDiYGpWYQRFURsCmsXqLSn0i0/FHP4l5r5Ei6etV4ildUDPXaZrajnNFJAL2i/OyWYRK3EyTtAPt/4TDE7V1zEGgbhwyQa4hY0ofjSPllnveKXLBCdNkjVVZVIMaZGDuaojUzuSK+lMiYrXp2bgRsJS6dPyZ5r7j6jXsDDq7nH0AiLwHSGthOwkz9VYdFk8ecFXXgj2ATXBCeG8IlW/L1bjsHHK5deEMY/P3aP5W/TH741Dg3p
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2018 17:14:08.7581
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2018 17:14:11.4293
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb169a4c-6df5-4b59-3d6e-08d5ec08b636
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b8c3aa2-3a56-4865-f7e4-08d5ec08b7cf
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1377
@@ -124,96 +123,72 @@ having a function for the same purpose.
 
 Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
 ---
- drivers/gpu/drm/i915/intel_display.c |  2 +-
- drivers/gpu/drm/i915/intel_drv.h     |  2 --
- drivers/gpu/drm/i915/intel_sprite.c  | 20 +++-----------------
- 3 files changed, 4 insertions(+), 20 deletions(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index fbe5a65..cf09012 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -3657,7 +3657,7 @@ u32 glk_plane_color_ctl(const struct intel_crtc_state *crtc_state,
- 	plane_color_ctl |= PLANE_COLOR_PLANE_GAMMA_DISABLE;
- 	plane_color_ctl |= glk_plane_color_ctl_alpha(fb->format->format);
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+index effecbe..1359e5c 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+@@ -243,18 +243,6 @@ static enum vop_data_format vop_convert_format(uint32_t format)
+ 	}
+ }
  
--	if (intel_format_is_yuv(fb->format->format)) {
-+	if (fb->format->is_yuv) {
- 		if (plane_state->base.color_encoding == DRM_COLOR_YCBCR_BT709)
- 			plane_color_ctl |= PLANE_COLOR_CSC_MODE_YUV709_TO_RGB709;
- 		else
-diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-index 0c3ac0e..64111ea 100644
---- a/drivers/gpu/drm/i915/intel_drv.h
-+++ b/drivers/gpu/drm/i915/intel_drv.h
-@@ -2069,7 +2069,6 @@ bool intel_sdvo_init(struct drm_i915_private *dev_priv,
- 
- 
- /* intel_sprite.c */
--bool intel_format_is_yuv(u32 format);
- int intel_usecs_to_scanlines(const struct drm_display_mode *adjusted_mode,
- 			     int usecs);
- struct intel_plane *intel_sprite_plane_create(struct drm_i915_private *dev_priv,
-@@ -2085,7 +2084,6 @@ void skl_disable_plane(struct intel_plane *plane, struct intel_crtc *crtc);
- bool skl_plane_get_hw_state(struct intel_plane *plane, enum pipe *pipe);
- bool skl_plane_has_ccs(struct drm_i915_private *dev_priv,
- 		       enum pipe pipe, enum plane_id plane_id);
--bool intel_format_is_yuv(uint32_t format);
- bool skl_plane_has_planar(struct drm_i915_private *dev_priv,
- 			  enum pipe pipe, enum plane_id plane_id);
- 
-diff --git a/drivers/gpu/drm/i915/intel_sprite.c b/drivers/gpu/drm/i915/intel_sprite.c
-index 344c0e7..1bb7bc3 100644
---- a/drivers/gpu/drm/i915/intel_sprite.c
-+++ b/drivers/gpu/drm/i915/intel_sprite.c
-@@ -41,20 +41,6 @@
- #include <drm/i915_drm.h>
- #include "i915_drv.h"
- 
--bool intel_format_is_yuv(u32 format)
+-static bool is_yuv_support(uint32_t format)
 -{
 -	switch (format) {
--	case DRM_FORMAT_YUYV:
--	case DRM_FORMAT_UYVY:
--	case DRM_FORMAT_VYUY:
--	case DRM_FORMAT_YVYU:
 -	case DRM_FORMAT_NV12:
+-	case DRM_FORMAT_NV16:
+-	case DRM_FORMAT_NV24:
 -		return true;
 -	default:
 -		return false;
 -	}
 -}
 -
- int intel_usecs_to_scanlines(const struct drm_display_mode *adjusted_mode,
- 			     int usecs)
- {
-@@ -404,7 +390,7 @@ chv_update_csc(const struct intel_plane_state *plane_state)
- 	const s16 *csc = csc_matrix[plane_state->base.color_encoding];
+ static uint16_t scl_vop_cal_scale(enum scale_mode mode, uint32_t src,
+ 				  uint32_t dst, bool is_horizontal,
+ 				  int vsu_mode, int *vskiplines)
+@@ -298,7 +286,8 @@ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
+ 	uint16_t cbcr_ver_scl_mode = SCALE_NONE;
+ 	int hsub = drm_format_horz_chroma_subsampling(pixel_format);
+ 	int vsub = drm_format_vert_chroma_subsampling(pixel_format);
+-	bool is_yuv = is_yuv_support(pixel_format);
++	const struct drm_format_info *info;
++	bool is_yuv = false;
+ 	uint16_t cbcr_src_w = src_w / hsub;
+ 	uint16_t cbcr_src_h = src_h / vsub;
+ 	uint16_t vsu_mode;
+@@ -306,6 +295,11 @@ static void scl_vop_cal_scl_fac(struct vop *vop, const struct vop_win_data *win,
+ 	uint32_t val;
+ 	int vskiplines;
  
- 	/* Seems RGB data bypasses the CSC always */
--	if (!intel_format_is_yuv(fb->format->format))
-+	if (!fb->format->is_yuv)
++	info = drm_format_info(pixel_format);
++
++	if (info->is_yuv)
++		is_yuv = true;
++
+ 	if (dst_w > 3840) {
+ 		DRM_DEV_ERROR(vop->dev, "Maximum dst width (3840) exceeded\n");
  		return;
- 
- 	I915_WRITE_FW(SPCSCYGOFF(plane_id), SPCSC_OOFF(0) | SPCSC_IOFF(0));
-@@ -439,7 +425,7 @@ vlv_update_clrc(const struct intel_plane_state *plane_state)
- 	enum plane_id plane_id = plane->id;
- 	int contrast, brightness, sh_scale, sh_sin, sh_cos;
- 
--	if (intel_format_is_yuv(fb->format->format) &&
-+	if (fb->format->is_yuv &&
- 	    plane_state->base.color_range == DRM_COLOR_YCBCR_LIMITED_RANGE) {
- 		/*
- 		 * Expand limited range to full range:
-@@ -1040,7 +1026,7 @@ intel_check_sprite_plane(struct intel_plane *plane,
- 		src->y1 = src_y << 16;
- 		src->y2 = (src_y + src_h) << 16;
- 
--		if (intel_format_is_yuv(fb->format->format) &&
-+		if (fb->format->is_yuv &&
-     		    fb->format->format != DRM_FORMAT_NV12 &&
- 		    (src_x % 2 || src_w % 2)) {
- 			DRM_DEBUG_KMS("src x/w (%u, %u) must be a multiple of 2 for YUV planes\n",
+@@ -680,7 +674,7 @@ static int vop_plane_atomic_check(struct drm_plane *plane,
+ 	 * Src.x1 can be odd when do clip, but yuv plane start point
+ 	 * need align with 2 pixel.
+ 	 */
+-	if (is_yuv_support(fb->format->format) && ((state->src.x1 >> 16) % 2)) {
++	if (fb->format->is_yuv && ((state->src.x1 >> 16) % 2)) {
+ 		DRM_ERROR("Invalid Source: Yuv format not support odd xpos\n");
+ 		return -EINVAL;
+ 	}
+@@ -767,7 +761,7 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+ 	VOP_WIN_SET(vop, win, format, format);
+ 	VOP_WIN_SET(vop, win, yrgb_vir, DIV_ROUND_UP(fb->pitches[0], 4));
+ 	VOP_WIN_SET(vop, win, yrgb_mst, dma_addr);
+-	if (is_yuv_support(fb->format->format)) {
++	if (fb->format->is_yuv) {
+ 		int hsub = drm_format_horz_chroma_subsampling(fb->format->format);
+ 		int vsub = drm_format_vert_chroma_subsampling(fb->format->format);
+ 		int bpp = fb->format->cpp[1];
 -- 
 2.7.4
 
