@@ -2,117 +2,105 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A254ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D636ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6BE20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:16:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JrlWsmkO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6BE20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 48F4B2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:20:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F4B2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbeGQSua (ORCPT
+        id S1730116AbeGQSyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 14:50:30 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44452 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729709AbeGQSua (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 14:50:30 -0400
-Received: by mail-lf0-f68.google.com with SMTP id g6-v6so1521730lfb.11;
-        Tue, 17 Jul 2018 11:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=f4GSxZtM7bs09N+h61RbpI4cIW21aQS1iYyfxmvVGnI=;
-        b=JrlWsmkO927Cp7xLgEl/sDPO85HMo0gDJZvdp7hj9tkyzXDtlwPpJ31iVLhG9eh+iq
-         0A7dtiHdaGQXs7Id1bFHTdsrSMzLQluSzG+LUaVYN+M1zej36Ot5cKF0/ucelGz36gqF
-         2a5qbOLoi8SRAgpIYVEv+s4Ch52l+ES90DDXlDBcp2b7Sb5EfCyOQk0ZN2xHAuvHrdql
-         S4dBAOkLpp0pEAvsysLkhhe3lvQ5M4+GccjL8eEmQ8FmB9hpz0vqQMVSjMmuWjSep6ch
-         04rHJJybOI82Hw6BP220L5T0r/+pqXgh+pcF0iZg4Ti5qVjGp9Fa3KIuoScIzCadQWIo
-         lv4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=f4GSxZtM7bs09N+h61RbpI4cIW21aQS1iYyfxmvVGnI=;
-        b=FvmFPHabItsSlL6JydHSYwOm7ZDLNzfXvmQr4BwaPHsxHOi1mXV1EHI0qxYnHRIn5c
-         ScwvnsjaiCHu8THP60OenS3JoIZomwUL5K8/nTdY3R+LOO/dica0esjhiRxPkdsfn19e
-         nSHvWj2ED2YDlezVnc8bAXdQCOMUQ3P3N28jB6F9fGkGbOz9QziDsv2Ytm93vqX759XC
-         5k9yw7fg4HuqZYLgYrlqPdeGFQoTcdBEcyLRdrSA5KrLeYMCuyOqT2NCGA8rlMgmdXpU
-         Jg7TC1JpFtjh9NNhsjrrwMF9wBG9F539+gduk3Axv2qHiXQ28bYK9mh0+MS6wnFLdiY1
-         YaLQ==
-X-Gm-Message-State: AOUpUlG9g/jyw3GawhixCRPmEAI49JBqd3HFg/NLiJMhDgM+GFBzMMaL
-        LM614jsOB+k2MLwP97CUqok=
-X-Google-Smtp-Source: AAOMgpfjJQJT6EnKuNunC/A6qYEWL0Zvf8jcv0kivwbImJodUACfYv7ygsGxI+VOwGCEsue8MHp8nA==
-X-Received: by 2002:a19:d7d1:: with SMTP id q78-v6mr1890180lfi.40.1531851398281;
-        Tue, 17 Jul 2018 11:16:38 -0700 (PDT)
-Received: from localhost.localdomain (user-94-254-174-73.play-internet.pl. [94.254.174.73])
-        by smtp.googlemail.com with ESMTPSA id u19-v6sm260911lje.51.2018.07.17.11.16.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 17 Jul 2018 11:16:37 -0700 (PDT)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     nick@shmanahar.org
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 2/2] Input: atmel_mxt_ts: Document optional voltage regulators
-Date:   Tue, 17 Jul 2018 20:16:26 +0200
-Message-Id: <1531851386-17840-3-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531851386-17840-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-References: <1531851386-17840-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+        Tue, 17 Jul 2018 14:54:17 -0400
+Received: from mga06.intel.com ([134.134.136.31]:31228 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729708AbeGQSyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 14:54:16 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 11:20:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
+   d="scan'208";a="246488314"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga006.fm.intel.com with ESMTP; 17 Jul 2018 11:20:23 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1ffUaE-000CiO-Lr; Wed, 18 Jul 2018 02:20:22 +0800
+Date:   Wed, 18 Jul 2018 02:19:29 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Mars Cheng <mars.cheng@mediatek.com>
+Cc:     kbuild-all@01.org, Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Owen Chen <owen.chen@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Subject: Re: [PATCH v5 06/11] soc: mediatek: add new flow for mtcmos power.
+Message-ID: <201807180244.Xwu9lTTR%fengguang.wu@intel.com>
+References: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document new optional voltage regulators, which can be used
-to power down/up touchscreen.
+Hi Owen,
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on v4.18-rc5 next-20180717]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Mars-Cheng/Add-basic-SoC-support-for-mt6765/20180717-205540
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:83:5: sparse: symbol 'bus_ctrl_set_release' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:114:5: sparse: symbol 'bus_ctrl_set' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:119:5: sparse: symbol 'bus_ctrl_release' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:124:5: sparse: symbol 'bus_clk_enable_disable' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:161:5: sparse: symbol 'bus_clk_enable' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:192:27: sparse: symbol 'bus_mask_set_clr_ctrl' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:197:26: sparse: symbol 'ext_bus_ctrl' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:202:26: sparse: symbol 'ext_cg_ctrl' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:210:15: sparse: symbol 'syscon_regmap_lookup_by_phandle_idx' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:231:5: sparse: symbol 'scpsys_ext_regmap_init' was not declared. Should it be static?
+   include/linux/slab.h:631:13: sparse: undefined identifier '__builtin_mul_overflow'
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:324:5: sparse: symbol 'scpsys_ext_clk_init' was not declared. Should it be static?
+>> drivers/soc/mediatek/mtk-scpsys-ext.c:336:5: sparse: symbol 'scpsys_ext_attr_init' was not declared. Should it be static?
+   include/linux/slab.h:631:13: sparse: call with no type!
+
+Please review and possibly fold the followup patch.
+
 ---
- Documentation/devicetree/bindings/input/atmel,maxtouch.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-index c88919480d37..17930ecadad3 100644
---- a/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-+++ b/Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-@@ -31,6 +31,12 @@ Optional properties for main touchpad device:
- 
- - reset-gpios: GPIO specifier for the touchscreen's reset pin (active low)
- 
-+- avdd-supply: Analog power supply. It powers up the analog channel block
-+    of the controller to detect the touches.
-+
-+- vdd-supply: Digital power supply. It powers up the digital block
-+    of the controller to enable i2c communication.
-+
- Example:
- 
- 	touch@4b {
-@@ -38,4 +44,6 @@ Example:
- 		reg = <0x4b>;
- 		interrupt-parent = <&gpio>;
- 		interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
-+		avdd-supply = <&atsp_reg>;
-+		vdd-supply = <&tsp_reg>;
- 	};
--- 
-2.7.4
-
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
