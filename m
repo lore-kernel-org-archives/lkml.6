@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F50ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4D7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC7E206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:28:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC7E206B7
+	by mail.kernel.org (Postfix) with ESMTP id B7C0520657
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:29:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7C0520657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731690AbeGQXD0 (ORCPT
+        id S1731729AbeGQXDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 19:03:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59133 "EHLO mail.bootlin.com"
+        Tue, 17 Jul 2018 19:03:44 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59117 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731670AbeGQXDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 19:03:25 -0400
+        id S1731443AbeGQXDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 19:03:17 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E4AE6207B4; Wed, 18 Jul 2018 00:28:36 +0200 (CEST)
+        id DB3582091A; Wed, 18 Jul 2018 00:28:27 +0200 (CEST)
 Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4EFC02093A;
-        Wed, 18 Jul 2018 00:28:11 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 42B1120935;
+        Wed, 18 Jul 2018 00:28:10 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -35,9 +35,9 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 16/16] ARM: dts: at91: at91sam9x5: switch to new clock bindings
-Date:   Wed, 18 Jul 2018 00:27:57 +0200
-Message-Id: <20180717222757.10253-17-alexandre.belloni@bootlin.com>
+Subject: [PATCH 14/16] ARM: dts: at91: sama5d4: switch to new clock bindings
+Date:   Wed, 18 Jul 2018 00:27:55 +0200
+Message-Id: <20180717222757.10253-15-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
@@ -46,132 +46,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch at91sam9x5 boards to the new PMC clock bindings.
+Switch sama5d4 boards to the new PMC clock bindings.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- arch/arm/boot/dts/at91sam9g15.dtsi       |   4 +
- arch/arm/boot/dts/at91sam9g25.dtsi       |   4 +
- arch/arm/boot/dts/at91sam9g25ek.dts      |   4 +-
- arch/arm/boot/dts/at91sam9g35.dtsi       |   4 +
- arch/arm/boot/dts/at91sam9x25.dtsi       |   4 +
- arch/arm/boot/dts/at91sam9x35.dtsi       |   4 +
- arch/arm/boot/dts/at91sam9x5.dtsi        | 326 +++--------------------
- arch/arm/boot/dts/at91sam9x5_can.dtsi    |  18 +-
- arch/arm/boot/dts/at91sam9x5_isi.dtsi    |  11 +-
- arch/arm/boot/dts/at91sam9x5_lcd.dtsi    |  19 +-
- arch/arm/boot/dts/at91sam9x5_macb0.dtsi  |  11 +-
- arch/arm/boot/dts/at91sam9x5_macb1.dtsi  |  11 +-
- arch/arm/boot/dts/at91sam9x5_usart3.dtsi |  11 +-
- 13 files changed, 62 insertions(+), 369 deletions(-)
+ arch/arm/boot/dts/at91-sama5d4ek.dts |   2 +-
+ arch/arm/boot/dts/sama5d4.dtsi       | 535 +++------------------------
+ 2 files changed, 49 insertions(+), 488 deletions(-)
 
-diff --git a/arch/arm/boot/dts/at91sam9g15.dtsi b/arch/arm/boot/dts/at91sam9g15.dtsi
-index 27de7dc0f0e0..b34a6c65bd44 100644
---- a/arch/arm/boot/dts/at91sam9g15.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g15.dtsi
-@@ -24,6 +24,10 @@
- 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
- 				      >;
- 			};
-+
-+			pmc: pmc@fffffc00 {
-+				compatible = "atmel,at91sam9g15-pmc", "atmel,at91sam9x5-pmc", "syscon";
-+			};
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/at91sam9g25.dtsi b/arch/arm/boot/dts/at91sam9g25.dtsi
-index 0898213f3bb2..d8bb56253e64 100644
---- a/arch/arm/boot/dts/at91sam9g25.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g25.dtsi
-@@ -26,6 +26,10 @@
- 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
- 				      >;
- 			};
-+
-+			pmc: pmc@fffffc00 {
-+				compatible = "atmel,at91sam9g25-pmc", "atmel,at91sam9x5-pmc", "syscon";
-+			};
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/at91sam9g25ek.dts b/arch/arm/boot/dts/at91sam9g25ek.dts
-index 31fecc2cdaf9..ac730812a81d 100644
---- a/arch/arm/boot/dts/at91sam9g25ek.dts
-+++ b/arch/arm/boot/dts/at91sam9g25ek.dts
-@@ -32,9 +32,9 @@
- 					pinctrl-0 = <&pinctrl_pck0_as_isi_mck &pinctrl_sensor_power &pinctrl_sensor_reset>;
- 					resetb-gpios = <&pioA 7 GPIO_ACTIVE_LOW>;
- 					pwdn-gpios = <&pioA 13 GPIO_ACTIVE_HIGH>;
--					clocks = <&pck0>;
-+					clocks = <&pmc PMC_TYPE_SYSTEM 8>;
- 					clock-names = "xvclk";
--					assigned-clocks = <&pck0>;
-+					assigned-clocks = <&pmc PMC_TYPE_SYSTEM 8>;
- 					assigned-clock-rates = <25000000>;
- 					status = "okay";
+diff --git a/arch/arm/boot/dts/at91-sama5d4ek.dts b/arch/arm/boot/dts/at91-sama5d4ek.dts
+index 0702a2f2b336..12d5af938aa3 100644
+--- a/arch/arm/boot/dts/at91-sama5d4ek.dts
++++ b/arch/arm/boot/dts/at91-sama5d4ek.dts
+@@ -115,7 +115,7 @@
+ 				wm8904: codec@1a {
+ 					compatible = "wlf,wm8904";
+ 					reg = <0x1a>;
+-					clocks = <&pck2>;
++					clocks = <&pmc PMC_TYPE_SYSTEM 10>;
+ 					clock-names = "mclk";
+ 				};
  
-diff --git a/arch/arm/boot/dts/at91sam9g35.dtsi b/arch/arm/boot/dts/at91sam9g35.dtsi
-index ff4115886f97..333e158feb61 100644
---- a/arch/arm/boot/dts/at91sam9g35.dtsi
-+++ b/arch/arm/boot/dts/at91sam9g35.dtsi
-@@ -25,6 +25,10 @@
- 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
- 				      >;
- 			};
-+
-+			pmc: pmc@fffffc00 {
-+				compatible = "atmel,at91sam9g35-pmc", "atmel,at91sam9x5-pmc", "syscon";
-+			};
+diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+index 92a35a1942b6..107a704514e0 100644
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -137,7 +137,7 @@
+ 			reg = <0x00400000 0x100000
+ 			       0xfc02c000 0x4000>;
+ 			interrupts = <47 IRQ_TYPE_LEVEL_HIGH 2>;
+-			clocks = <&udphs_clk>, <&utmi>;
++			clocks = <&pmc PMC_TYPE_PERIPHERAL 47>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
+ 			clock-names = "pclk", "hclk";
+ 			status = "disabled";
+ 
+@@ -264,7 +264,7 @@
+ 			compatible = "atmel,at91rm9200-ohci", "usb-ohci";
+ 			reg = <0x00500000 0x100000>;
+ 			interrupts = <46 IRQ_TYPE_LEVEL_HIGH 2>;
+-			clocks = <&uhphs_clk>, <&uhphs_clk>, <&uhpck>;
++			clocks = <&pmc PMC_TYPE_PERIPHERAL 46>, <&pmc PMC_TYPE_PERIPHERAL 46>, <&pmc PMC_TYPE_SYSTEM 6>;
+ 			clock-names = "ohci_clk", "hclk", "uhpck";
+ 			status = "disabled";
  		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/at91sam9x25.dtsi b/arch/arm/boot/dts/at91sam9x25.dtsi
-index 3c5fa3388997..a99703a262c9 100644
---- a/arch/arm/boot/dts/at91sam9x25.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x25.dtsi
-@@ -27,6 +27,10 @@
- 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
- 				      >;
- 			};
-+
-+			pmc: pmc@fffffc00 {
-+				compatible = "atmel,at91sam9x25-pmc", "atmel,at91sam9x5-pmc", "syscon";
-+			};
+@@ -273,7 +273,7 @@
+ 			compatible = "atmel,at91sam9g45-ehci", "usb-ehci";
+ 			reg = <0x00600000 0x100000>;
+ 			interrupts = <46 IRQ_TYPE_LEVEL_HIGH 2>;
+-			clocks = <&utmi>, <&uhphs_clk>;
++			clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_PERIPHERAL 46>;
+ 			clock-names = "usb_clk", "ehci_clk";
+ 			status = "disabled";
  		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/at91sam9x35.dtsi b/arch/arm/boot/dts/at91sam9x35.dtsi
-index d9054e8167b7..bca274d33f68 100644
---- a/arch/arm/boot/dts/at91sam9x35.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x35.dtsi
-@@ -26,6 +26,10 @@
- 				       0x003fffff 0x003f8000 0x00000000  /* pioD */
- 				      >;
- 			};
-+
-+			pmc: pmc@fffffc00 {
-+				compatible = "atmel,at91sam9x35-pmc", "atmel,at91sam9x5-pmc", "syscon";
-+			};
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/at91sam9x5.dtsi b/arch/arm/boot/dts/at91sam9x5.dtsi
-index a3c3c3128148..808f1ea16f9f 100644
---- a/arch/arm/boot/dts/at91sam9x5.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5.dtsi
-@@ -111,7 +111,7 @@
- 			ramc0: ramc@ffffe800 {
- 				compatible = "atmel,at91sam9g45-ddramc";
- 				reg = <0xffffe800 0x200>;
--				clocks = <&ddrck>;
-+				clocks = <&pmc PMC_TYPE_SYSTEM 2>;
- 				clock-names = "ddrck";
+@@ -297,7 +297,7 @@
+ 				  0x1 0x0 0x60000000 0x10000000
+ 				  0x2 0x0 0x70000000 0x10000000
+ 				  0x3 0x0 0x80000000 0x8000000>;
+-			clocks = <&mck>;
++			clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
+ 			status = "disabled";
+ 
+ 			nand_controller: nand-controller {
+@@ -327,7 +327,7 @@
+ 				compatible = "atmel,sama5d4-hlcdc";
+ 				reg = <0xf0000000 0x4000>;
+ 				interrupts = <51 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&lcdc_clk>, <&lcdck>, <&clk32k>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 51>, <&pmc PMC_TYPE_SYSTEM 3>, <&clk32k>;
+ 				clock-names = "periph_clk","sys_clk", "slow_clk";
+ 				status = "disabled";
+ 
+@@ -356,7 +356,7 @@
+ 				reg = <0xf0004000 0x200>;
+ 				interrupts = <50 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#dma-cells = <1>;
+-				clocks = <&dma1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 50>;
+ 				clock-names = "dma_clk";
  			};
  
-@@ -124,269 +124,9 @@
- 				compatible = "atmel,at91sam9x5-pmc", "syscon";
- 				reg = <0xfffffc00 0x200>;
+@@ -366,7 +366,7 @@
+ 				interrupts = <52 IRQ_TYPE_LEVEL_HIGH 5>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_isi_data_0_7>;
+-				clocks = <&isi_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 52>;
+ 				clock-names = "isi_clk";
+ 				status = "disabled";
+ 				port {
+@@ -378,7 +378,7 @@
+ 			ramc0: ramc@f0010000 {
+ 				compatible = "atmel,sama5d3-ddramc";
+ 				reg = <0xf0010000 0x200>;
+-				clocks = <&ddrck>, <&mpddr_clk>;
++				clocks = <&pmc PMC_TYPE_SYSTEM 2>, <&pmc PMC_TYPE_PERIPHERAL 16>;
+ 				clock-names = "ddrck", "mpddr";
+ 			};
+ 
+@@ -387,7 +387,7 @@
+ 				reg = <0xf0014000 0x200>;
+ 				interrupts = <8 IRQ_TYPE_LEVEL_HIGH 0>;
+ 				#dma-cells = <1>;
+-				clocks = <&dma0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+ 				clock-names = "dma_clk";
+ 			};
+ 
+@@ -395,448 +395,9 @@
+ 				compatible = "atmel,sama5d4-pmc", "syscon";
+ 				reg = <0xf0018000 0x120>;
  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
 -				interrupt-controller;
 -				#address-cells = <1>;
@@ -181,41 +164,38 @@ index a3c3c3128148..808f1ea16f9f 100644
 -				main_rc_osc: main_rc_osc {
 -					compatible = "atmel,at91sam9x5-clk-main-rc-osc";
 -					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_MOSCRCS>;
+-					interrupt-parent = <&pmc>;
+-					interrupts = <AT91_PMC_MOSCRCS>;
 -					clock-frequency = <12000000>;
--					clock-accuracy = <50000000>;
+-					clock-accuracy = <100000000>;
 -				};
 -
 -				main_osc: main_osc {
 -					compatible = "atmel,at91rm9200-clk-main-osc";
 -					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_MOSCS>;
+-					interrupt-parent = <&pmc>;
+-					interrupts = <AT91_PMC_MOSCS>;
 -					clocks = <&main_xtal>;
 -				};
 -
 -				main: mainck {
 -					compatible = "atmel,at91sam9x5-clk-main";
 -					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_MOSCSELS>;
--					clocks = <&main_rc_osc>, <&main_osc>;
+-					interrupt-parent = <&pmc>;
+-					interrupts = <AT91_PMC_MOSCSELS>;
+-					clocks = <&main_rc_osc &main_osc>;
 -				};
 -
 -				plla: pllack {
--					compatible = "atmel,at91rm9200-clk-pll";
+-					compatible = "atmel,sama5d3-clk-pll";
 -					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_LOCKA>;
+-					interrupt-parent = <&pmc>;
+-					interrupts = <AT91_PMC_LOCKA>;
 -					clocks = <&main>;
 -					reg = <0>;
--					atmel,clk-input-range = <2000000 32000000>;
+-					atmel,clk-input-range = <12000000 12000000>;
 -					#atmel,pll-clk-output-range-cells = <4>;
--					atmel,pll-clk-output-ranges = <745000000 800000000 0 0
--								       695000000 750000000 1 0
--								       645000000 700000000 2 0
--								       595000000 650000000 3 0
--								       545000000 600000000 0 1
--								       495000000 555000000 1 1
--								       445000000 500000000 2 1
--								       400000000 450000000 3 1>;
+-					atmel,pll-clk-output-ranges = <600000000 1200000000 0 0>;
 -				};
 -
 -				plladiv: plladivck {
@@ -227,18 +207,25 @@ index a3c3c3128148..808f1ea16f9f 100644
 -				utmi: utmick {
 -					compatible = "atmel,at91sam9x5-clk-utmi";
 -					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_LOCKU>;
+-					interrupt-parent = <&pmc>;
+-					interrupts = <AT91_PMC_LOCKU>;
 -					clocks = <&main>;
 -				};
 -
 -				mck: masterck {
 -					compatible = "atmel,at91sam9x5-clk-master";
 -					#clock-cells = <0>;
--					interrupts-extended = <&pmc AT91_PMC_MCKRDY>;
+-					interrupt-parent = <&pmc>;
+-					interrupts = <AT91_PMC_MCKRDY>;
 -					clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>;
--					atmel,clk-output-range = <0 133333333>;
+-					atmel,clk-output-range = <125000000 200000000>;
 -					atmel,clk-divisors = <1 2 4 3>;
--					atmel,master-clk-have-div3-pres;
+-				};
+-
+-				h32ck: h32mxck {
+-					#clock-cells = <0>;
+-					compatible = "atmel,sama5d4-clk-h32mx";
+-					clocks = <&mck>;
 -				};
 -
 -				usb: usbck {
@@ -265,6 +252,12 @@ index a3c3c3128148..808f1ea16f9f 100644
 -						reg = <1>;
 -						interrupts = <AT91_PMC_PCKRDY(1)>;
 -					};
+-
+-					prog2: prog2 {
+-						#clock-cells = <0>;
+-						reg = <2>;
+-						interrupts = <AT91_PMC_PCKRDY(2)>;
+-					};
 -				};
 -
 -				smd: smdclk {
@@ -281,6 +274,12 @@ index a3c3c3128148..808f1ea16f9f 100644
 -					ddrck: ddrck {
 -						#clock-cells = <0>;
 -						reg = <2>;
+-						clocks = <&mck>;
+-					};
+-
+-					lcdck: lcdck {
+-						#clock-cells = <0>;
+-						reg = <3>;
 -						clocks = <&mck>;
 -					};
 -
@@ -313,127 +312,290 @@ index a3c3c3128148..808f1ea16f9f 100644
 -						reg = <9>;
 -						clocks = <&prog1>;
 -					};
+-
+-					pck2: pck2 {
+-						#clock-cells = <0>;
+-						reg = <10>;
+-						clocks = <&prog2>;
+-					};
 -				};
 -
--				periphck {
+-				periph32ck {
 -					compatible = "atmel,at91sam9x5-clk-peripheral";
 -					#address-cells = <1>;
 -					#size-cells = <0>;
--					clocks = <&mck>;
+-					clocks = <&h32ck>;
 -
--					pioAB_clk: pioAB_clk {
--						#clock-cells = <0>;
--						reg = <2>;
--					};
--
--					pioCD_clk: pioCD_clk {
--						#clock-cells = <0>;
--						reg = <3>;
--					};
--
--					smd_clk: smd_clk {
--						#clock-cells = <0>;
--						reg = <4>;
--					};
--
--					usart0_clk: usart0_clk {
+-					pioD_clk: pioD_clk {
 -						#clock-cells = <0>;
 -						reg = <5>;
 -					};
 -
--					usart1_clk: usart1_clk {
+-					usart0_clk: usart0_clk {
 -						#clock-cells = <0>;
 -						reg = <6>;
 -					};
 -
--					usart2_clk: usart2_clk {
+-					usart1_clk: usart1_clk {
 -						#clock-cells = <0>;
 -						reg = <7>;
 -					};
 -
--					twi0_clk: twi0_clk {
+-					icm_clk: icm_clk {
+-						#clock-cells = <0>;
 -						reg = <9>;
+-					};
+-
+-					aes_clk: aes_clk {
+-						#clock-cells = <0>;
+-						reg = <12>;
+-					};
+-
+-					tdes_clk: tdes_clk {
+-						#clock-cells = <0>;
+-						reg = <14>;
+-					};
+-
+-					sha_clk: sha_clk {
+-						#clock-cells = <0>;
+-						reg = <15>;
+-					};
+-
+-					matrix1_clk: matrix1_clk {
+-						#clock-cells = <0>;
+-						reg = <17>;
+-					};
+-
+-					hsmc_clk: hsmc_clk {
+-						#clock-cells = <0>;
+-						reg = <22>;
+-					};
+-
+-					pioA_clk: pioA_clk {
+-						#clock-cells = <0>;
+-						reg = <23>;
+-					};
+-
+-					pioB_clk: pioB_clk {
+-						#clock-cells = <0>;
+-						reg = <24>;
+-					};
+-
+-					pioC_clk: pioC_clk {
+-						#clock-cells = <0>;
+-						reg = <25>;
+-					};
+-
+-					pioE_clk: pioE_clk {
+-						#clock-cells = <0>;
+-						reg = <26>;
+-					};
+-
+-					uart0_clk: uart0_clk {
+-						#clock-cells = <0>;
+-						reg = <27>;
+-					};
+-
+-					uart1_clk: uart1_clk {
+-						#clock-cells = <0>;
+-						reg = <28>;
+-					};
+-
+-					usart2_clk: usart2_clk {
+-						#clock-cells = <0>;
+-						reg = <29>;
+-					};
+-
+-					usart3_clk: usart3_clk {
+-						#clock-cells = <0>;
+-						reg = <30>;
+-					};
+-
+-					usart4_clk: usart4_clk {
+-						#clock-cells = <0>;
+-						reg = <31>;
+-					};
+-
+-					twi0_clk: twi0_clk {
+-						reg = <32>;
 -						#clock-cells = <0>;
 -					};
 -
 -					twi1_clk: twi1_clk {
 -						#clock-cells = <0>;
--						reg = <10>;
+-						reg = <33>;
 -					};
 -
 -					twi2_clk: twi2_clk {
 -						#clock-cells = <0>;
--						reg = <11>;
+-						reg = <34>;
 -					};
 -
 -					mci0_clk: mci0_clk {
 -						#clock-cells = <0>;
--						reg = <12>;
--					};
--
--					spi0_clk: spi0_clk {
--						#clock-cells = <0>;
--						reg = <13>;
--					};
--
--					spi1_clk: spi1_clk {
--						#clock-cells = <0>;
--						reg = <14>;
--					};
--
--					uart0_clk: uart0_clk {
--						#clock-cells = <0>;
--						reg = <15>;
--					};
--
--					uart1_clk: uart1_clk {
--						#clock-cells = <0>;
--						reg = <16>;
--					};
--
--					tcb0_clk: tcb0_clk {
--						#clock-cells = <0>;
--						reg = <17>;
--					};
--
--					pwm_clk: pwm_clk {
--						#clock-cells = <0>;
--						reg = <18>;
--					};
--
--					adc_clk: adc_clk {
--						#clock-cells = <0>;
--						reg = <19>;
--					};
--
--					dma0_clk: dma0_clk {
--						#clock-cells = <0>;
--						reg = <20>;
--					};
--
--					dma1_clk: dma1_clk {
--						#clock-cells = <0>;
--						reg = <21>;
--					};
--
--					uhphs_clk: uhphs_clk {
--						#clock-cells = <0>;
--						reg = <22>;
--					};
--
--					udphs_clk: udphs_clk {
--						#clock-cells = <0>;
--						reg = <23>;
+-						reg = <35>;
 -					};
 -
 -					mci1_clk: mci1_clk {
 -						#clock-cells = <0>;
--						reg = <26>;
+-						reg = <36>;
+-					};
+-
+-					spi0_clk: spi0_clk {
+-						#clock-cells = <0>;
+-						reg = <37>;
+-					};
+-
+-					spi1_clk: spi1_clk {
+-						#clock-cells = <0>;
+-						reg = <38>;
+-					};
+-
+-					spi2_clk: spi2_clk {
+-						#clock-cells = <0>;
+-						reg = <39>;
+-					};
+-
+-					tcb0_clk: tcb0_clk {
+-						#clock-cells = <0>;
+-						reg = <40>;
+-					};
+-
+-					tcb1_clk: tcb1_clk {
+-						#clock-cells = <0>;
+-						reg = <41>;
+-					};
+-
+-					tcb2_clk: tcb2_clk {
+-						#clock-cells = <0>;
+-						reg = <42>;
+-					};
+-
+-					pwm_clk: pwm_clk {
+-						#clock-cells = <0>;
+-						reg = <43>;
+-					};
+-
+-					adc_clk: adc_clk {
+-						#clock-cells = <0>;
+-						reg = <44>;
+-					};
+-
+-					dbgu_clk: dbgu_clk {
+-						#clock-cells = <0>;
+-						reg = <45>;
+-					};
+-
+-					uhphs_clk: uhphs_clk {
+-						#clock-cells = <0>;
+-						reg = <46>;
+-					};
+-
+-					udphs_clk: udphs_clk {
+-						#clock-cells = <0>;
+-						reg = <47>;
 -					};
 -
 -					ssc0_clk: ssc0_clk {
 -						#clock-cells = <0>;
--						reg = <28>;
+-						reg = <48>;
+-					};
+-
+-					ssc1_clk: ssc1_clk {
+-						#clock-cells = <0>;
+-						reg = <49>;
+-					};
+-
+-					trng_clk: trng_clk {
+-						#clock-cells = <0>;
+-						reg = <53>;
+-					};
+-
+-					macb0_clk: macb0_clk {
+-						#clock-cells = <0>;
+-						reg = <54>;
+-					};
+-
+-					macb1_clk: macb1_clk {
+-						#clock-cells = <0>;
+-						reg = <55>;
+-					};
+-
+-					fuse_clk: fuse_clk {
+-						#clock-cells = <0>;
+-						reg = <57>;
+-					};
+-
+-					securam_clk: securam_clk {
+-						#clock-cells = <0>;
+-						reg = <59>;
+-					};
+-
+-					smd_clk: smd_clk {
+-						#clock-cells = <0>;
+-						reg = <61>;
+-					};
+-
+-					twi3_clk: twi3_clk {
+-						#clock-cells = <0>;
+-						reg = <62>;
+-					};
+-
+-					catb_clk: catb_clk {
+-						#clock-cells = <0>;
+-						reg = <63>;
+-					};
+-				};
+-
+-				periph64ck {
+-					compatible = "atmel,at91sam9x5-clk-peripheral";
+-					#address-cells = <1>;
+-					#size-cells = <0>;
+-					clocks = <&mck>;
+-
+-					dma0_clk: dma0_clk {
+-						#clock-cells = <0>;
+-						reg = <8>;
+-					};
+-
+-					cpkcc_clk: cpkcc_clk {
+-						#clock-cells = <0>;
+-						reg = <10>;
+-					};
+-
+-					aesb_clk: aesb_clk {
+-						#clock-cells = <0>;
+-						reg = <13>;
+-					};
+-
+-					mpddr_clk: mpddr_clk {
+-						#clock-cells = <0>;
+-						reg = <16>;
+-					};
+-
+-					matrix0_clk: matrix0_clk {
+-						#clock-cells = <0>;
+-						reg = <18>;
+-					};
+-
+-					vdec_clk: vdec_clk {
+-						#clock-cells = <0>;
+-						reg = <19>;
+-					};
+-
+-					dma1_clk: dma1_clk {
+-						#clock-cells = <0>;
+-						reg = <50>;
+-					};
+-
+-					lcdc_clk: lcdc_clk {
+-						#clock-cells = <0>;
+-						reg = <51>;
+-					};
+-
+-					isi_clk: isi_clk {
+-						#clock-cells = <0>;
+-						reg = <52>;
 -					};
 -				};
 +				#clock-cells = <2>;
@@ -441,460 +603,330 @@ index a3c3c3128148..808f1ea16f9f 100644
 +				clock-names = "slow_clk", "main_xtal";
  			};
  
- 			rstc@fffffe00 {
-@@ -405,7 +145,7 @@
- 				compatible = "atmel,at91sam9260-pit";
- 				reg = <0xfffffe30 0xf>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&mck>;
-+				clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
- 			};
- 
- 			sckc@fffffe50 {
-@@ -438,7 +178,7 @@
- 				#size-cells = <0>;
- 				reg = <0xf8008000 0x100>;
- 				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&tcb0_clk>, <&clk32k>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k>;
- 				clock-names = "t0_clk", "slow_clk";
- 			};
- 
-@@ -448,7 +188,7 @@
- 				#size-cells = <0>;
- 				reg = <0xf800c000 0x100>;
- 				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&tcb0_clk>, <&clk32k>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k>;
- 				clock-names = "t0_clk", "slow_clk";
- 			};
- 
-@@ -457,7 +197,7 @@
- 				reg = <0xffffec00 0x200>;
- 				interrupts = <20 IRQ_TYPE_LEVEL_HIGH 0>;
- 				#dma-cells = <2>;
--				clocks = <&dma0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 20>;
- 				clock-names = "dma_clk";
- 			};
- 
-@@ -466,7 +206,7 @@
- 				reg = <0xffffee00 0x200>;
- 				interrupts = <21 IRQ_TYPE_LEVEL_HIGH 0>;
- 				#dma-cells = <2>;
--				clocks = <&dma1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 21>;
- 				clock-names = "dma_clk";
- 			};
- 
-@@ -864,7 +604,7 @@
- 					gpio-controller;
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
--					clocks = <&pioAB_clk>;
-+					clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
- 				};
- 
- 				pioB: gpio@fffff600 {
-@@ -876,7 +616,7 @@
- 					#gpio-lines = <19>;
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
--					clocks = <&pioAB_clk>;
-+					clocks = <&pmc PMC_TYPE_PERIPHERAL 2>;
- 				};
- 
- 				pioC: gpio@fffff800 {
-@@ -887,7 +627,7 @@
- 					gpio-controller;
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
--					clocks = <&pioCD_clk>;
-+					clocks = <&pmc PMC_TYPE_PERIPHERAL 3>;
- 				};
- 
- 				pioD: gpio@fffffa00 {
-@@ -899,7 +639,7 @@
- 					#gpio-lines = <22>;
- 					interrupt-controller;
- 					#interrupt-cells = <2>;
--					clocks = <&pioCD_clk>;
-+					clocks = <&pmc PMC_TYPE_PERIPHERAL 3>;
- 				};
- 			};
- 
-@@ -912,7 +652,7 @@
- 				dma-names = "tx", "rx";
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_ssc0_tx &pinctrl_ssc0_rx>;
--				clocks = <&ssc0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 28>;
- 				clock-names = "pclk";
+ 			mmc0: mmc@f8000000 {
+@@ -852,7 +413,7 @@
  				status = "disabled";
- 			};
-@@ -924,7 +664,7 @@
- 				dmas = <&dma0 1 AT91_DMA_CFG_PER_ID(0)>;
- 				dma-names = "rxtx";
- 				pinctrl-names = "default";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
 -				clocks = <&mci0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 12>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 35>;
  				clock-names = "mci_clk";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -938,7 +678,7 @@
- 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(0)>;
- 				dma-names = "rxtx";
- 				pinctrl-names = "default";
--				clocks = <&mci1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 26>;
- 				clock-names = "mci_clk";
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-@@ -954,7 +694,7 @@
- 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(8)>,
- 				       <&dma1 1 (AT91_DMA_CFG_PER_ID(9) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
- 				dma-names = "tx", "rx";
--				clocks = <&mck>;
-+				clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -968,7 +708,7 @@
- 				dmas = <&dma0 1 AT91_DMA_CFG_PER_ID(3)>,
- 				       <&dma0 1 (AT91_DMA_CFG_PER_ID(4) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
- 				dma-names = "tx", "rx";
--				clocks = <&usart0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -982,7 +722,7 @@
- 				dmas = <&dma0 1 AT91_DMA_CFG_PER_ID(5)>,
- 				       <&dma0 1 (AT91_DMA_CFG_PER_ID(6) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
- 				dma-names = "tx", "rx";
--				clocks = <&usart1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -996,7 +736,7 @@
- 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(12)>,
- 				       <&dma1 1 (AT91_DMA_CFG_PER_ID(13) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
- 				dma-names = "tx", "rx";
--				clocks = <&usart2_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
- 				clock-names = "usart";
- 				status = "disabled";
- 			};
-@@ -1012,7 +752,7 @@
- 				#size-cells = <0>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_i2c0>;
--				clocks = <&twi0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
- 				status = "disabled";
  			};
  
-@@ -1027,7 +767,7 @@
- 				#size-cells = <0>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_i2c1>;
--				clocks = <&twi1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
- 				status = "disabled";
- 			};
- 
-@@ -1042,7 +782,7 @@
- 				#size-cells = <0>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_i2c2>;
--				clocks = <&twi2_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
- 				status = "disabled";
- 			};
- 
-@@ -1052,7 +792,7 @@
- 				interrupts = <15 IRQ_TYPE_LEVEL_HIGH 5>;
+@@ -869,7 +430,7 @@
+ 				dma-names = "tx", "rx";
  				pinctrl-names = "default";
  				pinctrl-0 = <&pinctrl_uart0>;
 -				clocks = <&uart0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 27>;
  				clock-names = "usart";
  				status = "disabled";
  			};
-@@ -1063,7 +803,7 @@
- 				interrupts = <16 IRQ_TYPE_LEVEL_HIGH 5>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_uart1>;
--				clocks = <&uart1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
- 				clock-names = "usart";
+@@ -887,7 +448,7 @@
+ 					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
+ 					| AT91_XDMAC_DT_PERID(27))>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&ssc0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 48>;
+ 				clock-names = "pclk";
  				status = "disabled";
  			};
-@@ -1074,7 +814,7 @@
- 				compatible = "atmel,at91sam9x5-adc";
- 				reg = <0xf804c000 0x100>;
- 				interrupts = <19 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&adc_clk>,
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 19>,
- 					 <&adc_op_clk>;
- 				clock-names = "adc_clk", "adc_op_clk";
- 				atmel,adc-use-external-triggers;
-@@ -1121,7 +861,7 @@
+@@ -897,7 +458,7 @@
+ 				reg = <0xf800c000 0x300>;
+ 				interrupts = <43 IRQ_TYPE_LEVEL_HIGH 4>;
+ 				#pwm-cells = <3>;
+-				clocks = <&pwm_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 43>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -916,7 +477,7 @@
  				dma-names = "tx", "rx";
  				pinctrl-names = "default";
  				pinctrl-0 = <&pinctrl_spi0>;
 -				clocks = <&spi0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 37>;
  				clock-names = "spi_clk";
  				status = "disabled";
  			};
-@@ -1137,7 +877,7 @@
+@@ -936,7 +497,7 @@
+ 				pinctrl-0 = <&pinctrl_i2c0>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&twi0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 32>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -955,7 +516,7 @@
+ 				pinctrl-0 = <&pinctrl_i2c1>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&twi1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 33>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -965,7 +526,7 @@
+ 				#size-cells = <0>;
+ 				reg = <0xf801c000 0x100>;
+ 				interrupts = <40 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&tcb0_clk>, <&clk32k>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 40>, <&clk32k>;
+ 				clock-names = "t0_clk", "slow_clk";
+ 			};
+ 
+@@ -977,7 +538,7 @@
+ 				pinctrl-0 = <&pinctrl_macb0_rmii>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&macb0_clk>, <&macb0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 54>, <&pmc PMC_TYPE_PERIPHERAL 54>;
+ 				clock-names = "hclk", "pclk";
+ 				status = "disabled";
+ 			};
+@@ -997,7 +558,7 @@
+ 				pinctrl-0 = <&pinctrl_i2c2>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&twi2_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 34>;
+ 				status = "disabled";
+ 			};
+ 
+@@ -1019,7 +580,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_usart0 &pinctrl_usart0_rts &pinctrl_usart0_cts>;
+-				clocks = <&usart0_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1037,7 +598,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_usart1 &pinctrl_usart1_rts &pinctrl_usart1_cts>;
+-				clocks = <&usart1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1055,7 +616,7 @@
+ 				status = "disabled";
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&mci1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 36>;
+ 				clock-names = "mci_clk";
+ 			};
+ 
+@@ -1072,7 +633,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_uart1>;
+-				clocks = <&uart1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 28>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1090,7 +651,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_usart2 &pinctrl_usart2_rts &pinctrl_usart2_cts>;
+-				clocks = <&usart2_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 29>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1108,7 +669,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_usart3>;
+-				clocks = <&usart3_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 30>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1126,7 +687,7 @@
+ 				dma-names = "tx", "rx";
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_usart4>;
+-				clocks = <&usart4_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 31>;
+ 				clock-names = "usart";
+ 				status = "disabled";
+ 			};
+@@ -1144,7 +705,7 @@
+ 					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
+ 					| AT91_XDMAC_DT_PERID(29))>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&ssc1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 49>;
+ 				clock-names = "pclk";
+ 				status = "disabled";
+ 			};
+@@ -1164,7 +725,7 @@
  				dma-names = "tx", "rx";
  				pinctrl-names = "default";
  				pinctrl-0 = <&pinctrl_spi1>;
 -				clocks = <&spi1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 38>;
  				clock-names = "spi_clk";
  				status = "disabled";
  			};
-@@ -1149,7 +889,7 @@
- 				reg = <0x00500000 0x80000
- 				       0xf803c000 0x400>;
- 				interrupts = <23 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&utmi>, <&udphs_clk>;
-+				clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_PERIPHERAL 23>;
- 				clock-names = "hclk", "pclk";
- 				status = "disabled";
- 
-@@ -1229,7 +969,7 @@
- 				compatible = "atmel,at91sam9rl-pwm";
- 				reg = <0xf8034000 0x300>;
- 				interrupts = <18 IRQ_TYPE_LEVEL_HIGH 4>;
--				clocks = <&pwm_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 18>;
- 				#pwm-cells = <3>;
- 				status = "disabled";
- 			};
-@@ -1239,7 +979,7 @@
- 			compatible = "atmel,at91rm9200-ohci", "usb-ohci";
- 			reg = <0x00600000 0x100000>;
- 			interrupts = <22 IRQ_TYPE_LEVEL_HIGH 2>;
--			clocks = <&uhphs_clk>, <&uhphs_clk>, <&uhpck>;
-+			clocks = <&pmc PMC_TYPE_PERIPHERAL 22>, <&pmc PMC_TYPE_PERIPHERAL 22>, <&pmc PMC_TYPE_SYSTEM 6>;
- 			clock-names = "ohci_clk", "hclk", "uhpck";
- 			status = "disabled";
- 		};
-@@ -1248,7 +988,7 @@
- 			compatible = "atmel,at91sam9g45-ehci", "usb-ehci";
- 			reg = <0x00700000 0x100000>;
- 			interrupts = <22 IRQ_TYPE_LEVEL_HIGH 2>;
--			clocks = <&utmi>, <&uhphs_clk>;
-+			clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_PERIPHERAL 22>;
- 			clock-names = "usb_clk", "ehci_clk";
- 			status = "disabled";
- 		};
-@@ -1266,7 +1006,7 @@
- 				  0x3 0x0 0x40000000 0x10000000
- 				  0x4 0x0 0x50000000 0x10000000
- 				  0x5 0x0 0x60000000 0x10000000>;
--			clocks = <&mck>;
-+			clocks = <&pmc PMC_TYPE_CORE PMC_MCK>;
- 			status = "disabled";
- 
- 			nand_controller: nand-controller {
-diff --git a/arch/arm/boot/dts/at91sam9x5_can.dtsi b/arch/arm/boot/dts/at91sam9x5_can.dtsi
-index 8eb2f9c1b978..125f9e3b49ad 100644
---- a/arch/arm/boot/dts/at91sam9x5_can.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5_can.dtsi
-@@ -13,27 +13,13 @@
- / {
- 	ahb {
- 		apb {
--			pmc: pmc@fffffc00 {
--				periphck {
--					can0_clk: can0_clk {
--						#clock-cells = <0>;
--						reg = <29>;
--					};
--
--					can1_clk: can1_clk {
--						#clock-cells = <0>;
--						reg = <30>;
--					};
--				};
--			};
--
- 			can0: can@f8000000 {
- 				compatible = "atmel,at91sam9x5-can";
- 				reg = <0xf8000000 0x300>;
- 				interrupts = <29 IRQ_TYPE_LEVEL_HIGH 3>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can0_rx_tx>;
--				clocks = <&can0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 29>;
- 				clock-names = "can_clk";
- 				status = "disabled";
- 			};
-@@ -44,7 +30,7 @@
- 				interrupts = <30 IRQ_TYPE_LEVEL_HIGH 3>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can1_rx_tx>;
--				clocks = <&can1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 30>;
- 				clock-names = "can_clk";
- 				status = "disabled";
- 			};
-diff --git a/arch/arm/boot/dts/at91sam9x5_isi.dtsi b/arch/arm/boot/dts/at91sam9x5_isi.dtsi
-index 8fc45ca4dcb5..c3e45b57b6a2 100644
---- a/arch/arm/boot/dts/at91sam9x5_isi.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5_isi.dtsi
-@@ -44,22 +44,13 @@
- 				};
- 			};
- 
--			pmc: pmc@fffffc00 {
--				periphck {
--					isi_clk: isi_clk {
--						#clock-cells = <0>;
--						reg = <25>;
--					};
--				};
--			};
--
- 			isi: isi@f8048000 {
- 				compatible = "atmel,at91sam9g45-isi";
- 				reg = <0xf8048000 0x4000>;
- 				interrupts = <25 IRQ_TYPE_LEVEL_HIGH 5>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_isi_data_0_7>;
--				clocks = <&isi_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>;
- 				clock-names = "isi_clk";
- 				status = "disabled";
- 				port {
-diff --git a/arch/arm/boot/dts/at91sam9x5_lcd.dtsi b/arch/arm/boot/dts/at91sam9x5_lcd.dtsi
-index 1629db9dd563..12595fb11691 100644
---- a/arch/arm/boot/dts/at91sam9x5_lcd.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5_lcd.dtsi
-@@ -17,7 +17,7 @@
- 				compatible = "atmel,at91sam9x5-hlcdc";
- 				reg = <0xf8038000 0x4000>;
- 				interrupts = <25 IRQ_TYPE_LEVEL_HIGH 0>;
--				clocks = <&lcdc_clk>, <&lcdck>, <&clk32k>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 25>, <&pmc PMC_TYPE_SYSTEM 3>, <&clk32k>;
- 				clock-names = "periph_clk","sys_clk", "slow_clk";
- 				status = "disabled";
- 
-@@ -143,23 +143,6 @@
- 					};
- 				};
- 			};
--
--			pmc: pmc@fffffc00 {
--				periphck {
--					lcdc_clk: lcdc_clk {
--						#clock-cells = <0>;
--						reg = <25>;
--					};
--				};
--
--				systemck {
--					lcdck: lcdck {
--						#clock-cells = <0>;
--						reg = <3>;
--						clocks = <&mck>;
--					};
--				};
--			};
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/at91sam9x5_macb0.dtsi b/arch/arm/boot/dts/at91sam9x5_macb0.dtsi
-index 73d7e30965ba..57c2e5a4fb53 100644
---- a/arch/arm/boot/dts/at91sam9x5_macb0.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5_macb0.dtsi
-@@ -43,22 +43,13 @@
- 				};
- 			};
- 
--			pmc: pmc@fffffc00 {
--				periphck {
--					macb0_clk: macb0_clk {
--						#clock-cells = <0>;
--						reg = <24>;
--					};
--				};
--			};
--
- 			macb0: ethernet@f802c000 {
- 				compatible = "cdns,at91sam9260-macb", "cdns,macb";
- 				reg = <0xf802c000 0x100>;
- 				interrupts = <24 IRQ_TYPE_LEVEL_HIGH 3>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_macb0_rmii>;
--				clocks = <&macb0_clk>, <&macb0_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 24>, <&pmc PMC_TYPE_PERIPHERAL 24>;
- 				clock-names = "hclk", "pclk";
- 				status = "disabled";
- 			};
-diff --git a/arch/arm/boot/dts/at91sam9x5_macb1.dtsi b/arch/arm/boot/dts/at91sam9x5_macb1.dtsi
-index d81980c40c7d..59b8da87d3c1 100644
---- a/arch/arm/boot/dts/at91sam9x5_macb1.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5_macb1.dtsi
-@@ -31,22 +31,13 @@
- 				};
- 			};
- 
--			pmc: pmc@fffffc00 {
--				periphck {
--					macb1_clk: macb1_clk {
--						#clock-cells = <0>;
--						reg = <27>;
--					};
--				};
--			};
--
- 			macb1: ethernet@f8030000 {
- 				compatible = "cdns,at91sam9260-macb", "cdns,macb";
- 				reg = <0xf8030000 0x100>;
- 				interrupts = <27 IRQ_TYPE_LEVEL_HIGH 3>;
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_macb1_rmii>;
--				clocks = <&macb1_clk>, <&macb1_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 27>, <&pmc PMC_TYPE_PERIPHERAL 27>;
- 				clock-names = "hclk", "pclk";
- 				status = "disabled";
- 			};
-diff --git a/arch/arm/boot/dts/at91sam9x5_usart3.dtsi b/arch/arm/boot/dts/at91sam9x5_usart3.dtsi
-index a32d12b406a3..9102dfbed5d8 100644
---- a/arch/arm/boot/dts/at91sam9x5_usart3.dtsi
-+++ b/arch/arm/boot/dts/at91sam9x5_usart3.dtsi
-@@ -42,15 +42,6 @@
- 				};
- 			};
- 
--			pmc: pmc@fffffc00 {
--				periphck {
--					usart3_clk: usart3_clk {
--						#clock-cells = <0>;
--						reg = <8>;
--					};
--				};
--			};
--
- 			usart3: serial@f8028000 {
- 				compatible = "atmel,at91sam9260-usart";
- 				reg = <0xf8028000 0x200>;
-@@ -60,7 +51,7 @@
- 				dmas = <&dma1 1 AT91_DMA_CFG_PER_ID(14)>,
- 				       <&dma1 1 (AT91_DMA_CFG_PER_ID(15) | AT91_DMA_CFG_FIFOCFG_ASAP)>;
+@@ -1184,7 +745,7 @@
  				dma-names = "tx", "rx";
--				clocks = <&usart3_clk>;
-+				clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_spi2>;
+-				clocks = <&spi2_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 39>;
+ 				clock-names = "spi_clk";
+ 				status = "disabled";
+ 			};
+@@ -1195,7 +756,7 @@
+ 				#size-cells = <0>;
+ 				reg = <0xfc020000 0x100>;
+ 				interrupts = <41 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&tcb1_clk>, <&clk32k>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 41>, <&clk32k>;
+ 				clock-names = "t0_clk", "slow_clk";
+ 			};
+ 
+@@ -1205,7 +766,7 @@
+ 				#size-cells = <0>;
+ 				reg = <0xfc024000 0x100>;
+ 				interrupts = <42 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&tcb2_clk>, <&clk32k>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 42>, <&clk32k>;
+ 				clock-names = "t0_clk", "slow_clk";
+ 			};
+ 
+@@ -1217,7 +778,7 @@
+ 				pinctrl-0 = <&pinctrl_macb1_rmii>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&macb1_clk>, <&macb1_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 55>, <&pmc PMC_TYPE_PERIPHERAL 55>;
+ 				clock-names = "hclk", "pclk";
+ 				status = "disabled";
+ 			};
+@@ -1226,14 +787,14 @@
+ 				compatible = "atmel,at91sam9g45-trng";
+ 				reg = <0xfc030000 0x100>;
+ 				interrupts = <53 IRQ_TYPE_LEVEL_HIGH 0>;
+-				clocks = <&trng_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 53>;
+ 			};
+ 
+ 			adc0: adc@fc034000 {
+ 				compatible = "atmel,at91sam9x5-adc";
+ 				reg = <0xfc034000 0x100>;
+ 				interrupts = <44 IRQ_TYPE_LEVEL_HIGH 5>;
+-				clocks = <&adc_clk>,
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 44>,
+ 					 <&adc_op_clk>;
+ 				clock-names = "adc_clk", "adc_op_clk";
+ 				atmel,adc-channels-used = <0x01f>;
+@@ -1276,7 +837,7 @@
+ 				       <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
+ 					| AT91_XDMAC_DT_PERID(40))>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&aes_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 12>;
+ 				clock-names = "aes_clk";
+ 				status = "okay";
+ 			};
+@@ -1290,7 +851,7 @@
+ 				       <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
+ 					| AT91_XDMAC_DT_PERID(43))>;
+ 				dma-names = "tx", "rx";
+-				clocks = <&tdes_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
+ 				clock-names = "tdes_clk";
+ 				status = "okay";
+ 			};
+@@ -1302,7 +863,7 @@
+ 				dmas = <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1)
+ 					| AT91_XDMAC_DT_PERID(44))>;
+ 				dma-names = "tx";
+-				clocks = <&sha_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
+ 				clock-names = "sha_clk";
+ 				status = "okay";
+ 			};
+@@ -1311,7 +872,7 @@
+ 				compatible = "atmel,sama5d3-smc", "syscon", "simple-mfd";
+ 				reg = <0xfc05c000 0x1000>;
+ 				interrupts = <22 IRQ_TYPE_LEVEL_HIGH 6>;
+-				clocks = <&hsmc_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 22>;
+ 				#address-cells = <1>;
+ 				#size-cells = <1>;
+ 				ranges;
+@@ -1339,7 +900,7 @@
+ 				compatible = "atmel,at91sam9260-pit";
+ 				reg = <0xfc068630 0x10>;
+ 				interrupts = <3 IRQ_TYPE_LEVEL_HIGH 5>;
+-				clocks = <&h32ck>;
++				clocks = <&pmc PMC_TYPE_CORE PMC_MCK2>;
+ 			};
+ 
+ 			watchdog@fc068640 {
+@@ -1370,7 +931,7 @@
+ 				interrupts = <45 IRQ_TYPE_LEVEL_HIGH 7>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_dbgu>;
+-				clocks = <&dbgu_clk>;
++				clocks = <&pmc PMC_TYPE_PERIPHERAL 45>;
  				clock-names = "usart";
  				status = "disabled";
  			};
+@@ -1400,7 +961,7 @@
+ 					gpio-controller;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioA_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 23>;
+ 				};
+ 
+ 				pioB: gpio@fc06b000 {
+@@ -1411,7 +972,7 @@
+ 					gpio-controller;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioB_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 24>;
+ 				};
+ 
+ 				pioC: gpio@fc06c000 {
+@@ -1422,7 +983,7 @@
+ 					gpio-controller;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioC_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 25>;
+ 				};
+ 
+ 				pioD: gpio@fc068000 {
+@@ -1433,7 +994,7 @@
+ 					gpio-controller;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioD_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
+ 				};
+ 
+ 				pioE: gpio@fc06d000 {
+@@ -1444,7 +1005,7 @@
+ 					gpio-controller;
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+-					clocks = <&pioE_clk>;
++					clocks = <&pmc PMC_TYPE_PERIPHERAL 26>;
+ 				};
+ 
+ 				/* pinctrl pin settings */
 -- 
 2.18.0
 
