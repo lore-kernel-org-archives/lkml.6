@@ -6,136 +6,135 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AB9ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8ECECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A844B2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:52:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A844B2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CE8520693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:54:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE8520693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730503AbeGQV03 (ORCPT
+        id S1730397AbeGQV3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:26:29 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:46384 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729478AbeGQV03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:26:29 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1ffWwn-0000hi-8V; Tue, 17 Jul 2018 14:51:50 -0600
-To:     Matthew Wilcox <willy@infradead.org>, Martin Mares <mj@ucw.cz>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180717170204.30470-1-logang@deltatee.com>
- <20180717203900.GA1771@bombadil.infradead.org>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <1e1f1e0d-520a-e2f9-15cb-09e97cd4a836@deltatee.com>
-Date:   Tue, 17 Jul 2018 14:51:40 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 17 Jul 2018 17:29:00 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:48314 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729907AbeGQV27 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 17:28:59 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6HKsVhF030632;
+        Wed, 18 Jul 2018 05:54:31 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Wed, 18 Jul 2018 05:54:31 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6HKsPYv030612
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 18 Jul 2018 05:54:31 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180707111209.GA27768@gmail.com>
+ <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
+ <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
+ <f486debf-e824-0d0c-c0c9-cf1e278ee9eb@i-love.sakura.ne.jp>
+ <218baff7-9473-ac1e-2449-13de98fa6dc9@rasmusvillemoes.dk>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <2c8fe03e-36f5-5126-283c-cabc358a7d52@i-love.sakura.ne.jp>
+Date:   Wed, 18 Jul 2018 05:54:20 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180717203900.GA1771@bombadil.infradead.org>
+In-Reply-To: <218baff7-9473-ac1e-2449-13de98fa6dc9@rasmusvillemoes.dk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mj@ucw.cz, willy@infradead.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: lspci: Display path to device
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Corrected Signed-off-by: addresses.
+
+From 96d9d4d135994a081e54d33d23f5007c53d9b5dd Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 17 Jul 2018 22:47:11 +0900
+Subject: [PATCH v4] x86: Avoid pr_cont() in show_opcodes()
+
+Since syzbot is confused by concurrent printk() messages [1],
+this patch changes show_opcodes() to use %*ph format string.
+
+When we start adding prefix to each line of printk() output,
+we will be able to handle concurrent printk() messages.
+
+[1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+---
+ arch/x86/kernel/dumpstack.c | 25 +++++++------------------
+ 1 file changed, 7 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 666a284..ffdd484 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -93,26 +93,15 @@ static void printk_stack_address(unsigned long address, int reliable,
+  */
+ void show_opcodes(u8 *rip, const char *loglvl)
+ {
+-	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
++	const unsigned int prologue = OPCODE_BUFSIZE * 2 / 3;
+ 	u8 opcodes[OPCODE_BUFSIZE];
+-	u8 *ip;
+-	int i;
+ 
+-	printk("%sCode: ", loglvl);
+-
+-	ip = (u8 *)rip - code_prologue;
+-	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
+-		pr_cont("Bad RIP value.\n");
+-		return;
+-	}
+-
+-	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
+-		if (ip == rip)
+-			pr_cont("<%02x> ", opcodes[i]);
+-		else
+-			pr_cont("%02x ", opcodes[i]);
+-	}
+-	pr_cont("\n");
++	if (probe_kernel_read(opcodes, rip - prologue, OPCODE_BUFSIZE))
++		printk("%sCode: Bad RIP value.\n", loglvl);
++	else
++		printk("%sCode: %*ph <%02x> %*ph\n", loglvl, prologue, opcodes,
++		       opcodes[prologue], OPCODE_BUFSIZE - prologue - 1,
++		       &opcodes[prologue + 1]);
+ }
+ 
+ void show_ip(struct pt_regs *regs, const char *loglvl)
+-- 
+1.8.3.1
 
 
-On 17/07/18 02:39 PM, Matthew Wilcox wrote:
-> On Tue, Jul 17, 2018 at 11:02:00AM -0600, Logan Gunthorpe wrote:
->> The second patch expands the new helper to optionally take a path of
->> PCI devfns. This is to address Alex's renumbering concern when using
->> simple bus-devfns. The implementation is essentially how he described it and
->> similar to the Intel VT-d spec (Section 8.3.1).
-> 
-> I don't like telling the user to grovel around lspci -t by hand.  It's
-> not many lines of code to add a new -P option to lspci to show the path
-> to each device instead of bus:dev.fn
-
-Thanks, this looks great! I also found parsing the lspci -t output
-cumbersome.
-
-I've also got patches pending for switchtec-user[1] that help users find
-the path of downstream ports for Microsemi switches. (An example is
-shown below). As the ACS feature is primarily for PCI switch users, this
-should help a good segment of people. The lspci patches should cover a
-lot more people though.
-
-Logan
-
-sudo switchtec status /dev/switchtec0 -v
-Partition 0:    (LOCAL)
-    Logical Port ID 0 (USP):
-	Phys Port ID:    	32 (Stack 4, Port 0)
-	Bus-Dev-Func:    	0000:02:00.0
-	Bus-Dev-Func Path:	0000:00:02:0/00.0
-	Status:          	UP
-	LTSSM:           	L0
-	Max-Width:       	x16
-	Neg Width:       	x16
-	Rate:            	Gen3 - 8 GT/s  15.76 GB/s
-	Out Bytes:       	70.3 GB
-	In Bytes:        	70.8 GB
-    Logical Port ID 1 (DSP):
-	Phys Port ID:    	8 (Stack 1, Port 0)
-	Bus-Dev-Func:    	0000:03:00.0
-	Bus-Dev-Func Path:	0000:00:02:0/00.0/00.0
-	Status:          	UP
-	LTSSM:           	L0
-	Max-Width:       	x8
-	Neg Width:       	x8
-	Rate:            	Gen3 - 8 GT/s  7.88 GB/s
-	Out Bytes:       	12.2 MB
-	In Bytes:        	441 MB
-	ACS:             	SrcValid- TransBlk- ReqRedir- CmpltRedir-
-UpstreamFwd- EgressCtrl- DirectTrans-
-	Device:          	10b5:8724 (0000:04:00.0)
-	                 	0000:05
-    Logical Port ID 2 (DSP):
-	Phys Port ID:    	12 (Stack 1, Port 4)
-	Bus-Dev-Func:    	0000:03:01.0
-	Bus-Dev-Func Path:	0000:00:02:0/00.0/01.0
-	Status:          	UP
-	LTSSM:           	L0
-	Max-Width:       	x8
-	Neg Width:       	x8
-	Rate:            	Gen3 - 8 GT/s  7.88 GB/s
-	Out Bytes:       	1.65 MB
-	In Bytes:        	107 MB
-	ACS:             	SrcValid- TransBlk- ReqRedir- CmpltRedir-
-UpstreamFwd- EgressCtrl- DirectTrans-
-	Device:          	11f8:f117 (0000:0b:00.0)
-	                 	nvme4
-
-
-
-
-[1] https://github.com/Microsemi/switchtec-user/pull/25
 
