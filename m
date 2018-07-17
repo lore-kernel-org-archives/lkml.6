@@ -2,176 +2,101 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 350AAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F013ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:25:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D274A2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:23:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2H+TLs5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D274A2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DEFEA2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:25:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEFEA2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729610AbeGQHyf (ORCPT
+        id S1728889AbeGQH4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 03:54:35 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39036 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728024AbeGQHyf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 03:54:35 -0400
-Received: by mail-oi0-f67.google.com with SMTP id d189-v6so197246oib.6;
-        Tue, 17 Jul 2018 00:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=el7ejpWXstJDyd+qyxw0SMZcUiX9w1BBKOxZq/mVX/4=;
-        b=H2H+TLs5Kuv1UlErNkAqFzh6ypheugyID4jCaSKhe9nWmWXTcQzbPLtNZV4cVyKvpg
-         YhRrHQrQDuLMuP2sbLQEt7u9/kpyeKMopKs8Cjqi34xrhKQUG8L/+JRw1yTMnGylZ+yv
-         CfTlI9pO4zL+6mPMhnkcq7HRg7w/STLyY3YfZZxY7H++ifiK8NW9XfQ4/YVgsugmR34G
-         sew9jCeLVhNiyCVfqRIYKeVtULtfOwvag4yTH32J+mPp5y0ZJ9MidBaKlwSf2KmJm2S4
-         NDxZwwURdFUBWkDcPyXPAU7UjmISzu7zycsbTVny3TvFg8soliNQg0ALq7SpyaXbe4LC
-         Z3sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=el7ejpWXstJDyd+qyxw0SMZcUiX9w1BBKOxZq/mVX/4=;
-        b=qt8fsTEbz75eanAMB6C/hMAB5xQHCFJOjMMWonNwTo9kvwBDVdPskGxwZBcYg2entc
-         /o1ogud+W4Eip2cTZN/W15dacxzdbxIj0zf0dBJR436hV0Bp55D2plBtfB2CR7WZE9h6
-         gny8Qup8+UyhPcSk2asV9eN2Tii7c5C+/2jB1J7LeSP9Tz1ILdoUwDOvMTnm553uvv1X
-         kU09kzHZGrZye1oTJTkZ4CT2wJw3N5cWsNXG2DZBXujvyEyNd9wVSWYhEHyN26Tc8y+0
-         Jc3myLF2N38tzceuK0sEDgkOUkmjWXacA3aCwyfra0d37jfBlQUTccxfGc88dpmxIgJ9
-         cObA==
-X-Gm-Message-State: AOUpUlG1fL6Ttp+9xiBSO2FVsHJ7k+d89J852YvuzjEQXFyNqBWHKJq1
-        qb+bW/o1isG5rdo3GX1Fmdwj7q8SGLL/dM5rB8s=
-X-Google-Smtp-Source: AAOMgpebIfC3BrK6jgyy7V3rfVUKFe5aDVhum9VmGkS86YsUOrvV6lMJSA/+0gvxiPPtmYWcDVk9NvJ3XlEEFP9ti4E=
-X-Received: by 2002:aca:42:: with SMTP id 63-v6mr454245oia.154.1531812203814;
- Tue, 17 Jul 2018 00:23:23 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 00:23:23
- -0700 (PDT)
-In-Reply-To: <CF6A88132359CE47947DB4C6E1709ED53BB4D759@ORSMSX110.amr.corp.intel.com>
-References: <s5hk1qaf9hv.wl-tiwai@suse.de> <1704080.gFTvVrrZA1@aspire.rjw.lan>
- <6f01a906-b27c-0e1a-e9f6-fa27c015faa3@cosifan.de> <2396867.eZQXUlvGZn@aspire.rjw.lan>
- <CF6A88132359CE47947DB4C6E1709ED53BB4D759@ORSMSX110.amr.corp.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 17 Jul 2018 09:23:23 +0200
-X-Google-Sender-Auth: 0p8VSuK3hJDx8BBpjffHq5LFbXM
-Message-ID: <CAJZ5v0gzK6bbQvmbhBwcTapC_DNR5wkxAymNQAs1_E4ESfXxFw@mail.gmail.com>
-Subject: Re: [PATCH] ACPICA: Clear status of all events when entering S5
-To:     "Schmauss, Erik" <erik.schmauss@intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        =?UTF-8?Q?Thomas_H=C3=A4nig?= <haenig@cosifan.de>,
-        Takashi Iwai <tiwai@suse.de>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 17 Jul 2018 03:56:54 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:7100 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727052AbeGQH4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 03:56:54 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id CE42CD2247AF4BF092D3;
+        Tue, 17 Jul 2018 15:25:40 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6H7PBdx019271;
+        Tue, 17 Jul 2018 15:25:11 +0800 (GMT-8)
+        (envelope-from jiang.biao2@zte.com.cn)
+Received: from localhost.localdomain ([10.75.10.200])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018071715251567-691894 ;
+          Tue, 17 Jul 2018 15:25:15 +0800 
+From:   Jiang Biao <jiang.biao2@zte.com.cn>
+To:     tglx@linutronix.de, mingo@redhat.com
+Cc:     dave.hansen@linux.intel.com, luto@kernel.org, hpa@zytor.com,
+        x86@kernel.org, albcamus@gmail.com, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, jiang.biao2@zte.com.cn
+Subject: [PATCH v2 2/2] x86/pti: check the return value of pti_user_pagetable_walk_pmd
+Date:   Tue, 17 Jul 2018 15:23:22 +0800
+Message-Id: <1531812202-37778-2-git-send-email-jiang.biao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1531812202-37778-1-git-send-email-jiang.biao2@zte.com.cn>
+References: <1531812202-37778-1-git-send-email-jiang.biao2@zte.com.cn>
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-17 15:25:15,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-17 15:25:07,
+        Serialize complete at 2018-07-17 15:25:07
+X-MAIL: mse01.zte.com.cn w6H7PBdx019271
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 7:59 PM, Schmauss, Erik <erik.schmauss@intel.com> w=
-rote:
->
->> -----Original Message-----
->> From: Rafael J. Wysocki [mailto:rjw@rjwysocki.net]
->> Sent: Sunday, July 8, 2018 2:10 AM
->> To: Linux ACPI <linux-acpi@vger.kernel.org>
->> Cc: Thomas H=C3=A4nig <haenig@cosifan.de>; Takashi Iwai <tiwai@suse.de>;
->> Schmauss, Erik <erik.schmauss@intel.com>; Linux PM <linux-
->> pm@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel=
-.org>
->> Subject: [PATCH] ACPICA: Clear status of all events when entering S5
->>
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> After commit 18996f2db918 (ACPICA: Events: Stop unconditionally clearing=
- ACPI
->> IRQs during suspend/resume) the status of ACPI events is not cleared any=
- more
->> when entering the ACPI S5 system state (power
->> off) which causes some systems to power up immediately after turing off =
-power
->> in certain situations.
->>
->> That is a functional regression, so address it by making the code clear =
-the status
->> of all ACPI events again when entering S5 (for system-wide suspend or
->> hibernation the clearing of the status of all events is not desirable, a=
-s it might
->> cause the kernel to miss wakeup events sometimes).
->>
->> Fixes: 18996f2db918 (ACPICA: Events: Stop unconditionally clearing ACPI =
-IRQs
->> during suspend/resume)
->> Reported-by: Takashi Iwai <tiwai@suse.de>
->> Tested-by: Thomas H=C3=A4nig <haenig@cosifan.de>
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>
->> Resend https://patchwork.kernel.org/patch/10511451/ with a changelig and
->> tags.
->>
->> ---
->>  drivers/acpi/acpica/hwsleep.c |   15 +++++++++++----
->>  1 file changed, 11 insertions(+), 4 deletions(-)
->>
->> Index: linux-pm/drivers/acpi/acpica/hwsleep.c
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> =3D=3D
->> --- linux-pm.orig/drivers/acpi/acpica/hwsleep.c
->> +++ linux-pm/drivers/acpi/acpica/hwsleep.c
->> @@ -51,16 +51,23 @@ acpi_status acpi_hw_legacy_sleep(u8 slee
->>               return_ACPI_STATUS(status);
->>       }
->>
->> -     /*
->> -      * 1) Disable all GPEs
->> -      * 2) Enable all wakeup GPEs
->> -      */
->> +     /* Disable all GPEs */
->>       status =3D acpi_hw_disable_all_gpes();
->>       if (ACPI_FAILURE(status)) {
->>               return_ACPI_STATUS(status);
->>       }
->> +     /*
->> +      * If the target sleep state is S5, clear all GPEs and fixed event=
-s too
->> +      */
->> +     if (sleep_state =3D=3D ACPI_STATE_S5) {
->> +             status =3D acpi_hw_clear_acpi_status();
->> +             if (ACPI_FAILURE(status)) {
->> +                     return_ACPI_STATUS(status);
->> +             }
->> +     }
->>       acpi_gbl_system_awake_and_running =3D FALSE;
->>
->> +      /* Enable all wakeup GPEs */
->>       status =3D acpi_hw_enable_all_wakeup_gpes();
->>       if (ACPI_FAILURE(status)) {
->>               return_ACPI_STATUS(status);
->
-> Rafael, I've created an ACPICA pull request containing this patch.
+Check the return value of pti_user_pagetable_walk_pmd() to avoid
+NULL pointer dereference. And add warning for fail allocation.
 
-OK, thanks!
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ arch/x86/mm/pti.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-The patch is in the mainline kernel tree already at this point, so
-that's an upstream only thing.
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 7c402e9..3dba6a7 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -203,7 +203,7 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
+ 	BUILD_BUG_ON(p4d_large(*p4d) != 0);
+ 	if (p4d_none(*p4d)) {
+ 		unsigned long new_pud_page = __get_free_page(gfp);
+-		if (!new_pud_page)
++		if (WARN_ON(!new_pud_page))
+ 			return NULL;
+ 
+ 		set_p4d(p4d, __p4d(_KERNPG_TABLE | __pa(new_pud_page)));
+@@ -217,7 +217,7 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
+ 	}
+ 	if (pud_none(*pud)) {
+ 		unsigned long new_pmd_page = __get_free_page(gfp);
+-		if (!new_pmd_page)
++		if (WARN_ON(!new_pmd_page))
+ 			return NULL;
+ 
+ 		set_pud(pud, __pud(_KERNPG_TABLE | __pa(new_pmd_page)));
+@@ -239,8 +239,10 @@ static pmd_t *pti_user_pagetable_walk_pmd(unsigned long address)
+ static __init pte_t *pti_user_pagetable_walk_pte(unsigned long address)
+ {
+ 	gfp_t gfp = (GFP_KERNEL | __GFP_NOTRACK | __GFP_ZERO);
+-	pmd_t *pmd = pti_user_pagetable_walk_pmd(address);
+ 	pte_t *pte;
++	pmd_t *pmd = pti_user_pagetable_walk_pmd(address);
++	if (!pmd)
++		return NULL;
+ 
+ 	/* We can't do anything sensible if we hit a large mapping. */
+ 	if (pmd_large(*pmd)) {
+-- 
+2.7.4
 
-Can you please also do likewise for
-https://patchwork.kernel.org/patch/10495943/ ?
-
-Thanks,
-Rafael
