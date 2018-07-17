@@ -2,89 +2,114 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 703BDECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C17ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D9820877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GM3JyhE7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D9820877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A422920877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:12:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A422920877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbeGQEly (ORCPT
+        id S1728434AbeGQEnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 00:41:54 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:45655 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726152AbeGQEly (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 00:41:54 -0400
-Received: by mail-io0-f194.google.com with SMTP id l25-v6so39934541ioh.12;
-        Mon, 16 Jul 2018 21:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dhx2oV6LIxfXs6HHP2Jf2/uc5HecwZ6cyjY4v5Ttxss=;
-        b=GM3JyhE7gGsbGH3sA6y6R0lDmTRH7vKJJfsQgmU13EDTeTqB3TCUzxdLuvC+dr2RA2
-         UD/f5gjhZTJnY5FC+bbUNz3Soe7mCDQnqnIvzzyqZqwUwmNPE8n3YHkAatgAUfxKhArQ
-         ZHBPQif3s2OGTuprsZyODCCphLGN6b+1UtadbQRluH03u0qk2DwVCDSIBO3KDtNeecgK
-         THuKv4O+6A4alxXFgsuMOHuvS600LnmM6mM61LPiytDuZ9UPW1f21sBm+YbbGepw5sA3
-         jFC2PHDUT9kkHOvm8yUtZTzlhuwIw9tSnFgL2D4MRP5sj5MrXNldCZfzIGJ0HwTUcYWr
-         6tjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dhx2oV6LIxfXs6HHP2Jf2/uc5HecwZ6cyjY4v5Ttxss=;
-        b=Heh9a2Vq1jVgrE7IHtpcZh26epEBxCoOcXe1Wk7ZJQT3jqBwXoFnwjXBZPapwvZ65v
-         AYJo6TRD+83MiwnH1dPtzEgfIW5cjzYCrTxAhJkFSG9801yGmkewEq/Ath64AwXWhHeh
-         WLF75+C4qk9dv46NDkOiZqKovWGqtrKPBIessTpA7zvB4Xbv4I4G6OIzzB7CPoChEs1g
-         bQhTTZewwD/Wnb9hbPeTnLNBAVt1IK1loOOlROpQBKPeGeBzwyXhXtcQsu2ptAyEQoXQ
-         IrjTVqzH+KN8OUJB2mMyLtqKbDUu3p0qxv8ojpNy24dqYjEK/wVTEThQSH+jX9jOXiNX
-         f6xw==
-X-Gm-Message-State: AOUpUlHE+7knOOkO+jFDnEPAoAPW8/xm3hfJZOaTur0V8uOtBJpCYSIa
-        FOlCeEbpLSFdeu9MzIS3Z+bDLyV0qD9RwwzwWdwBwg==
-X-Google-Smtp-Source: AAOMgpcTgBCZHq/IJawIcIvkVqK/h2y5wSfnECK4zOsTfeiGl3AWbHAtVqvszulR4JDmCXKqyxi6xY69EkDQQ3ZECHk=
-X-Received: by 2002:a6b:bbc1:: with SMTP id l184-v6mr7107383iof.83.1531800681423;
- Mon, 16 Jul 2018 21:11:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180716062508.7726-1-andrew.smirnov@gmail.com> <20180716112629.GC20734@sirena.org.uk>
-In-Reply-To: <20180716112629.GC20734@sirena.org.uk>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Mon, 16 Jul 2018 21:11:09 -0700
-Message-ID: <CAHQ1cqHPgL0k9Av6m3gxkeT=YpaaK9+Wm4Lagp+GXo-nH+OBnw@mail.gmail.com>
-Subject: Re: [PATCH] spi: spi-fsl-dspi: Fill actual_length when doing DMA transfer
-To:     Mark Brown <broonie@kernel.org>
-Cc:     maitysanchayan@gmail.com, Stefan Agner <stefan@agner.ch>,
-        Chris Healy <cphealy@gmail.com>, linux-spi@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        Tue, 17 Jul 2018 00:43:06 -0400
+Received: from gate.crashing.org ([63.228.1.57]:53928 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbeGQEnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 00:43:06 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6H4CF3K015654;
+        Mon, 16 Jul 2018 23:12:17 -0500
+Message-ID: <7125cc74b640b941ea6f86e1f719cc25eeae9f78.camel@kernel.crashing.org>
+Subject: Re: [PATCH v3 1/5] dt-bindings: fsi: Document binding for the
+ fsi-master-ast-cf "device"
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Joel Stanley <joel@jms.id.au>, linux-kernel@vger.kernel.org
+Date:   Tue, 17 Jul 2018 14:12:15 +1000
+In-Reply-To: <20180716153308.GA13044@rob-hp-laptop>
+References: <20180712034847.12878-1-benh@kernel.crashing.org>
+         <20180712034847.12878-2-benh@kernel.crashing.org>
+         <20180716153308.GA13044@rob-hp-laptop>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 4:26 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Sun, Jul 15, 2018 at 11:25:08PM -0700, Andrey Smirnov wrote:
-> > Users of SPI device drivers may rely on 'actual_length', so it is
-> > important that information is correctly reported. One example would be
-> > spi_mem_exec_op() which will fail if 'actual_length' doesn't match
-> > requested transfer length. To fix the problem, add necessary code to
-> > populate 'actual_length'.
->
-> This doesn't apply against current code, please check and resend.
+On Mon, 2018-07-16 at 09:33 -0600, Rob Herring wrote:
+> On Thu, Jul 12, 2018 at 01:48:43PM +1000, Benjamin Herrenschmidt wrote:
+> > This isn't per-se a real device, it's a pseudo-device that
+> > represents the use of the Aspeed built-in ColdFire to
+> > implement the FSI protocol by bitbanging the GPIOs instead
+> > of doing it from the ARM core.
+> > 
+> > Thus it's a drop-in replacement for the existing
+> > fsi-master-gpio pseudo-device for use on systems based
+> > on the Aspeed chips. It has most of the same properties,
+> > plus some more needed to operate the coprocessor.
+> > 
+> > Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > ---
+> >  .../bindings/fsi/fsi-master-ast-cf.txt        | 36 +++++++++++++++++++
+> >  1 file changed, 36 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> > new file mode 100644
+> > index 000000000000..431bf8a423ce
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> > @@ -0,0 +1,36 @@
+> > +Device-tree bindings for ColdFire offloaded gpio-based FSI master driver
+> > +------------------------------------------------------------------------
+> > +
+> > +Required properties:
+> > + - compatible =
+> > +	"aspeed,ast2400-cf-fsi-master" for an AST2400 based system
+> > +   or
+> > +	"aspeed,ast2500-cf-fsi-master" for an AST2500 based system
+> > +
+> > + - clock-gpios = <gpio-descriptor>;	: GPIO for FSI clock
+> > + - data-gpios = <gpio-descriptor>;	: GPIO for FSI data signal
+> > + - enable-gpios = <gpio-descriptor>;	: GPIO for enable signal
+> > + - trans-gpios = <gpio-descriptor>;	: GPIO for voltage translator enable
+> > + - mux-gpios = <gpio-descriptor>;	: GPIO for pin multiplexing with other
+> > +                                          functions (eg, external FSI masters)
+> > + - memory-region = <phandle>;		: Reference to the reserved memory for
+> > +                                          the ColdFire. Must be 2M aligned on
+> > +					  AST2400 and 1M aligned on AST2500
+> > + - aspeed,sram = <phandle>;		: Reference to the SRAM node.
+> > + - aspeed,cvic = <phandle>;		: Reference to the CVIC node.
+> > +
+> > +Examples:
+> > +
+> > +    fsi-master {
+> > +        compatible = "aspeed,ast2500-cf-fsi-master", "fsi-master";
+> > +
+> > +	clock-gpios = <&gpio 0>;
+> > +        data-gpios = <&gpio 1>;
+> > +        enable-gpios = <&gpio 2>;
+> > +        trans-gpios = <&gpio 3>;
+> > +        mux-gpios = <&gpio 4>;
+> > +
+> > +	memory-region = <&coldfire_memory>;
+> > +	sram = <&sram>;
+> > +	cvic = <&cvic>;
+> 
+> Need to update the example. With that
 
+Ah right, thanks. The next spin will have that fixed and will go into
+the fsi tree.
 
-Sorry about that. Will do in v2.
-
-Thanks,
-Andrey Smirnov
+> Reviewed-by: Rob Herring <robh@kernel.org>
