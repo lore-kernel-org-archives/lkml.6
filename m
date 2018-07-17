@@ -2,115 +2,106 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C25D0ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A038ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56D2E20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:12:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21DEC20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:12:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="mC662TQS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D2E20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMQ/lrad"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DEC20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730821AbeGQVqj (ORCPT
+        id S1730880AbeGQVrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:46:39 -0400
-Received: from imap.thunk.org ([74.207.234.97]:53832 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729728AbeGQVqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:46:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=aR8IN/I9vH6lZ4h6A4eIkZqJQ04pImcCd8A1opg9Pus=; b=mC662TQSPOtNHPxRnrnNuW2olj
-        08eV1PgxBX2618dTye+7SGMtEa3czgKHFjH035EfBZ0gub3Z73FzeapXZNzunSVSRWv44vRE0az6t
-        DeNvMb6D6/UEjjF5lxuSCjtQhGzzNCkHlpaUPN69S6htifUxZfkEYjp26Eqq91LTUwmA=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1ffXGP-0007Sl-Ps; Tue, 17 Jul 2018 21:12:06 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 590A57A63EE; Tue, 17 Jul 2018 16:26:35 -0400 (EDT)
-Date:   Tue, 17 Jul 2018 16:26:35 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>, tcharding <me@tobin.cc>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biggers <ebiggers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] random: fix rdrand mix-in
-Message-ID: <20180717202635.GA3489@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>, tcharding <me@tobin.cc>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biggers <ebiggers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180717135307.3713325-1-arnd@arndb.de>
- <CA+55aFxjx+naf3vQ++kqxBNS=dvevPebcKOzA=OYWfMJZ2CrzA@mail.gmail.com>
+        Tue, 17 Jul 2018 17:47:22 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:42107 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729805AbeGQVrW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 17:47:22 -0400
+Received: by mail-qk0-f195.google.com with SMTP id 26-v6so1316430qks.9
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:12:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FVTkNR7nNyWkc6bGhuDo4SJ8a/oDmhYgh0e0q5v3tsU=;
+        b=hMQ/lradULhm1iiZR470AcyhPXvqk4rVYwb8oB/Tl7k2lwEnAa4lXZI8mt3Y3uygNv
+         wjin9deEg2T53GJ0eLs7ISgYyk1W6j8DeRWoB89oBlSHiDJFMWT29AIin1NlFkzPYxrY
+         a6JjNpT9HIlg4By+KvQrVj7Bqnj0wDFJwTRLT9vfl7j5tOY7gbtYeGt8t5sSGWAyC2Yh
+         7Mj1GFV2K8W1VSLgDDGQImcanuP81u4KET3HgOi50+yDswUNbh6WJZBXCvxUFnozI879
+         Dv6dCxcIJ94FzVwvce5lj9SYtIOB2dTzuxVKBvIZEXxoIf1VssLJgZPaqr2sOHQ3R5dm
+         oc4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FVTkNR7nNyWkc6bGhuDo4SJ8a/oDmhYgh0e0q5v3tsU=;
+        b=eFs+uQim7IjA2eYk10m0oFrcMfstEnjk5UiIMJVtvEpHpMLmGFzHVX2aP9TkLUhIbF
+         jNA9IybjYD0Szm+PgkGmxMXR9aK2wt6mlohAAS6lo527CcYBL0hf1JUbCmufL4JyyzMR
+         9e+FzLiHJQYjm8tcSKt43NTH1UJoHiQdk5g49chAiPKEDqLyX8QavWcdIP1M+I2OuKRG
+         1ZdInEXzBBnC4HSC98yPrTkFsgsNZ5us5v7IUxOGJVSVQQghlrzJefJYazdS/QDwF4TS
+         QfgQIH0OQXGPRNGHcOgxS9Gfj5CfAtGu1CXqEBHYsjcQmZKfWmuWm3t6DEhJlLxSkM1E
+         Zplg==
+X-Gm-Message-State: AOUpUlEzHQjRYg0NELWjM3/g3Bg+yvqUl6Q9pxw/2P9VQV/s/YCxroUE
+        yubqYI907DAoDsGBYU/Kfj0=
+X-Google-Smtp-Source: AAOMgpcVn+3ueySVV2M72AcDybkDr4o9oXka603KLPUudYzBPZjwbMTEvraYpYins/lSlrdSKM/N2Q==
+X-Received: by 2002:a37:7486:: with SMTP id p128-v6mr3124806qkc.335.1531861972457;
+        Tue, 17 Jul 2018 14:12:52 -0700 (PDT)
+Received: from oc6857751186.ibm.com (c-24-20-82-131.hsd1.or.comcast.net. [24.20.82.131])
+        by smtp.gmail.com with ESMTPSA id a19-v6sm1970655qta.50.2018.07.17.14.12.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 14:12:51 -0700 (PDT)
+Subject: Re: [PATCH] powerpc/msi: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linuxppc-dev@lists.ozlabs.org, Ingo Molnar <mingo@kernel.org>
+References: <20180629185254.GA37557@beast>
+From:   Tyrel Datwyler <turtle.in.the.kernel@gmail.com>
+Message-ID: <911632d5-b54c-b632-75d9-7628a0cfc490@gmail.com>
+Date:   Tue, 17 Jul 2018 14:12:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxjx+naf3vQ++kqxBNS=dvevPebcKOzA=OYWfMJZ2CrzA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180629185254.GA37557@beast>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 09:26:00AM -0700, Linus Torvalds wrote:
-> On Tue, Jul 17, 2018 at 6:54 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > The newly added arch_get_random_int() call was done incorrectly,
-> > using the output only if rdrand hardware was /not/ available. The
-> > compiler points out that the data is uninitialized in this case:
-
-Yeah, oops.  I had sent it for review to linux-crypto two days ago,
-and no one had caught it there --- so thanks so much for catching it,
-Arnd!  I'm going to fold this into the existing patch so it's easier
-to get this sent to stable.
-
-> >                 for (b = bytes ; b > 0 ; b -= sizeof(__u32), i++) {
-> > -                       if (arch_get_random_int(&t))
-> > +                       if (!arch_get_random_int(&t))
-> >                                 continue;
-> >                         buf[i] ^= t;
-> >                 }
+On 06/29/2018 11:52 AM, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> switches from an unchanging variable to a constant expression to eliminate
+> the VLA generation.
 > 
-> Why not just make that "continue" be a "break"? If you fail once, you
-> will fail the next time too (whether the arch just doesn't support it
-> at all, or whether the HW entropy is just temporarily exhausted).
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
 
-I wasn't sure how quickly the HW entropy would replenish itself; I
-know that on first RDRAND platforms it would effectively never fail
-(as in if six of the eight cores were calling RDRAND in a tight loop
-_maybe_ you could exhaust the HW entropy).  But on more modern systems
-with a huge number of cores (say, a 96 core Xeon) HW entropy running
-out was much more of a thing.  My impression was it could replenish
-itself fairly quickly, so my thinking was continue was better than
-break.
-
-The other thing that was a factor in my thinking was this was getting
-called from process context, and the process would be burning CPU time
-running "Jitterentropy", so it didn't seem like we would be wasting
-*that* much CPU time.
-
-It's big deal either way, so I can make it be a break if you think
-that's better.
-
-					- Ted
+Reviewed-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
