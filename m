@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CFCECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C55ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F268A2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B904420882
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:06:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIkrFkbd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F268A2086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="upT+Kxsn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B904420882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbeGQQkK (ORCPT
+        id S1731412AbeGQQkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:40:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59984 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 12:40:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729719AbeGQQkJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:40:09 -0400
+        id S1729716AbeGQQkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:40:14 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0465620849;
-        Tue, 17 Jul 2018 16:06:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E6C92086E;
+        Tue, 17 Jul 2018 16:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531843608;
-        bh=W53bbQvonhTknroYbREKOUJYNmnGPBPmYUP0btUEKZY=;
+        s=default; t=1531843612;
+        bh=4XcJliRjjOxVdfbEipu3y8P7mbZy5SqIXuIybb8BcIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sIkrFkbdRMiBOp3QnRkon9f6eEmpX4JiJ0/2gfel9guJj+EXUxvXOKma6GGlPcYbo
-         PrskxgxKMd4gYkw+VQFx2xjImDdp+qNBA5kMTSynkgKrHF+3Z0u2/qnifYkQTsb5cV
-         KICnnlePZ4CdnWqp1hkDQotvJ+sTlok+LJ2h3YoY=
+        b=upT+Kxsnp/Laxj/G1dP4/X7KaEzXun702l4tvRrKNgTwpZ+zsiVmP9v6WG+dbv/G+
+         13KG2eligvZI+kcmtX1iYpfX8VzXBhPDIx/NhV2stz6CqoalKt08ss4r+XTitZxgnK
+         MHCmimV4+QFx542Emrn/Xrhp2rlcLsF9A8b0A+as=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
@@ -57,9 +57,9 @@ To:     Herbert Xu <herbert@gondor.apana.org.au>,
         linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, devel@driverdev.osuosl.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 3/6] crypto: stm32_crc32 - Use existing define with polynomial
-Date:   Tue, 17 Jul 2018 18:05:38 +0200
-Message-Id: <20180717160541.3843-4-krzk@kernel.org>
+Subject: [PATCH 4/6] net: ethernet: Use existing define with polynomial
+Date:   Tue, 17 Jul 2018 18:05:39 +0200
+Message-Id: <20180717160541.3843-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180717160541.3843-1-krzk@kernel.org>
 References: <20180717160541.3843-1-krzk@kernel.org>
@@ -72,66 +72,219 @@ Do not define again the polynomial but use header with existing define.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-Not tested
+Only Freescale FEC was tested
 
 It would be nice to get some testing. Only generic lib/crc, bunzip, xz_crc32
 and Freescale's Ethernet driver were tested on HW.  Rest got just different
 builds.
 
+ drivers/net/ethernet/amd/xgbe/xgbe-dev.c         | 4 ++--
+ drivers/net/ethernet/apple/bmac.c                | 8 ++------
+ drivers/net/ethernet/broadcom/tg3.c              | 3 ++-
+ drivers/net/ethernet/freescale/fec_main.c        | 4 ++--
+ drivers/net/ethernet/freescale/fs_enet/fec.h     | 3 ---
+ drivers/net/ethernet/freescale/fs_enet/mac-fec.c | 3 ++-
+ drivers/net/ethernet/micrel/ks8851_mll.c         | 3 ++-
+ drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c    | 4 ++--
+ 8 files changed, 14 insertions(+), 18 deletions(-)
 
- drivers/crypto/stm32/stm32_crc32.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/crypto/stm32/stm32_crc32.c b/drivers/crypto/stm32/stm32_crc32.c
-index 040bed5e7725..29d2095d9dfd 100644
---- a/drivers/crypto/stm32/stm32_crc32.c
-+++ b/drivers/crypto/stm32/stm32_crc32.c
-@@ -6,6 +6,7 @@
- 
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+index e107e180e2c8..1e929a1e4ca7 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-dev.c
+@@ -119,6 +119,7 @@
+ #include <linux/clk.h>
  #include <linux/bitrev.h>
+ #include <linux/crc32.h>
++#include <linux/crc32poly.h>
+ 
+ #include "xgbe.h"
+ #include "xgbe-common.h"
+@@ -887,7 +888,6 @@ static int xgbe_disable_rx_vlan_filtering(struct xgbe_prv_data *pdata)
+ 
+ static u32 xgbe_vid_crc32_le(__le16 vid_le)
+ {
+-	u32 poly = 0xedb88320;	/* CRCPOLY_LE */
+ 	u32 crc = ~0;
+ 	u32 temp = 0;
+ 	unsigned char *data = (unsigned char *)&vid_le;
+@@ -904,7 +904,7 @@ static u32 xgbe_vid_crc32_le(__le16 vid_le)
+ 		data_byte >>= 1;
+ 
+ 		if (temp)
+-			crc ^= poly;
++			crc ^= CRC32_POLY_LE;
+ 	}
+ 
+ 	return crc;
+diff --git a/drivers/net/ethernet/apple/bmac.c b/drivers/net/ethernet/apple/bmac.c
+index 5a655d289dd5..024998d6d8c6 100644
+--- a/drivers/net/ethernet/apple/bmac.c
++++ b/drivers/net/ethernet/apple/bmac.c
+@@ -19,6 +19,7 @@
+ #include <linux/init.h>
+ #include <linux/spinlock.h>
+ #include <linux/crc32.h>
++#include <linux/crc32poly.h>
+ #include <linux/bitrev.h>
+ #include <linux/ethtool.h>
+ #include <linux/slab.h>
+@@ -37,11 +38,6 @@
+ #define trunc_page(x)	((void *)(((unsigned long)(x)) & ~((unsigned long)(PAGE_SIZE - 1))))
+ #define round_page(x)	trunc_page(((unsigned long)(x)) + ((unsigned long)(PAGE_SIZE - 1)))
+ 
+-/*
+- * CRC polynomial - used in working out multicast filter bits.
+- */
+-#define ENET_CRCPOLY 0x04c11db7
+-
+ /* switch to use multicast code lifted from sunhme driver */
+ #define SUNHME_MULTICAST
+ 
+@@ -838,7 +834,7 @@ crc416(unsigned int curval, unsigned short nxtval)
+ 		next = next >> 1;
+ 
+ 		/* do the XOR */
+-		if (high_crc_set ^ low_data_set) cur = cur ^ ENET_CRCPOLY;
++		if (high_crc_set ^ low_data_set) cur = cur ^ CRC32_POLY_BE;
+ 	}
+ 	return cur;
+ }
+diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
+index 0a796d5ec893..3d526d99ac59 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -50,6 +50,7 @@
+ #include <linux/ssb/ssb_driver_gige.h>
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
++#include <linux/crc32poly.h>
+ 
+ #include <net/checksum.h>
+ #include <net/ip.h>
+@@ -9709,7 +9710,7 @@ static inline u32 calc_crc(unsigned char *buf, int len)
+ 			reg >>= 1;
+ 
+ 			if (tmp)
+-				reg ^= 0xedb88320;
++				reg ^= CRC32_POLY_LE;
+ 		}
+ 	}
+ 
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index c729665107f5..a7cb378ef881 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -48,6 +48,7 @@
+ #include <linux/io.h>
+ #include <linux/irq.h>
  #include <linux/clk.h>
 +#include <linux/crc32poly.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
  #include <linux/platform_device.h>
-@@ -30,10 +31,6 @@
- #define CRC_CR_REVERSE          (BIT(7) | BIT(6) | BIT(5))
- #define CRC_INIT_DEFAULT        0xFFFFFFFF
+ #include <linux/mdio.h>
+ #include <linux/phy.h>
+@@ -2949,7 +2950,6 @@ fec_enet_close(struct net_device *ndev)
+  */
  
--/* Polynomial reversed */
--#define POLY_CRC32              0xEDB88320
--#define POLY_CRC32C             0x82F63B78
+ #define FEC_HASH_BITS	6		/* #bits in hash */
+-#define CRC32_POLY	0xEDB88320
+ 
+ static void set_multicast_list(struct net_device *ndev)
+ {
+@@ -2989,7 +2989,7 @@ static void set_multicast_list(struct net_device *ndev)
+ 			data = ha->addr[i];
+ 			for (bit = 0; bit < 8; bit++, data >>= 1) {
+ 				crc = (crc >> 1) ^
+-				(((crc ^ data) & 1) ? CRC32_POLY : 0);
++				(((crc ^ data) & 1) ? CRC32_POLY_LE : 0);
+ 			}
+ 		}
+ 
+diff --git a/drivers/net/ethernet/freescale/fs_enet/fec.h b/drivers/net/ethernet/freescale/fs_enet/fec.h
+index 7832db71dcb9..1dbee5d898b3 100644
+--- a/drivers/net/ethernet/freescale/fs_enet/fec.h
++++ b/drivers/net/ethernet/freescale/fs_enet/fec.h
+@@ -2,9 +2,6 @@
+ #ifndef FS_ENET_FEC_H
+ #define FS_ENET_FEC_H
+ 
+-/* CRC polynomium used by the FEC for the multicast group filtering */
+-#define FEC_CRC_POLY   0x04C11DB7
 -
- #define CRC_AUTOSUSPEND_DELAY	50
+ #define FEC_MAX_MULTICAST_ADDRS	64
  
- struct stm32_crc {
-@@ -70,7 +67,7 @@ static int stm32_crc32_cra_init(struct crypto_tfm *tfm)
- 	struct stm32_crc_ctx *mctx = crypto_tfm_ctx(tfm);
+ /* Interrupt events/masks.
+diff --git a/drivers/net/ethernet/freescale/fs_enet/mac-fec.c b/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
+index 1fc27c97e3b2..05093e5fc9dd 100644
+--- a/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
++++ b/drivers/net/ethernet/freescale/fs_enet/mac-fec.c
+@@ -18,6 +18,7 @@
+ #include <linux/string.h>
+ #include <linux/ptrace.h>
+ #include <linux/errno.h>
++#include <linux/crc32poly.h>
+ #include <linux/ioport.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
+@@ -187,7 +188,7 @@ static void set_multicast_one(struct net_device *dev, const u8 *mac)
+ 			msb = crc >> 31;
+ 			crc <<= 1;
+ 			if (msb ^ (byte & 0x1))
+-				crc ^= FEC_CRC_POLY;
++				crc ^= CRC32_POLY_BE;
+ 			byte >>= 1;
+ 		}
+ 	}
+diff --git a/drivers/net/ethernet/micrel/ks8851_mll.c b/drivers/net/ethernet/micrel/ks8851_mll.c
+index f3e9dd47b56f..0e9719fbc624 100644
+--- a/drivers/net/ethernet/micrel/ks8851_mll.c
++++ b/drivers/net/ethernet/micrel/ks8851_mll.c
+@@ -30,6 +30,7 @@
+ #include <linux/ethtool.h>
+ #include <linux/cache.h>
+ #include <linux/crc32.h>
++#include <linux/crc32poly.h>
+ #include <linux/mii.h>
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+@@ -1078,7 +1079,7 @@ static void ks_stop_rx(struct ks_net *ks)
  
- 	mctx->key = CRC_INIT_DEFAULT;
--	mctx->poly = POLY_CRC32;
-+	mctx->poly = CRC32_POLY_LE;
- 	return 0;
- }
+ }  /* ks_stop_rx */
  
-@@ -79,7 +76,7 @@ static int stm32_crc32c_cra_init(struct crypto_tfm *tfm)
- 	struct stm32_crc_ctx *mctx = crypto_tfm_ctx(tfm);
+-static unsigned long const ethernet_polynomial = 0x04c11db7U;
++static unsigned long const ethernet_polynomial = CRC32_POLY_BE;
  
- 	mctx->key = CRC_INIT_DEFAULT;
--	mctx->poly = POLY_CRC32C;
-+	mctx->poly = CRC32C_POLY_LE;
- 	return 0;
- }
+ static unsigned long ether_gen_crc(int length, u8 *data)
+ {
+diff --git a/drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c b/drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c
+index 458a7844260a..99d86e39ff54 100644
+--- a/drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c
++++ b/drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c
+@@ -20,6 +20,7 @@
+ #include <linux/clk.h>
+ #include <linux/bitrev.h>
+ #include <linux/crc32.h>
++#include <linux/crc32poly.h>
+ #include <linux/dcbnl.h>
  
-@@ -188,7 +185,7 @@ static int stm32_crc_final(struct shash_desc *desc, u8 *out)
- 	struct stm32_crc_ctx *mctx = crypto_shash_ctx(desc->tfm);
+ #include "dwc-xlgmac.h"
+@@ -193,7 +194,6 @@ static u32 xlgmac_vid_crc32_le(__le16 vid_le)
+ {
+ 	unsigned char *data = (unsigned char *)&vid_le;
+ 	unsigned char data_byte = 0;
+-	u32 poly = 0xedb88320;
+ 	u32 crc = ~0;
+ 	u32 temp = 0;
+ 	int i, bits;
+@@ -208,7 +208,7 @@ static u32 xlgmac_vid_crc32_le(__le16 vid_le)
+ 		data_byte >>= 1;
  
- 	/* Send computed CRC */
--	put_unaligned_le32(mctx->poly == POLY_CRC32C ?
-+	put_unaligned_le32(mctx->poly == CRC32C_POLY_LE ?
- 			   ~ctx->partial : ctx->partial, out);
+ 		if (temp)
+-			crc ^= poly;
++			crc ^= CRC32_POLY_LE;
+ 	}
  
- 	return 0;
+ 	return crc;
 -- 
 2.14.1
 
