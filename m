@@ -2,816 +2,144 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9BFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FD8ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B49820657
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F093220657
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jVB6AvTS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B49820657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="a7Ok9IWP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F093220657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731681AbeGQQQt (ORCPT
+        id S1731703AbeGQQQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:16:49 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51330 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730040AbeGQQQt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:16:49 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s12-v6so2006445wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 08:43:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=G74vTuT1DlINnuNuMu1EDadR9iCBF+SYA+UnFGqXqHY=;
-        b=jVB6AvTSEV0dMnhLKSy1Lhwfz+mJSlRPpx3difAM3gkr2s/rJkPEbeSgqp1zCu3aN+
-         zzHnY8ZHTdhPF0rFjW42jmVtFuNxDKKrQwtrGPrEDDXxsvIdv7bpp/3XSQVkiJhRTsTc
-         V+TMO4HY/lBu3svTEtzqiL8HVQbKkS0SLSqd5MiTI7NX3t4I9loj1hc0ifM+pnqGcEuQ
-         ioKcH46argyLk3AAuo8qWUpc0fywNr17AlYeo3jK2YDlt2+JBliQoQULLORS08YpsYa+
-         fem92LgdRyTSC+jTShpk+WoWDmG+PeADsfyM4bh+atM7adAY657Wvl6p7pyrjhQuiZmj
-         IUsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=G74vTuT1DlINnuNuMu1EDadR9iCBF+SYA+UnFGqXqHY=;
-        b=bkuV5w1IMth4WrSyOC3dhFX+V/33UoS9wEPjBzbqfddNcNVdy6oZF3e4ZB4pfHcvSM
-         5uPT8xMtPuA6siK3VQ/lxThieDywRIbAglZLWc8pYHoJ4Q3fSRpOZWK/la42uXtzYsXE
-         RH8ILIynud9qiawkzAx0d36yJrf4F1PWkMBqv4sjR6zn9e6ZPX2BJcxom4XiZQSQH+kF
-         mpT+p6aNwaiP7/TcrYjQIiDfEXyhiuG4jA/mr5ZIKI8C2cz2f6j0oJKgdBFmPoqRzqu+
-         34dV02QT8S/imqNJwoEWsz5AbqWcLqvxRfewHZPRMxEE9TeJfxBGUpwhskiXbLuw6KeC
-         aE2A==
-X-Gm-Message-State: AOUpUlEU9Kz43nc0zBcCHnTwkR4qmDHV/0QyXnd05Cp2SN6+XAntVjPv
-        5xFJ4pe9KwHSzJylr4lMBDIHqQ==
-X-Google-Smtp-Source: AAOMgpfWqUVm1ty7BFiGMfYhequQjd3q/7XQTdkYZBvdw6Sp8DyDpLYaGcLTL5R+oAC1jCCnJcOeRg==
-X-Received: by 2002:a1c:b788:: with SMTP id h130-v6mr1810138wmf.27.1531842209548;
-        Tue, 17 Jul 2018 08:43:29 -0700 (PDT)
-Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id s12-v6sm17598252wmc.2.2018.07.17.08.43.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 08:43:28 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH RESEND 15/15] ASoC: meson: add axg sound card support
-Date:   Tue, 17 Jul 2018 17:43:04 +0200
-Message-Id: <20180717154304.9973-16-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180717154304.9973-1-jbrunet@baylibre.com>
-References: <20180717154304.9973-1-jbrunet@baylibre.com>
+        Tue, 17 Jul 2018 12:16:52 -0400
+Received: from mail-eopbgr40113.outbound.protection.outlook.com ([40.107.4.113]:56041
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730539AbeGQQQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:16:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J3RAI8UIEah9v6V11KMuA6WEW6rThBSR0gN2TgnR2BA=;
+ b=a7Ok9IWPuSOBYER+z9ZJ9v5RHoxXXXcJIoGhx76rxFONCRRUss/W+O+W3UHkqF3K7VbP2w8V3fuF0bCiJViNbjKrwknsE4ncizYihrHShv7XYsxW4x5IT1x2RexCjQBLTN4kwjDMBMjm2Tm7E4Cu6BTY5RDgC7Fk6HnzMd5gQsg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=aryabinin@virtuozzo.com; 
+Received: from [172.16.25.12] (185.231.240.5) by
+ VI1PR08MB3262.eurprd08.prod.outlook.com (2603:10a6:803:3d::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.21; Tue, 17 Jul 2018 15:43:31 +0000
+Subject: Re: [PATCH 2/2] fs/fuse, splice_write: reduce allocation size.
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180716160344.7015-1-aryabinin@virtuozzo.com>
+ <20180716160344.7015-2-aryabinin@virtuozzo.com>
+ <CAJfpegvAAQTAjxLcQLefvFOQDJ6ug_G8Jggt=UZci+YnNP741A@mail.gmail.com>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <d1bcfeb2-8e74-f4a7-225e-9d78ffb4263e@virtuozzo.com>
+Date:   Tue, 17 Jul 2018 18:45:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <CAJfpegvAAQTAjxLcQLefvFOQDJ6ug_G8Jggt=UZci+YnNP741A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [185.231.240.5]
+X-ClientProxiedBy: HE1PR05CA0213.eurprd05.prod.outlook.com
+ (2603:10a6:3:fa::13) To VI1PR08MB3262.eurprd08.prod.outlook.com
+ (2603:10a6:803:3d::17)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ff1eda13-9699-439f-eb6d-08d5ebfc0c78
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3262;
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3262;3:vSdX3iK6xkKM1egz5lqBPPJJGK3teCPuEqt7uhLoQ2AKUg/BPOLGSwKV31E8CIn4c08SDptAsm5fLisMs9y1QYamEn7c3KV47YZ07eT7PuXQOCXbL4l+0Kbk4KHaVRb0k9XLDursgVN1EAGGHMvw2K85VZRsk7iIl9LO2bpiI4MP1olLPLQ+NhyWw9dmANmQ7bs+z09d7ZejfgNazQ0ahOKWNSumt8Xmrk5p4ZCNwQzZX8xFzNNS0C8W9/ikZ2U+;25:7cjy/JL+nk7i0bC4RFSwpFIcQusACg02ylfpvkBa/KS6DGP2N747/Q+7Ptn279kdDBMKhVWuh0Ko+PrmP6UZq6fy3bpA2ZVrXP8gpmmc8x/z1f+TB5ghsKKsuc72lSKAb48g8OvvoYlaUk5ebIWwWmHGWelmvxWNc7AQ2ToX2y599S41JiKJPwX5vAiAxzSAGnkUG2ttv8MoKFCsfN9cJ+02ntUy4DMcWB0m3SeZ2cISjepaJs+DccY90F9SiNoKov5k8UTBzNMkivaEokFN4pxRrfJNnuB0FQVYgeNkVK9G4juriWwJU1Yfr512RalNlp2xznIp1ppSVL0zVGw+YA==;31:7hJGlZUYz9TAZ05b7cIHHuHMzU2mBun3+cJLYVBfkPxDAbdnnbmYPRjfz3ptKzXSge06oO/NqV5jt+dA8pYmmcbYk1UXNdzmfKn6HrqQwl69UpGQK9FMkHGfjJw1nn9V/HBD/NF5RFpILANQQrJ5+CCTEXhUYQytuARgMzc6QlFOXaEAzO24PgJBbrbh9tJB+rwWhuxs/EOvYPpxD4n3WjJej5Ii+U8TEWL2X/uF2mc=
+X-MS-TrafficTypeDiagnostic: VI1PR08MB3262:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3262;20:TiATZzisly4xVNd01SyWRJUYENelYy80M0h7Q8HKZwaamr9xjSU8pMhl1WTZgSB4oaVsDGtl4vQu8i7NpfGbSFFjsk8/RAIrmuIv50kClxhR2jRAUK6nn72Jy/5KUOFO2FDLZzFGR7g5uyNguLwKtNQ4ltpfvs/Pq0TzLfplO6OA0jcach5OuZP1sRHcIvrU0mlhHZ9arPt8jAu03Gn3izLnl3u6iVrUDELqQ3FudJdLdx/JfPxGPYcORL7BjY2fbVukP2N3YUO3wVdMEmYluOfiQb2gmxwJNFI3IDtvf3Iolc3ZLkrjYPEeuz54hlMC0lhCfpWsRbukMCvvip2p+B68Qx9jyFlHeyfFdWxYLQwMcUaZ2OimWA5bClGn3RQVQOlUaDZuTuQWaJVxtKg1jmVEKGCGs6TlzT4Wmj2Li3Sy/Vog88LLBPoqirQMKgbFWNpIHzc0KIxZTjceCrl6xJ5WdPefE8Bzd458qBnxdP5gUZQf91yvhYvKB+QDSvIw;4:qCUHIQtITLKhg+4XCMsFuqsvhHeh2sCN7nqyB+Qp79a3zHX/obyGew2lky+ui4Rywzw+B1/F6ltdxXcwSjED9L/0VZP2TiMbn/zWP2Qj3YQ0zlDHigP8TNuBrt9quSsHhoL8QYfmOWbRgraF11th9CDtw/aBbTnNpcl6idJGVrJx3KQ+lSbJeMw4sBtWcA57qVaBsbhbh1A92z1o+nmNTj/b1z5pJtbj6UF3XM6he8Rib/hFJ8gAVfTroi1yROQVOpTxWbJPWNdnypCAsq1wJ70W+zWdXyDcDuaDtvNk8X9WJlZq5HsEPI5dyhrnZr01Sm2JSOzRqNTlkaze+N/J6hhpCIwOich0odzlI6a1iuI=
+X-Microsoft-Antispam-PRVS: <VI1PR08MB3262F0CAABADC102983D9E50B05C0@VI1PR08MB3262.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(131327999870524)(17755550239193);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:VI1PR08MB3262;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB3262;
+X-Forefront-PRVS: 073631BD3D
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(376002)(396003)(346002)(366004)(136003)(39840400004)(189003)(199004)(81166006)(4326008)(8936002)(8676002)(106356001)(65956001)(66066001)(65806001)(52116002)(2486003)(23676004)(6486002)(76176011)(64126003)(81156014)(229853002)(53546011)(36756003)(25786009)(105586002)(7736002)(50466002)(386003)(6246003)(305945005)(478600001)(2906002)(52146003)(47776003)(14444005)(53936002)(11346002)(77096007)(65826007)(5660300001)(86362001)(3846002)(446003)(6666003)(58126008)(6916009)(16576012)(97736004)(16526019)(186003)(2616005)(6116002)(26005)(68736007)(31686004)(31696002)(476003)(956004)(230700001)(316002)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB3262;H:[172.16.25.12];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:3;
+Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtWSTFQUjA4TUIzMjYyOzIzOmlDVGhKQXlxdDVqRkxiaHlEQ0gxOWdMajVo?=
+ =?utf-8?B?WHpMVFNNMERjYXg3NzdyVFY3TjdUMFVLWEpvL3lHckQ1QjZTaENlNzVHYlpS?=
+ =?utf-8?B?ZkFVc0trUGlnTWw2dk9ZQWEyNHhGR00rVWpIT25yc1FKODJyYUhRNm4xYi8z?=
+ =?utf-8?B?VGJzLzQ4WTgrOUVobWViNlBidyt6QnVZUWZ1T2R0M2ZzK0pWT1ptdHBVVGd4?=
+ =?utf-8?B?TklPMjhQa2NyNXBZTWkwaXB5TGRMb1hEZm55M3BOc1hNVmZodWZjYlhXOStZ?=
+ =?utf-8?B?aW5ickFReHdFUUV1Z25UMmt5VUZpdmRyekNMZmdiT3U5M0VYZEgyV2FmcWpa?=
+ =?utf-8?B?STJFb3draGhVc0dXRVd2UTN6OUl1Q3Q0d01VK1hkTUFPNFduZk9uWDlQclVK?=
+ =?utf-8?B?T1BaNHNaYWY1L1l3ZjF2UnVMVlJDV2xiV2lXTGkzTjNYbHlnVnlzUjBRNEZP?=
+ =?utf-8?B?N1ArRUxrc1JjTWlmVlh0S1UwYklYSVcwME1VTXdtbUtUbGJoUXlpb2RQWjY4?=
+ =?utf-8?B?WWJyTjJRbi9pTmVTM0k4N3V6Qjc4SGk3ejQ5WkFKWmpuMlg0bm8ycFFBVFdV?=
+ =?utf-8?B?OHR2SXdqbEx0Sm45SmhYZkZwME9Ic1BWeGZSZkNLQU5qRzZKVnNIZFROZXpl?=
+ =?utf-8?B?TGk1S2oxZys1NVNLdXVocXpNdnZtQWpoSUNzenlSL21GOEF0MWJtckR3eDdP?=
+ =?utf-8?B?RlRMdHcxVFdoQ1h3ZGROd2VMYW11QThzdlZmWHRJRWpiOXJBaC9DOWo4SmxE?=
+ =?utf-8?B?eUZBU2ZUdng5WlJrUEl3WGJBRWJCdkNIMlI2Y2VkR2NoUVFpS2d0TzM0Rmtt?=
+ =?utf-8?B?Wkw4TmREN3NBUkhnblBxZVo0WVlBZ05OS2RmZGp4Njd3ZU9MY1V4TzU4eHds?=
+ =?utf-8?B?VTJtU2pEQitobWtjNFlIL1drek9BTHRUSEFTMnp3Zm02bmE3UXdjbzJVZGp2?=
+ =?utf-8?B?UUJwYy80TzQyZjlvcTJqa2Z5TlhHZVhmdFJ5dWFxOXBCWFdMWmFkbk1sdzVT?=
+ =?utf-8?B?L0hOa1ErbVV0MnlRNlcwWjRxNWM5MkJNcHZjNDVEQ3V4cXBmbHZZcW42SU80?=
+ =?utf-8?B?dVJzcEV5bys0Wnc3SEJkQVJSdWxLaDZVa2ZkbUcydk9Rd09hQlNBVVAxUFpM?=
+ =?utf-8?B?Q2w0NzZjcGxpb0VBamdHTEQ2bzNGbXJzbnNxeXpGMXo1Z3NrbEQ0WkJRUnJP?=
+ =?utf-8?B?OTJqbURjZlUwalZ2M1ZGRjd2dDFXTDJqZVZNMkpjVFVIRkVUeVkrQjVYRm5V?=
+ =?utf-8?B?S083elRFS3c5VUF2NXZGZWdZWmtjT1NUdHRWK0FmbEZpcWFrb1ZWKzAxdHJG?=
+ =?utf-8?B?K3g1cVBLNUYvWkRXL3Z2M3VheXV0VFJ1dkc0MHc5OU5reGJxdUpwb21DTDBa?=
+ =?utf-8?B?OVhPRlpCYmtsWFI2YTJNL0l5U1dQcUYrdnQ3Q1hSNmMzTGlrOG15WDBudFMy?=
+ =?utf-8?B?Q3BPNUwrZVQ4Ylpjbk83RkVvNS9kNFN4VGMzZmRTRUZBNTVDWEJIMTBOUW11?=
+ =?utf-8?B?N0lHZkU1QVo4bnJON2Q1TjRBT3RWdVk2ZG9tMzdvS2RIT1JrdENzS2hWYVRo?=
+ =?utf-8?B?U005V1hvSytkWGxPTkZtNWRRSWxKenE0SkVvdzg1TVF2OUNKODFHUytORlRx?=
+ =?utf-8?B?ZVpkVFo5cHNkMkJLRk5NWFRSOTlVcjNybmhsZytCSDNhdmdUY3o2SFlGQTM1?=
+ =?utf-8?B?SlFLUVFzblNNSklrdXNNSFVxSDcyMlB5T1F1TERVRzljalkwdWg3YmdMcS9u?=
+ =?utf-8?B?OFRKS0pEU2FlN1QyQmU4Q2x1dFlKTkJibTRxaE40NEovRkp3b241dnhTMGRy?=
+ =?utf-8?B?T0NTb29nU2grY3p6M0JKWG1oMm5RSDh0dUN2RHNQTzk1TTBvV0k4aXAxWGJM?=
+ =?utf-8?B?N1BWS2tzVkRNTytiV1RlRHIxeFQ0dlR2MnBhZldsL1kyK1l2N2dXM0hHV3RW?=
+ =?utf-8?B?NG1HSzdseURnPT0=?=
+X-Microsoft-Antispam-Message-Info: zK50hoBL8CRFCrBV1di6CnXRmxfxmChXKz1uGn/a6ZDk36fr59CiEQ7s5sPoizg6PxAWyu+M/dFJpc2k5YGJqgcKBt04dQ5pWyOWUthPckPvum/kph/3XAzi9Gk4+JujS0Dst++5UAjyGoOSugOBC5lwxZ8mG5iQWgbEmyfE6HBM3lj+W0lOS/VeXJ7bSz0bVlHINVvbZ3sjuiE1gqCTRRinRyS+VjLawdFCP1fK0E9oocFW3NFtjHjfdITy4Gs5F3un8Csee23CDnPmvCvRaZTV0aHnj51UUkD4qrdNqQYnBGqtHlk5KL7SjAqir5WpmddJ3WOvfvnUr9Gli1V970k+VfYqABXctMjh/qbIaQQ=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3262;6:6LiGJRrVDFv0Bx8Loy6Wf2GEJbrjSPHPmCb6ysm5eUvOCxKQDP7k7FdrCA6G7JI1mlUEeCrLejvA4ixSlKuEc5/ZDWnBM10H3N5cFzo0TCa6WCYr/OYwYjAFDPPgtfLWg2eDyolOBR1SPR74hQ/1JVSWPxkQeMcn0rpn6YLCUOH5YpZ4z8gMuaWo6jwRlsZuhozEN9w4V3a4Wn6c2bxcO22ch7LE4gxFH13lgfMhDMsezL85Z78/TO+4HjIFJQFke+6PtsxYNBY1Jf8AKJNJLEB3015gIQNtFMQlN2D6P1byJS1TY3Ffk80fb9pDWxZBS7PDxtS1I43fEd38ZNSWGqQIOcD63QMwjSrw68wDTQINaE3H5ukHW4EU4m8qZtzQlq7aHVWQ9clJg/nTMqdIWBy3oT9p6yzKesR3jDkUpixRFlAuAG1yVB7Z2coWgn6G8gYfrIInUmsfn9Vzgm/WSg==;5:5+7O0UGP2TvaI73yqg+7dPq34j7P+e5tpa5P76/ttYbRiTG2yPAiD0z0Y72BLdGPe/UuAkSCLzboh4hWTpHwevXbbSYn9+6w9bZLltj/dE3oDi4yj6UZ0pVEx7zCsEJNk9AjQx05tdXZS0EkFvBqp4mtXWZMqB0uzU8CmcJzB8g=;24:PvJqBSo1ln0mttMnxeYy/gVDCY+qbvV4HGqLc6M4c/4Cj5qhbHBm2z5+OdX8XCEMfRPycL2kqNf5tcVuSSEP6tk+atonBeFLdlxAzinr4ns=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB3262;7:3oKh/s9ezZrJcUttYkZNlnwlw0Z6ZhPDIWXJ2xSvLdit4sSLjiBkGP5LdywEVXQYKD8UOx9SdWjjVDe1oHmefj+B9Ppmh1qddZ3GeEio0TUm1Viwh9T8ml/hpyNSeHy1XCOqKfZCE68N/MW84eATeuwfzf6Z2dIkp6cQEETzSiLZmWMKZ7ET3N5rYZYd2kR2Bvad6S0j1QIAJdZS+ZUZjyyj2paxMx9Fjp3smRieIfYMwGQo/zJg1afarMHicooy;20:PcwbQzXYji4lLRl7+G2uZMFONNvD8i0bechicFdR5CQvO9IVwpNRoDXw+tS02KXKn/GUTqB+L/KY3zwqUS6Kq3VgAx3C7p3YNLNizwy2VPu5qaSDBbd6h0RMZcfwkyCuyVFB+ENnWIGgnZ1uHz3cryqT3DHMWFqpUf2QQ685CoE=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2018 15:43:31.1955 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff1eda13-9699-439f-eb6d-08d5ebfc0c78
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3262
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the axg sound card to handle the specifities of the axg audio
-sub system.
 
-This card is required to:
- * setup the dpcm links specific to the AXG (with a cpu sound dai)
- * handle the 4 lanes masks of the tdm interfaces
- * add the loopback link when a tdm pad interface has a playback
-   stream
- * handle multi-codec links
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- sound/soc/meson/Kconfig    |  11 +
- sound/soc/meson/Makefile   |   2 +
- sound/soc/meson/axg-card.c | 671 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 684 insertions(+)
- create mode 100644 sound/soc/meson/axg-card.c
+On 07/17/2018 05:47 PM, Miklos Szeredi wrote:
+> On Mon, Jul 16, 2018 at 6:03 PM, Andrey Ryabinin
+> <aryabinin@virtuozzo.com> wrote:
+>> The 'bufs' array contains 'pipe->buffers' elements, but the
+>> fuse_dev_splice_write() uses only 'pipe->nrbufs' elements.
+> 
+> Hmm, only valid with pipe lock held, AFAICS.
+> 
+> True for using ->buffers as well...
+> 
+> Would you mind resending this series with an additional starting patch
+> that moves the bufs allocations inside pipe_lock()/pipe_unlock() to
+> fix races with fcntl(F_SETPIPE_SZ).
+> 
 
-diff --git a/sound/soc/meson/Kconfig b/sound/soc/meson/Kconfig
-index 00d05df67b52..4cf93c05a982 100644
---- a/sound/soc/meson/Kconfig
-+++ b/sound/soc/meson/Kconfig
-@@ -43,6 +43,17 @@ config SND_MESON_AXG_TDMOUT
- 	  Select Y or M to add support for TDM output formatter embedded
- 	  in the Amlogic AXG SoC family
- 
-+config SND_MESON_AXG_SOUND_CARD
-+	tristate "Amlogic AXG Sound Card Support"
-+	select SND_MESON_AXG_TDM_INTERFACE
-+	imply SND_MESON_AXG_FRDDR
-+	imply SND_MESON_AXG_TODDR
-+	imply SND_MESON_AXG_TDMIN
-+	imply SND_MESON_AXG_TDMOUT
-+	imply SND_MESON_AXG_SPDIFOUT
-+	help
-+	  Select Y or M to add support for the AXG SoC sound card
-+
- config SND_MESON_AXG_SPDIFOUT
- 	tristate "Amlogic AXG SPDIF Output Support"
- 	imply SND_SOC_SPDIF
-diff --git a/sound/soc/meson/Makefile b/sound/soc/meson/Makefile
-index f62833fb44d8..c5e003b093db 100644
---- a/sound/soc/meson/Makefile
-+++ b/sound/soc/meson/Makefile
-@@ -7,6 +7,7 @@ snd-soc-meson-axg-tdm-formatter-objs := axg-tdm-formatter.o
- snd-soc-meson-axg-tdm-interface-objs := axg-tdm-interface.o
- snd-soc-meson-axg-tdmin-objs := axg-tdmin.o
- snd-soc-meson-axg-tdmout-objs := axg-tdmout.o
-+snd-soc-meson-axg-sound-card-objs := axg-card.o
- snd-soc-meson-axg-spdifout-objs := axg-spdifout.o
- 
- obj-$(CONFIG_SND_MESON_AXG_FIFO) += snd-soc-meson-axg-fifo.o
-@@ -16,4 +17,5 @@ obj-$(CONFIG_SND_MESON_AXG_TDM_FORMATTER) += snd-soc-meson-axg-tdm-formatter.o
- obj-$(CONFIG_SND_MESON_AXG_TDM_INTERFACE) += snd-soc-meson-axg-tdm-interface.o
- obj-$(CONFIG_SND_MESON_AXG_TDMIN) += snd-soc-meson-axg-tdmin.o
- obj-$(CONFIG_SND_MESON_AXG_TDMOUT) += snd-soc-meson-axg-tdmout.o
-+obj-$(CONFIG_SND_MESON_AXG_SOUND_CARD) += snd-soc-meson-axg-sound-card.o
- obj-$(CONFIG_SND_MESON_AXG_SPDIFOUT) += snd-soc-meson-axg-spdifout.o
-diff --git a/sound/soc/meson/axg-card.c b/sound/soc/meson/axg-card.c
-new file mode 100644
-index 000000000000..d6d1081d94ad
---- /dev/null
-+++ b/sound/soc/meson/axg-card.c
-@@ -0,0 +1,671 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+//
-+// Copyright (c) 2018 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dai.h>
-+
-+#include "axg-tdm.h"
-+
-+struct axg_card {
-+	struct snd_soc_card card;
-+	void **link_data;
-+};
-+
-+struct axg_dai_link_tdm_mask {
-+	u32 tx;
-+	u32 rx;
-+};
-+
-+struct axg_dai_link_tdm_data {
-+	unsigned int mclk_fs;
-+	unsigned int slots;
-+	unsigned int slot_width;
-+	u32 *tx_mask;
-+	u32 *rx_mask;
-+	struct axg_dai_link_tdm_mask *codec_masks;
-+};
-+
-+#define PREFIX "amlogic,"
-+
-+static int axg_card_reallocate_links(struct axg_card *priv,
-+				     unsigned int num_links)
-+{
-+	struct snd_soc_dai_link *links;
-+	void **ldata;
-+
-+	links = krealloc(priv->card.dai_link,
-+			 num_links * sizeof(*priv->card.dai_link),
-+			 GFP_KERNEL | __GFP_ZERO);
-+	ldata = krealloc(priv->link_data,
-+			 num_links * sizeof(*priv->link_data),
-+			 GFP_KERNEL | __GFP_ZERO);
-+
-+	if (!links || !ldata) {
-+		dev_err(priv->card.dev, "failed to allocate links\n");
-+		return -ENOMEM;
-+	}
-+
-+	priv->card.dai_link = links;
-+	priv->link_data = ldata;
-+	priv->card.num_links = num_links;
-+	return 0;
-+}
-+
-+static int axg_card_parse_dai(struct snd_soc_card *card,
-+			      struct device_node *node,
-+			      struct device_node **dai_of_node,
-+			      const char **dai_name)
-+{
-+	struct of_phandle_args args;
-+	int ret;
-+
-+	if (!dai_name || !dai_of_node || !node)
-+		return -EINVAL;
-+
-+	ret = of_parse_phandle_with_args(node, "sound-dai",
-+					 "#sound-dai-cells", 0, &args);
-+	if (ret) {
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(card->dev, "can't parse dai %d\n", ret);
-+		return ret;
-+	}
-+	*dai_of_node = args.np;
-+
-+	return snd_soc_get_dai_name(&args, dai_name);
-+}
-+
-+static int axg_card_set_link_name(struct snd_soc_card *card,
-+				  struct snd_soc_dai_link *link,
-+				  const char *prefix)
-+{
-+	char *name = devm_kasprintf(card->dev, GFP_KERNEL, "%s.%s",
-+				    prefix, link->cpu_of_node->full_name);
-+	if (!name)
-+		return -ENOMEM;
-+
-+	link->name = name;
-+	link->stream_name = name;
-+
-+	return 0;
-+}
-+
-+static void axg_card_clean_references(struct axg_card *priv)
-+{
-+	struct snd_soc_card *card = &priv->card;
-+	struct snd_soc_dai_link *link;
-+	int i, j;
-+
-+	if (card->dai_link) {
-+		for (i = 0; i < card->num_links; i++) {
-+			link = &card->dai_link[i];
-+			of_node_put(link->cpu_of_node);
-+			for (j = 0; j < link->num_codecs; j++)
-+				of_node_put(link->codecs[j].of_node);
-+		}
-+	}
-+
-+	if (card->aux_dev) {
-+		for (i = 0; i < card->num_aux_devs; i++)
-+			of_node_put(card->aux_dev[i].codec_of_node);
-+	}
-+
-+	kfree(card->dai_link);
-+	kfree(priv->link_data);
-+}
-+
-+static int axg_card_add_aux_devices(struct snd_soc_card *card)
-+{
-+	struct device_node *node = card->dev->of_node;
-+	struct snd_soc_aux_dev *aux;
-+	int num, i;
-+
-+	num = of_count_phandle_with_args(node, PREFIX "aux-devs", NULL);
-+	if (num == -ENOENT) {
-+		/*
-+		 * It is ok to have no auxiliary devices but for this card it
-+		 * is a strange situtation. Let's warn the about it.
-+		 */
-+		dev_warn(card->dev, "card has no auxiliary devices\n");
-+		return 0;
-+	} else if (num < 0) {
-+		dev_err(card->dev, "error getting auxiliary devices: %d\n",
-+			num);
-+		return num;
-+	}
-+
-+	aux = devm_kcalloc(card->dev, num, sizeof(*aux), GFP_KERNEL);
-+	if (!aux)
-+		return -ENOMEM;
-+	card->aux_dev = aux;
-+	card->num_aux_devs = num;
-+
-+	for (i = 0; i < card->num_aux_devs; i++, aux++) {
-+		aux->codec_of_node = of_parse_phandle(node,
-+						      PREFIX "aux-devs", i);
-+		if (!aux->codec_of_node)
-+			return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_card_tdm_be_hw_params(struct snd_pcm_substream *substream,
-+				     struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct axg_card *priv = snd_soc_card_get_drvdata(rtd->card);
-+	struct axg_dai_link_tdm_data *be =
-+		(struct axg_dai_link_tdm_data *)priv->link_data[rtd->num];
-+	struct snd_soc_dai *codec_dai;
-+	unsigned int mclk;
-+	int ret, i;
-+
-+	if (be->mclk_fs) {
-+		mclk = params_rate(params) * be->mclk_fs;
-+
-+		for (i = 0; i < rtd->num_codecs; i++) {
-+			codec_dai = rtd->codec_dais[i];
-+			ret = snd_soc_dai_set_sysclk(codec_dai, 0, mclk,
-+						     SND_SOC_CLOCK_IN);
-+			if (ret && ret != -ENOTSUPP)
-+				return ret;
-+		}
-+
-+		ret = snd_soc_dai_set_sysclk(rtd->cpu_dai, 0, mclk,
-+					     SND_SOC_CLOCK_OUT);
-+		if (ret && ret != -ENOTSUPP)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct snd_soc_ops axg_card_tdm_be_ops = {
-+	.hw_params = axg_card_tdm_be_hw_params,
-+};
-+
-+static int axg_card_tdm_dai_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct axg_card *priv = snd_soc_card_get_drvdata(rtd->card);
-+	struct axg_dai_link_tdm_data *be =
-+		(struct axg_dai_link_tdm_data *)priv->link_data[rtd->num];
-+	struct snd_soc_dai *codec_dai;
-+	int ret, i;
-+
-+	for (i = 0; i < rtd->num_codecs; i++) {
-+		codec_dai = rtd->codec_dais[i];
-+		ret = snd_soc_dai_set_tdm_slot(codec_dai,
-+					       be->codec_masks[i].tx,
-+					       be->codec_masks[i].rx,
-+					       be->slots, be->slot_width);
-+		if (ret && ret != -ENOTSUPP) {
-+			dev_err(codec_dai->dev,
-+				"setting tdm link slots failed\n");
-+			return ret;
-+		}
-+	}
-+
-+	ret = axg_tdm_set_tdm_slots(rtd->cpu_dai, be->tx_mask, be->rx_mask,
-+				    be->slots, be->slot_width);
-+	if (ret) {
-+		dev_err(rtd->cpu_dai->dev, "setting tdm link slots failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_card_tdm_dai_lb_init(struct snd_soc_pcm_runtime *rtd)
-+{
-+	struct axg_card *priv = snd_soc_card_get_drvdata(rtd->card);
-+	struct axg_dai_link_tdm_data *be =
-+		(struct axg_dai_link_tdm_data *)priv->link_data[rtd->num];
-+	int ret;
-+
-+	/* The loopback rx_mask is the pad tx_mask */
-+	ret = axg_tdm_set_tdm_slots(rtd->cpu_dai, NULL, be->tx_mask,
-+				    be->slots, be->slot_width);
-+	if (ret) {
-+		dev_err(rtd->cpu_dai->dev, "setting tdm link slots failed\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_card_add_tdm_loopback(struct snd_soc_card *card,
-+				     int *index)
-+{
-+	struct axg_card *priv = snd_soc_card_get_drvdata(card);
-+	struct snd_soc_dai_link *pad = &card->dai_link[*index];
-+	struct snd_soc_dai_link *lb;
-+	int ret;
-+
-+	/* extend links */
-+	ret = axg_card_reallocate_links(priv, card->num_links + 1);
-+	if (ret)
-+		return ret;
-+
-+	lb = &card->dai_link[*index + 1];
-+
-+	lb->name = kasprintf(GFP_KERNEL, "%s-lb", pad->name);
-+	if (!lb->name)
-+		return -ENOMEM;
-+
-+	lb->stream_name = lb->name;
-+	lb->cpu_of_node = pad->cpu_of_node;
-+	lb->cpu_dai_name = "TDM Loopback";
-+	lb->codec_name = "snd-soc-dummy";
-+	lb->codec_dai_name = "snd-soc-dummy-dai";
-+	lb->dpcm_capture = 1;
-+	lb->no_pcm = 1;
-+	lb->ops = &axg_card_tdm_be_ops;
-+	lb->init = axg_card_tdm_dai_lb_init;
-+
-+	/* Provide the same link data to the loopback */
-+	priv->link_data[*index + 1] = priv->link_data[*index];
-+
-+	/*
-+	 * axg_card_clean_references() will iterate over this link,
-+	 * make sure the node count is balanced
-+	 */
-+	of_node_get(lb->cpu_of_node);
-+
-+	/* Let add_links continue where it should */
-+	*index += 1;
-+
-+	return 0;
-+}
-+
-+static unsigned int axg_card_parse_daifmt(struct device_node *node,
-+					  struct device_node *cpu_node)
-+{
-+	struct device_node *bitclkmaster = NULL;
-+	struct device_node *framemaster = NULL;
-+	unsigned int daifmt;
-+
-+	daifmt = snd_soc_of_parse_daifmt(node, PREFIX,
-+					 &bitclkmaster, &framemaster);
-+	daifmt &= ~SND_SOC_DAIFMT_MASTER_MASK;
-+
-+	/* If no master is provided, default to cpu master */
-+	if (!bitclkmaster || bitclkmaster == cpu_node) {
-+		daifmt |= (!framemaster || framemaster == cpu_node) ?
-+			SND_SOC_DAIFMT_CBS_CFS : SND_SOC_DAIFMT_CBS_CFM;
-+	} else {
-+		daifmt |= (!framemaster || framemaster == cpu_node) ?
-+			SND_SOC_DAIFMT_CBM_CFS : SND_SOC_DAIFMT_CBM_CFM;
-+	}
-+
-+	of_node_put(bitclkmaster);
-+	of_node_put(framemaster);
-+
-+	return daifmt;
-+}
-+
-+static int axg_card_parse_cpu_tdm_slots(struct snd_soc_card *card,
-+					struct snd_soc_dai_link *link,
-+					struct device_node *node,
-+					struct axg_dai_link_tdm_data *be)
-+{
-+	char propname[32];
-+	u32 tx, rx;
-+	int i;
-+
-+	be->tx_mask = devm_kcalloc(card->dev, AXG_TDM_NUM_LANES,
-+				   sizeof(*be->tx_mask), GFP_KERNEL);
-+	be->rx_mask = devm_kcalloc(card->dev, AXG_TDM_NUM_LANES,
-+				   sizeof(*be->rx_mask), GFP_KERNEL);
-+	if (!be->tx_mask || !be->rx_mask)
-+		return -ENOMEM;
-+
-+	for (i = 0, tx = 0; i < AXG_TDM_NUM_LANES; i++) {
-+		snprintf(propname, 32, "dai-tdm-slot-tx-mask-%d", i);
-+		snd_soc_of_get_slot_mask(node, propname, &be->tx_mask[i]);
-+		tx = max(tx, be->tx_mask[i]);
-+	}
-+
-+	/* Disable playback is the interface has no tx slots */
-+	if (!tx)
-+		link->dpcm_playback = 0;
-+
-+	for (i = 0, rx = 0; i < AXG_TDM_NUM_LANES; i++) {
-+		snprintf(propname, 32, "dai-tdm-slot-rx-mask-%d", i);
-+		snd_soc_of_get_slot_mask(node, propname, &be->rx_mask[i]);
-+		rx = max(rx, be->rx_mask[i]);
-+	}
-+
-+	/* Disable capture is the interface has no rx slots */
-+	if (!rx)
-+		link->dpcm_capture = 0;
-+
-+	/* ... but the interface should at least have one of them */
-+	if (!tx && !rx) {
-+		dev_err(card->dev, "tdm link has no cpu slots\n");
-+		return -EINVAL;
-+	}
-+
-+	of_property_read_u32(node, "dai-tdm-slot-num", &be->slots);
-+	if (!be->slots) {
-+		/*
-+		 * If the slot number is not provided, set it such as it
-+		 * accommodates the largest mask
-+		 */
-+		be->slots = fls(max(tx, rx));
-+	} else if (be->slots < fls(max(tx, rx)) || be->slots > 32) {
-+		/*
-+		 * Error if the slots can't accommodate the largest mask or
-+		 * if it is just too big
-+		 */
-+		dev_err(card->dev, "bad slot number\n");
-+		return -EINVAL;
-+	}
-+
-+	of_property_read_u32(node, "dai-tdm-slot-width", &be->slot_width);
-+
-+	return 0;
-+}
-+
-+static int axg_card_parse_codecs_masks(struct snd_soc_card *card,
-+				       struct snd_soc_dai_link *link,
-+				       struct device_node *node,
-+				       struct axg_dai_link_tdm_data *be)
-+{
-+	struct axg_dai_link_tdm_mask *codec_mask;
-+	struct device_node *np;
-+
-+	codec_mask = devm_kcalloc(card->dev, link->num_codecs,
-+				  sizeof(*codec_mask), GFP_KERNEL);
-+	if (!codec_mask)
-+		return -ENOMEM;
-+
-+	be->codec_masks = codec_mask;
-+
-+	for_each_child_of_node(node, np) {
-+		snd_soc_of_get_slot_mask(np, "dai-tdm-slot-rx-mask",
-+					 &codec_mask->rx);
-+		snd_soc_of_get_slot_mask(np, "dai-tdm-slot-tx-mask",
-+					 &codec_mask->tx);
-+
-+		codec_mask++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_card_parse_tdm(struct snd_soc_card *card,
-+			      struct device_node *node,
-+			      int *index)
-+{
-+	struct axg_card *priv = snd_soc_card_get_drvdata(card);
-+	struct snd_soc_dai_link *link = &card->dai_link[*index];
-+	struct axg_dai_link_tdm_data *be;
-+	int ret;
-+
-+	/* Allocate tdm link parameters */
-+	be = devm_kzalloc(card->dev, sizeof(*be), GFP_KERNEL);
-+	if (!be)
-+		return -ENOMEM;
-+	priv->link_data[*index] = be;
-+
-+	/* Setup tdm link */
-+	link->ops = &axg_card_tdm_be_ops;
-+	link->init = axg_card_tdm_dai_init;
-+	link->dai_fmt = axg_card_parse_daifmt(node, link->cpu_of_node);
-+
-+	of_property_read_u32(node, "mclk-fs", &be->mclk_fs);
-+
-+	ret = axg_card_parse_cpu_tdm_slots(card, link, node, be);
-+	if (ret) {
-+		dev_err(card->dev, "error parsing tdm link slots\n");
-+		return ret;
-+	}
-+
-+	ret = axg_card_parse_codecs_masks(card, link, node, be);
-+	if (ret)
-+		return ret;
-+
-+	/* Add loopback if the pad dai has playback */
-+	if (link->dpcm_playback) {
-+		ret = axg_card_add_tdm_loopback(card, index);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_card_set_be_link(struct snd_soc_card *card,
-+				struct snd_soc_dai_link *link,
-+				struct device_node *node)
-+{
-+	struct snd_soc_dai_link_component *codec;
-+	struct device_node *np;
-+	int ret, num_codecs;
-+
-+	link->no_pcm = 1;
-+	link->dpcm_playback = 1;
-+	link->dpcm_capture = 1;
-+
-+	num_codecs = of_get_child_count(node);
-+	if (!num_codecs) {
-+		dev_err(card->dev, "be link %s has no codec\n",
-+			node->full_name);
-+		return -EINVAL;
-+	}
-+
-+	codec = devm_kcalloc(card->dev, num_codecs, sizeof(*codec), GFP_KERNEL);
-+	if (!codec)
-+		return -ENOMEM;
-+
-+	link->codecs = codec;
-+	link->num_codecs = num_codecs;
-+
-+	for_each_child_of_node(node, np) {
-+		ret = axg_card_parse_dai(card, np, &codec->of_node,
-+					 &codec->dai_name);
-+		if (ret) {
-+			of_node_put(np);
-+			return ret;
-+		}
-+
-+		codec++;
-+	}
-+
-+	ret = axg_card_set_link_name(card, link, "be");
-+	if (ret)
-+		dev_err(card->dev, "error setting %s link name\n", np->name);
-+
-+	return ret;
-+}
-+
-+static int axg_card_set_fe_link(struct snd_soc_card *card,
-+				struct snd_soc_dai_link *link,
-+				bool is_playback)
-+{
-+	link->dynamic = 1;
-+	link->dpcm_merged_format = 1;
-+	link->dpcm_merged_chan = 1;
-+	link->dpcm_merged_rate = 1;
-+	link->codec_dai_name = "snd-soc-dummy-dai";
-+	link->codec_name = "snd-soc-dummy";
-+
-+	if (is_playback)
-+		link->dpcm_playback = 1;
-+	else
-+		link->dpcm_capture = 1;
-+
-+	return axg_card_set_link_name(card, link, "fe");
-+}
-+
-+static int axg_card_cpu_is_capture_fe(struct device_node *np)
-+{
-+	return of_device_is_compatible(np, PREFIX "axg-toddr");
-+}
-+
-+static int axg_card_cpu_is_playback_fe(struct device_node *np)
-+{
-+	return of_device_is_compatible(np, PREFIX "axg-frddr");
-+}
-+
-+static int axg_card_cpu_is_tdm_iface(struct device_node *np)
-+{
-+	return of_device_is_compatible(np, PREFIX "axg-tdm-iface");
-+}
-+
-+static int axg_card_add_link(struct snd_soc_card *card, struct device_node *np,
-+			     int *index)
-+{
-+	struct snd_soc_dai_link *dai_link = &card->dai_link[*index];
-+	int ret;
-+
-+	ret = axg_card_parse_dai(card, np, &dai_link->cpu_of_node,
-+				 &dai_link->cpu_dai_name);
-+	if (ret)
-+		return ret;
-+
-+	if (axg_card_cpu_is_playback_fe(dai_link->cpu_of_node))
-+		ret = axg_card_set_fe_link(card, dai_link, true);
-+	else if (axg_card_cpu_is_capture_fe(dai_link->cpu_of_node))
-+		ret = axg_card_set_fe_link(card, dai_link, false);
-+	else
-+		ret = axg_card_set_be_link(card, dai_link, np);
-+
-+	if (ret)
-+		return ret;
-+
-+	if (axg_card_cpu_is_tdm_iface(dai_link->cpu_of_node))
-+		ret = axg_card_parse_tdm(card, np, index);
-+
-+	return ret;
-+}
-+
-+static int axg_card_add_links(struct snd_soc_card *card)
-+{
-+	struct axg_card *priv = snd_soc_card_get_drvdata(card);
-+	struct device_node *node = card->dev->of_node;
-+	struct device_node *np;
-+	int num, i, ret;
-+
-+	num = of_get_child_count(node);
-+	if (!num) {
-+		dev_err(card->dev, "card has no links\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = axg_card_reallocate_links(priv, num);
-+	if (ret)
-+		return ret;
-+
-+	i = 0;
-+	for_each_child_of_node(node, np) {
-+		ret = axg_card_add_link(card, np, &i);
-+		if (ret) {
-+			of_node_put(np);
-+			return ret;
-+		}
-+
-+		i++;
-+	}
-+
-+	return 0;
-+}
-+
-+static int axg_card_parse_of_optional(struct snd_soc_card *card,
-+				      const char *propname,
-+				      int (*func)(struct snd_soc_card *c,
-+						  const char *p))
-+{
-+	/* If property is not provided, don't fail ... */
-+	if (!of_property_read_bool(card->dev->of_node, propname))
-+		return 0;
-+
-+	/* ... but do fail if it is provided and the parsing fails */
-+	return func(card, propname);
-+}
-+
-+static const struct of_device_id axg_card_of_match[] = {
-+	{ .compatible = "amlogic,axg-sound-card", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, axg_card_of_match);
-+
-+static int axg_card_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct axg_card *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, priv);
-+	snd_soc_card_set_drvdata(&priv->card, priv);
-+
-+	priv->card.owner = THIS_MODULE;
-+	priv->card.dev = dev;
-+
-+	ret = snd_soc_of_parse_card_name(&priv->card, PREFIX "name");
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = axg_card_parse_of_optional(&priv->card, PREFIX "routing",
-+					 snd_soc_of_parse_audio_routing);
-+	if (ret) {
-+		dev_err(dev, "error while parsing routing\n");
-+		return ret;
-+	}
-+
-+	ret = axg_card_parse_of_optional(&priv->card, PREFIX "widgets",
-+					 snd_soc_of_parse_audio_simple_widgets);
-+	if (ret) {
-+		dev_err(dev, "error while parsing widgets\n");
-+		return ret;
-+	}
-+
-+	ret = axg_card_add_links(&priv->card);
-+	if (ret)
-+		goto out_err;
-+
-+	ret = axg_card_add_aux_devices(&priv->card);
-+	if (ret)
-+		goto out_err;
-+
-+	ret = devm_snd_soc_register_card(dev, &priv->card);
-+	if (ret)
-+		goto out_err;
-+
-+	return 0;
-+
-+out_err:
-+	axg_card_clean_references(priv);
-+	return ret;
-+}
-+
-+static int axg_card_remove(struct platform_device *pdev)
-+{
-+	struct axg_card *priv = platform_get_drvdata(pdev);
-+
-+	axg_card_clean_references(priv);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver axg_card_pdrv = {
-+	.probe = axg_card_probe,
-+	.remove = axg_card_remove,
-+	.driver = {
-+		.name = "axg-sound-card",
-+		.of_match_table = axg_card_of_match,
-+	},
-+};
-+module_platform_driver(axg_card_pdrv);
-+
-+MODULE_DESCRIPTION("Amlogic AXG ALSA machine driver");
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.14.4
+Sure, will do shortly.
+I suppose the patch should go with a stable tag, right?
 
+
+> Thanks,
+> Miklos
+> 
