@@ -2,132 +2,69 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AC9ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA22ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D87520C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:37:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D87520C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E2A020C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:44:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E2A020C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbeGQLJq (ORCPT
+        id S1730172AbeGQLQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:09:46 -0400
-Received: from mga05.intel.com ([192.55.52.43]:52068 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730039AbeGQLJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:09:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 03:37:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="73017279"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 03:37:45 -0700
-Subject: Re: [PATCH V3 4/7] mmc: sdhci: add 32-bit block count support for v4
- mode
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>
-References: <1531106398-14062-1-git-send-email-zhang.chunyan@linaro.org>
- <1531106398-14062-5-git-send-email-zhang.chunyan@linaro.org>
- <892181d5-61f2-55da-2a79-1d2cbfc00f8f@intel.com>
- <CAAfSe-tJGM7GMb6pCAMhKVDu9XSEjmyGYkgVCQZr__C0Q0goiQ@mail.gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <b7eeeb0b-1584-52c7-43d3-228f5653697e@intel.com>
-Date:   Tue, 17 Jul 2018 13:36:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Tue, 17 Jul 2018 07:16:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58812 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729749AbeGQLQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:16:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A21CFACC5;
+        Tue, 17 Jul 2018 10:44:25 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 12:44:24 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: Fix vma_is_anonymous() false-positives
+Message-ID: <20180717104424.GA7193@dhcp22.suse.cz>
+References: <20180710134821.84709-2-kirill.shutemov@linux.intel.com>
+ <20180710134858.3506f097104859b533c81bf3@linux-foundation.org>
+ <20180716133028.GQ17280@dhcp22.suse.cz>
+ <20180716140440.fd3sjw5xys5wozw7@black.fi.intel.com>
+ <20180716142245.GT17280@dhcp22.suse.cz>
+ <20180716144739.que5362bofty6ocp@kshutemo-mobl1>
+ <20180716174042.GA17280@dhcp22.suse.cz>
+ <20180716203846.roolhtesloabxr2g@kshutemo-mobl1>
+ <20180717090053.GE16803@dhcp22.suse.cz>
+ <20180717093030.cu2jyuw5kuw7nvwo@black.fi.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <CAAfSe-tJGM7GMb6pCAMhKVDu9XSEjmyGYkgVCQZr__C0Q0goiQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717093030.cu2jyuw5kuw7nvwo@black.fi.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/18 12:14, Chunyan Zhang wrote:
-> Hi,
-> 
-> On 17 July 2018 at 16:29, Adrian Hunter <adrian.hunter@intel.com> wrote:
->> On 09/07/18 06:19, Chunyan Zhang wrote:
->>> When Host Version 4 is enabled, SDMA System Address register is
->>> re-defined as 32-bit Block Count, and SDMA uses ADMA System
->>> Address register (05Fh-058h) instead.
->>>
->>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
->>> ---
->>>  drivers/mmc/host/sdhci.c | 4 +++-
->>>  drivers/mmc/host/sdhci.h | 1 +
->>>  2 files changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>> index 7871ae2..f64e766 100644
->>> --- a/drivers/mmc/host/sdhci.c
->>> +++ b/drivers/mmc/host/sdhci.c
->>> @@ -889,6 +889,7 @@ static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->>>  static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
->>>  {
->>>       u8 ctrl;
->>> +     u32 reg;
->>>       struct mmc_data *data = cmd->data;
->>>
->>>       host->data_timeout = 0;
->>> @@ -1021,7 +1022,8 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
->>>       /* Set the DMA boundary value and block size */
->>>       sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, data->blksz),
->>>                    SDHCI_BLOCK_SIZE);
->>> -     sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
->>> +     reg = host->v4_mode ? SDHCI_32BIT_BLK_CNT : SDHCI_BLOCK_COUNT;
->>> +     sdhci_writew(host, data->blocks, reg);
->>
->> The specification says to set 16-bit block count register to zero when using
->> 32-bit block count.  It also says it is valid for V4.1 onwards and also for
->> V4 with SDMA and auto-CMD23.
->>
->> So maybe we should continue to use the 16-bit block count register with V4.0
-> 
-> Ok.
-> 
-> Where can I get a V4.0 specification? I only have V4.10 on hands.
+On Tue 17-07-18 12:30:30, Kirill A. Shutemov wrote:
+[...]
+> You propose quite a big redesign on how we handle anonymous VMAs.
+> Feel free to propose the patch(set). But I don't think it would fly for
+> stable@.
 
-I do not have a copy I can share, but the 4.1 specification already
-indicates what is V4.1 (onwards) and what only requires Host Version 4 Enable.
-
-> 
->>
->>>  }
->>>
->>>  static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
->>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>> index 24fa58a..889e48b 100644
->>> --- a/drivers/mmc/host/sdhci.h
->>> +++ b/drivers/mmc/host/sdhci.h
->>> @@ -28,6 +28,7 @@
->>>
->>>  #define SDHCI_DMA_ADDRESS    0x00
->>>  #define SDHCI_ARGUMENT2              SDHCI_DMA_ADDRESS
->>> +#define SDHCI_32BIT_BLK_CNT  SDHCI_DMA_ADDRESS
->>>
->>>  #define SDHCI_BLOCK_SIZE     0x04
->>>  #define  SDHCI_MAKE_BLKSZ(dma, blksz) (((dma & 0x7) << 12) | (blksz & 0xFFF))
->>>
->>
-> 
-
+OK, fair enough. I thought this would be much easier in the end but I
+admit I haven't tried that so I might have underestimated the whole
+thing.
+-- 
+Michal Hocko
+SUSE Labs
