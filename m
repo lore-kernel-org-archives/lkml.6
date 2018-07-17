@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EE8ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBE4ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5556020C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FA1F20C03
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:10:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="teqNnHIY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5556020C0A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tTD67los"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FA1F20C03
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731893AbeGQCkP (ORCPT
+        id S1731914AbeGQCkR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 22:40:15 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:45513 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731879AbeGQCkO (ORCPT
+        Mon, 16 Jul 2018 22:40:17 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46175 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731879AbeGQCkQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 22:40:14 -0400
-Received: by mail-pf0-f195.google.com with SMTP id i26-v6so15801788pfo.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 19:10:05 -0700 (PDT)
+        Mon, 16 Jul 2018 22:40:16 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 30-v6so16091160pld.13
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 19:10:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IYfvjfdX/zKsaH8sw7r+VxHkaI76EoX+lo/79eYCabE=;
-        b=teqNnHIY/42dt1qkDImcegiy1zUuHtF5A+roctv7KK9T1F0/+7mY0TEb0OKTpPiY0r
-         Xyp2yX3q5vTXHjJxtgkX63OVXrstXz/WYnZu20PlX0hoP0KeInCrS6DBMNnCNO1pRm5/
-         O/HUmqszq+jL6mDpkf0K+cfg2AXc/lwfxTQOav9z79PgymMeCFhK3tQmQJPAONxclufm
-         awNLlIpvBn95PXGmPYUfauPNnQB3VxVVtt0V1lHHgTlusgVKdcdehQNV7oPEKhHY8hyj
-         RcRhrD+seuL1v+Yj3hk1e12Zlh4RwCOxlfGZF2zJMIS4xSIADVX5ZuMBEf1pihrU3alp
-         rcRQ==
+        bh=tsTxvelgfSZt9NoU/bVE4xvBM75NVHnvM1mRkKNrPNE=;
+        b=tTD67losWJpdQUFFeaGrrQ0y+NMzB33u6r6Z/R9sbl4g4DyYg1EVtu2qbFKvm/kRE8
+         eB4Nu8c3eXPmaBh0BrzD6iznfV8sP+ArEF1TflwUPsCeUIv7bYvcXNpNnccpOARHd7N9
+         r3sE21pI+83x+0OwSfnN0+ncE9sKcWPsveg9sv00tZtRmIHekyH4qIu0tkB2XyqSbiQG
+         VyDbOZR4XPwRLulDc5QKv6Vk5thZuQijcIpYHpnmNH3TAQGgQI6U3dEeJmfUJ+UMBR0D
+         bGaJ4XI8ZYMnWbaGBVNmEMc8KvEmXA+VXhU6ywh2nS5cK8NIiaGCzDWnMFEWYlFIpkGh
+         oVYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=IYfvjfdX/zKsaH8sw7r+VxHkaI76EoX+lo/79eYCabE=;
-        b=Dnlwdnb8RnW3EqaxpvztYHob0meVA3GEOA3hHX/2T558WZwdZRnVjb2W6LPiYXlHI+
-         CJYk0+cOJBBV6w20MP8V8C7JyiGmbGAn7iVnecDAd7MWVCGvGc/c4mwyi6BVCsJGRlnu
-         4zXNMIpEEGzz477FcZJ6B3zqLUl7zRD3O9TsJsjcLBuUJvT5STzkmP6uxdTFZLUsj+cG
-         7ePvYuOb31mRV2N/3diFOcEJihhXg5PJKYK2Bad0fq7c0+d6HILCm6zhGwOY1x1ixL/d
-         nRIQWLt1V11NvI8dCw422U/Dx6iZDdYJ0KBy4/QtsnlvkHC/EiCjByyCnbuBs66c0fvB
-         ehLw==
-X-Gm-Message-State: AOUpUlE/lHW7jqUCf9bzMOZIXoYBFabMDGG5MTXyRHyWBylheIPhua8t
-        cwSvbRV9n7snGZeB6jugg60=
-X-Google-Smtp-Source: AAOMgpdQ8WS91+zj8f7j2eZZeKKsS6aPUl9cDYK5CRxcWLpfuAt4ll/6LI461Lqhhhg7F+j676nnpA==
-X-Received: by 2002:a63:3c4a:: with SMTP id i10-v6mr17512472pgn.415.1531793404687;
-        Mon, 16 Jul 2018 19:10:04 -0700 (PDT)
+        bh=tsTxvelgfSZt9NoU/bVE4xvBM75NVHnvM1mRkKNrPNE=;
+        b=ta7hHXL9uedfREcAZ9ViZaTgMwlBWbUVB0UXoa0FfXz/Adye7QDb7Sbrb8lIeCJ7/D
+         Yv4p9eOaaFDvAhxQwI05Rp6WuaSAXeGwk94dAqPovf/GHwstLI4np471PqnA0Q+FUIQD
+         dMsAbsQGNrjx/2p8S9X5mRfzlYgwgGR+f2XOZiaPEje67wDNaQ0eyIUXAUpE9WXK1NO1
+         QYOWvz0W/fWfb38yo6lxVh2zGjKBEjsqQLIq20sQIYhssBGLoqxv4SvG1TCg+edMjJzv
+         FLl1Hlb/v5/X/UnbncGq/GamFj9QxJPifBujvdxryziltsNOhRFhA6bYOzSjsgcwGkne
+         f/QQ==
+X-Gm-Message-State: AOUpUlHSCVarNT/gQOvenuxGiLnPtuTCAW0H6Rnl5HOoqIdukiOejdRs
+        W/HvQCluRhqVgq3oz8lrTyY=
+X-Google-Smtp-Source: AAOMgpel+pBVmuHdrU8z7NLwRULTLUVW0SPg1X2W/vwlPt3lX9HgwG1vA7l90xsfIwme0ZwcomTd2g==
+X-Received: by 2002:a17:902:1682:: with SMTP id h2-v6mr18750183plh.327.1531793406246;
+        Mon, 16 Jul 2018 19:10:06 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id i20-v6sm41597152pfj.82.2018.07.16.19.10.03
+        by smtp.gmail.com with ESMTPSA id i20-v6sm41597152pfj.82.2018.07.16.19.10.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 19:10:04 -0700 (PDT)
+        Mon, 16 Jul 2018 19:10:05 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 14/32] staging: gasket: bail out of reset sequence on device callback error
-Date:   Mon, 16 Jul 2018 19:09:08 -0700
-Message-Id: <20180717020926.176408-15-toddpoynor@gmail.com>
+Subject: [PATCH 15/32] staging: gasket: drop gasket_cdev_get_info, use container_of
+Date:   Mon, 16 Jul 2018 19:09:09 -0700
+Message-Id: <20180717020926.176408-16-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717020926.176408-1-toddpoynor@gmail.com>
 References: <20180717020926.176408-1-toddpoynor@gmail.com>
@@ -81,33 +81,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-If device reset callback returns an error, error out at the gasket
-level.
+Remove gasket_cdev_get_info(), use container_of() directly instead,
+drop unnecessary NULL checks.
 
 Reported-by: Dmitry Torokhov <dtor@chromium.org>
 Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/gasket/gasket_core.c | 26 ++++----------------------
+ 1 file changed, 4 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index a7f696d8e1026..4808bac93f983 100644
+index 4808bac93f983..ae20b7ff9569b 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -1875,9 +1875,11 @@ int gasket_reset_nolock(struct gasket_dev *gasket_dev, uint reset_type)
+@@ -233,18 +233,6 @@ static inline int gasket_check_and_invoke_callback_nolock(
+ 	return ret;
+ }
  
- 	/* Perform a device reset of the requested type. */
- 	ret = driver_desc->device_reset_cb(gasket_dev, reset_type);
--	if (ret)
-+	if (ret) {
- 		gasket_log_error(
- 			gasket_dev, "Device reset cb returned %d.", ret);
-+		return ret;
-+	}
+-/*
+- * Retrieve device-specific data via cdev pointer.
+- * @cdev_ptr: Character device pointer associated with the device.
+- *
+- * This function returns the pointer to the device-specific data allocated in
+- * add_dev_cb for the device associated with cdev_ptr.
+- */
+-static struct gasket_cdev_info *gasket_cdev_get_info(struct cdev *cdev_ptr)
+-{
+-	return container_of(cdev_ptr, struct gasket_cdev_info, cdev);
+-}
+-
+ /*
+  * Returns nonzero if the gasket_cdev_info is owned by the current thread group
+  * ID.
+@@ -1095,12 +1083,9 @@ static int gasket_open(struct inode *inode, struct file *filp)
+ 	const struct gasket_driver_desc *driver_desc;
+ 	struct gasket_ownership *ownership;
+ 	char task_name[TASK_COMM_LEN];
+-	struct gasket_cdev_info *dev_info = gasket_cdev_get_info(inode->i_cdev);
++	struct gasket_cdev_info *dev_info =
++	    container_of(inode->i_cdev, struct gasket_cdev_info, cdev);
  
- 	/* Reinitialize the page tables and interrupt framework. */
- 	for (i = 0; i < driver_desc->num_page_tables; ++i)
+-	if (!dev_info) {
+-		gasket_nodev_error("Unable to retrieve device data");
+-		return -EINVAL;
+-	}
+ 	gasket_dev = dev_info->gasket_dev_ptr;
+ 	driver_desc = gasket_dev->internal_desc->driver_desc;
+ 	ownership = &dev_info->ownership;
+@@ -1182,11 +1167,8 @@ static int gasket_release(struct inode *inode, struct file *file)
+ 	const struct gasket_driver_desc *driver_desc;
+ 	char task_name[TASK_COMM_LEN];
+ 	struct gasket_cdev_info *dev_info =
+-		(struct gasket_cdev_info *)gasket_cdev_get_info(inode->i_cdev);
+-	if (!dev_info) {
+-		gasket_nodev_error("Unable to retrieve device data");
+-		return -EINVAL;
+-	}
++		container_of(inode->i_cdev, struct gasket_cdev_info, cdev);
++
+ 	gasket_dev = dev_info->gasket_dev_ptr;
+ 	driver_desc = gasket_dev->internal_desc->driver_desc;
+ 	ownership = &dev_info->ownership;
 -- 
 2.18.0.203.gfac676dfb9-goog
 
