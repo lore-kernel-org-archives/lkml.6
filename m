@@ -2,106 +2,226 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A27ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0029EECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F23220C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:03:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F23220C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 9A45E2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:04:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hik9Zahr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A45E2148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbeGQKfW (ORCPT
+        id S1729983AbeGQKfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:35:22 -0400
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:48256 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729719AbeGQKfW (ORCPT
+        Tue, 17 Jul 2018 06:35:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:46912 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729656AbeGQKfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:35:22 -0400
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id D11EA1C24B3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 11:03:30 +0100 (IST)
-Received: (qmail 21430 invoked from network); 17 Jul 2018 10:03:30 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.66])
-  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 17 Jul 2018 10:03:30 -0000
-Date:   Tue, 17 Jul 2018 11:03:30 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Jirka Hladky <jhladky@redhat.com>
-Cc:     Kamil Kolakowski <kkolakow@redhat.com>,
-        Jakub Racek <jracek@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
- Stream, Linpack and NAS parallel benchmarks
-Message-ID: <20180717100329.yfy7igdsrpk5ujf4@techsingularity.net>
-References: <CAE4VaGAPOfy0RtQehKoe+443C1GRrJXCveBFgcAZ1nChVavp1g@mail.gmail.com>
- <CAE4VaGBMeL82SJK53gtcWkor-9eXeLX6VP9juw=FW=BOyp+hMA@mail.gmail.com>
- <20180621092331.p2pmaiu6563kp5u2@techsingularity.net>
- <CAE4VaGCQV+cS-vhdLyMwzftbB-xBHPt4Y4chg_0ykLHTE9cRfw@mail.gmail.com>
- <CAE4VaGDHcZbnDpJ+FiQLfA1DRftY0j_GJSnh3FDRi34OztVH6Q@mail.gmail.com>
- <20180627084954.73ucqvac62v5gje4@techsingularity.net>
- <CAE4VaGA9KzX05rdfw2PhEATLisV-NVMc9rOyjzSg-rX1rug9Dw@mail.gmail.com>
- <CABuKy6MUNX85PBVchz_hqXy+FxXU2x0U9ZEZB13rVSLGpWOWvQ@mail.gmail.com>
- <CAE4VaGD12BLS_kk=pRwgTKL8YOU63Nowwa42cEdZObQ=P1MFnA@mail.gmail.com>
- <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
+        Tue, 17 Jul 2018 06:35:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=iXNnyF2ef2ZgbJomMol+/cweHoUkF/XCw3sPJXTZ2R4=; b=Hik9ZahreQ2sr0HCHcXj5f+3L
+        0ddtuhzzkZccZTR88SQVLdALCJNildsXLwTCHP60RBngAlJm+EZByVl+AMe9NqL4gUBujykYzKBt+
+        ThEL/uK38aDGcrSqmvbK1S4mpMnrbvhLiOWPX+rt06J8JbMk6bEnePgmMsOOuCxE00PU6WK//laRG
+        GYtlLmXJkSXxAKHDrdmPeZXC/MI4u1sIpnZgK4NLuS5N8NHGowgBiftKufUSyMEG8cPiVJvK6i8oz
+        Vj+9EJA5nAvdGOfo/YbQkCK4tW3Js4G2HpUDVVI20MY3KWqH1uhftuTPMtFEDahPzKnWxBTqO9soZ
+        w1X/sZhkw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ffMpi-0003Bo-1Q; Tue, 17 Jul 2018 10:03:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C38D520289332; Tue, 17 Jul 2018 12:03:47 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 12:03:47 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
+ and IO
+Message-ID: <20180717100347.GD2494@hirez.programming.kicks-ass.net>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180712172942.10094-9-hannes@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE4VaGArxDYHzg8G203yKjgkuw3mULFSw8yCYbCcqvAUSUxy+A@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180712172942.10094-9-hannes@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 10:45:51AM +0200, Jirka Hladky wrote:
-> Hi Mel,
-> 
-> we have compared 4.18 + git://
-> git.kernel.org/pub/scm/linux/kernel/git/mel/linux.git
-> sched-numa-fast-crossnode-v1r12 against 4.16 kernel and performance results
-> look very good!
-> 
+On Thu, Jul 12, 2018 at 01:29:40PM -0400, Johannes Weiner wrote:
+> +static void time_state(struct psi_resource *res, int state, u64 now)
+> +{
+> +	if (res->state != PSI_NONE) {
+> +		bool was_full = res->state == PSI_FULL;
+> +
+> +		res->times[was_full] += now - res->state_start;
+> +	}
+> +	if (res->state != state)
+> +		res->state = state;
+> +	if (res->state != PSI_NONE)
+> +		res->state_start = now;
+> +}
+> +
+> +static void psi_group_change(struct psi_group *group, int cpu, u64 now,
+> +			     unsigned int clear, unsigned int set)
+> +{
+> +	enum psi_state state = PSI_NONE;
+> +	struct psi_group_cpu *groupc;
+> +	unsigned int *tasks;
+> +	unsigned int to, bo;
+> +
+> +	groupc = per_cpu_ptr(group->cpus, cpu);
+> +	tasks = groupc->tasks;
+> +
+> +	/* Update task counts according to the set/clear bitmasks */
+> +	for (to = 0; (bo = ffs(clear)); to += bo, clear >>= bo) {
+> +		int idx = to + (bo - 1);
+> +
+> +		if (tasks[idx] == 0 && !psi_bug) {
+> +			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d idx=%d tasks=[%u %u %u] clear=%x set=%x\n",
+> +					cpu, idx, tasks[0], tasks[1], tasks[2],
+> +					clear, set);
+> +			psi_bug = 1;
+> +		}
+> +		tasks[idx]--;
+> +	}
+> +	for (to = 0; (bo = ffs(set)); to += bo, set >>= bo)
+> +		tasks[to + (bo - 1)]++;
+> +
+> +	/* Time in which tasks wait for the CPU */
+> +	state = PSI_NONE;
+> +	if (tasks[NR_RUNNING] > 1)
+> +		state = PSI_SOME;
+> +	time_state(&groupc->res[PSI_CPU], state, now);
+> +
+> +	/* Time in which tasks wait for memory */
+> +	state = PSI_NONE;
+> +	if (tasks[NR_MEMSTALL]) {
+> +		if (!tasks[NR_RUNNING] ||
+> +		    (cpu_curr(cpu)->flags & PF_MEMSTALL))
+> +			state = PSI_FULL;
+> +		else
+> +			state = PSI_SOME;
+> +	}
+> +	time_state(&groupc->res[PSI_MEM], state, now);
+> +
+> +	/* Time in which tasks wait for IO */
+> +	state = PSI_NONE;
+> +	if (tasks[NR_IOWAIT]) {
+> +		if (!tasks[NR_RUNNING])
+> +			state = PSI_FULL;
+> +		else
+> +			state = PSI_SOME;
+> +	}
+> +	time_state(&groupc->res[PSI_IO], state, now);
+> +
+> +	/* Time in which tasks are non-idle, to weigh the CPU in summaries */
+> +	if (groupc->nonidle)
+> +		groupc->nonidle_time += now - groupc->nonidle_start;
+> +	groupc->nonidle = tasks[NR_RUNNING] ||
+> +		tasks[NR_IOWAIT] || tasks[NR_MEMSTALL];
+> +	if (groupc->nonidle)
+> +		groupc->nonidle_start = now;
+> +
+> +	/* Kick the stats aggregation worker if it's gone to sleep */
+> +	if (!delayed_work_pending(&group->clock_work))
+> +		schedule_delayed_work(&group->clock_work, PSI_FREQ);
+> +}
+> +
+> +void psi_task_change(struct task_struct *task, u64 now, int clear, int set)
+> +{
+> +	int cpu = task_cpu(task);
+> +
+> +	if (psi_disabled)
+> +		return;
+> +
+> +	if (!task->pid)
+> +		return;
+> +
+> +	if (((task->psi_flags & set) ||
+> +	     (task->psi_flags & clear) != clear) &&
+> +	    !psi_bug) {
+> +		printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
+> +				task->pid, task->comm, cpu,
+> +				task->psi_flags, clear, set);
+> +		psi_bug = 1;
+> +	}
+> +
+> +	task->psi_flags &= ~clear;
+> +	task->psi_flags |= set;
+> +
+> +	psi_group_change(&psi_system, cpu, now, clear, set);
+> +}
 
-Excellent, thanks to both Kamil and yourself for collecting the data.
-It's helpful to have independent verification.
 
-> We see performance gains about 10-20% for SPECjbb2005. NAS results are a
-> little bit noisy but show overall performance gains as well (total runtime
-> for reduced from 6 hours 34 minutes to 6 hours 26 minutes to give you a
-> specific example).
+> +/*
+> + * PSI tracks state that persists across sleeps, such as iowaits and
+> + * memory stalls. As a result, it has to distinguish between sleeps,
+> + * where a task's runnable state changes, and requeues, where a task
+> + * and its state are being moved between CPUs and runqueues.
+> + */
+> +static inline void psi_enqueue(struct task_struct *p, u64 now, bool wakeup)
+> +{
+> +	int clear = 0, set = TSK_RUNNING;
+> +
+> +	if (psi_disabled)
+> +		return;
+> +
+> +	if (!wakeup || p->sched_psi_wake_requeue) {
+> +		if (p->flags & PF_MEMSTALL)
+> +			set |= TSK_MEMSTALL;
+> +		if (p->sched_psi_wake_requeue)
+> +			p->sched_psi_wake_requeue = 0;
+> +	} else {
+> +		if (p->in_iowait)
+> +			clear |= TSK_IOWAIT;
+> +	}
+> +
+> +	psi_task_change(p, now, clear, set);
+> +}
+> +
+> +static inline void psi_dequeue(struct task_struct *p, u64 now, bool sleep)
+> +{
+> +	int clear = TSK_RUNNING, set = 0;
+> +
+> +	if (psi_disabled)
+> +		return;
+> +
+> +	if (!sleep) {
+> +		if (p->flags & PF_MEMSTALL)
+> +			clear |= TSK_MEMSTALL;
+> +	} else {
+> +		if (p->in_iowait)
+> +			set |= TSK_IOWAIT;
+> +	}
+> +
+> +	psi_task_change(p, now, clear, set);
+> +}
 
-Great.
+This is still a scary amount of accounting; not to mention you'll be
+adding O(cgroup-depth) to this in a later patch.
 
-> The only benchmark showing a slight regression is stream
-> - but the regression is just a few percents ( upto 10%) and I think it's
-> not a real concern given that it's an artificial benchmark.
-> 
-
-Agreed.
-
-> How is your testing going? Do you think
-> that sched-numa-fast-crossnode-v1r12 series can make it into the 4.18?
-> 
-
-My own testing completed and the results are within expectations and I
-saw no red flags. Unfortunately, I consider it unlikely they'll be merged
-for 4.18. Srikar Dronamraju's series is likely to need another update
-and I would need to rebase my patches on top of that. Given the scope
-and complexity, I find it unlikely they would be accepted for an -rc,
-particularly this late of an rc. Whether we hit the 4.19 merge window or
-not will depend on when Srikar's series gets updated.
-
-> Thanks a lot for your efforts to improve the performance!
-
-My pleasure.
-
--- 
-Mel Gorman
-SUSE Labs
+Where are the performance numbers for all this?
