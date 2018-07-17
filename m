@@ -6,85 +6,113 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A4CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CFBECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2928F208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:48:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2928F208E3
+	by mail.kernel.org (Postfix) with ESMTP id 212E5208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:48:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212E5208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731283AbeGQMUU (ORCPT
+        id S1731382AbeGQMU2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:20:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34714 "EHLO
+        Tue, 17 Jul 2018 08:20:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34720 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730919AbeGQMUU (ORCPT
+        with ESMTP id S1727877AbeGQMU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:20:20 -0400
+        Tue, 17 Jul 2018 08:20:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9C7D899;
-        Tue, 17 Jul 2018 11:48:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAFABC19;
+        Tue, 17 Jul 2018 11:48:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.17 0/1] 4.17.8-stable review
-Date:   Tue, 17 Jul 2018 13:47:59 +0200
-Message-Id: <20180717114728.444937016@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Matt Hart <matt@mattface.org>, Michal Hocko <mhocko@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 1/1] mm: dont do zero_resv_unavail if memmap is not allocated
+Date:   Tue, 17 Jul 2018 13:48:00 +0200
+Message-Id: <20180717114728.563227867@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180717114728.444937016@linuxfoundation.org>
+References: <20180717114728.444937016@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.8-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.17.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.17.8-rc1
-X-KernelTest-Deadline: 2018-07-19T11:47+00:00
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.17.8 release.
-There are 1 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Thu Jul 19 11:47:15 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.8-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
-and the diffstat can be found below.
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-thanks,
+commit d1b47a7c9efcf3c3384b70f6e3c8f1423b44d8c7 upstream.
 
-greg k-h
+Moving zero_resv_unavail before memmap_init_zone(), caused a regression on
+x86-32.
 
--------------
-Pseudo-Shortlog of commits:
+The cause is that we access struct pages before they are allocated when
+CONFIG_FLAT_NODE_MEM_MAP is used.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.17.8-rc1
+free_area_init_nodes()
+  zero_resv_unavail()
+    mm_zero_struct_page(pfn_to_page(pfn)); <- struct page is not alloced
+  free_area_init_node()
+    if CONFIG_FLAT_NODE_MEM_MAP
+      alloc_node_mem_map()
+        memblock_virt_alloc_node_nopanic() <- struct page alloced here
 
-Pavel Tatashin <pasha.tatashin@oracle.com>
-    mm: don't do zero_resv_unavail if memmap is not allocated
+On the other hand memblock_virt_alloc_node_nopanic() zeroes all the memory
+that it returns, so we do not need to do zero_resv_unavail() here.
 
+Fixes: e181ae0c5db9 ("mm: zero unavailable pages before memmap init")
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Tested-by: Matt Hart <matt@mattface.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
--------------
+---
+ include/linux/mm.h |    2 +-
+ mm/page_alloc.c    |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Diffstat:
-
- Makefile           | 4 ++--
- include/linux/mm.h | 2 +-
- mm/page_alloc.c    | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2081,7 +2081,7 @@ extern int __meminit __early_pfn_to_nid(
+ 					struct mminit_pfnnid_cache *state);
+ #endif
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK
++#if defined(CONFIG_HAVE_MEMBLOCK) && !defined(CONFIG_FLAT_NODE_MEM_MAP)
+ void zero_resv_unavail(void);
+ #else
+ static inline void zero_resv_unavail(void) {}
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6377,7 +6377,7 @@ void __paginginit free_area_init_node(in
+ 	free_area_init_core(pgdat);
+ }
+ 
+-#ifdef CONFIG_HAVE_MEMBLOCK
++#if defined(CONFIG_HAVE_MEMBLOCK) && !defined(CONFIG_FLAT_NODE_MEM_MAP)
+ /*
+  * Only struct pages that are backed by physical memory are zeroed and
+  * initialized by going through __init_single_page(). But, there are some
+@@ -6415,7 +6415,7 @@ void __paginginit zero_resv_unavail(void
+ 	if (pgcnt)
+ 		pr_info("Reserved but unavailable: %lld pages", pgcnt);
+ }
+-#endif /* CONFIG_HAVE_MEMBLOCK */
++#endif /* CONFIG_HAVE_MEMBLOCK && !CONFIG_FLAT_NODE_MEM_MAP */
+ 
+ #ifdef CONFIG_HAVE_MEMBLOCK_NODE_MAP
+ 
 
 
