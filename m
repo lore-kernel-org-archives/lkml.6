@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4443ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D91BECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:07:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88527208C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:05:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88527208C3
+	by mail.kernel.org (Postfix) with ESMTP id 51323208C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:07:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51323208C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbeGQHgz (ORCPT
+        id S1728515AbeGQHih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 03:36:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50316 "EHLO mx1.suse.de"
+        Tue, 17 Jul 2018 03:38:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50632 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727821AbeGQHgy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 03:36:54 -0400
+        id S1727625AbeGQHih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 03:38:37 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 93DADAE62;
-        Tue, 17 Jul 2018 07:05:45 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 09:05:44 +0200
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0EB83AE62;
+        Tue, 17 Jul 2018 07:07:28 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 09:07:25 +0200
 From:   Joerg Roedel <jroedel@suse.de>
-To:     Andy Lutomirski <luto@kernel.org>
+To:     Andy Lutomirski <luto@amacapital.net>
 Cc:     Joerg Roedel <joro@8bytes.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -36,6 +36,7 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Linux-MM <linux-mm@kvack.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Juergen Gross <jgross@suse.com>,
@@ -55,32 +56,34 @@ Cc:     Joerg Roedel <joro@8bytes.org>,
         Andrea Arcangeli <aarcange@redhat.com>,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Subject: Re: [PATCH 03/39] x86/entry/32: Load task stack from x86_tss.sp1 in
- SYSENTER handler
-Message-ID: <20180717070544.xok34ro76f7m32ha@suse.de>
+Subject: Re: [PATCH 07/39] x86/entry/32: Enter the kernel via trampoline stack
+Message-ID: <20180717070725.paxlewuu4z4qd3cu@suse.de>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <1531308586-29340-4-git-send-email-joro@8bytes.org>
- <823BAA9B-FACA-4E91-BE56-315FF569297C@amacapital.net>
- <20180713094849.5bsfpwhxzo5r5exk@8bytes.org>
- <CALCETrUP1QUKPLPJg6_L5=Mzmq33cSvq+NMaYW01wTCepdjCyg@mail.gmail.com>
- <CALCETrUBR-TGPY7wF4UwRb7jW39H+rJ4XFen35dgJRysk9sYTQ@mail.gmail.com>
+ <1531308586-29340-8-git-send-email-joro@8bytes.org>
+ <A66D58A6-3DC6-4CF3-B2A5-433C6E974060@amacapital.net>
+ <20180713105620.z6bjhqzfez2hll6r@8bytes.org>
+ <CALCETrW4XMD9TSTxK3h-3p5ZE5Z=DupiUBtiXnMmSprbXtJr3g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALCETrUBR-TGPY7wF4UwRb7jW39H+rJ4XFen35dgJRysk9sYTQ@mail.gmail.com>
+In-Reply-To: <CALCETrW4XMD9TSTxK3h-3p5ZE5Z=DupiUBtiXnMmSprbXtJr3g@mail.gmail.com>
 User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 04:17:40PM -0700, Andy Lutomirski wrote:
-> I re-read it again.  How about keeping TSS_entry_stack but making it
-> be the offset from the TSS to the entry stack.  Then do the arithmetic
-> in asm.
+On Fri, Jul 13, 2018 at 10:21:39AM -0700, Andy Lutomirski wrote:
+> On Fri, Jul 13, 2018 at 3:56 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> > Right, I implement a more restrictive check.
+> 
+> But the check needs to be correct or we'll mess up, right?  I think
+> the code will be much more robust and easier to review if you check
+> "on the entry stack" instead of ">= the entry stack".  (Or <= -- I can
+> never remember how this works in AT&T syntax.)
 
-Hmm, I think its better to keep the arithmetic in the C file for better
-readability. How about renaming it to TSS_entry2task_stack?
+Yeah, I re-used the check implemented on the NMI entry path, it checks
+exactly for the entry-stack range.
 
 
 Regards,
