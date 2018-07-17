@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BF6ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28964ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5725C20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5725C20C0E
+	by mail.kernel.org (Postfix) with ESMTP id C787120BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C787120BED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731194AbeGQKJE (ORCPT
+        id S1730571AbeGQKJS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:09:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9683 "EHLO huawei.com"
+        Tue, 17 Jul 2018 06:09:18 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9685 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729640AbeGQKJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730749AbeGQKJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Jul 2018 06:09:04 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id C8164F972FA2C;
-        Tue, 17 Jul 2018 17:37:06 +0800 (CST)
+        by Forcepoint Email with ESMTP id 03F449C633E37;
+        Tue, 17 Jul 2018 17:37:07 +0800 (CST)
 Received: from vm107-89-192.huawei.com (100.107.89.192) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.382.0; Tue, 17 Jul 2018 17:37:02 +0800
+ 14.3.382.0; Tue, 17 Jul 2018 17:36:59 +0800
 From:   Li Wei <liwei213@huawei.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <catalin.marinas@arm.com>, <will.deacon@arm.com>,
@@ -45,12 +45,10 @@ CC:     <zangleigang@hisilicon.com>, <gengjianfeng@hisilicon.com>,
         <guodong.xu@linaro.org>, <puck.chen@hisilicon.com>,
         <john.stultz@linaro.org>, <liwei213@huawei.com>,
         <fengbaopeng@hisilicon.com>
-Subject: [PATCH v11 2/4] [RESEND] dt-bindings: scsi: ufs: add document for hisi-ufs
-Date:   Tue, 17 Jul 2018 17:36:57 +0800
-Message-ID: <20180717093659.103263-3-liwei213@huawei.com>
+Subject: [PATCH v11 0/4] [RESEND] scsi: ufs: add ufs driver code for Hisilicon Hi3660 SoC
+Date:   Tue, 17 Jul 2018 17:36:55 +0800
+Message-ID: <20180717093659.103263-1-liwei213@huawei.com>
 X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20180717093659.103263-1-liwei213@huawei.com>
-References: <20180717093659.103263-1-liwei213@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [100.107.89.192]
@@ -60,92 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add ufs node document for Hisilicon.
+This patchset adds driver support for UFS for Hi3660 SoC. It is verified on HiKey960 board.
 
-Signed-off-by: Li Wei <liwei213@huawei.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Tested-by: John Stultz <john.stultz@linaro.org>
----
- Documentation/devicetree/bindings/ufs/ufs-hisi.txt | 41 ++++++++++++++++++++++
- .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      | 10 ++++--
- 2 files changed, 48 insertions(+), 3 deletions(-)
+Li Wei (4):
+  scsi: ufs: add Hisilicon ufs driver code
+  dt-bindings: scsi: ufs: add document for hisi-ufs
+  arm64: dts: add ufs dts node
+  arm64: defconfig: enable configs for Hisilicon ufs
+
+ Documentation/devicetree/bindings/ufs/ufs-hisi.txt |  41 ++
+ .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  10 +-
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |  18 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/scsi/ufs/Kconfig                           |   9 +
+ drivers/scsi/ufs/Makefile                          |   1 +
+ drivers/scsi/ufs/ufs-hisi.c                        | 619 +++++++++++++++++++++
+ drivers/scsi/ufs/ufs-hisi.h                        | 115 ++++
+ 8 files changed, 811 insertions(+), 3 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
+ create mode 100644 drivers/scsi/ufs/ufs-hisi.c
+ create mode 100644 drivers/scsi/ufs/ufs-hisi.h
 
-diff --git a/Documentation/devicetree/bindings/ufs/ufs-hisi.txt b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-new file mode 100644
-index 000000000000..a48c44817367
---- /dev/null
-+++ b/Documentation/devicetree/bindings/ufs/ufs-hisi.txt
-@@ -0,0 +1,41 @@
-+* Hisilicon Universal Flash Storage (UFS) Host Controller
-+
-+UFS nodes are defined to describe on-chip UFS hardware macro.
-+Each UFS Host Controller should have its own node.
-+
-+Required properties:
-+- compatible        : compatible list, contains one of the following -
-+					"hisilicon,hi3660-ufs", "jedec,ufs-1.1" for hisi ufs
-+					host controller present on Hi36xx chipset.
-+- reg               : should contain UFS register address space & UFS SYS CTRL register address,
-+- interrupt-parent  : interrupt device
-+- interrupts        : interrupt number
-+- clocks	        : List of phandle and clock specifier pairs
-+- clock-names       : List of clock input name strings sorted in the same
-+					order as the clocks property. "ref_clk", "phy_clk" is optional
-+- freq-table-hz     : Array of <min max> operating frequencies stored in the same
-+                      order as the clocks property. If this property is not
-+                      defined or a value in the array is "0" then it is assumed
-+                      that the frequency is set by the parent clock or a
-+                      fixed rate clock source.
-+- resets            : describe reset node register
-+- reset-names       : reset node register, the "rst" corresponds to reset the whole UFS IP.
-+
-+Example:
-+
-+	ufs: ufs@ff3b0000 {
-+		compatible = "hisilicon,hi3660-ufs", "jedec,ufs-1.1";
-+		/* 0: HCI standard */
-+		/* 1: UFS SYS CTRL */
-+		reg = <0x0 0xff3b0000 0x0 0x1000>,
-+			<0x0 0xff3b1000 0x0 0x1000>;
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&crg_ctrl HI3660_CLK_GATE_UFSIO_REF>,
-+			<&crg_ctrl HI3660_CLK_GATE_UFSPHY_CFG>;
-+		clock-names = "ref_clk", "phy_clk";
-+		freq-table-hz = <0 0>, <0 0>;
-+		/* offset: 0x84; bit: 12  */
-+		resets = <&crg_rst 0x84 12>;
-+		reset-names = "rst";
-+	};
-diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-index c39dfef76a18..2df00524bd21 100644
---- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-+++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-@@ -41,6 +41,8 @@ Optional properties:
- -lanes-per-direction	: number of lanes available per direction - either 1 or 2.
- 			  Note that it is assume same number of lanes is used both
- 			  directions at once. If not specified, default is 2 lanes per direction.
-+- resets            : reset node register
-+- reset-names       : describe reset node register, the "rst" corresponds to reset the whole UFS IP.
- 
- Note: If above properties are not defined it can be assumed that the supply
- regulators or clocks are always on.
-@@ -61,9 +63,11 @@ Example:
- 		vccq-max-microamp = 200000;
- 		vccq2-max-microamp = 200000;
- 
--		clocks = <&core 0>, <&ref 0>, <&iface 0>;
--		clock-names = "core_clk", "ref_clk", "iface_clk";
--		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>;
-+		clocks = <&core 0>, <&ref 0>, <&phy 0>, <&iface 0>;
-+		clock-names = "core_clk", "ref_clk", "phy_clk", "iface_clk";
-+		freq-table-hz = <100000000 200000000>, <0 0>, <0 0>, <0 0>;
-+		resets = <&reset 0 1>;
-+		reset-names = "rst";
- 		phys = <&ufsphy1>;
- 		phy-names = "ufsphy";
- 	};
+Major changes in v11:
+ - solve review comments from John Stultz.
+  *include Rob Herring's Reviewed-by tag to the dt-binding patch.
+  *drop the defconfig changes, such as f2fs and squashfs related.
+Major changes in v10:
+ - solve review comments from Rob Herring.
+   *Modify the "reset-names" describe in ufs-hisi.txt binding file.
+   *List clocks in ufs-hisi.txt binding file.
+   *remove the "arst" and keep only "rst" in the binging files.
+   *remove the "arst" member from both dts and c code. 
+Major changes in v9:
+ - solve review comments from Rob Herring.
+   *remove freq-table-hz in ufs-hisi.txt binding file.
+   *Move the rst to the ufshcd_pltfm.txt common binding file.
+   *Modify the member "assert" of UFS host structure to "arst".
+Major changes in v8:
+ - solve review comments from zhangfei.
+   *Add Version history.
+ - solve review comments from Rob Herring.
+   *remove freq-table-hz.
+ -  solve review comments from Riku Voipio.
+   *Add MODULE_DEVICE_TABLE for ufs driver.
+-- 
+Major changes in v7:
+ - solve review comments from Philippe Ombredanne.
+   *use the new SPDX license ids instead of the GNU General Public License.
 -- 
 2.15.0
 
