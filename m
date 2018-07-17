@@ -2,199 +2,308 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735CAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10CCBECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1294F20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:00:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1294F20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shmanahar.org
+	by mail.kernel.org (Postfix) with ESMTP id B54B02077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:00:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WdmYb7vH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54B02077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731023AbeGQVek (ORCPT
+        id S1731090AbeGQVfQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:34:40 -0400
-Received: from avasout05.plus.net ([84.93.230.250]:46554 "EHLO
-        avasout05.plus.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729728AbeGQVej (ORCPT
+        Tue, 17 Jul 2018 17:35:16 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:42342 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729840AbeGQVfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:34:39 -0400
-Received: from hairyalien ([80.229.148.18])
-        by smtp with SMTP
-        id fX4nf0w0k05ijfX4ofF3fE; Tue, 17 Jul 2018 22:00:12 +0100
-X-CM-Score: 0.00
-X-CNFS-Analysis: v=2.3 cv=QJJGuDDL c=1 sm=1 tr=0
- a=o7Djd4SkmPXITDn8qH+ssQ==:117 a=o7Djd4SkmPXITDn8qH+ssQ==:17
- a=IkcTkHD0fZMA:10 a=R9QF1RCXAYgA:10 a=pGLkceISAAAA:8 a=NEAV23lmAAAA:8
- a=6TZtSGDV1qYMrcTs3qQA:9 a=nMnXHCmPwxmY64QX:21 a=kPstQwhks1Tn8aqv:21
- a=QEXdDO2ut3YA:10
-Received: by hairyalien (sSMTP sendmail emulation); Tue, 17 Jul 2018 22:00:05 +0100
-Date:   Tue, 17 Jul 2018 22:00:05 +0100
-From:   Nick Dyer <nick@shmanahar.org>
-To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] Input: atmel_mxt_ts: Add support for  optional
- regulators.
-Message-ID: <20180717210005.GA21416@hairyalien>
-References: <1531851386-17840-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
- <1531851386-17840-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
+        Tue, 17 Jul 2018 17:35:16 -0400
+Received: by mail-lf0-f68.google.com with SMTP id u202-v6so1848375lff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:00:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z5JYk6tRqjYfJuLRQ/U6rFKZ//PDaSgY9kHWyM3JcX8=;
+        b=WdmYb7vHZKo49Dn7jhHuyP6VkkG7PetQa6INUMEM+Cx9dM1QkVHMqKY1tJbpdD88ST
+         iY0Xqma+2N9opU82QoCMIxdn+7qGmufvO3Yr9f2M7ZE/HH9T2eUU63jipZTr+eKEqMFo
+         JmFdGHa8UPkbY87SxELAV0mnOXEB5pOHMecOc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z5JYk6tRqjYfJuLRQ/U6rFKZ//PDaSgY9kHWyM3JcX8=;
+        b=MtzE6hCoQYkSqpv9nGjgeeye2L3LaguYOEHOBFeYAVzp8LkspdrzS8xMPpdkuVtnYo
+         p1uBe8fIog+JBi2mnTJskCtarv6KssiWR3ff8k/b/Wg8o/8yDd6HhDymWxX56mMsbdV4
+         C/0MEwrfx/jtghVmC9bsBaVIa/ysEumj90wgju4Vd/P66Wrb55dyxkGXWzW7luc07ndJ
+         +MACNoPSRLGeH7vPYNj2UW+z5UroMPURTzKhbYzcz0E5+f0xUq1e/4E+2arbDpGbOj5I
+         jZFHRXrkIP9XdMbbQ1ZJU+qKnaXGJVUJw93ZkrSB8MNUZMD6t55egrKWN1uDG8aNPbCt
+         FYRQ==
+X-Gm-Message-State: AOUpUlFLcNgkm698X05qR7/9EQurXzvdDoAgRayWT0DYJVrFXmYAcw3F
+        p6n6ly9SqdhHEZw8c4BDRIsDlPuGzx4=
+X-Google-Smtp-Source: AAOMgpcB+/zAbG4gksjA6MZJYAKA+O0vbXquSe5FkQdtcy1rO6zAVIKDDsL8cj/2XJU4y9QcDZgsug==
+X-Received: by 2002:a19:ea5c:: with SMTP id i89-v6mr2143589lfh.19.1531861247671;
+        Tue, 17 Jul 2018 14:00:47 -0700 (PDT)
+Received: from mail-lf0-f47.google.com (mail-lf0-f47.google.com. [209.85.215.47])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm312792ljc.50.2018.07.17.14.00.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 14:00:46 -0700 (PDT)
+Received: by mail-lf0-f47.google.com with SMTP id f18-v6so1855464lfc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:00:46 -0700 (PDT)
+X-Received: by 2002:a19:d754:: with SMTP id o81-v6mr2109744lfg.124.1531861245562;
+ Tue, 17 Jul 2018 14:00:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531851386-17840-2-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-CMAE-Envelope: MS4wfBnGOlP2wV8Hd5/1i2glJlyVzj4k10NHH6g5g9hZuijbXArqkYfx/oLqKX9xt9esOhJb87EiYHPctvT8mTLV0qtsZLfC738ou5ivZaRKMlKpSBGQYW8l
- qfJBGYCz9VNX0rnaasi7JCzgdeuTlqcXAhk=
+References: <1531734237-27421-1-git-send-email-sayalil@codeaurora.org> <1531734237-27421-2-git-send-email-sayalil@codeaurora.org>
+In-Reply-To: <1531734237-27421-2-git-send-email-sayalil@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 17 Jul 2018 14:00:09 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4pJWtRyY5gzOMDz58zaSS-kfy13Ek9qOVmzOdm-csP0A@mail.gmail.com>
+Message-ID: <CAE=gft4pJWtRyY5gzOMDz58zaSS-kfy13Ek9qOVmzOdm-csP0A@mail.gmail.com>
+Subject: Re: [PATCH V6] scsi: ufs: Add configfs support for UFS provisioning
+To:     sayalil@codeaurora.org
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, riteshh@codeaurora.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jlbec@evilplan.org, hch@lst.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 08:16:25PM +0200, Paweł Chmiel wrote:
-> This patch adds optional regulators, which can be used to power
-> up touchscreen. After enabling regulators, we need to wait 150msec.
-> This value is taken from official driver.
-> 
-> It was tested on Samsung Galaxy i9000 (based on Samsung S5PV210 SOC).
-> 
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Hi Sayali,
+On Mon, Jul 16, 2018 at 2:44 AM Sayali Lokhande <sayalil@codeaurora.org> wrote:
+>
+> This patch adds configfs support to provision UFS device at
+> runtime. This feature can be primarily useful in factory or
+> assembly line as some devices may be required to be configured
+> multiple times during initial system development phase.
+> Configuration Descriptors can be written multiple times until
+> bConfigDescrLock attribute is zero.
+>
+> Configuration descriptor buffer consists of Device and Unit
+> descriptor configurable parameters which are parsed from vendor
+> specific provisioning file and then passed via configfs node at
+> runtime to provision ufs device.
+> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+>
+> Usage:
+> 1) To read current configuration descriptor :
+>    cat /config/XXXX.ufshc/ufs_provision
+> 2) To provision ufs device:
+>    echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 > ---
-> Changes from v1:
->   - Enable regulators only if reset_gpio is present.
->   - Switch from devm_regulator_get_optional to devm_regulator_get
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 46 ++++++++++++++++++++++++++++++--
->  1 file changed, 44 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index 54fe190fd4bc..005f0fee9fc8 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -27,6 +27,7 @@
->  #include <linux/interrupt.h>
->  #include <linux/of.h>
->  #include <linux/property.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/property.h>
-> @@ -194,10 +195,10 @@ enum t100_type {
->  
->  /* Delay times */
->  #define MXT_BACKUP_TIME		50	/* msec */
-> -#define MXT_RESET_GPIO_TIME	20	/* msec */
->  #define MXT_RESET_INVALID_CHG	100	/* msec */
->  #define MXT_RESET_TIME		200	/* msec */
->  #define MXT_RESET_TIMEOUT	3000	/* msec */
-> +#define MXT_REGULATOR_DELAY	150	/* msec */
->  #define MXT_CRC_TIMEOUT		1000	/* msec */
->  #define MXT_FW_RESET_TIME	3000	/* msec */
->  #define MXT_FW_CHG_TIMEOUT	300	/* msec */
-> @@ -310,6 +311,8 @@ struct mxt_data {
->  	struct t7_config t7_cfg;
->  	struct mxt_dbg dbg;
->  	struct gpio_desc *reset_gpio;
-> +	struct regulator *vdd_reg;
-> +	struct regulator *avdd_reg;
->  
->  	/* Cached parameters from object table */
->  	u16 T5_address;
-> @@ -3076,6 +3079,22 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		return error;
->  	}
->  
-> +	data->vdd_reg = devm_regulator_get(&client->dev, "vdd");
-> +	if (IS_ERR(data->vdd_reg)) {
-> +		error = PTR_ERR(data->vdd_reg);
-> +		dev_err(&client->dev, "Failed to get vdd regulator: %d\n",
-> +			error);
-> +		return error;
-> +	}
+>  Documentation/ABI/testing/configfs-driver-ufs |  18 +++
+>  drivers/scsi/ufs/Kconfig                      |  10 ++
+>  drivers/scsi/ufs/Makefile                     |   1 +
+>  drivers/scsi/ufs/ufs-configfs.c               | 162 ++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                     |   2 +
+>  drivers/scsi/ufs/ufshcd.h                     |  19 +++
+>  6 files changed, 212 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+>
+...
+> diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
+> new file mode 100644
+> index 0000000..3e9837a
+> --- /dev/null
+> +++ b/drivers/scsi/ufs/ufs-configfs.c
+> @@ -0,0 +1,162 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +// Copyright (c) 2018, Linux Foundation.
 > +
-> +	data->avdd_reg = devm_regulator_get(&client->dev, "avdd");
-> +	if (IS_ERR(data->avdd_reg)) {
-> +		error = PTR_ERR(data->avdd_reg);
-> +		dev_err(&client->dev, "Failed to get avdd regulator: %d\n",
-> +			error);
-> +		return error;
-> +	}
+> +#include <linux/configfs.h>
+> +#include <linux/err.h>
+> +#include <linux/string.h>
 > +
->  	error = devm_request_threaded_irq(&client->dev, client->irq,
->  					  NULL, mxt_interrupt, IRQF_ONESHOT,
->  					  client->name, data);
-> @@ -3087,7 +3106,26 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	disable_irq(client->irq);
->  
->  	if (data->reset_gpio) {
-> -		msleep(MXT_RESET_GPIO_TIME);
-> +		error = regulator_enable(data->vdd_reg);
-> +		if (error) {
-> +			dev_err(&client->dev, "Failed to enable vdd regulator: %d\n",
-> +				error);
-> +			return error;
-> +		}
+> +#include "ufs.h"
+> +#include "ufshcd.h"
 > +
-> +		error = regulator_enable(data->avdd_reg);
-> +		if (error) {
-> +			dev_err(&client->dev, "Failed to enable avdd regulator: %d\n",
-> +				error);
-> +			return error;
-> +		}
+> +static inline struct ufs_hba *config_item_to_hba(struct config_item *item)
+> +{
+> +       struct config_group *group = to_config_group(item);
+> +       struct configfs_subsystem *subsys = to_configfs_subsystem(group);
+> +       struct ufs_hba *hba = container_of(subsys, struct ufs_hba, subsys);
 > +
-> +		/*
-> +		 * According to maXTouch power sequencing specification, RESET line
-> +		 * must be kept low until some time after regulators come up to
-> +		 * voltage
-> +		 */
-> +		msleep(MXT_REGULATOR_DELAY);
->  		gpiod_set_value(data->reset_gpio, 1);
->  		msleep(MXT_RESET_INVALID_CHG);
+> +       return hba ? hba : NULL;
 
-Hi Pawel-
+Can this ever return NULL? to_config_group() and
+to_configfs_subsystem() guard against null, but container_of does not,
+which would make hba a small negative value. The conditional would
+needs to be subsys ? hba : NULL.
 
-I see you've borrowed some of the logic from the patch I wrote a while
-back (see https://github.com/ndyer/linux/commit/8e9687e41ed062 )
+> +}
+> +
+> +static ssize_t ufs_provision_show(struct config_item *item, char *buf)
+> +{
+> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
+> +       int i, ret, curr_len = 0;
+> +       struct ufs_hba *hba = config_item_to_hba(item);
+> +
+> +       if (!hba)
+> +               return snprintf(buf, PAGE_SIZE, "ufs hba is NULL!\n");
 
-The correct behaviour according to Atmel should be:
+Maybe just fail, rather than successfully returning something unexpected.
 
-* Make RESET zero
-* Bring up regulators
-* Wait for a period to settle (150 msec)
-* Release RESET
-* Wait for 100 msec whilst device gets through bootloader
-* Wait for CHG line assert before reading info block
+> +
+> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_READ_DESC,
+> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+> +
+> +       if (ret)
+> +               return snprintf(buf, PAGE_SIZE,
+> +               "Failed reading descriptor. desc_idn %d, opcode %x ret %d\n",
+> +               QUERY_DESC_IDN_CONFIGURATION,
+> +               UPIU_QUERY_OPCODE_READ_DESC, ret);
 
-I can't see the first and last steps in your patch at present.
+Same here, failing is probably better than returning unexpected text.
 
-The only downside with this approach is that there are a lot of
-delays during driver probe, but I believe the asynchronous probe stuff
-that's landed since I wrote the original patch should address that.
+> +
+> +       for (i = 0; i < buff_len; i++)
+> +               curr_len += snprintf((buf + curr_len), (PAGE_SIZE - curr_len),
+> +                               "0x%x ", desc_buf[i]);
+> +
+> +       return curr_len;
+> +}
+> +
+> +ssize_t ufshcd_desc_configfs_store(struct ufs_hba *hba,
+> +               const char *buf, size_t count)
+> +{
+> +       char *strbuf;
+> +       char *strbuf_copy;
+> +       u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
+> +       int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
+> +       char *token;
+> +       int i, ret, value;
+> +       u32 bConfigDescrLock = 0;
+> +
+> +       /* reserve one byte for null termination */
+> +       strbuf = kmalloc(count + 1, GFP_KERNEL);
+> +       if (!strbuf)
+> +               return -ENOMEM;
+> +
+> +       strbuf_copy = strbuf;
+> +       strlcpy(strbuf, buf, count + 1);
+> +
+> +       if (!hba)
+> +               goto out;
+> +
+> +       /* Just return if bConfigDescrLock is already set */
+> +       ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
+> +               QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &bConfigDescrLock);
+> +       if (ret)
+> +               goto out;
+> +
+> +       if (bConfigDescrLock) {
+> +               dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
+> +               __func__, bConfigDescrLock);
+> +               goto out;
+> +       }
+> +
+> +       for (i = 0; i < QUERY_DESC_CONFIGURATION_DEF_SIZE; i++) {
+> +               token = strsep(&strbuf, " ");
+> +               if (!token && i)
+> +                       break;
+> +
+> +               ret = kstrtoint(token, 0, &value);
+> +               if (ret) {
+> +                       dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
+> +                               __func__, ret, token);
+> +                       break;
+> +               }
+> +               desc_buf[i] = (u8)value;
+> +       }
+> +
+> +       /* Write configuration descriptor to provision ufs */
+> +       ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
+> +               QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
+> +
+> +       if (!ret)
+> +               dev_err(hba->dev, "%s: UFS Provisioning done, reboot now!\n",
+> +               __func__);
+> +
+> +out:
+> +       kfree(strbuf_copy);
+> +       return count;
+> +}
+> +
+> +static ssize_t ufs_provision_store(struct config_item *item,
+> +               const char *buf, size_t count)
+> +{
+> +       struct ufs_hba *hba = config_item_to_hba(item);
+> +
+> +       return ufshcd_desc_configfs_store(hba, buf, count);
+> +}
+> +
+> +static struct configfs_attribute ufshcd_attr_provision = {
+> +       .ca_name        = "ufs_provision",
+> +       .ca_mode        = 0644,
+> +       .ca_owner       = THIS_MODULE,
+> +       .show           = ufs_provision_show,
+> +       .store          = ufs_provision_store,
+> +};
+> +
+> +static struct configfs_attribute *ufshcd_attrs[] = {
+> +       &ufshcd_attr_provision,
+> +       NULL,
+> +};
+> +
+> +static struct config_item_type ufscfg_type = {
+> +       .ct_attrs       = ufshcd_attrs,
+> +       .ct_owner       = THIS_MODULE,
+> +};
+> +
+> +static struct configfs_subsystem ufscfg_subsys = {
+> +       .su_group = {
+> +               .cg_item = {
+> +                       .ci_type = &ufscfg_type,
+> +               },
+> +       },
+> +};
+> +
+> +int ufshcd_configfs_init(struct ufs_hba *hba, const char *name)
+> +{
+> +       int ret;
+> +       struct configfs_subsystem *subsys = &hba->subsys;
+> +
+> +       strncpy(ufscfg_subsys.su_group.cg_item.ci_namebuf, name, strlen(name));
+> +       subsys->su_group = ufscfg_subsys.su_group;
+> +       config_group_init(&subsys->su_group);
+> +       mutex_init(&subsys->su_mutex);
+> +       ret = configfs_register_subsystem(subsys);
 
-cheers
+Are the configfs folks okay with adding a new top level directory for
+each host controller in the system? It might be better to have a
+single top level directory of ufs, and then each controller as a
+subdirectory underneath that. I'll defer to whatever the maintainers
+think here.
 
-Nick
+> +       if (ret)
+> +               pr_err("Error %d while registering subsystem %s\n",
+> +                      ret,
+> +                      subsys->su_group.cg_item.ci_namebuf);
+> +
+> +       return ret;
+> +}
+> +
+> +void ufshcd_configfs_exit(void)
+> +{
+> +       configfs_unregister_subsystem(&ufscfg_subsys);
+> +}
 
->  	}
-> @@ -3116,6 +3154,10 @@ static int mxt_remove(struct i2c_client *client)
->  	struct mxt_data *data = i2c_get_clientdata(client);
->  
->  	disable_irq(data->irq);
-> +	if (data->reset_gpio) {
-> +		regulator_disable(data->avdd_reg);
-> +		regulator_disable(data->vdd_reg);
-> +	}
->  	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
->  	mxt_free_input_device(data);
->  	mxt_free_object_table(data);
-> -- 
-> 2.7.4
-> 
+-Evan
