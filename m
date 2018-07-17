@@ -2,137 +2,92 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07664ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BCFECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADD2D208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB39B208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cPP0fTf5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADD2D208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d2wtBxur"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB39B208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbeGQExP (ORCPT
+        id S1730043AbeGQExT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 00:53:15 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37637 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729620AbeGQEwe (ORCPT
+        Tue, 17 Jul 2018 00:53:19 -0400
+Received: from mail-pl0-f46.google.com ([209.85.160.46]:45734 "EHLO
+        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727877AbeGQExT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 00:52:34 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n7-v6so1514155pgq.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 21:21:59 -0700 (PDT)
+        Tue, 17 Jul 2018 00:53:19 -0400
+Received: by mail-pl0-f46.google.com with SMTP id 94-v6so4318400ple.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 21:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=E3HM8Tth/zRydJwOd6Lp6hlKsvHw6H8gx4o1bYaHJJ4=;
-        b=cPP0fTf5plHseI4evj6xcwyRBM2F80MNLTiSR+WLYaVgfJ3JribBIXvb7IHjJsgS/K
-         5fZ/uAruUE27oZANxH1g7FPguL8iumDeFd7I97Apa2a0545xNy462UaeX0bwqvbHNckU
-         vXqS55kxYI0kJVx6F8Puo2xVubns4T1+kOZW0=
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=IbEYh3sE0lEQN86EDBidAaoJTgfuNRe/T1BPCLMMSbg=;
+        b=d2wtBxur94D14Z9XWSp94ESdFYXTa3LG/wYP+C/jko83F4yQbfJYeWj6DCUDNoorRe
+         OAm9h10smBoY6Ol++l+vjN7jzxjIox8CfUNye7LH4c9LfHtP4MVeuWDQfx6glTkDGgMg
+         B8GPIzeqhsVFJnoUZCmc6g6kCnwoLUThWd7h79tzQ2qHYmMglY3orBGPJnp4bRChhPHp
+         RgaM3mwbu878vgJbW8tzJI7yqsFe4wY1rh5fLg9v3XrHq9OVZYrOw5AZg06UKDa7n672
+         YjyWqrg6fdVWhRODrL1xcQWObOe07OC1HtdTxR97HwyZbV3ZnAjdttZxLWHXfETiM7tP
+         NJfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=E3HM8Tth/zRydJwOd6Lp6hlKsvHw6H8gx4o1bYaHJJ4=;
-        b=ifrF9agkvvCqLKsT+rROjyv5lGl3Ke0JsWeS3tSkpKx14bD4ph+ClapNjawNtW7LGp
-         /i4zafGyhfdZ6uZKHTX0ZhL2w/CtL6MXUU0Oi6HfdNC2xjPPmq7jxxKJGBEEBJCdosEj
-         0z2d9UIeKSqQBEicb5X4kFV+FStcau43QGqYJf1yEoQsMtfbiWyKxuzJhILvpV1dM/Nv
-         5DToXRXZ5EB7au/0fnerS5zwz4MLx8kTxZGkrNwVuQPB6pbgR01p/h1Ae7GC33lsp0R+
-         xl10k/V7PvMIuSqTsjaATZgxRshVPb9qH4S3XH6VitC78Sxls5PBUsoChoNAs9VywyUy
-         Q2mw==
-X-Gm-Message-State: AOUpUlGL5CNdzMYBJ2pAlA3hqtJqeu/h77I3DjS+6xz8c6WbYJ0793hE
-        2b5aFTzV6D6EcAgA0W3LUb4gzw==
-X-Google-Smtp-Source: AAOMgpcQOke5wolVCX/CBQwV2pvF9/SQjgWsKAVknnuq/8XKEQ/mYhffXEkcksJUpknKLDRQT/420Q==
-X-Received: by 2002:a63:8749:: with SMTP id i70-v6mr18252098pge.325.1531801319343;
-        Mon, 16 Jul 2018 21:21:59 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id r87-v6sm86452111pfb.1.2018.07.16.21.21.55
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=IbEYh3sE0lEQN86EDBidAaoJTgfuNRe/T1BPCLMMSbg=;
+        b=I26FF0X/FrgD+Gx1PJARa73NgCB3SQ7MyZ78DvkM3rUYRM/SOrr61o2g64PEAAKw7/
+         Q5O6/Ei9HeYC/ynMOXwV/cya2O7e03WuFoORTsSjeNMMSKiVd2s4ull6pYPSCzIkAUg8
+         MD30sS7u030w9LzEgCPsF/n9RIpzf9fJFyq6I2LvQTzacASnH3wagoFYnd0Le0ITyRcV
+         On13yqmjIbi2yopWtCpi1xF6xAHKcDc+dNAyxUYoe28pqO42lRgNbL7YFApuMOuTLwKd
+         k0uuxEQAo7XyAOi01fKIGwkaeHUJzoguNIvRQ450NLYFsCRjmnTLXkMh/hPBfO7Gh7Yi
+         Woaw==
+X-Gm-Message-State: AOUpUlHmb2s6yvTQT7LNIvtwbolBsn9lKaUtaXW9I55yz9Pcd12biCfc
+        yJooQcTppP/PEr9CaxszqSnq6A==
+X-Google-Smtp-Source: AAOMgpeEHefWhNXLI2kNDUeqoBFYAeYiyNzLipzqHec8H+MUHOE3x5J6Z9wLrOlMbSlcMOJ35cWAxQ==
+X-Received: by 2002:a17:902:8a95:: with SMTP id p21-v6mr7706plo.91.1531801364225;
+        Mon, 16 Jul 2018 21:22:44 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm55980201pgq.33.2018.07.16.21.22.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 21:21:58 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        linux-crypto@vger.kernel.org, qat-linux@intel.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 05/11] crypto: ahash: Remove VLA usage
-Date:   Mon, 16 Jul 2018 21:21:44 -0700
-Message-Id: <20180717042150.37761-6-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180717042150.37761-1-keescook@chromium.org>
-References: <20180717042150.37761-1-keescook@chromium.org>
+        Mon, 16 Jul 2018 21:22:43 -0700 (PDT)
+Date:   Mon, 16 Jul 2018 21:22:43 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [patch -mm] mm, oom: remove oom_lock from exit_mmap
+In-Reply-To: <44d26c25-6e09-49de-5e90-3c16115eb337@i-love.sakura.ne.jp>
+Message-ID: <alpine.DEB.2.21.1807162121040.157949@chino.kir.corp.google.com>
+References: <alpine.DEB.2.21.1807121432370.170100@chino.kir.corp.google.com> <20180713142612.GD19960@dhcp22.suse.cz> <44d26c25-6e09-49de-5e90-3c16115eb337@i-love.sakura.ne.jp>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this
-introduces max size macros for ahash, as already done for shash, and
-adjust the crypto user to max state size.
+On Sat, 14 Jul 2018, Tetsuo Handa wrote:
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> David is making changes using timeout based back off (in linux-next.git)
+> which is inappropriately trying to use MMF_UNSTABLE for two purposes.
+> 
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- crypto/ahash.c        | 4 ++--
- crypto/algif_hash.c   | 2 +-
- include/crypto/hash.h | 3 +++
- 3 files changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/crypto/ahash.c b/crypto/ahash.c
-index a64c143165b1..6435bdbe42fd 100644
---- a/crypto/ahash.c
-+++ b/crypto/ahash.c
-@@ -550,8 +550,8 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
- {
- 	struct crypto_alg *base = &alg->halg.base;
- 
--	if (alg->halg.digestsize > PAGE_SIZE / 8 ||
--	    alg->halg.statesize > PAGE_SIZE / 8 ||
-+	if (alg->halg.digestsize > AHASH_MAX_DIGESTSIZE ||
-+	    alg->halg.statesize > AHASH_MAX_STATESIZE ||
- 	    alg->halg.statesize == 0)
- 		return -EINVAL;
- 
-diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
-index bfcf595fd8f9..8974ee8ebead 100644
---- a/crypto/algif_hash.c
-+++ b/crypto/algif_hash.c
-@@ -239,7 +239,7 @@ static int hash_accept(struct socket *sock, struct socket *newsock, int flags,
- 	struct alg_sock *ask = alg_sk(sk);
- 	struct hash_ctx *ctx = ask->private;
- 	struct ahash_request *req = &ctx->req;
--	char state[crypto_ahash_statesize(crypto_ahash_reqtfm(req)) ? : 1];
-+	char state[AHASH_MAX_STATESIZE];
- 	struct sock *sk2;
- 	struct alg_sock *ask2;
- 	struct hash_ctx *ctx2;
-diff --git a/include/crypto/hash.h b/include/crypto/hash.h
-index ae14cc0e0cdb..4fcd0e2368cd 100644
---- a/include/crypto/hash.h
-+++ b/include/crypto/hash.h
-@@ -64,6 +64,9 @@ struct ahash_request {
- 	void *__ctx[] CRYPTO_MINALIGN_ATTR;
- };
- 
-+#define AHASH_MAX_DIGESTSIZE	512
-+#define AHASH_MAX_STATESIZE	512
-+
- #define AHASH_REQUEST_ON_STACK(name, ahash) \
- 	char __##name##_desc[sizeof(struct ahash_request) + \
- 		crypto_ahash_reqsize(ahash)] CRYPTO_MINALIGN_ATTR; \
--- 
-2.17.1
-
+If you believe there is a problem with the use of MMF_UNSTABLE as it sits 
+in -mm, please follow up directly in the thread that proposed the patch.  
+I have seen two replies to that thread from you: one that incorporates it 
+into your work, and one that links to a verison of my patch in your 
+patchset.  I haven't seen a concern raised about the use of MMF_UNSTABLE, 
+but perhaps it's somewhere in the 10,000 other emails about the oom 
+killer.
