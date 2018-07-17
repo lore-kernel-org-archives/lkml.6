@@ -2,342 +2,98 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C17DECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC72ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 289E620C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289E620C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A87F20C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:08:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pJ6Zz2w/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A87F20C10
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730107AbeGQKir (ORCPT
+        id S1730235AbeGQKkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:38:47 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:30749 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729661AbeGQKir (ORCPT
+        Tue, 17 Jul 2018 06:40:18 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:41280 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbeGQKkS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:38:47 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="42327533"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 17 Jul 2018 18:06:49 +0800
-Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
-        by cn.fujitsu.com (Postfix) with ESMTP id 57CA94B5CD93;
-        Tue, 17 Jul 2018 18:06:50 +0800 (CST)
-Received: from localhost (10.167.225.56) by G08CNEXCHPEKD02.g08.fujitsu.local
- (10.167.33.89) with Microsoft SMTP Server id 14.3.399.0; Tue, 17 Jul 2018
- 18:06:49 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <hpa@zytor.com>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <bhe@redhat.com>,
-        <keescook@chromium.org>, <yasu.isimatu@gmail.com>
-CC:     <indou.takao@jp.fujitsu.com>, <lcapitulino@redhat.com>,
-        <caoj.fnst@cn.fujitsu.com>, <douly.fnst@cn.fujitsu.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v3 2/4] x86/boot: Add acpitb.c to parse acpi tables
-Date:   Tue, 17 Jul 2018 18:04:07 +0800
-Message-ID: <20180717100409.10547-3-fanc.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180717100409.10547-1-fanc.fnst@cn.fujitsu.com>
-References: <20180717100409.10547-1-fanc.fnst@cn.fujitsu.com>
+        Tue, 17 Jul 2018 06:40:18 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HA3x0Z046511;
+        Tue, 17 Jul 2018 10:08:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=sUnChzybz80kh3MiedPl9Vq6KvkZc/rxL18U+C0jH+Y=;
+ b=pJ6Zz2w/GS1W8C1akyOnsDwUo3ZF0qrAStVvkBNQ6V+tIHqst+FFtzBkuhSDAjdCBPcK
+ e5R/dyikMy3KZQOTu2dW8wkiakqryukxRVZeEg19PHC+wBYhK/YPakWIsq2wjss5lfij
+ jpUfEyvM4kbHw6fSma3vUPz+M7ypFNHithhtCIklCZ6fflDgY6ICi359VVirhXMGJJQ5
+ DSs2IwS/aiNsVhJsTkh9JuPGC7pZU7zWpCmxs39fNU1ySdWGSiWa/7ntH4aUJrB0FlGM
+ NdGOqoc8SFg7kXNlTcK6iHqulSJNvopW7cpw5oaU/H1sWK7lzdOPHIKaW2yo4OrvHBOn Pw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2k7a3jr0sv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Jul 2018 10:08:21 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6HA8J7G030124
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Jul 2018 10:08:20 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6HA8Id3024479;
+        Tue, 17 Jul 2018 10:08:18 GMT
+Received: from mwanda (/197.179.115.196)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Jul 2018 03:08:18 -0700
+Date:   Tue, 17 Jul 2018 13:08:09 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Todd Poynor <toddpoynor@gmail.com>
+Cc:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
+        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Todd Poynor <toddpoynor@google.com>,
+        Dmitry Torokhov <dtor@chromium.org>
+Subject: Re: [PATCH 11/32] staging: gasket: gasket_wait_with_reschedule use
+ msleep
+Message-ID: <20180717100809.yxmto5qqhd3qjkv3@mwanda>
+References: <20180717020926.176408-1-toddpoynor@gmail.com>
+ <20180717020926.176408-12-toddpoynor@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-yoursite-MailScanner-ID: 57CA94B5CD93.AAD6C
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717020926.176408-12-toddpoynor@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=586
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807170104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Imitate the ACPI code to parse ACPI tables. Functions are simplified
-cause some operations are not needed here.
-And also, this method won't influence the initialization of ACPI.
+On Mon, Jul 16, 2018 at 07:09:05PM -0700, Todd Poynor wrote:
+> From: Todd Poynor <toddpoynor@google.com>
+> 
+> Replace schedule_timeout() call with msleep().
+> 
 
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
----
- arch/x86/boot/compressed/Makefile |   4 +
- arch/x86/boot/compressed/acpitb.c | 248 ++++++++++++++++++++++++++++++
- 2 files changed, 252 insertions(+)
- create mode 100644 arch/x86/boot/compressed/acpitb.c
+Why does it matter?  I genuinely don't know the rules here.  The commit
+message should normally say if there is a user visible effect or if it's
+just a clean up or whatever.
 
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index fa42f895fdde..41017dc98b61 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -83,6 +83,10 @@ ifdef CONFIG_X86_64
- 	vmlinux-objs-y += $(obj)/pgtable_64.o
- endif
- 
-+ifdef CONFIG_MEMORY_HOTREMOVE
-+vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/acpitb.o
-+endif
-+
- $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
- 
- vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
-diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
-new file mode 100644
-index 000000000000..a92fa33fcc16
---- /dev/null
-+++ b/arch/x86/boot/compressed/acpitb.c
-@@ -0,0 +1,248 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#define BOOT_CTYPE_H
-+#include "misc.h"
-+#include "acpitb.h"
-+
-+#include <linux/efi.h>
-+#include <asm/efi.h>
-+#include <linux/numa.h>
-+
-+extern unsigned long get_cmd_line_ptr(void);
-+
-+/* Search efi table for rsdp table. */
-+static bool efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
-+{
-+	efi_system_table_t *systab;
-+	bool find_rsdp = false;
-+	bool acpi_20 = false;
-+	bool efi_64 = false;
-+	void *config_tables;
-+	struct efi_info *e;
-+	char *sig;
-+	int size;
-+	int i;
-+
-+#ifndef CONFIG_EFI
-+	return false;
-+#endif
-+
-+	e = &boot_params->efi_info;
-+	sig = (char *)&e->efi_loader_signature;
-+
-+	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
-+		efi_64 = true;
-+	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
-+		efi_64 = false;
-+	else {
-+		debug_putstr("Wrong efi loader signature.\n");
-+		return false;
-+	}
-+
-+	/* Get systab from boot params. */
-+#ifdef CONFIG_X86_32
-+	if (e->efi_systab_hi || e->efi_memmap_hi) {
-+		debug_putstr("Table located above 4GB, disabling EFI.\n");
-+		return false;
-+	}
-+	systab = (efi_system_table_t *)e->efi_systab;
-+#else
-+	systab = (efi_system_table_t *)(
-+			e->efi_systab | ((__u64)e->efi_systab_hi<<32));
-+#endif
-+
-+	if (systab == NULL)
-+		return false;
-+
-+	/* Get efi tables from systab. */
-+	size = efi_64 ? sizeof(efi_config_table_64_t) :
-+			sizeof(efi_config_table_32_t);
-+
-+	for (i = 0; i < systab->nr_tables; i++) {
-+		efi_guid_t guid;
-+		unsigned long table;
-+
-+		config_tables = (void *)(systab->tables + size * i);
-+		if (efi_64) {
-+			efi_config_table_64_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_64_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+#ifndef CONFIG_64BIT
-+			if (table >> 32) {
-+				debug_putstr("Table located above 4G, disabling EFI.\n");
-+				return false;
-+			}
-+#endif
-+		} else {
-+			efi_config_table_32_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_32_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+		}
-+
-+		/*
-+		 * Get rsdp from efi tables.
-+		 * If we find acpi table, go on searching for acpi20 table.
-+		 * If we didn't get acpi20 table then use acpi table.
-+		 * If neither acpi table nor acpi20 table found,
-+		 * return false.
-+		 */
-+		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)) && !acpi_20) {
-+			*rsdp_addr = (acpi_physical_address)table;
-+			acpi_20 = false;
-+			find_rsdp = true;
-+		} else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID))) {
-+			*rsdp_addr = (acpi_physical_address)table;
-+			acpi_20 = true;
-+			return true;
-+		}
-+	}
-+	return find_rsdp;
-+}
-+
-+static u8 checksum(u8 *buffer, u32 length)
-+{
-+	u8 sum = 0;
-+	u8 *end = buffer + length;
-+
-+	while (buffer < end)
-+		sum = (u8)(sum + *(buffer++));
-+
-+	return sum;
-+}
-+
-+static u8 *scan_memory_for_rsdp(u8 *start_address, u32 length)
-+{
-+	struct acpi_table_rsdp *rsdp;
-+	u8 *end_address;
-+	u8 *mem_rover;
-+
-+	end_address = start_address + length;
-+
-+	for (mem_rover = start_address; mem_rover < end_address;
-+	     mem_rover += ACPI_RSDP_SCAN_STEP) {
-+		rsdp = (struct acpi_table_rsdp *)mem_rover;
-+		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
-+			continue;
-+		if (checksum((u8 *) rsdp,
-+		    ACPI_RSDP_CHECKSUM_LENGTH) != 0)
-+			continue;
-+		if ((rsdp->revision >= 2) && (checksum((u8 *)
-+		    rsdp, ACPI_RSDP_XCHECKSUM_LENGTH) != 0))
-+			continue;
-+		return mem_rover;
-+	}
-+	return NULL;
-+}
-+
-+static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
-+{
-+	struct acpi_table_rsdp *rsdp;
-+	u32 physical_address;
-+	u8 *table_ptr;
-+	u8 *mem_rover;
-+
-+	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
-+	ACPI_MOVE_16_TO_32(&physical_address, table_ptr);
-+	physical_address <<= 4;
-+	table_ptr = (u8 *)(acpi_physical_address)physical_address;
-+
-+	if (physical_address > 0x400) {
-+		mem_rover = scan_memory_for_rsdp(table_ptr,
-+						 ACPI_EBDA_WINDOW_SIZE);
-+
-+		if (mem_rover) {
-+			physical_address += (u32)ACPI_PTR_DIFF(mem_rover,
-+							       table_ptr);
-+			*rsdp_addr = (acpi_physical_address)physical_address;
-+			return;
-+		}
-+	}
-+
-+	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
-+	mem_rover = scan_memory_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
-+
-+	if (mem_rover) {
-+		physical_address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
-+					 ACPI_PTR_DIFF(mem_rover, table_ptr));
-+		*rsdp_addr = (acpi_physical_address)physical_address;
-+		return;
-+	}
-+}
-+
-+/*
-+ * Used to dig rsdp table from efi table or bios.
-+ * If rsdp table found in efi table, use it. Or search bios.
-+ */
-+static acpi_physical_address get_rsdp_addr(void)
-+{
-+	acpi_physical_address pa = 0;
-+	bool status = false;
-+
-+	status = efi_get_rsdp_addr(&pa);
-+
-+	if (!status || pa == 0)
-+		bios_get_rsdp_addr(&pa);
-+
-+	return pa;
-+}
-+
-+struct acpi_table_header *get_acpi_srat_table(void)
-+{
-+	char *args = (char *)get_cmd_line_ptr();
-+	acpi_physical_address acpi_table;
-+	acpi_physical_address root_table;
-+	struct acpi_table_header *header;
-+	struct acpi_table_rsdp *rsdp;
-+	char *signature;
-+	u32 size;
-+	u8 *entry;
-+	u32 count;
-+	int i, j;
-+	u32 len;
-+
-+	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
-+	if (!rsdp)
-+		return NULL;
-+
-+	/* Get rsdt or xsdt from rsdp. */
-+	if (!strstr(args, "acpi=rsdt") &&
-+	    rsdp->xsdt_physical_address &&
-+	    rsdp->revision > 1) {
-+		root_table = rsdp->xsdt_physical_address;
-+		size = ACPI_XSDT_ENTRY_SIZE;
-+	} else {
-+		root_table = rsdp->rsdt_physical_address;
-+		size = ACPI_RSDT_ENTRY_SIZE;
-+	}
-+
-+	/* Get acpi root table from rsdt or xsdt.*/
-+	header = (struct acpi_table_header *)root_table;
-+	len = header->length;
-+	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
-+	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
-+
-+	for (i = 0; i < count; i++) {
-+		u64 address64;
-+
-+		if (size == ACPI_RSDT_ENTRY_SIZE)
-+			acpi_table = ((acpi_physical_address)
-+				      (*ACPI_CAST_PTR(u32, entry)));
-+		else {
-+			ACPI_MOVE_64_TO_64(&address64, entry);
-+			acpi_table = (acpi_physical_address) address64;
-+		}
-+
-+		if (acpi_table) {
-+			header = (struct acpi_table_header *)acpi_table;
-+			signature = header->signature;
-+
-+			if (!strncmp(signature, "SRAT", 4))
-+				return header;
-+		}
-+		entry += size;
-+	}
-+	return NULL;
-+}
--- 
-2.17.1
-
-
+regards,
+dan carpenter
 
