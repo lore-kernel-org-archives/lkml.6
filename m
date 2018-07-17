@@ -2,74 +2,157 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F5FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6A1ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FD6E20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:55:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD6E20C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3533F20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:55:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BsKAAwwp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3533F20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbeGQH06 (ORCPT
+        id S1728835AbeGQH1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 03:26:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44376 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbeGQH06 (ORCPT
+        Tue, 17 Jul 2018 03:27:01 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:43628 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727481AbeGQH07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 03:26:58 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 61B0ED0E;
-        Tue, 17 Jul 2018 06:55:52 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 08:55:48 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
-        John Joseph <jnjoseph@google.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Simon Que <sque@chromium.org>,
-        Rob Springer <rspringer@google.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 05/18] staging: gasket: sysfs mapping creation fixups
-Message-ID: <20180717065548.GA10961@kroah.com>
-References: <20180714055816.223754-1-toddpoynor@gmail.com>
- <20180714055816.223754-6-toddpoynor@gmail.com>
- <20180714063224.GD20451@kroah.com>
- <CAO3upoZQ0QXc5OjvhJbwN42QE71m6ABvLb2WM_iFVWd64iGgSg@mail.gmail.com>
+        Tue, 17 Jul 2018 03:26:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xrXjExuV8F4PHPf1Pi8ibAYhmlWEmXkYKv+4JNEHI7k=; b=BsKAAwwpyZd9FxV0L/ppPKSNz
+        UDPg4zfCP5cUSBdwv+Y2M2+Ie10j5xKP8jAlpQxxTYxNG0AeXPNRf1XY3MjCkto8EJi5xG573ymvD
+        Nw37jZ+o70zvWJZ4SBgOauz3yiTuxRkPNWYTap7X8P9bBrWa3uk10vLdZKczvjSYMDrZtldcy70fl
+        9afcf4abctkPLig0RhOiAR4xsIM9ysuVszcHeBq/gS5kcAVNXXxHgPAwieipZIMB6ezDSNokkf0Tq
+        pXMuGf1AgAvjqHeNis33k48NtYrsfHWWXs/XqtqJ8Vd7qje7bmK4gTxQQLUQbttFIOvb59z3Okz4b
+        6Lo1dALPg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ffJtp-0000BJ-HZ; Tue, 17 Jul 2018 06:55:53 +0000
+Subject: Re: [PATCH 4/9] kconfig: include common Kconfig files from top-level
+ Kconfig
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        linux-um@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180708152004.21679-1-hch@lst.de>
+ <20180708152004.21679-5-hch@lst.de>
+ <CAK7LNAT5dzU-SOvqwnDs=bn3WA1_fmDj2abETmoHUdUExVF+WA@mail.gmail.com>
+ <e36e6b2c-0984-199e-8c19-3ec54b31c12e@infradead.org>
+ <7d4e0925-3d6b-7698-1ef3-4c66500d8507@infradead.org>
+ <f533eb02-479b-d6b2-82e3-27abb33e7ebd@infradead.org>
+Message-ID: <cfdf8aa2-8ea3-1a13-9e4e-697c19acb854@infradead.org>
+Date:   Mon, 16 Jul 2018 23:55:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO3upoZQ0QXc5OjvhJbwN42QE71m6ABvLb2WM_iFVWd64iGgSg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f533eb02-479b-d6b2-82e3-27abb33e7ebd@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 02:14:27PM -0700, Todd Poynor wrote:
-> On Fri, Jul 13, 2018 at 11:32 PM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Fri, Jul 13, 2018 at 10:58:03PM -0700, Todd Poynor wrote:
-> >> From: Todd Poynor <toddpoynor@google.com>
-> >>
-> >> Return EBUSY for attempt to create a mapping already in use.
-> >
-> > Why?
+On 07/16/2018 11:44 PM, Randy Dunlap wrote:
+> On 07/16/2018 11:42 PM, Randy Dunlap wrote:
+>> On 07/16/2018 11:33 PM, Randy Dunlap wrote:
+>>> On 07/11/2018 05:21 AM, Masahiro Yamada wrote:
+>>>> 2018-07-09 0:19 GMT+09:00 Christoph Hellwig <hch@lst.de>:
+>>>>> Instead of duplicating the source statements in every architecture just
+>>>>> do it once in the toplevel Kconfig file.
+>>>>>
+>>>>> Note that with this the inclusion of arch/$(SRCARCH/Kconfig moves out of
+>>>>> the top-level Kconfig into arch/Kconfig so that don't violate ordering
+>>>>> constraits while keeping a sensible menu structure.
+>>>>>
+>>>>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+>>>>
+>>>>
+>>>>> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+>>>>> index dd4f3d3e644f..7ab7b148181b 100644
+>>>>> --- a/arch/sh/Kconfig
+>>>>> +++ b/arch/sh/Kconfig
+>>>>> @@ -168,10 +168,6 @@ config PGTABLE_LEVELS
+>>>>>         default 3 if X2TLB
+>>>>>         default 2
+>>>>>
+>>>>> -source "init/Kconfig"
+>>>>> -
+>>>>> -source "kernel/Kconfig.freezer"
+>>>>> -
+>>>>>  menu "System type"
+>>>>>
+>>>>>  #
+>>>>> @@ -553,8 +549,6 @@ endchoice
+>>>>>
+>>>>>  endif
+>>>>>
+>>>>> -source "arch/sh/mm/Kconfig"
+>>>>
+>>>>
+>>>> I noticed at least sh is broken
+>>>> because "arch/sh/mm/Kconfig" is no longer included by anyone.
+>>>>
+>>>> I am not doing further tests.
+>>>>
+>>>
+>>> Hi,
+>>>
+>>> Thanks for noticing that.
+>>>
+>>> I have tested all $ARCH (except um) with "allmodconfig" and so far, arch/sh/
+>>> is the only one that has a problem.
+>>>
+>>
+>> Well, there are 3 $ARCH-es that have an arch/$ARCH/mm/Kconfig file:
+>> arm, sh, and unicore32.
+>>
+>> We can either merge those into arch/$ARCH/Kconfig or we can source
+>> arch/$ARCH/mm/Kconfig for all $ARCH (where most of these files will be
+>> empty).
+>>
+>> Christoph, thoughts/ideas?
+>>
 > 
-> The existing code returns EINVAL which often means something bogus was
-> requested, whereas EBUSY is sometimes used for requesting something
-> already in use.  If that's not an error typically returned in this
-> situation I'm happy to drop it.
+> The first option (merge into arch/$ARCH/Kconfig) is not a good option.
+> Some of these mm/Kconfig files are Large, so the second option is the only
+> one that makes sense to me.
+> 
 
-My "why" was rhetorical, please spell this out in the changelog text :)
+All that *should* be needed is to add
 
-thanks,
+source arch/sh/mm/Kconfig into arch/sh/Kconfig (as is done in arm and unicore32),
+but that causes lots of .config diffs (as seen by scripts/diffconfig).
 
-greg k-h
+and I can't work on this any more tonight.  :)
+
+
+>>>> Please test *ALL* architectures.
+>>>>
+>>>> If possible, matrix tests (arch, config-target), where
+>>>> arch = arm, arm64, ...
+>>>> config-target = allyesconfig, allnoconfig, alldefconfig, ...
+>>>>
+>>>>
+>>>> Note:
+>>>> scripts/diffconf is helpful.
+
+
+-- 
+~Randy
