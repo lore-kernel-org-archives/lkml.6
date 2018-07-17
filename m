@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A156ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69621ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E93A120693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1982F20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bpa2Za71"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93A120693
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTmJ1ycz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1982F20693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbeGQVjI (ORCPT
+        id S1730831AbeGQVjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:39:08 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40089 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVjI (ORCPT
+        Tue, 17 Jul 2018 17:39:13 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:40093 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729684AbeGQVjN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:39:08 -0400
-Received: by mail-pl0-f66.google.com with SMTP id s17-v6so987949plp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:41 -0700 (PDT)
+        Tue, 17 Jul 2018 17:39:13 -0400
+Received: by mail-pl0-f65.google.com with SMTP id s17-v6so988036plp.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=K9cAIOlM8vIlyl8eoQBDMoSI2ADkVWD6UnwaStMBIB4=;
-        b=Bpa2Za71Qv8ojEQX1vf12LTZgTp78FWZZF2W7AX/LmTcrhN4ltnhrQhW5fmKWbR9kv
-         kPotImjhg9iB2t2Lss2GI/SdTmsbTbUTmL2ug7d6Hq8N2/NUnf3xIWFVf1AoGm74BddR
-         13zCW+Pk+MxYcTJYOy2PsRyPdZWMnFWove1kMQd9dejBu/y+TFKBe5prs/LNodsNCjSg
-         ihk/K2AVopy7ilrUdfeQopFxqLZO/Qz7V1RWvrUGlMqbzoxPTQ7WRvsJdyDub9nzZ+EX
-         NDhhYhaIQvEQtb6RfbSho/A0U2ydT7eJhTTJt6my1hNpwwd8W6CJ37nE8cuKpt3bEkrR
-         fsxg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/AyrjK6mJxCWqaxrnTdbRZSjaqsy2SsJvBEmFFJsMdA=;
+        b=VTmJ1ycz/KFtezAMhusvaj48DPDDKIaV+MbJI7YIdYAIWmr+biHe6WH0LeVG2P35rG
+         JnWdsNJ4/KhXcDbEi/x32ABISvZjBHid1dGr78N51BzsazMigOfiycu1pwIUUViNvd87
+         HBmGtHxdAubSelCl4I53FiW21DpoLlQGxExyYxOpdzY4MesWvYQQanlF4grnNaRtQwFw
+         PkXIDEOhBqU7CSqZWSawa1/meSG9OUES8N6cKiitYDPxQYmxbSvo0+LIPs9gnbHf+qQo
+         Q5OUSBE7VKwBSXSi6IIkfotygB7bqSUcggz8GZ0jpajqI4M2lE0FpHx9E9xsX//Ctodg
+         skIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=K9cAIOlM8vIlyl8eoQBDMoSI2ADkVWD6UnwaStMBIB4=;
-        b=COL1EoLHve0uCUgTLc1Ntx+j3a761JFRIeXYaTb5RCJF7oLQVqJfVK1QP4SeV46mM3
-         Cp0mTpbK+91w7hSOVMkMSJh8FTVZLZmsqfSVJqCakaGMuMAoXquoSRVyD4ZYiuMMyC0/
-         uFfxgzOyoesuci3p+cnIZ82euut91ZPP21HHeFArJtMwDI0vduguut0aKLBqnGXk6+Zz
-         oZfrWEv+dA+YPhv6d1mLRG12dD8Anf8amc5s61QSEVKWT6IlWluXMuEp72n/faqoUZ2u
-         IDXciraxOh0FH5Q1k1cjwjfV48d9+a1Sqk5f1eV8jlwAQQUpBBb2cJ6KqjHsuQPSpRHc
-         KW2A==
-X-Gm-Message-State: AOUpUlFx37n4W/rkzDElf8Tf/xh+n0ygn2wCqCUewYU0gk3tLoiPZFNa
-        Oi/ibUsohK30N3g0COfW94ARHjPt
-X-Google-Smtp-Source: AAOMgpdrJVyHSnDoRT08j65gBAz5b0lxo2iWRlPv10VL+f9fn2aVz3n7K/fvyAgAYcwWJHUvJWWU3A==
-X-Received: by 2002:a17:902:7b97:: with SMTP id w23-v6mr3175153pll.66.1531861480795;
-        Tue, 17 Jul 2018 14:04:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/AyrjK6mJxCWqaxrnTdbRZSjaqsy2SsJvBEmFFJsMdA=;
+        b=VOc0WI9zuIRBZUVoS/K+t26+Ena0mlMkrKXHPvcHsT7H5PPEHFSuw2GjQgNat4VYFb
+         +gvZ2Zv3hNm/ijhgljBMoNoINlRgR0fHbRELuN/SlteKI7SQBwD40A62C12LVhlI4loh
+         gt64vPLUN6c9Ka3U0xEK6X3/UJ3W16EEJuVsmsTTVQ1929YsGjYxsj18ockcMzXsz7Xz
+         sCIctm1HDB/Si6avaMyGDgLm/Ux//7jkMy0Vdm+q2qV2DnDmqN7XlWJr4KGJdroIN3y1
+         ralw7SmKT3UfZB6vYgYqDNl0fXIaMKXLtGxbbdJbCweW2EYymqWox91tudIFT3B4Hl9d
+         SXmQ==
+X-Gm-Message-State: AOUpUlHMpclPDLbnFThwTsCwYYvDC+3j2eMUryapliMJ1qijAZyBZ+S5
+        DNvRE6ilKP92j0J39TsGsjQ=
+X-Google-Smtp-Source: AAOMgpdZ7kVqUutIZ06WRlTvNR25CtHgrBqtwCQ7sX/j+WfRG0fBFL0F1O6Yze72EdCuvh+EEOeO8A==
+X-Received: by 2002:a17:902:9893:: with SMTP id s19-v6mr3125281plp.130.1531861485803;
+        Tue, 17 Jul 2018 14:04:45 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.39
+        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:04:40 -0700 (PDT)
+        Tue, 17 Jul 2018 14:04:45 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -67,10 +68,12 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 00/32 v3] staging: gasket: sundry fixes and fixups
-Date:   Tue, 17 Jul 2018 13:56:40 -0700
-Message-Id: <20180717205712.29495-1-toddpoynor@gmail.com>
+Subject: [PATCH 01/32] staging: gasket: remove X86 Kconfig restriction
+Date:   Tue, 17 Jul 2018 13:56:41 -0700
+Message-Id: <20180717205712.29495-2-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
+References: <20180717205712.29495-1-toddpoynor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -78,108 +81,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Various fixes mainly from the chromium review of the gasket and apex
-drivers.  More to come.
+The gasket and apex drivers are to be used on other architectures
+besides X86.
 
-Todd Poynor (32):
-  staging: gasket: remove X86 Kconfig restriction
-  staging: gasket: fix typo in apex_enter_reset
-  staging: gasket: fix typo in gasket_core.h comments
-  staging: gasket: whitespace fix in gasket_page_table_init
-  staging: gasket: remove driver registration on class creation failure
-  staging: gasket: hold mutex on gasket driver unregistration
-  staging: gasket: Return EBUSY on mapping create when already in use
-  staging: gasket: Remove stale pointers on error allocating attr array
-  staging: gasket: convert gasket_mmap_has_permissions to bool return
-  staging: gasket: fix gasket_wait_with_reschedule timeout return code
-  staging: gasket: gasket_wait_with_reschedule use msleep
-  staging: gasket: gasket_wait_with_reschedule simplify logic
-  staging: gasket: gasket_wait_with_reschedule use 32 bits of retry
-    count
-  staging: gasket: bail out of reset sequence on device callback error
-  staging: gasket: drop gasket_cdev_get_info, use container_of
-  staging: gasket: always allow root open for write
-  staging: gasket: annotate ioctl arg with __user
-  staging: gasket: gasket_enable_dev remove unnecessary variable
-  staging: gasket: remove code for no physical device
-  staging: gasket: fix class create bug handling
-  staging: gasket: remove unnecessary code in coherent allocator
-  staging: gasket: don't treat no device reset callback as an error
-  staging: gasket: gasket_mmap return error instead of valid BAR index
-  staging: gasket: apex_clock_gating simplify logic, reduce indentation
-  staging: gasket: apex_ioctl_check_permissions use bool return type
-  staging: gasket: gasket page table functions use bool return type
-  staging: gasket: remove else clause after return in if clause
-  staging: gasket: fix comment syntax in apex.h
-  staging: gasket: remove unnecessary parens in page table code
-  staging: gasket: gasket_mmap use PAGE_MASK
-  staging: gasket: remove extra parens in gasket_write_mappable_regions
-  staging: gasket: fix multi-line comment syntax in gasket_core.h
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/staging/gasket/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes from v2:
-  staging: gasket: Return EBUSY on mapping create when already in use
-     Update commit text for clarity: why EBUSY is better than EINVAL here.
-  staging: gasket: gasket_wait_with_reschedule use msleep
-     Update commit text for clarity: why msleep is better than
-     schedule_timeout here.
-  staging: gasket: gasket_wait_with_reschedule return when condition hit
-     Renamed: staging: gasket: gasket_wait_with_reschedule simplify logic
-     Update commit text for clarity: improved description of change.
-     Remove extraneous condition check and a return statement now impossible
-     to reach.
-  staging: gasket: always allow root open for write
-     Add change that accidentally went into the below patch in v2.
-     Normalize file mode bitwise ANDs to zero or one values.
-     Dropped Reviewed-by from Dmitry Torokhov since this has changed.
-  staging: gasket: annotate ioctl arg with __user
-     Remove stray change from v2, now moved into the above patch in v3.
-  staging: gasket: remove else clause after return in if clause
-     Don't break line that doesn't need it after indentation reduced.
-  staging: gasket: gasket_mmap use PAGE_MASK
-     Update commit text for clarity: why ~PAGE_MASK is better than
-     PAGE_SIZE - 1 here.
-  staging: gasket: apex_clock_gating simplify logic, reduce indentation
-     Unbreak line that no longer needs a break after re-indent.
-     
-Unchanged from v2:
-  staging: gasket: remove X86 Kconfig restriction
-  staging: gasket: fix typo in apex_enter_reset
-  staging: gasket: fix typo in gasket_core.h comments
-  staging: gasket: whitespace fix in gasket_page_table_init
-  staging: gasket: remove driver registration on class creation failure
-  staging: gasket: hold mutex on gasket driver unregistration
-  staging: gasket: Remove stale pointers on error allocating attr array
-  staging: gasket: convert gasket_mmap_has_permissions to bool return
-  staging: gasket: fix gasket_wait_with_reschedule timeout return code
-  staging: gasket: gasket_wait_with_reschedule use 32 bits of retry
-    count
-  staging: gasket: bail out of reset sequence on device callback error
-  staging: gasket: drop gasket_cdev_get_info, use container_of
-  staging: gasket: gasket_enable_dev remove unnecessary variable
-  staging: gasket: remove code for no physical device
-  staging: gasket: fix class create bug handling
-  staging: gasket: remove unnecessary code in coherent allocator
-  staging: gasket: don't treat no device reset callback as an error
-  staging: gasket: gasket_mmap return error instead of valid BAR index
-  staging: gasket: apex_ioctl_check_permissions use bool return type
-  staging: gasket: gasket page table functions use bool return type
-  staging: gasket: fix comment syntax in apex.h
-  staging: gasket: remove unnecessary parens in page table code
-  staging: gasket: remove extra parens in gasket_write_mappable_regions
-  staging: gasket: fix multi-line comment syntax in gasket_core.h
-
- drivers/staging/gasket/Kconfig             |   2 +-
- drivers/staging/gasket/apex.h              |   7 +-
- drivers/staging/gasket/apex_driver.c       |  77 ++++++--------
- drivers/staging/gasket/gasket_core.c       | 115 ++++++++-------------
- drivers/staging/gasket/gasket_core.h       |  11 +-
- drivers/staging/gasket/gasket_ioctl.c      |  95 +++++++++--------
- drivers/staging/gasket/gasket_ioctl.h      |   4 +-
- drivers/staging/gasket/gasket_page_table.c |  66 ++++++------
- drivers/staging/gasket/gasket_page_table.h |   8 +-
- drivers/staging/gasket/gasket_sysfs.c      |   4 +-
- 10 files changed, 177 insertions(+), 212 deletions(-)
-
+diff --git a/drivers/staging/gasket/Kconfig b/drivers/staging/gasket/Kconfig
+index c836389c1402d..ef40c4c75e0f2 100644
+--- a/drivers/staging/gasket/Kconfig
++++ b/drivers/staging/gasket/Kconfig
+@@ -2,7 +2,7 @@ menu "Gasket devices"
+ 
+ config STAGING_GASKET_FRAMEWORK
+ 	tristate "Gasket framework"
+-	depends on PCI && X86_64
++	depends on PCI
+ 	help
+ 	  This framework supports Gasket-compatible devices, such as Apex.
+ 	  It is required for any of the following module(s).
 -- 
 2.18.0.203.gfac676dfb9-goog
 
