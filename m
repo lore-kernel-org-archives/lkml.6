@@ -2,124 +2,124 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9F3ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFDAECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:33:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 450B220C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:31:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450B220C10
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C5E5D20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:33:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5E5D20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731708AbeGQODx (ORCPT
+        id S1731635AbeGQOGL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:03:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35316 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731580AbeGQODx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:03:53 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C15DAAFC0;
-        Tue, 17 Jul 2018 13:31:09 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 15:31:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: Deprecate kernelcore=nn and movable_core=
-Message-ID: <20180717133109.GI7193@dhcp22.suse.cz>
-References: <20180717131837.18411-1-bhe@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717131837.18411-1-bhe@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 17 Jul 2018 10:06:11 -0400
+Received: from www.osadl.org ([62.245.132.105]:34963 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731523AbeGQOGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:06:11 -0400
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w6HDTADC024377;
+        Tue, 17 Jul 2018 15:29:10 +0200
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Gustavo Padovan <gustavo@padovan.org>
+Cc:     Li Philip <philip.li@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH V2] drm: handle error values properly
+Date:   Tue, 17 Jul 2018 15:28:21 +0200
+Message-Id: <1531834101-6018-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-07-18 21:18:37, Baoquan He wrote:
-> We can still use 'kernelcore=mirror' or 'movable_node' for the usage
-> of hotplug and movable zone. If somebody shows up with a valid usecase
-> we can reconsider.
+drm_legacy_ctxbitmap_next() returns idr_alloc() which can return
+-ENOMEM, -EINVAL or -ENOSPC none of which are -1. since drm_context_t
+is an unsigned int an intermediate variable is used to handle the
+error cases, and then cast to drm_context_t after ensuring that the
+value is >= 0. The explicit cast is to mark the type conversion as
+intentional.
 
-Well this doesn't really explain why to deprecate this functionality.
-It is a rather ugly hack that has been originally introduced for large
-order allocations. But we do have compaction these days. Even though the
-compaction cannot solve all the fragmentation issues the zone movable is
-not a great answer as it introduces other issues (basically highmem kind
-of issues we used to have on 32b systems).
-The current code doesn't work with KASLR and the code is too subtle to
-work properly in other cases as well. E.g. movablecore range might cover
-already used memory (e.g. bootmem allocations) and therefore it doesn't
-comply with the basic assumption that the memory is movable and that
-confuses memory hotplug (e.g. 15c30bc09085 ("mm, memory_hotplug: make
-has_unmovable_pages more robust").
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Fixes: d530b5f1ca0b ("drm: re-enable error handling")
+Fixes: 62968144e673 ("drm: convert drm context code to use Linux idr")
+---
 
-There are probably other issues I am not aware of but primarily the code
-adds a maintenance burden which would be better to get rid of.
+kbuild test robot reported:
+<snip>
+tree:   git://anongit.freedesktop.org/drm/drm-misc for-linux-next-fixes
+head:   d530b5f1ca0bb66958a2b714bebe40a1248b9c15
+commit: d530b5f1ca0bb66958a2b714bebe40a1248b9c15 [2/2] drm: re-enable error
++handling
 
-I would also go further and remove all the code the feature is using at
-one go. If somebody really needs this functionality we would need to
-revert the whole thing anyway.
+smatch warnings:
+drivers/gpu/drm/drm_context.c:375 drm_legacy_addctx() warn: unsigned
++'ctx->handle' is never less than zero.
+<snip>
 
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 2 ++
->  mm/page_alloc.c                                 | 3 +++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index efc7aa7a0670..1e22c49866a2 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1855,6 +1855,7 @@
->  	keepinitrd	[HW,ARM]
->  
->  	kernelcore=	[KNL,X86,IA-64,PPC]
-> +			[Usage of kernelcore=nn[KMGTPE] | nn% is deprecated]
->  			Format: nn[KMGTPE] | nn% | "mirror"
->  			This parameter specifies the amount of memory usable by
->  			the kernel for non-movable allocations.  The requested
-> @@ -2395,6 +2396,7 @@
->  			reporting absolute coordinates, such as tablets
->  
->  	movablecore=	[KNL,X86,IA-64,PPC]
-> +			[Deprecated]
->  			Format: nn[KMGTPE] | nn%
->  			This parameter is the complement to kernelcore=, it
->  			specifies the amount of memory used for migratable
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 1521100f1e63..86cf05f48b5f 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -6899,6 +6899,8 @@ static int __init cmdline_parse_kernelcore(char *p)
->  		return 0;
->  	}
->  
-> +	pr_warn("Only kernelcore=mirror supported, "
-> +		"usage of kernelcore=nn[KMGTPE]|nn%% is deprecated.\n");
->  	return cmdline_parse_core(p, &required_kernelcore,
->  				  &required_kernelcore_percent);
->  }
-> @@ -6909,6 +6911,7 @@ static int __init cmdline_parse_kernelcore(char *p)
->   */
->  static int __init cmdline_parse_movablecore(char *p)
->  {
-> +	pr_warn("Option movablecore= is deprecated.\n");
->  	return cmdline_parse_core(p, &required_movablecore,
->  				  &required_movablecore_percent);
->  }
-> -- 
-> 2.13.6
+V2: The proposed fix in d530b5f1ca0b ("drm: re-enable error handling")
+    actually was ineffective as the negative return value check was 
+    against a unsigned int and thus always false as reported by
+    kbuild test robot <lkp@intel.com>. The below patch removes that
+    warning and fixes the original problem of missed error handling.
 
+drm_context_t is actually just used in a few placed so the type could be
+changed but it is also exported via tools/include/uapi/drm/drm.h so
+changing the typedef of drm_context_t could break applications and thus
+this is not an option.
+
+Patch was compile tested with: x86_64_defconfig
+
+Patch is against 4.18-rc4 (localversion-next is next-20180717)
+
+ drivers/gpu/drm/drm_context.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_context.c b/drivers/gpu/drm/drm_context.c
+index 3c4000f..78f32a3 100644
+--- a/drivers/gpu/drm/drm_context.c
++++ b/drivers/gpu/drm/drm_context.c
+@@ -361,22 +361,26 @@ int drm_legacy_addctx(struct drm_device *dev, void *data,
+ {
+ 	struct drm_ctx_list *ctx_entry;
+ 	struct drm_ctx *ctx = data;
++	int ret;
+ 
+ 	if (!drm_core_check_feature(dev, DRIVER_KMS_LEGACY_CONTEXT) &&
+ 	    !drm_core_check_feature(dev, DRIVER_LEGACY))
+ 		return -EINVAL;
+ 
+ 	ctx->handle = drm_legacy_ctxbitmap_next(dev);
+-	if (ctx->handle == DRM_KERNEL_CONTEXT) {
++	ret = drm_legacy_ctxbitmap_next(dev);
++	if (ret == DRM_KERNEL_CONTEXT) {
+ 		/* Skip kernel's context and get a new one. */
+-		ctx->handle = drm_legacy_ctxbitmap_next(dev);
++		ret = drm_legacy_ctxbitmap_next(dev);
+ 	}
+-	DRM_DEBUG("%d\n", ctx->handle);
+-	if (ctx->handle < 0) {
++	DRM_DEBUG("ctxbitmap is error code %d\n", ret);
++	if (ret < 0) {
+ 		DRM_DEBUG("Not enough free contexts.\n");
+ 		/* Should this return -EBUSY instead? */
+ 		return -ENOMEM;
+ 	}
++	/* valid context is >= 0 */
++	ctx->handle = (drm_context_t)ret;
+ 
+ 	ctx_entry = kmalloc(sizeof(*ctx_entry), GFP_KERNEL);
+ 	if (!ctx_entry) {
 -- 
-Michal Hocko
-SUSE Labs
+2.1.4
+
