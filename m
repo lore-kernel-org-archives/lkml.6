@@ -2,131 +2,179 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C99CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCA2ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B394720852
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 594F120852
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:05:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="T0zqIuO6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B394720852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="pKxTcUuM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 594F120852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=yandex-team.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731497AbeGQNgd (ORCPT
+        id S1731532AbeGQNiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:36:33 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:39872 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728889AbeGQNgd (ORCPT
+        Tue, 17 Jul 2018 09:38:14 -0400
+Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:52697 "EHLO
+        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729664AbeGQNiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:36:33 -0400
-Received: by mail-pf0-f196.google.com with SMTP id j8-v6so474811pff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 06:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Gv4W8nGAHM+Ge3egwRfGgTP8VH7brii8tl8m/22o5io=;
-        b=T0zqIuO65Kz8Mu7bydxFKutavSE0X7/3R40nFtIXGOGWd3/8OwK3H9xo6w0tsn5Dqr
-         Hm1/dDKtbS5acg303oluvpqaYt6Idm0L1O7fjd0L/eH62LISMB0hRlYa+FfIcE6BeUXn
-         oxay2XnW+ZvJZUAE3T3srl9t6MuBdg7QyPalc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Gv4W8nGAHM+Ge3egwRfGgTP8VH7brii8tl8m/22o5io=;
-        b=A+12A/dNqVoXLtuv/o3zsdM5c1LBbHxQU5kRvA8Mp+pm/RVWMNeFYai0/Guffy24Ok
-         uwYsW2WrND7vPao/QmpOfcRmrcj2LkMKLUjaxnjvf17i5VXkxiHc0k/Rp5urfolG2uNr
-         yEtjdrXTJQFKWSyQy9manf0ZV4uqpL2/y81sf9QNIDm3IG8J2uwfN7ZiKZWbJHwrBZG4
-         kH1NgBhvslivqY2UgL6Ylw7QCxf8KvlKMf7AuN8cvEJrIp6iqVPflt2GZ26b2kcW+IZ7
-         cCNNVay1Wrl7tatTCEhV+4st4XbglI8DpuRHTK/Nh96l8HnMSF7xl2fhHuzepgDH75UZ
-         zhOA==
-X-Gm-Message-State: AOUpUlFTlTpfwOa1vqqrogcLfGSqD4/0rOG7/Fue5n83M7t5ECzkWHPK
-        9CmKrOr3ZyDt7QI3ti/mhWOm2g==
-X-Google-Smtp-Source: AAOMgpdqK/nAmF2QTJHvU772xNgO0mhGvhJCoUtEIrDhJ8/9Mlj+I+zdWghH1id2VjkBxKCFu8f1Dg==
-X-Received: by 2002:a63:b504:: with SMTP id y4-v6mr1541689pge.247.1531832638298;
-        Tue, 17 Jul 2018 06:03:58 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id s184-v6sm1925253pfb.56.2018.07.17.06.03.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 06:03:57 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 06:03:57 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v2 00/12] Add utilization clamping support
-Message-ID: <20180717130357.GA17824@joelaf.mtv.corp.google.com>
-References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+        Tue, 17 Jul 2018 09:38:14 -0400
+X-Greylist: delayed 494 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Jul 2018 09:38:11 EDT
+Received: from smtpcorp1o.mail.yandex.net (smtpcorp1o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::30])
+        by forwardcorp1g.cmail.yandex.net (Yandex) with ESMTP id 2A85421787;
+        Tue, 17 Jul 2018 15:57:22 +0300 (MSK)
+Received: from smtpcorp1o.mail.yandex.net (localhost.localdomain [127.0.0.1])
+        by smtpcorp1o.mail.yandex.net (Yandex) with ESMTP id 2208F2440DFC;
+        Tue, 17 Jul 2018 15:57:22 +0300 (MSK)
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:854c:7dcd:9203:76a5])
+        by smtpcorp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id yHIX3QnRFv-vL5eP9o4;
+        Tue, 17 Jul 2018 15:57:22 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1531832242; bh=hCzr5Fc1NkK14H05sX/7KhvSsgVtWNllE17bLsN/ZHU=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To;
+        b=pKxTcUuMEV0jeN+YPI1nrRgBPJLXP58KzIt/zbXGlDn2RohK0l9wXeeTkf0U3a3E+
+         3pTI6Rc5ZtEfpdvJ136Uk3P/LxfBlERlh5h1TsiNcV0X8kP5MfuNK7kq5eSpFYtJo/
+         pyupJLjtaha/TUSpjABZQzzewu2bODKR0QSDlZJA=
+Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: Re: [PATCH 4.4 14/43] tools build: fix # escaping in .cmd files for
+ future Make
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <20180716073511.796555857@linuxfoundation.org>
+ <20180716073513.350026232@linuxfoundation.org>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <d1a883c6-1b7c-8bf5-49e6-3e29a60ca117@yandex-team.ru>
+Date:   Tue, 17 Jul 2018 15:57:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716082906.6061-1-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180716073513.350026232@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 09:28:54AM +0100, Patrick Bellasi wrote:
-> This is a respin of:
-> 
->    https://lore.kernel.org/lkml/20180409165615.2326-1-patrick.bellasi@arm.com
-> 
-> which addresses all the feedbacks collected from the LKML discussion as well
-> as during the presentation at last OSPM Summit:
-> 
->    https://www.youtube.com/watch?v=0Yv9smm9i78
-> 
-> Further comments and feedbacks are more than welcome!
-> 
-[...] 
-> 
-> Patrick Bellasi (12):
->   sched/core: uclamp: extend sched_setattr to support utilization
->     clamping
->   sched/core: uclamp: map TASK's clamp values into CPU's clamp groups
->   sched/core: uclamp: add CPU's clamp groups accounting
->   sched/core: uclamp: update CPU's refcount on clamp changes
->   sched/cpufreq: uclamp: add utilization clamping for FAIR tasks
->   sched/cpufreq: uclamp: add utilization clamping for RT tasks
->   sched/core: uclamp: enforce last task UCLAMP_MAX
->   sched/core: uclamp: extend cpu's cgroup controller
->   sched/core: uclamp: map TG's clamp values into CPU's clamp groups
->   sched/core: uclamp: use TG's clamps to restrict Task's clamps
->   sched/core: uclamp: update CPU's refcount on TG's clamp changes
->   sched/core: uclamp: use percentage clamp values
-> 
->  Documentation/admin-guide/cgroup-v2.rst |  25 +
->  include/linux/sched.h                   |  53 ++
->  include/uapi/linux/sched.h              |   4 +-
->  include/uapi/linux/sched/types.h        |  66 +-
->  init/Kconfig                            |  63 ++
->  kernel/sched/core.c                     | 876 ++++++++++++++++++++++++
+This commit depends on commit 9564a8cf422d7b58f6e857e3546d346fa970191e
+"Kbuild: fix # escaping in .cmd files for future Make"
+which is missing in 4.4.141
 
-While I'm reviewing these patches, I had a quick thought. core.c is already
-7k+ lines. Based on this diffstat, does it make sense for uclamp to be in its
-own kernel/sched/uclamp.c file?
 
-thanks,
+this breaks compilation of tools/perf for me
 
-- Joel
- 
+make -C tools/perf V=1 JOBS=24 WERROR=0 NO_GTK2=1 LDFLAGS=-static all
+make[1]: Entering directory `/tmp/buildd/linux-yandex-4.4.141/tools/perf'
+   BUILD:   Doing 'make -j24' parallel build
+
+Auto-detecting system features:
+...                         dwarf: [ on  ]
+...            dwarf_getlocations: [ OFF ]
+...                         glibc: [ on  ]
+...                          gtk2: [ OFF ]
+...                      libaudit: [ on  ]
+...                        libbfd: [ on  ]
+...                        libelf: [ on  ]
+...                       libnuma: [ on  ]
+...        numa_num_possible_cpus: [ on  ]
+...                       libperl: [ OFF ]
+...                     libpython: [ OFF ]
+...                      libslang: [ on  ]
+...                     libunwind: [ on  ]
+...            libdw-dwarf-unwind: [ OFF ]
+...                          zlib: [ on  ]
+...                          lzma: [ on  ]
+...                     get_cpuid: [ on  ]
+...                           bpf: [ on  ]
+
+config/Makefile:274: No libdw DWARF unwind found, Please install elfutils-devel/libdw-dev >= 0.158 and/or set LIBDW_DIR
+config/Makefile:282: Old libdw.h, finding variables at given 'perf probe' point will not work, install elfutils-devel/libdw-dev >= 0.157
+config/Makefile:458: Missing perl devel files. Disabling perl scripting support, please install perl-ExtUtils-Embed/libperl-dev
+config/Makefile:501: No 'Python.h' (for Python 2.x support) was found: disables Python support - please install python-devel/python-dev
+$(:)
+make -C /tmp/buildd/linux-yandex-4.4.141/tools/build fixdep
+/bin/sh util/PERF-VERSION-GEN
+make -f /tmp/buildd/linux-yandex-4.4.141/tools/build/Makefile.build dir=. obj=fixdep
+. util/generate-cmdlist.sh > common-cmds.h+ && mv common-cmds.h+ common-cmds.h
+.fixdep.o.cmd:1: *** missing separator.  Stop.
+make[3]: *** [fixdep-in.o] Error 2
+make[2]: *** [fixdep] Error 2
+
+
+On 16.07.2018 10:36, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Paul Menzel <pmenzel@molgen.mpg.de>
+> 
+> commit 9feeb638cde083c737e295c0547f1b4f28e99583 upstream.
+> 
+> In 2016 GNU Make made a backwards incompatible change to the way '#'
+> characters were handled in Makefiles when used inside functions or
+> macros:
+> 
+> http://git.savannah.gnu.org/cgit/make.git/commit/?id=c6966b323811c37acedff05b57
+> 
+> Due to this change, when attempting to run `make prepare' I get a
+> spurious make syntax error:
+> 
+>      /home/earnest/linux/tools/objtool/.fixdep.o.cmd:1: *** missing separator.  Stop.
+> 
+> When inspecting `.fixdep.o.cmd' it includes two lines which use
+> unescaped comment characters at the top:
+> 
+>      \# cannot find fixdep (/home/earnest/linux/tools/objtool//fixdep)
+>      \# using basic dep data
+> 
+> This is because `tools/build/Build.include' prints these '\#'
+> characters:
+> 
+>      printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
+>      printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
+> 
+> This completes commit 9564a8cf422d ("Kbuild: fix # escaping in .cmd files
+> for future Make").
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=197847
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>   tools/build/Build.include |    4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- a/tools/build/Build.include
+> +++ b/tools/build/Build.include
+> @@ -62,8 +62,8 @@ dep-cmd = $(if $(wildcard $(fixdep)),
+>              $(fixdep) $(depfile) $@ '$(make-cmd)' > $(dot-target).tmp;           \
+>              rm -f $(depfile);                                                    \
+>              mv -f $(dot-target).tmp $(dot-target).cmd,                           \
+> -           printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
+> -           printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
+> +           printf '$(pound) cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
+> +           printf '$(pound) using basic dep data\n\n' >> $(dot-target).cmd;           \
+>              cat $(depfile) >> $(dot-target).cmd;                                 \
+>              printf '%s\n' 'cmd_$@ := $(make-cmd)' >> $(dot-target).cmd)
+>   
+> 
+> 
+> 
+
