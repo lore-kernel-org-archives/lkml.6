@@ -2,171 +2,139 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96E4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E769ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 885D520693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:20:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTUp1oDA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885D520693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 262802075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:23:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 262802075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbeGQRyE (ORCPT
+        id S1730600AbeGQR4k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:54:04 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:39330 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729668AbeGQRyE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:54:04 -0400
-Received: by mail-lf0-f67.google.com with SMTP id a134-v6so1408168lfe.6;
-        Tue, 17 Jul 2018 10:20:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=i9wkBg7Hsu4Be5vqekATgyLF7+tVr2R69O6VYweQI5M=;
-        b=LTUp1oDAEF5g4L+LKimE8yYLIpRg/xd/FIPiJoZ/QtKKPulL/MEwdsuE+uYpqc8+Cn
-         CThURZqU5i1VLBvqUhe/XP+ALbJacGhPy6b6T1P34i8XMP3tANm8lm2gdUXorZE2j7zH
-         cnB/SZQT3EpBc6m4j7HnURsUbDgf9aE+8eXvBWKBWEVP+bsQTaNWykTzb+y5bSbqvE6P
-         QwnIztxY8zErTc7zPZrjE46ZwEq/LSlv9DHiRyAJy6VOifdpprMvesnIfFUQ6GOKPArC
-         CUhTjfscdAXcdK0MQ+Xt5MzYZ/Rjr7ywRHqu9UvCzdBb4bq4VkENaK1227Cb/xK7Bs2j
-         v6pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=i9wkBg7Hsu4Be5vqekATgyLF7+tVr2R69O6VYweQI5M=;
-        b=P8md6fin3dDc193wcqRkMZHBGkD42+6PebiCpGTLKE5IgWoLEBZMeYNVrnpvRUv8gQ
-         swWAy3WpJBIdn19bZR1uFTliamLCdhBn6pW8IOlQqLkq1QpPTSWrbudgjqBdkAP+/KUk
-         xgFc4dGtvZJEM5/XDwUbzfvBPY6z3PQ0Gx5FBSnxuspmisvQDxv7sll9GzH5d2AAP/1M
-         Jvd/H4MYK3EqkSePDKVhrYBZ1FWED8mVpiWQJ+mZUUzZKbmQB2qpFgi0lDwcrnWlZU0/
-         1vyFFce0hRn4wxaRRI1G86dtdf00Mo8O0KM5+YsBya1B01Q3pUDBswsk/C5AMp5lO2GZ
-         NL3A==
-X-Gm-Message-State: AOUpUlGBYH99rtJcCFDMOGEuTGVHNVbJPMPRcMFYzy7os9XSwBoWMeHL
-        BY4f3MpuLH39vdM+Z0w5HgQ=
-X-Google-Smtp-Source: AAOMgpexACbEhSGbFleJ/AmDqCcZmqpB0OrVU1C+Wkbea9lyMagISJiGS8JhZxZpTicknFQfTUAJ1A==
-X-Received: by 2002:a19:4b90:: with SMTP id y138-v6mr1772416lfa.118.1531848023784;
-        Tue, 17 Jul 2018 10:20:23 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id j9-v6sm250086ljh.40.2018.07.17.10.20.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 10:20:22 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH] ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
-Date:   Tue, 17 Jul 2018 19:20:56 +0200
-Message-Id: <20180717172056.18472-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
+        Tue, 17 Jul 2018 13:56:40 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28157 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729741AbeGQR4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:56:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 10:23:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
+   d="scan'208";a="72141659"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Jul 2018 10:23:00 -0700
+Message-ID: <d4419603cb727bb28fe9ab7abfc9595b78cb7554.camel@linux.intel.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Load when ACPI PCCH is present
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andreas Herrmann <aherrmann@suse.com>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 17 Jul 2018 10:23:00 -0700
+In-Reply-To: <8115130.Fhkpr82c7G@aspire.rjw.lan>
+References: <20180717065048.74mmgk4t5utjaa6a@suselix>
+         <20180717102136.snayvzmv2h3dcwiq@suselix>
+         <20180717140336.ayovaz4ksdlak6bb@suselix>
+         <8115130.Fhkpr82c7G@aspire.rjw.lan>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In ams_delta_modem_init(), replace request for hardcoded GPIO and
-assignment of related IRQ number to MODEM platform data with a check
-for that number having already been assigned.  Then, from init_machine,
-request MODEM IRQ GPIO descriptor by its GPIO chip hardware pin number
-and assign related IRQ to the MODEM.
+On Tue, 2018-07-17 at 18:13 +0200, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Currently, intel_pstate doesn't load if _PSS is not present on
+> HP Proliant systems, because it expects the firmware to take over
+> CPU performance scaling in that case.  However, if ACPI PCCH is
+> present, the firmware expects the kernel to use it for CPU
+> performance scaling and the pcc-cpufreq driver is loaded for that.
+> 
+> Unfortunately, the firmware interface used by that driver is not
+> scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
+> on systems with more than just a few CPUs.  In fact, it is better to
+> avoid using it at all.
+> 
+> For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
+> is not present and load if it is there.
+> 
+> Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power
+> mgmt option)
+> Reported-by: Andreas Herrmann <aherrmann@suse.com>
+> Tested-by: Andreas Herrmann <aherrmann@suse.com>
+> Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
+> Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
- arch/arm/mach-omap1/board-ams-delta.c | 46 ++++++++++++++++++++++++++---------
- 1 file changed, 35 insertions(+), 11 deletions(-)
+But do we need a change as done by the following commit in in pcc-
+cpufreq.c?
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index dd28d2614d7f..9c376ac31e25 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -630,6 +630,28 @@ static struct gpiod_hog ams_delta_gpio_hogs[] = {
- 	{},
- };
- 
-+static struct plat_serial8250_port ams_delta_modem_ports[];
-+
-+/*
-+ * Obtain MODEM IRQ GPIO descriptor using its hardware pin
-+ * number and assign related IRQ number to the MODEM port.
-+ * Keep the GPIO descriptor open so nobody steps in.
-+ */
-+static void __init modem_assign_irq(struct gpio_chip *chip)
-+{
-+	struct gpio_desc *gpiod;
-+
-+	gpiod = gpiochip_request_own_desc(chip, AMS_DELTA_GPIO_PIN_MODEM_IRQ,
-+					  "modem_irq");
-+	if (IS_ERR(gpiod)) {
-+		pr_err("%s: modem IRQ GPIO request failed (%ld)\n", __func__,
-+		       PTR_ERR(gpiod));
-+	} else {
-+		gpiod_direction_input(gpiod);
-+		ams_delta_modem_ports[0].irq = gpiod_to_irq(gpiod);
-+	}
-+}
-+
- /*
-  * The purpose of this function is to take care of proper initialization of
-  * devices and data structures which depend on GPIO lines provided by OMAP GPIO
-@@ -649,7 +671,13 @@ static void __init omap_gpio_deps_init(void)
- 		return;
- 	}
- 
-+	/*
-+	 * Start with FIQ initialization as it may have to request
-+	 * and release successfully each OMAP GPIO pin in turn.
-+	 */
- 	ams_delta_init_fiq(chip, &ams_delta_serio_device);
-+
-+	modem_assign_irq(chip);
- }
- 
- static void __init ams_delta_init(void)
-@@ -844,20 +872,18 @@ static int __init modem_nreset_init(void)
- }
- 
- 
-+/*
-+ * This function expects MODEM IRQ number already assigned to the port
-+ * and fails if it's not.
-+ */
- static int __init ams_delta_modem_init(void)
- {
- 	int err;
- 
--	omap_cfg_reg(M14_1510_GPIO2);
--	ams_delta_modem_ports[0].irq =
--			gpio_to_irq(AMS_DELTA_GPIO_PIN_MODEM_IRQ);
-+	if (ams_delta_modem_ports[0].irq < 0)
-+		return ams_delta_modem_ports[0].irq;
- 
--	err = gpio_request(AMS_DELTA_GPIO_PIN_MODEM_IRQ, "modem");
--	if (err) {
--		pr_err("Couldn't request gpio pin for modem\n");
--		return err;
--	}
--	gpio_direction_input(AMS_DELTA_GPIO_PIN_MODEM_IRQ);
-+	omap_cfg_reg(M14_1510_GPIO2);
- 
- 	/* Initialize the modem_nreset regulator consumer before use */
- 	modem_priv.regulator = ERR_PTR(-ENODEV);
-@@ -866,8 +892,6 @@ static int __init ams_delta_modem_init(void)
- 			AMS_DELTA_LATCH2_MODEM_CODEC);
- 
- 	err = platform_device_register(&ams_delta_modem_device);
--	if (err)
--		gpio_free(AMS_DELTA_GPIO_PIN_MODEM_IRQ);
- 
- 	return err;
- }
--- 
-2.16.4
+"
+commit 8a61e12e84597b5f8155ac91b44dea866ccfaac2
+Author: Yinghai Lu <yinghai@kernel.org>
+Date:   Fri Sep 20 10:43:56 2013 -0700
 
+    acpi-cpufreq: skip loading acpi_cpufreq after intel_pstate
+    
+"
+
+Thanks,
+Srinivas
+
+> ---
+>  drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> Index: linux-pm/drivers/cpufreq/intel_pstate.c
+> ===================================================================
+> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
+> +++ linux-pm/drivers/cpufreq/intel_pstate.c
+> @@ -2391,6 +2391,18 @@ static bool __init intel_pstate_no_acpi_
+>  	return true;
+>  }
+>  
+> +static bool __init intel_pstate_no_acpi_pcch(void)
+> +{
+> +	acpi_status status;
+> +	acpi_handle handle;
+> +
+> +	status = acpi_get_handle(NULL, "\\_SB", &handle);
+> +	if (ACPI_FAILURE(status))
+> +		return true;
+> +
+> +	return !acpi_has_method(handle, "PCCH");
+> +}
+> +
+>  static bool __init intel_pstate_has_acpi_ppc(void)
+>  {
+>  	int i;
+> @@ -2450,7 +2462,10 @@ static bool __init intel_pstate_platform
+>  
+>  	switch (plat_info[idx].data) {
+>  	case PSS:
+> -		return intel_pstate_no_acpi_pss();
+> +		if (!intel_pstate_no_acpi_pss())
+> +			return false;
+> +
+> +		return intel_pstate_no_acpi_pcch();
+>  	case PPC:
+>  		return intel_pstate_has_acpi_ppc() && !force_load;
+>  	}
+> 
