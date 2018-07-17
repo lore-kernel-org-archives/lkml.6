@@ -2,173 +2,98 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EDBBECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 922C5ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 293DD2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:12:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 293DD2147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4089020C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4089020C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemote.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbeGQInc (ORCPT
+        id S1729758AbeGQIq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:43:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33150 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729621AbeGQInc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:43:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D1015AD1A;
-        Tue, 17 Jul 2018 08:12:06 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 10:12:01 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Felix Kuehling <felix.kuehling@amd.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Rientjes <rientjes@google.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: [PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180717081201.GB16803@dhcp22.suse.cz>
-References: <20180716115058.5559-1-mhocko@kernel.org>
- <20180716161249.c76240cd487c070fb271d529@linux-foundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716161249.c76240cd487c070fb271d529@linux-foundation.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Tue, 17 Jul 2018 04:46:28 -0400
+Received: from smtpbg65.qq.com ([103.7.28.233]:4433 "EHLO smtpbg65.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726396AbeGQIq2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 04:46:28 -0400
+X-QQ-GoodBg: 0
+X-QQ-SSF: 00100000000000F0
+X-QQ-FEAT: hcmviN0nPXLXoRw+YsYJM3mfiTquQ6FwmjEtIM2oU4j7a5Fw4mZBEzo+AE5V9
+        cN52WwBb1k44F2OX00VToIRcLBxwUt8rjrVKYhSVqTPDD2RkGjQsqJQ8fkYOB6BtFjzxjbC
+        ESWVOsxuvvcYNHNEmDVLHJR1+YjcCFwqKcBD8Nt4bm1muBWQV40ZJlT81XkYF4V2aC5dOG7
+        QmlY7TwuGoUtxeebjOjvLpRf4kUj+J1NyXxSyYEBzsXytt0bzSkptYql9Bx/Ua6A+Vynnwb
+        K4SzSKSeC4VgRO2gqv7iNziFbTItt0V8feGQ==
+X-QQ-BUSINESS-ORIGIN: 2
+X-Originating-IP: 222.92.124.153
+X-QQ-STYLE: 
+X-QQ-mid: bizmailfree7t1531815298t32857
+From:   "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+To:     "=?utf-8?B?R3JlZyBLcm9haC1IYXJ0bWFu?=" <gregkh@linuxfoundation.org>
+Cc:     "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>,
+        "=?utf-8?B?c3RhYmxl?=" <stable@vger.kernel.org>,
+        "=?utf-8?B?UGF1bCBCdXJ0b24=?=" <paul.burton@mips.com>,
+        "=?utf-8?B?SmFtZXMgSG9nYW4=?=" <jhogan@kernel.org>
+Subject: Re: [PATCH 4.9 03/32] MIPS: Use asyncIPIsforarch_trigger_cpumask_backtrace()
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: base64
+Date:   Tue, 17 Jul 2018 16:14:58 +0800
+X-Priority: 3
+Message-ID: <tencent_339CA9301A5289DE7945E7F2@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20180716073504.433996952@linuxfoundation.org>
+        <20180716073504.871411055@linuxfoundation.org>
+        <tencent_63FC64B11AAB89F2466748AE@qq.com>
+        <20180716094023.GA20647@kroah.com>
+        <tencent_47C96C376F2E810C2237848B@qq.com>
+        <20180716104621.GB11023@kroah.com>
+        <20180716183402.GC13309@kroah.com>
+        <tencent_06288B95133EFFAE55198FCC@qq.com>
+        <20180717072055.GB12255@kroah.com>
+In-Reply-To: <20180717072055.GB12255@kroah.com>
+X-QQ-ReplyHash: 2870787012
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+        by smtp.qq.com (ESMTP) with SMTP
+        id ; Tue, 17 Jul 2018 16:15:00 +0800 (CST)
+Feedback-ID: bizmailfree:lemote.com:qybgforeign:qybgforeign4
+X-QQ-Bgrelay: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 16-07-18 16:12:49, Andrew Morton wrote:
-> On Mon, 16 Jul 2018 13:50:58 +0200 Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > There are several blockable mmu notifiers which might sleep in
-> > mmu_notifier_invalidate_range_start and that is a problem for the
-> > oom_reaper because it needs to guarantee a forward progress so it cannot
-> > depend on any sleepable locks.
-> > 
-> > Currently we simply back off and mark an oom victim with blockable mmu
-> > notifiers as done after a short sleep. That can result in selecting a
-> > new oom victim prematurely because the previous one still hasn't torn
-> > its memory down yet.
-> > 
-> > We can do much better though. Even if mmu notifiers use sleepable locks
-> > there is no reason to automatically assume those locks are held.
-> > Moreover majority of notifiers only care about a portion of the address
-> > space and there is absolutely zero reason to fail when we are unmapping an
-> > unrelated range. Many notifiers do really block and wait for HW which is
-> > harder to handle and we have to bail out though.
-> > 
-> > This patch handles the low hanging fruid. __mmu_notifier_invalidate_range_start
-> > gets a blockable flag and callbacks are not allowed to sleep if the
-> > flag is set to false. This is achieved by using trylock instead of the
-> > sleepable lock for most callbacks and continue as long as we do not
-> > block down the call chain.
-> 
-> I assume device driver developers are wondering "what does this mean
-> for me".  As I understand it, the only time they will see
-> blockable==false is when their driver is being called in response to an
-> out-of-memory condition, yes?  So it is a very rare thing.
+SGksIEdyZWcsDQoNCkkgaGF2ZSByZXNlbmQgcGF0Y2hlcyBhbmQgY2Mgc3RhYmxlIGxpc3Qu
+DQoNClRoaXMgcGF0Y2ggaXMgbmVlZGVkIGZvciA0LjQueSBidXQgbmVlZCByZXN0cnVjdGlv
+biwgYXMgUGF1bCBzYWlkOg0KU3RyaWN0bHkgc3BlYWtpbmcgdGhlIGZhdWx0eSBNSVBTIGlt
+cGxlbWVudGF0aW9uIGNhbiBiZQ0KdHJhY2VkIGZ1cnRoZXIgYmFjayB0byBjb21taXQgODU2
+ODM5Yjc2ODM2ICgiTUlQUzogQWRkDQphcmNoX3RyaWdnZXJfYWxsX2NwdV9iYWNrdHJhY2Uo
+KSBmdW5jdGlvbiIpIGluIHYzLjE5DQoNCkh1YWNhaQ0KIA0KLS0tLS0tLS0tLS0tLS0tLS0t
+IE9yaWdpbmFsIC0tLS0tLS0tLS0tLS0tLS0tLQ0KRnJvbTogICJHcmVnIEtyb2FoLUhhcnRt
+YW4iPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPjsNCkRhdGU6ICBUdWUsIEp1bCAxNywg
+MjAxOCAwMzoyMCBQTQ0KVG86ICAi6ZmI5Y2O5omNIjxjaGVuaGNAbGVtb3RlLmNvbT47DQpD
+YzogICJsaW51eC1rZXJuZWwiPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyAic3Rh
+YmxlIjxzdGFibGVAdmdlci5rZXJuZWwub3JnPjsgIlBhdWwgQnVydG9uIjxwYXVsLmJ1cnRv
+bkBtaXBzLmNvbT47ICJKYW1lcyBIb2dhbiI8amhvZ2FuQGtlcm5lbC5vcmc+Ow0KU3ViamVj
+dDogIFJlOiBbUEFUQ0ggNC45IDAzLzMyXSBNSVBTOiBVc2UgYXN5bmNJUElzZm9yYXJjaF90
+cmlnZ2VyX2NwdW1hc2tfYmFja3RyYWNlKCkNCiANCk9uIFR1ZSwgSnVsIDE3LCAyMDE4IGF0
+IDAyOjUzOjM4UE0gKzA4MDAsIOmZiOWNjuaJjSB3cm90ZToNCj4gSGksIEdyZWcsDQo+IA0K
+PiBJIGhhdmUgYmFja3BvcnRlZCBhbmQgdGVzdGVkIGl0IHRvIDQuOSBhbmQgNC40Og0KPiBo
+dHRwczovL3BhdGNod29yay5saW51eC1taXBzLm9yZy9wYXRjaC8xOTg2Mi8NCj4gaHR0cHM6
+Ly9wYXRjaHdvcmsubGludXgtbWlwcy5vcmcvcGF0Y2gvMTk4NjMvDQoNCkkgY2FuJ3QgZG8g
+YW55dGhpbmcgd2l0aCByYW5kb20gd2ViIGxpbmtzLiAgUGxlYXNlIHByb3Blcmx5IGNjOiB0
+aGUNCnN0YWJsZSBsaXN0IHdpdGggdGhlIGJhY2twb3J0cyBhbmQgSSBjYW4gdGFrZSB0aGVt
+IGZyb20gdGhlcmUuDQoNCkFuZCBhcmUgeW91IHN1cmUgdGhleSBhcmUgbmVlZGVkIGZvciA0
+LjQueT8NCg0KdGhhbmtzLA0KDQpncmVnIGstaA==
 
-Yes, this is the case right now. Maybe we will grow other users in
-future. Those other potential users is the reason why I used blockable
-rather than oom parameter name.
 
-> Any suggestions regarding how the driver developers can test this code
-> path?  I don't think we presently have a way to fake an oom-killing
-> event?  Perhaps we should add such a thing, given the problems we're
-> having with that feature.
 
-The simplest way is to wrap an userspace code which uses these notifiers
-into a memcg and set the hard limit to hit the oom. This can be done
-e.g. after the test faults in all the mmu notifier managed memory and
-set the hard limit to something really small. Then we are looking for a
-proper process tear down.
-
-> > I think we can improve that even further because there is a common
-> > pattern to do a range lookup first and then do something about that.
-> > The first part can be done without a sleeping lock in most cases AFAICS.
-> > 
-> > The oom_reaper end then simply retries if there is at least one notifier
-> > which couldn't make any progress in !blockable mode. A retry loop is
-> > already implemented to wait for the mmap_sem and this is basically the
-> > same thing.
-> > 
-> > ...
-> >
-> > +static inline int mmu_notifier_invalidate_range_start_nonblock(struct mm_struct *mm,
-> > +				  unsigned long start, unsigned long end)
-> > +{
-> > +	int ret = 0;
-> > +	if (mm_has_notifiers(mm))
-> > +		ret = __mmu_notifier_invalidate_range_start(mm, start, end, false);
-> > +
-> > +	return ret;
-> >  }
-> 
-> nit,
-> 
-> {
-> 	if (mm_has_notifiers(mm))
-> 		return __mmu_notifier_invalidate_range_start(mm, start, end, false);
-> 	return 0;
-> }
-> 
-> would suffice.
-
-Sure. Fixed
- 
-> > 
-> > ...
-> >
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -3074,7 +3074,7 @@ void exit_mmap(struct mm_struct *mm)
-> >  		 * reliably test it.
-> >  		 */
-> >  		mutex_lock(&oom_lock);
-> > -		__oom_reap_task_mm(mm);
-> > +		(void)__oom_reap_task_mm(mm);
-> >  		mutex_unlock(&oom_lock);
-> 
-> What does this do?
-
-There is no error to be returned here as the comment above explains
-		 * Nothing can be holding mm->mmap_sem here and the above call
-		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
-		 * __oom_reap_task_mm() will not block.
--- 
-Michal Hocko
-SUSE Labs
