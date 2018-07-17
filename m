@@ -2,119 +2,77 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F8DECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E90BCECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DFC02086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:51:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9ycpU/G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFC02086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 9386D20841
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:53:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9386D20841
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731228AbeGQQYs (ORCPT
+        id S1730128AbeGQQ0V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:24:48 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38947 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729755AbeGQQYs (ORCPT
+        Tue, 17 Jul 2018 12:26:21 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53362 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729687AbeGQQ0V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:24:48 -0400
-Received: by mail-pl0-f66.google.com with SMTP id p23-v6so647260plo.6;
-        Tue, 17 Jul 2018 08:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=G2uP0r/qMylzgGtFaZxCGlBnrHX1oy1f/I42cSXMtZ4=;
-        b=f9ycpU/GmGuE0nGXG4Ak1au9r8o4wFvWrDt6DULaya9O+HXNF1hBm1mToc66J1d1lS
-         rOKqzrROy0XpLpYdBnBWGyFieQKW3wdYdAvBQzTCMpr82EKXDqlu50jRf30KvIiolvW7
-         LrGj1mqrClfKchqMpgAXf0nOskbqedm01845UHtwsTeazKTRlod58EOBaMT2UxijgTDF
-         1Lw3OH897uYO8rRdohkUCDyhJbBqTDsP97Tya8uUqgdMIWio0+5E6ccukfGz53F4QcXq
-         3EzeGYP1TFrXIIfv17z9VUqtqkHdEvSeQcLA/UpRr1pLkkpzN+ZkXOwrcJ6stEqn61Ri
-         DPmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G2uP0r/qMylzgGtFaZxCGlBnrHX1oy1f/I42cSXMtZ4=;
-        b=i1irIKsTTicLjlvBe+69CyYmMhGdEN2Oz6J+CMzrLW4qy7eQV33gNbDvatL7gDG+6E
-         BCs+cRlgBhgKC1XWOpkNAg8XS0Fsnm3sR9nFwd6xLE0RkKF10WSmZip2JO2KkMfKka9I
-         P79/Qmf2+ynYWTf4OruCrG6DqPNigRcdCZvRPqCj4gfB4yurTep/aOGOOsrnLRzQ18KY
-         eCgODLiJe8xOb7QtA92X0RkSPSBM5ckHYrXtCtblGSi3D/5USl0Z/djCqnDpTlMx5JJk
-         yhNQRJOyMpxcPAANX13FUfMzEl3RdRPJRqzpo9IakCBiOMNBELT173L58jFIsEN8RyZH
-         KjtA==
-X-Gm-Message-State: AOUpUlF6GXCh4403tMk4yb8c/aWQRzyXVJ+tdoUCWgKmg1/mQqBDr4oU
-        qWg8nuQDpHBMrbZL4xCObnw=
-X-Google-Smtp-Source: AAOMgpekLw9gDJtuGACnvqiNXmUB9qhp3N3BPRZ4s78g2wHRoBvKLUBU+p0madtsj/9L3iBfed7BJg==
-X-Received: by 2002:a17:902:3c5:: with SMTP id d63-v6mr2174147pld.163.1531842690615;
-        Tue, 17 Jul 2018 08:51:30 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id t76-v6sm2418723pfe.109.2018.07.17.08.51.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 08:51:29 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 08:51:29 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        support.opensource@diasemi.com
-Subject: Re: [PATCH] usb: typec: tcpm: Fix sink PDO starting index for PPS
- APDO selection
-Message-ID: <20180717155129.GB29933@roeck-us.net>
-References: <20180717143619.80EEB3FBB7@swsrvapps-01.diasemi.com>
+        Tue, 17 Jul 2018 12:26:21 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ffSHX-00015d-88; Tue, 17 Jul 2018 15:52:55 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ipv6: sr: fix useless rol32 call on hash
+Date:   Tue, 17 Jul 2018 16:52:54 +0100
+Message-Id: <20180717155254.30367-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717143619.80EEB3FBB7@swsrvapps-01.diasemi.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 03:36:19PM +0100, Adam Thomson wrote:
-> There is a bug in the sink PDO search code when trying to select
-> a PPS APDO. The current code actually sets the starting index for
-> searching to whatever value 'i' is, rather than choosing index 1
-> to avoid the first PDO (always 5V fixed). As a result, for sources
-> which support PPS but whose PPS APDO index does not match with the
-> supporting sink PPS APDO index for the platform, no valid PPS APDO
-> will be found so this feature will not be permitted.
-> 
-> Sadly in testing, both Source and Sink capabilities matched up and
-> this was missed. Code is now updated to correctly set the start
-> index to 1, and testing with additional PPS capable sources show
-> this to work as expected.
-> 
-> Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+The rol32 call is currently rotating hash but the rol'd value is
+being discarded. I believe the current code is incorrect and hash
+should be assigned the rotated value returned from rol32.
 
-> ---
->  drivers/usb/typec/tcpm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index 74e0cda..4f1f421 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -2238,7 +2238,7 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
->  			 * PPS APDO. Again skip the first sink PDO as this will
->  			 * always be 5V 3A.
->  			 */
-> -			for (j = i; j < port->nr_snk_pdo; j++) {
-> +			for (j = 1; j < port->nr_snk_pdo; j++) {
->  				pdo = port->snk_pdo[j];
->  
->  				switch (pdo_type(pdo)) {
-> -- 
-> 1.9.1
-> 
+Detected by CoverityScan, CID#1468411 ("Useless call")
+
+Fixes: b5facfdba14c ("ipv6: sr: Compute flowlabel for outer IPv6 header of seg6 encap mode")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ net/ipv6/seg6_iptunnel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ipv6/seg6_iptunnel.c b/net/ipv6/seg6_iptunnel.c
+index 19ccf0dc996c..a8854dd3e9c5 100644
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -101,7 +101,7 @@ static __be32 seg6_make_flowlabel(struct net *net, struct sk_buff *skb,
+ 
+ 	if (do_flowlabel > 0) {
+ 		hash = skb_get_hash(skb);
+-		rol32(hash, 16);
++		hash = rol32(hash, 16);
+ 		flowlabel = (__force __be32)hash & IPV6_FLOWLABEL_MASK;
+ 	} else if (!do_flowlabel && skb->protocol == htons(ETH_P_IPV6)) {
+ 		flowlabel = ip6_flowlabel(inner_hdr);
+-- 
+2.17.1
+
