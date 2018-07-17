@@ -2,116 +2,107 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B455FECDFAA
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:12:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6BAECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67144208C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:12:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z202eMpH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67144208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 097F12084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:16:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 097F12084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sympatico.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbeGQCkB (ORCPT
+        id S1729876AbeGQCqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 22:40:01 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42655 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731128AbeGQCkA (ORCPT
+        Mon, 16 Jul 2018 22:46:12 -0400
+Received: from simcoe209srvr.owm.bell.net ([184.150.200.209]:36504 "EHLO
+        torfep06.bell.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729630AbeGQCqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 22:40:00 -0400
-Received: by mail-pg1-f196.google.com with SMTP id y4-v6so8208745pgp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 19:09:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=inPp99IyCggJ5JzoBgEQkIf2dCom/uUiaC1+Y2uOfNo=;
-        b=Z202eMpHdF16N866AcG25mMTmAZ4sFGTYjXml3VwkFslLj0N8F44E5x27lXbdL8wPw
-         OAru82Uknf7J7QkMA0WAefjvI6mwFuz5EYuQhNmFbekMOCcA+qy71LWUn6FKRzb84Ss2
-         xiaLrlt+5qHdXGNt4SOUIKEZcP6Kw4YYYJNSFiV93nZczIME3YXSqsfYjLoJb1svNZxe
-         u7qtNyApD8swGtz8iZoQjQpIqPVblD2S9NM1cSr62A6tl6OPta00ZGYaIkiAJxG9lt0n
-         98BetSXcFoDhgVf3KcrsNso9vGHx3ece+Hewoh0K2rnMdxXM5TS2894hNuPmDcA1xP/s
-         Oa7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=inPp99IyCggJ5JzoBgEQkIf2dCom/uUiaC1+Y2uOfNo=;
-        b=TBlPB2ShFDs1JwOQxgSjaSUeX9a/nbKfQp6sDNp5ObRaGNY2LLavOkTD2Z21wlHpth
-         lp6nu1R6Jelbn7Lmpj2IrIEoNAswWF1lXx1VtHJQd9wmnWnXQ8DcgpoKRUn63RvRs1Sx
-         YU1LW9Z1TxYnMOpTy9eu+qvNuU3/scb6iQZrQqaY3WkV7SYyko6j3v+kIkGdGo/B1tiA
-         pLfBXdIsQH0DMMUcn/D5vV0qtbDqOZSoEf9ASqJ+rRfLzo5MtzVPhSjE1hROXRwxR3K7
-         1JM37h6DHs9XTx5UVZTgmOSV2VXObbpf2crkNG2cXCbgP/V+dLif0en0U3sEx69usNxt
-         D7IA==
-X-Gm-Message-State: AOUpUlEw2cqr/bujxQnUCCbEZC3GJZBqCucAkjDVWBOqZKexzKu5dOt5
-        XFtmDorC7SRXnpbGKIiwYB4=
-X-Google-Smtp-Source: AAOMgpcNU2UXM2j5LviCMByKqBSeSVt0cUzFEhMOdvgQIWKzpbjqmrYQj+PldhwsSTUo9NhBGYZSRQ==
-X-Received: by 2002:a62:8b0f:: with SMTP id j15-v6mr20709478pfe.33.1531793390416;
-        Mon, 16 Jul 2018 19:09:50 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id i20-v6sm41597152pfj.82.2018.07.16.19.09.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Jul 2018 19:09:49 -0700 (PDT)
-From:   Todd Poynor <toddpoynor@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 05/32] staging: gasket: remove driver registration on class creation failure
-Date:   Mon, 16 Jul 2018 19:08:59 -0700
-Message-Id: <20180717020926.176408-6-toddpoynor@gmail.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-In-Reply-To: <20180717020926.176408-1-toddpoynor@gmail.com>
-References: <20180717020926.176408-1-toddpoynor@gmail.com>
+        Mon, 16 Jul 2018 22:46:12 -0400
+X-Greylist: delayed 491 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Jul 2018 22:46:11 EDT
+Received: from bell.net torfep02 184.150.200.158 by torfep02.bell.net
+          with ESMTP
+          id <20180717020750.ZUCU32387.torfep02.bell.net@torspm01.bell.net>
+          for <linux-kernel@vger.kernel.org>;
+          Mon, 16 Jul 2018 22:07:50 -0400
+Received: from arcusix ([67.71.42.39]) by torspm01.bell.net with ESMTP
+          id <20180717020750.QKNW26298.torspm01.bell.net@arcusix>;
+          Mon, 16 Jul 2018 22:07:50 -0400
+Message-ID: <18439b1a3755a6bfd8f96b1866c328ada1db0aa8.camel@sympatico.ca>
+Subject: Re: [PATCH 00/39 v7] PTI support for x86-32
+From:   "David H. Gutteridge" <dhgutteridge@sympatico.ca>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        jroedel@suse.de
+Date:   Mon, 16 Jul 2018 22:07:44 -0400
+In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Cloudmark-Analysis: v=2.2 cv=DZT4krlW c=1 sm=0 tr=0 a=/4BQ6POolEllGJf7n1YyrQ==:17 a=IkcTkHD0fZMA:10 a=R9QF1RCXAYgA:10 a=D19gQVrFAAAA:8 a=xGJFdQoOOyYT9RtmLrQA:9 a=QEXdDO2ut3YA:10 a=W4TVW4IDbPiebHqcZpNg:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Poynor <toddpoynor@google.com>
+On Wed, 2018-07-11 at 13:29 +0200, Joerg Roedel wrote:
+> Hi,
+> 
+> here is version 7 of my patches to enable PTI on x86-32.
+> Changes to the previous version are:
+> 
+> 	* Rebased to v4.18-rc4
+> 
+> 	* Introduced pti_finalize() which is called after
+> 	  mark_readonly() and used to update the kernel
+> 	  mappings in the user page-table after RO/NX
+> 	  protections are in place.
+> 
+> The patches need the vmalloc/ioremap fixes in tip/x86/mm to
+> work correctly, because this enablement makes the issues
+> fixed there more likely to happen.
 
-If class_create() fails, remove the gasket driver from the global
-registration table.
+Hi Joerg & *,
 
-Signed-off-by: Zhongze Hu <frankhu@chromium.org>
-Signed-off-by: Todd Poynor <toddpoynor@google.com>
----
- drivers/staging/gasket/gasket_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I redid my testing on bare metal and in a VM (as with my previous
+testing
+efforts: https://lkml.org/lkml/2018/2/19/844, same setups
+and coverage,
+plus CONFIG_X86_DEBUG_ENTRY_CR3 enabled too) with the
+pti-x32-v7 branch,
+and I didn't encounter any issues. The two DRM
+drivers that were
+triggering bugs in some of the prior iterations
+are both behaving
+properly for me.
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index b69b630f1b79b..cbadab7544c81 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -335,7 +335,8 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 	if (IS_ERR_OR_NULL(internal->class)) {
- 		gasket_nodev_error("Cannot register %s class [ret=%ld]",
- 				   driver_desc->name, PTR_ERR(internal->class));
--		return PTR_ERR(internal->class);
-+		ret = PTR_ERR(internal->class);
-+		goto unregister_gasket_driver;
- 	}
- 
- 	/*
-@@ -369,6 +370,7 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- fail1:
- 	class_destroy(internal->class);
- 
-+unregister_gasket_driver:
- 	g_descs[desc_idx].driver_desc = NULL;
- 	return ret;
- }
--- 
-2.18.0.203.gfac676dfb9-goog
+Regards,
+
+Dave
 
