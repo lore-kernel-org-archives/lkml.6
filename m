@@ -2,66 +2,64 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88ECAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D939FECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 939D6206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:40:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="j/01SRq+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 939D6206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 95E8320673
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95E8320673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbeGQUOY (ORCPT
+        id S1730203AbeGQUOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:14:24 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:38841 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729719AbeGQUOY (ORCPT
+        Tue, 17 Jul 2018 16:14:47 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42476 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729743AbeGQUOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:14:24 -0400
-Received: by mail-wm0-f66.google.com with SMTP id 69-v6so505142wmf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 12:40:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cgN6ZKbAW23bR3AOhVXTv/5v1lbCBLUDDVZIWPOwn5s=;
-        b=j/01SRq+AdmleF4dn3pyxT0Q7/Sy6ibXXHeaoSHvA+O0foSqMBI0Piz7nhRQ7efQI0
-         Jxe+34klWA5LLSdPjexvhG6pp7eg1leK3KZrwY7LTSoEWolG7z07tIiilWhtYrJor2r7
-         1FOgDZcwCGEz4D2YwzPJWdnU9gpnQzkM5B9zs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cgN6ZKbAW23bR3AOhVXTv/5v1lbCBLUDDVZIWPOwn5s=;
-        b=QuiWEzyhgDGDwfRSyr1197KbVw86HrU4B8Od9HnJXP2cw5ymIKTzP3nZcrUuYQlXbT
-         oijWqKWeSsCVdo26dgY8gSkw1M0p4D97b8q6FJZjrXg9cY3daPFAGOP/fy5H2JTeMSvC
-         8H4MdHPWGAjXYHYwdLqoFfPbEqkoUoghl9gNkKYNoSaivB8osI7kF4XSy4N8Z15452FD
-         7b9QTxIVIubXUQqLG670dntWHZ8AoujjzTnCyyyPHuT3wxWYzC9h2v/0DLvZfcbdAkRZ
-         UVAAA7gTbmWaANmdncjntXbWHfzo5TNPNP9+AhsMFW1L2i2iIqkblcrKq0YlEtTmy3Ch
-         MGoQ==
-X-Gm-Message-State: AOUpUlHOKM0DCpPyuHTE3IB8l0ECN9GmN1Paf/dqoVGA09YTravgeTGv
-        lyd1TY0/O+66k5Y7jmJSJvveUw==
-X-Google-Smtp-Source: AAOMgpeGMiPW1xT0mN9DBA7JF72pIWtYdlFtuWmtbhKYirh31FhUexd4vDW7xIv/tBAsv/qVWU4Vyw==
-X-Received: by 2002:a1c:1509:: with SMTP id 9-v6mr2060304wmv.142.1531856416672;
-        Tue, 17 Jul 2018 12:40:16 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id u3-v6sm2188277wre.21.2018.07.17.12.40.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 12:40:11 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 21:40:01 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        Tue, 17 Jul 2018 16:14:47 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6HJcxsh046180
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 15:40:39 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k9pg08rk6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 15:40:39 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 17 Jul 2018 15:40:38 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 17 Jul 2018 15:40:34 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6HJeXnY5898860
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Jul 2018 19:40:33 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF0B1B2064;
+        Tue, 17 Jul 2018 15:40:24 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BEFC2B205F;
+        Tue, 17 Jul 2018 15:40:24 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Jul 2018 15:40:24 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id BB0E316C86E1; Tue, 17 Jul 2018 12:42:57 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 12:42:57 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
         Peter Zijlstra <peterz@infradead.org>,
         Alan Stern <stern@rowland.harvard.edu>,
+        andrea.parri@amarulasolutions.com,
         Will Deacon <will.deacon@arm.com>,
         Akira Yokosawa <akiyks@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>,
@@ -73,10 +71,8 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
  remove it for ordinary release/acquire
-Message-ID: <20180717194001.GA3781@andrea>
-References: <20180712180511.GP2476@hirez.programming.kicks-ass.net>
- <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
- <20180713110851.GY2494@hirez.programming.kicks-ass.net>
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180713110851.GY2494@hirez.programming.kicks-ass.net>
  <87tvp3xonl.fsf@concordia.ellerman.id.au>
  <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
  <87601fz1kc.fsf@concordia.ellerman.id.au>
@@ -84,58 +80,74 @@ References: <20180712180511.GP2476@hirez.programming.kicks-ass.net>
  <87va9dyl8y.fsf@concordia.ellerman.id.au>
  <CA+55aFyFLzH71Tke858x0cjCiRO48vc1W9oVmVkO43rtjezqOg@mail.gmail.com>
  <20180717183341.GQ12945@linux.vnet.ibm.com>
+ <CA+55aFwA=TmJJkKvskX3wL9Rs1j8xZJDJVghv=G0spYufK9kYg@mail.gmail.com>
+ <CA+55aFwTN_qZkpi2pLu3vFqSPA43V049j_Ag=NTiKMz1FhYvhg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717183341.GQ12945@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CA+55aFwTN_qZkpi2pLu3vFqSPA43V049j_Ag=NTiKMz1FhYvhg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071719-2213-0000-0000-000002CC377C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009381; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062228; UDB=6.00545367; IPR=6.00840085;
+ MB=3.00022174; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-17 19:40:37
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071719-2214-0000-0000-00005ADF4A7F
+Message-Id: <20180717194257.GU12945@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=983 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807170204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > That said, I don't understand the powerpc memory ordering. I thought
-> > the rules were "isync on lock, lwsync on unlock".
-> > 
-> > That's what the AIX docs imply, at least.
-> > 
-> > In particular, I find:
-> > 
-> >   "isync is not a memory barrier instruction, but the
-> > load-compare-conditional branch-isync sequence can provide this
-> > ordering property"
-> > 
-> > so why are you doing "sync/lwsync", when it sounds like "isync/lwsync"
-> > (for lock/unlock) is the right thing and would already give memory
-> > barrier semantics?
+On Tue, Jul 17, 2018 at 11:49:41AM -0700, Linus Torvalds wrote:
+> On Tue, Jul 17, 2018 at 11:44 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> >  (a) lwsync is a memory barrier for all the "easy" cases (ie
+> > load->store, load->load, and store->load).
 > 
-> The PowerPC guys will correct me if I miss something here...
+> That last one should have been "store->store", of course.
 
-[Same here.]
+Heh!  I autocorrected without noticing.
 
+> So 'lwsync' gives smp_rmb(), smp_wmb(), and smp_load_acquire()
+> semantics (which are the usual "no barrier needed at all" suspects for
+> things like x86).
 
+Yes.
+
+> What lwsync lacks is store->load ordering. So:
 > 
-> The isync provides ordering roughly similar to lwsync, but nowhere near
-> as strong as sync, and it is sync that would be needed to cause lock
-> acquisition to provide full ordering.
-
-IIRC, ctrl+isync is even *weaker* than lwsync in certain respects, e.g.,
-the former doesn't provide A-cumulativity according to the architectural
-intent.
-
-
->The reason for using lwsync instead
-> of isync is that the former proved to be faster on recent hardware.
-
-Interesting; can you add some references about this?
-
-  Andrea
-
-
-> The reason that the kernel still has the ability to instead generate
-> isync instructions is that some older PowerPC hardware does not provide
-> the lwsync instruction.  If the hardware does support lwsync, the isync
-> instructions are overwritten with lwsync at boot time.
+> >  (b) lwsync is *not* a memory barrier for the store->load case.
 > 
-> 							Thanx, Paul
+> BUT, this is where isync comes in:
 > 
+> >  (c) isync *is* (when in that *sequence*) a memory barrier for a
+> > store->load case (and has to be: loads inside a spinlocked region MUST
+> > NOT be done earlier than stores outside of it!).
+> 
+> which is why I think that a spinlock implementation that uses isync
+> would give us the semantics we want, without the use of the crazy
+> expensive 'sync' that Michael tested (and which apparently gets
+> horrible 10% scheduler performance regressions at least on some
+> powerpc CPU's).
+
+Again, although isync orders the store -instruction- -execution- against
+later loads, it does nothing to flush the store buffer.  So the prior
+stores will not necessarily appear to be ordered from the viewpoint of
+other CPUs not holding the lock.
+
+Again, if those other CPUs are holding the lock, they see all memory
+accesses from all prior critical sections for that lock, as required.
+
+							Thanx, Paul
+
