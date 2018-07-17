@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDE8ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B71ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53DFC20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:09:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53DFC20693
+	by mail.kernel.org (Postfix) with ESMTP id D2F7220693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:09:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F7220693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731636AbeGQVn0 (ORCPT
+        id S1731671AbeGQVn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:43:26 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:34776 "EHLO
+        Tue, 17 Jul 2018 17:43:28 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46519 "EHLO
         mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731583AbeGQVnZ (ORCPT
+        with ESMTP id S1731583AbeGQVn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:43:25 -0400
-Received: by mail-pl0-f65.google.com with SMTP id f6-v6so1000672plo.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:08:57 -0700 (PDT)
+        Tue, 17 Jul 2018 17:43:28 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 30-v6so981397pld.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:08:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=bPRaQP/phER6Yrf1g8s7fULsmxW+AmhTsOUxjRfrtLY=;
-        b=PkG4cvnVVm+TxUInQlzvWoeUmZCk9vXOKGPhSJB5gLpOzzqlkiX5Hp5rTXU0yehXkJ
-         lTfu89uhqlD8CB6I0IakAApoq9LSvtI4o/5NWy+sHoJ4ao6vXZcQd7fzXK7ibYrfUJ/l
-         8HWJrGhdyhv+YXVW7FTefGKGjuNqgoo9xPm5fm66UxyZ5z8PxYhZj+4Y4VoLc3mifX1N
-         48DmQBbnm4UTZyRRb68A498nFpfS34NoMi8BgyE8vqVpUSYN3LOx7OiumL0iR1NCaoC9
-         +dIpcy1SR9U5ZeekbJ0j86Uk5YpUh/Z5rIQ/X/oUmilpMjGRg49lipLaz6Xv6WOL4Ft6
-         DDTA==
-X-Gm-Message-State: AOUpUlF/SdrwZ0j/XRaE1bRf2s81OZK1lQ73ncGQSX4h9VbpAeJm/qq2
-        wW3N8/yBxB3aHdT/dQAtYls59A==
-X-Google-Smtp-Source: AAOMgpfRqZMPxgZ39slXni4F51gcQ+zF35iWoWNA3v7cW16Oae5W0BoDMbW41xUe/BxmBMeGSvCQxA==
-X-Received: by 2002:a17:902:683:: with SMTP id 3-v6mr3137824plh.291.1531861737108;
-        Tue, 17 Jul 2018 14:08:57 -0700 (PDT)
+         :references:mime-version:content-transfer-encoding;
+        bh=MKgItULpWv/JusAWZlHp/HHgqWsf1L9Tz79AKNI73hM=;
+        b=SUWrlvXZPDk8see1jBnqNWkK7bIpEL/Zl3ty5RbIy1JGnWgy1LO2TJ5QKVfom52fmk
+         a1S0IxAmSjPULBv9AdEykG4YPbQxabW3tLxH8pGzVJJeEIuFA9pIiQBg/HQ4HbsLfAAT
+         d54fp8hFPUgn2E52xW0sEOS4zQTIchV5Lu8S0QLw5x4IzsuOW119+us58+JEA1Od0A8/
+         Zp5fklIiD0sDXPb7HU4RrWzKl+M4NaWb94zBxMCT3Jd2QKtywPcNYYgYURvdOpvB/7TW
+         Eb0YBMp6u/AXjUB8k+D7bcBp6U2t9MfoKs9+oEPJGb+QcZwUI2iD1gjzRcznsMwW0ztC
+         aNyw==
+X-Gm-Message-State: AOUpUlE0t1hDv2jjHvJfGoaAKHjz7m8umygqkzN2I8pPfwAbkT2kklGb
+        kGZeMIS7vy/8/e+Fu9/m2Ccf4g==
+X-Google-Smtp-Source: AAOMgpf8ibqETWbw1taelIpS4ixt5mBMlaR81P1Ndj3kMrMboYDtEz8KtRtXjR8lfn53Aa/ZjUJV7g==
+X-Received: by 2002:a17:902:28a6:: with SMTP id f35-v6mr3154150plb.110.1531861738851;
+        Tue, 17 Jul 2018 14:08:58 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id b23-v6sm5081924pfc.49.2018.07.17.14.08.55
+        by smtp.gmail.com with ESMTPSA id b23-v6sm5081924pfc.49.2018.07.17.14.08.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:08:56 -0700 (PDT)
+        Tue, 17 Jul 2018 14:08:57 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -61,53 +61,98 @@ Cc:     linux-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v4 2/3] arm64: dts: qcom: pm8998: Add spmi-temp-alarm node
-Date:   Tue, 17 Jul 2018 14:08:14 -0700
-Message-Id: <20180717210815.245639-2-mka@chromium.org>
+Subject: [PATCH v4 3/3] arm64: dts: qcom: pm8998: Add pm8998 thermal zone
+Date:   Tue, 17 Jul 2018 14:08:15 -0700
+Message-Id: <20180717210815.245639-3-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717210815.245639-1-mka@chromium.org>
 References: <20180717210815.245639-1-mka@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the spmi-temp-alarm node to pm8998 based on the examples in the
-bindings.
+The thermal zone uses spmi-temp-alarm as sensor. The trip points
+correspond to stage 1 and 2 temperatures. Stage 2 shutdown is disabled,
+instead the stage 2 temperature is configured as critical trip point to
+allow for an ordely shutdown.
+
+Without an IIO input the sensor only reports a limited number of
+temperatures:
+
+- 37°C for temperatures below 105°C
+- 107°C for temperatures >= 105°C and < 125°C
+- 127°C for temperatures >= 125°C
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
 Changes in v4:
-- none
+- updated trip point temperatures to match stage 1 and 2 ones
+- disabled stage 2 shutdown
+- updated commit message
 
 Changes in v3:
-- changed node name from 'qcom,temp-alarm@2400' to 'temp-alarm@2400'
-- removed controller register length value from 'reg'
+- moved 'thermal-zones' node to the beginning of the .dtsi
 
 Changes in v2:
-- none
+- defined 'thermal-zones' node in pm8998.dtsi instead of using a label
+  to refer to it
+- use 105°C hardware trip point as critical trip point
+- reduced number of trip points to 2
+- lowered temperature of passive trip point
+- updated trip point names and added labels
+- updated commit message
 ---
- arch/arm64/boot/dts/qcom/pm8998.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm64/boot/dts/qcom/pm8998.dtsi | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-index 92bed1e7d4bb..7eea94701b23 100644
+index 7eea94701b23..3bb179b85a44 100644
 --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
 +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-@@ -11,6 +11,13 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+@@ -3,6 +3,31 @@
  
-+		pm8998_temp: temp-alarm@2400 {
-+			compatible = "qcom,spmi-temp-alarm";
-+			reg = <0x2400>;
-+			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
-+			#thermal-sensor-cells = <0>;
-+		};
+ #include <dt-bindings/spmi/spmi.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/thermal/thermal.h>
 +
- 		pm8998_gpio: gpios@c000 {
- 			compatible = "qcom,pm8998-gpio", "qcom,spmi-gpio";
- 			reg = <0xc000>;
++/ {
++	thermal-zones {
++		pm8998 {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++
++			thermal-sensors = <&pm8998_temp>;
++
++			trips {
++				pm8998_alert0: pm8998-alert0 {
++					temperature = <105000>;
++					hysteresis = <2000>;
++					type = "passive";
++				};
++				pm8998_crit: pm8998-crit {
++					temperature = <125000>;
++					hysteresis = <2000>;
++					type = "critical";
++				};
++			};
++		};
++	};
++};
+ 
+ &spmi_bus {
+ 	pm8998_lsid0: pmic@0 {
+@@ -15,6 +40,7 @@
+ 			compatible = "qcom,spmi-temp-alarm";
+ 			reg = <0x2400>;
+ 			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
++			stage2-shutdown-disabled;
+ 			#thermal-sensor-cells = <0>;
+ 		};
+ 
 -- 
 2.18.0.203.gfac676dfb9-goog
 
