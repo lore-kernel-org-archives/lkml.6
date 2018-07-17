@@ -2,91 +2,110 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7065EECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:02:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9AFFECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2851A2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:02:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2851A2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A3D42077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:04:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qIR1PKKi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3D42077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731090AbeGQUgc (ORCPT
+        id S1730203AbeGQUin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:36:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54558 "EHLO mail.bootlin.com"
+        Tue, 17 Jul 2018 16:38:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729730AbeGQUgc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:36:32 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 27AB1207AB; Tue, 17 Jul 2018 22:02:19 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6628B2091A;
-        Tue, 17 Jul 2018 22:01:36 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 22:01:36 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Abhishek Sahu <absahu@codeaurora.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nand: ranw: qcom_nand: stop using phys_to_dma()
-Message-ID: <20180717220136.2782fc5d@bbrezillon>
-In-Reply-To: <CAK8P3a1M4v1hMduAX3y39DEjBiT=70xm-+qJ8CPLZHQwKOzJ1g@mail.gmail.com>
-References: <20180711122709.358159-1-arnd@arndb.de>
-        <20180711150449.4152333c@bbrezillon>
-        <CAK8P3a1M4v1hMduAX3y39DEjBiT=70xm-+qJ8CPLZHQwKOzJ1g@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1730027AbeGQUim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 16:38:42 -0400
+Received: from mail-wm0-f53.google.com (mail-wm0-f53.google.com [74.125.82.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E91620834
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 20:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531857869;
+        bh=W3m6y5FiKhTM8zUTgIIJg4Q9yMvxEpuw2xp8Z3qe/5w=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=qIR1PKKiqVAyBT0fAvgMcQRuStU8PtgJ9K50GvShL/O3Y8Ql9DX2kcGRdzYR74Pfv
+         zZEEsToh2bqfSqvNT/AYn9BwKDcMMdKNV8Q5sA0WdirXr2d9zEPE27eyKa9qJ/s9cz
+         Zy02fPDx/gJcXwtN3IbttD9dz6awMpHPUzWbO744=
+Received: by mail-wm0-f53.google.com with SMTP id h20-v6so555784wmb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:04:29 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEfQ5gTW4fk7I2vXi8WjkUm1FKWKuPZSCaUsg+L+I/Tpr/hLgU0
+        noLb/LLYJAh4VkaqdlTlI8r6McwXPd/IiTwOnuYRDg==
+X-Google-Smtp-Source: AAOMgpdCieXSPcXelWPNCN9Ep4NlHJC3M6OW2RyKsFzLCUx7OoMosWQXYAmmLfp4fJYGV+JPfjpfNeJeTZOjWaELG88=
+X-Received: by 2002:a1c:ef0f:: with SMTP id n15-v6mr2109118wmh.116.1531857868131;
+ Tue, 17 Jul 2018 13:04:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:04:07
+ -0700 (PDT)
+In-Reply-To: <20180716190337.26133-5-riel@surriel.com>
+References: <20180716190337.26133-1-riel@surriel.com> <20180716190337.26133-5-riel@surriel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 17 Jul 2018 13:04:07 -0700
+X-Gmail-Original-Message-ID: <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
+Message-ID: <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+To:     Rik van Riel <riel@surriel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+On Mon, Jul 16, 2018 at 12:03 PM, Rik van Riel <riel@surriel.com> wrote:
+> Lazy TLB mode can result in an idle CPU being woken up by a TLB flush,
+> when all it really needs to do is reload %CR3 at the next context switch,
+> assuming no page table pages got freed.
+>
+> Memory ordering is used to prevent race conditions between switch_mm_irqs_off,
+> which checks whether .tlb_gen changed, and the TLB invalidation code, which
+> increments .tlb_gen whenever page table entries get invalidated.
+>
+> The atomic increment in inc_mm_tlb_gen is its own barrier; the context
+> switch code adds an explicit barrier between reading tlbstate.is_lazy and
+> next->context.tlb_gen.
+>
+> Unlike the 2016 version of this patch, CPUs with cpu_tlbstate.is_lazy set
+> are not removed from the mm_cpumask(mm), since that would prevent the TLB
+> flush IPIs at page table free time from being sent to all the CPUs
+> that need them.
+>
+> This patch reduces total CPU use in the system by about 1-2% for a
+> memcache workload on two socket systems, and by about 1% for a heavily
+> multi-process netperf between two systems.
+>
 
-On Wed, 11 Jul 2018 16:26:31 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+I'm not 100% certain I'm replying to the right email, and I haven't
+gotten the tip-bot notification at all, but:
 
-> On Wed, Jul 11, 2018 at 3:04 PM, Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> > On Wed, 11 Jul 2018 14:26:58 +0200
-> > Arnd Bergmann <arnd@arndb.de> wrote:
-> >  
-> >> Compile-testing this driver on x86 caused a link error:
-> >>
-> >> ERROR: "__phys_to_dma" [drivers/mtd/nand/raw/qcom_nandc.ko] undefined!
-> >>
-> >> The problem here is that the driver attempts to convert the physical
-> >> address into the DMA controller as a dma_addr_t and calls phys_to_dma()
-> >> to do the conversion.
-> >>
-> >> However, there is no generic way to convert a phys_addr_t into a dma_addr_t
-> >> for anything other than RAM (which should use the dma-mapping API instead).
-> >> The only correct use of phys_to_dma() instead is inside of the dma-mapping
-> >> implementation.  
-> >
-> > Should we use dma_map_resource() to do the phys_addr_t to dma_addr_t
-> > conversion?  
-> 
-> I had not seen that interface before, but yes, that does seem like the best
-> way to do it here.
+I think you've introduced a minor-ish performance regression due to
+changing the old (admittedly terribly documented) control flow a bit.
+Before, if real_prev == next, we would skip:
 
-Do you plan to send a new version using dma_map_resource()? BTW,
-there's typo in the subject prefix (s/ranw/rawnand/).
+load_mm_cr4(next);
+switch_ldt(real_prev, next);
 
-Regards,
+Now we don't any more.  I think you should reinstate that
+optimization.  It's probably as simple as wrapping them in an if
+(real_priv != next) with a comment like /* Remote changes that would
+require a cr4 or ldt reload will unconditionally send an IPI even to
+lazy CPUs.  So, if we aren't changing our mm, we don't need to refresh
+cr4 or the ldt */
 
-Boris
+Hmm.  load_mm_cr4() should bypass itself when mm == &init_mm.  Want to
+fix that part or should I?
+
+--Andy
