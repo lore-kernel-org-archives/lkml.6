@@ -2,109 +2,92 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A57AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A30ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32FBD20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:19:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32FBD20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8EC1020C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:21:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESQnhNSC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EC1020C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731455AbeGQMvg (ORCPT
+        id S1731408AbeGQMxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:51:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:8190 "EHLO mga14.intel.com"
+        Tue, 17 Jul 2018 08:53:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731250AbeGQMvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:51:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 05:19:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="216679187"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga004.jf.intel.com with ESMTP; 17 Jul 2018 05:19:09 -0700
-Message-ID: <d64fc362be63bb8540447f7df2c232eedd696edb.camel@linux.intel.com>
-Subject: Re: [PATCH 3/5] i2c: designware: add MSCC Ocelot support
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Hogan <jhogan@kernel.org>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microsemi.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 17 Jul 2018 15:19:08 +0300
-In-Reply-To: <20180717114837.21839-4-alexandre.belloni@bootlin.com>
-References: <20180717114837.21839-1-alexandre.belloni@bootlin.com>
-         <20180717114837.21839-4-alexandre.belloni@bootlin.com>
-Organization: Intel Finland Oy
+        id S1731314AbeGQMxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:53:23 -0400
+Received: from mail-wm0-f54.google.com (mail-wm0-f54.google.com [74.125.82.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF3AE2146E;
+        Tue, 17 Jul 2018 12:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531830059;
+        bh=xmXtyF9eQMvbP7iyzNNmVto0syQn1/2JCrYVijzkh0U=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=ESQnhNSCY9SF4t3UWqtr4U52yZM12r/iqsFdNiZTgGZAf6VClzYwsx3UQwv9jPKH9
+         VRCuyP+oGQIZK4zLDiEAptmc+IUffnxncO4AIaw4zXeQ8ROmBqIL5eAkKymX9hCF1H
+         fgcoUqYJDrrh2SUCV4mcv2BdTVmn1bQudkywLMBc=
+Received: by mail-wm0-f54.google.com with SMTP id s14-v6so1318139wmc.1;
+        Tue, 17 Jul 2018 05:20:58 -0700 (PDT)
+X-Gm-Message-State: AOUpUlH2Rna+Dm7ykDpmogrGqDJyiCpKu1fJchExZoytpgkyv7gg50TG
+        5WhueYWss3CBLbK5sciAfkSm5agE967MMu9/bWU=
+X-Google-Smtp-Source: AAOMgpdfnmdCLspzg3qXe3Yy8eBVKyShq7ToqHW11XnnmlPtQ7R9T96qfxJHHdGcbJUzvHNClzqsilRBzbuuDhZpgFQ=
+X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr1283856wmm.117.1531830057316;
+ Tue, 17 Jul 2018 05:20:57 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:20:56
+ -0700 (PDT)
+In-Reply-To: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
+References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 17 Jul 2018 14:20:56 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdP78VFQgSQ9z9WsgYY_YhEKPUt=0MOra6Pz6smQeiNGg@mail.gmail.com>
+Message-ID: <CAJKOXPdP78VFQgSQ9z9WsgYY_YhEKPUt=0MOra6Pz6smQeiNGg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] thermal: exynos: enable core tmu clk on exynos platform
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 13:48 +0200, Alexandre Belloni wrote:
-> The Microsemi Ocelot I2C controller is a designware IP. It also has a
-> second set of registers to allow tweaking SDA hold time and spike
-> filtering.
+Hi Anand,
 
-Can you elaborate a bit?
+Thanks for patch.
 
-Are they platform specific? Are they shadow registers? Are they
-something else? Datasheet link / excerpt would be also good to read.
- 
->  Optional properties :
-> + - reg : for "mscc,ocelot-i2c", a second register set to configure
-> the SDA hold
-> +   time, named ICPU_CFG:TWI_DELAY in the datasheet.
-> +
+On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
+> clk_summary do not show tmu_apbif clk enable, so replace
+> the clk_prepare with clk_prepare_enables to enable tmu clk.
 
-Hmm... Is this registers unique to the SoC in question? Is address of
-them fixed or may be configured on RTL level?
+This is not valid reason to do a change. What is clk_summary does not
+really matter. Your change has negative impact on power consumption as
+the clock stays enabled all the time. This is not what we want... so
+please explain it more - why you need the clock to be enabled all the
+time? What is broken (clk_summary is not broken in this case)?
 
-If former is right, why do we need a separate property?
+> simplify the enable of tmu_triminfo_apbif clk, also fixed
+> the order of goto error for failed cases.
 
->  
-> +#define MSCC_ICPU_CFG_TWI_DELAY		0x0
-> +#define MSCC_ICPU_CFG_TWI_DELAY_ENABLE	BIT(0)
-> +#define MSCC_ICPU_CFG_TWI_SPIKE_FILTER	0x4
-> +
-> +static int mscc_twi_set_sda_hold_time(struct dw_i2c_dev *dev)
-> +{
-> +	writel((dev->sda_hold_time << 1) |
-> MSCC_ICPU_CFG_TWI_DELAY_ENABLE,
-> +	       dev->base_ext + MSCC_ICPU_CFG_TWI_DELAY);
-> +
-> +	return 0;
-> +}
+This has to be split into separate change.
 
-Hmm... And does how this make native DesignWare IP's registers obsolete?
-
-
-> +	if (of_device_is_compatible(pdev->dev.of_node, "mscc,ocelot-
-> i2c"))
-
-Can't you just ask for this unconditionally? Why not?
-(It seems I might have known why not, but can we use named resource
-instead in case this is not so SoC specific)
-
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Best regards,
+Krzysztof
