@@ -2,90 +2,85 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9224ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92344ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF5620841
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:56:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EF5620841
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id 2331520877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:57:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktQUVAn3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2331520877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbeGQQaI (ORCPT
+        id S1730598AbeGQQbB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:30:08 -0400
-Received: from smtp03.citrix.com ([162.221.156.55]:60343 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729805AbeGQQaI (ORCPT
+        Tue, 17 Jul 2018 12:31:01 -0400
+Received: from mail-yw0-f172.google.com ([209.85.161.172]:42670 "EHLO
+        mail-yw0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729708AbeGQQbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:30:08 -0400
-X-IronPort-AV: E=Sophos;i="5.51,366,1526342400"; 
-   d="scan'208";a="60430637"
-Subject: Re: [RFC 1/1] libiscsi: Fix race between iscsi_xmit_task and
- iscsi_complete_task
-From:   Anoob Soman <anoob.soman@citrix.com>
-To:     <lduncan@suse.com>, <cleech@redhat.com>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>, <open-iscsi@googlegroups.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1530543624-130587-1-git-send-email-anoob.soman@citrix.com>
- <5cc14ea6-2586-ce2b-f8c4-c46222280df7@citrix.com>
-Message-ID: <41949f23-794e-60c8-ce0f-fcb170b1db39@citrix.com>
-Date:   Tue, 17 Jul 2018 16:56:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 17 Jul 2018 12:31:01 -0400
+Received: by mail-yw0-f172.google.com with SMTP id y203-v6so563215ywd.9;
+        Tue, 17 Jul 2018 08:57:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j4sExYVc44yL99uS2OarcCcbwXMg3T9dUbeLuViEUuo=;
+        b=ktQUVAn3Yv+BXq2zN65uuSldkvbBtAj6j5Uiw8bTmBUFL83hKsJMxdVBSEPXZuuO5o
+         USwjTAOxu9BwLIpOM8Yw+a2F8SHaZURgXAvecE4baeRF2/leY49GBxiO1OiNK10RtKOi
+         2L3tt0jkdv0pBDUIQcfYjmE5K4+Z4wWBlzw6WRTFxJRohEmfDIJwmbt51QNmQ8DSGbKB
+         fTWDhKCA9o+1YjF3KURVWpgCh/z8g2JNouJ97edfoeVnU9XBJYblGNDovOq7irklkg28
+         q7ullbdgrwwUOt+Gc4YT62AMzdIfCldoTj01UfKnQDh5GmUwkjUUHM89DGii2DOylwOu
+         T4AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j4sExYVc44yL99uS2OarcCcbwXMg3T9dUbeLuViEUuo=;
+        b=NvWq9T7axsbpXtp/hpiiUpEl0/WKHEhkJMbQtBQFwOYMlO7PPbuzpNTvBdPsONgY5G
+         S6KTCUB/6N0rUuMB+LRqy3aog/absyVFG/pLu+OW9p9aximj31p6s1kTX0zGHm1pa8W1
+         G6j3BTgIQBbDnUa7Sp7rx6pCPL/Vn/f+uV7go6TAvtrDeNp6HCOF/o5Ue4vqYJD6dlJX
+         q5alU/wVywSXRKX4R79BUbzych3DrjgTCT3m0JTbChzVeEgS7eR/ADDhxDuCVFbVcXu0
+         u7qZ7DY2s8wUUQUodA4QHzHEpFYSVTLyKS2AjeByNtCyIjWqcXS/F3vE8EZ1tvEKNQzo
+         Mg8Q==
+X-Gm-Message-State: AOUpUlG7RAavoX8INT3ne354nkfvMC4PLGZ1FdL+hIZgYIpQuETxB+wj
+        uWy0VPtT6O1VvIv2vbOPKitucq3J
+X-Google-Smtp-Source: AAOMgpd9uiBxn2zZaB4gw/nT+Sr0S+bF4P8aUn7kk1Fo/1cSuVQbU6X3jlR+Z1QiBx6hlwnMCu1HNw==
+X-Received: by 2002:a81:780e:: with SMTP id t14-v6mr1156155ywc.317.1531843062647;
+        Tue, 17 Jul 2018 08:57:42 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::1:7178])
+        by smtp.gmail.com with ESMTPSA id r3-v6sm682302ywr.80.2018.07.17.08.57.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 08:57:41 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 08:57:40 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     axboe@kernel.dk
+Cc:     michaelcallahan@fb.com, newella@fb.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCHSET v2] block: Separating discards from writes in Linux IO
+ statistics
+Message-ID: <20180717155740.GP72677@devbig577.frc2.facebook.com>
+References: <20180605180120.2726113-1-tj@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5cc14ea6-2586-ce2b-f8c4-c46222280df7@citrix.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180605180120.2726113-1-tj@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 11:43, Anoob Soman wrote:
-> On 02/07/18 16:00, Anoob Soman wrote:
->> ---
->>   drivers/scsi/libiscsi.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
->> index d609383..aa3be6f 100644
->> --- a/drivers/scsi/libiscsi.c
->> +++ b/drivers/scsi/libiscsi.c
->> @@ -1449,7 +1449,13 @@ static int iscsi_xmit_task(struct iscsi_conn 
->> *conn)
->>       if (test_bit(ISCSI_SUSPEND_BIT, &conn->suspend_tx))
->>           return -ENODATA;
->>   +    spin_lock_bh(&conn->session->back_lock);
->> +    if (conn->task == NULL) {
->> +        spin_unlock_bh(&conn->session->back_lock);
->> +        return -ENODATA;
->> +    }
->>       __iscsi_get_task(task);
->> +    spin_unlock_bh(&conn->session->back_lock);
->>       spin_unlock_bh(&conn->session->frwd_lock);
->>       rc = conn->session->tt->xmit_task(task);
->>       spin_lock_bh(&conn->session->frwd_lock);
->
->
-> Hi Chris, Lee.
->
-> Could one of you look at this change and provide some comments ?
->
-> Thanks,
->
-> -Anoob.
->
+Jens, ping.
 
-Hi,
+Thanks.
 
-Can someone look at this change ?
-
-Thanks,
-
-Anoob.
-
+-- 
+tejun
