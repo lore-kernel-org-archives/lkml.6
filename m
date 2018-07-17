@@ -2,109 +2,290 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E47ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6414ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F305120C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F305120C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7699C20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="PxIz2Wx2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7699C20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731259AbeGQKEk (ORCPT
+        id S1730302AbeGQKDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:04:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38457 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729672AbeGQKEk (ORCPT
+        Tue, 17 Jul 2018 06:03:18 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:38973 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729707AbeGQKDR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:04:40 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9WSpr1462956
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:32:28 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9WRRJ1462953;
-        Tue, 17 Jul 2018 02:32:27 -0700
-Date:   Tue, 17 Jul 2018 02:32:27 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Yauheni Kaliuta <tipbot@zytor.com>
-Message-ID: <tip-0fcff1715bec7593a0ba86f3fef46cd89af37a8b@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org, stern@rowland.harvard.edu,
-        yauheni.kaliuta@redhat.com, hpa@zytor.com,
-        paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
-Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          mingo@kernel.org, paulmck@linux.vnet.ibm.com, hpa@zytor.com,
-          yauheni.kaliuta@redhat.com, stern@rowland.harvard.edu
-In-Reply-To: <20180716180605.16115-13-paulmck@linux.vnet.ibm.com>
-References: <20180716180605.16115-13-paulmck@linux.vnet.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model/Documentation: Fix typo,
- smb->smp
-Git-Commit-ID: 0fcff1715bec7593a0ba86f3fef46cd89af37a8b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 17 Jul 2018 06:03:17 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id B2C7E10C14B1;
+        Tue, 17 Jul 2018 02:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531819895; bh=w7YjSlCdPQrYkR6OUtEivkzkwouW9GKWB5UCYgk89/o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=PxIz2Wx2Hx4DPgqav3pjU2np8x0S0H0ZiOvYvL7LRDdQnBZ54A4OI6Oh5Tj1E6cLb
+         FB//dbjHEbQ0VXvEYZMdLyiDsxF7X57w2UPB1t6nuSSWSoj9zvCAbJ/q5IvsUpj3vn
+         IKCxFcd+1dDd2pNRL2MdgN9uGNmr00Ft2cYMszykmEvRy+mLMOeRLdcBT0+toy59G/
+         5hrm6kEiiG5CB5L2wWx3d9URVnscRAJYYebtM6gB/TFlVP6xCCKrnloPLkyluDBmNp
+         o+Xz3OROZapJPaHfFpmLf5djLiueodWjwsMo7DgMi/Qm9eTQq4Bli82vy+/JRMsG4K
+         8c6GCIMi3rQwA==
+Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C1234378B;
+        Tue, 17 Jul 2018 02:31:34 -0700 (PDT)
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by de02.synopsys.com (Postfix) with ESMTP id D9DA73BBEE;
+        Tue, 17 Jul 2018 11:31:33 +0200 (CEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com,
+        shawn.lin@rock-chips.com
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v12 02/12] PCI: endpoint: Add MSI-X interfaces
+Date:   Tue, 17 Jul 2018 11:31:22 +0200
+Message-Id: <008979e1aa4c70eb0257f341ca8878f541ac1fa2.1531818979.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
+References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
+References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0fcff1715bec7593a0ba86f3fef46cd89af37a8b
-Gitweb:     https://git.kernel.org/tip/0fcff1715bec7593a0ba86f3fef46cd89af37a8b
-Author:     Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-AuthorDate: Mon, 16 Jul 2018 11:06:04 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 17 Jul 2018 09:30:35 +0200
+Add PCI_EPC_IRQ_MSIX type.
 
-tools/memory-model/Documentation: Fix typo, smb->smp
+Add MSI-X callbacks signatures to the ops structure.
 
-The tools/memory-model/Documentation/explanation.txt file says
-"For each other CPU C', smb_wmb() forces all po-earlier stores"
-This commit therefore replaces the "smb_wmb()" with "smp_wmb()".
+Add sysfs interface for set/get MSI-X capability maximum number.
 
-Signed-off-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akiyks@gmail.com
-Cc: boqun.feng@gmail.com
-Cc: dhowells@redhat.com
-Cc: j.alglave@ucl.ac.uk
-Cc: linux-arch@vger.kernel.org
-Cc: luc.maranget@inria.fr
-Cc: npiggin@gmail.com
-Cc: parri.andrea@gmail.com
-Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/20180716180605.16115-13-paulmck@linux.vnet.ibm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Update documentation accordingly.
+
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
- tools/memory-model/Documentation/explanation.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Moved pci_epc_raise_irq() signature changes to patch file #3.
+Change v3->v4:
+ - Rebased to Lorenzo's master branch v4.18-rc1.
+Change v4->v5:
+ - Nothing changed, just to follow the patch set version.
+Change v5->v6:
+ - Nothing changed, just to follow the patch set version.
+Change v6->v7:
+ - Nothing changed, just to follow the patch set version.
+Change v7->v8:
+ - Re-sending the patch series.
+Change v8->v9:
+ - Nothing changed, just to follow the patch set version.
+Change v9->v10:
+ - Updated documentation.
+Change v10->v11:
+ - Nothing changed, just to follow the patch set version.
+Change v11->v12:
+ - Nothing changed, just to follow the patch set version.
 
-diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
-index 1b09f3175a1f..0cbd1ef8f86d 100644
---- a/tools/memory-model/Documentation/explanation.txt
-+++ b/tools/memory-model/Documentation/explanation.txt
-@@ -804,7 +804,7 @@ type of fence:
- Second, some types of fence affect the way the memory subsystem
- propagates stores.  When a fence instruction is executed on CPU C:
+ .../PCI/endpoint/function/binding/pci-test.txt     |  2 +
+ drivers/pci/endpoint/pci-ep-cfs.c                  | 24 +++++++++
+ drivers/pci/endpoint/pci-epc-core.c                | 57 ++++++++++++++++++++++
+ include/linux/pci-epc.h                            |  9 ++++
+ include/linux/pci-epf.h                            |  1 +
+ 5 files changed, 93 insertions(+)
+
+diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+index 3b68b95..cd76ba4 100644
+--- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
++++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+@@ -15,3 +15,5 @@ subsys_id	 : don't care
+ interrupt_pin	 : Should be 1 - INTA, 2 - INTB, 3 - INTC, 4 -INTD
+ msi_interrupts	 : Should be 1 to 32 depending on the number of MSI interrupts
+ 		   to test
++msix_interrupts	 : Should be 1 to 2048 depending on the number of MSI-X
++		   interrupts to test
+diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+index 018ea34..d1288a0 100644
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -286,6 +286,28 @@ static ssize_t pci_epf_msi_interrupts_show(struct config_item *item,
+ 		       to_pci_epf_group(item)->epf->msi_interrupts);
+ }
  
--	For each other CPU C', smb_wmb() forces all po-earlier stores
-+	For each other CPU C', smp_wmb() forces all po-earlier stores
- 	on C to propagate to C' before any po-later stores do.
++static ssize_t pci_epf_msix_interrupts_store(struct config_item *item,
++					     const char *page, size_t len)
++{
++	u16 val;
++	int ret;
++
++	ret = kstrtou16(page, 0, &val);
++	if (ret)
++		return ret;
++
++	to_pci_epf_group(item)->epf->msix_interrupts = val;
++
++	return len;
++}
++
++static ssize_t pci_epf_msix_interrupts_show(struct config_item *item,
++					    char *page)
++{
++	return sprintf(page, "%d\n",
++		       to_pci_epf_group(item)->epf->msix_interrupts);
++}
++
+ PCI_EPF_HEADER_R(vendorid)
+ PCI_EPF_HEADER_W_u16(vendorid)
  
- 	For each other CPU C', any store which propagates to C before
+@@ -327,6 +349,7 @@ CONFIGFS_ATTR(pci_epf_, subsys_vendor_id);
+ CONFIGFS_ATTR(pci_epf_, subsys_id);
+ CONFIGFS_ATTR(pci_epf_, interrupt_pin);
+ CONFIGFS_ATTR(pci_epf_, msi_interrupts);
++CONFIGFS_ATTR(pci_epf_, msix_interrupts);
+ 
+ static struct configfs_attribute *pci_epf_attrs[] = {
+ 	&pci_epf_attr_vendorid,
+@@ -340,6 +363,7 @@ static struct configfs_attribute *pci_epf_attrs[] = {
+ 	&pci_epf_attr_subsys_id,
+ 	&pci_epf_attr_interrupt_pin,
+ 	&pci_epf_attr_msi_interrupts,
++	&pci_epf_attr_msix_interrupts,
+ 	NULL,
+ };
+ 
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index b0ee427..7d77bd0 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -218,6 +218,63 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ EXPORT_SYMBOL_GPL(pci_epc_set_msi);
+ 
+ /**
++ * pci_epc_get_msix() - get the number of MSI-X interrupt numbers allocated
++ * @epc: the EPC device to which MSI-X interrupts was requested
++ * @func_no: the endpoint function number in the EPC device
++ *
++ * Invoke to get the number of MSI-X interrupts allocated by the RC
++ */
++int pci_epc_get_msix(struct pci_epc *epc, u8 func_no)
++{
++	int interrupt;
++	unsigned long flags;
++
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
++		return 0;
++
++	if (!epc->ops->get_msix)
++		return 0;
++
++	spin_lock_irqsave(&epc->lock, flags);
++	interrupt = epc->ops->get_msix(epc, func_no);
++	spin_unlock_irqrestore(&epc->lock, flags);
++
++	if (interrupt < 0)
++		return 0;
++
++	return interrupt + 1;
++}
++EXPORT_SYMBOL_GPL(pci_epc_get_msix);
++
++/**
++ * pci_epc_set_msix() - set the number of MSI-X interrupt numbers required
++ * @epc: the EPC device on which MSI-X has to be configured
++ * @func_no: the endpoint function number in the EPC device
++ * @interrupts: number of MSI-X interrupts required by the EPF
++ *
++ * Invoke to set the required number of MSI-X interrupts.
++ */
++int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
++{
++	int ret;
++	unsigned long flags;
++
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
++	    interrupts < 1 || interrupts > 2048)
++		return -EINVAL;
++
++	if (!epc->ops->set_msix)
++		return 0;
++
++	spin_lock_irqsave(&epc->lock, flags);
++	ret = epc->ops->set_msix(epc, func_no, interrupts - 1);
++	spin_unlock_irqrestore(&epc->lock, flags);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pci_epc_set_msix);
++
++/**
+  * pci_epc_unmap_addr() - unmap CPU address from PCI address
+  * @epc: the EPC device on which address is allocated
+  * @func_no: the endpoint function number in the EPC device
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index 243eaa5..89f079f 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -17,6 +17,7 @@ enum pci_epc_irq_type {
+ 	PCI_EPC_IRQ_UNKNOWN,
+ 	PCI_EPC_IRQ_LEGACY,
+ 	PCI_EPC_IRQ_MSI,
++	PCI_EPC_IRQ_MSIX,
+ };
+ 
+ /**
+@@ -30,6 +31,10 @@ enum pci_epc_irq_type {
+  *	     capability register
+  * @get_msi: ops to get the number of MSI interrupts allocated by the RC from
+  *	     the MSI capability register
++ * @set_msix: ops to set the requested number of MSI-X interrupts in the
++ *	     MSI-X capability register
++ * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
++ *	     from the MSI-X capability register
+  * @raise_irq: ops to raise a legacy or MSI interrupt
+  * @start: ops to start the PCI link
+  * @stop: ops to stop the PCI link
+@@ -48,6 +53,8 @@ struct pci_epc_ops {
+ 			      phys_addr_t addr);
+ 	int	(*set_msi)(struct pci_epc *epc, u8 func_no, u8 interrupts);
+ 	int	(*get_msi)(struct pci_epc *epc, u8 func_no);
++	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
++	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+ 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
+ 			     enum pci_epc_irq_type type, u8 interrupt_num);
+ 	int	(*start)(struct pci_epc *epc);
+@@ -144,6 +151,8 @@ void pci_epc_unmap_addr(struct pci_epc *epc, u8 func_no,
+ 			phys_addr_t phys_addr);
+ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts);
+ int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
++int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
++int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
+ int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+ 		      enum pci_epc_irq_type type, u8 interrupt_num);
+ int pci_epc_start(struct pci_epc *epc);
+diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+index 4e77649..ec02f587 100644
+--- a/include/linux/pci-epf.h
++++ b/include/linux/pci-epf.h
+@@ -119,6 +119,7 @@ struct pci_epf {
+ 	struct pci_epf_header	*header;
+ 	struct pci_epf_bar	bar[6];
+ 	u8			msi_interrupts;
++	u16			msix_interrupts;
+ 	u8			func_no;
+ 
+ 	struct pci_epc		*epc;
+-- 
+2.7.4
+
