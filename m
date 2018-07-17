@@ -2,130 +2,173 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA1C7ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BBDECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 817BA20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:08:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817BA20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BFEB20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:08:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BFEB20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeGQRmA (ORCPT
+        id S1730249AbeGQRmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:42:00 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39194 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729708AbeGQRmA (ORCPT
+        Tue, 17 Jul 2018 13:42:24 -0400
+Received: from smtprelay0226.hostedemail.com ([216.40.44.226]:35437 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729708AbeGQRmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:42:00 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6HH6Tpx073094
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:08:24 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k9m16hd0v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:08:23 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 17 Jul 2018 13:08:22 -0400
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 17 Jul 2018 13:08:18 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6HH8Hm44129528
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Jul 2018 17:08:17 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A2689B2064;
-        Tue, 17 Jul 2018 13:08:09 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 836C0B206B;
-        Tue, 17 Jul 2018 13:08:09 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 17 Jul 2018 13:08:09 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 3832B16C86E3; Tue, 17 Jul 2018 10:10:42 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 10:10:42 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     stern@rowland.harvard.edu, andrea.parri@amarulasolutions.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH RFC tools/memory-model] Model effects of volatile on ctrl
-Reply-To: paulmck@linux.vnet.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071717-0072-0000-0000-000003820BEC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009380; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01062177; UDB=6.00545336; IPR=6.00840035;
- MB=3.00022173; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-17 17:08:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071717-0073-0000-0000-000048C034BF
-Message-Id: <20180717171042.GA2299@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=1 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=1
- clxscore=1015 lowpriorityscore=0 mlxscore=1 impostorscore=0
- mlxlogscore=200 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807170178
+        Tue, 17 Jul 2018 13:42:24 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 0BDF3100E86CA;
+        Tue, 17 Jul 2018 17:08:48 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: boats66_2f8725726b951
+X-Filterd-Recvd-Size: 5288
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 17 Jul 2018 17:08:46 +0000 (UTC)
+Message-ID: <99f5bcb9b5a3604264d43e7305950dcf7f6cfcc7.camel@perches.com>
+Subject: Re: [PATCH] ipv6: sr: fix useless rol32 call on hash
+From:   Joe Perches <joe@perches.com>
+To:     David Lebrun <dav.lebrun@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 17 Jul 2018 10:08:45 -0700
+In-Reply-To: <6ab9af97-33b6-d5cc-d1e9-6e5fbd9158a8@gmail.com>
+References: <20180717155254.30367-1-colin.king@canonical.com>
+         <6ab9af97-33b6-d5cc-d1e9-6e5fbd9158a8@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit models the fact that compilers are not allowed to reorder
-volatile accesses.  This modeling is at best approximate, although it
-does correctly handle C-RomanPenyaev-list-rcu-rr.litmus from the litmus
-github archive.  The approach is to extend control dependencies to
-subsequent volatiles accesses.
+On Tue, 2018-07-17 at 17:03 +0100, David Lebrun wrote:
+> On 07/17/2018 04:52 PM, Colin King wrote:
+> > From: Colin Ian King<colin.king@canonical.com>
+> > 
+> > The rol32 call is currently rotating hash but the rol'd value is
+> > being discarded. I believe the current code is incorrect and hash
+> > should be assigned the rotated value returned from rol32.
+> > 
+> > Detected by CoverityScan, CID#1468411 ("Useless call")
+> > 
+> > Fixes: b5facfdba14c ("ipv6: sr: Compute flowlabel for outer IPv6 header of seg6 encap mode")
+> > Signed-off-by: Colin Ian King<colin.king@canonical.com>
+> 
+> Acked-by: dlebrun@google.com
+> 
+> Good catch, thanks !
+> 
+> In that case, the same issue is present in 
+> include/net/ipv6.h:ip6_make_flowlabel().
 
-Probable issues with this change:
+Perhaps all of the ror and rol definitions should add
+__must_check
 
-1.	It does not correctly handle the case of identical WRITE_ONCE()
-	invocations at the beginning of both legs of an "if" statement.
-	(Of course, the current state does not correctly handle this
-	either.)
-    
-2.	It might not correctly handle the ARMv8 conditional-move instruction.
-    
-3.	It is probably missing some handling of atomic RWM operations.
-    
-4.	It does not insist that the initial ctrl dependency end in
-	a volatile access.  This is not yet a problem because we
-	don't yet model unmarked accesses.
+Something like the below and perhaps many more of the
+functions that return some value should have __must_chedk
+added as well.
+---
+ include/linux/bitops.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-That said, this patch is not intended for inclusion, but rather in the
-hope that it inspires someone to come up with something better.
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index af419012d77d..3cddde65c8bb 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -67,7 +67,7 @@ static inline __u64 rol64(__u64 word, unsigned int shift)
+  * @word: value to rotate
+  * @shift: bits to roll
+  */
+-static inline __u64 ror64(__u64 word, unsigned int shift)
++static inline __must_check __u64 ror64(__u64 word, unsigned int shift)
+ {
+ 	return (word >> shift) | (word << (64 - shift));
+ }
+@@ -77,7 +77,7 @@ static inline __u64 ror64(__u64 word, unsigned int shift)
+  * @word: value to rotate
+  * @shift: bits to roll
+  */
+-static inline __u32 rol32(__u32 word, unsigned int shift)
++static inline __must_check __u32 rol32(__u32 word, unsigned int shift)
+ {
+ 	return (word << shift) | (word >> ((-shift) & 31));
+ }
+@@ -87,7 +87,7 @@ static inline __u32 rol32(__u32 word, unsigned int shift)
+  * @word: value to rotate
+  * @shift: bits to roll
+  */
+-static inline __u32 ror32(__u32 word, unsigned int shift)
++static inline __must_check __u32 ror32(__u32 word, unsigned int shift)
+ {
+ 	return (word >> shift) | (word << (32 - shift));
+ }
+@@ -97,7 +97,7 @@ static inline __u32 ror32(__u32 word, unsigned int shift)
+  * @word: value to rotate
+  * @shift: bits to roll
+  */
+-static inline __u16 rol16(__u16 word, unsigned int shift)
++static inline __must_check __u16 rol16(__u16 word, unsigned int shift)
+ {
+ 	return (word << shift) | (word >> (16 - shift));
+ }
+@@ -107,7 +107,7 @@ static inline __u16 rol16(__u16 word, unsigned int shift)
+  * @word: value to rotate
+  * @shift: bits to roll
+  */
+-static inline __u16 ror16(__u16 word, unsigned int shift)
++static inline __must_check __u16 ror16(__u16 word, unsigned int shift)
+ {
+ 	return (word >> shift) | (word << (16 - shift));
+ }
+@@ -117,7 +117,7 @@ static inline __u16 ror16(__u16 word, unsigned int shift)
+  * @word: value to rotate
+  * @shift: bits to roll
+  */
+-static inline __u8 rol8(__u8 word, unsigned int shift)
++static inline __must_check __u8 rol8(__u8 word, unsigned int shift)
+ {
+ 	return (word << shift) | (word >> (8 - shift));
+ }
+@@ -127,7 +127,7 @@ static inline __u8 rol8(__u8 word, unsigned int shift)
+  * @word: value to rotate
+  * @shift: bits to roll
+  */
+-static inline __u8 ror8(__u8 word, unsigned int shift)
++static inline __must_check __u8 ror8(__u8 word, unsigned int shift)
+ {
+ 	return (word >> shift) | (word << (8 - shift));
+ }
+@@ -139,7 +139,7 @@ static inline __u8 ror8(__u8 word, unsigned int shift)
+  *
+  * This is safe to use for 16- and 8-bit types as well.
+  */
+-static inline __s32 sign_extend32(__u32 value, int index)
++static inline __must_check __s32 sign_extend32(__u32 value, int index)
+ {
+ 	__u8 shift = 31 - index;
+ 	return (__s32)(value << shift) >> shift;
+@@ -150,7 +150,7 @@ static inline __s32 sign_extend32(__u32 value, int index)
+  * @value: value to sign extend
+  * @index: 0 based bit index (0<=index<64) to sign bit
+  */
+-static inline __s64 sign_extend64(__u64 value, int index)
++static inline __must_check __s64 sign_extend64(__u64 value, int index)
+ {
+ 	__u8 shift = 63 - index;
+ 	return (__s64)(value << shift) >> shift;
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index 882fc33274ac..f745337ba10e 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -57,7 +57,9 @@ empty rmw & (fre ; coe) as atomic
- 
- (* Preserved Program Order *)
- let dep = addr | data
--let rwdep = (dep | ctrl) ; [W]
-+let volatile = [Once] | [Release] | [Acquire] (* No unmarked accesses. *)
-+let ctrl-volatile = ctrl ; (po ; volatile)*
-+let rwdep = (dep | ctrl-volatile) ; [W]
- let overwrite = co | fr
- let to-w = rwdep | (overwrite & int)
- let to-r = addr | (dep ; rfi)
 
