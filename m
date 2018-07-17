@@ -2,265 +2,237 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3EEECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7228BECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F00D020852
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="doxS+6hW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F00D020852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 2809520852
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2809520852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbeGQKDT (ORCPT
+        id S1730880AbeGQKD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:03:19 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:38979 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729756AbeGQKDR (ORCPT
+        Tue, 17 Jul 2018 06:03:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:42637 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729712AbeGQKD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:03:17 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C58E110C14B4;
-        Tue, 17 Jul 2018 02:31:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531819895; bh=ungPpr1AClIbh57tdEJyxhpUeK8pE6vcfVVg1O/pcCw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=doxS+6hWZyDEksjQO5ctaO9F2V2u9rxJ5sfO/3MNBNIkcCyHnDRgloRci1xwpHhBz
-         0FkNwH47Wl65tS4vgm2ab8WLVnPG/Gh/bsZpu0Iv0GE/DjPstFcpyPUfC5Oa6IzBWF
-         kzCiMtr1RJEM9VmNq9vEw8kw8yhH4hDp3QdVKUD1On1wgcG7+Ym3dyxbZcPsylDXfd
-         ktuPCuJwfY0aMj5QjRRDrRovqpq5q5fm17EKtOS4yBABSTs7Qa47sQS+nDwcBO1JV0
-         UQZygNYdbIiDgEHFottZ2Sr/ZD9jxNCIIe7G6RAcGu4r0CjyZ22xeYkP+xJ5BZpw9z
-         UGhS4i+DcxWkg==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C5F98378C;
-        Tue, 17 Jul 2018 02:31:34 -0700 (PDT)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id EF89F3BBF4;
-        Tue, 17 Jul 2018 11:31:33 +0200 (CEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v12 03/12] PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
-Date:   Tue, 17 Jul 2018 11:31:23 +0200
-Message-Id: <57701b3fe8a92a516448455ce6b6e17d2de12847.1531818979.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
+        Tue, 17 Jul 2018 06:03:26 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9VLYo1462822
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 02:31:21 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9VLXe1462819;
+        Tue, 17 Jul 2018 02:31:21 -0700
+Date:   Tue, 17 Jul 2018 02:31:21 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrea Parri <tipbot@zytor.com>
+Message-ID: <tip-3d85b2703783636366560c94842affd8608ec9d1@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
+        tglx@linutronix.de, will.deacon@arm.com, peterz@infradead.org,
+        hpa@zytor.com
+Reply-To: will.deacon@arm.com, peterz@infradead.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
+          mingo@kernel.org, torvalds@linux-foundation.org,
+          boqun.feng@gmail.com, tglx@linutronix.de,
+          paulmck@linux.vnet.ibm.com
+In-Reply-To: <20180716180605.16115-11-paulmck@linux.vnet.ibm.com>
+References: <20180716180605.16115-11-paulmck@linux.vnet.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] locking/spinlock, sched/core: Clarify
+ requirements for smp_mb__after_spinlock()
+Git-Commit-ID: 3d85b2703783636366560c94842affd8608ec9d1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change {cdns, dra7xx, artpec6, dw, rockchip}_pcie_ep_raise_irq() and
-pci_epc_raise_irq() signature, namely the interrupt_num variable type
-from u8 to u16 to accommodate 2048 maximum MSI-X interrupts.
+Commit-ID:  3d85b2703783636366560c94842affd8608ec9d1
+Gitweb:     https://git.kernel.org/tip/3d85b2703783636366560c94842affd8608ec9d1
+Author:     Andrea Parri <andrea.parri@amarulasolutions.com>
+AuthorDate: Mon, 16 Jul 2018 11:06:02 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 17 Jul 2018 09:30:33 +0200
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Alan Douglas <adouglas@cadence.com>
-Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
-Acked-by: Joao Pinto <jpinto@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+locking/spinlock, sched/core: Clarify requirements for smp_mb__after_spinlock()
+
+There are 11 interpretations of the requirements described in the header
+comment for smp_mb__after_spinlock(): one for each LKMM maintainer, and
+one currently encoded in the Cat file. Stick to the latter (until a more
+satisfactory solution is available).
+
+This also reworks some snippets related to the barrier to illustrate the
+requirements and to link them to the idioms which are relied upon at its
+call sites.
+
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: akiyks@gmail.com
+Cc: dhowells@redhat.com
+Cc: j.alglave@ucl.ac.uk
+Cc: linux-arch@vger.kernel.org
+Cc: luc.maranget@inria.fr
+Cc: npiggin@gmail.com
+Cc: parri.andrea@gmail.com
+Cc: stern@rowland.harvard.edu
+Link: http://lkml.kernel.org/r/20180716180605.16115-11-paulmck@linux.vnet.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Move into here the pci_epc_raise_irq() signature change from patch
-file #1.
- - Move into here the {dra7xx, artpec6}_pcie_ep_raise_irq() signature
-changes from patch file #2.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Swap patch files position (#3 -> #2).
- - Moved dw_pcie_ep_raise_irq and dw_plat_pcie_ep_raise_irq functions
-signatures changes from patch file #3.
- - Changed rockchip_pcie_ep_raise_irq function signature.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Nothing changed, just to follow the patch set version.
-Change v9->v10:
- - Nothing changed, just to follow the patch set version.
-Change v10->v11:
- - Nothing changed, just to follow the patch set version.
-Change v11->v12:
- - Nothing changed, just to follow the patch set version.
+ include/linux/spinlock.h | 53 ++++++++++++++++++++++++++++++++----------------
+ kernel/sched/core.c      | 41 +++++++++++++++++++------------------
+ 2 files changed, 57 insertions(+), 37 deletions(-)
 
- drivers/pci/controller/dwc/pci-dra7xx.c           | 2 +-
- drivers/pci/controller/dwc/pcie-artpec6.c         | 2 +-
- drivers/pci/controller/dwc/pcie-designware-ep.c   | 2 +-
- drivers/pci/controller/dwc/pcie-designware-plat.c | 2 +-
- drivers/pci/controller/dwc/pcie-designware.h      | 2 +-
- drivers/pci/controller/pcie-cadence-ep.c          | 3 ++-
- drivers/pci/controller/pcie-rockchip-ep.c         | 2 +-
- drivers/pci/endpoint/pci-epc-core.c               | 8 ++++----
- include/linux/pci-epc.h                           | 6 +++---
- 9 files changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 345aab5..ce9224a 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -370,7 +370,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
- }
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index fd57888d4942..3190997df9ca 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -114,29 +114,48 @@ do {								\
+ #endif /*arch_spin_is_contended*/
  
- static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
--				 enum pci_epc_irq_type type, u8 interrupt_num)
-+				 enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index 321b56c..9a2474b 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
- }
- 
- static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
--				  enum pci_epc_irq_type type, u8 interrupt_num)
-+				  enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 04092a7..69d039d 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -242,7 +242,7 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
- }
- 
- static int dw_pcie_ep_raise_irq(struct pci_epc *epc, u8 func_no,
--				enum pci_epc_irq_type type, u8 interrupt_num)
-+				enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 0ce3440..0efb318 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -81,7 +81,7 @@ static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
- 
- static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 				     enum pci_epc_irq_type type,
--				     u8 interrupt_num)
-+				     u16 interrupt_num)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index bee4e25..9d581c0 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -191,7 +191,7 @@ enum dw_pcie_as_type {
- struct dw_pcie_ep_ops {
- 	void	(*ep_init)(struct dw_pcie_ep *ep);
- 	int	(*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
--			     enum pci_epc_irq_type type, u8 interrupt_num);
-+			     enum pci_epc_irq_type type, u16 interrupt_num);
- };
- 
- struct dw_pcie_ep {
-diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
-index e3fe412..208d11f 100644
---- a/drivers/pci/controller/pcie-cadence-ep.c
-+++ b/drivers/pci/controller/pcie-cadence-ep.c
-@@ -363,7 +363,8 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn,
- }
- 
- static int cdns_pcie_ep_raise_irq(struct pci_epc *epc, u8 fn,
--				  enum pci_epc_irq_type type, u8 interrupt_num)
-+				  enum pci_epc_irq_type type,
-+				  u16 interrupt_num)
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
- 
-diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-index 6beba8e..b8163c5 100644
---- a/drivers/pci/controller/pcie-rockchip-ep.c
-+++ b/drivers/pci/controller/pcie-rockchip-ep.c
-@@ -472,7 +472,7 @@ static int rockchip_pcie_ep_send_msi_irq(struct rockchip_pcie_ep *ep, u8 fn,
- 
- static int rockchip_pcie_ep_raise_irq(struct pci_epc *epc, u8 fn,
- 				      enum pci_epc_irq_type type,
--				      u8 interrupt_num)
-+				      u16 interrupt_num)
- {
- 	struct rockchip_pcie_ep *ep = epc_get_drvdata(epc);
- 
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index 7d77bd0..c72e656 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -131,13 +131,13 @@ EXPORT_SYMBOL_GPL(pci_epc_start);
-  * pci_epc_raise_irq() - interrupt the host system
-  * @epc: the EPC device which has to interrupt the host
-  * @func_no: the endpoint function number in the EPC device
-- * @type: specify the type of interrupt; legacy or MSI
-- * @interrupt_num: the MSI interrupt number
-+ * @type: specify the type of interrupt; legacy, MSI or MSI-X
-+ * @interrupt_num: the MSI or MSI-X interrupt number
+ /*
+- * This barrier must provide two things:
++ * smp_mb__after_spinlock() provides the equivalent of a full memory barrier
++ * between program-order earlier lock acquisitions and program-order later
++ * memory accesses.
   *
-- * Invoke to raise an MSI or legacy interrupt
-+ * Invoke to raise an legacy, MSI or MSI-X interrupt
-  */
- int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
--		      enum pci_epc_irq_type type, u8 interrupt_num)
-+		      enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	int ret;
- 	unsigned long flags;
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 89f079f..bb2395b 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -35,7 +35,7 @@ enum pci_epc_irq_type {
-  *	     MSI-X capability register
-  * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
-  *	     from the MSI-X capability register
-- * @raise_irq: ops to raise a legacy or MSI interrupt
-+ * @raise_irq: ops to raise a legacy, MSI or MSI-X interrupt
-  * @start: ops to start the PCI link
-  * @stop: ops to stop the PCI link
-  * @owner: the module owner containing the ops
-@@ -56,7 +56,7 @@ struct pci_epc_ops {
- 	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
- 	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
- 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
--			     enum pci_epc_irq_type type, u8 interrupt_num);
-+			     enum pci_epc_irq_type type, u16 interrupt_num);
- 	int	(*start)(struct pci_epc *epc);
- 	void	(*stop)(struct pci_epc *epc);
- 	struct module *owner;
-@@ -154,7 +154,7 @@ int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
- int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
- int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
- int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
--		      enum pci_epc_irq_type type, u8 interrupt_num);
-+		      enum pci_epc_irq_type type, u16 interrupt_num);
- int pci_epc_start(struct pci_epc *epc);
- void pci_epc_stop(struct pci_epc *epc);
- struct pci_epc *pci_epc_get(const char *epc_name);
--- 
-2.7.4
-
+- *   - it must guarantee a STORE before the spin_lock() is ordered against a
+- *     LOAD after it, see the comments at its two usage sites.
++ * This guarantees that the following two properties hold:
+  *
+- *   - it must ensure the critical section is RCsc.
++ *   1) Given the snippet:
+  *
+- * The latter is important for cases where we observe values written by other
+- * CPUs in spin-loops, without barriers, while being subject to scheduling.
++ *	  { X = 0;  Y = 0; }
+  *
+- * CPU0			CPU1			CPU2
++ *	  CPU0				CPU1
+  *
+- *			for (;;) {
+- *			  if (READ_ONCE(X))
+- *			    break;
+- *			}
+- * X=1
+- *			<sched-out>
+- *						<sched-in>
+- *						r = X;
++ *	  WRITE_ONCE(X, 1);		WRITE_ONCE(Y, 1);
++ *	  spin_lock(S);			smp_mb();
++ *	  smp_mb__after_spinlock();	r1 = READ_ONCE(X);
++ *	  r0 = READ_ONCE(Y);
++ *	  spin_unlock(S);
+  *
+- * without transitivity it could be that CPU1 observes X!=0 breaks the loop,
+- * we get migrated and CPU2 sees X==0.
++ *      it is forbidden that CPU0 does not observe CPU1's store to Y (r0 = 0)
++ *      and CPU1 does not observe CPU0's store to X (r1 = 0); see the comments
++ *      preceding the call to smp_mb__after_spinlock() in __schedule() and in
++ *      try_to_wake_up().
++ *
++ *   2) Given the snippet:
++ *
++ *  { X = 0;  Y = 0; }
++ *
++ *  CPU0		CPU1				CPU2
++ *
++ *  spin_lock(S);	spin_lock(S);			r1 = READ_ONCE(Y);
++ *  WRITE_ONCE(X, 1);	smp_mb__after_spinlock();	smp_rmb();
++ *  spin_unlock(S);	r0 = READ_ONCE(X);		r2 = READ_ONCE(X);
++ *			WRITE_ONCE(Y, 1);
++ *			spin_unlock(S);
++ *
++ *      it is forbidden that CPU0's critical section executes before CPU1's
++ *      critical section (r0 = 1), CPU2 observes CPU1's store to Y (r1 = 1)
++ *      and CPU2 does not observe CPU0's store to X (r2 = 0); see the comments
++ *      preceding the calls to smp_rmb() in try_to_wake_up() for similar
++ *      snippets but "projected" onto two CPUs.
++ *
++ * Property (2) upgrades the lock to an RCsc lock.
+  *
+  * Since most load-store architectures implement ACQUIRE with an smp_mb() after
+  * the LL/SC loop, they need no further barriers. Similarly all our TSO
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index fe365c9a08e9..0c5ec2abdf93 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1998,21 +1998,20 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	 * be possible to, falsely, observe p->on_rq == 0 and get stuck
+ 	 * in smp_cond_load_acquire() below.
+ 	 *
+-	 * sched_ttwu_pending()                 try_to_wake_up()
+-	 *   [S] p->on_rq = 1;                  [L] P->state
+-	 *       UNLOCK rq->lock  -----.
+-	 *                              \
+-	 *				 +---   RMB
+-	 * schedule()                   /
+-	 *       LOCK rq->lock    -----'
+-	 *       UNLOCK rq->lock
++	 * sched_ttwu_pending()			try_to_wake_up()
++	 *   STORE p->on_rq = 1			  LOAD p->state
++	 *   UNLOCK rq->lock
++	 *
++	 * __schedule() (switch to task 'p')
++	 *   LOCK rq->lock			  smp_rmb();
++	 *   smp_mb__after_spinlock();
++	 *   UNLOCK rq->lock
+ 	 *
+ 	 * [task p]
+-	 *   [S] p->state = UNINTERRUPTIBLE     [L] p->on_rq
++	 *   STORE p->state = UNINTERRUPTIBLE	  LOAD p->on_rq
+ 	 *
+-	 * Pairs with the UNLOCK+LOCK on rq->lock from the
+-	 * last wakeup of our task and the schedule that got our task
+-	 * current.
++	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
++	 * __schedule().  See the comment for smp_mb__after_spinlock().
+ 	 */
+ 	smp_rmb();
+ 	if (p->on_rq && ttwu_remote(p, wake_flags))
+@@ -2026,15 +2025,17 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
+ 	 * One must be running (->on_cpu == 1) in order to remove oneself
+ 	 * from the runqueue.
+ 	 *
+-	 *  [S] ->on_cpu = 1;	[L] ->on_rq
+-	 *      UNLOCK rq->lock
+-	 *			RMB
+-	 *      LOCK   rq->lock
+-	 *  [S] ->on_rq = 0;    [L] ->on_cpu
++	 * __schedule() (switch to task 'p')	try_to_wake_up()
++	 *   STORE p->on_cpu = 1		  LOAD p->on_rq
++	 *   UNLOCK rq->lock
++	 *
++	 * __schedule() (put 'p' to sleep)
++	 *   LOCK rq->lock			  smp_rmb();
++	 *   smp_mb__after_spinlock();
++	 *   STORE p->on_rq = 0			  LOAD p->on_cpu
+ 	 *
+-	 * Pairs with the full barrier implied in the UNLOCK+LOCK on rq->lock
+-	 * from the consecutive calls to schedule(); the first switching to our
+-	 * task, the second putting it to sleep.
++	 * Pairs with the LOCK+smp_mb__after_spinlock() on rq->lock in
++	 * __schedule().  See the comment for smp_mb__after_spinlock().
+ 	 */
+ 	smp_rmb();
+ 
