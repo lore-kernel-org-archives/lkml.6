@@ -2,234 +2,186 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD43BECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D236AECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7732D2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:20:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7732D2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8EDA92146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:21:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EDA92146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731827AbeGQOw6 (ORCPT
+        id S1731804AbeGQOyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:52:58 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47370 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731657AbeGQOw6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:52:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5191B18A;
-        Tue, 17 Jul 2018 07:20:05 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5CE183F318;
-        Tue, 17 Jul 2018 07:20:01 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 15:19:56 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 03/12] PM: Introduce an Energy Model management
- framework
-Message-ID: <20180717141955.GA4496@e108498-lin.cambridge.arm.com>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-4-quentin.perret@arm.com>
- <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
- <20180710083202.GD17598@e108498-lin.cambridge.arm.com>
- <20180716102917.GA19311@e108498-lin.cambridge.arm.com>
- <fe73f66d-7bed-f413-eb77-34f3d385dbc7@arm.com>
+        Tue, 17 Jul 2018 10:54:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46782 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731608AbeGQOyS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:54:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 19345ADCA;
+        Tue, 17 Jul 2018 14:21:23 +0000 (UTC)
+Subject: Re: [PATCH v2 3/3] lib/test_crc: Add test cases for crc calculation
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+References: <20180717065711.28281-1-colyli@suse.de>
+ <20180717065711.28281-4-colyli@suse.de>
+ <CAHp75Vfe34n31UAxyqdX63hP7kCYWHo-_LEWx2KLsiW5F9xEEQ@mail.gmail.com>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c5f4089e-2794-8f11-7b04-5993fbcad25b@suse.de>
+Date:   Tue, 17 Jul 2018 22:21:17 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fe73f66d-7bed-f413-eb77-34f3d385dbc7@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <CAHp75Vfe34n31UAxyqdX63hP7kCYWHo-_LEWx2KLsiW5F9xEEQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
-
-On Tuesday 17 Jul 2018 at 10:57:13 (+0200), Dietmar Eggemann wrote:
-> On 07/16/2018 12:29 PM, Quentin Perret wrote:
-> I see an impact of 'calculating capacity on the fly' in
-> compute_energy()->em_fd_energy(). Running the first energy test case (# task
-> equal 10) on the Juno r0 board with function profiling gives me:
+On 2018/7/17 3:32 PM, Andy Shevchenko wrote:
+> On Tue, Jul 17, 2018 at 9:57 AM, Coly Li <colyli@suse.de> wrote:
+>> This patch adds a kernel module to test the consistency of multiple crc
+>> calculation in Linux kernel. It is enabled with CONFIG_TEST_CRC enabled.
+>>
+>> The test results are printed into kernel message, which look like,
+>>
+>> test_crc: crc64_le: PASSED (0x4e6b1ff972fa8c55, expval 0x4e6b1ff972fa8c55)
+>> test_crc: crc64_le_bch: PASSED (0x0e4f1391d7a4a62e, expval 0x0e4f1391d7a4a62e)
+>> test_crc: crc64_le_update: FAILED (0x03d4d0d85685d9a1, expval 0x3d4d0d85685d9a1f)
+>>
+>> kernel 0day system has framework to check kernel message, then the above
+>> result can be handled by 0day system. If crc calculation inconsistency
+>> happens, it can be detected quite soon.
+>>
+>> lib/test_crc.c is a testing frame work for many crc consistency
+>> testings. For now, there are only test caes for 3 crc routines,
+>> - crc64_le()
+>> - crc64_le_bch()
+>> - crc64_le_update()
 > 
-> v4:
+>> +config TEST_CRC
+>> +       tristate "CRC calculation test driver"
+>> +       depends on CRC64
 > 
->   Function              Hit    Time            Avg             s^2
-> A53 - cpu [0,3-5]
->   compute_energy      14620    30790.86 us     2.106 us        8.421 us
->   compute_energy        682    1512.960 us     2.218 us        0.154 us
->   compute_energy       1207    2627.820 us     2.177 us        0.172 us
->   compute_energy         93    206.720 us      2.222 us        0.151 us
-> A57 - cpu [1-2]
->   compute_energy        153    160.100 us      1.046 us        0.190 us
->   compute_energy        136    130.760 us      0.961 us        0.077 us
+>> +       default n
 > 
+> Please, remove it.
+> You Cc'ed the guy who did this:
+> http://git.infradead.org/linux-platform-drivers-x86.git/commit/0192f17529fa3f8d78ca0181a2b2aaa7cbb0784d
 > 
-> v4 + 'calculating capacity on the fly':
+
+Sure, this line is removed in v3 series.
+
+>> +       help
+>> +         This builds the "test_crc" module. This driver enables to test the
+>> +         CRC calculation consistency to make sure new modification does not
+>> +         break existing checksum calculation.
 > 
->   Function              Hit    Time            Avg             s^2
-> A53 - cpu [0,3-5]
->   compute_energy      11623    26941.12 us     2.317 us        12.203 us
->   compute_energy       5062    11771.48 us     2.325 us        0.819 us
->   compute_energy       4391    10396.78 us     2.367 us        1.753 us
->   compute_energy       2234    5265.640 us     2.357 us        0.955 us
-> A57 - cpu [1-2]
->   compute_energy         59    66.020 us       1.118 us        0.112 us
->   compute_energy        229    234.880 us      1.025 us        0.135 us
+>> +static int chk_and_msg(const char *name, __le64 crc, __le64 expval)
+>> +{
+>> +       int ret = 0;
+>> +
+>> +       if (crc == expval) {
+>> +               pr_info("test_crc: %s: PASSED:(0x%016llx, expected 0x%016llx)",
+>> +                       name, crc, expval);
+>> +       } else {
+>> +               pr_err("test_crc: %s: FAILED:(0x%016llx, expected 0x%016llx)",
+>> +                       name, crc, expval);
+>> +               ret = -EINVAL;
+>> +       }
+>> +
+>> +       return ret;
+>> +}
 > 
-> The code is not optimized, I just replaced cs->capacity with
-> arch_scale_cpu_capacity(NULL, cpu) (max_cap) and 'max_cap * cs->frequency /
-> max_freq' respectively.
-> There are 3 compute_energy() calls per wake-up on a system with 2 frequency
-> domains.
-
-First, thank you very much for looking into this :-)
-
-So, I guess you see this overhead because of the extra division involved
-by computing 'cap = max_cap * cs->frequency / max_freq'. However, I
-think there is an opportunity to optimize things a bit and avoid that
-overhead entirely. My suggestion is to remove the 'capacity' field from
-the em_cap_state struct and to add a 'cost' parameter instead:
-
-struct em_cap_state {
-	unsigned long frequency;
-	unsigned long power;
-	unsigned long cost;
-};
-
-I define the 'cost' of a capacity state as:
-
-	cost = power * max_freq / freq;
-
-Since 'power', 'max_freq' and 'freq' do not change at run-time (as opposed
-to 'capacity'), this coefficient is static and computed when the table is
-first created. Then, based on this, you can implement em_fd_energy() as
-follows:
-
-static inline unsigned long em_fd_energy(struct em_freq_domain *fd,
-				unsigned long max_util, unsigned long sum_util)
-{
-	unsigned long freq, scale_cpu;
-	struct em_cap_state *cs;
-	int i, cpu;
-
-	/* Map the utilization value to a frequency */
-	cpu = cpumask_first(to_cpumask(fd->cpus));
-	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
-	cs = &fd->table[fd->nr_cap_states - 1];
-	freq = map_util_freq(max_util, cs->frequency, scale_cpu);
-
-	/* Find the lowest capacity state above this frequency */
-	for (i = 0; i < fd->nr_cap_states; i++) {
-		cs = &fd->table[i];
-		if (cs->frequency >= freq)
-			break;
-	}
-
-	/*
-	 * The capacity of a CPU at a specific performance state is defined as:
-	 *
-	 *     cap = freq * scale_cpu / max_freq
-	 *
-	 * The energy consumed by this CPU can be estimated as:
-	 *
-	 *     nrg = power * util / cap
-	 *
-	 * because (util / cap) represents the percentage of busy time of the
-	 * CPU. Based on those definitions, we have:
-	 *
-	 *     nrg = power * util * max_freq / (scale_cpu * freq)
-	 *
-	 * which can be re-arranged as a product of two terms:
-	 *
-	 *     nrg = (power * max_freq / freq) * (util / scale_cpu)
-	 *
-	 * The first term is static, and is stored in the em_cap_state struct
-	 * as 'cost'. The parameters of the second term change at run-time.
-	 */
-	return cs->cost * sum_util / scale_cpu;
-}
-
-With the above implementation, there is no additional division in
-em_fd_energy() compared to v4, so I would expect to see no significant
-difference in computation time.
-
-I tried to reproduce your test case and I get the following numbers on
-my Juno r0 (using the performance governor):
-
-v4:
-***
-  Function           Hit    Time            Avg             s^2
-A53 - cpu [0,3-5]
-  compute_energy    1796    12685.66 us     7.063 us        0.039 us
-  compute_energy    4214    28060.02 us     6.658 us        0.919 us
-  compute_energy    2743    20167.86 us     7.352 us        0.067 us
-  compute_energy   13958    97122.68 us     6.958 us        9.255 us
-A57 - cpu [1-2]
-  compute_energy      86    448.800 us      5.218 us        0.106 us
-  compute_energy     163    847.600 us      5.200 us        0.128 us
-
-
-'v5' (with 'cost'):
-*******************
-  Function           Hit    Time            Avg             s^2
-A53 - cpu [0,3-5]
-  compute_energy    1695    11153.54 us     6.580 us        0.022 us
-  compute_energy   16823    113709.5 us     6.759 us        27.109 us
-  compute_energy     677    4490.060 us     6.632 us        0.028 us
-  compute_energy    1959    13595.66 us     6.940 us        0.029 us
-A57 - cpu [1-2]
-  compute_energy     211    1089.860 us     5.165 us        0.122 us
-  compute_energy      83    420.860 us      5.070 us        0.075 us
-
-
-So I don't observe any obvious regression with my optimization applied.
-The v4 branch I used is the one mentioned in the cover letter:
-http://www.linux-arm.org/git?p=linux-qp.git;a=shortlog;h=refs/heads/upstream/eas_v4
-
-And I just pushed the WiP branch I used to compare against:
-http://www.linux-arm.org/git?p=linux-qp.git;a=shortlog;h=refs/heads/upstream/eas_v5-WiP-compute_energy_profiling
-
-Is this also fixing the regression on your side ?
-
+>> +
+>> +
 > 
-> > The second option simplifies the code of the EM framework significantly
-> > (no more em_rescale_cpu_capacity()) and shouldn't introduce massive
-> > overheads on the scheduler side (the energy calculation already
-> > requires one multiplication and one division, so nothing new on that
-> > side). At the same time, that would make it a whole lot easier to
-> > interface the EM framework with IPA without having to deal with RCU all
-> > over the place.
+> One of the blank lines is redundant.
 > 
-> IMO, em_rescale_cpu_capacity() is just the capacity related example what the
-> EM needs if its values can be changed at runtime. There might be other use
-> cases in the future like changing power values depending on temperature.
-> So maybe it's a good idea to not have this 'EM values can change at runtime'
-> feature in the first version of the EM and emphasize on simplicity of the
-> code instead (if we can eliminate the extra runtime overhead).
 
-I agree that it would be nice to keep it simple in the beginning. If
-there is strong and demonstrated use-case for updating the EM at
-run-time later, then we can re-introduce the RCU protection. But until
-then, we can avoid the complex implementation at no obvious cost (given
-my results above) so that sounds like a good trade-off to me :-)
+removed.
 
-Thanks,
-Quentin
+>> +static int __init test_crc_init(void)
+>> +{
+>> +       int i;
+>> +       int v, ret = 0;
+>> +
+>> +       pr_info("Kernel CRC consitency testing:");
+>> +       for (i = 0; test_data[i].name; i++) {
+>> +               v = test_data[i].handler(&test_data[i]);
+>> +               if (v < 0 && ret == 0)
+>> +                       ret = -EINVAL;
+>> +       }
+>> +
+>> +       return ret;
+>> +}
+> 
+> Didn't notice anything about statistics.
+> 
+> See, for example,
+> https://elixir.bootlin.com/linux/v4.18-rc5/source/lib/test_printf.c#L536
+> 
+
+The code is added into v3 series.
+
+Thanks for your review :-)
+
+Coly Li
+
