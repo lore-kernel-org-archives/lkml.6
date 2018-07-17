@@ -2,101 +2,121 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9BEECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2BCECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A60C20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:16:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A60C20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E15E208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:16:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fXVdNhgI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E15E208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731251AbeGQLsS (ORCPT
+        id S1731412AbeGQLsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:48:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36246 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730000AbeGQLsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:48:18 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5376CAED8;
-        Tue, 17 Jul 2018 11:16:09 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 13:16:08 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     ufo19890607@gmail.com
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhoujian@didichuxing.com
-Subject: Re: [PATCH v14 1/2] Reorganize the oom report in dump_header
-Message-ID: <20180717111608.GC7193@dhcp22.suse.cz>
-References: <1531825548-27761-1-git-send-email-ufo19890607@gmail.com>
+        Tue, 17 Jul 2018 07:48:43 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52554 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730688AbeGQLsm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:48:42 -0400
+Received: by mail-wm0-f67.google.com with SMTP id o11-v6so1085437wmh.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 04:16:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EOvPp6b0C7XSwc1BkF56Pa2irrv+IIQ/aLn5fozBffk=;
+        b=fXVdNhgIVuUMf7DtDJeD9k/sg+/e67rpAHpr8fJ2FtkNOOx8JZZjCY+PTpI4ilCECE
+         nfJi3Q4rWJ0y0e44zvpxUMWMoYy+tIyj1enGpqy1una1BFz5suHbqkDDG9ddkyeEF9rF
+         0YztehNBFRcOi7iiPngSmVIqaEzxKVFgzFUWh9XG0pWShE0wCmo2WZiVog/UAVQyK7te
+         ACF/XovRNy48xXACitiOHnUuIDBDqhFYxBpw9Ckhb2BMf7CrCTYXGBpUZC2KCAqENQnK
+         ginJvqFAE66lAAAn1Rg5Xx7ihwRwKrLDSNVSV4ZI4Z4a0Fcn3t0xnX4U3Ds+pBj+e5kl
+         EN0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EOvPp6b0C7XSwc1BkF56Pa2irrv+IIQ/aLn5fozBffk=;
+        b=RyUyGWbpD8tH43ffkQDehzmShcNq0swNEyIvCUFjPToMx7ZxbPiKa8+lsA+szynuVN
+         hAKkRtEUtceWWw+NWYs/+WJufRvBEDkHQMk4c+d+fbPn2hTFIolSWoSmDJif7jEE6VIO
+         Kny3hUfqH5Zf/A5y594f86j1t59bOy2TEn0elum0Hmr8FbELb9x8VUhu7u9eGugS0v8H
+         N3OZvUMVJv1lZF6POojR3nJTdZNaY01+G/SJ3OJVXC/z8qWOIj+bZMKh2H4yaWoAePKS
+         y1FdUUFuoGxfn81kS6BgKvZKlq4Pd50YdaTeSqg5++u5XLKpM2slCAx/1gaD+inBE6yA
+         BI2w==
+X-Gm-Message-State: AOUpUlHrS3ooLTro+dglTFhoIgjr+iDj5MUaFczBDJ8ogEgTL1klWZRn
+        598Ru1XH/+usEXowgu3We+VpHg==
+X-Google-Smtp-Source: AAOMgpfYPNMj8OFQl8CxfIBXMwuURnY4AiGFCsjenR9cZIiJ8FjBZrjI/Q6X2tFwuwyTw/6IhUiVrw==
+X-Received: by 2002:a1c:3693:: with SMTP id y19-v6mr1015920wmh.71.1531826193863;
+        Tue, 17 Jul 2018 04:16:33 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id a11-v6sm1194851wrr.81.2018.07.17.04.16.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 04:16:33 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 13:16:30 +0200
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     hdegoede@redhat.com, linux@armlinux.org.uk, mark.rutland@arm.com,
+        maxime.ripard@free-electrons.com, tj@kernel.org, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, thierry.reding@gmail.com,
+        icenowy@aosc.io
+Subject: Re: [PATCH v3 4/9] dt-bindings: ata: ahci-platform: document AHCI
+ reset
+Message-ID: <20180717111630.GA7900@Red>
+References: <1531479786-4911-1-git-send-email-clabbe@baylibre.com>
+ <1531479786-4911-5-git-send-email-clabbe@baylibre.com>
+ <20180716155416.GA32497@rob-hp-laptop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531825548-27761-1-git-send-email-ufo19890607@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180716155416.GA32497@rob-hp-laptop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-07-18 19:05:47, ufo19890607@gmail.com wrote:
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
+On Mon, Jul 16, 2018 at 09:54:16AM -0600, Rob Herring wrote:
+> On Fri, Jul 13, 2018 at 11:03:01AM +0000, Corentin Labbe wrote:
+> > This patch document the new optional resets for ahci node.
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> > ---
+> >  Documentation/devicetree/bindings/ata/ahci-platform.txt | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> > index 5f362af2724c..a5281d7557e3 100644
+> > --- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> > +++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> > @@ -34,6 +34,8 @@ Optional properties:
+> >  - phys              : reference to the SATA PHY node
+> >  - phy-names         : must be "sata-phy"
+> >  - ahci-supply       : regulator for AHCI controller
+> > +- resets            : phandle to the reset line of AHCI controller
+> > +                      If set, must have a reset-names set as "ahci"
 > 
-> OOM report contains several sections. The first one is the allocation
-> context that has triggered the OOM. Then we have cpuset context
-> followed by the stack trace of the OOM path. Followed by the oom
-> eligible tasks and the information about the chosen oom victim.
+> A name is pointless if there is only one. Also, the name should be what 
+> the signal in the block is called which I doubt would be called "ahci". 
+> A likely name is some form of reset, resetn, etc. which again is 
+> pointless to name if there is only 1.
 > 
-> One thing that makes parsing more awkward than necessary is that we do
-> not have a single and easily parsable line about the oom context. This
-> patch is reorganizing the oom report to
-> 1) who invoked oom and what was the allocation request
-> 	[  131.751307] panic invoked oom-killer: gfp_mask=0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
+> If you do have 'reset-names' then that needs to be listed too like 
+> phy-names.
 > 
-> 2) OOM stack trace
-> 	[  131.752399] CPU: 16 PID: 8581 Comm: panic Not tainted 4.18.0-rc5+ #48
-> 	[  131.753154] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
-> 	[  131.753806] Call Trace:
-> 	[  131.754473]  dump_stack+0x5a/0x73
-> 	[  131.755129]  dump_header+0x53/0x2dc
-> 	[  131.755775]  oom_kill_process+0x228/0x420
-> 	[  131.756430]  ? oom_badness+0x2a/0x130
-> 	[  131.757063]  out_of_memory+0x11a/0x4a0
-> 	[  131.757710]  __alloc_pages_slowpath+0x7cc/0xa1e
-> 	[  131.758392]  ? apic_timer_interrupt+0xa/0x20
-> 	[  131.759040]  __alloc_pages_nodemask+0x277/0x290
-> 	[  131.759710]  alloc_pages_vma+0x73/0x180
-> 	[  131.760388]  do_anonymous_page+0xed/0x5a0
-> 	[  131.761067]  __handle_mm_fault+0xbb3/0xe70
-> 	[  131.761749]  handle_mm_fault+0xfa/0x210
-> 	[  131.762457]  __do_page_fault+0x233/0x4c0
-> 	[  131.763136]  do_page_fault+0x32/0x140
-> 	[  131.763832]  ? page_fault+0x8/0x30
-> 	[  131.764523]  page_fault+0x1e/0x30
-> 
-> 3) oom context (contrains and the chosen victim).
-> 	[  131.771164] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0-1,task=panic,pid=8608,uid=0
-> 
-> An admin can easily get the full oom context at a single line which
-> makes parsing much easier.
-> 
-> Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+Since the ahci-platform code is common to lots of different drivers, I must have a name otherwise I could grab a reset which wasnt for me.
+See the revert of f0f56716fc3e ("ata: ahci-platform: add reset control support") for example.
 
-Btw. you can usually keep Acked-by for such a small change. If you are
-not sure just ask off list.
+So the code need to grab a name, and since this name could be used by other people I took the generic "ahci".
 
-> ---
-> Changes since v13:
-> - remove the spaces for printing pid and uid.
--- 
-Michal Hocko
-SUSE Labs
+In my case (R40), the reset is called sata, so I will change reset-names to "sata" in my next serie.
+
+Regards
