@@ -3,89 +3,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A11ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AB9ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 936552075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:51:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 936552075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id A844B2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:52:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A844B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730123AbeGQVZf (ORCPT
+        id S1730503AbeGQV03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:25:35 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:46548 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729738AbeGQVZf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:25:35 -0400
-Received: (qmail 4549 invoked by uid 2102); 17 Jul 2018 16:51:10 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 17 Jul 2018 16:51:10 -0400
-Date:   Tue, 17 Jul 2018 16:51:10 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-cc:     "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Hans de Goede <hdegoede@redhat.com>, <hverkuil@xs4all.nl>,
-        <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <rostedt@goodmis.org>, <mingo@redhat.com>, <isely@pobox.com>,
-        <bhumirks@gmail.com>, <colin.king@canonical.com>,
-        <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
- ISO transfer
-In-Reply-To: <eb2b495fe7e8bbeaf3f9e2814be4923583482852.camel@collabora.com>
-Message-ID: <Pine.LNX.4.44L0.1807171643120.1344-100000@iolanthe.rowland.org>
+        Tue, 17 Jul 2018 17:26:29 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:46384 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729478AbeGQV03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 17:26:29 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1ffWwn-0000hi-8V; Tue, 17 Jul 2018 14:51:50 -0600
+To:     Matthew Wilcox <willy@infradead.org>, Martin Mares <mj@ucw.cz>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180717170204.30470-1-logang@deltatee.com>
+ <20180717203900.GA1771@bombadil.infradead.org>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <1e1f1e0d-520a-e2f9-15cb-09e97cd4a836@deltatee.com>
+Date:   Tue, 17 Jul 2018 14:51:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <20180717203900.GA1771@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, mj@ucw.cz, willy@infradead.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: lspci: Display path to device
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Jul 2018, Ezequiel Garcia wrote:
 
-> Hi Matwey,
-> 
-> First of all, sorry for the delay.
-> 
-> Adding Alan and Hans. Guys, do you have any feedback here?
 
-...
-
-> > > So, what is the benefit of using consistent
-> > > for these URBs, as opposed to streaming?
-> > 
-> > I don't know, I think there is no real benefit and all we see is a
-> > consequence of copy-pasta when some webcam drivers were inspired by
-> > others and development priparily was going at x86 platforms.
+On 17/07/18 02:39 PM, Matthew Wilcox wrote:
+> On Tue, Jul 17, 2018 at 11:02:00AM -0600, Logan Gunthorpe wrote:
+>> The second patch expands the new helper to optionally take a path of
+>> PCI devfns. This is to address Alex's renumbering concern when using
+>> simple bus-devfns. The implementation is essentially how he described it and
+>> similar to the Intel VT-d spec (Section 8.3.1).
 > 
-> You are probably right about the copy-pasta.
-> 
-> >  It would
-> > be great if somebody corrected me here. DMA Coherence is quite strong
-> > property and I cannot figure out how can it help when streaming video.
-> > The CPU host always reads from the buffer and never writes to.
-> > Hardware perepherial always writes to and never reads from. Moreover,
-> > buffer access is mutually exclusive and separated in time by Interrupt
-> > fireing and URB starting (when we reuse existing URB for new request).
-> > Only single one memory barrier is really required here.
-> > 
-> 
-> Yeah, and not setting URB_NO_TRANSFER_DMA_MAP makes the USB core
-> create DMA mappings and use the streaming API. Which makes more
-> sense in hardware without hardware coherency.
+> I don't like telling the user to grovel around lspci -t by hand.  It's
+> not many lines of code to add a new -P option to lspci to show the path
+> to each device instead of bus:dev.fn
 
-As far as I know, the _only_ advantage to using coherent DMA in this
-situation is that you then do not have to pay the overhead of
-constantly setting up and tearing down the streaming mappings.  So it
-depends very much on the platform: If coherent buffers are cached then
-it's a slight win and otherwise it's a big lose.
+Thanks, this looks great! I also found parsing the lspci -t output
+cumbersome.
 
-Alan Stern
+I've also got patches pending for switchtec-user[1] that help users find
+the path of downstream ports for Microsemi switches. (An example is
+shown below). As the ACS feature is primarily for PCI switch users, this
+should help a good segment of people. The lspci patches should cover a
+lot more people though.
+
+Logan
+
+sudo switchtec status /dev/switchtec0 -v
+Partition 0:    (LOCAL)
+    Logical Port ID 0 (USP):
+	Phys Port ID:    	32 (Stack 4, Port 0)
+	Bus-Dev-Func:    	0000:02:00.0
+	Bus-Dev-Func Path:	0000:00:02:0/00.0
+	Status:          	UP
+	LTSSM:           	L0
+	Max-Width:       	x16
+	Neg Width:       	x16
+	Rate:            	Gen3 - 8 GT/s  15.76 GB/s
+	Out Bytes:       	70.3 GB
+	In Bytes:        	70.8 GB
+    Logical Port ID 1 (DSP):
+	Phys Port ID:    	8 (Stack 1, Port 0)
+	Bus-Dev-Func:    	0000:03:00.0
+	Bus-Dev-Func Path:	0000:00:02:0/00.0/00.0
+	Status:          	UP
+	LTSSM:           	L0
+	Max-Width:       	x8
+	Neg Width:       	x8
+	Rate:            	Gen3 - 8 GT/s  7.88 GB/s
+	Out Bytes:       	12.2 MB
+	In Bytes:        	441 MB
+	ACS:             	SrcValid- TransBlk- ReqRedir- CmpltRedir-
+UpstreamFwd- EgressCtrl- DirectTrans-
+	Device:          	10b5:8724 (0000:04:00.0)
+	                 	0000:05
+    Logical Port ID 2 (DSP):
+	Phys Port ID:    	12 (Stack 1, Port 4)
+	Bus-Dev-Func:    	0000:03:01.0
+	Bus-Dev-Func Path:	0000:00:02:0/00.0/01.0
+	Status:          	UP
+	LTSSM:           	L0
+	Max-Width:       	x8
+	Neg Width:       	x8
+	Rate:            	Gen3 - 8 GT/s  7.88 GB/s
+	Out Bytes:       	1.65 MB
+	In Bytes:        	107 MB
+	ACS:             	SrcValid- TransBlk- ReqRedir- CmpltRedir-
+UpstreamFwd- EgressCtrl- DirectTrans-
+	Device:          	11f8:f117 (0000:0b:00.0)
+	                 	nvme4
+
+
+
+
+[1] https://github.com/Microsemi/switchtec-user/pull/25
 
