@@ -2,152 +2,348 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7395ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA83CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C5C420BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C5C420BED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F06520BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="K0ccWrCG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F06520BED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730055AbeGQKHq (ORCPT
+        id S1730310AbeGQKHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:07:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44863 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728835AbeGQKHp (ORCPT
+        Tue, 17 Jul 2018 06:07:51 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:39139 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbeGQKHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:07:45 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9ZfHq1463459
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:35:41 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9Zf3x1463456;
-        Tue, 17 Jul 2018 02:35:41 -0700
-Date:   Tue, 17 Jul 2018 02:35:41 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rik van Riel <tipbot@zytor.com>
-Message-ID: <tip-64482aafe55fc7e84d0741c356f8176ee7bde357@git.kernel.org>
-Cc:     riel@surriel.com, hpa@zytor.com, tglx@linutronix.de,
-        peterz@infradead.org, torvalds@linux-foundation.org,
-        songliubraving@fb.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, dave.hansen@intel.com
-Reply-To: dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, songliubraving@fb.com, hpa@zytor.com,
-          tglx@linutronix.de, peterz@infradead.org,
-          torvalds@linux-foundation.org, riel@surriel.com
-In-Reply-To: <20180716190337.26133-6-riel@surriel.com>
-References: <20180716190337.26133-6-riel@surriel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/tlb: Only send page table free TLB flush to
- lazy TLB CPUs
-Git-Commit-ID: 64482aafe55fc7e84d0741c356f8176ee7bde357
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 17 Jul 2018 06:07:51 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6B0A310C134F;
+        Tue, 17 Jul 2018 02:36:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531820168; bh=1O/r2aDYKcGdEXAYb1vdl90YJL9gPljVDVaYHM9y6N0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=K0ccWrCG3mscUjLxB55Zuep7yOaXhjLKt9wNBQlgeFgJJeXxuwN/lC2c8AercZgzx
+         TjFgqv3/bXMGaInqjT/CIj8kGV7DCR6p83tkVsyZZ9uiipOnmhXz8j5DUM3FOGOX+I
+         S4s0E8385b8MiXimgdHadNEcfaQmsXPPL9j47d2mqrrFx1qq472gfSDL9Z+1HCLUg8
+         o1cwlKy/zbyAzPOwmv76/k6pRMP3Glj28d4mX2if5RTsmEk0T8MPMfCDlKkv+J6xRP
+         DvmtP74B0vD9cBHbXQWYMNXKj/JayP9fIEYjmGuaILqH2MY+VnAzf8SHMlGqMB9bjz
+         wRO5aliN++2aQ==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 45E8A3C49;
+        Tue, 17 Jul 2018 02:36:08 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 17 Jul 2018 02:36:07 -0700
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 17 Jul 2018 11:36:06 +0200
+Received: from [10.107.25.102] (10.107.25.102) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Tue, 17 Jul 2018 11:36:05 +0200
+Subject: Re: [PATCH v11 10/12] pci_endpoint_test: Add 2 ioctl commands
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "joao.pinto@synopsys.com" <joao.pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "adouglas@cadence.com" <adouglas@cadence.com>,
+        "jesper.nilsson@axis.com" <jesper.nilsson@axis.com>,
+        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1531751641.git.gustavo.pimentel@synopsys.com>
+ <0dc487515e28a6cd790888cb98f84fb7ea3a412e.1531751641.git.gustavo.pimentel@synopsys.com>
+ <fe9da184-e085-05d2-2c12-4dc50633736f@ti.com>
+From:   Gustavo Pimentel <Gustavo.Pimentel@synopsys.com>
+Message-ID: <a89dac70-860b-be00-f5f0-88e69613fe00@synopsys.com>
+Date:   Tue, 17 Jul 2018 10:33:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <fe9da184-e085-05d2-2c12-4dc50633736f@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.25.102]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  64482aafe55fc7e84d0741c356f8176ee7bde357
-Gitweb:     https://git.kernel.org/tip/64482aafe55fc7e84d0741c356f8176ee7bde357
-Author:     Rik van Riel <riel@surriel.com>
-AuthorDate: Mon, 16 Jul 2018 15:03:35 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 17 Jul 2018 09:35:33 +0200
+Hi, Kishon,
 
-x86/mm/tlb: Only send page table free TLB flush to lazy TLB CPUs
+On 17/07/2018 03:43, Kishon Vijay Abraham I wrote:
+> Hi Gustavo,
+> 
+> On Monday 16 July 2018 08:22 PM, Gustavo Pimentel wrote:
+>> Add MSI-X support and update driver documentation accordingly.
+>>
+>> Add 2 new IOCTL commands:
+>>  - Allow to reconfigure driver IRQ type in runtime.
+>>  - Allow to retrieve current driver IRQ type configured.
+>>
+>> Add IRQ type validation before executing the READ/WRITE/COPY tests.
+>>
+>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>> ---
+>> Change v2->v3:
+>>  - New patch file created base on the previous patch
+>> "misc: pci_endpoint_test: Add MSI-X support" patch file following
+>> Kishon's suggestion.
+>> Change v3->v4:
+>>  - Rebased to Lorenzo's master branch v4.18-rc1.
+>> Change v4->v5:
+>>  - Nothing changed, just to follow the patch set version.
+>> Change v5->v6:
+>>  - Moved PCITEST_SET_IRQTYPE and PCITEST_GET_IRQTYPE ioctl entries
+>> from patch #10 to here.
+>>  - Increased ioctl parameters range associated to
+>> drivers/misc/pci_endpoint_test.c driver.
+>> Change v6->v7:
+>>  - irq_type variable update just before returning the function.
+>> Change v7->v8:
+>>  - Re-sending the patch series.
+>> Change v8->v9:
+>>  - Added a extra parameter to pci_endpoint_test_alloc_irq_vectors,
+>> that specifies which irq type should be allocated.
+>> Change v9->v10:
+>>  - Fixed bug, report available: https://urldefense.proofpoint.com/v2/url?u=https-3A__lkml.org_lkml_2018_7_16_11&d=DwIC-g&c=DPL6_X_6JkXFx7AXWqB0tg&r=bkWxpLoW-f-E3EdiDCCa0_h0PicsViasSlvIpzZvPxs&m=kfPim9EoIsdNO2BRH1BV6fsKhqV4Qy_JAofUZ2bPmpg&s=sz6k8lKVuC2tpzwc3T-OwE9ShzNwtALcrS_fuJGfiK0&e=
+>>  - Added IRQ type validation before executing the READ/WRITE/COPY
+>> tests.
+>>
+>>  Documentation/ioctl/ioctl-number.txt             |   2 +-
+>>  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
+>>  drivers/misc/pci_endpoint_test.c                 | 192 +++++++++++++++++------
+>>  include/uapi/linux/pcitest.h                     |   2 +
+>>  4 files changed, 152 insertions(+), 47 deletions(-)
+>>
+>> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+>> index 65259d4..c15c4f3 100644
+>> --- a/Documentation/ioctl/ioctl-number.txt
+>> +++ b/Documentation/ioctl/ioctl-number.txt
+>> @@ -166,7 +166,7 @@ Code  Seq#(hex)	Include File		Comments
+>>  'P'	all	linux/soundcard.h	conflict!
+>>  'P'	60-6F	sound/sscape_ioctl.h	conflict!
+>>  'P'	00-0F	drivers/usb/class/usblp.c	conflict!
+>> -'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
+>> +'P'	01-09	drivers/misc/pci_endpoint_test.c	conflict!
+>>  'Q'	all	linux/soundcard.h
+>>  'R'	00-1F	linux/random.h		conflict!
+>>  'R'	01	linux/rfkill.h		conflict!
+>> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+>> index fdfa0f6..58ccca4 100644
+>> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+>> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+>> @@ -28,6 +28,9 @@ ioctl
+>>  	      to be tested should be passed as argument.
+>>   PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+>>  	      to be tested should be passed as argument.
+>> + PCITEST_SET_IRQTYPE: Changes driver IRQ type configuration. The IRQ type
+>> +	      should be passed as argument (0: Legacy, 1:MSI, 2:MSI-X).
+>> + PCITEST_GET_IRQTYPE: Gets driver IRQ type configuration.
+>>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>>  		as argument.
+>>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+>> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+>> index f4fef10..d909ca5 100644
+>> --- a/drivers/misc/pci_endpoint_test.c
+>> +++ b/drivers/misc/pci_endpoint_test.c
+>> @@ -37,6 +37,7 @@
+>>  
+>>  #define DRV_MODULE_NAME				"pci-endpoint-test"
+>>  
+>> +#define IRQ_TYPE_UNDEFINED			-1
+>>  #define IRQ_TYPE_LEGACY				0
+>>  #define IRQ_TYPE_MSI				1
+>>  #define IRQ_TYPE_MSIX				2
+>> @@ -157,6 +158,88 @@ static irqreturn_t pci_endpoint_test_irqhandler(int irq, void *dev_id)
+>>  	return IRQ_HANDLED;
+>>  }
+>>  
+>> +static void pci_endpoint_test_free_irq_vectors(struct pci_endpoint_test *test)
+>> +{
+>> +	int i;
+>> +	struct pci_dev *pdev = test->pdev;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	for (i = 0; i < test->num_irqs; i++)
+>> +		devm_free_irq(dev, pci_irq_vector(pdev, i), test);
+>> +
+>> +	test->num_irqs = 0;
+>> +}
+>> +
+>> +static bool pci_endpoint_test_alloc_irq_vectors(struct pci_endpoint_test *test,
+>> +						int type)
+>> +{
+>> +	int irq = -1;
+>> +	struct pci_dev *pdev = test->pdev;
+>> +	struct device *dev = &pdev->dev;
+>> +	bool res = true;
+>> +
+>> +	switch (type) {
+>> +	case IRQ_TYPE_LEGACY:
+>> +		irq = 0;
+>> +		break;
+>> +	case IRQ_TYPE_MSI:
+>> +		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
+>> +		if (irq < 0)
+>> +			dev_err(dev, "Failed to get MSI interrupts\n");
+>> +		break;
+>> +	case IRQ_TYPE_MSIX:
+>> +		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
+>> +		if (irq < 0)
+>> +			dev_err(dev, "Failed to get MSI-X interrupts\n");
+>> +		break;
+>> +	default:
+>> +		dev_err(dev, "Invalid IRQ type selected\n");
+>> +	}
+>> +
+>> +	if (irq < 0) {
+>> +		irq = 0;
+>> +		res = false;
+>> +	}
+>> +	test->num_irqs = irq;
+>> +
+>> +	return res;
+>> +}
+>> +
+>> +static void pci_endpoint_test_release_irq(struct pci_endpoint_test *test)
+>> +{
+>> +	struct pci_dev *pdev = test->pdev;
+>> +
+>> +	pci_disable_msi(pdev);
+>> +	pci_disable_msix(pdev);
+>> +}
+>> +
+>> +static bool pci_endpoint_test_request_irq(struct pci_endpoint_test *test)
+>> +{
+>> +	int i;
+>> +	int err;
+>> +	struct pci_dev *pdev = test->pdev;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
+>> +			       IRQF_SHARED, DRV_MODULE_NAME, test);
+>> +	if (err) {
+>> +		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
+>> +		return false;
+>> +	}
+>> +
+>> +	for (i = 1; i < test->num_irqs; i++) {
+>> +		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
+>> +				       pci_endpoint_test_irqhandler,
+>> +				       IRQF_SHARED, DRV_MODULE_NAME, test);
+>> +		if (err)
+>> +			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
+>> +				pci_irq_vector(pdev, i),
+>> +				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
+>> +	}
+>> +
+>> +	return true;
+>> +}
+>> +
+>>  static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
+>>  				  enum pci_barno barno)
+>>  {
+>> @@ -247,6 +330,11 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
+>>  	if (size > SIZE_MAX - alignment)
+>>  		goto err;
+>>  
+>> +	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
+>> +		dev_err(dev, "Invalid IRQ type option\n");
+>> +		goto err;
+>> +	}
+>> +
+>>  	orig_src_addr = dma_alloc_coherent(dev, size + alignment,
+>>  					   &orig_src_phys_addr, GFP_KERNEL);
+>>  	if (!orig_src_addr) {
+>> @@ -337,6 +425,11 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
+>>  	if (size > SIZE_MAX - alignment)
+>>  		goto err;
+>>  
+>> +	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
+>> +		dev_err(dev, "Invalid IRQ type option\n");
+>> +		goto err;
+>> +	}
+>> +
+>>  	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
+>>  				       GFP_KERNEL);
+>>  	if (!orig_addr) {
+>> @@ -400,6 +493,11 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
+>>  	if (size > SIZE_MAX - alignment)
+>>  		goto err;
+>>  
+>> +	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
+>> +		dev_err(dev, "Invalid IRQ type option\n");
+>> +		goto err;
+>> +	}
+>> +
+>>  	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
+>>  				       GFP_KERNEL);
+>>  	if (!orig_addr) {
+>> @@ -440,6 +538,38 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
+>>  	return ret;
+>>  }
+>>  
+>> +static bool pci_endpoint_test_set_irq(struct pci_endpoint_test *test,
+>> +				      int req_irq_type)
+>> +{
+>> +	struct pci_dev *pdev = test->pdev;
+>> +	struct device *dev = &pdev->dev;
+>> +
+>> +	if (req_irq_type < IRQ_TYPE_LEGACY || req_irq_type > IRQ_TYPE_MSIX) {
+>> +		dev_err(dev, "Invalid IRQ type option\n");
+>> +		return false;
+>> +	}
+>> +
+>> +	if (irq_type == req_irq_type)
+>> +		return true;
+>> +
+>> +	pci_endpoint_test_free_irq_vectors(test);
+>> +	pci_endpoint_test_release_irq(test);
+>> +
+>> +	if (!pci_endpoint_test_alloc_irq_vectors(test, req_irq_type))
+>> +		goto err;
+>> +
+>> +	if (!pci_endpoint_test_request_irq(test))
+>> +		goto err;
+>> +
+>> +	irq_type = req_irq_type;
+>> +	return true;
+>> +
+>> +err:
+>> +	pci_endpoint_test_release_irq(test);
+> 
+> sorry for not noticing this earlier..
+> 
+> pci_endpoint_test_alloc_irq_vectors enables MSI.. I'd have expected
+> pci_endpoint_test_free_irq_vectors to disable MSI. Similarly
+> pci_endpoint_test_request_irq requests irq. Ideally
+> pci_endpoint_test_release_irq should have freed irq. I feel the contents of
+> pci_endpoint_test_release_irq() and pci_endpoint_test_free_irq_vectors are swapped.
+> 
+> For the patch itself, I have tested it now and the issue I reported earlier is
+> not seen in this series.
 
-CPUs in !is_lazy have either received TLB flush IPIs earlier on during
-the munmap (when the user memory was unmapped), or have context switched
-and reloaded during that stage of the munmap.
+I just sent the patch series V12 with that swapped.
+Please give the Acked for the missing patches #4, #7 and #10 (if you agree) to
+close this patch series.
 
-Page table free TLB flushes only need to be sent to CPUs in lazy TLB
-mode, which TLB contents might not yet be up to date yet.
+> 
+> Thanks
+> Kishon
+> 
 
-Tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: efault@gmx.de
-Cc: kernel-team@fb.com
-Cc: luto@kernel.org
-Link: http://lkml.kernel.org/r/20180716190337.26133-6-riel@surriel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/tlb.c | 43 +++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 39 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 26542cc17043..e4156e37aa71 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -712,15 +712,50 @@ void tlb_flush_remove_tables_local(void *arg)
- 	}
- }
- 
-+static void mm_fill_lazy_tlb_cpu_mask(struct mm_struct *mm,
-+				      struct cpumask *lazy_cpus)
-+{
-+	int cpu;
-+
-+	for_each_cpu(cpu, mm_cpumask(mm)) {
-+		if (!per_cpu(cpu_tlbstate.is_lazy, cpu))
-+			cpumask_set_cpu(cpu, lazy_cpus);
-+	}
-+}
-+
- void tlb_flush_remove_tables(struct mm_struct *mm)
- {
- 	int cpu = get_cpu();
-+	cpumask_var_t lazy_cpus;
-+
-+	if (cpumask_any_but(mm_cpumask(mm), cpu) >= nr_cpu_ids) {
-+		put_cpu();
-+		return;
-+	}
-+
-+	if (!zalloc_cpumask_var(&lazy_cpus, GFP_ATOMIC)) {
-+		/*
-+		 * If the cpumask allocation fails, do a brute force flush
-+		 * on all the CPUs that have this mm loaded.
-+		 */
-+		smp_call_function_many(mm_cpumask(mm),
-+				tlb_flush_remove_tables_local, (void *)mm, 1);
-+		put_cpu();
-+		return;
-+	}
-+
- 	/*
--	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
-+	 * CPUs with !is_lazy either received a TLB flush IPI while the user
-+	 * pages in this address range were unmapped, or have context switched
-+	 * and reloaded %CR3 since then.
-+	 *
-+	 * Shootdown IPIs at page table freeing time only need to be sent to
-+	 * CPUs that may have out of date TLB contents.
- 	 */
--	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
--		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
--
-+	mm_fill_lazy_tlb_cpu_mask(mm, lazy_cpus);
-+	smp_call_function_many(lazy_cpus,
-+				tlb_flush_remove_tables_local, (void *)mm, 1);
-+	free_cpumask_var(lazy_cpus);
- 	put_cpu();
- }
- 
+Regards,
+Gustavo
