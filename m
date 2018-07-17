@@ -2,142 +2,116 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D16ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 382D4ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B7A20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:33:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JhlE06JY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B7A20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E8268206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:39:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8268206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730614AbeGQSHN (ORCPT
+        id S1729952AbeGQSNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 14:07:13 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37811 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729934AbeGQSHN (ORCPT
+        Tue, 17 Jul 2018 14:13:19 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.163]:13509 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729721AbeGQSNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 14:07:13 -0400
-Received: by mail-ed1-f65.google.com with SMTP id b10-v6so1887947eds.4;
-        Tue, 17 Jul 2018 10:33:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1kZnsFSKyy62tixi+alSRUAS2tH0NGxOiK1XPu0Z9gY=;
-        b=JhlE06JYvogXXsE9AB2eIlICUBaw/OlHDabfM9zz//sj6j/jPi6yg1zDvG9BT5EF3r
-         ZaYIS0fYMX6Djh6QfzRiXzlqrsyPMTbZVVq9OZAst5gxuoI16Ax5zMNEgZpM6Qgi+JiC
-         fMb2sZ7u+wiMkLTP4Z+vUcwtz8Y7TNnCs+bEi6O4H9jK+z7LhgsglTGzeHEso6TREmCY
-         yM9ylqlFExYeENxknNwAqlJnZIy6iect6IP2hzqS4TXltLOWVsYj46m+US67NvQLQlJh
-         Z/Zp4gy5ENgwlhOogyJOUSOrOGRi3RO+MXkG77/MTCdIHL6x6V9HqsoD2AcyT5Rce946
-         CwoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1kZnsFSKyy62tixi+alSRUAS2tH0NGxOiK1XPu0Z9gY=;
-        b=bGZMqgDX83JNSpwDXURz9OsC0pJNzUhhjPVBpzzYOzqgrRPwZMuWyRz6kSLkQfNfIk
-         fZjEAZbCn9Bd2otSTAhhLgvK+4bzDoGtnmTB1onfyX55hQCR0Pk5BtcihWN85futMtZx
-         7x0Y6CUFnSWOn+b+HlyrjDqPZuB6hR7Yg57fN83+ilupZybytNeG4L8DNlri/ZsE8iqn
-         72pPsmk4OP32jvL9v0CnVttLir3ELGIDTJjobN+bBii3C+tfsyroSs9EVePP2DCz1dWZ
-         Il70ar4kCl8iW5cC/OdmL/tCnN0Mh1NLhHxKb3oY9sYuBqofAsck+RrVtuxOSLRAetCh
-         jKww==
-X-Gm-Message-State: AOUpUlGLuqob/XHq6C1VGBeiBGhRJIyYSI93X/zIZgLqOhPycuj1Lm2E
-        B/jQIS9VduHpoWkYbet64KYeBS5nz3QOlvE3NT0=
-X-Google-Smtp-Source: AAOMgpf6KAMov7ApJc0gH7CupP7uuj6L4Q0Alb3/v8RTMmlh69KlIihddIuiN3KrPRSy0xTHAMe2JdQLnSKs7C+cJtk=
-X-Received: by 2002:a50:d7cb:: with SMTP id m11-v6mr3519434edj.19.1531848810716;
- Tue, 17 Jul 2018 10:33:30 -0700 (PDT)
+        Tue, 17 Jul 2018 14:13:19 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id F3CDF400D4943
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 12:39:36 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id fTwDf5UrpPvAdfTwYfAiHo; Tue, 17 Jul 2018 12:39:36 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=49734 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ffTwD-003btg-DR; Tue, 17 Jul 2018 12:39:01 -0500
+Date:   Tue, 17 Jul 2018 12:39:00 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] vfio/pci: Fix potential Spectre v1
+Message-ID: <20180717173900.GA24627@embeddedor.com>
 MIME-Version: 1.0
-References: <00000000000076e6dc057131d87c@google.com>
-In-Reply-To: <00000000000076e6dc057131d87c@google.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Tue, 17 Jul 2018 10:32:53 -0700
-Message-ID: <CAF=yD-L0G2VC2-sCgsUmX=qmj5ukq6HS7Td1LDWitJkEUYdkHA@mail.gmail.com>
-Subject: Re: KMSAN: kernel-infoleak in put_cmsg
-To:     syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com
-Cc:     David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1ffTwD-003btg-DR
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:49734
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 6:25 AM syzbot
-<syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    123906095e30 kmsan: introduce kmsan_interrupt_enter()/kmsa..
-> git tree:       https://github.com/google/kmsan.git/master
-> console output: https://syzkaller.appspot.com/x/log.txt?x=166dafa0400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=848e40757852af3e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9adb4b567003cac781f0
-> compiler:       clang version 7.0.0 (trunk 334104)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=164e4ab0400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a41e40400000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9adb4b567003cac781f0@syzkaller.appspotmail.com
->
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> random: sshd: uninitialized urandom read (32 bytes read)
-> ==================================================================
-> BUG: KMSAN: kernel-infoleak in copy_to_user include/linux/uaccess.h:184
-> [inline]
-> BUG: KMSAN: kernel-infoleak in put_cmsg+0x5ef/0x860 net/core/scm.c:242
-> CPU: 0 PID: 4501 Comm: syz-executor128 Not tainted 4.17.0+ #9
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x185/0x1d0 lib/dump_stack.c:113
->   kmsan_report+0x188/0x2a0 mm/kmsan/kmsan.c:1125
->   kmsan_internal_check_memory+0x138/0x1f0 mm/kmsan/kmsan.c:1219
->   kmsan_copy_to_user+0x7a/0x160 mm/kmsan/kmsan.c:1261
->   copy_to_user include/linux/uaccess.h:184 [inline]
->   put_cmsg+0x5ef/0x860 net/core/scm.c:242
->   ip6_datagram_recv_specific_ctl+0x1cf3/0x1eb0 net/ipv6/datagram.c:719
+info.index can be indirectly controlled by user-space, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-> Bytes 2-3 of 24 are uninitialized
-> Memory access starts at ffff8801bde1f8a8
+This issue was detected with the help of Smatch:
 
-This socket requests IPV6_ORIGDSTADDR.
+drivers/vfio/pci/vfio_pci.c:734 vfio_pci_ioctl()
+warn: potential spectre issue 'vdev->region'
 
-According to
+Fix this by sanitizing info.index before indirectly using it to index
+vdev->region
 
-  > Uninit was stored to memory at:
-  >   ip6_datagram_recv_specific_ctl+0x1c3e/0x1eb0 net/ipv6/datagram.c:713
-  >   ip6_datagram_recv_ctl+0x41c/0x450 net/ipv6/datagram.c:733
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-It is reading two uninitialized bytes at line
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-                        sin6.sin6_port = ports[1];
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/vfio/pci/vfio_pci.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-But this access is after the check
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index b423a30..125b58e 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -28,6 +28,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/vfio.h>
+ #include <linux/vgaarb.h>
++#include <linux/nospec.h>
+ 
+ #include "vfio_pci_private.h"
+ 
+@@ -727,6 +728,9 @@ static long vfio_pci_ioctl(void *device_data,
+ 			if (info.index >=
+ 			    VFIO_PCI_NUM_REGIONS + vdev->num_regions)
+ 				return -EINVAL;
++			info.index = array_index_nospec(info.index,
++							VFIO_PCI_NUM_REGIONS +
++							vdev->num_regions);
+ 
+ 			i = info.index - VFIO_PCI_NUM_REGIONS;
+ 
+-- 
+2.7.4
 
-                __be16 *ports = (__be16 *) skb_transport_header(skb);
-
-                if (skb_transport_offset(skb) + 4 <= (int)skb->len) {
-
-and the sent packet is 725B.
-
-The socket was opened with SOCK_RAW and protocol NEXTHDR_DEST.
-
-  r0 = socket$inet6(0xa, 0x3, 0x3c)
-
-so this is not a normal packet. Need to take a look at the contents.
