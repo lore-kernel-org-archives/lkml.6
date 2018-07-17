@@ -6,59 +6,63 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AF2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A860FECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7967A2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:00:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300902064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="HCGGJHS4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7967A2064D
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="35dsNwzn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300902064D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbeGQUen (ORCPT
+        id S1730999AbeGQUdx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:34:43 -0400
-Received: from mail-co1nam03on0087.outbound.protection.outlook.com ([104.47.40.87]:2340
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        Tue, 17 Jul 2018 16:33:53 -0400
+Received: from mail-cys01nam02on0078.outbound.protection.outlook.com ([104.47.37.78]:38976
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730840AbeGQUdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:33:55 -0400
+        id S1729980AbeGQUdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 16:33:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LdxoCw6N7PsaVehr0K1ijk5/waIm7L819w8sPs4IDqU=;
- b=HCGGJHS4HmxgG8KDHhK8DemH0NtgF9tWbrYj1+1ouTy8S8lViBrscefHoqh2XaLXIBYDqkvqeWoNxGf6j5LCzFZZH0810OhCnZelT3SE/9Er8xba+jlw88g8OMUfHTcgj/ExVUFdQVvlmZnKz5Ms7ktgyIi1Zq9FUdQSEVLzhWo=
-Received: from SN6PR02CA0033.namprd02.prod.outlook.com (2603:10b6:805:a2::46)
- by CY1PR02MB1625.namprd02.prod.outlook.com (2a01:111:e400:5299::27) with
+ bh=ae3uMsPM9qWtcPtZCcchHnnmLXzK+8XsulKYSv1xPnQ=;
+ b=35dsNwznORnkXxpuZ9FhV+AibBqptnFW7QzudmFHTJsqSVMs8lM7gQM6Jf62yKh1AQLpV1x4QOAOioJ+N6KoeKN1aRESnjNg5rXfV86bVPHa8JQvg1vXTE03nQAlW4A3rK4dZY8aMfXyFlfY5AYsqhlTgUkfj4ICpkHMJSHzimE=
+Received: from BL0PR02CA0044.namprd02.prod.outlook.com (2603:10b6:207:3d::21)
+ by SN1PR0201MB1917.namprd02.prod.outlook.com (2a01:111:e400:5223::26) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.20; Tue, 17 Jul
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.19; Tue, 17 Jul
  2018 19:59:34 +0000
-Received: from SN1NAM02FT007.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::202) by SN6PR02CA0033.outlook.office365.com
- (2603:10b6:805:a2::46) with Microsoft SMTP Server (version=TLS1_2,
+Received: from SN1NAM02FT029.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::209) by BL0PR02CA0044.outlook.office365.com
+ (2603:10b6:207:3d::21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.973.16 via Frontend
  Transport; Tue, 17 Jul 2018 19:59:34 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
+ header.d=none;linaro.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT007.mail.protection.outlook.com (10.152.72.88) with Microsoft SMTP
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT029.mail.protection.outlook.com (10.152.72.110) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.952.17
  via Frontend Transport; Tue, 17 Jul 2018 19:59:33 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:59442 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1ffW8C-0003Ut-Td; Tue, 17 Jul 2018 12:59:32 -0700
+        id 1ffW8C-0001af-Md; Tue, 17 Jul 2018 12:59:32 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <jolly.shah@xilinx.com>)
-        id 1ffW87-0004zI-Q3; Tue, 17 Jul 2018 12:59:27 -0700
+        id 1ffW87-0004zI-Jd; Tue, 17 Jul 2018 12:59:27 -0700
 Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <jollys@xilinx.com>)
-        id 1ffW85-0004y7-2A; Tue, 17 Jul 2018 12:59:25 -0700
+        id 1ffW85-0004y7-Nf; Tue, 17 Jul 2018 12:59:25 -0700
 From:   Jolly Shah <jolly.shah@xilinx.com>
 To:     <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
         <gregkh@linuxfoundation.org>, <matt@codeblueprint.co.uk>,
@@ -70,181 +74,280 @@ To:     <ard.biesheuvel@linaro.org>, <mingo@kernel.org>,
 CC:     <rajanv@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Jolly Shah <jollys@xilinx.com>
-Subject: [PATCH v10 00/10] drivers: Introduce firmware dnd clock river for ZynqMP core
-Date:   Tue, 17 Jul 2018 12:58:57 -0700
-Message-ID: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+Subject: [PATCH v10 09/10] dt-bindings: clock: Add bindings for ZynqMP clock driver
+Date:   Tue, 17 Jul 2018 12:59:06 -0700
+Message-ID: <1531857547-16652-10-git-send-email-jollys@xilinx.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
+References: <1531857547-16652-1-git-send-email-jollys@xilinx.com>
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(1496009)(136003)(396003)(39860400002)(376002)(346002)(2980300002)(438002)(199004)(189003)(77096007)(54906003)(486006)(44832011)(106466001)(26005)(476003)(107886003)(2201001)(6306002)(36386004)(50226002)(110136005)(4326008)(8936002)(7696005)(9786002)(106002)(51416003)(426003)(356003)(48376002)(36756003)(5660300001)(50466002)(81156014)(81166006)(7416002)(305945005)(126002)(72206003)(2616005)(966005)(336012)(186003)(16586007)(39060400002)(6346003)(6666003)(2906002)(316002)(478600001)(8676002)(63266004)(47776003)(107986001)(921003)(5001870100001)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR02MB1625;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT007;1:cSK2bCOTSY3749v9JKYrj1vPuLt/xlw8fz/9lrqBIj51lmFFMHTd7kk/DAkUJbsSOCOBvKso+MvWbIEHvQxSQiQ5XgbNq2HJNyyM2w34e6xfDPZcOkiQbYHlgxXVgu9p
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(376002)(396003)(2980300002)(438002)(199004)(189003)(9786002)(2906002)(26005)(107886003)(186003)(2201001)(426003)(6666003)(44832011)(77096007)(14444005)(5660300001)(126002)(476003)(16586007)(8936002)(50466002)(36386004)(4326008)(2616005)(486006)(54906003)(110136005)(356003)(8676002)(305945005)(11346002)(446003)(48376002)(81156014)(316002)(81166006)(47776003)(76176011)(7416002)(63266004)(7696005)(336012)(106002)(39060400002)(106466001)(51416003)(72206003)(36756003)(50226002)(478600001)(107986001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR0201MB1917;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT029;1:HbUrg4R9FJU4/mHVW/PUMz6o58k4QGaGy5Y7eQHWik2ENq89g7NaThjwcjoCI9DoQLW6LmbtNt6Ue97mlFM4Kc6sjrPk8OPrznIfK9NnWHOiQzfoPvNbJo4OpvnNEJCU
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 81f21bbc-7874-408b-e6ec-08d5ec1fd141
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:CY1PR02MB1625;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR02MB1625;3:Ui8UffBNeFFrjMqjhe2kx5BU0R/cuG/ONv8NueoKwKNv9t/mf6s3gd8G39Sm/jzGvxDvOiA2OeLCcSYfnDownhQEsW0JT6CwK1po+LM1EZ52vHKT+0r8xMAevhwylvceGoE0m1BwNbYYJxai2XkVB38ag3sWA/hIca/jS8IiXoy4u7b3KGDUA1O+sK4RCEXIvtZsIZCqJqVpiOIBde6hPgvBD5EC+KGRtu+Ms9NmQh1FETUixh7kKEVpe3Mmv+4Rsk1pu1kAwPM7LFZwatRgulEzxFSwSxKUP1bpWVAD3wsduydv78jOMC5ywRDXYjsaTpXrrx0VfMivClnkrcsAMP7VcFhHvZQ5cqVhMjwlH8o=;25:JPNe9zAkyeKBUvvRhJ/bJIS5hrINA9aa5FGCi9Vk7bLEixWZ7q2OFABMC+Lof1rkEk32ARu4Q4m6nIuLlCscOD807QtgRjLYM2mK32/yGzOLIZcBwACXVawAvAVhTJk46YymruWsTQPgvyUk4QkwqlCFos1dk2EDr2yDIxSHJoHeW+vtgk7cbd8gtbTkS+wH2978pl62t6TG1hIY1zdnhY8noYSbeqxVCYu15Mmw2iXPS+MxVjJkk9JGLmjJTZq8W87Rmtet4zDW4MbUaEx43wGVwzqma5NQTAGyr8BrGFjRJwfj1fJS3YGnXjpNpRAfmBQKV98DXVAcWlC40iUY/Q==
-X-MS-TrafficTypeDiagnostic: CY1PR02MB1625:
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR02MB1625;31:K4vSgYZoLbSpAwVvc7p1S0DRlc3pUJstlXad4cdRWXAf6oi8082x9W+h+8V+TFU+YDGfAbtE5NlqAGuAyJYK1ZYHbKHzxZLapybhVkrHFpz6JcnkQovh+s7dUT+PzesF03JlEfjyo5TJLPqw34TpHAk7coyZIznWrLPd2WnRLClkYU9O/+LudneALSOUolppOs6QYHJ094tU9rR9G7hEgzE6M0ODie1l3aSZJVf75LM=;20:Np1/zbR0SwDca8413F8pqFA3JZiYgFjAAhyHKGVKJrWyRSqy2uTt0fciC6vroDOylpxWaVIvyz33xEiOk8ZmQ141eH1Q3EoEIUJcZ5uixMXuZAJOkweayQ4dn5G4XaMBCvTlCqfsQbbOLjI4ds8yb6xtL+wK+urUgKpYYi7vII/ujMKrIHS1PfIg6gQQZeW4stQ4U45+CekJaLjA19vDCq3fKCd/eRdxt+aYH1q/aHLzvuYGKqSGMkwFBWKyAZOhHLBioDy+aBZ3U762pCWValtxnLriTYsE7wgFRyd9ZW75mIgQm6mCfAFNuaQhBwTrD8Vqnp89AgesCpgTJtRFXUJOAwv9UGTgVZS4k33KbkYl5YcVI/2f54z+2npq6yrfTQC/y//i2GirEaqjMvl3oxeB05+aGTV2B98ooJNXj22//Tyqr0A0LSyYxd0m+859q0bjvSkiR4Jn71lf/y7Kb51IRZNm2547xdrwrAO/zdpwIjv5s4q/O3gUj2opGxkf
+X-MS-Office365-Filtering-Correlation-Id: 0fd01f1a-f4ff-4d2e-4eda-08d5ec1fd133
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:SN1PR0201MB1917;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0201MB1917;3:Ydg5blDcgZxaCWcfvizjZCe3Zs3D24Nl+VAiJeW8XQZzuWSEaeCZ3gVNPFiu+DPD/I3osMajDgXEce0JLzcVlqmrqop2joT+uAf49apdKwlTQflAqQt2wGVvT63GT33re0/Qeg76WAH1cn7YaKDjAFOgR6xl6csWZnkbxz1c2h4NxmHdm64W9xyUgjZZom7yIS9KORGLUNtcoPC5oIWtSKDdV7MxQCSCfiBUufvzF7GU1Ukoh+aVI+1R/StcojTQl/6E1n4U/tu4Y8V7lCFNfYTuExlvQLcHe9Q7wrznMBhVXvRb7UkWKXX1T25P3o67a0bJZHOUW7yj73OnguDSjPzOXrI5Ngv4RfHSimClBsM=;25:ZWm5YDlAScd8EPy8NqFAF6saNd+jeszK2wDN2uDgXQMI7Ebrh+hDp4gA9BU8LjvtU+1rG8oqQediu36pKAJBptPZTZ5W2e0CcAHLqojIAJEF1g4+N+vBf9tIZrmzyPhg9ROXZw1mAoN7L0t0w49VbltmkYZ2orRNULV73vJvqYrUSMe5qPmD2mo2S/3Vyhcd4leRMM0cWdMve/WVGNTXLCoQzZWtUmr/qm8NBR7DFaUF3tOxOxYzq7AQKybP8Vl40gvqopJrEjFCFiRVGjj0Fq65M4B6kyzS25QD+Rtc/SC4mf0dxet93IbuYwESKLdKpuSUY+2d6Yss9Ab6/8Clzw==
+X-MS-TrafficTypeDiagnostic: SN1PR0201MB1917:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0201MB1917;31:fGynviVRTCX6qJU3yxdKBjool4MYT4UK2oBzhtOrwFsFrohD4ZBABaqL6sCU6GLczYsydHZMtnqcrvI8E6+XE05Uz57lOQX4EyMsNIB4Xue6DV+aHQstDEAlCvcQXi9hj2/dlfGF5i+oOIq34fbuWzhPe/SoLnccp6oaT2KTSB5EreY1Si2krGB2PCVNwcfpnIRJmLReBQtG26zx2SLocwoqrenkZaA6+fLqzvJe7h0=;20:+36Zmy6Uh9+KO39YW96MQuXZuBdFLCHzKykTuCJgnbX1eXj9ynNLWy0z2e7BVhgICKJ7qazwxDixRrljFD3WgLrff0vgDKj44c8KjjYcg70ySGeajUhDpTS0ecGTpBgPmoArsGTYCvwRhnhS8Csy2/r1Vp+tgTSp0gUuXrFJPvKQ6i7ug/C9QOW97pVU1hSpzb9i0w2Fa8JkL9saNZOmuz323FdgjjMe0lhisiTq2A+XUjzcyN++4mdG/vPw+FuNiJtUeI/7iY/aNScYE9Op0d7f6++XgkQhb9ThiYzfOQ1kgjN2VqKLN7SLHGgU/GUUDdQWJQejBhZpzzuwcLMvFD4kXnnwro9jq583AL/rsRK6Lf6UOYp45tRLCXSNj27ve/Kuh/lhW2IR6uOKshJFDnAZVDiDTHPoOf9evFhBFw7/5rqQd6CExhihkOs+01UvqJQfuh7cvzwfk3+OorayQSP/nxkpI+qt/SnXtxBLx4yrk5YCrJXmAkmhIMrXqyia
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <CY1PR02MB1625BDCBE461B1F9A5BF5867B85C0@CY1PR02MB1625.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
+X-Microsoft-Antispam-PRVS: <SN1PR0201MB1917C9387F3FF8AFB330F99BB85C0@SN1PR0201MB1917.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(93006095)(93004095)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:CY1PR02MB1625;BCL:0;PCL:0;RULEID:;SRVR:CY1PR02MB1625;
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR02MB1625;4:LbQ2ouHVv+KBKTPOmNKCxWlgePwqf3FkJml4ZDJ0Ze7+fZwoeZq7spZ6TIret1eYv2DaYHIN0S7m0HvSUemBXeh/5owmhS1Zex7l6UcpyHjDDkS+pAo8g7v7QfAaJHgeOxjYSDwNMRk0KI8NLbj2gEhJDILGZ6e+Erp6bNGlfUc47SlUyPR584V5Dpn3GYjzM33Qe888MQ/XyNhKo2Zy5/DLlH3h5xdAKIS1LyhMGpJX97/hWjuBBRYy2+9//Y9g6CY/G0eVRJc6OoVDRfsMoQ==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93004095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SN1PR0201MB1917;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0201MB1917;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0201MB1917;4:QDKhWgaEVX0v2PY4+gZve45DyH2BuoVmT7vrIPvxrVrtsUxwYY8XVtvhcOL5N5w7WkUrgB35WSwZWt4E25WKv6eghrAvaeRyEVLzGIfGDM9lQFBfXKxF8ATMhUObjc7cY3hnYmnDHw45RzfFVBlK6ejCCKvjhlbeYdfs2hWTV56ndWJ3zP+JlmPlOngVxv6QIW8n8ufti+kYEHcChAmAvldzV9Vk/l8RShU8AFOXI4pZvJ67XQro4SpuD5S3oRIO461kfY6WlLp8RV9oCjkCUvVQ+xa1DeaeiS8rBtJ7fnKlR3Px85dHY7zFed1GswEi
 X-Forefront-PRVS: 073631BD3D
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR02MB1625;23:71BZLpKYz5jBKB7a3owQhXsSs8iOVlgGo117OmYcB?=
- =?us-ascii?Q?8R7FHAd6XCvGesezcWvB1NFu/osCB8RWsSNudoXDMocSu4OISrHDPls28qiO?=
- =?us-ascii?Q?1p+HNzRJzQqGWlLAku1RaVRiZWsW7v8yinV5IhbLwHb6BxzWooM6Nw0aRiP7?=
- =?us-ascii?Q?00t50ciY99XkB0LT58TaE7Pu+zIosSvVfS6yD7IUtdIUA9t4QoFKSUFDfWDn?=
- =?us-ascii?Q?ZOCKTdM47oYgPueIcSzF+aD1tl3G4x6pWdG4JsLFZckE0VfNtFjD1QRACkCM?=
- =?us-ascii?Q?qTBGaBXBQ1ReWMg7GRpgmmfd8IrCvFxqH/hV3PMK83JO8IJf5Stps3NACEVS?=
- =?us-ascii?Q?oQreGmpPjw9QUMKPHHRYNk8evsBtLscVBXxFc1DI2hrC7bOdi/xdY1mdPYBJ?=
- =?us-ascii?Q?608fMyKVvHEX+YDUVn+RWuQACwpMBDfyhFCxHdmkNjVm0bBe4cIFuASg0P4a?=
- =?us-ascii?Q?IGvchJTCgrsdv0x8hRII5LZZgXiOC8bFWyZ5i0fGpS/f79trWQuCuzyVSBOr?=
- =?us-ascii?Q?fucmZ9hTU9Kn8mig//JxT4/N2jflvNk+ndT/TAegqBvDQtxelq4MEI93eaPO?=
- =?us-ascii?Q?YY4WV7xjUxsKFq6wJdqHmmGG6e6SIyitnLQVDzDBoFn1+Ks4KI5zIS4czC3K?=
- =?us-ascii?Q?DVT/6A2qgPCCvD4UzHDsXVObr6pvbk+0xuNeXu8lKIVnZl4bHMuuVbT61u7v?=
- =?us-ascii?Q?nooGJYUYLxOWhruUiPNfOvbQRgoLglnMUybsxVV1IkINAyw9kN4rN4WugkYH?=
- =?us-ascii?Q?VcYZApXg6VUrbsXCbOB/GkszPV3+XphRCqbXch63oXNXJ099eMobnk8AGdxW?=
- =?us-ascii?Q?xO8hEa3alFw+4rfgsmKjWGEVp9FJPIg6ZlcMoTDlIQaNqkHsJ2ZGrUTlnoj+?=
- =?us-ascii?Q?KqncwSryHVM2fHmDLmPzc6ZJB1CEHoxjwnOx4LGl9CvTnS4mqU/1LvkMOFfl?=
- =?us-ascii?Q?vpD1Ygs59gEA3tLSJKh8YgM7QVD+AJb7+D2ytqqvzfVhMLR6/CwkJebSdK+h?=
- =?us-ascii?Q?euxKesjsS6ImrOfvILvitBLHqCNOzut/VAcsyNQYwBEPSpUZnV7KoF4BJK0s?=
- =?us-ascii?Q?n2AcA4JvhfkoIkV+cwUsk+98oaxmp1VFIdexpKdcia2C7p265l4zTYIeOf4N?=
- =?us-ascii?Q?9eD5GJFS3h+cnkMUeIUMzwe97l8gg2PgVHKNpZ3yRhjv5PFCUzhTqkZ3jMR4?=
- =?us-ascii?Q?69F6BSvabW/s32vneeg5//+QmU1qFIv7a93xewvpPPQ/CpRc7RWOI3Nd++/Z?=
- =?us-ascii?Q?zBgrXfpAXCbCAUNq/OOxGmpkcnpJ8UqUDK9mwuAci5k+IQTZhBMB5I/k7JOz?=
- =?us-ascii?B?UT09?=
-X-Microsoft-Antispam-Message-Info: 4GmsDeY5QavoPylu8Y2vA+usTaC4WV+45c+3ao410p1BtjICUarmcKlpsQCq07RNSyoCVlUm9+uKBr8vW7jaDaF/7VtN0EGdiok8yfF4Mp4MbAH4seRjwWCEg8ReoP6SyvwNSda1rVc1FydS8YF+3/la9A3CpEtr7EHKG4LSVPqiwtGnMXorabpLWiK+p7Q0BlqD+jZ6rfAxfQyZEJQwFswA0CJhgYNWi1a8X+fG0UqvgiHfHbuEinA5rIEx3SzgAi5kY4xG7VTrrLEFSZ5mLIYjpdmuhhiQBTurNLUqp2wy4Jj18ma+sU15IUVNH3RZZ5rgAtVJAyX1Hr+sE3vOhp4BlCCT3ijtwI+IDOPk4IM=
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR02MB1625;6:SUflCPDnFpIwWR6UDUSlJcbLIMz0OdWpFbwjh3uZq6keu+Hsl7X+xJvAFNkj8SURPGP8ycvB9quIk5nXPhdPbIaIuBrUF8kXrD7+yOzhFcCcxcXFFPJmSFAzFDAG/uDvUnpwzWGlHQuy8mIvNHDTVD5pMiNxRYptc5bHF98TjNjmrEojXbeDXo57QbF58dFFp02AJn5FVdy9HuGgNCIbROeBALSVh1KqrCuXmF0t0n6D0T+MWhPNBYCX5v8Y5RwaS3lv4VLUf7bY9VjA1vm0PNTZpDPC4DHxTfPs/qc0O5UwFSuXYb2m0QQTrdAjxoC1dZfbXUBKnDZ/ARPr9HX7Z8Xlv/VJGIty9nfCwMZ2q2TfSGl3eSbJGJ3zqcyf2hcscxq33VvTUpQ1kO0hQ892UDDMwJ6+zkjGc7sdn2f9BfZhf/1ADEwP9U9HfRQONEgx6X3e3mu/lL6m0Ikdsu45qg==;5:BDNPsAy3uakZMazbv9URwfrO1pnC5at6GLzI5Kbi36qfQpjUBtKvbFoOWADIiz0+5/zO0hW6EgGRx46ZBC4qA1y2SuOIZap+Zs9HZ45EXcdVLn6COZBx9sB5P89+3AZGeOldVGGJwR+2DCF0BFpK0riRulpcsOFYu19Xl1i1dFA=;24:YTwxP7ET0TcTSmE5cHRGk0rW9q0L23OtvxyNYMXJpor3ADZO35+KGO4P9udM8LagYBnJxY1d7y0Oyoxeqwe+TTKEsN0W0AKnGffu+V6VtqY=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR0201MB1917;23:6zsYMNdeFLOVAlrZ8RH3gUqbt/Xe++zEKAlvZnW?=
+ =?us-ascii?Q?HwV7P05dEVJ37cstjIwplSig894msBSCaFg8s9oJ9JC7WlHw/AgPwgASy5qX?=
+ =?us-ascii?Q?d1Ub7gDcm88uP/Uzde6ZlA91wPptunwTSIdjkIJhopurosGQ1vqX5WGSsDXp?=
+ =?us-ascii?Q?MRRoZZUzSVJx4mOX8c5pPA8XPkpre3aLogAQKwhuiEc0wiBB4SajEOK4zFwv?=
+ =?us-ascii?Q?kfwxOrIi2D5PrkOqnMJjeyibjDLgL42a22W6JQQOYGG13dUpPrHHhlFuLfp9?=
+ =?us-ascii?Q?9jZHC2R6taC6k4pxstiH19xTHYk4I6b3AllRAqBr+u6B0aRzFF68w0xysa2R?=
+ =?us-ascii?Q?UMQGpT7VhPY1zixXMB/MwRqb9fVm5IvCpKF18WWii8ASfVeWfwmHRlNxXjZl?=
+ =?us-ascii?Q?3SaJNMaMIk9fWPumI8+EiGZ0zNe7NjnN/pDo5Z5gB0M2ZawyFTUMK4Jn8n+2?=
+ =?us-ascii?Q?AOf+vVnJE0t0irJrhQV1dWIMzGzmluz1qE8aK+OerkhdxQocFZN2tqnZLUcd?=
+ =?us-ascii?Q?Tm0e3AvUqZKd5qqOBcZJBaOxRy10NfAj/TNk6jL88aRqfB8XEccpdHNFAe/N?=
+ =?us-ascii?Q?v4XUXBBU2n01iu3QV/WEEgUDlyCOXclYAAG9Ir1gEMcyvwDiphbhW5gcP5Ej?=
+ =?us-ascii?Q?LUNQbqaZhSTzEJUm+I9ymIqENuGqaXN4mFRaHBS1BRS//G0E2Pd6kJ1CZS9N?=
+ =?us-ascii?Q?MqK4c09uwL1juxewpjMZhinrH+NhSuitHjHHqP1tebgFNbuT1uZh0IqCZgCp?=
+ =?us-ascii?Q?Nh1WYtQYfiIZLPG/8ROPKqH8ooZj1ptBi5twJE57FbvuowOz8/SNTIqyFYX7?=
+ =?us-ascii?Q?1nwqN1OXT4n3cHy4o6IiMqyj+zb8lgjtsNcKPEcJqS7ZSlfqx15QCqPE3GPl?=
+ =?us-ascii?Q?XHNsyA4t1D8vP/+KAe0gFPWG/F60kLwsEqenoGbNeZODjTQfalbq4v3Xt0SO?=
+ =?us-ascii?Q?bvqW8RTo9FzXQpkXv53HAwm+FDAr1yEdpDatZFw5j2lNwzHpvMLBrN4jcjSl?=
+ =?us-ascii?Q?U73n7Jn+m1diEXLgeGpPgR0iBNsCXXtg10jrqhLUqVzmp2OIMXU0wu359grr?=
+ =?us-ascii?Q?5tooUmOOUVGDA9VpDhatT64vk/QEj6C7uULnAJAUgVFpAAsTtah5N3XRyHsH?=
+ =?us-ascii?Q?GT1TwVnZ8sgAvB8tJGueNXh6dsSVPD/b02lVknm9VZhj5GHALT1QPtcLmxYs?=
+ =?us-ascii?Q?QBuYKTs3oRkpERYK8Do3tUIeyBNFXbv/aqSwcMaLq8W04QW8iLjdARNC9CS4?=
+ =?us-ascii?Q?e6ISx65UgBvyHU93pzaflsIOrwyBQcF3GkjMtNP74?=
+X-Microsoft-Antispam-Message-Info: YqijupFRXLGYTFW1PAriXtIz8oGX/9OBVlZrQXIm/Ho/5ALcrvcuMoSPsngmMT0hI+vKM3xovDHuzc1mlgwDyHgsQ+KLxAS/o2lNpIqTEPKP49c2+GMph1x1gKcwCTYr9dOkUmo8Ui6ECgUkFoFiMvMDUh3eGBc6pSPCqb0xAZ3R6O43yxbxbLwVdp6jqsHsFqDqnyht9o+8vzcKYlIan4JGYS/Jo+9OAvpPrr1sIO+iPcI1oZ2LoF7TuG55VbQL77k/+3J/9S/Rm+dWdKuPHzcuC24H7xkxCJOO0bYU8/srvZxsSEoKtWbo4rMnzGv8IC6Ek1WIGfJ8qCQ51X1kGgJNm3DDnROo9CpEsWE5hQ8=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0201MB1917;6:px7g/v5qN1CFdC/FqZrAurMZC8cspkpeGVIJiIs7msPD18Oxh3iZMu7frXP4lgOxknG/JKo+VxuFHwSce1TV7SR+mnnh0NdYYws0q/96ewaH9j+UXr9+uCMPrvXHyUU9ZmO7NRz4nnWPTrwVklRzRXv9/eTEtDbYIVMChdeXx7eMw6k39QeRAWglv8oJCsgzECXgjptRyDo3xq/9Nth63mw8Uq5i/WLi4x45FYjTqjfChGovtK2uVWbL1sFnO1tKgfvTWHlLRdJx+nRThf86TorMtqBZAv0RYX+1XuXIWO0KbebjC8iJszuABGemt76ZVafsmvnb1DaRl1iqVatqfDLxHn3W73Do4K564K+Ntrfu4tYutOJOh7yO7eGscSKYvxNGaBOgLaVV+UQwzpTzVbRJv9iXUznVlSmsNbZB0c3z80h1VnSzdlrCC21U4Q5XHPREGrnHWxPeXNo+qbgT+Q==;5:JdS2BsYBkBNCa2vSxqZ2jZvjDBCAg/OouwmB2CbN2W0LtOmIVTHyXV9/Y7kWUfDzD0uJPRaw7IsK8DxX74F62yB9MFaC2eh/fAB4hjsgipVU50HoVuOE0FgH0k5uMf29ERNo8ks8YfpxEGu9wgkDnZumG3mZqkTKgamIR2BiKvU=;24:UD3Npm+MkQe++cGXsMrsvSJDDt4dWu/RvyG7nxgnWAZFVyix7YF9Slmqo0a3OeAEGlo7t4jDlz+VNvPMyvPMmd0DKAyOzjRroUosamYWd00=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY1PR02MB1625;7:ivsuMVMy1FtXa9a0nHOVQRBZEgs9AQuYVm0v+10wdTgXPfAZsKvhq7sYfJrXuV9NsN9iKDR+sDPxvDcOAAHW60Y6TPDbh+YU0ZoOb2xXWbNS3Oe/EGFcE5UzDzr/4c8LXlIAKTLKvHuMyaxCkcI1xeSx565bKI0A4MlEIUbY27PSjgfaAfbELG0wIqVOWF8GJNWlyvwcRr+EHuOWDBhSE1PLhBog0CMz/wBSQzAQLgn6GSub6X7vwnIXVpryrKXG
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR0201MB1917;7:TETfsGekyRgn1AsArOlL9mxRqaSOVyGfUaTiAEwuwa9UMuqZhzDilvZOMfgQyBCeMR5/cslWh7Aa+YxbS68IPZIARTb1gLXwpq0bNY3He64W0sIZTcD5p+rtptbzV2ZxwFvyUhxILsLdLJhExfKdLYwRq3/MZ+HCC2DZUeOlD+V2A4PyOJ6zEnxNqIQQLbSirc/u8RQxrI/V3SH2pS7etBhcgxc36AQPwGsM/QgVx83TDUhihreP3+fSjKPmBkmr
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2018 19:59:33.5597
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2018 19:59:33.2297
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81f21bbc-7874-408b-e6ec-08d5ec1fd141
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fd01f1a-f4ff-4d2e-4eda-08d5ec1fd133
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR02MB1625
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0201MB1917
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset is adding communication layer with firmware and clock driver who uses 
-those APIs to communicate with PMU.
-Firmware driver provides an interface to firmware APIs.Interface APIs can be used by any driver to communicate to
-PMUFW(Platform Management Unit). All requests go through ATF.
-This patchset adds CCF compliant clock driver for ZynqMP.Clock driver queries supported clock information from 
-firmware and regiters pll and output clocks with CCF.
-v10:
- - Incorporated code review comments from v9 patch series. Discussed below:
-	https://patchwork.kernel.org/patch/10478575/
-	https://patchwork.kernel.org/patch/10478457/
-	https://patchwork.kernel.org/patch/10478461/
-	https://patchwork.kernel.org/patch/10478463/
-	
-v9:
- - Fixed minor typo comments
+From: Rajan Vaja <rajanv@xilinx.com>
 
-v8:
- - Corrected typo in clk Kconfig
- 
-v7:
- - Removed xilinx specific clock debugfs API support
- - Added reviewed-by tags for FW and clock bindings
- - Updated clock node name to clock-controller
+Add documentation to describe Xilinx ZynqMP clock driver
+bindings.
 
-v6:
- - Broke patch series to have base FW driver and Clock driver user
- - Incorporated code review comments from last FW and Clock driver patch series. Discussed below:
-	https://patchwork.kernel.org/patch/10230759/
-	https://patchwork.kernel.org/patch/10250047/
-
-v5:
- - Added ATF version check support
- - Updated some functions to be static 
- - Minor function name corrections
-
-v4:
- - Changed clock setrate/getrate API prototype to support 64 bit rate
- - Defined macros for get_node_status return values
- - Moved DT node as a child of firmware
- - Changed debugfs APIs to return data to debugfs buffer instead of dumping to kernel log
- - Minor changes to incorporate other review comments from v3 patch series
-
-v3:
- - added some fixes to firmware-ggs.c
- - updated pinmux get/set function argument names to specify function id instead of node id
- - added new pinctrl query macros
- - incorporated review comments from v2 patch series
-
-v2:
- - change SPDX-License-Identifier license text style
- - split patch into multiple patches
- - Updated copyrights
- - Added ABI documentation
- - incorporated logical review comments from previuos patch. Discussed below:
-	https://patchwork.kernel.org/patch/10150665/
-	
-Jolly Shah (1):
-  drivers: clk: Add ZynqMP clock driver
-
-Rajan Vaja (9):
-  dt-bindings: firmware: Add bindings for ZynqMP firmware
-  firmware: xilinx: Add Zynqmp firmware driver
-  firmware: xilinx: Add zynqmp IOCTL API for device control
-  firmware: xilinx: Add query data API
-  firmware: xilinx: Add clock APIs
-  firmware: xilinx: Add debugfs interface
-  firmware: xilinx: Add debugfs for IOCTL API
-  firmware: xilinx: Add debugfs for query data API
-  dt-bindings: clock: Add bindings for ZynqMP clock driver
-
- .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  82 +++
- arch/arm64/Kconfig.platforms                       |   1 +
- drivers/clk/Kconfig                                |   1 +
- drivers/clk/Makefile                               |   1 +
- drivers/clk/zynqmp/Kconfig                         |  10 +
- drivers/clk/zynqmp/Makefile                        |   4 +
- drivers/clk/zynqmp/clk-gate-zynqmp.c               | 144 +++++
- drivers/clk/zynqmp/clk-mux-zynqmp.c                | 141 ++++
- drivers/clk/zynqmp/clk-zynqmp.h                    |  68 ++
- drivers/clk/zynqmp/clkc.c                          | 719 +++++++++++++++++++++
- drivers/clk/zynqmp/divider.c                       | 217 +++++++
- drivers/clk/zynqmp/pll.c                           | 335 ++++++++++
- drivers/firmware/Kconfig                           |   1 +
- drivers/firmware/Makefile                          |   1 +
- drivers/firmware/xilinx/Kconfig                    |  23 +
- drivers/firmware/xilinx/Makefile                   |   5 +
- drivers/firmware/xilinx/zynqmp-debug.c             | 249 +++++++
- drivers/firmware/xilinx/zynqmp-debug.h             |  22 +
- drivers/firmware/xilinx/zynqmp.c                   | 562 ++++++++++++++++
- include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 ++++
- include/linux/firmware/xlnx-zynqmp.h               | 116 ++++
- 21 files changed, 2818 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
- create mode 100644 drivers/clk/zynqmp/Kconfig
- create mode 100644 drivers/clk/zynqmp/Makefile
- create mode 100644 drivers/clk/zynqmp/clk-gate-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-mux-zynqmp.c
- create mode 100644 drivers/clk/zynqmp/clk-zynqmp.h
- create mode 100644 drivers/clk/zynqmp/clkc.c
- create mode 100644 drivers/clk/zynqmp/divider.c
- create mode 100644 drivers/clk/zynqmp/pll.c
- create mode 100644 drivers/firmware/xilinx/Kconfig
- create mode 100644 drivers/firmware/xilinx/Makefile
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.c
- create mode 100644 drivers/firmware/xilinx/zynqmp-debug.h
- create mode 100644 drivers/firmware/xilinx/zynqmp.c
+Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
+Signed-off-by: Jolly Shah <jollys@xilinx.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+---
+ .../firmware/xilinx/xlnx,zynqmp-firmware.txt       |  53 ++++++++++
+ include/dt-bindings/clock/xlnx,zynqmp-clk.h        | 116 +++++++++++++++++++++
+ 2 files changed, 169 insertions(+)
  create mode 100644 include/dt-bindings/clock/xlnx,zynqmp-clk.h
- create mode 100644 include/linux/firmware/xlnx-zynqmp.h
 
+diff --git a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+index 1b431d9..d215d15 100644
+--- a/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
++++ b/Documentation/devicetree/bindings/firmware/xilinx/xlnx,zynqmp-firmware.txt
+@@ -17,6 +17,53 @@ Required properties:
+ 		  - "smc" : SMC #0, following the SMCCC
+ 		  - "hvc" : HVC #0, following the SMCCC
+ 
++--------------------------------------------------------------------------
++Device Tree Clock bindings for the Zynq Ultrascale+ MPSoC controlled using
++Zynq MPSoC firmware interface
++--------------------------------------------------------------------------
++The clock controller is a h/w block of Zynq Ultrascale+ MPSoC clock
++tree. It reads required input clock frequencies from the devicetree and acts
++as clock provider for all clock consumers of PS clocks.
++
++See clock_bindings.txt for more information on the generic clock bindings.
++
++Required properties:
++ - #clock-cells:	Must be 1
++ - compatible:		Must contain:	"xlnx,zynqmp-clk"
++ - clocks:		List of clock specifiers which are external input
++			clocks to the given clock controller. Please refer
++			the next section to find the input clocks for a
++			given controller.
++ - clock-names:		List of clock names which are exteral input clocks
++			to the given clock controller. Please refer to the
++			clock bindings for more details.
++
++Input clocks for zynqmp Ultrascale+ clock controller:
++
++The Zynq UltraScale+ MPSoC has one primary and four alternative reference clock
++inputs. These required clock inputs are:
++ - pss_ref_clk (PS reference clock)
++ - video_clk (reference clock for video system )
++ - pss_alt_ref_clk (alternative PS reference clock)
++ - aux_ref_clk
++ - gt_crx_ref_clk (transceiver reference clock)
++
++The following strings are optional parameters to the 'clock-names' property in
++order to provide an optional (E)MIO clock source:
++ - swdt0_ext_clk
++ - swdt1_ext_clk
++ - gem0_emio_clk
++ - gem1_emio_clk
++ - gem2_emio_clk
++ - gem3_emio_clk
++ - mio_clk_XX		# with XX = 00..77
++ - mio_clk_50_or_51	#for the mux clock to gem tsu from 50 or 51
++
++
++Output clocks are registered based on clock information received
++from firmware. Output clocks indexes are mentioned in
++include/dt-bindings/clock/xlnx,zynqmp-clk.h.
++
+ -------
+ Example
+ -------
+@@ -25,5 +72,11 @@ firmware {
+ 	zynqmp_firmware: zynqmp-firmware {
+ 		compatible = "xlnx,zynqmp-firmware";
+ 		method = "smc";
++		zynqmp_clk : clock-controller {
++			#clock-cells = <1>;
++			compatible = "xlnx,zynqmp-clk";
++			clocks = <&pss_ref_clk>, <&video_clk>, <&pss_alt_ref_clk>, <&aux_ref_clk>, <&gt_crx_ref_clk>;
++			clock-names = "pss_ref_clk", "video_clk", "pss_alt_ref_clk","aux_ref_clk", "gt_crx_ref_clk";
++		};
+ 	};
+ };
+diff --git a/include/dt-bindings/clock/xlnx,zynqmp-clk.h b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
+new file mode 100644
+index 0000000..4aebe6e
+--- /dev/null
++++ b/include/dt-bindings/clock/xlnx,zynqmp-clk.h
+@@ -0,0 +1,116 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Xilinx Zynq MPSoC Firmware layer
++ *
++ *  Copyright (C) 2014-2018 Xilinx, Inc.
++ *
++ */
++
++#ifndef _DT_BINDINGS_CLK_ZYNQMP_H
++#define _DT_BINDINGS_CLK_ZYNQMP_H
++
++#define IOPLL			0
++#define RPLL			1
++#define APLL			2
++#define DPLL			3
++#define VPLL			4
++#define IOPLL_TO_FPD		5
++#define RPLL_TO_FPD		6
++#define APLL_TO_LPD		7
++#define DPLL_TO_LPD		8
++#define VPLL_TO_LPD		9
++#define ACPU			10
++#define ACPU_HALF		11
++#define DBF_FPD			12
++#define DBF_LPD			13
++#define DBG_TRACE		14
++#define DBG_TSTMP		15
++#define DP_VIDEO_REF		16
++#define DP_AUDIO_REF		17
++#define DP_STC_REF		18
++#define GDMA_REF		19
++#define DPDMA_REF		20
++#define DDR_REF			21
++#define SATA_REF		22
++#define PCIE_REF		23
++#define GPU_REF			24
++#define GPU_PP0_REF		25
++#define GPU_PP1_REF		26
++#define TOPSW_MAIN		27
++#define TOPSW_LSBUS		28
++#define GTGREF0_REF		29
++#define LPD_SWITCH		30
++#define LPD_LSBUS		31
++#define USB0_BUS_REF		32
++#define USB1_BUS_REF		33
++#define USB3_DUAL_REF		34
++#define USB0			35
++#define USB1			36
++#define CPU_R5			37
++#define CPU_R5_CORE		38
++#define CSU_SPB			39
++#define CSU_PLL			40
++#define PCAP			41
++#define IOU_SWITCH		42
++#define GEM_TSU_REF		43
++#define GEM_TSU			44
++#define GEM0_REF		45
++#define GEM1_REF		46
++#define GEM2_REF		47
++#define GEM3_REF		48
++#define GEM0_TX			49
++#define GEM1_TX			50
++#define GEM2_TX			51
++#define GEM3_TX			52
++#define QSPI_REF		53
++#define SDIO0_REF		54
++#define SDIO1_REF		55
++#define UART0_REF		56
++#define UART1_REF		57
++#define SPI0_REF		58
++#define SPI1_REF		59
++#define NAND_REF		60
++#define I2C0_REF		61
++#define I2C1_REF		62
++#define CAN0_REF		63
++#define CAN1_REF		64
++#define CAN0			65
++#define CAN1			66
++#define DLL_REF			67
++#define ADMA_REF		68
++#define TIMESTAMP_REF		69
++#define AMS_REF			70
++#define PL0_REF			71
++#define PL1_REF			72
++#define PL2_REF			73
++#define PL3_REF			74
++#define WDT			75
++#define IOPLL_INT		76
++#define IOPLL_PRE_SRC		77
++#define IOPLL_HALF		78
++#define IOPLL_INT_MUX		79
++#define IOPLL_POST_SRC		80
++#define RPLL_INT		81
++#define RPLL_PRE_SRC		82
++#define RPLL_HALF		83
++#define RPLL_INT_MUX		84
++#define RPLL_POST_SRC		85
++#define APLL_INT		86
++#define APLL_PRE_SRC		87
++#define APLL_HALF		88
++#define APLL_INT_MUX		89
++#define APLL_POST_SRC		90
++#define DPLL_INT		91
++#define DPLL_PRE_SRC		92
++#define DPLL_HALF		93
++#define DPLL_INT_MUX		94
++#define DPLL_POST_SRC		95
++#define VPLL_INT		96
++#define VPLL_PRE_SRC		97
++#define VPLL_HALF		98
++#define VPLL_INT_MUX		99
++#define VPLL_POST_SRC		100
++#define CAN0_MIO		101
++#define CAN1_MIO		102
++
++#endif
 -- 
 2.7.4
 
