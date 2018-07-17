@@ -2,111 +2,95 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CB2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F65ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E1720693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:11:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E62820693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:14:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="KREa3IKu";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Li1h9lAd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E1720693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fHKZvdw2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E62820693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731154AbeGQUqJ (ORCPT
+        id S1730745AbeGQUsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:46:09 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:34299 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730151AbeGQUqI (ORCPT
+        Tue, 17 Jul 2018 16:48:19 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:52542 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729728AbeGQUsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:46:08 -0400
-Received: by mail-yw0-f193.google.com with SMTP id j68-v6so866491ywg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:11:54 -0700 (PDT)
+        Tue, 17 Jul 2018 16:48:19 -0400
+Received: by mail-it0-f67.google.com with SMTP id p4-v6so951341itf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:14:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=2yvHwkZ8MzJ9wGS1mNVLoL3xgTQu7us9DUTFp9nRzGU=;
-        b=KREa3IKuP+3l0vTTsYlums91eUyNqIubVE1g7T2K9nqbScjSsc3nEgHDVh+KE3PgEL
-         8M4dPqdvYpRyuBVbqrAS0zTlWXjen4ps/kXjXNgVGZjcTu1PRxIEcPg2INlVmOjd8NEO
-         ECro26HX9bVTJypxMIV0pCz9feimhkxbOn8ffWifU7noa8YmX1nBJrMXMma38vQz/B9A
-         94m+sx4RJaL1hSXyLmNrNmSfxjtrTaMZ+U9sb2DfC9LpsP3y4SSI/xaDoWn6kjDA+/Rh
-         s3Fa3LVqZJvdIFq4pLxkJ0BNd+9EwqEuIOnnjhoF1/oLcHfI1clBR8J5oQ3rG3nONNqb
-         LOqQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=2yvHwkZ8MzJ9wGS1mNVLoL3xgTQu7us9DUTFp9nRzGU=;
-        b=Li1h9lAdylB3do/rFZbooBgSnolRHMLu+uY3fHaZ4EOJBjeJoyfE7x2aqDxlexPXZ8
-         baILj1ym0xGeJVS8V32XAQpjQhK+j8D/2g4QVnPjnOR4SIdHne3Fqw5kyDuMo6RsH2gp
-         62O4k807ZiZlWu7f/96Z6wWnGdyf2IHXTpS/g=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aBNGvOwE2k6zHFGYPTokhboJ1nK9O//k08KLpx5LKrA=;
+        b=fHKZvdw2qL4ob1tLQ+4zIerq9oD9beDN9wIAqmYxsyNBztSXa0B9CrlxATeuNjezmD
+         QL3MKNG/5iuZRlYZJsrxAjZacJug73wrOeuWlb/znCYpdTDOlgbRjsHR3L/WM3Y1UTBN
+         ck++dh8mrDOa8H+eZPpFe2FqDwSRryXb+uhAM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=2yvHwkZ8MzJ9wGS1mNVLoL3xgTQu7us9DUTFp9nRzGU=;
-        b=mBqTlmnGWMOxTiy5Z1mQP0DQR+cY1Z+L6fEeVfbttmOx+5b6Gs9cfrLZXaAWJhffr4
-         2AbcghKkQBhA4MkFqVcBXneiarQDyXpgt3VVOVw1mNbdEmkQ3TlIHPbbias/bH6+Nooc
-         lWoxZWBKsKGfJUZ8aYD6loJC+xjFS2Tp+f2ctnQ2Tu2tvQkEE/6G9kzX6nBFZv3wmfGB
-         4du1cdyYDfYfgSzNnRuUmHYgbVo2ZDBxgmoWysqss7F+qEryrp8+o+v8hhLxulPWj3td
-         SnEAWBftW7wutToZ9h4zGztpT4klfvb1xc8m2hqCMrvNZZNEyahGIiGG9/RVkwgFe8hf
-         4Zag==
-X-Gm-Message-State: AOUpUlGxuCTPsBbuQh5PEFr62rcMeTBqCiKlsOimdLKGCCL8RGFEZjXI
-        4MHu0VjkV+O8C33p4abkrXcbUHCZU9qjLDeNHoEY/w==
-X-Google-Smtp-Source: AAOMgpcyubc4EXJo8j9XdndfoV57EWat7wM6KU9IZIu4dVsgw2ak0cFV5xzm316PuUy1T4UXM9XolUC+aBlqujqQMqc=
-X-Received: by 2002:a0d:fa42:: with SMTP id k63-v6mr1685527ywf.53.1531858313526;
- Tue, 17 Jul 2018 13:11:53 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aBNGvOwE2k6zHFGYPTokhboJ1nK9O//k08KLpx5LKrA=;
+        b=d8DO/MdFln5pzmuSGumAu0iicq9McaHPz6I5Q1IiOm1HA7FLDkDs/nWiiXuAkIrG1q
+         PJfvMLGcOCNw2eJ8gSDxQGJNLiKkSggaTWWQuT/z1e+7AyfqSUtHonQ4MDRXwMOiOyaF
+         SCxIDWKsF/sFJAaYlj3JN3F2Y3Hh2tr4++2+Ns3uzXEmROgQr4x27Big5EXCzJfmzW55
+         ZcwLj6MvmWg1l7SUTAGK2nfPC92sAjmoIC1AnrTD1V+MKTpK1ovrJALuMnX/K9k7/tkK
+         kNGn91GXgrsi8q+h1HsPTYUjYp91AweoniAssPR7GaFl7OtfIzxvNZldYsRb3tFVMlK6
+         FYzA==
+X-Gm-Message-State: AOUpUlHFoF5I8YfxTFA0Ihoq7DlD+7Lh7X7wGAGLnebkPEngu9WQCr2a
+        xbu31/qhUQJSu+pTHKblidFI85LyuOeuFapWnFs=
+X-Google-Smtp-Source: AAOMgpfUoSxW7tFGByzPmXvp4e7+9NeU45d9c1Ggz1CV8+GZ3Zv8fbceE1X8R0+/9GPEVM7mshNkocb4lqjIckgs1sY=
+X-Received: by 2002:a24:d0d7:: with SMTP id m206-v6mr2773254itg.1.1531858443250;
+ Tue, 17 Jul 2018 13:14:03 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:11:52
- -0700 (PDT)
-In-Reply-To: <20180717164358.GC75957@gmail.com>
-References: <20180717042150.37761-1-keescook@chromium.org> <20180717042150.37761-11-keescook@chromium.org>
- <20180717164358.GC75957@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 17 Jul 2018 13:11:52 -0700
-X-Google-Sender-Auth: X2XqlzxcxsVwGKMhI8keWWEGQ-s
-Message-ID: <CAGXu5j+uUUKjDb3_W=PvLG+mG+_ozTRuK5PMAewKEVnomnc2yA@mail.gmail.com>
-Subject: Re: [dm-devel] [PATCH v5 10/11] crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Eric Biggers <ebiggers@google.com>, qat-linux@intel.com,
-        LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
+References: <CA+55aFwA=TmJJkKvskX3wL9Rs1j8xZJDJVghv=G0spYufK9kYg@mail.gmail.com>
+ <Pine.LNX.4.44L0.1807171528530.1344-100000@iolanthe.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1807171528530.1344-100000@iolanthe.rowland.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Jul 2018 13:13:51 -0700
+Message-ID: <CA+55aFyLp7DMp4jgJjV_Dj_KvMD--umZkqCDKBPbzH+sOZu24g@mail.gmail.com>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nick Piggin <npiggin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 9:43 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Mon, Jul 16, 2018 at 09:21:49PM -0700, Kees Cook wrote:
->> +     reqsize = sizeof(struct shash_desc) + crypto_shash_descsize(shash);
->> +     if (WARN_ON(reqsize > AHASH_MAX_REQSIZE)) {
->> +             crypto_mod_put(calg);
->> +             return -EINVAL;
->> +     }
+On Tue, Jul 17, 2018 at 12:37 PM Alan Stern <stern@rowland.harvard.edu> wrote:
 >
-> 'crypto_free_shash(shash);' instead of 'crypto_mod_put(calg);'
+> Why not?  Instructions are allowed to migrate _into_ critical sections,
+> just not _out_ of them.  So a store preceding the start of a spinlocked
+> region can migrate in and be executed after a load that is inside the
+> region.
 
-Oops! Yes, thanks; I have fixed it now in the next version.
+Hmm, yes of course. But the isync instruction description I found also
+talks about the previous instructions being "completed".
 
--Kees
+But yeah, that obviously can mean just "in the store buffer", not
+actually ordered.
 
--- 
-Kees Cook
-Pixel Security
+           Linus
