@@ -6,67 +6,67 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3431FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0255AECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D850620858
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A399520858
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="ZDCpW6Xi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D850620858
+	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="d/VXd+PD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A399520858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731817AbeGQPNb (ORCPT
+        id S1731743AbeGQPPP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:13:31 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55207 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729673AbeGQPNa (ORCPT
+        Tue, 17 Jul 2018 11:15:15 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46537 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731574AbeGQPPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:13:30 -0400
-Received: by mail-wm0-f65.google.com with SMTP id c14-v6so1770238wmb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:40:30 -0700 (PDT)
+        Tue, 17 Jul 2018 11:15:14 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s11-v6so1508898wra.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=nA2iznopCjFdlLv8dqs/g3O3xKgoxRNxzVc0JmokCcI=;
-        b=ZDCpW6XiCxH0gr2DpPmQulKSsrf7tJwWoH+5pMADV/lFndgu0HEN71n9L+vhKFHhJI
-         0fFvCfa8PBi0cgk1ScKxLVDYll31Emp8icQkyRlgJsXO++qhwL0T/Wcg6UxM/bsViRfJ
-         ST9dSrMbJ5XdrEiWybEqGpzpY1Kp5grTDGkEMhg0VGgnqm3OURTEquA3QmaE57MVvq9K
-         P/f/3sRm8fbGg0YilKIexNjNXZfPcWw/g+vxjKVnSwk7QOccKqRxwXqb9edPd/MSuwxf
-         aV1mj8J5xYFepoumWBLQyuFB935hxNzNFeHsaPJgJ0WylPjlF3Pjke1O+wdOFMuObEyx
-         qMjQ==
+        bh=v5ncRrf8HRTKs3DcplUkUrghsOUSNnl9vzQFwCPS/Xk=;
+        b=d/VXd+PDEOKi2XqtRyJKBXe2KrfGmBB+xeNKDeRpJ/CwQKrtAMy2f3mP0pyItghp7U
+         Ypmvwcrk1ixlmSGgwzQGuyPvAuzf+bz5YtTLZFOvmMMBdINHobjOl9yXSEk9FgKe/Fct
+         FIxAiOjEJRDJ6RfuFz0Tq0TRsNLKUrssAfuUxdD0doYqF5PFQGVfEkYdo/YiktLD3ntm
+         u0XpXhCFNi1jChE/fsiHhFkVaeLih5On6lTiuxvTmrNegRZI2m3HYuoNn7h/AvlTH7jd
+         cM1hZNGh9UlX2qQdLynsP93e9BjUJF+7bj/i7w3z+DS68EkEm0+4jkDdyiG89gAqVc5p
+         4BAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
          :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
-        bh=nA2iznopCjFdlLv8dqs/g3O3xKgoxRNxzVc0JmokCcI=;
-        b=UdCzQPZoZIpWapy1+KOI7z8Djwd9n7FrL6byr3uGw9sASJanZwBhZP6PG0N8TJx+q4
-         LknEg1rpAG1gXy3Kpaq81YNXYmRA088vi3cgBlvRugY5BzS2DAXR9dn+S0hAylT5D9jU
-         CSdQwtzfiQ+bh+7GwKabDFg7g3cmBEvQhgcsp7hbodSB0eStpjo4c/zE8NCz3nqmoeCV
-         UbGTPFvOH59pS/QANBOyswjJPjSstS9Cy/wxMFSmKjUTsvvLhhRCgerxijuD/4wL10qj
-         ijV4LfohCG8emqjqOSONjvZ3xy79S4ctOspcsZVC0/VxMdtJlAdS/yVx3B0YaXscuEUB
-         vgsw==
-X-Gm-Message-State: AOUpUlEUnrP0q5z3WkZf0LjGuBV0kgVJoPXMUqEkasLkRat/t5yFV7XN
-        YI7hjeGh1bTAb2gYiZp+mgzO8w==
-X-Google-Smtp-Source: AAOMgpdIl+mLC4erxX689USmQPaN990EcpAoBaLCSDD+oZK4zKovY4dNQVVxLU3OBJDS4ZH2IQhNGg==
-X-Received: by 2002:a1c:7d58:: with SMTP id y85-v6mr1510859wmc.91.1531838430192;
-        Tue, 17 Jul 2018 07:40:30 -0700 (PDT)
+        bh=v5ncRrf8HRTKs3DcplUkUrghsOUSNnl9vzQFwCPS/Xk=;
+        b=sfavabh43XE/aQoGMyaJFASbryTsQ0ux7Nml2+K5O4PtvTbOJfbggBdG1JpnmaXcyS
+         yeDsLEBKOtjhBeNWC75rhYELJxwwaa9QlJFOp1XLoc8gNU5IkLUsFGBFF6Q+H4iMHDa+
+         KOgIfZlQ/mL+/RQsSztUiu0pJRTCLkDmVMmFVfukC11aFY70hYpdk9JgWabg+jSvFFck
+         OJUfBXUGK9urQMBtHIC2OL0zeD4eDhaZISx7ICkEOOoTRkdO3YhCLsOTSR0N/d7ZGoDe
+         jreQgCnRWhHhlKYXxEOftLsYdrbtoJhKAWHYdA+S3OF+gY/R+mQ8Av9Z1D+UxiJJ9hVM
+         ZLUg==
+X-Gm-Message-State: AOUpUlG6fhBS5Slm5b1KDbfYsST6BZwxnz/tPmTgZ7Y0HRMYzRS2pqKV
+        aiQVxxkdhRsLfzqnZk9UKUan2V6Ykd4=
+X-Google-Smtp-Source: AAOMgpffTFsghZyQyoOLds5/Lnp9wxdmlTpPajFdK2EWVTIVYtIPY3iSAjdRWG0niZHIanEPtDcYxQ==
+X-Received: by 2002:adf:e14a:: with SMTP id f10-v6mr1564614wri.42.1531838533032;
+        Tue, 17 Jul 2018 07:42:13 -0700 (PDT)
 Received: from [173.194.76.109] ([149.199.62.254])
-        by smtp.gmail.com with ESMTPSA id q1-v6sm1845151wrw.42.2018.07.17.07.40.25
+        by smtp.gmail.com with ESMTPSA id a9-v6sm1338692wrp.55.2018.07.17.07.42.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 07:40:29 -0700 (PDT)
+        Tue, 17 Jul 2018 07:42:12 -0700 (PDT)
 Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH] arm64: zynqmp: Use serdev for zcu100 BT
+Subject: Re: [PATCH] arm64: zynqmp: Remove #address/#size-cells from gpio-keys
 To:     Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-References: <0ce3b4f588f1d9a83cfe99b93af3514f4d893273.1523452571.git.michal.simek@xilinx.com>
+References: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
 From:   Michal Simek <monstr@monstr.eu>
 Openpgp: preference=signencrypt
 Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
@@ -112,23 +112,23 @@ Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
  HIic/FvF0oY3lecyr+v1jvS5FXJ6rCn3uwotd30azG5pKDtAkpRqW283+LueDVQ5P/Gwp5V1
  9e6oMggSVn53IRVPB4MzTXVm/Q03c5YXPqgP4bPIF624HAPRnUxCWY1yrZuE4zNPG5dfY0PN
  RmzhqoTJlA==
-Message-ID: <9e8bdff9-8239-56ea-8ede-472bb47baacd@monstr.eu>
-Date:   Tue, 17 Jul 2018 16:40:22 +0200
+Message-ID: <50a270ad-93e6-5be2-ab57-bd4cbd9fe49a@monstr.eu>
+Date:   Tue, 17 Jul 2018 16:42:05 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <0ce3b4f588f1d9a83cfe99b93af3514f4d893273.1523452571.git.michal.simek@xilinx.com>
+In-Reply-To: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
 Content-Type: multipart/signed; micalg=pgp-sha1;
  protocol="application/pgp-signature";
- boundary="zMmpjYsj3gX0iHWT1XoIteXxD99uthBdL"
+ boundary="rNj6OcjYfbJvEiaEta93scPgEff3uU0w7"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---zMmpjYsj3gX0iHWT1XoIteXxD99uthBdL
-Content-Type: multipart/mixed; boundary="wHVQIfImkgc6Tv4iVZTxwbvCmzhAo6xJe";
+--rNj6OcjYfbJvEiaEta93scPgEff3uU0w7
+Content-Type: multipart/mixed; boundary="bpAOc0hM4YirHXmYmS6kfcoRqLeshgDHH";
  protected-headers="v1"
 From: Michal Simek <monstr@monstr.eu>
 Reply-To: monstr@monstr.eu
@@ -137,55 +137,87 @@ Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
  Will Deacon <will.deacon@arm.com>, Catalin Marinas
  <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>,
  linux-arm-kernel@lists.infradead.org
-Message-ID: <9e8bdff9-8239-56ea-8ede-472bb47baacd@monstr.eu>
-Subject: Re: [PATCH] arm64: zynqmp: Use serdev for zcu100 BT
-References: <0ce3b4f588f1d9a83cfe99b93af3514f4d893273.1523452571.git.michal.simek@xilinx.com>
-In-Reply-To: <0ce3b4f588f1d9a83cfe99b93af3514f4d893273.1523452571.git.michal.simek@xilinx.com>
+Message-ID: <50a270ad-93e6-5be2-ab57-bd4cbd9fe49a@monstr.eu>
+Subject: Re: [PATCH] arm64: zynqmp: Remove #address/#size-cells from gpio-keys
+References: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
+In-Reply-To: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
 
---wHVQIfImkgc6Tv4iVZTxwbvCmzhAo6xJe
+--bpAOc0hM4YirHXmYmS6kfcoRqLeshgDHH
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 11.4.2018 15:16, Michal Simek wrote:
-> Mainline started to use serdev interface for uart attached devices.
-> Change description to reflect it.
+On 2.5.2018 13:34, Michal Simek wrote:
+> dts reports incorrect usage of these properties in gpio-keys node.
+> Warning (avoid_unnecessary_addr_size): /gpio-keys: unnecessary
+>=20
+> The patch is removing these useless properties.
 >=20
 > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
 >=20
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
+>  arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 2 --
+>  arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts | 2 --
+>  arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts | 2 --
+>  arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts | 2 --
+>  4 files changed, 8 deletions(-)
 >=20
 > diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/a=
 rm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> index 3e862a9faf26..c7f713c8e69e 100644
+> index c7f713c8e69e..eb5e8bddb610 100644
 > --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
 > +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> @@ -89,12 +89,6 @@
->  			gpios =3D <&gpio 25 GPIO_ACTIVE_HIGH>;
->  			default-state =3D "on";
->  		};
-> -
-> -		bt_power {
-> -			label =3D "bt_power";
-> -			gpios =3D <&gpio 8 GPIO_ACTIVE_HIGH>;
-> -			default-state =3D "on";
-> -		};
->  	};
+> @@ -44,8 +44,6 @@
 > =20
->  	wmmcsdio_fixed: fixedregulator-mmcsdio {
-> @@ -267,6 +261,10 @@
+>  	gpio-keys {
+>  		compatible =3D "gpio-keys";
+> -		#address-cells =3D <1>;
+> -		#size-cells =3D <0>;
+>  		autorepeat;
+>  		sw4 {
+>  			label =3D "sw4";
+> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts b/arch/a=
+rm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
+> index 5b4ffe646a9b..25dd57485323 100644
+> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
+> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
+> @@ -41,8 +41,6 @@
 > =20
->  &uart0 {
->  	status =3D "okay";
-> +	bluetooth {
-> +		compatible =3D "ti,wl1831-st";
-> +		enable-gpios =3D <&gpio 8 GPIO_ACTIVE_HIGH>;
-> +	};
->  };
+>  	gpio-keys {
+>  		compatible =3D "gpio-keys";
+> -		#address-cells =3D <1>;
+> -		#size-cells =3D <0>;
+>  		autorepeat;
+>  		sw19 {
+>  			label =3D "sw19";
+> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts b/arch/a=
+rm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
+> index 668f7f26716a..259f21b0c001 100644
+> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
+> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
+> @@ -41,8 +41,6 @@
 > =20
->  &uart1 {
+>  	gpio-keys {
+>  		compatible =3D "gpio-keys";
+> -		#address-cells =3D <1>;
+> -		#size-cells =3D <0>;
+>  		autorepeat;
+>  		sw19 {
+>  			label =3D "sw19";
+> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts b/arch/a=
+rm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
+> index 9a9dd6a0142b..a61b3cc6f4c9 100644
+> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
+> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
+> @@ -41,8 +41,6 @@
+> =20
+>  	gpio-keys {
+>  		compatible =3D "gpio-keys";
+> -		#address-cells =3D <1>;
+> -		#size-cells =3D <0>;
+>  		autorepeat;
+>  		sw19 {
+>  			label =3D "sw19";
 >=20
 
 Applied.
@@ -202,9 +234,9 @@ U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
 
 
 
---wHVQIfImkgc6Tv4iVZTxwbvCmzhAo6xJe--
+--bpAOc0hM4YirHXmYmS6kfcoRqLeshgDHH--
 
---zMmpjYsj3gX0iHWT1XoIteXxD99uthBdL
+--rNj6OcjYfbJvEiaEta93scPgEff3uU0w7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -212,9 +244,9 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iEYEARECAAYFAltN/9YACgkQykllyylKDCGQSgCfQfqmmsBaP7q3On0LJivHZyex
-pNYAn1sGPL1lCMM21pu7/MYWIvP5OTut
-=zWFi
+iEYEARECAAYFAltOAD0ACgkQykllyylKDCFJ9gCfR4xAncQz6PzgQ/+BVn7ZWP3d
+1mgAoIjY4vHuoCrBpcTsKJL1IT5Vbju3
+=dHkX
 -----END PGP SIGNATURE-----
 
---zMmpjYsj3gX0iHWT1XoIteXxD99uthBdL--
+--rNj6OcjYfbJvEiaEta93scPgEff3uU0w7--
