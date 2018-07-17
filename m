@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A92E2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33136ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4F220C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F4F220C0E
+	by mail.kernel.org (Postfix) with ESMTP id E9F3C21475
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F3C21475
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731455AbeGQLx6 (ORCPT
+        id S1731526AbeGQLyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:53:58 -0400
-Received: from mga02.intel.com ([134.134.136.20]:45425 "EHLO mga02.intel.com"
+        Tue, 17 Jul 2018 07:54:00 -0400
+Received: from mga01.intel.com ([192.55.52.88]:16951 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730839AbeGQLx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:53:57 -0400
+        id S1730839AbeGQLx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:53:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:48 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="57138277"
+   d="scan'208";a="58320642"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 17 Jul 2018 04:21:46 -0700
+  by orsmga006.jf.intel.com with ESMTP; 17 Jul 2018 04:21:45 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 3C3A378E; Tue, 17 Jul 2018 14:21:49 +0300 (EEST)
+        id 06286476; Tue, 17 Jul 2018 14:21:48 +0300 (EEST)
 From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,9 +43,9 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv5 13/19] x86/mm: Rename CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING
-Date:   Tue, 17 Jul 2018 14:20:23 +0300
-Message-Id: <20180717112029.42378-14-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv5 07/19] x86/mm: Mask out KeyID bits from page table entry pfn
+Date:   Tue, 17 Jul 2018 14:20:17 +0300
+Message-Id: <20180717112029.42378-8-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
 References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
@@ -54,41 +54,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the option to CONFIG_MEMORY_PHYSICAL_PADDING. It will be used
-not only for KASLR.
+MKTME claims several upper bits of the physical address in a page table
+entry to encode KeyID. It effectively shrinks number of bits for
+physical address. We should exclude KeyID bits from physical addresses.
+
+For instance, if CPU enumerates 52 physical address bits and number of
+bits claimed for KeyID is 6, bits 51:46 must not be threated as part
+physical address.
+
+This patch adjusts __PHYSICAL_MASK during MKTME enumeration.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/Kconfig    | 2 +-
- arch/x86/mm/kaslr.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/intel.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 6d4774f203d0..b6f1785c2176 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2197,7 +2197,7 @@ config RANDOMIZE_MEMORY
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index eb75564f2d25..bf2caf9d52dd 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -571,6 +571,29 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 		mktme_status = MKTME_ENABLED;
+ 	}
  
- 	   If unsure, say Y.
- 
--config RANDOMIZE_MEMORY_PHYSICAL_PADDING
-+config MEMORY_PHYSICAL_PADDING
- 	hex "Physical memory mapping padding" if EXPERT
- 	depends on RANDOMIZE_MEMORY
- 	default "0xa" if MEMORY_HOTPLUG
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 61db77b0eda9..4408cd9a3bef 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -102,7 +102,7 @@ void __init kernel_randomize_memory(void)
- 	 */
- 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
- 	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
--		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-+		CONFIG_MEMORY_PHYSICAL_PADDING;
- 
- 	/* Adapt phyiscal memory region size based on available memory */
- 	if (memory_tb < kaslr_regions[0].size_tb)
++#ifdef CONFIG_X86_INTEL_MKTME
++	if (mktme_status == MKTME_ENABLED && nr_keyids) {
++		/*
++		 * Mask out bits claimed from KeyID from physical address mask.
++		 *
++		 * For instance, if a CPU enumerates 52 physical address bits
++		 * and number of bits claimed for KeyID is 6, bits 51:46 of
++		 * physical address is unusable.
++		 */
++		phys_addr_t keyid_mask;
++
++		keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, c->x86_phys_bits - keyid_bits);
++		physical_mask &= ~keyid_mask;
++	} else {
++		/*
++		 * Reset __PHYSICAL_MASK.
++		 * Maybe needed if there's inconsistent configuation
++		 * between CPUs.
++		 */
++		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
++	}
++#endif
++
+ 	/*
+ 	 * KeyID bits effectively lower the number of physical address
+ 	 * bits.  Update cpuinfo_x86::x86_phys_bits accordingly.
 -- 
 2.18.0
 
