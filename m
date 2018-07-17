@@ -2,163 +2,102 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED23ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3297FECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 742A420877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:56:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHws4PhL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 742A420877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DF1D520877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:58:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF1D520877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbeGQI15 (ORCPT
+        id S1729060AbeGQI3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:27:57 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46282 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728304AbeGQI14 (ORCPT
+        Tue, 17 Jul 2018 04:29:24 -0400
+Received: from regular1.263xmail.com ([211.150.99.136]:36574 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727980AbeGQI3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:27:56 -0400
-Received: by mail-ed1-f67.google.com with SMTP id o8-v6so401399edt.13;
-        Tue, 17 Jul 2018 00:56:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zOPdeZUhGNfyHmpN/mjg2dJa1r2NLtNXoUOVYLCXWRA=;
-        b=OHws4PhLNWS9Zq4tC/1FPbwEgop039/jV7c31sMcTlBh8k7brlgtDeSkw1LCSFr0Hg
-         kfYTnF0NQLzbX3VRdeFEuxm6rS+YdN+L+XV6ryNcNvid7bWh5Wwdipcfw56ZYyrZvf3z
-         ue1uGk7c9KbjCBrDLJ4UvxSGRTvZLZRy7uI8G3jzp+gayLSktlvAjH5sJlIUPgJdnELa
-         2RCeNOrxncyvSGNfOxuxFMnTODQLCUWUqVUksR96yCAo9Zb+5zpy9LzAX6XGS+Ag99w+
-         e5tNvleDU+Y30C/BaL/WUjx1Un49cYmF+V2Q2gy1s9qIKrOPdoARmy86WazsQRP9LvGZ
-         v6EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=zOPdeZUhGNfyHmpN/mjg2dJa1r2NLtNXoUOVYLCXWRA=;
-        b=LgB/J3IJzy4LropZvmd8nfZQOwPDj7Qg6zdpUDdGVzWFTSbH76ZfMTtCLgoUgLFA51
-         lhrg0RHV3A+TRg6n7JgOx29oMZpsVhFJN94lT5BoMIVnqfR+4oQWvdqVb8fwo0GJpwDn
-         83GL5PLSz3TE5rIl2mSByydzwADxS8OB8VUdOqoYzLZGd5ZjvHOqsMb8636GBLE6s5s4
-         80qsfSYzBpl0XJCEE4Q1qLbeQ0mdSvNhfsuykWf4+MnLv0Bbgqd/iff8nrAEX8GS+Mrz
-         zzQ1YJ968+21694EFHj7Mf2F8p8ElqrD2OD+MC5gFzEsYIVoSPOJctFfDFnLbYVwVMGQ
-         XZLw==
-X-Gm-Message-State: AOUpUlE2SnfUjpHdpZTNPwYK8U0B/ER4lLMacbRejRDAl219fLp5QSjF
-        y5sNrn0Yg6M7hzbU1SRyoKA=
-X-Google-Smtp-Source: AAOMgpdOW4Bjf1jFDqpcLteQ5+8YbBDC0J1y03yd3sdV/ysHPLvuBElY6hs19TY4tj/GU0CAodc8RQ==
-X-Received: by 2002:aa7:d786:: with SMTP id s6-v6mr1200483edq.228.1531814195946;
-        Tue, 17 Jul 2018 00:56:35 -0700 (PDT)
-Received: from ziggy.stardust ([37.223.136.20])
-        by smtp.gmail.com with ESMTPSA id k32-v6sm234456edc.85.2018.07.17.00.56.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 00:56:35 -0700 (PDT)
-Subject: Re: [PATCH v1 2/2] arm64: dts: mt7622: update a clock property for
- UART0
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <2ff39c40ef6bc3054667e63c785a1d28527b5ddf.1531753039.git.ryder.lee@mediatek.com>
- <87527531b135f4eb7fb51d4e7ee82723cd162a6c.1531753039.git.ryder.lee@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <070b9fec-a66a-9f2e-bef4-22eaa6d6ddf3@gmail.com>
-Date:   Tue, 17 Jul 2018 09:56:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <87527531b135f4eb7fb51d4e7ee82723cd162a6c.1531753039.git.ryder.lee@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 04:29:23 -0400
+X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Jul 2018 04:29:21 EDT
+Received: from cl?rock-chips.com (unknown [192.168.167.42])
+        by regular1.263xmail.com (Postfix) with ESMTP id D064099;
+        Tue, 17 Jul 2018 15:51:58 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 1B4583C6;
+        Tue, 17 Jul 2018 15:51:49 +0800 (CST)
+X-RL-SENDER: cl@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: cl@rock-chips.com
+X-UNIQUE-TAG: <7db74b6c942d13a080b185e327d85088>
+X-ATTACHMENT-NUM: 0
+X-SENDER: cl@rock-chips.com
+X-DNS-TYPE: 0
+Received: from unknown (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith SMTP id 16092GEIJMY;
+        Tue, 17 Jul 2018 15:51:55 +0800 (CST)
+From:   <cl@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        klaus.goger@theobroma-systems.com, cl@rock-chips.com,
+        jagan@amarulasolutions.com, djw@t-chip.com.cn,
+        jacob-chen@iotwrt.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        frank.wang@rock-chips.com, lgirdwood@gmail.com, broonie@kernel.org,
+        alsa-devel@alsa-project.org, gregkh@linuxfoundation.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        yamada.masahiro@socionext.com, arnd@arndb.de,
+        zhangqing@rock-chips.com, shawn.lin@rock-chips.com,
+        kever.yang@rock-chips.com, david.wu@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com,
+        sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
+        william.wu@rock-chips.com, sandy.huang@rock-chips.com
+Subject: [PATCH v1 2/7] Documentation: rockchip-dw-mshc: add description for px30
+Date:   Tue, 17 Jul 2018 15:49:02 +0800
+Message-Id: <1531813747-8804-3-git-send-email-cl@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1531813747-8804-1-git-send-email-cl@rock-chips.com>
+References: <1531813747-8804-1-git-send-email-cl@rock-chips.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Liang Chen <cl@rock-chips.com>
+
+Add "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc" for
+dwmmc on px30 platform.
+
+Signed-off-by: Liang Chen <cl@rock-chips.com>
+---
+ Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+index 8ce49b2..6f629b1 100644
+--- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
+@@ -14,6 +14,7 @@ Required Properties:
+ 							before RK3288
+ 	- "rockchip,rk3288-dw-mshc": for Rockchip RK3288
+ 	- "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RV1108
++	- "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip PX30
+ 	- "rockchip,rk3036-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3036
+ 	- "rockchip,rk3228-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK322x
+ 	- "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3328
+-- 
+1.9.1
 
 
-On 16/07/18 16:59, Ryder Lee wrote:
-> The input clock of UART0 should be CLK_PERI_UART0_PD.
-> 
-> Fixes: 13f36c326cef ("arm64: dts: mt7622: turn uart0 clock to real ones")
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
-
-pused to v4.18-next/dts64
-
-Thanks a lot!
-
-> change since v1:
-> - add Fixes tag.
-> ---
->  arch/arm64/boot/dts/mediatek/mt7622.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> index 8cdec52..4caa9b4 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-> @@ -367,7 +367,7 @@
->  		reg = <0 0x11002000 0 0x400>;
->  		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
->  		clocks = <&topckgen CLK_TOP_UART_SEL>,
-> -			 <&pericfg CLK_PERI_UART1_PD>;
-> +			 <&pericfg CLK_PERI_UART0_PD>;
->  		clock-names = "baud", "bus";
->  		status = "disabled";
->  	};
-> 
