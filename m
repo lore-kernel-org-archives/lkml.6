@@ -2,144 +2,99 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE93CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A783ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F39206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F39206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B8732206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:57:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8732206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbeGQRap (ORCPT
+        id S1729976AbeGQRas (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:30:45 -0400
-Received: from foss.arm.com ([217.140.101.70]:49912 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729689AbeGQRao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:30:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC3B27A9;
-        Tue, 17 Jul 2018 09:57:11 -0700 (PDT)
-Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BD193F318;
-        Tue, 17 Jul 2018 09:57:07 -0700 (PDT)
-Subject: Re: [PATCH v11 09/15] arm64: kexec_file: load initrd and device-tree
-To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
- <20180711074203.3019-10-takahiro.akashi@linaro.org>
-From:   James Morse <james.morse@arm.com>
-Message-ID: <c5199d62-16f3-a0f2-fdf5-7dcbf6a02cd6@arm.com>
-Date:   Tue, 17 Jul 2018 17:57:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 17 Jul 2018 13:30:48 -0400
+Received: from gateway24.websitewelcome.com ([192.185.50.252]:32804 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729689AbeGQRar (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:30:47 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 376C44B46EC
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 11:57:14 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id fTHJf3DqlPvAdfTHZf8RTk; Tue, 17 Jul 2018 11:57:13 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=48302 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ffTHI-003Ajg-Hf; Tue, 17 Jul 2018 11:56:44 -0500
+Date:   Tue, 17 Jul 2018 11:56:43 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Richard Weinberger <richard@nod.at>,
+        Artem Bityutskiy <dedekind1@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] UBIFS: use swap macro in swap_dirty_idx
+Message-ID: <20180717165643.GA19225@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20180711074203.3019-10-takahiro.akashi@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1ffTHI-003Ajg-Hf
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:48302
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akashi,
+Make use of the swap macro and remove unnecessary variable *t*. This
+makes the code easier to read and maintain.
 
-On 11/07/18 08:41, AKASHI Takahiro wrote:
-> load_other_segments() is expected to allocate and place all the necessary
-> memory segments other than kernel, including initrd and device-tree
-> blob (and elf core header for crash).
-> While most of the code was borrowed from kexec-tools' counterpart,
-> users may not be allowed to specify dtb explicitly, instead, the dtb
-> presented by the original boot loader is reused.
-> 
-> arch_kimage_kernel_post_load_cleanup() is responsible for freeing arm64-
-> specific data allocated in load_other_segments().
+This code was detected with the help of Coccinelle.
 
-> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-> index c38a8048ed00..ca00681c25c6 100644
-> --- a/arch/arm64/kernel/machine_kexec_file.c
-> +++ b/arch/arm64/kernel/machine_kexec_file.c
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/ubifs/find.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> +int arch_kimage_file_post_load_cleanup(struct kimage *image)
-> +{
-> +	vfree(image->arch.dtb_buf);
-> +	image->arch.dtb_buf = NULL;
-> +
-> +	return kexec_image_post_load_cleanup_default(image);
-> +}
+diff --git a/fs/ubifs/find.c b/fs/ubifs/find.c
+index 9571616..36198f8 100644
+--- a/fs/ubifs/find.c
++++ b/fs/ubifs/find.c
+@@ -750,10 +750,7 @@ static int cmp_dirty_idx(const struct ubifs_lprops **a,
+ static void swap_dirty_idx(struct ubifs_lprops **a, struct ubifs_lprops **b,
+ 			   int size)
+ {
+-	struct ubifs_lprops *t = *a;
+-
+-	*a = *b;
+-	*b = t;
++	swap(*a, *b);
+ }
+ 
+ /**
+-- 
+2.7.4
 
-A nit from sparse:
-| warning: symbol 'arch_kimage_file_post_load_cleanup' was not declared
-
-Can we add a definition for this to a header file somewhere. asm/kexec.h is
-probably the best bet.
-
-
-> +static int setup_dtb(struct kimage *image,
-> +		unsigned long initrd_load_addr, unsigned long initrd_len,
-> +		char *cmdline, unsigned long cmdline_len,
-> +		char **dtb_buf, size_t *dtb_buf_len)
-> +{
-
-> +	/* add initrd-* */
-> +	if (initrd_load_addr) {
-> +		value = cpu_to_fdt64(initrd_load_addr);
-> +		ret = fdt_setprop_u64(buf, nodeoffset, "linux,initrd-start",
-> +							value);
-
-fdt_setprop_u64() already does the endian conversion.
-
-From scripts/dtc/libfdt/libfdt.h, its implemented as:
-| 	fdt64_t tmp = cpu_to_fdt64(val);
-| 	return fdt_setprop(fdt, nodeoffset, name, &tmp, sizeof(tmp));
-
-(I think you were using setprop directly in an older version)
-
-
-This leads to:
-| ------------[ cut here ]------------
-| initrd not fully accessible via the linear mapping -- please check your
-| bootloader ...
-| WARNING: CPU: 0 PID: 0 at ../arch/arm64/mm/init.c:429
-| arm64_memblock_init+0x150/0x3d8
-| Modules linked in:
-| CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc5-00015-g95b5c843d0da #10150
-| Hardware name: AMD Seattle (Rev.B0) Development Board (Overdrive) (DT)
-| pstate: 60000085 (nZCv daIf -PAN -UAO)
-| pc : arm64_memblock_init+0x150/0x3d8
-| lr : arm64_memblock_init+0x150/0x3d8
-
-| Call trace:
-| arm64_memblock_init+0x150/0x3d8
-| setup_arch+0x1c0/0x510
-| start_kernel+0x80/0x418
-| random: get_random_bytes called from print_oops_end_marker+0x4c/0x68 with
-| crng_init=0
-| ---[ end trace 0000000000000000 ]---
-
-
-Which is caused by the values being miles outside ram due to the extra byte
-swapping:
-| morse@frikadeller:~$ sudo dtc -I dtb -O dts /sys/firmware/fdt  | grep initrd
-|                 linux,initrd-end = <0x900b6c05 0x80000000>;
-|                 linux,initrd-start = <0x906a04 0x80000000>;
-
-
-With the two extra cpu_to_fdt64() calls removed:
-Reviewed-by: James Morse <james.morse@arm.com>
-
-
-Thanks,
-
-James
