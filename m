@@ -2,122 +2,164 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1913ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 713FAECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B01221470
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:00:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B01221470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 288982146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:01:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Cwu2ChZy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288982146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbeGQJcb (ORCPT
+        id S1729711AbeGQJcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:32:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42310 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729035AbeGQJcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:32:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5F9A9AE85;
-        Tue, 17 Jul 2018 09:00:54 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 11:00:53 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: Fix vma_is_anonymous() false-positives
-Message-ID: <20180717090053.GE16803@dhcp22.suse.cz>
-References: <20180710134821.84709-1-kirill.shutemov@linux.intel.com>
- <20180710134821.84709-2-kirill.shutemov@linux.intel.com>
- <20180710134858.3506f097104859b533c81bf3@linux-foundation.org>
- <20180716133028.GQ17280@dhcp22.suse.cz>
- <20180716140440.fd3sjw5xys5wozw7@black.fi.intel.com>
- <20180716142245.GT17280@dhcp22.suse.cz>
- <20180716144739.que5362bofty6ocp@kshutemo-mobl1>
- <20180716174042.GA17280@dhcp22.suse.cz>
- <20180716203846.roolhtesloabxr2g@kshutemo-mobl1>
+        Tue, 17 Jul 2018 05:32:53 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:37962 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728340AbeGQJcx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:32:53 -0400
+Received: by mail-lf0-f67.google.com with SMTP id a4-v6so280610lff.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:01:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KFYtXehKt13DaWoTpc0385WJRkOF+xkM4v6NIlC+MLE=;
+        b=Cwu2ChZyIY+hsMI5jBGlSxwxfD9bEA0DY/TTCrS0paHPJ9RsSvPkXM3jnZLL0C6zVi
+         vsrXDReh4R6ycpjVYndvYq2oHIVEoEuAMCK6Wtli1IsQTww1wBnOg0OkUQ2E9yzoT/4g
+         vty2hOAbnRqtN6D2vProw3SVbz8JeDLTuEHdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KFYtXehKt13DaWoTpc0385WJRkOF+xkM4v6NIlC+MLE=;
+        b=oBbxRQPMMiaodKNkYwduuBcZ0qmwJrdze7McSsQrFr61PJZilJnpSuXwb+7DUZBoAx
+         E524c9DxdbCEdLXxfckDGkMBUXWsqRoJsDS/jcx2dqkZJZmliddbhYIbTUabU2t4jqrw
+         pEzz8VpggcVcPQ3R2NwA6BMvGaAOr/KgYg+eRF3Q1Lc0Hy3YWhIe2oV4ih1YbEKq342w
+         kXpP1sPLPJ8BhPrgOtNNSATh+9ED4RVxVcgpJSmFcDNWNhx+d4KKy1z2DEotP7lxj4Hh
+         DWYTzH9vST2YXdZtNNUz2EdXfqAKQtbZ85QqfZ4AuCM/ktc+Jd9keTL/IVzp+nVXV/5S
+         F8Dw==
+X-Gm-Message-State: AOUpUlHqjZe4hTw79O3DhH4Qxx43cEtcasKeOPW83l49SyyxyabYJS3Q
+        kKntwqoBO2jYgbAFd6uQG2pQmA==
+X-Google-Smtp-Source: AAOMgpdEz6RKmcp09w1/7HBmC92j3aBnUhYlBNz1bLbpxYjAMjCgQzLClfRkAAfalAe6bYxr3om6jA==
+X-Received: by 2002:a19:73c9:: with SMTP id h70-v6mr668911lfk.61.1531818076543;
+        Tue, 17 Jul 2018 02:01:16 -0700 (PDT)
+Received: from [172.16.11.32] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id z7-v6sm72509lfg.89.2018.07.17.02.01.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 02:01:16 -0700 (PDT)
+Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180707111209.GA27768@gmail.com>
+ <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
+From:   Rasmus Villemoes <mail@rasmusvillemoes.dk>
+Message-ID: <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
+Date:   Tue, 17 Jul 2018 11:01:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716203846.roolhtesloabxr2g@kshutemo-mobl1>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 16-07-18 23:38:46, Kirill A. Shutemov wrote:
-> On Mon, Jul 16, 2018 at 07:40:42PM +0200, Michal Hocko wrote:
-> > On Mon 16-07-18 17:47:39, Kirill A. Shutemov wrote:
-> > > On Mon, Jul 16, 2018 at 04:22:45PM +0200, Michal Hocko wrote:
-> > > > On Mon 16-07-18 17:04:41, Kirill A. Shutemov wrote:
-> > > > > On Mon, Jul 16, 2018 at 01:30:28PM +0000, Michal Hocko wrote:
-> > > > > > On Tue 10-07-18 13:48:58, Andrew Morton wrote:
-> > > > > > > On Tue, 10 Jul 2018 16:48:20 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
-> > > > > > > 
-> > > > > > > > vma_is_anonymous() relies on ->vm_ops being NULL to detect anonymous
-> > > > > > > > VMA. This is unreliable as ->mmap may not set ->vm_ops.
-> > > > > > > > 
-> > > > > > > > False-positive vma_is_anonymous() may lead to crashes:
-> > > > > > > > 
-> > > > > > > > ...
-> > > > > > > > 
-> > > > > > > > This can be fixed by assigning anonymous VMAs own vm_ops and not relying
-> > > > > > > > on it being NULL.
-> > > > > > > > 
-> > > > > > > > If ->mmap() failed to set ->vm_ops, mmap_region() will set it to
-> > > > > > > > dummy_vm_ops. This way we will have non-NULL ->vm_ops for all VMAs.
-> > > > > > > 
-> > > > > > > Is there a smaller, simpler fix which we can use for backporting
-> > > > > > > purposes and save the larger rework for development kernels?
-> > > > > > 
-> > > > > > Why cannot we simply keep anon vma with null vm_ops and set dummy_vm_ops
-> > > > > > for all users who do not initialize it in their mmap callbacks?
-> > > > > > Basically have a sanity check&fixup in call_mmap?
-> > > > > 
-> > > > > As I said, there's a corner case of MAP_PRIVATE of /dev/zero.
-> > > > 
-> > > > This is really creative. I really didn't think about that. I am
-> > > > wondering whether this really has to be handled as a private anonymous
-> > > > mapping implicitly. Why does vma_is_anonymous has to succeed for these
-> > > > mappings? Why cannot we simply handle it as any other file backed
-> > > > PRIVATE mapping?
-> > > 
-> > > Because it's established way to create anonymous mappings in Linux.
-> > > And we cannot break the semantics.
-> > 
-> > How exactly would semantic break? You would still get zero pages on read
-> > faults and anonymous pages on CoW. So basically the same thing as for
-> > any other file backed MAP_PRIVATE mapping.
+On 2018-07-07 15:54, Tetsuo Handa wrote:
+> On 2018/07/07 20:12, Ingo Molnar wrote:
+>>
+>> * Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+>>
+>>> From: Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>
+>>>
+>>> Since syzbot is confused by concurrent printk() messages [1],
+>>> this patch changes show_opcodes() to use snprintf().
+>>>
+>>> When we start adding prefix to each line of printk() output,
+>>> we will be able to handle concurrent printk() messages.
+>>>
+>>> [1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
+>>
+>> Does this change the output?
+>>
+>> - If yes, could you show the before/after output in the changelog,
+>>
+>> - If not (i.e. if only the number of printk calls is changed, the output is the 
+>>   same), could you say so in the changelog?
 > 
-> You are wrong about zero page.
+> This patch will not change the output unless multiple threads concurrently
+> call printk(). The purpose of this patch is to help parsing kernel messages
+> when multiple threads are concurrently calling printk() for multiple times
+> (e.g. backtrace) by reducing pr_cont()/KERN_CONT usage.
+> 
+>>
+>> Also, 3*OPCODE_BUFSIZE+2+1 is 195 bytes - isn't that a bit too much on-stack 
+>> footprint?
+> 
+> Then, we can reduce it by OPCODE_BUFSIZE bytes by unionizing opcodes[] and buf[].
 
-Well, if we redirect ->fault to do_anonymous_page and
+Why not this instead? Less stack use, less code, no intermediary
+snprintfs, no pr_cont...
 
-> And you won't get THP.
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 666a284116ac..c881e8a757d9 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -93,26 +93,16 @@ static void printk_stack_address(unsigned long
+address, int reliable,
+  */
+ void show_opcodes(u8 *rip, const char *loglvl)
+ {
+-       unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
++       unsigned int prologue = OPCODE_BUFSIZE * 2 / 3;
+        u8 opcodes[OPCODE_BUFSIZE];
+-       u8 *ip;
+-       int i;
 
-huge_fault to do_huge_pmd_anonymous_page then we should emulate the
-standard anonymous mapping.
+-       printk("%sCode: ", loglvl);
+-
+-       ip = (u8 *)rip - code_prologue;
+-       if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
+-               pr_cont("Bad RIP value.\n");
++       if (probe_kernel_read(opcodes, rip - prologue, OPCODE_BUFSIZE)) {
++               printk("%sCode: Bad RIP value.\n", loglvl);
+                return;
+        }
+-
+-       for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
+-               if (ip == rip)
+-                       pr_cont("<%02x> ", opcodes[i]);
+-               else
+-                       pr_cont("%02x ", opcodes[i]);
+-       }
+-       pr_cont("\n");
++       printk("%sCode: %*ph <%02x> %*ph\n", loglvl,
++              prologue, &opcodes[0], opcodes[prologue],
++              OPCODE_BUFSIZE - prologue - 1, &opcodes[prologue + 1]);
+ }
 
-> And I'm sure there's more differences. Just grep for
-> vma_is_anonymous().
+ void show_ip(struct pt_regs *regs, const char *loglvl)
 
-I am sorry to push on this but if we have one odd case I would rather
-handle it and have a simple _rule_ that every mmap provide _has_ to
-provide vm_ops and have a trivial fix up at a single place rather than
-patch a subtle placeholders you were proposing.
+Not compile-tested, probably whitespace-damaged, but you get the idea.
 
-I will not insist of course but this looks less fragile to me.
-
--- 
-Michal Hocko
-SUSE Labs
+Rasmus
