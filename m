@@ -2,333 +2,400 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9E0ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2585ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 180602086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:34:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlMFTtOX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 180602086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 9B2C520C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:38:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B2C520C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731667AbeGQOGq (ORCPT
+        id S1731652AbeGQOLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:06:46 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38436 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731324AbeGQOGp (ORCPT
+        Tue, 17 Jul 2018 10:11:38 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46857 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731580AbeGQOLh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:06:45 -0400
-Received: by mail-pf0-f195.google.com with SMTP id v15-v6so520409pff.5;
-        Tue, 17 Jul 2018 06:34:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S3i9NYoqd19PcOZqpT5wMvWnbv+PIyLIf1B3xO8x5qo=;
-        b=PlMFTtOXAp7iBf+aaBVDVCSsYD6F5P93SArQCaAYLiM3sxBzktuTjDwfpaoTs71xTr
-         9Y2yy89O85ZlyPMaEVc+afSV6u02oHnWZG1LPy5DNwMymVfLHaM5mnhVfdWc7PEJSGx+
-         YzoEankq0W89Gs1GmDCPrNawCr7iFvYUYvxbu8O1wBb1/cgfJvbiJLTR43bclJP1N+vU
-         U9qGOSIE7PRbMtEdc5Qj3Ty1wioYLBqMNmZXJLZnTq6Jt/rP91XbaN5f9lgPQQV0jgli
-         ZqbP2bNVwi6GJoVOdsPtn63gqkeYzR+FJrCN418S33mdDwyQNG1H0aoeTN16kJazvWe8
-         Kg+w==
+        Tue, 17 Jul 2018 10:11:37 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <seth.forshee@canonical.com>)
+        id 1ffQBn-0000U2-Tg
+        for linux-kernel@vger.kernel.org; Tue, 17 Jul 2018 13:38:52 +0000
+Received: by mail-it0-f71.google.com with SMTP id u140-v6so1099872itc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 06:38:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S3i9NYoqd19PcOZqpT5wMvWnbv+PIyLIf1B3xO8x5qo=;
-        b=CDwjp6UCKTZmlNibHMDToeraU6kPeR4c23oJ18FFXxnj58AIsXXQpQkmuvaWTXcRnA
-         YCimnjlO4aGre6/vxdaufw5JxLng2ND/D6uUpBjTq5SGHS1nmp3S+W7fnLsNFf2xK7s6
-         t4Fl0C1bcHJreEC7BdVKdgRDDwm0AMg93UJhe5eo/BWHrqF3xQiawM72GO8CV8LELncX
-         +o70MIqoLmdOlfFDsvHDfI72zO6IMY6ViFpOBVHValP0iYTVhGEBpCEZe83hojFDLF17
-         HomEsMzkcmFvMCdmFb5nr8tjPDfa33xCOjoLyxTv0NX9Do/+xsRcRMQ+awt1ld9n2OW7
-         iNaQ==
-X-Gm-Message-State: AOUpUlFvm088C+r8zCSSiRvcyKsgrT1HkTtSUMpIMvOgSSS5+BRx1/Sg
-        Cav6a9RNpDqCf7Ry2y9+UswHEw==
-X-Google-Smtp-Source: AAOMgpfr5dhG1LP8pQkgGRbdUFOe4JBWeKP4V2QxF5pV+9+M18KU6PTpgcJmPuO796di2vdiJA1/YA==
-X-Received: by 2002:a63:f18:: with SMTP id e24-v6mr1657263pgl.320.1531834443093;
-        Tue, 17 Jul 2018 06:34:03 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id b76-v6sm3691934pfj.184.2018.07.17.06.34.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 06:34:01 -0700 (PDT)
-Subject: Re: [PATCH v2] watchdog: add driver for the MEN 16z069 IP-Core
-To:     Johannes Thumshirn <jthumshirn@suse.de>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        mmoese@suse.de
-References: <20180716072510.6939-1-jthumshirn@suse.de>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <004b89c5-05f0-73ed-b707-bc1c1cb9bfec@roeck-us.net>
-Date:   Tue, 17 Jul 2018 06:33:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+yQY7FvTHCpbGgdxFop6GN3WoT4q87ln2NXbseabOX0=;
+        b=Z/xeVHzEE5DzwWcn+WmqThnxEhdyNFQ4BzPxjhIoKKg2EozDm0sQBYPVjj4XTAfKl1
+         LIQHL0QHAzM0S2zrQQXO31AFesE9TSAWKn2dpBJvm/H9RDdIT5ytHUDAHrS0larkD9c3
+         Felv1bK7JODIYdufDJWkwNsB4iWEMCPXmY6QER90e7ctEYihH+TMx5TF2EHQHFGqv1JI
+         NTPLf1G6PUsQWbMcl7TF99D8mLraUoQ7PdE9Gr4fE4lA8/87JSwjZUPlECTC947IGX9d
+         MF6KpUfZJkVlLeso6jf/z0OtM7ojVPov74lXL6R4xZBE236lM0GoZTJ46+pNDgXdRD+V
+         t3iQ==
+X-Gm-Message-State: AOUpUlER8Tpy3cL1REB7ngYDp3y+yU0/M1FuK28umQN4hboJwUqRh1rl
+        J1QzwepX9g+C0HvUXhjZNUADJloDx3xYvrNWeWjH2EdtISk+FgND2tTZ/5xUlKKgoQR9RBUDJ0w
+        vKDivyQeYJHxa9zNkx0ivKC4qd8uwWstqKCUrHeqQLA==
+X-Received: by 2002:a6b:df07:: with SMTP id w7-v6mr1445942iog.20.1531834730390;
+        Tue, 17 Jul 2018 06:38:50 -0700 (PDT)
+X-Google-Smtp-Source: AA+uWPzNK3UglJluyZhfVdUW2VFjcmickL34gaKsHQfJ69kD5M/A0RUABldZvbW9OpbBD6fpw7KvhQ==
+X-Received: by 2002:a6b:df07:: with SMTP id w7-v6mr1445911iog.20.1531834730055;
+        Tue, 17 Jul 2018 06:38:50 -0700 (PDT)
+Received: from localhost ([2605:a601:ac7:2a20:60d3:8c04:9844:c5ad])
+        by smtp.gmail.com with ESMTPSA id o139-v6sm693269itc.21.2018.07.17.06.38.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 06:38:49 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 08:38:47 -0500
+From:   Seth Forshee <seth.forshee@canonical.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        Phil Estes <estesp@gmail.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH v3 0/1] shiftfs: uid/gid shifting filesystem
+Message-ID: <20180717133847.GB15620@ubuntu-xps13>
+References: <1529098514.4048.41.camel@HansenPartnership.com>
 MIME-Version: 1.0
-In-Reply-To: <20180716072510.6939-1-jthumshirn@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1529098514.4048.41.camel@HansenPartnership.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/16/2018 12:25 AM, Johannes Thumshirn wrote:
-> Add a driver for the MEN 16z069 Watchdog and Reset Controller IP-Core.
-> 
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
++Cc David
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On Fri, Jun 15, 2018 at 02:35:14PM -0700, James Bottomley wrote:
+> This is a repost of the v2 patch updated for the d_real changes
+> 
+> For those who want to test it out, there's a git tree here
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/binfmt_misc.git
+> 
+> on the shiftfs-v3 branch
+> 
+> v2:
+> 
+> This is a rewrite of the original shiftfs code to make use of super
+> block user namespaces.  I've also removed the mappings passed in as
+> mount options in favour of using the mappings in s_user_ns.  The upshot
+> is that it probably needs retesting for all the bugs people found,
+> since there's a lot of new code, and the use case has changed.  Now, to
+> use it, you have to mark the filesystems you want to be mountable
+> inside a user namespace as root:
+> 
+> mount -t shiftfs -o mark <origin> <mark location>
+> 
+> The origin should be inaccessible to the unprivileged user, and the
+> access to the <mark location> can be controlled by the usual filesystem
+> permissions.  Once this is done, any user who can get access to the
+> <mark location> can do (as the local user namespace root):
+> 
+> mount -t shiftfs <mark location> <somewhere in my local mount ns>
 
-> 
-> ---
-> Changes to v1:
-> * Sorted includes alphabetically
-> * Indented defines with tabs
-> * Removed unnecessary timeout validation
-> * Removed unnecessary masking of values
-> * Fixed error return in .probe
-> * Directly accessed drv->wdt
-> * Removed leftover timeout resetting
-> ---
->   MAINTAINERS                   |   6 ++
->   drivers/watchdog/Kconfig      |  10 +++
->   drivers/watchdog/Makefile     |   1 +
->   drivers/watchdog/menz69_wdt.c | 170 ++++++++++++++++++++++++++++++++++++++++++
->   4 files changed, 187 insertions(+)
->   create mode 100644 drivers/watchdog/menz69_wdt.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 07d1576fc766..67a76f740294 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9298,6 +9298,12 @@ F:	drivers/leds/leds-menf21bmc.c
->   F:	drivers/hwmon/menf21bmc_hwmon.c
->   F:	Documentation/hwmon/menf21bmc
->   
-> +MEN Z069 WATCHDOG DRIVER
-> +M:	Johannes Thumshirn <jth@kernel.org>
-> +L:	linux-watchdog@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/watchdog/menz069_wdt.c
-> +
->   MESON AO CEC DRIVER FOR AMLOGIC SOCS
->   M:	Neil Armstrong <narmstrong@baylibre.com>
->   L:	linux-media@lists.freedesktop.org
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 9af07fd92763..df55d65bbb1c 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -161,6 +161,16 @@ config MENF21BMC_WATCHDOG
->   	  This driver can also be built as a module. If so the module
->   	  will be called menf21bmc_wdt.
->   
-> +config MENZ069_WATCHDOG
-> +	tristate "MEN 16Z069 Watchdog"
-> +	depends on MCB || COMPILE_TEST
-> +	select WATCHDOG_CORE
-> +	help
-> +	  Say Y here to include support for the MEN 16Z069 Watchdog.
-> +
-> +	  This driver can also be built as a module. If so the module
-> +	  will be called menz069_wdt.
-> +
->   config TANGOX_WATCHDOG
->   	tristate "Sigma Designs SMP86xx/SMP87xx watchdog"
->   	select WATCHDOG_CORE
-> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> index 1d3c6b094fe5..bf92e7bf9ce0 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -215,4 +215,5 @@ obj-$(CONFIG_MAX77620_WATCHDOG) += max77620_wdt.o
->   obj-$(CONFIG_ZIIRAVE_WATCHDOG) += ziirave_wdt.o
->   obj-$(CONFIG_SOFT_WATCHDOG) += softdog.o
->   obj-$(CONFIG_MENF21BMC_WATCHDOG) += menf21bmc_wdt.o
-> +obj-$(CONFIG_MENZ069_WATCHDOG) += menz69_wdt.o
->   obj-$(CONFIG_RAVE_SP_WATCHDOG) += rave-sp-wdt.o
-> diff --git a/drivers/watchdog/menz69_wdt.c b/drivers/watchdog/menz69_wdt.c
-> new file mode 100644
-> index 000000000000..ed18238c5407
-> --- /dev/null
-> +++ b/drivers/watchdog/menz69_wdt.c
-> @@ -0,0 +1,170 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Watchdog driver for the MEN z069 IP-Core
-> + *
-> + * Copyright (C) 2018 Johannes Thumshirn <jth@kernel.org>
-> + */
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mcb.h>
-> +#include <linux/module.h>
-> +#include <linux/watchdog.h>
-> +
-> +struct men_z069_drv {
-> +	struct watchdog_device wdt;
-> +	void __iomem *base;
-> +	struct resource *mem;
-> +};
-> +
-> +#define MEN_Z069_WTR			0x10
-> +#define MEN_Z069_WTR_WDEN		BIT(15)
-> +#define MEN_Z069_WTR_WDET_MASK		0x7fff
-> +#define MEN_Z069_WVR			0x14
-> +
-> +#define MEN_Z069_TIMER_FREQ		500 /* 500 Hz */
-> +#define MEN_Z069_WDT_COUNTER_MIN	1
-> +#define MEN_Z069_WDT_COUNTER_MAX	0x7fff
-> +#define MEN_Z069_DEFAULT_TIMEOUT	30
-> +
-> +static bool nowayout = WATCHDOG_NOWAYOUT;
-> +module_param(nowayout, bool, 0);
-> +MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
-> +			    __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-> +
-> +static int men_z069_wdt_start(struct watchdog_device *wdt)
-> +{
-> +	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-> +	u16 val;
-> +
-> +	val = readw(drv->base + MEN_Z069_WTR);
-> +	val |= MEN_Z069_WTR_WDEN;
-> +	writew(val, drv->base + MEN_Z069_WTR);
-> +
-> +	return 0;
-> +}
-> +
-> +static int men_z069_wdt_stop(struct watchdog_device *wdt)
-> +{
-> +	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-> +	u16 val;
-> +
-> +	val = readw(drv->base + MEN_Z069_WTR);
-> +	val &= ~MEN_Z069_WTR_WDEN;
-> +	writew(val, drv->base + MEN_Z069_WTR);
-> +
-> +	return 0;
-> +}
-> +
-> +static int men_z069_wdt_ping(struct watchdog_device *wdt)
-> +{
-> +	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-> +	u16 val;
-> +
-> +	/* The watchdog trigger value toggles between 0x5555 and 0xaaaa */
-> +	val = readw(drv->base + MEN_Z069_WVR);
-> +	val ^= 0xffff;
-> +	writew(val, drv->base + MEN_Z069_WVR);
-> +
-> +	return 0;
-> +}
-> +
-> +static int men_z069_wdt_set_timeout(struct watchdog_device *wdt,
-> +				    unsigned int timeout)
-> +{
-> +	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-> +	u16 reg, val, ena;
-> +
-> +	wdt->timeout = timeout;
-> +	val = timeout * MEN_Z069_TIMER_FREQ;
-> +
-> +	reg = readw(drv->base + MEN_Z069_WVR);
-> +	ena = reg & MEN_Z069_WTR_WDEN;
-> +	reg = ena | val;
-> +	writew(reg, drv->base + MEN_Z069_WTR);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct watchdog_info men_z069_info = {
-> +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-> +	.identity = "MEN z069 Watchdog",
-> +};
-> +
-> +static const struct watchdog_ops men_z069_ops = {
-> +	.owner = THIS_MODULE,
-> +	.start = men_z069_wdt_start,
-> +	.stop = men_z069_wdt_stop,
-> +	.ping = men_z069_wdt_ping,
-> +	.set_timeout = men_z069_wdt_set_timeout,
-> +};
-> +
-> +static struct watchdog_device men_z069_wdt = {
-> +	.info = &men_z069_info,
-> +	.ops = &men_z069_ops,
-> +	.timeout = MEN_Z069_DEFAULT_TIMEOUT,
-> +	.min_timeout = 1,
-> +	.max_timeout = MEN_Z069_WDT_COUNTER_MAX / MEN_Z069_TIMER_FREQ,
-> +};
-> +
-> +static int men_z069_probe(struct mcb_device *dev,
-> +			  const struct mcb_device_id *id)
-> +{
-> +	struct men_z069_drv *drv;
-> +	struct resource *mem;
-> +
-> +	drv = devm_kzalloc(&dev->dev, sizeof(struct men_z069_drv), GFP_KERNEL);
-> +	if (!drv)
-> +		return -ENOMEM;
-> +
-> +	mem = mcb_request_mem(dev, "z069-wdt");
-> +	if (IS_ERR(mem))
-> +		return PTR_ERR(mem);
-> +
-> +	drv->base = devm_ioremap(&dev->dev, mem->start, resource_size(mem));
-> +	if (drv->base == NULL)
-> +		goto release_mem;
-> +
-> +	drv->mem = mem;
-> +
-> +	drv->wdt = men_z069_wdt;
-> +	watchdog_init_timeout(&drv->wdt, 0, &dev->dev);
-> +	watchdog_set_nowayout(&drv->wdt, nowayout);
-> +	watchdog_set_drvdata(&drv->wdt, drv);
-> +	drv->wdt.parent = &dev->dev;
-> +	mcb_set_drvdata(dev, drv);
-> +
-> +	return watchdog_register_device(&men_z069_wdt);
-> +
-> +release_mem:
-> +	mcb_release_mem(mem);
-> +	return -ENOMEM;
-> +}
-> +
-> +static void men_z069_remove(struct mcb_device *dev)
-> +{
-> +	struct men_z069_drv *drv = mcb_get_drvdata(dev);
-> +
-> +	watchdog_unregister_device(&drv->wdt);
-> +	mcb_release_mem(drv->mem);
-> +}
-> +
-> +static const struct mcb_device_id men_z069_ids[] = {
-> +	{ .device = 0x45 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(mcb, men_z069_ids);
-> +
-> +static struct mcb_driver men_z069_driver = {
-> +	.driver = {
-> +		.name = "z069-wdt",
-> +		.owner = THIS_MODULE,
-> +	},
-> +	.probe = men_z069_probe,
-> +	.remove = men_z069_remove,
-> +	.id_table = men_z069_ids,
-> +};
-> +module_mcb_driver(men_z069_driver);
-> +
-> +MODULE_AUTHOR("Johannes Thumshirn <jth@kernel.org>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("mcb:16z069");
-> 
+David, I wanted to pull you in here based on something you said on the
+most recent filesystem context thread (thought it would make more sense
+here rather than piggypacking on that already massive thread).
 
+> I want to be able to add support for a bunch of things:
+> 
+>  (1) UID, GID and Project ID mapping/translation.  I want to be able to
+>      install a translation table of some sort on the superblock to translate
+>      source identifiers (which may be foreign numeric UIDs/GIDs, text names,
+>      GUIDs) into system identifiers.  This needs to be done before the
+>      superblock is published[*].
+> 
+>      Note that this may, for example, involve using the context and the
+>      superblock held therein to issue an RPC to a server to look up
+>      translations.
+> 
+>      [*] By "published" I mean made available through mount so that other
+>      	 userspace processes can access it by path.
+> 
+>      Maybe specifying a translation range element with something like:
+> 
+> 	write(fd, "t uid <srcuid> <nsuid> <count>");
+> 
+>      The translation information also needs to propagate over an automount in
+>      some circumstances.
+> 
+>  (2) Namespace configuration.  I want to be able to tell the superblock
+>      creation process what namespaces should be applied when it created (in
+>      particular the userns and netns) for containerisation purposes, e.g.:
+> 
+> 	write(fd, "n user=<fd> net=<fd>");
+
+There's some obvious overlap between shiftfs and (1), but also important
+differences. Primarily that shiftfs tries to make something that looks
+like a bind mount rather than applying the mappings to new superblocks
+for arbitrary filesystems.
+
+I've already been playing with shiftfs on top of the filesystem context
+patches, because I thought it would allow getting rid of the
+intermediate "mark" mount described above. I have a hacky proof of
+concept implementation that I've pushed to the shiftfs-fscontext branch
+of
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/sforshee/linux.git
+
+Basically the idea is that the more privileged "host" context can create
+the fs fd and set the source on it to "bless" a subtree for id shifted
+mounting, and the less privileged "client" context can use the fd to do
+the mount (test program below). But I had to mess with fc->user_ns to
+ensure s_user_ns gets set correctly, and it would likely be nicer to do
+something more like (2) above.
+
+The idea is that we need the more privileged "host" context to bless the
+subtree being id shifted before actually executing the mount in the less
+privileged "client" context. I'm doing this by having the host set the
+source, then have the client use the fd to create the superblock (my
+test program is below). This leads to some undesirable changing of the
+fs contexts user ns in shiftfs (so that s_user_ns is the client's
+namespace), which could likely be eliminated by doing something like
+what's described in (2) and having the super block created on the host
+side.
+
+However, maybe these things are similar enough to settle on a common
+solution, such as supporting id mapping at the vfsmount level.
+
+Seth
+
+---
+
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <fcntl.h>
+#include <sched.h>
+#include <sys/wait.h>
+#include <limits.h>
+
+#define __NR_move_mount		336
+#define __NR_fsopen		337
+#define __NR_fsmount		338
+
+#define FSOPEN_CLOEXEC			0x00000001
+#define FSMOUNT_CLOEXEC			0x00000001
+#define MOVE_MOUNT_F_EMPTY_PATH         0x00000004
+
+static int move_mount(int from_dfd, const char *from_pathname,
+		      int to_dfd, const char *to_pathname, unsigned int flags)
+{
+	return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd, to_pathname,
+		       flags);
+}
+
+static int fsopen(const char *fs_name, unsigned int flags)
+{
+	return syscall(__NR_fsopen, fs_name, flags);
+}
+
+static int fsmount(int fsfd, unsigned int flags, unsigned int ms_flags)
+{
+	return syscall(__NR_fsmount, fsfd, flags, ms_flags);
+}
+
+static void write_idmap(char *path, char *map)
+{
+	int fd;
+	size_t map_len;
+
+	map_len = strlen(map);
+	fd = open(path, O_RDWR);
+	if (fd == -1) {
+		perror("open");
+		exit(1);
+	}
+
+	if (write(fd, map, map_len) != map_len) {
+		perror("write");
+		exit(1);
+	}
+}
+
+#define CHILD_STACK_SIZE (1024 * 1024)
+static char child_stack[CHILD_STACK_SIZE];
+
+struct child_args {
+	int inp[2];
+	int outp[2];
+	int fsfd;
+	char *dest;
+	uid_t uid;
+	uid_t gid;
+};
+
+static int child_func(void *arg)
+{
+	struct child_args *args = arg;
+	char ch;
+	int fsfd = args->fsfd, mfd;
+	int ret;
+
+	close(args->inp[1]);
+	close(args->outp[0]);
+
+	/* Change to uid/gid for root in the user ns */
+	if (setgid(args->gid) == -1) {
+		perror("setgid");
+		exit(-1);
+	}
+	if (setuid(args->uid) == -1) {
+		perror("setgid");
+		exit(-1);
+	}
+
+	if (unshare(CLONE_NEWNS | CLONE_NEWUSER) == -1) {
+		perror("unshare");
+		exit(1);
+	}
+
+	/* Close write pipe to signal unshare has completed */
+	close(args->outp[1]);
+
+	/* Wait for uid/gid maps to be written */
+	if (read(args->inp[0], &ch, 1) != 0) {
+		perror("read");
+		exit(1);
+	}
+	close(args->inp[0]);
+
+	/* Now we are root in user ns; proceed with mount */
+	ret = write(fsfd, "x create", 9);
+	if (ret == -1) {
+		perror("write \"x create\"");
+		exit(1);
+	}
+
+	mfd = fsmount(fsfd, FSMOUNT_CLOEXEC, 0);
+	if (mfd < 0) {
+		perror("fsmount");
+		exit(1);
+	}
+
+	ret = move_mount(mfd, "", AT_FDCWD, args->dest, MOVE_MOUNT_F_EMPTY_PATH);
+	if (ret < 0) {
+		perror("move_mount");
+		exit(1);
+	}
+
+	close(fsfd);
+	close(mfd);
+
+	execl("/bin/sh", "/bin/sh", NULL);
+	perror("execl");
+	exit(1);
+}
+
+int main(int argc, char *argv[])
+{
+	char *src, *dest;
+	uid_t root_uid;
+	gid_t root_gid;
+	int fsfd;
+	char buf[PATH_MAX + 2];
+	int len, ret;
+	struct child_args args;
+	pid_t child_pid;
+	int *inp, *outp;
+	char map_buf[100];
+	char map_path[PATH_MAX];
+	char ch;
+
+	if (argc != 5) {
+		printf("Usage: %s <src> <dest> <root_uid> <root_gid>\n", argv[0]);
+		exit(1);
+	}
+
+	src = argv[1];
+	dest = argv[2];
+	root_uid = atoi(argv[3]);
+	root_gid = atoi(argv[4]);
+
+	fsfd = fsopen("shiftfs", FSOPEN_CLOEXEC);
+	if (fsfd < 0) {
+		perror("fsopen");
+		exit(1);
+	}
+
+	/*
+	 * Set source subtree; we do it on this side of clone(2) so that
+	 * the kernel can check for permissions wrt src. The rest of the
+	 * mount will happen in the child process after unsharing the
+	 * user/mount namespaces.
+	 */
+	len = snprintf(buf, sizeof(buf), "s %s", src);
+	if (len >= sizeof(buf)) {
+		fprintf(stderr, "src too large\n");
+		exit(1);
+	}
+	ret = write(fsfd, buf, len);
+	if (ret == -1) {
+		perror("write \"s src\"");
+		exit(1);
+	}
+
+	if (pipe(args.inp) == -1) {
+		perror("pipe");
+		exit(1);
+	}
+	if (pipe(args.outp) == -1) {
+		perror("pipe");
+		exit(1);
+	}
+	args.fsfd = fsfd;
+	args.dest = dest;
+	args.uid = root_uid;
+	args.gid = root_gid;
+	child_pid = clone(child_func, child_stack + CHILD_STACK_SIZE, SIGCHLD, &args);
+
+	/* Pipe directions reversed wrt child */
+	inp = args.outp;
+	outp = args.inp;
+	close(inp[1]);
+	close(outp[0]);
+
+	/* Wait for child to set ids and unshare */
+	if (read(inp[0], &ch, 1) != 0) {
+		perror("read");
+		exit(1);
+	}
+
+	snprintf(map_buf, sizeof(map_buf), "0 %ld 1", (long)root_uid);
+	snprintf(map_path, sizeof(map_path), "/proc/%ld/uid_map",
+		 (long)child_pid);
+	write_idmap(map_path, map_buf);
+
+	snprintf(map_buf, sizeof(map_buf), "0 %ld 1", (long)root_gid);
+	snprintf(map_path, sizeof(map_path), "/proc/%ld/gid_map",
+		 (long)child_pid);
+	write_idmap(map_path, map_buf);
+
+	/* Signal child that id maps have been updated */
+	close(outp[1]);
+
+	if (waitpid(child_pid, NULL, 0) == -1) {
+		perror("waitpid");
+		exit(1);
+	}
+
+	exit(0);
+}
