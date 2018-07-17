@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66450ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D838ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C57B206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD85E206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCaXsBQp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C57B206B7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZO6Cc/Tw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD85E206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731563AbeGQVjc (ORCPT
+        id S1731586AbeGQVje (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:39:32 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46913 "EHLO
+        Tue, 17 Jul 2018 17:39:34 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35304 "EHLO
         mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVja (ORCPT
+        with ESMTP id S1729684AbeGQVjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:39:30 -0400
-Received: by mail-pf0-f196.google.com with SMTP id l123-v6so1081404pfl.13
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:05:03 -0700 (PDT)
+        Tue, 17 Jul 2018 17:39:33 -0400
+Received: by mail-pf0-f196.google.com with SMTP id q7-v6so1093355pff.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:05:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=spfKPJapcjAqYHmM8PHMImRoo/pf564doGGH7tS/BT0=;
-        b=kCaXsBQpMKg/CVp/0nrVHZoAtu/jC9jdwL/bHGUAOKCEkflq83QOqtjTZ2vFHD57xu
-         ADCQ6JTBi6Lq6KZ3/xyAr6sgI7xaA1/QWPv9WbnIbxGtoMnnmXRZtJiKEFij8UfiZt8a
-         5ZWDE2/hpHCEB6L/SIszSLGPEdyTydOADejSEeWzGdoZWZXutENfPheNPZ4Qui1BdIIc
-         ges7R/uB/XN3ghQZ0FedmnujINSLOVerLFu3DKpzj8p8fRoM1vez6YSZ4gapHsaDvDI0
-         /xdBjvRtBmnscP2SoY4jiOHyYCw2DPE7cmI9R9Mx5SN18h2S7QlFMRtnYzy2hg2thTFG
-         a7Mg==
+        bh=IogpT4gY1T5aJ1zmG493UxVPEI5KtbycrZJWsuWhmm0=;
+        b=ZO6Cc/Tw5Mgqlz7ABUd1TJvx9FzobQEF9+z1nkN2dZh5XBb7VbrEDoqYPDkOknKuZE
+         K4hgHGY4uZAT3w6ok3qeC1tlJzSEDuvx9wuV1ilCsDzNsQSSR9qsn/K2QoWk+dW2oyZb
+         p7zjXPeERu3kW2KIcYJzPw6YIEB71IfEiLLjjf+OOTkvcc/0HZ7JikUyGYccsvCEPuEq
+         9WpZ9NuBuv2XfT1xgAQHHMQ1q3dEXrdLkmlOF0EOqw3rlQkos6HMQeKBzI+YLbaf1GjJ
+         rvZ/hOyzbMQoUMD9V3WU45xAmIQDvB3vYPqiecBzZqu5S4n1SudYmEz8z/lnJkn1iI8g
+         H0Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=spfKPJapcjAqYHmM8PHMImRoo/pf564doGGH7tS/BT0=;
-        b=oCo33EyX3X6eL+9oobiOs0lgHw2yeKb1NBJkr8oaN4qvC5/EALU8pXvBoUUS/c7E84
-         i/Jtu0nbTuadvO+u1ZBQdxg+y6CCqgf+5Cg1p2KqRv8uFuaJ2TpP/1nsin2EMpj82VYX
-         DIU3NBLmcMXaUpf7JQ2oyQvzY/4KrpJ+P8r9bUo2GbOIEo0GxrXD6p06IuEfzGJo292q
-         bVhagVxR4f8Y/bbKPjNjkXm/7bQ41px1z+s74AKKiN4RN41wnf6Ydw0tvQSkceK2xyiJ
-         2ZQKjzQ+9yY5JzYhtc4PsxyHWQhaPg+HtZ4tJtAnLjoCI6hxGoRK4Aa52PjjBD5guWfo
-         z5Kg==
-X-Gm-Message-State: AOUpUlFtyB2dTEkqjmO/1YTKlNKXEl1Kx8edbp40SVml7kly7pRMFtw/
-        GkWNeFrvWiLdvOs0zAFy06bMTY9X
-X-Google-Smtp-Source: AAOMgpeKKCv/vOf5RKWdyikiZhw4e2Co1EKZsQWXuH+UwMHAL8UB17l32MWlaoXP79ZBSwEkS3pxAQ==
-X-Received: by 2002:a63:314f:: with SMTP id x76-v6mr3012238pgx.373.1531861503071;
-        Tue, 17 Jul 2018 14:05:03 -0700 (PDT)
+        bh=IogpT4gY1T5aJ1zmG493UxVPEI5KtbycrZJWsuWhmm0=;
+        b=mABE28pYbNZA6MfF6wY4JnpwjfNYp1abIQ9FGBNyde2DxZi6Gj+2dEwkbLLgCUYUpO
+         ck5VbG0Y0JnJMOB4sOuGmQNZYA8sByhujRAW6ElH3PkaTJ+6W0LGY3bX2VgdUT/ect3C
+         LoOnTEk/8/DrOCrXwshid177UUQ/igA6Sy/Q5VaZ/vhfiZZge1lhZXKXCkc1lAtKSHH4
+         SK4n6iUanHhQ69zmsZ6e4D7Y8BZDXS8Z50Cfk8BE/Ox5cFqKjp7tqjgdMW2SPXzxhuuJ
+         XgmI5oCE4XmJ1NZF/4ePbMDJn9mW7aUMwL240LOtSFO30q2cBTPz/BQURPrZPvgmEBmr
+         y13g==
+X-Gm-Message-State: AOUpUlGaA0VA2GpsrhxDJ1Xak+e3eST3Jy9nN3yIWwVxYAks7v9mR5Ro
+        m7pgKCxivIllWhNr51cf7mI=
+X-Google-Smtp-Source: AAOMgpejxfaDQRB2dpLT0GAV2Yd6hrn5qER8u5wXOklm1wtRhbfiOQ2medzcZ3M7vPCGI3xQp+B2uQ==
+X-Received: by 2002:a63:5922:: with SMTP id n34-v6mr3106219pgb.113.1531861505657;
+        Tue, 17 Jul 2018 14:05:05 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.05.01
+        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.05.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:05:02 -0700 (PDT)
+        Tue, 17 Jul 2018 14:05:04 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 15/32] staging: gasket: drop gasket_cdev_get_info, use container_of
-Date:   Tue, 17 Jul 2018 13:56:55 -0700
-Message-Id: <20180717205712.29495-16-toddpoynor@gmail.com>
+Subject: [PATCH 17/32] staging: gasket: annotate ioctl arg with __user
+Date:   Tue, 17 Jul 2018 13:56:57 -0700
+Message-Id: <20180717205712.29495-18-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
 References: <20180717205712.29495-1-toddpoynor@gmail.com>
@@ -81,68 +81,364 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-Remove gasket_cdev_get_info(), use container_of() directly instead,
-drop unnecessary NULL checks.
+For sparse checking.
 
 Reported-by: Dmitry Torokhov <dtor@chromium.org>
 Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
+Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
 ---
- drivers/staging/gasket/gasket_core.c | 26 ++++----------------------
- 1 file changed, 4 insertions(+), 22 deletions(-)
+ drivers/staging/gasket/apex_driver.c  | 11 ++--
+ drivers/staging/gasket/gasket_core.c  |  6 ++-
+ drivers/staging/gasket/gasket_core.h  |  4 +-
+ drivers/staging/gasket/gasket_ioctl.c | 72 ++++++++++++++-------------
+ drivers/staging/gasket/gasket_ioctl.h |  4 +-
+ 5 files changed, 52 insertions(+), 45 deletions(-)
 
+diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+index 612b3ab803196..c91c5aff5ab9c 100644
+--- a/drivers/staging/gasket/apex_driver.c
++++ b/drivers/staging/gasket/apex_driver.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2018 Google, Inc.
+  */
+ 
++#include <linux/compiler.h>
+ #include <linux/delay.h>
+ #include <linux/fs.h>
+ #include <linux/init.h>
+@@ -142,9 +143,9 @@ static int apex_get_status(struct gasket_dev *gasket_dev);
+ 
+ static uint apex_ioctl_check_permissions(struct file *file, uint cmd);
+ 
+-static long apex_ioctl(struct file *file, uint cmd, ulong arg);
++static long apex_ioctl(struct file *file, uint cmd, void __user *arg);
+ 
+-static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg);
++static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg);
+ 
+ static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type);
+ 
+@@ -635,7 +636,7 @@ static uint apex_ioctl_check_permissions(struct file *filp, uint cmd)
+ /*
+  * Apex-specific ioctl handler.
+  */
+-static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
++static long apex_ioctl(struct file *filp, uint cmd, void __user *arg)
+ {
+ 	struct gasket_dev *gasket_dev = filp->private_data;
+ 
+@@ -655,7 +656,7 @@ static long apex_ioctl(struct file *filp, uint cmd, ulong arg)
+  * @gasket_dev: Gasket device pointer.
+  * @arg: User ioctl arg, in this case to a apex_gate_clock_ioctl struct.
+  */
+-static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
++static long apex_clock_gating(struct gasket_dev *gasket_dev, void __user *arg)
+ {
+ 	struct apex_gate_clock_ioctl ibuf;
+ 
+@@ -663,7 +664,7 @@ static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
+ 		return 0;
+ 
+ 	if (allow_sw_clock_gating) {
+-		if (copy_from_user(&ibuf, (void __user *)arg, sizeof(ibuf)))
++		if (copy_from_user(&ibuf, arg, sizeof(ibuf)))
+ 			return -EFAULT;
+ 
+ 		gasket_log_error(
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index bc3662eafb63d..0d5ba7359af73 100644
+index 947b4fcc76970..ff34af42bbe7c 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -233,18 +233,6 @@ static inline int gasket_check_and_invoke_callback_nolock(
- 	return ret;
+@@ -14,6 +14,7 @@
+ #include "gasket_page_table.h"
+ #include "gasket_sysfs.h"
+ 
++#include <linux/compiler.h>
+ #include <linux/delay.h>
+ #include <linux/fs.h>
+ #include <linux/init.h>
+@@ -1823,14 +1824,15 @@ static long gasket_ioctl(struct file *filp, uint cmd, ulong arg)
+ 		 * check_and_invoke_callback.
+ 		 */
+ 		if (driver_desc->ioctl_handler_cb)
+-			return driver_desc->ioctl_handler_cb(filp, cmd, arg);
++			return driver_desc->ioctl_handler_cb(
++			    filp, cmd, (void __user *)arg);
+ 
+ 		gasket_log_error(
+ 			gasket_dev, "Received unknown ioctl 0x%x", cmd);
+ 		return -EINVAL;
+ 	}
+ 
+-	return gasket_handle_ioctl(filp, cmd, arg);
++	return gasket_handle_ioctl(filp, cmd, (void __user *)arg);
  }
  
--/*
-- * Retrieve device-specific data via cdev pointer.
-- * @cdev_ptr: Character device pointer associated with the device.
-- *
-- * This function returns the pointer to the device-specific data allocated in
-- * add_dev_cb for the device associated with cdev_ptr.
-- */
--static struct gasket_cdev_info *gasket_cdev_get_info(struct cdev *cdev_ptr)
--{
--	return container_of(cdev_ptr, struct gasket_cdev_info, cdev);
--}
--
- /*
-  * Returns nonzero if the gasket_cdev_info is owned by the current thread group
-  * ID.
-@@ -1095,12 +1083,9 @@ static int gasket_open(struct inode *inode, struct file *filp)
- 	const struct gasket_driver_desc *driver_desc;
- 	struct gasket_ownership *ownership;
- 	char task_name[TASK_COMM_LEN];
--	struct gasket_cdev_info *dev_info = gasket_cdev_get_info(inode->i_cdev);
-+	struct gasket_cdev_info *dev_info =
-+	    container_of(inode->i_cdev, struct gasket_cdev_info, cdev);
+ int gasket_reset(struct gasket_dev *gasket_dev, uint reset_type)
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index 50ad0c8853183..68b4d2ac9fd6c 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -315,7 +315,7 @@ struct gasket_dev {
  
--	if (!dev_info) {
--		gasket_nodev_error("Unable to retrieve device data");
--		return -EINVAL;
--	}
- 	gasket_dev = dev_info->gasket_dev_ptr;
- 	driver_desc = gasket_dev->internal_desc->driver_desc;
- 	ownership = &dev_info->ownership;
-@@ -1182,11 +1167,8 @@ static int gasket_release(struct inode *inode, struct file *file)
- 	const struct gasket_driver_desc *driver_desc;
- 	char task_name[TASK_COMM_LEN];
- 	struct gasket_cdev_info *dev_info =
--		(struct gasket_cdev_info *)gasket_cdev_get_info(inode->i_cdev);
--	if (!dev_info) {
--		gasket_nodev_error("Unable to retrieve device data");
--		return -EINVAL;
--	}
-+		container_of(inode->i_cdev, struct gasket_cdev_info, cdev);
+ /* Type of the ioctl permissions check callback. See below. */
+ typedef int (*gasket_ioctl_permissions_cb_t)(
+-	struct file *filp, uint cmd, ulong arg);
++	struct file *filp, uint cmd, void __user *arg);
+ 
+ /*
+  * Device type descriptor.
+@@ -549,7 +549,7 @@ struct gasket_driver_desc {
+ 	 * return -EINVAL. Should return an error status (either -EINVAL or
+ 	 * the error result of the ioctl being handled).
+ 	 */
+-	long (*ioctl_handler_cb)(struct file *filp, uint cmd, ulong arg);
++	long (*ioctl_handler_cb)(struct file *filp, uint cmd, void __user *arg);
+ 
+ 	/*
+ 	 * device_status_cb: Callback to determine device health.
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index d0fa05b8bf1d3..ab2376c32c00b 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -7,6 +7,7 @@
+ #include "gasket_interrupt.h"
+ #include "gasket_logging.h"
+ #include "gasket_page_table.h"
++#include <linux/compiler.h>
+ #include <linux/fs.h>
+ #include <linux/uaccess.h>
+ 
+@@ -23,17 +24,18 @@
+ #endif
+ 
+ static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd);
+-static int gasket_set_event_fd(struct gasket_dev *dev, ulong arg);
++static int gasket_set_event_fd(struct gasket_dev *dev, void __user *arg);
+ static int gasket_read_page_table_size(
+-	struct gasket_dev *gasket_dev, ulong arg);
++	struct gasket_dev *gasket_dev, void __user *arg);
+ static int gasket_read_simple_page_table_size(
+-	struct gasket_dev *gasket_dev, ulong arg);
++	struct gasket_dev *gasket_dev, void __user *arg);
+ static int gasket_partition_page_table(
+-	struct gasket_dev *gasket_dev, ulong arg);
+-static int gasket_map_buffers(struct gasket_dev *gasket_dev, ulong arg);
+-static int gasket_unmap_buffers(struct gasket_dev *gasket_dev, ulong arg);
++	struct gasket_dev *gasket_dev, void __user *arg);
++static int gasket_map_buffers(struct gasket_dev *gasket_dev, void __user *arg);
++static int gasket_unmap_buffers(struct gasket_dev *gasket_dev,
++				void __user *arg);
+ static int gasket_config_coherent_allocator(
+-	struct gasket_dev *gasket_dev, ulong arg);
++	struct gasket_dev *gasket_dev, void __user *arg);
+ 
+ /*
+  * standard ioctl dispatch function.
+@@ -43,9 +45,10 @@ static int gasket_config_coherent_allocator(
+  *
+  * Standard ioctl dispatcher; forwards operations to individual handlers.
+  */
+-long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
++long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *arg)
+ {
+ 	struct gasket_dev *gasket_dev;
++	ulong intarg = (ulong)arg;
+ 	int retval;
+ 
+ 	gasket_dev = (struct gasket_dev *)filp->private_data;
+@@ -74,16 +77,16 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+ 	 */
+ 	switch (cmd) {
+ 	case GASKET_IOCTL_RESET:
+-		trace_gasket_ioctl_integer_data(arg);
+-		retval = gasket_reset(gasket_dev, arg);
++		trace_gasket_ioctl_integer_data(intarg);
++		retval = gasket_reset(gasket_dev, intarg);
+ 		break;
+ 	case GASKET_IOCTL_SET_EVENTFD:
+ 		retval = gasket_set_event_fd(gasket_dev, arg);
+ 		break;
+ 	case GASKET_IOCTL_CLEAR_EVENTFD:
+-		trace_gasket_ioctl_integer_data(arg);
++		trace_gasket_ioctl_integer_data(intarg);
+ 		retval = gasket_interrupt_clear_eventfd(
+-			gasket_dev->interrupt_data, (int)arg);
++			gasket_dev->interrupt_data, (int)intarg);
+ 		break;
+ 	case GASKET_IOCTL_PARTITION_PAGE_TABLE:
+ 		trace_gasket_ioctl_integer_data(arg);
+@@ -91,7 +94,7 @@ long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg)
+ 		break;
+ 	case GASKET_IOCTL_NUMBER_PAGE_TABLES:
+ 		trace_gasket_ioctl_integer_data(gasket_dev->num_page_tables);
+-		if (copy_to_user((void __user *)arg,
++		if (copy_to_user(arg,
+ 				 &gasket_dev->num_page_tables,
+ 				 sizeof(uint64_t)))
+ 			retval = -EFAULT;
+@@ -217,11 +220,11 @@ static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
+  * @gasket_dev: Pointer to the current gasket_dev we're using.
+  * @arg: Pointer to gasket_interrupt_eventfd struct in userspace.
+  */
+-static int gasket_set_event_fd(struct gasket_dev *gasket_dev, ulong arg)
++static int gasket_set_event_fd(struct gasket_dev *gasket_dev, void __user *arg)
+ {
+ 	struct gasket_interrupt_eventfd die;
+ 
+-	if (copy_from_user(&die, (void __user *)arg,
++	if (copy_from_user(&die, arg,
+ 			   sizeof(struct gasket_interrupt_eventfd))) {
+ 		return -EFAULT;
+ 	}
+@@ -237,13 +240,13 @@ static int gasket_set_event_fd(struct gasket_dev *gasket_dev, ulong arg)
+  * @gasket_dev: Pointer to the current gasket_dev we're using.
+  * @arg: Pointer to gasket_page_table_ioctl struct in userspace.
+  */
+-static int gasket_read_page_table_size(struct gasket_dev *gasket_dev, ulong arg)
++static int gasket_read_page_table_size(struct gasket_dev *gasket_dev,
++				       void __user *arg)
+ {
+ 	int ret = 0;
+ 	struct gasket_page_table_ioctl ibuf;
+ 
+-	if (copy_from_user(&ibuf, (void __user *)arg,
+-			   sizeof(struct gasket_page_table_ioctl)))
++	if (copy_from_user(&ibuf, arg, sizeof(struct gasket_page_table_ioctl)))
+ 		return -EFAULT;
+ 
+ 	if (ibuf.page_table_index >= gasket_dev->num_page_tables)
+@@ -256,7 +259,7 @@ static int gasket_read_page_table_size(struct gasket_dev *gasket_dev, ulong arg)
+ 		ibuf.page_table_index, ibuf.size, ibuf.host_address,
+ 		ibuf.device_address);
+ 
+-	if (copy_to_user((void __user *)arg, &ibuf, sizeof(ibuf)))
++	if (copy_to_user(arg, &ibuf, sizeof(ibuf)))
+ 		return -EFAULT;
+ 
+ 	return ret;
+@@ -268,13 +271,12 @@ static int gasket_read_page_table_size(struct gasket_dev *gasket_dev, ulong arg)
+  * @arg: Pointer to gasket_page_table_ioctl struct in userspace.
+  */
+ static int gasket_read_simple_page_table_size(
+-	struct gasket_dev *gasket_dev, ulong arg)
++	struct gasket_dev *gasket_dev, void __user *arg)
+ {
+ 	int ret = 0;
+ 	struct gasket_page_table_ioctl ibuf;
+ 
+-	if (copy_from_user(&ibuf, (void __user *)arg,
+-			   sizeof(struct gasket_page_table_ioctl)))
++	if (copy_from_user(&ibuf, arg, sizeof(struct gasket_page_table_ioctl)))
+ 		return -EFAULT;
+ 
+ 	if (ibuf.page_table_index >= gasket_dev->num_page_tables)
+@@ -287,7 +289,7 @@ static int gasket_read_simple_page_table_size(
+ 		ibuf.page_table_index, ibuf.size, ibuf.host_address,
+ 		ibuf.device_address);
+ 
+-	if (copy_to_user((void __user *)arg, &ibuf, sizeof(ibuf)))
++	if (copy_to_user(arg, &ibuf, sizeof(ibuf)))
+ 		return -EFAULT;
+ 
+ 	return ret;
+@@ -298,14 +300,14 @@ static int gasket_read_simple_page_table_size(
+  * @gasket_dev: Pointer to the current gasket_dev we're using.
+  * @arg: Pointer to gasket_page_table_ioctl struct in userspace.
+  */
+-static int gasket_partition_page_table(struct gasket_dev *gasket_dev, ulong arg)
++static int gasket_partition_page_table(struct gasket_dev *gasket_dev,
++				       void __user *arg)
+ {
+ 	int ret;
+ 	struct gasket_page_table_ioctl ibuf;
+ 	uint max_page_table_size;
+ 
+-	if (copy_from_user(&ibuf, (void __user *)arg,
+-			   sizeof(struct gasket_page_table_ioctl)))
++	if (copy_from_user(&ibuf, arg, sizeof(struct gasket_page_table_ioctl)))
+ 		return -EFAULT;
+ 
+ 	trace_gasket_ioctl_page_table_data(
+@@ -339,12 +341,12 @@ static int gasket_partition_page_table(struct gasket_dev *gasket_dev, ulong arg)
+  * @gasket_dev: Pointer to the current gasket_dev we're using.
+  * @arg: Pointer to a gasket_page_table_ioctl struct in userspace.
+  */
+-static int gasket_map_buffers(struct gasket_dev *gasket_dev, ulong arg)
++static int gasket_map_buffers(struct gasket_dev *gasket_dev,
++			      void __user *arg)
+ {
+ 	struct gasket_page_table_ioctl ibuf;
+ 
+-	if (copy_from_user(&ibuf, (void __user *)arg,
+-			   sizeof(struct gasket_page_table_ioctl)))
++	if (copy_from_user(&ibuf, arg, sizeof(struct gasket_page_table_ioctl)))
+ 		return -EFAULT;
+ 
+ 	trace_gasket_ioctl_page_table_data(
+@@ -369,12 +371,12 @@ static int gasket_map_buffers(struct gasket_dev *gasket_dev, ulong arg)
+  * @gasket_dev: Pointer to the current gasket_dev we're using.
+  * @arg: Pointer to a gasket_page_table_ioctl struct in userspace.
+  */
+-static int gasket_unmap_buffers(struct gasket_dev *gasket_dev, ulong arg)
++static int gasket_unmap_buffers(struct gasket_dev *gasket_dev,
++				void __user *arg)
+ {
+ 	struct gasket_page_table_ioctl ibuf;
+ 
+-	if (copy_from_user(&ibuf, (void __user *)arg,
+-			   sizeof(struct gasket_page_table_ioctl)))
++	if (copy_from_user(&ibuf, arg, sizeof(struct gasket_page_table_ioctl)))
+ 		return -EFAULT;
+ 
+ 	trace_gasket_ioctl_page_table_data(
+@@ -402,12 +404,12 @@ static int gasket_unmap_buffers(struct gasket_dev *gasket_dev, ulong arg)
+  * @arg: Pointer to a gasket_coherent_alloc_config_ioctl struct in userspace.
+  */
+ static int gasket_config_coherent_allocator(
+-	struct gasket_dev *gasket_dev, ulong arg)
++	struct gasket_dev *gasket_dev, void __user *arg)
+ {
+ 	int ret;
+ 	struct gasket_coherent_alloc_config_ioctl ibuf;
+ 
+-	if (copy_from_user(&ibuf, (void __user *)arg,
++	if (copy_from_user(&ibuf, arg,
+ 			   sizeof(struct gasket_coherent_alloc_config_ioctl)))
+ 		return -EFAULT;
+ 
+@@ -431,7 +433,7 @@ static int gasket_config_coherent_allocator(
+ 			gasket_dev, ibuf.size, &ibuf.dma_address,
+ 			ibuf.page_table_index);
+ 	}
+-	if (copy_to_user((void __user *)arg, &ibuf, sizeof(ibuf)))
++	if (copy_to_user(arg, &ibuf, sizeof(ibuf)))
+ 		return -EFAULT;
+ 
+ 	return ret;
+diff --git a/drivers/staging/gasket/gasket_ioctl.h b/drivers/staging/gasket/gasket_ioctl.h
+index 461fab27a3e52..2c6bd3e6ba2c9 100644
+--- a/drivers/staging/gasket/gasket_ioctl.h
++++ b/drivers/staging/gasket/gasket_ioctl.h
+@@ -5,6 +5,8 @@
+ 
+ #include "gasket_core.h"
+ 
++#include <linux/compiler.h>
 +
- 	gasket_dev = dev_info->gasket_dev_ptr;
- 	driver_desc = gasket_dev->internal_desc->driver_desc;
- 	ownership = &dev_info->ownership;
+ /*
+  * Handle Gasket common ioctls.
+  * @filp: Pointer to the ioctl's file.
+@@ -13,7 +15,7 @@
+  *
+  * Returns 0 on success and nonzero on failure.
+  */
+-long gasket_handle_ioctl(struct file *filp, uint cmd, ulong arg);
++long gasket_handle_ioctl(struct file *filp, uint cmd, void __user *arg);
+ 
+ /*
+  * Determines if an ioctl is part of the standard Gasket framework.
 -- 
 2.18.0.203.gfac676dfb9-goog
 
