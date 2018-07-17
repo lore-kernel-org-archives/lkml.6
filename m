@@ -2,129 +2,112 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D49D4ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E78ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6FF2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:13:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D6FF2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2608C2064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:16:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2608C2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730421AbeGQTrp (ORCPT
+        id S1730063AbeGQTuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 15:47:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38234 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729743AbeGQTrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 15:47:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7A314AF4B;
-        Tue, 17 Jul 2018 19:13:41 +0000 (UTC)
-Subject: Re: [PATCH v2 5/7] mm: rename and change semantics of
- nr_indirectly_reclaimable_bytes
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vijayanand Jitta <vjitta@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-References: <20180618091808.4419-6-vbabka@suse.cz>
- <201806201923.mC5ZpigB%fengguang.wu@intel.com>
- <38c6a6e1-c5e0-fd7d-4baf-1f0f09be5094@suse.cz>
- <20180629211201.GA14897@castle.DHCP.thefacebook.com>
- <ef2dea13-0102-c4bc-a28f-c1b2408f0753@suse.cz>
- <20180702165223.GA17295@castle.DHCP.thefacebook.com>
- <bfdb3fb1-5d81-e17c-e456-083cca04e2cc@suse.cz>
- <20180717185451.GA18762@castle.DHCP.thefacebook.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <0e1e8870-9c98-2330-e978-f927c33eec49@suse.cz>
-Date:   Tue, 17 Jul 2018 21:11:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 17 Jul 2018 15:50:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52403 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729704AbeGQTuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 15:50:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4640120876; Tue, 17 Jul 2018 21:16:18 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0F4782072C;
+        Tue, 17 Jul 2018 21:16:08 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 21:16:08 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     nicolas.ferre@microchip.com, linux@armlinux.org.uk,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] rework ULP1 patches
+Message-ID: <20180717191608.GA3211@piout.net>
+References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <20180717185451.GA18762@castle.DHCP.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/17/2018 08:54 PM, Roman Gushchin wrote:
-> On Tue, Jul 17, 2018 at 10:44:07AM +0200, Vlastimil Babka wrote:
->> On 07/02/2018 06:52 PM, Roman Gushchin wrote:
->>> On Sat, Jun 30, 2018 at 12:09:27PM +0200, Vlastimil Babka wrote:
->>>
->>> If these per-cpu data is something like per-cpu refcounters,
->>> which are using to manage reclaimable objects (e.g. cgroup css objects).
->>> Of course, they are not always reclaimable, but in certain states.
->>
->> BTW, seems you seem interested, could you provide some more formal
->> review as well? Others too. We don't need to cover all use cases
->> immediately, when the patchset is apparently stalled due to lack of
->> review. Thanks!
+On 17/07/2018 11:26:53+0300, Claudiu Beznea wrote:
+> Hi,
 > 
-> Sure!
-
-Thanks!
-
-> The patchset looks sane at a first glance, but I need some time
-> to dig deeper. Is v2 the final version?
-
-There was a fixlet on top and some added changelog text, so I'll do a v3
-tomorrow incorporating that to make things easier for everyone.
-
-> Thanks!
+> Based on the discussion at [1] and private discussion I had with Alexandre
+> Belloni on IRC, I reworked ULP1 patches to remove device tree bindings
+> proposed in [1].
+> 
+> The implementation from this patches (mostly patch 4/4) is using
+> device_may_wakeup() API that current Linux code provides and the fact that
+> for the ULP1 the wakeup souces are known and well defined.
+> Basically, this rework (mostly patch 4/4) loops through well defined ULP1
+> wakeup sources and check if those wakeup sources were configured to wake
+> up the system (vid DT or sysfs) and, based on that (and in case of RTC,
+> based on SHDWC.MR), set the PMC fast startup mode and polarity registers.
+> In [1] PMC fast startup mode and polarity registers were configured by
+> introducing new DT bindings.
+> 
+> Since with these patches SHDWC registers are used in ULP1 wakeup sources
+> configuration the patch 4/4 changed a bit the PM initialization phase for
+> SAMA5D2 in order to have mapped also the SHDWC in case ULP1 needs to be
+> initialized. In case ULP1 configuration fails the ULP0 mode is used (same
+> approach as in backup mode case).
+> 
+> I measure the delay introduced in suspend sequence by using an oscilloscope
+> connected to a GPIO and calling gpio_direction_output(PIN, 0) at the beginning
+> of at91_pm_config_ws() and gpio_direction_output(PIN, 1) at the end of
+> at91_pm_config_ws(). With these I measureed on oscilloscope the difference
+> b/w the front changes. The measured time was *1.56ms*. Keep in mind that
+> gpio_direction_output() will call, in the end,
+> atmel_gpio_direction_output() which access 4 registers to toggle the PIN
+> (in at91_pm_config_ws() there are also 4 peripheral register accesses).
+> 
+> Besides this rework, I took the chance and I appended few other patches to
+> this series, based on Wenyou Yang's previous work, related to ULP modes.
+> 
+> Patch 1/4: replaces slow clock with ULP0
+> Patch 2/4: is the Wenyou's patch wich adds ULP1 support
+> Patch 3/4: is defining PMC fast startup registers
+> 
+> The patches were based on v4.18-rc1.
+> 
+> [1] https://patchwork.kernel.org/patch/8595091/
+> 
+> Claudiu Beznea (3):
+>   ARM: at91: pm: Use ULP0 naming instead of slow clock
+>   ARM: at91: pm: add PMC fast startup registers defines
+>   ARM: at91: pm: configure wakeup sources for ULP1 mode
+> 
+> Wenyou Yang (1):
+>   ARM: at91: pm: Add ULP1 mode support
+> 
+>  arch/arm/mach-at91/pm.c         | 184 +++++++++++++++++++++++++++++++++-------
+>  arch/arm/mach-at91/pm.h         |   6 +-
+>  arch/arm/mach-at91/pm_suspend.S | 142 ++++++++++++++++++++++++++-----
+>  include/linux/clk/at91_pmc.h    |  15 ++++
+>  4 files changed, 294 insertions(+), 53 deletions(-)
 > 
 
+Applied, thanks.
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
