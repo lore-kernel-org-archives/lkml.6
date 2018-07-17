@@ -2,37 +2,64 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB66ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D13ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4096B20673
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:37:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4096B20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 4DBE320673
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:37:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DBE320673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbeGQUL6 (ORCPT
+        id S1730600AbeGQUL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:11:58 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:45946 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729704AbeGQUL4 (ORCPT
+        Tue, 17 Jul 2018 16:11:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36116 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730252AbeGQUL6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:11:56 -0400
-Received: (qmail 3318 invoked by uid 2102); 17 Jul 2018 15:37:50 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 17 Jul 2018 15:37:50 -0400
-Date:   Tue, 17 Jul 2018 15:37:50 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Tue, 17 Jul 2018 16:11:58 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6HJZHaY033312
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 15:37:51 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k9pfw8nmj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 15:37:51 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 17 Jul 2018 15:37:50 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 17 Jul 2018 15:37:45 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6HJbjIm6750490
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Jul 2018 19:37:45 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6E17CB206A;
+        Tue, 17 Jul 2018 15:37:36 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F3A9B2066;
+        Tue, 17 Jul 2018 15:37:36 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Jul 2018 15:37:36 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 4AB2616C86E1; Tue, 17 Jul 2018 12:40:09 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 12:40:09 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        <andrea.parri@amarulasolutions.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        andrea.parri@amarulasolutions.com,
         Will Deacon <will.deacon@arm.com>,
         Akira Yokosawa <akiyks@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>,
@@ -44,70 +71,85 @@ cc:     Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
  remove it for ordinary release/acquire
-In-Reply-To: <CA+55aFwA=TmJJkKvskX3wL9Rs1j8xZJDJVghv=G0spYufK9kYg@mail.gmail.com>
-Message-ID: <Pine.LNX.4.44L0.1807171528530.1344-100000@iolanthe.rowland.org>
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
+ <20180713110851.GY2494@hirez.programming.kicks-ass.net>
+ <87tvp3xonl.fsf@concordia.ellerman.id.au>
+ <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
+ <87601fz1kc.fsf@concordia.ellerman.id.au>
+ <CA+55aFzjcKv40hT_aD4jsdERi+a1pLU2SWPTwvyT2PDnoOmSpQ@mail.gmail.com>
+ <87va9dyl8y.fsf@concordia.ellerman.id.au>
+ <CA+55aFyFLzH71Tke858x0cjCiRO48vc1W9oVmVkO43rtjezqOg@mail.gmail.com>
+ <20180717183341.GQ12945@linux.vnet.ibm.com>
+ <20180717184255.GM2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717184255.GM2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071719-0068-0000-0000-00000319919C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009381; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062227; UDB=6.00545367; IPR=6.00840084;
+ MB=3.00022174; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-17 19:37:49
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071719-0069-0000-0000-00004510EF59
+Message-Id: <20180717194009.GT12945@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=422 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807170203
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Jul 2018, Linus Torvalds wrote:
-
-> On Tue, Jul 17, 2018 at 11:31 AM Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> >
+On Tue, Jul 17, 2018 at 08:42:55PM +0200, Peter Zijlstra wrote:
+> On Tue, Jul 17, 2018 at 11:33:41AM -0700, Paul E. McKenney wrote:
+> > On Tue, Jul 17, 2018 at 09:19:15AM -0700, Linus Torvalds wrote:
+> > > 
+> > > In particular, I find:
+> > > 
+> > >   "isync is not a memory barrier instruction, but the
+> > > load-compare-conditional branch-isync sequence can provide this
+> > > ordering property"
+> > > 
+> > > so why are you doing "sync/lwsync", when it sounds like "isync/lwsync"
+> > > (for lock/unlock) is the right thing and would already give memory
+> > > barrier semantics?
+> > 
+> > The PowerPC guys will correct me if I miss something here...
+> > 
 > > The isync provides ordering roughly similar to lwsync, but nowhere near
 > > as strong as sync, and it is sync that would be needed to cause lock
-> > acquisition to provide full ordering.
+> > acquisition to provide full ordering.  The reason for using lwsync instead
+> > of isync is that the former proved to be faster on recent hardware.
+> > The reason that the kernel still has the ability to instead generate
+> > isync instructions is that some older PowerPC hardware does not provide
+> > the lwsync instruction.  If the hardware does support lwsync, the isync
+> > instructions are overwritten with lwsync at boot time.
 > 
-> That's only true when looking at isync in isolation.
-> 
-> Read the part I quoted. The AIX documentation implies that the
-> *sequence* of load-compare-conditional branch-isync is a memory
-> barrier, even if isync on its own is now.
+> Isn't ISYNC the instruction-sync pipeline flush instruction? That is
+> used as an smp_rmb() here to, together with the control dependency from the
+> LL/SC, to form a LOAD->{LOAD,STORE} (aka LOAD-ACQUIRE) ordering?
 
-I'm not a huge expert on the PowerPC architecture, but I do have a
-pretty good understanding of the widely accepted memory model published
-by the Peter Sewell's group at Cambridge (PPCMEM).  According to that
-model, load-compare-conditional branch-isync is _not_ a full memory
-barrier.
+That is the one!
 
-> So I'm just saying that
+> Where LWSYNC provides a TSO like ordering and SYNC provides a full
+> transitive barrier aka. smp_mb() (althgouh I think it is strictly
+> stronger than smp_mb() since it also implies completion, which smp_mb()
+> does not).
 > 
->  (a) isync-on-lock is supposed to be much cheaper than sync-on-lock
-> 
->  (b) the AIX documentation at least implies that isync-on-lock (when
-> used together the the whole locking sequence) is actually a memory
-> barrier
-> 
-> Now, admittedly the powerpc barrier instructions are unfathomable
-> crazy stuff, so who knows. But:
-> 
->  (a) lwsync is a memory barrier for all the "easy" cases (ie
-> load->store, load->load, and store->load).
-> 
->  (b) lwsync is *not* a memory barrier for the store->load case.
-> 
->  (c) isync *is* (when in that *sequence*) a memory barrier for a
-> store->load case (and has to be: loads inside a spinlocked region MUST
-> NOT be done earlier than stores outside of it!).
+> And since both LL/SC-CTRL + ISYNC / LWSYNC are strictly CPU local, they
+> cannot be used to create RCsc ordering.
 
-Why not?  Instructions are allowed to migrate _into_ critical sections,
-just not _out_ of them.  So a store preceding the start of a spinlocked
-region can migrate in and be executed after a load that is inside the
-region.
+Completely agreed, there needs to be a sync instruction in either the
+lock or the unlock to get RCsc ordering.  Neither lwsync nor isync
+can provide the needed ordering.
 
-Alan Stern
-
-> So a unlock/lock sequence where the unlock is using lwsync, and the
-> lock is using isync, should in fact be a full memory barrier (which is
-> the semantics we're looking for).
-> 
-> So doing performance testing on sync/lwsync (for lock/unlock
-> respectively) seems the wrong thing to do.  Please test the
-> isync/lwsync case instead.
-> 
-> Hmm? What am I missing?
+							Thanx, Paul
 
