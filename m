@@ -2,104 +2,323 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A36A8ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:45:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15299ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E974208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:45:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="N2XkIXDU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E974208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id C3A61208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:45:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A61208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730591AbeGQLRC (ORCPT
+        id S1730795AbeGQLRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:17:02 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37694 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729749AbeGQLRB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:17:01 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HAdNEF108295;
-        Tue, 17 Jul 2018 10:44:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=N9MEHzoTJVXVcbarjSAmYUJspn1Td86wyt9S4n26rMU=;
- b=N2XkIXDU/KO6KokIyDGNMOmM8a+lsqDwVkKP+b1FA6wltivJkM5C/ToVoPMovq2FoUn4
- WmY5hfqkMVYnHQRgmAk34yz9h0jvXCHsdxex5Ep8QKxluiA/uoYCZZ8YOPwxBF4fBvjd
- ids8DAKC/gkT/32a1SLWxYOUsVQdFt5aT+/Ub+avmBKnznQ/5euzy500WSeWMkvucyA8
- oS045oglpFKb/hYLrkJu7AvwolvpjFcfxWkd/w9XVNwJNWFUPRLUIifdUrRBrlVXiqWh
- d2GHHKU6uBLwjABufocK+9litjxK3A6sIw4OX3ewKQVwEyzeKs1K+vUrhwWqGATR3WuO rQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2k7a3403jb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 10:44:54 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6HAirKe014670
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 10:44:53 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6HAiqtL029482;
-        Tue, 17 Jul 2018 10:44:52 GMT
-Received: from mwanda (/197.179.115.196)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 03:44:52 -0700
-Date:   Tue, 17 Jul 2018 13:44:43 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
-        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 30/32] staging: gasket: gasket_mmap use PAGE_MASK
-Message-ID: <20180717104443.rx4viceiphjrmyut@mwanda>
-References: <20180717020926.176408-1-toddpoynor@gmail.com>
- <20180717020926.176408-31-toddpoynor@gmail.com>
+        Tue, 17 Jul 2018 07:17:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34034 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730093AbeGQLRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:17:25 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8610B20731; Tue, 17 Jul 2018 12:45:23 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 40AFE207AD;
+        Tue, 17 Jul 2018 12:45:09 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 12:45:08 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     nicolas.ferre@microchip.com, linux@armlinux.org.uk,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/4] ARM: at91: pm: configure wakeup sources for ULP1 mode
+Message-ID: <20180717104508.GC3100@piout.net>
+References: <1531816017-31986-1-git-send-email-claudiu.beznea@microchip.com>
+ <1531816017-31986-5-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717020926.176408-31-toddpoynor@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=4 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=791
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807170111
+In-Reply-To: <1531816017-31986-5-git-send-email-claudiu.beznea@microchip.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 07:09:24PM -0700, Todd Poynor wrote:
-> From: Todd Poynor <toddpoynor@google.com>
+Hi,
+
+On 17/07/2018 11:26:57+0300, Claudiu Beznea wrote:
+> Since for ULP1 PM mode of SAMA5D2 the wakeup sources are limited and
+> well known add a method to check if these wakeup sources are defined by
+> user (either via DT or filesystem). In case there are no wakeup sources
+> defined for ULP1 the PM suspend will fail, otherwise these will be
+> configured in fast startup registers of PMC. Since wakeup sources of
+> ULP1 need also to be configured in SHDWC registers the code was a bit
+> changed to map the SHDWC also in case ULP1 is requested by user (this
+> was done in the initialization phase). In case the ULP1 initialization
+> fails the ULP0 mode is used (this mode was also used in case backup mode
+> initialization failed).
 > 
-> Instead of math on PAGE_SIZE.
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> ---
+>  arch/arm/mach-at91/pm.c | 165 +++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 143 insertions(+), 22 deletions(-)
+> 
+> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+> index 099d8094018c..c8ef696b83b6 100644
+> --- a/arch/arm/mach-at91/pm.c
+> +++ b/arch/arm/mach-at91/pm.c
+> @@ -80,6 +80,87 @@ static struct at91_pm_bu {
+>  	phys_addr_t resume;
+>  } *pm_bu;
+>  
+> +struct wakeup_source_info {
+> +	unsigned int pmc_fsmr_bit;
+> +	unsigned int shdwc_mr_bit;
+> +	bool set_polarity;
+> +};
+> +
+> +static const struct wakeup_source_info ws_info[] = {
+> +	{ .pmc_fsmr_bit = AT91_PMC_FSTT(10),	.set_polarity = true },
+> +	{ .pmc_fsmr_bit = AT91_PMC_RTCAL,	.shdwc_mr_bit = BIT(17) },
+> +	{ .pmc_fsmr_bit = AT91_PMC_USBAL },
+> +	{ .pmc_fsmr_bit = AT91_PMC_SDMMC_CD },
+> +};
+> +
+> +static const struct of_device_id sama5d2_ws_ids[] = {
+> +	{ .compatible = "atmel,sama5d2-gem",		.data = &ws_info[0] },
+> +	{ .compatible = "atmel,at91rm9200-rtc",		.data = &ws_info[1] },
+> +	{ .compatible = "atmel,sama5d3-udc",		.data = &ws_info[2] },
+> +	{ .compatible = "atmel,at91rm9200-ohci",	.data = &ws_info[2] },
+> +	{ .compatible = "usb-ohci",			.data = &ws_info[2] },
+> +	{ .compatible = "atmel,at91sam9g45-ehci",	.data = &ws_info[2] },
+> +	{ .compatible = "usb-ehci",			.data = &ws_info[2] },
+> +	{ .compatible = "atmel,sama5d2-sdhci",		.data = &ws_info[3] },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static int at91_pm_config_ws(unsigned int pm_mode, bool set)
+> +{
+> +	const struct wakeup_source_info *wsi;
+> +	const struct of_device_id *match;
+> +	struct platform_device *pdev;
+> +	struct device_node *np;
+> +	unsigned int mode = 0, polarity = 0, val = 0;
+> +
+> +	if (pm_mode != AT91_PM_ULP1)
+> +		return 0;
+> +
+> +	if (!pm_data.pmc || !pm_data.shdwc)
+> +		return -EPERM;
+> +
+> +	if (!set) {
+> +		writel(mode, pm_data.pmc + AT91_PMC_FSMR);
+> +		return 0;
+> +	}
+> +
+> +	/* SHDWC.WUIR */
+> +	val = readl(pm_data.shdwc + 0x0c);
+> +	mode |= (val & 0x3ff);
+> +	polarity |= ((val >> 16) & 0x3ff);
+> +
+> +	/* SHDWC.MR */
+> +	val = readl(pm_data.shdwc + 0x04);
+> +
+> +	/* Loop through defined wakeup sources. */
+> +	for_each_matching_node_and_match(np, sama5d2_ws_ids, &match) {
+> +		pdev = of_find_device_by_node(np);
+
+of_find_device_by_node takes a reference to the embedded struct
+device...
+
+> +		if (!pdev)
+> +			continue;
+> +
+> +		if (device_may_wakeup(&pdev->dev)) {
+> +			wsi = match->data;
+> +
+> +			/* Check if enabled on SHDWC. */
+> +			if (wsi->shdwc_mr_bit && !(val & wsi->shdwc_mr_bit))
+> +				continue;
+> +
+> +			mode |= wsi->pmc_fsmr_bit;
+> +			if (wsi->set_polarity)
+> +				polarity |= wsi->pmc_fsmr_bit;
+> +		}
+
+So you need to drop it here.
+
+Can you do that and resend, just that patch? thanks.
+
+> +	}
+> +
+> +	if (mode) {
+> +		writel(mode, pm_data.pmc + AT91_PMC_FSMR);
+> +		writel(polarity, pm_data.pmc + AT91_PMC_FSPR);
+> +	} else {
+> +		pr_err("AT91: PM: no ULP1 wakeup sources found!");
+> +	}
+> +
+> +	return mode ? 0 : -EPERM;
+> +}
+> +
+>  /*
+>   * Called after processes are frozen, but before we shutdown devices.
+>   */
+> @@ -98,7 +179,7 @@ static int at91_pm_begin(suspend_state_t state)
+>  		pm_data.mode = -1;
+>  	}
+>  
+> -	return 0;
+> +	return at91_pm_config_ws(pm_data.mode, true);
+>  }
+>  
+>  /*
+> @@ -234,6 +315,7 @@ static int at91_pm_enter(suspend_state_t state)
+>   */
+>  static void at91_pm_end(void)
+>  {
+> +	at91_pm_config_ws(pm_data.mode, false);
+>  }
+>  
+>  
+> @@ -479,31 +561,28 @@ static void __init at91_pm_sram_init(void)
+>  			&at91_pm_suspend_in_sram, at91_pm_suspend_in_sram_sz);
+>  }
+>  
+> -static void __init at91_pm_backup_init(void)
+> +static bool __init at91_is_pm_mode_active(int pm_mode)
+> +{
+> +	return (pm_data.standby_mode == pm_mode ||
+> +		pm_data.suspend_mode == pm_mode);
+> +}
+> +
+> +static int __init at91_pm_backup_init(void)
+>  {
+>  	struct gen_pool *sram_pool;
+>  	struct device_node *np;
+>  	struct platform_device *pdev = NULL;
+> +	int ret = -ENODEV;
+>  
+> -	if ((pm_data.standby_mode != AT91_PM_BACKUP) &&
+> -	    (pm_data.suspend_mode != AT91_PM_BACKUP))
+> -		return;
+> +	if (!at91_is_pm_mode_active(AT91_PM_BACKUP))
+> +		return 0;
+>  
+>  	pm_bu = NULL;
+>  
+> -	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-shdwc");
+> -	if (!np) {
+> -		pr_warn("%s: failed to find shdwc!\n", __func__);
+> -		return;
+> -	}
+> -
+> -	pm_data.shdwc = of_iomap(np, 0);
+> -	of_node_put(np);
+> -
+>  	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-sfrbu");
+>  	if (!np) {
+>  		pr_warn("%s: failed to find sfrbu!\n", __func__);
+> -		goto sfrbu_fail;
+> +		return ret;
+>  	}
+>  
+>  	pm_data.sfrbu = of_iomap(np, 0);
+> @@ -530,6 +609,7 @@ static void __init at91_pm_backup_init(void)
+>  	pm_bu = (void *)gen_pool_alloc(sram_pool, sizeof(struct at91_pm_bu));
+>  	if (!pm_bu) {
+>  		pr_warn("%s: unable to alloc securam!\n", __func__);
+> +		ret = -ENOMEM;
+>  		goto securam_fail;
+>  	}
+>  
+> @@ -537,21 +617,62 @@ static void __init at91_pm_backup_init(void)
+>  	pm_bu->canary = __pa_symbol(&canary);
+>  	pm_bu->resume = __pa_symbol(cpu_resume);
+>  
+> -	return;
+> +	return 0;
+>  
+> -sfrbu_fail:
+> -	iounmap(pm_data.shdwc);
+> -	pm_data.shdwc = NULL;
+>  securam_fail:
+>  	iounmap(pm_data.sfrbu);
+>  	pm_data.sfrbu = NULL;
+> +	return ret;
+> +}
+>  
+> -	if (pm_data.standby_mode == AT91_PM_BACKUP)
+> +static void __init at91_pm_use_default_mode(int pm_mode)
+> +{
+> +	if (pm_mode != AT91_PM_ULP1 && pm_mode != AT91_PM_BACKUP)
+> +		return;
+> +
+> +	if (pm_data.standby_mode == pm_mode)
+>  		pm_data.standby_mode = AT91_PM_ULP0;
+> -	if (pm_data.suspend_mode == AT91_PM_BACKUP)
+> +	if (pm_data.suspend_mode == pm_mode)
+>  		pm_data.suspend_mode = AT91_PM_ULP0;
+>  }
+>  
+> +static void __init at91_pm_modes_init(void)
+> +{
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	if (!at91_is_pm_mode_active(AT91_PM_BACKUP) &&
+> +	    !at91_is_pm_mode_active(AT91_PM_ULP1))
+> +		return;
+> +
+> +	np = of_find_compatible_node(NULL, NULL, "atmel,sama5d2-shdwc");
+> +	if (!np) {
+> +		pr_warn("%s: failed to find shdwc!\n", __func__);
+> +		goto ulp1_default;
+> +	}
+> +
+> +	pm_data.shdwc = of_iomap(np, 0);
+> +	of_node_put(np);
+> +
+> +	ret = at91_pm_backup_init();
+> +	if (ret) {
+> +		if (!at91_is_pm_mode_active(AT91_PM_ULP1))
+> +			goto unmap;
+> +		else
+> +			goto backup_default;
+> +	}
+> +
+> +	return;
+> +
+> +unmap:
+> +	iounmap(pm_data.shdwc);
+> +	pm_data.shdwc = NULL;
+> +ulp1_default:
+> +	at91_pm_use_default_mode(AT91_PM_ULP1);
+> +backup_default:
+> +	at91_pm_use_default_mode(AT91_PM_BACKUP);
+> +}
+> +
+>  struct pmc_info {
+>  	unsigned long uhp_udp_mask;
+>  };
+> @@ -645,7 +766,7 @@ void __init sama5d2_pm_init(void)
+>  	if (!IS_ENABLED(CONFIG_SOC_SAMA5D2))
+>  		return;
+>  
+> -	at91_pm_backup_init();
+> +	at91_pm_modes_init();
+>  	sama5_pm_init();
+>  }
+>  
+> -- 
+> 2.7.4
 > 
 
-The commit message is sort of distinct from the first line.  The first
-line is like a title, not the start of a sentence.  On like marc.info
-when you're looking at patches, the Subject and the commit message are
-sort of far apart so it looks weird.  It looks weird on my email as
-well.
-
-Sorry, we're really hitting you with a bunch of nit-picky stuff.  If you
-were a one off contributer I'd just let a lot of this stuff slide but
-since you're going to be a maintainer for a while then it's good to
-learn all these micro rules at the begining.
-
-regards,
-dan carpenter
-
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
