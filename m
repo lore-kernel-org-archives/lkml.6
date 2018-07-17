@@ -2,232 +2,127 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE63ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B06ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66C120647
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSouMoJ0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66C120647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A9A5D2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A5D2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731234AbeGQXuD (ORCPT
+        id S1731325AbeGQXuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 19:50:03 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39456 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730092AbeGQXuD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 19:50:03 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l15-v6so2412589lji.6;
-        Tue, 17 Jul 2018 16:15:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qxJYpWidCfKa9iYVekeWO6dAh9gWrR/YyGHbbCX1psE=;
-        b=QSouMoJ0fwCnnqNWTVH8yd3iJe6MGFsb5IdKbOnw/5eUTbh9p4qWM8nCLanrrGmqld
-         s7tvqhpPNch90Z9V7SZJUU4LcF5UqLdNn6Ea+CpxKSzY9BWBZgwHWGZljeutg+6+O1sB
-         3qy2Q7ac0VHg51HnCQjeQd0KAfD9wEteynDec/4CqXR/uK8SYbpdPoyYWc5eDwc5L8Ij
-         vvMnV10YYgGmVrh1UolmAo8E6y0G1O0Pg6AwhoHSMjqxSaPxOAG5QixEDbnAEQAqEP9H
-         Fqy2mL7qLtkVfxtl0ZI05r2zypqlSjV5+WRTuHBBTDJOIN5G/DusGibSLll6h7PpoYrZ
-         9mMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=qxJYpWidCfKa9iYVekeWO6dAh9gWrR/YyGHbbCX1psE=;
-        b=YBVG4PEvSjftRjYlj0vHv1DFeumVnJdH97hzoee6GItiaSvX/uGZOgbl0/QjpcV1Vo
-         OHYstJSKElxqgAq+ckfYIzy6kQiiiBDfWE2rsrvbDx19rJVBOkGo5fh/ySV2Ayl7sclg
-         fBJXHNJ2iJMAR8SCyWmpmP6aNhsMdVViOaHFsYzkcEPLTcGWNZDUogkg934h4q4+ZsBQ
-         FAb0/4XGcxgtWbtkVDKMg9vw1X+sJEjma+AjwsgaLx3HORPEMDfLMFkQ4RUaFxj6MYQq
-         +9DlUDV448RnUpVn0sPhj5xsBJV9ia72I0+VEglcbTRwhCTqkYXfBwp9qdZGOkbF4IHy
-         36Tg==
-X-Gm-Message-State: AOUpUlGz9RNafSEdL4F3QQm90C+Q1G3bUJ9MwsCfjC5sn6b2hdmzKVZz
-        FVFWNGagml1jhnTLHbds9hk=
-X-Google-Smtp-Source: AAOMgpfpRbQVTAxkk+8MxMp5mbBaWh7aJhRee/Ubtb0OfGpX9uZazXx/ALbAkpId+Yvq1ObEPq0lGw==
-X-Received: by 2002:a2e:998e:: with SMTP id w14-v6mr1434604lji.7.1531869306199;
-        Tue, 17 Jul 2018 16:15:06 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id n24-v6sm350827ljc.7.2018.07.17.16.15.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 16:15:05 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
+        Tue, 17 Jul 2018 19:50:06 -0400
+Received: from mga02.intel.com ([134.134.136.20]:40998 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730092AbeGQXuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 19:50:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 16:15:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,367,1526367600"; 
+   d="scan'208";a="57675216"
+Received: from unknown (HELO [10.7.201.150]) ([10.7.201.150])
+  by orsmga008.jf.intel.com with ESMTP; 17 Jul 2018 16:15:10 -0700
+Subject: Re: [RFC PATCH v2 16/27] mm: Modify can_follow_write_pte/pmd for
+ shadow stack
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v2 1/3 v2] video: fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
-Date:   Wed, 18 Jul 2018 01:14:46 +0200
-Message-Id: <20180717231448.14958-2-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180717231448.14958-1-jmkrzyszt@gmail.com>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
- <20180717231448.14958-1-jmkrzyszt@gmail.com>
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-17-yu-cheng.yu@intel.com>
+ <de510df6-7ea9-edc6-9c49-2f80f16472b4@linux.intel.com>
+ <1531328731.15351.3.camel@intel.com>
+ <45a85b01-e005-8cb6-af96-b23ce9b5fca7@linux.intel.com>
+ <1531868610.3541.21.camel@intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <fa9db8c5-41c8-05e9-ad8d-dc6aaf11cb04@linux.intel.com>
+Date:   Tue, 17 Jul 2018 16:15:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <1531868610.3541.21.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now as Amstrad Delta board - the only user of this driver - provides
-GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
-use the table to locate required GPIO pins.
+On 07/17/2018 04:03 PM, Yu-cheng Yu wrote:
+> We need to find a way to differentiate "someone can write to this PTE"
+> from "the write bit is set in this PTE".
 
-Declare static variables for storing GPIO descriptors and replace
-gpio_ function calls with their gpiod_ equivalents. Move GPIO lookup
-to the driver probe function so device initialization can be deferred
-instead of aborted if a GPIO pin is not yet available.
+Please think about this:
 
-Pin naming used by the driver should be followed while respective GPIO
-lookup table is initialized by a board init code.
-
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-Changelog:
-v2: Remove problematic error code conversion no longer needed if used
-    on top of commit d08605a64e67 ("ARM: OMAP1: ams-delta: move late
-    devices back to init_machine") already in linux-omap and commit
-    8853daf3b4ac ("gpiolib: Defer on non-DT find_chip_by_name()
-    failure") already in linux-next
-
-Dependency on commit 8853daf3b4ac ("gpiolib: Defer on non-DT
-find_chip_by_name() failure") is not critical for clean build or run, it
-only prevents from unexpected future changes to driver initialization
-order durin device_initall.
-
- drivers/video/fbdev/omap/lcd_ams_delta.c | 55 +++++++++++++-------------------
- 1 file changed, 22 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
-index e8c748a0dfe2..cddbd00cbf9f 100644
---- a/drivers/video/fbdev/omap/lcd_ams_delta.c
-+++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
-@@ -24,11 +24,10 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/lcd.h>
--#include <linux/gpio.h>
- 
- #include <mach/hardware.h>
--#include <mach/board-ams-delta.h>
- 
- #include "omapfb.h"
- 
-@@ -41,6 +40,8 @@
- /* LCD class device section */
- 
- static int ams_delta_lcd;
-+static struct gpio_desc *gpiod_vblen;
-+static struct gpio_desc *gpiod_ndisp;
- 
- static int ams_delta_lcd_set_power(struct lcd_device *dev, int power)
- {
-@@ -99,41 +100,17 @@ static struct lcd_ops ams_delta_lcd_ops = {
- 
- /* omapfb panel section */
- 
--static const struct gpio _gpios[] = {
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_LCD_VBLEN,
--		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "lcd_vblen",
--	},
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_LCD_NDISP,
--		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "lcd_ndisp",
--	},
--};
--
--static int ams_delta_panel_init(struct lcd_panel *panel,
--		struct omapfb_device *fbdev)
--{
--	return gpio_request_array(_gpios, ARRAY_SIZE(_gpios));
--}
--
--static void ams_delta_panel_cleanup(struct lcd_panel *panel)
--{
--	gpio_free_array(_gpios, ARRAY_SIZE(_gpios));
--}
--
- static int ams_delta_panel_enable(struct lcd_panel *panel)
- {
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 1);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 1);
-+	gpiod_set_value(gpiod_ndisp, 1);
-+	gpiod_set_value(gpiod_vblen, 1);
- 	return 0;
- }
- 
- static void ams_delta_panel_disable(struct lcd_panel *panel)
- {
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 0);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 0);
-+	gpiod_set_value(gpiod_vblen, 0);
-+	gpiod_set_value(gpiod_ndisp, 0);
- }
- 
- static struct lcd_panel ams_delta_panel = {
-@@ -154,8 +131,6 @@ static struct lcd_panel ams_delta_panel = {
- 	.pcd		= 0,
- 	.acb		= 37,
- 
--	.init		= ams_delta_panel_init,
--	.cleanup	= ams_delta_panel_cleanup,
- 	.enable		= ams_delta_panel_enable,
- 	.disable	= ams_delta_panel_disable,
- };
-@@ -166,9 +141,23 @@ static struct lcd_panel ams_delta_panel = {
- static int ams_delta_panel_probe(struct platform_device *pdev)
- {
- 	struct lcd_device *lcd_device = NULL;
--#ifdef CONFIG_LCD_CLASS_DEVICE
- 	int ret;
- 
-+	gpiod_vblen = devm_gpiod_get(&pdev->dev, "vblen", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_vblen)) {
-+		ret = PTR_ERR(gpiod_vblen);
-+		dev_err(&pdev->dev, "VBLEN GPIO request failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	gpiod_ndisp = devm_gpiod_get(&pdev->dev, "ndisp", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_ndisp)) {
-+		ret = PTR_ERR(gpiod_ndisp);
-+		dev_err(&pdev->dev, "NDISP GPIO request failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+#ifdef CONFIG_LCD_CLASS_DEVICE
- 	lcd_device = lcd_device_register("omapfb", &pdev->dev, NULL,
- 						&ams_delta_lcd_ops);
- 
--- 
-2.16.4
-
+	Should pte_write() tell us whether PTE.W=1, or should it tell us
+	that *something* can write to the PTE, which would include
+	PTE.W=0/D=1?
