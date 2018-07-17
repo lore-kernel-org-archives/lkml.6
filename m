@@ -2,138 +2,56 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0DBECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:51:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD17ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:51:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273E32086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:51:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 273E32086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com
+	by mail.kernel.org (Postfix) with ESMTP id 62EC32086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:51:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62EC32086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729063AbeGQIWn (ORCPT
+        id S1729642AbeGQIW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:22:43 -0400
-Received: from 9.mo179.mail-out.ovh.net ([46.105.76.148]:50238 "EHLO
-        9.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727961AbeGQIWn (ORCPT
+        Tue, 17 Jul 2018 04:22:56 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54104 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbeGQIW4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:22:43 -0400
-Received: from player691.ha.ovh.net (unknown [10.109.143.220])
-        by mo179.mail-out.ovh.net (Postfix) with ESMTP id B3E95D4E60
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 09:11:57 +0200 (CEST)
-Received: from localhost.localdomain (22.220.201.77.rev.sfr.net [77.201.220.22])
-        (Authenticated sender: sebastien.szymanski@armadeus.com)
-        by player691.ha.ovh.net (Postfix) with ESMTPSA id D896F26008E;
-        Tue, 17 Jul 2018 09:11:39 +0200 (CEST)
-From:   =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Subject: [PATCH 1/2] drm/panel: Add support for Armadeus ST0700 Adapt
-Date:   Tue, 17 Jul 2018 09:23:17 +0200
-Message-Id: <20180717072318.18730-1-sebastien.szymanski@armadeus.com>
-X-Mailer: git-send-email 2.16.4
+        Tue, 17 Jul 2018 04:22:56 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1ffKll-0002DB-Us; Tue, 17 Jul 2018 09:51:38 +0200
+Date:   Tue, 17 Jul 2018 09:51:37 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     RAGHU Halharvi <raghuhack78@gmail.com>
+cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] genirq:Dereference desc after null pointer check
+In-Reply-To: <20180716230309.23937-1-raghuhack78@gmail.com>
+Message-ID: <alpine.DEB.2.21.1807170950390.1740@nanos.tec.linutronix.de>
+References: <20180716222725.14896-1-raghuhack78@gmail.com> <20180716230309.23937-1-raghuhack78@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 10861837878486389893
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtiedrheekgdduudefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the Armadeus ST0700 Adapt. It comes with a
-Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT and an adapter board so
-that it can be connected on the TFT header of Armadeus Dev boards.
+On Tue, 17 Jul 2018, RAGHU Halharvi wrote:
 
-Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
----
- .../display/panel/armadeus,st0700-adapt.txt        |  9 +++++++
- drivers/gpu/drm/panel/panel-simple.c               | 29 ++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
+> * Remove unchecked dereferencing of *desc & assigning it local irq
+> 	variable
+> * Move the assignement after proper check of *desc for NULL pointer.
 
-diff --git a/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
-new file mode 100644
-index 000000000000..a30d63db3c8f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
-@@ -0,0 +1,9 @@
-+Armadeus ST0700 Adapt. A Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT with
-+an adapter board.
-+
-+Required properties:
-+- compatible: "armadeus,st0700-adapt"
-+- power-supply: see panel-common.txt
-+
-+Optional properties:
-+- backlight: see panel-common.txt
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index cbf1ab404ee7..80d3b0106fce 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -437,6 +437,32 @@ static const struct panel_desc ampire_am800480r3tmqwa1h = {
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
- };
- 
-+static const struct display_timing santek_st0700i5y_rbslw_f_timing = {
-+	.pixelclock = { 26400000, 33300000, 46800000 },
-+	.hactive = { 800, 800, 800 },
-+	.hfront_porch = { 16, 210, 354 },
-+	.hback_porch = { 45, 36, 6 },
-+	.hsync_len = { 1, 10, 40 },
-+	.vactive = { 480, 480, 480 },
-+	.vfront_porch = { 7, 22, 147 },
-+	.vback_porch = { 22, 13, 3 },
-+	.vsync_len = { 1, 10, 20 },
-+	.flags = DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW |
-+		DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_PIXDATA_POSEDGE
-+};
-+
-+static const struct panel_desc armadeus_st0700_adapt = {
-+	.timings = &santek_st0700i5y_rbslw_f_timing,
-+	.num_timings = 1,
-+	.bpc = 6,
-+	.size = {
-+		.width = 154,
-+		.height = 86,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
-+	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_POSEDGE,
-+};
-+
- static const struct drm_display_mode auo_b101aw03_mode = {
- 	.clock = 51450,
- 	.hdisplay = 1024,
-@@ -2076,6 +2102,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "ampire,am800480r3tmqwa1h",
- 		.data = &ampire_am800480r3tmqwa1h,
-+	}, {
-+		.compatible = "armadeus,st0700-adapt",
-+		.data = &armadeus_st0700_adapt,
- 	}, {
- 		.compatible = "auo,b101aw03",
- 		.data = &auo_b101aw03,
--- 
-2.16.4
+Sorry no. The NULL pointer check is pointless because the call sites
+already do it before calling that function.
 
+Thanks,
+
+	tglx
