@@ -6,55 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7907CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A007ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C83B20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C83B20852
+	by mail.kernel.org (Postfix) with ESMTP id 89B9420852
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89B9420852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729689AbeGQKCu (ORCPT
+        id S1730092AbeGQKCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:02:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44559 "EHLO
+        Tue, 17 Jul 2018 06:02:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41263 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728720AbeGQKCt (ORCPT
+        with ESMTP id S1728720AbeGQKCw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:02:49 -0400
+        Tue, 17 Jul 2018 06:02:52 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9UHp61462729
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9UmuY1462770
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:30:17 -0700
+        Tue, 17 Jul 2018 02:30:48 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9UGjA1462726;
-        Tue, 17 Jul 2018 02:30:16 -0700
-Date:   Tue, 17 Jul 2018 02:30:16 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9Umbl1462767;
+        Tue, 17 Jul 2018 02:30:48 -0700
+Date:   Tue, 17 Jul 2018 02:30:48 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
-Message-ID: <tip-70b83069f70d185356beba3202b9d167ee39f051@git.kernel.org>
-Cc:     tglx@linutronix.de, stern@rowland.harvard.edu,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        akiyks@gmail.com, andrea.parri@amarulasolutions.com,
-        luc.maranget@inria.fr, boqun.feng@gmail.com, npiggin@gmail.com,
-        hpa@zytor.com, paulmck@linux.vnet.ibm.com, dhowells@redhat.com,
-        dlustig@nvidia.com, j.alglave@ucl.ac.uk, mingo@kernel.org,
-        will.deacon@arm.com, torvalds@linux-foundation.org,
-        peterz@infradead.org
-Reply-To: andrea.parri@amarulasolutions.com, stern@rowland.harvard.edu,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          akiyks@gmail.com, davem@davemloft.net, boqun.feng@gmail.com,
-          luc.maranget@inria.fr, npiggin@gmail.com, dhowells@redhat.com,
-          dlustig@nvidia.com, paulmck@linux.vnet.ibm.com, hpa@zytor.com,
-          torvalds@linux-foundation.org, peterz@infradead.org,
-          j.alglave@ucl.ac.uk, mingo@kernel.org, will.deacon@arm.com
-In-Reply-To: <20180716180605.16115-9-paulmck@linux.vnet.ibm.com>
-References: <20180716180605.16115-9-paulmck@linux.vnet.ibm.com>
+From:   tip-bot for Andrea Parri <tipbot@zytor.com>
+Message-ID: <tip-76e079fefc8f62bd9b2cd2950814d1ee806e31a5@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        paulmck@linux.vnet.ibm.com, torvalds@linux-foundation.org,
+        andrea.parri@amarulasolutions.com, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de
+Reply-To: torvalds@linux-foundation.org, andrea.parri@amarulasolutions.com,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          paulmck@linux.vnet.ibm.com, mingo@kernel.org, tglx@linutronix.de,
+          hpa@zytor.com
+In-Reply-To: <20180716180605.16115-10-paulmck@linux.vnet.ibm.com>
+References: <20180716180605.16115-10-paulmck@linux.vnet.ibm.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Add informal LKMM
- documentation to MAINTAINERS
-Git-Commit-ID: 70b83069f70d185356beba3202b9d167ee39f051
+Subject: [tip:locking/core] sched/core: Use smp_mb() in
+ wake_woken_function()
+Git-Commit-ID: 76e079fefc8f62bd9b2cd2950814d1ee806e31a5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -68,60 +61,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  70b83069f70d185356beba3202b9d167ee39f051
-Gitweb:     https://git.kernel.org/tip/70b83069f70d185356beba3202b9d167ee39f051
-Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-AuthorDate: Mon, 16 Jul 2018 11:06:00 -0700
+Commit-ID:  76e079fefc8f62bd9b2cd2950814d1ee806e31a5
+Gitweb:     https://git.kernel.org/tip/76e079fefc8f62bd9b2cd2950814d1ee806e31a5
+Author:     Andrea Parri <andrea.parri@amarulasolutions.com>
+AuthorDate: Mon, 16 Jul 2018 11:06:01 -0700
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 17 Jul 2018 09:30:32 +0200
+CommitDate: Tue, 17 Jul 2018 09:30:33 +0200
 
-tools/memory-model: Add informal LKMM documentation to MAINTAINERS
+sched/core: Use smp_mb() in wake_woken_function()
 
-The Linux-kernel memory model has been informal, with a number of
-text files documenting it.  It would be good to make sure that these
-informal descriptions are kept up to date and/or pruned appropriately.
-This commit therefore brings more of those text files into the LKMM
-MAINTAINERS file entry.
+wake_woken_function() synchronizes with wait_woken() as follows:
 
+  [wait_woken]                       [wake_woken_function]
+
+  entry->flags &= ~wq_flag_woken;    condition = true;
+  smp_mb();                          smp_wmb();
+  if (condition)                     wq_entry->flags |= wq_flag_woken;
+     break;
+
+This commit replaces the above smp_wmb() with an smp_mb() in order to
+guarantee that either wait_woken() sees the wait condition being true
+or the store to wq_entry->flags in woken_wake_function() follows the
+store in wait_woken() in the coherence order (so that the former can
+eventually be observed by wait_woken()).
+
+The commit also fixes a comment associated to set_current_state() in
+wait_woken(): the comment pairs the barrier in set_current_state() to
+the above smp_wmb(), while the actual pairing involves the barrier in
+set_current_state() and the barrier executed by the try_to_wake_up()
+in wake_woken_function().
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Akira Yokosawa <akiyks@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Daniel Lustig <dlustig@nvidia.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: Nicholas Piggin <npiggin@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
+Cc: akiyks@gmail.com
+Cc: boqun.feng@gmail.com
+Cc: dhowells@redhat.com
+Cc: j.alglave@ucl.ac.uk
 Cc: linux-arch@vger.kernel.org
+Cc: luc.maranget@inria.fr
+Cc: npiggin@gmail.com
 Cc: parri.andrea@gmail.com
-Link: http://lkml.kernel.org/r/20180716180605.16115-9-paulmck@linux.vnet.ibm.com
+Cc: stern@rowland.harvard.edu
+Cc: will.deacon@arm.com
+Link: http://lkml.kernel.org/r/20180716180605.16115-10-paulmck@linux.vnet.ibm.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/sched/wait.c | 47 +++++++++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 26 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index eb427596f3e0..900889a47627 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8318,9 +8318,14 @@ M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
- R:	Akira Yokosawa <akiyks@gmail.com>
- R:	Daniel Lustig <dlustig@nvidia.com>
- L:	linux-kernel@vger.kernel.org
-+L:	linux-arch@vger.kernel.org
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
- F:	tools/memory-model/
-+F:	Documentation/atomic_bitops.txt
-+F:	Documentation/atomic_t.txt
-+F:	Documentation/core-api/atomic_ops.rst
-+F:	Documentation/core-api/refcount-vs-atomic.rst
- F:	Documentation/memory-barriers.txt
+diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
+index 928be527477e..a7a2aaa3026a 100644
+--- a/kernel/sched/wait.c
++++ b/kernel/sched/wait.c
+@@ -392,35 +392,36 @@ static inline bool is_kthread_should_stop(void)
+  *     if (condition)
+  *         break;
+  *
+- *     p->state = mode;				condition = true;
+- *     smp_mb(); // A				smp_wmb(); // C
+- *     if (!wq_entry->flags & WQ_FLAG_WOKEN)	wq_entry->flags |= WQ_FLAG_WOKEN;
+- *         schedule()				try_to_wake_up();
+- *     p->state = TASK_RUNNING;		    ~~~~~~~~~~~~~~~~~~
+- *     wq_entry->flags &= ~WQ_FLAG_WOKEN;		condition = true;
+- *     smp_mb() // B				smp_wmb(); // C
+- *						wq_entry->flags |= WQ_FLAG_WOKEN;
+- * }
+- * remove_wait_queue(&wq_head, &wait);
++ *     // in wait_woken()			// in woken_wake_function()
+  *
++ *     p->state = mode;				wq_entry->flags |= WQ_FLAG_WOKEN;
++ *     smp_mb(); // A				try_to_wake_up():
++ *     if (!(wq_entry->flags & WQ_FLAG_WOKEN))	   <full barrier>
++ *         schedule()				   if (p->state & mode)
++ *     p->state = TASK_RUNNING;			      p->state = TASK_RUNNING;
++ *     wq_entry->flags &= ~WQ_FLAG_WOKEN;	~~~~~~~~~~~~~~~~~~
++ *     smp_mb(); // B				condition = true;
++ * }						smp_mb(); // C
++ * remove_wait_queue(&wq_head, &wait);		wq_entry->flags |= WQ_FLAG_WOKEN;
+  */
+ long wait_woken(struct wait_queue_entry *wq_entry, unsigned mode, long timeout)
+ {
+-	set_current_state(mode); /* A */
+ 	/*
+-	 * The above implies an smp_mb(), which matches with the smp_wmb() from
+-	 * woken_wake_function() such that if we observe WQ_FLAG_WOKEN we must
+-	 * also observe all state before the wakeup.
++	 * The below executes an smp_mb(), which matches with the full barrier
++	 * executed by the try_to_wake_up() in woken_wake_function() such that
++	 * either we see the store to wq_entry->flags in woken_wake_function()
++	 * or woken_wake_function() sees our store to current->state.
+ 	 */
++	set_current_state(mode); /* A */
+ 	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !is_kthread_should_stop())
+ 		timeout = schedule_timeout(timeout);
+ 	__set_current_state(TASK_RUNNING);
  
- LINUX SECURITY MODULE (LSM) FRAMEWORK
+ 	/*
+-	 * The below implies an smp_mb(), it too pairs with the smp_wmb() from
+-	 * woken_wake_function() such that we must either observe the wait
+-	 * condition being true _OR_ WQ_FLAG_WOKEN such that we will not miss
+-	 * an event.
++	 * The below executes an smp_mb(), which matches with the smp_mb() (C)
++	 * in woken_wake_function() such that either we see the wait condition
++	 * being true or the store to wq_entry->flags in woken_wake_function()
++	 * follows ours in the coherence order.
+ 	 */
+ 	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); /* B */
+ 
+@@ -430,14 +431,8 @@ EXPORT_SYMBOL(wait_woken);
+ 
+ int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, int sync, void *key)
+ {
+-	/*
+-	 * Although this function is called under waitqueue lock, LOCK
+-	 * doesn't imply write barrier and the users expects write
+-	 * barrier semantics on wakeup functions.  The following
+-	 * smp_wmb() is equivalent to smp_wmb() in try_to_wake_up()
+-	 * and is paired with smp_store_mb() in wait_woken().
+-	 */
+-	smp_wmb(); /* C */
++	/* Pairs with the smp_store_mb() in wait_woken(). */
++	smp_mb(); /* C */
+ 	wq_entry->flags |= WQ_FLAG_WOKEN;
+ 
+ 	return default_wake_function(wq_entry, mode, sync, key);
