@@ -2,107 +2,116 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAAAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9818FECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD43520836
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:05:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJ+eLjYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD43520836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A5B52077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:06:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5B52077B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730567AbeGQUjd (ORCPT
+        id S1730600AbeGQUkW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:39:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55256 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 16:40:22 -0400
+Received: from mga09.intel.com ([134.134.136.24]:3191 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729805AbeGQUjd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:39:33 -0400
-Received: from mail-wm0-f52.google.com (mail-wm0-f52.google.com [74.125.82.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AEAB20843
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 20:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531857920;
-        bh=fVjIUGEUgjVJzm4NA7k71aWq6598wWa/GZPckMr4Wzs=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=jJ+eLjYjtlmg8V5jz+Zj7xY2aq4m5zjhQCFKpk36riaD+KteYlWXUSKbM6O4qDZnP
-         7gk2GSRYrB4PVzsydWWv3DfHutJsBYWhebddPB36+xoqPOGo7CY1XdAXTL1KaOFaZN
-         pZo1kbK5yOuDn8XzyZwop2/IdQvrkQ1DNGCH5mfg=
-Received: by mail-wm0-f52.google.com with SMTP id h20-v6so557828wmb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:05:20 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFCW2VbVcsVo7CFve1XBTk4ioNhbkNy4hzIA6K22Ykj6UwnQVaN
-        wD9yhnhMUj3snxW600uBiuzIUevoZNa5a3w7IOHYIA==
-X-Google-Smtp-Source: AAOMgpeApGRDS79uHWgtTpe/InXIh/c16usC+0nvFa7gAnYJglbeOgRgOs5hvYuRJu3NLNIDf1sAV3ensQkOrDSkLbs=
-X-Received: by 2002:a1c:ef0f:: with SMTP id n15-v6mr2110520wmh.116.1531857918633;
- Tue, 17 Jul 2018 13:05:18 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:04:57
- -0700 (PDT)
-In-Reply-To: <20180717070544.xok34ro76f7m32ha@suse.de>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <1531308586-29340-4-git-send-email-joro@8bytes.org> <823BAA9B-FACA-4E91-BE56-315FF569297C@amacapital.net>
- <20180713094849.5bsfpwhxzo5r5exk@8bytes.org> <CALCETrUP1QUKPLPJg6_L5=Mzmq33cSvq+NMaYW01wTCepdjCyg@mail.gmail.com>
- <CALCETrUBR-TGPY7wF4UwRb7jW39H+rJ4XFen35dgJRysk9sYTQ@mail.gmail.com> <20180717070544.xok34ro76f7m32ha@suse.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 17 Jul 2018 13:04:57 -0700
-X-Gmail-Original-Message-ID: <CALCETrVza8cpwKPzH1hXUSuassq117MZN7pJaBD89CA=FvuTsw@mail.gmail.com>
-Message-ID: <CALCETrVza8cpwKPzH1hXUSuassq117MZN7pJaBD89CA=FvuTsw@mail.gmail.com>
-Subject: Re: [PATCH 03/39] x86/entry/32: Load task stack from x86_tss.sp1 in
- SYSENTER handler
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729760AbeGQUkW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 16:40:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 13:06:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
+   d="scan'208";a="57249539"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by orsmga007.jf.intel.com with ESMTP; 17 Jul 2018 13:06:03 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     jikos@kernel.org
+Cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] HID: intel-ish-hid: Prevent loading of driver on Mehlow
+Date:   Tue, 17 Jul 2018 13:05:57 -0700
+Message-Id: <20180717200557.39925-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 12:05 AM, Joerg Roedel <jroedel@suse.de> wrote:
-> On Fri, Jul 13, 2018 at 04:17:40PM -0700, Andy Lutomirski wrote:
->> I re-read it again.  How about keeping TSS_entry_stack but making it
->> be the offset from the TSS to the entry stack.  Then do the arithmetic
->> in asm.
->
-> Hmm, I think its better to keep the arithmetic in the C file for better
-> readability. How about renaming it to TSS_entry2task_stack?
+On Mehlow Xeon-E workstation, ISH PCI device is enabled but without ISH
+firmware. Here the ISH device PCI device id was reused for some non Linux
+storage drivers. So this was not done for enabling ISH. But this has a
+undesirable side effect for Linux.
 
-That's okay with me.
+Here the ISH driver will be loaded via PCI enumeration and will try to do
+reset sequence. But reset sequence will wait till timeout as there is no
+real ISH firmware is present to take action. This delay will add to boot
+time of Linux (This platform will still continue to boot after this
+timeout).
 
->
->
-> Regards,
->
->         Joerg
+To avoid this boot delay we need to prevent loading of ISH drivers on
+this platform. So we need to have hack to avoid treating this device as
+ISH on this platform. To identify this workstation, we need some runtime
+method. Luckily there are special PCI id on this workstation to
+distinguish from the client version of this platform. On client version,
+the ISH is supported using same PCI device id. So this change look for
+the presence of PCI device IDs A309 and A30A and exit.
+
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+This is not a change for 4.18-rc.
+
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
+index a2c53ea3b5ed..d6e7156c36d9 100644
+--- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
++++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
+@@ -95,6 +95,26 @@ static int ish_init(struct ishtp_device *dev)
+ 	return 0;
+ }
+ 
++
++static bool ish_invalid_firmware(void)
++{
++	struct pci_dev *pdev;
++
++	pdev = pci_get_device(PCI_VENDOR_ID_INTEL, 0xA309, NULL);
++	if (pdev) {
++		pci_dev_put(pdev);
++		return true;
++	}
++
++	pdev = pci_get_device(PCI_VENDOR_ID_INTEL, 0xA30A, NULL);
++	if (pdev) {
++		pci_dev_put(pdev);
++		return true;
++	}
++
++	return false;
++}
++
+ /**
+  * ish_probe() - PCI driver probe callback
+  * @pdev:	pci device
+@@ -110,6 +130,9 @@ static int ish_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	struct ish_hw *hw;
+ 	int	ret;
+ 
++	if (ish_invalid_firmware())
++		return -ENODEV;
++
+ 	/* enable pci dev */
+ 	ret = pci_enable_device(pdev);
+ 	if (ret) {
+-- 
+2.17.1
+
