@@ -2,110 +2,104 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A62ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEACECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1404420877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:33:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1404420877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 014DB20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:34:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HQtn2aGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014DB20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbeGQQGc (ORCPT
+        id S1730093AbeGQQH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:06:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45223 "EHLO mail.bootlin.com"
+        Tue, 17 Jul 2018 12:07:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729663AbeGQQGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:06:32 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6307220717; Tue, 17 Jul 2018 17:33:19 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 322C820717;
-        Tue, 17 Jul 2018 17:33:09 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 17:33:09 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Subject: Re: [PATCH v2] drm/sun4i: sun8i: Avoid clearing blending order at
- each atomic commit
-Message-ID: <20180717153309.bhxw6gdeyz7lwq7s@flea>
-References: <20180717122522.11327-1-paul.kocialkowski@bootlin.com>
+        id S1729663AbeGQQH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:07:28 -0400
+Received: from localhost (unknown [122.178.206.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A7EF20839;
+        Tue, 17 Jul 2018 15:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531841656;
+        bh=Odx7C7LLxB0hPvxPLqDMm97N8dkhL4WBzNNd1R8eATI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HQtn2aGjhZTWI145IFcdEmJftV4Ep5/pwmDl0lKvQsZUre3KiCf/dybS5ifHOBtoi
+         9aMlR8+svYmFIr7xm3POS3ODBmOOhnF74hWn9YNs3gCAhek1lkxtRZ0WFibq72QSZj
+         zG4Y9AuWWJegWriPTK4fQV35bhX/fYKCtNvPNAzc=
+Date:   Tue, 17 Jul 2018 21:04:07 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH 05/14] dmaengine: dma-jz4780: Add support for the JZ4740
+ SoC
+Message-ID: <20180717153407.GF3219@vkoul-mobl>
+References: <20180703123214.23090-1-paul@crapouillou.net>
+ <20180703123214.23090-6-paul@crapouillou.net>
+ <20180709171226.GK22377@vkoul-mobl>
+ <20180716213339.GA19161@rob-hp-laptop>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a5bmnfticdas2aey"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717122522.11327-1-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20180716213339.GA19161@rob-hp-laptop>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16-07-18, 15:33, Rob Herring wrote:
+> On Mon, Jul 09, 2018 at 10:42:26PM +0530, Vinod wrote:
+> > On 03-07-18, 14:32, Paul Cercueil wrote:
+> > 
+> > >  enum jz_version {
+> > > +	ID_JZ4740,
+> > >  	ID_JZ4770,
+> > >  	ID_JZ4780,
+> > >  };
+> > > @@ -247,6 +248,7 @@ static void jz4780_dma_desc_free(struct virt_dma_desc *vdesc)
+> > >  }
+> > >  
+> > >  static const unsigned int jz4780_dma_ord_max[] = {
+> > > +	[ID_JZ4740] = 5,
+> > >  	[ID_JZ4770] = 6,
+> > >  	[ID_JZ4780] = 7,
+> > >  };
+> > > @@ -801,11 +803,13 @@ static struct dma_chan *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
+> > >  }
+> > >  
+> > >  static const unsigned int jz4780_dma_nb_channels[] = {
+> > > +	[ID_JZ4740] = 6,
+> > >  	[ID_JZ4770] = 6,
+> > >  	[ID_JZ4780] = 32,
+> > >  };
+> > 
+> > I feel these should be done away with if we describe hardware in DT
+> 
+> The compatible property can imply things like this.
 
---a5bmnfticdas2aey
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So what is the general recommendation, let DT describe hardware
+including version delta or use compatible to code that in driver?
 
-On Tue, Jul 17, 2018 at 02:25:22PM +0200, Paul Kocialkowski wrote:
-> Blending order is set based on the z position of each DRM plane. The
-> blending order register is currently cleared at each atomic DRM commit,
-> with the intent that each committed plane will set the appropriate
-> bits (based on its z-pos) when enabling the plane.
->=20
-> However, it sometimes happens that a particular plane is left unchanged
-> by an atomic commit and thus will not be configured again. In that
-> scenario, blending order is cleared and only the bits relevant for the
-> planes affected by the commit are set. This leaves the planes that did
-> not change without their blending order set in the register, leading
-> to that plane not being displayed.
->=20
-> Instead of clearing the blending order register at every atomic commit,
-> this change moves the register's initial clear at bind time and only
-> clears the bits for a specific plane when disabling it or changing its
-> zpos.
->=20
-> This way, planes that are left untouched by a DRM atomic commit are
-> no longer disabled.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Is it documented anywhere?
 
-Applied, thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---a5bmnfticdas2aey
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltODDQACgkQ0rTAlCFN
-r3S0Yw//RtZqZal/rupm0nBsH7yHgbC9dTXAvMI0i4nX9y3hZwOExd82pREUpx7c
-WL+JZcFyhRA2PmWqGPBVEL+1Ge4rGbZj4fn3YJD3LTn4TiFQFekRDeYUQQJ9u0Zt
-6PZ5Fe/tFb9FOG2b7C62JMyKnT05JcCDKIh1vd29JtZiPoQTj0INBQi4K+f1D4fK
-AAnJSH6k8Bj8xlaAZoHxvKwyruFC4cje/avZ9PD3r7mO4oBX+Xu0Ich+bM9YRVUu
-r6dmT/if2I89whqJ0gPeIN1v7cBKcZKg9+/5DEVnQ5P8748yfAgUvE+TlwHV8WwA
-VnFQe/jxmdDtEM4nKInhnnuWlt/W6JQKtEyWGVQI+GGbNO/aWIP2IvTgMGOkLBEC
-6rxnUiLIkJ8GW/cIAnb5VuzE7OvcYiM91vsZBAstVMOt22rpryOZkcVKKetuB0hp
-k4P7gpeNhEhiHPrm4NxsexjADqNoe9PQ59j3AHe/LvrtIx2u+a3jcx76OkqbBe4z
-SgpZ6c7g7gns2ROR8cIgLLtyVLG4ITSYPka1EkxJb6GGbwpU9FQg9oY9UXBxpOYq
-TAPjqXcxGvAK3xVB5181lgzQC2ctLAZeL9k7gppp8tQPhG8ZZkC9/F6+EPZqBZ6z
-DqalGbflswI7o4KZDv86fOJR2yO534gN/9co/ChEt3DL2vpJxL4=
-=w5Ux
------END PGP SIGNATURE-----
-
---a5bmnfticdas2aey--
+-- 
+~Vinod
