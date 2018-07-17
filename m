@@ -2,74 +2,265 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB85ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E52B1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D0D9208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:20:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0D9208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 88BC020C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88BC020C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731103AbeGQLw2 (ORCPT
+        id S1731137AbeGQLxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:52:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59242 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbeGQLw2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:52:28 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A67B0C34;
-        Tue, 17 Jul 2018 11:20:19 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 13:20:17 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org, lwn@lwn.net,
-        Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.17.7
-Message-ID: <20180717112017.GA17910@kroah.com>
-References: <20180717105929.GA18343@kroah.com>
- <20180717111126.GA24208@flashbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717111126.GA24208@flashbox>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 17 Jul 2018 07:53:53 -0400
+Received: from mga17.intel.com ([192.55.52.151]:62278 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730180AbeGQLxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:53:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="55627991"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Jul 2018 04:21:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id A22481E8; Tue, 17 Jul 2018 14:21:48 +0300 (EEST)
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv5 00/19] MKTME enabling
+Date:   Tue, 17 Jul 2018 14:20:10 +0300
+Message-Id: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 04:11:26AM -0700, Nathan Chancellor wrote:
-> On Tue, Jul 17, 2018 at 12:59:29PM +0200, Greg KH wrote:
-> > NOTE, this kernel release is broken for i386 systems.  If you are
-> > running such a machine, do NOT update to this release, you will not be
-> > able to boot properly.
-> > 
-> > I did this release anyway with this known problem as there is a fix in
-> > here for x86-64 systems that was nasty to track down and was affecting
-> > people.  Given that the huge majority of systems are NOT i386, I felt
-> > this was a safe release to do at this point in time.
-> > 
-> > Once the proper fix for i386 systems has been accepted into Linus's tree
-> > (it has been posted already), I will pick it up and do a new 4.17.y
-> > release so that users of those systems can update.
-> > 
-> 
-> Just a heads up, it was picked up by Linux yesterday but it wasn't
-> tagged for stable: d1b47a7c9efc ("mm: don't do zero_resv_unavail if
-> memmap is not allocated").
+Multikey Total Memory Encryption (MKTME)[1] is a technology that allows
+transparent memory encryption in upcoming Intel platforms. See overview
+below.
 
-Ah, I missed that!  Now queued up, let's run this on my build system and
-then push it out for the world to test in a few hours.
+Here's updated version of my patchset that brings support of MKTME.
+Please review and consider applying.
 
-thanks,
+The patchset provides in-kernel infrastructure for MKTME, but doesn't yet
+have userspace interface.
 
-greg k-h
+First 8 patches are for core-mm. The rest is x86-specific.
+
+The patchset is on top of tip- tree plus page_ext cleanups I've posted
+earlier[2]. page_ext cleanups are in -mm tree now.
+
+Below is performance numbers for kernel build. Enabling MKTME doesn't
+affect performance of non-encrypted memory allocation.
+
+For encrypted memory allocation requires cache flush on allocation and
+freeing encrypted memory. For kernel build it results in ~20% performance
+degradation if we allocate all anonymous memory as encrypted.
+
+We would need to maintain per-KeyID pool of free pages to minimize cache
+flushing. I'm going to work on the optimization on top of this patchset.
+
+The patchset also can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/kas/linux.git mktme/wip
+
+v5:
+ - Do not merge VMAs with different KeyID (for real).
+
+ - Do not use zero page in encrypted VMAs.
+
+ - Avoid division in __pa(). The division is replaced with masking which
+   makes it near-free. I was not able to measure difference comparing to
+   base line. direct_mapping_size now has to be power-of-2 if MKTME
+   enabled. Only in this case we can use masking there.
+
+v4:
+ - Address Dave's feedback.
+
+ - Add performance numbers.
+
+v3:
+ - Kernel now can access encrypted pages via per-KeyID direct mapping.
+
+ - Rework page allocation for encrypted memory to minimize overhead on
+   non-encrypted pages. It comes with cost for allocation of encrypted
+   pages: we have to flush cache on every time we allocate *and* free
+   encrypted page. We will need to optimize it later.
+
+v2:
+ - Store KeyID of page in page_ext->flags rather than in anon_vma.
+   anon_vma approach turned out to be problematic. The main problem is
+   that anon_vma of the page is no longer stable after last mapcount has
+   gone. We would like to preserve last used KeyID even for freed
+   pages as it allows to avoid unnecessary cache flushing on allocation
+   of an encrypted page. page_ext serves this well enough.
+
+ - KeyID is now propagated through page allocator. No need in GFP_ENCRYPT
+   anymore.
+
+ - Patch "Decouple dynamic __PHYSICAL_MASK from AMD SME" has been fix to
+   work with AMD SEV (need to be confirmed by AMD folks).
+
+------------------------------------------------------------------------------
+
+MKTME is built on top of TME. TME allows encryption of the entirety of
+system memory using a single key. MKTME allows to have multiple encryption
+domains, each having own key -- different memory pages can be encrypted
+with different keys.
+
+Key design points of Intel MKTME:
+
+ - Initial HW implementation would support upto 63 keys (plus one default
+   TME key). But the number of keys may be as low as 3, depending to SKU
+   and BIOS settings
+
+ - To access encrypted memory you need to use mapping with proper KeyID
+   int the page table entry. KeyID is encoded in upper bits of PFN in page
+   table entry.
+
+ - CPU does not enforce coherency between mappings of the same physical
+   page with different KeyIDs or encryption keys. We wound need to take
+   care about flushing cache on allocation of encrypted page and on
+   returning it back to free pool.
+
+ - For managing keys, there's MKTME_KEY_PROGRAM leaf of the new PCONFIG
+   (platform configuration) instruction. It allows load and clear keys
+   associated with a KeyID. You can also ask CPU to generate a key for
+   you or disable memory encryption when a KeyID is used.
+
+Performance numbers for kernel build:
+
+Base (tip- tree):
+
+ Performance counter stats for 'sh -c make -j100 -B -k >/dev/null' (5 runs):
+
+    5664711.936917      task-clock (msec)         #   34.815 CPUs utilized            ( +-  0.02% )
+         1,033,886      context-switches          #    0.183 K/sec                    ( +-  0.37% )
+           189,308      cpu-migrations            #    0.033 K/sec                    ( +-  0.39% )
+       104,951,554      page-faults               #    0.019 M/sec                    ( +-  0.01% )
+16,907,670,543,945      cycles                    #    2.985 GHz                      ( +-  0.01% )
+12,662,345,427,578      stalled-cycles-frontend   #   74.89% frontend cycles idle     ( +-  0.02% )
+ 9,936,469,878,830      instructions              #    0.59  insn per cycle
+                                                  #    1.27  stalled cycles per insn  ( +-  0.00% )
+ 2,179,100,082,611      branches                  #  384.680 M/sec                    ( +-  0.00% )
+    91,235,200,652      branch-misses             #    4.19% of all branches          ( +-  0.01% )
+
+     162.706797586 seconds time elapsed                                          ( +-  0.04% )
+
+CONFIG_X86_INTEL_MKTME=y, no encrypted memory:
+
+ Performance counter stats for 'sh -c make -j100 -B -k >/dev/null' (5 runs):
+
+    5668508.245004      task-clock (msec)         #   34.872 CPUs utilized            ( +-  0.02% )
+         1,032,034      context-switches          #    0.182 K/sec                    ( +-  0.90% )
+           188,098      cpu-migrations            #    0.033 K/sec                    ( +-  1.15% )
+       104,964,084      page-faults               #    0.019 M/sec                    ( +-  0.01% )
+16,919,270,913,026      cycles                    #    2.985 GHz                      ( +-  0.02% )
+12,672,067,815,805      stalled-cycles-frontend   #   74.90% frontend cycles idle     ( +-  0.02% )
+ 9,942,560,135,477      instructions              #    0.59  insn per cycle
+                                                  #    1.27  stalled cycles per insn  ( +-  0.00% )
+ 2,180,800,745,687      branches                  #  384.722 M/sec                    ( +-  0.00% )
+    91,167,857,700      branch-misses             #    4.18% of all branches          ( +-  0.02% )
+
+     162.552503629 seconds time elapsed                                          ( +-  0.10% )
+
+CONFIG_X86_INTEL_MKTME=y, all anonymous memory encrypted with KeyID-1, pay
+cache flush overhead on allocation and free:
+
+ Performance counter stats for 'sh -c make -j100 -B -k >/dev/null' (5 runs):
+
+    7041851.999259      task-clock (msec)         #   35.915 CPUs utilized            ( +-  0.01% )
+         1,118,938      context-switches          #    0.159 K/sec                    ( +-  0.49% )
+           197,039      cpu-migrations            #    0.028 K/sec                    ( +-  0.80% )
+       104,970,021      page-faults               #    0.015 M/sec                    ( +-  0.00% )
+21,025,639,251,627      cycles                    #    2.986 GHz                      ( +-  0.01% )
+16,729,451,765,492      stalled-cycles-frontend   #   79.57% frontend cycles idle     ( +-  0.02% )
+10,010,727,735,588      instructions              #    0.48  insn per cycle
+                                                  #    1.67  stalled cycles per insn  ( +-  0.00% )
+ 2,197,110,181,421      branches                  #  312.007 M/sec                    ( +-  0.00% )
+    91,119,463,513      branch-misses             #    4.15% of all branches          ( +-  0.01% )
+
+     196.072361087 seconds time elapsed                                          ( +-  0.14% )
+
+[1] https://software.intel.com/sites/default/files/managed/a5/16/Multi-Key-Total-Memory-Encryption-Spec.pdf
+[2] https://lkml.kernel.org/r/20180531135457.20167-1-kirill.shutemov@linux.intel.com
+
+Kirill A. Shutemov (19):
+  mm: Do no merge VMAs with different encryption KeyIDs
+  mm: Do not use zero page in encrypted pages
+  mm/ksm: Do not merge pages with different KeyIDs
+  mm/page_alloc: Unify alloc_hugepage_vma()
+  mm/page_alloc: Handle allocation for encrypted memory
+  mm/khugepaged: Handle encrypted pages
+  x86/mm: Mask out KeyID bits from page table entry pfn
+  x86/mm: Introduce variables to store number, shift and mask of KeyIDs
+  x86/mm: Preserve KeyID on pte_modify() and pgprot_modify()
+  x86/mm: Implement page_keyid() using page_ext
+  x86/mm: Implement vma_keyid()
+  x86/mm: Implement prep_encrypted_page() and arch_free_page()
+  x86/mm: Rename CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING
+  x86/mm: Allow to disable MKTME after enumeration
+  x86/mm: Detect MKTME early
+  x86/mm: Calculate direct mapping size
+  x86/mm: Implement sync_direct_mapping()
+  x86/mm: Handle encrypted memory in page_to_virt() and __pa()
+  x86: Introduce CONFIG_X86_INTEL_MKTME
+
+ Documentation/x86/x86_64/mm.txt      |   4 +
+ arch/alpha/include/asm/page.h        |   2 +-
+ arch/s390/include/asm/pgtable.h      |   2 +-
+ arch/x86/Kconfig                     |  21 +-
+ arch/x86/include/asm/mktme.h         |  47 +++
+ arch/x86/include/asm/page.h          |   1 +
+ arch/x86/include/asm/page_64.h       |   4 +-
+ arch/x86/include/asm/pgtable_types.h |  15 +-
+ arch/x86/include/asm/setup.h         |   6 +
+ arch/x86/kernel/cpu/intel.c          |  32 +-
+ arch/x86/kernel/head64.c             |   4 +
+ arch/x86/kernel/setup.c              |   3 +
+ arch/x86/mm/Makefile                 |   2 +
+ arch/x86/mm/init_64.c                |  68 ++++
+ arch/x86/mm/kaslr.c                  |  11 +-
+ arch/x86/mm/mktme.c                  | 546 +++++++++++++++++++++++++++
+ fs/userfaultfd.c                     |   7 +-
+ include/linux/gfp.h                  |  54 ++-
+ include/linux/migrate.h              |  12 +-
+ include/linux/mm.h                   |  20 +-
+ include/linux/page_ext.h             |  11 +-
+ mm/compaction.c                      |   1 +
+ mm/huge_memory.c                     |   3 +-
+ mm/khugepaged.c                      |  10 +
+ mm/ksm.c                             |   3 +
+ mm/madvise.c                         |   2 +-
+ mm/memory.c                          |   3 +-
+ mm/mempolicy.c                       |  31 +-
+ mm/migrate.c                         |   4 +-
+ mm/mlock.c                           |   2 +-
+ mm/mmap.c                            |  31 +-
+ mm/mprotect.c                        |   2 +-
+ mm/page_alloc.c                      |  47 +++
+ mm/page_ext.c                        |   3 +
+ 34 files changed, 954 insertions(+), 60 deletions(-)
+ create mode 100644 arch/x86/include/asm/mktme.h
+ create mode 100644 arch/x86/mm/mktme.c
+
+-- 
+2.18.0
+
