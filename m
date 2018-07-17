@@ -2,100 +2,106 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74184ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AA0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A306208C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A306208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0876D208C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:15:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0876D208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbeGQHqV (ORCPT
+        id S1728861AbeGQHq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 03:46:21 -0400
-Received: from mga02.intel.com ([134.134.136.20]:27050 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727821AbeGQHqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 03:46:21 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 00:15:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="asc'?scan'208";a="65252212"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.68.37])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Jul 2018 00:15:02 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Pengbo Mu <pengbo.mu@nxp.com>, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pengbo Mu <pengbo.mu@nxp.com>
-Subject: Re: [PATCH] usb: phy: fix copyright issue of phy-fsl-usb.c
-In-Reply-To: <1531811402-44183-1-git-send-email-pengbo.mu@nxp.com>
-References: <1531811402-44183-1-git-send-email-pengbo.mu@nxp.com>
-Date:   Tue, 17 Jul 2018 10:11:58 +0300
-Message-ID: <87r2k22v5t.fsf@linux.intel.com>
+        Tue, 17 Jul 2018 03:46:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51552 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727600AbeGQHq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 03:46:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C162AAEB1;
+        Tue, 17 Jul 2018 07:15:46 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 09:15:45 +0200
+From:   Joerg Roedel <jroedel@suse.de>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Andy Lutomirski <luto@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>
+Subject: Re: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on
+ Entry-Stack
+Message-ID: <20180717071545.ojdall7tatbjtfai@suse.de>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+ <1531308586-29340-11-git-send-email-joro@8bytes.org>
+ <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
+ <20180714052110.cobtew6rms23ih37@suse.de>
+ <7AB4F269-E0E8-4290-A764-69D8605467E8@amacapital.net>
+ <20180714080159.hqp36q7fxzb2ktlq@suse.de>
+ <75BDF04F-9585-438C-AE04-918FBE00A174@amacapital.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <75BDF04F-9585-438C-AE04-918FBE00A174@amacapital.net>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Sat, Jul 14, 2018 at 07:36:47AM -0700, Andy Lutomirski wrote:
+> But I’m still unconvinced. If any code executed with IRQs enabled on
+> the entry stack, then that code is terminally buggy. If you’re
+> executing with IRQs off, you’re not going to get migrated.  64-bit
+> kernels run on percpu stacks all the time, and it’s not a problem.
+
+The code switches to the kernel-stack and kernel-cr3 and just remembers
+where it came from (to handle the entry-from-kernel with entry-stack
+and/or user-cr3 case). IRQs are disabled in the entry-code path. But
+ultimately it calls into C code to handle the exception. And there IRQs
+might get enabled again.
+
+> IRET errors are genuinely special and, if they’re causing a problem
+> for you, we should fix them the same way we deal with them on x86_64.
+
+Right, IRET is handled differently and doesn't need this patch. But the
+segment-writing exceptions do.
+
+If you insist on it I can try to implement the assumption that we don't
+get preempted in this code-path. That will safe us some cycles for
+copying stack contents in this unlikely slow-path. But we definitly need
+to handle the entry-from-kernel with entry-stack and/or user-cr3 case
+correctly and make a switch to kernel-stack/cr3 because we are going to
+call into C-code.
 
 
-Hi,
+Regards,
 
-Pengbo Mu <pengbo.mu@nxp.com> writes:
-> Fixed the copyright issue of drivers/usb/phy/phy-fsl-usb.c.
->
-> Signed-off-by: Pengbo Mu <pengbo.mu@nxp.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhuu@nxp.com>
-> ---
->  drivers/usb/phy/phy-fsl-usb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/usb/phy/phy-fsl-usb.c b/drivers/usb/phy/phy-fsl-usb.c
-> index 900875f..dcb531c 100644
-> --- a/drivers/usb/phy/phy-fsl-usb.c
-> +++ b/drivers/usb/phy/phy-fsl-usb.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0+
->  /*
-> - * Copyright (C) 2007,2008 Freescale semiconductor, Inc.
-> + * Copyright 2007,2008 Freescale Semiconductor, Inc.
-
-again, what's the issue here?
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAltNlr4ACgkQzL64meEa
-mQbIew//XIFxhxdBrE+Wr0EdSyW3uTwoE1qOW949nTkZYyT55Wlzw/riF2u3MTAq
-c1n84oBF3u63WtO9xBa3Kt0S9RCi/43VhAHJeLGJ1VLw4QfOthChRUSgjvbu1pkl
-w9eufUF8yH5ui0YIymoC/s4JpfnCvYEl9Rf1SdAd6Qyk4CB32dV3KU3cELjIor8C
-ZDUgmaI98T+99wb6ET7ezR3Nk7o5kntl7GxgxcdQvYZic3PWgSgO7zLNZAdb95MT
-dQxi9bu6JHerglzin2uoL1t/tM41mK0gArVuI4qzu9R+A+XtjKowSIK7ivlmabxT
-4c9AkhzGWrj02/dx6XXQ/Z4yhcldxawdK/wofxbJKQzhOcimUgM98bdEnpypAPPg
-T7RRKr4m0zN3nuUAtUOjTO5ykEvAQATqgGjW7tlLls0Jnzzz4AJsUI//MdYsb1Hf
-ptZ5WU2n4A8u+CTu6f8oLj9MPAzBhmUp0g2V/arsPSGEZNqLc3EulfzqZRux2FRi
-z57TCQdx08qgXE2KxvrqwpN2H+IXR6SJoU5xcpzNMyuU0D+jauJ3f/6MXR3/XcQ6
-a5HdPxW2ntrGu+1M0kO6Glk27KO3jG2hqKKLlE5nOasyzexyigo6ZpXzgLHyG/bJ
-K+EmftC5foosqrR1i3YpQkKMxrYdJb+szKEdIdUC2bQroYlf55I=
-=OXJs
------END PGP SIGNATURE-----
---=-=-=--
+	Joerg
