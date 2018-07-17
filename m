@@ -3,108 +3,118 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CC8ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 05:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A0EECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 05:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E761A208C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 05:41:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E761A208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E0D5A208C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 05:47:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0D5A208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbeGQGLu (ORCPT
+        id S1727821AbeGQGRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 02:11:50 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44134 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbeGQGLt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 02:11:49 -0400
-Received: by mail-lj1-f194.google.com with SMTP id q127-v6so31354292ljq.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 22:40:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xYXThKdizlH2N1WQVNwQ3h6xnD6AlT1x6Rsg/eLpKAg=;
-        b=gl6ODkpCSbVMD+lwLfcji5anUU7OdV81yKhakXVZDbzhQuvj6iZ/h+tuHXxTApW4C/
-         9zsrmFyEijcEJeSP8rHND3EeY/jNb+gJL/6Le/rhNnDlm7Xh0O1JjkJ6PYVLKHFoeBef
-         XPFrwqO7CI9XI8dINpg/J0FEoozCIu1z1mZyorMiPf9054Wpi7KzMYoKa2ilKATgBxKP
-         Rm7ve9S2qq9N/tEi67tb8n9rPjiciCkIVaQhlcoiviQHFNyVeRhRufvruYksW5tfjgZ4
-         y18Upvr3cuc7lvtULMSDtydzGAlLNSaQvNzJcoFrh2AeeElKsFXb3w1pxoaM1owXM0jn
-         EsEA==
-X-Gm-Message-State: AOUpUlF85cLReAANQVg+GxPFIhdW0UnyTjRato9lYcrb9I+SyykeeyWa
-        6tXqbVmxewD6PckQHBg21sDVbkKE1inmyKTYZkLNXA==
-X-Google-Smtp-Source: AAOMgpfGi8sMNPv/hUWDLHGBzkl6furCD2+wTxU55UU0Celoe7q5I/7JTYhpUKE7MuaydIyYNks2DELJgUUa2zX08Sk=
-X-Received: by 2002:a2e:47c8:: with SMTP id u191-v6mr189832lja.58.1531806058630;
- Mon, 16 Jul 2018 22:40:58 -0700 (PDT)
+        Tue, 17 Jul 2018 02:17:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42852 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727096AbeGQGRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 02:17:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 67761AD93;
+        Tue, 17 Jul 2018 05:46:48 +0000 (UTC)
+Subject: Re: [PATCH 0/4] add crc64 calculation as kernel library
+To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+References: <20180716165507.23100-1-colyli@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <8538b45b-bf30-926a-50fb-700b4bf1c636@suse.de>
+Date:   Tue, 17 Jul 2018 07:46:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a2e:240e:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 22:40:28
- -0700 (PDT)
-In-Reply-To: <0cdd742b-ad2e-aeac-c85f-21c59333d54d@gmail.com>
-References: <20180717041602.31100-1-jmaxwell37@gmail.com> <0cdd742b-ad2e-aeac-c85f-21c59333d54d@gmail.com>
-From:   Jon Maxwell <jmaxwell@redhat.com>
-Date:   Tue, 17 Jul 2018 15:40:28 +1000
-Message-ID: <CAFjuzB9632y6RbdxvjUBWXQX8YbSO7GJ6TWP_SCtrpt4Vy5t1w@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/3] Series to improve setsockopt()
- TCP_USER_TIMEOUT accuracy
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Jon Maxwell <jmaxwell37@gmail.com>,
-        "Miller, David" <davem@davemloft.net>, edumazet@google.com,
-        ncardwell@google.com, David.Laight@aculab.com,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180716165507.23100-1-colyli@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 2:56 PM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
-> On 07/16/2018 09:15 PM, Jon Maxwell wrote:
->> This is a patch series based on:
->>
->> Jon Maxwell (3):
->>   [PATCH net-next 1/3] tcp: convert icsk_user_timeout from jiffies to msecs
->>   [PATCH net-next v1 2/3] tcp: convert icsk_user_timeout from jiffies to msecs
->>   [PATCH net-next v1 3/3] tcp: convert icsk_user_timeout from jiffies to msecs
->
-> This would have been nice to use meaningful titles for each patch,
-> instead of copy/pasting the first one ?
->
-> Thanks !
->
->
->
+On 07/16/2018 06:55 PM, Coly Li wrote:
+> This patch set adds basic implementation of crc64 calculation as Linux
+> kernel library. Since bcache already does crc64 by itself, this patch
+> set also modifies bcache code to use the new crc64 library routine.
+> 
+> bcache uses crc64 as storage checksum, if a change of crc lib routines
+> results an inconsistent result, the unmatched checksum may make bcache
+> 'think' the on-disk is corrupted, such change should be avoided or
+> detected as early as possible. Therefore the last patch in this series
+> adds a crc test framework, to check consistency of different calculations.
+> 
+> Coly Li
+> 
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Michael Lyle <mlyle@lyle.org>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> ---
+> Andy Shevchenko (1):
+>   lib/crc64: add crc64 option to lib/Kconfig
+> 
+> Coly Li (3):
+>   lib: add crc64 calculation routines
+>   bcache: use routines from lib/crc64.c for CRC64 calculation
+>   lib/test_crc: Add test cases for crc calculation
+> 
+>  drivers/md/bcache/bcache.h  |   7 +-
+>  drivers/md/bcache/btree.c   |   2 +-
+>  drivers/md/bcache/request.c |   2 +-
+>  drivers/md/bcache/super.c   |   5 +-
+>  drivers/md/bcache/util.c    | 131 ----------------------------------
+>  drivers/md/bcache/util.h    |   5 +-
+>  include/linux/crc64.h       |  15 ++++
+>  lib/.gitignore              |   2 +
+>  lib/Kconfig                 |   8 +++
+>  lib/Kconfig.debug           |  11 +++
+>  lib/Makefile                |  12 ++++
+>  lib/crc64.c                 |  71 +++++++++++++++++++
+>  lib/gen_crc64table.c        |  76 ++++++++++++++++++++
+>  lib/test_crc.c              | 136 ++++++++++++++++++++++++++++++++++++
+>  14 files changed, 341 insertions(+), 142 deletions(-)
+>  create mode 100644 include/linux/crc64.h
+>  create mode 100644 lib/crc64.c
+>  create mode 100644 lib/gen_crc64table.c
+>  create mode 100644 lib/test_crc.c
+> 
+Actually, I would merge patch 1 & 2 together (pointless to introduce an
+option for which no code exists).
+Otherwise for the whole series:
 
-This is my 1st time doing a patch series. Let me rebase and resubmit
-each with a more descriptive title.
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 
-But 1st do I still need to put the patch number in the series? Even if
-the title differs?
+Cheers,
 
-1) e.g:
-
-Jon Maxwell (3):
-   [PATCH net-next 1/3] tcp: convert icsk_user_timeout from jiffies to msecs
-   [PATCH net-next 2/3] tcp: Add tcp_retransmit_stamp() helper
-   [PATCH net-next 3/3] tcp: Add  tcp_clamp_rto_to_user_timeout() to
-improve accuracy
-
-2) or:
-
-Jon Maxwell (3):
-   [PATCH net-next] tcp: convert icsk_user_timeout from jiffies to msecs
-   [PATCH net-next] tcp: Add tcp_retransmit_time() helper
-   [PATCH net-next] tcp: Add  tcp_clamp_rto_to_user_timeout() to
-improve TCP_USER_TIMEOUT accuracy
-
-Which is preferred (1) or (2)? Are the above titles descriptive enough?
-
-Regards
-
-Jon
+Hannes
+-- 
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
