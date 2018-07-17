@@ -2,38 +2,38 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,UPPERCASE_50_75,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A194AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC39ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527F22146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:52:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 527F22146F
+	by mail.kernel.org (Postfix) with ESMTP id 8F78D2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F78D2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729970AbeGQJYY (ORCPT
+        id S1730043AbeGQJY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:24:24 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45075 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729686AbeGQJYY (ORCPT
+        Tue, 17 Jul 2018 05:24:28 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:38628 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729709AbeGQJY2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:24:24 -0400
-X-UUID: a65f2588d1014a75a66a48a31a6b0001-20180717
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Tue, 17 Jul 2018 05:24:28 -0400
+X-UUID: 6e4536d2c8d74178b205f5316d5d7365-20180717
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <mars.cheng@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1591156922; Tue, 17 Jul 2018 16:52:37 +0800
+        with ESMTP id 2112350227; Tue, 17 Jul 2018 16:52:38 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 17 Jul 2018 16:52:34 +0800
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Tue, 17 Jul 2018 16:52:35 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 17 Jul 2018 16:52:34 +0800
+ Transport; Tue, 17 Jul 2018 16:52:35 +0800
 From:   Mars Cheng <mars.cheng@mediatek.com>
 To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -49,9 +49,9 @@ CC:     CC Hwang <cc.hwang@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>,
         Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v5 05/11] clk: mediatek: add mt6765 clock IDs
-Date:   Tue, 17 Jul 2018 16:52:26 +0800
-Message-ID: <1531817552-17221-6-git-send-email-mars.cheng@mediatek.com>
+Subject: [PATCH v5 11/11] arm64: dts: mediatek: add mt6765 support
+Date:   Tue, 17 Jul 2018 16:52:32 +0800
+Message-ID: <1531817552-17221-12-git-send-email-mars.cheng@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
 References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
@@ -63,332 +63,329 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds basic chip support for MT6765 SoC.
+
 Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- include/dt-bindings/clock/mt6765-clk.h |  313 ++++++++++++++++++++++++++++++++
- 1 file changed, 313 insertions(+)
- create mode 100644 include/dt-bindings/clock/mt6765-clk.h
+ arch/arm64/boot/dts/mediatek/Makefile       |    1 +
+ arch/arm64/boot/dts/mediatek/mt6765-evb.dts |   33 ++++
+ arch/arm64/boot/dts/mediatek/mt6765.dtsi    |  253 +++++++++++++++++++++++++++
+ 3 files changed, 287 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6765.dtsi
 
-diff --git a/include/dt-bindings/clock/mt6765-clk.h b/include/dt-bindings/clock/mt6765-clk.h
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index ac17f60..7506b0d 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt6765-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt6765-evb.dts b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
 new file mode 100644
-index 0000000..eb97e56
+index 0000000..36dddff2
 --- /dev/null
-+++ b/include/dt-bindings/clock/mt6765-clk.h
-@@ -0,0 +1,313 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+@@ -0,0 +1,33 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * dts file for Mediatek MT6765
++ *
++ * (C) Copyright 2018. Mediatek, Inc.
++ *
++ * Mars Cheng <mars.cheng@mediatek.com>
++ */
 +
-+#ifndef _DT_BINDINGS_CLK_MT6765_H
-+#define _DT_BINDINGS_CLK_MT6765_H
++/dts-v1/;
++#include "mt6765.dtsi"
 +
-+/* FIX Clks */
-+#define CLK_TOP_CLK26M			0
++/ {
++	model = "MediaTek MT6765 EVB";
++	compatible = "mediatek,mt6765-evb", "mediatek,mt6765";
 +
-+/* APMIXEDSYS */
-+#define CLK_APMIXED_ARMPLL_L		0
-+#define CLK_APMIXED_ARMPLL		1
-+#define CLK_APMIXED_CCIPLL		2
-+#define CLK_APMIXED_MAINPLL		3
-+#define CLK_APMIXED_MFGPLL		4
-+#define CLK_APMIXED_MMPLL		5
-+#define CLK_APMIXED_UNIV2PLL		6
-+#define CLK_APMIXED_MSDCPLL		7
-+#define CLK_APMIXED_APLL1		8
-+#define CLK_APMIXED_MPLL		9
-+#define CLK_APMIXED_ULPOSC1		10
-+#define CLK_APMIXED_ULPOSC2		11
-+#define CLK_APMIXED_SSUSB26M		12
-+#define CLK_APMIXED_APPLL26M		13
-+#define CLK_APMIXED_MIPIC0_26M		14
-+#define CLK_APMIXED_MDPLLGP26M		15
-+#define CLK_APMIXED_MMSYS_F26M		16
-+#define CLK_APMIXED_UFS26M		17
-+#define CLK_APMIXED_MIPIC1_26M		18
-+#define CLK_APMIXED_MEMPLL26M		19
-+#define CLK_APMIXED_CLKSQ_LVPLL_26M	20
-+#define CLK_APMIXED_MIPID0_26M		21
-+#define CLK_APMIXED_NR_CLK		22
++	aliases {
++		serial0 = &uart0;
++	};
 +
-+/* TOPCKGEN */
-+#define CLK_TOP_SYSPLL			0
-+#define CLK_TOP_SYSPLL_D2		1
-+#define CLK_TOP_SYSPLL1_D2		2
-+#define CLK_TOP_SYSPLL1_D4		3
-+#define CLK_TOP_SYSPLL1_D8		4
-+#define CLK_TOP_SYSPLL1_D16		5
-+#define CLK_TOP_SYSPLL_D3		6
-+#define CLK_TOP_SYSPLL2_D2		7
-+#define CLK_TOP_SYSPLL2_D4		8
-+#define CLK_TOP_SYSPLL2_D8		9
-+#define CLK_TOP_SYSPLL_D5		10
-+#define CLK_TOP_SYSPLL3_D2		11
-+#define CLK_TOP_SYSPLL3_D4		12
-+#define CLK_TOP_SYSPLL_D7		13
-+#define CLK_TOP_SYSPLL4_D2		14
-+#define CLK_TOP_SYSPLL4_D4		15
-+#define CLK_TOP_USB20_192M		16
-+#define CLK_TOP_USB20_192M_D4		17
-+#define CLK_TOP_USB20_192M_D8		18
-+#define CLK_TOP_USB20_192M_D16		19
-+#define CLK_TOP_USB20_192M_D32		20
-+#define CLK_TOP_UNIVPLL			21
-+#define CLK_TOP_UNIVPLL_D2		22
-+#define CLK_TOP_UNIVPLL1_D2		23
-+#define CLK_TOP_UNIVPLL1_D4		24
-+#define CLK_TOP_UNIVPLL_D3		25
-+#define CLK_TOP_UNIVPLL2_D2		26
-+#define CLK_TOP_UNIVPLL2_D4		27
-+#define CLK_TOP_UNIVPLL2_D8		28
-+#define CLK_TOP_UNIVPLL2_D32		29
-+#define CLK_TOP_UNIVPLL_D5		30
-+#define CLK_TOP_UNIVPLL3_D2		31
-+#define CLK_TOP_UNIVPLL3_D4		32
-+#define CLK_TOP_MMPLL			33
-+#define CLK_TOP_MMPLL_D2		34
-+#define CLK_TOP_MPLL			35
-+#define CLK_TOP_DA_MPLL_104M_DIV	36
-+#define CLK_TOP_DA_MPLL_52M_DIV		37
-+#define CLK_TOP_MFGPLL			38
-+#define CLK_TOP_MSDCPLL			39
-+#define CLK_TOP_MSDCPLL_D2		40
-+#define CLK_TOP_APLL1			41
-+#define CLK_TOP_APLL1_D2		42
-+#define CLK_TOP_APLL1_D4		43
-+#define CLK_TOP_APLL1_D8		44
-+#define CLK_TOP_ULPOSC1			45
-+#define CLK_TOP_ULPOSC1_D2		46
-+#define CLK_TOP_ULPOSC1_D4		47
-+#define CLK_TOP_ULPOSC1_D8		48
-+#define CLK_TOP_ULPOSC1_D16		49
-+#define CLK_TOP_ULPOSC1_D32		50
-+#define CLK_TOP_DMPLL			51
-+#define CLK_TOP_F_FRTC			52
-+#define CLK_TOP_F_F26M			53
-+#define CLK_TOP_AXI			54
-+#define CLK_TOP_MM			55
-+#define CLK_TOP_SCP			56
-+#define CLK_TOP_MFG			57
-+#define CLK_TOP_F_FUART			58
-+#define CLK_TOP_SPI			59
-+#define CLK_TOP_MSDC50_0		60
-+#define CLK_TOP_MSDC30_1		61
-+#define CLK_TOP_AUDIO			62
-+#define CLK_TOP_AUD_1			63
-+#define CLK_TOP_AUD_ENGEN1		64
-+#define CLK_TOP_F_FDISP_PWM		65
-+#define CLK_TOP_SSPM			66
-+#define CLK_TOP_DXCC			67
-+#define CLK_TOP_I2C			68
-+#define CLK_TOP_F_FPWM			69
-+#define CLK_TOP_F_FSENINF		70
-+#define CLK_TOP_AES_FDE			71
-+#define CLK_TOP_F_BIST2FPC		72
-+#define CLK_TOP_ARMPLL_DIVIDER_PLL0	73
-+#define CLK_TOP_ARMPLL_DIVIDER_PLL1	74
-+#define CLK_TOP_ARMPLL_DIVIDER_PLL2	75
-+#define CLK_TOP_DA_USB20_48M_DIV	76
-+#define CLK_TOP_DA_UNIV_48M_DIV		77
-+#define CLK_TOP_APLL12_DIV0		78
-+#define CLK_TOP_APLL12_DIV1		79
-+#define CLK_TOP_APLL12_DIV2		80
-+#define CLK_TOP_APLL12_DIV3		81
-+#define CLK_TOP_ARMPLL_DIVIDER_PLL0_EN	82
-+#define CLK_TOP_ARMPLL_DIVIDER_PLL1_EN	83
-+#define CLK_TOP_ARMPLL_DIVIDER_PLL2_EN	84
-+#define CLK_TOP_FMEM_OCC_DRC_EN		85
-+#define CLK_TOP_USB20_48M_EN		86
-+#define CLK_TOP_UNIVPLL_48M_EN		87
-+#define CLK_TOP_MPLL_104M_EN		88
-+#define CLK_TOP_MPLL_52M_EN		89
-+#define CLK_TOP_F_UFS_MP_SAP_CFG_EN	90
-+#define CLK_TOP_F_BIST2FPC_EN		91
-+#define CLK_TOP_MD_32K			92
-+#define CLK_TOP_MD_26M			93
-+#define CLK_TOP_MD2_32K			94
-+#define CLK_TOP_MD2_26M			95
-+#define CLK_TOP_AXI_SEL			96
-+#define CLK_TOP_MEM_SEL			97
-+#define CLK_TOP_MM_SEL			98
-+#define CLK_TOP_SCP_SEL			99
-+#define CLK_TOP_MFG_SEL			100
-+#define CLK_TOP_ATB_SEL			101
-+#define CLK_TOP_CAMTG_SEL		102
-+#define CLK_TOP_CAMTG1_SEL		103
-+#define CLK_TOP_CAMTG2_SEL		104
-+#define CLK_TOP_CAMTG3_SEL		105
-+#define CLK_TOP_UART_SEL		106
-+#define CLK_TOP_SPI_SEL			107
-+#define CLK_TOP_MSDC50_0_HCLK_SEL	108
-+#define CLK_TOP_MSDC50_0_SEL		109
-+#define CLK_TOP_MSDC30_1_SEL		110
-+#define CLK_TOP_AUDIO_SEL		111
-+#define CLK_TOP_AUD_INTBUS_SEL		112
-+#define CLK_TOP_AUD_1_SEL		113
-+#define CLK_TOP_AUD_ENGEN1_SEL		114
-+#define CLK_TOP_DISP_PWM_SEL		115
-+#define CLK_TOP_SSPM_SEL		116
-+#define CLK_TOP_DXCC_SEL		117
-+#define CLK_TOP_USB_TOP_SEL		118
-+#define CLK_TOP_SPM_SEL			119
-+#define CLK_TOP_I2C_SEL			120
-+#define CLK_TOP_PWM_SEL			121
-+#define CLK_TOP_SENINF_SEL		122
-+#define CLK_TOP_AES_FDE_SEL		123
-+#define CLK_TOP_PWRAP_ULPOSC_SEL	124
-+#define CLK_TOP_CAMTM_SEL		125
-+#define CLK_TOP_NR_CLK			126
++	memory@40000000 {
++		device_type = "memory";
++		reg = <0 0x40000000 0 0x1e800000>;
++	};
 +
-+/* INFRACFG */
-+#define CLK_IFR_ICUSB			0
-+#define CLK_IFR_GCE			1
-+#define CLK_IFR_THERM			2
-+#define CLK_IFR_I2C_AP			3
-+#define CLK_IFR_I2C_CCU			4
-+#define CLK_IFR_I2C_SSPM		5
-+#define CLK_IFR_I2C_RSV			6
-+#define CLK_IFR_PWM_HCLK		7
-+#define CLK_IFR_PWM1			8
-+#define CLK_IFR_PWM2			9
-+#define CLK_IFR_PWM3			10
-+#define CLK_IFR_PWM4			11
-+#define CLK_IFR_PWM5			12
-+#define CLK_IFR_PWM			13
-+#define CLK_IFR_UART0			14
-+#define CLK_IFR_UART1			15
-+#define CLK_IFR_GCE_26M			16
-+#define CLK_IFR_CQ_DMA_FPC		17
-+#define CLK_IFR_BTIF			18
-+#define CLK_IFR_SPI0			19
-+#define CLK_IFR_MSDC0			20
-+#define CLK_IFR_MSDC1			21
-+#define CLK_IFR_TRNG			22
-+#define CLK_IFR_AUXADC			23
-+#define CLK_IFR_CCIF1_AP		24
-+#define CLK_IFR_CCIF1_MD		25
-+#define CLK_IFR_AUXADC_MD		26
-+#define CLK_IFR_AP_DMA			27
-+#define CLK_IFR_DEVICE_APC		28
-+#define CLK_IFR_CCIF_AP			29
-+#define CLK_IFR_AUDIO			30
-+#define CLK_IFR_CCIF_MD			31
-+#define CLK_IFR_RG_PWM_FBCLK6		32
-+#define CLK_IFR_DISP_PWM		33
-+#define CLK_IFR_CLDMA_BCLK		34
-+#define CLK_IFR_AUDIO_26M_BCLK		35
-+#define CLK_IFR_SPI1			36
-+#define CLK_IFR_I2C4			37
-+#define CLK_IFR_SPI2			38
-+#define CLK_IFR_SPI3			39
-+#define CLK_IFR_I2C5			40
-+#define CLK_IFR_I2C5_ARBITER		41
-+#define CLK_IFR_I2C5_IMM		42
-+#define CLK_IFR_I2C1_ARBITER		43
-+#define CLK_IFR_I2C1_IMM		44
-+#define CLK_IFR_I2C2_ARBITER		45
-+#define CLK_IFR_I2C2_IMM		46
-+#define CLK_IFR_SPI4			47
-+#define CLK_IFR_SPI5			48
-+#define CLK_IFR_CQ_DMA			49
-+#define CLK_IFR_FAES_FDE		50
-+#define CLK_IFR_MSDC0_SELF		51
-+#define CLK_IFR_MSDC1_SELF		52
-+#define CLK_IFR_I2C6			53
-+#define CLK_IFR_AP_MSDC0		54
-+#define CLK_IFR_MD_MSDC0		55
-+#define CLK_IFR_MSDC0_SRC		56
-+#define CLK_IFR_MSDC1_SRC		57
-+#define CLK_IFR_AES_TOP0_BCLK		58
-+#define CLK_IFR_MCU_PM_BCLK		59
-+#define CLK_IFR_CCIF2_AP		60
-+#define CLK_IFR_CCIF2_MD		61
-+#define CLK_IFR_CCIF3_AP		62
-+#define CLK_IFR_CCIF3_MD		63
-+#define CLK_IFR_NR_CLK			64
++	chosen {
++		stdout-path = "serial0:921600n8";
++	};
++};
 +
-+/* AUDIO */
-+#define CLK_AUDIO_AFE			0
-+#define CLK_AUDIO_22M			1
-+#define CLK_AUDIO_APLL_TUNER		2
-+#define CLK_AUDIO_ADC			3
-+#define CLK_AUDIO_DAC			4
-+#define CLK_AUDIO_DAC_PREDIS		5
-+#define CLK_AUDIO_TML			6
-+#define CLK_AUDIO_I2S1_BCLK		7
-+#define CLK_AUDIO_I2S2_BCLK		8
-+#define CLK_AUDIO_I2S3_BCLK		9
-+#define CLK_AUDIO_I2S4_BCLK		10
-+#define CLK_AUDIO_NR_CLK		11
++&uart0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt6765.dtsi b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+new file mode 100644
+index 0000000..37f9f3a
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+@@ -0,0 +1,253 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * dts file for Mediatek MT6765
++ *
++ * (C) Copyright 2018. Mediatek, Inc.
++ *
++ * Mars Cheng <mars.cheng@mediatek.com>
++ */
 +
-+/* MIPI_RX_ANA_CSI0A */
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <dt-bindings/clock/mt6765-clk.h>
 +
-+#define CLK_MIPI0A_CSR_CSI_EN_0A	0
-+#define CLK_MIPI0A_NR_CLK		1
++/ {
++	compatible = "mediatek,mt6765";
++	interrupt-parent = <&sysirq>;
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+/* MMSYS_CONFIG */
++	psci {
++		compatible = "arm,psci-0.2";
++		method = "smc";
++	};
 +
-+#define CLK_MM_MDP_RDMA0		0
-+#define CLK_MM_MDP_CCORR0		1
-+#define CLK_MM_MDP_RSZ0			2
-+#define CLK_MM_MDP_RSZ1			3
-+#define CLK_MM_MDP_TDSHP0		4
-+#define CLK_MM_MDP_WROT0		5
-+#define CLK_MM_MDP_WDMA0		6
-+#define CLK_MM_DISP_OVL0		7
-+#define CLK_MM_DISP_OVL0_2L		8
-+#define CLK_MM_DISP_RSZ0		9
-+#define CLK_MM_DISP_RDMA0		10
-+#define CLK_MM_DISP_WDMA0		11
-+#define CLK_MM_DISP_COLOR0		12
-+#define CLK_MM_DISP_CCORR0		13
-+#define CLK_MM_DISP_AAL0		14
-+#define CLK_MM_DISP_GAMMA0		15
-+#define CLK_MM_DISP_DITHER0		16
-+#define CLK_MM_DSI0			17
-+#define CLK_MM_FAKE_ENG			18
-+#define CLK_MM_SMI_COMMON		19
-+#define CLK_MM_SMI_LARB0		20
-+#define CLK_MM_SMI_COMM0		21
-+#define CLK_MM_SMI_COMM1		22
-+#define CLK_MM_CAM_MDP			23
-+#define CLK_MM_SMI_IMG			24
-+#define CLK_MM_SMI_CAM			25
-+#define CLK_MM_IMG_DL_RELAY		26
-+#define CLK_MM_IMG_DL_ASYNC_TOP		27
-+#define CLK_MM_DIG_DSI			28
-+#define CLK_MM_F26M_HRTWT		29
-+#define CLK_MM_NR_CLK			30
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+/* IMGSYS */
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x000>;
++		};
 +
-+#define CLK_IMG_LARB2			0
-+#define CLK_IMG_DIP			1
-+#define CLK_IMG_FDVT			2
-+#define CLK_IMG_DPE			3
-+#define CLK_IMG_RSC			4
-+#define CLK_IMG_NR_CLK			5
++		cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x001>;
++		};
 +
-+/* VENCSYS */
++		cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x002>;
++		};
 +
-+#define CLK_VENC_SET0_LARB		0
-+#define CLK_VENC_SET1_VENC		1
-+#define CLK_VENC_SET2_JPGENC		2
-+#define CLK_VENC_SET3_VDEC		3
-+#define CLK_VENC_NR_CLK			4
++		cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x003>;
++		};
 +
-+/* CAMSYS */
++		cpu@100 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x100>;
++		};
 +
-+#define CLK_CAM_LARB3			0
-+#define CLK_CAM_DFP_VAD			1
-+#define CLK_CAM				2
-+#define CLK_CAMTG			3
-+#define CLK_CAM_SENINF			4
-+#define CLK_CAMSV0			5
-+#define CLK_CAMSV1			6
-+#define CLK_CAMSV2			7
-+#define CLK_CAM_CCU			8
-+#define CLK_CAM_NR_CLK			9
++		cpu@101 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x101>;
++		};
 +
-+#endif /* _DT_BINDINGS_CLK_MT6765_H */
++		cpu@102 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x102>;
++		};
++
++		cpu@103 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			enable-method = "psci";
++			reg = <0x103>;
++		};
++	};
++
++	clocks {
++		clk26m: clk26m {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <26000000>;
++		};
++
++		clk32k: clk32k {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <32000>;
++		};
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupt-parent = <&gic>;
++		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
++			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
++	};
++
++	soc {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		compatible = "simple-bus";
++		ranges;
++
++		gic: interrupt-controller@c000000 {
++			compatible = "arm,gic-v3";
++			#interrupt-cells = <3>;
++			#address-cells = <2>;
++			#size-cells = <2>;
++			interrupt-parent = <&gic>;
++			interrupt-controller;
++			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
++			      <0 0x0c100000 0 0x200000>, /* GICR */
++			      <0 0x0c400000 0 0x2000>,   /* GICC */
++			      <0 0x0c410000 0 0x2000>,   /* GICH */
++			      <0 0x0c420000 0 0x20000>;  /* GICV */
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++		};
++
++		topckgen: topckgen@10000000 {
++			compatible = "mediatek,mt6765-topckgen", "syscon";
++			reg = <0 0x10000000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		infracfg: infracfg@10001000 {
++			compatible = "mediatek,mt6765-infracfg", "syscon";
++			reg = <0 0x10001000 0 0x1000>;
++			interrupts = <GIC_SPI 147 IRQ_TYPE_EDGE_RISING>;
++			#clock-cells = <1>;
++		};
++
++		pericfg: pericfg@10003000 {
++			compatible = "mediatek,mt6765-pericfg", "syscon";
++			reg = <0 0x10003000 0 0x1000>;
++		};
++
++		scpsys: scpsys@10006000 {
++			compatible = "mediatek,mt6765-scpsys";
++			reg =	<0 0x10006000 0 0x1000>; /* spm */
++			#power-domain-cells = <1>;
++			clocks = <&topckgen CLK_TOP_MFG_SEL>,
++				 <&topckgen CLK_TOP_MM_SEL>,
++				 <&mmsys_config CLK_MM_SMI_COMMON>,
++				 <&mmsys_config CLK_MM_SMI_COMM0>,
++				 <&mmsys_config CLK_MM_SMI_COMM1>,
++				 <&mmsys_config CLK_MM_SMI_LARB0>,
++				 <&imgsys CLK_IMG_LARB2>,
++				 <&mmsys_config CLK_MM_SMI_IMG>,
++				 <&camsys CLK_CAM_LARB3>,
++				 <&camsys CLK_CAM_DFP_VAD>,
++				 <&camsys CLK_CAM>,
++				 <&camsys CLK_CAM_CCU>,
++				 <&mmsys_config CLK_MM_SMI_CAM>;
++			clock-names = "mfg", "mm",
++				      "mm-0", "mm-1", "mm-2", "mm-3",
++				      "isp-0", "isp-1", "cam-0", "cam-1",
++				      "cam-2", "cam-3", "cam-4";
++			infracfg = <&infracfg>;
++			smi_comm = <&smi_common>;
++		};
++
++		apmixed: apmixed@1000c000 {
++			compatible = "mediatek,mt6765-apmixedsys", "syscon";
++			reg = <0 0x1000c000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		sysirq: interrupt-controller@10200a80 {
++			compatible = "mediatek,mt6765-sysirq",
++				     "mediatek,mt6577-sysirq";
++			interrupt-controller;
++			#interrupt-cells = <3>;
++			interrupt-parent = <&gic>;
++			reg = <0 0x10200a80 0 0x50>;
++		};
++
++		uart0: serial@11002000 {
++			compatible = "mediatek,mt6765-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11002000 0 0x400>;
++			interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_IFR_UART0>,
++				 <&infracfg CLK_IFR_AP_DMA>;
++			clock-names = "baud", "bus";
++			status = "disabled";
++		};
++
++		uart1: serial@11003000 {
++			compatible = "mediatek,mt6765-uart",
++				     "mediatek,mt6577-uart";
++			reg = <0 0x11003000 0 0x400>;
++			interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_IFR_UART1>,
++				 <&infracfg CLK_IFR_AP_DMA>;
++			clock-names = "baud", "bus";
++			status = "disabled";
++		};
++
++		audio: audio@11220000 {
++			compatible = "mediatek,mt6765-audsys", "syscon";
++			reg = <0 0x11220000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		mipi_rx_ana_csi0a: mipi_rx_ana_csi0a@11c10000 {
++			compatible = "mediatek,mt6765-mipi_rx_ana_csi0a",
++				     "syscon";
++			reg = <0 0x11c10000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		mmsys_config: mmsys_config@14000000 {
++			compatible = "mediatek,mt6765-mmsys", "syscon";
++			reg = <0 0x14000000 0 0x1000>;
++			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_LOW>;
++			#clock-cells = <1>;
++		};
++
++		smi_common: smi_common@14002000 {
++			compatible = "mediatek,mt6765-smi-common", "syscon";
++			reg = <0 0x14002000 0 0x1000>;
++		};
++
++		imgsys: imgsys@15020000 {
++			compatible = "mediatek,mt6765-imgsys", "syscon";
++			reg = <0 0x15020000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++
++		venc_gcon: venc_gcon@17000000 {
++			compatible = "mediatek,mt6765-vcodecsys", "syscon";
++			reg = <0 0x17000000 0 0x10000>;
++			#clock-cells = <1>;
++		};
++
++		camsys: camsys@1a000000  {
++			compatible = "mediatek,mt6765-camsys", "syscon";
++			reg = <0 0x1a000000 0 0x1000>;
++			#clock-cells = <1>;
++		};
++	}; /* end of soc */
++};
 -- 
 1.7.9.5
 
