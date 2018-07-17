@@ -2,79 +2,96 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1503AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98744ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC05320C03
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:40:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4723220BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:41:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ydCV1Tyh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC05320C03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WmaOOPcA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4723220BED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730736AbeGQDK4 (ORCPT
+        id S1730229AbeGQDLw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 23:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729630AbeGQDK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 23:10:56 -0400
-Received: from dragon (unknown [104.237.91.210])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77F4520BED;
-        Tue, 17 Jul 2018 02:40:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531795239;
-        bh=bIrBnG4oVYfiizv0mn0+QjyB1i5OZK8XAI7zfYPI1m8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ydCV1Tyh2eTeUysE3LXNjRh2EomJXDLj1t/V/YIc2Pzq/waolK27ho+mAyYG8DuBx
-         G81Gnnt/mhH6uIDdyeKETMsmT7xg/cFsv9oKpC4JyPjg4ZoYElWwfJqhbltMTssprE
-         lw0f8pjI6t+sjPGYEWKOB+cL+f9og+I4/5aKY1TA=
-Date:   Tue, 17 Jul 2018 10:40:28 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] ARM: dts: make pfuze switch always-on for imx
- platforms
-Message-ID: <20180717024027.GA4576@dragon>
-References: <1530063055-25914-1-git-send-email-Anson.Huang@nxp.com>
- <AM3PR04MB1315B66212D928D7EAF27557F5580@AM3PR04MB1315.eurprd04.prod.outlook.com>
+        Mon, 16 Jul 2018 23:11:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47936 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729854AbeGQDLw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 23:11:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NHTTYKkayQ/9JS2jPzZ9dqFt2qqic5/uDioWFevfwaI=; b=WmaOOPcABwtzDDAP2VVqaseeh
+        aQcte6LevjvNyDH7wyhWv7UR7yxksO+E0VAXx12EELWke02y0G8lIDYqHyWbNQ72JyfBQ2kh1OqFn
+        c81Qv1IyOJOtEMi9DdiHvsXnHT6Lh2mQMj2r0uSFOWxeBbMWqB/0gLt/hro9Y/BJz2sQ3NtJL/FI5
+        R8xJkHGc9bTJ6R6MxkNmxf9fnhBmDiXGPOy899W79Kkkd8HdMK/v96YpXKB3rYSAlfALwrpZe81S4
+        9xMYRE43X86rO1R2BF8zr+InAM4mSkEaIMrJJsYTfcPvj6zeZHCk+BftDOiED7AnLKccwD4kYqE++
+        9mUwEw1Rw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ffFvg-0005xZ-E2; Tue, 17 Jul 2018 02:41:32 +0000
+Date:   Mon, 16 Jul 2018 19:41:32 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 1/5] radix tree test suite: fix mapshift build target
+Message-ID: <20180717024132.GC7934@bombadil.infradead.org>
+References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+ <20180503192430.7582-2-ross.zwisler@linux.intel.com>
+ <20180715230052.GA6486@bombadil.infradead.org>
+ <20180716160710.GA2287@linux.intel.com>
+ <20180716195249.GA14380@bombadil.infradead.org>
+ <20180716210820.GA17164@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM3PR04MB1315B66212D928D7EAF27557F5580@AM3PR04MB1315.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180716210820.GA17164@linux.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 02:16:55AM +0000, Anson Huang wrote:
-> Hi, Shawn
-> 	Although the commit 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for switch") is reverted to avoid the boot failure on some i.MX platforms, but adding the "regulator-always-on" property for those pfuze's critical switches are the right way and making sense, no matter how the pfuze regulator's switch ON/OFF function will be implemented, below patches should can be applied anyway?
+On Mon, Jul 16, 2018 at 03:08:20PM -0600, Ross Zwisler wrote:
+> On Mon, Jul 16, 2018 at 12:52:49PM -0700, Matthew Wilcox wrote:
+> > On Mon, Jul 16, 2018 at 10:07:10AM -0600, Ross Zwisler wrote:
+> <>
+> > OK ... what version of make are you using?  Because this works fine for me:
+> > 
+> > $ git clone linux clean
+> > $ cd clean
+> > $ git checkout v4.17
+> > $ cd tools/testing/radix-tree/ 
+> > $ git revert 8d9fa88edd5e360b71765feeadb915d4066c9684
+> > $ make
+> > 
+> > $ make --version
+> > GNU Make 4.1
+> > Built for x86_64-pc-linux-gnu
+> > 
+> > It's Debian's Version: 4.1-9.1
 > 
-> ARM: dts: imx6sll-evk: make pfuze100 sw4 always on
-> ARM: dts: make pfuze switch always-on for imx platforms
-> ARM: dts: imx6sl-evk: keep sw4 always on
+> $ make --version
+> GNU Make 4.2.1
+> Built for x86_64-redhat-linux-gnu
 > 
-> 	Let me know your thoughts, thanks!
+> The one from Fedora 27.
 
-Okay, resend them as a series with commit log updated, since the commit
-log doesn't reflect the current situation any longer.
+Huh.  I just tried 4.2.1-1.1 from Debian unstable and that doesn't
+produce the problem either.  I'm not sure how to proceed at this point.
+I'm really not a makefile expert.
 
-Shawn
