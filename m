@@ -6,174 +6,107 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E80C9ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22ED5ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C53E20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C53E20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D9ED920C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9ED920C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731488AbeGQK7s (ORCPT
+        id S1730638AbeGQLBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:59:48 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:51538 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729718AbeGQK7r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:59:47 -0400
-Received: by mail-wm0-f44.google.com with SMTP id s12-v6so954401wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 03:27:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hX/4nWBLOv9cV571YboMDyHFje1lzsIY0N+Y+aoUQmw=;
-        b=lFtwP/kf+g30De5Gk13svgkQCtK6qCYh+vajVRZt9IK+07GbVCRdGXIwyF8rPeAfBW
-         se92uBf/4H0aJNBf8xUmaQtXy9V6gy8LDduAdPqHGG5EZbzNKFn3LrW8N7SXEaqlcOkM
-         aedoaesgvw1iOwWwQHG9e6k7B+0hZCfKTgraGuehBZDPXWKMtazvF1lcqJpR1XGaGvYs
-         un+neAH3tSfDwZ1RLTaExa0DR8HyWM2r3aQm0AHXftkdH64LRoxWIsBPo2tEhguGN5IY
-         HozW9feY3zx1WdQo/SYjpTu1cGXQP8WGuEVtvqdtRPk0OEpZeBqLDPF145tuq3eNyYxa
-         5Blg==
-X-Gm-Message-State: AOUpUlELGC1aZkTnd4zWq/h6sUHwEEpL/ETO//yYGa3ROMNzDoH/3YVr
-        T8Nvg/Mz2LeC6lDDZCOF6dSkoQ1+J8NnlbFwjcun3g==
-X-Google-Smtp-Source: AAOMgpfdnAyjKUrh/CrVc/QUnIPSedyhkuCJa8/iauUymmJ44AUFWxkz/t9rofGbcZ89bhVjWsQJhjA0/IspEBF4TBw=
-X-Received: by 2002:a1c:7408:: with SMTP id p8-v6mr931534wmc.118.1531823270322;
- Tue, 17 Jul 2018 03:27:50 -0700 (PDT)
+        Tue, 17 Jul 2018 07:01:03 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36971 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729718AbeGQLBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:01:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 03:28:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="73015709"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 03:28:33 -0700
+Subject: Re: [PATCH] mmc: tegra: Force correct divider calculation on DDR50/52
+To:     Aapo Vienamo <avienamo@nvidia.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>
+Cc:     linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <875ad3f9-81b9-2c50-be1d-4550fd9e3b44@intel.com>
+Date:   Tue, 17 Jul 2018 13:26:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Received: by 2002:a1c:28c2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 03:27:49
- -0700 (PDT)
-In-Reply-To: <20180712171356.10227-1-lyude@redhat.com>
-References: <20180712171356.10227-1-lyude@redhat.com>
-From:   Karol Herbst <kherbst@redhat.com>
-Date:   Tue, 17 Jul 2018 12:27:49 +0200
-Message-ID: <CACO55tv2xQwpvL_KtXXj+UNAHnvuPSwhHZ5ny+LuWN892YR8Kw@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH] drm/nouveau: Don't forget to label dp_aux devices
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     nouveau <nouveau@lists.freedesktop.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531751669-26584-1-git-send-email-avienamo@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Karol Herbst <karolherbst@gmail.com>
+On 16/07/18 17:34, Aapo Vienamo wrote:
+> Tegra SDHCI controllers require the SDHCI clock divider to be configured
+> to divide the clock by two in DDR50/52 modes. Incorrectly configured
+> clock divider results in corrupted data.
+> 
+> Prevent the possibility of incorrectly calculating the divider value due
+> to clock rate rounding or low parent clock frequency by not assigning
+> host->max_clk to clk_get_rate() on tegra_sdhci_set_clock().
+> 
+> See the comments for further details.
+> 
+> Fixes: a8e326a ("mmc: tegra: implement module external clock change")
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
 
-2018-07-12 19:13 GMT+02:00 Lyude Paul <lyude@redhat.com>:
-> This makes debugging with DP tracing a lot harder to interpret, so name
-> each i2c based off the name of the encoder that it's for
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
 > ---
->  drivers/gpu/drm/nouveau/dispnv04/disp.c     |  2 +-
->  drivers/gpu/drm/nouveau/dispnv50/disp.c     |  2 +-
->  drivers/gpu/drm/nouveau/nouveau_connector.c | 12 ++++++++++--
->  drivers/gpu/drm/nouveau/nouveau_connector.h |  3 ++-
->  4 files changed, 14 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/dispnv04/disp.c b/drivers/gpu/drm/nouveau/dispnv04/disp.c
-> index 501d2d290e9c..45ff1872d894 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv04/disp.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv04/disp.c
-> @@ -64,7 +64,7 @@ nv04_display_create(struct drm_device *dev)
->         for (i = 0; i < dcb->entries; i++) {
->                 struct dcb_output *dcbent = &dcb->entry[i];
->
-> -               connector = nouveau_connector_create(dev, dcbent->connector);
-> +               connector = nouveau_connector_create(dev, dcbent);
->                 if (IS_ERR(connector))
->                         continue;
->
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> index 9382e99a0bc7..4f8d51590bbb 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> @@ -2198,7 +2198,7 @@ nv50_display_create(struct drm_device *dev)
->
->         /* create encoder/connector objects based on VBIOS DCB table */
->         for (i = 0, dcbe = &dcb->entry[0]; i < dcb->entries; i++, dcbe++) {
-> -               connector = nouveau_connector_create(dev, dcbe->connector);
-> +               connector = nouveau_connector_create(dev, dcbe);
->                 if (IS_ERR(connector))
->                         continue;
->
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> index 7b557c354307..0c5cc600c973 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> @@ -408,8 +408,10 @@ nouveau_connector_destroy(struct drm_connector *connector)
->         kfree(nv_connector->edid);
->         drm_connector_unregister(connector);
->         drm_connector_cleanup(connector);
-> -       if (nv_connector->aux.transfer)
-> +       if (nv_connector->aux.transfer) {
->                 drm_dp_aux_unregister(&nv_connector->aux);
-> +               kfree(nv_connector->aux.name);
-> +       }
->         kfree(connector);
->  }
->
-> @@ -1201,13 +1203,16 @@ drm_conntype_from_dcb(enum dcb_connector_type dcb)
->  }
->
->  struct drm_connector *
-> -nouveau_connector_create(struct drm_device *dev, int index)
-> +nouveau_connector_create(struct drm_device *dev,
-> +                        const struct dcb_output *dcbe)
->  {
->         const struct drm_connector_funcs *funcs = &nouveau_connector_funcs;
->         struct nouveau_drm *drm = nouveau_drm(dev);
->         struct nouveau_display *disp = nouveau_display(dev);
->         struct nouveau_connector *nv_connector = NULL;
->         struct drm_connector *connector;
-> +       char aux_name[48] = {0};
-> +       int index = dcbe->connector;
->         int type, ret = 0;
->         bool dummy;
->
-> @@ -1306,6 +1311,9 @@ nouveau_connector_create(struct drm_device *dev, int index)
->         case DRM_MODE_CONNECTOR_eDP:
->                 nv_connector->aux.dev = dev->dev;
->                 nv_connector->aux.transfer = nouveau_connector_aux_xfer;
-> +               snprintf(aux_name, sizeof(aux_name), "sor-%04x-%04x",
-> +                        dcbe->hasht, dcbe->hashm);
-> +               nv_connector->aux.name = kstrdup(aux_name, GFP_KERNEL);
->                 ret = drm_dp_aux_register(&nv_connector->aux);
->                 if (ret) {
->                         NV_ERROR(drm, "failed to register aux channel\n");
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.h b/drivers/gpu/drm/nouveau/nouveau_connector.h
-> index a4d1a059bd3d..2c5cb51c7c33 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_connector.h
-> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
-> @@ -35,6 +35,7 @@
->  #include "nouveau_crtc.h"
->
->  struct nvkm_i2c_port;
-> +struct dcb_output;
->
->  struct nouveau_connector {
->         struct drm_connector base;
-> @@ -76,7 +77,7 @@ nouveau_crtc_connector_get(struct nouveau_crtc *nv_crtc)
->  }
->
->  struct drm_connector *
-> -nouveau_connector_create(struct drm_device *, int index);
-> +nouveau_connector_create(struct drm_device *, const struct dcb_output *);
->
->  extern int nouveau_tv_disable;
->  extern int nouveau_ignorelid;
-> --
-> 2.17.1
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+>  drivers/mmc/host/sdhci-tegra.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index ddf00166..908b23e 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -210,9 +210,24 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>  	if (!clock)
+>  		return sdhci_set_clock(host, clock);
+>  
+> +	/*
+> +	 * In DDR50/52 modes the Tegra SDHCI controllers require the SDHCI
+> +	 * divider to be configured to divided the host clock by two. The SDHCI
+> +	 * clock divider is calculated as part of sdhci_set_clock() by
+> +	 * sdhci_calc_clk(). The divider is calculated from host->max_clk and
+> +	 * the requested clock rate.
+> +	 *
+> +	 * By setting the host->max_clk to clock * 2 the divider calculation
+> +	 * will always result in the correct value for DDR50/52 modes,
+> +	 * regardless of clock rate rounding, which may happen if the value
+> +	 * from clk_get_rate() is used.
+> +	 */
+>  	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
+>  	clk_set_rate(pltfm_host->clk, host_clk);
+> -	host->max_clk = clk_get_rate(pltfm_host->clk);
+> +	if (tegra_host->ddr_signaling)
+> +		host->max_clk = host_clk;
+> +	else
+> +		host->max_clk = clk_get_rate(pltfm_host->clk);
+>  
+>  	sdhci_set_clock(host, clock);
+>  
+> 
+
