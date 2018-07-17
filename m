@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E728ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33C6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAA4E20BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:34:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA4E20BED
+	by mail.kernel.org (Postfix) with ESMTP id 9203E20BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:35:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9203E20BED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730614AbeGQKGM (ORCPT
+        id S1730390AbeGQKGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:06:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:37685 "EHLO
+        Tue, 17 Jul 2018 06:06:41 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54287 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729602AbeGQKGM (ORCPT
+        with ESMTP id S1729602AbeGQKGl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:06:12 -0400
+        Tue, 17 Jul 2018 06:06:41 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9Y7641463334
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9Yc3Y1463383
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:34:07 -0700
+        Tue, 17 Jul 2018 02:34:38 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9Y7cl1463331;
-        Tue, 17 Jul 2018 02:34:07 -0700
-Date:   Tue, 17 Jul 2018 02:34:07 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9YcNj1463379;
+        Tue, 17 Jul 2018 02:34:38 -0700
+Date:   Tue, 17 Jul 2018 02:34:38 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Rik van Riel <tipbot@zytor.com>
-Message-ID: <tip-2ff6ddf19c0ec40633bd14d8fe28a289816bd98d@git.kernel.org>
-Cc:     dave.hansen@intel.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, hpa@zytor.com, riel@surriel.com,
-        mingo@kernel.org, torvalds@linux-foundation.org,
-        songliubraving@fb.com, tglx@linutronix.de
-Reply-To: tglx@linutronix.de, mingo@kernel.org, songliubraving@fb.com,
-          torvalds@linux-foundation.org, riel@surriel.com, hpa@zytor.com,
-          peterz@infradead.org, linux-kernel@vger.kernel.org,
-          dave.hansen@intel.com
-In-Reply-To: <20180716190337.26133-3-riel@surriel.com>
-References: <20180716190337.26133-3-riel@surriel.com>
+Message-ID: <tip-61d0beb5796ab11f7f3bf38cb2eccc6579aaa70b@git.kernel.org>
+Cc:     luto@kernel.org, peterz@infradead.org,
+        torvalds@linux-foundation.org, dave.hansen@intel.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        tglx@linutronix.de, riel@surriel.com
+Reply-To: riel@surriel.com, tglx@linutronix.de, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          dave.hansen@intel.com, peterz@infradead.org,
+          torvalds@linux-foundation.org, luto@kernel.org
+In-Reply-To: <20180716190337.26133-4-riel@surriel.com>
+References: <20180716190337.26133-4-riel@surriel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/tlb: Leave lazy TLB mode at page table free
- time
-Git-Commit-ID: 2ff6ddf19c0ec40633bd14d8fe28a289816bd98d
+Subject: [tip:x86/mm] x86/mm/tlb: Restructure switch_mm_irqs_off()
+Git-Commit-ID: 61d0beb5796ab11f7f3bf38cb2eccc6579aaa70b
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,33 +60,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2ff6ddf19c0ec40633bd14d8fe28a289816bd98d
-Gitweb:     https://git.kernel.org/tip/2ff6ddf19c0ec40633bd14d8fe28a289816bd98d
+Commit-ID:  61d0beb5796ab11f7f3bf38cb2eccc6579aaa70b
+Gitweb:     https://git.kernel.org/tip/61d0beb5796ab11f7f3bf38cb2eccc6579aaa70b
 Author:     Rik van Riel <riel@surriel.com>
-AuthorDate: Mon, 16 Jul 2018 15:03:32 -0400
+AuthorDate: Mon, 16 Jul 2018 15:03:33 -0400
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 17 Jul 2018 09:35:31 +0200
+CommitDate: Tue, 17 Jul 2018 09:35:32 +0200
 
-x86/mm/tlb: Leave lazy TLB mode at page table free time
+x86/mm/tlb: Restructure switch_mm_irqs_off()
 
-Andy discovered that speculative memory accesses while in lazy
-TLB mode can crash a system, when a CPU tries to dereference a
-speculative access using memory contents that used to be valid
-page table memory, but have since been reused for something else
-and point into la-la land.
+Move some code that will be needed for the lazy -> !lazy state
+transition when a lazy TLB CPU has gotten out of date.
 
-The latter problem can be prevented in two ways. The first is to
-always send a TLB shootdown IPI to CPUs in lazy TLB mode, while
-the second one is to only send the TLB shootdown at page table
-freeing time.
+No functional changes, since the if (real_prev == next) branch
+always returns.
 
-The second should result in fewer IPIs, since operationgs like
-mprotect and madvise are very common with some workloads, but
-do not involve page table freeing. Also, on munmap, batching
-of page table freeing covers much larger ranges of virtual
-memory than the batching of unmapped user pages.
-
-Tested-by: Song Liu <songliubraving@fb.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Rik van Riel <riel@surriel.com>
 Acked-by: Dave Hansen <dave.hansen@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
@@ -95,142 +83,101 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: efault@gmx.de
 Cc: kernel-team@fb.com
-Cc: luto@kernel.org
-Link: http://lkml.kernel.org/r/20180716190337.26133-3-riel@surriel.com
+Link: http://lkml.kernel.org/r/20180716190337.26133-4-riel@surriel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/include/asm/tlbflush.h |  5 +++++
- arch/x86/mm/tlb.c               | 27 +++++++++++++++++++++++++++
- include/asm-generic/tlb.h       | 10 ++++++++++
- mm/memory.c                     | 22 ++++++++++++++--------
- 4 files changed, 56 insertions(+), 8 deletions(-)
+ arch/x86/mm/tlb.c | 60 +++++++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 30 deletions(-)
 
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index 6690cd3fc8b1..3aa3204b5dc0 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -554,4 +554,9 @@ extern void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
- 	native_flush_tlb_others(mask, info)
- #endif
- 
-+extern void tlb_flush_remove_tables(struct mm_struct *mm);
-+extern void tlb_flush_remove_tables_local(void *arg);
-+
-+#define HAVE_TLB_FLUSH_REMOVE_TABLES
-+
- #endif /* _ASM_X86_TLBFLUSH_H */
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 6eb1f34c3c85..9a893673c56b 100644
+index 9a893673c56b..4b73fe835c95 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -646,6 +646,33 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 	put_cpu();
- }
+@@ -187,6 +187,8 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+ 	unsigned cpu = smp_processor_id();
+ 	u64 next_tlb_gen;
++	bool need_flush;
++	u16 new_asid;
  
-+void tlb_flush_remove_tables_local(void *arg)
-+{
-+	struct mm_struct *mm = arg;
-+
-+	if (this_cpu_read(cpu_tlbstate.loaded_mm) == mm &&
-+			this_cpu_read(cpu_tlbstate.is_lazy)) {
-+		/*
-+		 * We're in lazy mode.  We need to at least flush our
-+		 * paging-structure cache to avoid speculatively reading
-+		 * garbage into our TLB.  Since switching to init_mm is barely
-+		 * slower than a minimal flush, just switch to init_mm.
-+		 */
-+		switch_mm_irqs_off(NULL, &init_mm, NULL);
-+	}
-+}
-+
-+void tlb_flush_remove_tables(struct mm_struct *mm)
-+{
-+	int cpu = get_cpu();
-+	/*
-+	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
-+	 */
-+	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
-+		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
-+
-+	put_cpu();
-+}
- 
- static void do_flush_tlb_all(void *info)
- {
-diff --git a/include/asm-generic/tlb.h b/include/asm-generic/tlb.h
-index 3063125197ad..e811ef7b8350 100644
---- a/include/asm-generic/tlb.h
-+++ b/include/asm-generic/tlb.h
-@@ -303,4 +303,14 @@ static inline void tlb_remove_check_page_size_change(struct mmu_gather *tlb,
- 
- #define tlb_migrate_finish(mm) do {} while (0)
- 
-+/*
-+ * Used to flush the TLB when page tables are removed, when lazy
-+ * TLB mode may cause a CPU to retain intermediate translations
-+ * pointing to about-to-be-freed page table memory.
-+ */
-+#ifndef HAVE_TLB_FLUSH_REMOVE_TABLES
-+#define tlb_flush_remove_tables(mm) do {} while (0)
-+#define tlb_flush_remove_tables_local(mm) do {} while (0)
-+#endif
-+
- #endif /* _ASM_GENERIC__TLB_H */
-diff --git a/mm/memory.c b/mm/memory.c
-index 7206a634270b..18355e0b971a 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -326,16 +326,20 @@ bool __tlb_remove_page_size(struct mmu_gather *tlb, struct page *page, int page_
- 
- #ifdef CONFIG_HAVE_RCU_TABLE_FREE
- 
--/*
-- * See the comment near struct mmu_table_batch.
-- */
--
- static void tlb_remove_table_smp_sync(void *arg)
- {
--	/* Simply deliver the interrupt */
-+	struct mm_struct __maybe_unused *mm = arg;
-+	/*
-+	 * On most architectures this does nothing. Simply delivering the
-+	 * interrupt is enough to prevent races with software page table
-+	 * walking like that done in get_user_pages_fast.
-+	 *
-+	 * See the comment near struct mmu_table_batch.
-+	 */
-+	tlb_flush_remove_tables_local(mm);
- }
- 
--static void tlb_remove_table_one(void *table)
-+static void tlb_remove_table_one(void *table, struct mmu_gather *tlb)
- {
  	/*
- 	 * This isn't an RCU grace period and hence the page-tables cannot be
-@@ -344,7 +348,7 @@ static void tlb_remove_table_one(void *table)
- 	 * It is however sufficient for software page-table walkers that rely on
- 	 * IRQ disabling. See the comment near struct mmu_table_batch.
- 	 */
--	smp_call_function(tlb_remove_table_smp_sync, NULL, 1);
-+	smp_call_function(tlb_remove_table_smp_sync, tlb->mm, 1);
- 	__tlb_remove_table(table);
- }
+ 	 * NB: The scheduler will call us with prev == next when switching
+@@ -252,8 +254,6 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
  
-@@ -365,6 +369,8 @@ void tlb_table_flush(struct mmu_gather *tlb)
- {
- 	struct mmu_table_batch **batch = &tlb->batch;
+ 		return;
+ 	} else {
+-		u16 new_asid;
+-		bool need_flush;
+ 		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
  
-+	tlb_flush_remove_tables(tlb->mm);
+ 		/*
+@@ -297,41 +297,41 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
++	}
+ 
+-		if (need_flush) {
+-			this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+-			this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+-			load_new_mm_cr3(next->pgd, new_asid, true);
+-
+-			/*
+-			 * NB: This gets called via leave_mm() in the idle path
+-			 * where RCU functions differently.  Tracing normally
+-			 * uses RCU, so we need to use the _rcuidle variant.
+-			 *
+-			 * (There is no good reason for this.  The idle code should
+-			 *  be rearranged to call this before rcu_idle_enter().)
+-			 */
+-			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
+-		} else {
+-			/* The new ASID is already up to date. */
+-			load_new_mm_cr3(next->pgd, new_asid, false);
+-
+-			/* See above wrt _rcuidle. */
+-			trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+-		}
++	if (need_flush) {
++		this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
++		this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
++		load_new_mm_cr3(next->pgd, new_asid, true);
+ 
+ 		/*
+-		 * Record last user mm's context id, so we can avoid
+-		 * flushing branch buffer with IBPB if we switch back
+-		 * to the same user.
++		 * NB: This gets called via leave_mm() in the idle path
++		 * where RCU functions differently.  Tracing normally
++		 * uses RCU, so we need to use the _rcuidle variant.
++		 *
++		 * (There is no good reason for this.  The idle code should
++		 *  be rearranged to call this before rcu_idle_enter().)
+ 		 */
+-		if (next != &init_mm)
+-			this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
++		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, TLB_FLUSH_ALL);
++	} else {
++		/* The new ASID is already up to date. */
++		load_new_mm_cr3(next->pgd, new_asid, false);
+ 
+-		this_cpu_write(cpu_tlbstate.loaded_mm, next);
+-		this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
++		/* See above wrt _rcuidle. */
++		trace_tlb_flush_rcuidle(TLB_FLUSH_ON_TASK_SWITCH, 0);
+ 	}
+ 
++	/*
++	 * Record last user mm's context id, so we can avoid
++	 * flushing branch buffer with IBPB if we switch back
++	 * to the same user.
++	 */
++	if (next != &init_mm)
++		this_cpu_write(cpu_tlbstate.last_ctx_id, next->context.ctx_id);
 +
- 	if (*batch) {
- 		call_rcu_sched(&(*batch)->rcu, tlb_remove_table_rcu);
- 		*batch = NULL;
-@@ -387,7 +393,7 @@ void tlb_remove_table(struct mmu_gather *tlb, void *table)
- 	if (*batch == NULL) {
- 		*batch = (struct mmu_table_batch *)__get_free_page(GFP_NOWAIT | __GFP_NOWARN);
- 		if (*batch == NULL) {
--			tlb_remove_table_one(table);
-+			tlb_remove_table_one(table, tlb);
- 			return;
- 		}
- 		(*batch)->nr = 0;
++	this_cpu_write(cpu_tlbstate.loaded_mm, next);
++	this_cpu_write(cpu_tlbstate.loaded_mm_asid, new_asid);
++
+ 	load_mm_cr4(next);
+ 	switch_ldt(real_prev, next);
+ }
