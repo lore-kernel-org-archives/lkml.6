@@ -2,84 +2,86 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE4BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E9AECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8238D20779
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:46:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g1gnktSX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8238D20779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F319B20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:46:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F319B20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbeGQQUA (ORCPT
+        id S1730707AbeGQQUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:20:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53946 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 12:20:13 -0400
+Received: from mga06.intel.com ([134.134.136.31]:22965 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729702AbeGQQT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:19:59 -0400
-Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A90E20657;
-        Tue, 17 Jul 2018 15:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531842404;
-        bh=YYLR/gXfx28aeRf+O1lNeyi+ody/rq9gSQZu/Wn2pV8=;
-        h=From:To:Subject:Date:From;
-        b=g1gnktSXqd2OC1XD3QKE1atud9fTJ/vhSfKvTIK9ho05XnjQ5QXjHjGlPRFys3ZkI
-         pN+3nk+4ttVb8VNcwA7mnD229M5Mt6CTV5bqiUX4fdI9J4Dn3OnN1iqtWyKETSPyC3
-         KSCL76RckoNgLKKTsN7PHNvLZiZp1bwDFBbjEW0Q=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal: samsung: Remove Exynos5440 clock handling left-overs
-Date:   Tue, 17 Jul 2018 17:46:17 +0200
-Message-Id: <20180717154617.29913-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        id S1730128AbeGQQUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:20:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 08:46:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
+   d="scan'208";a="67640899"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga003.jf.intel.com with ESMTP; 17 Jul 2018 08:46:53 -0700
+Message-ID: <b9e186e35d780a31077c8336315e86a8f0551523.camel@linux.intel.com>
+Subject: Re: [PATCH v3 0/3] add crc64 calculation as kernel library
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Date:   Tue, 17 Jul 2018 18:46:53 +0300
+In-Reply-To: <20180717145525.50852-1-colyli@suse.de>
+References: <20180717145525.50852-1-colyli@suse.de>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 8014220d48e7 ("thermal: samsung: Remove support for Exynos5440")
-removed the Exynos5440 specific part of code for accessing TMU interrupt
-registers but the surrounding clock handling was left.
+On Tue, 2018-07-17 at 22:55 +0800, Coly Li wrote:
+> This patch set adds basic implementation of crc64 calculation as Linux
+> kernel library. Since bcache already does crc64 by itself, this patch
+> set also modifies bcache code to use the new crc64 library routine.
+> 
+> bcache uses crc64 as storage checksum, if a change of crc lib routines
+> results an inconsistent result, the unmatched checksum may make bcache
+> 'think' the on-disk is corrupted, such change should be avoided or
+> detected as early as possible. Therefore the last patch in this series
+> adds a crc test framework, to check consistency of different
+> calculations.
+> 
 
-Clean it up.
+Thanks, I have commented individual patches, though I didn't see patch
+3/3 and...
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/thermal/samsung/exynos_tmu.c | 5 -----
- 1 file changed, 5 deletions(-)
+> Andy Shevchenko (1):
+>   lib/crc64: add crc64 option to lib/Kconfig
+> 
+> Coly Li (3):
+>   lib: add crc64 calculation routines
+>   bcache: use routines from lib/crc64.c for CRC64 calculation
+>   lib/test_crc: Add test cases for crc calculation
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index a992e51ef065..48eef552cba4 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -789,11 +789,6 @@ static void exynos_tmu_work(struct work_struct *work)
- 	struct exynos_tmu_data *data = container_of(work,
- 			struct exynos_tmu_data, irq_work);
- 
--	if (!IS_ERR(data->clk_sec))
--		clk_enable(data->clk_sec);
--	if (!IS_ERR(data->clk_sec))
--		clk_disable(data->clk_sec);
--
- 	thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
- 
- 	mutex_lock(&data->lock);
+...this part looks weird.
+
+Do you use `git format-patch --cover-letter`?
+
 -- 
-2.14.1
-
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
