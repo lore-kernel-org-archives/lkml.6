@@ -2,108 +2,76 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11855ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B3C1ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1A9320877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:08:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A9320877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id AAE48208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:14:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+D4G/Kw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE48208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbeGQGjG (ORCPT
+        id S1727978AbeGQGpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 02:39:06 -0400
-Received: from muru.com ([72.249.23.125]:51658 "EHLO muru.com"
+        Tue, 17 Jul 2018 02:45:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727293AbeGQGjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 02:39:06 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id E459180EE;
-        Tue, 17 Jul 2018 06:11:20 +0000 (UTC)
-Date:   Mon, 16 Jul 2018 23:08:08 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Roger Quadros <rogerq@ti.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Tejun Heo <tj@kernel.org>, linux-omap@vger.kernel.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org,
-        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Samuel Morris <samorris@lexmark.com>
-Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
-Message-ID: <20180717060808.GW99251@atomide.com>
-References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
- <20180620102904.GC112168@atomide.com>
- <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
- <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
- <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
- <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
- <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
- <20180702093243.GO112168@atomide.com>
- <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
+        id S1727481AbeGQGpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 02:45:49 -0400
+Received: from dragon (unknown [104.237.91.210])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2734E208AD;
+        Tue, 17 Jul 2018 06:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531808093;
+        bh=lta4qCa9f7aqclIKu9G1ICn8m8pHlZdXFOnMNLtUX1k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c+D4G/Kwh9heONu24kshD5UUDTy4pZ92IPj4U1j93TtR7V9Y7b7VP6pqlqHtiB29A
+         jc3h5wTbSq9w6zDzjuiUePhgJY1fjrmH/v0DgmA1tLpwME3zLyihWB1tUAemdTpCZo
+         YxYFdV6hmPQq9EJevBb8yhFt63+wAtYNXZT5e1XQ=
+Date:   Tue, 17 Jul 2018 14:14:40 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>, linux-pm@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] soc: imx6qp: Use GENPD_FLAG_ALWAYS_ON for PU errata
+Message-ID: <20180717061439.GH4576@dragon>
+References: <c00ad2ebf94d105544b328c77fa1edbfe6bbc193.1531475786.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <c00ad2ebf94d105544b328c77fa1edbfe6bbc193.1531475786.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tejun & Stephen,
-
-The following regression is still pending in next, see below.
-
-* Samuel Morris <samorris@lexmark.com> [180702 13:35]:
-> On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:
-> > Hi,
-> >
-> > * Roger Quadros <rogerq@ti.com> [180621 14:56]:
-> >> On 21/06/18 17:31, Samuel Morris wrote:
-> >> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote:
-> >> >> +Rafael
-> >> >>
-> >> >> On 20/06/18 18:30, Samuel Morris wrote:
-> >> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:
-> >> >>>> Tony,
-> >> >>>>
-> >> >>>> On 20/06/18 13:29, Tony Lindgren wrote:
-> >> >>>>> Hi,
-> >> >>>>>
-> >> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
-> >> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
-> >> >>>>>
-> >> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
-> >> >>>>> hotplug to save power").
-> >> >>>>>
-> >> >>>>> Reverting the patch makes things work again. Any ideas what
-> >> >>>>> might be going wrong here? Things clearly idle but then there
-> >> >>>>> seems to be some register access with clocks disabled.
-> >
-> > So this issue is still happening as of next-20180702. Can you guys
-> > please revert the commit above while working on a better solution?
+On Fri, Jul 13, 2018 at 01:01:15PM +0300, Leonard Crestez wrote:
+> This is functionally identical but simpler and slightly faster.
 > 
-> That's fine with me. I'm not very familiar with the process here, does
-> this require anything on my end? And would that require the
-> accompanying patch to be reverted: "ata: ahci: rpm_put port on
-> port_stop to match rpm_get in port_start"? There shouldn't be any
-> problem leaving that one in, but I just want to know before submitting
-> my next patch set.
+> The PU domain is turned on at boot time and never turned off. In the
+> current implementation the pm core will repeatedly call power_off when
+> the domain is unused and get -EBUSY back. If the domain is marked as
+> "always on" instead the pm core won't even attempt to turn it off.
+> 
+> In theory on 6qp it is safe to turn PU off in suspend, however that is
+> best accomplished with a new core flag.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Well usually the maintainer just reverts the regression causing
-patch in the related branch and that's it.
-
-Stephen, can you please revert in next until we hear back from
-Tejun?
-
-Regards,
-
-Tony
+Applied all, thanks.
