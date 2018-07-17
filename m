@@ -2,109 +2,104 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=FROM_WORDY,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAD2ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A511EECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ACCE20C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:36:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ACCE20C10
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id 610E520856
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:37:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hW2HQCmg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610E520856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731721AbeGQPJW (ORCPT
+        id S1731781AbeGQPKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:09:22 -0400
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.66]:21861 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729621AbeGQPJW (ORCPT
+        Tue, 17 Jul 2018 11:10:05 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35988 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731613AbeGQPKF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:09:22 -0400
-Received: from [46.226.52.200] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-2.bemta.az-b.eu-west-1.aws.symcld.net id 45/70-19217-5EEFD4B5; Tue, 17 Jul 2018 14:36:21 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrPIsWRWlGSWpSXmKPExsUSt3Opse7Tf77
-  RBkcnCVo0L17PZtG1eieLxeVdc9gsFi1rZbZ4svAMkwOrx7yTgR77565h99j5vYHd4/MmuQCW
-  KNbMvKT8igTWjFsrprMUrOOqmH90DWsD406OLkYuDiGB9YwSM0+9Ze9i5ARyKiSO7vjJCGKzC
-  VhITD7xgK2LkYODRUBV4uHBEJCwsECYxNxrs1lAekUEuhklTm56CtbLLJAksfZtDzNIPa+Ag8
-  TMOdUgYV4BQYmTM5+wQJRISBx88YIZYpWBxOkFjWBxCQF7ienvr4K1SgjoSzQei4UIG0p8n/U
-  NqsRc4tGEuawTGPlnIZk6C8nUBYxMqxgtkooy0zNKchMzc3QNDQx0DQ2NdA0tLXUNzQ31Eqt0
-  k/RSS3XLU4tLdIHc8mK94src5JwUvbzUkk2MwGBmAIIdjCe+JR9ilORgUhLl5a32jRbiS8pPq
-  cxILM6ILyrNSS0+xCjDwaEkwcsDjA4hwaLU9NSKtMwcYFzBpCU4eJREeL/8BUrzFhck5hZnpk
-  OkTjEac5xq7pnEzPHn/dRJzEIsefl5qVLivHdBSgVASjNK8+AGweL9EqOslDAvI9BpQjwFqUW
-  5mSWo8q8YxTkYlYR5p4JM4cnMK4Hb9wroFCagU6SrwU4pSURISTUwGnAZf5rwUepeXmem5q7Y
-  zHOTvui+Oy0kd0Qtn63gZu2xgyGLSx9JdSiV39I/JdDx26jkxIJHTsK2yqc7/n19Gx9Zvdeza
-  0tm+czUuj33zUudFzT0hfMu05nzq6tFY1JswtZtpx5sPX+quP+rsdCScpZD3z6bdsZ5p3xi0r
-  IM17m8eH+KcwqjEktxRqKhFnNRcSIANtVSzPICAAA=
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-4.tower-288.messagelabs.com!1531838180!4468578!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 5229 invoked from network); 17 Jul 2018 14:36:21 -0000
-Received: from mailrelay2.diasemi.com (HELO sw-ex-cashub01.diasemi.com) (94.185.165.51)
-  by server-4.tower-288.messagelabs.com with AES128-SHA encrypted SMTP; 17 Jul 2018 14:36:21 -0000
-Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
- SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.382.0; Tue, 17 Jul 2018 15:36:19 +0100
-Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
- 80EEB3FBB7; Tue, 17 Jul 2018 15:36:19 +0100 (BST)
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date:   Tue, 17 Jul 2018 15:36:19 +0100
-Subject: [PATCH] usb: typec: tcpm: Fix sink PDO starting index for PPS APDO
- selection
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <support.opensource@diasemi.com>
-Message-ID: <20180717143619.80EEB3FBB7@swsrvapps-01.diasemi.com>
+        Tue, 17 Jul 2018 11:10:05 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HEXTJ9059436;
+        Tue, 17 Jul 2018 14:37:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=kb7VZG9kHN9YTsQxh3Q1PD4iBlaLxkVhGu+IzWVeecY=;
+ b=hW2HQCmgpNq8OR0amRUNG+Lfez0OvLmTl8kuuMZsgCaOz7pfcSs1FTS4V9CuM/PejPCQ
+ 1u0qsTLZe21139a0jf69eBUM/rKhfq9/wDF2pIeJeQYFaIF9bzDc9juKqimTzwEha4JT
+ TTvVCpqdepX3UFjHo6EFGqoHlRS4tFtDmbZYzyMgBtAN836+dz1AW52/Axo+ZIWw4Rzy
+ N5J97mB7CcFPnsZa0DDDMRAK4tFThwC391yXcuHSP4UdX+QviST/3pEoFwqhTTxn6faG
+ EIorA1hjGe4PcvOksxhARxubQ+rDnE7M6zswNlyas0kW6E4VaWRCUFpdnts73Sl+cRtM 8w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2k7a3t9122-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Jul 2018 14:37:06 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6HEb4Za013610
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Jul 2018 14:37:04 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6HEb3xO011177;
+        Tue, 17 Jul 2018 14:37:03 GMT
+Received: from mail-oi0-f52.google.com (/209.85.218.52)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Jul 2018 07:37:03 -0700
+Received: by mail-oi0-f52.google.com with SMTP id y207-v6so2408637oie.13;
+        Tue, 17 Jul 2018 07:37:03 -0700 (PDT)
+X-Gm-Message-State: AOUpUlF80K7wJLH0oqnzosshmsVrXZtucTRjBgxshthL4f7g7l0mbSae
+        jeJrwXPvyJ3jaYFxu9866gWMEWGq+YrvJ14P1R4=
+X-Google-Smtp-Source: AAOMgpfKA5tktxdsU4IGxad/NaJ1FlX7Wb13iw+Eq6ajro0V2wuihEO3q2qXBIe7MJPeAqdPNWLSfItBuK0AKUNN310=
+X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr2077710oiy.191.1531838223222;
+ Tue, 17 Jul 2018 07:37:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 17/07/2018 11:50:00
+References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
+ <20180712000419.5165-14-pasha.tatashin@oracle.com> <928b8490-89d2-46a3-8596-16751bcd12db@cn.fujitsu.com>
+ <CAGM2reb-MwiT8qoiSkXCjAAM46JOYL9BP+U3q7PMTcxp9EiK7w@mail.gmail.com>
+ <01812492-b88b-4436-570b-ef776eaafc6a@cn.fujitsu.com> <CAGM2reaU1GouLvUfW_dbs7gFiYCMX=X+Vag2RnuofmmgS4_TdA@mail.gmail.com>
+ <4f6b295d-c88b-2204-0557-ae85ed443a31@cn.fujitsu.com>
+In-Reply-To: <4f6b295d-c88b-2204-0557-ae85ed443a31@cn.fujitsu.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Tue, 17 Jul 2018 10:36:27 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZJHRXuWNaLpJRtkbx0V4FJD78dvCNAsMg8X4cF2qeQuw@mail.gmail.com>
+Message-ID: <CAGM2reZJHRXuWNaLpJRtkbx0V4FJD78dvCNAsMg8X4cF2qeQuw@mail.gmail.com>
+Subject: Re: [PATCH v13 13/18] x86/tsc: calibrate tsc only once
+To:     douly.fnst@cn.fujitsu.com
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        peterz@infradead.org, prarit@redhat.com, feng.tang@intel.com,
+        Petr Mladek <pmladek@suse.com>, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, boris.ostrovsky@oracle.com,
+        jgross@suse.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=593
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807170153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a bug in the sink PDO search code when trying to select
-a PPS APDO. The current code actually sets the starting index for
-searching to whatever value 'i' is, rather than choosing index 1
-to avoid the first PDO (always 5V fixed). As a result, for sources
-which support PPS but whose PPS APDO index does not match with the
-supporting sink PPS APDO index for the platform, no valid PPS APDO
-will be found so this feature will not be permitted.
+>
+> Oops, yes, my mistake. I will test the patchset with Thomas's kvm patch
+> for you.
 
-Sadly in testing, both Source and Sink capabilities matched up and
-this was missed. Code is now updated to correctly set the start
-index to 1, and testing with additional PPS capable sources show
-this to work as expected.
+Thank you Dou. Please wait for updated series before you test it. I
+will include patches from Thomas in the updated series.
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
----
- drivers/usb/typec/tcpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-index 74e0cda..4f1f421 100644
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -2238,7 +2238,7 @@ static unsigned int tcpm_pd_select_pps_apdo(struct tcpm_port *port)
- 			 * PPS APDO. Again skip the first sink PDO as this will
- 			 * always be 5V 3A.
- 			 */
--			for (j = i; j < port->nr_snk_pdo; j++) {
-+			for (j = 1; j < port->nr_snk_pdo; j++) {
- 				pdo = port->snk_pdo[j];
- 
- 				switch (pdo_type(pdo)) {
--- 
-1.9.1
-
+Thank you,
+Pavel
