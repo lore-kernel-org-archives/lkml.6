@@ -1,145 +1,195 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC07ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A29F8ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8032064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:24:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8032064D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 594142064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:25:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 594142064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbeGQO5r (ORCPT
+        id S1732009AbeGQO55 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:57:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58260 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731679AbeGQO5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:57:47 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E4E1401EF05;
-        Tue, 17 Jul 2018 14:24:52 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A6092026D68;
-        Tue, 17 Jul 2018 14:24:49 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 22:24:43 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: Deprecate kernelcore=nn and movable_core=
-Message-ID: <20180717142443.GG1724@MiWiFi-R3L-srv>
-References: <20180717131837.18411-1-bhe@redhat.com>
- <20180717133109.GI7193@dhcp22.suse.cz>
+        Tue, 17 Jul 2018 10:57:57 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:48043 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731679AbeGQO55 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:57:57 -0400
+Received: by mail-io0-f198.google.com with SMTP id z9-v6so929919iom.14
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:25:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=DYtgAsqvnTaWI+W6q7So6gIV706lIbW9uTerpXWnMdk=;
+        b=jX4bOr+yTITzBY8m8PS+KBWU4esumK/t+XKILE1kIsi2aUTEfjRxGWn6nTGvtzY4wA
+         QH02FjoG9aIA4Gd9h1ha3Jp3wxyXOQ3FNA9+9Tqd+q4uRH4cU3xOkQ9TdmzMvDR8gGp5
+         sZLAW3Lps+iLQ2hqbSa/0h05P01LdKJdLw8j8NTJHmWB2Nuq3Y0IjZjWsX0q0B4tP0oM
+         tNQw2F/6hv6ka6mgh1BdWiSfYHEDIeN3du4UkMvjcPwB9aFH1oNH1Tc6x3zsz81AVGb6
+         nk6YVlV1UllrFY1K+L9tsmTzD7dWSNU4D+uxIXZMj1fmFkikBjTdOdxsdcy00gbuGaPQ
+         7U6Q==
+X-Gm-Message-State: AOUpUlFt8ANicNP9tpAmWxN9+3utLSoiUSGnuONo7oawuMMrD/zp8FLD
+        60xuUZksdjeeGZYu0C/MgOTETOHTAJ8oi3CH/oXMz0nXSz72
+X-Google-Smtp-Source: AAOMgpdYXuOMSVIUp6SjASUZxsNNy3xfmRdVMkuwKgvA6mxk+1k/VuHsHCMTypUGinXCjZukKeKcSf6rXdvF5GDYKxBFd/k45doK
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717133109.GI7193@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 17 Jul 2018 14:24:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 17 Jul 2018 14:24:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+X-Received: by 2002:a02:b587:: with SMTP id m7-v6mr753555jaj.7.1531837502079;
+ Tue, 17 Jul 2018 07:25:02 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 07:25:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002a4cb6057132b614@google.com>
+Subject: KMSAN: uninit-value in __nf_conntrack_find_get
+From:   syzbot <syzbot+6f18401420df260e37ed@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Hello,
 
-On 07/17/18 at 03:31pm, Michal Hocko wrote:
-> On Tue 17-07-18 21:18:37, Baoquan He wrote:
-> > We can still use 'kernelcore=mirror' or 'movable_node' for the usage
-> > of hotplug and movable zone. If somebody shows up with a valid usecase
-> > we can reconsider.
-> 
-> Well this doesn't really explain why to deprecate this functionality.
-> It is a rather ugly hack that has been originally introduced for large
-> order allocations. But we do have compaction these days. Even though the
-> compaction cannot solve all the fragmentation issues the zone movable is
-> not a great answer as it introduces other issues (basically highmem kind
-> of issues we used to have on 32b systems).
-> The current code doesn't work with KASLR and the code is too subtle to
-> work properly in other cases as well. E.g. movablecore range might cover
-> already used memory (e.g. bootmem allocations) and therefore it doesn't
-> comply with the basic assumption that the memory is movable and that
-> confuses memory hotplug (e.g. 15c30bc09085 ("mm, memory_hotplug: make
-> has_unmovable_pages more robust").
-> 
-> There are probably other issues I am not aware of but primarily the code
-> adds a maintenance burden which would be better to get rid of.
-> 
-> I would also go further and remove all the code the feature is using at
-> one go. If somebody really needs this functionality we would need to
-> revert the whole thing anyway.
+syzbot found the following crash on:
 
-Thanks for these details. I can arrange your above saying and rewrite
-patch log. Are you suggesting removing the code "kernelcore=nn" and
-"movablecore=" are using? If yes, I can repost with these changes.
+HEAD commit:    b64f7ec04e12 kmsan: implement kmsan_memmove_shadow() and k..
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=109869d0400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=93d57043084eee38
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f18401420df260e37ed
+compiler:       clang version 7.0.0 (trunk 334104)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=174cce78400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b0b562400000
 
-Just saw some deprecated codes are still there for future cleaning up.
-So posted this v1 patch.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6f18401420df260e37ed@syzkaller.appspotmail.com
 
-Thanks
-Baoquan
+random: sshd: uninitialized urandom read (32 bytes read)
+==================================================================
+BUG: KMSAN: uninit-value in ____nf_conntrack_find  
+net/netfilter/nf_conntrack_core.c:539 [inline]
+BUG: KMSAN: uninit-value in __nf_conntrack_find_get+0xc15/0x2190  
+net/netfilter/nf_conntrack_core.c:573
+CPU: 0 PID: 4610 Comm: syz-executor884 Not tainted 4.18.0-rc4+ #24
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x185/0x1e0 lib/dump_stack.c:113
+  kmsan_report+0x195/0x2c0 mm/kmsan/kmsan.c:1092
+  __msan_warning_32+0x7d/0xe0 mm/kmsan/kmsan_instr.c:640
+  ____nf_conntrack_find net/netfilter/nf_conntrack_core.c:539 [inline]
+  __nf_conntrack_find_get+0xc15/0x2190 net/netfilter/nf_conntrack_core.c:573
+  resolve_normal_ct net/netfilter/nf_conntrack_core.c:1331 [inline]
+  nf_conntrack_in+0x1674/0x2070 net/netfilter/nf_conntrack_core.c:1416
+  ipv6_conntrack_local+0xc3/0xf0  
+net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c:179
+  nf_hook_entry_hookfn include/linux/netfilter.h:119 [inline]
+  nf_hook_slow+0x15d/0x3e0 net/netfilter/core.c:511
+  nf_hook include/linux/netfilter.h:242 [inline]
+  __ip6_local_out+0x64c/0x770 net/ipv6/output_core.c:164
+  ip6_local_out+0xa4/0x1d0 net/ipv6/output_core.c:174
+  ip6_send_skb net/ipv6/ip6_output.c:1696 [inline]
+  ip6_push_pending_frames+0x218/0x4d0 net/ipv6/ip6_output.c:1716
+  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
+  rawv6_sendmsg+0x45f0/0x5410 net/ipv6/raw.c:935
+  inet_sendmsg+0x3fc/0x760 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:641 [inline]
+  sock_sendmsg net/socket.c:651 [inline]
+  __sys_sendto+0x798/0x8e0 net/socket.c:1797
+  __do_sys_sendto net/socket.c:1809 [inline]
+  __se_sys_sendto net/socket.c:1805 [inline]
+  __x64_sys_sendto+0x1a1/0x210 net/socket.c:1805
+  do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x4459c9
+Code: e8 bc e7 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 2b 0e fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fa03df22d98 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
+RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 00000000004459c9
+RDX: 000000000000fedf RSI: 0000000020000000 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000020000180 R09: 000000000000001a
+R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006dac20
+R13: 616e732f7665642f R14: 00007fa03df239c0 R15: 0000000000000001
 
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt | 2 ++
-> >  mm/page_alloc.c                                 | 3 +++
-> >  2 files changed, 5 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index efc7aa7a0670..1e22c49866a2 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -1855,6 +1855,7 @@
-> >  	keepinitrd	[HW,ARM]
-> >  
-> >  	kernelcore=	[KNL,X86,IA-64,PPC]
-> > +			[Usage of kernelcore=nn[KMGTPE] | nn% is deprecated]
-> >  			Format: nn[KMGTPE] | nn% | "mirror"
-> >  			This parameter specifies the amount of memory usable by
-> >  			the kernel for non-movable allocations.  The requested
-> > @@ -2395,6 +2396,7 @@
-> >  			reporting absolute coordinates, such as tablets
-> >  
-> >  	movablecore=	[KNL,X86,IA-64,PPC]
-> > +			[Deprecated]
-> >  			Format: nn[KMGTPE] | nn%
-> >  			This parameter is the complement to kernelcore=, it
-> >  			specifies the amount of memory used for migratable
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 1521100f1e63..86cf05f48b5f 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -6899,6 +6899,8 @@ static int __init cmdline_parse_kernelcore(char *p)
-> >  		return 0;
-> >  	}
-> >  
-> > +	pr_warn("Only kernelcore=mirror supported, "
-> > +		"usage of kernelcore=nn[KMGTPE]|nn%% is deprecated.\n");
-> >  	return cmdline_parse_core(p, &required_kernelcore,
-> >  				  &required_kernelcore_percent);
-> >  }
-> > @@ -6909,6 +6911,7 @@ static int __init cmdline_parse_kernelcore(char *p)
-> >   */
-> >  static int __init cmdline_parse_movablecore(char *p)
-> >  {
-> > +	pr_warn("Option movablecore= is deprecated.\n");
-> >  	return cmdline_parse_core(p, &required_movablecore,
-> >  				  &required_movablecore_percent);
-> >  }
-> > -- 
-> > 2.13.6
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+Uninit was stored to memory at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+  kmsan_save_stack mm/kmsan/kmsan.c:271 [inline]
+  kmsan_internal_chain_origin+0x13c/0x240 mm/kmsan/kmsan.c:683
+  __msan_chain_origin+0x76/0xd0 mm/kmsan/kmsan_instr.c:483
+  __nf_conntrack_confirm+0x2700/0x3f70 net/netfilter/nf_conntrack_core.c:793
+  nf_conntrack_confirm include/net/netfilter/nf_conntrack_core.h:71 [inline]
+  ipv6_confirm+0x573/0x740 net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c:165
+  nf_hook_entry_hookfn include/linux/netfilter.h:119 [inline]
+  nf_hook_slow+0x15d/0x3e0 net/netfilter/core.c:511
+  nf_hook include/linux/netfilter.h:242 [inline]
+  NF_HOOK_COND include/linux/netfilter.h:275 [inline]
+  ip6_output+0x37d/0x710 net/ipv6/ip6_output.c:171
+  dst_output include/net/dst.h:444 [inline]
+  ip6_local_out+0x164/0x1d0 net/ipv6/output_core.c:176
+  ip6_send_skb net/ipv6/ip6_output.c:1696 [inline]
+  ip6_push_pending_frames+0x218/0x4d0 net/ipv6/ip6_output.c:1716
+  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
+  rawv6_sendmsg+0x45f0/0x5410 net/ipv6/raw.c:935
+  inet_sendmsg+0x3fc/0x760 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:641 [inline]
+  sock_sendmsg net/socket.c:651 [inline]
+  __sys_sendto+0x798/0x8e0 net/socket.c:1797
+  __do_sys_sendto net/socket.c:1809 [inline]
+  __se_sys_sendto net/socket.c:1805 [inline]
+  __x64_sys_sendto+0x1a1/0x210 net/socket.c:1805
+  do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:256 [inline]
+  kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:181
+  kmsan_kmalloc+0xa1/0x120 mm/kmsan/kmsan_hooks.c:91
+  kmem_cache_alloc+0xad2/0xbb0 mm/slub.c:2739
+  __nf_conntrack_alloc+0x166/0x670 net/netfilter/nf_conntrack_core.c:1137
+  init_conntrack+0x635/0x2840 net/netfilter/nf_conntrack_core.c:1219
+  resolve_normal_ct net/netfilter/nf_conntrack_core.c:1333 [inline]
+  nf_conntrack_in+0x1812/0x2070 net/netfilter/nf_conntrack_core.c:1416
+  ipv6_conntrack_local+0xc3/0xf0  
+net/ipv6/netfilter/nf_conntrack_l3proto_ipv6.c:179
+  nf_hook_entry_hookfn include/linux/netfilter.h:119 [inline]
+  nf_hook_slow+0x15d/0x3e0 net/netfilter/core.c:511
+  nf_hook include/linux/netfilter.h:242 [inline]
+  __ip6_local_out+0x64c/0x770 net/ipv6/output_core.c:164
+  ip6_local_out+0xa4/0x1d0 net/ipv6/output_core.c:174
+  ip6_send_skb net/ipv6/ip6_output.c:1696 [inline]
+  ip6_push_pending_frames+0x218/0x4d0 net/ipv6/ip6_output.c:1716
+  rawv6_push_pending_frames net/ipv6/raw.c:616 [inline]
+  rawv6_sendmsg+0x45f0/0x5410 net/ipv6/raw.c:935
+  inet_sendmsg+0x3fc/0x760 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:641 [inline]
+  sock_sendmsg net/socket.c:651 [inline]
+  __sys_sendto+0x798/0x8e0 net/socket.c:1797
+  __do_sys_sendto net/socket.c:1809 [inline]
+  __se_sys_sendto net/socket.c:1805 [inline]
+  __x64_sys_sendto+0x1a1/0x210 net/socket.c:1805
+  do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
