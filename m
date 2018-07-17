@@ -2,367 +2,145 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 526CBECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA800ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0318920684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0318920684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F6EB20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nebtPf14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6EB20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731474AbeGQRqB (ORCPT
+        id S1731525AbeGQRqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:46:01 -0400
-Received: from foss.arm.com ([217.140.101.70]:50202 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731443AbeGQRqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:46:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0FEE7A9;
-        Tue, 17 Jul 2018 10:12:23 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6A80E3F5A0;
-        Tue, 17 Jul 2018 10:12:22 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, robert.walker@arm.com,
-        mathieu.poirier@linaro.org, mike.leach@linaro.org,
-        coresight@lists.linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v2 10/10] coresight: etm-perf: Add support for ETR backend
-Date:   Tue, 17 Jul 2018 18:11:41 +0100
-Message-Id: <1531847501-22226-11-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531847501-22226-1-git-send-email-suzuki.poulose@arm.com>
-References: <1531847501-22226-1-git-send-email-suzuki.poulose@arm.com>
+        Tue, 17 Jul 2018 13:46:10 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38947 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731404AbeGQRp7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:45:59 -0400
+Received: by mail-io0-f194.google.com with SMTP id o22-v6so562276ioh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 10:12:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oTVSC4VD//TDv6GXbp8o90J4gP81R50Ip6HwYMMfiAY=;
+        b=nebtPf14tiFIXJQCcFgZYPRcMIYmiFfThMFTENmGRV0fQCM52wjKC+PQ5tULzxO2/q
+         1TCQBTAcmO4DwPXb3qTL8nPlaON3q/dSXbG+sg1uh3sPMbg//NIGE/c5bZgGXai/oVuH
+         Ao69WJ/4GXM/8gYUku40nbskPwacdhoLamP+mZu5d5L5fyUcV5dKUnE3Yz9qP3ltwuLC
+         9YndbsHANuMVlb48k1yYQ+Lv0SuvUjDUTAyOXuiZoEiMKJvNlWb7W4KmYjSO9DyojDzH
+         nVn7ODkm1001dfuLD+tPXrWkIQZzdiw3CDIVkZ9upNF3sl/nJDben/csOEbgBh+ag2dJ
+         8rNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oTVSC4VD//TDv6GXbp8o90J4gP81R50Ip6HwYMMfiAY=;
+        b=Nr3mWXv6h0n+UcXFHM+WLzQlYE4W7rUrrPdhVuzEXB/1sRVApV10P7CJXTqFGogV84
+         fir+OfzN4ixTW/XQds4KSgfy6jaAgUkzuwogqLQTcz9/RTu4mt0SZhIJT2XOAPa+9FPJ
+         poiz/XxAeW+zOOfd37mTBnMZfeXUNpKPUF4UY1Yk2lyVnOW/et7QghnqbkbnnWGhv2Cp
+         IKJwmQ9EyF2LO5WVQ+I2TIjA2DDjSFujVXQnzn09DNxY4kUKDGDE43vxklTzxQSZXu5L
+         nBmkxP+M2X3jiKE1EXValz3+MVhqLSG/tskNbzV/TonkmqVJrJQT8oAn13xKtmnDKiJ8
+         kRLA==
+X-Gm-Message-State: AOUpUlHsbl+M3OGGnrkCSpMCmi4+4qsX98nLTE130pSK+WCa4Zu22nYS
+        wDKcgEGCI2Acsl0M82zWEInbi9VTZ3tVqAzwA89WQg==
+X-Google-Smtp-Source: AAOMgpd+w3hyq5QgS2hGTrxn/dx9yqqUcYkUsoZhzBx5Z+mAf89WW7BEeZ92hQaEdEXUXNgU6tl42wNy+Bz/zNk85kA=
+X-Received: by 2002:a6b:ac03:: with SMTP id v3-v6mr2202565ioe.71.1531847542149;
+ Tue, 17 Jul 2018 10:12:22 -0700 (PDT)
+MIME-Version: 1.0
+References: <0000000000006a10de0570cf4d66@google.com> <CAJfpeguHRhT4xwDNu-xEfA+YOrB7Wo7eM8sU19RGLaBpEN0g_A@mail.gmail.com>
+ <CACT4Y+Y=NZZDXPGvgTZzoG0G=a0TG+=vUXHUJPZMBvcufz872A@mail.gmail.com> <CAJfpegu20a7CCJQYTgrmuKPuAJkRgdv_5rmt6T-3kWKH5BpWnQ@mail.gmail.com>
+In-Reply-To: <CAJfpegu20a7CCJQYTgrmuKPuAJkRgdv_5rmt6T-3kWKH5BpWnQ@mail.gmail.com>
+From:   Alistair Strachan <astrachan@google.com>
+Date:   Tue, 17 Jul 2018 10:12:10 -0700
+Message-ID: <CANDihLG6kRJQXSCsv1M-bC3xgBpyS=B4bVoHCQ2h1_tKJeqppg@mail.gmail.com>
+Subject: Re: WARNING: lock held when returning to user space in fuse_lock_inode
+To:     miklos@szeredi.hu
+Cc:     dvyukov@google.com,
+        syzbot+3f7b29af1baa9d0a55be@syzkaller.appspotmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for using TMC-ETR as backend for ETM perf tracing.
-We use software double buffering at the moment. i.e, the TMC-ETR
-uses a separate buffer than the perf ring buffer. The data is
-copied to the perf ring buffer once a session completes.
+On Tue, Jul 17, 2018 at 5:46 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> On Tue, Jul 17, 2018 at 1:36 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> > On Tue, Jul 17, 2018 at 1:14 PM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >> On Thu, Jul 12, 2018 at 5:49 PM, syzbot
+> >> <syzbot+3f7b29af1baa9d0a55be@syzkaller.appspotmail.com> wrote:
+> >>> Hello,
+> >>>
+> >>> syzbot found the following crash on:
+> >>>
+> >>> HEAD commit:    c25c74b7476e Merge tag 'trace-v4.18-rc3-2' of git://git.ke..
+> >>> git tree:       upstream
+> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=177bcec2400000
+> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=3f7b29af1baa9d0a55be
+> >>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> >>> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13aa7678400000
+> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17492678400000
+> >>>
+> >>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> >>> Reported-by: syzbot+3f7b29af1baa9d0a55be@syzkaller.appspotmail.com
+> >>>
+> >>> random: sshd: uninitialized urandom read (32 bytes read)
+> >>> random: sshd: uninitialized urandom read (32 bytes read)
+> >>> random: sshd: uninitialized urandom read (32 bytes read)
+> >>>
+> >>> ================================================
+> >>> WARNING: lock held when returning to user space!
+> >>> 4.18.0-rc4+ #143 Not tainted
+> >>> ------------------------------------------------
+> >>> syz-executor012/4539 is leaving the kernel with locks still held!
+> >>> 1 lock held by syz-executor012/4539:
+> >>>  #0: (____ptrval____) (&fi->mutex){+.+.}, at: fuse_lock_inode+0xaf/0xe0
+> >>> fs/fuse/inode.c:363
+> >>
+> >> False positive.
+> >>
+> >> fi->mutex is definitely not held by the acquiring task when returning
+> >> to userspace.  Maybe syzkaller is confused by the fact that there are
+> >> several interdependent tasks involved with fuse:  the one calling into
+> >> fuse by doing something (looking up ./file0/file0) and the one that
+> >> reads the fuse device (returning with the LOOKUP request for "file0").
+> >> The second one will return with that lock held, but it's not the one
+> >> that acquired it, so there's no bug at all here.
+> >
+> > Hi Miklos,
+> >
+> > syzkaller is unrelated here. That's what kernel self-detects and
+> > prints. So either way there is something to fix in kernel here: either
+> > fuse or lockdep.
+> >
+> > +Alistair did some analysis offline, hope you don't mind if I repost
+> > your description:
+> > ===
+> > Just from reading the code, I think I can see how this happens. Fuse
+> > is wrapping its inode mutex with a check for "parallel_dirops", which
+> > is set up in process_init_reply(). The FUSE_PARALLEL_DIROPS appears to
+> > always be set, in fuse_send_init(), but its initial state is to be
+> > disabled. So if the mutex gets taken, and it'll never be unlocked if
+> > the initial command is flushed by fuse_readdir()'s use of
+> > fuse_lock_inode().
+> > ===
+>
+> Ah, indeed.  Fix attached.
 
-The TMC-ETR would try to match the larger of perf ring buffer
-or the ETR buffer size configured via sysfs, scaling down to
-a minimum limit of 1MB.
+Looks good to me.
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 248 +++++++++++++++++++++++-
- drivers/hwtracing/coresight/coresight-tmc.h     |   2 +
- 2 files changed, 248 insertions(+), 2 deletions(-)
+Tested-by: Alistair Strachan <astrachan@google.com>
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index bc0c932..6280790 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -10,6 +10,7 @@
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include "coresight-catu.h"
-+#include "coresight-etm-perf.h"
- #include "coresight-priv.h"
- #include "coresight-tmc.h"
- 
-@@ -21,6 +22,28 @@ struct etr_flat_buf {
- };
- 
- /*
-+ * etr_perf_buffer - Perf buffer used for ETR
-+ * @etr_buf		- Actual buffer used by the ETR
-+ * @snaphost		- Perf session mode
-+ * @head		- handle->head at the beginning of the session.
-+ * @nr_pages		- Number of pages in the ring buffer.
-+ * @pages		- Array of Pages in the ring buffer.
-+ */
-+struct etr_perf_buffer {
-+	struct etr_buf		*etr_buf;
-+	bool			snapshot;
-+	unsigned long		head;
-+	int			nr_pages;
-+	void			**pages;
-+};
-+
-+/* Convert the perf index to an offset within the ETR buffer */
-+#define PERF_IDX2OFF(idx, buf)	((idx) % ((buf)->nr_pages << PAGE_SHIFT))
-+
-+/* Lower limit for ETR hardware buffer */
-+#define TMC_ETR_PERF_MIN_BUF_SIZE	SZ_1M
-+
-+/*
-  * The TMC ETR SG has a page size of 4K. The SG table contains pointers
-  * to 4KB buffers. However, the OS may use a PAGE_SIZE different from
-  * 4K (i.e, 16KB or 64KB). This implies that a single OS page could
-@@ -1103,10 +1126,228 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
- 	return ret;
- }
- 
-+/*
-+ * tmc_etr_setup_perf_buf: Allocate ETR buffer for use by perf.
-+ * The size of the hardware buffer is dependent on the size configured
-+ * via sysfs and the perf ring buffer size. We prefer to allocate the
-+ * largest possible size, scaling down the size by half until it
-+ * reaches a minimum limit (1M), beyond which we give up.
-+ */
-+static struct etr_perf_buffer *
-+tmc_etr_setup_perf_buf(struct tmc_drvdata *drvdata, int node, int nr_pages,
-+		       void **pages, bool snapshot)
-+{
-+	struct etr_buf *etr_buf;
-+	struct etr_perf_buffer *etr_perf;
-+	unsigned long size;
-+
-+	etr_perf = kzalloc_node(sizeof(*etr_perf), GFP_KERNEL, node);
-+	if (!etr_perf)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/*
-+	 * Try to match the perf ring buffer size if it is larger
-+	 * than the size requested via sysfs.
-+	 */
-+	if ((nr_pages << PAGE_SHIFT) > drvdata->size) {
-+		etr_buf = tmc_alloc_etr_buf(drvdata, (nr_pages << PAGE_SHIFT),
-+					    0, node, NULL);
-+		if (!IS_ERR(etr_buf))
-+			goto done;
-+	}
-+
-+	/*
-+	 * Else switch to configured size for this ETR
-+	 * and scale down until we hit the minimum limit.
-+	 */
-+	size = drvdata->size;
-+	do {
-+		etr_buf = tmc_alloc_etr_buf(drvdata, size, 0, node, NULL);
-+		if (!IS_ERR(etr_buf))
-+			goto done;
-+		size /= 2;
-+	} while (size >= TMC_ETR_PERF_MIN_BUF_SIZE);
-+
-+	kfree(etr_perf);
-+	return ERR_PTR(-ENOMEM);
-+
-+done:
-+	etr_perf->etr_buf = etr_buf;
-+	return etr_perf;
-+}
-+
-+
-+static void *tmc_etr_alloc_perf_buffer(struct coresight_device *csdev,
-+				       int cpu, void **pages, int nr_pages,
-+				       bool snapshot)
-+{
-+	struct etr_perf_buffer *etr_perf;
-+	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+
-+	if (cpu == -1)
-+		cpu = smp_processor_id();
-+
-+	etr_perf = tmc_etr_setup_perf_buf(drvdata, cpu_to_node(cpu),
-+					  nr_pages, pages, snapshot);
-+	if (IS_ERR(etr_perf)) {
-+		dev_dbg(drvdata->dev, "Unable to allocate ETR buffer\n");
-+		return NULL;
-+	}
-+
-+	etr_perf->snapshot = snapshot;
-+	etr_perf->nr_pages = nr_pages;
-+	etr_perf->pages = pages;
-+
-+	return etr_perf;
-+}
-+
-+static void tmc_etr_free_perf_buffer(void *config)
-+{
-+	struct etr_perf_buffer *etr_perf = config;
-+
-+	if (etr_perf->etr_buf)
-+		tmc_free_etr_buf(etr_perf->etr_buf);
-+	kfree(etr_perf);
-+}
-+
-+/*
-+ * tmc_etr_sync_perf_buffer: Copy the actual trace data from the hardware
-+ * buffer to the perf ring buffer.
-+ */
-+static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
-+{
-+	long bytes, to_copy;
-+	long pg_idx, pg_offset, src_offset;
-+	unsigned long head = etr_perf->head;
-+	char **dst_pages, *src_buf;
-+	struct etr_buf *etr_buf = etr_perf->etr_buf;
-+
-+	head = etr_perf->head;
-+	pg_idx = head >> PAGE_SHIFT;
-+	pg_offset = head & (PAGE_SIZE - 1);
-+	dst_pages = (char **)etr_perf->pages;
-+	src_offset = etr_buf->offset;
-+	to_copy = etr_buf->len;
-+
-+	while (to_copy > 0) {
-+		/*
-+		 * In one iteration, we can copy minimum of :
-+		 *  1) what is available in the source buffer,
-+		 *  2) what is available in the source buffer, before it
-+		 *     wraps around.
-+		 *  3) what is available in the destination page.
-+		 * in one iteration.
-+		 */
-+		bytes = tmc_etr_buf_get_data(etr_buf, src_offset, to_copy,
-+					     &src_buf);
-+		if (WARN_ON_ONCE(bytes <= 0))
-+			break;
-+		bytes = min(bytes, (long)(PAGE_SIZE - pg_offset));
-+
-+		memcpy(dst_pages[pg_idx] + pg_offset, src_buf, bytes);
-+
-+		to_copy -= bytes;
-+
-+		/* Move destination pointers */
-+		pg_offset += bytes;
-+		if (pg_offset == PAGE_SIZE) {
-+			pg_offset = 0;
-+			if (++pg_idx == etr_perf->nr_pages)
-+				pg_idx = 0;
-+		}
-+
-+		/* Move source pointers */
-+		src_offset += bytes;
-+		if (src_offset >= etr_buf->size)
-+			src_offset -= etr_buf->size;
-+	}
-+}
-+
-+/*
-+ * tmc_etr_update_perf_buffer : Update the perf ring buffer with the
-+ * available trace data. We use software double buffering at the moment.
-+ *
-+ * TODO: Add support for reusing the perf ring buffer.
-+ */
-+static unsigned long
-+tmc_etr_update_perf_buffer(struct coresight_device *csdev,
-+			   struct perf_output_handle *handle,
-+			   void *config)
-+{
-+	bool lost = false;
-+	unsigned long flags, size = 0;
-+	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct etr_perf_buffer *etr_perf = config;
-+	struct etr_buf *etr_buf = etr_perf->etr_buf;
-+
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (WARN_ON(drvdata->perf_data != etr_perf)) {
-+		lost = true;
-+		spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+		goto out;
-+	}
-+
-+	CS_UNLOCK(drvdata->base);
-+
-+	tmc_flush_and_stop(drvdata);
-+	tmc_sync_etr_buf(drvdata);
-+
-+	CS_UNLOCK(drvdata->base);
-+	/* Reset perf specific data */
-+	drvdata->perf_data = NULL;
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+
-+	size = etr_buf->len;
-+	tmc_etr_sync_perf_buffer(etr_perf);
-+
-+	/*
-+	 * Update handle->head in snapshot mode. Also update the size to the
-+	 * hardware buffer size if there was an overflow.
-+	 */
-+	if (etr_perf->snapshot) {
-+		handle->head += size;
-+		if (etr_buf->full)
-+			size = etr_buf->size;
-+	}
-+
-+	lost |= etr_buf->full;
-+out:
-+	if (lost)
-+		perf_aux_output_flag(handle, PERF_AUX_FLAG_TRUNCATED);
-+	return size;
-+}
-+
- static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
- {
--	/* We don't support perf mode yet ! */
--	return -EINVAL;
-+	int rc = 0;
-+	unsigned long flags;
-+	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct perf_output_handle *handle = data;
-+	struct etr_perf_buffer *etr_perf = etm_perf_sink_config(handle);
-+
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	/*
-+	 * There can be only one writer per sink in perf mode. If the sink
-+	 * is already open in SYSFS mode, we can't use it.
-+	 */
-+	if (drvdata->mode != CS_MODE_DISABLED || drvdata->perf_data) {
-+		rc = -EBUSY;
-+		goto unlock_out;
-+	}
-+
-+	if (WARN_ON(!etr_perf || !etr_perf->etr_buf)) {
-+		rc = -EINVAL;
-+		goto unlock_out;
-+	}
-+
-+	etr_perf->head = PERF_IDX2OFF(handle->head, etr_perf);
-+	drvdata->perf_data = etr_perf;
-+	drvdata->mode = CS_MODE_PERF;
-+	tmc_etr_enable_hw(drvdata, etr_perf->etr_buf);
-+
-+unlock_out:
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+	return rc;
- }
- 
- static int tmc_enable_etr_sink(struct coresight_device *csdev,
-@@ -1148,6 +1389,9 @@ static void tmc_disable_etr_sink(struct coresight_device *csdev)
- static const struct coresight_ops_sink tmc_etr_sink_ops = {
- 	.enable		= tmc_enable_etr_sink,
- 	.disable	= tmc_disable_etr_sink,
-+	.alloc_buffer	= tmc_etr_alloc_perf_buffer,
-+	.update_buffer	= tmc_etr_update_perf_buffer,
-+	.free_buffer	= tmc_etr_free_perf_buffer,
- };
- 
- const struct coresight_ops tmc_etr_cs_ops = {
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 872f63e..487c537 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.h
-+++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -170,6 +170,7 @@ struct etr_buf {
-  * @trigger_cntr: amount of words to store after a trigger.
-  * @etr_caps:	Bitmask of capabilities of the TMC ETR, inferred from the
-  *		device configuration register (DEVID)
-+ * @perf_data:	PERF buffer for ETR.
-  * @sysfs_data:	SYSFS buffer for ETR.
-  */
- struct tmc_drvdata {
-@@ -191,6 +192,7 @@ struct tmc_drvdata {
- 	u32			trigger_cntr;
- 	u32			etr_caps;
- 	struct etr_buf		*sysfs_buf;
-+	void			*perf_data;
- };
- 
- struct etr_buf_operations {
--- 
-2.7.4
-
+> Thanks,
+> Miklos
