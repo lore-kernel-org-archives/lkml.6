@@ -1,131 +1,164 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28432ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEA0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE6832146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:12:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="K3xJcxsQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6832146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F3922146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:15:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3922146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbeGQNor (ORCPT
+        id S1731553AbeGQNrl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:44:47 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:14917 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731548AbeGQNor (ORCPT
+        Tue, 17 Jul 2018 09:47:41 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:40465 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729633AbeGQNrk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:44:47 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie3.idc.renesas.com with ESMTP; 17 Jul 2018 22:12:08 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id B911584E54;
-        Tue, 17 Jul 2018 22:12:08 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.51,365,1526310000"; 
-   d="scan'208";a="287112913"
-Received: from mail-os2jpn01lp0146.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.146])
-  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 17 Jul 2018 22:12:08 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YkP+iSdpEjm7gV1jYmLD9Dfll7nE65X6cGP8HWJaXV0=;
- b=K3xJcxsQ7KejyxJ3uDs9S7ZvHmPnJdzO/6aVd4tWnDDz39BuHvZLRCx46DnXmKWSqvjO0kRdH8ffl29Ws6Gn+TDBhnKzbM41B2vr9Unef6hAIuAVd5cokTB9a83HKWCOAH+MKNhwtGAwuWYVkN1igOGYF2Rxix9D4zlXsvWUS2c=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1PR01MB1801.jpnprd01.prod.outlook.com (52.133.164.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.18; Tue, 17 Jul 2018 13:12:06 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::69c3:9892:2e04:3333]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::69c3:9892:2e04:3333%2]) with mapi id 15.20.0952.021; Tue, 17 Jul 2018
- 13:12:06 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Simon Horman <horms@verge.net.au>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: RE: [PATCH 2/2] i2c: designware: Add support for a bus clock
-Thread-Topic: [PATCH 2/2] i2c: designware: Add support for a bus clock
-Thread-Index: AQHUHONXv++x9VJe70Gk9EuuSmoVI6STU7qAgAAEdoCAAAK7oIAAB/kAgAACkTA=
-Date:   Tue, 17 Jul 2018 13:12:05 +0000
-Message-ID: <TY1PR01MB1769EA2ACCC9EC9D0F2DC00EF55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
- <1531731553-22979-3-git-send-email-phil.edworthy@renesas.com>
- <20180717120737.bipotpki3yhn6klf@verge.net.au>
- <c6b21734b729cb5f92a5686ae3fa8469692a1302.camel@linux.intel.com>
- <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <CAMuHMdX8Q4wJtQ==PW0HrQpWS=CY1zPuasJPQCuQwhN0PzVfpQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdX8Q4wJtQ==PW0HrQpWS=CY1zPuasJPQCuQwhN0PzVfpQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1801;7:rhU5VIGSREvuOJzGTG4Mf0Ms6uB9g7zRwQ2ZtkGVAFG9kL+O48fdoyGyIFk8y6ilQQDpVrE/DlF60MSK1GhBGn+XrqIqBLzWw2u7a5AcP860RWtnLabcgpRjmg5FoH0DH4IaJoNHQkcQSpeyCEZKppVvgQqqs0laqKPXyj5YY/TmCy3cgHk57Byt6KRDyTE1sG9TE7UW5c2i/5M4qd6ZLfGqsJpm66r8vzgWgEpxgwVIQ0u+mBvMJPcnfLaSmjI5;20:pg20SEBqOp0nTxmsXF5CGSZDdVF/7D5rqi3qkaVKyBhxxqMAbyMHx/RMEDw51UN2TIRTZvzz1UTYs0tJPCBlA5kVxQNvPCSpojouvlrEu2GIBmCX2LS1x4MuGNDpjH41eHaiY7l+hee1BHzVqOLKqSgsjdOcW7aWf+F8LXqksWU=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 2c7a6a90-1517-4f17-e707-08d5ebe6e523
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1801;
-x-ms-traffictypediagnostic: TY1PR01MB1801:
-x-microsoft-antispam-prvs: <TY1PR01MB180102A647432C454E24856CF55C0@TY1PR01MB1801.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:TY1PR01MB1801;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1801;
-x-forefront-prvs: 073631BD3D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(39860400002)(346002)(366004)(199004)(189003)(316002)(44832011)(11346002)(446003)(53936002)(6246003)(6506007)(53546011)(102836004)(93886005)(25786009)(476003)(9686003)(55016002)(4326008)(76176011)(26005)(486006)(6436002)(7696005)(186003)(14444005)(256004)(5250100002)(14454004)(478600001)(99286004)(54906003)(7736002)(97736004)(229853002)(2900100001)(74316002)(68736007)(6916009)(2906002)(105586002)(5660300001)(106356001)(8936002)(3846002)(6116002)(8676002)(81156014)(81166006)(86362001)(33656002)(66066001)(305945005);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1801;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Ih99GnP4rQZcwsVQHsp+fWKtPB1PJpttY1hCFnSHmn4mA6osI5SdVaxuW8JSIL3UpKmxk1xPNAt8hwrU1bjdCCeE4ySgO7oN3CNFupS0BdWRQbeZwQ/lmVt/BJI8rsfNi8/crLWQx/FDwJvASHDcABHxfRnETGppjGY+etbkhil2fPYJvocc5iHzUPz/TEW9WOpW7iZVnqrx/sEtDsx4hvQJoHACuXMpFkjnUfL1Q+aVe5nQb/MG5cSAwtXuBfpFYo960KhYNHvnV7hN6aVO9PzBeUS+dqA5jNbR9zeeIh+H1JIVcLvQoS9X2My8K6GAlnGx5ASf0WeR+kswpnwcVaxk/YTHOfZTROFjOIE29yE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 17 Jul 2018 09:47:40 -0400
+Received: by mail-io0-f198.google.com with SMTP id j18-v6so781111iog.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 06:15:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Vn8DblY3qZQCygNbYBpC8hk2hFKEbPU4zIGFGX6Xw4A=;
+        b=NyZnbI9aWcw1AOWQrCrifUAxs0QuFJUQIzr02bU6ZJ6ExVniSIuQkhkBeDDfR9UByo
+         HQroX6NA3Rd0hZuL3vl/dYNHJ77IkYmD/UWah2FQvei/D1wYXwf8woo0qfVcYbEDM0m6
+         I3XfLyvhTsv+ZucDB5O5Tw5A3uNA95QdKWDYOCw1kkEZYqp15j+Mcwk07XlJnQZOlnYQ
+         qyiTQB60YGVLf35gtBRni5y53fPuSWIA8iENEFZMUTkzHS8jiBHH73f5McwQ2CVdDktK
+         t98JS17W+UbdlxPspODlmkFhV7JKPG1n8yDLOV0NBVTJA86h9Q0eEy1nI4cPKa3plLan
+         lmWA==
+X-Gm-Message-State: AOUpUlHKiGp+wV8OQl2t711XcsJjVfrBu6kEqfgiBqVyuAaHMa0KqaSx
+        l4IWIppIwkKqEeWTORCf+e4PyawRnfROS/2ymZE2g5kY7eyG
+X-Google-Smtp-Source: AAOMgpflqPxd66Oh4IsAvF2hnHJeaPzpks1uNeDQb9LJorjHx3cyK4h60UKvGDI/kzq+qTtqycDjXcMI8pGQK/SYPWhPNGHzuCFt
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c7a6a90-1517-4f17-e707-08d5ebe6e523
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Jul 2018 13:12:06.0102
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1801
+X-Received: by 2002:a6b:a303:: with SMTP id m3-v6mr612635ioe.96.1531833302434;
+ Tue, 17 Jul 2018 06:15:02 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 06:15:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d8cc39057131bbcd@google.com>
+Subject: general protection fault in list_lru_count_one
+From:   syzbot <syzbot+50d322b3e0b15a4a8d55@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, garsilva@embeddedor.com,
+        hannes@cmpxchg.org, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        longman@redhat.com, mhocko@suse.com, sfr@canb.auug.org.au,
+        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCk9uIDE3IEp1bHkgMjAxOCAxNDowMiwgR2VlcnQgVXl0dGVyaG9ldmVuIHdy
-b3RlOg0KPiBPbiBUdWUsIEp1bCAxNywgMjAxOCBhdCAyOjQyIFBNIFBoaWwgRWR3b3J0aHkgd3Jv
-dGU6DQo+ID4gT24gMTcgSnVseSAyMDE4IDEzOjI0LCBBbmR5IFNoZXZjaGVua28gd3JvdGU6DQo+
-ID4gPiBPbiBUdWUsIDIwMTgtMDctMTcgYXQgMTQ6MDcgKzAyMDAsIFNpbW9uIEhvcm1hbiB3cm90
-ZToNCj4gPiA+ID4gT24gTW9uLCBKdWwgMTYsIDIwMTggYXQgMDk6NTk6MTNBTSArMDEwMCwgUGhp
-bCBFZHdvcnRoeSB3cm90ZToNCj4gPiA+ID4gPiBUaGUgU3lub3BzeXMgSTJDIENvbnRyb2xsZXIg
-aGFzIGEgYnVzIGNsb2NrLCBidXQgdHlwaWNhbGx5IFNvQ3MNCj4gPiA+ID4gPiBoaWRlIHRoaXMg
-YXdheS4NCj4gPiA+ID4gPiBIb3dldmVyLCBvbiBzb21lIFNvQ3MgeW91IG5lZWQgdG8gZXhwbGlj
-aXR5IGVuYWJsZSB0aGUgYnVzIGNsb2NrDQo+ID4gPiA+ID4gaW4gb3JkZXIgdG8gYWNjZXNzIHRo
-ZSByZWdpc3RlcnMuDQo+ID4gPiA+ID4gVGhlcmVmb3JlLCBlbmFibGUgYW4gb3B0aW9uYWwgYnVz
-IGNsb2NrIHNwZWNpZmllZCBieSBEVC4NCj4gPiA+DQo+ID4gPiA+ID4gKyAgICAgICAgIC8qIE9w
-dGlvbmFsIGJ1cyBjbG9jayAqLw0KPiA+ID4gPiA+ICsgICAgICAgICBpZiAoIUlTX0VSUihkZXYt
-PmJ1c2NsaykpIHsNCj4gPiA+ID4NCj4gPiA+ID4gSSBzdXNwZWN0IHRoYXQgZXJyb3IgdmFsdWVz
-IHN0b3JlZCBpbiBkZXYtPmJ1c2NsaywgIG90aGVyIHRoYW4NCj4gPiA+ID4gLUVOT0VOVCwgc2hv
-dWxkIGJlIHRyZWF0ZWQgYXMgZXJyb3JzLg0KPiA+IElTX0VSUiBjYXRjaGVzIGFsbCBlcnJvcnMg
-YW5kIGlzIHRoZSBjb3JyZWN0IHdheSB0byBjaGVjayB0aGUgdmFsdWUNCj4gPiByZXR1cm5lZCBi
-eSBkZXZtX2Nsa19nZXQuDQo+IA0KPiBXaGF0IGlmIGl0IHJldHVybnMgLUVQUk9CRV9ERUZFUiwg
-d2hpY2ggbWVhbnMgdGhlIGNsb2NrIGlzIHJlZmVyZW5jZWQsIGFuZA0KPiB0aHVzIG5vdCBvcHRp
-b25hbCwgYnV0IG5vdCB5ZXQgcmVhZHk/DQo+IEZvciBvcHRpb25hbCBjbG9ja3MsIGFsbCBlcnJv
-cnMgYnV0IC1FTk9FTlQgc2hvdWxkIGJlIHByb3BhZ2F0ZWQgdXAuDQpHb29kIHBvaW50IQ0KDQpU
-aGFua3MNClBoaWwNCg==
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    483d835c8189 Add linux-next specific files for 20180713
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=169b4770400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=60e5ac2478928314
+dashboard link: https://syzkaller.appspot.com/bug?extid=50d322b3e0b15a4a8d55
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10faa9a4400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f57794400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+50d322b3e0b15a4a8d55@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+IPVS: ftp: loaded support on port[0] = 21
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 4462 Comm: syz-executor763 Not tainted  
+4.18.0-rc4-next-20180713+ #7
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:list_lru_from_memcg_idx mm/list_lru.c:56 [inline]
+RIP: 0010:list_lru_count_one+0x156/0x460 mm/list_lru.c:201
+Code: 08 3c 03 0f 8e b5 02 00 00 4d 63 bd d8 0a 00 00 e8 7f 35 d2 ff 48 8d  
+7b 50 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 d8 02 00 00 49 8d 46 c0 4c 8b 6b 50 48 ba 00 00
+RSP: 0018:ffff8801ac967198 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81aa3a64
+RDX: 000000000000000a RSI: ffffffff81aa3ad1 RDI: 0000000000000050
+RBP: ffff8801ac967228 R08: ffff8801af1c6300 R09: 0000000000000000
+R10: ffffed00359e0088 R11: ffff8801acf00447 R12: 1ffff1003592ce34
+R13: ffff8801ad6aa080 R14: ffff8801ac967200 R15: 0000000000000000
+FS:  000000000206b880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006ce080 CR3: 00000001ae3c1000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  list_lru_shrink_count include/linux/list_lru.h:122 [inline]
+  super_cache_count+0x153/0x2e0 fs/super.c:146
+  do_shrink_slab+0x148/0xc50 mm/vmscan.c:458
+  shrink_slab_memcg mm/vmscan.c:598 [inline]
+  shrink_slab+0x861/0xa60 mm/vmscan.c:671
+  shrink_node+0x429/0x16a0 mm/vmscan.c:2735
+  shrink_zones mm/vmscan.c:2964 [inline]
+  do_try_to_free_pages+0x3e7/0x1290 mm/vmscan.c:3026
+  try_to_free_mem_cgroup_pages+0x49d/0xc90 mm/vmscan.c:3324
+  reclaim_high.constprop.73+0x137/0x1e0 mm/memcontrol.c:2060
+  mem_cgroup_handle_over_high+0x8d/0x130 mm/memcontrol.c:2085
+  tracehook_notify_resume include/linux/tracehook.h:195 [inline]
+  exit_to_usermode_loop+0x287/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440ec7
+Code: 1f 40 00 b8 5a 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 6d 14 fc ff c3  
+66 2e 0f 1f 84 00 00 00 00 00 66 90 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 4d 14 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffe197f4e98 EFLAGS: 00000202 ORIG_RAX: 0000000000000053
+RAX: 0000000000000000 RBX: 0000000000000002 RCX: 0000000000440ec7
+RDX: 00007ffe197f4eb3 RSI: 00000000000001ff RDI: 00007ffe197f4eb0
+RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000000003
+R10: 0000000000000064 R11: 0000000000000202 R12: 0000000000000001
+R13: 0000000000008fab R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace 82052695a1b5b84c ]---
+RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
+RIP: 0010:list_lru_from_memcg_idx mm/list_lru.c:56 [inline]
+RIP: 0010:list_lru_count_one+0x156/0x460 mm/list_lru.c:201
+Code: 08 3c 03 0f 8e b5 02 00 00 4d 63 bd d8 0a 00 00 e8 7f 35 d2 ff 48 8d  
+7b 50 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
+85 d8 02 00 00 49 8d 46 c0 4c 8b 6b 50 48 ba 00 00
+RSP: 0018:ffff8801ac967198 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81aa3a64
+RDX: 000000000000000a RSI: ffffffff81aa3ad1 RDI: 0000000000000050
+RBP: ffff8801ac967228 R08: ffff8801af1c6300 R09: 0000000000000000
+R10: ffffed00359e0088 R11: ffff8801acf00447 R12: 1ffff1003592ce34
+R13: ffff8801ad6aa080 R14: ffff8801ac967200 R15: 0000000000000000
+FS:  000000000206b880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000006ce080 CR3: 00000001ae3c1000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
