@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECC5ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E95EECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7374A20BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7374A20BED
+	by mail.kernel.org (Postfix) with ESMTP id 5D3D820BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D3D820BED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731075AbeGQKJA (ORCPT
+        id S1729805AbeGQKJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:09:00 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50967 "EHLO huawei.com"
+        Tue, 17 Jul 2018 06:09:01 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50938 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730933AbeGQKI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:08:59 -0400
+        id S1729640AbeGQKJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 06:09:00 -0400
 Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 13D69E7978C90;
-        Tue, 17 Jul 2018 17:37:13 +0800 (CST)
+        by Forcepoint Email with ESMTP id F27ED56B2CEFC;
+        Tue, 17 Jul 2018 17:37:12 +0800 (CST)
 Received: from vm107-89-192.huawei.com (100.107.89.192) by
  DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.382.0; Tue, 17 Jul 2018 17:37:03 +0800
+ 14.3.382.0; Tue, 17 Jul 2018 17:37:05 +0800
 From:   Li Wei <liwei213@huawei.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <catalin.marinas@arm.com>, <will.deacon@arm.com>,
@@ -45,9 +45,9 @@ CC:     <zangleigang@hisilicon.com>, <gengjianfeng@hisilicon.com>,
         <guodong.xu@linaro.org>, <puck.chen@hisilicon.com>,
         <john.stultz@linaro.org>, <liwei213@huawei.com>,
         <fengbaopeng@hisilicon.com>
-Subject: [PATCH v11 3/4] [RESEND] arm64: dts: add ufs dts node
-Date:   Tue, 17 Jul 2018 17:36:58 +0800
-Message-ID: <20180717093659.103263-4-liwei213@huawei.com>
+Subject: [PATCH v11 4/4] [RESEND] arm64: defconfig: enable configs for Hisilicon ufs
+Date:   Tue, 17 Jul 2018 17:36:59 +0800
+Message-ID: <20180717093659.103263-5-liwei213@huawei.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20180717093659.103263-1-liwei213@huawei.com>
 References: <20180717093659.103263-1-liwei213@huawei.com>
@@ -60,44 +60,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-arm64: dts: add ufs node for Hisilicon.
-
 Signed-off-by: Li Wei <liwei213@huawei.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
 Tested-by: John Stultz <john.stultz@linaro.org>
 ---
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 8d477dcbfa58..851190a719ea 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -1000,6 +1000,24 @@
- 			reset-gpios = <&gpio11 1 0 >;
- 		};
- 
-+		/* UFS */
-+		ufs: ufs@ff3b0000 {
-+			compatible = "hisilicon,hi3660-ufs", "jedec,ufs-1.1";
-+			/* 0: HCI standard */
-+			/* 1: UFS SYS CTRL */
-+			reg = <0x0 0xff3b0000 0x0 0x1000>,
-+				<0x0 0xff3b1000 0x0 0x1000>;
-+			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&crg_ctrl HI3660_CLK_GATE_UFSIO_REF>,
-+				<&crg_ctrl HI3660_CLK_GATE_UFSPHY_CFG>;
-+			clock-names = "ref_clk", "phy_clk";
-+			freq-table-hz = <0 0>, <0 0>;
-+			/* offset: 0x84; bit: 12 */
-+			resets = <&crg_rst 0x84 12>;
-+			reset-names = "rst";
-+		};
-+
- 		/* SD */
- 		dwmmc1: dwmmc1@ff37f000 {
- 			#address-cells = <1>;
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index f9a186f6af8a..2c07e233012b 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -193,6 +193,7 @@ CONFIG_SCSI_HISI_SAS=y
+ CONFIG_SCSI_HISI_SAS_PCI=y
+ CONFIG_SCSI_UFSHCD=m
+ CONFIG_SCSI_UFSHCD_PLATFORM=m
++CONFIG_SCSI_UFS_HISI=y
+ CONFIG_SCSI_UFS_QCOM=m
+ CONFIG_ATA=y
+ CONFIG_SATA_AHCI=y
 -- 
 2.15.0
 
