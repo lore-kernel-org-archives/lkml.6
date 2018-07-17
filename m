@@ -2,80 +2,136 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AA5ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A04ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 425C320C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:03:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kTdudoF+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425C320C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id D6C9220C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C9220C10
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731573AbeGQOg3 (ORCPT
+        id S1731715AbeGQOgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:36:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35880 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbeGQOg3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:36:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=TIDdoTGPaUVmncM7hvaLO8ZVbsetoanGfGEf7vhFbKs=; b=kTdudoF+/7Z7/lWWHM21jhOW2
-        GJmWJ7TiKlP0AuNF/n7aq6l0TecaoXew2V71GLHc3wolp4yom9wcSpXialvOnvodk4CbtLaq7+nwY
-        qG5ckDAGDSSAbsf2aJ0lUvoZVDL3AU1/jt1T/eYnJvMZIcEy6/ytBdqefYpkG0S1PFMIXPpMl02To
-        tkIRuV97KR3aXR6m8NtQC/HmbSbeBMTKHlBsb8WWj21fNdv/uV2D08f7jqDcIz87EonH3kHdyWbe1
-        LRkSq3ZhQlxta9KhNKRwt8fmyJO8MS2V9kyl0ATT1Sb8kM9KH1T8+CjyuJLeOtudviw0884fnQdt2
-        VGG3z1wTg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffQZj-0006am-Ka; Tue, 17 Jul 2018 14:03:35 +0000
-Date:   Tue, 17 Jul 2018 07:03:35 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
-Cc:     bhelgaas@google.com, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Joey Zheng <yu.zheng@hxt-semitech.com>
-Subject: Re: [PATCH] PCI: Unify pci and normal dma direction definition
-Message-ID: <20180717140335.GA23500@infradead.org>
-References: <1531463840-34651-1-git-send-email-shunyong.yang@hxt-semitech.com>
+        Tue, 17 Jul 2018 10:36:50 -0400
+Received: from smtp.nue.novell.com ([195.135.221.5]:45986 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729035AbeGQOgu (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Tue, 17 Jul 2018 10:36:50 -0400
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 17 Jul 2018 16:03:59 +0200
+Received: from suselix (nwb-a10-snat.microfocus.com [10.120.13.202])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Tue, 17 Jul 2018 15:03:38 +0100
+Date:   Tue, 17 Jul 2018 16:03:36 +0200
+From:   Andreas Herrmann <aherrmann@suse.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Commit 554c8aa8ecad causing severe performance degression with
+ pcc-cpufreq
+Message-ID: <20180717140336.ayovaz4ksdlak6bb@suselix>
+References: <20180717065048.74mmgk4t5utjaa6a@suselix>
+ <20180717092721.onkaf3qsu7te6syi@suselix>
+ <20180717093620.ym6phfmr3rfvsxyo@suselix>
+ <3724084.DyflrVPzDS@aspire.rjw.lan>
+ <20180717102136.snayvzmv2h3dcwiq@suselix>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1531463840-34651-1-git-send-email-shunyong.yang@hxt-semitech.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20180717102136.snayvzmv2h3dcwiq@suselix>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/include/linux/dma-direction.h b/include/linux/dma-direction.h
-> index 3649a031893a..9d52716e9218 100644
-> --- a/include/linux/dma-direction.h
-> +++ b/include/linux/dma-direction.h
-> @@ -2,7 +2,7 @@
->  #ifndef _LINUX_DMA_DIRECTION_H
->  #define _LINUX_DMA_DIRECTION_H
->  /*
-> - * These definitions mirror those in pci.h, so they can be used
-> + * These definitions mirror those in pci-dma-compat.h, so they can be used
->   * interchangeably with their PCI_ counterparts.
->   */
+On Tue, Jul 17, 2018 at 12:21:36PM +0200, Andreas Herrmann wrote:
+> On Tue, Jul 17, 2018 at 12:09:21PM +0200, Rafael J. Wysocki wrote:
 
-I think we can just drop this comment anymore.
+  ---8<---
 
-> +#define PCI_DMA_BIDIRECTIONAL	(DMA_BIDIRECTIONAL)
-> +#define PCI_DMA_TODEVICE	(DMA_TO_DEVICE)
-> +#define PCI_DMA_FROMDEVICE	(DMA_FROM_DEVICE)
-> +#define PCI_DMA_NONE		(DMA_NONE)
+> > OK, the patch is below.
+> > 
+> > First, I hope that if "Collaborative Power Control" is disabled, it will
+> > simply hide the PCCH object and so intel_pstate will still not load then.
+> 
+> PCCH is hidden in that case.
+> 
+> > The main question basically is what the OS is expected to do if
+> > "Dynamic Power Savings Mode" is set.  If we are *expected* to use
+> > the PCC interface then, intel_pstate may not work in that case, but
+> > I suspect that the PCC interface allows extra energy to be saved
+> > over what is possible without it.
+> 
+> I'll test it and see what happens.
 
-No need for the braces.
+I've tested it on top of v4.18-rc5-36-g30b06abfb92b. intel_pstate now
+loads instead of pcc-cpufreq and system looks stable.
+
+When disabling "Collaborative Power Control" no cpufreq driver is loaded
+(as expected).
+
+Performance (with kernbench) is as expected (always better than any
+brew of pcc-cpufreq + misc modifications to this driver + partial
+rollback of commit 554c8aa8ecad).
+
+If you like you can add either Tested-by or
+Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
+
+I think this patch should be tagged for 4.17-stable.
+
+
+Thanks,
+
+Andreas
+
+> > ---
+> >  drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
+> >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > 
+> > Index: linux-pm/drivers/cpufreq/intel_pstate.c
+> > ===================================================================
+> > --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
+> > +++ linux-pm/drivers/cpufreq/intel_pstate.c
+> > @@ -2391,6 +2391,18 @@ static bool __init intel_pstate_no_acpi_
+> >  	return true;
+> >  }
+> >  
+> > +static bool __init intel_pstate_no_acpi_pcch(void)
+> > +{
+> > +	acpi_status status;
+> > +	acpi_handle handle;
+> > +
+> > +	status = acpi_get_handle(NULL, "\\_SB", &handle);
+> > +	if (ACPI_FAILURE(status))
+> > +		return true;
+> > +
+> > +	return !acpi_has_method(handle, "PCCH");
+> > +}
+> > +
+> >  static bool __init intel_pstate_has_acpi_ppc(void)
+> >  {
+> >  	int i;
+> > @@ -2450,7 +2462,10 @@ static bool __init intel_pstate_platform
+> >  
+> >  	switch (plat_info[idx].data) {
+> >  	case PSS:
+> > -		return intel_pstate_no_acpi_pss();
+> > +		if (!intel_pstate_no_acpi_pss())
+> > +			return false;
+> > +
+> > +		return intel_pstate_no_acpi_pcch();
+> >  	case PPC:
+> >  		return intel_pstate_has_acpi_ppc() && !force_load;
+> >  	}
+> > 
+> > 
