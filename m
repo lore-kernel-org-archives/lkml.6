@@ -3,226 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67B7ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20B0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9617D20C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:00:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9617D20C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BD7720C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:02:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD7720C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731541AbeGQNcz (ORCPT
+        id S1731429AbeGQNem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:32:55 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:10036 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731186AbeGQNcz (ORCPT
+        Tue, 17 Jul 2018 09:34:42 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:43586 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbeGQNel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:32:55 -0400
-X-UUID: a7b61c0b97d14ecab026e04965d1c5af-20180717
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2051947313; Tue, 17 Jul 2018 21:00:15 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 17 Jul 2018 21:00:13 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 17 Jul 2018 21:00:13 +0800
-Message-ID: <1531832413.8953.30.camel@mtkswgap22>
-Subject: Re: [PATCH v5 04/11] soc: mediatek: add MT6765 scpsys support
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Mars Cheng <mars.cheng@mediatek.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Owen Chen <owen.chen@mediatek.com>
-Date:   Tue, 17 Jul 2018 21:00:13 +0800
-In-Reply-To: <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-         <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 09:34:41 -0400
+Received: by mail-ua0-f195.google.com with SMTP id x24-v6so597253ual.10;
+        Tue, 17 Jul 2018 06:02:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NTsNEzTAW7/1uLisgf+Fjr24kxMJ8/bLGOfcGlQkJg0=;
+        b=qStyDeELl9rDTJipGg0+sCvTIXiOCjTxC1+kUVuFeL3ifXbIYLsZOsD438fx9Gaj6u
+         +OKECV3w0gncVE8IRTyRF1as/s0RZnLFFfXW1ciWhJAE8QXIpdMcCe76WWX8IHkBwK7E
+         FlCTDFs4o5mgM1CwNvf/JZzi2vz+sXh4zIihSWnUH1ebnPwlwXLzNOD+4bfFjwgpOvHO
+         UtNPYhRd05niVIXsiFs7HnY5xun4G/wxmxI8KryaiphdXrVc6+9yL83mHngEVu1a2CMT
+         AFfpGktRx2ORzf9gCu757/+UcF4kDY/8m2hiG15ZpngEw+TNMRJ+k3HGpGPxrT554mpM
+         t/GA==
+X-Gm-Message-State: AOUpUlFEuOcXg5srSoYnzF/WegccXOuCZJ1m+5aLY1L4HXvF8L25koW5
+        y5VUvR5cuPwD+cJTgurLZbP9oytxvnY/ubAleI0=
+X-Google-Smtp-Source: AAOMgpeXHxRReDFYNLlLKYfpjSxGt4W+0Z2ybqd1E3K+UdH9EK+IW6ORLmfm9u1VngrBPNgAGjMs4zh316vRjJCgDCY=
+X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr955593uae.72.1531832526582;
+ Tue, 17 Jul 2018 06:02:06 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
+ <1531731553-22979-3-git-send-email-phil.edworthy@renesas.com>
+ <20180717120737.bipotpki3yhn6klf@verge.net.au> <c6b21734b729cb5f92a5686ae3fa8469692a1302.camel@linux.intel.com>
+ <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 17 Jul 2018 15:01:54 +0200
+Message-ID: <CAMuHMdX8Q4wJtQ==PW0HrQpWS=CY1zPuasJPQCuQwhN0PzVfpQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] i2c: designware: Add support for a bus clock
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Simon Horman <horms@verge.net.au>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 16:52 +0800, Mars Cheng wrote:
-> This adds scpsys support for MT6765
-> 
+Hi Phil,
 
-it looks like 4/11 have to depend on 6/11 and 7/11 to get a full function on scpsys for MT6765.
+On Tue, Jul 17, 2018 at 2:42 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
+> On 17 July 2018 13:24, Andy Shevchenko wrote:
+> > On Tue, 2018-07-17 at 14:07 +0200, Simon Horman wrote:
+> > > On Mon, Jul 16, 2018 at 09:59:13AM +0100, Phil Edworthy wrote:
+> > > > The Synopsys I2C Controller has a bus clock, but typically SoCs hide
+> > > > this away.
+> > > > However, on some SoCs you need to explicity enable the bus clock in
+> > > > order to access the registers.
+> > > > Therefore, enable an optional bus clock specified by DT.
+> >
+> > > > +         /* Optional bus clock */
+> > > > +         if (!IS_ERR(dev->busclk)) {
+> > >
+> > > I suspect that error values stored in dev->busclk,  other than
+> > > -ENOENT, should be treated as errors.
+> IS_ERR catches all errors and is the correct way to check the value
+> returned by devm_clk_get.
 
-you should keep dependency in order to submit these patches
+What if it returns -EPROBE_DEFER, which means the clock is referenced,
+and thus not optional, but not yet ready?
+For optional clocks, all errors but -ENOENT should be propagated up.
 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-scpsys.c        |   88 ++++++++++++++++++++++++++++++
->  include/dt-bindings/power/mt6765-power.h |   14 +++++
->  2 files changed, 102 insertions(+)
->  create mode 100644 include/dt-bindings/power/mt6765-power.h
-> 
-> diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-> index 5b24bb4..4bb6c7a 100644
-> --- a/drivers/soc/mediatek/mtk-scpsys.c
-> +++ b/drivers/soc/mediatek/mtk-scpsys.c
-> @@ -23,6 +23,7 @@
->  
->  #include <dt-bindings/power/mt2701-power.h>
->  #include <dt-bindings/power/mt2712-power.h>
-> +#include <dt-bindings/power/mt6765-power.h>
->  #include <dt-bindings/power/mt6797-power.h>
->  #include <dt-bindings/power/mt7622-power.h>
->  #include <dt-bindings/power/mt7623a-power.h>
-> @@ -680,6 +681,79 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  };
->  
->  /*
-> + * MT6765 power domain support
-> + */
-> +#define SPM_PWR_STATUS_MT6765			0x0180
-> +#define SPM_PWR_STATUS_2ND_MT6765		0x0184
-> +
-> +static const struct scp_domain_data scp_domain_data_mt6765[] = {
-> +	[MT6765_POWER_DOMAIN_VCODEC] = {
-> +		.name = "vcodec",
-> +		.sta_mask = BIT(26),
-> +		.ctl_offs = 0x300,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_ISP] = {
-> +		.name = "isp",
-> +		.sta_mask = BIT(5),
-> +		.ctl_offs = 0x308,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_MM] = {
-> +		.name = "mm",
-> +		.sta_mask = BIT(3),
-> +		.ctl_offs = 0x30C,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_CONN] = {
-> +		.name = "conn",
-> +		.sta_mask = BIT(1),
-> +		.ctl_offs = 0x32C,
-> +		.sram_pdn_bits = 0,
-> +		.sram_pdn_ack_bits = 0,
-> +	},
-> +	[MT6765_POWER_DOMAIN_MFG_ASYNC] = {
-> +		.name = "mfg_async",
-> +		.sta_mask = BIT(23),
-> +		.ctl_offs = 0x334,
-> +		.sram_pdn_bits = 0,
-> +		.sram_pdn_ack_bits = 0,
-> +	},
-> +	[MT6765_POWER_DOMAIN_MFG] = {
-> +		.name = "mfg",
-> +		.sta_mask = BIT(4),
-> +		.ctl_offs = 0x338,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
-> +	[MT6765_POWER_DOMAIN_CAM] = {
-> +		.name = "cam",
-> +		.sta_mask = BIT(25),
-> +		.ctl_offs = 0x344,
-> +		.sram_pdn_bits = GENMASK(8, 9),
-> +		.sram_pdn_ack_bits = GENMASK(12, 13),
-> +	},
-> +	[MT6765_POWER_DOMAIN_MFG_CORE0] = {
-> +		.name = "mfg_core0",
-> +		.sta_mask = BIT(7),
-> +		.ctl_offs = 0x34C,
-> +		.sram_pdn_bits = GENMASK(8, 8),
-> +		.sram_pdn_ack_bits = GENMASK(12, 12),
-> +	},
+Gr{oetje,eeting}s,
 
-Above power domains really don't require any clock controlled with
-clk_id before any access on them?
+                        Geert
 
-> +};
-> +
-> +static const struct scp_subdomain scp_subdomain_mt6765[] = {
-> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_CAM},
-> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_ISP},
-> +	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_VCODEC},
-> +	{MT6765_POWER_DOMAIN_MFG_ASYNC, MT6765_POWER_DOMAIN_MFG},
-> +	{MT6765_POWER_DOMAIN_MFG, MT6765_POWER_DOMAIN_MFG_CORE0},
-> +};
-> +
-> +/*
->   * MT6797 power domain support
->   */
->  
-> @@ -962,6 +1036,17 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  	.bus_prot_reg_update = false,
->  };
->  
-> +static const struct scp_soc_data mt6765_data = {
-> +	.domains = scp_domain_data_mt6765,
-> +	.num_domains = ARRAY_SIZE(scp_domain_data_mt6765),
-> +	.subdomains = scp_subdomain_mt6765,
-> +	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt6765),
-> +	.regs = {
-> +		.pwr_sta_offs = SPM_PWR_STATUS_MT6765,
-> +		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6765,
-> +	},
-> +};
-> +
->  static const struct scp_soc_data mt6797_data = {
->  	.domains = scp_domain_data_mt6797,
->  	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
-> @@ -1018,6 +1103,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
->  		.compatible = "mediatek,mt2712-scpsys",
->  		.data = &mt2712_data,
->  	}, {
-> +		.compatible = "mediatek,mt6765-scpsys",
-> +		.data = &mt6765_data,
-> +	}, {
->  		.compatible = "mediatek,mt6797-scpsys",
->  		.data = &mt6797_data,
->  	}, {
-> diff --git a/include/dt-bindings/power/mt6765-power.h b/include/dt-bindings/power/mt6765-power.h
-> new file mode 100644
-> index 0000000..d347b4e
-> --- /dev/null
-> +++ b/include/dt-bindings/power/mt6765-power.h
-> @@ -0,0 +1,14 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _DT_BINDINGS_POWER_MT6765_POWER_H
-> +#define _DT_BINDINGS_POWER_MT6765_POWER_H
-> +
-> +#define MT6765_POWER_DOMAIN_CONN		0
-> +#define MT6765_POWER_DOMAIN_MM			1
-> +#define MT6765_POWER_DOMAIN_MFG_ASYNC		2
-> +#define MT6765_POWER_DOMAIN_ISP			3
-> +#define MT6765_POWER_DOMAIN_MFG			4
-> +#define MT6765_POWER_DOMAIN_MFG_CORE0		5
-> +#define MT6765_POWER_DOMAIN_CAM			6
-> +#define MT6765_POWER_DOMAIN_VCODEC		7
-> +
-> +#endif /* _DT_BINDINGS_POWER_MT6765_POWER_H */
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
