@@ -2,88 +2,100 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D985ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD92ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B75220C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:57:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B75220C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 90EED20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:57:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90EED20C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbeGQL25 (ORCPT
+        id S1731296AbeGQL31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:28:57 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:54467 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729641AbeGQL25 (ORCPT
+        Tue, 17 Jul 2018 07:29:27 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:2253 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729641AbeGQL31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:28:57 -0400
-Received: by mail-wm0-f65.google.com with SMTP id c14-v6so1027900wmb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 03:56:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8/ckz05765y3DTNEDB3T3WNjWl/CAJH1fHKMMtvJxDM=;
-        b=CDsA6o4UKi9oCRS8CcqFs3fO9OG0Ip1oCRzxTjVb+WFztxuzGx45O7SuvQNBiR5TLb
-         lzsJIcx2M9VyRCyyyLNYbBuDBiCBWlLT3kUqG4WurQLYqARLS6xrFNJPeOZizVCZdvfW
-         /YFTY8HxKt/QMWNqvGBR8hA4uPPcbixh/+vjZe9Tokc50p1tH0yC62Vi2YwJ2A5GYMB9
-         Q6qStoQ3UTQhm/8WZdzZiJ+RkMKlRsoDveD3LRPoHLHMEXkRGkRwR9drauyWsfnniieB
-         NLIG0BdkbjOA+xqAgcCGSnKNp8V/1D9bBHueZgCbJXOD7xwzfgeXWB/s0nQVS7//mOq0
-         KGmw==
-X-Gm-Message-State: AOUpUlHHJtU/qxYRiITt2T3U67+717hFpDK82zN4spM/ksmeziIQ7bbo
-        OW07DCJ7piY5MFjHEllgJoUFD6YY
-X-Google-Smtp-Source: AAOMgpeNISCWhGr/uKqD/5xE0boN5eXLz8uA6ye1EluYmfnqPRY1l8k5IWpPRn8c2e5XMM5Tsb4KJA==
-X-Received: by 2002:a1c:ad50:: with SMTP id w77-v6mr1097837wme.54.1531825013735;
-        Tue, 17 Jul 2018 03:56:53 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id u3-v6sm1083583wre.21.2018.07.17.03.56.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 03:56:53 -0700 (PDT)
-Received: from d104.suse.de (nat.nue.novell.com [195.135.221.2])
-        by techadventures.net (Postfix) with ESMTPA id 20BF2123F8B;
-        Tue, 17 Jul 2018 12:56:52 +0200 (CEST)
-From:   osalvador@techadventures.net
-To:     linux-mm@kvack.org
-Cc:     pasha.tatashin@oracle.com, mhocko@suse.com, vbabka@suse.cz,
-        akpm@linux-foundation.org, aaron.lu@intel.com,
-        iamjoonsoo.kim@lge.com, linux-kernel@vger.kernel.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: [RFC PATCH 0/3] Cleanup for free_area_init_node / free_area_init_core
-Date:   Tue, 17 Jul 2018 12:56:19 +0200
-Message-Id: <20180717105622.12410-1-osalvador@techadventures.net>
-X-Mailer: git-send-email 2.13.6
+        Tue, 17 Jul 2018 07:29:27 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b4dcb8c0000>; Tue, 17 Jul 2018 03:57:16 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 17 Jul 2018 03:57:23 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 17 Jul 2018 03:57:23 -0700
+Received: from [10.21.26.144] (10.21.26.144) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 17 Jul
+ 2018 10:57:18 +0000
+Subject: Re: [PATCH] Revert "ata: ahci_platform: convert kcalloc to
+ devm_kcalloc"
+To:     Corentin Labbe <clabbe@baylibre.com>, <hdegoede@redhat.com>,
+        <tj@kernel.org>, <sfr@canb.auug.org.au>
+CC:     <linux-ide@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1531824575-852-1-git-send-email-clabbe@baylibre.com>
+From:   Mikko Perttunen <mperttunen@nvidia.com>
+Message-ID: <c8a963fa-70c8-ea79-3c30-69bf723fb764@nvidia.com>
+Date:   Tue, 17 Jul 2018 13:57:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <1531824575-852-1-git-send-email-clabbe@baylibre.com>
+X-Originating-IP: [10.21.26.144]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oscar Salvador <osalvador@suse.de>
+Thanks!
 
-While trying to cleanup the memhotplug code, I found quite difficult to follow
-free_area_init_node / free_area_init_core wrt which functions get called
-from the memhotplug path.
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-This is en effort to try to refactor / cleanup those two functions a little bit,
-to make them easier to read.
-
-It compiles, but I did not test it.
-I would like to get some feedback to see if it is worth or not. 
-
-Signed-off-by: Oscar Salvador <osalvador@suse.de>
-
-Oscar Salvador (3):
-  mm: Make free_area_init_core more readable by moving the ifdefs
-  mm: Refactor free_area_init_core
-  mm: Make free_area_init_node call certain functions only when booting
-
- mm/page_alloc.c | 193 ++++++++++++++++++++++++++++++++++----------------------
- 1 file changed, 116 insertions(+), 77 deletions(-)
-
--- 
-2.13.6
-
+On 17.07.2018 13:49, Corentin Labbe wrote:
+> Since ahci_platform_put_resources() use target_pwrs after "devm_" freed
+> it, we cannot use devm_kcalloc for allocating target_pwrs.
+> 
+> This reverts commit bd0038b1b4f499d814d8f33a55b1df5ea6cf3b85.
+> 
+> Reported-by: Mikko Perttunen <mperttunen@nvidia.com>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>   drivers/ata/libahci_platform.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+> index fe8939e161ea..2ceebaf2ed56 100644
+> --- a/drivers/ata/libahci_platform.c
+> +++ b/drivers/ata/libahci_platform.c
+> @@ -271,6 +271,8 @@ static void ahci_platform_put_resources(struct device *dev, void *res)
+>   	for (c = 0; c < hpriv->nports; c++)
+>   		if (hpriv->target_pwrs && hpriv->target_pwrs[c])
+>   			regulator_put(hpriv->target_pwrs[c]);
+> +
+> +	kfree(hpriv->target_pwrs);
+>   }
+>   
+>   static int ahci_platform_get_phy(struct ahci_host_priv *hpriv, u32 port,
+> @@ -406,7 +408,11 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev)
+>   		rc = -ENOMEM;
+>   		goto err_out;
+>   	}
+> -	hpriv->target_pwrs = devm_kcalloc(dev, hpriv->nports, sizeof(*hpriv->target_pwrs), GFP_KERNEL);
+> +	/*
+> +	 * We cannot use devm_ here, since ahci_platform_put_resources() uses
+> +	 * target_pwrs after devm_ have freed memory
+> +	 */
+> +	hpriv->target_pwrs = kcalloc(hpriv->nports, sizeof(*hpriv->target_pwrs), GFP_KERNEL);
+>   	if (!hpriv->target_pwrs) {
+>   		rc = -ENOMEM;
+>   		goto err_out;
+> 
