@@ -3,242 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C225BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A7AECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7710D2077B
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:43:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7710D2077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DDB902077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:44:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB902077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbeGQJPS (ORCPT
+        id S1729720AbeGQJPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:15:18 -0400
-Received: from mga17.intel.com ([192.55.52.151]:5021 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728610AbeGQJPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:15:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 01:43:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="73416481"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
-  by orsmga001.jf.intel.com with ESMTP; 17 Jul 2018 01:43:41 -0700
-Subject: Re: [PATCH RFC 1/2] mmc: sdhci: Allow platform controlled voltage
- switching
-To:     Vijay Viswanath <vviswana@codeaurora.org>, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, jeremymc@redhat.com,
-        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        vbadigan@codeaurora.org, dianders@google.com,
-        sayalil@codeaurora.org, Evan Green <evgreen@chromium.org>
-References: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
- <1529583826-42020-2-git-send-email-vviswana@codeaurora.org>
- <53c6d61f-47f5-2e4e-8280-6f76f707799e@intel.com>
- <0d9b1934-d80d-a726-8094-688c97474afa@codeaurora.org>
- <78dfa5db-712b-bb0c-ad03-761371beef10@intel.com>
- <c721395a-0198-d533-5e40-42e4856f34e5@codeaurora.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <6e8c713f-6569-25f3-dec5-f08001b3c6f3@intel.com>
-Date:   Tue, 17 Jul 2018 11:42:07 +0300
+        Tue, 17 Jul 2018 05:15:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39686 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728288AbeGQJPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:15:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0A663ACB8;
+        Tue, 17 Jul 2018 08:44:09 +0000 (UTC)
+Subject: Re: [PATCH v2 5/7] mm: rename and change semantics of
+ nr_indirectly_reclaimable_bytes
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vijayanand Jitta <vjitta@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+References: <20180618091808.4419-6-vbabka@suse.cz>
+ <201806201923.mC5ZpigB%fengguang.wu@intel.com>
+ <38c6a6e1-c5e0-fd7d-4baf-1f0f09be5094@suse.cz>
+ <20180629211201.GA14897@castle.DHCP.thefacebook.com>
+ <ef2dea13-0102-c4bc-a28f-c1b2408f0753@suse.cz>
+ <20180702165223.GA17295@castle.DHCP.thefacebook.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSFWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmNvbT7CwZcEEwEKAEECGwMFCwkIBwMFFQoJCAsFFgIDAQAC
+ HgECF4ACGQEWIQSpQNQ0mSwujpkQPVAiT6fnzIKmZAUCWi/zTwUJBbOLuQAKCRAiT6fnzIKm
+ ZIpED/4jRN/6LKZZIT4R2xoou0nJkBGVA3nfb+mUMgi3uwn/zC+o6jjc3ShmP0LQ0cdeuSt/
+ t2ytstnuARTFVqZT4/IYzZgBsLM8ODFY5vGfPw00tsZMIfFuVPQX3xs0XgLEHw7/1ZCVyJVr
+ mTzYmV3JruwhMdUvIzwoZ/LXjPiEx1MRdUQYHAWwUfsl8lUZeu2QShL3KubR1eH6lUWN2M7t
+ VcokLsnGg4LTajZzZfq2NqCKEQMY3JkAmOu/ooPTrfHCJYMF/5dpi8YF1CkQF/PVbnYbPUuh
+ dRM0m3NzPtn5DdyfFltJ7fobGR039+zoCo6dFF9fPltwcyLlt1gaItfX5yNbOjX3aJSHY2Vc
+ A5T+XAVC2sCwj0lHvgGDz/dTsMM9Ob/6rRJANlJPRWGYk3WVWnbgW8UejCWtn1FkiY/L/4qJ
+ UsqkId8NkkVdVAenCcHQmOGjRQYTpe6Cf4aQ4HGNDeWEm3H8Uq9vmHhXXcPLkxBLRbGDSHyq
+ vUBVaK+dAwAsXn/5PlGxw1cWtur1ep7RDgG3vVQDhIOpAXAg6HULjcbWpBEFaoH720oyGmO5
+ kV+yHciYO3nPzz/CZJzP5Ki7Q1zqBb/U6gib2at5Ycvews+vTueYO+rOb9sfD8BFTK386LUK
+ uce7E38owtgo/V2GV4LMWqVOy1xtCB6OAUfnGDU2EM7ATQRbGTU1AQgAn0H6UrFiWcovkh6E
+ XVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQLa1PQDUi6j00ChlcR66g9/V0sPIcSutacPKf
+ dKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMhFmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCT
+ sTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sfbAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZO
+ rIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq+aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahK
+ tQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4njQARAQABwsF8BBgBCgAmFiEEqUDUNJksLo6Z
+ ED1QIk+n58yCpmQFAlsZNTUCGwwFCQPCZwAACgkQIk+n58yCpmQ83g/9Frg1sRMdGPn98zV+
+ O2eC3h0p5f/oxxQ8MhG5znwHoW4JDG2TuxfcQuz7X7Dd5JWscjlw4VFJ2DD+IrDAGLHwPhCr
+ RyfKalnrbYokvbClM9EuU1oUuh7k+Sg5ECNXEsamW9AiWGCaKWNDdHre3Lf4xl+RJWxghOVW
+ RiUdpLA/a3yDvJNVr6rxkDHQ1P24ZZz/VKDyP+6g8aty2aWEU0YFNjI+rqYZb2OppDx6fdma
+ YnLDcIfDFnkVlDmpznnGCyEqLLyMS3GH52AH13zMT9L9QYgT303+r6QQpKBIxAwn8Jg8dAlV
+ OLhgeHXKr+pOQdFf6iu2sXlUR4MkO/5KWM1K0jFR2ug8Pb3aKOhowVMBT64G0TXhQ/kX4tZ2
+ ZF0QZLUCHU3Cigvbu4AWWVMNDEOGD/4sn9OoHxm6J04jLUHFUpFKDcjab4NRNWoHLsuLGjve
+ Gdbr2RKO2oJ5qZj81K7os0/5vTAA4qHDP2EETAQcunTn6aPlkUnJ8aw6I1Rwyg7/XsU7gQHF
+ IM/cUMuWWm7OUUPtJeR8loxZiZciU7SMvN1/B9ycPMFs/A6EEzyG+2zKryWry8k7G/pcPrFx
+ O2PkDPy3YmN1RfpIX2HEmnCEFTTCsKgYORangFu/qOcXvM83N+2viXxG4mjLAMiIml1o2lKV
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <bfdb3fb1-5d81-e17c-e456-083cca04e2cc@suse.cz>
+Date:   Tue, 17 Jul 2018 10:44:07 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.0
 MIME-Version: 1.0
-In-Reply-To: <c721395a-0198-d533-5e40-42e4856f34e5@codeaurora.org>
+In-Reply-To: <20180702165223.GA17295@castle.DHCP.thefacebook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/18 11:40, Vijay Viswanath wrote:
-> 
-> 
-> On 7/17/2018 1:00 PM, Adrian Hunter wrote:
->> On 17/07/18 08:14, Vijay Viswanath wrote:
->>>
->>>
->>> On 7/10/2018 4:37 PM, Adrian Hunter wrote:
->>>> On 21/06/18 15:23, Vijay Viswanath wrote:
->>>>> Some controllers can have internal mechanism to inform the SW that it
->>>>> is ready for voltage switching. For such controllers, changing voltage
->>>>> before the HW is ready can result in various issues.
->>>>>
->>>>> Add a quirk, which can be used by drivers of such controllers.
->>>>>
->>>>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->>>>> ---
->>>>>    drivers/mmc/host/sdhci.c | 20 +++++++++++++++-----
->>>>>    drivers/mmc/host/sdhci.h |  2 ++
->>>>>    2 files changed, 17 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>>>> index 1c828e0..f0346d4 100644
->>>>> --- a/drivers/mmc/host/sdhci.c
->>>>> +++ b/drivers/mmc/host/sdhci.c
->>>>> @@ -1615,7 +1615,8 @@ void sdhci_set_power_noreg(struct sdhci_host *host,
->>>>> unsigned char mode,
->>>>>    void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
->>>>>                 unsigned short vdd)
->>>>>    {
->>>>> -    if (IS_ERR(host->mmc->supply.vmmc))
->>>>> +    if (IS_ERR(host->mmc->supply.vmmc) ||
->>>>> +            (host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+On 07/02/2018 06:52 PM, Roman Gushchin wrote:
+> On Sat, Jun 30, 2018 at 12:09:27PM +0200, Vlastimil Babka wrote:
+>> On 06/29/2018 11:12 PM, Roman Gushchin wrote:
 >>>>
->>>> I think you should provide your own ->set_power() instead of this
+>>>> The vmstat counter NR_INDIRECTLY_RECLAIMABLE_BYTES was introduced by commit
+>>>> eb59254608bc ("mm: introduce NR_INDIRECTLY_RECLAIMABLE_BYTES") with the goal of
+>>>> accounting objects that can be reclaimed, but cannot be allocated via a
+>>>> SLAB_RECLAIM_ACCOUNT cache. This is now possible via kmalloc() with
+>>>> __GFP_RECLAIMABLE flag, and the dcache external names user is converted.
 >>>>
+>>>> The counter is however still useful for accounting direct page allocations
+>>>> (i.e. not slab) with a shrinker, such as the ION page pool. So keep it, and:
 >>>
->>> will do
->>>
->>>>>            sdhci_set_power_noreg(host, mode, vdd);
->>>>>        else
->>>>>            sdhci_set_power_reg(host, mode, vdd);
->>>>> @@ -2009,7 +2010,9 @@ int sdhci_start_signal_voltage_switch(struct
->>>>> mmc_host *mmc,
->>>>>            ctrl &= ~SDHCI_CTRL_VDD_180;
->>>>>            sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>>>    -        if (!IS_ERR(mmc->supply.vqmmc)) {
->>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
->>>>> +                !(host->quirks2 &
->>>>> +                    SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
->>>>
->>>> And your own ->start_signal_voltage_switch()
->>>>
->>>
->>> sdhci_msm_start_signal_voltage_switch() would be an exact copy of
->>> sdhci_start_signal_voltage_switch()..... will incorporate this if not using
->>> quirk.
->>>
->>>>>                ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>>>                if (ret) {
->>>>>                    pr_warn("%s: Switching to 3.3V signalling voltage
->>>>> failed\n",
->>>>> @@ -2032,7 +2035,8 @@ int sdhci_start_signal_voltage_switch(struct
->>>>> mmc_host *mmc,
->>>>>        case MMC_SIGNAL_VOLTAGE_180:
->>>>>            if (!(host->flags & SDHCI_SIGNALING_180))
->>>>>                return -EINVAL;
->>>>> -        if (!IS_ERR(mmc->supply.vqmmc)) {
->>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
->>>>> +            !(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
->>>>>                ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>>>                if (ret) {
->>>>>                    pr_warn("%s: Switching to 1.8V signalling voltage
->>>>> failed\n",
->>>>> @@ -3485,7 +3489,10 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>>>         * the host can take the appropriate action if regulators are not
->>>>>         * available.
->>>>>         */
->>>>> -    ret = mmc_regulator_get_supply(mmc);
->>>>> +    if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>>>
->>>> Since we expect mmc_regulator_get_supply() to have been called, this could
->>>> be:
->>>>
->>>>      if (!mmc->supply.vmmc) {
->>>>          ret = mmc_regulator_get_supply(mmc);
->>>>          enable_vqmmc = true;
->>>>      } else {
->>>>          ret = 0;
->>>>      }
->>>>>> +        ret = mmc_regulator_get_supply(mmc);
->>>>> +    else
->>>>> +        ret = 0;
->>>>>        if (ret)
->>>>>            return ret;
->>>>>    @@ -3736,7 +3743,10 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>>>          /* If vqmmc regulator and no 1.8V signalling, then there's no
->>>>> UHS */
->>>>>        if (!IS_ERR(mmc->supply.vqmmc)) {
->>>>> -        ret = regulator_enable(mmc->supply.vqmmc);
->>>>> +        if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>>>
->>>> And this could be:
->>>>
->>>>          if (enable_vqmmc)
->>>>              ret = regulator_enable(mmc->supply.vqmmc);
->>>>          else
->>>>              ret = 0;
->>>>   > However, you still need to ensure
->>>> regulator_disable(mmc->supply.vqmmc) is
->>>> only called if regulator_enable() was called.
->>> I missed this. Will cover it.
->>>
->>> Also I missed one more place where we are doing regulator_disable. During
->>> sdhci-msm unbinding, we would end up doing an extra regulator disable
->>> (thanks Evan for pointing it out) in sdhci_remove_host.
->>>
->>> To avoid the quirk( or having any flag), it would require copying the code
->>> of sdhci_start_signal_voltage_switch() and sdhci_remove_host() and creating
+>>> Btw, it looks like I've another example of usefulness of this counter:
+>>> dynamic per-cpu data.
 >>
->> You do not need to duplicate sdhci_remove_host(), just change it so that it
->> only  disables what was enabled i.e.
->>
->>     if (host->vqmmc_enabled)
->>         regulator_disable(mmc->supply.vqmmc);
->>
+>> Hmm, but are those reclaimable? Most likely not in general? Do you have
+>> examples that are?
 > 
-> Ok, so we will be adding a new flag "vqmmc_enabled" in sdhci_host, ryt ?
+> If these per-cpu data is something like per-cpu refcounters,
+> which are using to manage reclaimable objects (e.g. cgroup css objects).
+> Of course, they are not always reclaimable, but in certain states.
 
-Yes
+BTW, seems you seem interested, could you provide some more formal
+review as well? Others too. We don't need to cover all use cases
+immediately, when the patchset is apparently stalled due to lack of
+review. Thanks!
 
-> Just wanted to clarify
-> 
->>> 2 new functions in sdhci_msm layer which would do the exact same as above,
->>> with just the regulator parts removed.
->>>
->>> This looks messy (considering any future changes to the 2 sdhci API will
->>> need to be copied to their duplicate sdhci_msm API) and a bit overkill to
->>> avoid quirk. At the same time, I don't know how useful such a quirk would be
->>> to other platform drivers.
->>>
->>> Please let me know your view/suggestions.
->>
->> Let's try without the quirk.
->>
->>>>
->>>>> +            ret = regulator_enable(mmc->supply.vqmmc);
->>>>> +        else
->>>>> +            ret = 0;
->>>>>            if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
->>>>>                                1950000))
->>>>>                host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
->>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>>>> index 23966f8..3b0c97a 100644
->>>>> --- a/drivers/mmc/host/sdhci.h
->>>>> +++ b/drivers/mmc/host/sdhci.h
->>>>> @@ -450,6 +450,8 @@ struct sdhci_host {
->>>>>     * obtainable timeout.
->>>>>     */
->>>>>    #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT            (1<<17)
->>>>> +/* Regulator voltage changes are being done from platform layer */
->>>>> +#define SDHCI_QUIRK2_INTERNAL_PWR_CTL                (1<<18)
->>>>
->>>> So maybe the quirk is not needed.
->>>>
->>>>>          int irq;        /* Device IRQ */
->>>>>        void __iomem *ioaddr;    /* Mapped address */
->>>>>
->>>>
->>>
->>> Thanks for the review & suggestions!
->>> Vijay
->>>
->>
+> Thanks!
 > 
 
