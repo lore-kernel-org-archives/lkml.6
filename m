@@ -2,136 +2,110 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07AAECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286C1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A14FE206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A14FE206B8
+	by mail.kernel.org (Postfix) with ESMTP id E4F13206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:31:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F13206B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbeGQVFw (ORCPT
+        id S1730252AbeGQVGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:05:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55788 "EHLO mail.bootlin.com"
+        Tue, 17 Jul 2018 17:06:15 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55812 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729657AbeGQVFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:05:51 -0400
+        id S1729657AbeGQVGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 17:06:14 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E4B05207AB; Tue, 17 Jul 2018 22:31:29 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7401A206F6;
-        Tue, 17 Jul 2018 22:31:29 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 22:31:29 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH RESEND v3] mtd: rawnand: ams-delta: use GPIO lookup
- table
-Message-ID: <20180717223129.5e999c50@bbrezillon>
-In-Reply-To: <20180717170552.17735-1-jmkrzyszt@gmail.com>
-References: <20180709193850.20191-1-jmkrzyszt@gmail.com>
-        <20180717170552.17735-1-jmkrzyszt@gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id 60920207AB; Tue, 17 Jul 2018 22:31:53 +0200 (CEST)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 30702206FF;
+        Tue, 17 Jul 2018 22:31:53 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 22:31:53 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: early_printk: respect keep parameter
+Message-ID: <20180717203153.GC3211@piout.net>
+References: <20180711183239.21023-1-alexandre.belloni@bootlin.com>
+ <nycvar.YSQ.7.76.1807171603240.20892@knanqh.ubzr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YSQ.7.76.1807171603240.20892@knanqh.ubzr>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Tony
-
-On Tue, 17 Jul 2018 19:05:52 +0200
-Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
-
-> Now as Amstrad Delta board - the only user of this driver - provides
-> GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
-> use the table to locate required GPIO pins.
+On 17/07/2018 16:16:44-0400, Nicolas Pitre wrote:
+> On Wed, 11 Jul 2018, Alexandre Belloni wrote:
 > 
-> Declare static variables for storing GPIO descriptors and replace
-> gpio_ function calls with their gpiod_ equivalents.
+> > Parse and use the keep parameter of earlyprintk to avoid having the kernel
+> > output stop with:
+> > 
+> > Console: colour dummy device 80x30
+> > console [tty0] enabled
+> > bootconsole [earlycon0] disabled
+> > 
+> > This happens because once tty0, the virtual terminal console is registered,
+> > it is selected as the default console, disregarding an existing stdout-path
+> > DT property and the early console is shutdown before the console driver is
+> > probed.
+> > 
+> > Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > 
-> Pin naming used by the driver should be followed while respective GPIO
-> lookup table is initialized by a board init code.
+> Why can't you have a real console driver that takes over at that point 
+> which respects whatever DT property you give it?
 > 
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+See Russell's analysis here:
 
-Just a minor comment below (nothing important, just a coding style
-preference).
-
-Also, if it goes through the omap tree (I guess it will target 4.20),
-I'll need an immutable tag, because I have changes touching this driver
-in the pipe (that's more a request for Tony).
+https://www.spinics.net/lists/linux-serial/msg25363.html
 
 
-> @@ -230,9 +205,42 @@ static int ams_delta_init(struct platform_device *pdev)
->  	platform_set_drvdata(pdev, io_base);
->  
->  	/* Set chip enabled, but  */
-> -	err = gpio_request_array(_mandatory_gpio, ARRAY_SIZE(_mandatory_gpio));
-> -	if (err)
-> -		goto out_gpio;
-> +	gpiod_nwp = devm_gpiod_get(&pdev->dev, "nwp", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(gpiod_nwp)) {
-> +		err = PTR_ERR(gpiod_nwp);
-> +		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
-> +		goto out_mtd;
-> +	}
+> The early_printk code is very raw and inefficient, and it shouldn't be 
+> used for anything but the debugging of early boot hangs.
+> 
 
-Can you add a blank line after each if (IS_ERR(gpiod_nwp)) { } block.
+The issue I had is that he pinctrl driver wasn't probing so the real
+console driver could never probe. I think this fits the use case.
 
-> +	gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(gpiod_nce)) {
-> +		err = PTR_ERR(gpiod_nce);
-> +		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
-> +		goto out_mtd;
-> +	}
-> +	gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(gpiod_nre)) {
-> +		err = PTR_ERR(gpiod_nre);
-> +		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
-> +		goto out_mtd;
-> +	}
-> +	gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
-> +	if (IS_ERR(gpiod_nwe)) {
-> +		err = PTR_ERR(gpiod_nwe);
-> +		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
-> +		goto out_mtd;
-> +	}
-> +	gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
-> +	if (IS_ERR(gpiod_ale)) {
-> +		err = PTR_ERR(gpiod_ale);
-> +		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
-> +		goto out_mtd;
-> +	}
-> +	gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
-> +	if (IS_ERR(gpiod_cle)) {
-> +		err = PTR_ERR(gpiod_cle);
-> +		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
-> +		goto out_mtd;
-> +	}
->  
->  	/* Scan to find existence of the device */
->  	err = nand_scan(ams_delta_mtd, 1);
+Also, atmel_serial doesn't yet have earlycon support.
+
+> > ---
+> >  arch/arm/kernel/early_printk.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/arch/arm/kernel/early_printk.c b/arch/arm/kernel/early_printk.c
+> > index 9257736ec9fa..bbb10150b11a 100644
+> > --- a/arch/arm/kernel/early_printk.c
+> > +++ b/arch/arm/kernel/early_printk.c
+> > @@ -42,6 +42,9 @@ static struct console early_console_dev = {
+> >  
+> >  static int __init setup_early_printk(char *buf)
+> >  {
+> > +	if (buf && strstr(buf, "keep"))
+> > +		early_console_dev.flags &= ~CON_BOOT;
+> > +
+> >  	early_console = &early_console_dev;
+> >  	register_console(&early_console_dev);
+> >  	return 0;
+> > -- 
+> > 2.18.0
+> > 
+> > 
+> 
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
