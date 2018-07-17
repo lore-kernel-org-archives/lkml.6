@@ -2,123 +2,144 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1014DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC07ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:24:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB06B2064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:24:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="XCRv5UUZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB06B2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by mail.kernel.org (Postfix) with ESMTP id 4D8032064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:24:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8032064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731881AbeGQO52 (ORCPT
+        id S1731957AbeGQO5r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:57:28 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:43036 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731608AbeGQO52 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:57:28 -0400
-Received: by mail-lf0-f66.google.com with SMTP id m12-v6so978253lfc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VzJWilzjD9QyH8EQZA9XW5s+BaknxtsbeUT09Yr+xi8=;
-        b=XCRv5UUZ+z+R2GB/M3IJEJVeroxNE0AogE1lVESBchrJXOoJElC4qHqzeWS2zxnf1o
-         0HD4BA4oNRB+yWDfMxJwbishUYqemW4ZUAvq0Y3a6NhCze6mC8O1lCbBOFV/oOw3mrjR
-         SvL9CA5BUfm+XEOEo67V18MunwYvFCFnmy0to=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VzJWilzjD9QyH8EQZA9XW5s+BaknxtsbeUT09Yr+xi8=;
-        b=RjWqqJVEK2wd7bOf1B67EvQQL+qafRv+0Zopdx2FzObXWaWjuyJOLrrra1pZWzXy3P
-         PeNNsJGRxIC4+t/6fG1aXkYCxu5Wb86sCqsSFOvaMxU1IpuFxbTCqGEuShTY+Te6ykb/
-         h0+BdvZJeRfMzFD5Tqhs6zj6rkhHWt9vG+apLeGwYLeMdXEqQZra055c4mqk10sPJo5c
-         K0/gZ7bNevnvJgyVljq/geDFLh20aJuNCENXvUkbFbki4b/3umzSaBbushWkPiXybj9N
-         AdjUcZR+6yYAMUgx87nAv4qRqimW3atqfw+agTMDhlA64Vox10V1RguJB5ysnJnsoRzi
-         H+8g==
-X-Gm-Message-State: AOUpUlF/GAr971Ci/sSyctxeJnN/bbyUIrSEXuuIIsTpf7xbTKDtiJxP
-        UXmFzasbzJqeilu0kUmtAMdgjA==
-X-Google-Smtp-Source: AAOMgpeFPmeAiDRU/bnZ79kXZlnnddpWqoSNfXFhFX5eNKmDg2VgZKyl+TD8ej8Zcn6w+cTE9sCo4A==
-X-Received: by 2002:a19:9806:: with SMTP id a6-v6mr1502219lfe.128.1531837472362;
-        Tue, 17 Jul 2018 07:24:32 -0700 (PDT)
-Received: from [172.16.11.32] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id k10-v6sm200154ljh.5.2018.07.17.07.24.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 07:24:31 -0700 (PDT)
-Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20180707111209.GA27768@gmail.com>
- <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
- <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
- <f486debf-e824-0d0c-c0c9-cf1e278ee9eb@i-love.sakura.ne.jp>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <218baff7-9473-ac1e-2449-13de98fa6dc9@rasmusvillemoes.dk>
-Date:   Tue, 17 Jul 2018 16:24:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 17 Jul 2018 10:57:47 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731679AbeGQO5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:57:47 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3E4E1401EF05;
+        Tue, 17 Jul 2018 14:24:52 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8A6092026D68;
+        Tue, 17 Jul 2018 14:24:49 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 22:24:43 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Deprecate kernelcore=nn and movable_core=
+Message-ID: <20180717142443.GG1724@MiWiFi-R3L-srv>
+References: <20180717131837.18411-1-bhe@redhat.com>
+ <20180717133109.GI7193@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <f486debf-e824-0d0c-c0c9-cf1e278ee9eb@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717133109.GI7193@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 17 Jul 2018 14:24:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 17 Jul 2018 14:24:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-17 15:53, Tetsuo Handa wrote:
-> On 2018/07/17 18:01, Rasmus Villemoes wrote:
->> Why not this instead? Less stack use, less code, no intermediary
->> snprintfs, no pr_cont...
-> 
-> Excellent! I didn't notice %ph extension.
-> 
->> Not compile-tested, probably whitespace-damaged, but you get the idea.
-> 
-> Yes, it works well.
-> 
-> 
-> 
-> From 96d9d4d135994a081e54d33d23f5007c53d9b5dd Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Tue, 17 Jul 2018 22:47:11 +0900
-> Subject: [PATCH v3] x86: Avoid pr_cont() in show_opcodes()
-> 
-> Since syzbot is confused by concurrent printk() messages [1],
-> this patch changes show_opcodes() to use %*ph format string.
-> 
-> When we start adding prefix to each line of printk() output,
-> we will be able to handle concurrent printk() messages.
-> 
-> [1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>
-> Signed-off-by: Rasmus Villemoes <mail@rasmusvillemoes.dk>
+Hi Michal,
 
-I'm not sure that SoB-chain is correct. Anyway, however which way, and
-if at all, you want to credit me, please use the email address
-linux@rasmusvillemoes.dk . I probably botched From header in the
-previous mail, not used to using Thunderbird...
+On 07/17/18 at 03:31pm, Michal Hocko wrote:
+> On Tue 17-07-18 21:18:37, Baoquan He wrote:
+> > We can still use 'kernelcore=mirror' or 'movable_node' for the usage
+> > of hotplug and movable zone. If somebody shows up with a valid usecase
+> > we can reconsider.
+> 
+> Well this doesn't really explain why to deprecate this functionality.
+> It is a rather ugly hack that has been originally introduced for large
+> order allocations. But we do have compaction these days. Even though the
+> compaction cannot solve all the fragmentation issues the zone movable is
+> not a great answer as it introduces other issues (basically highmem kind
+> of issues we used to have on 32b systems).
+> The current code doesn't work with KASLR and the code is too subtle to
+> work properly in other cases as well. E.g. movablecore range might cover
+> already used memory (e.g. bootmem allocations) and therefore it doesn't
+> comply with the basic assumption that the memory is movable and that
+> confuses memory hotplug (e.g. 15c30bc09085 ("mm, memory_hotplug: make
+> has_unmovable_pages more robust").
+> 
+> There are probably other issues I am not aware of but primarily the code
+> adds a maintenance burden which would be better to get rid of.
+> 
+> I would also go further and remove all the code the feature is using at
+> one go. If somebody really needs this functionality we would need to
+> revert the whole thing anyway.
 
-Rasmus
+Thanks for these details. I can arrange your above saying and rewrite
+patch log. Are you suggesting removing the code "kernelcore=nn" and
+"movablecore=" are using? If yes, I can repost with these changes.
+
+Just saw some deprecated codes are still there for future cleaning up.
+So posted this v1 patch.
+
+Thanks
+Baoquan
+
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt | 2 ++
+> >  mm/page_alloc.c                                 | 3 +++
+> >  2 files changed, 5 insertions(+)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index efc7aa7a0670..1e22c49866a2 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -1855,6 +1855,7 @@
+> >  	keepinitrd	[HW,ARM]
+> >  
+> >  	kernelcore=	[KNL,X86,IA-64,PPC]
+> > +			[Usage of kernelcore=nn[KMGTPE] | nn% is deprecated]
+> >  			Format: nn[KMGTPE] | nn% | "mirror"
+> >  			This parameter specifies the amount of memory usable by
+> >  			the kernel for non-movable allocations.  The requested
+> > @@ -2395,6 +2396,7 @@
+> >  			reporting absolute coordinates, such as tablets
+> >  
+> >  	movablecore=	[KNL,X86,IA-64,PPC]
+> > +			[Deprecated]
+> >  			Format: nn[KMGTPE] | nn%
+> >  			This parameter is the complement to kernelcore=, it
+> >  			specifies the amount of memory used for migratable
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 1521100f1e63..86cf05f48b5f 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -6899,6 +6899,8 @@ static int __init cmdline_parse_kernelcore(char *p)
+> >  		return 0;
+> >  	}
+> >  
+> > +	pr_warn("Only kernelcore=mirror supported, "
+> > +		"usage of kernelcore=nn[KMGTPE]|nn%% is deprecated.\n");
+> >  	return cmdline_parse_core(p, &required_kernelcore,
+> >  				  &required_kernelcore_percent);
+> >  }
+> > @@ -6909,6 +6911,7 @@ static int __init cmdline_parse_kernelcore(char *p)
+> >   */
+> >  static int __init cmdline_parse_movablecore(char *p)
+> >  {
+> > +	pr_warn("Option movablecore= is deprecated.\n");
+> >  	return cmdline_parse_core(p, &required_movablecore,
+> >  				  &required_movablecore_percent);
+> >  }
+> > -- 
+> > 2.13.6
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
