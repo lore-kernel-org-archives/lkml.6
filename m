@@ -2,107 +2,154 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 369F0ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B79ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE0512086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:26:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0512086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id B66B12086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:26:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="CQrCxf3M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B66B12086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730027AbeGQJ6H (ORCPT
+        id S1730116AbeGQJ6K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:58:07 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41545 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729652AbeGQJ6G (ORCPT
+        Tue, 17 Jul 2018 05:58:10 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:35220 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729652AbeGQJ6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:58:06 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9Q51k1461931
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:26:05 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9Q5hC1461928;
-        Tue, 17 Jul 2018 02:26:05 -0700
-Date:   Tue, 17 Jul 2018 02:26:05 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
-Message-ID: <tip-acb6c96c52ac0da6bb464173ad2cf5ada9049ad4@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, andrea.parri@amarulasolutions.com,
-        hpa@zytor.com, stern@rowland.harvard.edu, mingo@kernel.org,
-        tglx@linutronix.de, paulmck@linux.vnet.ibm.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org
-Reply-To: andrea.parri@amarulasolutions.com, torvalds@linux-foundation.org,
-          hpa@zytor.com, stern@rowland.harvard.edu,
-          paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, peterz@infradead.org
-In-Reply-To: <20180716180605.16115-2-paulmck@linux.vnet.ibm.com>
-References: <20180716180605.16115-2-paulmck@linux.vnet.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Fix
- ISA2+pooncelock+pooncelock+pombonce name
-Git-Commit-ID: acb6c96c52ac0da6bb464173ad2cf5ada9049ad4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 17 Jul 2018 05:58:09 -0400
+Received: by mail-pl0-f68.google.com with SMTP id w3-v6so219618plq.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:26:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=L5m5dV8B3PCYn2WTmlF1m2BxJT5h/9rxOdGn08Yj740=;
+        b=CQrCxf3Ma8iUY9PDA+OWUcD9E27DylBVWxNDi5WvUXMSMP6UzIC7VsgnnA4p1HCRkM
+         tm5E2WZwQ7s/hn26qKt713lm1xfbUwfRSRsXJAX5VcO264DCPDZ27foMKow4TX5ye8Fn
+         89CpDzhyaPMVkRHdVfkRaEdQGtyfGjrSNnqMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=L5m5dV8B3PCYn2WTmlF1m2BxJT5h/9rxOdGn08Yj740=;
+        b=exIapUtRSHkGPBT85lQnQderqjEPNr+ei80j5aqzfc8crgP0dzO1mRqFfVnOvbpA1f
+         /SFPx0BpjcjpN2FBdXMbVA1BW8hMERl3DsEU6vBY1SoxC+SXI7cSnzTrtCSHZzAJxEz3
+         jwKR1l7AtTPhkHVnOk1r5MZm0uerkmD474ttiKecZNzu0gfbFHz2SVV3Gb8q1eA6hLpt
+         27IoVD5YE9vlWGWc3BPa1szj8JSxrJ3DOubMCdBDr4TQf+ssRz2fqh3rMgnCTYo3uaW3
+         E4fRKzNcLz1OY8uU/6O5c6b1E5v8tAXwK8P4AJTuZPkcpzzhNyrLwiKsqsxWj4nRonYt
+         iIUA==
+X-Gm-Message-State: AOUpUlHuuuc/pkX+1UzGKVTn0CkP9wwqWy+oZI2vcwMQFbPUTlR3aIQn
+        gmt2+fDG+Dfxi5K8TtUV5KVQjg==
+X-Google-Smtp-Source: AAOMgpdI4HhVQBNk+gHwhfhnqoaLzT1WdZZ0DNI+nKgXLFJ1XjblrQnQ67YZpCYYEOjgXslewEwqEg==
+X-Received: by 2002:a17:902:900b:: with SMTP id a11-v6mr862013plp.143.1531819588944;
+        Tue, 17 Jul 2018 02:26:28 -0700 (PDT)
+Received: from localhost.localdomain ([183.82.229.107])
+        by smtp.gmail.com with ESMTPSA id l85-v6sm2652869pfk.34.2018.07.17.02.26.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 02:26:28 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabio maggi <fabio.mauri@bticino.it>, lamiaposta71@gmail.com,
+        Andrea CORTESE <andrea.cortese@bticino.it>,
+        Davide Bonfanti <davide.bonfanti@bticino.it>,
+        Shyam Saini <shyam.saini@amarulasolutions.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Simone CIANNI <simone.cianni@bticino.it>,
+        Raffaele RECALCATI <raffaele.recalcati@bticino.it>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 3/3] ARM: dts: i.MX6: imx6dl-mamoj: Add usb host and device support
+Date:   Tue, 17 Jul 2018 14:55:26 +0530
+Message-Id: <20180717092526.32215-3-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180717092526.32215-1-jagan@amarulasolutions.com>
+References: <20180717092526.32215-1-jagan@amarulasolutions.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  acb6c96c52ac0da6bb464173ad2cf5ada9049ad4
-Gitweb:     https://git.kernel.org/tip/acb6c96c52ac0da6bb464173ad2cf5ada9049ad4
-Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-AuthorDate: Mon, 16 Jul 2018 11:05:53 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 17 Jul 2018 09:29:31 +0200
+From: Michael Trimarchi <michael@amarulasolutions.com>
 
-tools/memory-model: Fix ISA2+pooncelock+pooncelock+pombonce name
+Add USB host and device support for BTicino i.MX6DL Mamoj board.
 
-The names on the first line of the litmus tests are arbitrary,
-but the convention is that they be the filename without the trailing
-".litmus".  This commit therefore removes the stray trailing ".litmus"
-from ISA2+pooncelock+pooncelock+pombonce.litmus's name.
-
-Reported-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: akiyks@gmail.com
-Cc: boqun.feng@gmail.com
-Cc: dhowells@redhat.com
-Cc: j.alglave@ucl.ac.uk
-Cc: linux-arch@vger.kernel.org
-Cc: luc.maranget@inria.fr
-Cc: npiggin@gmail.com
-Cc: parri.andrea@gmail.com
-Cc: will.deacon@arm.com
-Link: http://lkml.kernel.org/r/20180716180605.16115-2-paulmck@linux.vnet.ibm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Simone CIANNI <simone.cianni@bticino.it>
+Signed-off-by: Raffaele RECALCATI <raffaele.recalcati@bticino.it>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
 ---
- .../litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus             | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes for v3:
+- usbhost is replace with usbhostgrp on iomux node
+Changes for v2:
+- collect Fabio r-w-b tag
 
-diff --git a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-index 7a39a0aaa976..0f749e419b34 100644
---- a/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-+++ b/tools/memory-model/litmus-tests/ISA2+pooncelock+pooncelock+pombonce.litmus
-@@ -1,4 +1,4 @@
--C ISA2+pooncelock+pooncelock+pombonce.litmus
-+C ISA2+pooncelock+pooncelock+pombonce
+ arch/arm/boot/dts/imx6dl-mamoj.dts | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/arch/arm/boot/dts/imx6dl-mamoj.dts b/arch/arm/boot/dts/imx6dl-mamoj.dts
+index 530cb20ccc86..df8607fe4142 100644
+--- a/arch/arm/boot/dts/imx6dl-mamoj.dts
++++ b/arch/arm/boot/dts/imx6dl-mamoj.dts
+@@ -134,6 +134,17 @@
+ 		vin-supply = <&reg_lcd_vgl>;
+ 	};
  
- (*
-  * Result: Sometimes
++	reg_usb_host: regulator-usb-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usbhost-vbus";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_usbhost>;
++		regulator-min-microvolt = <50000000>;
++		regulator-max-microvolt = <50000000>;
++		gpio = <&gpio6 6 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++	};
++
+ 	reg_wl18xx_vmmc:  regulator-wl18xx-vmcc {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vwl1807";
+@@ -297,6 +308,16 @@
+ 	status = "okay";
+ };
+ 
++&usbh1 {
++	vbus-supply = <&reg_usb_host>;
++	status = "okay";
++};
++
++&usbotg {
++	dr_mode = "peripheral";
++	status = "okay";
++};
++
+ &usdhc1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc1>;
+@@ -428,6 +449,12 @@
+ 		>;
+ 	};
+ 
++	pinctrl_usbhost: usbhostgrp {
++		fsl,pins = <
++			MX6QDL_PAD_EIM_A23__GPIO6_IO06		0x4001b0b0
++		>;
++	};
++
+ 	pinctrl_usdhc1: usdhc1grp {
+ 		fsl,pins = <
+ 			MX6QDL_PAD_SD1_CMD__SD1_CMD    0x17069
+-- 
+2.17.1
+
