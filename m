@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE0FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D25ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C1D2146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C1D2146E
+	by mail.kernel.org (Postfix) with ESMTP id 78A1E2146F
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78A1E2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbeGQJYh (ORCPT
+        id S1730502AbeGQJYn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:24:37 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:13286 "EHLO
+        Tue, 17 Jul 2018 05:24:43 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:54274 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729389AbeGQJYh (ORCPT
+        with ESMTP id S1729657AbeGQJYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:24:37 -0400
-X-UUID: ed3c7f239dbd415c9402bf2fbfa5ee90-20180717
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        Tue, 17 Jul 2018 05:24:42 -0400
+X-UUID: ac381f8c769c4db2a538362d734eb97d-20180717
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <mars.cheng@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1929413268; Tue, 17 Jul 2018 16:52:37 +0800
+        with ESMTP id 2085990818; Tue, 17 Jul 2018 16:52:37 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Tue, 17 Jul 2018 16:52:35 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
@@ -49,9 +49,9 @@ CC:     CC Hwang <cc.hwang@mediatek.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-clk@vger.kernel.org>, Owen Chen <owen.chen@mediatek.com>,
         Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v5 06/11] soc: mediatek: add new flow for mtcmos power.
-Date:   Tue, 17 Jul 2018 16:52:27 +0800
-Message-ID: <1531817552-17221-7-git-send-email-mars.cheng@mediatek.com>
+Subject: [PATCH v5 10/11] clk: mediatek: Add MT6765 clock support
+Date:   Tue, 17 Jul 2018 16:52:31 +0800
+Message-ID: <1531817552-17221-11-git-send-email-mars.cheng@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
 References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
@@ -65,1074 +65,1680 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Owen Chen <owen.chen@mediatek.com>
 
-MT6765 need multiple register and actions to setup bus
-protect.
-1. turn on subsys CG before release bus protect to receive
-   ack.
-2. turn off subsys CG after set bus protect and receive
-   ack.
-3. bus protect need not only infracfg but other domain
-   register to setup. Therefore we add a set/clr APIs
-   with more customize arguments.
+Add MT6765 clock support, include topckgen, apmixedsys,
+infracfg, and subsystem clocks.
 
 Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 ---
- drivers/soc/mediatek/Makefile           |    2 +-
- drivers/soc/mediatek/mtk-infracfg.c     |  178 +++++++++++---
- drivers/soc/mediatek/mtk-scpsys-ext.c   |  405 +++++++++++++++++++++++++++++++
- drivers/soc/mediatek/mtk-scpsys.c       |  147 +++++++++--
- include/linux/soc/mediatek/infracfg.h   |    9 +-
- include/linux/soc/mediatek/scpsys-ext.h |   66 +++++
- 6 files changed, 745 insertions(+), 62 deletions(-)
- create mode 100644 drivers/soc/mediatek/mtk-scpsys-ext.c
- create mode 100644 include/linux/soc/mediatek/scpsys-ext.h
+ drivers/clk/mediatek/Kconfig             |   87 +++
+ drivers/clk/mediatek/Makefile            |    7 +
+ drivers/clk/mediatek/clk-mt6765-audio.c  |  109 ++++
+ drivers/clk/mediatek/clk-mt6765-cam.c    |   83 +++
+ drivers/clk/mediatek/clk-mt6765-img.c    |   79 +++
+ drivers/clk/mediatek/clk-mt6765-mipi0a.c |   77 +++
+ drivers/clk/mediatek/clk-mt6765-mm.c     |  105 ++++
+ drivers/clk/mediatek/clk-mt6765-vcodec.c |   79 +++
+ drivers/clk/mediatek/clk-mt6765.c        |  963 ++++++++++++++++++++++++++++++
+ 9 files changed, 1589 insertions(+)
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-audio.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mipi0a.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765-vcodec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6765.c
 
-diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
-index 12998b0..9dc6670 100644
---- a/drivers/soc/mediatek/Makefile
-+++ b/drivers/soc/mediatek/Makefile
-@@ -1,3 +1,3 @@
--obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
-+obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o mtk-scpsys-ext.o
- obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
- obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
-diff --git a/drivers/soc/mediatek/mtk-infracfg.c b/drivers/soc/mediatek/mtk-infracfg.c
-index 958861c..11eadf8 100644
---- a/drivers/soc/mediatek/mtk-infracfg.c
-+++ b/drivers/soc/mediatek/mtk-infracfg.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015 Pengutronix, Sascha Hauer <kernel@pengutronix.de>
-  *
-@@ -15,6 +16,7 @@
- #include <linux/jiffies.h>
- #include <linux/regmap.h>
- #include <linux/soc/mediatek/infracfg.h>
-+#include <linux/soc/mediatek/scpsys-ext.h>
- #include <asm/processor.h>
- 
- #define MTK_POLL_DELAY_US   10
-@@ -26,62 +28,176 @@
- #define INFRA_TOPAXI_PROTECTEN_CLR	0x0264
- 
- /**
-- * mtk_infracfg_set_bus_protection - enable bus protection
-- * @regmap: The infracfg regmap
-- * @mask: The mask containing the protection bits to be enabled.
-- * @reg_update: The boolean flag determines to set the protection bits
-- *              by regmap_update_bits with enable register(PROTECTEN) or
-- *              by regmap_write with set register(PROTECTEN_SET).
-+ * mtk_generic_set_cmd - enable bus protection with set register
-+ * @regmap: The bus protect regmap
-+ * @set_ofs: The set register offset to set corresponding bit to 1.
-+ * @sta_ofs: The status register offset to show bus protect enable/disable.
-+ * @mask: The mask containing the protection bits to be disabled.
-  *
-  * This function enables the bus protection bits for disabled power
-  * domains so that the system does not hang when some unit accesses the
-  * bus while in power down.
-  */
--int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
--		bool reg_update)
-+int mtk_generic_set_cmd(struct regmap *regmap, u32 set_ofs,
-+			u32 sta_ofs, u32 mask)
- {
- 	u32 val;
- 	int ret;
- 
--	if (reg_update)
--		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask,
--				mask);
--	else
--		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_SET, mask);
-+	regmap_write(regmap, set_ofs, mask);
- 
--	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
--				       val, (val & mask) == mask,
--				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
-+				       (val & mask) == mask,
-+				       MTK_POLL_DELAY_US,
-+				       MTK_POLL_TIMEOUT);
- 
- 	return ret;
- }
- 
- /**
-- * mtk_infracfg_clear_bus_protection - disable bus protection
-- * @regmap: The infracfg regmap
-+ * mtk_generic_clr_cmd - disable bus protection  with clr register
-+ * @regmap: The bus protect regmap
-+ * @clr_ofs: The clr register offset to clear corresponding bit to 0.
-+ * @sta_ofs: The status register offset to show bus protect enable/disable.
-  * @mask: The mask containing the protection bits to be disabled.
-- * @reg_update: The boolean flag determines to clear the protection bits
-- *              by regmap_update_bits with enable register(PROTECTEN) or
-- *              by regmap_write with clear register(PROTECTEN_CLR).
-  *
-  * This function disables the bus protection bits previously enabled with
-- * mtk_infracfg_set_bus_protection.
-+ * mtk_set_bus_protection.
-  */
- 
--int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
--		bool reg_update)
-+int mtk_generic_clr_cmd(struct regmap *regmap, u32 clr_ofs,
-+			u32 sta_ofs, u32 mask)
- {
- 	int ret;
- 	u32 val;
- 
--	if (reg_update)
--		regmap_update_bits(infracfg, INFRA_TOPAXI_PROTECTEN, mask, 0);
--	else
--		regmap_write(infracfg, INFRA_TOPAXI_PROTECTEN_CLR, mask);
-+	regmap_write(regmap, clr_ofs, mask);
- 
--	ret = regmap_read_poll_timeout(infracfg, INFRA_TOPAXI_PROTECTSTA1,
--				       val, !(val & mask),
--				       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
-+				       !(val & mask),
-+				       MTK_POLL_DELAY_US,
-+				       MTK_POLL_TIMEOUT);
-+	return ret;
-+}
+diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+index 3dd1dab..95e5e52 100644
+--- a/drivers/clk/mediatek/Kconfig
++++ b/drivers/clk/mediatek/Kconfig
+@@ -193,4 +193,91 @@ config COMMON_CLK_MT8173
+ 	default ARCH_MEDIATEK
+ 	---help---
+ 	  This driver supports MediaTek MT8173 clocks.
 +
-+/**
-+ * mtk_generic_enable_cmd - enable bus protection with upd register
-+ * @regmap: The bus protect regmap
-+ * @upd_ofs: The update register offset to directly rewrite value to
-+ *              corresponding bit.
-+ * @sta_ofs: The status register offset to show bus protect enable/disable.
-+ * @mask: The mask containing the protection bits to be disabled.
-+ *
-+ * This function enables the bus protection bits for disabled power
-+ * domains so that the system does not hang when some unit accesses the
-+ * bus while in power down.
-+ */
-+int mtk_generic_enable_cmd(struct regmap *regmap, u32 upd_ofs,
-+			   u32 sta_ofs, u32 mask)
-+{
-+	u32 val;
-+	int ret;
++config COMMON_CLK_MT6765
++       bool "Clock driver for MediaTek MT6765"
++       depends on (ARCH_MEDIATEK && ARM64) || COMPILE_TEST
++       select COMMON_CLK_MEDIATEK
++       default ARCH_MEDIATEK && ARM64
++       help
++         This driver supports MediaTek MT6765 basic clocks.
 +
-+	regmap_update_bits(regmap, upd_ofs, mask, mask);
- 
-+	ret = regmap_read_poll_timeout(regmap, sta_ofs, val,
-+				       (val & mask) == mask,
-+				       MTK_POLL_DELAY_US,
-+				       MTK_POLL_TIMEOUT);
- 	return ret;
- }
++config COMMON_CLK_MT6765_AUDIOSYS
++       bool "Clock driver for MediaTek MT6765 audiosys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 audiosys clocks.
 +
-+/**
-+ * mtk_generic_disable_cmd - disable bus protection with updd register
-+ * @regmap: The bus protect regmap
-+ * @upd_ofs: The update register offset to directly rewrite value to
-+ *              corresponding bit.
-+ * @sta_ofs: The status register offset to show bus protect enable/disable.
-+ * @mask: The mask containing the protection bits to be disabled.
-+ *
-+ * This function disables the bus protection bits previously enabled with
-+ * mtk_set_bus_protection.
-+ */
++config COMMON_CLK_MT6765_CAMSYS
++       bool "Clock driver for MediaTek MT6765 camsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 camsys clocks.
 +
-+int mtk_generic_disable_cmd(struct regmap *regmap, u32 upd_ofs,
-+			    u32 sta_ofs, u32 mask)
-+{
-+	int ret;
-+	u32 val;
++config COMMON_CLK_MT6765_GCESYS
++       bool "Clock driver for MediaTek MT6765 gcesys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 gcesys clocks.
 +
-+	regmap_update_bits(regmap, upd_ofs, mask, 0);
++config COMMON_CLK_MT6765_MMSYS
++       bool "Clock driver for MediaTek MT6765 mmsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 mmsys clocks.
 +
-+	ret = regmap_read_poll_timeout(regmap, sta_ofs,
-+				       val, !(val & mask),
-+				       MTK_POLL_DELAY_US,
-+				       MTK_POLL_TIMEOUT);
-+	return ret;
-+}
++config COMMON_CLK_MT6765_IMGSYS
++       bool "Clock driver for MediaTek MT6765 imgsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 imgsys clocks.
 +
-+/**
-+ * mtk_set_bus_protection - enable bus protection
-+ * @infracfg: The bus protect regmap, default use infracfg
-+ * @mask: The mask containing the protection bits to be enabled.
-+ *
-+ * This function enables the bus protection bits for disabled power
-+ * domains so that the system does not hang when some unit accesses the
-+ * bus while in power down.
-+ */
-+int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask)
-+{
-+	return mtk_generic_set_cmd(infracfg,
-+				   INFRA_TOPAXI_PROTECTEN_SET,
-+				   INFRA_TOPAXI_PROTECTSTA1,
-+				   mask);
-+}
++config COMMON_CLK_MT6765_VCODECSYS
++       bool "Clock driver for MediaTek MT6765 vcodecsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 vcodecsys clocks.
 +
-+/**
-+ * mtk_clear_bus_protection - disable bus protection
-+ * @infracfg: The bus protect regmap, default use infracfg
-+ * @mask: The mask containing the protection bits to be disabled.
-+ *
-+ * This function disables the bus protection bits previously enabled with
-+ * mtk_set_bus_protection.
-+ */
++config COMMON_CLK_MT6765_MFGSYS
++       bool "Clock driver for MediaTek MT6765 mfgsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 mfgsys clocks.
 +
-+int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask)
-+{
-+	return mtk_generic_clr_cmd(infracfg,
-+				   INFRA_TOPAXI_PROTECTEN_CLR,
-+				   INFRA_TOPAXI_PROTECTSTA1,
-+				   mask);
-+}
++config COMMON_CLK_MT6765_MIPI0ASYS
++       bool "Clock driver for MediaTek MT6765 mipi0asys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 mipi0asys clocks.
 +
-+/**
-+ * mtk_infracfg_enable_bus_protection - enable bus protection
-+ * @infracfg: The bus protect regmap, default use infracfg
-+ * @mask: The mask containing the protection bits to be disabled.
-+ *
-+ * This function enables the bus protection bits for disabled power
-+ * domains so that the system does not hang when some unit accesses the
-+ * bus while in power down.
-+ */
-+int mtk_infracfg_enable_bus_protection(struct regmap *infracfg, u32 mask)
-+{
-+	return mtk_generic_enable_cmd(infracfg,
-+				      INFRA_TOPAXI_PROTECTEN,
-+				      INFRA_TOPAXI_PROTECTSTA1,
-+				      mask);
-+}
++config COMMON_CLK_MT6765_MIPI0BSYS
++       bool "Clock driver for MediaTek MT6765 mipi0bsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 mipi0bsys clocks.
 +
-+/**
-+ * mtk_infracfg_disable_bus_protection - disable bus protection
-+ * @infracfg: The bus protect regmap, default use infracfg
-+ * @mask: The mask containing the protection bits to be disabled.
-+ *
-+ * This function disables the bus protection bits previously enabled with
-+ * mtk_infracfg_set_bus_protection.
-+ */
++config COMMON_CLK_MT6765_MIPI1ASYS
++       bool "Clock driver for MediaTek MT6765 mipi1asys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 mipi1asys clocks.
 +
-+int mtk_infracfg_disable_bus_protection(struct regmap *infracfg, u32 mask)
-+{
-+	return mtk_generic_disable_cmd(infracfg,
-+				       INFRA_TOPAXI_PROTECTEN,
-+				       INFRA_TOPAXI_PROTECTSTA1,
-+				       mask);
-+}
-diff --git a/drivers/soc/mediatek/mtk-scpsys-ext.c b/drivers/soc/mediatek/mtk-scpsys-ext.c
++config COMMON_CLK_MT6765_MIPI1BSYS
++       bool "Clock driver for MediaTek MT6765 mipi1bsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 mipi1bsys clocks.
++
++config COMMON_CLK_MT6765_MIPI2ASYS
++       bool "Clock driver for MediaTek MT6765 mipi2asys"
++       depends on COMMON_CLK_MT6765
++      help
++         This driver supports MediaTek MT6765 mipi2asys clocks.
++
++config COMMON_CLK_MT6765_MIPI2BSYS
++       bool "Clock driver for MediaTek MT6765 mipi2bsys"
++       depends on COMMON_CLK_MT6765
++       help
++         This driver supports MediaTek MT6765 mipi2bsys clocks.
++
+ endmenu
+diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+index b97980d..b455a8e 100644
+--- a/drivers/clk/mediatek/Makefile
++++ b/drivers/clk/mediatek/Makefile
+@@ -1,5 +1,12 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o clk-mux.o
++obj-$(CONFIG_COMMON_CLK_MT6765) += clk-mt6765.o
++obj-$(CONFIG_COMMON_CLK_MT6765_AUDIOSYS) += clk-mt6765-audio.o
++obj-$(CONFIG_COMMON_CLK_MT6765_CAMSYS) += clk-mt6765-cam.o
++obj-$(CONFIG_COMMON_CLK_MT6765_IMGSYS) += clk-mt6765-img.o
++obj-$(CONFIG_COMMON_CLK_MT6765_MIPI0ASYS) += clk-mt6765-mipi0a.o
++obj-$(CONFIG_COMMON_CLK_MT6765_MMSYS) += clk-mt6765-mm.o
++obj-$(CONFIG_COMMON_CLK_MT6765_VCODECSYS) += clk-mt6765-vcodec.o
+ obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
+ obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
+ obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
+diff --git a/drivers/clk/mediatek/clk-mt6765-audio.c b/drivers/clk/mediatek/clk-mt6765-audio.c
 new file mode 100644
-index 0000000..965e64d
+index 0000000..0515e2b
 --- /dev/null
-+++ b/drivers/soc/mediatek/mtk-scpsys-ext.c
-@@ -0,0 +1,405 @@
++++ b/drivers/clk/mediatek/clk-mt6765-audio.c
+@@ -0,0 +1,109 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (c) 2018 MediaTek Inc.
 + * Author: Owen Chen <owen.chen@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
-+#include <linux/clk.h>
++
 +#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt6765-clk.h>
++
++static const struct mtk_gate_regs audio0_cg_regs = {
++	.set_ofs = 0x0,
++	.clr_ofs = 0x0,
++	.sta_ofs = 0x0,
++};
++
++static const struct mtk_gate_regs audio1_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x4,
++	.sta_ofs = 0x4,
++};
++
++#define GATE_AUDIO0(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &audio0_cg_regs,		\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
++	}
++
++#define GATE_AUDIO1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &audio1_cg_regs,		\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
++	}
++
++static const struct mtk_gate audio_clks[] __initconst = {
++	/* AUDIO0 */
++	GATE_AUDIO0(CLK_AUDIO_AFE, "aud_afe", "audio_ck", 2),
++	GATE_AUDIO0(CLK_AUDIO_22M, "aud_22m", "aud_engen1_ck", 8),
++	GATE_AUDIO0(CLK_AUDIO_APLL_TUNER, "aud_apll_tuner",
++		    "aud_engen1_ck", 19),
++	GATE_AUDIO0(CLK_AUDIO_ADC, "aud_adc", "audio_ck", 24),
++	GATE_AUDIO0(CLK_AUDIO_DAC, "aud_dac", "audio_ck", 25),
++	GATE_AUDIO0(CLK_AUDIO_DAC_PREDIS, "aud_dac_predis",
++		    "audio_ck", 26),
++	GATE_AUDIO0(CLK_AUDIO_TML, "aud_tml", "audio_ck", 27),
++	/* AUDIO1 */
++	GATE_AUDIO1(CLK_AUDIO_I2S1_BCLK, "aud_i2s1_bclk",
++		    "audio_ck", 4),
++	GATE_AUDIO1(CLK_AUDIO_I2S2_BCLK, "aud_i2s2_bclk",
++		    "audio_ck", 5),
++	GATE_AUDIO1(CLK_AUDIO_I2S3_BCLK, "aud_i2s3_bclk",
++		    "audio_ck", 6),
++	GATE_AUDIO1(CLK_AUDIO_I2S4_BCLK, "aud_i2s4_bclk",
++		    "audio_ck", 7),
++};
++
++static int clk_mt6765_audio_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_AUDIO_NR_CLK);
++
++	mtk_clk_register_gates(node, audio_clks,
++			       ARRAY_SIZE(audio_clks), clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt6765_audio[] = {
++	{ .compatible = "mediatek,mt6765-audsys", },
++	{}
++};
++
++static struct platform_driver clk_mt6765_audio_drv = {
++	.probe = clk_mt6765_audio_probe,
++	.driver = {
++		.name = "clk-mt6765-audio",
++		.of_match_table = of_match_clk_mt6765_audio,
++	},
++};
++
++builtin_platform_driver(clk_mt6765_audio_drv);
+diff --git a/drivers/clk/mediatek/clk-mt6765-cam.c b/drivers/clk/mediatek/clk-mt6765-cam.c
+new file mode 100644
+index 0000000..e36721b
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt6765-cam.c
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Owen Chen <owen.chen@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt6765-clk.h>
++
++static const struct mtk_gate_regs cam_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_CAM(_id, _name, _parent, _shift) {		\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &cam_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++static const struct mtk_gate cam_clks[] __initconst = {
++	GATE_CAM(CLK_CAM_LARB3, "cam_larb3", "mm_ck", 0),
++	GATE_CAM(CLK_CAM_DFP_VAD, "cam_dfp_vad", "mm_ck", 1),
++	GATE_CAM(CLK_CAM, "cam", "mm_ck", 6),
++	GATE_CAM(CLK_CAMTG, "camtg", "mm_ck", 7),
++	GATE_CAM(CLK_CAM_SENINF, "cam_seninf", "mm_ck", 8),
++	GATE_CAM(CLK_CAMSV0, "camsv0", "mm_ck", 9),
++	GATE_CAM(CLK_CAMSV1, "camsv1", "mm_ck", 10),
++	GATE_CAM(CLK_CAMSV2, "camsv2", "mm_ck", 11),
++	GATE_CAM(CLK_CAM_CCU, "cam_ccu", "mm_ck", 12),
++};
++
++static int clk_mt6765_cam_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_CAM_NR_CLK);
++
++	mtk_clk_register_gates(node, cam_clks, ARRAY_SIZE(cam_clks), clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt6765_cam[] = {
++	{ .compatible = "mediatek,mt6765-camsys", },
++	{}
++};
++
++static struct platform_driver clk_mt6765_cam_drv = {
++	.probe = clk_mt6765_cam_probe,
++	.driver = {
++		.name = "clk-mt6765-cam",
++		.of_match_table = of_match_clk_mt6765_cam,
++	},
++};
++
++builtin_platform_driver(clk_mt6765_cam_drv);
+diff --git a/drivers/clk/mediatek/clk-mt6765-img.c b/drivers/clk/mediatek/clk-mt6765-img.c
+new file mode 100644
+index 0000000..a0c35ce
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt6765-img.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Owen Chen <owen.chen@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt6765-clk.h>
++
++static const struct mtk_gate_regs img_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_IMG(_id, _name, _parent, _shift) {		\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &img_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++static const struct mtk_gate img_clks[] __initconst = {
++	GATE_IMG(CLK_IMG_LARB2, "img_larb2", "mm_ck", 0),
++	GATE_IMG(CLK_IMG_DIP, "img_dip", "mm_ck", 2),
++	GATE_IMG(CLK_IMG_FDVT, "img_fdvt", "mm_ck", 3),
++	GATE_IMG(CLK_IMG_DPE, "img_dpe", "mm_ck", 4),
++	GATE_IMG(CLK_IMG_RSC, "img_rsc", "mm_ck", 5),
++};
++
++static int clk_mt6765_img_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_IMG_NR_CLK);
++
++	mtk_clk_register_gates(node, img_clks, ARRAY_SIZE(img_clks), clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt6765_img[] = {
++	{ .compatible = "mediatek,mt6765-imgsys", },
++	{}
++};
++
++static struct platform_driver clk_mt6765_img_drv = {
++	.probe = clk_mt6765_img_probe,
++	.driver = {
++		.name = "clk-mt6765-img",
++		.of_match_table = of_match_clk_mt6765_img,
++	},
++};
++
++builtin_platform_driver(clk_mt6765_img_drv);
+diff --git a/drivers/clk/mediatek/clk-mt6765-mipi0a.c b/drivers/clk/mediatek/clk-mt6765-mipi0a.c
+new file mode 100644
+index 0000000..7366be6
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt6765-mipi0a.c
+@@ -0,0 +1,77 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Owen Chen <owen.chen@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt6765-clk.h>
++
++static const struct mtk_gate_regs mipi0a_cg_regs = {
++	.set_ofs = 0x80,
++	.clr_ofs = 0x80,
++	.sta_ofs = 0x80,
++};
++
++#define GATE_MIPI0A(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &mipi0a_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
++	}
++
++static const struct mtk_gate mipi0a_clks[] __initconst = {
++	GATE_MIPI0A(CLK_MIPI0A_CSR_CSI_EN_0A,
++		    "mipi0a_csr_0a", "f_fseninf_ck", 1),
++};
++
++static int clk_mt6765_mipi0a_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_MIPI0A_NR_CLK);
++
++	mtk_clk_register_gates(node, mipi0a_clks,
++			       ARRAY_SIZE(mipi0a_clks), clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt6765_mipi0a[] = {
++	{ .compatible = "mediatek,mt6765-mipi_rx_ana_csi0a", },
++	{}
++};
++
++static struct platform_driver clk_mt6765_mipi0a_drv = {
++	.probe = clk_mt6765_mipi0a_probe,
++	.driver = {
++		.name = "clk-mt6765-mipi0a",
++		.of_match_table = of_match_clk_mt6765_mipi0a,
++	},
++};
++
++builtin_platform_driver(clk_mt6765_mipi0a_drv);
+diff --git a/drivers/clk/mediatek/clk-mt6765-mm.c b/drivers/clk/mediatek/clk-mt6765-mm.c
+new file mode 100644
+index 0000000..5ad1e0d
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt6765-mm.c
+@@ -0,0 +1,105 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Owen Chen <owen.chen@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt6765-clk.h>
++
++static const struct mtk_gate_regs mm_cg_regs = {
++	.set_ofs = 0x104,
++	.clr_ofs = 0x108,
++	.sta_ofs = 0x100,
++};
++
++#define GATE_MM(_id, _name, _parent, _shift) {		\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &mm_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++static const struct mtk_gate mm_clks[] __initconst = {
++	/* MM */
++	GATE_MM(CLK_MM_MDP_RDMA0, "mm_mdp_rdma0", "mm_ck", 0),
++	GATE_MM(CLK_MM_MDP_CCORR0, "mm_mdp_ccorr0", "mm_ck", 1),
++	GATE_MM(CLK_MM_MDP_RSZ0, "mm_mdp_rsz0", "mm_ck", 2),
++	GATE_MM(CLK_MM_MDP_RSZ1, "mm_mdp_rsz1", "mm_ck", 3),
++	GATE_MM(CLK_MM_MDP_TDSHP0, "mm_mdp_tdshp0", "mm_ck", 4),
++	GATE_MM(CLK_MM_MDP_WROT0, "mm_mdp_wrot0", "mm_ck", 5),
++	GATE_MM(CLK_MM_MDP_WDMA0, "mm_mdp_wdma0", "mm_ck", 6),
++	GATE_MM(CLK_MM_DISP_OVL0, "mm_disp_ovl0", "mm_ck", 7),
++	GATE_MM(CLK_MM_DISP_OVL0_2L, "mm_disp_ovl0_2l", "mm_ck", 8),
++	GATE_MM(CLK_MM_DISP_RSZ0, "mm_disp_rsz0", "mm_ck", 9),
++	GATE_MM(CLK_MM_DISP_RDMA0, "mm_disp_rdma0", "mm_ck", 10),
++	GATE_MM(CLK_MM_DISP_WDMA0, "mm_disp_wdma0", "mm_ck", 11),
++	GATE_MM(CLK_MM_DISP_COLOR0, "mm_disp_color0", "mm_ck", 12),
++	GATE_MM(CLK_MM_DISP_CCORR0, "mm_disp_ccorr0", "mm_ck", 13),
++	GATE_MM(CLK_MM_DISP_AAL0, "mm_disp_aal0", "mm_ck", 14),
++	GATE_MM(CLK_MM_DISP_GAMMA0, "mm_disp_gamma0", "mm_ck", 15),
++	GATE_MM(CLK_MM_DISP_DITHER0, "mm_disp_dither0", "mm_ck", 16),
++	GATE_MM(CLK_MM_DSI0, "mm_dsi0", "mm_ck", 17),
++	GATE_MM(CLK_MM_FAKE_ENG, "mm_fake_eng", "mm_ck", 18),
++	GATE_MM(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_ck", 19),
++	GATE_MM(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_ck", 20),
++	GATE_MM(CLK_MM_SMI_COMM0, "mm_smi_comm0", "mm_ck", 21),
++	GATE_MM(CLK_MM_SMI_COMM1, "mm_smi_comm1", "mm_ck", 22),
++	GATE_MM(CLK_MM_CAM_MDP, "mm_cam_mdp_ck", "mm_ck", 23),
++	GATE_MM(CLK_MM_SMI_IMG, "mm_smi_img_ck", "mm_ck", 24),
++	GATE_MM(CLK_MM_SMI_CAM, "mm_smi_cam_ck", "mm_ck", 25),
++	GATE_MM(CLK_MM_IMG_DL_RELAY, "mm_img_dl_relay", "mm_ck", 26),
++	GATE_MM(CLK_MM_IMG_DL_ASYNC_TOP, "mm_imgdl_async", "mm_ck", 27),
++	GATE_MM(CLK_MM_DIG_DSI, "mm_dig_dsi_ck", "mm_ck", 28),
++	GATE_MM(CLK_MM_F26M_HRTWT, "mm_hrtwt", "f_f26m_ck", 29),
++};
++
++static int clk_mt6765_mm_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
++
++	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks), clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt6765_mm[] = {
++	{ .compatible = "mediatek,mt6765-mmsys", },
++	{}
++};
++
++static struct platform_driver clk_mt6765_mm_drv = {
++	.probe = clk_mt6765_mm_probe,
++	.driver = {
++		.name = "clk-mt6765-mm",
++		.of_match_table = of_match_clk_mt6765_mm,
++	},
++};
++
++builtin_platform_driver(clk_mt6765_mm_drv);
+diff --git a/drivers/clk/mediatek/clk-mt6765-vcodec.c b/drivers/clk/mediatek/clk-mt6765-vcodec.c
+new file mode 100644
+index 0000000..fb690c2
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt6765-vcodec.c
+@@ -0,0 +1,79 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Owen Chen <owen.chen@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "clk-mtk.h"
++#include "clk-gate.h"
++
++#include <dt-bindings/clock/mt6765-clk.h>
++
++static const struct mtk_gate_regs venc_cg_regs = {
++	.set_ofs = 0x4,
++	.clr_ofs = 0x8,
++	.sta_ofs = 0x0,
++};
++
++#define GATE_VENC(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &venc_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr_inv,	\
++	}
++
++static const struct mtk_gate venc_clks[] __initconst = {
++	GATE_VENC(CLK_VENC_SET0_LARB, "venc_set0_larb", "mm_ck", 0),
++	GATE_VENC(CLK_VENC_SET1_VENC, "venc_set1_venc", "mm_ck", 4),
++	GATE_VENC(CLK_VENC_SET2_JPGENC, "jpgenc", "mm_ck", 8),
++	GATE_VENC(CLK_VENC_SET3_VDEC, "venc_set3_vdec", "mm_ck", 12),
++};
++
++static int clk_mt6765_vcodec_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++
++	clk_data = mtk_alloc_clk_data(CLK_VENC_NR_CLK);
++
++	mtk_clk_register_gates(node, venc_clks,
++			       ARRAY_SIZE(venc_clks), clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt6765_venc[] = {
++	{ .compatible = "mediatek,mt6765-vcodecsys", },
++	{}
++};
++
++static struct platform_driver clk_mt6765_vcodec_drv = {
++	.probe = clk_mt6765_vcodec_probe,
++	.driver = {
++		.name = "clk-mt6765-vcodec",
++		.of_match_table = of_match_clk_mt6765_vcodec,
++	},
++};
++
++builtin_platform_driver(clk_mt6765_vcodec_drv);
+diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk-mt6765.c
+new file mode 100644
+index 0000000..7b360b9
+--- /dev/null
++++ b/drivers/clk/mediatek/clk-mt6765.c
+@@ -0,0 +1,963 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 MediaTek Inc.
++ * Author: Owen Chen <owen.chen@mediatek.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
 +#include <linux/slab.h>
-+#include <linux/export.h>
 +#include <linux/mfd/syscon.h>
 +#include <linux/of_device.h>
 +#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/soc/mediatek/infracfg.h>
-+#include <linux/soc/mediatek/scpsys-ext.h>
 +
++#include "clk-mtk.h"
++#include "clk-gate.h"
++#include "clk-mux.h"
 +
-+#define MAX_CLKS		10
-+#define INFRA			"infracfg"
-+#define SMIC			"smi_comm"
++#include <dt-bindings/clock/mt6765-clk.h>
 +
-+static LIST_HEAD(ext_clk_map_list);
-+static LIST_HEAD(ext_attr_map_list);
++/*fmeter div select 4*/
++#define _DIV4_ 1
 +
-+static struct regmap *infracfg;
-+static struct regmap *smi_comm;
++static DEFINE_SPINLOCK(mt6765_clk_lock);
 +
-+enum regmap_type {
-+	IFR_TYPE,
-+	SMI_TYPE,
-+	MAX_REGMAP_TYPE,
++/* Total 12 subsys */
++void __iomem *cksys_base;
++void __iomem *apmixed_base;
++
++/* CKSYS */
++#define CLK_SCP_CFG_0		(cksys_base + 0x200)
++#define CLK_SCP_CFG_1		(cksys_base + 0x204)
++
++/* CG */
++#define AP_PLL_CON3		(apmixed_base + 0x0C)
++#define PLLON_CON0		(apmixed_base + 0x44)
++#define PLLON_CON1		(apmixed_base + 0x48)
++
++/* clk cfg update */
++#define CLK_CFG_0		0x40
++#define CLK_CFG_0_SET		0x44
++#define CLK_CFG_0_CLR		0x48
++#define CLK_CFG_1		0x50
++#define CLK_CFG_1_SET		0x54
++#define CLK_CFG_1_CLR		0x58
++#define CLK_CFG_2		0x60
++#define CLK_CFG_2_SET		0x64
++#define CLK_CFG_2_CLR		0x68
++#define CLK_CFG_3		0x70
++#define CLK_CFG_3_SET		0x74
++#define CLK_CFG_3_CLR		0x78
++#define CLK_CFG_4		0x80
++#define CLK_CFG_4_SET		0x84
++#define CLK_CFG_4_CLR		0x88
++#define CLK_CFG_5		0x90
++#define CLK_CFG_5_SET		0x94
++#define CLK_CFG_5_CLR		0x98
++#define CLK_CFG_6		0xa0
++#define CLK_CFG_6_SET		0xa4
++#define CLK_CFG_6_CLR		0xa8
++#define CLK_CFG_7		0xb0
++#define CLK_CFG_7_SET		0xb4
++#define CLK_CFG_7_CLR		0xb8
++#define CLK_CFG_8		0xc0
++#define CLK_CFG_8_SET		0xc4
++#define CLK_CFG_8_CLR		0xc8
++#define CLK_CFG_9		0xd0
++#define CLK_CFG_9_SET		0xd4
++#define CLK_CFG_9_CLR		0xd8
++#define CLK_CFG_10		0xe0
++#define CLK_CFG_10_SET		0xe4
++#define CLK_CFG_10_CLR		0xe8
++#define CLK_CFG_UPDATE		0x004
++
++static const struct mtk_fixed_clk fixed_clks[] __initconst = {
++	FIXED_CLK(CLK_TOP_F_FRTC, "f_frtc_ck", "clk32k", 32768),
++	FIXED_CLK(CLK_TOP_CLK26M, "clk_26m_ck", "clk26m", 26000000),
++	FIXED_CLK(CLK_TOP_DMPLL, "dmpll_ck", NULL, 466000000),
 +};
 +
-+/**
-+ * struct ext_reg_ctrl - set multiple register for bus protect
-+ * @regmap: The bus protect regmap, 1: infracfg, 2: other master regmap
-+ *                  such as SMI.
-+ * @set_ofs: The set register offset to set corresponding bit to 1.
-+ * @clr_ofs: The clr register offset to clear corresponding bit to 0.
-+ * @sta_ofs: The status register offset to show bus protect enable/disable.
-+ */
-+struct ext_reg_ctrl {
-+	enum regmap_type type;
-+	u32 set_ofs;
-+	u32 clr_ofs;
-+	u32 sta_ofs;
++static const struct mtk_fixed_factor top_divs[] __initconst = {
++	FACTOR(CLK_TOP_SYSPLL, "syspll_ck", "mainpll", 1, 1),
++	FACTOR(CLK_TOP_SYSPLL_D2, "syspll_d2", "mainpll", 1, 2),
++	FACTOR(CLK_TOP_SYSPLL1_D2, "syspll1_d2", "syspll_d2", 1, 2),
++	FACTOR(CLK_TOP_SYSPLL1_D4, "syspll1_d4", "syspll_d2", 1, 4),
++	FACTOR(CLK_TOP_SYSPLL1_D8, "syspll1_d8", "syspll_d2", 1, 8),
++	FACTOR(CLK_TOP_SYSPLL1_D16, "syspll1_d16", "syspll_d2", 1, 16),
++	FACTOR(CLK_TOP_SYSPLL_D3, "syspll_d3", "mainpll", 1, 3),
++	FACTOR(CLK_TOP_SYSPLL2_D2, "syspll2_d2", "syspll_d3", 1, 2),
++	FACTOR(CLK_TOP_SYSPLL2_D4, "syspll2_d4", "syspll_d3", 1, 4),
++	FACTOR(CLK_TOP_SYSPLL2_D8, "syspll2_d8", "syspll_d3", 1, 8),
++	FACTOR(CLK_TOP_SYSPLL_D5, "syspll_d5", "mainpll", 1, 5),
++	FACTOR(CLK_TOP_SYSPLL3_D2, "syspll3_d2", "syspll_d5", 1, 2),
++	FACTOR(CLK_TOP_SYSPLL3_D4, "syspll3_d4", "syspll_d5", 1, 4),
++	FACTOR(CLK_TOP_SYSPLL_D7, "syspll_d7", "mainpll", 1, 7),
++	FACTOR(CLK_TOP_SYSPLL4_D2, "syspll4_d2", "syspll_d7", 1, 2),
++	FACTOR(CLK_TOP_SYSPLL4_D4, "syspll4_d4", "syspll_d7", 1, 4),
++	FACTOR(CLK_TOP_UNIVPLL, "univpll", "univ2pll", 1, 2),
++	FACTOR(CLK_TOP_USB20_192M, "usb20_192m_ck", "univpll", 2, 13),
++	FACTOR(CLK_TOP_USB20_192M_D4, "usb20_192m_d4", "usb20_192m_ck", 1, 4),
++	FACTOR(CLK_TOP_USB20_192M_D8, "usb20_192m_d8", "usb20_192m_ck", 1, 8),
++	FACTOR(CLK_TOP_USB20_192M_D16,
++	       "usb20_192m_d16", "usb20_192m_ck", 1, 16),
++	FACTOR(CLK_TOP_USB20_192M_D32,
++	       "usb20_192m_d32", "usb20_192m_ck", 1, 32),
++	FACTOR(CLK_TOP_UNIVPLL_D2, "univpll_d2", "univpll", 1, 2),
++	FACTOR(CLK_TOP_UNIVPLL1_D2, "univpll1_d2", "univpll_d2", 1, 2),
++	FACTOR(CLK_TOP_UNIVPLL1_D4, "univpll1_d4", "univpll_d2", 1, 4),
++	FACTOR(CLK_TOP_UNIVPLL_D3, "univpll_d3", "univpll", 1, 3),
++	FACTOR(CLK_TOP_UNIVPLL2_D2, "univpll2_d2", "univpll_d3", 1, 2),
++	FACTOR(CLK_TOP_UNIVPLL2_D4, "univpll2_d4", "univpll_d3", 1, 4),
++	FACTOR(CLK_TOP_UNIVPLL2_D8, "univpll2_d8", "univpll_d3", 1, 8),
++	FACTOR(CLK_TOP_UNIVPLL2_D32, "univpll2_d32", "univpll_d3", 1, 32),
++	FACTOR(CLK_TOP_UNIVPLL_D5, "univpll_d5", "univpll", 1, 5),
++	FACTOR(CLK_TOP_UNIVPLL3_D2, "univpll3_d2", "univpll_d5", 1, 2),
++	FACTOR(CLK_TOP_UNIVPLL3_D4, "univpll3_d4", "univpll_d5", 1, 4),
++	FACTOR(CLK_TOP_MMPLL, "mmpll_ck", "mmpll", 1, 1),
++	FACTOR(CLK_TOP_MMPLL_D2, "mmpll_d2", "mmpll_ck", 1, 2),
++	FACTOR(CLK_TOP_MPLL, "mpll_ck", "mpll", 1, 1),
++	FACTOR(CLK_TOP_DA_MPLL_104M_DIV, "mpll_104m_div", "mpll_ck", 1, 2),
++	FACTOR(CLK_TOP_DA_MPLL_52M_DIV, "mpll_52m_div", "mpll_ck", 1, 4),
++	FACTOR(CLK_TOP_MFGPLL, "mfgpll_ck", "mfgpll", 1, 1),
++	FACTOR(CLK_TOP_MSDCPLL, "msdcpll_ck", "msdcpll", 1, 1),
++	FACTOR(CLK_TOP_MSDCPLL_D2, "msdcpll_d2", "msdcpll_ck", 1, 2),
++	FACTOR(CLK_TOP_APLL1, "apll1_ck", "apll1", 1, 1),
++	FACTOR(CLK_TOP_APLL1_D2, "apll1_d2", "apll1_ck", 1, 2),
++	FACTOR(CLK_TOP_APLL1_D4, "apll1_d4", "apll1_ck", 1, 4),
++	FACTOR(CLK_TOP_APLL1_D8, "apll1_d8", "apll1_ck", 1, 8),
++	FACTOR(CLK_TOP_ULPOSC1, "ulposc1_ck", "ulposc1", 1, 1),
++	FACTOR(CLK_TOP_ULPOSC1_D2, "ulposc1_d2", "ulposc1_ck", 1, 2),
++	FACTOR(CLK_TOP_ULPOSC1_D4, "ulposc1_d4", "ulposc1_ck", 1, 4),
++	FACTOR(CLK_TOP_ULPOSC1_D8, "ulposc1_d8", "ulposc1_ck", 1, 8),
++	FACTOR(CLK_TOP_ULPOSC1_D16, "ulposc1_d16", "ulposc1_ck", 1, 16),
++	FACTOR(CLK_TOP_ULPOSC1_D32, "ulposc1_d32", "ulposc1_ck", 1, 32),
++	FACTOR(CLK_TOP_F_F26M, "f_f26m_ck", "clk_26m_ck", 1, 1),
++	FACTOR(CLK_TOP_AXI, "axi_ck", "axi_sel", 1, 1),
++	FACTOR(CLK_TOP_MM, "mm_ck", "mm_sel", 1, 1),
++	FACTOR(CLK_TOP_SCP, "scp_ck", "scp_sel", 1, 1),
++	FACTOR(CLK_TOP_MFG, "mfg_ck", "mfg_sel", 1, 1),
++	FACTOR(CLK_TOP_F_FUART, "f_fuart_ck", "uart_sel", 1, 1),
++	FACTOR(CLK_TOP_SPI, "spi_ck", "spi_sel", 1, 1),
++	FACTOR(CLK_TOP_MSDC50_0, "msdc50_0_ck", "msdc50_0_sel", 1, 1),
++	FACTOR(CLK_TOP_MSDC30_1, "msdc30_1_ck", "msdc30_1_sel", 1, 1),
++	FACTOR(CLK_TOP_AUDIO, "audio_ck", "audio_sel", 1, 1),
++	FACTOR(CLK_TOP_AUD_1, "aud_1_ck", "aud_1_sel", 1, 1),
++	FACTOR(CLK_TOP_AUD_ENGEN1, "aud_engen1_ck", "aud_engen1_sel", 1, 1),
++	FACTOR(CLK_TOP_F_FDISP_PWM, "f_fdisp_pwm_ck", "disp_pwm_sel", 1, 1),
++	FACTOR(CLK_TOP_SSPM, "sspm_ck", "sspm_sel", 1, 1),
++	FACTOR(CLK_TOP_DXCC, "dxcc_ck", "dxcc_sel", 1, 1),
++	FACTOR(CLK_TOP_I2C, "i2c_ck", "i2c_sel", 1, 1),
++	FACTOR(CLK_TOP_F_FPWM, "f_fpwm_ck", "pwm_sel", 1, 1),
++	FACTOR(CLK_TOP_F_FSENINF, "f_fseninf_ck", "seninf_sel", 1, 1),
++	FACTOR(CLK_TOP_AES_FDE, "aes_fde_ck", "aes_fde_sel", 1, 1),
++	FACTOR(CLK_TOP_F_BIST2FPC, "f_bist2fpc_ck", "univpll2_d2", 1, 1),
++	FACTOR(CLK_TOP_ARMPLL_DIVIDER_PLL0, "arm_div_pll0", "syspll_d2", 1, 1),
++	FACTOR(CLK_TOP_ARMPLL_DIVIDER_PLL1, "arm_div_pll1", "syspll_ck", 1, 1),
++	FACTOR(CLK_TOP_ARMPLL_DIVIDER_PLL2, "arm_div_pll2", "univpll_d2", 1, 1),
++	FACTOR(CLK_TOP_DA_USB20_48M_DIV,
++	       "usb20_48m_div", "usb20_192m_d4", 1, 1),
++	FACTOR(CLK_TOP_DA_UNIV_48M_DIV, "univ_48m_div", "usb20_192m_d4", 1, 1),
 +};
 +
-+/**
-+ * struct ext_clk_ctrl - enable multiple clks for bus protect
-+ * @clk: The clk need to enable before pwr on/bus protect.
-+ * @scpd_n: The name present the scpsys domain where the clks belongs to.
-+ * @clk_list: The list node linked to ext_clk_map_list.
-+ */
-+struct ext_clk_ctrl {
-+	struct clk *clk;
-+	const char *scpd_n;
-+	struct list_head clk_list;
++static const char * const axi_parents[] __initconst = {
++	"clk26m",
++	"syspll_d7",
++	"syspll1_d4",
++	"syspll3_d2"
 +};
 +
-+struct bus_mask_ops {
-+	int	(*set)(struct regmap *regmap, u32 set_ofs,
-+		       u32 sta_ofs, u32 mask);
-+	int	(*release)(struct regmap *regmap, u32 clr_ofs,
-+			   u32 sta_ofs, u32 mask);
++static const char * const mem_parents[] __initconst = {
++	"clk26m",
++	"dmpll_ck",
++	"apll1_ck"
 +};
 +
-+static struct scpsys_ext_attr *__get_attr_parent(const char *parent_n)
-+{
-+	struct scpsys_ext_attr *attr;
-+
-+	if (!parent_n)
-+		return ERR_PTR(-EINVAL);
-+
-+	list_for_each_entry(attr, &ext_attr_map_list, attr_list) {
-+		if (attr->scpd_n && !strcmp(parent_n, attr->scpd_n))
-+			return attr;
-+	}
-+
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+int bus_ctrl_set_release(struct scpsys_ext_attr *attr, bool set)
-+{
-+	int i;
-+	int ret = 0;
-+
-+	for (i = 0; i < MAX_STEP_NUM && attr->mask[i].mask; i++) {
-+		struct ext_reg_ctrl *rc = attr->mask[i].regs;
-+		struct regmap *regmap;
-+
-+		if (rc->type == IFR_TYPE)
-+			regmap = infracfg;
-+		else if (rc->type == SMI_TYPE)
-+			regmap = smi_comm;
-+		else
-+			return -EINVAL;
-+
-+		if (set)
-+			ret = attr->mask[i].ops->set(regmap,
-+						rc->set_ofs,
-+						rc->sta_ofs,
-+						attr->mask[i].mask);
-+		else
-+			ret = attr->mask[i].ops->release(regmap,
-+						rc->clr_ofs,
-+						rc->sta_ofs,
-+						attr->mask[i].mask);
-+	}
-+
-+	return ret;
-+}
-+
-+int bus_ctrl_set(struct scpsys_ext_attr *attr)
-+{
-+	return bus_ctrl_set_release(attr, CMD_ENABLE);
-+}
-+
-+int bus_ctrl_release(struct scpsys_ext_attr *attr)
-+{
-+	return bus_ctrl_set_release(attr, CMD_DISABLE);
-+}
-+
-+int bus_clk_enable_disable(struct scpsys_ext_attr *attr, bool enable)
-+{
-+	int i = 0;
-+	int ret = 0;
-+	struct ext_clk_ctrl *cc;
-+	struct clk *clk[MAX_CLKS];
-+
-+	list_for_each_entry(cc, &ext_clk_map_list, clk_list) {
-+		if (!strcmp(cc->scpd_n, attr->scpd_n)) {
-+			if (enable)
-+				ret = clk_prepare_enable(cc->clk);
-+			else
-+				clk_disable_unprepare(cc->clk);
-+
-+			if (ret) {
-+				pr_err("Failed to  %s %s\n",
-+				       enable ? "enable" : "disable",
-+				       __clk_get_name(cc->clk));
-+				goto err;
-+			} else {
-+				clk[i] = cc->clk;
-+				i++;
-+			}
-+		}
-+	}
-+
-+	return ret;
-+
-+err:
-+	for (--i; i >= 0; i--)
-+		if (enable)
-+			clk_disable_unprepare(clk[i]);
-+		else
-+			clk_prepare_enable(clk[i]);
-+	return ret;
-+}
-+
-+int bus_clk_enable(struct scpsys_ext_attr *attr)
-+{
-+	struct scpsys_ext_attr *attr_p;
-+	int ret = 0;
-+
-+	attr_p = __get_attr_parent(attr->parent_n);
-+	if (!IS_ERR(attr_p)) {
-+		ret = bus_clk_enable_disable(attr_p, CMD_ENABLE);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return bus_clk_enable_disable(attr, CMD_ENABLE);
-+}
-+
-+int bus_clk_disable(struct scpsys_ext_attr *attr)
-+{
-+	struct scpsys_ext_attr *attr_p;
-+	int ret = 0;
-+
-+	ret = bus_clk_enable_disable(attr, CMD_DISABLE);
-+	if (ret)
-+		return ret;
-+
-+	attr_p = __get_attr_parent(attr->parent_n);
-+	if (!IS_ERR(attr_p))
-+		ret = bus_clk_enable_disable(attr_p, CMD_DISABLE);
-+
-+	return ret;
-+}
-+
-+const struct bus_mask_ops bus_mask_set_clr_ctrl = {
-+	.set = &mtk_generic_set_cmd,
-+	.release = &mtk_generic_clr_cmd,
++static const char * const mm_parents[] __initconst = {
++	"clk26m",
++	"mmpll_ck",
++	"syspll1_d2",
++	"syspll_d5",
++	"syspll1_d4",
++	"univpll_d5",
++	"univpll1_d2",
++	"mmpll_d2"
 +};
 +
-+const struct bus_ext_ops ext_bus_ctrl = {
-+	.enable = &bus_ctrl_set,
-+	.disable = &bus_ctrl_release,
++static const char * const scp_parents[] __initconst = {
++	"clk26m",
++	"syspll4_d2",
++	"univpll2_d2",
++	"syspll1_d2",
++	"univpll1_d2",
++	"syspll_d3",
++	"univpll_d3"
 +};
 +
-+const struct bus_ext_ops ext_cg_ctrl = {
-+	.enable = &bus_clk_enable,
-+	.disable = &bus_clk_disable,
++static const char * const mfg_parents[] __initconst = {
++	"clk26m",
++	"mfgpll_ck",
++	"syspll_d3",
++	"univpll_d3"
 +};
 +
-+/*
-+ * scpsys bus driver init
-+ */
-+struct regmap *syscon_regmap_lookup_by_phandle_idx(struct device_node *np,
-+						   const char *property,
-+						   int index)
-+{
-+	struct device_node *syscon_np;
-+	struct regmap *regmap;
++static const char * const atb_parents[] __initconst = {
++	"clk26m",
++	"syspll1_d4",
++	"syspll1_d2"
++};
 +
-+	if (property)
-+		syscon_np = of_parse_phandle(np, property, index);
-+	else
-+		syscon_np = np;
++static const char * const camtg_parents[] __initconst = {
++	"clk26m",
++	"usb20_192m_d8",
++	"univpll2_d8",
++	"usb20_192m_d4",
++	"univpll2_d32",
++	"usb20_192m_d16",
++	"usb20_192m_d32"
++};
 +
-+	if (!syscon_np)
-+		return ERR_PTR(-ENODEV);
++static const char * const uart_parents[] __initconst = {
++	"clk26m",
++	"univpll2_d8"
++};
 +
-+	regmap = syscon_node_to_regmap(syscon_np);
-+	of_node_put(syscon_np);
++static const char * const spi_parents[] __initconst = {
++	"clk26m",
++	"syspll3_d2",
++	"syspll4_d2",
++	"syspll2_d4"
++};
 +
-+	return regmap;
-+}
++static const char * const msdc5hclk_parents[] __initconst = {
++	"clk26m",
++	"syspll1_d2",
++	"univpll1_d4",
++	"syspll2_d2"
++};
 +
-+int scpsys_ext_regmap_init(struct platform_device *pdev)
-+{
-+	infracfg = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-+						   INFRA);
-+	if (IS_ERR(infracfg)) {
-+		dev_err(&pdev->dev,
-+			"Cannot find bus infracfg controller: %ld\n",
-+			PTR_ERR(infracfg));
-+		return PTR_ERR(infracfg);
++static const char * const msdc50_0_parents[] __initconst = {
++	"clk26m",
++	"msdcpll_ck",
++	"syspll2_d2",
++	"syspll4_d2",
++	"univpll1_d2",
++	"syspll1_d2",
++	"univpll_d5",
++	"univpll1_d4"
++};
++
++static const char * const msdc30_1_parents[] __initconst = {
++	"clk26m",
++	"msdcpll_d2",
++	"univpll2_d2",
++	"syspll2_d2",
++	"syspll1_d4",
++	"univpll1_d4",
++	"usb20_192m_d4",
++	"syspll2_d4"
++};
++
++static const char * const audio_parents[] __initconst = {
++	"clk26m",
++	"syspll3_d4",
++	"syspll4_d4",
++	"syspll1_d16"
++};
++
++static const char * const aud_intbus_parents[] __initconst = {
++	"clk26m",
++	"syspll1_d4",
++	"syspll4_d2"
++};
++
++static const char * const aud_1_parents[] __initconst = {
++	"clk26m",
++	"apll1_ck"
++};
++
++static const char * const aud_engen1_parents[] __initconst = {
++	"clk26m",
++	"apll1_d2",
++	"apll1_d4",
++	"apll1_d8"
++};
++
++static const char * const disp_pwm_parents[] __initconst = {
++	"clk26m",
++	"univpll2_d4",
++	"ulposc1_d2",
++	"ulposc1_d8"
++};
++
++static const char * const sspm_parents[] __initconst = {
++	"clk26m",
++	"syspll1_d2",
++	"syspll_d3"
++};
++
++static const char * const dxcc_parents[] __initconst = {
++	"clk26m",
++	"syspll1_d2",
++	"syspll1_d4",
++	"syspll1_d8"
++};
++
++static const char * const usb_top_parents[] __initconst = {
++	"clk26m",
++	"univpll3_d4"
++};
++
++static const char * const spm_parents[] __initconst = {
++	"clk26m",
++	"syspll1_d8"
++};
++
++static const char * const i2c_parents[] __initconst = {
++	"clk26m",
++	"univpll3_d4",
++	"univpll3_d2",
++	"syspll1_d8",
++	"syspll2_d8"
++};
++
++static const char * const pwm_parents[] __initconst = {
++	"clk26m",
++	"univpll3_d4",
++	"syspll1_d8"
++};
++
++static const char * const seninf_parents[] __initconst = {
++	"clk26m",
++	"univpll1_d4",
++	"univpll1_d2",
++	"univpll2_d2"
++};
++
++static const char * const aes_fde_parents[] __initconst = {
++	"clk26m",
++	"msdcpll_ck",
++	"univpll_d3",
++	"univpll2_d2",
++	"univpll1_d2",
++	"syspll1_d2"
++};
++
++static const char * const ulposc_parents[] __initconst = {
++	"clk26m",
++	"ulposc1_d4",
++	"ulposc1_d8",
++	"ulposc1_d16",
++	"ulposc1_d32"
++};
++
++static const char * const camtm_parents[] __initconst = {
++	"clk26m",
++	"univpll1_d4",
++	"univpll1_d2",
++	"univpll2_d2"
++};
++
++#define INVALID_UPDATE_REG 0xFFFFFFFF
++#define INVALID_UPDATE_SHIFT -1
++#define INVALID_MUX_GATE -1
++
++static const struct mtk_mux top_muxes[] __initconst = {
++	/* CLK_CFG_0 */
++	MUX_CLR_SET_UPD_FLAGS(CLK_TOP_AXI_SEL, "axi_sel", axi_parents,
++			      CLK_CFG_0, CLK_CFG_0_SET, CLK_CFG_0_CLR,
++			      0, 2, 7, CLK_CFG_UPDATE, 0, CLK_IS_CRITICAL),
++	MUX_CLR_SET_UPD_FLAGS(CLK_TOP_MEM_SEL, "mem_sel", mem_parents,
++			      CLK_CFG_0, CLK_CFG_0_SET, CLK_CFG_0_CLR,
++			      8, 2, 15, CLK_CFG_UPDATE, 1, CLK_IS_CRITICAL),
++	MUX_CLR_SET_UPD(CLK_TOP_MM_SEL, "mm_sel", mm_parents, CLK_CFG_0,
++			CLK_CFG_0_SET, CLK_CFG_0_CLR, 16, 3, 23,
++			CLK_CFG_UPDATE, 2),
++	MUX_CLR_SET_UPD(CLK_TOP_SCP_SEL, "scp_sel", scp_parents, CLK_CFG_0,
++			CLK_CFG_0_SET, CLK_CFG_0_CLR, 24, 3, 31,
++			CLK_CFG_UPDATE, 3),
++	/* CLK_CFG_1 */
++	MUX_CLR_SET_UPD(CLK_TOP_MFG_SEL, "mfg_sel", mfg_parents, CLK_CFG_1,
++			CLK_CFG_1_SET, CLK_CFG_1_CLR, 0, 2, 7,
++			CLK_CFG_UPDATE, 4),
++	MUX_CLR_SET_UPD(CLK_TOP_ATB_SEL, "atb_sel", atb_parents, CLK_CFG_1,
++			CLK_CFG_1_SET, CLK_CFG_1_CLR, 8, 2, 15,
++			CLK_CFG_UPDATE, 5),
++	MUX_CLR_SET_UPD(CLK_TOP_CAMTG_SEL, "camtg_sel",
++			camtg_parents, CLK_CFG_1, CLK_CFG_1_SET,
++			CLK_CFG_1_CLR, 16, 3, 23, CLK_CFG_UPDATE, 6),
++	MUX_CLR_SET_UPD(CLK_TOP_CAMTG1_SEL, "camtg1_sel", camtg_parents,
++			CLK_CFG_1, CLK_CFG_1_SET, CLK_CFG_1_CLR,
++			24, 3, 31, CLK_CFG_UPDATE, 7),
++	/* CLK_CFG_2 */
++	MUX_CLR_SET_UPD(CLK_TOP_CAMTG2_SEL, "camtg2_sel",
++			camtg_parents, CLK_CFG_2, CLK_CFG_2_SET,
++			CLK_CFG_2_CLR, 0, 3, 7, CLK_CFG_UPDATE, 8),
++	MUX_CLR_SET_UPD(CLK_TOP_CAMTG3_SEL, "camtg3_sel", camtg_parents,
++			CLK_CFG_2, CLK_CFG_2_SET, CLK_CFG_2_CLR,
++			8, 3, 15, CLK_CFG_UPDATE, 9),
++	MUX_CLR_SET_UPD(CLK_TOP_UART_SEL, "uart_sel", uart_parents,
++			CLK_CFG_2, CLK_CFG_2_SET, CLK_CFG_2_CLR, 16, 1, 23,
++			CLK_CFG_UPDATE, 10),
++	MUX_CLR_SET_UPD(CLK_TOP_SPI_SEL, "spi_sel", spi_parents, CLK_CFG_2,
++			CLK_CFG_2_SET, CLK_CFG_2_CLR, 24, 2, 31,
++			CLK_CFG_UPDATE, 11),
++	/* CLK_CFG_3 */
++	MUX_CLR_SET_UPD(CLK_TOP_MSDC50_0_HCLK_SEL, "msdc5hclk",
++			msdc5hclk_parents, CLK_CFG_3, CLK_CFG_3_SET,
++			CLK_CFG_3_CLR, 0, 2, 7, CLK_CFG_UPDATE, 12),
++	MUX_CLR_SET_UPD(CLK_TOP_MSDC50_0_SEL, "msdc50_0_sel",
++			msdc50_0_parents, CLK_CFG_3, CLK_CFG_3_SET,
++			CLK_CFG_3_CLR, 8, 3, 15, CLK_CFG_UPDATE, 13),
++	MUX_CLR_SET_UPD(CLK_TOP_MSDC30_1_SEL, "msdc30_1_sel",
++			msdc30_1_parents, CLK_CFG_3, CLK_CFG_3_SET,
++			CLK_CFG_3_CLR, 16, 3, 23, CLK_CFG_UPDATE, 14),
++	MUX_CLR_SET_UPD(CLK_TOP_AUDIO_SEL, "audio_sel", audio_parents,
++			CLK_CFG_3, CLK_CFG_3_SET, CLK_CFG_3_CLR,
++			24, 2, 31, CLK_CFG_UPDATE, 15),
++	/* CLK_CFG_4 */
++	MUX_CLR_SET_UPD(CLK_TOP_AUD_INTBUS_SEL, "aud_intbus_sel",
++			aud_intbus_parents, CLK_CFG_4, CLK_CFG_4_SET,
++			CLK_CFG_4_CLR, 0, 2, 7, CLK_CFG_UPDATE, 16),
++	MUX_CLR_SET_UPD(CLK_TOP_AUD_1_SEL, "aud_1_sel", aud_1_parents,
++			CLK_CFG_4, CLK_CFG_4_SET, CLK_CFG_4_CLR,
++			8, 1, 15, CLK_CFG_UPDATE, 17),
++	MUX_CLR_SET_UPD(CLK_TOP_AUD_ENGEN1_SEL, "aud_engen1_sel",
++			aud_engen1_parents, CLK_CFG_4, CLK_CFG_4_SET,
++			CLK_CFG_4_CLR, 16, 2, 23, CLK_CFG_UPDATE, 18),
++	MUX_CLR_SET_UPD(CLK_TOP_DISP_PWM_SEL, "disp_pwm_sel",
++			disp_pwm_parents, CLK_CFG_4, CLK_CFG_4_SET,
++			CLK_CFG_4_CLR, 24, 2, 31, CLK_CFG_UPDATE, 19),
++	/* CLK_CFG_5 */
++	MUX_CLR_SET_UPD(CLK_TOP_SSPM_SEL, "sspm_sel", sspm_parents,
++			CLK_CFG_5, CLK_CFG_5_SET, CLK_CFG_5_CLR, 0, 2, 7,
++			CLK_CFG_UPDATE, 20),
++	MUX_CLR_SET_UPD(CLK_TOP_DXCC_SEL, "dxcc_sel", dxcc_parents,
++			CLK_CFG_5, CLK_CFG_5_SET, CLK_CFG_5_CLR, 8, 2, 15,
++			CLK_CFG_UPDATE, 21),
++	MUX_CLR_SET_UPD(CLK_TOP_USB_TOP_SEL, "usb_top_sel", usb_top_parents,
++			CLK_CFG_5, CLK_CFG_5_SET, CLK_CFG_5_CLR, 16, 1, 23,
++			CLK_CFG_UPDATE, 22),
++	MUX_CLR_SET_UPD(CLK_TOP_SPM_SEL, "spm_sel", spm_parents, CLK_CFG_5,
++			CLK_CFG_5_SET, CLK_CFG_5_CLR, 24, 1, 31,
++			CLK_CFG_UPDATE, 23),
++	/* CLK_CFG_6 */
++	MUX_CLR_SET_UPD(CLK_TOP_I2C_SEL, "i2c_sel", i2c_parents, CLK_CFG_6,
++			CLK_CFG_6_SET, CLK_CFG_6_CLR, 0, 3, 7, CLK_CFG_UPDATE,
++			24),
++	MUX_CLR_SET_UPD(CLK_TOP_PWM_SEL, "pwm_sel", pwm_parents, CLK_CFG_6,
++			CLK_CFG_6_SET, CLK_CFG_6_CLR, 8, 2, 15, CLK_CFG_UPDATE,
++			25),
++	MUX_CLR_SET_UPD(CLK_TOP_SENINF_SEL, "seninf_sel", seninf_parents,
++			CLK_CFG_6, CLK_CFG_6_SET, CLK_CFG_6_CLR, 16, 2, 23,
++			CLK_CFG_UPDATE, 26),
++	MUX_CLR_SET_UPD(CLK_TOP_AES_FDE_SEL, "aes_fde_sel", aes_fde_parents,
++			CLK_CFG_6, CLK_CFG_6_SET, CLK_CFG_6_CLR, 24, 3, 31,
++			CLK_CFG_UPDATE, 27),
++	/* CLK_CFG_7 */
++	MUX_CLR_SET_UPD_FLAGS(CLK_TOP_PWRAP_ULPOSC_SEL, "ulposc_sel",
++			      ulposc_parents, CLK_CFG_7, CLK_CFG_7_SET,
++			      CLK_CFG_7_CLR, 0, 3, 7, CLK_CFG_UPDATE, 28,
++			      CLK_IS_CRITICAL),
++	MUX_CLR_SET_UPD(CLK_TOP_CAMTM_SEL, "camtm_sel", camtm_parents,
++			CLK_CFG_7, CLK_CFG_7_SET, CLK_CFG_7_CLR, 8, 2, 15,
++			CLK_CFG_UPDATE, 29),
++};
++
++static const struct mtk_gate_regs top0_cg_regs = {
++	.set_ofs = 0x0,
++	.clr_ofs = 0x0,
++	.sta_ofs = 0x0,
++};
++
++static const struct mtk_gate_regs top1_cg_regs = {
++	.set_ofs = 0x104,
++	.clr_ofs = 0x104,
++	.sta_ofs = 0x104,
++};
++
++static const struct mtk_gate_regs top2_cg_regs = {
++	.set_ofs = 0x320,
++	.clr_ofs = 0x320,
++	.sta_ofs = 0x320,
++};
++
++#define GATE_TOP0(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &top0_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
 +	}
 +
-+	smi_comm = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-+						   SMIC);
-+	if (IS_ERR(smi_comm)) {
-+		dev_err(&pdev->dev,
-+			"Cannot find bus smi_comm controller: %ld\n",
-+			PTR_ERR(smi_comm));
-+		return PTR_ERR(smi_comm);
++#define GATE_TOP1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &top1_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
 +	}
 +
-+	return 0;
-+}
-+
-+static int add_clk_to_list(struct platform_device *pdev,
-+			   const char *name,
-+			   const char *scpd_n)
-+{
-+	struct clk *clk;
-+	struct ext_clk_ctrl *cc;
-+
-+	clk = devm_clk_get(&pdev->dev, name);
-+	if (IS_ERR(clk)) {
-+		dev_err(&pdev->dev, "Failed add clk %ld\n", PTR_ERR(clk));
-+		return PTR_ERR(clk);
++#define GATE_TOP2(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &top2_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
 +	}
 +
-+	cc = kzalloc(sizeof(*cc), GFP_KERNEL);
-+	cc->clk = clk;
-+	cc->scpd_n = kstrdup(scpd_n, GFP_KERNEL);
++static const struct mtk_gate top_clks[] __initconst = {
++	/* TOP0 */
++	GATE_TOP0(CLK_TOP_MD_32K, "md_32k", "f_frtc_ck", 8),
++	GATE_TOP0(CLK_TOP_MD_26M, "md_26m", "f_f26m_ck", 9),
++	GATE_TOP0(CLK_TOP_MD2_32K, "md2_32k", "f_frtc_ck", 10),
++	GATE_TOP0(CLK_TOP_MD2_26M, "md2_26m", "f_f26m_ck", 11),
++	/* TOP1 */
++	GATE_TOP1(CLK_TOP_ARMPLL_DIVIDER_PLL0_EN,
++		  "arm_div_pll0_en", "arm_div_pll0", 3),
++	GATE_TOP1(CLK_TOP_ARMPLL_DIVIDER_PLL1_EN,
++		  "arm_div_pll1_en", "arm_div_pll1", 4),
++	GATE_TOP1(CLK_TOP_ARMPLL_DIVIDER_PLL2_EN,
++		  "arm_div_pll2_en", "arm_div_pll2", 5),
++	GATE_TOP1(CLK_TOP_FMEM_OCC_DRC_EN, "drc_en", "univpll2_d2", 6),
++	GATE_TOP1(CLK_TOP_USB20_48M_EN, "usb20_48m_en", "usb20_48m_div", 8),
++	GATE_TOP1(CLK_TOP_UNIVPLL_48M_EN, "univpll_48m_en", "univ_48m_div", 9),
++	GATE_TOP1(CLK_TOP_F_UFS_MP_SAP_CFG_EN, "ufs_sap", "f_f26m_ck", 12),
++	GATE_TOP1(CLK_TOP_F_BIST2FPC_EN, "bist2fpc", "f_bist2fpc_ck", 16),
++	/* TOP2 */
++	GATE_TOP2(CLK_TOP_APLL12_DIV0, "apll12_div0", "aud_1_ck", 2),
++	GATE_TOP2(CLK_TOP_APLL12_DIV1, "apll12_div1", "aud_1_ck", 3),
++	GATE_TOP2(CLK_TOP_APLL12_DIV2, "apll12_div2", "aud_1_ck", 4),
++	GATE_TOP2(CLK_TOP_APLL12_DIV3, "apll12_div3", "aud_1_ck", 5),
++};
 +
-+	list_add(&cc->clk_list, &ext_clk_map_list);
++static const struct mtk_gate_regs ifr0_cg_regs = {
++	.set_ofs = 0x200,
++	.clr_ofs = 0x200,
++	.sta_ofs = 0x200,
++};
 +
-+	return 0;
-+}
++static const struct mtk_gate_regs ifr1_cg_regs = {
++	.set_ofs = 0x74,
++	.clr_ofs = 0x74,
++	.sta_ofs = 0x74,
++};
 +
-+static int add_cg_to_list(struct platform_device *pdev)
++static const struct mtk_gate_regs ifr2_cg_regs = {
++	.set_ofs = 0x80,
++	.clr_ofs = 0x84,
++	.sta_ofs = 0x90,
++};
++
++static const struct mtk_gate_regs ifr3_cg_regs = {
++	.set_ofs = 0x88,
++	.clr_ofs = 0x8c,
++	.sta_ofs = 0x94,
++};
++
++static const struct mtk_gate_regs ifr4_cg_regs = {
++	.set_ofs = 0xa4,
++	.clr_ofs = 0xa8,
++	.sta_ofs = 0xac,
++};
++
++static const struct mtk_gate_regs ifr5_cg_regs = {
++	.set_ofs = 0xc0,
++	.clr_ofs = 0xc4,
++	.sta_ofs = 0xc8,
++};
++
++#define GATE_IFR0(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ifr0_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr_inv,	\
++	}
++
++#define GATE_IFR1(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ifr1_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr,	\
++	}
++
++#define GATE_IFR2(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ifr2_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++#define GATE_IFR3(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ifr3_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++#define GATE_IFR4(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ifr4_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++#define GATE_IFR5(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &ifr5_cg_regs,			\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_setclr,	\
++	}
++
++static const struct mtk_gate ifr_clks[] __initconst = {
++	/* INFRA_TOPAXI */
++	/* INFRA PERI */
++	/* INFRA mode 0 */
++	GATE_IFR2(CLK_IFR_ICUSB, "ifr_icusb", "axi_ck", 8),
++	GATE_IFR2(CLK_IFR_GCE, "ifr_gce", "axi_ck", 9),
++	GATE_IFR2(CLK_IFR_THERM, "ifr_therm", "axi_ck", 10),
++	GATE_IFR2(CLK_IFR_I2C_AP, "ifr_i2c_ap", "i2c_ck", 11),
++	GATE_IFR2(CLK_IFR_I2C_CCU, "ifr_i2c_ccu", "i2c_ck", 12),
++	GATE_IFR2(CLK_IFR_I2C_SSPM, "ifr_i2c_sspm", "i2c_ck", 13),
++	GATE_IFR2(CLK_IFR_I2C_RSV, "ifr_i2c_rsv", "i2c_ck", 14),
++	GATE_IFR2(CLK_IFR_PWM_HCLK, "ifr_pwm_hclk", "axi_ck", 15),
++	GATE_IFR2(CLK_IFR_PWM1, "ifr_pwm1", "f_fpwm_ck", 16),
++	GATE_IFR2(CLK_IFR_PWM2, "ifr_pwm2", "f_fpwm_ck", 17),
++	GATE_IFR2(CLK_IFR_PWM3, "ifr_pwm3", "f_fpwm_ck", 18),
++	GATE_IFR2(CLK_IFR_PWM4, "ifr_pwm4", "f_fpwm_ck", 19),
++	GATE_IFR2(CLK_IFR_PWM5, "ifr_pwm5", "f_fpwm_ck", 20),
++	GATE_IFR2(CLK_IFR_PWM, "ifr_pwm", "f_fpwm_ck", 21),
++	GATE_IFR2(CLK_IFR_UART0, "ifr_uart0", "f_fuart_ck", 22),
++	GATE_IFR2(CLK_IFR_UART1, "ifr_uart1", "f_fuart_ck", 23),
++	GATE_IFR2(CLK_IFR_GCE_26M, "ifr_gce_26m", "f_f26m_ck", 27),
++	GATE_IFR2(CLK_IFR_CQ_DMA_FPC, "ifr_dma", "axi_ck", 28),
++	GATE_IFR2(CLK_IFR_BTIF, "ifr_btif", "axi_ck", 31),
++	/* INFRA mode 1 */
++	GATE_IFR3(CLK_IFR_SPI0, "ifr_spi0", "spi_ck", 1),
++	GATE_IFR3(CLK_IFR_MSDC0, "ifr_msdc0", "msdc5hclk", 2),
++	GATE_IFR3(CLK_IFR_MSDC1, "ifr_msdc1", "axi_ck", 4),
++	GATE_IFR3(CLK_IFR_TRNG, "ifr_trng", "axi_ck", 9),
++	GATE_IFR3(CLK_IFR_AUXADC, "ifr_auxadc", "f_f26m_ck", 10),
++	GATE_IFR3(CLK_IFR_CCIF1_AP, "ifr_ccif1_ap", "axi_ck", 12),
++	GATE_IFR3(CLK_IFR_CCIF1_MD, "ifr_ccif1_md", "axi_ck", 13),
++	GATE_IFR3(CLK_IFR_AUXADC_MD, "ifr_auxadc_md", "f_f26m_ck", 14),
++	GATE_IFR3(CLK_IFR_AP_DMA, "ifr_ap_dma", "axi_ck", 18),
++	GATE_IFR3(CLK_IFR_DEVICE_APC, "ifr_dapc", "axi_ck", 20),
++	GATE_IFR3(CLK_IFR_CCIF_AP, "ifr_ccif_ap", "axi_ck", 23),
++	GATE_IFR3(CLK_IFR_AUDIO, "ifr_audio", "axi_ck", 25),
++	GATE_IFR3(CLK_IFR_CCIF_MD, "ifr_ccif_md", "axi_ck", 26),
++	/* INFRA mode 2 */
++	GATE_IFR4(CLK_IFR_RG_PWM_FBCLK6, "ifr_pwmfb", "f_f26m_ck", 0),
++	GATE_IFR4(CLK_IFR_DISP_PWM, "ifr_disp_pwm", "f_fdisp_pwm_ck", 2),
++	GATE_IFR4(CLK_IFR_CLDMA_BCLK, "ifr_cldmabclk", "axi_ck", 3),
++	GATE_IFR4(CLK_IFR_AUDIO_26M_BCLK, "ifr_audio26m", "f_f26m_ck", 4),
++	GATE_IFR4(CLK_IFR_SPI1, "ifr_spi1", "spi_ck", 6),
++	GATE_IFR4(CLK_IFR_I2C4, "ifr_i2c4", "i2c_ck", 7),
++	GATE_IFR4(CLK_IFR_SPI2, "ifr_spi2", "spi_ck", 9),
++	GATE_IFR4(CLK_IFR_SPI3, "ifr_spi3", "spi_ck", 10),
++	GATE_IFR4(CLK_IFR_I2C5, "ifr_i2c5", "i2c_ck", 18),
++	GATE_IFR4(CLK_IFR_I2C5_ARBITER, "ifr_i2c5a", "i2c_ck", 19),
++	GATE_IFR4(CLK_IFR_I2C5_IMM, "ifr_i2c5_imm", "i2c_ck", 20),
++	GATE_IFR4(CLK_IFR_I2C1_ARBITER, "ifr_i2c1a", "i2c_ck", 21),
++	GATE_IFR4(CLK_IFR_I2C1_IMM, "ifr_i2c1_imm", "i2c_ck", 22),
++	GATE_IFR4(CLK_IFR_I2C2_ARBITER, "ifr_i2c2a", "i2c_ck", 23),
++	GATE_IFR4(CLK_IFR_I2C2_IMM, "ifr_i2c2_imm", "i2c_ck", 24),
++	GATE_IFR4(CLK_IFR_SPI4, "ifr_spi4", "spi_ck", 25),
++	GATE_IFR4(CLK_IFR_SPI5, "ifr_spi5", "spi_ck", 26),
++	GATE_IFR4(CLK_IFR_CQ_DMA, "ifr_cq_dma", "axi_ck", 27),
++	GATE_IFR4(CLK_IFR_FAES_FDE, "ifr_faes_fde_ck", "aes_fde_ck", 29),
++	/* INFRA mode 3 */
++	GATE_IFR5(CLK_IFR_MSDC0_SELF, "ifr_msdc0sf", "msdc50_0_ck", 0),
++	GATE_IFR5(CLK_IFR_MSDC1_SELF, "ifr_msdc1sf", "msdc50_0_ck", 1),
++	GATE_IFR5(CLK_IFR_I2C6, "ifr_i2c6", "i2c_ck", 6),
++	GATE_IFR5(CLK_IFR_AP_MSDC0, "ifr_ap_msdc0", "msdc50_0_ck", 7),
++	GATE_IFR5(CLK_IFR_MD_MSDC0, "ifr_md_msdc0", "msdc50_0_ck", 8),
++	GATE_IFR5(CLK_IFR_MSDC0_SRC, "ifr_msdc0_clk", "msdc50_0_ck", 9),
++	GATE_IFR5(CLK_IFR_MSDC1_SRC, "ifr_msdc1_clk", "msdc30_1_ck", 10),
++	GATE_IFR5(CLK_IFR_MCU_PM_BCLK, "ifr_mcu_pm_bclk", "axi_ck", 17),
++	GATE_IFR5(CLK_IFR_CCIF2_AP, "ifr_ccif2_ap", "axi_ck", 18),
++	GATE_IFR5(CLK_IFR_CCIF2_MD, "ifr_ccif2_md", "axi_ck", 19),
++	GATE_IFR5(CLK_IFR_CCIF3_AP, "ifr_ccif3_ap", "axi_ck", 20),
++	GATE_IFR5(CLK_IFR_CCIF3_MD, "ifr_ccif3_md", "axi_ck", 21),
++};
++
++/* additional CCF control for mipi26M race condition(disp/camera) */
++static const struct mtk_gate_regs apmixed_cg_regs = {
++	.set_ofs = 0x14,
++	.clr_ofs = 0x14,
++	.sta_ofs = 0x14,
++};
++
++#define GATE_APMIXED(_id, _name, _parent, _shift) {	\
++		.id = _id,				\
++		.name = _name,				\
++		.parent_name = _parent,			\
++		.regs = &apmixed_cg_regs,		\
++		.shift = _shift,			\
++		.ops = &mtk_clk_gate_ops_no_setclr_inv,		\
++	}
++
++static const struct mtk_gate apmixed_clks[] __initconst = {
++	/* AUDIO0 */
++	GATE_APMIXED(CLK_APMIXED_SSUSB26M, "apmixed_ssusb26m", "f_f26m_ck",
++		     4),
++	GATE_APMIXED(CLK_APMIXED_APPLL26M, "apmixed_appll26m", "f_f26m_ck",
++		     5),
++	GATE_APMIXED(CLK_APMIXED_MIPIC0_26M, "apmixed_mipic026m", "f_f26m_ck",
++		     6),
++	GATE_APMIXED(CLK_APMIXED_MDPLLGP26M, "apmixed_mdpll26m", "f_f26m_ck",
++		     7),
++	GATE_APMIXED(CLK_APMIXED_MMSYS_F26M, "apmixed_mmsys26m", "f_f26m_ck",
++		     8),
++	GATE_APMIXED(CLK_APMIXED_UFS26M, "apmixed_ufs26m", "f_f26m_ck",
++		     9),
++	GATE_APMIXED(CLK_APMIXED_MIPIC1_26M, "apmixed_mipic126m", "f_f26m_ck",
++		     11),
++	GATE_APMIXED(CLK_APMIXED_MEMPLL26M, "apmixed_mempll26m", "f_f26m_ck",
++		     13),
++	GATE_APMIXED(CLK_APMIXED_CLKSQ_LVPLL_26M, "apmixed_lvpll26m",
++		     "f_f26m_ck", 14),
++	GATE_APMIXED(CLK_APMIXED_MIPID0_26M, "apmixed_mipid026m", "f_f26m_ck",
++		     16),
++};
++
++#define MT6765_PLL_FMAX		(3800UL * MHZ)
++#define MT6765_PLL_FMIN		(1500UL * MHZ)
++
++#define CON0_MT6765_RST_BAR	BIT(23)
++
++#define PLL_INFO_NULL		(0xFF)
++
++#define PLL_B(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,	\
++		_pcwibits, _pd_reg, _pd_shift, _tuner_reg, _tuner_en_reg,\
++		_tuner_en_bit, _pcw_reg, _pcw_shift, _div_table) {\
++		.id = _id,						\
++		.name = _name,						\
++		.reg = _reg,						\
++		.pwr_reg = _pwr_reg,					\
++		.en_mask = _en_mask,					\
++		.flags = _flags,					\
++		.rst_bar_mask = CON0_MT6765_RST_BAR,			\
++		.fmax = MT6765_PLL_FMAX,				\
++		.fmin = MT6765_PLL_FMIN,				\
++		.pcwbits = _pcwbits,					\
++		.pcwibits = _pcwibits,					\
++		.pd_reg = _pd_reg,					\
++		.pd_shift = _pd_shift,					\
++		.tuner_reg = _tuner_reg,				\
++		.tuner_en_reg = _tuner_en_reg,				\
++		.tuner_en_bit = _tuner_en_bit,				\
++		.pcw_reg = _pcw_reg,					\
++		.pcw_shift = _pcw_shift,				\
++		.div_table = _div_table,				\
++	}
++
++#define PLL(_id, _name, _reg, _pwr_reg, _en_mask, _flags, _pcwbits,	\
++			_pcwibits, _pd_reg, _pd_shift, _tuner_reg,	\
++			_tuner_en_reg, _tuner_en_bit, _pcw_reg,	\
++			_pcw_shift)	\
++		PLL_B(_id, _name, _reg, _pwr_reg, _en_mask, _flags,	\
++			_pcwbits, _pcwibits, _pd_reg, _pd_shift,	\
++			_tuner_reg, _tuner_en_reg, _tuner_en_bit,	\
++			_pcw_reg, _pcw_shift, NULL)	\
++
++static const struct mtk_pll_data plls[] = {
++	PLL(CLK_APMIXED_ARMPLL_L, "armpll_l", 0x021C, 0x0228, BIT(0),
++	    PLL_AO, 22, 8, 0x0220, 24, 0, 0, 0, 0x0220, 0),
++	PLL(CLK_APMIXED_ARMPLL, "armpll", 0x020C, 0x0218, BIT(0),
++	    PLL_AO, 22, 8, 0x0210, 24, 0, 0, 0, 0x0210, 0),
++	PLL(CLK_APMIXED_CCIPLL, "ccipll", 0x022C, 0x0238, BIT(0),
++	    PLL_AO, 22, 8, 0x0230, 24, 0, 0, 0, 0x0230, 0),
++	PLL(CLK_APMIXED_MAINPLL, "mainpll", 0x023C, 0x0248, BIT(0),
++	    (HAVE_RST_BAR | PLL_AO), 22, 8, 0x0240, 24, 0, 0, 0, 0x0240,
++	    0),
++	PLL(CLK_APMIXED_MFGPLL, "mfgpll", 0x024C, 0x0258, BIT(0),
++	    0, 22, 8, 0x0250, 24, 0, 0, 0, 0x0250, 0),
++	PLL(CLK_APMIXED_MMPLL, "mmpll", 0x025C, 0x0268, BIT(0),
++	    0, 22, 8, 0x0260, 24, 0, 0, 0, 0x0260, 0),
++	PLL(CLK_APMIXED_UNIV2PLL, "univ2pll", 0x026C, 0x0278, BIT(0),
++	    HAVE_RST_BAR, 22, 8, 0x0270, 24, 0, 0, 0, 0x0270, 0),
++	PLL(CLK_APMIXED_MSDCPLL, "msdcpll", 0x027C, 0x0288, BIT(0),
++	    0, 22, 8, 0x0280, 24, 0, 0, 0, 0x0280, 0),
++	PLL(CLK_APMIXED_APLL1, "apll1", 0x028C, 0x029C, BIT(0),
++	    0, 32, 8, 0x0290, 24, 0x0040, 0x000C, 0, 0x0294, 0),
++	PLL(CLK_APMIXED_MPLL, "mpll", 0x02A0, 0x02AC, BIT(0),
++	    PLL_AO, 22, 8, 0x02A4, 24, 0, 0, 0, 0x02A4, 0),
++};
++
++static int clk_mt6765_apmixed_probe(struct platform_device *pdev)
 +{
-+	int i = 0;
-+
++	struct clk_onecell_data *clk_data;
++	int r;
 +	struct device_node *node = pdev->dev.of_node;
++	void __iomem *base;
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 +
-+	if (!node) {
-+		dev_err(&pdev->dev, "Cannot find topcksys node: %ld\n",
-+			PTR_ERR(node));
-+		return PTR_ERR(node);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base)) {
++		pr_err("%s(): ioremap failed\n", __func__);
++		return PTR_ERR(base);
 +	}
 +
-+	do {
-+		const char *ck_name;
-+		char *temp_str;
-+		char *tok[2] = {NULL};
-+		int cg_idx = 0;
-+		int idx = 0;
-+		int ret = 0;
++	clk_data = mtk_alloc_clk_data(CLK_APMIXED_NR_CLK);
 +
-+		ret = of_property_read_string_index(node, "clock-names", i,
-+						    &ck_name);
-+		if (ret < 0)
-+			break;
++	mtk_clk_register_plls(node, plls, ARRAY_SIZE(plls), clk_data);
 +
-+		temp_str = kmalloc_array(strlen(ck_name), sizeof(char),
-+					 GFP_KERNEL | __GFP_ZERO);
-+		memcpy(temp_str, ck_name, strlen(ck_name));
-+		temp_str[strlen(ck_name)] = '\0';
-+		do {
-+			tok[idx] = strsep(&temp_str, "-");
-+			idx++;
-+		} while (temp_str);
++	mtk_clk_register_gates(node, apmixed_clks,
++			       ARRAY_SIZE(apmixed_clks), clk_data);
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
 +
-+		if (idx == 2) {
-+			if (kstrtouint(tok[1], 10, &cg_idx))
-+				return -EINVAL;
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
 +
-+			if (add_clk_to_list(pdev, ck_name, tok[0]))
-+				return -EINVAL;
-+		}
-+		kfree(temp_str);
-+		i++;
-+	} while (1);
++	apmixed_base = base;
++	/* MPLL, CCIPLL, MAINPLL set HW mode, TDCLKSQ, CLKSQ1 */
++	clk_writel(clk_readl(AP_PLL_CON3) & 0xFFFFFFE1, AP_PLL_CON3);
++	clk_writel(clk_readl(PLLON_CON0) & 0x01041041, PLLON_CON0);
++	clk_writel(clk_readl(PLLON_CON1) & 0x01041041, PLLON_CON1);
 +
-+	return 0;
++	return r;
 +}
 +
-+int scpsys_ext_clk_init(struct platform_device *pdev)
++static struct clk_onecell_data *mt6765_top_clk_data;
++
++static int clk_mt6765_top_probe(struct platform_device *pdev)
 +{
-+	int ret = 0;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++	void __iomem *base;
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 +
-+	ret = add_cg_to_list(pdev);
-+	if (ret)
-+		goto err;
-+
-+err:
-+	return ret;
-+}
-+
-+int scpsys_ext_attr_init(const struct scpsys_ext_data *data)
-+{
-+	int i, count = 0;
-+
-+	for (i = 0; i < data->num_attr; i++) {
-+		struct scpsys_ext_attr *node = data->attr + i;
-+
-+		if (!node)
-+			continue;
-+
-+		list_add(&node->attr_list, &ext_attr_map_list);
-+		count++;
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base)) {
++		pr_err("%s(): ioremap failed\n", __func__);
++		return PTR_ERR(base);
 +	}
 +
-+	if (!count)
-+		return -EINVAL;
++	mt6765_top_clk_data = mtk_alloc_clk_data(CLK_TOP_NR_CLK);
 +
-+	return 0;
++	mtk_clk_register_fixed_clks(fixed_clks, ARRAY_SIZE(fixed_clks),
++				    mt6765_top_clk_data);
++	mtk_clk_register_factors(top_divs, ARRAY_SIZE(top_divs),
++				 mt6765_top_clk_data);
++	mtk_clk_register_muxes(top_muxes, ARRAY_SIZE(top_muxes), node,
++			       &mt6765_clk_lock, mt6765_top_clk_data);
++	mtk_clk_register_gates(node, top_clks, ARRAY_SIZE(top_clks),
++			       mt6765_top_clk_data);
++
++	r = of_clk_add_provider(node, of_clk_src_onecell_get,
++				mt6765_top_clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	cksys_base = base;
++	/* [4]:no need */
++	clk_writel(clk_readl(CLK_SCP_CFG_0) | 0x3EF, CLK_SCP_CFG_0);
++	/*[1,2,3,8]: no need*/
++	clk_writel(clk_readl(CLK_SCP_CFG_1) | 0x1, CLK_SCP_CFG_1);
++
++	return r;
 +}
 +
-+static const struct of_device_id of_scpsys_ext_match_tbl[] = {
++static int clk_mt6765_ifr_probe(struct platform_device *pdev)
++{
++	struct clk_onecell_data *clk_data;
++	int r;
++	struct device_node *node = pdev->dev.of_node;
++	void __iomem *base;
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base)) {
++		pr_err("%s(): ioremap failed\n", __func__);
++		return PTR_ERR(base);
++	}
++
++	clk_data = mtk_alloc_clk_data(CLK_IFR_NR_CLK);
++
++	mtk_clk_register_gates(node, ifr_clks, ARRAY_SIZE(ifr_clks),
++			       clk_data);
++	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
++
++	if (r)
++		pr_err("%s(): could not register clock provider: %d\n",
++		       __func__, r);
++
++	return r;
++}
++
++static const struct of_device_id of_match_clk_mt6765[] = {
 +	{
++		.compatible = "mediatek,mt6765-apmixedsys",
++		.data = clk_mt6765_apmixed_probe,
++	}, {
++		.compatible = "mediatek,mt6765-topckgen",
++		.data = clk_mt6765_top_probe,
++	}, {
++		.compatible = "mediatek,mt6765-infracfg",
++		.data = clk_mt6765_ifr_probe,
++	}, {
 +		/* sentinel */
 +	}
 +};
 +
-+struct scpsys_ext_data *scpsys_ext_init(struct platform_device *pdev)
++static int clk_mt6765_probe(struct platform_device *pdev)
 +{
-+	const struct of_device_id *match;
-+	struct scpsys_ext_data *data;
-+	int ret;
++	int (*clk_probe)(struct platform_device *d);
++	int r;
 +
-+	match = of_match_device(of_scpsys_ext_match_tbl, &pdev->dev);
++	clk_probe = of_device_get_match_data(&pdev->dev);
++	if (!clk_probe)
++		return -EINVAL;
 +
-+	if (!match) {
-+		dev_err(&pdev->dev, "no match\n");
-+		return ERR_CAST(match);
-+	}
-+
-+	data = (struct scpsys_ext_data *)match->data;
-+	if (IS_ERR(data)) {
-+		dev_err(&pdev->dev, "no match scpext data\n");
-+		return ERR_CAST(data);
-+	}
-+
-+	ret = scpsys_ext_attr_init(data);
-+	if (ret) {
++	r = clk_probe(pdev);
++	if (r)
 +		dev_err(&pdev->dev,
-+			"Failed to init bus attr: %d\n",
-+			ret);
-+		return ERR_PTR(ret);
-+	}
++			"could not register clock provider: %s: %d\n",
++			pdev->name, r);
 +
-+	ret = scpsys_ext_regmap_init(pdev);
-+	if (ret) {
-+		dev_err(&pdev->dev,
-+			"Failed to init bus register: %d\n",
-+			ret);
-+		return ERR_PTR(ret);
-+	}
-+
-+	ret = scpsys_ext_clk_init(pdev);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to init bus clks: %d\n",
-+			ret);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return data;
++	return r;
 +}
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 4bb6c7a..03df2d6 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2015 Pengutronix, Sascha Hauer <kernel@pengutronix.de>
-  *
-@@ -20,6 +21,7 @@
- #include <linux/pm_domain.h>
- #include <linux/regulator/consumer.h>
- #include <linux/soc/mediatek/infracfg.h>
-+#include <linux/soc/mediatek/scpsys-ext.h>
- 
- #include <dt-bindings/power/mt2701-power.h>
- #include <dt-bindings/power/mt2712-power.h>
-@@ -117,6 +119,15 @@ enum clk_id {
- 
- #define MAX_CLKS	3
- 
-+/**
-+ * struct scp_domain_data - scp domain data for power on/off flow
-+ * @name: The domain name.
-+ * @sta_mask: The mask for power on/off status bit.
-+ * @ctl_offs: The offset for main power control register.
-+ * @sram_pdn_bits: The mask for sram power control bits.
-+ * @sram_pdn_ack_bits The mask for sram power control acked bits.
-+ * @caps: The flag for active wake-up action.
-+ */
- struct scp_domain_data {
- 	const char *name;
- 	u32 sta_mask;
-@@ -150,7 +161,7 @@ struct scp {
- 	void __iomem *base;
- 	struct regmap *infracfg;
- 	struct scp_ctrl_reg ctrl_reg;
--	bool bus_prot_reg_update;
-+	struct scpsys_ext_data *ext_data;
- };
- 
- struct scp_subdomain {
-@@ -164,7 +175,6 @@ struct scp_soc_data {
- 	const struct scp_subdomain *subdomains;
- 	int num_subdomains;
- 	const struct scp_ctrl_reg regs;
--	bool bus_prot_reg_update;
- };
- 
- static int scpsys_domain_is_on(struct scp_domain *scpd)
-@@ -236,6 +246,31 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	val |= PWR_RST_B_BIT;
- 	writel(val, ctl_addr);
- 
-+	if (!IS_ERR(scp->ext_data)) {
-+		struct scpsys_ext_attr *attr;
 +
-+		attr = scp->ext_data->get_attr(scpd->data->name);
-+		if (!IS_ERR(attr) && attr->cg_ops) {
-+			ret = attr->cg_ops->enable(attr);
-+			if (ret)
-+				goto err_ext_clk;
-+		}
-+	}
-+
-+	val &= ~scpd->data->sram_pdn_bits;
-+	writel(val, ctl_addr);
-+
-+	if (!IS_ERR(scp->ext_data)) {
-+		struct scpsys_ext_attr *attr;
-+
-+		attr = scp->ext_data->get_attr(scpd->data->name);
-+		if (!IS_ERR(attr) && attr->cg_ops) {
-+			ret = attr->cg_ops->enable(attr);
-+			if (ret)
-+				goto err_ext_clk;
-+		}
-+	}
-+
- 	val &= ~scpd->data->sram_pdn_bits;
- 	writel(val, ctl_addr);
- 
-@@ -247,25 +282,65 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 		 * applied here.
- 		 */
- 		usleep_range(12000, 12100);
--
- 	} else {
- 		ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
- 					 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
- 		if (ret < 0)
--			goto err_pwr_ack;
-+			goto err_sram;
- 	}
- 
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask,
--				scp->bus_prot_reg_update);
-+				scpd->data->bus_prot_mask);
- 		if (ret)
--			goto err_pwr_ack;
-+			goto err_sram;
-+	}
-+
-+	if (!IS_ERR(scp->ext_data)) {
-+		struct scpsys_ext_attr *attr;
-+
-+		attr = scp->ext_data->get_attr(scpd->data->name);
-+		if (!IS_ERR(attr) && attr->bus_ops) {
-+			ret = attr->bus_ops->disable(attr);
-+			if (ret)
-+				goto err_sram;
-+		}
-+	}
-+
-+	if (!IS_ERR(scp->ext_data)) {
-+		struct scpsys_ext_attr *attr;
-+
-+		attr = scp->ext_data->get_attr(scpd->data->name);
-+		if (!IS_ERR(attr) && attr->cg_ops) {
-+			ret = attr->cg_ops->disable(attr);
-+			if (ret)
-+				goto err_sram;
-+		}
- 	}
- 
- 	return 0;
- 
-+err_sram:
-+	val = readl(ctl_addr);
-+	val |= scpd->data->sram_pdn_bits;
-+	writel(val, ctl_addr);
-+err_ext_clk:
-+	val = readl(ctl_addr);
-+	val |= PWR_ISO_BIT;
-+	writel(val, ctl_addr);
-+
-+	val &= ~PWR_RST_B_BIT;
-+	writel(val, ctl_addr);
-+
-+	val |= PWR_CLK_DIS_BIT;
-+	writel(val, ctl_addr);
- err_pwr_ack:
-+	val &= ~PWR_ON_BIT;
-+	writel(val, ctl_addr);
-+
-+	val &= ~PWR_ON_2ND_BIT;
-+	writel(val, ctl_addr);
-+
- 	for (i = MAX_CLKS - 1; i >= 0; i--) {
- 		if (scpd->clk[i])
- 			clk_disable_unprepare(scpd->clk[i]);
-@@ -274,8 +349,6 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	if (scpd->supply)
- 		regulator_disable(scpd->supply);
- 
--	dev_err(scp->dev, "Failed to power on domain %s\n", genpd->name);
--
- 	return ret;
- }
- 
-@@ -289,14 +362,35 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	int ret, tmp;
- 	int i;
- 
-+	if (!IS_ERR(scp->ext_data)) {
-+		struct scpsys_ext_attr *attr;
-+
-+		attr = scp->ext_data->get_attr(scpd->data->name);
-+		if (!IS_ERR(attr) && attr->cg_ops) {
-+			ret = attr->cg_ops->enable(attr);
-+			if (ret)
-+				goto out;
-+		}
-+	}
-+
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask,
--				scp->bus_prot_reg_update);
-+				scpd->data->bus_prot_mask);
- 		if (ret)
- 			goto out;
- 	}
- 
-+	if (!IS_ERR(scp->ext_data)) {
-+		struct scpsys_ext_attr *attr;
-+
-+		attr = scp->ext_data->get_attr(scpd->data->name);
-+		if (!IS_ERR(attr) && attr->bus_ops) {
-+			ret = attr->bus_ops->enable(attr);
-+			if (ret)
-+				goto out;
-+		}
-+	}
-+
- 	val = readl(ctl_addr);
- 	val |= scpd->data->sram_pdn_bits;
- 	writel(val, ctl_addr);
-@@ -307,6 +401,17 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	if (ret < 0)
- 		goto out;
- 
-+	if (!IS_ERR(scp->ext_data)) {
-+		struct scpsys_ext_attr *attr;
-+
-+		attr = scp->ext_data->get_attr(scpd->data->name);
-+		if (!IS_ERR(attr) && attr->cg_ops) {
-+			ret = attr->cg_ops->disable(attr);
-+			if (ret)
-+				goto out;
-+		}
-+	}
-+
- 	val |= PWR_ISO_BIT;
- 	writel(val, ctl_addr);
- 
-@@ -337,8 +442,6 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	return 0;
- 
- out:
--	dev_err(scp->dev, "Failed to power off domain %s\n", genpd->name);
--
- 	return ret;
- }
- 
-@@ -352,8 +455,7 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
- 
- static struct scp *init_scp(struct platform_device *pdev,
- 			const struct scp_domain_data *scp_domain_data, int num,
--			const struct scp_ctrl_reg *scp_ctrl_reg,
--			bool bus_prot_reg_update)
-+			const struct scp_ctrl_reg *scp_ctrl_reg)
- {
- 	struct genpd_onecell_data *pd_data;
- 	struct resource *res;
-@@ -367,11 +469,10 @@ static struct scp *init_scp(struct platform_device *pdev,
- 
- 	scp->ctrl_reg.pwr_sta_offs = scp_ctrl_reg->pwr_sta_offs;
- 	scp->ctrl_reg.pwr_sta2nd_offs = scp_ctrl_reg->pwr_sta2nd_offs;
--
--	scp->bus_prot_reg_update = bus_prot_reg_update;
--
- 	scp->dev = &pdev->dev;
- 
-+	scp->ext_data = scpsys_ext_init(pdev);
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	scp->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(scp->base))
-@@ -1021,7 +1122,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
- 	},
--	.bus_prot_reg_update = true,
- };
- 
- static const struct scp_soc_data mt2712_data = {
-@@ -1033,7 +1133,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
- 	},
--	.bus_prot_reg_update = false,
- };
- 
- static const struct scp_soc_data mt6765_data = {
-@@ -1056,7 +1155,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.pwr_sta_offs = SPM_PWR_STATUS_MT6797,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6797
- 	},
--	.bus_prot_reg_update = true,
- };
- 
- static const struct scp_soc_data mt7622_data = {
-@@ -1066,7 +1164,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
- 	},
--	.bus_prot_reg_update = true,
- };
- 
- static const struct scp_soc_data mt7623a_data = {
-@@ -1076,7 +1173,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
- 	},
--	.bus_prot_reg_update = true,
- };
- 
- static const struct scp_soc_data mt8173_data = {
-@@ -1088,7 +1184,6 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.pwr_sta_offs = SPM_PWR_STATUS,
- 		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND
- 	},
--	.bus_prot_reg_update = true,
- };
- 
- /*
-@@ -1132,8 +1227,8 @@ static int scpsys_probe(struct platform_device *pdev)
- 
- 	soc = of_device_get_match_data(&pdev->dev);
- 
--	scp = init_scp(pdev, soc->domains, soc->num_domains, &soc->regs,
--			soc->bus_prot_reg_update);
-+	scp = init_scp(pdev, soc->domains, soc->num_domains,
-+		       &soc->regs);
- 	if (IS_ERR(scp))
- 		return PTR_ERR(scp);
- 
-diff --git a/include/linux/soc/mediatek/infracfg.h b/include/linux/soc/mediatek/infracfg.h
-index fd25f01..bfad082 100644
---- a/include/linux/soc/mediatek/infracfg.h
-+++ b/include/linux/soc/mediatek/infracfg.h
-@@ -32,8 +32,9 @@
- #define MT7622_TOP_AXI_PROT_EN_WB		(BIT(2) | BIT(6) | \
- 						 BIT(7) | BIT(8))
- 
--int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask,
--		bool reg_update);
--int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask,
--		bool reg_update);
-+int mtk_infracfg_set_bus_protection(struct regmap *infracfg, u32 mask);
-+int mtk_infracfg_clear_bus_protection(struct regmap *infracfg, u32 mask);
-+int mtk_infracfg_enable_bus_protection(struct regmap *infracfg, u32 mask);
-+int mtk_infracfg_disable_bus_protection(struct regmap *infracfg, u32 mask);
-+
- #endif /* __SOC_MEDIATEK_INFRACFG_H */
-diff --git a/include/linux/soc/mediatek/scpsys-ext.h b/include/linux/soc/mediatek/scpsys-ext.h
-new file mode 100644
-index 0000000..99b5ff1
---- /dev/null
-+++ b/include/linux/soc/mediatek/scpsys-ext.h
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __SOC_MEDIATEK_SCPSYS_EXT_H
-+#define __SOC_MEDIATEK_SCPSYS_EXT_H
-+
-+#include <linux/platform_device.h>
-+
-+#define CMD_ENABLE	1
-+#define CMD_DISABLE	0
-+
-+#define MAX_STEP_NUM	4
-+
-+/**
-+ * struct bus_mask - set mask and corresponding operation for bus protect
-+ * @regs: The register set of bus register control, including set/clr/sta.
-+ * @mask: The mask set for bus protect.
-+ * @flag: The flag to idetify which operation we take for bus protect.
-+ */
-+struct bus_mask {
-+	struct ext_reg_ctrl *regs;
-+	u32 mask;
-+	const struct bus_mask_ops *ops;
++static struct platform_driver clk_mt6765_drv = {
++	.probe = clk_mt6765_probe,
++	.driver = {
++		.name = "clk-mt6765",
++		.owner = THIS_MODULE,
++		.of_match_table = of_match_clk_mt6765,
++	},
 +};
 +
-+/**
-+ * struct scpsys_ext_attr - extended attribute for bus protect and further
-+ *                                           operand.
-+ *
-+ * @scpd_n: The name present the scpsys domain where the clks belongs to.
-+ * @mask: The mask set for bus protect.
-+ * @bus_ops: The operation we take for bus protect.
-+ * @cg_ops: The operation we take for cg on/off.
-+ * @attr_list: The list node linked to ext_attr_map_list.
-+ */
-+struct scpsys_ext_attr {
-+	const char *scpd_n;
-+	struct bus_mask mask[MAX_STEP_NUM];
-+	const char *parent_n;
-+	const struct bus_ext_ops *bus_ops;
-+	const struct bus_ext_ops *cg_ops;
++static int __init clk_mt6765_init(void)
++{
++	return platform_driver_register(&clk_mt6765_drv);
++}
 +
-+	struct list_head attr_list;
-+};
-+
-+struct scpsys_ext_data {
-+	struct scpsys_ext_attr *attr;
-+	u8 num_attr;
-+	struct scpsys_ext_attr * (*get_attr)(const char *scpd_n);
-+};
-+
-+struct bus_ext_ops {
-+	int	(*enable)(struct scpsys_ext_attr *attr);
-+	int	(*disable)(struct scpsys_ext_attr *attr);
-+};
-+
-+int mtk_generic_set_cmd(struct regmap *regmap, u32 set_ofs,
-+			u32 sta_ofs, u32 mask);
-+int mtk_generic_clr_cmd(struct regmap *regmap, u32 clr_ofs,
-+			u32 sta_ofs, u32 mask);
-+int mtk_generic_enable_cmd(struct regmap *regmap, u32 upd_ofs,
-+			   u32 sta_ofs, u32 mask);
-+int mtk_generic_disable_cmd(struct regmap *regmap, u32 upd_ofs,
-+			    u32 sta_ofs, u32 mask);
-+
-+struct scpsys_ext_data *scpsys_ext_init(struct platform_device *pdev);
-+
-+#endif /* __SOC_MEDIATEK_SCPSYS_EXT_H */
++arch_initcall(clk_mt6765_init);
 -- 
 1.7.9.5
 
