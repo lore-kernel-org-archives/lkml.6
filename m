@@ -2,205 +2,138 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B9EECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1910FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52481208C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:49:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52481208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C62C9208C3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:51:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C62C9208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731250AbeGQCTu (ORCPT
+        id S1731086AbeGQCVc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 22:19:50 -0400
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:53577 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730267AbeGQCTu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 22:19:50 -0400
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.51 with ESMTP; 17 Jul 2018 10:49:41 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.151 with ESMTP; 17 Jul 2018 10:49:41 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Tue, 17 Jul 2018 10:49:40 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Lukasz Odzioba <lukasz.odzioba@intel.com>,
-        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com
-Subject: Re: [PATCH 1/4] perf tools: Fix struct comm_str removal crash
-Message-ID: <20180717014940.GA9295@sejong>
-References: <20180712142023.16915-1-jolsa@kernel.org>
- <20180712142023.16915-2-jolsa@kernel.org>
- <20180715130827.GA5071@danjae.aot.lge.com>
- <20180716102934.GA14153@krava>
+        Mon, 16 Jul 2018 22:21:32 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59408 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730056AbeGQCVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 22:21:32 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0B19481A4EB9;
+        Tue, 17 Jul 2018 01:51:25 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 66DB52026D65;
+        Tue, 17 Jul 2018 01:51:23 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 09:51:20 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        yasu.isimatu@gmail.com, keescook@chromium.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        vbabka@suse.cz, mgorman@techsingularity.net
+Subject: Re: Bug report about KASLR and ZONE_MOVABLE
+Message-ID: <20180717015120.GC1724@MiWiFi-R3L-srv>
+References: <20180711104158.GE2070@MiWiFi-R3L-srv>
+ <20180711104944.GG1969@MiWiFi-R3L-srv>
+ <20180711124008.GF2070@MiWiFi-R3L-srv>
+ <72721138-ba6a-32c9-3489-f2060f40a4c9@cn.fujitsu.com>
+ <20180712060115.GD6742@localhost.localdomain>
+ <20180712123228.GK32648@dhcp22.suse.cz>
+ <20180712235240.GH2070@MiWiFi-R3L-srv>
+ <20180716113845.GM17280@dhcp22.suse.cz>
+ <20180716130202.GB1724@MiWiFi-R3L-srv>
+ <20180716152410.GU17280@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180716102934.GA14153@krava>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180716152410.GU17280@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 17 Jul 2018 01:51:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 17 Jul 2018 01:51:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri,
-
-On Mon, Jul 16, 2018 at 12:29:34PM +0200, Jiri Olsa wrote:
-> On Sun, Jul 15, 2018 at 10:08:27PM +0900, Namhyung Kim wrote:
-> 
-> SNIP
-> 
-> > > Because thread 2 first decrements the refcnt and only after then it
-> > > removes the struct comm_str from the list, the thread 1 can find this
-> > > object on the list with refcnt equls to 0 and hit the assert.
+On 07/16/18 at 05:24pm, Michal Hocko wrote:
+> On Mon 16-07-18 21:02:02, Baoquan He wrote:
+> > On 07/16/18 at 01:38pm, Michal Hocko wrote:
+> > > On Fri 13-07-18 07:52:40, Baoquan He wrote:
+> > > > Hi Michal,
+> > > > 
+> > > > On 07/12/18 at 02:32pm, Michal Hocko wrote:
+> > > [...]
+> > > > > I am not able to find the beginning of the email thread right now. Could
+> > > > > you summarize what is the actual problem please?
+> > > > 
+> > > > The bug is found on x86 now. 
+> > > > 
+> > > > When added "kernelcore=" or "movablecore=" into kernel command line,
+> > > > kernel memory is spread evenly among nodes. However, this is right when
+> > > > KASLR is not enabled, then kernel will be at 16M of place in x86 arch.
+> > > > If KASLR enabled, it could be put any place from 16M to 64T randomly.
+> > > >  
+> > > > Consider a scenario, we have 10 nodes, and each node has 20G memory, and
+> > > > we specify "kernelcore=50%", means each node will take 10G for
+> > > > kernelcore, 10G for movable area. But this doesn't take kernel position
+> > > > into consideration. E.g if kernel is put at 15G of 2nd node, namely
+> > > > node1. Then we think on node1 there's 10G for kernelcore, 10G for
+> > > > movable, in fact there's only 5G available for movable, just after
+> > > > kernel.
 > > > 
-> > > This patch fixes the thread 2 path, by removing the struct comm_str
-> > > FIRST from the list and only AFTER calling comm_str__put on it. This
-> > > way the thread 1 finds only valid objects on the list.
+> > > OK, I guess I see that part. But who is going to use movablecore along
+> > > with KASLR enabled? I mean do we really have to support those two
+> > > obscure command line parameters for KASLR?
 > > 
-> > I'm not sure we can unconditionally remove the comm_str from the tree.
-> > It should be removed only if refcount is going to zero IMHO.
-> > Otherwise it could end up having multiple comm_str entry for a same
-> > name.
+> > Not very sure whether we have to support both of those to work with
+> > KASLR. Maybe it's time to make clear of it now.
 > 
-> right, but it wouldn't crash ;-)
+> Yes, I would really like to deprecate this. It is an ugly piece of code
+> and it's far from easily maintainable as well.
 > 
-> how about attached change, that actualy deals with the refcnt
-> race I'm running the tests now, seems ok so far
+> > For 'kernelcore=mirror', we have solved the conflict to make it work well
+> > with KASLR. For 'movable_node' conflict with KASLR, Chao is posting
+> > patches to fix it. As for 'kernelcore=' and 'movablecore=', 
+> > 
+> > 1) solve the conflict between them with KASLR in
+> >    find_zone_movable_pfns_for_nodes();
+> > 2) disable KASLR when 'kernelcore=' | 'movablecore=' is set;
+> > 3) disable 'kernelcore=' | 'movablecore=' when KASLR is enabled;
+> > 4) add note in doc to notice people to not add them at the same time;
+> 
+> I would simply warn that those kernel parameters are not supported
+> anymore. If somebody shows up with a valid usecase we can reconsider.
 
-I think we can keep if the refcount is back to non-zero.  What about this?
-(not tested..)
+OK, got it. The use case I can think of is that people want to check 
+hotplug on system w/o hotplug ACPI info.
 
-
-static struct comm_str *comm_str__get(cs)
-{
-    if (cs)
-        refcount_inc_no_warn(&cs->refcnt);  // should be added
-    return cs;
-}
-
-static void comm_str__put(cs)
-{
-    if (cs && refcount_dec_and_test(&cs->refcnt)) {
-        down_write(&comm_str_lock);
-        /* might race with comm_str__findnew() */
-        if (!refcount_read(&cs->refcnt)) {
-            rb_erase(&cs->rb_node, &comm_str_root);
-            zfree(&cs->str);
-            free(cs);
-        }
-        up_write(&comm_str_lock);
-    }
-}
-
-
-Thanks,
-Namhyung
-
+I am fine with warning people they are not supported. Should I post a
+patch to address this, or you will do it? Both is fine to me.
 
 > 
+> > 2) and 3) may need be fixed in arch/x86 code. As long as come to an
+> > agreement, any one is fine to me.
+> > > 
+> > > In fact I would be much more concerned about memory hotplug and
+> > > pre-defined movable nodes. Does the current KASLR code work in that
+> > > case?
+> > 
+> > As said above, kernelcore=mirror works well with KASLR now. Making
+> > 'movable_node' work with KASLR is in progress.
 > 
-> ---
-> diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
-> index 7798a2cc8a86..592b03548021 100644
-> --- a/tools/perf/util/comm.c
-> +++ b/tools/perf/util/comm.c
-> @@ -18,22 +18,27 @@ struct comm_str {
->  static struct rb_root comm_str_root;
->  static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,};
->  
-> -static struct comm_str *comm_str__get(struct comm_str *cs)
-> +static bool comm_str__get(struct comm_str *cs)
->  {
-> -	if (cs)
-> -		refcount_inc(&cs->refcnt);
-> -	return cs;
-> +	return cs ? refcount_inc_not_zero(&cs->refcnt) : false;
->  }
->  
-> -static void comm_str__put(struct comm_str *cs)
-> +static int comm_str__put(struct comm_str *cs, bool lock)
->  {
-> -	if (cs && refcount_dec_and_test(&cs->refcnt)) {
-> +	if (!cs || !refcount_dec_and_test(&cs->refcnt))
-> +		return 0;
-> +
-> +	if (lock)
->  		down_write(&comm_str_lock);
-> -		rb_erase(&cs->rb_node, &comm_str_root);
-> +
-> +	rb_erase(&cs->rb_node, &comm_str_root);
-> +
-> +	if (lock)
->  		up_write(&comm_str_lock);
-> -		zfree(&cs->str);
-> -		free(cs);
-> -	}
-> +
-> +	zfree(&cs->str);
-> +	free(cs);
-> +	return 1;
->  }
->  
->  static struct comm_str *comm_str__alloc(const char *str)
-> @@ -67,9 +72,22 @@ struct comm_str *__comm_str__findnew(const char *str, struct rb_root *root)
->  		parent = *p;
->  		iter = rb_entry(parent, struct comm_str, rb_node);
->  
-> -		cmp = strcmp(str, iter->str);
-> -		if (!cmp)
-> -			return comm_str__get(iter);
-> +		/*
-> +		 * If we race with comm_str__put, iter->refcnt == 0
-> +		 * and it will be removed within comm_str__put
-> +		 * thread shortly, ignore it in this search.
-> +		 */
-> +		if (comm_str__get(iter)) {
-> +			cmp = strcmp(str, iter->str);
-> +			if (!cmp)
-> +				return iter;
-> +			/*
-> +			 * If we actualy had to remove the item, restart
-> +			 * the search to have the clean tree search.
-> +			 */
-> +			if (comm_str__put(iter, false))
-> +				return __comm_str__findnew(str, root);
-> +		}
->  
->  		if (cmp < 0)
->  			p = &(*p)->rb_left;
-> @@ -125,7 +143,7 @@ int comm__override(struct comm *comm, const char *str, u64 timestamp, bool exec)
->  	if (!new)
->  		return -ENOMEM;
->  
-> -	comm_str__put(old);
-> +	comm_str__put(old, true);
->  	comm->comm_str = new;
->  	comm->start = timestamp;
->  	if (exec)
-> @@ -136,7 +154,7 @@ int comm__override(struct comm *comm, const char *str, u64 timestamp, bool exec)
->  
->  void comm__free(struct comm *comm)
->  {
-> -	comm_str__put(comm->comm_str);
-> +	comm_str__put(comm->comm_str, true);
->  	free(comm);
->  }
->  
+> OK, thanks for the info.
+
+You are welcome.
+
+Thanks
+Baoquan
