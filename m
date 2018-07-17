@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71873ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B365ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C49D20C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F91620C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:08:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5h++Urt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C49D20C0E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uih0vf+j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F91620C0E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731843AbeGQMkQ (ORCPT
+        id S1731618AbeGQMjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:40:16 -0400
+        Tue, 17 Jul 2018 08:39:09 -0400
 Received: from mail.kernel.org ([198.145.29.99]:60678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731643AbeGQMjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:39:10 -0400
+        id S1731235AbeGQMjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:39:08 -0400
 Received: from kenny.it.cumulusnetworks.com. (fw.cumulusnetworks.com [216.129.126.126])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 126322146F;
-        Tue, 17 Jul 2018 12:06:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65E402145D;
+        Tue, 17 Jul 2018 12:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531829210;
-        bh=21c3T+U2OAnSmaX/4GUzGtZWUNcEdzgplop3uCRoUM4=;
+        s=default; t=1531829208;
+        bh=queapUVKgMCCkh9UYlHU3KRbDu+xP402bFdT2YDY4Pg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U5h++Urt8BjDagT3XZQzwodHT+cCIynDNca/2KReEcYPvwjFXTg6ud0d3/etAR17V
-         xeh1CI8yH4iirGkLTkZhBkG9HIMym7Fgsxpb/3+T/bjMrSrHjOrQyFe/4AOkOK7Ygy
-         n6xtTkuPVAp0diwtJV8oOtF0BrNLInifmVDXwTk0=
+        b=uih0vf+j2bZ0PgJPBYtwar+1ECf0abRrHUQjGhgwrTvnjPzKZAVImQgokdN84CzLO
+         ww6VhvFDCJSrc8ayDilpD2TU0cr5CQKmNzy/TFyG4RJ6g9fNuByf8oS/J3k3rGNFcl
+         obCNqrZALhM38b+AhGqaVzcmrxqgk01HWpCTCiCU=
 From:   dsahern@kernel.org
 To:     netdev@vger.kernel.org
 Cc:     nikita.leshchenko@oracle.com, roopa@cumulusnetworks.com,
@@ -43,9 +43,9 @@ Cc:     nikita.leshchenko@oracle.com, roopa@cumulusnetworks.com,
         saeedm@mellanox.com, alex.aring@gmail.com,
         linux-wpan@vger.kernel.org, netfilter-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org, David Ahern <dsahern@gmail.com>
-Subject: [PATCH RFC/RFT net-next 13/17] net/neighbor: Convert internal functions away from neigh_tables
-Date:   Tue, 17 Jul 2018 05:06:47 -0700
-Message-Id: <20180717120651.15748-14-dsahern@kernel.org>
+Subject: [PATCH RFC/RFT net-next 09/17] net: Remove arp_tbl and nd_tbl from headers
+Date:   Tue, 17 Jul 2018 05:06:43 -0700
+Message-Id: <20180717120651.15748-10-dsahern@kernel.org>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180717120651.15748-1-dsahern@kernel.org>
 References: <20180717120651.15748-1-dsahern@kernel.org>
@@ -56,83 +56,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: David Ahern <dsahern@gmail.com>
 
-Convert uses of neigh_tables array to neigh_find_table. Maintain existing
-family order using a new table_families array. A later patch removes the
-neigh_tables array in favor of per-namespace accesses.
+No more users at this point.
 
 Signed-off-by: David Ahern <dsahern@gmail.com>
 ---
- net/core/neighbour.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ include/net/arp.h   | 3 ---
+ include/net/ndisc.h | 2 --
+ 2 files changed, 5 deletions(-)
 
-diff --git a/net/core/neighbour.c b/net/core/neighbour.c
-index b60087d7c0bc..afb2ee985dd1 100644
---- a/net/core/neighbour.c
-+++ b/net/core/neighbour.c
-@@ -62,6 +62,19 @@ static int pneigh_ifdown_and_unlock(struct neigh_table *tbl,
- static const struct seq_operations neigh_stat_seq_ops;
- #endif
+diff --git a/include/net/arp.h b/include/net/arp.h
+index 7b503bedd9fb..fae3561db10b 100644
+--- a/include/net/arp.h
++++ b/include/net/arp.h
+@@ -7,9 +7,6 @@
+ #include <linux/hash.h>
+ #include <net/neighbour.h>
  
-+/* used for table dumps to maintain the legacy order of
-+ * ipv4, ipv6, decnet
-+ */
-+static int table_families[] = {
-+	AF_INET,
-+#if IS_ENABLED(CONFIG_IPV6)
-+	AF_INET6,
-+#endif
-+#if IS_ENABLED(CONFIG_DECNET)
-+	AF_DECnet,
-+#endif
-+};
-+
- /*
-    Neighbour hash table buckets are protected with rwlock tbl->lock.
- 
-@@ -2046,8 +2059,8 @@ static int neightbl_set(struct sk_buff *skb, struct nlmsghdr *nlh,
- 
- 	ndtmsg = nlmsg_data(nlh);
- 
--	for (tidx = 0; tidx < NEIGH_NR_TABLES; tidx++) {
--		tbl = neigh_tables[tidx];
-+	for (tidx = 0; tidx < ARRAY_SIZE(table_families); tidx++) {
-+		tbl = neigh_find_table(net, table_families[tidx]);
- 		if (!tbl)
- 			continue;
- 		if (ndtmsg->ndtm_family && tbl->family != ndtmsg->ndtm_family)
-@@ -2195,10 +2208,10 @@ static int neightbl_dump_info(struct sk_buff *skb, struct netlink_callback *cb)
- 
- 	family = ((struct rtgenmsg *) nlmsg_data(cb->nlh))->rtgen_family;
- 
--	for (tidx = 0; tidx < NEIGH_NR_TABLES; tidx++) {
-+	for (tidx = 0; tidx < ARRAY_SIZE(table_families); tidx++) {
- 		struct neigh_parms *p;
- 
--		tbl = neigh_tables[tidx];
-+		tbl = neigh_find_table(net, table_families[tidx]);
- 		if (!tbl)
- 			continue;
- 
-@@ -2453,6 +2466,7 @@ static int pneigh_dump_table(struct neigh_table *tbl, struct sk_buff *skb,
- 
- static int neigh_dump_info(struct sk_buff *skb, struct netlink_callback *cb)
- {
-+	struct net *net = sock_net(skb->sk);
- 	struct neigh_table *tbl;
- 	int t, family, s_t;
- 	int proxy = 0;
-@@ -2469,9 +2483,8 @@ static int neigh_dump_info(struct sk_buff *skb, struct netlink_callback *cb)
- 
- 	s_t = cb->args[0];
- 
--	for (t = 0; t < NEIGH_NR_TABLES; t++) {
--		tbl = neigh_tables[t];
 -
-+	for (t = 0; t < ARRAY_SIZE(table_families); t++) {
-+		tbl = neigh_find_table(net, table_families[t]);
- 		if (!tbl)
- 			continue;
- 		if (t < s_t || (family && tbl->family != family))
+-extern struct neigh_table arp_tbl;
+-
+ static inline struct neigh_table *ipv4_neigh_table(struct net *net)
+ {
+ 	return neigh_find_table(net, AF_INET);
+diff --git a/include/net/ndisc.h b/include/net/ndisc.h
+index 078951ac54fd..6fc58a61acdd 100644
+--- a/include/net/ndisc.h
++++ b/include/net/ndisc.h
+@@ -72,8 +72,6 @@ struct net_proto_family;
+ struct sk_buff;
+ struct prefix_info;
+ 
+-extern struct neigh_table nd_tbl;
+-
+ struct nd_msg {
+         struct icmp6hdr	icmph;
+         struct in6_addr	target;
 -- 
 2.11.0
 
