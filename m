@@ -2,193 +2,91 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BACDECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68659ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEA14206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:58:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieWHpll9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEA14206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 166A320C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:00:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166A320C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbeGQJ3x (ORCPT
+        id S1729648AbeGQJbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:29:53 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41065 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729746AbeGQJ3w (ORCPT
+        Tue, 17 Jul 2018 05:31:38 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:35840 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728089AbeGQJbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:29:52 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k12-v6so619506oiw.8;
-        Tue, 17 Jul 2018 01:58:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=lTZa91DiRanMHz+9KZvOyW8aIwKsrXndtM8vdWzeR3g=;
-        b=ieWHpll9gDqpS1cAjIaDDkzSsqzrQfjjUOo8YwOSlqk5EB4umHWEIRvk1dG2vG9KKv
-         4WhUSz1NzzOoDh7nu4J0yLZTfzLRBEOeFTfVrAPEW5WWNLKO91AoopqlWIssgzV5ycYv
-         v5HbFEaQMMfmnUDUnMMj10d0yZLbwTAa2gm+q/9DIzNZD4kUdLzYCu8BU5gstIltiwOb
-         MJ2Mr226NoaCetsGZcEt7hDp6U+4Vq6vgMiOFVlVpK9WGCfaoycnfouBXEI0MadzrOPy
-         JrhzL8Nj2iNHX3GnkD6RkMVFKdLzPjh5tvFQF76kV4d++01VcRKVqIV/pb2OQRuxCRSY
-         IfLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=lTZa91DiRanMHz+9KZvOyW8aIwKsrXndtM8vdWzeR3g=;
-        b=s0uyS+qMoKybeUbPEHA9UUEL7w5Y2WcvbH9kdHl/IV7J1mjlk9Xl4E26Qp0woBRui8
-         f9vXHuqBSTozyOXNLziG/Ve10n3U1CsnajGJp/6fpB6pchiF3STk6YZBcX1wxDL7i285
-         J02C6bT9L+qnTSTfbLGqF5uVC4KyHxNw8n4/vmXzrBzCyCXWRgSmBmYjFWagpl2NpGhT
-         rPNnrZOr0Ee4NoUlxEvSghFnU123MplVNXdrJJ6JokRdL4047MijFx4WX0yjY1gSdG1j
-         YSNO2bS5zIgcRx7uvQe7SiozYazqlCfchqjGrzhHF/58Di2dnpqR/SqpOuDXTaJKsc6O
-         ylmQ==
-X-Gm-Message-State: AOUpUlFXLAwrQDlrEpI6zpoqoJ8I+/17qATcfaF8GCc/0nva3XOuC9JD
-        1qNh3Al1nTAJoPXV/vVKq74qqYZXX3GP7CrLGGU=
-X-Google-Smtp-Source: AAOMgpdGFgc3BzUqNwUgDB5ddkOTdu2g6vdLkUjPH2UBCNNm7pDgKZ+8FVXwgD0h83HOCgMMXz7/Ying07IiQCBUexU=
-X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr685721oig.282.1531817897799;
- Tue, 17 Jul 2018 01:58:17 -0700 (PDT)
+        Tue, 17 Jul 2018 05:31:38 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42323762"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 17 Jul 2018 17:00:02 +0800
+Received: from G08CNEXCHPEKD03.g08.fujitsu.local (unknown [10.167.33.85])
+        by cn.fujitsu.com (Postfix) with ESMTP id 985EE4B5CF67;
+        Tue, 17 Jul 2018 17:00:02 +0800 (CST)
+Received: from localhost.localdomain (10.167.226.106) by
+ G08CNEXCHPEKD03.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Tue, 17 Jul 2018 17:00:02 +0800
+Subject: Re: [PATCH v13 13/18] x86/tsc: calibrate tsc only once
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+CC:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        <linux@armlinux.org.uk>, <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, <sboyd@codeaurora.org>,
+        <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        <mingo@redhat.com>, <tglx@linutronix.de>, <hpa@zytor.com>,
+        <peterz@infradead.org>, <prarit@redhat.com>, <feng.tang@intel.com>,
+        Petr Mladek <pmladek@suse.com>, <gnomes@lxorguk.ukuu.org.uk>,
+        <linux-s390@vger.kernel.org>, <boris.ostrovsky@oracle.com>,
+        <jgross@suse.com>
+References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
+ <20180712000419.5165-14-pasha.tatashin@oracle.com>
+ <928b8490-89d2-46a3-8596-16751bcd12db@cn.fujitsu.com>
+ <CAGM2reb-MwiT8qoiSkXCjAAM46JOYL9BP+U3q7PMTcxp9EiK7w@mail.gmail.com>
+ <01812492-b88b-4436-570b-ef776eaafc6a@cn.fujitsu.com>
+ <CAGM2reaU1GouLvUfW_dbs7gFiYCMX=X+Vag2RnuofmmgS4_TdA@mail.gmail.com>
+From:   Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <4f6b295d-c88b-2204-0557-ae85ed443a31@cn.fujitsu.com>
+Date:   Tue, 17 Jul 2018 16:59:58 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 01:58:17
- -0700 (PDT)
-In-Reply-To: <20180717085039.kqxwbkgruhj5qxtx@suselix>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix> <CAJZ5v0ihkNKPrtzKynt8jgQi1JjwCm+SdoUnu4XqoPSkOroHvA@mail.gmail.com>
- <CAJZ5v0gG5XNmpR_0U+6EOFHPeVz+EhunLoQ0-sXDCBg8QL3mQw@mail.gmail.com> <20180717085039.kqxwbkgruhj5qxtx@suselix>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 17 Jul 2018 10:58:17 +0200
-X-Google-Sender-Auth: v12RXoODgLqMylRGNqC1wMoGI7E
-Message-ID: <CAJZ5v0gbC4ErkSpsQkp-e=R38m_wVy6WY9ukrTzAJbP-3wz-ug@mail.gmail.com>
-Subject: Re: Commit 554c8aa8ecad causing severe performance degression with pcc-cpufreq
-To:     Andreas Herrmann <aherrmann@suse.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAGM2reaU1GouLvUfW_dbs7gFiYCMX=X+Vag2RnuofmmgS4_TdA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 985EE4B5CF67.AB088
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 10:50 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
-> On Tue, Jul 17, 2018 at 10:03:41AM +0200, Rafael J. Wysocki wrote:
->> On Tue, Jul 17, 2018 at 9:33 AM, Rafael J. Wysocki <rafael@kernel.org> wrote:
->> > Hi,
->> >
->> > Thanks for your report!
->> >
->> > On Tue, Jul 17, 2018 at 8:50 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
->> >> Hello,
->> >>
->> >> I've recently noticed that commit 554c8aa8ecad ("sched: idle: Select
->> >> idle state before stopping the tick") causes severe performance drop
->> >> for systems using pcc-cpufreq driver. Depending on the number of CPUs
->> >> the system might be almost unusable. The OS jitter for 4.17.y and
->> >> 4.18.-rcx kernels is off the charts, you can even spot it with top
->> >> command (issued when the system is supposedly idle), e.g.
->> >>
->> >>  top - 14:44:24 up 2 min,  1 user,  load average: 90.11, 38.20, 14.38
->> >>  Tasks: 1199 total, 109 running, 541 sleeping,   0 stopped,   0 zombie
->> >>  %Cpu(s):  1.2 us, 58.7 sy,  0.0 ni, 39.3 id,  0.6 wa,  0.0 hi,  0.3 si,  0.0 st
->> >>  KiB Mem:  13137064+total,  1192168 used, 13017848+free,     2340 buffers
->> >>  KiB Swap:  2104316 total,        0 used,  2104316 free.   522296 cached Mem
->> >>
->> >>    PID USER      PR  NI    VIRT    RES    SHR S    %CPU  %MEM     TIME+ COMMAND
->> >>   3373 root      20   0  982024  49916  36120 R  96.691 0.038   0:19.54 kubelet
->> >>     67 root      20   0       0      0      0 R  78.676 0.000   0:49.36 kworker/9:0
->> >>     25 root      20   0       0      0      0 R  78.125 0.000   0:49.67 kworker/2:0
->> >>    182 root      20   0       0      0      0 R  75.735 0.000   1:18.17 kworker/28:0
->> >>     43 root      20   0       0      0      0 R  75.000 0.000   0:11.56 kworker/5:0
->> >>    103 root      20   0       0      0      0 R  74.449 0.000   0:46.83 kworker/15:0
->> >>    334 root      20   0       0      0      0 R  72.978 0.000   1:06.88 kworker/53:0
->> >>    789 root      20   0       0      0      0 R  69.853 0.000   1:29.50 kworker/38:1
->> >>    418 root      20   0       0      0      0 R  69.301 0.000   0:41.33 kworker/67:0
->> >>    779 root      20   0       0      0      0 R  68.934 0.000   1:33.60 kworker/27:1
->> >>    773 root      20   0       0      0      0 R  68.566 0.000   1:37.91 kworker/22:1
->> >>    762 root      20   0       0      0      0 R  68.015 0.000   1:41.01 kworker/11:1
->> >>    769 root      20   0       0      0      0 R  67.647 0.000   1:37.65 kworker/18:1
->> >>    805 root      20   0       0      0      0 R  67.096 0.000   1:30.96 kworker/54:1
->> >>    840 root      20   0       0      0      0 R  66.912 0.000   1:23.82 kworker/89:1
->> >>    812 root      20   0       0      0      0 R  66.728 0.000   1:31.89 kworker/59:1
->> >>    847 root      20   0       0      0      0 R  66.360 0.000   1:28.40 kworker/96:1
->> >>    763 root      20   0       0      0      0 R  66.176 0.000   1:42.57 kworker/12:1
->> >>    772 root      20   0       0      0      0 R  66.176 0.000   1:12.58 kworker/21:1
->> >>    821 root      20   0       0      0      0 R  66.176 0.000   1:29.62 kworker/69:1
->> >>    923 root      20   0       0      0      0 R  65.809 0.000   1:44.32 kworker/3:18
->> >>   1284 root      20   0       0      0      0 R  65.809 0.000   1:23.50 kworker/101:2
->> >>     61 root      20   0       0      0      0 R  65.625 0.000   1:29.37 kworker/8:0
->> >>   3531 root      20   0   24384   3768   2356 R  65.625 0.003   0:08.91 top
->> >>    771 root      20   0       0      0      0 R  65.074 0.000   1:37.90 kworker/20:1
->> >>    767 root      20   0       0      0      0 R  64.706 0.000   1:38.01 kworker/16:1
->> >>    764 root      20   0       0      0      0 R  64.522 0.000   1:40.28 kworker/13:1
->> >>    765 root      20   0       0      0      0 R  64.154 0.000   1:40.13 kworker/14:1
->> >>
->> >> When I apply below patch (trying to revert essential parts of commit
->> >> 554c8aa8ecad) behaviour seems back to normal.
->> >
->> > Well, that basically defeats the purpose of the change in commit
->> > 554c8aa8ecad, so it's not what I'd like to do to fix this problem.
->> >
->> > Also it would be good to understand what actually happens.
->> >
->> >> I know that pcc-cpufreq driver is not "state-of-the-art" when it comes
->> >> to cpufreq drivers and you better not use it.
->> >
->> > That's exactly right.
->> >
->> >> But I wonder whether commit 554c8aa8ecad ("sched: idle: Select idle state before
->> >> stopping the tick") introduced bad behaviour for other cases as well.
->> >
->> > It has been tested quite extensively in that respect, although
->> > admittedly not with the pcc-cpufreq driver.
->> >
->> > Nothing bad related to it has been has been reported so far, FWIW.
->> >
->> >> I'll send some performance results to illustrate the issue asap. I've
->> >> also tried to modify pcc-cpufreq to reduce the amount of frequency
->> >> changes triggered by this driver but this does not help for kernels
->> >> where commit 554c8aa8ecad is applied.
->> >
->> > Can you replace pcc-cpufreq with a different cpufreq driver on the
->> > affected systems?  If so, do performance numbers look bad after that
->> > too?
->>
->> Also, what cpufreq governor do you use with pcc-cpufreq?
->
-> Ondemand governor. Which triggers a lot of PCC related platform calls.
-> And as Peter noticed already the driver has a severe bottleneck (lock
-> protecting shared memory used for all CPUs to pass data to/from
-> platform for PCC calls).
->
->> Does changing it to something like "performance" improve things?
->
-> With performance governor above mentioned bottleneck is no issue.
 
-OK
 
-> On balance before this commit users could use pcc-cpufreq but had
-> already suboptimal performance (compared to say intel_pstate driver
-> which can be used changing BIOS options). Starting with this commit
-> systems using pcc-cpufreq are unusable with high number of CPUs (top
-> output above is for system with 120 CPUs).
+At 07/16/2018 09:35 PM, Pavel Tatashin wrote:
+[...]
+> v13 has xen patches, so xen timestamps work early as well now.
+> 
 
-I see. :-)
+Oops, yes, my mistake. I will test the patchset with Thomas's kvm patch
+for you.
 
-> So should the driver be removed (sooner or later), or this behaviour
-> be documented somewhere, or just leave it as is.
+Thanks,
+	dou
 
-At least it should be documented in the driver that it is not scalable
-and not for use on many-CPU systems (with "many" meaning anything
-greater than 4 probably).
+> Thank you,
+> Pavel
+> 
+> 
+> 
 
-Or we could just make the driver not load if the number of CPUs in the
-system is greater than 4 or similar.
+
