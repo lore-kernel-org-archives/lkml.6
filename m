@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166FBECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7395ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C446420BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:35:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C446420BED
+	by mail.kernel.org (Postfix) with ESMTP id 5C5C420BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C5C420BED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbeGQKHO (ORCPT
+        id S1730055AbeGQKHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:07:14 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34739 "EHLO
+        Tue, 17 Jul 2018 06:07:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44863 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729046AbeGQKHN (ORCPT
+        with ESMTP id S1728835AbeGQKHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:07:13 -0400
+        Tue, 17 Jul 2018 06:07:45 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9Z8er1463425
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9ZfHq1463459
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:35:08 -0700
+        Tue, 17 Jul 2018 02:35:41 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9Z8h11463422;
-        Tue, 17 Jul 2018 02:35:08 -0700
-Date:   Tue, 17 Jul 2018 02:35:08 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9Zf3x1463456;
+        Tue, 17 Jul 2018 02:35:41 -0700
+Date:   Tue, 17 Jul 2018 02:35:41 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Rik van Riel <tipbot@zytor.com>
-Message-ID: <tip-ac0315896970d8589291e9d8a1569fc65967b7f1@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        songliubraving@fb.com, dave.hansen@intel.com, tglx@linutronix.de,
-        riel@surriel.com, hpa@zytor.com, torvalds@linux-foundation.org,
-        mingo@kernel.org
-Reply-To: peterz@infradead.org, songliubraving@fb.com,
-          linux-kernel@vger.kernel.org, dave.hansen@intel.com,
-          hpa@zytor.com, riel@surriel.com, tglx@linutronix.de,
-          mingo@kernel.org, torvalds@linux-foundation.org
-In-Reply-To: <20180716190337.26133-5-riel@surriel.com>
-References: <20180716190337.26133-5-riel@surriel.com>
+Message-ID: <tip-64482aafe55fc7e84d0741c356f8176ee7bde357@git.kernel.org>
+Cc:     riel@surriel.com, hpa@zytor.com, tglx@linutronix.de,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        songliubraving@fb.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, dave.hansen@intel.com
+Reply-To: dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, songliubraving@fb.com, hpa@zytor.com,
+          tglx@linutronix.de, peterz@infradead.org,
+          torvalds@linux-foundation.org, riel@surriel.com
+In-Reply-To: <20180716190337.26133-6-riel@surriel.com>
+References: <20180716190337.26133-6-riel@surriel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/tlb: Make lazy TLB mode lazier
-Git-Commit-ID: ac0315896970d8589291e9d8a1569fc65967b7f1
+Subject: [tip:x86/mm] x86/mm/tlb: Only send page table free TLB flush to
+ lazy TLB CPUs
+Git-Commit-ID: 64482aafe55fc7e84d0741c356f8176ee7bde357
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,35 +61,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ac0315896970d8589291e9d8a1569fc65967b7f1
-Gitweb:     https://git.kernel.org/tip/ac0315896970d8589291e9d8a1569fc65967b7f1
+Commit-ID:  64482aafe55fc7e84d0741c356f8176ee7bde357
+Gitweb:     https://git.kernel.org/tip/64482aafe55fc7e84d0741c356f8176ee7bde357
 Author:     Rik van Riel <riel@surriel.com>
-AuthorDate: Mon, 16 Jul 2018 15:03:34 -0400
+AuthorDate: Mon, 16 Jul 2018 15:03:35 -0400
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Tue, 17 Jul 2018 09:35:33 +0200
 
-x86/mm/tlb: Make lazy TLB mode lazier
+x86/mm/tlb: Only send page table free TLB flush to lazy TLB CPUs
 
-Lazy TLB mode can result in an idle CPU being woken up by a TLB flush,
-when all it really needs to do is reload %CR3 at the next context switch,
-assuming no page table pages got freed.
+CPUs in !is_lazy have either received TLB flush IPIs earlier on during
+the munmap (when the user memory was unmapped), or have context switched
+and reloaded during that stage of the munmap.
 
-Memory ordering is used to prevent race conditions between switch_mm_irqs_off,
-which checks whether .tlb_gen changed, and the TLB invalidation code, which
-increments .tlb_gen whenever page table entries get invalidated.
-
-The atomic increment in inc_mm_tlb_gen is its own barrier; the context
-switch code adds an explicit barrier between reading tlbstate.is_lazy and
-next->context.tlb_gen.
-
-Unlike the 2016 version of this patch, CPUs with cpu_tlbstate.is_lazy set
-are not removed from the mm_cpumask(mm), since that would prevent the TLB
-flush IPIs at page table free time from being sent to all the CPUs
-that need them.
-
-This patch reduces total CPU use in the system by about 1-2% for a
-memcache workload on two socket systems, and by about 1% for a heavily
-multi-process netperf between two systems.
+Page table free TLB flushes only need to be sent to CPUs in lazy TLB
+mode, which TLB contents might not yet be up to date yet.
 
 Tested-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Rik van Riel <riel@surriel.com>
@@ -99,136 +86,68 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: efault@gmx.de
 Cc: kernel-team@fb.com
 Cc: luto@kernel.org
-Link: http://lkml.kernel.org/r/20180716190337.26133-5-riel@surriel.com
+Link: http://lkml.kernel.org/r/20180716190337.26133-6-riel@surriel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/tlb.c | 68 +++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 59 insertions(+), 9 deletions(-)
+ arch/x86/mm/tlb.c | 43 +++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 39 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 4b73fe835c95..26542cc17043 100644
+index 26542cc17043..e4156e37aa71 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -7,6 +7,7 @@
- #include <linux/export.h>
- #include <linux/cpu.h>
- #include <linux/debugfs.h>
-+#include <linux/gfp.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/mmu_context.h>
-@@ -185,6 +186,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- {
- 	struct mm_struct *real_prev = this_cpu_read(cpu_tlbstate.loaded_mm);
- 	u16 prev_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
-+	bool was_lazy = this_cpu_read(cpu_tlbstate.is_lazy);
- 	unsigned cpu = smp_processor_id();
- 	u64 next_tlb_gen;
- 	bool need_flush;
-@@ -242,17 +244,40 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			   next->context.ctx_id);
- 
- 		/*
--		 * We don't currently support having a real mm loaded without
--		 * our cpu set in mm_cpumask().  We have all the bookkeeping
--		 * in place to figure out whether we would need to flush
--		 * if our cpu were cleared in mm_cpumask(), but we don't
--		 * currently use it.
-+		 * Even in lazy TLB mode, the CPU should stay set in the
-+		 * mm_cpumask. The TLB shootdown code can figure out from
-+		 * from cpu_tlbstate.is_lazy whether or not to send an IPI.
- 		 */
- 		if (WARN_ON_ONCE(real_prev != &init_mm &&
- 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
- 			cpumask_set_cpu(cpu, mm_cpumask(next));
- 
--		return;
-+		/*
-+		 * If the CPU is not in lazy TLB mode, we are just switching
-+		 * from one thread in a process to another thread in the same
-+		 * process. No TLB flush required.
-+		 */
-+		if (!was_lazy)
-+			return;
-+
-+		/*
-+		 * Read the tlb_gen to check whether a flush is needed.
-+		 * If the TLB is up to date, just use it.
-+		 * The barrier synchronizes with the tlb_gen increment in
-+		 * the TLB shootdown code.
-+		 */
-+		smp_mb();
-+		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
-+		if (this_cpu_read(cpu_tlbstate.ctxs[prev_asid].tlb_gen) ==
-+				next_tlb_gen)
-+			return;
-+
-+		/*
-+		 * TLB contents went out of date while we were in lazy
-+		 * mode. Fall through to the TLB switching code below.
-+		 */
-+		new_asid = prev_asid;
-+		need_flush = true;
- 	} else {
- 		u64 last_ctx_id = this_cpu_read(cpu_tlbstate.last_ctx_id);
- 
-@@ -454,6 +479,9 @@ static void flush_tlb_func_common(const struct flush_tlb_info *f,
- 		 * paging-structure cache to avoid speculatively reading
- 		 * garbage into our TLB.  Since switching to init_mm is barely
- 		 * slower than a minimal flush, just switch to init_mm.
-+		 *
-+		 * This should be rare, with native_flush_tlb_others skipping
-+		 * IPIs to lazy TLB mode CPUs.
- 		 */
- 		switch_mm_irqs_off(NULL, &init_mm, NULL);
- 		return;
-@@ -560,6 +588,9 @@ static void flush_tlb_func_remote(void *info)
- void native_flush_tlb_others(const struct cpumask *cpumask,
- 			     const struct flush_tlb_info *info)
- {
-+	cpumask_var_t lazymask;
-+	unsigned int cpu;
-+
- 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
- 	if (info->end == TLB_FLUSH_ALL)
- 		trace_tlb_flush(TLB_REMOTE_SEND_IPI, TLB_FLUSH_ALL);
-@@ -583,8 +614,6 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
- 		 * that UV should be updated so that smp_call_function_many(),
- 		 * etc, are optimal on UV.
- 		 */
--		unsigned int cpu;
--
- 		cpu = smp_processor_id();
- 		cpumask = uv_flush_tlb_others(cpumask, info);
- 		if (cpumask)
-@@ -592,8 +621,29 @@ void native_flush_tlb_others(const struct cpumask *cpumask,
- 					       (void *)info, 1);
- 		return;
+@@ -712,15 +712,50 @@ void tlb_flush_remove_tables_local(void *arg)
  	}
--	smp_call_function_many(cpumask, flush_tlb_func_remote,
+ }
+ 
++static void mm_fill_lazy_tlb_cpu_mask(struct mm_struct *mm,
++				      struct cpumask *lazy_cpus)
++{
++	int cpu;
 +
-+	/*
-+	 * A temporary cpumask is used in order to skip sending IPIs
-+	 * to CPUs in lazy TLB state, while keeping them in mm_cpumask(mm).
-+	 * If the allocation fails, simply IPI every CPU in mm_cpumask.
-+	 */
-+	if (!alloc_cpumask_var(&lazymask, GFP_ATOMIC)) {
-+		smp_call_function_many(cpumask, flush_tlb_func_remote,
-+			       (void *)info, 1);
++	for_each_cpu(cpu, mm_cpumask(mm)) {
++		if (!per_cpu(cpu_tlbstate.is_lazy, cpu))
++			cpumask_set_cpu(cpu, lazy_cpus);
++	}
++}
++
+ void tlb_flush_remove_tables(struct mm_struct *mm)
+ {
+ 	int cpu = get_cpu();
++	cpumask_var_t lazy_cpus;
++
++	if (cpumask_any_but(mm_cpumask(mm), cpu) >= nr_cpu_ids) {
++		put_cpu();
 +		return;
 +	}
 +
-+	cpumask_copy(lazymask, cpumask);
-+
-+	for_each_cpu(cpu, lazymask) {
-+		if (per_cpu(cpu_tlbstate.is_lazy, cpu))
-+			cpumask_clear_cpu(cpu, lazymask);
++	if (!zalloc_cpumask_var(&lazy_cpus, GFP_ATOMIC)) {
++		/*
++		 * If the cpumask allocation fails, do a brute force flush
++		 * on all the CPUs that have this mm loaded.
++		 */
++		smp_call_function_many(mm_cpumask(mm),
++				tlb_flush_remove_tables_local, (void *)mm, 1);
++		put_cpu();
++		return;
 +	}
 +
-+	smp_call_function_many(lazymask, flush_tlb_func_remote,
- 			       (void *)info, 1);
-+
-+	free_cpumask_var(lazymask);
+ 	/*
+-	 * XXX: this really only needs to be called for CPUs in lazy TLB mode.
++	 * CPUs with !is_lazy either received a TLB flush IPI while the user
++	 * pages in this address range were unmapped, or have context switched
++	 * and reloaded %CR3 since then.
++	 *
++	 * Shootdown IPIs at page table freeing time only need to be sent to
++	 * CPUs that may have out of date TLB contents.
+ 	 */
+-	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids)
+-		smp_call_function_many(mm_cpumask(mm), tlb_flush_remove_tables_local, (void *)mm, 1);
+-
++	mm_fill_lazy_tlb_cpu_mask(mm, lazy_cpus);
++	smp_call_function_many(lazy_cpus,
++				tlb_flush_remove_tables_local, (void *)mm, 1);
++	free_cpumask_var(lazy_cpus);
+ 	put_cpu();
  }
  
- /*
