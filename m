@@ -2,142 +2,183 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3F4ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9B6ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D96EF208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:54:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zok+z77y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D96EF208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D35C9208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:57:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D35C9208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731257AbeGQM1I (ORCPT
+        id S1731203AbeGQM3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:27:08 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:42458 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731012AbeGQM1I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:27:08 -0400
-Received: by mail-ua0-f196.google.com with SMTP id w7-v6so471315uan.9;
-        Tue, 17 Jul 2018 04:54:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VcyY5bNhPqNiJOLsmcLVEFfrqVl3klrh7MTk9oYxeYQ=;
-        b=Zok+z77yEch/vtaBwykWsl39Kb74/7kKhCcp8hLgUY9x8FrNHV6Kl7PKNd4GxRnilo
-         g8Acu5NEQ/CY76RsUBVtIk1hRtTPHec38zmvVI40BTMLKiTpr5nlEDLA+9ItDk1PpkUY
-         U/1lR6ytsDcv0ezM9e+NRMhJi/Ms5XtAvTHac5o1HiaFCdEYf8r3r9NwzxAEqkYfSglF
-         /KWoAi7QXLqFrJ2dyz+im/6VMtyf35a9fLQh/yfPw9YH9Ke9PDfuN1JvF5Lfjg8v4P2z
-         GuqrPwfsG5c9x538XluKRua6WTO71mC0HKSO4VTMxpA2+xWCT4pe+zjbY33RQ/Yf71Ii
-         sXGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VcyY5bNhPqNiJOLsmcLVEFfrqVl3klrh7MTk9oYxeYQ=;
-        b=MWThU3WE2AC2jV8/G/KTuHR+TRN7E3Kdt1oWsdrLq7UnXJH+S3EWoee7XTM9jPoXhh
-         5jdfpREHanXEdLdVgkuTsWRZxxljroWR1rhRcyYZ+k0I2DjNXkyD6JtGjM4jQNrodsEo
-         FRnyXF6vyezsHzdyZ10FD6EDmSGo4BcKbgyFE/caw5PNeccxhtTSZF6P5V6KJOUVdUQn
-         NafnTd2vGX3cbVI5L/1l4rfKeKxXC1M7qrXZVjW3MtOsx4VeNgFAYtOkClNqofEtWvTL
-         4Q6DQweemn0RlWD4fnf/djJkmkmhRJ/PpVs6eqpr6lwa8tfHT/Q85sJjZGnUNOcDtQMY
-         URaA==
-X-Gm-Message-State: AOUpUlHwFlTcU13xJVWU4rjWUF4RFgtrCh8jhmhgMm62WYZuxVbvJbv1
-        oxqDmtsmuPdEAFvlSNDCK0XQfoVRKYMelKf2xBw=
-X-Google-Smtp-Source: AAOMgpfRlkRLx3afqbTIzl0ec3XzKGxGRAkXxWa7nTJsYf9s5G7k+vqWJxyjH0J8yRB6Wq/RyeWCfLBx9o/jHQBqXPE=
-X-Received: by 2002:ab0:10cc:: with SMTP id x12-v6mr782099uab.55.1531828490342;
- Tue, 17 Jul 2018 04:54:50 -0700 (PDT)
+        Tue, 17 Jul 2018 08:29:16 -0400
+Received: from nautica.notk.org ([91.121.71.147]:46679 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731087AbeGQM3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:29:16 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id BCB6AC009; Tue, 17 Jul 2018 13:56:54 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 13:56:39 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     piaojun <piaojun@huawei.com>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: [PATCH v2] net/9p/client.c: fix misuse of spin_lock_irqsave for
+ p9_client lock
+Message-ID: <20180717115639.GA26901@nautica>
+References: <5B4D8BD8.3040009@huawei.com>
 MIME-Version: 1.0
-References: <20180716235936.11268-1-lyude@redhat.com> <20180716235936.11268-5-lyude@redhat.com>
- <CACO55tv9B+GNM=nhpH1UfeWd9F1x5nTp+vHSuJ-TsuzRFK_AEA@mail.gmail.com>
-In-Reply-To: <CACO55tv9B+GNM=nhpH1UfeWd9F1x5nTp+vHSuJ-TsuzRFK_AEA@mail.gmail.com>
-From:   Ben Skeggs <skeggsb@gmail.com>
-Date:   Tue, 17 Jul 2018 21:54:37 +1000
-Message-ID: <CACAvsv4Rg32Fhq-4yOBWhUooWE+WzG5fQzvN+jYn4Uruc5kDLw@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH 4/5] drm/nouveau: Grab RPM ref when i2c bus is
- in use
-To:     Karol Herbst <kherbst@redhat.com>
-Cc:     lyude@redhat.com, Dave Airlie <airlied@linux.ie>,
-        nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Ben Skeggs <bskeggs@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5B4D8BD8.3040009@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Jul 2018 at 20:18, Karol Herbst <kherbst@redhat.com> wrote:
->
-> mhh, we shouldn't call to Linux APIs from within of nvkm. Rather gaurd
-> the Linux glue code to the i2c stuff instead, but this is all done
-> from inside of nvkm. I think we should move it out into
-> drm/nouveau/nouveau_i2c.c and do the handling there.
-Huh?  No, this is completely fine.
+piaojun wrote on Tue, Jul 17, 2018:
+> In p9_read_work(), we use spin_lock for client->lock, but misuse
+> spin_lock_irqsave for it in p9_fid_create(). As p9_client lock won't be
+> locked in irq context, so spin_lock is enough. And that will improve the
+> performance.
 
->
-> On Tue, Jul 17, 2018 at 1:59 AM, Lyude Paul <lyude@redhat.com> wrote:
-> > The i2c bus can be both accessed by DRM itself, along with any of it's
-> > devnodes (/sys/class/i2c). So, we need to make sure that all codepaths
-> > using the i2c bus keep the GPU resumed.
-> >
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > Cc: Karol Herbst <karolherbst@gmail.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c
-> > index 807a2b67bd64..1de48c990b80 100644
-> > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c
-> > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c
-> > @@ -119,18 +119,28 @@ nvkm_i2c_bus_release(struct nvkm_i2c_bus *bus)
-> >         BUS_TRACE(bus, "release");
-> >         nvkm_i2c_pad_release(pad);
-> >         mutex_unlock(&bus->mutex);
-> > +       pm_runtime_put_autosuspend(pad->i2c->subdev.device->dev);
-> >  }
-> >
-> >  int
-> >  nvkm_i2c_bus_acquire(struct nvkm_i2c_bus *bus)
-> >  {
-> >         struct nvkm_i2c_pad *pad = bus->pad;
-> > +       struct device *dev = pad->i2c->subdev.device->dev;
-> >         int ret;
-> > +
-> >         BUS_TRACE(bus, "acquire");
-> > +
-> > +       ret = pm_runtime_get_sync(dev);
-> > +       if (ret < 0 && ret != -EACCES)
-> > +               return ret;
-> > +
-> >         mutex_lock(&bus->mutex);
-> >         ret = nvkm_i2c_pad_acquire(pad, NVKM_I2C_PAD_I2C);
-> > -       if (ret)
-> > +       if (ret) {
-> >                 mutex_unlock(&bus->mutex);
-> > +               pm_runtime_put_autosuspend(dev);
-> > +       }
-> >         return ret;
-> >  }
-> >
-> > --
-> > 2.17.1
-> >
-> > _______________________________________________
-> > Nouveau mailing list
-> > Nouveau@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/nouveau
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+(I didn't say in v1, but the commit message sounds a bit odd to me, if
+there is any other change to the patch could you please rephrase it a
+bit?)
+
+> Rebased on 9p-next.
+
+(Likewise, this should probably go below the '---' mark to not be in the
+final commit message, 9p-next does not make sense to linux as a whole)
+
+> 
+> Signed-off-by: Jun Piao <piaojun@huawei.com>
+
+Nitpicks aside this still looks good to me, I'm not expert in locking
+but I believe the conn_cancel stuff in trans_fd is called either from
+user context or workqueue which also is process context, while the rest
+comes from user context only.
+
+There *are* common functions called from interrupt context (I see:
+p9_tag_lookup, p9_client_cb, p9_parse_header) but luckily enough
+none of these take the lock.
+
+I'll give this one a little bit of time for others to review before
+picking it up, just in case, but will do if no-one complains.
+
+> ---
+>  net/9p/client.c   | 18 ++++++++----------
+>  net/9p/trans_fd.c |  7 +++----
+>  2 files changed, 11 insertions(+), 14 deletions(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 30f9aee..f6897ee 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -275,14 +275,14 @@ static struct p9_fcall *p9_fcall_alloc(int alloc_msize)
+>  	INIT_LIST_HEAD(&req->req_list);
+> 
+>  	idr_preload(GFP_NOFS);
+> -	spin_lock_irq(&c->lock);
+> +	spin_lock(&c->lock);
+>  	if (type == P9_TVERSION)
+>  		tag = idr_alloc(&c->reqs, req, P9_NOTAG, P9_NOTAG + 1,
+>  				GFP_NOWAIT);
+>  	else
+>  		tag = idr_alloc(&c->reqs, req, 0, P9_NOTAG, GFP_NOWAIT);
+>  	req->tc->tag = tag;
+> -	spin_unlock_irq(&c->lock);
+> +	spin_unlock(&c->lock);
+>  	idr_preload_end();
+>  	if (tag < 0)
+>  		goto free;
+> @@ -328,13 +328,12 @@ struct p9_req_t *p9_tag_lookup(struct p9_client *c, u16 tag)
+>   */
+>  static void p9_free_req(struct p9_client *c, struct p9_req_t *r)
+>  {
+> -	unsigned long flags;
+>  	u16 tag = r->tc->tag;
+> 
+>  	p9_debug(P9_DEBUG_MUX, "clnt %p req %p tag: %d\n", c, r, tag);
+> -	spin_lock_irqsave(&c->lock, flags);
+> +	spin_lock(&c->lock);
+>  	idr_remove(&c->reqs, tag);
+> -	spin_unlock_irqrestore(&c->lock, flags);
+> +	spin_unlock(&c->lock);
+>  	kfree(r->tc);
+>  	kfree(r->rc);
+>  	kmem_cache_free(p9_req_cache, r);
+> @@ -846,10 +845,10 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
+>  	fid->fid = 0;
+> 
+>  	idr_preload(GFP_KERNEL);
+> -	spin_lock_irq(&clnt->lock);
+> +	spin_lock(&clnt->lock);
+>  	ret = idr_alloc_u32(&clnt->fids, fid, &fid->fid, P9_NOFID - 1,
+>  			    GFP_NOWAIT);
+> -	spin_unlock_irq(&clnt->lock);
+> +	spin_unlock(&clnt->lock);
+>  	idr_preload_end();
+> 
+>  	if (!ret)
+> @@ -862,13 +861,12 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
+>  static void p9_fid_destroy(struct p9_fid *fid)
+>  {
+>  	struct p9_client *clnt;
+> -	unsigned long flags;
+> 
+>  	p9_debug(P9_DEBUG_FID, "fid %d\n", fid->fid);
+>  	clnt = fid->clnt;
+> -	spin_lock_irqsave(&clnt->lock, flags);
+> +	spin_lock(&clnt->lock);
+>  	idr_remove(&clnt->fids, fid->fid);
+> -	spin_unlock_irqrestore(&clnt->lock, flags);
+> +	spin_unlock(&clnt->lock);
+>  	kfree(fid->rdir);
+>  	kfree(fid);
+>  }
+> diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+> index bf459ee..94ef685 100644
+> --- a/net/9p/trans_fd.c
+> +++ b/net/9p/trans_fd.c
+> @@ -197,15 +197,14 @@ static void p9_mux_poll_stop(struct p9_conn *m)
+>  static void p9_conn_cancel(struct p9_conn *m, int err)
+>  {
+>  	struct p9_req_t *req, *rtmp;
+> -	unsigned long flags;
+>  	LIST_HEAD(cancel_list);
+> 
+>  	p9_debug(P9_DEBUG_ERROR, "mux %p err %d\n", m, err);
+> 
+> -	spin_lock_irqsave(&m->client->lock, flags);
+> +	spin_lock(&m->client->lock);
+> 
+>  	if (m->err) {
+> -		spin_unlock_irqrestore(&m->client->lock, flags);
+> +		spin_unlock(&m->client->lock);
+>  		return;
+>  	}
+> 
+> @@ -217,7 +216,7 @@ static void p9_conn_cancel(struct p9_conn *m, int err)
+>  	list_for_each_entry_safe(req, rtmp, &m->unsent_req_list, req_list) {
+>  		list_move(&req->req_list, &cancel_list);
+>  	}
+> -	spin_unlock_irqrestore(&m->client->lock, flags);
+> +	spin_unlock(&m->client->lock);
+> 
+>  	list_for_each_entry_safe(req, rtmp, &cancel_list, req_list) {
+>  		p9_debug(P9_DEBUG_ERROR, "call back req %p\n", req);
+> -- 
+
+-- 
+Dominique Martinet
