@@ -1,89 +1,147 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867F7ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C86CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3437320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8C9C20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:39:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KBrf/51L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3437320693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="quGpYoFc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C9C20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729748AbeGQRM0 (ORCPT
+        id S1730040AbeGQRNJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:12:26 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55239 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729063AbeGQRM0 (ORCPT
+        Tue, 17 Jul 2018 13:13:09 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35815 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729648AbeGQRNI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:12:26 -0400
-Received: by mail-it0-f65.google.com with SMTP id s7-v6so32207itb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 09:38:57 -0700 (PDT)
+        Tue, 17 Jul 2018 13:13:08 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e6-v6so686332pgv.2;
+        Tue, 17 Jul 2018 09:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LqX32k3468kJHVo/iFUUdiOoqcgtev4FePQlWkQg9ek=;
-        b=KBrf/51LxzWzeyx78s0k78V8qsHm3r/ju94taO3n/FarE1ZIt6sfMWHRBI3mR1ik5t
-         ho6TOguoMZQ2HAqgWCjKKXe+ss1qvGLg2ECsvLczhB0JRXruxtkRYX60MgNgWUfuSjt+
-         xSN6luIDz1+uyPs23L2dd33NRDu0l4+rLFGH0=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZMd2FRiR6W2pZKbshIRcfu1N2WVCxhkw80AZqiUJUMU=;
+        b=quGpYoFcrUS9bmTV5YOmzEIPI2gqMSMrCP+I3WLBlN8UgKq3cWK8wBf1CTmMeE6VsP
+         xnLf/y6uFTVW9PejfBDc4cDrA56Fro7IKCgOKgKWGSvpEsx220kDjtOLwfL1zjn4KOQj
+         TgGBMqr+Pm//UH2oM2H5TlPrlTsIFZEPQhS1DVt478dqzjJKNG4yJPJaw7hOq1YgLSNx
+         Nt4Rbi4deje8PzKKOJifrcIdxeTCoEtFliKAaMgq7cCy2CEbchtKYO8LIMvNEy7KzXzT
+         sauModa6R/aa1KhDyKFboTfExHDTgkQVk+LpwJGM76AMnyT+Yg1q38DoVaIcXcg2YSHw
+         zDSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LqX32k3468kJHVo/iFUUdiOoqcgtev4FePQlWkQg9ek=;
-        b=djW9LOwpIlHCuoC8BG3lNAPqWnZh2CDPEaWz+wX0fp/xFxihsxBw3uuC1UtB15MdN5
-         rTjs4xif+DzzlBhWs+BywykaZOvVK2mPzHiHcskSd6kcc3AJl+PzOmblSrGNZgxukJYC
-         B28sy3WPDArjcBdw479eCi3L+itcar5Gf17YoEUUiK8+W3Sf3/m14wyYYegKscAx7fLs
-         6DPuJmHFCTjoDare0ZBqo+M1v3KmIrMNWmL8G+GN76rS8LRu5xjtez9TN292kDHOiALe
-         vY6hQekDhwFXR6U1KJWbkEwsaPvb4X6GswKrIJPN/kKoEfloByFBAuXCgo6F/Bf/Nsmi
-         T6Fw==
-X-Gm-Message-State: AOUpUlGa7HKs+/3sEha6zXFDrnU13b8iE+NQw8EsjY64O/0dFcGJ/+z6
-        Kry1m4AjTUqiNGFC97W4ifUeJLPToLPLF3j2V8Y=
-X-Google-Smtp-Source: AAOMgpdQMcMjmMh1H+swg7TtBs5xftvC6Ef918e0otEjuI+1ZBmTyI1VdPHYiFwisAwXtSPhBYuOWZVUeebMv253/Yc=
-X-Received: by 2002:a24:d0d7:: with SMTP id m206-v6mr2162570itg.1.1531845536509;
- Tue, 17 Jul 2018 09:38:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZMd2FRiR6W2pZKbshIRcfu1N2WVCxhkw80AZqiUJUMU=;
+        b=oMSGbb9nEp52IWhpQZNs/TIYms6Ua4tfIY4htTwRCUQv7UqRizFdHpU8sragJK9mPn
+         dC02C601wWKtLPvq0zOXGNT6HXPiwi1PWikua9bwJyyC1zDDaXwDu52/pxHjv5ueh/vJ
+         /JRtIZQGRvhloVC2sF+pgMvpJLTVffn7GgQorxEjaP6TkyVI6XhR2jXl3fwDmO4CAddF
+         udb8W6DQgnHoItmpLlcEeKJ4Q5LyQhjPReZ29EsUaEKKeb3OsZ+ov/zrPTB1fFTdqkyG
+         V8OJL2hDBNxxvEZ5Stk7cuWw3duBO6sNAWor49pdf8MA2VoAzhBUyRwNSZgoNXKQuPYP
+         BysA==
+X-Gm-Message-State: AOUpUlG1AWV7mFSdhUq/MIIKvC6rEAwEUmUd0aYQK4KM964pbOzV98MX
+        CLUT8lMVmstle3BWorDpaRY=
+X-Google-Smtp-Source: AAOMgpfiKuUtBPKrY7jtTvAf3ePjoJSK26Ua28bOKDxL+vdsy+f6v53EYPrDCmwpt+oqbu0oCD81Zw==
+X-Received: by 2002:a63:a745:: with SMTP id w5-v6mr2348729pgo.374.1531845578868;
+        Tue, 17 Jul 2018 09:39:38 -0700 (PDT)
+Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id c19-v6sm2181884pfn.182.2018.07.17.09.39.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 09:39:38 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 09:39:36 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Eric Biggers <ebiggers@google.com>, qat-linux@intel.com,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
+        linux-crypto@vger.kernel.org, Lars Persson <larper@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>
+Subject: Re: [dm-devel] [PATCH v5 05/11] crypto: ahash: Remove VLA usage
+Message-ID: <20180717163936.GB75957@gmail.com>
+References: <20180717042150.37761-1-keescook@chromium.org>
+ <20180717042150.37761-6-keescook@chromium.org>
 MIME-Version: 1.0
-References: <877em2jxyr.fsf_-_@xmission.com> <20180711024459.10654-7-ebiederm@xmission.com>
- <20180716125144.GA18262@redhat.com> <8736wjtetv.fsf@xmission.com>
-In-Reply-To: <8736wjtetv.fsf@xmission.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Jul 2018 09:38:44 -0700
-Message-ID: <CA+55aFx5gP+1coJ92v4jYgTVfatnOoN3mqrerPEGxadZE2rKNg@mail.gmail.com>
-Subject: Re: [RFC][PATCH 07/11] signal: Deliver group signals via PIDTYPE_TGID
- not PIDTYPE_PID
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Wen Yang <wen.yang99@zte.com.cn>, majiang <ma.jiang@zte.com.cn>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717042150.37761-6-keescook@chromium.org>
+User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 7:50 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> In practice since glibc does not make thread id's available I don't
-> expect anyone relies on this behavior.  Since no one relies on it we
-> can change it without creating a regression.
+On Mon, Jul 16, 2018 at 09:21:44PM -0700, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this
+> introduces max size macros for ahash, as already done for shash, and
+> adjust the crypto user to max state size.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  crypto/ahash.c        | 4 ++--
+>  crypto/algif_hash.c   | 2 +-
+>  include/crypto/hash.h | 3 +++
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/crypto/ahash.c b/crypto/ahash.c
+> index a64c143165b1..6435bdbe42fd 100644
+> --- a/crypto/ahash.c
+> +++ b/crypto/ahash.c
+> @@ -550,8 +550,8 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
+>  {
+>  	struct crypto_alg *base = &alg->halg.base;
+>  
+> -	if (alg->halg.digestsize > PAGE_SIZE / 8 ||
+> -	    alg->halg.statesize > PAGE_SIZE / 8 ||
+> +	if (alg->halg.digestsize > AHASH_MAX_DIGESTSIZE ||
+> +	    alg->halg.statesize > AHASH_MAX_STATESIZE ||
+>  	    alg->halg.statesize == 0)
+>  		return -EINVAL;
+>  
+> diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+> index bfcf595fd8f9..8974ee8ebead 100644
+> --- a/crypto/algif_hash.c
+> +++ b/crypto/algif_hash.c
+> @@ -239,7 +239,7 @@ static int hash_accept(struct socket *sock, struct socket *newsock, int flags,
+>  	struct alg_sock *ask = alg_sk(sk);
+>  	struct hash_ctx *ctx = ask->private;
+>  	struct ahash_request *req = &ctx->req;
+> -	char state[crypto_ahash_statesize(crypto_ahash_reqtfm(req)) ? : 1];
+> +	char state[AHASH_MAX_STATESIZE];
+>  	struct sock *sk2;
+>  	struct alg_sock *ask2;
+>  	struct hash_ctx *ctx2;
+> diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+> index ae14cc0e0cdb..4fcd0e2368cd 100644
+> --- a/include/crypto/hash.h
+> +++ b/include/crypto/hash.h
+> @@ -64,6 +64,9 @@ struct ahash_request {
+>  	void *__ctx[] CRYPTO_MINALIGN_ATTR;
+>  };
+>  
+> +#define AHASH_MAX_DIGESTSIZE	512
+> +#define AHASH_MAX_STATESIZE	512
+> +
 
-Actually, there's a really obvious case where this simply isn't true.
+Why is AHASH_MAX_DIGESTSIZE (512) so much larger than SHASH_MAX_DIGESTSIZE (64)?
+I would have expected them to be the same.
 
-Just imagine you're a MIS person or a developer, doing "ps -eLf" to
-see what's going on, and want to kill one thread. Either because you
-see that one thread using all CPU, or because you are the developer
-and you know what's up.
-
-Those thread ID's are exported trivially.
-
-               Linus
+- Eric
