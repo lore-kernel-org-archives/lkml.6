@@ -2,143 +2,117 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E370DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52127ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A448E20779
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A448E20779
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C5ED20779
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:43:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="h7cFQ0E9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C5ED20779
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbeGQQQY (ORCPT
+        id S1731151AbeGQQQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:16:24 -0400
-Received: from mga02.intel.com ([134.134.136.20]:64704 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729755AbeGQQQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:16:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 08:43:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
-   d="scan'208";a="55690109"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Jul 2018 08:43:06 -0700
-Message-ID: <8f62965ad89f82b0f4bd73d6e5acf352dc2b767e.camel@linux.intel.com>
-Subject: Re: [PATCH v3 1/3] lib: add crc64 calculation routines
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Lyle <mlyle@lyle.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Eric Biggers <ebiggers3@gmail.com>
-Date:   Tue, 17 Jul 2018 18:43:05 +0300
-In-Reply-To: <20180717145525.50852-2-colyli@suse.de>
-References: <20180717145525.50852-1-colyli@suse.de>
-         <20180717145525.50852-2-colyli@suse.de>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 12:16:30 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42473 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730811AbeGQQQ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:16:29 -0400
+Received: by mail-wr1-f66.google.com with SMTP id e7-v6so1725950wrs.9
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 08:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=fpyojqqEXxBMVGQ9gOj0nSaGphKtXorSOcTurNY/3cc=;
+        b=h7cFQ0E99C5He0aTuGhI2oM1xKwg9NbZH1e3UuDi2GEq8v10llg/46wOTJ5WL69eRF
+         OYilMmDCWm8M03ECCgb47vmGVbSOGhCe+nK94TV33unOHxE9lYX2cfPGzEM1XImUz4Do
+         ZiG4UQ2y79jihzwFkGbT0Mq2D8hN7tt7A2g7W9KiWT6gkXvQBjpnTkjcXnX5oDUjhgIK
+         Cj7+/QSkyOrl1ZVt782QeCc7kSWgx9QEa3Uz+J9Xden6RYB3wZZEG+c51PvsG/lec/Lf
+         K/ImscxuiNnolRidsFSTP5kShoiZIhhEVLGm31IdwVhGPigZe6qaOtVVAwGLSWnPLNi+
+         Xs0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=fpyojqqEXxBMVGQ9gOj0nSaGphKtXorSOcTurNY/3cc=;
+        b=nUPDdypnH+rxLX2RYk9GrqjzBZ6jsdD1qy5RMtw1yiod/K86PTGZ2LYf5IZS9+z7/L
+         R9rs1/WMuQMThLsoE/DlmYWmSkpiZ0ffUDwL8Yu7B2xKq5pLWwxfC3aso3McmyszIKYX
+         lOQc+r+e7wHyoum7HhDS65SVcNz+xKrZ65mJGFcAtNa8G6hlYSZcRWC4iZ4Mj1eJmQY/
+         Kyvxv3NmGFQjytyHS45ZYwwpzCfJoq83VRBbqWWXfj09rBirAXOcAH8rV3L16BZ34IeN
+         lAkn5b+ml2p4JxLdJEs8wmJRNxxlkjvRZ6xjxYwnv/6hT/TRBVXyxnCzuTtvxiucfgaz
+         fVbQ==
+X-Gm-Message-State: AOUpUlHZSAzYcx9DZSr3rbucFeavSFowliuRy2+PR2d++484oX7xsMIv
+        9iCXCXx5pvuTBRGiP4E+tI4RrQ==
+X-Google-Smtp-Source: AAOMgpcK1lszas2G2hxs9HE8rfCvIFthk0KibnQXHOoTjvyHpLSS+bT4gjnczSYfpcHxZBQt++ZASQ==
+X-Received: by 2002:adf:e3c5:: with SMTP id k5-v6mr1854206wrm.94.1531842194289;
+        Tue, 17 Jul 2018 08:43:14 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id s12-v6sm17598252wmc.2.2018.07.17.08.43.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 08:43:13 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH RESEND 01/15] ASoC: meson: add axg fifos DT binding documentation
+Date:   Tue, 17 Jul 2018 17:42:50 +0200
+Message-Id: <20180717154304.9973-2-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180717154304.9973-1-jbrunet@baylibre.com>
+References: <20180717154304.9973-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 22:55 +0800, Coly Li wrote:
-> This patch adds the re-write crc64 calculation routines for Linux
-> kernel.
-> The CRC64 polynomical arithmetic follows ECMA-182 specification,
-> inspired
-> by CRC paper of Dr. Ross N. Williams
-> (see http://www.ross.net/crc/download/crc_v3.txt) and other public
-> domain
-> implementations.
-> 
-> All the changes work in this way,
-> - When Linux kernel is built, host program lib/gen_crc64table.c will
-> be
->   compiled to lib/gen_crc64table and executed.
-> - The output of gen_crc64table execution is an array called as lookup
->   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64bits-long
->   numbers, this talbe is dumped into header file lib/crc64table.h.
-> - Then the header file is included by lib/crc64.c for normal 64bit crc
->   calculation.
-> - Function declaration of the crc64 calculation routines is placed in
->   include/linux/crc64.h
+Add the DT bindings documentation for axg's FIFOs: TODDR and FRDDR.
 
-Thanks for an update! My comments below.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../devicetree/bindings/sound/amlogic,axg-fifo.txt | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
 
-> Co-developed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-As required by coding style this tag should be accompanied with SoB of
-co-developer(s).
-
-> +u64 __pure crc64_update(u64 crc, const void *_p, size_t len);
-
-For sake of consistency I would name _len as well.
-
-> + * Normal 64bit CRC calculation.
-
-I think 64-bit form is slightly better and more often
-
-$ git grep -n -w 64bit | wc -l
-809
-
-$ git grep -n -w 64-bit | wc -l
-2957
-
-> + * crc64table[256] is the lookup table of a table-driver 64bit CRC
-
-Ditto.
-
-> + * Copyright 2018 SUSE Linux.
-> + *   Author: Coly Li <colyli@suse.de>
-
-> + *
-
-This (blank comment) line is not needed.
-
-> +u64 __pure crc64_update(u64 crc, const void *_p, size_t len)
-
-_len ?
-
-> + * Copyright 2018 SUSE Linux.
-> + *   Author: Coly Li <colyli@suse.de>
-
-> + *
-
-Not needed line.
-
-
-> +#include <inttypes.h>
-> +#include <stdio.h>
-
-+ blank line? Would separate groups of headers logically.
-
-> +#include <linux/swab.h>
-
-> +static int64_t crc64_table[256] = {0,};
-
-I guess {0} would work as well (no comma).
-
-> +	printf("#include <uapi/linux/types.h>\n");
-> +	printf("#include <linux/cache.h>\n\n");
-
-Do wee need these? CRC32 case seems fine without.
-
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
+new file mode 100644
+index 000000000000..3dfc2515e5c6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
+@@ -0,0 +1,23 @@
++* Amlogic Audio FIFO controllers
++
++Required properties:
++- compatible: 'amlogic,axg-toddr' or
++	      'amlogic,axg-frddr'
++- reg: physical base address of the controller and length of memory
++       mapped region.
++- interrupts: interrupt specifier for the fifo.
++- clocks: phandle to the fifo peripheral clock provided by the audio
++	  clock controller.
++- resets: phandle to memory ARB line provided by the arb reset controller.
++- #sound-dai-cells: must be 0.
++
++Example of FRDDR A on the A113 SoC:
++
++frddr_a: audio-controller@1c0 {
++	compatible = "amlogic,axg-frddr";
++	reg = <0x0 0x1c0 0x0 0x1c>;
++	#sound-dai-cells = <0>;
++	interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
++	clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
++	resets = <&arb AXG_ARB_FRDDR_A>;
++};
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.14.4
+
