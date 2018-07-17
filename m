@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7396ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070DCECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F69A2083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B69F420693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQUU6yTK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F69A2083C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vHfzVnPT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69F420693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731623AbeGQVji (ORCPT
+        id S1731660AbeGQVjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:39:38 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:36359 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVjh (ORCPT
+        Tue, 17 Jul 2018 17:39:41 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46277 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731631AbeGQVjk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:39:37 -0400
-Received: by mail-pl0-f66.google.com with SMTP id e11-v6so989092plb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:05:10 -0700 (PDT)
+        Tue, 17 Jul 2018 17:39:40 -0400
+Received: by mail-pl0-f67.google.com with SMTP id 30-v6so977542pld.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:05:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/Y3X8FuzWC0GBsAO7UK9zN60BpvzgFrScgU21ZmN/4Y=;
-        b=NQUU6yTKZfDkwfXAJ17a2dC0zrmPQN10pu6KzZ3JBoHjH0qexycn6IU06/WxyU2hmA
-         zXooQH0PRLDZ9fYh8elJb/9r5j3AiTD2nc0Z6NotYMyjj+mKfwXHwLmcEsmHym+DHOle
-         9g+pnvomhVrfNzHQjv/r4QWUz3G3LUQLz+h8XNxtdOqRjBlawRKPH8uO2cgOiHAx7x1Q
-         HKJ9+GV6kiEEJ49lnfa7Z2fJE6DG9SpTmAVNi+ZDCfN6DUBzaWMCUoSR81ukxoqIqfpn
-         QdQSzJCImUAsiKpUZZn+Pw7iKxAsWEccoVhSJ0JSaw1Fz6qgHgBHYUQCIfacsvtdJPf8
-         iljw==
+        bh=+oUpoCUo2DWLRpB7iXcfwH6+odVSYOgNZdA2MwlGoRg=;
+        b=vHfzVnPTVaa5pAwGV3WZePEUeVvPDcOCWiMYXAo8Q3r/rEchfUwIrbjOwJLK/KvA1N
+         D8gpE0Pl9oKl4C+VtnXmyIT31edGi21DfQrR2mwsRVntiZtFpsaFoO1/7t5F0p+tNL58
+         LtGnjg9d/4+mJRn51jjxHxOi94kLViMCfp1/2AA4yZHfJ3vymboPUNdhuXVg9/WI2xv2
+         Y5Frhlz7ph8hqLABbp6kn+jTeAXCNjgUATMEk/aQJeqHi0fMiN+EdcUjPBBEVqneQXyk
+         morwspt0QDdY3reyIQdZOr1L2wjOIXYcIE4sKzLDiJ8/ZDD7bX2NcqWdqe13cRfKAcGK
+         yOHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=/Y3X8FuzWC0GBsAO7UK9zN60BpvzgFrScgU21ZmN/4Y=;
-        b=C/rDem2cC2htIAUieR/lrpO0UIPWKyRlhLhE8rS+D/gLNDeFBqWK4Ri5MY01qwY/XD
-         XUZQ423YzCTpz1FbUMFr+FSGz0m/N4nqXvTduVKwcF30bcv928UwjsBGPE6AOgFTDsmn
-         7I3uFg2NVneeZzcAd2mGc8V0Em8FBOVk22KKPqj1qyxUUnYDob2rIOnJZ908oxySijpn
-         +2dTih38vUmbg3GE5uHieKjK/xNICgW3a107e5abAeUsmgRktvSllTzUTcPKL4ETikGZ
-         CDM1QQDTosMFfNWzBmSjD7fXaA3tbbJcikioTySrN2es092lV5+iIzq+25GHHizf/UdV
-         SjUg==
-X-Gm-Message-State: AOUpUlGgmQ/p8csI+uzLW77+dPo8Jmvuv9oyVJxpU0jr+l8Pd08tXS62
-        y2CATiyBYWTgORMqTFBuaHs=
-X-Google-Smtp-Source: AAOMgpfNQA8P591Vo4Kt33N5OSILdOLbF2/Th+q1hAJi5qUaB6EwKQQY2WgyK5+AWTG7Tiva54Ym8g==
-X-Received: by 2002:a17:902:b112:: with SMTP id q18-v6mr3074467plr.284.1531861509609;
-        Tue, 17 Jul 2018 14:05:09 -0700 (PDT)
+        bh=+oUpoCUo2DWLRpB7iXcfwH6+odVSYOgNZdA2MwlGoRg=;
+        b=VJxatuTtoV4y0CU4Kd1GWQIEM9raIE75hLWAbepOl+F/jITo5ArE3pjIdncNKgBiu+
+         qapSLIjvrroyeARLLVQo3/XtaW9YQp0ow7R9worsaXqD1UQyma5wQWvuqhzpbHq4JXww
+         iD6N6GGq8WfMVfT4oGUJwnFvFTU+Li6c25VBJ+4dhcAAr0ZcYMaOhl9IJ6M8LqaovCjP
+         wSkaqEZA8f7qnTEIVXCVM/kCLqvtBxfqWg4Rt67BiY+gJDwARkTKuezKLN570K/KPDGx
+         Uf7iCYtmUi1uI3b4gn0HvyszPo+crLHxz+JbdxeF+H68ACSoiXgMBg9Y7EeMkLgANyPf
+         1e+g==
+X-Gm-Message-State: AOUpUlF2/KUS9IFRttt9bWi/E4PsO7TZxdLe4sr6RJWDq3MKiMgOBc0B
+        FBDcP4DgcBlSRvbPGstOrLQ=
+X-Google-Smtp-Source: AAOMgpdA4yBMGqPXwBC9oPy8YofgktoktMmMpMi9kzMH3CrxF3iAypSaIY5GQY3Kd8t4BS8wZHV6HA==
+X-Received: by 2002:a17:902:a40b:: with SMTP id p11-v6mr3148574plq.228.1531861512799;
+        Tue, 17 Jul 2018 14:05:12 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.05.07
+        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.05.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:05:07 -0700 (PDT)
+        Tue, 17 Jul 2018 14:05:11 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 19/32] staging: gasket: remove code for no physical device
-Date:   Tue, 17 Jul 2018 13:56:59 -0700
-Message-Id: <20180717205712.29495-20-toddpoynor@gmail.com>
+Subject: [PATCH 21/32] staging: gasket: remove unnecessary code in coherent allocator
+Date:   Tue, 17 Jul 2018 13:57:01 -0700
+Message-Id: <20180717205712.29495-22-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
 References: <20180717205712.29495-1-toddpoynor@gmail.com>
@@ -81,50 +81,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-gasket_enable_dev code for enabling a gasket device with no physical PCI
-device registered shouldn't be necessary.
+Remove extraneous statement in gasket_config_coherent_allocator()
 
-Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Dmitry Torokhov <dtor@chromium.org>
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/staging/gasket/gasket_ioctl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 3f313fc54ff77..0a87bc67eac19 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -899,7 +899,6 @@ static int gasket_enable_dev(
- {
- 	int tbl_idx;
- 	int ret;
--	struct device *ddev;
- 	const struct gasket_driver_desc *driver_desc =
- 		internal_desc->driver_desc;
+diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
+index ab2376c32c00b..0f6cb377cca47 100644
+--- a/drivers/staging/gasket/gasket_ioctl.c
++++ b/drivers/staging/gasket/gasket_ioctl.c
+@@ -419,10 +419,8 @@ static int gasket_config_coherent_allocator(
+ 	if (ibuf.page_table_index >= gasket_dev->num_page_tables)
+ 		return -EFAULT;
  
-@@ -920,21 +919,12 @@ static int gasket_enable_dev(
- 	for (tbl_idx = 0; tbl_idx < driver_desc->num_page_tables; tbl_idx++) {
- 		gasket_log_debug(
- 			gasket_dev, "Initializing page table %d.", tbl_idx);
--		if (gasket_dev->pci_dev) {
--			ddev = &gasket_dev->pci_dev->dev;
--		} else {
--			gasket_log_error(
--				gasket_dev,
--				"%s with no physical device!!", __func__);
--			WARN_ON(1);
--			ddev = NULL;
--		}
- 		ret = gasket_page_table_init(
- 			&gasket_dev->page_table[tbl_idx],
- 			&gasket_dev->bar_data[
- 				driver_desc->page_table_bar_index],
- 			&driver_desc->page_table_configs[tbl_idx],
--			ddev, gasket_dev->pci_dev, true);
-+			&gasket_dev->pci_dev->dev, gasket_dev->pci_dev, true);
- 		if (ret) {
- 			gasket_log_error(
- 				gasket_dev,
+-	if (ibuf.size > PAGE_SIZE * MAX_NUM_COHERENT_PAGES) {
+-		ibuf.size = PAGE_SIZE * MAX_NUM_COHERENT_PAGES;
++	if (ibuf.size > PAGE_SIZE * MAX_NUM_COHERENT_PAGES)
+ 		return -ENOMEM;
+-	}
+ 
+ 	if (ibuf.enable == 0) {
+ 		ret = gasket_free_coherent_memory(
 -- 
 2.18.0.203.gfac676dfb9-goog
 
