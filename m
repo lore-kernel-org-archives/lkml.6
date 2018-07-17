@@ -6,61 +6,67 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D6EECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CE9ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DFCA20C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:25:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EA9F2145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:25:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HgbzAvea"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DFCA20C10
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JOZmj5tu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA9F2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731300AbeGQL5V (ORCPT
+        id S1731431AbeGQL5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:57:21 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34822 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730638AbeGQL5V (ORCPT
+        Tue, 17 Jul 2018 07:57:25 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:36066 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731256AbeGQL5Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:57:21 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e6-v6so319544pgv.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 04:25:11 -0700 (PDT)
+        Tue, 17 Jul 2018 07:57:24 -0400
+Received: by mail-pf0-f196.google.com with SMTP id d14-v6so365959pfo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 04:25:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=k3jKW0sCb0rK8PdrGlYTdRe+q05sdvywcfGkw5Lbutg=;
-        b=HgbzAveaSKoFkhJeJuYv38MCDkH8abJSq1TpKAP4jPut74BL6aFBLoUrAGAEnrO2cY
-         nMxgwjwlMS3EPjDNLUHnyoCJpECeH4DrJx7MNdyKg9A80OqkcmjRrGPGHw5vhXxvXeCm
-         3yAgPIp3dBD4Wk1ehWJNSr6GmoJx47zF79w78=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=PTtFId+Y0EEs5+cllmvrMc/Z4BBjEeLBQmZE8Amw2Fs=;
+        b=JOZmj5tuLw2cxLCnpI93zZTUwIZv+Z6685Ga82IC6HSk74uIe9xTOqwuzOyXsLSjou
+         fsmqRX7gwVUtXjilC31ujon5hxjxqfgB2ixE9ovqN0eT30OQPGbs1Fkgq35QPrRq4bJH
+         TpSOMbdHUxnKMGuMWbEN7UnGEGRSCyN2EVND0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=k3jKW0sCb0rK8PdrGlYTdRe+q05sdvywcfGkw5Lbutg=;
-        b=IIDue6x/GLvMwPy2sen+1nG31o55Rt9sMlcYnCPMGKY/xug+5VBAIGmtZ9aRHdqlCJ
-         Hy1OtEYJUt91oXDgdfXjQ1IiXUe3FG43VvYLRNQvVVoS0yKLcNMEkvb/rTLOWcY9xcK+
-         wKjEy6fa848G2PpWCRuzWglm8SMV5DcxhGg24zs41kz9QHuAClaBmU/mXXojzxhN3QuO
-         4ZAYMs6m0H/d2GayvmAPewajjMA7WlfbOSSgvdhifHDPiEiMEqI+JO4lUYQFLQnNuZUk
-         u/bz98t/AqDxNCixrCXuznshJB5Rv67L5muZiqNE+QHn4S0UZhmAmckJQFrAyWYXTAW7
-         lY0g==
-X-Gm-Message-State: AOUpUlFEsk9ZwJWmEvQkEJFaYB/9I3AknvwYlh9WmZbzZm4xNN85kN0o
-        MJJpKkmclqDSn7F4ejPHHDQ8Pw==
-X-Google-Smtp-Source: AAOMgpfc5ApwLLzY+NcxAMroV0XITJqvh3KrxhQY5KHExdoy+lDtrvgWqiiVCb68iXLLE4pYJrkpHA==
-X-Received: by 2002:a63:c80e:: with SMTP id z14-v6mr1172426pgg.77.1531826710885;
-        Tue, 17 Jul 2018 04:25:10 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=PTtFId+Y0EEs5+cllmvrMc/Z4BBjEeLBQmZE8Amw2Fs=;
+        b=s45kG2OP69UDic/H6eOVX+GNV3mQTW3Jv8MBzb1GJA0lFAVtbOwPT0kDyEMd8kxLQf
+         abQijsMU99M70KjGtJbxb09GDNjeBhpmMSFeRxX88pzZ+8ZxgBHkXFpJvgcl8lQrdMJW
+         oWLFEDfO/+kRhqw6G68eAGwN7f+KWEQ7RqrJFdRQ44txSGe1i3OrJ7Jm9qg+z3JtcUdU
+         caWYa1SRbLSC/W+qEBUAsT5dwRpQKT80lEBBcLdVrIIGORUObZjfBatahMoog4A0ygRe
+         hT86Vu7fwnG0EoDP8CMeEsEpZATT3bIthxYnrJnPAYd9EEAbKAxzgpoZJ0CriLGEvwrD
+         fIeA==
+X-Gm-Message-State: AOUpUlGzKI2eZXS8Jy6z0v+bmk44xxwX/nSec3xCYSmXIe3i9w3DweM8
+        d2s/09rjSfxavtYyQPBBOQK9XQ==
+X-Google-Smtp-Source: AAOMgpd3cR8UU01Pr4HkKwTDERGOtcxKrxLiHloBiGKjtGNa1Ek4VOznh0chC0jeIQ++XB2DlSd4Pg==
+X-Received: by 2002:a65:614a:: with SMTP id o10-v6mr1151025pgv.387.1531826713954;
+        Tue, 17 Jul 2018 04:25:13 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm1391207pge.29.2018.07.17.04.25.08
+        by smtp.gmail.com with ESMTPSA id y3-v6sm1391207pge.29.2018.07.17.04.25.11
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 17 Jul 2018 04:25:10 -0700 (PDT)
+        Tue, 17 Jul 2018 04:25:13 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     ysato@users.sourceforge.jp, dalias@libc.org, corbet@lwn.net
 Cc:     baolin.wang@linaro.org, arnd@arndb.de, broonie@kernel.org,
         linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH 1/4] sh: dreamcast: rtc: push down rtc class ops into driver
-Date:   Tue, 17 Jul 2018 19:24:24 +0800
-Message-Id: <bb0912b9725f192179cc94ef8c3f6702fc078e11.1531826106.git.baolin.wang@linaro.org>
+Subject: [RESEND PATCH 2/4] sh: sh03: rtc: push down rtc class ops into driver
+Date:   Tue, 17 Jul 2018 19:24:25 +0800
+Message-Id: <c2862178b063b9a9d5a62a732de61c2963ce989a.1531826106.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <bb0912b9725f192179cc94ef8c3f6702fc078e11.1531826106.git.baolin.wang@linaro.org>
+References: <bb0912b9725f192179cc94ef8c3f6702fc078e11.1531826106.git.baolin.wang@linaro.org>
+In-Reply-To: <bb0912b9725f192179cc94ef8c3f6702fc078e11.1531826106.git.baolin.wang@linaro.org>
+References: <bb0912b9725f192179cc94ef8c3f6702fc078e11.1531826106.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -72,147 +78,174 @@ The dreamcast RTC support has an extra level of indirection to
 provide either the old read_persistent_clock/update_persistent_clock
 interface or the rtc-generic device for hctosys/systohc.
 
-Both do the same thing here, so we can do away with the abstraction
-and simply enable the RTC core code to take care of it.
+By removing the indirection and always using the RTC_CLASS interface,
+we can avoid the lossy double conversion between rtc_time and timespec,
+so we end up supporting the entire range of 'year' values, and clarifying
+the rtc_set_time callback.
+
+I did not change the behavior of sh03_rtc_settimeofday(), which keeps
+just updating the seconds/minutes by calling set_rtc_mmss(), this
+could be improved if anyone cares. Also, the file should ideally be
+moved into drivers/rtc and not use rtc-generic.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- arch/sh/boards/mach-dreamcast/Makefile        |    4 +--
- arch/sh/boards/mach-dreamcast/rtc.c           |   39 +++++++++++++++++--------
- arch/sh/boards/mach-dreamcast/setup.c         |    1 -
- arch/sh/configs/dreamcast_defconfig           |    2 ++
- arch/sh/include/mach-dreamcast/mach/sysasic.h |    1 -
- 5 files changed, 31 insertions(+), 16 deletions(-)
+ arch/sh/boards/mach-sh03/Makefile |    3 ++-
+ arch/sh/boards/mach-sh03/rtc.c    |   51 ++++++++++++++++++++++---------------
+ arch/sh/boards/mach-sh03/setup.c  |    9 -------
+ arch/sh/configs/sh03_defconfig    |    2 ++
+ 4 files changed, 35 insertions(+), 30 deletions(-)
 
-diff --git a/arch/sh/boards/mach-dreamcast/Makefile b/arch/sh/boards/mach-dreamcast/Makefile
-index 7b97546..62b024b 100644
---- a/arch/sh/boards/mach-dreamcast/Makefile
-+++ b/arch/sh/boards/mach-dreamcast/Makefile
-@@ -2,5 +2,5 @@
- # Makefile for the Sega Dreamcast specific parts of the kernel
+diff --git a/arch/sh/boards/mach-sh03/Makefile b/arch/sh/boards/mach-sh03/Makefile
+index 400306a..47007a3 100644
+--- a/arch/sh/boards/mach-sh03/Makefile
++++ b/arch/sh/boards/mach-sh03/Makefile
+@@ -2,4 +2,5 @@
+ # Makefile for the Interface (CTP/PCI-SH03) specific parts of the kernel
  #
  
--obj-y	 := setup.o irq.o rtc.o
--
-+obj-y	 := setup.o irq.o
+-obj-y	 := setup.o rtc.o
++obj-y	 := setup.o
 +obj-$(CONFIG_RTC_DRV_GENERIC) += rtc.o
-diff --git a/arch/sh/boards/mach-dreamcast/rtc.c b/arch/sh/boards/mach-dreamcast/rtc.c
-index 061d657..4f168d8 100644
---- a/arch/sh/boards/mach-dreamcast/rtc.c
-+++ b/arch/sh/boards/mach-dreamcast/rtc.c
-@@ -11,8 +11,9 @@
-  */
- 
- #include <linux/time.h>
--#include <asm/rtc.h>
+diff --git a/arch/sh/boards/mach-sh03/rtc.c b/arch/sh/boards/mach-sh03/rtc.c
+index dc3d50e..8b23ed7 100644
+--- a/arch/sh/boards/mach-sh03/rtc.c
++++ b/arch/sh/boards/mach-sh03/rtc.c
+@@ -13,8 +13,9 @@
+ #include <linux/bcd.h>
+ #include <linux/rtc.h>
+ #include <linux/spinlock.h>
 -#include <asm/io.h>
-+#include <linux/rtc.h>
+-#include <asm/rtc.h>
 +#include <linux/io.h>
++#include <linux/rtc.h>
 +#include <linux/platform_device.h>
  
- /* The AICA RTC has an Epoch of 1/1/1950, so we must subtract 20 years (in
-    seconds) to get the standard Unix Epoch when getting the time, and add
-@@ -30,9 +31,10 @@
-  *
-  * Grabs the current RTC seconds counter and adjusts it to the Unix Epoch.
-  */
--static void aica_rtc_gettimeofday(struct timespec *ts)
-+static int aica_rtc_gettimeofday(struct device *dev, struct rtc_time *tm)
+ #define RTC_BASE	0xb0000000
+ #define RTC_SEC1	(RTC_BASE + 0)
+@@ -38,7 +39,7 @@
+ 
+ static DEFINE_SPINLOCK(sh03_rtc_lock);
+ 
+-unsigned long get_cmos_time(void)
++static int sh03_rtc_gettimeofday(struct device *dev, struct rtc_time *tm)
  {
- 	unsigned long val1, val2;
-+	time64_t t;
+ 	unsigned int year, mon, day, hour, min, sec;
  
- 	do {
- 		val1 = ((__raw_readl(AICA_RTC_SECS_H) & 0xffff) << 16) |
-@@ -42,10 +44,12 @@ static void aica_rtc_gettimeofday(struct timespec *ts)
- 			(__raw_readl(AICA_RTC_SECS_L) & 0xffff);
- 	} while (val1 != val2);
+@@ -75,17 +76,18 @@ unsigned long get_cmos_time(void)
+ 	}
  
--	ts->tv_sec = val1 - TWENTY_YEARS;
-+	/* normalize to 1970..2106 time range */
-+	t = (u32)(val1 - TWENTY_YEARS);
+ 	spin_unlock(&sh03_rtc_lock);
+-	return mktime(year, mon, day, hour, min, sec);
+-}
  
--	/* Can't get nanoseconds with just a seconds counter. */
--	ts->tv_nsec = 0;
-+	rtc_time64_to_tm(t, tm);
-+
+-void sh03_rtc_gettimeofday(struct timespec *tv)
+-{
++	tm->tm_sec  = sec;
++	tm->tm_min  = min;
++	tm->tm_hour = hour;
++	tm->tm_mday = day;
++	tm->tm_mon  = mon;
++	tm->tm_year = year - 1900;
+ 
+-	tv->tv_sec = get_cmos_time();
+-	tv->tv_nsec = 0;
 +	return 0;
  }
  
- /**
-@@ -54,10 +58,11 @@ static void aica_rtc_gettimeofday(struct timespec *ts)
-  *
-  * Adjusts the given @tv to the AICA Epoch and sets the RTC seconds counter.
-  */
--static int aica_rtc_settimeofday(const time_t secs)
-+static int aica_rtc_settimeofday(struct device *dev, struct rtc_time *tm)
+-static int set_rtc_mmss(unsigned long nowtime)
++static int set_rtc_mmss(struct rtc_time *tm)
  {
- 	unsigned long val1, val2;
--	unsigned long adj = secs + TWENTY_YEARS;
-+	time64_t secs = rtc_tm_to_time64(tm);
-+	u32 adj = secs + TWENTY_YEARS;
+ 	int retval = 0;
+ 	int real_seconds, real_minutes, cmos_minutes;
+@@ -97,8 +99,8 @@ static int set_rtc_mmss(unsigned long nowtime)
+ 		if (!(__raw_readb(RTC_CTL) & RTC_BUSY))
+ 			break;
+ 	cmos_minutes = (__raw_readb(RTC_MIN1) & 0xf) + (__raw_readb(RTC_MIN10) & 0xf) * 10;
+-	real_seconds = nowtime % 60;
+-	real_minutes = nowtime / 60;
++	real_seconds = tm->tm_sec;
++	real_minutes = tm->tm_min;
+ 	if (((abs(real_minutes - cmos_minutes) + 15)/30) & 1)
+ 		real_minutes += 30;		/* correct for half hour time zone */
+ 	real_minutes %= 60;
+@@ -112,22 +114,31 @@ static int set_rtc_mmss(unsigned long nowtime)
+ 		printk_once(KERN_NOTICE
+ 		       "set_rtc_mmss: can't update from %d to %d\n",
+ 		       cmos_minutes, real_minutes);
+-		retval = -1;
++		retval = -EINVAL;
+ 	}
+ 	spin_unlock(&sh03_rtc_lock);
  
- 	do {
- 		__raw_writel((adj & 0xffff0000) >> 16, AICA_RTC_SECS_H);
-@@ -73,9 +78,19 @@ static int aica_rtc_settimeofday(const time_t secs)
- 	return 0;
+ 	return retval;
  }
  
--void aica_time_init(void)
+-int sh03_rtc_settimeofday(const time_t secs)
++int sh03_rtc_settimeofday(struct device *dev, struct rtc_time *tm)
+ {
+-	unsigned long nowtime = secs;
+-
+-	return set_rtc_mmss(nowtime);
++	return set_rtc_mmss(tm);
+ }
+ 
+-void sh03_time_init(void)
 +static const struct rtc_class_ops rtc_generic_ops = {
-+	.read_time = aica_rtc_gettimeofday,
-+	.set_time = aica_rtc_settimeofday,
++	.read_time = sh03_rtc_gettimeofday,
++	.set_time = sh03_rtc_settimeofday,
 +};
 +
-+static int __init aica_time_init(void)
++static int __init sh03_time_init(void)
  {
--	rtc_sh_get_time = aica_rtc_gettimeofday;
--	rtc_sh_set_time = aica_rtc_settimeofday;
--}
+-	rtc_sh_get_time = sh03_rtc_gettimeofday;
+-	rtc_sh_set_time = sh03_rtc_settimeofday;
 +	struct platform_device *pdev;
 +
 +	pdev = platform_device_register_data(NULL, "rtc-generic", -1,
 +					     &rtc_generic_ops,
 +					     sizeof(rtc_generic_ops));
- 
++
 +	return PTR_ERR_OR_ZERO(pdev);
-+}
-+arch_initcall(aica_time_init);
-diff --git a/arch/sh/boards/mach-dreamcast/setup.c b/arch/sh/boards/mach-dreamcast/setup.c
-index ad1a4db..672c2ad8 100644
---- a/arch/sh/boards/mach-dreamcast/setup.c
-+++ b/arch/sh/boards/mach-dreamcast/setup.c
-@@ -30,7 +30,6 @@
- 
- static void __init dreamcast_setup(char **cmdline_p)
- {
--	board_time_init = aica_time_init;
+ }
++arch_initcall(sh03_time_init);
+diff --git a/arch/sh/boards/mach-sh03/setup.c b/arch/sh/boards/mach-sh03/setup.c
+index 85e7059..3901b60 100644
+--- a/arch/sh/boards/mach-sh03/setup.c
++++ b/arch/sh/boards/mach-sh03/setup.c
+@@ -22,14 +22,6 @@ static void __init init_sh03_IRQ(void)
+ 	plat_irq_setup_pins(IRQ_MODE_IRQ);
  }
  
- static struct sh_machine_vector mv_dreamcast __initmv = {
-diff --git a/arch/sh/configs/dreamcast_defconfig b/arch/sh/configs/dreamcast_defconfig
-index 3f08dc5..1d27666 100644
---- a/arch/sh/configs/dreamcast_defconfig
-+++ b/arch/sh/configs/dreamcast_defconfig
-@@ -70,3 +70,5 @@ CONFIG_PROC_KCORE=y
- CONFIG_TMPFS=y
- CONFIG_HUGETLBFS=y
+-/* arch/sh/boards/sh03/rtc.c */
+-void sh03_time_init(void);
+-
+-static void __init sh03_setup(char **cmdline_p)
+-{
+-	board_time_init = sh03_time_init;
+-}
+-
+ static struct resource cf_ide_resources[] = {
+ 	[0] = {
+ 		.start  = 0x1f0,
+@@ -101,6 +93,5 @@ static int __init sh03_devices_setup(void)
+ 
+ static struct sh_machine_vector mv_sh03 __initmv = {
+ 	.mv_name		= "Interface (CTP/PCI-SH03)",
+-	.mv_setup		= sh03_setup,
+ 	.mv_init_irq		= init_sh03_IRQ,
+ };
+diff --git a/arch/sh/configs/sh03_defconfig b/arch/sh/configs/sh03_defconfig
+index 2156223..489ffdf 100644
+--- a/arch/sh/configs/sh03_defconfig
++++ b/arch/sh/configs/sh03_defconfig
+@@ -130,3 +130,5 @@ CONFIG_CRYPTO_SHA1=y
+ CONFIG_CRYPTO_DEFLATE=y
  # CONFIG_CRYPTO_ANSI_CPRNG is not set
+ CONFIG_CRC_CCITT=y
 +CONFIG_RTC_CLASS=y
 +CONFIG_RTC_DRV_GENERIC=y
-diff --git a/arch/sh/include/mach-dreamcast/mach/sysasic.h b/arch/sh/include/mach-dreamcast/mach/sysasic.h
-index 58f710e..59effd1 100644
---- a/arch/sh/include/mach-dreamcast/mach/sysasic.h
-+++ b/arch/sh/include/mach-dreamcast/mach/sysasic.h
-@@ -42,7 +42,6 @@
- /* arch/sh/boards/mach-dreamcast/irq.c */
- extern int systemasic_irq_demux(int);
- extern void systemasic_irq_init(void);
--extern void aica_time_init(void);
- 
- #endif /* __ASM_SH_DREAMCAST_SYSASIC_H */
- 
 -- 
 1.7.9.5
 
