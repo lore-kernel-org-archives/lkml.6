@@ -2,184 +2,141 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5412ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6077ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8510020684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:04:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="bdq+/tKu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8510020684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 7E94C20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:08:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E94C20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbeGQSiX (ORCPT
+        id S1729838AbeGQSmY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 14:38:23 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41500 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729648AbeGQSiX (ORCPT
+        Tue, 17 Jul 2018 14:42:24 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:41476 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729708AbeGQSmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 14:38:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z8-v6so774017pgu.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 11:04:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2kjvYhcfHU5ri5jurY3UTz/7geCp52c47PKwrE9wDB4=;
-        b=bdq+/tKuSzrMKzEBFLfzLq0HTIviHCcam5W4mUEbCvj2I7VW4Vit0DivJtfZtekTGL
-         l1TUiVOUVEvAqYQZ2uWveadlfi3q1Iimvp5FXn6OmA6+OvvP50/Gy8fdM4vGfzINwE7K
-         itMgBVpEEiS4npnXfE5tAfvhIzod4oHA+hSzM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2kjvYhcfHU5ri5jurY3UTz/7geCp52c47PKwrE9wDB4=;
-        b=jPUAOaDr6hc94UMFaHad34BNNf0akRrGGq00cJodQpXI4FD9mIzX9Z9SuPbk66zmr4
-         F5uR+Btt7mFUTtnqETdLyKFtYk2keWTkBOOs4Wosy/UZJ8rj+Zfa4r3vRuZyQx3DrdaZ
-         GFp1egqGanuJu1wlZK27uCyyY1HObEzCGX0yLKUE8a09xXZMkO8eBffViwNeXsydDfMq
-         cmpK+s2CbQ3VSNb9ChOXZ0wJfMDNbLuEzL5VKRdr8SMPAbSVAOiT+4a64I5NwSDHdiqN
-         Y+cBS08aotJktt4krPcAssmOQK/XviQDZ+CaXdNTbQ7gbwy6piBcFUe9W1uI78HpdPWA
-         SjjA==
-X-Gm-Message-State: AOUpUlH/BoTdlc5i0BmrSicn6U8CSvRdjbYnkUWovmI0sFt/qA+azYn/
-        x/QZSf7h53Q6/l1BIqy8w8xOBg==
-X-Google-Smtp-Source: AAOMgpfkynl/mQ7osVQ66OxTdD4FKG7Aun26ZzzOfY07x2T+dpoVFDmORTA1XUEhthJ0bgU4XxsM6w==
-X-Received: by 2002:a65:660a:: with SMTP id w10-v6mr2526209pgv.366.1531850675760;
-        Tue, 17 Jul 2018 11:04:35 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm2935213pfi.89.2018.07.17.11.04.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 11:04:35 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 11:04:34 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
+        Tue, 17 Jul 2018 14:42:24 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 5a5eb709416a008b; Tue, 17 Jul 2018 20:08:33 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Andreas Herrmann <aherrmann@suse.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
         Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v2 01/12] sched/core: uclamp: extend sched_setattr to
- support utilization clamping
-Message-ID: <20180717180434.GB150378@joelaf.mtv.corp.google.com>
-References: <20180716082906.6061-1-patrick.bellasi@arm.com>
- <20180716082906.6061-2-patrick.bellasi@arm.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] cpufreq: intel_pstate: Register when ACPI PCCH is present
+Date:   Tue, 17 Jul 2018 20:06:54 +0200
+Message-ID: <2386802.jRaeHeNqoJ@aspire.rjw.lan>
+In-Reply-To: <8115130.Fhkpr82c7G@aspire.rjw.lan>
+References: <20180717065048.74mmgk4t5utjaa6a@suselix> <20180717140336.ayovaz4ksdlak6bb@suselix> <8115130.Fhkpr82c7G@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180716082906.6061-2-patrick.bellasi@arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 09:28:55AM +0100, Patrick Bellasi wrote:
-> The SCHED_DEADLINE scheduling class provides an advanced and formal
-> model to define tasks requirements which can be translated into proper
-> decisions for both task placements and frequencies selections.
-> Other classes have a more simplified model which is essentially based on
-> the relatively simple concept of POSIX priorities.
-> 
-> Such a simple priority based model however does not allow to exploit
-> some of the most advanced features of the Linux scheduler like, for
-> example, driving frequencies selection via the schedutil cpufreq
-> governor. However, also for non SCHED_DEADLINE tasks, it's still
-> interesting to define tasks properties which can be used to better
-> support certain scheduler decisions.
-> 
-> Utilization clamping aims at exposing to user-space a new set of
-> per-task attributes which can be used to provide the scheduler with some
-> hints about the expected/required utilization for a task.
-> This will allow to implement a more advanced per-task frequency control
-> mechanism which is not based just on a "passive" measured task
-> utilization but on a more "active" approach. For example, it could be
-> possible to boost interactive tasks, thus getting better performance, or
-> cap background tasks, thus being more energy efficient.
-> Ultimately, such a mechanism can be considered similar to the cpufreq's
-> powersave, performance and userspace governor but with a much fine
-> grained and per-task control.
-> 
-> Let's introduce a new API to set utilization clamping values for a
-> specified task by extending sched_setattr, a syscall which already
-> allows to define task specific properties for different scheduling
-> classes.
-> Specifically, a new pair of attributes allows to specify a minimum and
-> maximum utilization which the scheduler should consider for a task.
-> 
-> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Paul Turner <pjt@google.com>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Steve Muckle <smuckle@google.com>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-> ---
->  include/linux/sched.h            | 16 ++++++++
->  include/uapi/linux/sched.h       |  4 +-
->  include/uapi/linux/sched/types.h | 64 +++++++++++++++++++++++++++-----
->  init/Kconfig                     | 19 ++++++++++
->  kernel/sched/core.c              | 39 +++++++++++++++++++
->  5 files changed, 132 insertions(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 43731fe51c97..fd8495723088 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -279,6 +279,17 @@ struct vtime {
->  	u64			gtime;
->  };
->  
-> +enum uclamp_id {
-> +	/* No utilization clamp group assigned */
-> +	UCLAMP_NONE = -1,
-> +
-> +	UCLAMP_MIN = 0, /* Minimum utilization */
-> +	UCLAMP_MAX,     /* Maximum utilization */
-> +
-> +	/* Utilization clamping constraints count */
-> +	UCLAMP_CNT
-> +};
-> +
->  struct sched_info {
->  #ifdef CONFIG_SCHED_INFO
->  	/* Cumulative counters: */
-> @@ -649,6 +660,11 @@ struct task_struct {
->  #endif
->  	struct sched_dl_entity		dl;
->  
-> +#ifdef CONFIG_UCLAMP_TASK
-> +	/* Utlization clamp values for this task */
-> +	int				uclamp[UCLAMP_CNT];
-> +#endif
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Seems a bit wasteful to me. Seems you need 2 values that are in the range
-0..1024.  Can we not do better with task_struct space usage?
+Currently, intel_pstate doesn't load if _PSS is not present on
+HP Proliant systems, because it expects the firmware to take over
+CPU performance scaling in that case.  However, if ACPI PCCH is
+present, the firmware expects the kernel to use it for CPU
+performance scaling and the pcc-cpufreq driver is loaded for that.
 
-thanks!
+Unfortunately, the firmware interface used by that driver is not
+scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
+on systems with more than just a few CPUs.  In fact, it is better to
+avoid using it at all.
 
- - Joel
+For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
+is not present and register if it is there.  Also prevent the
+pcc-cpufreq driver from trying to initialize if intel_pstate has
+been registered already.
+
+Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power mgmt option)
+Reported-by: Andreas Herrmann <aherrmann@suse.com>
+Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
+Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+This is a replacement for https://patchwork.kernel.org/patch/10530091/
+
+In addition to the intel_pstate changes in the above, it also
+prevents pcc-cpufreq from trying to initialize (which will fail
+ultimately, but may confuse the firmware in the meantime).
+
+Andreas, please test this one and let me know if it still works for you.
+
+Thanks,
+Rafael
+
+---
+ drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
+ drivers/cpufreq/pcc-cpufreq.c  |    4 ++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+Index: linux-pm/drivers/cpufreq/intel_pstate.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/intel_pstate.c
++++ linux-pm/drivers/cpufreq/intel_pstate.c
+@@ -2391,6 +2391,18 @@ static bool __init intel_pstate_no_acpi_
+ 	return true;
+ }
+ 
++static bool __init intel_pstate_no_acpi_pcch(void)
++{
++	acpi_status status;
++	acpi_handle handle;
++
++	status = acpi_get_handle(NULL, "\\_SB", &handle);
++	if (ACPI_FAILURE(status))
++		return true;
++
++	return !acpi_has_method(handle, "PCCH");
++}
++
+ static bool __init intel_pstate_has_acpi_ppc(void)
+ {
+ 	int i;
+@@ -2450,7 +2462,10 @@ static bool __init intel_pstate_platform
+ 
+ 	switch (plat_info[idx].data) {
+ 	case PSS:
+-		return intel_pstate_no_acpi_pss();
++		if (!intel_pstate_no_acpi_pss())
++			return false;
++
++		return intel_pstate_no_acpi_pcch();
+ 	case PPC:
+ 		return intel_pstate_has_acpi_ppc() && !force_load;
+ 	}
+Index: linux-pm/drivers/cpufreq/pcc-cpufreq.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/pcc-cpufreq.c
++++ linux-pm/drivers/cpufreq/pcc-cpufreq.c
+@@ -580,6 +580,10 @@ static int __init pcc_cpufreq_init(void)
+ {
+ 	int ret;
+ 
++	/* Skip initialization if another cpufreq driver is there. */
++	if (cpufreq_get_current_driver())
++		return 0;
++
+ 	if (acpi_disabled)
+ 		return 0;
+ 
 
