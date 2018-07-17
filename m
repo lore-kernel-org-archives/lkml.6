@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D175CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 400C7ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D66A20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFFA2206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:05:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8YBTyRv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D66A20693
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p865+fT7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFA2206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731462AbeGQVj1 (ORCPT
+        id S1731497AbeGQVj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:39:27 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39679 "EHLO
+        Tue, 17 Jul 2018 17:39:28 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37124 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVjX (ORCPT
+        with ESMTP id S1729684AbeGQVj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:39:23 -0400
-Received: by mail-pg1-f194.google.com with SMTP id g2-v6so967422pgs.6
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:56 -0700 (PDT)
+        Tue, 17 Jul 2018 17:39:27 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n7-v6so969735pgq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:05:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sFOYZchG5aNHLXLp146UdEXMW7F8alJ8AxLF3XjI9+4=;
-        b=O8YBTyRvFkgWwuZ5ROIKo9gNMUi9Zq4Wh/GG39NflTt5FsxkSZZf8MKKLEwkvUjaCj
-         J86Sv9jwzSuAsxRkZrseNa7x8iG6PHicZvns/PUnetCcpr02iHVzvDkmy8cedwK6vDw2
-         EJX91L6Y3j0KSKXvCxl9panbKNkAfz080E48hqTqN5hO7erO9HsAhGTVUPTZFC3CMTnD
-         +zxyQGbLibfSrt1DzA9c1pmyGNcl9DGxmDNcub7swrfI5gi2gcrToCLOTMSSiEI5/Oz0
-         kjbxEFOH47bVYMeocCDJcokqaas2N0p1+E6VVSJUUmWI9NflItHoMeZj3z3oILfXjQRF
-         KD0Q==
+        bh=2qyllyI7aOVIpdaIhLG6KLtNZiRhj1jRgXJKalK9xDA=;
+        b=p865+fT7unu1eZIL5RUPa/TOr0Mpm8h6A3yq9PyVZeZjwDFZawPxisD5TrGNzmeR8Z
+         hEFvKExpXPeqpAnb9RAC6kpACDUtQFBDVf60urfLChuXHTLbibzNDQoW6u+564YBt0PF
+         Gs/NiqXoNguEhXIQUX+M/HXWtQRYrZllP85QzQloYbgByvSFO8PmQS2iIdKd/qfNVHac
+         mUlDZaSd93AGYAM69RFo2nNCDn8z9wxTI9ed3waBNK6RbWCVmjHDkrEtdRqmRd3nrwSw
+         6teFA7OeiLs+nvHoMwXSYi9CIWyXGzRcQLLAa4ReKM7y+v/UE6MzR4CUmpl8E1gUoHHr
+         ABWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sFOYZchG5aNHLXLp146UdEXMW7F8alJ8AxLF3XjI9+4=;
-        b=KF+xyGBQcuQN79YV4GDe79hYtLMzbBQz+AUvjCqowRYdvC86MaOebrieDfN8WlTlW4
-         kqxpVA+CAMeQQtgFOi46tLeXCzvZa7K/jCdki3rj/2eAHx9V9DmqPi4MJm27CxkomUz/
-         6mGpc9X3lAfEkEqF0lUra1JdNJ+596ak4cB2Ey61LgTcWbv0W9NuWOOkxCt8JIO4RGpG
-         X8blHyYfO0GbYe/noAMpbdUMcc0Uc0O8nrt8Z5G85JrQh/E7E9q9TzYjtoVQHOTlPlqq
-         TGSeCIcUgD3k0Cz3yJXGPmctuzy71H9BxUtTCrz+dXn/g3CgOqXnAX6h1rw9JEjy8l5V
-         NpSQ==
-X-Gm-Message-State: AOUpUlE6UQMAeejZeT0p0yiTYBvobaM5q35hpZwvgX+uOZLRT4apa68c
-        A1oiA9LOfq3yJ+LLZQASnVY=
-X-Google-Smtp-Source: AAOMgpc4EbaCVw3Dr4bW0He8/2+9bkjATP3JRTKd5FHyMAo5UOWtWwkdaDS0P7/ZbDwi0gs5uCWsBQ==
-X-Received: by 2002:a63:6949:: with SMTP id e70-v6mr3172272pgc.119.1531861495994;
-        Tue, 17 Jul 2018 14:04:55 -0700 (PDT)
+        bh=2qyllyI7aOVIpdaIhLG6KLtNZiRhj1jRgXJKalK9xDA=;
+        b=nWT8vGJogNfZDoAkH1jD46N534iKic1ag/UZnUevrHcy3qLH0S4xVm+tD1UANDERs6
+         O0mf9+HxNItNypY7oBmUtt8k6D4IGJnQzl+ytUym3ryOQgSVlDf+MicPvG1LWkebNU9W
+         b+WYmUg95Ww2xFKMhSeSufTlOsx7ueXUMLOeJNYcsvmQgstqTKVBkJsQfOdQcavLcaXW
+         Vi1sTgzfd5PexJb0zz0prT1h3Ji1xnWmRtYZsgjEg3Ey91QnI2thL18Kkrqi1kS+liSP
+         RZ6Jcz9R5Yj5HbRU1DxO3aWzO0MKErG+pF5MApzZUftFk2D10K3tlR9c5Zz3nIOqC2Ms
+         APlw==
+X-Gm-Message-State: AOUpUlHXFSNcfz7t17dCeq4QO5FnKNjb6PbLRT+agYzpKu2OLFQsXoJ8
+        hctxkRfDo6ynfxLY/pQcmPA=
+X-Google-Smtp-Source: AAOMgpcLt1qi/+na+6Tb7vSJL0dDrAydmVXchQOF1CYdN7qD+BukVf4XgteEyHdPykFL1z/EEzd0/w==
+X-Received: by 2002:a63:2c8e:: with SMTP id s136-v6mr3007199pgs.390.1531861500510;
+        Tue, 17 Jul 2018 14:05:00 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.54
+        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:04:55 -0700 (PDT)
+        Tue, 17 Jul 2018 14:04:59 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 09/32] staging: gasket: convert gasket_mmap_has_permissions to bool return
-Date:   Tue, 17 Jul 2018 13:56:49 -0700
-Message-Id: <20180717205712.29495-10-toddpoynor@gmail.com>
+Subject: [PATCH 13/32] staging: gasket: gasket_wait_with_reschedule use 32 bits of retry count
+Date:   Tue, 17 Jul 2018 13:56:53 -0700
+Message-Id: <20180717205712.29495-14-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
 References: <20180717205712.29495-1-toddpoynor@gmail.com>
@@ -81,63 +81,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-gasket_mmap_has_permissions() should return a boolean value.
+Don't need a 64-bit retry counter.
 
+Reported-by: Dmitry Torokhov <dtor@chromium.org>
 Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/staging/gasket/gasket_core.c | 4 ++--
+ drivers/staging/gasket/gasket_core.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 2ff328652356a..248d717e1df65 100644
+index 5ae3d44f6166e..94e64b900380d 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -1241,19 +1241,19 @@ static int gasket_release(struct inode *inode, struct file *file)
-  * that the provided descriptor/range is of adequate size to hold the range to
-  * be mapped.
-  */
--static int gasket_mmap_has_permissions(
-+static bool gasket_mmap_has_permissions(
- 	struct gasket_dev *gasket_dev, struct vm_area_struct *vma,
- 	int bar_permissions)
+@@ -2089,9 +2089,9 @@ struct device *gasket_get_device(struct gasket_dev *dev)
+  **/
+ int gasket_wait_with_reschedule(
+ 	struct gasket_dev *gasket_dev, int bar, u64 offset, u64 mask, u64 val,
+-	u64 max_retries, u64 delay_ms)
++	uint max_retries, u64 delay_ms)
  {
- 	int requested_permissions;
- 	/* Always allow sysadmin to access. */
- 	if (capable(CAP_SYS_ADMIN))
--		return 1;
-+		return true;
+-	u64 retries = 0;
++	uint retries = 0;
+ 	u64 tmp;
  
- 	/* Never allow non-sysadmins to access to a dead device. */
- 	if (gasket_dev->status != GASKET_STATUS_ALIVE) {
- 		gasket_log_info(gasket_dev, "Device is dead.");
--		return 0;
-+		return false;
- 	}
+ 	while (retries < max_retries) {
+diff --git a/drivers/staging/gasket/gasket_core.h b/drivers/staging/gasket/gasket_core.h
+index 94a5537bff2c2..50ad0c8853183 100644
+--- a/drivers/staging/gasket/gasket_core.h
++++ b/drivers/staging/gasket/gasket_core.h
+@@ -702,6 +702,6 @@ struct device *gasket_get_device(struct gasket_dev *dev);
+ /* Helper function, Asynchronous waits on a given set of bits. */
+ int gasket_wait_with_reschedule(
+ 	struct gasket_dev *gasket_dev, int bar, u64 offset, u64 mask, u64 val,
+-	u64 max_retries, u64 delay_ms);
++	uint max_retries, u64 delay_ms);
  
- 	/* Make sure that no wrong flags are set. */
-@@ -1265,7 +1265,7 @@ static int gasket_mmap_has_permissions(
- 			"Attempting to map a region with requested permissions "
- 			"0x%x, but region has permissions 0x%x.",
- 			requested_permissions, bar_permissions);
--		return 0;
-+		return false;
- 	}
- 
- 	/* Do not allow a non-owner to write. */
-@@ -1275,10 +1275,10 @@ static int gasket_mmap_has_permissions(
- 			gasket_dev,
- 			"Attempting to mmap a region for write without owning "
- 			"device.");
--		return 0;
-+		return false;
- 	}
- 
--	return 1;
-+	return true;
- }
- 
- /*
+ #endif /* __GASKET_CORE_H__ */
 -- 
 2.18.0.203.gfac676dfb9-goog
 
