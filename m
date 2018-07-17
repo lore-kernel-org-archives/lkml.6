@@ -2,70 +2,79 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F3FCECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A871ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A3E2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:04:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1A3E2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id C314D2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C314D2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731918AbeGQPhN (ORCPT
+        id S1731967AbeGQPhO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 17 Jul 2018 11:37:14 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:55678 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1731793AbeGQPhN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Jul 2018 11:37:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54854 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731737AbeGQPhN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:37:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E87D1ACC3;
-        Tue, 17 Jul 2018 15:04:07 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 546A7DAC97; Tue, 17 Jul 2018 17:04:00 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 17:04:00 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Su Yue <suy.fnst@cn.fujitsu.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: fix size_t format string
-Message-ID: <20180717150400.GA3126@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Arnd Bergmann <arnd@arndb.de>,
-        Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Su Yue <suy.fnst@cn.fujitsu.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180717135236.3673195-1-arnd@arndb.de>
+Received: (qmail 3019 invoked by uid 2102); 17 Jul 2018 11:04:09 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 17 Jul 2018 11:04:09 -0400
+Date:   Tue, 17 Jul 2018 11:04:09 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Martijn Coenen <maco@android.com>
+cc:     Kernel development list <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oliver Neukum <oneukum@suse.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        USB Storage list <usb-storage@lists.one-eyed-alien.net>
+Subject: Re: [PATCH 6/6] RFC: USB: storage: move symbols into USB_STORAGE
+ namespace.
+In-Reply-To: <20180716122125.175792-7-maco@android.com>
+Message-ID: <Pine.LNX.4.44L0.1807171100190.1689-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717135236.3673195-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 03:52:27PM +0200, Arnd Bergmann wrote:
-> The newly added check_block_group_item() function causes a build warning
-> on 32-bit architectures:
-> 
-> fs/btrfs/tree-checker.c: In function 'check_block_group_item':
-> fs/btrfs/tree-checker.c:404:41: error: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'unsigned int' [-Werror=format=]
-> 
-> The type of a sizeof() expression is size_t, which is correctly printed
-> using the %zu format string.
-> 
-> Fixes: 9dc16aad5660 ("btrfs: tree-checker: Verify block_group_item")
+On Mon, 16 Jul 2018, Martijn Coenen wrote:
 
-Folded to the commit, thanks.
+> Modules using these symbols must now import this namesapce explicitly.
+
+Spelling error ("namesapce").
+
+> 
+> Signed-off-by: Martijn Coenen <maco@android.com>
+> ---
+>  drivers/usb/storage/alauda.c        |  1 +
+>  drivers/usb/storage/cypress_atacb.c |  1 +
+>  drivers/usb/storage/datafab.c       |  1 +
+>  drivers/usb/storage/ene_ub6250.c    |  1 +
+>  drivers/usb/storage/freecom.c       |  1 +
+>  drivers/usb/storage/isd200.c        |  1 +
+>  drivers/usb/storage/jumpshot.c      |  1 +
+>  drivers/usb/storage/karma.c         |  1 +
+>  drivers/usb/storage/onetouch.c      |  1 +
+>  drivers/usb/storage/realtek_cr.c    |  1 +
+>  drivers/usb/storage/sddr09.c        |  1 +
+>  drivers/usb/storage/sddr55.c        |  1 +
+>  drivers/usb/storage/shuttle_usbat.c |  1 +
+>  drivers/usb/storage/uas.c           |  1 +
+>  drivers/usb/storage/usb.c           | 20 ++++++++++----------
+>  15 files changed, 24 insertions(+), 10 deletions(-)
+
+This patch misses the various EXPORT_SYMBOL_GPL lines in debug.c,
+protocol.c, scsiglue.c, and transport.c.  They should also be
+considered part of the USB_STORAGE namespace.
+
+Alan Stern
+
