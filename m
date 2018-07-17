@@ -2,214 +2,392 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5975CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500F1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0986520852
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="lxeKckJp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0986520852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 54C6320BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C6320BED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730821AbeGQKE4 (ORCPT
+        id S1729994AbeGQKF3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:04:56 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:38989 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729794AbeGQKDS (ORCPT
+        Tue, 17 Jul 2018 06:05:29 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:41615 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbeGQKF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:03:18 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B53A110C1669;
-        Tue, 17 Jul 2018 02:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531819896; bh=guS3HUvFX7793b/AwDLTTEWIUG1K4wM9vhINWiM7ZpI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=lxeKckJpDWjdNI/zcUW+lVvhn0p+eMKhinYST6ryJ3prv/IOAsSSEyA5iHSjwmG1t
-         6C033bN5JoqY9ErmpqnmZz1Mm4wxfncTCf1LClgEW9KOu700YWxqAHz+89elr9X+nQ
-         htIEsksiu9Aj4sO/eNBmBSx0ZRrktsXfFjRp8iMEeeCrFZNwP+SDFBugpQXl55ER+N
-         50KrKsmmcaIhuQRjqYJaWIXXsfe+cMm0ilHtPTWHNuq0q0Q1CF941Km26FXN55yad9
-         gaG7QR9EOzqzFIKyW9kwu6cMQtvcn33xvBlkcDEo2t7crQ+t12RMsdnDfoc4mzRRrX
-         wQ5t1nNWlI0+Q==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 6E6593FAC;
-        Tue, 17 Jul 2018 02:31:36 -0700 (PDT)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 2732F3BBFF;
-        Tue, 17 Jul 2018 11:31:34 +0200 (CEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v12 05/12] PCI: dwc: Rework MSI callbacks handler
-Date:   Tue, 17 Jul 2018 11:31:25 +0200
-Message-Id: <278a41c07a3339e82867962b36cae81e4928f2b0.1531818979.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
+        Tue, 17 Jul 2018 06:05:29 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9X3aQ1463216
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 02:33:03 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9X3JG1463212;
+        Tue, 17 Jul 2018 02:33:03 -0700
+Date:   Tue, 17 Jul 2018 02:33:03 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrea Parri <tipbot@zytor.com>
+Message-ID: <tip-71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stern@rowland.harvard.edu,
+        npiggin@gmail.com, luc.maranget@inria.fr,
+        paulmck@linux.vnet.ibm.com, mingo@kernel.org, hpa@zytor.com,
+        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
+        j.alglave@ucl.ac.uk, dhowells@redhat.com,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        boqun.feng@gmail.com, akiyks@gmail.com, will.deacon@arm.com
+Reply-To: will.deacon@arm.com, akiyks@gmail.com, boqun.feng@gmail.com,
+          peterz@infradead.org, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+          torvalds@linux-foundation.org, hpa@zytor.com,
+          andrea.parri@amarulasolutions.com, tglx@linutronix.de,
+          mingo@kernel.org, luc.maranget@inria.fr,
+          paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+          stern@rowland.harvard.edu, npiggin@gmail.com
+In-Reply-To: <20180716180605.16115-14-paulmck@linux.vnet.ibm.com>
+References: <20180716180605.16115-14-paulmck@linux.vnet.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] tools/memory-model: Rename litmus tests to
+ comply to norm7
+Git-Commit-ID: 71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicate defines located on pcie-designware.h file already
-available on /include/uapi/linux/pci-regs.h file.
+Commit-ID:  71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19
+Gitweb:     https://git.kernel.org/tip/71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19
+Author:     Andrea Parri <andrea.parri@amarulasolutions.com>
+AuthorDate: Mon, 16 Jul 2018 11:06:05 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 17 Jul 2018 09:30:36 +0200
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+tools/memory-model: Rename litmus tests to comply to norm7
+
+norm7 produces the 'normalized' name of a litmus test,  when the test
+can be generated from a single cycle that passes through each process
+exactly once. The commit renames such tests in order to comply to the
+naming scheme implemented by this tool.
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Akira Yokosawa <akiyks@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: parri.andrea@gmail.com
+Link: http://lkml.kernel.org/r/20180716180605.16115-14-paulmck@linux.vnet.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Replaced wrong return value 0 to -EINVAL.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Moved pci_epc_set_msi maximum interrupts validation into a new patch
-file #11.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Nothing changed, just to follow the patch set version.
-Change v9->v10:
- - Nothing changed, just to follow the patch set version.
-Change v10->v11:
- - Nothing changed, just to follow the patch set version.
-Change v11->v12:
- - Nothing changed, just to follow the patch set version.
+ tools/memory-model/Documentation/recipes.txt         |  8 ++++----
+ tools/memory-model/README                            | 20 ++++++++++----------
+ ....litmus => IRIW+fencembonceonces+OnceOnce.litmus} |  2 +-
+ ...litmus => LB+fencembonceonce+ctrlonceonce.litmus} |  2 +-
+ ...s => MP+fencewmbonceonce+fencermbonceonce.litmus} |  2 +-
+ ...+mbonceonces.litmus => R+fencembonceonces.litmus} |  2 +-
+ tools/memory-model/litmus-tests/README               | 16 ++++++++--------
+ ...itmus => S+fencewmbonceonce+poacquireonce.litmus} |  2 +-
+ ...mbonceonces.litmus => SB+fencembonceonces.litmus} |  2 +-
+ ...> WRC+pooncerelease+fencermbonceonce+Once.litmus} |  2 +-
+ ...erelease+poacquirerelease+fencembonceonce.litmus} |  2 +-
+ 11 files changed, 30 insertions(+), 30 deletions(-)
 
- drivers/pci/controller/dwc/pcie-designware-ep.c | 49 +++++++++++++++++--------
- drivers/pci/controller/dwc/pcie-designware.h    | 11 ------
- 2 files changed, 33 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 23be2c0..dd9c366 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
+index 1fea8ef2b184..af72700cc20a 100644
+--- a/tools/memory-model/Documentation/recipes.txt
++++ b/tools/memory-model/Documentation/recipes.txt
+@@ -126,7 +126,7 @@ However, it is not necessarily the case that accesses ordered by
+ locking will be seen as ordered by CPUs not holding that lock.
+ Consider this example:
  
- static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
-+
-+	if (!ep->msi_cap)
-+		return -EINVAL;
+-	/* See Z6.0+pooncelock+pooncelock+pombonce.litmus. */
++	/* See Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus. */
+ 	void CPU0(void)
+ 	{
+ 		spin_lock(&mylock);
+@@ -292,7 +292,7 @@ and to use smp_load_acquire() instead of smp_rmb().  However, the older
+ smp_wmb() and smp_rmb() APIs are still heavily used, so it is important
+ to understand their use cases.  The general approach is shown below:
  
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	if (!(val & MSI_CAP_MSI_EN_MASK))
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	if (!(val & PCI_MSI_FLAGS_ENABLE))
- 		return -EINVAL;
+-	/* See MP+wmbonceonce+rmbonceonce.litmus. */
++	/* See MP+fencewmbonceonce+fencermbonceonce.litmus. */
+ 	void CPU0(void)
+ 	{
+ 		WRITE_ONCE(x, 1);
+@@ -360,7 +360,7 @@ can be seen in the LB+poonceonces.litmus litmus test.
+ One way of avoiding the counter-intuitive outcome is through the use of a
+ control dependency paired with a full memory barrier:
  
--	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
-+	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
-+
- 	return val;
- }
+-	/* See LB+ctrlonceonce+mbonceonce.litmus. */
++	/* See LB+fencembonceonce+ctrlonceonce.litmus. */
+ 	void CPU0(void)
+ 	{
+ 		r0 = READ_ONCE(x);
+@@ -476,7 +476,7 @@ that one CPU first stores to one variable and then loads from a second,
+ while another CPU stores to the second variable and then loads from the
+ first.  Preserving order requires nothing less than full barriers:
  
--static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
-+static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- {
--	int val;
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	u32 val, reg;
+-	/* See SB+mbonceonces.litmus. */
++	/* See SB+fencembonceonces.litmus. */
+ 	void CPU0(void)
+ 	{
+ 		WRITE_ONCE(x, 1);
+diff --git a/tools/memory-model/README b/tools/memory-model/README
+index 734f7feaa5dc..ee987ce20aae 100644
+--- a/tools/memory-model/README
++++ b/tools/memory-model/README
+@@ -35,13 +35,13 @@ BASIC USAGE: HERD7
+ The memory model is used, in conjunction with "herd7", to exhaustively
+ explore the state space of small litmus tests.
  
--	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
--	val &= ~MSI_CAP_MMC_MASK;
--	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
-+	if (!ep->msi_cap)
-+		return -EINVAL;
-+
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	val = dw_pcie_readw_dbi(pci, reg);
-+	val &= ~PCI_MSI_FLAGS_QMASK;
-+	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
- 	dw_pcie_dbi_ro_wr_en(pci);
--	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
-+	dw_pcie_writew_dbi(pci, reg, val);
- 	dw_pcie_dbi_ro_wr_dis(pci);
+-For example, to run SB+mbonceonces.litmus against the memory model:
++For example, to run SB+fencembonceonces.litmus against the memory model:
  
- 	return 0;
-@@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct pci_epc *epc = ep->epc;
- 	u16 msg_ctrl, msg_data;
--	u32 msg_addr_lower, msg_addr_upper;
-+	u32 msg_addr_lower, msg_addr_upper, reg;
- 	u64 msg_addr;
- 	bool has_upper;
- 	int ret;
+-  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+mbonceonces.litmus
++  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+fencembonceonces.litmus
  
-+	if (!ep->msi_cap)
-+		return -EINVAL;
-+
- 	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
--	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
-+	reg = ep->msi_cap + PCI_MSI_FLAGS;
-+	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
- 	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
--	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
-+	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
-+	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
- 	if (has_upper) {
--		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
-+		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
-+		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
-+		reg = ep->msi_cap + PCI_MSI_DATA_64;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	} else {
- 		msg_addr_upper = 0;
--		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
-+		reg = ep->msi_cap + PCI_MSI_DATA_32;
-+		msg_data = dw_pcie_readw_dbi(pci, reg);
- 	}
- 	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
- 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 00ac419..e8b97f5 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -96,17 +96,6 @@
- #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
- 			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
+ Here is the corresponding output:
  
--#define MSI_MESSAGE_CONTROL		0x52
--#define MSI_CAP_MMC_SHIFT		1
--#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
--#define MSI_CAP_MME_SHIFT		4
--#define MSI_CAP_MSI_EN_MASK		0x1
--#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
--#define MSI_MESSAGE_ADDR_L32		0x54
--#define MSI_MESSAGE_ADDR_U32		0x58
--#define MSI_MESSAGE_DATA_32		0x58
--#define MSI_MESSAGE_DATA_64		0x5C
--
- #define MAX_MSI_IRQS			256
- #define MAX_MSI_IRQS_PER_CTRL		32
- #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
--- 
-2.7.4
-
+-  Test SB+mbonceonces Allowed
++  Test SB+fencembonceonces Allowed
+   States 3
+   0:r0=0; 1:r0=1;
+   0:r0=1; 1:r0=0;
+@@ -50,8 +50,8 @@ Here is the corresponding output:
+   Witnesses
+   Positive: 0 Negative: 3
+   Condition exists (0:r0=0 /\ 1:r0=0)
+-  Observation SB+mbonceonces Never 0 3
+-  Time SB+mbonceonces 0.01
++  Observation SB+fencembonceonces Never 0 3
++  Time SB+fencembonceonces 0.01
+   Hash=d66d99523e2cac6b06e66f4c995ebb48
+ 
+ The "Positive: 0 Negative: 3" and the "Never 0 3" each indicate that
+@@ -67,16 +67,16 @@ BASIC USAGE: KLITMUS7
+ The "klitmus7" tool converts a litmus test into a Linux kernel module,
+ which may then be loaded and run.
+ 
+-For example, to run SB+mbonceonces.litmus against hardware:
++For example, to run SB+fencembonceonces.litmus against hardware:
+ 
+   $ mkdir mymodules
+-  $ klitmus7 -o mymodules litmus-tests/SB+mbonceonces.litmus
++  $ klitmus7 -o mymodules litmus-tests/SB+fencembonceonces.litmus
+   $ cd mymodules ; make
+   $ sudo sh run.sh
+ 
+ The corresponding output includes:
+ 
+-  Test SB+mbonceonces Allowed
++  Test SB+fencembonceonces Allowed
+   Histogram (3 states)
+   644580  :>0:r0=1; 1:r0=0;
+   644328  :>0:r0=0; 1:r0=1;
+@@ -86,8 +86,8 @@ The corresponding output includes:
+   Positive: 0, Negative: 2000000
+   Condition exists (0:r0=0 /\ 1:r0=0) is NOT validated
+   Hash=d66d99523e2cac6b06e66f4c995ebb48
+-  Observation SB+mbonceonces Never 0 2000000
+-  Time SB+mbonceonces 0.16
++  Observation SB+fencembonceonces Never 0 2000000
++  Time SB+fencembonceonces 0.16
+ 
+ The "Positive: 0 Negative: 2000000" and the "Never 0 2000000" indicate
+ that during two million trials, the state specified in this litmus
+diff --git a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
+similarity index 95%
+rename from tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
+rename to tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
+index 98a3716efa37..e729d2776e89 100644
+--- a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
++++ b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
+@@ -1,4 +1,4 @@
+-C IRIW+mbonceonces+OnceOnce
++C IRIW+fencembonceonces+OnceOnce
+ 
+ (*
+  * Result: Never
+diff --git a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
+similarity index 95%
+rename from tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
+rename to tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
+index de6708229dd1..4727f5aaf03b 100644
+--- a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
++++ b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
+@@ -1,4 +1,4 @@
+-C LB+ctrlonceonce+mbonceonce
++C LB+fencembonceonce+ctrlonceonce
+ 
+ (*
+  * Result: Never
+diff --git a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
+similarity index 91%
+rename from tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
+rename to tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
+index c078f38ff27a..a273da9faa6d 100644
+--- a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
++++ b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
+@@ -1,4 +1,4 @@
+-C MP+wmbonceonce+rmbonceonce
++C MP+fencewmbonceonce+fencermbonceonce
+ 
+ (*
+  * Result: Never
+diff --git a/tools/memory-model/litmus-tests/R+mbonceonces.litmus b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
+similarity index 95%
+rename from tools/memory-model/litmus-tests/R+mbonceonces.litmus
+rename to tools/memory-model/litmus-tests/R+fencembonceonces.litmus
+index a0e884ad2132..222a0b850b4a 100644
+--- a/tools/memory-model/litmus-tests/R+mbonceonces.litmus
++++ b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
+@@ -1,4 +1,4 @@
+-C R+mbonceonces
++C R+fencembonceonces
+ 
+ (*
+  * Result: Never
+diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
+index 00140aaf58b7..4581ec2d3c57 100644
+--- a/tools/memory-model/litmus-tests/README
++++ b/tools/memory-model/litmus-tests/README
+@@ -18,7 +18,7 @@ CoWW+poonceonce.litmus
+ 	Test of write-write coherence, that is, whether or not two
+ 	successive writes to the same variable are ordered.
+ 
+-IRIW+mbonceonces+OnceOnce.litmus
++IRIW+fencembonceonces+OnceOnce.litmus
+ 	Test of independent reads from independent writes with smp_mb()
+ 	between each pairs of reads.  In other words, is smp_mb()
+ 	sufficient to cause two different reading processes to agree on
+@@ -47,7 +47,7 @@ ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
+ 	Can a release-acquire chain order a prior store against
+ 	a later load?
+ 
+-LB+ctrlonceonce+mbonceonce.litmus
++LB+fencembonceonce+ctrlonceonce.litmus
+ 	Does a control dependency and an smp_mb() suffice for the
+ 	load-buffering litmus test, where each process reads from one
+ 	of two variables then writes to the other?
+@@ -88,14 +88,14 @@ MP+porevlocks.litmus
+ 	As below, but with the first access of the writer process
+ 	and the second access of reader process protected by a lock.
+ 
+-MP+wmbonceonce+rmbonceonce.litmus
++MP+fencewmbonceonce+fencermbonceonce.litmus
+ 	Does a smp_wmb() (between the stores) and an smp_rmb() (between
+ 	the loads) suffice for the message-passing litmus test, where one
+ 	process writes data and then a flag, and the other process reads
+ 	the flag and then the data.  (This is similar to the ISA2 tests,
+ 	but with two processes instead of three.)
+ 
+-R+mbonceonces.litmus
++R+fencembonceonces.litmus
+ 	This is the fully ordered (via smp_mb()) version of one of
+ 	the classic counterintuitive litmus tests that illustrates the
+ 	effects of store propagation delays.
+@@ -103,7 +103,7 @@ R+mbonceonces.litmus
+ R+poonceonces.litmus
+ 	As above, but without the smp_mb() invocations.
+ 
+-SB+mbonceonces.litmus
++SB+fencembonceonces.litmus
+ 	This is the fully ordered (again, via smp_mb() version of store
+ 	buffering, which forms the core of Dekker's mutual-exclusion
+ 	algorithm.
+@@ -123,12 +123,12 @@ SB+rfionceonce-poonceonces.litmus
+ S+poonceonces.litmus
+ 	As below, but without the smp_wmb() and acquire load.
+ 
+-S+wmbonceonce+poacquireonce.litmus
++S+fencewmbonceonce+poacquireonce.litmus
+ 	Can a smp_wmb(), instead of a release, and an acquire order
+ 	a prior store against a subsequent store?
+ 
+ WRC+poonceonces+Once.litmus
+-WRC+pooncerelease+rmbonceonce+Once.litmus
++WRC+pooncerelease+fencermbonceonce+Once.litmus
+ 	These two are members of an extension of the MP litmus-test
+ 	class in which the first write is moved to a separate process.
+ 	The second is forbidden because smp_store_release() is
+@@ -143,7 +143,7 @@ Z6.0+pooncelock+poonceLock+pombonce.litmus
+ 	As above, but with smp_mb__after_spinlock() immediately
+ 	following the spin_lock().
+ 
+-Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
++Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+ 	Is the ordering provided by a release-acquire chain sufficient
+ 	to make ordering apparent to accesses by a process that does
+ 	not participate in that release-acquire chain?
+diff --git a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
+similarity index 90%
+rename from tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
+rename to tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
+index c53350205d28..18479823cd6c 100644
+--- a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
++++ b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
+@@ -1,4 +1,4 @@
+-C S+wmbonceonce+poacquireonce
++C S+fencewmbonceonce+poacquireonce
+ 
+ (*
+  * Result: Never
+diff --git a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
+similarity index 95%
+rename from tools/memory-model/litmus-tests/SB+mbonceonces.litmus
+rename to tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
+index 74b874ffa8da..ed5fff18d223 100644
+--- a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
++++ b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
+@@ -1,4 +1,4 @@
+-C SB+mbonceonces
++C SB+fencembonceonces
+ 
+ (*
+  * Result: Never
+diff --git a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
+similarity index 93%
+rename from tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
+rename to tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
+index ad3448b941e6..e9947250d7de 100644
+--- a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
++++ b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
+@@ -1,4 +1,4 @@
+-C WRC+pooncerelease+rmbonceonce+Once
++C WRC+pooncerelease+fencermbonceonce+Once
+ 
+ (*
+  * Result: Never
+diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+similarity index 94%
+rename from tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
+rename to tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+index a20fc3fafb53..88e70b87a683 100644
+--- a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
++++ b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
+@@ -1,4 +1,4 @@
+-C Z6.0+pooncerelease+poacquirerelease+mbonceonce
++C Z6.0+pooncerelease+poacquirerelease+fencembonceonce
+ 
+ (*
+  * Result: Sometimes
