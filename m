@@ -2,90 +2,146 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E633FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E203ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E8E2146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E8E2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id BB2382146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:54:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB2382146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731741AbeGQO0o (ORCPT
+        id S1731806AbeGQO04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:26:44 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:58031 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731615AbeGQO0n (ORCPT
+        Tue, 17 Jul 2018 10:26:56 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:43853 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731615AbeGQO0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:26:43 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Lsf1t-1g37JF2Aif-012DLU; Tue, 17 Jul 2018 15:53:08 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jann Horn <jannh@google.com>, "Tobin C. Harding" <me@tobin.cc>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] random: fix rdrand mix-in
-Date:   Tue, 17 Jul 2018 15:53:00 +0200
-Message-Id: <20180717135307.3713325-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:WZgbE637AAgQW4ChcH5dH8Sl4SIv1Fo5xxxZYegee96rlF0ZFCk
- Eu9pBEswRiWNfVXXKjvg07PBhpJZKn31b95OfwFwmvZDQ1cDz4g1ktbtYjSDsRnUkt9LSUo
- wYX8X07xqMJ5agcRoFLqzXPcieJXkjZvUyAa1MylVmtDxqvw6+6C64T8vtE5F8Ijk0yOYQb
- RTmJBBZzL7IweNUfaClEA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:VD8pRcCibbQ=:vLDYu1to3c6uBFHQ7a2Vry
- V5u2lhjT3ZXNj/Xt9KLCCL3gFjbjHlQbpnhNZA86yl1QW/V2GtG6YLOU0nJLLAlpuINFsJVfh
- jC71TPXLfs6d7TLdPInY/gNAfgVNyRMyqPdstF8lDGi2uf0rImdkjlS+X3Axf4dIe5FCocSa2
- OQTCXuQh2871uS6f5Q7A7PvViPHx1onXFVQ+7WDao2FDGbMxicB60uMOs7lRzRGMtQViX8DMl
- cVMaA+xl9opQ66x/W56YaBzFbLzvF98JKidE5/esPzCJIRJBke65CCdf+XvJNV/Ump/dVLezv
- CZwIeO7PARx73U2xkEgM3JxEnWD6bHa15oGJ9s5yexGoQhlrJ/0ou/vk6plQtpqCnNRGx1sUl
- o8tUUckC5Sn6JQSvRo07d6qT2+bG2LMt+JR77Sfaubi+s5DiangXY9RdIw8hypxjs6gKr2xy/
- ZSaFeiUUvoxRGtPBo1+jm88nTOqEsXxBe9IUbcYrm7bjPdrFcpLnNlDYGfBfu6gdjwf1cFBmF
- RBpnV4g0hbDbJ6sWF7qdsCwL3qTd+zpgP0/XYLnc04XE8auRdwo6GsswTPWFkm2cxLXvbDpdN
- aAkm4iwyPE7dnJC8i+gNtZfEybFDxxNV6qpw6BVCas0Ht9WGtdD7Ax8ipHNFc4u8CrRBgNQ2i
- 5AqOD4ZPpmPR4Yno9QRjA8ijRUcakmg7cyJPs3CRixBypZR/jBxWrlKpZYphFi3VQI3Y=
+        Tue, 17 Jul 2018 10:26:55 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6HDs7qw011951;
+        Tue, 17 Jul 2018 22:54:07 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Tue, 17 Jul 2018 22:54:07 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6HDs0FX011917
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 17 Jul 2018 22:54:07 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
+To:     Rasmus Villemoes <mail@rasmusvillemoes.dk>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20180707111209.GA27768@gmail.com>
+ <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
+ <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <f486debf-e824-0d0c-c0c9-cf1e278ee9eb@i-love.sakura.ne.jp>
+Date:   Tue, 17 Jul 2018 22:53:55 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The newly added arch_get_random_int() call was done incorrectly,
-using the output only if rdrand hardware was /not/ available. The
-compiler points out that the data is uninitialized in this case:
+On 2018/07/17 18:01, Rasmus Villemoes wrote:
+> Why not this instead? Less stack use, less code, no intermediary
+> snprintfs, no pr_cont...
 
-drivers/char/random.c: In function 'write_pool.constprop':
-drivers/char/random.c:1912:11: error: 't' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+Excellent! I didn't notice %ph extension.
 
-This fixes the condition so we only use that data when it was
-valid.
+> Not compile-tested, probably whitespace-damaged, but you get the idea.
 
-Fixes: 349ddb707fb7 ("random: mix rdrand with entropy sent in from userspace")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Yes, it works well.
+
+
+
+From 96d9d4d135994a081e54d33d23f5007c53d9b5dd Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Tue, 17 Jul 2018 22:47:11 +0900
+Subject: [PATCH v3] x86: Avoid pr_cont() in show_opcodes()
+
+Since syzbot is confused by concurrent printk() messages [1],
+this patch changes show_opcodes() to use %*ph format string.
+
+When we start adding prefix to each line of printk() output,
+we will be able to handle concurrent printk() messages.
+
+[1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SKAURA.ne.jp>
+Signed-off-by: Rasmus Villemoes <mail@rasmusvillemoes.dk>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
 ---
- drivers/char/random.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/dumpstack.c | 25 +++++++------------------
+ 1 file changed, 7 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 283fe390e878..71660aef8c8c 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1907,7 +1907,7 @@ write_pool(struct entropy_store *r, const char __user *buffer, size_t count)
- 			return -EFAULT;
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 666a284..ffdd484 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -93,26 +93,15 @@ static void printk_stack_address(unsigned long address, int reliable,
+  */
+ void show_opcodes(u8 *rip, const char *loglvl)
+ {
+-	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
++	const unsigned int prologue = OPCODE_BUFSIZE * 2 / 3;
+ 	u8 opcodes[OPCODE_BUFSIZE];
+-	u8 *ip;
+-	int i;
  
- 		for (b = bytes ; b > 0 ; b -= sizeof(__u32), i++) {
--			if (arch_get_random_int(&t))
-+			if (!arch_get_random_int(&t))
- 				continue;
- 			buf[i] ^= t;
- 		}
+-	printk("%sCode: ", loglvl);
+-
+-	ip = (u8 *)rip - code_prologue;
+-	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
+-		pr_cont("Bad RIP value.\n");
+-		return;
+-	}
+-
+-	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
+-		if (ip == rip)
+-			pr_cont("<%02x> ", opcodes[i]);
+-		else
+-			pr_cont("%02x ", opcodes[i]);
+-	}
+-	pr_cont("\n");
++	if (probe_kernel_read(opcodes, rip - prologue, OPCODE_BUFSIZE))
++		printk("%sCode: Bad RIP value.\n", loglvl);
++	else
++		printk("%sCode: %*ph <%02x> %*ph\n", loglvl, prologue, opcodes,
++		       opcodes[prologue], OPCODE_BUFSIZE - prologue - 1,
++		       &opcodes[prologue + 1]);
+ }
+ 
+ void show_ip(struct pt_regs *regs, const char *loglvl)
 -- 
-2.9.0
+1.8.3.1
 
