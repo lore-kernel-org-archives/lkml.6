@@ -2,138 +2,115 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1910FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C42AFECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C62C9208C3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:51:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C62C9208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 709A420BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 02:00:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709A420BED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731086AbeGQCVc (ORCPT
+        id S1730840AbeGQCaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 22:21:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59408 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730056AbeGQCVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 22:21:32 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0B19481A4EB9;
-        Tue, 17 Jul 2018 01:51:25 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 66DB52026D65;
-        Tue, 17 Jul 2018 01:51:23 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 09:51:20 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        yasu.isimatu@gmail.com, keescook@chromium.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        vbabka@suse.cz, mgorman@techsingularity.net
-Subject: Re: Bug report about KASLR and ZONE_MOVABLE
-Message-ID: <20180717015120.GC1724@MiWiFi-R3L-srv>
-References: <20180711104158.GE2070@MiWiFi-R3L-srv>
- <20180711104944.GG1969@MiWiFi-R3L-srv>
- <20180711124008.GF2070@MiWiFi-R3L-srv>
- <72721138-ba6a-32c9-3489-f2060f40a4c9@cn.fujitsu.com>
- <20180712060115.GD6742@localhost.localdomain>
- <20180712123228.GK32648@dhcp22.suse.cz>
- <20180712235240.GH2070@MiWiFi-R3L-srv>
- <20180716113845.GM17280@dhcp22.suse.cz>
- <20180716130202.GB1724@MiWiFi-R3L-srv>
- <20180716152410.GU17280@dhcp22.suse.cz>
+        Mon, 16 Jul 2018 22:30:25 -0400
+Received: from gateway23.websitewelcome.com ([192.185.47.80]:41494 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729980AbeGQCaY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 22:30:24 -0400
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 7F5665F39
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 21:00:16 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id fFHTfF75JbXuJfFHdfN5T0; Mon, 16 Jul 2018 21:00:16 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=37160 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ffFHT-004Jop-1V; Mon, 16 Jul 2018 20:59:59 -0500
+Date:   Mon, 16 Jul 2018 20:59:58 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Santosh Raspatur <santosh@chelsio.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] net: cxgb3_main: fix potential Spectre v1
+Message-ID: <20180717015958.GA19236@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180716152410.GU17280@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 17 Jul 2018 01:51:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 17 Jul 2018 01:51:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1ffFHT-004Jop-1V
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:37160
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/16/18 at 05:24pm, Michal Hocko wrote:
-> On Mon 16-07-18 21:02:02, Baoquan He wrote:
-> > On 07/16/18 at 01:38pm, Michal Hocko wrote:
-> > > On Fri 13-07-18 07:52:40, Baoquan He wrote:
-> > > > Hi Michal,
-> > > > 
-> > > > On 07/12/18 at 02:32pm, Michal Hocko wrote:
-> > > [...]
-> > > > > I am not able to find the beginning of the email thread right now. Could
-> > > > > you summarize what is the actual problem please?
-> > > > 
-> > > > The bug is found on x86 now. 
-> > > > 
-> > > > When added "kernelcore=" or "movablecore=" into kernel command line,
-> > > > kernel memory is spread evenly among nodes. However, this is right when
-> > > > KASLR is not enabled, then kernel will be at 16M of place in x86 arch.
-> > > > If KASLR enabled, it could be put any place from 16M to 64T randomly.
-> > > >  
-> > > > Consider a scenario, we have 10 nodes, and each node has 20G memory, and
-> > > > we specify "kernelcore=50%", means each node will take 10G for
-> > > > kernelcore, 10G for movable area. But this doesn't take kernel position
-> > > > into consideration. E.g if kernel is put at 15G of 2nd node, namely
-> > > > node1. Then we think on node1 there's 10G for kernelcore, 10G for
-> > > > movable, in fact there's only 5G available for movable, just after
-> > > > kernel.
-> > > 
-> > > OK, I guess I see that part. But who is going to use movablecore along
-> > > with KASLR enabled? I mean do we really have to support those two
-> > > obscure command line parameters for KASLR?
-> > 
-> > Not very sure whether we have to support both of those to work with
-> > KASLR. Maybe it's time to make clear of it now.
-> 
-> Yes, I would really like to deprecate this. It is an ugly piece of code
-> and it's far from easily maintainable as well.
-> 
-> > For 'kernelcore=mirror', we have solved the conflict to make it work well
-> > with KASLR. For 'movable_node' conflict with KASLR, Chao is posting
-> > patches to fix it. As for 'kernelcore=' and 'movablecore=', 
-> > 
-> > 1) solve the conflict between them with KASLR in
-> >    find_zone_movable_pfns_for_nodes();
-> > 2) disable KASLR when 'kernelcore=' | 'movablecore=' is set;
-> > 3) disable 'kernelcore=' | 'movablecore=' when KASLR is enabled;
-> > 4) add note in doc to notice people to not add them at the same time;
-> 
-> I would simply warn that those kernel parameters are not supported
-> anymore. If somebody shows up with a valid usecase we can reconsider.
+t.qset_idx can be indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-OK, got it. The use case I can think of is that people want to check 
-hotplug on system w/o hotplug ACPI info.
+This issue was detected with the help of Smatch:
 
-I am fine with warning people they are not supported. Should I post a
-patch to address this, or you will do it? Both is fine to me.
+drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c:2286 cxgb_extension_ioctl()
+warn: potential spectre issue 'adapter->msix_info'
 
-> 
-> > 2) and 3) may need be fixed in arch/x86 code. As long as come to an
-> > agreement, any one is fine to me.
-> > > 
-> > > In fact I would be much more concerned about memory hotplug and
-> > > pre-defined movable nodes. Does the current KASLR code work in that
-> > > case?
-> > 
-> > As said above, kernelcore=mirror works well with KASLR now. Making
-> > 'movable_node' work with KASLR is in progress.
-> 
-> OK, thanks for the info.
+Fix this by sanitizing t.qset_idx before using it to index
+adapter->msix_info
 
-You are welcome.
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-Thanks
-Baoquan
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+index 7b795ed..a19172d 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -51,6 +51,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <linux/nospec.h>
+ 
+ #include "common.h"
+ #include "cxgb3_ioctl.h"
+@@ -2268,6 +2269,7 @@ static int cxgb_extension_ioctl(struct net_device *dev, void __user *useraddr)
+ 
+ 		if (t.qset_idx >= nqsets)
+ 			return -EINVAL;
++		t.qset_idx = array_index_nospec(t.qset_idx, nqsets);
+ 
+ 		q = &adapter->params.sge.qset[q1 + t.qset_idx];
+ 		t.rspq_size = q->rspq_size;
+-- 
+2.7.4
+
