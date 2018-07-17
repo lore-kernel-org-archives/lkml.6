@@ -2,202 +2,99 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A02ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34442ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A5CA20841
+	by mail.kernel.org (Postfix) with ESMTP id C403620BED
 	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:46:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A5CA20841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C403620BED
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730667AbeGQBPY (ORCPT
+        id S1730875AbeGQBPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 21:15:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33224 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729827AbeGQBPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 21:15:23 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 20D90401EF04;
-        Tue, 17 Jul 2018 00:45:30 +0000 (UTC)
-Received: from [10.72.12.85] (ovpn-12-85.pek2.redhat.com [10.72.12.85])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CF2F1111E40C;
-        Tue, 17 Jul 2018 00:45:19 +0000 (UTC)
-Subject: Re: [PATCH net-next V2 0/8] Packed virtqueue support for vhost
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com,
-        maxime.coquelin@redhat.com
-References: <1531711691-6769-1-git-send-email-jasowang@redhat.com>
- <20180716113720-mutt-send-email-mst@kernel.org>
- <33f4643f-f226-0389-1f4f-607c289db94e@redhat.com>
- <20180716154102-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <5ba5c927-a0b4-f399-7a88-b90763765142@redhat.com>
-Date:   Tue, 17 Jul 2018 08:45:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 16 Jul 2018 21:15:52 -0400
+Received: from nautica.notk.org ([91.121.71.147]:55050 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729827AbeGQBPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 21:15:52 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 9261BC009; Tue, 17 Jul 2018 02:45:57 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 02:45:42 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Chirantan Ekbote <chirantan@chromium.org>
+Cc:     groug@kaod.org, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, dgreid@chromium.org,
+        groeck@chromium.org
+Subject: Re: [PATCH v2] Fix zero-copy path in the 9p virtio transport
+Message-ID: <20180717004542.GA8102@nautica>
+References: <20180717003529.114368-1-chirantan@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20180716154102-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 17 Jul 2018 00:45:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 17 Jul 2018 00:45:30 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jasowang@redhat.com' RCPT:''
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180717003529.114368-1-chirantan@chromium.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Chirantan Ekbote wrote on Mon, Jul 16, 2018:
+> The zero-copy optimization when reading or writing large chunks of data
+> is quite useful.  However, the 9p messages created through the zero-copy
+> write path have an incorrect message size: it should be the size of the
+> header + size of the data being written but instead it's just the size
+> of the header.
+> 
+> This only works if the server ignores the size field of the message and
+> otherwise breaks the framing of the protocol. Fix this by re-writing the
+> message size field with the correct value.
+> 
+> Tested by running `dd if=/dev/zero of=out bs=4k count=1` inside a
+> virtio-9p mount.
+> 
+> Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+> Reviewed-by: Greg Kurz <groug@kaod.org>
+> Tested-by: Greg Kurz <groug@kaod.org>
 
+Ack, I've added this to my queue for 4.19
 
-On 2018年07月16日 20:49, Michael S. Tsirkin wrote:
-> On Mon, Jul 16, 2018 at 05:46:33PM +0800, Jason Wang wrote:
->>
->> On 2018年07月16日 16:39, Michael S. Tsirkin wrote:
->>> On Mon, Jul 16, 2018 at 11:28:03AM +0800, Jason Wang wrote:
->>>> Hi all:
->>>>
->>>> This series implements packed virtqueues. The code were tested with
->>>> Tiwei's guest driver series at https://patchwork.ozlabs.org/cover/942297/
->>>>
->>>>
->>>> Pktgen test for both RX and TX does not show obvious difference with
->>>> split virtqueues. The main bottleneck is the guest Linux driver, since
->>>> it can not stress vhost for a 100% CPU utilization. A full TCP
->>>> benchmark is ongoing. Will test virtio-net pmd as well when it was
->>>> ready.
->>> Well the question then is why we should bother merging this
->>> if this doesn't give a performance gain.
->> We meet bottlenecks at other places. I can only test Linux driver which has
->> lots of overheads e.g interrupts. And perf show only a small fraction of
->> time were spent on e.g virtqueue manipulation. I hope virtio-net pmd can
->> give us different result but we don't have one ready for testing now. (Jen's
->> V4 have bugs thus can not work with this series).
-> Can't linux busy poll?
+Thanks for moving the memcpy and the updated comment, it makes it more
+clear that these are different fields of the message.
 
-For vhost busy polling, there's no difference since guest can not give 
-vhost enough stress. For guest busy polling, it does not work for the 
-packets generated by pktgen.
+> ---
+>  net/9p/trans_virtio.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+> index 05006cbb3361..65761381c58f 100644
+> --- a/net/9p/trans_virtio.c
+> +++ b/net/9p/trans_virtio.c
+> @@ -406,6 +406,7 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+>  	p9_debug(P9_DEBUG_TRANS, "virtio request\n");
+>  
+>  	if (uodata) {
+> +		__le32 sz;
+>  		int n = p9_get_mapped_pages(chan, &out_pages, uodata,
+>  					    outlen, &offs, &need_drop);
+>  		if (n < 0)
+> @@ -416,6 +417,12 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+>  			memcpy(&req->tc->sdata[req->tc->size - 4], &v, 4);
+>  			outlen = n;
+>  		}
+> +		/* The size field of the message must include the length of the
+> +		 * header and the length of the data.  We didn't actually know
+> +		 * the length of the data until this point so add it in now.
+> +		 */
+> +		sz = cpu_to_le32(req->tc->size + outlen);
+> +		memcpy(&req->tc->sdata[0], &sz, sizeof(sz));
+>  	} else if (uidata) {
+>  		int n = p9_get_mapped_pages(chan, &in_pages, uidata,
+>  					    inlen, &offs, &need_drop);
 
-> And how about testing loopback with XDP?
-
-No difference, I even shortcut both the tun_get_user() on host and 
-netif_receive_skb() in guest.
-
->>>    Do you see
->>> a gain in CPU utilization maybe?
->> Unfortunately not.
->>
->>> If not - let's wait for that TCP benchmark result?
->> We can, but you know TCP_STREAM result is sometime misleading.
->>
->> A brunch of other patches of mine were rebased on this and then blocked on
->> this series. Consider we don't meet regression, maybe we can merge this
->> first and try optimizations or fixups on top?
->>
->> Thanks
-> I'm not sure I understand this approach. Packed ring is just an optimization.
-> What value is there in merging it if it does not help speed?
-
-If you want to support migration from dpdk or vDPA backend. And we still 
-have the chance to see the performance with virito-net pmd in the 
-future. If this does not make sense for you, I will leave this series 
-until we can get results from virtio-net pmd (or find a way that packed 
-virtqueue outperform). And I will start to post other optimizations on 
-vhost.
-
-Thanks
-
->
->>>> Notes:
->>>> - This version depends on Tiwei's series at https://patchwork.ozlabs.org/cover/942297/
->>>>
->>>> This version were tested with:
->>>>
->>>> - Zerocopy (Out of Order) support
->>>> - vIOMMU support
->>>> - mergeable buffer on/off
->>>> - busy polling on/off
->>>> - vsock (nc-vsock)
->>>>
->>>> Changes from V1:
->>>> - drop uapi patch and use Tiwei's
->>>> - split the enablement of packed virtqueue into a separate patch
->>>>
->>>> Changes from RFC V5:
->>>>
->>>> - save unnecessary barriers during vhost_add_used_packed_n()
->>>> - more compact math for event idx
->>>> - fix failure of SET_VRING_BASE when avail_wrap_counter is true
->>>> - fix not copy avail_wrap_counter during GET_VRING_BASE
->>>> - introduce SET_VRING_USED_BASE/GET_VRING_USED_BASE for syncing last_used_idx
->>>> - rename used_wrap_counter to last_used_wrap_counter
->>>> - rebase to net-next
->>>>
->>>> Changes from RFC V4:
->>>>
->>>> - fix signalled_used index recording
->>>> - track avail index correctly
->>>> - various minor fixes
->>>>
->>>> Changes from RFC V3:
->>>>
->>>> - Fix math on event idx checking
->>>> - Sync last avail wrap counter through GET/SET_VRING_BASE
->>>> - remove desc_event prefix in the driver/device structure
->>>>
->>>> Changes from RFC V2:
->>>>
->>>> - do not use & in checking desc_event_flags
->>>> - off should be most significant bit
->>>> - remove the workaround of mergeable buffer for dpdk prototype
->>>> - id should be in the last descriptor in the chain
->>>> - keep _F_WRITE for write descriptor when adding used
->>>> - device flags updating should use ADDR_USED type
->>>> - return error on unexpected unavail descriptor in a chain
->>>> - return false in vhost_ve_avail_empty is descriptor is available
->>>> - track last seen avail_wrap_counter
->>>> - correctly examine available descriptor in get_indirect_packed()
->>>> - vhost_idx_diff should return u16 instead of bool
->>>>
->>>> Changes from RFC V1:
->>>>
->>>> - Refactor vhost used elem code to avoid open coding on used elem
->>>> - Event suppression support (compile test only).
->>>> - Indirect descriptor support (compile test only).
->>>> - Zerocopy support.
->>>> - vIOMMU support.
->>>> - SCSI/VSOCK support (compile test only).
->>>> - Fix several bugs
->>>>
->>>> Jason Wang (8):
->>>>     vhost: move get_rx_bufs to vhost.c
->>>>     vhost: hide used ring layout from device
->>>>     vhost: do not use vring_used_elem
->>>>     vhost_net: do not explicitly manipulate vhost_used_elem
->>>>     vhost: vhost_put_user() can accept metadata type
->>>>     vhost: packed ring support
->>>>     vhost: event suppression for packed ring
->>>>     vhost: enable packed virtqueues
->>>>
->>>>    drivers/vhost/net.c        | 143 ++-----
->>>>    drivers/vhost/scsi.c       |  62 +--
->>>>    drivers/vhost/vhost.c      | 994 ++++++++++++++++++++++++++++++++++++++++-----
->>>>    drivers/vhost/vhost.h      |  55 ++-
->>>>    drivers/vhost/vsock.c      |  42 +-
->>>>    include/uapi/linux/vhost.h |   7 +
->>>>    6 files changed, 1035 insertions(+), 268 deletions(-)
->>>>
->>>> -- 
->>>> 2.7.4
-
+-- 
+Dominique Martinet
