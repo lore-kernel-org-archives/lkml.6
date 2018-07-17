@@ -3,61 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D80EEECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6F3ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:03:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97CE720877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:02:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97CE720877
+	by mail.kernel.org (Postfix) with ESMTP id DC2532086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:03:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC2532086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbeGQId5 (ORCPT
+        id S1729706AbeGQIe7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:33:57 -0400
-Received: from muru.com ([72.249.23.125]:51782 "EHLO muru.com"
+        Tue, 17 Jul 2018 04:34:59 -0400
+Received: from muru.com ([72.249.23.125]:51802 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726396AbeGQId5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:33:57 -0400
+        id S1727796AbeGQIe7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 04:34:59 -0400
 Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A11D680C5;
-        Tue, 17 Jul 2018 08:05:46 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 01:02:33 -0700
+        by muru.com (Postfix) with ESMTPS id 1CDA1814A;
+        Tue, 17 Jul 2018 08:06:48 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 01:03:35 -0700
 From:   Tony Lindgren <tony@atomide.com>
-To:     Koen Kooi <koen@dominion.thruhere.net>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        David Lechner <david@lechnology.com>,
-        Shawn Guo <shawnguo@kernel.org>, SZ Lin <sz.lin@moxa.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: Add vendor prefix for Sancloud
-Message-ID: <20180717080233.GC99251@atomide.com>
-References: <1531808688-9716-1-git-send-email-koen@dominion.thruhere.net>
- <1531808688-9716-2-git-send-email-koen@dominion.thruhere.net>
- <20180717072028.GA3100@piout.net>
- <D3049450-5391-40CB-ADD1-E1330BFE0525@dominion.thruhere.net>
- <20180717073659.GB3100@piout.net>
- <8EB8A3A1-EF76-42F8-A7C2-5A4A595C92B8@dominion.thruhere.net>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Tejun Heo <tj@kernel.org>, Roger Quadros <rogerq@ti.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        linux-omap@vger.kernel.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org,
+        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Samuel Morris <samorris@lexmark.com>
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+Message-ID: <20180717080335.GD99251@atomide.com>
+References: <20180620102904.GC112168@atomide.com>
+ <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+ <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+ <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
+ <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
+ <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
+ <20180702093243.GO112168@atomide.com>
+ <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
+ <20180717060808.GW99251@atomide.com>
+ <20180717180028.0ba098f6@canb.auug.org.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8EB8A3A1-EF76-42F8-A7C2-5A4A595C92B8@dominion.thruhere.net>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180717180028.0ba098f6@canb.auug.org.au>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Koen Kooi <koen@dominion.thruhere.net> [180717 07:46]:
+* Stephen Rothwell <sfr@canb.auug.org.au> [180717 08:03]:
+> Hi Tony,
 > 
-> Thanks for the explanation! I resent 0001 with linux-omap and Tony explicitly adding using -cc in git-send-email.
+> On Mon, 16 Jul 2018 23:08:08 -0700 Tony Lindgren <tony@atomide.com> wrote:
+> >
+> > The following regression is still pending in next, see below.
+> > 
+> > * Samuel Morris <samorris@lexmark.com> [180702 13:35]:
+> > > On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:  
+> > > > Hi,
+> > > >
+> > > > * Roger Quadros <rogerq@ti.com> [180621 14:56]:  
+> > > >> On 21/06/18 17:31, Samuel Morris wrote:  
+> > > >> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote:  
+> > > >> >> +Rafael
+> > > >> >>
+> > > >> >> On 20/06/18 18:30, Samuel Morris wrote:  
+> > > >> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:  
+> > > >> >>>> Tony,
+> > > >> >>>>
+> > > >> >>>> On 20/06/18 13:29, Tony Lindgren wrote:  
+> > > >> >>>>> Hi,
+> > > >> >>>>>
+> > > >> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:  
+> > > >> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.  
+> > > >> >>>>>
+> > > >> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
+> > > >> >>>>> hotplug to save power").
+> > > >> >>>>>
+> > > >> >>>>> Reverting the patch makes things work again. Any ideas what
+> > > >> >>>>> might be going wrong here? Things clearly idle but then there
+> > > >> >>>>> seems to be some register access with clocks disabled.  
+> > > >
+> > > > So this issue is still happening as of next-20180702. Can you guys
+> > > > please revert the commit above while working on a better solution?  
+> > > 
+> > > That's fine with me. I'm not very familiar with the process here, does
+> > > this require anything on my end? And would that require the
+> > > accompanying patch to be reverted: "ata: ahci: rpm_put port on
+> > > port_stop to match rpm_get in port_start"? There shouldn't be any
+> > > problem leaving that one in, but I just want to know before submitting
+> > > my next patch set.  
+> > 
+> > Well usually the maintainer just reverts the regression causing
+> > patch in the related branch and that's it.
+> > 
+> > Stephen, can you please revert in next until we hear back from
+> > Tejun?
+> 
+> OK, I have reverted that commit from today.  Please let me know when the
+> problem is fixed in the libata tree ...
 
-Yeah thanks I'll pick up both patches.
+Thanks!
 
 Tony
+
+
