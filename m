@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4A2ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AEE1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED0821475
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED0821475
+	by mail.kernel.org (Postfix) with ESMTP id EDC5021475
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC5021475
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731567AbeGQLyD (ORCPT
+        id S1731589AbeGQLyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:54:03 -0400
-Received: from mga01.intel.com ([192.55.52.88]:16955 "EHLO mga01.intel.com"
+        Tue, 17 Jul 2018 07:54:05 -0400
+Received: from mga14.intel.com ([192.55.52.115]:5664 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731468AbeGQLyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:54:00 -0400
+        id S1731468AbeGQLyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:54:05 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:51 -0700
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:56 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="72049668"
+   d="scan'208";a="55628002"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Jul 2018 04:21:48 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 17 Jul 2018 04:21:45 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 5D781821; Tue, 17 Jul 2018 14:21:49 +0300 (EEST)
+        id ED3753BF; Tue, 17 Jul 2018 14:21:48 +0300 (EEST)
 From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,9 +43,9 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv5 16/19] x86/mm: Calculate direct mapping size
-Date:   Tue, 17 Jul 2018 14:20:26 +0300
-Message-Id: <20180717112029.42378-17-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv5 06/19] mm/khugepaged: Handle encrypted pages
+Date:   Tue, 17 Jul 2018 14:20:16 +0300
+Message-Id: <20180717112029.42378-7-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
 References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
@@ -54,230 +54,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel needs to have a way to access encrypted memory. We have two
-option on how approach it:
+khugepaged allocates page in advance, before we found a VMA for
+collapse. We don't yet know which KeyID to use for the allocation.
 
- - Create temporary mappings every time kernel needs access to encrypted
-   memory. That's basically brings highmem and its overhead back.
-
- - Create multiple direct mappings, one per-KeyID. In this setup we
-   don't need to create temporary mappings on the fly -- encrypted
-   memory is permanently available in kernel address space.
-
-We take the second approach as it has lower overhead.
-
-It's worth noting that with per-KeyID direct mappings compromised kernel
-would give access to decrypted data right away without additional tricks
-to get memory mapped with the correct KeyID.
-
-Per-KeyID mappings require a lot more virtual address space. On 4-level
-machine with 64 KeyIDs we max out 46-bit virtual address space dedicated
-for direct mapping with 1TiB of RAM. Given that we round up any
-calculation on direct mapping size to 1TiB, we effectively claim all
-46-bit address space for direct mapping on such machine regardless of
-RAM size.
-
-Increased usage of virtual address space has implications for KASLR:
-we have less space for randomization. With 64 TiB claimed for direct
-mapping with 4-level we left with 27 TiB of entropy to place
-page_offset_base, vmalloc_base and vmemmap_base.
-
-5-level paging provides much wider virtual address space and KASLR
-doesn't suffer significantly from per-KeyID direct mappings.
-
-It's preferred to run MKTME with 5-level paging.
-
-A direct mapping for each KeyID will be put next to each other in the
-virtual address space. We need to have a way to find boundaries of
-direct mapping for particular KeyID.
-
-The new variable direct_mapping_size specifies the size of direct
-mapping. With the value, it's trivial to find direct mapping for
-KeyID-N: PAGE_OFFSET + N * direct_mapping_size.
-
-Size of direct mapping is calculated during KASLR setup. If KALSR is
-disabled it happens during MKTME initialization.
-
-With MKTME size of direct mapping has to be power-of-2. It makes
-implementation of __pa() efficient.
+The page is allocated with KeyID-0. Once we know that the VMA is
+suitable for collapsing, we prepare the page for KeyID we need, based on
+vma_keyid().
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- Documentation/x86/x86_64/mm.txt |  4 +++
- arch/x86/include/asm/page_64.h  |  2 ++
- arch/x86/include/asm/setup.h    |  6 ++++
- arch/x86/kernel/head64.c        |  4 +++
- arch/x86/kernel/setup.c         |  3 ++
- arch/x86/mm/init_64.c           | 58 +++++++++++++++++++++++++++++++++
- arch/x86/mm/kaslr.c             | 11 +++++--
- 7 files changed, 85 insertions(+), 3 deletions(-)
+ mm/khugepaged.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/x86/x86_64/mm.txt b/Documentation/x86/x86_64/mm.txt
-index 5432a96d31ff..c5b92904090f 100644
---- a/Documentation/x86/x86_64/mm.txt
-+++ b/Documentation/x86/x86_64/mm.txt
-@@ -61,6 +61,10 @@ The direct mapping covers all memory in the system up to the highest
- memory address (this means in some cases it can also include PCI memory
- holes).
- 
-+With MKTME, we have multiple direct mappings. One per-KeyID. They are put
-+next to each other. PAGE_OFFSET + N * direct_mapping_size can be used to
-+find direct mapping for KeyID-N.
-+
- vmalloc space is lazily synchronized into the different PML4/PML5 pages of
- the processes using the page fault handler, with init_top_pgt as
- reference.
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index 939b1cff4a7b..f57fc3cc2246 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -14,6 +14,8 @@ extern unsigned long phys_base;
- extern unsigned long page_offset_base;
- extern unsigned long vmalloc_base;
- extern unsigned long vmemmap_base;
-+extern unsigned long direct_mapping_size;
-+extern unsigned long direct_mapping_mask;
- 
- static inline unsigned long __phys_addr_nodebug(unsigned long x)
- {
-diff --git a/arch/x86/include/asm/setup.h b/arch/x86/include/asm/setup.h
-index ae13bc974416..bcac5080cca5 100644
---- a/arch/x86/include/asm/setup.h
-+++ b/arch/x86/include/asm/setup.h
-@@ -59,6 +59,12 @@ extern void x86_ce4100_early_setup(void);
- static inline void x86_ce4100_early_setup(void) { }
- #endif
- 
-+#ifdef CONFIG_MEMORY_PHYSICAL_PADDING
-+void calculate_direct_mapping_size(void);
-+#else
-+static inline void calculate_direct_mapping_size(void) { }
-+#endif
-+
- #ifndef _SETUP
- 
- #include <asm/espfix.h>
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 8047379e575a..79b92518ceee 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -59,6 +59,10 @@ EXPORT_SYMBOL(vmalloc_base);
- unsigned long vmemmap_base __ro_after_init = __VMEMMAP_BASE_L4;
- EXPORT_SYMBOL(vmemmap_base);
- #endif
-+unsigned long direct_mapping_size __ro_after_init = -1UL;
-+EXPORT_SYMBOL(direct_mapping_size);
-+unsigned long direct_mapping_mask __ro_after_init = -1UL;
-+EXPORT_SYMBOL(direct_mapping_mask);
- 
- #define __head	__section(.head.text)
- 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 2f86d883dd95..09ddbd142e3c 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1053,6 +1053,9 @@ void __init setup_arch(char **cmdline_p)
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 5ae34097aed1..d116f4ebb622 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1056,6 +1056,16 @@ static void collapse_huge_page(struct mm_struct *mm,
  	 */
- 	init_cache_modes();
+ 	anon_vma_unlock_write(vma->anon_vma);
  
-+	 /* direct_mapping_size has to be initialized before KASLR and MKTME */
-+	calculate_direct_mapping_size();
-+
- 	/*
- 	 * Define random base addresses for memory sections after max_pfn is
- 	 * defined and before each memory section base is used.
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index a688617c727e..d3a93ca69c67 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1399,6 +1399,64 @@ unsigned long memory_block_size_bytes(void)
- 	return memory_block_size_probed;
- }
- 
-+#ifdef CONFIG_MEMORY_PHYSICAL_PADDING
-+void __init calculate_direct_mapping_size(void)
-+{
-+	unsigned long available_va;
-+
-+	/* 1/4 of virtual address space is didicated for direct mapping */
-+	available_va = 1UL << (__VIRTUAL_MASK_SHIFT - 1);
-+
-+	/* How much memory the system has? */
-+	direct_mapping_size = max_pfn << PAGE_SHIFT;
-+	direct_mapping_size = round_up(direct_mapping_size, 1UL << 40);
-+
-+	if (!mktme_nr_keyids)
-+		goto out;
-+
 +	/*
-+	 * For MKTME we need direct_mapping_size to be power-of-2.
-+	 * It makes __pa() implementation efficient.
++	 * At this point new_page is allocated as non-encrypted.
++	 * If VMA's KeyID is non-zero, we need to prepare it to be encrypted
++	 * before coping data.
 +	 */
-+	direct_mapping_size = roundup_pow_of_two(direct_mapping_size);
-+
-+	/*
-+	 * Not enough virtual address space to address all physical memory with
-+	 * MKTME enabled. Even without padding.
-+	 *
-+	 * Disable MKTME instead.
-+	 */
-+	if (direct_mapping_size > available_va / (mktme_nr_keyids + 1)) {
-+		pr_err("x86/mktme: Disabled. Not enough virtual address space\n");
-+		pr_err("x86/mktme: Consider switching to 5-level paging\n");
-+		mktme_disable();
-+		goto out;
++	if (vma_keyid(vma)) {
++		prep_encrypted_page(new_page, HPAGE_PMD_ORDER,
++				vma_keyid(vma), false);
 +	}
 +
-+	/*
-+	 * Virtual address space is divided between per-KeyID direct mappings.
-+	 */
-+	available_va /= mktme_nr_keyids + 1;
-+out:
-+	/* Add padding, if there's enough virtual address space */
-+	direct_mapping_size += (1UL << 40) * CONFIG_MEMORY_PHYSICAL_PADDING;
-+	if (mktme_nr_keyids)
-+		direct_mapping_size = roundup_pow_of_two(direct_mapping_size);
-+
-+	if (direct_mapping_size > available_va)
-+		direct_mapping_size = available_va;
-+
-+	/*
-+	 * For MKTME, make sure direct_mapping_size is still power-of-2
-+	 * after adding padding and calculate mask that is used in __pa().
-+	 */
-+	if (mktme_nr_keyids) {
-+		direct_mapping_size = rounddown_pow_of_two(direct_mapping_size);
-+		direct_mapping_mask = direct_mapping_size - 1;
-+	}
-+}
-+#endif
-+
- #ifdef CONFIG_SPARSEMEM_VMEMMAP
- /*
-  * Initialise the sparsemem vmemmap using huge-pages at the PMD level.
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 4408cd9a3bef..bf044ff50ec0 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -101,10 +101,15 @@ void __init kernel_randomize_memory(void)
- 	 * add padding if needed (especially for memory hotplug support).
- 	 */
- 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
--	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
--		CONFIG_MEMORY_PHYSICAL_PADDING;
- 
--	/* Adapt phyiscal memory region size based on available memory */
-+	/*
-+	 * Calculate space required to map all physical memory.
-+	 * In case of MKTME, we map physical memory multiple times, one for
-+	 * each KeyID. If MKTME is disabled mktme_nr_keyids is 0.
-+	 */
-+	memory_tb = (direct_mapping_size * (mktme_nr_keyids + 1)) >> TB_SHIFT;
-+
-+	/* Adapt physical memory region size based on available memory */
- 	if (memory_tb < kaslr_regions[0].size_tb)
- 		kaslr_regions[0].size_tb = memory_tb;
- 
+ 	__collapse_huge_page_copy(pte, new_page, vma, address, pte_ptl);
+ 	pte_unmap(pte);
+ 	__SetPageUptodate(new_page);
 -- 
 2.18.0
 
