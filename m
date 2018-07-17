@@ -2,164 +2,161 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B694ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 086B0ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03BAE20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:07:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B75222064D
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:08:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="nEuJUL5P";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N+ONVPxR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03BAE20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avISY3Kd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B75222064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbeGQUmF (ORCPT
+        id S1730810AbeGQUmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 16:42:05 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:44783 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729855AbeGQUmF (ORCPT
+        Tue, 17 Jul 2018 16:42:52 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:41682 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730040AbeGQUmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 16:42:05 -0400
-Received: by mail-yw0-f193.google.com with SMTP id k18-v6so856127ywm.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:07:51 -0700 (PDT)
+        Tue, 17 Jul 2018 16:42:52 -0400
+Received: by mail-oi0-f67.google.com with SMTP id k12-v6so4413116oiw.8;
+        Tue, 17 Jul 2018 13:08:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=X6lBtrCenNy5Dza3t5CsfoNuyhb8zfp/3gAtHtGNTdg=;
-        b=nEuJUL5PnA7FE3/SJ/EStfcNrdnqj8tibArIiL7pXa2AIStwrqqJLAHLkwoyOjB4cC
-         x7395gyM0CxrLxc97YAqYbOAzcAPJeAoc98ZEta1mP0Jhy1vkBrZaXVhoGUSxOsOL6yv
-         ory6DB3OSMqp+qM2SzGy7elcCMBYvAD0B1SrQ5H5+d8uX4Eb0lOO731tTS4gIK6ccCMo
-         M6L6VcIgkFeaPyLTbjmEXszRVl2iccBI78zROBGKZ+G5oL6LBj5j7JjfhmsreXFWwqxU
-         jpHvDdYoYC8z7YLGk4sroFHLFe5DKizv/pzISkzwtis4j23KpObIK5A0WBhrVvPpPBNj
-         tk3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=X6lBtrCenNy5Dza3t5CsfoNuyhb8zfp/3gAtHtGNTdg=;
-        b=N+ONVPxRbJHbuAtz5TgQ/IkDDRkwiN33SDm+/s+UHDufl4sAaniZphQ/JtAcnRueJp
-         Xqh1AHL722WhHAyuuY2u9/0zOtriZZ5OFEDfL6TpG9OifmgmeYgQibYeYuutkOXiRgQR
-         gRvqe2RRBDpUQI7jU8EybtjzCGD3XRyCX7fVo=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=sF5AlaQP39FqOPzedF3gA0UAv8cCONHNYLOBoqDZm/k=;
+        b=avISY3Kd1GSHWsSir1HMr6HTodWZgXzVvsHKf7TGf+ZfEc6/R3MYDVUUDS6Brsttkc
+         oKzcOcU6eZp7WvCFXpNBCpYlXLDTgWNfMKcDB+QYS/vVd+/3g9CYpmcQ3mcrvfmAUtqO
+         UvYtfIhFLg9w2XTDGDU+HImIlh3hdm9vCcn6V03vj2biAAbXHES/Eb0x5bnK/dFTIrHz
+         j01QR1gpFdkR0grWpVN7phD9CKw57gr2GxyKRsfbPy0YOnO4Eiu7gjGCQhF18K6qvH6v
+         c65xIFQsz73iEib39zOGOM6uQu20DZ7/U1Yrw/e0gQuUfC9lfu431uE7mJFfZyJKC/su
+         g+Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=X6lBtrCenNy5Dza3t5CsfoNuyhb8zfp/3gAtHtGNTdg=;
-        b=VMl+JvnHqlOk5Gp7PI9VfHpdAHaEDv5up0BK0ijV+ABHfbSrUwNtM0DUFvkHewr9tc
-         imNKXUsxKnSV+CtJHUm/7QdtiI3eATQzJnEpQe+JER3a9Yr5wRIQiT/I/pMOpN+0+FX2
-         fpWwlJbeRAGCI2TG6S2FwpzmHGSCMMqnRBdxn5mhTDcxipdR5WL1fLrw5mFBLSQ1v2Ih
-         B460v06mxPsq5KFNa1To1BQAhipqTcKBO5pttU1NlL14sDl5IkwX4UQEYgM5wDmV1K6A
-         x7aI/QWnJV4VjW4plVy/0kdjqFabMuXG7dIKwCvkTXR/Rqi7W2SylJ5ag4vRxLUF+wMi
-         rDTw==
-X-Gm-Message-State: AOUpUlFmz4WD7To9x1ZFCnk1J6vEAmISKFLD+rzgkdvmfVjUWy0/YXai
-        iW3I4C+ilUHmEb+uy1d3AYC47qw6TJYQEkkOWZRgMQ==
-X-Google-Smtp-Source: AAOMgpeLfANoUOz2lJyua63U9w5itWYNb7o8KE0h0gvvjQsk5X0T4ADvf7ng/vcVAjHUJZOcNgG2WP2ZtCdHDr7P3Bw=
-X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr1596783ywn.88.1531858070714;
- Tue, 17 Jul 2018 13:07:50 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sF5AlaQP39FqOPzedF3gA0UAv8cCONHNYLOBoqDZm/k=;
+        b=No0QZIvcpAiZ9/DKGDQaB+s0PZUqr3h3Tr7C5sMVImHSIrPBGs8nzYDybOZo0UimvV
+         fvAo7vILB4pvC8TWtNm8YVf9ssS3fME/sS5veTZIvFOLEr73JkDXUxSM1ALVE9Hvyyh8
+         6qUjM7nTc/VSlfzgRzyVlMam+XUjWmtqrjYyxJSznXxSP+lEBJLmDmq1ypd60eR/4NeP
+         1Cq5QA/ZKtkxLT/JPWqATq+DXXB6+9//qhLUL5BytClDWuM/rWf0fWyN7Upl2JuhO6W6
+         YSzEIBtwhcWOzeoPXDp1ONV8bYVSATKvVWrXtUqDhWWZLPeH32B85XjbHbbEq4B4oNgj
+         tOXA==
+X-Gm-Message-State: AOUpUlFqodx0qC55uvZu7d83BKJrpu5OCYDukRPBkEGKkSZr7Y+laAiY
+        TMGzA5ly5+wMPLVdS65gMSMxyFZpHv6KKMoXBzM=
+X-Google-Smtp-Source: AAOMgpe8vSsmMVMtxjBo+umoRlrrLHkbRPrG5K/ETmGDP21bkqfl5DA5fp2qE3GBvbNRQTBV0L2XzQCMtLbEzeG/LCU=
+X-Received: by 2002:aca:56d1:: with SMTP id k200-v6mr2974796oib.319.1531858118040;
+ Tue, 17 Jul 2018 13:08:38 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:07:50
+Received: by 2002:a9d:5b33:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:08:17
  -0700 (PDT)
-In-Reply-To: <20180717163936.GB75957@gmail.com>
-References: <20180717042150.37761-1-keescook@chromium.org> <20180717042150.37761-6-keescook@chromium.org>
- <20180717163936.GB75957@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 17 Jul 2018 13:07:50 -0700
-X-Google-Sender-Auth: VJdsoLPqumtapTCOIENYSKGJN84
-Message-ID: <CAGXu5jKKD4hzeFEdvY5QdahEr4POd9ZM_B_5Z_iU-Qmx3AYSfQ@mail.gmail.com>
-Subject: Re: [dm-devel] [PATCH v5 05/11] crypto: ahash: Remove VLA usage
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Eric Biggers <ebiggers@google.com>, qat-linux@intel.com,
-        LKML <linux-kernel@vger.kernel.org>, dm-devel@redhat.com,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
+In-Reply-To: <CAJKOXPdtEbaOaqU1uzPLq6-MUANJq+2GCviy47b3zkjmRMcc8A@mail.gmail.com>
+References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
+ <1531822342-4293-2-git-send-email-linux.amoon@gmail.com> <CAJKOXPdtEbaOaqU1uzPLq6-MUANJq+2GCviy47b3zkjmRMcc8A@mail.gmail.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Wed, 18 Jul 2018 01:38:17 +0530
+Message-ID: <CANAwSgTrsOv_cg470tze2vLLNAPEV1oApTEKep6gK8mPzWMiQg@mail.gmail.com>
+Subject: Re: [PATCH 2/5] thermal: exynos: cleanup of clk err check for exynos_tmu_work
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 9:39 AM, Eric Biggers <ebiggers3@gmail.com> wrote:
-> On Mon, Jul 16, 2018 at 09:21:44PM -0700, Kees Cook wrote:
->> In the quest to remove all stack VLA usage from the kernel[1], this
->> introduces max size macros for ahash, as already done for shash, and
->> adjust the crypto user to max state size.
->>
->> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->> ---
->>  crypto/ahash.c        | 4 ++--
->>  crypto/algif_hash.c   | 2 +-
->>  include/crypto/hash.h | 3 +++
->>  3 files changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/crypto/ahash.c b/crypto/ahash.c
->> index a64c143165b1..6435bdbe42fd 100644
->> --- a/crypto/ahash.c
->> +++ b/crypto/ahash.c
->> @@ -550,8 +550,8 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
->>  {
->>       struct crypto_alg *base = &alg->halg.base;
->>
->> -     if (alg->halg.digestsize > PAGE_SIZE / 8 ||
->> -         alg->halg.statesize > PAGE_SIZE / 8 ||
->> +     if (alg->halg.digestsize > AHASH_MAX_DIGESTSIZE ||
->> +         alg->halg.statesize > AHASH_MAX_STATESIZE ||
->>           alg->halg.statesize == 0)
->>               return -EINVAL;
->>
->> diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
->> index bfcf595fd8f9..8974ee8ebead 100644
->> --- a/crypto/algif_hash.c
->> +++ b/crypto/algif_hash.c
->> @@ -239,7 +239,7 @@ static int hash_accept(struct socket *sock, struct socket *newsock, int flags,
->>       struct alg_sock *ask = alg_sk(sk);
->>       struct hash_ctx *ctx = ask->private;
->>       struct ahash_request *req = &ctx->req;
->> -     char state[crypto_ahash_statesize(crypto_ahash_reqtfm(req)) ? : 1];
->> +     char state[AHASH_MAX_STATESIZE];
->>       struct sock *sk2;
->>       struct alg_sock *ask2;
->>       struct hash_ctx *ctx2;
->> diff --git a/include/crypto/hash.h b/include/crypto/hash.h
->> index ae14cc0e0cdb..4fcd0e2368cd 100644
->> --- a/include/crypto/hash.h
->> +++ b/include/crypto/hash.h
->> @@ -64,6 +64,9 @@ struct ahash_request {
->>       void *__ctx[] CRYPTO_MINALIGN_ATTR;
->>  };
->>
->> +#define AHASH_MAX_DIGESTSIZE 512
->> +#define AHASH_MAX_STATESIZE  512
->> +
+Hi Krzysztof,
+
+On 17 July 2018 at 17:54, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
+>> cleanup err check in exynos_tmu_work as clk internal
+>> framework will perform if clk is enable/disable
+>> so drop the double check of IS_ERR and other such references.
 >
-> Why is AHASH_MAX_DIGESTSIZE (512) so much larger than SHASH_MAX_DIGESTSIZE (64)?
-> I would have expected them to be the same.
+> I do not understand the statement. Clock framework will perform if clk
+> is enable/disable? How clock can be "enable" or "disable"? You mean
+> gate clock? you mean clock pointer is an ERR pointer?
+>
 
-This was a direct replacement of the PAGE_SIZE / 8 original limit.
-This this didn't trip any frame size warnings, it seemed like we
-didn't need to do the more narrow limitations done elsewhere.
+if (!IS_ERR(data->clk_sec))
+check if the pointer is valid or not
+this check is again performed in
+clk_enable.
 
-I am, of course, happy to do a manual review and find a lower
-alternative if that's desired.
+>> CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>> ---
+>>  drivers/thermal/samsung/exynos_tmu.c | 19 ++++++-------------
+>>  1 file changed, 6 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index 0164c9e..2dbde97 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -300,8 +300,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>>
+>>         mutex_lock(&data->lock);
+>>         clk_enable(data->clk);
+>> -       if (!IS_ERR(data->clk_sec))
+>> -               clk_enable(data->clk_sec);
+>> +       clk_enable(data->clk_sec);
+>>
+>>         status = readb(data->base + EXYNOS_TMU_REG_STATUS);
+>>         if (!status) {
+>> @@ -334,8 +333,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>>  err:
+>>         clk_disable(data->clk);
+>>         mutex_unlock(&data->lock);
+>> -       if (!IS_ERR(data->clk_sec))
+>> -               clk_disable(data->clk_sec);
+>> +       clk_disable(data->clk_sec);
+>>  out:
+>>         return ret;
+>>  }
+>> @@ -789,19 +787,16 @@ static void exynos_tmu_work(struct work_struct *work)
+>>         struct exynos_tmu_data *data = container_of(work,
+>>                         struct exynos_tmu_data, irq_work);
+>>
+>> -       if (!IS_ERR(data->clk_sec))
+>> -               clk_enable(data->clk_sec);
+>> -       if (!IS_ERR(data->clk_sec))
+>> -               clk_disable(data->clk_sec);
+>> -
+>>         thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
+>>
+>>         mutex_lock(&data->lock);
+>>         clk_enable(data->clk);
+>> +       clk_enable(data->clk_sec);
+>
+> You are changing here the logic completely. Before the "enable" was
+> followed immediately by "disable". Now you are moving disable
+> somewhere else... All this looks suspicious...
 
--Kees
+I chose to move enable/disable of clk_sec this under the mutex lock for safe
+which dose the same sequence with different order.
 
--- 
-Kees Cook
-Pixel Security
+Second approach:
+We should get rid of clk_enable/disable in exynos_tmu_work
+as this looks unnecessary for toggle clk's on every update.
+
+Best Regards
+-Anand
