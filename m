@@ -2,109 +2,145 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61044ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA42ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17FE120C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:12:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HGKXryFd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17FE120C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A7AD208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:13:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A7AD208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeGQLo6 (ORCPT
+        id S1731250AbeGQLpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:44:58 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:35700 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729665AbeGQLo6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:44:58 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HB8dcs121810;
-        Tue, 17 Jul 2018 11:12:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=nCZgGOKWJOVRQzaoLoBDZJ0T2u3H4n4K18h4Ci15tmE=;
- b=HGKXryFdMCDz/8e/005AHqE6WX757V+8bkLNipDC1p5sMgFtzSWaCQ99BwDiyE7i/+Nf
- zxhHjkr2UzfreEZe2svfV6UOqwcTT/55q7zMYF+i+qnyqdoLAWFcEW8etA3Rh4t+YplA
- vMJgdpbFZHFNj1KE5hRK6d1GZhFULNCD1TKY3cYRNOlwK3ihXRjsqrTDEQwMgQBIlqVT
- ljKCaXrDhqnRGXiEW3s1vKdl7cml4Cfy3nTs6w/9FAZPnUb9JaHjTO5d6c9qZ48E7eJk
- UmXh27QdQAaILwB/dpQMI4S7ROnmshYSb3m/N0vVg1yxAL06ba+aUl6HPWrW4Zqya+ar 3A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2k7a3t07d5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 11:12:45 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6HBCivX024322
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 11:12:44 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6HBChAc002068;
-        Tue, 17 Jul 2018 11:12:43 GMT
-Received: from mwanda (/197.179.115.196)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 04:12:42 -0700
-Date:   Tue, 17 Jul 2018 14:12:33 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Todd Poynor <toddpoynor@gmail.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
-        linux-kernel@vger.kernel.org, Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Subject: Re: [PATCH 12/32] staging: gasket: gasket_wait_with_reschedule
- return when condition hit
-Message-ID: <20180717111233.5jsxqfyveibe6b7j@mwanda>
-References: <20180717020926.176408-1-toddpoynor@gmail.com>
- <20180717020926.176408-13-toddpoynor@gmail.com>
- <20180717101329.yl4hwob2jbjlp2uh@mwanda>
+        Tue, 17 Jul 2018 07:45:54 -0400
+Received: from foss.arm.com ([217.140.101.70]:44712 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730000AbeGQLpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:45:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4FA127A9;
+        Tue, 17 Jul 2018 04:13:47 -0700 (PDT)
+Received: from [10.1.207.53] (e112298-lin.cambridge.arm.com [10.1.207.53])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B8F03F5A0;
+        Tue, 17 Jul 2018 04:13:46 -0700 (PDT)
+Subject: Re: [RFC PATCH 1/4] genirq: Provide basic NMI management for
+ interrupt lines
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        ricardo.neri-calderon@linux.intel.com, marc.zyngier@arm.com,
+        peterz@infradead.org, mingo@kernel.org
+References: <1531152846-19374-1-git-send-email-julien.thierry@arm.com>
+ <1531152846-19374-2-git-send-email-julien.thierry@arm.com>
+ <alpine.DEB.2.21.1807171114280.3238@nanos.tec.linutronix.de>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <e0c00482-7125-32e5-faa1-4251c118de5e@arm.com>
+Date:   Tue, 17 Jul 2018 12:13:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717101329.yl4hwob2jbjlp2uh@mwanda>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=600
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807170116
+In-Reply-To: <alpine.DEB.2.21.1807171114280.3238@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 01:13:29PM +0300, Dan Carpenter wrote:
-> On Mon, Jul 16, 2018 at 07:09:06PM -0700, Todd Poynor wrote:
-> > From: Todd Poynor <toddpoynor@google.com>
-> > 
-> > Return right away instead of break out of while and then return.
-> > 
->
+Hi Thomas,
 
-Btw, I wasn't going to complain about this but since Greg is being extra
-critical about commit messages that don't explain *why* it just creates
-an environment why I also feel free to complain...  I couldn't
-understand what this commit does without looking at the code in context.
+Thanks for the review.
 
-A possible commit message here is:
+On 17/07/18 10:22, Thomas Gleixner wrote:
+> On Mon, 9 Jul 2018, Julien Thierry wrote:
+>> +/**
+>> + *	disable_nmi_nosync - disable an nmi without waiting
+>> + *	@irq: Interrupt to disable
+>> + *
+>> + *	Disable the selected interrupt line. Disables and enables are
+>> + *	nested.
+>> + *	The interrupt to disable must have been requested through request_nmi.
+>> + *	Unlike disable_nmi(), this function does not ensure existing
+>> + *	instances of the IRQ handler have completed before returning.
+>> + */
+>> +void disable_nmi_nosync(unsigned int irq)
+>> +{
+>> +	disable_irq_nosync(irq);
+>> +}
+>> +
+>> +/**
+>> + *	disable_nmi - disable an nmi and wait for completion
+>> + *	@irq: Interrupt to disable
+>> + *
+>> + *	Disable the selected interrupt line. Enables and disables are
+>> + *	nested.
+>> + *	The interrupt to disable must have been requested through request_nmi.
+>> + *	This function waits for any pending IRQ handlers for this interrupt
+>> + *	to complete before returning. If you use this function while
+>> + *	holding a resource the IRQ handler may need you will deadlock.
+> 
+> I don't see how that wait would work with NMIs.
+> 
 
-[PATCH 12/32] staging: gasket: small cleanup in gasket_wait_with_reschedule()
+I'm a bit unsure about this one. In practice NMI handlers shouldn't take 
+forever nor block the system for too long. And if we are able to disable 
+interrupt line used for the NMI I'd think that the sequence:
 
-gasket_wait_with_reschedule() is a little more clear if we just return
-directly.
+	disable_nmi_interrupt_line(irq);
+	wait_for_remaining_handlers(irq);
 
-regards,
-dan carpenter
+should terminate if the NMI handler is not broken (unless I am missing 
+something).
 
+In any case, I don't mind getting rid of the waiting disable for NMIs, I 
+doubt there is a strong need for it. So if the function is likely to be 
+broken I'm happy to get rid of it.
+
+>> +/* This function must be called with desc->lock held */
+>> +static const void *__cleanup_nmi(unsigned int irq, struct irq_desc *desc)
+>> +{
+>> +	const char *devname = NULL;
+>> +
+>> +	desc->istate &= ~IRQS_NMI;
+>> +
+>> +#ifdef CONFIG_SMP
+>> +	if (WARN_ON(desc->affinity_notify))
+>> +		desc->affinity_notify = NULL;
+>> +#endif
+> 
+> We should not support that affinity notify horror for NMIs at all.
+> 
+
+Makes sense, I'll add it to the constraints for NMIs and remove that part.
+
+>> +	if (!WARN_ON(desc->action == NULL)) {
+>> +		irq_pm_remove_action(desc, desc->action);
+>> +		devname = desc->action->name;
+>> +		unregister_handler_proc(irq, desc->action);
+>> +
+>> +		kfree(desc->action);
+>> +		desc->action = NULL;
+>> +	}
+>> +
+>> +	irq_settings_clr_disable_unlazy(desc);
+>> +	irq_shutdown(desc);
+>> +
+>> +#ifdef CONFIG_SMP
+>> +	/* make sure affinity_hint is cleaned up */
+>> +	if (WARN_ON_ONCE(desc->affinity_hint))
+>> +		desc->affinity_hint = NULL;
+>> +#endif
+> 
+> Especially not twice :)
+> 
+
+Oops... I'll remove that as well.
+
+Thanks,
+
+-- 
+Julien Thierry
