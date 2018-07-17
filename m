@@ -2,226 +2,157 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F125ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4F1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2162B2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2162B2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 826D72086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:32:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Btsyq5wF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826D72086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbeGQIDa (ORCPT
+        id S1729678AbeGQIEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:03:30 -0400
-Received: from mga05.intel.com ([192.55.52.43]:43156 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728304AbeGQID3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:03:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 00:32:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="73400250"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
-  by orsmga001.jf.intel.com with ESMTP; 17 Jul 2018 00:32:09 -0700
-Subject: Re: [PATCH RFC 1/2] mmc: sdhci: Allow platform controlled voltage
- switching
-To:     Vijay Viswanath <vviswana@codeaurora.org>, ulf.hansson@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, jeremymc@redhat.com,
-        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        vbadigan@codeaurora.org, dianders@google.com,
-        sayalil@codeaurora.org, Evan Green <evgreen@chromium.org>
-References: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
- <1529583826-42020-2-git-send-email-vviswana@codeaurora.org>
- <53c6d61f-47f5-2e4e-8280-6f76f707799e@intel.com>
- <0d9b1934-d80d-a726-8094-688c97474afa@codeaurora.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <78dfa5db-712b-bb0c-ad03-761371beef10@intel.com>
-Date:   Tue, 17 Jul 2018 10:30:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        Tue, 17 Jul 2018 04:04:00 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:40207 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbeGQIEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 04:04:00 -0400
+Received: by mail-ua0-f193.google.com with SMTP id p22-v6so78788uao.7;
+        Tue, 17 Jul 2018 00:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=qrJPFHLaBDSOL9khb/4YPxbd0lP219BuFiE/MMn/70I=;
+        b=Btsyq5wFhLhB+3AzIITNDj8LBIJgHAonmBHKT4WKbIyRqMZTZCYC675JTFA9Swlbao
+         S9lKDw/iV4nC0QVhxe2NN12bANPjDtK/tJrwZoaGDoI9F91Ms8kqyp8BDe+1r+xdbBcq
+         h5KcFATzUMsRBx7y48Uq4lmKvRabZT0qHuLjGedqrGQUl9G11pEXSiMYfz2C5RTx2Tri
+         NxlIyOWwLStqPuR7kIY611M2ztTad71wwzN1Dg/LexQemIXrLZWSTOE7dAUdQHPwU2/0
+         04+gRye50ZaKW3rKHN08ErIqd0CAzdfMlKJLZO77BTti5Hi1pPtPBfGYNuqUQ41cYzNB
+         LRLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=qrJPFHLaBDSOL9khb/4YPxbd0lP219BuFiE/MMn/70I=;
+        b=Ur08O2x0tUkpae4EKB2QkMvyaTe4ftaS7BkXQqC/QRn+zE76rdEjQeAl8s0qsBS9Ml
+         FsOY4MH0CMAuBwBxivFmAqvkT29euf4ANZAh4no0AEHud8nVB1d+1P6PtW903dMbnMVW
+         QA4vli2qBTWpOwq5DCfmRf0eoZHmhw++1VBAaa8zEX3Z3pafZjO4xEg8SkLpWsLiu3Ek
+         /H3d9Y228aqkXaencPEIxb1T7FMeN8OY8+V0fmQyeEiFQxcd3cwV6AhXQTKP8RrtQtuq
+         3PDINJdC11lL+TYiq9c7X1yPK4LdA56l7ldhgdeanVCtFl1lat3SMkKWjs84ryO/GS+n
+         MJDg==
+X-Gm-Message-State: AOUpUlG8o4ZfVheh5XQiji8rwR5WJRANisWpXpTttu+uZSu2cUd2ypD4
+        q6jrN2u7V6HdHjmTLAwkQGXm1cfwEkKPV5oHA3XsedGz
+X-Google-Smtp-Source: AAOMgpeKwARGBCoqvCq6bQ7HNay13CnR7CthWT8PJJia5x63LE+UPnDTjbDnHCERN1iBUo/vtl8lnLsSxYAQbiLvcHQ=
+X-Received: by 2002:ab0:1b93:: with SMTP id k19-v6mr301571uai.122.1531812765753;
+ Tue, 17 Jul 2018 00:32:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <0d9b1934-d80d-a726-8094-688c97474afa@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 00:32:45
+ -0700 (PDT)
+In-Reply-To: <20180717065711.28281-4-colyli@suse.de>
+References: <20180717065711.28281-1-colyli@suse.de> <20180717065711.28281-4-colyli@suse.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 17 Jul 2018 10:32:45 +0300
+Message-ID: <CAHp75Vfe34n31UAxyqdX63hP7kCYWHo-_LEWx2KLsiW5F9xEEQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] lib/test_crc: Add test cases for crc calculation
+To:     Coly Li <colyli@suse.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/18 08:14, Vijay Viswanath wrote:
-> 
-> 
-> On 7/10/2018 4:37 PM, Adrian Hunter wrote:
->> On 21/06/18 15:23, Vijay Viswanath wrote:
->>> Some controllers can have internal mechanism to inform the SW that it
->>> is ready for voltage switching. For such controllers, changing voltage
->>> before the HW is ready can result in various issues.
->>>
->>> Add a quirk, which can be used by drivers of such controllers.
->>>
->>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->>> ---
->>>   drivers/mmc/host/sdhci.c | 20 +++++++++++++++-----
->>>   drivers/mmc/host/sdhci.h |  2 ++
->>>   2 files changed, 17 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>> index 1c828e0..f0346d4 100644
->>> --- a/drivers/mmc/host/sdhci.c
->>> +++ b/drivers/mmc/host/sdhci.c
->>> @@ -1615,7 +1615,8 @@ void sdhci_set_power_noreg(struct sdhci_host *host,
->>> unsigned char mode,
->>>   void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
->>>                unsigned short vdd)
->>>   {
->>> -    if (IS_ERR(host->mmc->supply.vmmc))
->>> +    if (IS_ERR(host->mmc->supply.vmmc) ||
->>> +            (host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>
->> I think you should provide your own ->set_power() instead of this
->>
-> 
-> will do
-> 
->>>           sdhci_set_power_noreg(host, mode, vdd);
->>>       else
->>>           sdhci_set_power_reg(host, mode, vdd);
->>> @@ -2009,7 +2010,9 @@ int sdhci_start_signal_voltage_switch(struct
->>> mmc_host *mmc,
->>>           ctrl &= ~SDHCI_CTRL_VDD_180;
->>>           sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>   -        if (!IS_ERR(mmc->supply.vqmmc)) {
->>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
->>> +                !(host->quirks2 &
->>> +                    SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
->>
->> And your own ->start_signal_voltage_switch()
->>
-> 
-> sdhci_msm_start_signal_voltage_switch() would be an exact copy of
-> sdhci_start_signal_voltage_switch()..... will incorporate this if not using
-> quirk.
-> 
->>>               ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>               if (ret) {
->>>                   pr_warn("%s: Switching to 3.3V signalling voltage
->>> failed\n",
->>> @@ -2032,7 +2035,8 @@ int sdhci_start_signal_voltage_switch(struct
->>> mmc_host *mmc,
->>>       case MMC_SIGNAL_VOLTAGE_180:
->>>           if (!(host->flags & SDHCI_SIGNALING_180))
->>>               return -EINVAL;
->>> -        if (!IS_ERR(mmc->supply.vqmmc)) {
->>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
->>> +            !(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
->>>               ret = mmc_regulator_set_vqmmc(mmc, ios);
->>>               if (ret) {
->>>                   pr_warn("%s: Switching to 1.8V signalling voltage
->>> failed\n",
->>> @@ -3485,7 +3489,10 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>        * the host can take the appropriate action if regulators are not
->>>        * available.
->>>        */
->>> -    ret = mmc_regulator_get_supply(mmc);
->>> +    if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>
->> Since we expect mmc_regulator_get_supply() to have been called, this could
->> be:
->>
->>     if (!mmc->supply.vmmc) {
->>         ret = mmc_regulator_get_supply(mmc);
->>         enable_vqmmc = true;
->>     } else {
->>         ret = 0;
->>     }
->> >> +        ret = mmc_regulator_get_supply(mmc);
->>> +    else
->>> +        ret = 0;
->>>       if (ret)
->>>           return ret;
->>>   @@ -3736,7 +3743,10 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>         /* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
->>>       if (!IS_ERR(mmc->supply.vqmmc)) {
->>> -        ret = regulator_enable(mmc->supply.vqmmc);
->>> +        if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
->>
->> And this could be:
->>
->>         if (enable_vqmmc)
->>             ret = regulator_enable(mmc->supply.vqmmc);
->>         else
->>             ret = 0;
->>  > However, you still need to ensure regulator_disable(mmc->supply.vqmmc) is
->> only called if regulator_enable() was called.
-> I missed this. Will cover it.
-> 
-> Also I missed one more place where we are doing regulator_disable. During
-> sdhci-msm unbinding, we would end up doing an extra regulator disable
-> (thanks Evan for pointing it out) in sdhci_remove_host.
-> 
-> To avoid the quirk( or having any flag), it would require copying the code
-> of sdhci_start_signal_voltage_switch() and sdhci_remove_host() and creating
+On Tue, Jul 17, 2018 at 9:57 AM, Coly Li <colyli@suse.de> wrote:
+> This patch adds a kernel module to test the consistency of multiple crc
+> calculation in Linux kernel. It is enabled with CONFIG_TEST_CRC enabled.
+>
+> The test results are printed into kernel message, which look like,
+>
+> test_crc: crc64_le: PASSED (0x4e6b1ff972fa8c55, expval 0x4e6b1ff972fa8c55)
+> test_crc: crc64_le_bch: PASSED (0x0e4f1391d7a4a62e, expval 0x0e4f1391d7a4a62e)
+> test_crc: crc64_le_update: FAILED (0x03d4d0d85685d9a1, expval 0x3d4d0d85685d9a1f)
+>
+> kernel 0day system has framework to check kernel message, then the above
+> result can be handled by 0day system. If crc calculation inconsistency
+> happens, it can be detected quite soon.
+>
+> lib/test_crc.c is a testing frame work for many crc consistency
+> testings. For now, there are only test caes for 3 crc routines,
+> - crc64_le()
+> - crc64_le_bch()
+> - crc64_le_update()
 
-You do not need to duplicate sdhci_remove_host(), just change it so that it
-only  disables what was enabled i.e.
+> +config TEST_CRC
+> +       tristate "CRC calculation test driver"
+> +       depends on CRC64
 
-	if (host->vqmmc_enabled)
-		regulator_disable(mmc->supply.vqmmc);
+> +       default n
 
-> 2 new functions in sdhci_msm layer which would do the exact same as above,
-> with just the regulator parts removed.
-> 
-> This looks messy (considering any future changes to the 2 sdhci API will
-> need to be copied to their duplicate sdhci_msm API) and a bit overkill to
-> avoid quirk. At the same time, I don't know how useful such a quirk would be
-> to other platform drivers.
-> 
-> Please let me know your view/suggestions.
+Please, remove it.
+You Cc'ed the guy who did this:
+http://git.infradead.org/linux-platform-drivers-x86.git/commit/0192f17529fa3f8d78ca0181a2b2aaa7cbb0784d
 
-Let's try without the quirk.
+> +       help
+> +         This builds the "test_crc" module. This driver enables to test the
+> +         CRC calculation consistency to make sure new modification does not
+> +         break existing checksum calculation.
 
->>
->>> +            ret = regulator_enable(mmc->supply.vqmmc);
->>> +        else
->>> +            ret = 0;
->>>           if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
->>>                               1950000))
->>>               host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
->>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>> index 23966f8..3b0c97a 100644
->>> --- a/drivers/mmc/host/sdhci.h
->>> +++ b/drivers/mmc/host/sdhci.h
->>> @@ -450,6 +450,8 @@ struct sdhci_host {
->>>    * obtainable timeout.
->>>    */
->>>   #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT            (1<<17)
->>> +/* Regulator voltage changes are being done from platform layer */
->>> +#define SDHCI_QUIRK2_INTERNAL_PWR_CTL                (1<<18)
->>
->> So maybe the quirk is not needed.
->>
->>>         int irq;        /* Device IRQ */
->>>       void __iomem *ioaddr;    /* Mapped address */
->>>
->>
-> 
-> Thanks for the review & suggestions!
-> Vijay
-> 
+> +static int chk_and_msg(const char *name, __le64 crc, __le64 expval)
+> +{
+> +       int ret = 0;
+> +
+> +       if (crc == expval) {
+> +               pr_info("test_crc: %s: PASSED:(0x%016llx, expected 0x%016llx)",
+> +                       name, crc, expval);
+> +       } else {
+> +               pr_err("test_crc: %s: FAILED:(0x%016llx, expected 0x%016llx)",
+> +                       name, crc, expval);
+> +               ret = -EINVAL;
+> +       }
+> +
+> +       return ret;
+> +}
 
+> +
+> +
+
+One of the blank lines is redundant.
+
+> +static int __init test_crc_init(void)
+> +{
+> +       int i;
+> +       int v, ret = 0;
+> +
+> +       pr_info("Kernel CRC consitency testing:");
+> +       for (i = 0; test_data[i].name; i++) {
+> +               v = test_data[i].handler(&test_data[i]);
+> +               if (v < 0 && ret == 0)
+> +                       ret = -EINVAL;
+> +       }
+> +
+> +       return ret;
+> +}
+
+Didn't notice anything about statistics.
+
+See, for example,
+https://elixir.bootlin.com/linux/v4.18-rc5/source/lib/test_printf.c#L536
+
+-- 
+With Best Regards,
+Andy Shevchenko
