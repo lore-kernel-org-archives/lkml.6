@@ -2,157 +2,137 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 100FCECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF40ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8422520C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:26:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XMrxQ4fk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8422520C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D25720C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D25720C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731570AbeGQM6n (ORCPT
+        id S1731445AbeGQM7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:58:43 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44996 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbeGQM6m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:58:42 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HCNqpU183172;
-        Tue, 17 Jul 2018 12:26:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=WMx9rQ8lAgRj6r1Lbl9q0LC6ynD+2FsBavzU3GyhdVQ=;
- b=XMrxQ4fkC3cLWnF75dSwBiUFSWcB0EKbrbZ+nAHBq570Nzelr7B9IEpn1yQdGy/ipX0f
- EF3eDEKapIyW+XkaWFlAv1BMp1BLHjzMBKINgVfTUrfv3CF+d+Pfm+Csw3qls84blDgY
- AcwLTSOIuUjVyWDMon3KCVqlAxiza0kWj9v70iI0ngxwR6B/VSSyxWvbusaw1XMb4+l8
- wox6ciqJHYcTMj4JIP8vZ0LH6OHnT8je67vl2IgOkCEc+5j+5oBshP7RT3/GOHHMBT98
- oSCKeq/PRXcKxWrSwmaKTjt2XytaYObGgMt4AZe6sfd6bX/Tx4Oud2FBVouZQ8UIg6z0 Gg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2k7a340dgs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 12:26:06 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6HCQ5Tw004415
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 12:26:05 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6HCQ5JX003091;
-        Tue, 17 Jul 2018 12:26:05 GMT
-Received: from mwanda (/197.179.115.196)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 05:26:04 -0700
-Date:   Tue, 17 Jul 2018 15:25:57 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     kbuild@01.org, RAGHU Halharvi <raghuhack78@gmail.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        RAGHU Halharvi <raghuhack78@gmail.com>, tglx@linutronix.de
-Subject: Re: [PATCH] genirq:Dereference desc after null pointer check
-Message-ID: <20180717122557.joykttug2wr55sf7@mwanda>
+        Tue, 17 Jul 2018 08:59:46 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44824 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728489AbeGQM7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:59:46 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D60AE774A53CE;
+        Tue, 17 Jul 2018 20:27:16 +0800 (CST)
+Received: from [127.0.0.1] (10.177.16.168) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Tue, 17 Jul 2018
+ 20:27:12 +0800
+Subject: Re: [V9fs-developer] [PATCH v2] net/9p: Fix a deadlock case in the
+ virtio transport
+To:     Dominique Martinet <asmadeus@codewreck.org>
+References: <5B4DCD0A.8040600@huawei.com> <20180717114215.GA14414@nautica>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>
+From:   jiangyiwen <jiangyiwen@huawei.com>
+Message-ID: <5B4DE09F.5000800@huawei.com>
+Date:   Tue, 17 Jul 2018 20:27:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180716222725.14896-1-raghuhack78@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807170129
+In-Reply-To: <20180717114215.GA14414@nautica>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.16.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi RAGHU,
+On 2018/7/17 19:42, Dominique Martinet wrote:
+> 
+>> Subject: net/9p: Fix a deadlock case in the virtio transport
+> 
+> I hadn't noticed in the v1, but how is that a deadlock fix?
+> The previous code doesn't look like it deadlocks to me, the commit
+> message is more correct.
+> 
 
-Thank you for the patch! Perhaps something to improve:
+Hi Dominique,
 
-url:    https://github.com/0day-ci/linux/commits/RAGHU-Halharvi/genirq-Dereference-desc-after-null-pointer-check/20180717-150842
+If cpu is running in the irq context for a long time,
+NMI watchdog will detect the hard lockup in the cpu,
+and then it will cause kernel panic. So I use this
+subject to underline the scenario.
 
-smatch warnings:
-kernel/irq/manage.c:1571 __free_irq() error: uninitialized symbol 'irq'.
+> jiangyiwen wrote on Tue, Jul 17, 2018:
+>> When client has multiple threads that issue io requests
+>> all the time, and the server has a very good performance,
+>> it may cause cpu is running in the irq context for a long
+>> time because it can check virtqueue has buf in the *while*
+>> loop.
+>>
+>> So we should keep chan->lock in the whole loop.
+>>
+>> Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+>> ---
+>>  net/9p/trans_virtio.c | 17 ++++++-----------
+>>  1 file changed, 6 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+>> index 05006cb..e5fea8b 100644
+>> --- a/net/9p/trans_virtio.c
+>> +++ b/net/9p/trans_virtio.c
+>> @@ -148,20 +148,15 @@ static void req_done(struct virtqueue *vq)
+>>
+>>  	p9_debug(P9_DEBUG_TRANS, ": request done\n");
+>>
+>> -	while (1) {
+>> -		spin_lock_irqsave(&chan->lock, flags);
+>> -		req = virtqueue_get_buf(chan->vq, &len);
+>> -		if (req == NULL) {
+>> -			spin_unlock_irqrestore(&chan->lock, flags);
+>> -			break;
+>> -		}
+>> -		chan->ring_bufs_avail = 1;
+>> -		spin_unlock_irqrestore(&chan->lock, flags);
+>> -		/* Wakeup if anyone waiting for VirtIO ring space. */
+>> -		wake_up(chan->vc_wq);
+>> +	spin_lock_irqsave(&chan->lock, flags);
+>> +	while ((req = virtqueue_get_buf(chan->vq, &len)) != NULL) {
+>>  		if (len)
+>>  			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
+>>  	}
+>> +	chan->ring_bufs_avail = 1;
+> 
+> Do we have a guarantee that req_done is only called if there is at least
+> one buf to read?
+> For example, that there isn't two threads queueing the same callback but
+> the first one reads everything and the second has nothing to read?
+> 
+> If virtblk_done takes care of setting up a "req_done" bool to only
+> notify waiters if something has been done I'd rather have a reason to do
+> differently, even if you can argue that nothing bad will happen in case
+> of a gratuitous wake_up
+> 
 
-# https://github.com/0day-ci/linux/commit/3ebb02d34bcb1c8111a79856326bca85fb3321eb
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 3ebb02d34bcb1c8111a79856326bca85fb3321eb
-vim +/irq +1571 kernel/irq/manage.c
+Sorry, I don't fully understand what your mean.
+I think even if the ring buffer don't have the data, wakeup operation
+will not cause any other problem, and the loss of performance can be
+ignored.
 
-d3c60047 Thomas Gleixner                2008-10-16  1560  
-cbf94f06 Magnus Damm                    2009-03-12  1561  /*
-cbf94f06 Magnus Damm                    2009-03-12  1562   * Internal function to unregister an irqaction - used to free
-cbf94f06 Magnus Damm                    2009-03-12  1563   * regular and special interrupts that are part of the architecture.
-^1da177e Linus Torvalds                 2005-04-16  1564   */
-83ac4ca9 Uwe Kleine König               2018-03-19  1565  static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
-^1da177e Linus Torvalds                 2005-04-16  1566  {
-3ebb02d3 RAGHU Halharvi                 2018-07-17  1567  	unsigned int irq;
-f17c7545 Ingo Molnar                    2009-02-17  1568  	struct irqaction *action, **action_ptr;
-^1da177e Linus Torvalds                 2005-04-16  1569  	unsigned long flags;
-^1da177e Linus Torvalds                 2005-04-16  1570  
-ae88a23b Ingo Molnar                    2009-02-15 @1571  	WARN(in_interrupt(), "Trying to free IRQ %d from IRQ context!\n", irq);
-                                                                                                                                  ^^^
-Not initialized.
+Thanks.
 
-7d94f7ca Yinghai Lu                     2008-08-19  1572  
-7d94f7ca Yinghai Lu                     2008-08-19  1573  	if (!desc)
-f21cfb25 Magnus Damm                    2009-03-12  1574  		return NULL;
-^1da177e Linus Torvalds                 2005-04-16  1575  
-3ebb02d3 RAGHU Halharvi                 2018-07-17  1576  	irq = desc->irq_data.irq;
-9114014c Thomas Gleixner                2017-06-29  1577  	mutex_lock(&desc->request_mutex);
-abc7e40c Thomas Gleixner                2015-12-13  1578  	chip_bus_lock(desc);
-239007b8 Thomas Gleixner                2009-11-17  1579  	raw_spin_lock_irqsave(&desc->lock, flags);
-ae88a23b Ingo Molnar                    2009-02-15  1580  
-ae88a23b Ingo Molnar                    2009-02-15  1581  	/*
-ae88a23b Ingo Molnar                    2009-02-15  1582  	 * There can be multiple actions per IRQ descriptor, find the right
-ae88a23b Ingo Molnar                    2009-02-15  1583  	 * one based on the dev_id:
-ae88a23b Ingo Molnar                    2009-02-15  1584  	 */
-f17c7545 Ingo Molnar                    2009-02-17  1585  	action_ptr = &desc->action;
-^1da177e Linus Torvalds                 2005-04-16  1586  	for (;;) {
-f17c7545 Ingo Molnar                    2009-02-17  1587  		action = *action_ptr;
-^1da177e Linus Torvalds                 2005-04-16  1588  
-ae88a23b Ingo Molnar                    2009-02-15  1589  		if (!action) {
-ae88a23b Ingo Molnar                    2009-02-15  1590  			WARN(1, "Trying to free already-free IRQ %d\n", irq);
-239007b8 Thomas Gleixner                2009-11-17  1591  			raw_spin_unlock_irqrestore(&desc->lock, flags);
-abc7e40c Thomas Gleixner                2015-12-13  1592  			chip_bus_sync_unlock(desc);
-19d39a38 Thomas Gleixner                2017-07-11  1593  			mutex_unlock(&desc->request_mutex);
-f21cfb25 Magnus Damm                    2009-03-12  1594  			return NULL;
-ae88a23b Ingo Molnar                    2009-02-15  1595  		}
-^1da177e Linus Torvalds                 2005-04-16  1596  
-8316e381 Ingo Molnar                    2009-02-17  1597  		if (action->dev_id == dev_id)
-ae88a23b Ingo Molnar                    2009-02-15  1598  			break;
-f17c7545 Ingo Molnar                    2009-02-17  1599  		action_ptr = &action->next;
-ae88a23b Ingo Molnar                    2009-02-15  1600  	}
-^1da177e Linus Torvalds                 2005-04-16  1601  
-ae88a23b Ingo Molnar                    2009-02-15  1602  	/* Found it - now remove it from the list of entries: */
-f17c7545 Ingo Molnar                    2009-02-17  1603  	*action_ptr = action->next;
-dbce706e Paolo 'Blaisorblade' Giarrusso 2005-06-21  1604  
-cab303be Thomas Gleixner                2014-08-28  1605  	irq_pm_remove_action(desc, action);
-cab303be Thomas Gleixner                2014-08-28  1606  
-ae88a23b Ingo Molnar                    2009-02-15  1607  	/* If this was the last handler, shut down the IRQ line: */
-c1bacbae Thomas Gleixner                2014-03-08  1608  	if (!desc->action) {
-e9849777 Thomas Gleixner                2015-10-09  1609  		irq_settings_clr_disable_unlazy(desc);
-46999238 Thomas Gleixner                2011-02-02  1610  		irq_shutdown(desc);
-c1bacbae Thomas Gleixner                2014-03-08  1611  	}
-3aa551c9 Thomas Gleixner                2009-03-23  1612  
+>> +	spin_unlock_irqrestore(&chan->lock, flags);
+>> +	/* Wakeup if anyone waiting for VirtIO ring space. */
+>> +	wake_up(chan->vc_wq);
+>>  }
+> 
+> Thanks,
+> 
 
-:::::: The code at line 1571 was first introduced by commit
-:::::: ae88a23b32fa7e0dc9fa7ce735966e68eb41b0bc irq: refactor and clean up the free_irq() code flow
 
-:::::: TO: Ingo Molnar <mingo@elte.hu>
-:::::: CC: Ingo Molnar <mingo@elte.hu>
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
