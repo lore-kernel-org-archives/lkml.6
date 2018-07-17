@@ -2,114 +2,137 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDDEECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3595AECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D7F62147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5BCC21476
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:22:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CVpUgEPr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D7F62147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKCM8tqo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BCC21476
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731887AbeGQOzG (ORCPT
+        id S1731906AbeGQOzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:55:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58350 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731733AbeGQOzF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:55:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OUNk26li7VwVFPkQIQ4fOTX19qt2GWgKPm5YuwyF2nY=; b=CVpUgEPrLebGmj2iK9Fn8Bu7C
-        RKjuMWD9R/pc5NaMPCEaTaGTEK7TxlCWmF2lHZmbfUkB9k+OXS/1b0/O6Oxrt4M7CtIbnAroPHfr5
-        Ej1plu6xu5F0HsI10Eglr8DxCNVWutsTYTJP6dTiJSBSdAh8AwnvY1ECBOa4sf+Oc22Y0S+2mkP9y
-        +WbtODQ2pQ3QsKlAlCCGj7Qs3C9xblzBs0tPUndR37/iGAub5G69ys5EiwPcLfpIF3C994B0wegxt
-        nXHdEaIzWK1fUGxwNY6U8ZJ9BlnsznecDEyXDUfnQy/M/hJlWTbEW+5ZU5VHC6M7a+2CXjYgoM0sx
-        sONwFC3CQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffQrX-0007tS-Eu; Tue, 17 Jul 2018 14:21:59 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E159620275F36; Tue, 17 Jul 2018 16:21:57 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 16:21:57 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
- and IO
-Message-ID: <20180717142157.GF2494@hirez.programming.kicks-ass.net>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-9-hannes@cmpxchg.org>
+        Tue, 17 Jul 2018 10:55:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729621AbeGQOzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:55:15 -0400
+Received: from mail-it0-f50.google.com (mail-it0-f50.google.com [209.85.214.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B13C921476;
+        Tue, 17 Jul 2018 14:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531837340;
+        bh=tH1TrPtS9VLFrWAvJbTOk+nHJahZHNs/5EH8WN/2NJw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tKCM8tqoObmICYnc+kiWX1udWizv++/BYLQcnuJkKS9B+ieKV/npJ2F3az+ISz4Xp
+         BTwRy+79Y7cbH9JFQd4L7DGttui/rcg+Aa0Lw8VuG5Ju+CxRo2aSKXYhlk9YDbquvJ
+         QMY6+MAyjp1UgR2kZtgMhZEuv+LQdbaX0qfUtNB8=
+Received: by mail-it0-f50.google.com with SMTP id 72-v6so2043137itw.3;
+        Tue, 17 Jul 2018 07:22:20 -0700 (PDT)
+X-Gm-Message-State: AOUpUlE6Zi6dgKMefkPVA7QaDMf3tVB0X2QMkUTRHWCBxLdsHyNPwYRw
+        WnBgY6be7xS+nzoHSHViNouJZDbRLgYmYuI6bg==
+X-Google-Smtp-Source: AAOMgpeRau3cPJBlvirVG3v/gnDGb2/qaV8IRxV83iY669CXEkZ7YE9lR2xN9AIVzYOfbZx+k2y2oqeD8w0qHIP5S3g=
+X-Received: by 2002:a02:9936:: with SMTP id r51-v6mr1696009jaj.46.1531837340200;
+ Tue, 17 Jul 2018 07:22:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712172942.10094-9-hannes@cmpxchg.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
+ <1531396813-6581-6-git-send-email-avienamo@nvidia.com> <20180716154309.GA16477@rob-hp-laptop>
+ <20180717152318.3608e3f9@dhcp-10-21-25-168>
+In-Reply-To: <20180717152318.3608e3f9@dhcp-10-21-25-168>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 17 Jul 2018 08:22:07 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL1F0RF_6=ho0pa7Uh4AUsyvFRDGM50gN4=6_+MwBfGYQ@mail.gmail.com>
+Message-ID: <CAL_JsqL1F0RF_6=ho0pa7Uh4AUsyvFRDGM50gN4=6_+MwBfGYQ@mail.gmail.com>
+Subject: Re: [PATCH v3 5/7] dt-bindings: Add Tegra PMC pad configuration bindings
+To:     Aapo Vienamo <avienamo@nvidia.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 01:29:40PM -0400, Johannes Weiner wrote:
-> diff --git a/include/linux/sched/stat.h b/include/linux/sched/stat.h
-> index 04f1321d14c4..ac39435d1521 100644
-> --- a/include/linux/sched/stat.h
-> +++ b/include/linux/sched/stat.h
-> @@ -28,10 +28,14 @@ static inline int sched_info_on(void)
->  	return 1;
->  #elif defined(CONFIG_TASK_DELAY_ACCT)
->  	extern int delayacct_on;
-> +	if (delayacct_on)
-> +		return 1;
-> +#elif defined(CONFIG_PSI)
-> +	extern int psi_disabled;
-> +	if (!psi_disabled)
-> +		return 1;
->  #endif
-> +	return 0;
->  }
+On Tue, Jul 17, 2018 at 6:23 AM Aapo Vienamo <avienamo@nvidia.com> wrote:
+>
+> On Mon, 16 Jul 2018 09:43:09 -0600
+> Rob Herring <robh@kernel.org> wrote:
+>
+> > On Thu, Jul 12, 2018 at 03:00:11PM +0300, Aapo Vienamo wrote:
+> > > Document the pinctrl bindings used by the PMC driver for performing pad
+> > > configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
+> > > are modified as they both cover SoC generations for which these bindings
+> > > apply.
+> > >
+> > > Add a header defining Tegra PMC pad voltage configurations.
+> > >
+> > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > > Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> > > ---
+> > >  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 84 +++++++++++++++++++
+> > >  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 95 ++++++++++++++++++++++
+> > >  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h | 18 ++++
+> > >  3 files changed, 197 insertions(+)
+> > >  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > > index 5a3bf7c..9528f41 100644
+> > > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > > @@ -34,3 +34,87 @@ Board DTS:
+> > >     pmc@c360000 {
+> > >             nvidia,invert-interrupt;
+> > >     };
+> > > +
+> > > +== Pad Control Nodes ==
+> > > +
+> > > +The PMC can be used to set pad power state and voltage configuration.
+> > > +The pad configuration is done via the pinctrl framework. The driver
+> > > +implements power-source, low-power-enable, and low-power-disable pinconf
+> > > +pin configuration node properties. Each pinctrl pin corresponds to a
+> > > +single Tegra PMC pad. Thus, in the following sections of this document
+> > > +pin refers to the pinctrl frameworks notion of a Tegra PMC pad.
+> >
+> > "pinctrl framework" is Linux specific and doesn't belong in the binding.
+> > Neither does what a driver supports. Describe what the h/w supports.
+> >
+> > > +
+> > > +The pad configuration state nodes are placed under the pmc node and they
+> > > +are referred to by the pinctrl client device properties. For more
+> >
+> > Another driver detail not relevant.
+> >
+> > > +information see the examples presented later and
+> >
+> > examples don't document bindings. The documentation should be complete
+> > without examples.
+> >
+> > > +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> > > +
+> > > +The values accepted by power-source property are
+> > > +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> > > +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+> >
+> > You need to list out what properties the child nodes can have.
+> >
+> > power-source needs a vendor prefix.
+>
+> Isn't it a generic pinctrl property?
 
-Doesn't that want to be something like:
+I don't know offhand. Doesn't look like it if you have custom values.
 
-static inline bool sched_info_on(void)
-{
-#ifdef CONFIG_SCHEDSTAT
-	return true;
-#else /* !SCHEDSTAT */
-#ifdef CONFIG_TASK_DELAY_ACCT
-	extern int delayacct_on;
-	if (delayacct_on)
-		return true;
-#endif /* DELAYACCT */
-#ifdef CONFIG_PSI
-	extern int psi_disabled;
-	if (!psi_disabled)
-		return true;
-#endif
-	return false;
-#endif /* !SCHEDSTATE */
-}
-
-Such that if you build a TASK_DELAY_ACCT && PSI kernel, and boot with
-nodelayacct, you still get sched_info_on().
+Rob
