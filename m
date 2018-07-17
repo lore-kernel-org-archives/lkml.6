@@ -2,84 +2,73 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A09ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D82ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA547208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:59:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA547208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EBD3E208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD3E208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731248AbeGQMcO (ORCPT
+        id S1731293AbeGQMdi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:32:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42064 "EHLO mx1.redhat.com"
+        Tue, 17 Jul 2018 08:33:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45674 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731154AbeGQMcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:32:13 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C5D1E402332F;
-        Tue, 17 Jul 2018 11:59:54 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5D8252026D68;
-        Tue, 17 Jul 2018 11:59:53 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 17 Jul 2018 13:59:54 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 13:59:52 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        majiang <ma.jiang@zte.com.cn>
-Subject: Re: [RFC][PATCH 05/11] pids: Move the pgrp and session pid pointers
- from task_struct to signal_struct
-Message-ID: <20180717115952.GA29647@redhat.com>
-References: <877em2jxyr.fsf_-_@xmission.com>
- <20180711024459.10654-5-ebiederm@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711024459.10654-5-ebiederm@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 17 Jul 2018 11:59:54 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 17 Jul 2018 11:59:54 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
+        id S1731087AbeGQMdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:33:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A0BA0AE4F;
+        Tue, 17 Jul 2018 12:01:18 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, Juergen Gross <jgross@suse.com>
+Subject: [PATCH 0/4] xen: various cleanups
+Date:   Tue, 17 Jul 2018 14:01:09 +0200
+Message-Id: <20180717120113.12756-1-jgross@suse.com>
+X-Mailer: git-send-email 2.13.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a bit offtopic/cosmetic and we can do this later, just for record
-before I forget this...
+Some Xen related cleanups:
+- move some pv-only code from CONFIG_XEN to CONFIG_XEN_PV
+- use CONFIG_XEN_PVHVM in Makefile instead of #ifdef around a complete source
+- add SPDX identifier where missing
 
-On 07/10, Eric W. Biederman wrote:
->
-> +static struct pid **task_pid_ptr(struct task_struct *task, enum pid_type type)
-> +{
-> +	return (type == PIDTYPE_PID) ?
-> +		&task->thread_pid :
-> +		(type == __PIDTYPE_TGID) ?
-> +		&task->signal->leader_pid :
-> +		&task->signal->pids[type];
-> +}
+Juergen Gross (4):
+  xen: move pv irq related functions under CONFIG_XEN_PV umbrella
+  xen: move pv specific parts of arch/x86/xen/mmu.c to mmu_pv.c
+  xen: link platform-pci-unplug.o only if CONFIG_XEN_PVHVM
+  xen: add SPDX identifier in arch/x86/xen files
 
-This new helper is (simplified after you removed __PIDTYPE_TGID/leader_pid) can
-have more users: task_pid_type(), init_task_pid(). In fact even (say) task_tgid()
-can use it if we export it inline.
+ arch/x86/entry/entry_32.S          |   8 +-
+ arch/x86/entry/entry_64.S          |   8 +-
+ arch/x86/xen/Makefile              |  41 ++++++--
+ arch/x86/xen/efi.c                 |  14 +--
+ arch/x86/xen/enlighten.c           |   2 +
+ arch/x86/xen/enlighten_hvm.c       |   2 +
+ arch/x86/xen/grant-table.c         |  25 +----
+ arch/x86/xen/mmu.c                 | 188 +------------------------------------
+ arch/x86/xen/mmu_pv.c              | 140 +++++++++++++++++++++++++++
+ arch/x86/xen/p2m.c                 |   2 +
+ arch/x86/xen/pci-swiotlb-xen.c     |   2 +
+ arch/x86/xen/platform-pci-unplug.c |  18 +---
+ arch/x86/xen/vdso.h                |   2 +
+ arch/x86/xen/xen-pvh.S             |  15 +--
+ include/xen/interface/memory.h     |   6 --
+ include/xen/xen-ops.h              | 133 +++++++++++++++++---------
+ 16 files changed, 287 insertions(+), 319 deletions(-)
 
-And if we make task_pid_ptr() the only user of signal->pids[] array we can shrink
-it, signal->pids[0] is not used. Or may be we can simply redefine enum pid_type,
-we can define PIDTYPE_PID == -1 or move it at the end, or do something else.
-
-Once again, this is just random/minor thoughts, feel free to ignore.
-
-Oleg.
+-- 
+2.13.7
 
