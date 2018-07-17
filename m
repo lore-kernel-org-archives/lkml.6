@@ -2,100 +2,131 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20B0ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C99CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD7720C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:02:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD7720C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id B394720852
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:04:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="T0zqIuO6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B394720852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbeGQNem (ORCPT
+        id S1731497AbeGQNgd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:34:42 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:43586 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728889AbeGQNel (ORCPT
+        Tue, 17 Jul 2018 09:36:33 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39872 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbeGQNgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:34:41 -0400
-Received: by mail-ua0-f195.google.com with SMTP id x24-v6so597253ual.10;
-        Tue, 17 Jul 2018 06:02:07 -0700 (PDT)
+        Tue, 17 Jul 2018 09:36:33 -0400
+Received: by mail-pf0-f196.google.com with SMTP id j8-v6so474811pff.6
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 06:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Gv4W8nGAHM+Ge3egwRfGgTP8VH7brii8tl8m/22o5io=;
+        b=T0zqIuO65Kz8Mu7bydxFKutavSE0X7/3R40nFtIXGOGWd3/8OwK3H9xo6w0tsn5Dqr
+         Hm1/dDKtbS5acg303oluvpqaYt6Idm0L1O7fjd0L/eH62LISMB0hRlYa+FfIcE6BeUXn
+         oxay2XnW+ZvJZUAE3T3srl9t6MuBdg7QyPalc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NTsNEzTAW7/1uLisgf+Fjr24kxMJ8/bLGOfcGlQkJg0=;
-        b=qStyDeELl9rDTJipGg0+sCvTIXiOCjTxC1+kUVuFeL3ifXbIYLsZOsD438fx9Gaj6u
-         +OKECV3w0gncVE8IRTyRF1as/s0RZnLFFfXW1ciWhJAE8QXIpdMcCe76WWX8IHkBwK7E
-         FlCTDFs4o5mgM1CwNvf/JZzi2vz+sXh4zIihSWnUH1ebnPwlwXLzNOD+4bfFjwgpOvHO
-         UtNPYhRd05niVIXsiFs7HnY5xun4G/wxmxI8KryaiphdXrVc6+9yL83mHngEVu1a2CMT
-         AFfpGktRx2ORzf9gCu757/+UcF4kDY/8m2hiG15ZpngEw+TNMRJ+k3HGpGPxrT554mpM
-         t/GA==
-X-Gm-Message-State: AOUpUlFEuOcXg5srSoYnzF/WegccXOuCZJ1m+5aLY1L4HXvF8L25koW5
-        y5VUvR5cuPwD+cJTgurLZbP9oytxvnY/ubAleI0=
-X-Google-Smtp-Source: AAOMgpeXHxRReDFYNLlLKYfpjSxGt4W+0Z2ybqd1E3K+UdH9EK+IW6ORLmfm9u1VngrBPNgAGjMs4zh316vRjJCgDCY=
-X-Received: by 2002:ab0:5b57:: with SMTP id v23-v6mr955593uae.72.1531832526582;
- Tue, 17 Jul 2018 06:02:06 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Gv4W8nGAHM+Ge3egwRfGgTP8VH7brii8tl8m/22o5io=;
+        b=A+12A/dNqVoXLtuv/o3zsdM5c1LBbHxQU5kRvA8Mp+pm/RVWMNeFYai0/Guffy24Ok
+         uwYsW2WrND7vPao/QmpOfcRmrcj2LkMKLUjaxnjvf17i5VXkxiHc0k/Rp5urfolG2uNr
+         yEtjdrXTJQFKWSyQy9manf0ZV4uqpL2/y81sf9QNIDm3IG8J2uwfN7ZiKZWbJHwrBZG4
+         kH1NgBhvslivqY2UgL6Ylw7QCxf8KvlKMf7AuN8cvEJrIp6iqVPflt2GZ26b2kcW+IZ7
+         cCNNVay1Wrl7tatTCEhV+4st4XbglI8DpuRHTK/Nh96l8HnMSF7xl2fhHuzepgDH75UZ
+         zhOA==
+X-Gm-Message-State: AOUpUlFTlTpfwOa1vqqrogcLfGSqD4/0rOG7/Fue5n83M7t5ECzkWHPK
+        9CmKrOr3ZyDt7QI3ti/mhWOm2g==
+X-Google-Smtp-Source: AAOMgpdqK/nAmF2QTJHvU772xNgO0mhGvhJCoUtEIrDhJ8/9Mlj+I+zdWghH1id2VjkBxKCFu8f1Dg==
+X-Received: by 2002:a63:b504:: with SMTP id y4-v6mr1541689pge.247.1531832638298;
+        Tue, 17 Jul 2018 06:03:58 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id s184-v6sm1925253pfb.56.2018.07.17.06.03.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 06:03:57 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 06:03:57 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v2 00/12] Add utilization clamping support
+Message-ID: <20180717130357.GA17824@joelaf.mtv.corp.google.com>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
- <1531731553-22979-3-git-send-email-phil.edworthy@renesas.com>
- <20180717120737.bipotpki3yhn6klf@verge.net.au> <c6b21734b729cb5f92a5686ae3fa8469692a1302.camel@linux.intel.com>
- <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 17 Jul 2018 15:01:54 +0200
-Message-ID: <CAMuHMdX8Q4wJtQ==PW0HrQpWS=CY1zPuasJPQCuQwhN0PzVfpQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] i2c: designware: Add support for a bus clock
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Simon Horman <horms@verge.net.au>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716082906.6061-1-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Phil,
+On Mon, Jul 16, 2018 at 09:28:54AM +0100, Patrick Bellasi wrote:
+> This is a respin of:
+> 
+>    https://lore.kernel.org/lkml/20180409165615.2326-1-patrick.bellasi@arm.com
+> 
+> which addresses all the feedbacks collected from the LKML discussion as well
+> as during the presentation at last OSPM Summit:
+> 
+>    https://www.youtube.com/watch?v=0Yv9smm9i78
+> 
+> Further comments and feedbacks are more than welcome!
+> 
+[...] 
+> 
+> Patrick Bellasi (12):
+>   sched/core: uclamp: extend sched_setattr to support utilization
+>     clamping
+>   sched/core: uclamp: map TASK's clamp values into CPU's clamp groups
+>   sched/core: uclamp: add CPU's clamp groups accounting
+>   sched/core: uclamp: update CPU's refcount on clamp changes
+>   sched/cpufreq: uclamp: add utilization clamping for FAIR tasks
+>   sched/cpufreq: uclamp: add utilization clamping for RT tasks
+>   sched/core: uclamp: enforce last task UCLAMP_MAX
+>   sched/core: uclamp: extend cpu's cgroup controller
+>   sched/core: uclamp: map TG's clamp values into CPU's clamp groups
+>   sched/core: uclamp: use TG's clamps to restrict Task's clamps
+>   sched/core: uclamp: update CPU's refcount on TG's clamp changes
+>   sched/core: uclamp: use percentage clamp values
+> 
+>  Documentation/admin-guide/cgroup-v2.rst |  25 +
+>  include/linux/sched.h                   |  53 ++
+>  include/uapi/linux/sched.h              |   4 +-
+>  include/uapi/linux/sched/types.h        |  66 +-
+>  init/Kconfig                            |  63 ++
+>  kernel/sched/core.c                     | 876 ++++++++++++++++++++++++
 
-On Tue, Jul 17, 2018 at 2:42 PM Phil Edworthy <phil.edworthy@renesas.com> wrote:
-> On 17 July 2018 13:24, Andy Shevchenko wrote:
-> > On Tue, 2018-07-17 at 14:07 +0200, Simon Horman wrote:
-> > > On Mon, Jul 16, 2018 at 09:59:13AM +0100, Phil Edworthy wrote:
-> > > > The Synopsys I2C Controller has a bus clock, but typically SoCs hide
-> > > > this away.
-> > > > However, on some SoCs you need to explicity enable the bus clock in
-> > > > order to access the registers.
-> > > > Therefore, enable an optional bus clock specified by DT.
-> >
-> > > > +         /* Optional bus clock */
-> > > > +         if (!IS_ERR(dev->busclk)) {
-> > >
-> > > I suspect that error values stored in dev->busclk,  other than
-> > > -ENOENT, should be treated as errors.
-> IS_ERR catches all errors and is the correct way to check the value
-> returned by devm_clk_get.
+While I'm reviewing these patches, I had a quick thought. core.c is already
+7k+ lines. Based on this diffstat, does it make sense for uclamp to be in its
+own kernel/sched/uclamp.c file?
 
-What if it returns -EPROBE_DEFER, which means the clock is referenced,
-and thus not optional, but not yet ready?
-For optional clocks, all errors but -ENOENT should be propagated up.
+thanks,
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+- Joel
+ 
