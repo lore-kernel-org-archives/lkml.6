@@ -2,209 +2,144 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DBBECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE93CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E279620652
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:53:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrEW5xdg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E279620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A3F39206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:57:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F39206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbeGQR1S (ORCPT
+        id S1729754AbeGQRap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:27:18 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36360 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729461AbeGQR1R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:27:17 -0400
-Received: by mail-lj1-f195.google.com with SMTP id u7-v6so1590159lji.3;
-        Tue, 17 Jul 2018 09:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=S9lZ6HZItc0RtljoziecAQsIxDMcOW6lRqlTevmkrQ0=;
-        b=lrEW5xdgEzH48DWMLeyT6ahgS2uHfVI3sBzHfxmxf5tbjY9+0YOk7Oc03fDlJgHS+C
-         AnNCpN7ZT3Svnyxm+tgn0kFL1O9C7ravYB6y0xLQJuYIb+aS7IghQcuZAXkkERk787mE
-         ZME92hBeJOoU9PGDybg0Upap7DBkfojWqYdNuIo3CVtbLIuf9AIkbn4f28AVsFepiSUC
-         rp9SpbHAn0q93rpUJysuMPBSheYkd+fMvaMYOw0112A9IPXYkOBw2e7AVi7231QA4kMy
-         ejxw5vhXpAcwMQi0rZeGOrdUmqvH1FtiYMbxHow/aEtLerazphDtvrlPvCjiG3jgN6T4
-         Jqhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=S9lZ6HZItc0RtljoziecAQsIxDMcOW6lRqlTevmkrQ0=;
-        b=DSCp2RQgrOcioZwXbNLpsY0nLN0ZpH5Y4eSIEkFJqjHwd64uuoLEnHPksq3qY0PiQl
-         kJ+ruQ/tfivZPk/Z7UafK39Ij76X9/oJvC4An+5G+P4EHKMSBvr+ETdMwOAZB1MoEt7a
-         0l94tpLHC49glbXqopdAKgLLk113ioG8YKHXwL7/LeKeZDeZs9AiUWc//Iumu69XMTXy
-         uf2QbmXYw+0pA5uGV01AcQfkonmRRTTtagTxCYmIU3XD2t5rmQbu9SL9w0FYVQi/fTy4
-         ErJfgqTRpAdeIeVoRJbvJlh8bhQXUfEs4KksxdBBMut4LELRgNORS22QZZg3OrPjFPIx
-         RyjQ==
-X-Gm-Message-State: AOUpUlH2bRmJU8ByZQOoclq096siBaP4KyB4mtS3utEv96M62nvf3wWX
-        7lXPYD8DOITA+vzXyHQERmFTZRFo
-X-Google-Smtp-Source: AAOMgpfkQ3mGxnrIMIMJgFIugnO/3emT3Pbrx6J8ugsOsNBdzajhiv982Rfl6mxZCaP2GBEdoUuFZQ==
-X-Received: by 2002:a2e:4357:: with SMTP id q84-v6mr1977795lja.13.1531846423094;
-        Tue, 17 Jul 2018 09:53:43 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id w12-v6sm239386ljw.60.2018.07.17.09.53.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 09:53:42 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-fbdev@vger.kernel.org,
-        linux-omap@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH RESEND v2] video: fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
-Date:   Tue, 17 Jul 2018 18:54:00 +0200
-Message-Id: <20180717165400.17565-1-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180709191601.18681-1-jmkrzyszt@gmail.com>
-References: <20180709191601.18681-1-jmkrzyszt@gmail.com>
+        Tue, 17 Jul 2018 13:30:45 -0400
+Received: from foss.arm.com ([217.140.101.70]:49912 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729689AbeGQRao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:30:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EC3B27A9;
+        Tue, 17 Jul 2018 09:57:11 -0700 (PDT)
+Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BD193F318;
+        Tue, 17 Jul 2018 09:57:07 -0700 (PDT)
+Subject: Re: [PATCH v11 09/15] arm64: kexec_file: load initrd and device-tree
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
+ <20180711074203.3019-10-takahiro.akashi@linaro.org>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <c5199d62-16f3-a0f2-fdf5-7dcbf6a02cd6@arm.com>
+Date:   Tue, 17 Jul 2018 17:57:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180711074203.3019-10-takahiro.akashi@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now as Amstrad Delta board - the only user of this driver - provides
-GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
-use the table to locate required GPIO pins.
+Hi Akashi,
 
-Declare static variables for storing GPIO descriptors and replace
-gpio_ function calls with their gpiod_ equivalents. Move GPIO lookup
-to the driver probe function so device initialization can be deferred
-instead of aborted if a GPIO pin is not yet available.
+On 11/07/18 08:41, AKASHI Takahiro wrote:
+> load_other_segments() is expected to allocate and place all the necessary
+> memory segments other than kernel, including initrd and device-tree
+> blob (and elf core header for crash).
+> While most of the code was borrowed from kexec-tools' counterpart,
+> users may not be allowed to specify dtb explicitly, instead, the dtb
+> presented by the original boot loader is reused.
+> 
+> arch_kimage_kernel_post_load_cleanup() is responsible for freeing arm64-
+> specific data allocated in load_other_segments().
 
-Pin naming used by the driver should be followed while respective GPIO
-lookup table is initialized by a board init code.
+> diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> index c38a8048ed00..ca00681c25c6 100644
+> --- a/arch/arm64/kernel/machine_kexec_file.c
+> +++ b/arch/arm64/kernel/machine_kexec_file.c
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-Changelog:
-v2: Remove problematic error code conversion, no longer needed if used
-    on top of commit d08605a64e67 ("ARM: OMAP1: ams-delta: move late
-    devices back to init_machine") and commit 8853daf3b4ac ("gpiolib:
-    Defer on non-DT find_chip_by_name() failure") already in linux-next.
+> +int arch_kimage_file_post_load_cleanup(struct kimage *image)
+> +{
+> +	vfree(image->arch.dtb_buf);
+> +	image->arch.dtb_buf = NULL;
+> +
+> +	return kexec_image_post_load_cleanup_default(image);
+> +}
 
- drivers/video/fbdev/omap/lcd_ams_delta.c | 55 +++++++++++++-------------------
- 1 file changed, 22 insertions(+), 33 deletions(-)
+A nit from sparse:
+| warning: symbol 'arch_kimage_file_post_load_cleanup' was not declared
 
-diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
-index e8c748a0dfe2..cddbd00cbf9f 100644
---- a/drivers/video/fbdev/omap/lcd_ams_delta.c
-+++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
-@@ -24,11 +24,10 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/lcd.h>
--#include <linux/gpio.h>
- 
- #include <mach/hardware.h>
--#include <mach/board-ams-delta.h>
- 
- #include "omapfb.h"
- 
-@@ -41,6 +40,8 @@
- /* LCD class device section */
- 
- static int ams_delta_lcd;
-+static struct gpio_desc *gpiod_vblen;
-+static struct gpio_desc *gpiod_ndisp;
- 
- static int ams_delta_lcd_set_power(struct lcd_device *dev, int power)
- {
-@@ -99,41 +100,17 @@ static struct lcd_ops ams_delta_lcd_ops = {
- 
- /* omapfb panel section */
- 
--static const struct gpio _gpios[] = {
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_LCD_VBLEN,
--		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "lcd_vblen",
--	},
--	{
--		.gpio	= AMS_DELTA_GPIO_PIN_LCD_NDISP,
--		.flags	= GPIOF_OUT_INIT_LOW,
--		.label	= "lcd_ndisp",
--	},
--};
--
--static int ams_delta_panel_init(struct lcd_panel *panel,
--		struct omapfb_device *fbdev)
--{
--	return gpio_request_array(_gpios, ARRAY_SIZE(_gpios));
--}
--
--static void ams_delta_panel_cleanup(struct lcd_panel *panel)
--{
--	gpio_free_array(_gpios, ARRAY_SIZE(_gpios));
--}
--
- static int ams_delta_panel_enable(struct lcd_panel *panel)
- {
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 1);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 1);
-+	gpiod_set_value(gpiod_ndisp, 1);
-+	gpiod_set_value(gpiod_vblen, 1);
- 	return 0;
- }
- 
- static void ams_delta_panel_disable(struct lcd_panel *panel)
- {
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 0);
--	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 0);
-+	gpiod_set_value(gpiod_vblen, 0);
-+	gpiod_set_value(gpiod_ndisp, 0);
- }
- 
- static struct lcd_panel ams_delta_panel = {
-@@ -154,8 +131,6 @@ static struct lcd_panel ams_delta_panel = {
- 	.pcd		= 0,
- 	.acb		= 37,
- 
--	.init		= ams_delta_panel_init,
--	.cleanup	= ams_delta_panel_cleanup,
- 	.enable		= ams_delta_panel_enable,
- 	.disable	= ams_delta_panel_disable,
- };
-@@ -166,9 +141,23 @@ static struct lcd_panel ams_delta_panel = {
- static int ams_delta_panel_probe(struct platform_device *pdev)
- {
- 	struct lcd_device *lcd_device = NULL;
--#ifdef CONFIG_LCD_CLASS_DEVICE
- 	int ret;
- 
-+	gpiod_vblen = devm_gpiod_get(&pdev->dev, "vblen", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_vblen)) {
-+		ret = PTR_ERR(gpiod_vblen);
-+		dev_err(&pdev->dev, "VBLEN GPIO request failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	gpiod_ndisp = devm_gpiod_get(&pdev->dev, "ndisp", GPIOD_OUT_LOW);
-+	if (IS_ERR(gpiod_ndisp)) {
-+		ret = PTR_ERR(gpiod_ndisp);
-+		dev_err(&pdev->dev, "NDISP GPIO request failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+#ifdef CONFIG_LCD_CLASS_DEVICE
- 	lcd_device = lcd_device_register("omapfb", &pdev->dev, NULL,
- 						&ams_delta_lcd_ops);
- 
--- 
-2.16.4
+Can we add a definition for this to a header file somewhere. asm/kexec.h is
+probably the best bet.
 
+
+> +static int setup_dtb(struct kimage *image,
+> +		unsigned long initrd_load_addr, unsigned long initrd_len,
+> +		char *cmdline, unsigned long cmdline_len,
+> +		char **dtb_buf, size_t *dtb_buf_len)
+> +{
+
+> +	/* add initrd-* */
+> +	if (initrd_load_addr) {
+> +		value = cpu_to_fdt64(initrd_load_addr);
+> +		ret = fdt_setprop_u64(buf, nodeoffset, "linux,initrd-start",
+> +							value);
+
+fdt_setprop_u64() already does the endian conversion.
+
+From scripts/dtc/libfdt/libfdt.h, its implemented as:
+| 	fdt64_t tmp = cpu_to_fdt64(val);
+| 	return fdt_setprop(fdt, nodeoffset, name, &tmp, sizeof(tmp));
+
+(I think you were using setprop directly in an older version)
+
+
+This leads to:
+| ------------[ cut here ]------------
+| initrd not fully accessible via the linear mapping -- please check your
+| bootloader ...
+| WARNING: CPU: 0 PID: 0 at ../arch/arm64/mm/init.c:429
+| arm64_memblock_init+0x150/0x3d8
+| Modules linked in:
+| CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc5-00015-g95b5c843d0da #10150
+| Hardware name: AMD Seattle (Rev.B0) Development Board (Overdrive) (DT)
+| pstate: 60000085 (nZCv daIf -PAN -UAO)
+| pc : arm64_memblock_init+0x150/0x3d8
+| lr : arm64_memblock_init+0x150/0x3d8
+
+| Call trace:
+| arm64_memblock_init+0x150/0x3d8
+| setup_arch+0x1c0/0x510
+| start_kernel+0x80/0x418
+| random: get_random_bytes called from print_oops_end_marker+0x4c/0x68 with
+| crng_init=0
+| ---[ end trace 0000000000000000 ]---
+
+
+Which is caused by the values being miles outside ram due to the extra byte
+swapping:
+| morse@frikadeller:~$ sudo dtc -I dtb -O dts /sys/firmware/fdt  | grep initrd
+|                 linux,initrd-end = <0x900b6c05 0x80000000>;
+|                 linux,initrd-start = <0x906a04 0x80000000>;
+
+
+With the two extra cpu_to_fdt64() calls removed:
+Reviewed-by: James Morse <james.morse@arm.com>
+
+
+Thanks,
+
+James
