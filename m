@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8C0ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC84ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58DF208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58DF208E3
+	by mail.kernel.org (Postfix) with ESMTP id A10C5208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10C5208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731440AbeGQMdm (ORCPT
+        id S1731408AbeGQMdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 17 Jul 2018 08:33:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45702 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:45762 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731120AbeGQMdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731300AbeGQMdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Jul 2018 08:33:41 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 90749AE84;
-        Tue, 17 Jul 2018 12:01:19 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5E85CAF6A;
+        Tue, 17 Jul 2018 12:01:21 +0000 (UTC)
 From:   Juergen Gross <jgross@suse.com>
 To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
         x86@kernel.org
 Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
         mingo@redhat.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH 4/4] xen: add SPDX identifier in arch/x86/xen files
-Date:   Tue, 17 Jul 2018 14:01:13 +0200
-Message-Id: <20180717120113.12756-5-jgross@suse.com>
+Subject: [PATCH 3/4] xen: link platform-pci-unplug.o only if CONFIG_XEN_PVHVM
+Date:   Tue, 17 Jul 2018 14:01:12 +0200
+Message-Id: <20180717120113.12756-4-jgross@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20180717120113.12756-1-jgross@suse.com>
 References: <20180717120113.12756-1-jgross@suse.com>
@@ -42,209 +42,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Instead of using one large #ifdef CONFIG_XEN_PVHVM in
+arch/x86/xen/platform-pci-unplug.c add the object file depending on
+CONFIG_XEN_PVHVM being set.
+
 Signed-off-by: Juergen Gross <jgross@suse.com>
 ---
- arch/x86/xen/efi.c                 | 14 +-------------
- arch/x86/xen/enlighten.c           |  2 ++
- arch/x86/xen/enlighten_hvm.c       |  2 ++
- arch/x86/xen/grant-table.c         | 25 +------------------------
- arch/x86/xen/mmu.c                 |  2 ++
- arch/x86/xen/mmu_pv.c              |  2 ++
- arch/x86/xen/p2m.c                 |  2 ++
- arch/x86/xen/pci-swiotlb-xen.c     |  2 ++
- arch/x86/xen/platform-pci-unplug.c | 16 ++--------------
- arch/x86/xen/vdso.h                |  2 ++
- arch/x86/xen/xen-pvh.S             | 15 ++-------------
- 11 files changed, 20 insertions(+), 64 deletions(-)
+ arch/x86/xen/Makefile              | 2 +-
+ arch/x86/xen/platform-pci-unplug.c | 2 --
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
-index 1804b27f9632..1fbb629a9d78 100644
---- a/arch/x86/xen/efi.c
-+++ b/arch/x86/xen/efi.c
-@@ -1,18 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2014 Oracle Co., Daniel Kiper
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License along
-- * with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
+diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
+index a964f307a266..dd2550d33b38 100644
+--- a/arch/x86/xen/Makefile
++++ b/arch/x86/xen/Makefile
+@@ -19,11 +19,11 @@ obj-y				+= mmu.o
+ obj-y				+= time.o
+ obj-y				+= grant-table.o
+ obj-y				+= suspend.o
+-obj-y				+= platform-pci-unplug.o
  
- #include <linux/bitops.h>
-diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
-index 3b5318505c69..42122e21542b 100644
---- a/arch/x86/xen/enlighten.c
-+++ b/arch/x86/xen/enlighten.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
- #include <linux/bootmem.h>
- #endif
-diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
-index 19c1ff542387..0e75642d42a3 100644
---- a/arch/x86/xen/enlighten_hvm.c
-+++ b/arch/x86/xen/enlighten_hvm.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- #include <linux/acpi.h>
- #include <linux/cpu.h>
- #include <linux/kexec.h>
-diff --git a/arch/x86/xen/grant-table.c b/arch/x86/xen/grant-table.c
-index 92ccc718152d..ecb0d5450334 100644
---- a/arch/x86/xen/grant-table.c
-+++ b/arch/x86/xen/grant-table.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
- /******************************************************************************
-  * grant_table.c
-  * x86 specific part
-@@ -8,30 +9,6 @@
-  * Copyright (c) 2004-2005, K A Fraser
-  * Copyright (c) 2008 Isaku Yamahata <yamahata at valinux co jp>
-  *                    VA Linux Systems Japan. Split out x86 specific part.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License version 2
-- * as published by the Free Software Foundation; or, when distributed
-- * separately from the Linux kernel or incorporated into other
-- * software packages, subject to the following license:
-- *
-- * Permission is hereby granted, free of charge, to any person obtaining a copy
-- * of this source file (the "Software"), to deal in the Software without
-- * restriction, including without limitation the rights to use, copy, modify,
-- * merge, publish, distribute, sublicense, and/or sell copies of the Software,
-- * and to permit persons to whom the Software is furnished to do so, subject to
-- * the following conditions:
-- *
-- * The above copyright notice and this permission notice shall be included in
-- * all copies or substantial portions of the Software.
-- *
-- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-- * IN THE SOFTWARE.
-  */
+ obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o
+ obj-$(CONFIG_XEN_PVHVM)		+= mmu_hvm.o
+ obj-$(CONFIG_XEN_PVHVM)		+= suspend_hvm.o
++obj-$(CONFIG_XEN_PVHVM)		+= platform-pci-unplug.o
  
- #include <linux/sched.h>
-diff --git a/arch/x86/xen/mmu.c b/arch/x86/xen/mmu.c
-index e0e13fe16d37..60e9c37fd79f 100644
---- a/arch/x86/xen/mmu.c
-+++ b/arch/x86/xen/mmu.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- #include <linux/pfn.h>
- #include <asm/xen/page.h>
- #include <asm/xen/hypercall.h>
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index ea4b2f69dfce..b7ec689320c7 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- /*
-  * Xen mmu operations
-  *
-diff --git a/arch/x86/xen/p2m.c b/arch/x86/xen/p2m.c
-index 159a897151d6..d6d74efd8912 100644
---- a/arch/x86/xen/p2m.c
-+++ b/arch/x86/xen/p2m.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- /*
-  * Xen leaves the responsibility for maintaining p2m mappings to the
-  * guests themselves, but it must also access and update the p2m array
-diff --git a/arch/x86/xen/pci-swiotlb-xen.c b/arch/x86/xen/pci-swiotlb-xen.c
-index 37c6056a7bba..33293ce01d8d 100644
---- a/arch/x86/xen/pci-swiotlb-xen.c
-+++ b/arch/x86/xen/pci-swiotlb-xen.c
-@@ -1,3 +1,5 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- /* Glue code to lib/swiotlb-xen.c */
- 
- #include <linux/dma-mapping.h>
+ obj-$(CONFIG_XEN_PV)		+= setup.o
+ obj-$(CONFIG_XEN_PV)		+= apic.o
 diff --git a/arch/x86/xen/platform-pci-unplug.c b/arch/x86/xen/platform-pci-unplug.c
-index 3957946a6cfe..2e794ac9d8e8 100644
+index 33a783c77d96..3957946a6cfe 100644
 --- a/arch/x86/xen/platform-pci-unplug.c
 +++ b/arch/x86/xen/platform-pci-unplug.c
-@@ -1,22 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
- /******************************************************************************
-  * platform-pci-unplug.c
-  *
-  * Xen platform PCI device driver
-  * Copyright (c) 2010, Citrix
-- *
-- * This program is free software; you can redistribute it and/or modify it
-- * under the terms and conditions of the GNU General Public License,
-- * version 2, as published by the Free Software Foundation.
-- *
-- * This program is distributed in the hope it will be useful, but WITHOUT
-- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-- * more details.
-- *
-- * You should have received a copy of the GNU General Public License along with
-- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
-- * Place - Suite 330, Boston, MA 02111-1307 USA.
-- *
-  */
+@@ -30,7 +30,6 @@
+ #define XEN_PLATFORM_ERR_PROTOCOL -2
+ #define XEN_PLATFORM_ERR_BLACKLIST -3
  
- #include <linux/init.h>
-diff --git a/arch/x86/xen/vdso.h b/arch/x86/xen/vdso.h
-index 861fedfe5230..873c54c488fe 100644
---- a/arch/x86/xen/vdso.h
-+++ b/arch/x86/xen/vdso.h
-@@ -1,3 +1,5 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
- /* Bit used for the pseudo-hwcap for non-negative segments.  We use
-    bit 1 to avoid bugs in some versions of glibc when bit 0 is
-    used; the choice is otherwise arbitrary. */
-diff --git a/arch/x86/xen/xen-pvh.S b/arch/x86/xen/xen-pvh.S
-index ca2d3b2bf2af..b0e471506cd8 100644
---- a/arch/x86/xen/xen-pvh.S
-+++ b/arch/x86/xen/xen-pvh.S
-@@ -1,18 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
- /*
-  * Copyright C 2016, Oracle and/or its affiliates. All rights reserved.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License along
-- * with this program.  If not, see <http://www.gnu.org/licenses/>.
-  */
- 
- 	.code32
+-#ifdef CONFIG_XEN_PVHVM
+ /* store the value of xen_emul_unplug after the unplug is done */
+ static int xen_platform_pci_unplug;
+ static int xen_emul_unplug;
+@@ -214,4 +213,3 @@ static int __init parse_xen_emul_unplug(char *arg)
+ 	return 0;
+ }
+ early_param("xen_emul_unplug", parse_xen_emul_unplug);
+-#endif
 -- 
 2.13.7
 
