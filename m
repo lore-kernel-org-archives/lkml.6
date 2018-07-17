@@ -2,173 +2,109 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BBDECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75576ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BFEB20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:08:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BFEB20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F5C920684
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:09:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IxCKzGuj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5C920684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730249AbeGQRmY (ORCPT
+        id S1730522AbeGQRnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:42:24 -0400
-Received: from smtprelay0226.hostedemail.com ([216.40.44.226]:35437 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729708AbeGQRmY (ORCPT
+        Tue, 17 Jul 2018 13:43:16 -0400
+Received: from mail-it0-f54.google.com ([209.85.214.54]:38078 "EHLO
+        mail-it0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729748AbeGQRnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:42:24 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 0BDF3100E86CA;
-        Tue, 17 Jul 2018 17:08:48 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: boats66_2f8725726b951
-X-Filterd-Recvd-Size: 5288
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 17 Jul 2018 17:08:46 +0000 (UTC)
-Message-ID: <99f5bcb9b5a3604264d43e7305950dcf7f6cfcc7.camel@perches.com>
-Subject: Re: [PATCH] ipv6: sr: fix useless rol32 call on hash
-From:   Joe Perches <joe@perches.com>
-To:     David Lebrun <dav.lebrun@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 17 Jul 2018 10:08:45 -0700
-In-Reply-To: <6ab9af97-33b6-d5cc-d1e9-6e5fbd9158a8@gmail.com>
-References: <20180717155254.30367-1-colin.king@canonical.com>
-         <6ab9af97-33b6-d5cc-d1e9-6e5fbd9158a8@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 13:43:16 -0400
+Received: by mail-it0-f54.google.com with SMTP id v71-v6so175847itb.3;
+        Tue, 17 Jul 2018 10:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nk68BKGLW6HORrwdpPvfI+NaBh2nimNlB1HeZ0XGSjs=;
+        b=IxCKzGujbcTHCjcrZbjlbs6QGlMkuyrVZ3rAPitnrMH+JJIhlZTcH9eHgAazUt11l1
+         lXx2LsYitWdwyjQYnCCD9NXVivdXDf33v9OywDZvogciLNQJz1rUuGW0YVGB575/ifMM
+         YBJc2+JV+d6qisPB9v5Wz0ANU1zczkXxDXhbI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nk68BKGLW6HORrwdpPvfI+NaBh2nimNlB1HeZ0XGSjs=;
+        b=jE9aHk5twtrXGykMa3sVwoRHqYJl0f+u84VoPAzJRGTAcdl5+Twqtf2Ze/A7TrCD4X
+         G7nvEroJOHMChK5HrUo9m9cfxhOU3jZzHnrowONd/UHKJeqT6hjsK5elDPLDXVKNEgQy
+         qheH4VayRNuexmsgcN6Hzg1igCQRVyyu4PDHU+h+tEnlqkMPZIH/qG8eOUazpHya5Szt
+         Em0gMiH+DulNOVElN0B9N7pD034dS4ONR9hM9MZQMa9JHWuuG91AGxjkCtU0pGhHgvyj
+         haKg2JkWP6nVEZwUPPcjpjmeHDIAUZqv11fIaDjVd+zv+kfHC9bA3TiUSY9o2k6UGoeT
+         ofeg==
+X-Gm-Message-State: AOUpUlHEAoOrwM+ceiuLEOttntZ2Lje5J4XeT96is4D6x12oaz/LOM6W
+        GpGlR9qyFabz2joAxqKFTWXoQeD+5+MU5SSz7+k=
+X-Google-Smtp-Source: AAOMgpdKWzF6HIyN4w8v6ZrlFoP7Or9DRoBSUoeFaPwra/2pzKbzjmKaPvkX9Vgrf5pwgsDc+zaRYzGvqsSgYqcn1h0=
+X-Received: by 2002:a24:d0d7:: with SMTP id m206-v6mr2258742itg.1.1531847380008;
+ Tue, 17 Jul 2018 10:09:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <CA+55aFwuAojr7vAfiRO-2je-wDs7pu+avQZNhX_k9NN=D7_zVQ@mail.gmail.com>
+ <1d3d0fe3-bc02-7720-15ac-6bc06e00067c@marvell.com>
+In-Reply-To: <1d3d0fe3-bc02-7720-15ac-6bc06e00067c@marvell.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Jul 2018 10:09:28 -0700
+Message-ID: <CA+55aFwb5hPtPFbB02SSn+wTkqTDSgHGFkiw7LB57mj42VzyZQ@mail.gmail.com>
+Subject: Re: dvb usb issues since kernel 4.9
+To:     hannah@marvell.com
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Josef Griebichler <griebichler.josef@gmx.at>,
+        Hannes Frederic Sowa <hannes@redhat.com>,
+        Jesper Dangaard Brouer <jbrouer@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        dma <dmaengine@vger.kernel.org>, vkoul@kernel.org,
+        Dan Williams <dan.j.williams@intel.com>, nadavh@marvell.com,
+        thomas.petazzoni@bootlin.com, omrii@marvell.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 17:03 +0100, David Lebrun wrote:
-> On 07/17/2018 04:52 PM, Colin King wrote:
-> > From: Colin Ian King<colin.king@canonical.com>
-> > 
-> > The rol32 call is currently rotating hash but the rol'd value is
-> > being discarded. I believe the current code is incorrect and hash
-> > should be assigned the rotated value returned from rol32.
-> > 
-> > Detected by CoverityScan, CID#1468411 ("Useless call")
-> > 
-> > Fixes: b5facfdba14c ("ipv6: sr: Compute flowlabel for outer IPv6 header of seg6 encap mode")
-> > Signed-off-by: Colin Ian King<colin.king@canonical.com>
-> 
-> Acked-by: dlebrun@google.com
-> 
-> Good catch, thanks !
-> 
-> In that case, the same issue is present in 
-> include/net/ipv6.h:ip6_make_flowlabel().
+On Tue, Jul 17, 2018 at 4:58 AM Hanna Hawa <hannah@marvell.com> wrote:
+>
+> After some debug/bisect/diff, found that patch "softirq: Let ksoftirqd
+> do its job" is problematic patch.
 
-Perhaps all of the ror and rol definitions should add
-__must_check
+Ok, this thread died down without any resolution.
 
-Something like the below and perhaps many more of the
-functions that return some value should have __must_chedk
-added as well.
----
- include/linux/bitops.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+>- Using v4.14.0 (including softirq patch) and the additional fix
+> proposed by Linus - no timeout issue.
 
-diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-index af419012d77d..3cddde65c8bb 100644
---- a/include/linux/bitops.h
-+++ b/include/linux/bitops.h
-@@ -67,7 +67,7 @@ static inline __u64 rol64(__u64 word, unsigned int shift)
-  * @word: value to rotate
-  * @shift: bits to roll
-  */
--static inline __u64 ror64(__u64 word, unsigned int shift)
-+static inline __must_check __u64 ror64(__u64 word, unsigned int shift)
- {
- 	return (word >> shift) | (word << (64 - shift));
- }
-@@ -77,7 +77,7 @@ static inline __u64 ror64(__u64 word, unsigned int shift)
-  * @word: value to rotate
-  * @shift: bits to roll
-  */
--static inline __u32 rol32(__u32 word, unsigned int shift)
-+static inline __must_check __u32 rol32(__u32 word, unsigned int shift)
- {
- 	return (word << shift) | (word >> ((-shift) & 31));
- }
-@@ -87,7 +87,7 @@ static inline __u32 rol32(__u32 word, unsigned int shift)
-  * @word: value to rotate
-  * @shift: bits to roll
-  */
--static inline __u32 ror32(__u32 word, unsigned int shift)
-+static inline __must_check __u32 ror32(__u32 word, unsigned int shift)
- {
- 	return (word >> shift) | (word << (32 - shift));
- }
-@@ -97,7 +97,7 @@ static inline __u32 ror32(__u32 word, unsigned int shift)
-  * @word: value to rotate
-  * @shift: bits to roll
-  */
--static inline __u16 rol16(__u16 word, unsigned int shift)
-+static inline __must_check __u16 rol16(__u16 word, unsigned int shift)
- {
- 	return (word << shift) | (word >> (16 - shift));
- }
-@@ -107,7 +107,7 @@ static inline __u16 rol16(__u16 word, unsigned int shift)
-  * @word: value to rotate
-  * @shift: bits to roll
-  */
--static inline __u16 ror16(__u16 word, unsigned int shift)
-+static inline __must_check __u16 ror16(__u16 word, unsigned int shift)
- {
- 	return (word >> shift) | (word << (16 - shift));
- }
-@@ -117,7 +117,7 @@ static inline __u16 ror16(__u16 word, unsigned int shift)
-  * @word: value to rotate
-  * @shift: bits to roll
-  */
--static inline __u8 rol8(__u8 word, unsigned int shift)
-+static inline __must_check __u8 rol8(__u8 word, unsigned int shift)
- {
- 	return (word << shift) | (word >> (8 - shift));
- }
-@@ -127,7 +127,7 @@ static inline __u8 rol8(__u8 word, unsigned int shift)
-  * @word: value to rotate
-  * @shift: bits to roll
-  */
--static inline __u8 ror8(__u8 word, unsigned int shift)
-+static inline __must_check __u8 ror8(__u8 word, unsigned int shift)
- {
- 	return (word >> shift) | (word << (8 - shift));
- }
-@@ -139,7 +139,7 @@ static inline __u8 ror8(__u8 word, unsigned int shift)
-  *
-  * This is safe to use for 16- and 8-bit types as well.
-  */
--static inline __s32 sign_extend32(__u32 value, int index)
-+static inline __must_check __s32 sign_extend32(__u32 value, int index)
- {
- 	__u8 shift = 31 - index;
- 	return (__s32)(value << shift) >> shift;
-@@ -150,7 +150,7 @@ static inline __s32 sign_extend32(__u32 value, int index)
-  * @value: value to sign extend
-  * @index: 0 based bit index (0<=index<64) to sign bit
-  */
--static inline __s64 sign_extend64(__u64 value, int index)
-+static inline __must_check __s64 sign_extend64(__u64 value, int index)
- {
- 	__u8 shift = 63 - index;
- 	return (__s64)(value << shift) >> shift;
+Are you talking about the patch that made HI_SOFTIRQ and
+TASKLET_SOFTIRQ special, and had this:
 
+  #define SOFTIRQ_NOW_MASK ((1 << HI_SOFTIRQ) | (1 << TASKLET_SOFTIRQ))
 
+in it?
+
+I think I'll just commit the damn thing. It's hacky, but it's simple,
+and it never got applied because we had smarter suggestions. But the
+smarter suggestions never ended up being applied either, so..
+
+                       Linus
