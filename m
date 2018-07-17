@@ -2,93 +2,82 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C239FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C785ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BA8E214C1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA8E214C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id BDE5F20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:17:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="ht/a+Od6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDE5F20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731398AbeGQMrW (ORCPT
+        id S1731422AbeGQMuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:47:22 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:59735 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731219AbeGQMrW (ORCPT
+        Tue, 17 Jul 2018 08:50:20 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:57053 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731239AbeGQMuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:47:22 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6HCDvP4001845;
-        Tue, 17 Jul 2018 14:14:31 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2k87uegmm1-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 17 Jul 2018 14:14:31 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F09AC34;
-        Tue, 17 Jul 2018 12:14:30 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C677C5273;
-        Tue, 17 Jul 2018 12:14:30 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 17 Jul
- 2018 14:14:30 +0200
-Received: from lmecxl0923.lme.st.com (10.48.0.237) by webmail-ga.st.com
- (10.75.90.48) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 17 Jul
- 2018 14:14:30 +0200
-From:   Ludovic Barre <ludovic.Barre@st.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        "Ludovic Barre" <ludovic.barre@st.com>
-Subject: [PATCH 1/1] irqchip/stm32: add exti0 translation for stm32mp1
-Date:   Tue, 17 Jul 2018 14:14:27 +0200
-Message-ID: <1531829667-22928-1-git-send-email-ludovic.Barre@st.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 17 Jul 2018 08:50:20 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 67DEA25BEBD;
+        Tue, 17 Jul 2018 22:17:55 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1531829875; bh=Z/rf9VbXzABrpd78lm3tl+kNWysE3SLlzVis07nPW10=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ht/a+Od6mawSz2J9CDNdC2IC0I4U6avbTBmsZt7G7vo42cZrDNpNs15XHw4NuBF3/
+         XdSaTzwzU1YMug6Vjh1v0U1MDpp4mioJvcDeH9b9hKBygZdyvkWI0/FwHyceFEmRcQ
+         sSQak7flPZ1t8K5VwnVGRgvxSAzY9EWUtkIQvjRQ=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 6DEDB940456; Tue, 17 Jul 2018 14:17:53 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 14:17:53 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Chris Brandt <chris.brandt@renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] serial: sh-sci: Fix use-after-free on subsequent port
+ startup
+Message-ID: <20180717121752.jdsefuqhlidxkztp@verge.net.au>
+References: <20180717085810.23502-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.48.0.237]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_03:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717085810.23502-1-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ludovic Barre <ludovic.barre@st.com>
+On Tue, Jul 17, 2018 at 10:58:10AM +0200, Geert Uytterhoeven wrote:
+> sci_request_irq() checks port->irqstr[j] for a NULL pointer, to decide
+> if a fallback interrupt name string should be allocated or not.
+> 
+> While this string is freed during port shutdown, the pointer is not
+> zeroed.  Hence on a subsequent startup of the port, it will still be
+> pointing to the freed memory, leading to e.g.
+> 
+>     WARNING: CPU: 0 PID: 404 at fs/proc/generic.c:388 __proc_create+0xbc/0x260
+>     name len 0
+> 
+> or to a crash (the latter is more likely with CONFIG_DEBUG_SLAB=y, due
+> to the poisoning of freed memory).
+> 
+> Instead of zeroeing the pointer at multiple places, preinitialize
+> port->irqstr[j] to zero to fix this.
+> 
+> Fixes: 8b0bbd956228ae87 ("serial: sh-sci: Add support for R7S9210")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This patch fixes a datasheet issue, in the draft version the "exti0"
-was not connected whereas is it.
-
-Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
----
- drivers/irqchip/irq-stm32-exti.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
-index 3a7e890..3df527f 100644
---- a/drivers/irqchip/irq-stm32-exti.c
-+++ b/drivers/irqchip/irq-stm32-exti.c
-@@ -159,6 +159,7 @@ static const struct stm32_exti_bank *stm32mp1_exti_banks[] = {
- };
- 
- static const struct stm32_desc_irq stm32mp1_desc_irq[] = {
-+	{ .exti = 0, .irq_parent = 6 },
- 	{ .exti = 1, .irq_parent = 7 },
- 	{ .exti = 2, .irq_parent = 8 },
- 	{ .exti = 3, .irq_parent = 9 },
--- 
-2.7.4
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
