@@ -2,149 +2,579 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BDCCECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A151AECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D99CA208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:53:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="CZTcV1wD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D99CA208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ragnatech.se
+	by mail.kernel.org (Postfix) with ESMTP id 41379208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:53:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41379208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731325AbeGQMZ1 (ORCPT
+        id S1731371AbeGQM0F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:25:27 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:33463 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730780AbeGQMZZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:25:25 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s12-v6so744292ljj.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 04:53:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=KYC/N6Zyk+gmyFkTsTEnL1uBAeUm4fwT2abmcDYyteY=;
-        b=CZTcV1wD5zvhgKxsa7/iAbXjR+UC04XsHwDPxN1M1WzaVSDYbvU2azcVIk+OWgWB3c
-         Fz8IqR69YOt2tcvJG3Xq3YBNj6tW/UVVpwiBeD6tekyJbGY8jB/bHG/wMSlZmxDJe/gm
-         YloNRsbJbyqzaUxtgAZxYWJ62rkcloUXa9E8+NRBGPkVo1z/uxqMIzLPTvV3TMQPot1h
-         W5dfEm1p+bXg8U9/6yk7mR866umdaY+ogW9UgqLT9L6KGKWK2gMZSJo2z9yTrkBM5+7+
-         TNmaohq1JHB7NncJH+QDfy6iVxPWPOpobIG5pGX6dkm2I7BKISy6xeDvluWea8nWFhoU
-         WIIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=KYC/N6Zyk+gmyFkTsTEnL1uBAeUm4fwT2abmcDYyteY=;
-        b=GEniQFckdluXwL0vCGt8rc3uvNXVLOiMfjQnYaG1uVOakyOdob+4TqM0X0NcUxbV6D
-         CEL4QPzsbNKBsLHBwjJVH+M1tCVpMzKWjMRnILaNutsiklx5s1aAcGWEoKpZYHAg2xWZ
-         1tkxF+3oq1kGIoCWkJmLPtJIQusRoOqNmMZfVN60DGU2G2+hPS9lrV1xuBq/y3VfBtj6
-         6PZ///7/IClx1B2FvxJuzEWYvPlfdH25MHcgM8rJbWWggpyjdcU/xUxu7s3JigTpANDY
-         XZWckxcrcboYMP4Fl4CtIYoVG3zbnpHvcBBIQWYqEen6Kqtg+p1iiw5zta0F4y7yFdxD
-         5f+w==
-X-Gm-Message-State: AOUpUlEb9VMNOCt7x2GbVl+AqExaH8O/pJCdlqve0y85h/zlUcF25Xua
-        L3155eZNUT8y6sX4M0ZGxssGtw==
-X-Google-Smtp-Source: AAOMgpc2wSzxHX1+bsBFG7wpaybD1jqS8Swcf0xNkc+aiHLERPY+O1Kgg53sTXH4FA+fHvNYHv9k4g==
-X-Received: by 2002:a2e:6a04:: with SMTP id f4-v6mr1279944ljc.109.1531828387418;
-        Tue, 17 Jul 2018 04:53:07 -0700 (PDT)
-Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm124315lfc.95.2018.07.17.04.53.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 04:53:06 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 13:53:06 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] regulator: bd9571mwv: Document "backup_mode"
- sysfs file
-Message-ID: <20180717115306.GH10087@bigcity.dyn.berto.se>
-References: <20180716153052.1830-1-geert+renesas@glider.be>
- <20180716153052.1830-4-geert+renesas@glider.be>
+        Tue, 17 Jul 2018 08:26:05 -0400
+Received: from mga06.intel.com ([134.134.136.31]:12356 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730875AbeGQM0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:26:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:53:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="57143422"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga007.jf.intel.com with ESMTP; 17 Jul 2018 04:53:41 -0700
+Subject: Re: [PATCH V3 6/7] mmc: sdhci-sprd: added Spreadtrum's initial host
+ controller
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
+References: <1531106398-14062-1-git-send-email-zhang.chunyan@linaro.org>
+ <1531106398-14062-7-git-send-email-zhang.chunyan@linaro.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <645aaecf-af5e-ef96-b942-3a8eb8d8af82@intel.com>
+Date:   Tue, 17 Jul 2018 14:52:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180716153052.1830-4-geert+renesas@glider.be>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1531106398-14062-7-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
-
-Thanks for your work.
-
-On 2018-07-16 17:30:52 +0200, Geert Uytterhoeven wrote:
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> v4:
->   - Add Acked-by,
+On 09/07/18 06:19, Chunyan Zhang wrote:
+> From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 > 
-> v3:
->   - New.
-> ---
->  .../testing/sysfs-driver-bd9571mwv-regulator  | 27 +++++++++++++++++++
->  1 file changed, 27 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator
+> This patch adds the initial support of Secure Digital Host Controller
+> Interface compliant controller found in some latest Spreadtrum chipsets.
+> This patch has been tested on the version of SPRD-R11 controller.
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator b/Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator
+> R11 is a variant based on SD v4.0 specification.
+> 
+> With this driver, R11 mmc can be initialized, can be mounted, read and
+> written.
+> 
+> Original-by: Billows Wu <billows.wu@spreadtrum.com>
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> ---
+>  drivers/mmc/host/Kconfig      |  13 ++
+>  drivers/mmc/host/Makefile     |   1 +
+>  drivers/mmc/host/sdhci-sprd.c | 437 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 451 insertions(+)
+>  create mode 100644 drivers/mmc/host/sdhci-sprd.c
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 0581c19..c5424dc 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -581,6 +581,19 @@ config MMC_SDRICOH_CS
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called sdricoh_cs.
+>  
+> +config MMC_SDHCI_SPRD
+> +	tristate "Spreadtrum SDIO host Controller"
+> +	depends on ARCH_SPRD
+> +	depends on MMC_SDHCI_PLTFM
+> +	select MMC_SDHCI_IO_ACCESSORS
+> +	help
+> +	  This selects the SDIO Host Controller in Spreadtrum
+> +	  SoCs, this driver supports R11(IP version: R11P0).
+> +
+> +	  If you have a controller with this interface, say Y or M here.
+> +
+> +	  If unsure, say N.
+> +
+>  config MMC_TMIO_CORE
+>  	tristate
+>  
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 85dc132..b0b6802 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -89,6 +89,7 @@ obj-$(CONFIG_MMC_SDHCI_ST)		+= sdhci-st.o
+>  obj-$(CONFIG_MMC_SDHCI_MICROCHIP_PIC32)	+= sdhci-pic32.o
+>  obj-$(CONFIG_MMC_SDHCI_BRCMSTB)		+= sdhci-brcmstb.o
+>  obj-$(CONFIG_MMC_SDHCI_OMAP)		+= sdhci-omap.o
+> +obj-$(CONFIG_MMC_SDHCI_SPRD)		+= sdhci-sprd.o
+>  obj-$(CONFIG_MMC_CQHCI)			+= cqhci.o
+>  
+>  ifeq ($(CONFIG_CB710_DEBUG),y)
+> diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
 > new file mode 100644
-> index 0000000000000000..4d63a7904b94a993
+> index 0000000..8d37ecb
 > --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-driver-bd9571mwv-regulator
-> @@ -0,0 +1,27 @@
-> +What:		/sys/bus/i2c/devices/.../bd9571mwv-regulator.*.auto/backup_mode
-> +Date:		Jul 2018
-> +KernelVersion:	4.19
-> +Contact:	Geert Uytterhoeven <geert+renesas@glider.be>
-> +Description:	Read/write the current state of DDR Backup Mode, which controls
-> +		if DDR power rails will be kept powered during system suspend.
-> +		("on"/"1" = enabled, "off"/"0" = disabled).
-> +		Two types of power switches (or control signals) can be used:
-> +		  A. With a momentary power switch (or pulse signal), DDR
-> +		     Backup Mode is enabled by default when available, as the
-> +		     PMIC will be configured only during system suspend.
-> +		  B. With a toggle power switch (or level signal), the
-> +		     following steps must be followed exactly:
-> +		       1. Configure PMIC for backup mode, to change the role of
-> +			  the accessory power switch from a power switch to a
-> +			  wake-up switch,
-> +		       2. Switch accessory power switch off, to prepare for
-> +			  system suspend, which is a manual step not controlled
-> +			  by software,
-> +		       3. Suspend system,
-> +		       4. Switch accessory power switch on, to resume the
-> +			  system.
-> +		     DDR Backup Mode must be explicitly enabled by the user,
-> +		     to invoke step 1.
-> +		See also Documentation/devicetree/bindings/mfd/bd9571mwv.txt.
-> +Users:		User space applications for embedded boards equipped with a
-> +		BD9571MWV PMIC.
-> -- 
-> 2.17.1
+> +++ b/drivers/mmc/host/sdhci-sprd.c
+> @@ -0,0 +1,437 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Secure Digital Host Controller
+> +//
+> +// Copyright (C) 2018 Spreadtrum, Inc.
+> +// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+> +
+> +#include <linux/delay.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/highmem.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/slab.h>
+> +
+> +#include "sdhci-pltfm.h"
+> +
+> +#define SDHCI_SPRD_REG_32_DLL_DLY_OFFSET	0x208
+> +#define  SDHCIBSPRD_IT_WR_DLY_INV		BIT(5)
+> +#define  SDHCI_SPRD_BIT_CMD_DLY_INV		BIT(13)
+> +#define  SDHCI_SPRD_BIT_POSRD_DLY_INV		BIT(21)
+> +#define  SDHCI_SPRD_BIT_NEGRD_DLY_INV		BIT(29)
+> +
+> +#define SDHCI_SPRD_REG_32_BUSY_POSI		0x250
+> +#define  SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN	BIT(25)
+> +#define  SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN	BIT(24)
+> +
+> +#define SDHCI_SPRD_REG_DEBOUNCE		0x28C
+> +#define  SDHCI_SPRD_BIT_DLL_BAK		BIT(0)
+> +#define  SDHCI_SPRD_BIT_DLL_VAL		BIT(1)
+> +
+> +#define  SDHCI_SPRD_INT_SIGNAL_MASK	0x1B7F410B
+> +
+> +/* SDHCI_HOST_CONTROL2 */
+> +#define  SDHCI_SPRD_CTRL_HS200		0x0005
+> +#define  SDHCI_SPRD_CTRL_HS400		0x0006
+> +
+> +/* SDHCI_SOFTWARE_RESET */
+> +#define  SDHCI_HW_RESET_CARD		0x8 /* For Spreadtrum's design */
+> +
+> +#define SDHCI_SPRD_MAX_CUR		0xFFFFFF
+> +#define SDHCI_SPRD_CLK_MAX_DIV		1023
+> +
+> +#define SDHCI_SPRD_CLK_DEF_RATE		26000000
+> +
+> +struct sdhci_sprd_host {
+> +	u32 version;
+> +	struct clk *clk_sdio;
+> +	struct clk *clk_enable;
+> +	u32 base_rate;
+> +};
+> +
+> +#define TO_SPRD_HOST(host) sdhci_pltfm_priv(sdhci_priv(host))
+> +
+> +static void sdhci_sprd_init_config(struct sdhci_host *host)
+> +{
+> +	u16 val;
+> +
+> +	/* set 64-bit addressing modes */
+> +	val = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	val |= SDHCI_CTRL_64BIT_ADDR;
+> +	sdhci_writew(host, val, SDHCI_HOST_CONTROL2);
+
+SDHCI should do that when enabling 64-bit DMA in V4 mode.  Needs to be done
+either in sdhci_prepare_data() or after every reset or resume (e.g. when
+->enable_dma() is called).
+
+> +
+> +	/* set dll backup mode */
+> +	val = sdhci_readl(host, SDHCI_SPRD_REG_DEBOUNCE);
+> +	val |= SDHCI_SPRD_BIT_DLL_BAK | SDHCI_SPRD_BIT_DLL_VAL;
+> +	sdhci_writel(host, val, SDHCI_SPRD_REG_DEBOUNCE);
+> +
+> +	/* set CMD23 enabled */
+> +	val = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	val |= SDHCI_CMD23_ENABLE;
+> +	sdhci_writew(host, val, SDHCI_HOST_CONTROL2);
+
+SDHCI should do that.  Needs to be done either when enabling auto-CMD23 or
+after every reset or resume.
+
+> +}
+> +
+> +static inline u32 sdhci_sprd_readl(struct sdhci_host *host, int reg)
+> +{
+> +	if (unlikely(reg == SDHCI_MAX_CURRENT))
+> +		return SDHCI_SPRD_MAX_CUR;
+> +
+> +	return readl_relaxed(host->ioaddr + reg);
+> +}
+> +
+> +static inline void sdhci_sprd_writel(struct sdhci_host *host, u32 val, int reg)
+> +{
+> +	/* SDHCI_MAX_CURRENT is reserved on Spreadtrum's platform */
+> +	if (unlikely(reg == SDHCI_MAX_CURRENT))
+> +		return;
+> +
+> +	if (unlikely(reg == SDHCI_SIGNAL_ENABLE || reg == SDHCI_INT_ENABLE))
+> +		val = val & SDHCI_SPRD_INT_SIGNAL_MASK;
+> +
+> +	writel_relaxed(val, host->ioaddr + reg);
+> +}
+> +
+> +static inline void sdhci_sprd_writeb(struct sdhci_host *host, u8 val, int reg)
+> +{
+> +	if (unlikely(reg == SDHCI_SOFTWARE_RESET)) {
+> +		if (readb_relaxed(host->ioaddr + reg) & SDHCI_HW_RESET_CARD)
+> +			val |= SDHCI_HW_RESET_CARD;
+> +	}
+> +
+> +	writeb_relaxed(val, host->ioaddr + reg);
+> +}
+> +
+> +static inline void sdhci_sprd_sd_clk_off(struct sdhci_host *host)
+> +{
+> +	u16 ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +
+> +	ctrl &= ~SDHCI_CLOCK_CARD_EN;
+> +	sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
+> +}
+> +
+> +static inline void
+> +sdhci_sprd_set_dll_invert(struct sdhci_host *host, u32 mask, bool en)
+> +{
+> +	u32 dll_dly_offset;
+> +
+> +	dll_dly_offset = sdhci_readl(host, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
+> +	if (en)
+> +		dll_dly_offset |= mask;
+> +	else
+> +		dll_dly_offset &= ~mask;
+> +	sdhci_writel(host, dll_dly_offset, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
+> +}
+> +
+> +static inline u32 sdhci_sprd_calc_div(u32 base_clk, u32 clk)
+> +{
+> +	u32 div;
+> +
+> +	/* select 2x clock source */
+> +	if (base_clk <= clk * 2)
+> +		return 0;
+> +
+> +	div = (u32) (base_clk / (clk * 2));
+> +
+> +	if ((base_clk / div) > (clk * 2))
+> +		div++;
+> +
+> +	if (div > SDHCI_SPRD_CLK_MAX_DIV)
+> +		div = SDHCI_SPRD_CLK_MAX_DIV;
+> +
+> +	if (div % 2)
+> +		div = (div + 1) / 2;
+> +	else
+> +		div = div / 2;
+> +
+> +	return div;
+> +}
+> +
+> +static inline void _sdhci_sprd_set_clock(struct sdhci_host *host,
+> +					unsigned int clk)
+> +{
+> +	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+> +	u32 div, val, mask;
+> +
+> +	div = sdhci_sprd_calc_div(sprd_host->base_rate, clk);
+> +
+> +	clk |= ((div & 0x300) >> 2) | ((div & 0xFF) << 8);
+> +	sdhci_enable_clk(host, clk);
+> +
+> +	/* enable auto gate sdhc_enable_auto_gate */
+> +	val = sdhci_readl(host, SDHCI_SPRD_REG_32_BUSY_POSI);
+> +	mask = SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN |
+> +	       SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN;
+> +	if (mask != (val & mask)) {
+> +		val |= mask;
+> +		sdhci_writel(host, val, SDHCI_SPRD_REG_32_BUSY_POSI);
+> +	}
+> +}
+> +
+> +static void sdhci_sprd_set_clock(struct sdhci_host *host, unsigned int clock)
+> +{
+> +	bool en = false;
+> +
+> +	if (clock == 0) {
+> +		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+> +	} else if (clock != host->clock) {
+> +		sdhci_sprd_sd_clk_off(host);
+> +		_sdhci_sprd_set_clock(host, clock);
+> +
+> +		if (clock <= 400000)
+> +			en = true;
+> +		sdhci_sprd_set_dll_invert(host, SDHCI_SPRD_BIT_CMD_DLY_INV |
+> +					  SDHCI_SPRD_BIT_POSRD_DLY_INV, en);
+> +	} else {
+> +		_sdhci_sprd_set_clock(host, clock);
+> +	}
+> +}
+> +
+> +static unsigned int sdhci_sprd_get_max_clock(struct sdhci_host *host)
+> +{
+> +	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+> +
+> +	return clk_round_rate(sprd_host->clk_sdio, ULONG_MAX);
+> +}
+> +
+> +static unsigned int sdhci_sprd_get_min_clock(struct sdhci_host *host)
+> +{
+> +	return 400000;
+> +}
+> +
+> +static void sdhci_sprd_set_uhs_signaling(struct sdhci_host *host,
+> +					 unsigned int timing)
+> +{
+> +	u16 ctrl_2;
+> +
+> +	if (timing == host->timing)
+> +		return;
+> +
+> +	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	/* Select Bus Speed Mode for host */
+> +	ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
+> +	switch (timing) {
+> +	case MMC_TIMING_UHS_SDR12:
+> +		ctrl_2 = SDHCI_CTRL_UHS_SDR12;
+
+Shouldn't this and the following ones be '|=' not '='
+
+> +		break;
+> +	case MMC_TIMING_MMC_HS:
+> +	case MMC_TIMING_SD_HS:
+> +	case MMC_TIMING_UHS_SDR25:
+> +		ctrl_2 = SDHCI_CTRL_UHS_SDR25;
+> +		break;
+> +	case MMC_TIMING_UHS_SDR50:
+> +		ctrl_2 = SDHCI_CTRL_UHS_SDR50;
+> +		break;
+> +	case MMC_TIMING_UHS_SDR104:
+> +		ctrl_2 = SDHCI_CTRL_UHS_SDR104;
+> +		break;
+> +	case MMC_TIMING_UHS_DDR50:
+> +	case MMC_TIMING_MMC_DDR52:
+> +		ctrl_2 = SDHCI_CTRL_UHS_DDR50;
+> +		break;
+> +	case MMC_TIMING_MMC_HS200:
+> +		ctrl_2 = SDHCI_SPRD_CTRL_HS200;
+> +		break;
+> +	case MMC_TIMING_MMC_HS400:
+> +		ctrl_2 = SDHCI_SPRD_CTRL_HS400;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+> +}
+> +
+> +static void sdhci_sprd_hw_reset(struct sdhci_host *host)
+> +{
+> +	int val;
+> +
+> +	/* Note: don't use sdhci_readb/writeb() API here */
+> +	val = readb_relaxed(host->ioaddr + SDHCI_SOFTWARE_RESET);
+> +	val &= ~SDHCI_HW_RESET_CARD;
+> +	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
+> +	udelay(10);
+> +
+> +	val |= SDHCI_HW_RESET_CARD;
+> +	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
+> +	udelay(300);
+
+usleep_range() maybe
+
+> +}
+> +
+> +static struct sdhci_ops sdhci_sprd_ops = {
+> +	.read_l = sdhci_sprd_readl,
+> +	.write_l = sdhci_sprd_writel,
+> +	.write_b = sdhci_sprd_writeb,
+> +	.set_clock = sdhci_sprd_set_clock,
+> +	.get_max_clock = sdhci_sprd_get_max_clock,
+> +	.get_min_clock = sdhci_sprd_get_min_clock,
+> +	.set_bus_width = sdhci_set_bus_width,
+> +	.reset = sdhci_reset,
+> +	.set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
+> +	.hw_reset = sdhci_sprd_hw_reset,
+> +};
+> +
+> +static const struct sdhci_pltfm_data sdhci_sprd_pdata = {
+> +	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
+> +	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200,
+> +	.ops = &sdhci_sprd_ops,
+> +};
+> +
+> +static int sdhci_sprd_probe(struct platform_device *pdev)
+> +{
+> +	struct sdhci_host *host;
+> +	struct sdhci_sprd_host *sprd_host;
+> +	struct clk *clk;
+> +	int ret = 0;
+> +
+> +	host = sdhci_pltfm_init(pdev, &sdhci_sprd_pdata, sizeof(*sprd_host));
+> +	if (IS_ERR(host))
+> +		return PTR_ERR(host);
+> +
+> +	host->dma_mask = DMA_BIT_MASK(64);
+> +	pdev->dev.dma_mask = &host->dma_mask;
+> +
+> +	host->mmc->caps = MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED |
+> +		MMC_CAP_ERASE | MMC_CAP_CMD23;
+> +	ret = mmc_of_parse(host->mmc);
+> +	if (ret)
+> +		goto pltfm_free;
+> +
+> +	sprd_host = TO_SPRD_HOST(host);
+> +
+> +	clk = devm_clk_get(&pdev->dev, "sdio");
+> +	if (IS_ERR(clk)) {
+> +		ret = PTR_ERR(clk);
+> +		goto pltfm_free;
+> +	}
+> +	sprd_host->clk_sdio = clk;
+> +	sprd_host->base_rate = clk_get_rate(sprd_host->clk_sdio);
+> +	if (!sprd_host->base_rate)
+> +		sprd_host->base_rate = SDHCI_SPRD_CLK_DEF_RATE;
+> +
+> +	clk = devm_clk_get(&pdev->dev, "enable");
+> +	if (IS_ERR(clk)) {
+> +		ret = PTR_ERR(clk);
+> +		goto pltfm_free;
+> +	}
+> +	sprd_host->clk_enable = clk;
+> +
+> +	ret = clk_prepare_enable(sprd_host->clk_sdio);
+> +	if (ret)
+> +		goto pltfm_free;
+> +
+> +	clk_prepare_enable(sprd_host->clk_enable);
+> +	if (ret)
+> +		goto clk_disable;
+> +
+> +	sdhci_sprd_init_config(host);
+> +	host->version = sdhci_readw(host, SDHCI_HOST_VERSION);
+> +	sprd_host->version = ((host->version & SDHCI_VENDOR_VER_MASK) >>
+> +			       SDHCI_VENDOR_VER_SHIFT);
+> +
+> +	pm_runtime_get_noresume(&pdev->dev);
+> +	pm_runtime_set_active(&pdev->dev);
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> +	pm_runtime_use_autosuspend(&pdev->dev);
+> +	pm_suspend_ignore_children(&pdev->dev, 1);
+> +
+> +	sdhci_enable_v4_mode(host);
+> +	ret = sdhci_add_host(host);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "failed to add mmc host: %d\n", ret);
+> +		goto pm_runtime_disable;
+> +	}
+> +
+> +	pm_runtime_mark_last_busy(&pdev->dev);
+> +	pm_runtime_put_autosuspend(&pdev->dev);
+> +
+> +	return 0;
+> +
+> +pm_runtime_disable:
+> +	pm_runtime_disable(&pdev->dev);
+> +	pm_runtime_set_suspended(&pdev->dev);
+> +
+> +	clk_disable_unprepare(sprd_host->clk_enable);
+> +
+> +clk_disable:
+> +	clk_disable_unprepare(sprd_host->clk_sdio);
+> +
+> +pltfm_free:
+> +	sdhci_pltfm_free(pdev);
+> +	return ret;
+> +}
+> +
+> +static int sdhci_sprd_remove(struct platform_device *pdev)
+> +{
+> +	struct sdhci_host *host = platform_get_drvdata(pdev);
+> +	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+> +	struct mmc_host *mmc = host->mmc;
+> +
+> +	mmc_remove_host(mmc);
+> +	clk_disable_unprepare(sprd_host->clk_sdio);
+> +	clk_disable_unprepare(sprd_host->clk_enable);
+> +
+> +	mmc_free_host(mmc);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id sdhci_sprd_of_match[] = {
+> +	{ .compatible = "sprd,sdhci-r11", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, sdhci_sprd_of_match);
+> +
+> +#ifdef CONFIG_PM
+> +static int sdhci_sprd_runtime_suspend(struct device *dev)
+> +{
+> +	struct sdhci_host *host = dev_get_drvdata(dev);
+> +	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+> +
+> +	sdhci_runtime_suspend_host(host);
+> +
+> +	clk_disable_unprepare(sprd_host->clk_sdio);
+> +	clk_disable_unprepare(sprd_host->clk_enable);
+> +
+> +	return 0;
+> +}
+> +
+> +static int sdhci_sprd_runtime_resume(struct device *dev)
+> +{
+> +	struct sdhci_host *host = dev_get_drvdata(dev);
+> +	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
+> +
+> +	clk_prepare_enable(sprd_host->clk_enable);
+> +	clk_prepare_enable(sprd_host->clk_sdio);
+
+Drivers usually check the error returns of clk_prepare_enable().
+
+> +
+> +	sdhci_runtime_resume_host(host);
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static const struct dev_pm_ops sdhci_sprd_pm_ops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+> +				pm_runtime_force_resume)
+> +	SET_RUNTIME_PM_OPS(sdhci_sprd_runtime_suspend,
+> +			   sdhci_sprd_runtime_resume, NULL)
+> +};
+> +
+> +static struct platform_driver sdhci_sprd_driver = {
+> +	.probe = sdhci_sprd_probe,
+> +	.remove = sdhci_sprd_remove,
+> +	.driver = {
+> +		.name = "sdhci_sprd_r11",
+> +		.of_match_table = of_match_ptr(sdhci_sprd_of_match),
+> +		.pm = &sdhci_sprd_pm_ops,
+> +	},
+> +};
+> +module_platform_driver(sdhci_sprd_driver);
+> +
+> +MODULE_DESCRIPTION("Spreadtrum sdio host controller r11 driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:sdhci-sprd-r11");
 > 
 
--- 
-Regards,
-Niklas Söderlund
