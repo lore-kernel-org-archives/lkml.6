@@ -2,116 +2,108 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969A4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5D9ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ECF120693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED6D620693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:59:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5O5KiR0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ECF120693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lP81qsB7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED6D620693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbeGQVd3 (ORCPT
+        id S1730816AbeGQVeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:33:29 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:44265 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729675AbeGQVd3 (ORCPT
+        Tue, 17 Jul 2018 17:34:05 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:38643 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730571AbeGQVeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:33:29 -0400
-Received: by mail-lf0-f67.google.com with SMTP id g6-v6so1839812lfb.11;
-        Tue, 17 Jul 2018 13:59:02 -0700 (PDT)
+        Tue, 17 Jul 2018 17:34:05 -0400
+Received: by mail-ua0-f193.google.com with SMTP id o11-v6so1579295uak.5;
+        Tue, 17 Jul 2018 13:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=xQD8rXDSZuNUjODavj/BObqQe1YuTPyRihz1AZ/+1O4=;
-        b=O5O5KiR0qcvMhAgfiCepX2Wjp2X5YbQzXEiMyCtzpHPRsDyuGm+N5HGAYfH1rs/bfZ
-         FPqeJJMl/CNA2fKk/g9eP8RhzpEpBpvFWEEc9cdaIPL9JE5ujLAogZFb4MieW7bAa3aM
-         uPuaMBiaNINJikrpeMjpYsH3MkyTK1QYxhgzLwGBORFfnETx53LfsWMeCj8nVEiYTrSJ
-         YYeqrfIYKu/OpgkMojXILR1ZICZayR3OujDSIytaXOmGzj/gVeT1dHEPPbDhiejLPePs
-         EiX8TAnYAtTSiEqMHz9jUq4nbnC7pBPZYAoh2iR7EXi3Tdw9ylEayzI8OjYbYV+t0v+z
-         Nvkw==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=bO7Xs2fMtXdjJqlmDVk7bkjPabeiVg1xz712teaXtqI=;
+        b=lP81qsB7gczMgjlc6nUo22x+HaVTnR8BJOum3nIYoz6QqTVFmZgMWwthBk1f8gRwzj
+         M615rxyUd7L0MXXBc2N08MhwfbP7YQHGL3kr5xl2qUMG0FWMeaYxoLRm2/eZHo1xcIDy
+         JaIOfk/hxPy2SPF6xvVgGErbrGs7VJHuNWd+a46d4b7igsM4wqck4LP9GZXWbtqPRH4z
+         hzvY70052p0H6jAIihmwoFz889ZA7HQxqeFwznWCrSLzWk95jegLmBctcX9lTF0+fGox
+         uS+RsDR0FfykVd4CWdPhSWIM56xpsbeghtlHFI/enmNb6PuI/T29S3W0EEN42uVugZ60
+         knlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=xQD8rXDSZuNUjODavj/BObqQe1YuTPyRihz1AZ/+1O4=;
-        b=QQoPlEWdnT8m0u90KL8nNvI5amwwtOzzy43Txw5/i6wRXCsoDGXMTZ2eDx5p/uACMa
-         cn013ROlf1HchyK/sRvLdXCjv/WdJelUapRqPEK8HDdcr6Rwf39bBP+SJCikSVySFiy8
-         DfXfBl65x93KAr/ByeftvvAUUnvYeeDFRwponBEtlHhigKeqRQ447YRxA5SRwGeitF0z
-         AgMvxsrxsTmtslizNpKmKJ3U+6+vkl+Jp2AJdQttKQGDVaVMaqL8GWHsVgi4o6oGMgyb
-         d7BVBGlC57t+hu/qUJWYa9moWuIwUu4q3vCgF6pf3z+wAsHrdVEup4OxVO+RuJ/5hlIw
-         fYsA==
-X-Gm-Message-State: AOUpUlEiBqQDMWqWx4KaBShTfgdahzZP/h3EvB/Uc9YTFu4MioZIeJSC
-        tig2yivpY9PbKfmBQTSso7dYiu87Kodf2jfgHdk=
-X-Google-Smtp-Source: AAOMgpdfBH/3ThwNmGdiXnmKqYdHMVitAFxiNadDAsvx5bxnPjAovUpbNzWjHJ2gdC3nZEzkS/GpoZVHMKymeSbZGH8=
-X-Received: by 2002:a19:a705:: with SMTP id q5-v6mr2321816lfe.148.1531861141737;
- Tue, 17 Jul 2018 13:59:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=bO7Xs2fMtXdjJqlmDVk7bkjPabeiVg1xz712teaXtqI=;
+        b=ueACnqPOl2d+fKgybpeVe65o2FN5Ue7jL0xCCPrhfwPn/nxvIXP9oNkIQGhTuN97tQ
+         PlmEBLmOWAQ6a84bZB4zYBSGKWAJMETZZkhYWl/ApvOKJ6o28VTKR7TOe9CIbdbU1PV/
+         NnuxaxJYLV9zVFY1D2Lsq++SVid+3XlZ26iNLg7sEoqecMlmS7qpB6ofItnlNWUctwa6
+         GsKwc7ykzgqhTP/gfHgkC89ngdJA1n9TckxgkS9FbpHO+FxloMiP/84gWC3dyVfdh8H2
+         LjfExEtznpq5us+MVH2WEI7DCvQqZnNfFY2qQtdv8hFCHyW2gTddL4643Nz4g4dFc4kb
+         DRhw==
+X-Gm-Message-State: AOUpUlFjgz0Ik4yEs0nMpOLhIel/sIQ+ObMYmB50iDOGYb+L2McVNRRf
+        +8kw2YZHaqGN0Lkc2aGTOK8jXQ2NBgPv+zvmHNA=
+X-Google-Smtp-Source: AAOMgpefHO65mOVwsLxXsuBt/4HHWrbjB2QUB1Tji/rVyiJ2OYoXauWksCYSQjhPLyS12VHfpOnrtMYjxL5c67n5Pnw=
+X-Received: by 2002:ab0:6037:: with SMTP id n23-v6mr2167159ual.28.1531861178812;
+ Tue, 17 Jul 2018 13:59:38 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:59:00
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:59:38
  -0700 (PDT)
-In-Reply-To: <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
-References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
- <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
- <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
- <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au> <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
- <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com> <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 17 Jul 2018 22:59:00 +0200
-X-Google-Sender-Auth: ygSPwkRKrTzzbBxLpxAZEi-9gWY
-Message-ID: <CAK8P3a3Dh+g=v++BMCtmmiOSnVu4CEUgss0U7BZS_K45aTddqg@mail.gmail.com>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
+In-Reply-To: <CADfjVriarrPnxixjun1g0m7izp4kMCvP4vXuPtNTth7_LWXrMA@mail.gmail.com>
+References: <20180717145525.50852-1-colyli@suse.de> <20180717145525.50852-4-colyli@suse.de>
+ <CADfjVriarrPnxixjun1g0m7izp4kMCvP4vXuPtNTth7_LWXrMA@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 17 Jul 2018 23:59:38 +0300
+Message-ID: <CAHp75Ve7w8HxAcRXozsctFETuBtA0VD6jAsExEb6Wtq4UYRNAg@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] lib/test_crc: Add test cases for crc calculation
+To:     Noah Massey <noah.massey@gmail.com>
+Cc:     Coly Li <colyli@suse.de>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+        linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 6:28 AM, Kees Cook <keescook@chromium.org> wrote:
+On Tue, Jul 17, 2018 at 9:51 PM, Noah Massey <noah.massey@gmail.com> wrote:
+> On Tue, Jul 17, 2018 at 10:56 AM Coly Li <colyli@suse.de> wrote:
+
+>> +               pr_info("test_crc: %s: PASSED:(0x%016llx, expected 0x%016llx)\n",
+>> +                       name, crc, expval);
 >
-> After my ahash to shash conversions, only ccm is left as an ahash
-> user, since it actually uses sg. But with the hard-coded value reduced
-> to 376, this doesn't trip the frame warnings any more. :)
+> I don't think we should have specific kernel output for passed tests.
+> If a new test is added which follows this pattern, the 0-day will fail
+> because the kernel output would change. Along the lines of "silence is
+> golden", if no test hit the error output, we're good.
+
+Agree.
+
+>> +       if (err == 0)
+>> +               pr_info("test_crc: all %d tests passed\n", i);
 >
-> I'll send an updated series soon.
+> Similar to previous comment: we should not report the number of passed
+> tests, since adding a test would invalidate previous golden output.
+> Also, consider the situation where some tests are conditionally
+> executed depending on kconfig.
 
-Maybe we should get rid of that one as well then and remove
-AHASH_REQUEST_ON_STACK()?
+We do similar in many test modules and I know at least two that had
+been changed in order to get new test cases.
+Are you proposing to change 'em all?
 
-I see that Ard (now on Cc) added this usage only recently. Looking
-at the code some more, I also find that the descsize is probably
-much smaller than 376 for all possible cases   of "cbcmac(*)",
-either alg->cra_blocksize plus a few bytes or sizeof(mac_desc_ctx)
-(i.e. 20) for arch/arm64/crypto/aes-glue.c.
-
-Walking the sglist here means open-coding a shash_ahash_update()
-implementation in crypto_ccm_auth(), that that doesn't seem to
-add much complexity over what it already has to do to chain
-the sglist today.
-
-      Arnd
+-- 
+With Best Regards,
+Andy Shevchenko
