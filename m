@@ -2,92 +2,158 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BCFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DA5ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB39B208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11BC3208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 04:22:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d2wtBxur"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB39B208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KFRqd4aI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BC3208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbeGQExT (ORCPT
+        id S1729664AbeGQEwe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 00:53:19 -0400
-Received: from mail-pl0-f46.google.com ([209.85.160.46]:45734 "EHLO
-        mail-pl0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbeGQExT (ORCPT
+        Tue, 17 Jul 2018 00:52:34 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40714 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729614AbeGQEwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 00:53:19 -0400
-Received: by mail-pl0-f46.google.com with SMTP id 94-v6so4318400ple.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 21:22:44 -0700 (PDT)
+        Tue, 17 Jul 2018 00:52:33 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x5-v6so8396462pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 21:21:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=IbEYh3sE0lEQN86EDBidAaoJTgfuNRe/T1BPCLMMSbg=;
-        b=d2wtBxur94D14Z9XWSp94ESdFYXTa3LG/wYP+C/jko83F4yQbfJYeWj6DCUDNoorRe
-         OAm9h10smBoY6Ol++l+vjN7jzxjIox8CfUNye7LH4c9LfHtP4MVeuWDQfx6glTkDGgMg
-         B8GPIzeqhsVFJnoUZCmc6g6kCnwoLUThWd7h79tzQ2qHYmMglY3orBGPJnp4bRChhPHp
-         RgaM3mwbu878vgJbW8tzJI7yqsFe4wY1rh5fLg9v3XrHq9OVZYrOw5AZg06UKDa7n672
-         YjyWqrg6fdVWhRODrL1xcQWObOe07OC1HtdTxR97HwyZbV3ZnAjdttZxLWHXfETiM7tP
-         NJfA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Z5Bt8w1FWlfFrHcBVrOM+ClUStFhbI+Y1ZodLgd//8E=;
+        b=KFRqd4aIZqhgVsnmop43d3o5Qm5rmBHxz5CPgQzhxmwkxA9iVhCH+3iaYEw7WIenA6
+         3uCgKRDA8cJHJsA+O1ZLORt/TZ8esB3H+6/mE0YmrUuMh2esD1HUfaJS6NPfKHKK4tfs
+         J4CKUOdira1hr99ozia9YZ74fFp5sgWZ6Un+g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=IbEYh3sE0lEQN86EDBidAaoJTgfuNRe/T1BPCLMMSbg=;
-        b=I26FF0X/FrgD+Gx1PJARa73NgCB3SQ7MyZ78DvkM3rUYRM/SOrr61o2g64PEAAKw7/
-         Q5O6/Ei9HeYC/ynMOXwV/cya2O7e03WuFoORTsSjeNMMSKiVd2s4ull6pYPSCzIkAUg8
-         MD30sS7u030w9LzEgCPsF/n9RIpzf9fJFyq6I2LvQTzacASnH3wagoFYnd0Le0ITyRcV
-         On13yqmjIbi2yopWtCpi1xF6xAHKcDc+dNAyxUYoe28pqO42lRgNbL7YFApuMOuTLwKd
-         k0uuxEQAo7XyAOi01fKIGwkaeHUJzoguNIvRQ450NLYFsCRjmnTLXkMh/hPBfO7Gh7Yi
-         Woaw==
-X-Gm-Message-State: AOUpUlHmb2s6yvTQT7LNIvtwbolBsn9lKaUtaXW9I55yz9Pcd12biCfc
-        yJooQcTppP/PEr9CaxszqSnq6A==
-X-Google-Smtp-Source: AAOMgpeEHefWhNXLI2kNDUeqoBFYAeYiyNzLipzqHec8H+MUHOE3x5J6Z9wLrOlMbSlcMOJ35cWAxQ==
-X-Received: by 2002:a17:902:8a95:: with SMTP id p21-v6mr7706plo.91.1531801364225;
-        Mon, 16 Jul 2018 21:22:44 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id x2-v6sm55980201pgq.33.2018.07.16.21.22.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Z5Bt8w1FWlfFrHcBVrOM+ClUStFhbI+Y1ZodLgd//8E=;
+        b=LWzpG3Gerk+Wy4xQm18BH0Dy+PXzohJOl44kRdmhNDPZGoveUud7Ez3XjKkI22UNez
+         bIVB9e+ShVv3mhH32Q4EKRqtY/dZXG73jYwm32sYE9irLtezcGZXCtr9+PsPwGY1vasU
+         7l/qLFKQbSVN3ikjteZ7FnKj5wEv7hJYOgyKDfIMhZmA2FIuSjdB7l90L2e+3XR4oNbW
+         IX33CukWGRYT9pZ5RUKE2uz64xi17BMp1AGmx6YCTCJUCScrzNT66qmN1mBbnRzd1A9Y
+         YQ+b0vR+ZeKcNv69SEMK0cuhiJucE8wfekeqR+dR5qvY4bD/OLTekfp9rmUs1akaYEU6
+         Tyrg==
+X-Gm-Message-State: AOUpUlHeMNgLyLE2qHen7uOW44yoFp3CVl73oxqXPlcI50YZ/0BmnZY/
+        lgc7x0r0zzxZxPOYRxRgBIDBuw==
+X-Google-Smtp-Source: AAOMgpdOxCMyMtu9/xyNd8PeyINSuceJd+8KI9J0QBQfNsoptomg6ilyNpK+mftm80LZmpAeFd+xQg==
+X-Received: by 2002:a63:9e0a:: with SMTP id s10-v6mr18870pgd.326.1531801318201;
+        Mon, 16 Jul 2018 21:21:58 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id h10-v6sm43493964pfj.78.2018.07.16.21.21.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 21:22:43 -0700 (PDT)
-Date:   Mon, 16 Jul 2018 21:22:43 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [patch -mm] mm, oom: remove oom_lock from exit_mmap
-In-Reply-To: <44d26c25-6e09-49de-5e90-3c16115eb337@i-love.sakura.ne.jp>
-Message-ID: <alpine.DEB.2.21.1807162121040.157949@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1807121432370.170100@chino.kir.corp.google.com> <20180713142612.GD19960@dhcp22.suse.cz> <44d26c25-6e09-49de-5e90-3c16115eb337@i-love.sakura.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Mon, 16 Jul 2018 21:21:53 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        linux-crypto@vger.kernel.org, qat-linux@intel.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 00/11] crypto: Remove VLA usage
+Date:   Mon, 16 Jul 2018 21:21:39 -0700
+Message-Id: <20180717042150.37761-1-keescook@chromium.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 14 Jul 2018, Tetsuo Handa wrote:
+v5:
+- limit AHASH_REQUEST_ON_STACK size only to non-async hash wrapping.
+- sanity-check ahash reqsize only when doing shash wrapping.
+- remove frame_warn changes in favor of shash conversions and other fixes.
+- send ahash to shash conversion patches and other fixes separately.
 
-> David is making changes using timeout based back off (in linux-next.git)
-> which is inappropriately trying to use MMF_UNSTABLE for two purposes.
-> 
+v4:
+- add back *_REQUEST_ON_STACK patches.
+- programmatically find stack sizes for *_REQUEST_ON_STACK patches.
+- whitelist some code that trips FRAME_WARN on 32-bit builds.
+- fix alignment patches.
 
-If you believe there is a problem with the use of MMF_UNSTABLE as it sits 
-in -mm, please follow up directly in the thread that proposed the patch.  
-I have seen two replies to that thread from you: one that incorporates it 
-into your work, and one that links to a verison of my patch in your 
-patchset.  I haven't seen a concern raised about the use of MMF_UNSTABLE, 
-but perhaps it's somewhere in the 10,000 other emails about the oom 
-killer.
+v3:
+- drop *_REQUEST_ON_STACK patches. The rest of this series is pretty
+  straight-forward, and I'd like to get them tested in -next while
+  we continue to chip away at the *_REQUEST_ON_STACK VLA removal patches
+  separately. "Part 2" will continue with those.
+
+v2:
+- use 512 instead of PAGE_SIZE / 8 to avoid bloat on large-page archs.
+- swtich xcbc to "16" max universally.
+- fix typo in bounds check for dm buffer size.
+- examine actual reqsizes for skcipher and ahash instead of guessing.
+- improve names and comments for alg maxes
+
+
+This is nearly the last of the VLA removals[1], but it's one of the
+largest because crypto gets used in lots of places. After looking
+through code, usage, reading the threads Gustavo started, and comparing
+the use-cases to the other VLA removals that have landed in the kernel,
+I think this series is likely the best way forward to shut the door on
+VLAs forever.
+
+As background, the crypto stack usage is for callers to do an immediate
+bit of work that doesn't allocate new memory. This means that other VLA
+removal techniques (like just using kmalloc) aren't workable, and the
+next common technique is needed: examination of maximum stack usage and
+the addition of sanity checks. This series does that, and in several
+cases, these maximums were already implicit in the code.
+
+This series is intended to land via the crypto tree for 4.19, though
+it touches dm and a few other things as well, since there are dependent
+patches (new crypto #defines being used, kbuild, etc).
+
+Thanks!
+
+-Kees
+
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+
+Kees Cook (11):
+  crypto: xcbc: Remove VLA usage
+  crypto: cbc: Remove VLA usage
+  crypto: shash: Remove VLA usage
+  dm integrity: Remove VLA usage
+  crypto: ahash: Remove VLA usage
+  dm verity fec: Remove VLA usage
+  crypto alg: Introduce generic max blocksize and alignmask
+  crypto: qat: Remove VLA usage
+  crypto: shash: Remove VLA usage in unaligned hashing
+  crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
+  crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+
+ crypto/ahash.c                           |  4 +--
+ crypto/algapi.c                          |  7 +++-
+ crypto/algif_hash.c                      |  2 +-
+ crypto/shash.c                           | 42 +++++++++++++++---------
+ crypto/xcbc.c                            |  9 +++--
+ drivers/crypto/qat/qat_common/qat_algs.c |  8 +++--
+ drivers/md/dm-integrity.c                | 23 +++++++++----
+ drivers/md/dm-verity-fec.c               |  5 ++-
+ include/crypto/algapi.h                  |  4 ++-
+ include/crypto/cbc.h                     |  4 ++-
+ include/crypto/hash.h                    | 19 +++++++++--
+ include/crypto/internal/skcipher.h       |  1 +
+ include/crypto/skcipher.h                |  4 ++-
+ include/linux/compiler-gcc.h             |  1 -
+ 14 files changed, 97 insertions(+), 36 deletions(-)
+
+-- 
+2.17.1
+
