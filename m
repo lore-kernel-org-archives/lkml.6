@@ -2,203 +2,147 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80086ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E182ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395E720BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:24:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 395E720BED
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0FED4208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 01:24:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FED4208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730873AbeGQBx6 (ORCPT
+        id S1731096AbeGQByh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 21:53:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59496 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729913AbeGQBx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 21:53:58 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DD038308402C;
-        Tue, 17 Jul 2018 01:23:56 +0000 (UTC)
-Received: from rh (ovpn-116-84.phx2.redhat.com [10.3.116.84])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD60645AA;
-        Tue, 17 Jul 2018 01:23:55 +0000 (UTC)
-Received: from [::1] (helo=rh)
-        by rh with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <dchinner@redhat.com>)
-        id 1ffEiR-0006sE-Q2; Tue, 17 Jul 2018 11:23:47 +1000
-Date:   Tue, 17 Jul 2018 11:23:45 +1000
-From:   Dave Chinner <dchinner@redhat.com>
-To:     Jan Stancek <jstancek@redhat.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ltp@lists.linux.it, open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, patches@kernelci.org,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-xfs@vger.kernel.org
-Subject: Re: [LTP] [PATCH 4.17 00/67] 4.17.7-stable review
-Message-ID: <20180717012345.GM20351@rh>
-References: <20180716073443.294323458@linuxfoundation.org>
- <CA+G9fYtVSorLiG5cZdqtipy4XO1zr1HUZ4gH7tf_07m-B4HS1w@mail.gmail.com>
- <2078122506.33400530.1531776704409.JavaMail.zimbra@redhat.com>
+        Mon, 16 Jul 2018 21:54:37 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:10031 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729913AbeGQByg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 21:54:36 -0400
+Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 17 Jul
+ 2018 09:23:50 +0800
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+ <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+ <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+ <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+ <1531216472.2708.71.camel@baylibre.com> <7hfu0jmhbe.fsf@baylibre.com>
+CC:     <yixun.lan@amlogic.com>, <qianggui.song@amlogic.com>,
+        Rob Herring <robh@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <bo.yang@amlogic.com>,
+        <sboyd@kernel.org>, <jian.hu@amlogic.com>,
+        <xingyu.chen@amlogic.com>, <qiufang.dai@amlogic.com>,
+        <linux-amlogic@lists.infradead.org>, <sunny.luo@amlogic.com>,
+        <carlo@caione.org>, <linux-arm-kernel@lists.infradead.org>
+From:   Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <7e1cce0b-fc86-b900-2019-a85c5e5ba2ae@amlogic.com>
+Date:   Tue, 17 Jul 2018 09:24:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2078122506.33400530.1531776704409.JavaMail.zimbra@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 17 Jul 2018 01:23:57 +0000 (UTC)
+In-Reply-To: <7hfu0jmhbe.fsf@baylibre.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[cc linux-xfs@vger.kernel.org]
+HI Kevin
 
-Darrick, can you have a look over this mess while I'm afk?
+just want to clarify..
 
--Dave.
+On 07/16/18 21:38, Kevin Hilman wrote:
+> Jerome Brunet <jbrunet@baylibre.com> writes:
+> 
+>> On Tue, 2018-07-10 at 09:21 +0800, Yixun Lan wrote:
+>>>
+>>> On 07/10/18 05:53, Martin Blumenstingl wrote:
+>>>> On Mon, Jul 9, 2018 at 1:14 PM Jian Hu <jian.hu@amlogic.com> wrote:
+> 
+> [...]
+> 
+>>>>> +
+>>>>> +static const struct of_device_id clkc_match_table[] = {
+>>>>> +       { .compatible = "amlogic,g12a-clkc" },
+>>>>
+>>>> I wonder if that should be "amlogic,meson-g12a-clkc" (I know that AXG
+>>>> and GXBB/GXL/GXM omit the "meson-" prefix, but I am not sure if that's
+>>>> correct - I'll CC Rob Herring on the dt-bindings patch)
+>>>>
+>>>
+>>> we're fine with either way, since the g12a is recently new added SoC.
+>>>
+>>> but I guess those old compatibles which already exist won't be changed,
+>>> as it will break the DT
+>>
+>> Yes, I doubt we are going to change the compatibles. With or without the meson
+>> prefix, I suppose it going to stay that way.
+> 
+> Correct, we will not change existing compatibles.  Adding new ones for
+> clarity is fine though.
+> 
+fine
 
-On Mon, Jul 16, 2018 at 05:31:44PM -0400, Jan Stancek wrote:
+>> It is worth thinking about it for new drivers though.
+>> We already have the "amlogic,", so do we really to prefix even more with "meson-
+>> "
+>>
+>> Also, if we were really strict about that scheme, should meson8b compatible be
+>>
+>> "amlogic,meson-meson8b-foo-bar" ... the SoC is meson8b, not just 8b after all ?
+>>
+>> For the particular case of the clock controller, I don't care very much, as long
+>> as the compatible is coherent with documentation.
+>>
+>> I might have a preference for the current compatible ... just for consistency
+>> with the other clock controllers.
 > 
+> In hindsight, I think using the "meson" prefix was a mistake.  It's
+> redunant, IMO, but it's how we've been doing things for all the drivers,
+> except for drivers/clk, which, honestly, I hadn't even noticed until
+> now.
 > 
-> ----- Original Message -----
-> > On 16 July 2018 at 13:04, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > wrote:
-> > > This is the start of the stable review cycle for the 4.17.7 release.
-> > > There are 67 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > >
-> > > Responses should be made by Wed Jul 18 07:34:11 UTC 2018.
-> > > Anything received after that time might be too late.
-> > >
-> > > The whole patch series can be found in one patch at:
-> > >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.7-rc1.gz
-> > > or in the git tree and branch at:
-> > >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > >         linux-4.17.y
-> > > and the diffstat can be found below.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> > 
-> > 
-> > Results from Linaro’s test farm.
-> > Regressions detected.
-> > 
-> > LTP syscalls failed test cases on all devices arm64, arm32 and x86_64,
-> >  - creat08
-> >  - open10
+> As Jerome said, I think consistency is an important goal, so leaving off
+> the "meson-" for drivers/clk is fine with me.
 > 
-> This is consequence of:
->   0fa3ecd87848 ("Fix up non-directory creation in SGID directories")
+ok
+
+> Also for consistency, for the rest of the drivers, keeping "meson-" is
+> probably the right thing to do.
 > 
-> So likely cause of action here will be modifying both tests to not
-> expect S_ISGID in scenario described in commit above.
+ok, for the above, you are talking about the already exist compatible
+names? or the patches we will push in the future?
+
+> However, patches would be welcome to add compatibles without the "meson"
+> for the rest of the drivers & documentation as well, but please do not
+> remove any compatibles.
 > 
-> [adding Dave Chinner]
+I assume you are talking about the patches in the future we will push?
+to drop the "meson".
+
+I'm confused here, as the above two paragraphs conflict with each other
+
+> Kevin
 > 
-> @Dave: Does XFS need separate patch for problem described in commit
-> 0fa3ecd87848? XFS doesn't appear to use inode_init_owner() function,
-> both tests currently PASS the check for S_ISGID on file created by
-> non-group member as of v4.18-rc5.
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 > 
-> Regards,
-> Jan
-> 
-> > 
-> > Reported this bug internally on upstream Linux mainline week back.
-> > Now this bug happening on 4.17, 4.14, 4.9 and 4.4
-> > 
-> > creat08 and open10 failed with this error,
-> > TFAIL  : testdir.B.3132/setgid: Incorrect modes, setgid bit should be set
-> > 
-> > Test case description:
-> > /*
-> >  * NAME
-> >  * creat08.c - Verifies that the group ID and setgid bit are
-> >  *    set correctly when a new file is created.
-> >  *    (ported from SPIE, section2/iosuite/creat5.c,
-> >  *     by Airong Zhang <zhanga@us.ibm.com>)
-> >  * CALLS
-> >  * creat
-> >  *
-> >  * ALGORITHM
-> >  * Create two directories, one with the group ID of this process
-> >  * and the setgid bit not set, and the other with a group ID
-> >  * other than that of this process and with the setgid bit set.
-> >  * In each directory, create a file with and without the setgid
-> >  * bit set in the creation modes. Verify that the modes and group
-> >  * ID are correct on each of the 4 files.
-> >  * As root, create a file with the setgid bit on in the
-> >  * directory with the setgid bit.
-> >  * This tests the SVID3 create group semantics.
-> >  */
-> > 
-> > Block2 testing:
-> > /*--------------------------------------------------------------*/
-> > /* Block2: Create two files in testdir.B, one with the setgid   */
-> > /*         bit set in the creation modes and the other without. */
-> > /*    Both should inherit the group ID of the parent       */
-> > /*    directory, group2.                                   */
-> > /*--------------------------------------------------------------*/
-> > 
-> > 
-> > Test results comparison on mainline versions,
-> > https://qa-reports.linaro.org/lkft/linux-mainline-oe/tests/ltp-syscalls-tests/creat08
-> > https://qa-reports.linaro.org/lkft/linux-mainline-oe/tests/ltp-syscalls-tests/open10
-> > 
-> > Test results comparison on 4.17 versions,
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/tests/ltp-syscalls-tests/creat08
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/tests/ltp-syscalls-tests/open10
-> > 
-> > Bug report link,
-> > https://bugs.linaro.org/show_bug.cgi?id=3940
-> > 
-> > Summary
-> > ------------------------------------------------------------------------
-> > 
-> > kernel: 4.17.7-rc1
-> > git repo:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > git branch: linux-4.17.y
-> > git commit: bc0bd9e05fa1e213c689620eb4cba825c03dcc4a
-> > git describe: v4.17.6-68-gbc0bd9e05fa1
-> > Test details:
-> > https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/build/v4.17.6-68-gbc0bd9e05fa1
-> > 
-> > Regressions (compared to build v4.17.6-67-g3b02b1fd1975)
-> > ------------------------------------------------------------------------
-> > 
-> > LTP syscalls failed test cases on all devices,
-> > 
-> >  - creat08
-> >  - open10
-> > 
-> > --
-> > Linaro LKFT
-> > https://lkft.linaro.org
-> > 
-> > --
-> > Mailing list info: https://lists.linux.it/listinfo/ltp
-> > 
+> .
 > 
 
--- 
-Dave Chinner
-dchinner@redhat.com
