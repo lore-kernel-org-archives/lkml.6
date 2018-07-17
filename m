@@ -6,388 +6,140 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 500F1ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E40B6ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C6320BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54C6320BED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 967C120C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:34:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 967C120C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729994AbeGQKF3 (ORCPT
+        id S1730702AbeGQKFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:05:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:41615 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728835AbeGQKF3 (ORCPT
+        Tue, 17 Jul 2018 06:05:46 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40997 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbeGQKFq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:05:29 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9X3aQ1463216
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:33:03 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9X3JG1463212;
-        Tue, 17 Jul 2018 02:33:03 -0700
-Date:   Tue, 17 Jul 2018 02:33:03 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrea Parri <tipbot@zytor.com>
-Message-ID: <tip-71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stern@rowland.harvard.edu,
-        npiggin@gmail.com, luc.maranget@inria.fr,
-        paulmck@linux.vnet.ibm.com, mingo@kernel.org, hpa@zytor.com,
-        andrea.parri@amarulasolutions.com, tglx@linutronix.de,
-        j.alglave@ucl.ac.uk, dhowells@redhat.com,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        boqun.feng@gmail.com, akiyks@gmail.com, will.deacon@arm.com
-Reply-To: will.deacon@arm.com, akiyks@gmail.com, boqun.feng@gmail.com,
-          peterz@infradead.org, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-          torvalds@linux-foundation.org, hpa@zytor.com,
-          andrea.parri@amarulasolutions.com, tglx@linutronix.de,
-          mingo@kernel.org, luc.maranget@inria.fr,
-          paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-          stern@rowland.harvard.edu, npiggin@gmail.com
-In-Reply-To: <20180716180605.16115-14-paulmck@linux.vnet.ibm.com>
-References: <20180716180605.16115-14-paulmck@linux.vnet.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/memory-model: Rename litmus tests to
- comply to norm7
-Git-Commit-ID: 71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 17 Jul 2018 06:05:46 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ffMMq-0002wJ-DF; Tue, 17 Jul 2018 09:34:00 +0000
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "J . Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-nfs@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180716120954.6720-1-colin.king@canonical.com>
+ <20180717093005.3ggy24fskb3bxtni@mwanda>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject: Re: [PATCH] nfsd: fix memory leak of async_copy
+Message-ID: <d7bb05ee-c69b-bbed-bfb1-a16ce1ca39f2@canonical.com>
+Date:   Tue, 17 Jul 2018 10:33:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180717093005.3ggy24fskb3bxtni@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19
-Gitweb:     https://git.kernel.org/tip/71b7ff5ebc9b1d5aa95eb48d6388234f1304fd19
-Author:     Andrea Parri <andrea.parri@amarulasolutions.com>
-AuthorDate: Mon, 16 Jul 2018 11:06:05 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 17 Jul 2018 09:30:36 +0200
+On 17/07/18 10:30, Dan Carpenter wrote:
+> On Mon, Jul 16, 2018 at 01:09:54PM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> In the case where async_copy is successfully allocated but
+>> the call to nfs4_init_cp_state fails, async_copy is not
+>> currently freed and the memory is leaked. Fix this by kfree'ing
+>> it before returning.
+>>
+>> Detected by CoverityScan, CID#1471823 ("Resource leak")
+>>
+>> Fixes: beb1814d5a8a ("NFSD create new stateid for async copy")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  fs/nfsd/nfs4proc.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+>> index 8f3368353aaf..3fb96a2708b9 100644
+>> --- a/fs/nfsd/nfs4proc.c
+>> +++ b/fs/nfsd/nfs4proc.c
+>> @@ -1295,8 +1295,10 @@ nfsd4_copy(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+>>  		async_copy = kzalloc(sizeof(struct nfsd4_copy), GFP_KERNEL);
+>>  		if (!async_copy)
+>>  			goto out;
+>> -		if (!nfs4_init_cp_state(nn, copy))
+>> +		if (!nfs4_init_cp_state(nn, copy)) {
+>> +			kfree(async_copy);
+>>  			goto out;
+> 
+> It really feels like both this and the kzalloc() failure should be doing
+> an of fput() of copy->file_src and copy->file_dst.  The goto out_err
+> does an list_del(&copy->copies); but it happens before the
+> "list_add(&async_copy->copies ..." so that's likely wrong as well.
 
-tools/memory-model: Rename litmus tests to comply to norm7
+Good observation, thanks for spotting that. I suspect I'm a bit out of
+my depth figuring out the exact error handling reaping steps here.
+Perhaps this is one for the maintainers to figure out a safe cleanup on
+these error paths.
 
-norm7 produces the 'normalized' name of a litmus test,  when the test
-can be generated from a single cycle that passes through each process
-exactly once. The commit renames such tests in order to comply to the
-naming scheme implemented by this tool.
+> 
+> regards,
+> dan carpenter
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: Akira Yokosawa <akiyks@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: linux-arch@vger.kernel.org
-Cc: parri.andrea@gmail.com
-Link: http://lkml.kernel.org/r/20180716180605.16115-14-paulmck@linux.vnet.ibm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/memory-model/Documentation/recipes.txt         |  8 ++++----
- tools/memory-model/README                            | 20 ++++++++++----------
- ....litmus => IRIW+fencembonceonces+OnceOnce.litmus} |  2 +-
- ...litmus => LB+fencembonceonce+ctrlonceonce.litmus} |  2 +-
- ...s => MP+fencewmbonceonce+fencermbonceonce.litmus} |  2 +-
- ...+mbonceonces.litmus => R+fencembonceonces.litmus} |  2 +-
- tools/memory-model/litmus-tests/README               | 16 ++++++++--------
- ...itmus => S+fencewmbonceonce+poacquireonce.litmus} |  2 +-
- ...mbonceonces.litmus => SB+fencembonceonces.litmus} |  2 +-
- ...> WRC+pooncerelease+fencermbonceonce+Once.litmus} |  2 +-
- ...erelease+poacquirerelease+fencembonceonce.litmus} |  2 +-
- 11 files changed, 30 insertions(+), 30 deletions(-)
-
-diff --git a/tools/memory-model/Documentation/recipes.txt b/tools/memory-model/Documentation/recipes.txt
-index 1fea8ef2b184..af72700cc20a 100644
---- a/tools/memory-model/Documentation/recipes.txt
-+++ b/tools/memory-model/Documentation/recipes.txt
-@@ -126,7 +126,7 @@ However, it is not necessarily the case that accesses ordered by
- locking will be seen as ordered by CPUs not holding that lock.
- Consider this example:
- 
--	/* See Z6.0+pooncelock+pooncelock+pombonce.litmus. */
-+	/* See Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus. */
- 	void CPU0(void)
- 	{
- 		spin_lock(&mylock);
-@@ -292,7 +292,7 @@ and to use smp_load_acquire() instead of smp_rmb().  However, the older
- smp_wmb() and smp_rmb() APIs are still heavily used, so it is important
- to understand their use cases.  The general approach is shown below:
- 
--	/* See MP+wmbonceonce+rmbonceonce.litmus. */
-+	/* See MP+fencewmbonceonce+fencermbonceonce.litmus. */
- 	void CPU0(void)
- 	{
- 		WRITE_ONCE(x, 1);
-@@ -360,7 +360,7 @@ can be seen in the LB+poonceonces.litmus litmus test.
- One way of avoiding the counter-intuitive outcome is through the use of a
- control dependency paired with a full memory barrier:
- 
--	/* See LB+ctrlonceonce+mbonceonce.litmus. */
-+	/* See LB+fencembonceonce+ctrlonceonce.litmus. */
- 	void CPU0(void)
- 	{
- 		r0 = READ_ONCE(x);
-@@ -476,7 +476,7 @@ that one CPU first stores to one variable and then loads from a second,
- while another CPU stores to the second variable and then loads from the
- first.  Preserving order requires nothing less than full barriers:
- 
--	/* See SB+mbonceonces.litmus. */
-+	/* See SB+fencembonceonces.litmus. */
- 	void CPU0(void)
- 	{
- 		WRITE_ONCE(x, 1);
-diff --git a/tools/memory-model/README b/tools/memory-model/README
-index 734f7feaa5dc..ee987ce20aae 100644
---- a/tools/memory-model/README
-+++ b/tools/memory-model/README
-@@ -35,13 +35,13 @@ BASIC USAGE: HERD7
- The memory model is used, in conjunction with "herd7", to exhaustively
- explore the state space of small litmus tests.
- 
--For example, to run SB+mbonceonces.litmus against the memory model:
-+For example, to run SB+fencembonceonces.litmus against the memory model:
- 
--  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+mbonceonces.litmus
-+  $ herd7 -conf linux-kernel.cfg litmus-tests/SB+fencembonceonces.litmus
- 
- Here is the corresponding output:
- 
--  Test SB+mbonceonces Allowed
-+  Test SB+fencembonceonces Allowed
-   States 3
-   0:r0=0; 1:r0=1;
-   0:r0=1; 1:r0=0;
-@@ -50,8 +50,8 @@ Here is the corresponding output:
-   Witnesses
-   Positive: 0 Negative: 3
-   Condition exists (0:r0=0 /\ 1:r0=0)
--  Observation SB+mbonceonces Never 0 3
--  Time SB+mbonceonces 0.01
-+  Observation SB+fencembonceonces Never 0 3
-+  Time SB+fencembonceonces 0.01
-   Hash=d66d99523e2cac6b06e66f4c995ebb48
- 
- The "Positive: 0 Negative: 3" and the "Never 0 3" each indicate that
-@@ -67,16 +67,16 @@ BASIC USAGE: KLITMUS7
- The "klitmus7" tool converts a litmus test into a Linux kernel module,
- which may then be loaded and run.
- 
--For example, to run SB+mbonceonces.litmus against hardware:
-+For example, to run SB+fencembonceonces.litmus against hardware:
- 
-   $ mkdir mymodules
--  $ klitmus7 -o mymodules litmus-tests/SB+mbonceonces.litmus
-+  $ klitmus7 -o mymodules litmus-tests/SB+fencembonceonces.litmus
-   $ cd mymodules ; make
-   $ sudo sh run.sh
- 
- The corresponding output includes:
- 
--  Test SB+mbonceonces Allowed
-+  Test SB+fencembonceonces Allowed
-   Histogram (3 states)
-   644580  :>0:r0=1; 1:r0=0;
-   644328  :>0:r0=0; 1:r0=1;
-@@ -86,8 +86,8 @@ The corresponding output includes:
-   Positive: 0, Negative: 2000000
-   Condition exists (0:r0=0 /\ 1:r0=0) is NOT validated
-   Hash=d66d99523e2cac6b06e66f4c995ebb48
--  Observation SB+mbonceonces Never 0 2000000
--  Time SB+mbonceonces 0.16
-+  Observation SB+fencembonceonces Never 0 2000000
-+  Time SB+fencembonceonces 0.16
- 
- The "Positive: 0 Negative: 2000000" and the "Never 0 2000000" indicate
- that during two million trials, the state specified in this litmus
-diff --git a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-rename to tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
-index 98a3716efa37..e729d2776e89 100644
---- a/tools/memory-model/litmus-tests/IRIW+mbonceonces+OnceOnce.litmus
-+++ b/tools/memory-model/litmus-tests/IRIW+fencembonceonces+OnceOnce.litmus
-@@ -1,4 +1,4 @@
--C IRIW+mbonceonces+OnceOnce
-+C IRIW+fencembonceonces+OnceOnce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-rename to tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
-index de6708229dd1..4727f5aaf03b 100644
---- a/tools/memory-model/litmus-tests/LB+ctrlonceonce+mbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/LB+fencembonceonce+ctrlonceonce.litmus
-@@ -1,4 +1,4 @@
--C LB+ctrlonceonce+mbonceonce
-+C LB+fencembonceonce+ctrlonceonce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
-similarity index 91%
-rename from tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-rename to tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
-index c078f38ff27a..a273da9faa6d 100644
---- a/tools/memory-model/litmus-tests/MP+wmbonceonce+rmbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/MP+fencewmbonceonce+fencermbonceonce.litmus
-@@ -1,4 +1,4 @@
--C MP+wmbonceonce+rmbonceonce
-+C MP+fencewmbonceonce+fencermbonceonce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/R+mbonceonces.litmus b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/R+mbonceonces.litmus
-rename to tools/memory-model/litmus-tests/R+fencembonceonces.litmus
-index a0e884ad2132..222a0b850b4a 100644
---- a/tools/memory-model/litmus-tests/R+mbonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/R+fencembonceonces.litmus
-@@ -1,4 +1,4 @@
--C R+mbonceonces
-+C R+fencembonceonces
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/README b/tools/memory-model/litmus-tests/README
-index 00140aaf58b7..4581ec2d3c57 100644
---- a/tools/memory-model/litmus-tests/README
-+++ b/tools/memory-model/litmus-tests/README
-@@ -18,7 +18,7 @@ CoWW+poonceonce.litmus
- 	Test of write-write coherence, that is, whether or not two
- 	successive writes to the same variable are ordered.
- 
--IRIW+mbonceonces+OnceOnce.litmus
-+IRIW+fencembonceonces+OnceOnce.litmus
- 	Test of independent reads from independent writes with smp_mb()
- 	between each pairs of reads.  In other words, is smp_mb()
- 	sufficient to cause two different reading processes to agree on
-@@ -47,7 +47,7 @@ ISA2+pooncerelease+poacquirerelease+poacquireonce.litmus
- 	Can a release-acquire chain order a prior store against
- 	a later load?
- 
--LB+ctrlonceonce+mbonceonce.litmus
-+LB+fencembonceonce+ctrlonceonce.litmus
- 	Does a control dependency and an smp_mb() suffice for the
- 	load-buffering litmus test, where each process reads from one
- 	of two variables then writes to the other?
-@@ -88,14 +88,14 @@ MP+porevlocks.litmus
- 	As below, but with the first access of the writer process
- 	and the second access of reader process protected by a lock.
- 
--MP+wmbonceonce+rmbonceonce.litmus
-+MP+fencewmbonceonce+fencermbonceonce.litmus
- 	Does a smp_wmb() (between the stores) and an smp_rmb() (between
- 	the loads) suffice for the message-passing litmus test, where one
- 	process writes data and then a flag, and the other process reads
- 	the flag and then the data.  (This is similar to the ISA2 tests,
- 	but with two processes instead of three.)
- 
--R+mbonceonces.litmus
-+R+fencembonceonces.litmus
- 	This is the fully ordered (via smp_mb()) version of one of
- 	the classic counterintuitive litmus tests that illustrates the
- 	effects of store propagation delays.
-@@ -103,7 +103,7 @@ R+mbonceonces.litmus
- R+poonceonces.litmus
- 	As above, but without the smp_mb() invocations.
- 
--SB+mbonceonces.litmus
-+SB+fencembonceonces.litmus
- 	This is the fully ordered (again, via smp_mb() version of store
- 	buffering, which forms the core of Dekker's mutual-exclusion
- 	algorithm.
-@@ -123,12 +123,12 @@ SB+rfionceonce-poonceonces.litmus
- S+poonceonces.litmus
- 	As below, but without the smp_wmb() and acquire load.
- 
--S+wmbonceonce+poacquireonce.litmus
-+S+fencewmbonceonce+poacquireonce.litmus
- 	Can a smp_wmb(), instead of a release, and an acquire order
- 	a prior store against a subsequent store?
- 
- WRC+poonceonces+Once.litmus
--WRC+pooncerelease+rmbonceonce+Once.litmus
-+WRC+pooncerelease+fencermbonceonce+Once.litmus
- 	These two are members of an extension of the MP litmus-test
- 	class in which the first write is moved to a separate process.
- 	The second is forbidden because smp_store_release() is
-@@ -143,7 +143,7 @@ Z6.0+pooncelock+poonceLock+pombonce.litmus
- 	As above, but with smp_mb__after_spinlock() immediately
- 	following the spin_lock().
- 
--Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-+Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
- 	Is the ordering provided by a release-acquire chain sufficient
- 	to make ordering apparent to accesses by a process that does
- 	not participate in that release-acquire chain?
-diff --git a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
-similarity index 90%
-rename from tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-rename to tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
-index c53350205d28..18479823cd6c 100644
---- a/tools/memory-model/litmus-tests/S+wmbonceonce+poacquireonce.litmus
-+++ b/tools/memory-model/litmus-tests/S+fencewmbonceonce+poacquireonce.litmus
-@@ -1,4 +1,4 @@
--C S+wmbonceonce+poacquireonce
-+C S+fencewmbonceonce+poacquireonce
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
-similarity index 95%
-rename from tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-rename to tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
-index 74b874ffa8da..ed5fff18d223 100644
---- a/tools/memory-model/litmus-tests/SB+mbonceonces.litmus
-+++ b/tools/memory-model/litmus-tests/SB+fencembonceonces.litmus
-@@ -1,4 +1,4 @@
--C SB+mbonceonces
-+C SB+fencembonceonces
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
-similarity index 93%
-rename from tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-rename to tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
-index ad3448b941e6..e9947250d7de 100644
---- a/tools/memory-model/litmus-tests/WRC+pooncerelease+rmbonceonce+Once.litmus
-+++ b/tools/memory-model/litmus-tests/WRC+pooncerelease+fencermbonceonce+Once.litmus
-@@ -1,4 +1,4 @@
--C WRC+pooncerelease+rmbonceonce+Once
-+C WRC+pooncerelease+fencermbonceonce+Once
- 
- (*
-  * Result: Never
-diff --git a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
-similarity index 94%
-rename from tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-rename to tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
-index a20fc3fafb53..88e70b87a683 100644
---- a/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+mbonceonce.litmus
-+++ b/tools/memory-model/litmus-tests/Z6.0+pooncerelease+poacquirerelease+fencembonceonce.litmus
-@@ -1,4 +1,4 @@
--C Z6.0+pooncerelease+poacquirerelease+mbonceonce
-+C Z6.0+pooncerelease+poacquirerelease+fencembonceonce
- 
- (*
-  * Result: Sometimes
