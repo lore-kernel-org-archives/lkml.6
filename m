@@ -2,217 +2,102 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A94AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCC7ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1A452146F
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1A452146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 8264F206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:57:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8264F206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730897AbeGQJZd (ORCPT
+        id S1729655AbeGQJ2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:25:33 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:15704 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729683AbeGQJYW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:24:22 -0400
-X-UUID: a4382f0fa28a47559fabaf11c8cd02ca-20180717
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1643907888; Tue, 17 Jul 2018 16:52:36 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 17 Jul 2018 16:52:34 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 17 Jul 2018 16:52:34 +0800
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-CC:     CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v5 04/11] soc: mediatek: add MT6765 scpsys support
-Date:   Tue, 17 Jul 2018 16:52:25 +0800
-Message-ID: <1531817552-17221-5-git-send-email-mars.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+        Tue, 17 Jul 2018 05:28:37 -0400
+Received: from mga17.intel.com ([192.55.52.151]:5661 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728983AbeGQJ2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:28:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 01:57:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="73419334"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga001.jf.intel.com with ESMTP; 17 Jul 2018 01:56:04 -0700
+Subject: Re: [PATCH V4 3/3] x86: Add entry trampolines to kcore
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
+ <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
+ <20180606131631.GD12180@hirez.programming.kicks-ass.net>
+ <20180606131946.GF24381@kernel.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <90e24c0c-6ec9-f2c0-54af-0a946b05e574@intel.com>
+Date:   Tue, 17 Jul 2018 11:54:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20180606131946.GF24381@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds scpsys support for MT6765
+On 06/06/18 16:19, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Jun 06, 2018 at 03:16:31PM +0200, Peter Zijlstra escreveu:
+>> On Wed, Jun 06, 2018 at 03:54:11PM +0300, Adrian Hunter wrote:
+>>> Without program headers for PTI entry trampoline pages, the trampoline
+>>> virtual addresses do not map to anything.
+>>>
+>>
+>>>
+>>> In addition, entry trampolines all map to the same page.  Represent that by
+>>> giving the corresponding program headers in kcore the same offset.
+>>>
+>>> This has the benefit that, when perf tools uses /proc/kcore as a source for
+>>> kernel object code, samples from different CPU trampolines are aggregated
+>>> together.  Note, such aggregation is normal for profiling i.e. people want
+>>> to profile the object code, not every different virtual address the object
+>>> code might be mapped to (across different processes for example).
+>>>
+>>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>>> Acked-by: Andi Kleen <ak@linux.intel.com>
+>>> ---
+>>>  arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
+>>>  fs/proc/kcore.c              |  7 +++++--
+>>>  include/linux/kcore.h        | 13 +++++++++++++
+>>>  3 files changed, 28 insertions(+), 2 deletions(-)
+>>
+>> This also adds the KCORE_REMAP functionality, but isn't mentioned at all
+>> in the Changelog.
+>>
+>> Still, looks OK I suppose,
+> 
+> I can add a note about that,
+>  
+>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> Thanks, giving it some more hours and will apply and try to test it.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c        |   88 ++++++++++++++++++++++++++++++
- include/dt-bindings/power/mt6765-power.h |   14 +++++
- 2 files changed, 102 insertions(+)
- create mode 100644 include/dt-bindings/power/mt6765-power.h
-
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index 5b24bb4..4bb6c7a 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -23,6 +23,7 @@
- 
- #include <dt-bindings/power/mt2701-power.h>
- #include <dt-bindings/power/mt2712-power.h>
-+#include <dt-bindings/power/mt6765-power.h>
- #include <dt-bindings/power/mt6797-power.h>
- #include <dt-bindings/power/mt7622-power.h>
- #include <dt-bindings/power/mt7623a-power.h>
-@@ -680,6 +681,79 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- };
- 
- /*
-+ * MT6765 power domain support
-+ */
-+#define SPM_PWR_STATUS_MT6765			0x0180
-+#define SPM_PWR_STATUS_2ND_MT6765		0x0184
-+
-+static const struct scp_domain_data scp_domain_data_mt6765[] = {
-+	[MT6765_POWER_DOMAIN_VCODEC] = {
-+		.name = "vcodec",
-+		.sta_mask = BIT(26),
-+		.ctl_offs = 0x300,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT6765_POWER_DOMAIN_ISP] = {
-+		.name = "isp",
-+		.sta_mask = BIT(5),
-+		.ctl_offs = 0x308,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT6765_POWER_DOMAIN_MM] = {
-+		.name = "mm",
-+		.sta_mask = BIT(3),
-+		.ctl_offs = 0x30C,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT6765_POWER_DOMAIN_CONN] = {
-+		.name = "conn",
-+		.sta_mask = BIT(1),
-+		.ctl_offs = 0x32C,
-+		.sram_pdn_bits = 0,
-+		.sram_pdn_ack_bits = 0,
-+	},
-+	[MT6765_POWER_DOMAIN_MFG_ASYNC] = {
-+		.name = "mfg_async",
-+		.sta_mask = BIT(23),
-+		.ctl_offs = 0x334,
-+		.sram_pdn_bits = 0,
-+		.sram_pdn_ack_bits = 0,
-+	},
-+	[MT6765_POWER_DOMAIN_MFG] = {
-+		.name = "mfg",
-+		.sta_mask = BIT(4),
-+		.ctl_offs = 0x338,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+	[MT6765_POWER_DOMAIN_CAM] = {
-+		.name = "cam",
-+		.sta_mask = BIT(25),
-+		.ctl_offs = 0x344,
-+		.sram_pdn_bits = GENMASK(8, 9),
-+		.sram_pdn_ack_bits = GENMASK(12, 13),
-+	},
-+	[MT6765_POWER_DOMAIN_MFG_CORE0] = {
-+		.name = "mfg_core0",
-+		.sta_mask = BIT(7),
-+		.ctl_offs = 0x34C,
-+		.sram_pdn_bits = GENMASK(8, 8),
-+		.sram_pdn_ack_bits = GENMASK(12, 12),
-+	},
-+};
-+
-+static const struct scp_subdomain scp_subdomain_mt6765[] = {
-+	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_CAM},
-+	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_ISP},
-+	{MT6765_POWER_DOMAIN_MM, MT6765_POWER_DOMAIN_VCODEC},
-+	{MT6765_POWER_DOMAIN_MFG_ASYNC, MT6765_POWER_DOMAIN_MFG},
-+	{MT6765_POWER_DOMAIN_MFG, MT6765_POWER_DOMAIN_MFG_CORE0},
-+};
-+
-+/*
-  * MT6797 power domain support
-  */
- 
-@@ -962,6 +1036,17 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 	.bus_prot_reg_update = false,
- };
- 
-+static const struct scp_soc_data mt6765_data = {
-+	.domains = scp_domain_data_mt6765,
-+	.num_domains = ARRAY_SIZE(scp_domain_data_mt6765),
-+	.subdomains = scp_subdomain_mt6765,
-+	.num_subdomains = ARRAY_SIZE(scp_subdomain_mt6765),
-+	.regs = {
-+		.pwr_sta_offs = SPM_PWR_STATUS_MT6765,
-+		.pwr_sta2nd_offs = SPM_PWR_STATUS_2ND_MT6765,
-+	},
-+};
-+
- static const struct scp_soc_data mt6797_data = {
- 	.domains = scp_domain_data_mt6797,
- 	.num_domains = ARRAY_SIZE(scp_domain_data_mt6797),
-@@ -1018,6 +1103,9 @@ static void mtk_register_power_domains(struct platform_device *pdev,
- 		.compatible = "mediatek,mt2712-scpsys",
- 		.data = &mt2712_data,
- 	}, {
-+		.compatible = "mediatek,mt6765-scpsys",
-+		.data = &mt6765_data,
-+	}, {
- 		.compatible = "mediatek,mt6797-scpsys",
- 		.data = &mt6797_data,
- 	}, {
-diff --git a/include/dt-bindings/power/mt6765-power.h b/include/dt-bindings/power/mt6765-power.h
-new file mode 100644
-index 0000000..d347b4e
---- /dev/null
-+++ b/include/dt-bindings/power/mt6765-power.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _DT_BINDINGS_POWER_MT6765_POWER_H
-+#define _DT_BINDINGS_POWER_MT6765_POWER_H
-+
-+#define MT6765_POWER_DOMAIN_CONN		0
-+#define MT6765_POWER_DOMAIN_MM			1
-+#define MT6765_POWER_DOMAIN_MFG_ASYNC		2
-+#define MT6765_POWER_DOMAIN_ISP			3
-+#define MT6765_POWER_DOMAIN_MFG			4
-+#define MT6765_POWER_DOMAIN_MFG_CORE0		5
-+#define MT6765_POWER_DOMAIN_CAM			6
-+#define MT6765_POWER_DOMAIN_VCODEC		7
-+
-+#endif /* _DT_BINDINGS_POWER_MT6765_POWER_H */
--- 
-1.7.9.5
+Any update on this?
 
