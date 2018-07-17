@@ -2,93 +2,162 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32C2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45318ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F8D3205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:17:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D697C2075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:20:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Bl312LO6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8D3205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="sVQtISzH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZsjuopUn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D697C2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbeGQWvq (ORCPT
+        id S1730598AbeGQWym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 18:51:46 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42878 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730043AbeGQWvq (ORCPT
+        Tue, 17 Jul 2018 18:54:42 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:32818 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729741AbeGQWym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 18:51:46 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f4-v6so1052015plb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 15:17:03 -0700 (PDT)
+        Tue, 17 Jul 2018 18:54:42 -0400
+Received: by mail-ua0-f196.google.com with SMTP id i4-v6so1707016uak.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 15:19:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=D/YGTuN6Klw2q4jYEyvzusVSx0bxBDD0pMg2sv98vYQ=;
-        b=Bl312LO6YcCHMiq7AcDLxgvNO1zQNdBNJantnTz6ON1DqvBGqOmYC/V2uYd794Xwlo
-         IHc/L2Gi3Tp1wHWRUb0ckjVDLjaev76lkv33CpmyKJTl3Oixta3xDUZ9HHKg9EnhxWR5
-         UmWxjW1QoQBg+kdB9NBFGcpSsmi7AvPyHqx14DcdOQHA5KJ8l6POZqVnJHR5sLrqQHfU
-         cdQMFXybboUq84IIgWNAq2hDqVmJRzcne5h0G0Q1sCwyuxle4vcLSaaB9esRGltwaUlM
-         VwYGHy6JaB7GEQxHlPKNPaGjFXHVsvQtLrfyDR4pORAp2f68sAwuCUPJAsmwn/amkjuL
-         92pw==
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=hD5CH1IWBFTh7urbsfaAhBZIEtaCLp1PeomeNx1jtwY=;
+        b=sVQtISzHEgMyGyXMcO2mY/LtRqwn/t1G3BKnX9ZbZNJmuYPvdgkLM4xkiGZcWhvSsl
+         rt+k+8AUb2F2yF+MVzIoMjxsQP7UGk8nfecq+vo2rAWaPp79kN9fhd3bGZYiJQaQys6S
+         4K6cYZPMmgX9CoPf/ZNdaRX2u4rKdip9q8TaTaV+DWNN14nD0/Yg7Iilql1E8kcUXmHZ
+         Hr3tbTtHeo3QqdtixfGsm83sRnORp/Kyh3Anf5savoP3bsuee3U4aj4SEQkXVL9JtoWc
+         6mDGR9G2zG17jtMYQWFA2PNUXAYmORS+yoncEO+HIzs4cxxpjkoZdWrBv7CFEhsMWSlT
+         ACZA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=hD5CH1IWBFTh7urbsfaAhBZIEtaCLp1PeomeNx1jtwY=;
+        b=ZsjuopUneWyYX2c7lqvfkPY9vXYeVeVFV/JSibhS3sSI9+46HoQdcfB+L4dQhWIMWH
+         CFnbbVDYhVKWCvBOyGZ06eAJbESIuWkxgzwA1LhMMkYhy4Adpsf8V7ej0Q8uOMCwo6hE
+         QY4v2D00kcxTk2OLV4MNfeOjnkjcl3+1HD+Mo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=D/YGTuN6Klw2q4jYEyvzusVSx0bxBDD0pMg2sv98vYQ=;
-        b=Mp8PkkX5uzV1XNBzueu6UTkmj+xC2D4F3aAlzH67/+7x4YS4ssmehjia0YkJ+V30VL
-         PCO3/oBdGd7yuG1dhFMqVIIvlgijTZ5tnDaKF7eKwfaFtEqr/J89Br9QVVrguQtdcN+G
-         mlSQRgIT8QIYboY5Ol6E/3B0SRtS7uTdsMejB4+ivhoH9HOvHJAH6uX8HIfb6VdyVCV7
-         m9NMex/HGMUgtPuPA/bRllF8Ak50f+9RUjn6/t1bMrwwQuh6pO1f821QZpuFcLiBQ5jO
-         NhE5jxtgGshTNEiYk2NfMgSaMSpMwi9iVy9RBauLWam2phc0CCES7NmqLjpUcCFqvsd6
-         eyww==
-X-Gm-Message-State: AOUpUlFUgnPC5+RNGf8Ze6BbVp0+qDNuDNh6ew7EHq9OqhEIJ+yWJFQe
-        fHi3r7IwREzbtRIJCbzAUJSCMg==
-X-Google-Smtp-Source: AAOMgpdAMelQb/0t1Omb5R+yDd8DkooXfrKShcvdDXO/vsmAY9QXLPQcYP+1dO0KoucBxqnCW7/xMw==
-X-Received: by 2002:a17:902:a981:: with SMTP id bh1-v6mr3307617plb.2.1531865822944;
-        Tue, 17 Jul 2018 15:17:02 -0700 (PDT)
-Received: from [192.168.1.56] (206-212-239-179.static.onlinenw.com. [206.212.239.179])
-        by smtp.gmail.com with ESMTPSA id 1-v6sm3280632pfm.145.2018.07.17.15.17.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 15:17:01 -0700 (PDT)
-Subject: Re: [PATCH] pktcdvd:checkpatch:Remove assignment if condition
-From:   Jens Axboe <axboe@kernel.dk>
-To:     RAGHU Halharvi <raghuhack78@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-References: <20180717170212.17197-1-raghuhack78@gmail.com>
- <96cc7712-bbc3-25fa-06ce-876bd8068f61@kernel.dk>
-Message-ID: <6c46fb77-93d4-a24a-a99e-07242a597b67@kernel.dk>
-Date:   Tue, 17 Jul 2018 16:17:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=hD5CH1IWBFTh7urbsfaAhBZIEtaCLp1PeomeNx1jtwY=;
+        b=tHhhaWT9kQmlWXBFOit3T6xS/eYt41rrMm6n+3swl/BTnM2r5NR9IEo9Jl3k9sM/g4
+         ATdMIPRvpOJB7snt9YIMUutRdlObzULMwq4w5k4UTgfVSh92WzVh4+qbnTBASUgDJAwx
+         rAnYwemu40GX/x8788MKYRV5D3PQM3SM/J2R2pGZfsH4nu4FAAkV5Z3xN+XCIo2NTgxh
+         VOi76cxSwHTfW7yx/g76oVPh0Wz8gAzU2vZmdnfGI3N3B1Xq9yumXmJ/p2l7CUl59zRX
+         ahkJQikqTt3ZjvSCl+2qXkjt0ncj7Cu0r+voUrUrDd8P4O6JTIlN4OS55g67KST9NlvK
+         8fBg==
+X-Gm-Message-State: AOUpUlGi3YycJaGKRiFAFbANmMdG8FDiADIL6IHKHv01kLQSmaFYYVUF
+        ngwlx3xKhJbrwOKqk8ELkGUi82mdqR6XhuMw9tlVqQ==
+X-Google-Smtp-Source: AAOMgpfMq7mqPlBaLLdbs7VU09nWiMSGB6ofMN18SdE01yBhREYnSQQGodYJdMgjxdkemFYHQhOu/JM4nlZGGYUdn58=
+X-Received: by 2002:ab0:4364:: with SMTP id k91-v6mr2357034uak.46.1531865996679;
+ Tue, 17 Jul 2018 15:19:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <96cc7712-bbc3-25fa-06ce-876bd8068f61@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a1f:cd5:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 15:19:55 -0700 (PDT)
+In-Reply-To: <1530827202-9997-1-git-send-email-girishm@codeaurora.org>
+References: <1530827202-9997-1-git-send-email-girishm@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 17 Jul 2018 15:19:55 -0700
+X-Google-Sender-Auth: eXUhOp8uphtV88cFlT2gDmI-h3Q
+Message-ID: <CAD=FV=W1LA3XFDDhD7wZOWF2wLoGA1xTbKkXJDj0t_BE13J0BA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: spi: Qualcomm Quad SPI(QSPI) documentation
+To:     Girish Mahadevan <girishm@codeaurora.org>
+Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/17/18 4:14 PM, Jens Axboe wrote:
-> On 7/17/18 11:02 AM, RAGHU Halharvi wrote:
->> * Remove checkpatch errors caused due to assignment operation in if
->> condition
-> 
-> Applied all three patches, thanks.
+Hi,
 
-I take that back, only patch #1 actually applies. Please resend the
-other two in a series, which apply to my for-4.19/block branch.
+On Thu, Jul 5, 2018 at 2:46 PM, Girish Mahadevan <girishm@codeaurora.org> wrote:
+> Signed-off-by: Girish Mahadevan <girishm@codeaurora.org>
+> ---
+>  .../devicetree/bindings/spi/qcom,spi-qcom-qspi.txt | 36 ++++++++++++++++++++++
+>  err.txt                                            | 27 ----------------
+>  2 files changed, 36 insertions(+), 27 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+>  delete mode 100644 err.txt
+>
+> diff --git a/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+> new file mode 100644
+> index 0000000..3baa893
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/qcom,spi-qcom-qspi.txt
+> @@ -0,0 +1,36 @@
+> +QTI [Qualcomm Technologies Inc] Quad Serial Peripheral Interface (QSPI)
+> +
+> +QSPI [Quad Serial Peripheral Interface] allows single dual and quad read/write
+> +access to slaves. QTI's QSPI controller implements the QSPI protocol to interface
+> +with slaves like NOR Flash devices.
+> +
+> +Required properties:
+> +- compatible:  Should contain:
+> +               "qcom,qspi-v1"
+> +- reg:         Contains the base register location and length
+> +- interrupts:  Interrupt number used by the controller.
+> +- clocks:      Contains the core and AHB clock names.
+> +- clock-names: "core" for core clock and "iface" for AHB clock.
+> +- spi-max-frequency:   Maximum SPI core clock frequency in Hz.
+> +
+> +SPI slave nodes must be children of the SPI master node and can contain
+> +properties described in Documentation/devicetree/bindings/spi/spi-bus.txt
+> +
+> +Example:
+> +
+> +       qspi: qspi@7418000 {
+> +               compatible = "qcom,qspi-v1";
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               reg = <0x7418000 0x600>;
+> +               interrupts = <0 459 0>;
 
--- 
-Jens Axboe
+Please use a more proper interrupts example, AKA:
+    interrupts = <GIC_SPI 459 IRQ_TYPE_LEVEL_HIGH>;
 
+
+> +               clock-names = "iface", "core";
+> +               clocks = <&clock_gcc clk_gcc_qspi_ahb_clk>,
+> +                        <&clock_gcc clk_gcc_qspi_ser_clk>;
+
+In upstream I believe that the clock #defines are usually in ALL CAPS.
+Maybe good to use that in your example.  In the clock patches I'm
+hoping to send up for SDM845, for instance, this will be:
+
+clocks = <&gcc GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
+    <&gcc GCC_QSPI_CORE_CLK>;
+
+
+> +
+> +               device@0 {
+> +                       compatible = "dummy_device";
+> +                       reg = <x>; /* CS for the device */
+> +                       spi-max-frequency = <f>; /* Max supported frequency of the slave (Hz) */
+
+Since you are a Quad SPI controller, maybe you'd want your example to
+include how to enable that?  AKA:
+
+spi-tx-bus-width = <4>;
+spi-rx-bus-width = <4>;
+
+
+-Doug
