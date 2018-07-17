@@ -2,103 +2,109 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7594AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA7BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:48:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2940B2077B
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:47:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2940B2077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziswiler.com
+	by mail.kernel.org (Postfix) with ESMTP id C84A520C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:48:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XJ7CvU2w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84A520C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbeGQJTE (ORCPT
+        id S1729664AbeGQJUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:19:04 -0400
-Received: from mout.perfora.net ([74.208.4.197]:38025 "EHLO mout.perfora.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbeGQJTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:19:04 -0400
-Received: from localhost.localdomain.toradex.int ([46.140.72.82]) by
- mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPA (Nemesis) id
- 0MdMM1-1fO5zM0bi7-00IW4H; Tue, 17 Jul 2018 10:46:27 +0200
-From:   Marcel Ziswiler <marcel@ziswiler.com>
-To:     linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        boris.brezillon@bootlin.com, miquel.raynal@bootlin.com
-Cc:     dev@lynxeye.de, mirza.krak@gmail.com, benjamin.lindqvist@endian.se,
-        krzk@kernel.org, marek.vasut@gmail.com, richard@nod.at,
-        digetx@gmail.com, computersforpeace@gmail.com, dwmw2@infradead.org,
-        dan.carpenter@oracle.com,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v2] mtd: rawnand: tegra: check bounds of die_nr properly
-Date:   Tue, 17 Jul 2018 10:46:18 +0200
-Message-Id: <20180717084618.25249-1-marcel@ziswiler.com>
-X-Mailer: git-send-email 2.14.4
-X-Provags-ID: V03:K1:cwxPbZn/B9YMA3utdimZ5G+gGaG+2hAP57u4ETYDnApc6wrEkOC
- 2aGtq0w7IdRMieNlM+h84x/7xpXiYh6ldj3kkHwGIx4k27T5sW4TcEIyL8sKM6he0EewBvf
- SS2M/0jzTZUng6MKft4lGhRp/6kjoWJAVLD3Klg3wadwg9qCBJybkSOWudZ26WWsVcYo1D+
- QW3aQGbkafG7HgXYF59Lg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:jO9ycJ2SoQg=:xRXk7nSm18P5HMsGwGWoue
- Z0TUcAsm/fhHQnLnIp1J2ozQPaEzrWTXzBjoJ23Lmlj8ZTVKtO6EwJnvsGKejDZpUIUAu/+QD
- Iimvw63w/yYPa9KKpGAQOm8ShhtGNVIY3tiqQ1rEqiUNglGNFU9jlRiTFrn97gZN2Y7zXD5dN
- Hakk9ajIbsshmsGKpbzdnn1ajvcLbNuuo5idipLZKZ69XB7CjgYtHpY+yUgF0/BETEvrGas+w
- txzE3/0Ku3wTIFY+Wpc9z+IslpNRZMFo9TVmaOD9wmo6fBvLpHX9HAr32A01AU20yQc8p/F9Q
- 6I9YWZ09TYlvcqBVcekgvX3KornsbBdDPijeq5bfXpZw4YpDpS+7qBgngeuCzIxmQDveYWJMH
- bggoKs54fNTlQ2aPHN8borvbQFhhS0wSbe5IRnZeUtnWW0O7kMcuwfItnZKuZ85LZXMG408xx
- Li+o0FSuOnA8iSqy6HNDgFtlMCj8VCzZh0GSz5kU2+zcu5MihA67xdjzRCGOftXV+eDG3neF6
- vNBTvhPrA53RNmeYYl3UVR9iJ8DBT/EOBs2RAirEJ/a6vd/kEnWXXHTVYflFcot5cx96of1fA
- Km6Fr8aMPRtOu+rF7HYqfU8EVwVZD+vK2evJI1IK8Jin8lD3ot/E8TbVMPfXDehcnmIX9uYX+
- fINsOMqS1uMOHLsh4K0aLLmC2CgZfIu7RkOeq0UZYxvLB1EFO6Kgjl6R76w7ZjsgZ8CI=
+        Tue, 17 Jul 2018 05:20:08 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35412 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728624AbeGQJUI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 05:20:08 -0400
+Received: by mail-wm0-f68.google.com with SMTP id y22-v6so655066wma.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 01:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YsUBJbK6QfW3n/j1Hb4Fk31inSrLXIeIFA4IppZCSFc=;
+        b=XJ7CvU2wqUhxagL51ier5M3VPk7nBdy5k6k1hGv57Tl6pVyabWgH1/7zHAqjqj49ti
+         qEsXltsL2rkn/um6Sz3f8JhzH4tFs9L7ObKqXdAks30whcmfCNl/hNIgiup69+q/XTig
+         m68Auuvs22IalKto1n38WlR/MouQTLxkU8Jmw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YsUBJbK6QfW3n/j1Hb4Fk31inSrLXIeIFA4IppZCSFc=;
+        b=Vm/VXeDUOvy6XwhyCNzfEOJWo5LLRYtJK5BH4oqiE0tIEmK8z8vGRld3ZKg2rJBFpn
+         QHgasjCD6YwWGygQYCcFMVFkzDpAGr0YU2DyMMkZkmZjusn4Ipi9KbSbtKp7V2ZoAm+z
+         c8gDr2RtBi7zHZ3smGNfz8JwAj6aMUe6IJMYA2PEA0OKIpigxf39NYa80QD69pVapL0S
+         /LN26NmOtYZvXcVCtat2IGF9cZ9nzETdqA0xFG2j66FOWiXYQvjLkBYI+Z6pSeu3NLad
+         zDp7TfFXUAxUAuNF2i9bHBrJryGTdZwFScfiXS9zDc7S42EzKVL/0HlTmc025Qzrd8ma
+         Fx0g==
+X-Gm-Message-State: AOUpUlFoBR39s+ZuzCzOgZ2gAKA5JI3/cyBOg2Ak2vwq4UC4wua2/WEK
+        GuInyFj1k6evqzjokELPL3SnEQF0aDM=
+X-Google-Smtp-Source: AAOMgpfoG3blF0YZbRRikRBXAE2zF2f+QeMGcnxcA6HoxMRUEiQa1uCKkSTszw1TGyf6GvaBhEEN8w==
+X-Received: by 2002:a1c:20cb:: with SMTP id g194-v6mr752789wmg.102.1531817315171;
+        Tue, 17 Jul 2018 01:48:35 -0700 (PDT)
+Received: from [192.168.8.101] ([37.168.37.237])
+        by smtp.googlemail.com with ESMTPSA id r1-v6sm362780wrs.39.2018.07.17.01.48.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 01:48:34 -0700 (PDT)
+Subject: Re: [PATCH 1/2] time: Introduce one suspend clocksource to compensate
+ the suspend time
+To:     Baolin Wang <baolin.wang@linaro.org>, tglx@linutronix.de,
+        john.stultz@linaro.org, sboyd@kernel.org, arnd@arndb.de,
+        broonie@kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <c233469f487d9e187de3fdaf79db4e1a7ca7486d.1531812082.git.baolin.wang@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <9efe5275-e429-76c7-7746-7750c8fd4203@linaro.org>
+Date:   Tue, 17 Jul 2018 10:48:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <c233469f487d9e187de3fdaf79db4e1a7ca7486d.1531812082.git.baolin.wang@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+On 17/07/2018 09:55, Baolin Wang wrote:
+> On some hardware with multiple clocksources, we have coarse grained
+> clocksources that support the CLOCK_SOURCE_SUSPEND_NONSTOP flag, but
+> which are less than ideal for timekeeping whereas other clocksources
+> can be better candidates but halt on suspend.
+> 
+> Currently, the timekeeping core only supports timing suspend using
+> CLOCK_SOURCE_SUSPEND_NONSTOP clocksources if that clocksource is the
+> current clocksource for timekeeping.
+> 
+> As a result, some architectures try to implement read_persistent_clock64()
+> using those non-stop clocksources, but isn't really ideal, which will
+> introduce more duplicate code. To fix this, provide logic to allow a
+> registered SUSPEND_NONSTOP clocksource, which isn't the current
+> clocksource, to be used to calculate the suspend time.
+> 
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
 
-The Tegra driver currently only support a single chip select, hence
-check boundaries accordingly. This fixes a off by one issue catched
-with Smatch:
-    drivers/mtd/nand/raw/tegra_nand.c:476 tegra_nand_select_chip()
-    warn: array off by one? 'nand->cs[die_nr]'
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Also warn in case the stack asks for a chip select we currently do
-not support.
 
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-
----
-
-Changes in v2:
-- Fixed comparison between signed integer die_nr and unsigned ARRAY_SIZE.
-
- drivers/mtd/nand/raw/tegra_nand.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegra_nand.c
-index 9f7de36be893..56c0aa1bc81f 100644
---- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -468,7 +468,9 @@ static void tegra_nand_select_chip(struct mtd_info *mtd, int die_nr)
- 	struct tegra_nand_chip *nand = to_tegra_chip(chip);
- 	struct tegra_nand_controller *ctrl = to_tegra_ctrl(chip->controller);
- 
--	if (die_nr < 0 || die_nr > 1) {
-+	WARN_ON(die_nr >= (int)ARRAY_SIZE(nand->cs));
-+
-+	if (die_nr < 0 || die_nr > 0) {
- 		ctrl->cur_cs = -1;
- 		return;
- 	}
 -- 
-2.14.4
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
