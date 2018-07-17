@@ -1,140 +1,186 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FAKE_REPLY_C,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA05ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D2E8ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F70320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3594F20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCnH8Now"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F70320693
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5nOakqx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3594F20693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeGQT5s (ORCPT
+        id S1730052AbeGQUCN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 15:57:48 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:38326 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729730AbeGQT5s (ORCPT
+        Tue, 17 Jul 2018 16:02:13 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:46148 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729737AbeGQUCN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 15:57:48 -0400
-Received: by mail-yb0-f196.google.com with SMTP id i9-v6so875171ybo.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 12:23:45 -0700 (PDT)
+        Tue, 17 Jul 2018 16:02:13 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 30-v6so881249pld.13;
+        Tue, 17 Jul 2018 12:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=HG2oRehlFdsqyKpdamp8CzUmeyowAhmUlDH6NKCgm5M=;
-        b=iCnH8NowZt2ydSjMaH8+VJ4OQ9GvWbSKZtdpvMa007mUoSxWe7U38mYmAzgY50ARAc
-         PXxb7L6GMmb1Uc4L1Y/+SEQCrO2WNiMnyS6mbMnzvPTOLZjDewJUxLxg4pt6qilCwLGj
-         ZALLsVCu61iTaSEJ3aVAx5n5mlAUujotujrNVOz8AZ1Z6FAZyaempsl8NRZ5EcmPZB9/
-         5+4KggUMADl7kceBKn/aWqlKvEBBgHSW6sFio2ldmuL//TEydJcsgJhZBl/0L0HSDPuI
-         HUMxO+Za5v6VJ3cV+aXvEFGgp1gbN1PFPMoveejlyOBU837A56Alwb45p0LwcHW/GR8z
-         iMMw==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=1Knnd+V32HjVtLDxmw3Hp1WE5hR4HzI9y9e5WTMUyQg=;
+        b=D5nOakqx1fZZRox3jtqIE5/ycwQAsZowIjRSQMyxPyCCaQS6PL//ozM+xbJMiSiw4C
+         E+W7EelZPhuepYXoWDVN8aMKvCYIisFWX+VHHibYSCCDn4Rq0U6k6OUc/8MgsiVh1Kia
+         SU4jQFPHhOkZ6tG+PykzJBVG9mOE1XchXjl4DqXfap20QN6ltXnALelEY2D6TZKG4zLE
+         0yNby8IcmUN87rD/MzoJwMnc9gbl2I2oeDn1T+LPchOLBbac5FFo/wzofTWEXHxveyeB
+         FpXdzzQbw2BrNgwpfBIDC14kT/otokf7x9guTrNG/KRStF6QPKc1dBaMVOA6lnJ8uqHo
+         bKaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=HG2oRehlFdsqyKpdamp8CzUmeyowAhmUlDH6NKCgm5M=;
-        b=g6LRU7blYv2SxIXm1jZHETaXjNGqeQBqHFpOVhNV9UNvX/Xt1IA/0/i0TShf09jhOc
-         PXTAC7i4Neg9sMiO78SHhTbThI3BnUMz73s65C9A4pOpD45PsWjBKeJnts9qVfr97Ydb
-         wO0VCGinwEuXf6Qf0kYR2IhsFXRDYNmuUeG52K4/DKhnDHbOzSYjUas0yEKQxpLMWBUh
-         MSZi1z/mUcL8LTsNn4ORldrqS+Fp8pMFH3D1k0ZIV4KHGDuZ1X1PLB1Q4OPpNT790KOg
-         I5TY/JK3vcYBOcQ3SE3IgLURxADxiPeXILCicz+exstPfaeGaeo+xG1dqyEmg02WCO9c
-         5DJg==
-X-Gm-Message-State: AOUpUlGQ6n4gEOXxy7DeWM/nreugGv2nRzkoGXxpNUXhTpsssczgN+8Q
-        +8Oa5Kjj7g0KEAeuBMNowv4pScfQeE4OCYHkQKI=
-X-Google-Smtp-Source: AAOMgpfOUZvRy3eYAuEJgVX892Ab77FcVRIYyiYqJiFuwOYpiTNMrL+S6nPKT9pcaQlOmpEX4JvjB71R5laxURNxxbo=
-X-Received: by 2002:a25:69c2:: with SMTP id e185-v6mr1635188ybc.366.1531855424583;
- Tue, 17 Jul 2018 12:23:44 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1Knnd+V32HjVtLDxmw3Hp1WE5hR4HzI9y9e5WTMUyQg=;
+        b=TV2+aoisINigzD93BvBsv4yFbMNNmXnfYt7nNwAWy/XpzATepHMfUbFH4lj1/evFlN
+         XcbxYcZwHJrysH+6pMwTCo24JZ6dbgvqhm6By4U3Q8AmK86vAu8gNPzT/FKEseVJh5m1
+         wwu3qu2Ad30BJHKnSGJ758VBgMukg/D3nJaM8001Cxo1qWzbWQfFAcRJwSmcO94r+11S
+         XcCsglM/Yc8dIwftF+Si4+qPpjcn1fDnnpVBXXp4yoYccbuMFDzpUCGV3LFIIbXedqPd
+         +2EGB409ccSTrYMEPfhwrXAVLin+62FXcRd5UETK4QYxtxPxaQD3HqwGucMgl2XV+2ek
+         RLZQ==
+X-Gm-Message-State: AOUpUlGKTdlelIewG8KNPAUTvK0GR5TYeMxKc5y6mm9/kr6aCqR95D6V
+        bIxH1Ut+tzIZeeSHG1gO/GE=
+X-Google-Smtp-Source: AAOMgpfIM+MPMSl9HJ8uV5iV55nnMhTEAhXanm7BALsQWAC7c3/OLj7fHiNzl+3DrU2/ljbe1j76Pg==
+X-Received: by 2002:a17:902:22:: with SMTP id 31-v6mr2884773pla.332.1531855688762;
+        Tue, 17 Jul 2018 12:28:08 -0700 (PDT)
+Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm2165493pgv.61.2018.07.17.12.28.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 12:28:08 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 12:28:06 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Cc:     syzbot <syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: kernel BUG at fs/userfaultfd.c:LINE! (2)
+Message-ID: <20180717192806.GI75957@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:5e42:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 12:23:44
- -0700 (PDT)
-In-Reply-To: <20180717103715.k3cu7jiv4333aq4k@mwanda>
-References: <20180717020926.176408-1-toddpoynor@gmail.com> <20180717020926.176408-28-toddpoynor@gmail.com>
- <20180717103715.k3cu7jiv4333aq4k@mwanda>
-From:   Todd Poynor <toddpoynor@gmail.com>
-Date:   Tue, 17 Jul 2018 12:23:44 -0700
-Message-ID: <CAO3upoaEbcSxsmtaBK7gZ1i-SA78vOR0KKxCj4Q0XF1zZHH6vA@mail.gmail.com>
-Subject: Re: [PATCH 27/32] staging: gasket: remove else clause after return in
- if clause
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, Zhongze Hu <frankhu@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Simon Que <sque@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Todd Poynor <toddpoynor@google.com>,
-        Dmitry Torokhov <dtor@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000dcb1a1057112c66a@google.com>
+User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 3:37 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> On Mon, Jul 16, 2018 at 07:09:21PM -0700, Todd Poynor wrote:
->> From: Todd Poynor <toddpoynor@google.com>
->>
->> Else after return is unnecessary and may cause static code checkers to
->> complain.
->>
->> Reported-by: Guenter Roeck <groeck@chromium.org>
->> Signed-off-by: Simon Que <sque@chromium.org>
->> Signed-off-by: Todd Poynor <toddpoynor@google.com>
->> ---
->>  drivers/staging/gasket/gasket_page_table.c | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
->> index 2a27db658a4e4..080bf78c22c3b 100644
->> --- a/drivers/staging/gasket/gasket_page_table.c
->> +++ b/drivers/staging/gasket/gasket_page_table.c
->> @@ -598,9 +598,8 @@ bool gasket_page_table_is_dev_addr_bad(
->>       if (gasket_addr_is_simple(pg_tbl, dev_addr))
->>               return gasket_is_simple_dev_addr_bad(
->>                       pg_tbl, dev_addr, num_pages);
->> -     else
->> -             return gasket_is_extended_dev_addr_bad(
->> -                     pg_tbl, dev_addr, num_pages);
->> +     return gasket_is_extended_dev_addr_bad(
->> +             pg_tbl, dev_addr, num_pages);
->
-> This isn't the normal way to break up a line.  It might even cause
-> problems if you run with checkpatch.pl --strict.  And anyway this fits
-> on one line:
->
->         return gasket_is_extended_dev_addr_bad(pg_tbl, dev_addr, num_pages);
->
-> But normally we would do:
->
->         return gasket_is_extended_dev_addr_bad(pg_tbl, dev_addr, num_pages,
->                                                wha'ever, blah, blah, blah);
->
-> There are times when that looks a bit ugly if the variable names are
-> long so we could do:
->
->         return gasket_is_extended_dev_addr_bad(
->                                 long_variable_name_asdfasdfaasdf,
->                                 pg_tbl, dev_addr);
->
-> But generally try to get a couple tabs in from the start of the function
-> name.
+[+Cc userfaultfd developers and linux-mm]
 
-Got it, fixed in v3, thanks -- Todd
+The reproducer hits the BUG_ON() in userfaultfd_release():
 
->
-> regards,
-> dan carpenter
->
+	BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
+	       !!(vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP)));
+
+On Sun, Jul 15, 2018 at 05:19:03PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    37b5dca2898d Merge tag 'rtc-4.18-2' of git://git.kernel.or..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12aaf3b2400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=121be635a7a35ddb7dcb
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11176d62400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1362b368400000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com
+> 
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> random: sshd: uninitialized urandom read (32 bytes read)
+> ------------[ cut here ]------------
+> kernel BUG at fs/userfaultfd.c:883!
+> invalid opcode: 0000 [#1] SMP KASAN
+> CPU: 0 PID: 4708 Comm: syz-executor086 Not tainted 4.18.0-rc4+ #148
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:userfaultfd_release+0x5fb/0x770 fs/userfaultfd.c:882
+> Code: 00 31 c0 48 8b 4d d0 65 48 33 0c 25 28 00 00 00 0f 85 a1 00 00 00 48
+> 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 be a0 ff <0f> 0b 4c 89 f7 e8
+> 0b 9e de ff e9 11 fc ff ff 4c 89 e7 e8 5e 9d de
+> RSP: 0018:ffff8801d8407a80 EFLAGS: 00010293
+> RAX: ffff8801d8742080 RBX: dffffc0000000000 RCX: ffffffff81db4a59
+> RDX: 0000000000000000 RSI: ffffffff81db4ccb RDI: 0000000000000000
+> RBP: ffff8801d8407bd0 R08: ffff8801d8742080 R09: 0000000000000000
+> R10: ffff8801d87428b8 R11: 16fb0df9f74494d6 R12: ffff8801d89a3b58
+> R13: 0000000000000000 R14: ffff8801d89a3a50 R15: 0000000000000000
+> FS:  0000000000ed6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f45c6b81e78 CR3: 00000001acb61000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  __fput+0x355/0x8b0 fs/file_table.c:209
+>  ____fput+0x15/0x20 fs/file_table.c:243
+>  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+>  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+>  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
+>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x405471
+> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 54 17 00 00 c3 48
+> 83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89
+> c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> RSP: 002b:00007ffcad3db600 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000405471
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
+> RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00007ffcad3db610 R11: 0000000000000293 R12: 00000000006dbc3c
+> R13: 00000000006dbda0 R14: 0000000000000008 R15: 0000000000000001
+> Modules linked in:
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> ---[ end trace 638e68cedadb8eda ]---
+> RIP: 0010:userfaultfd_release+0x5fb/0x770 fs/userfaultfd.c:882
+> Code: 00 31 c0 48 8b 4d d0 65 48 33 0c 25 28 00 00 00 0f 85 a1 00 00 00 48
+> 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 be a0 ff <0f> 0b 4c 89 f7 e8
+> 0b 9e de ff e9 11 fc ff ff 4c 89 e7 e8 5e 9d de
+> RSP: 0018:ffff8801d8407a80 EFLAGS: 00010293
+> RAX: ffff8801d8742080 RBX: dffffc0000000000 RCX: ffffffff81db4a59
+> RDX: 0000000000000000 RSI: ffffffff81db4ccb RDI: 0000000000000000
+> RBP: ffff8801d8407bd0 R08: ffff8801d8742080 R09: 0000000000000000
+> R10: ffff8801d87428b8 R11: 16fb0df9f74494d6 R12: ffff8801d89a3b58
+> R13: 0000000000000000 R14: ffff8801d89a3a50 R15: 0000000000000000
+> FS:  0000000000ed6880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f45c6b81e78 CR3: 00000001acb61000 CR4: 00000000001406f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000dcb1a1057112c66a%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
