@@ -2,202 +2,328 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56082ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470A6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A1820C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:23:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XVX7CYxB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A1820C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F260020C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:23:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F260020C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbeGQMzf (ORCPT
+        id S1731520AbeGQMzv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:55:35 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44602 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728330AbeGQMzf (ORCPT
+        Tue, 17 Jul 2018 08:55:51 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:4984 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731439AbeGQMzv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:55:35 -0400
-Received: by mail-ed1-f67.google.com with SMTP id f23-v6so1029924edr.11;
-        Tue, 17 Jul 2018 05:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=lWP9m7b+vcMFhzrD5h/3o0/wQVt82MsKRXdQcguKX2Q=;
-        b=XVX7CYxB8sT4nfqigd0YJyO2VrzHPQK54qyBZwFMSQQomeF3hb3x0y0QSiYw2FLFbT
-         DutQ1rhRPjksPc5TJvdglAJACLKCrareUJKrq3HiGSoEkDXaZC/5NuVOFTYtPXxmkecA
-         5tWYpW69tBeMrnFSagVKMmsn0IyWymXZxxwM+p2AvsAgVrW4D//WAm6hdnGxEfKrYhCg
-         Ye0F0GEM3Xd+rehkFq3hLrzHL6rtRdk/vb/O5rWItQH+1qvaUEyEycxYdrxbSNfxm7BD
-         6zy4aDPX4mKEOxlg86ucdlsIxBHwsGGAqfPAnQY+Pk3xxu7npP2cztzV1urRVFXnx4V8
-         xiGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=lWP9m7b+vcMFhzrD5h/3o0/wQVt82MsKRXdQcguKX2Q=;
-        b=j25OJZxX524wUC6+jDiVKOjSoHSM5tButMbmXD3vVhO3yb8IAIWR5gg7z2fFlcBtiR
-         Mbyo11dLjE4C+ne/zj0BYH6GFjVynFVHIquYGJwQ3SZOFX8A4BAtNVaZADmBAKkHOWkr
-         BTPfDrZhZakbM/YwHhTIPMSH0J6vG5AgvKyt/5kFH7TQ/i0RuBW/x32w6N5/SOXOMp9n
-         GtNx9huL8lGgSTD0I89gaJddcGc78NiuKQgQmuSFJpSflS/gJzdq4CtM3IxJa1zEneyB
-         ZM6l0NuIrbxty71tL71elBeTEuFfUjBC9NkowuQntLVkejRqYx8x6DLS1sigAQHTgAtY
-         FNqg==
-X-Gm-Message-State: AOUpUlH/2P2A2siGpI36uwe9uJUTigEgexcTwoNGqpgNwMvjnK4iT+So
-        eaPaGi6poCyB9QPdlcG/4Jqnf8JyyxTcHQgy4f+eMA==
-X-Google-Smtp-Source: AAOMgpdLoYOrW8D6z6S0KKAu8MT4pIPDZNxVjWdxAQre9jJIFKRz9AQs+AZ9efgx8V9goqFvODf8voveoWug/6cOSQ4=
-X-Received: by 2002:a50:fb91:: with SMTP id e17-v6mr2343565edq.308.1531830188208;
- Tue, 17 Jul 2018 05:23:08 -0700 (PDT)
+        Tue, 17 Jul 2018 08:55:51 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b4ddfb90000>; Tue, 17 Jul 2018 05:23:21 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 17 Jul 2018 05:23:26 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 17 Jul 2018 05:23:26 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 17 Jul
+ 2018 12:23:23 +0000
+Date:   Tue, 17 Jul 2018 15:23:18 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Mikko Perttunen" <mperttunen@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 5/7] dt-bindings: Add Tegra PMC pad configuration
+ bindings
+Message-ID: <20180717152318.3608e3f9@dhcp-10-21-25-168>
+In-Reply-To: <20180716154309.GA16477@rob-hp-laptop>
+References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
+        <1531396813-6581-6-git-send-email-avienamo@nvidia.com>
+        <20180716154309.GA16477@rob-hp-laptop>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Received: by 2002:a50:f988:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:22:37
- -0700 (PDT)
-In-Reply-To: <20180709151947.940759-1-arnd@arndb.de>
-References: <20180709151947.940759-1-arnd@arndb.de>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 17 Jul 2018 13:22:37 +0100
-Message-ID: <CA+V-a8vw_4t7srk2wxp_W7QDN8-Vwj=OC8bvyvpzyTyhXnHLEA@mail.gmail.com>
-Subject: Re: [PATCH] headers: fix linux/mod_devicetable.h inclusions
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gabriel Somlo <somlo@cmu.edu>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Jean-Christophe Trotin <jean-christophe.trotin@st.com>,
-        Zha Qipeng <qipeng.zha@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
-        qemu-devel@nongnu.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, platform-driver-x86@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 4:19 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> A couple of drivers produced build errors after the mod_devicetable.h
-> header was split out from the platform_device one, e.g.
->
-> drivers/media/platform/davinci/vpbe_osd.c:42:40: error: array type has incomplete element type 'struct platform_device_id'
-> drivers/media/platform/davinci/vpbe_venc.c:42:40: error: array type has incomplete element type 'struct platform_device_id'
->
+On Mon, 16 Jul 2018 09:43:09 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-For the above fixes,
+> On Thu, Jul 12, 2018 at 03:00:11PM +0300, Aapo Vienamo wrote:
+> > Document the pinctrl bindings used by the PMC driver for performing pad
+> > configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
+> > are modified as they both cover SoC generations for which these bindings
+> > apply.
+> > 
+> > Add a header defining Tegra PMC pad voltage configurations.
+> > 
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> > ---
+> >  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 84 +++++++++++++++++++
+> >  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 95 ++++++++++++++++++++++
+> >  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h | 18 ++++
+> >  3 files changed, 197 insertions(+)
+> >  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > index 5a3bf7c..9528f41 100644
+> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> > @@ -34,3 +34,87 @@ Board DTS:
+> >  	pmc@c360000 {
+> >  		nvidia,invert-interrupt;
+> >  	};
+> > +
+> > +== Pad Control Nodes ==
+> > +
+> > +The PMC can be used to set pad power state and voltage configuration.
+> > +The pad configuration is done via the pinctrl framework. The driver
+> > +implements power-source, low-power-enable, and low-power-disable pinconf
+> > +pin configuration node properties. Each pinctrl pin corresponds to a
+> > +single Tegra PMC pad. Thus, in the following sections of this document
+> > +pin refers to the pinctrl frameworks notion of a Tegra PMC pad.  
+> 
+> "pinctrl framework" is Linux specific and doesn't belong in the binding. 
+> Neither does what a driver supports. Describe what the h/w supports.
+> 
+> > +
+> > +The pad configuration state nodes are placed under the pmc node and they
+> > +are referred to by the pinctrl client device properties. For more  
+> 
+> Another driver detail not relevant.
+> 
+> > +information see the examples presented later and  
+> 
+> examples don't document bindings. The documentation should be complete 
+> without examples.
+> 
+> > +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> > +
+> > +The values accepted by power-source property are
+> > +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> > +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.  
+> 
+> You need to list out what properties the child nodes can have.
+> 
+> power-source needs a vendor prefix.
 
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Isn't it a generic pinctrl property?
 
-Regards,
---Prabhakar Lad
+> > +
+> > +Following pinctrl pin name strings are present on Tegra186:
+> > +csia		csib		dsi		mipi-bias
+> > +pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
+> > +usb0		usb1		usb2		usb-bias
+> > +uart		audio		hsic		dbg
+> > +hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
+> > +sdmmc4		cam		dsib		dsic
+> > +dsid		csic		csid		csie
+> > +dsif		spi		ufs		dmic-hv
+> > +edp		sdmmc1-hv	sdmmc3-hv	conn
+> > +audio-hv	ao-hv
+> > +
+> > +All of the listed Tegra186 pins except ao-hv support the
+> > +low-power-enable and low-power-disable properties. The power-source
+> > +property is supported following Tegra210 pins: sdmmc2-hv, dmic-hv,
+> > +sdmmc1-hv, sdmmc3-hv, audio-hv, ao-hv.
+> > +
+> > +Pad configuration state example:
+> > +	pmc: pmc@7000e400 {
+> > +		compatible = "nvidia,tegra186-pmc";
+> > +		reg = <0 0x0c360000 0 0x10000>,
+> > +		      <0 0x0c370000 0 0x10000>,
+> > +		      <0 0x0c380000 0 0x10000>,
+> > +		      <0 0x0c390000 0 0x10000>;
+> > +		reg-names = "pmc", "wake", "aotag", "scratch";
+> > +
+> > +		...
+> > +
+> > +		sdmmc1_3v3: sdmmc1-3v3 {
+> > +			pins = "sdmmc1-hv";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> > +		};
+> > +
+> > +		sdmmc1_1v8: sdmmc1-1v8 {
+> > +			pins = "sdmmc1-hv";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> > +		};
+> > +
+> > +		hdmi_off: hdmi-off {
+> > +			pins = "hdmi";
+> > +			low-power-enable;
+> > +		}
+> > +
+> > +		hdmi_on: hdmi-on {
+> > +			pins = "hdmi";
+> > +			low-power-disable;
+> > +		}
+> > +	};
+> > +
+> > +Pinctrl client example:
+> > +	sdmmc1: sdhci@3400000 {
+> > +		...
+> > +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> > +		pinctrl-0 = <&sdmmc1_3v3>;
+> > +		pinctrl-1 = <&sdmmc1_1v8>;
+> > +	};
+> > +
+> > +	...
+> > +
+> > +	sor0: sor@15540000 {
+> > +		...
+> > +		pinctrl-0 = <&hdmi_off>;
+> > +		pinctrl-1 = <&hdmi_on>;
+> > +		pinctrl-names = "hdmi-on", "hdmi-off";
+> > +	};
+> > diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > index a74b37b..d50a505 100644
+> > --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> > @@ -195,3 +195,98 @@ Example:
+> >  		power-domains = <&pd_audio>;
+> >  		...
+> >  	};
+> > +
+> > +== Pad Control Nodes ==  
+> 
+> Similar comments in this file.
+> 
+> > +
+> > +The PMC can be used to set pad power state and voltage configuration.
+> > +This functionality is present on SoCs from Tegra124 onwards. The pad
+> > +configuration is done via the pinctrl framework. The driver implements
+> > +power-source, low-power-enable, and low-power-disable pinconf pin
+> > +configuration node properties. Each pinctrl pin corresponds to a single
+> > +Tegra PMC pad. Thus, in the following sections of this document pin
+> > +refers to the pinctrl frameworks notion of a Tegra PMC pad.
+> > +
+> > +The pad configuration state nodes are placed under the pmc node and they
+> > +are referred to by the pinctrl client device properties. For more
+> > +information see the examples presented later and
+> > +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> > +
+> > +The values accepted by power-source property are
+> > +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> > +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+> > +
+> > +Following pinctrl pin name strings are present on Tegra124 and Tegra132:
+> > +audio		bb		cam		comp
+> > +csia		csb		cse		dsi
+> > +dsib		dsic		dsid		hdmi
+> > +hsic		hv		lvds		mipi-bias
+> > +nand		pex-bias	pex-clk1	pex-clk2
+> > +pex-cntrl	sdmmc1		sdmmc3		sdmmc4
+> > +sys_ddc		uart		usb0		usb1
+> > +usb2		usb_bias
+> > +
+> > +All of the listed Tegra124 and Tegra132 pins support the
+> > +low-power-enable and low-power-disable properties. None of the pins
+> > +support the power-source property.
+> > +
+> > +Following pinctrl pin name strings are present on Tegra210:
+> > +audio		audio-hv	cam		csia
+> > +csib		csic		csid		csie
+> > +csif		dbg		debug-nonao	dmic
+> > +dp		dsi		dsib		dsic
+> > +dsid		emmc		emmc2		gpio
+> > +hdmi		hsic		lvds		mipi-bias
+> > +pex-bias	pex-clk1	pex-clk2	pex-cntrl
+> > +sdmmc1		sdmmc3		spi		spi-hv
+> > +uart		usb0		usb1		usb2
+> > +usb3		usb-bias
+> > +
+> > +All of the listed Tegra210 pins except pex-cntrl support the
+> > +low-power-enable and low-power-disable properties. The power-source
+> > +property is supported following Tegra210 pins: audio, audio-hv, cam,
+> > +dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3, spi, spi-hv, and uart.
+> > +
+> > +Pad configuration state example:
+> > +	pmc: pmc@7000e400 {
+> > +		compatible = "nvidia,tegra210-pmc";
+> > +		reg = <0x0 0x7000e400 0x0 0x400>;
+> > +		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+> > +		clock-names = "pclk", "clk32k_in";
+> > +
+> > +		...
+> > +
+> > +		sdmmc1_3v3: sdmmc1-3v3 {
+> > +			pins = "sdmmc1";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> > +		};
+> > +
+> > +		sdmmc1_1v8: sdmmc1-1v8 {
+> > +			pins = "sdmmc1";
+> > +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> > +		};
+> > +
+> > +		hdmi_off: hdmi-off {
+> > +			pins = "hdmi";
+> > +			low-power-enable;
+> > +		}
+> > +
+> > +		hdmi_on: hdmi-on {
+> > +			pins = "hdmi";
+> > +			low-power-disable;
+> > +		}
+> > +	};
+> > +
+> > +Pinctrl client example:
+> > +	sdmmc1: sdhci@700b0000 {
+> > +		...
+> > +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> > +		pinctrl-0 = <&sdmmc1_3v3>;
+> > +		pinctrl-1 = <&sdmmc1_1v8>;
+> > +	};
+> > +	...
+> > +	sor@54540000 {
+> > +		...
+> > +		pinctrl-0 = <&hdmi_off>;
+> > +		pinctrl-1 = <&hdmi_on>;
+> > +		pinctrl-names = "hdmi-on", "hdmi-off";
+> > +	};
+> > diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > new file mode 100644
+> > index 0000000..20f4340
+> > --- /dev/null
+> > +++ b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> > @@ -0,0 +1,18 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * pinctrl-tegra-io-pad.h: Tegra I/O pad source voltage configuration constants
+> > + * pinctrl bindings.
+> > + *
+> > + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> > + *
+> > + * Author: Aapo Vienamo <avienamo@nvidia.com>
+> > + */
+> > +
+> > +#ifndef _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> > +#define _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> > +
+> > +/* Voltage levels of the I/O pad's source rail */
+> > +#define TEGRA_IO_PAD_VOLTAGE_1V8	0
+> > +#define TEGRA_IO_PAD_VOLTAGE_3V3	1
+> > +
+> > +#endif
+> > -- 
+> > 2.7.4
+> >   
 
-> This adds the inclusion where needed.
->
-> Fixes: ac3167257b9f ("headers: separate linux/mod_devicetable.h from linux/platform_device.h")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/firmware/qemu_fw_cfg.c             | 1 +
->  drivers/media/platform/davinci/vpbe_osd.c  | 1 +
->  drivers/media/platform/davinci/vpbe_venc.c | 1 +
->  drivers/media/platform/qcom/venus/vdec.c   | 1 +
->  drivers/media/platform/qcom/venus/venc.c   | 1 +
->  drivers/media/platform/sti/hva/hva-v4l2.c  | 1 +
->  drivers/platform/x86/intel_punit_ipc.c     | 1 +
->  7 files changed, 7 insertions(+)
->
-> diff --git a/drivers/firmware/qemu_fw_cfg.c b/drivers/firmware/qemu_fw_cfg.c
-> index 14fedbeca724..039e0f91dba8 100644
-> --- a/drivers/firmware/qemu_fw_cfg.c
-> +++ b/drivers/firmware/qemu_fw_cfg.c
-> @@ -28,6 +28,7 @@
->   */
->
->  #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
->  #include <linux/acpi.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/media/platform/davinci/vpbe_osd.c b/drivers/media/platform/davinci/vpbe_osd.c
-> index 7f610320426d..c551a25d90d9 100644
-> --- a/drivers/media/platform/davinci/vpbe_osd.c
-> +++ b/drivers/media/platform/davinci/vpbe_osd.c
-> @@ -18,6 +18,7 @@
->   *
->   */
->  #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/kernel.h>
->  #include <linux/interrupt.h>
->  #include <linux/platform_device.h>
-> diff --git a/drivers/media/platform/davinci/vpbe_venc.c b/drivers/media/platform/davinci/vpbe_venc.c
-> index ba157827192c..ddcad7b3e76c 100644
-> --- a/drivers/media/platform/davinci/vpbe_venc.c
-> +++ b/drivers/media/platform/davinci/vpbe_venc.c
-> @@ -11,6 +11,7 @@
->   * GNU General Public License for more details.
->   */
->  #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/kernel.h>
->  #include <linux/init.h>
->  #include <linux/ctype.h>
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index f89a91d43cc9..d4e23c7df347 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -14,6 +14,7 @@
->   */
->  #include <linux/clk.h>
->  #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-> index f7a87a3dbb46..0522cf202b75 100644
-> --- a/drivers/media/platform/qcom/venus/venc.c
-> +++ b/drivers/media/platform/qcom/venus/venc.c
-> @@ -14,6 +14,7 @@
->   */
->  #include <linux/clk.h>
->  #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/slab.h>
-> diff --git a/drivers/media/platform/sti/hva/hva-v4l2.c b/drivers/media/platform/sti/hva/hva-v4l2.c
-> index 15080cb00fa7..5a807c7c5e79 100644
-> --- a/drivers/media/platform/sti/hva/hva-v4l2.c
-> +++ b/drivers/media/platform/sti/hva/hva-v4l2.c
-> @@ -6,6 +6,7 @@
->   */
->
->  #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <media/v4l2-event.h>
-> diff --git a/drivers/platform/x86/intel_punit_ipc.c b/drivers/platform/x86/intel_punit_ipc.c
-> index b5b890127479..f1afc0ebbc68 100644
-> --- a/drivers/platform/x86/intel_punit_ipc.c
-> +++ b/drivers/platform/x86/intel_punit_ipc.c
-> @@ -12,6 +12,7 @@
->   */
->
->  #include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
->  #include <linux/acpi.h>
->  #include <linux/delay.h>
->  #include <linux/bitops.h>
-> --
-> 2.9.0
->
+ -Aapo
