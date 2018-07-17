@@ -2,102 +2,132 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C2DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A30EECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E232146E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:07:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E232146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id CF47F2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:07:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF47F2146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731538AbeGQNkN (ORCPT
+        id S1731591AbeGQNkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:40:13 -0400
-Received: from nautica.notk.org ([91.121.71.147]:52364 "EHLO nautica.notk.org"
+        Tue, 17 Jul 2018 09:40:23 -0400
+Received: from mga14.intel.com ([192.55.52.115]:10120 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731324AbeGQNkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:40:12 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 0D98AC009; Tue, 17 Jul 2018 15:07:35 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 15:07:20 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     jiangyiwen <jiangyiwen@huawei.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        v9fs-developer@lists.sourceforge.net
-Subject: Re: [V9fs-developer] [PATCH v2] net/9p: Fix a deadlock case in the
- virtio transport
-Message-ID: <20180717130720.GA23759@nautica>
-References: <5B4DCD0A.8040600@huawei.com>
- <20180717114215.GA14414@nautica>
- <5B4DE09F.5000800@huawei.com>
+        id S1731324AbeGQNkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 09:40:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 06:07:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="57156688"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga007.jf.intel.com with ESMTP; 17 Jul 2018 06:07:43 -0700
+Subject: Re: [PATCH V6] scsi: ufs: Add configfs support for UFS provisioning
+To:     Sayali Lokhande <sayalil@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        asutoshd@codeaurora.org, evgreen@chromium.org,
+        riteshh@codeaurora.org
+Cc:     linux-scsi@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+References: <1531734237-27421-1-git-send-email-sayalil@codeaurora.org>
+ <1531734237-27421-2-git-send-email-sayalil@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <fc305cad-a0db-9c4b-9d5f-14e8e48a23b3@intel.com>
+Date:   Tue, 17 Jul 2018 16:06:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
+In-Reply-To: <1531734237-27421-2-git-send-email-sayalil@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5B4DE09F.5000800@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-jiangyiwen wrote on Tue, Jul 17, 2018:
-> On 2018/7/17 19:42, Dominique Martinet wrote:
-> > 
-> >> Subject: net/9p: Fix a deadlock case in the virtio transport
-> > 
-> > I hadn't noticed in the v1, but how is that a deadlock fix?
-> > The previous code doesn't look like it deadlocks to me, the commit
-> > message is more correct.
-> > 
+On 16/07/18 12:43, Sayali Lokhande wrote:
+> This patch adds configfs support to provision UFS device at
+> runtime. This feature can be primarily useful in factory or
+> assembly line as some devices may be required to be configured
+> multiple times during initial system development phase.
+> Configuration Descriptors can be written multiple times until
+> bConfigDescrLock attribute is zero.
 > 
-> If cpu is running in the irq context for a long time,
-> NMI watchdog will detect the hard lockup in the cpu,
-> and then it will cause kernel panic. So I use this
-> subject to underline the scenario.
-
-That's still not a deadlock - fix lockup would be more appropriate?
-
-
-> > Do we have a guarantee that req_done is only called if there is at least
-> > one buf to read?
-> > For example, that there isn't two threads queueing the same callback but
-> > the first one reads everything and the second has nothing to read?
-> > 
-> > If virtblk_done takes care of setting up a "req_done" bool to only
-> > notify waiters if something has been done I'd rather have a reason to do
-> > differently, even if you can argue that nothing bad will happen in case
-> > of a gratuitous wake_up
-> > 
+> Configuration descriptor buffer consists of Device and Unit
+> descriptor configurable parameters which are parsed from vendor
+> specific provisioning file and then passed via configfs node at
+> runtime to provision ufs device.
+> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
 > 
-> Sorry, I don't fully understand what your mean.
-> I think even if the ring buffer don't have the data, wakeup operation
-> will not cause any other problem, and the loss of performance can be
-> ignored.
+> Usage:
+> 1) To read current configuration descriptor :
+>    cat /config/XXXX.ufshc/ufs_provision
+> 2) To provision ufs device:
+>    echo <config_desc_buf> > /config/XXXX.ufshc/ufs_provision
+> 
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  Documentation/ABI/testing/configfs-driver-ufs |  18 +++
+>  drivers/scsi/ufs/Kconfig                      |  10 ++
+>  drivers/scsi/ufs/Makefile                     |   1 +
+>  drivers/scsi/ufs/ufs-configfs.c               | 162 ++++++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.c                     |   2 +
+>  drivers/scsi/ufs/ufshcd.h                     |  19 +++
+>  6 files changed, 212 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
+>  create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+> 
+> diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
+> new file mode 100644
+> index 0000000..eeee499c
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/configfs-driver-ufs
+> @@ -0,0 +1,18 @@
+> +What:		/config/ufshcd/ufs_provision
+> +Date:		Jun 2018
+> +KernelVersion:	4.14
+> +Description:
+> +		This file shows the current ufs configuration descriptor set in device.
+> +		This can be used to provision ufs device if bConfigDescrLock is 0.
+> +		For more details, refer 14.1.6.3 Configuration Descriptor and
+> +		Table 14-12 - Unit Descriptor configurable parameters from specs for
+> +		description of each configuration descriptor parameter.
+> +		Configuration descriptor buffer needs to be passed in space separated
+> +		format specificied as below:
+> +		echo <bLength> <bDescriptorIDN> <bConfDescContinue> <bBootEnable>
+> +		<bDescrAccessEn> <bInitPowerMode> <bHighPriorityLUN>
+> +		<bSecureRemovalType> <bInitActiveICCLevel> <wPeriodicRTCUpdate>
+> +		<0Bh:0Fh_ReservedAs_0> <bLUEnable> <bBootLunID> <bLUWriteProtect>
+> +		<bMemoryType> <dNumAllocUnits> <bDataReliability> <bLogicalBlockSize>
+> +		<bProvisioningType> <wContextCapabilities> <0Dh:0Fh_ReservedAs_0>
+> +		> /config/XXXX.ufshc/ufs_provision
+> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+> index e27b4d4..34d89c2 100644
+> --- a/drivers/scsi/ufs/Kconfig
+> +++ b/drivers/scsi/ufs/Kconfig
+> @@ -100,3 +100,13 @@ config SCSI_UFS_QCOM
+>  
+>  	  Select this if you have UFS controller on QCOM chipset.
+>  	  If unsure, say N.
+> +
+> +config UFS_PROVISION
+> +	tristate "Runtime UFS Provisioning support"
+> +	depends on SCSI_UFSHCD_PLATFORM && CONFIGFS_FS
 
-I just mean "others do check, why not us?". It's almost free to check if
-we had something to read, but if there are many pending read/writes
-waiting for a buffer they will all wake up and spin uselessly.
+Why SCSI_UFSHCD_PLATFORM instead of SCSI_UFSHCD?
 
-I've checked other callers of virtqueue_get_buf() and out of 9 that loop
-around in a callback then wake another thread up, 6 do check before
-waking up, two check that something happened just to print a debug
-statement if not (virtio_test and virtgpu) and one doesn't check
-(virtio_input); so I guess we wouldn't be the first ones, just not
-following the trend.
-
-But yes, nothing bad will happen, so let's agree to disagree and I'll
-defer to others opinion on this
-
-
-Thanks,
--- 
-Dominique Martinet
+Also please cc me in future revisions.
