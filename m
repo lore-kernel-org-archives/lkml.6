@@ -2,87 +2,90 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8901ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B827ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A89208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76A89208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id EC816208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC816208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbeGQGrf (ORCPT
+        id S1728883AbeGQGrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 02:47:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45176 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726357AbeGQGrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 02:47:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 42B99AD61;
-        Tue, 17 Jul 2018 06:16:37 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 08:16:34 +0200
-From:   Joerg Roedel <jroedel@suse.de>
-To:     "David H. Gutteridge" <dhgutteridge@sympatico.ca>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 00/39 v7] PTI support for x86-32
-Message-ID: <20180717061634.mhmidg6u5idp66kz@suse.de>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <18439b1a3755a6bfd8f96b1866c328ada1db0aa8.camel@sympatico.ca>
+        Tue, 17 Jul 2018 02:47:39 -0400
+Received: from muru.com ([72.249.23.125]:51678 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726357AbeGQGri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 02:47:38 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 02AAC80EE;
+        Tue, 17 Jul 2018 06:19:52 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 23:16:40 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Koen Kooi <koen@dominion.thruhere.net>
+Cc:     linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] ARM: dts: am335x: add am335x-sancloud-bbe board
+ support
+Message-ID: <20180717061640.GX99251@atomide.com>
+References: <1531463123-30340-1-git-send-email-koen@dominion.thruhere.net>
+ <1531463123-30340-3-git-send-email-koen@dominion.thruhere.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <18439b1a3755a6bfd8f96b1866c328ada1db0aa8.camel@sympatico.ca>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1531463123-30340-3-git-send-email-koen@dominion.thruhere.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dave,
+Hi Koen,
 
-On Mon, Jul 16, 2018 at 10:07:44PM -0400, David H. Gutteridge wrote:
-> I redid my testing on bare metal and in a VM (as with my previous
-> testing
-> efforts: https://lkml.org/lkml/2018/2/19/844, same setups
-> and coverage,
-> plus CONFIG_X86_DEBUG_ENTRY_CR3 enabled too) with the
-> pti-x32-v7 branch,
-> and I didn't encounter any issues. The two DRM
-> drivers that were
-> triggering bugs in some of the prior iterations
-> are both behaving
-> properly for me.
+Just noticed there should be generic node names here too, see below.
 
-That are great news, thanks for testing, David!
+* Koen Kooi <koen@dominion.thruhere.net> [180713 06:28]:
+> The "Beaglebone Enhanced" by Sancloud is based on the Beaglebone Black,
+> but with the following differences:
+> 
+>  * Gigabit capable PHY
+>  * Extra USB hub, optional i2c control
+>  * lps3331ap barometer connected over i2c
+>  * MPU6050 6 axis MEMS accelerometer/gyro connected over i2c
+>  * 1GiB DDR3 RAM
+>  * RTL8723 Wifi/Bluetooth connected over USB
 
+> +&i2c0 {
+> +	lps331ap: lps331ap@5C {
+> +		compatible = "st,lps331ap-press";
+> +		st,drdy-int-pin = <1>;
+> +		reg = <0x5C>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <26 IRQ_TYPE_EDGE_RISING>;
+> +	};
 
-Regards,
+lps33lap: barometer@5c
 
-	Joerg
+> +	mpu6050: mpu6050@68 {
+> +		compatible = "invensense,mpu6050";
+> +		reg = <0x68>;
+> +		interrupt-parent = <&gpio0>;
+> +		interrupts = <2 IRQ_TYPE_EDGE_RISING>;
+> +		orientation = <0xff 0 0 0 1 0 0 0 0xff>;
+> +	};
+
+mpu6050: accelerometer@2c
+
+And so on. Please check the lower case hex numbers too as
+that's what Linux typically uses.
+
+Thanks,
+
+Tony
