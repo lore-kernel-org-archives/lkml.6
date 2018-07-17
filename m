@@ -2,132 +2,103 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56940ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71633ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16BCB20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 277E820684
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:57:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IMCssMWN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16BCB20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="dC4eICP3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277E820684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731140AbeGQS1V (ORCPT
+        id S1729747AbeGQSbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 14:27:21 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43760 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729709AbeGQS1U (ORCPT
+        Tue, 17 Jul 2018 14:31:16 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:41403 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729708AbeGQSbQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 14:27:20 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b20-v6so1931454edt.10;
-        Tue, 17 Jul 2018 10:53:34 -0700 (PDT)
+        Tue, 17 Jul 2018 14:31:16 -0400
+Received: by mail-qt0-f196.google.com with SMTP id e19-v6so1669633qtp.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 10:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=41Z91/MXjfQHcAVCDW1mkadMZC7WIDawmTrHG8kyZMA=;
-        b=IMCssMWNAOgslx8a89M7fHFUGRcOp0Puc+cKsKkvLrKHmNib93MlpxBiSrDmHW5H7u
-         0WBI+D4CWCGlB29Txz8M8balJ+Dj1FRMRmQ1VcydYn+UsOwmUUKVUhoYXsmFG4yjOVqO
-         q66X8AcAkHcKfB07b9pfrtMCQw70QLvsRBJCymHUE1rbH45mCZPN4atEgsKlyS3nHIMY
-         ybIZRw9kbeQGf8t0ad7OSwz2GUFwzZsKsNAuqiN7SoXpTUl/nuAw6Rg6BadHcHFeYBxb
-         +YDIN5x5X9rQdt3R9vsolBsStVGGEO4j+Z+qE6dTtPVvktoPAq5Cf/soisz0mJt91Cj8
-         TS3A==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=bmAyHcDD/Xc2tb4UqnQcDKH5J0/3De7sxMrzFlHQ2p4=;
+        b=dC4eICP3eGZ+c5d22OChe8UTqQVXW5tJk0YYdB335OTslm4f/VEz5RZfSozX+gaava
+         7wVFqeedHKJ5GB0YtYiIaBpzEtu4QsoMTNqoHXqMX/lM5vBE1CyIV48lhaC3iytcl4BB
+         dlcOm5jX6c6qy+Ne/KIznOclHevgcYX/I59gDfiFDRyQIkpoUBvhks+2BIHTHGlf6P0M
+         kKVpNb9Y2qmItJtezrQkM/QxABb1Zm0nXGNa87ce6y5YHcRQVx+1kG5fxj17PCkDQRXG
+         Uet+4aPdpMvyvFrXz19QuAFJ8+7tg0+UgIpY3UeIHu/OPMDhV/sDllbDXxis39xzLW4k
+         /oHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=41Z91/MXjfQHcAVCDW1mkadMZC7WIDawmTrHG8kyZMA=;
-        b=Aga1g/9Zz0gMUKQ5JZ0abfpTRINrZX6+W7O9/bByADQWWRl7ruKimH8C7NYruWO4Tx
-         1oFdFB4J18ee7ANdu0N/ynVG82v2fmYnNkCLgktyKr/4iDIkhKBbwj5U/w3PXD1UEH8R
-         +m7KN1hny4zOk8N8/gcgmsbFlso0FMQuZr8biblz/YPLsixXP5b25CeTG2GXZ09ueeG1
-         k3sjzZOS9A4Y+e1rrPbjc1AhpZZ4/V4LdadPhoZq5NDIeAMt556XiT/bRYkA8sf8hdcH
-         gpcFZuEdVejallR+bYuEzMtReEa9GVhHLGk0afj2G0ej+PkuPsDjltDGWQIU5b5Z8qm9
-         pCew==
-X-Gm-Message-State: AOUpUlERfiZHaGqnKOpbb/FKji5ytgrfgzkPpPIqUPmSL+IfjZfsanha
-        fg7u0qM9hnVz4W9HJ1Hpr4zLnWBQWAnCAjkvOr4=
-X-Google-Smtp-Source: AAOMgpc/TwZAhLN/6GQqw4PyKtWK60dUY+jTlAqqKPirmypzoFKBD/vyMdT5x2WflJVs9RFPNQ8AHgj3MUEKDjElg2A=
-X-Received: by 2002:a50:95ab:: with SMTP id w40-v6mr3517045eda.33.1531850013930;
- Tue, 17 Jul 2018 10:53:33 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=bmAyHcDD/Xc2tb4UqnQcDKH5J0/3De7sxMrzFlHQ2p4=;
+        b=DNlgsJDCE9MZKLSkaVVhxbGO+jiv9lVJWiazy0jliNDc7zEU1XNxi/CvCDu1dA4/tS
+         qyW4Oaf9/PJjLUffPF3yBXwjchTz70JMuvCIHo5CU3vQKo8oEEhAp2+cMQyJmqIXmnVF
+         SAnx4U6jzIH6EiI9v7WrexMK2fkoZix7nKnOZX2xmf/XoJKczxE/gUGbB9KFhV91NQ15
+         zWKJiExvp2fn7eAsyOUfvpXFu/d/U1hlqO0/Qh4lrf3k3sheUnhAJz3zpXKuSUQoBoAb
+         SU1MCToA+A/EreJpXqYqT7gVwGyFyusXHq7WH4RDNgcmK12s47T4TKZqhKCzsDAvMaEn
+         xFyw==
+X-Gm-Message-State: AOUpUlHGAzAhYBh0YcOaMDm7PWIf+zGRbZRD5BRKpgtw4XuaupboVteY
+        Ol+cwzmm/utIfbj2Lg/oVJdX+A==
+X-Google-Smtp-Source: AAOMgpeEOEJzw5lS4xVKsVovKVCDKmbbgRN3NPFs3u5gtIHeylT8jTEwHP7aipmpvqUD7RkXhIPw7A==
+X-Received: by 2002:ac8:234f:: with SMTP id b15-v6mr2634886qtb.336.1531850249641;
+        Tue, 17 Jul 2018 10:57:29 -0700 (PDT)
+Received: from cakuba.lan ([75.53.12.129])
+        by smtp.gmail.com with ESMTPSA id m12-v6sm1411170qkl.54.2018.07.17.10.57.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 10:57:29 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 10:57:25 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtnetlink: fix uninitialized variable
+Message-ID: <20180717105725.5cb8a405@cakuba.lan>
+In-Reply-To: <20180717134314.GA31127@embeddedor.com>
+References: <20180717134314.GA31127@embeddedor.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-References: <20180717120651.15748-1-dsahern@kernel.org> <CAM_iQpW4g2v6xk49Gz+WBasKaO9VUk3Q-umX7iBRK-mAhn21Fw@mail.gmail.com>
- <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
-In-Reply-To: <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Tue, 17 Jul 2018 10:53:21 -0700
-Message-ID: <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
-Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to per-namespace
-To:     David Ahern <dsahern@gmail.com>
-Cc:     Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        nikita.leshchenko@oracle.com,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>, alex.aring@gmail.com,
-        linux-wpan@vger.kernel.org,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 10:43 AM David Ahern <dsahern@gmail.com> wrote:
->
-> On 7/17/18 11:40 AM, Cong Wang wrote:
-> > On Tue, Jul 17, 2018 at 5:11 AM <dsahern@kernel.org> wrote:
-> >>
-> >> From: David Ahern <dsahern@gmail.com>
-> >>
-> >> Nikita Leshenko reported that neighbor entries in one namespace can
-> >> evict neighbor entries in another. The problem is that the neighbor
-> >> tables have entries across all namespaces without separate accounting
-> >> and with global limits on when to scan for entries to evict.
-> >
-> > It is nothing new, people including me already noticed this before.
-> >
-> >
-> >>
-> >> Resolve by making the neighbor tables for ipv4, ipv6 and decnet per
-> >> namespace and making the accounting and threshold limits per namespace.
-> >
-> >
-> > The last discussion about this a long time ago concluded that neigh
-> > table entries are controllable by remote, so after moving it to per netns,
-> > it would be easier to DOS the host.
-> >
->
-> There are still limits on the total number of entries and with
-> per-namespace limits an admin has better control.
+On Tue, 17 Jul 2018 08:43:14 -0500, Gustavo A. R. Silva wrote:
+> Currently, there are execution paths in which variable err is
+> returned without being properly initialized previously:
+> 
+> 1417        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_SKB,
+> 1418                                IFLA_XDP_SKB_PROG_ID, rtnl_xdp_prog_skb))
+> 1419                goto err_cancel;
+> 1420        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_DRV,
+> 1421                                IFLA_XDP_DRV_PROG_ID, rtnl_xdp_prog_drv))
+> 1422                goto err_cancel;
+> 1423        if (rtnl_xdp_report_one(skb, dev, &prog_id, &mode, XDP_ATTACHED_HW,
+> 1424                                IFLA_XDP_HW_PROG_ID, rtnl_xdp_prog_hw))
+> 1425                goto err_cancel;
+> 
+> Fix this by initializing variable err to -EMSGSIZE.
+> 
+> Addresses-Coverity-ID: 1471831 ("Uninitialized scalar variable")
+> Fixes: a25717d2b604 ("xdp: support simultaneous driver and hw XDP attachment")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Per-netns limit is *exactly* the problem here.
+Looks like duplicate of:
 
-Quote from David Miller:
-"
-From: ebiederm@xmission.com (Eric W. Biederman)
-Date: Wed, 25 Jun 2014 18:17:08 -0700
+http://patchwork.ozlabs.org/patch/944662/
 
-> I disagree that removing a global DOS prevention check is a benefit.
-> Certainly large semantics changes like that should not happen without
-> being discussed in the patch description.
-
-Agreed, this is the most important core issue.
-
-If we just make these things per netns, then as a result if you create
-N namespaces we will allow N times more neighbour entries to be
-sitting in the system at once.
-
-Actually, I'm really surprised the limits get hit and this actually
-causes problems.
-"
-
-You can see the original discussion here:
-https://marc.info/?l=linux-netdev&m=140356141019653&w=2
+Strage GCC doesn't catch this even with W=1, the code is fairly
+straightforward :S
