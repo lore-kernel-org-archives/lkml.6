@@ -2,73 +2,104 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826A4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0697ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BCA12086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:54:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BCA12086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 872352086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:55:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872352086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731752AbeGQP1y (ORCPT
+        id S1731871AbeGQP2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:27:54 -0400
-Received: from verein.lst.de ([213.95.11.211]:51848 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731429AbeGQP1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:27:54 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 315A96FC87; Tue, 17 Jul 2018 16:57:25 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 16:57:25 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Fredrik Noring <noring@nocrew.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Robin Murphy <robin.murphy@arm.com>, m.szyprowski@samsung.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        JuergenUrban@gmx.de
-Subject: Re: [PATCH] dma-mapping: Relax warnings for per-device areas
-Message-ID: <20180717145725.GA22109@lst.de>
-References: <1f8262d206c6886072d04cc93454f6e3f812bd20.1530623284.git.robin.murphy@arm.com> <20180705193613.GA28905@lst.de> <20180715122826.GB2342@localhost.localdomain>
+        Tue, 17 Jul 2018 11:28:15 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53767 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731617AbeGQP2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 11:28:15 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6HEsqEc1549491
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 07:54:52 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6HEsqN31549488;
+        Tue, 17 Jul 2018 07:54:52 -0700
+Date:   Tue, 17 Jul 2018 07:54:52 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Dewet Thibaut <tipbot@zytor.com>
+Message-ID: <tip-fd4054b31af283af9ec44895e561bbb3449ad81d@git.kernel.org>
+Cc:     bp@suse.de, tony.luck@intel.com, linux-kernel@vger.kernel.org,
+        linux-edac@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        thibaut.dewet@nokia.com, alexander.sverdlin@nokia.com,
+        hpa@zytor.com
+Reply-To: tglx@linutronix.de, bp@suse.de, tony.luck@intel.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          linux-edac@vger.kernel.org, thibaut.dewet@nokia.com,
+          alexander.sverdlin@nokia.com, hpa@zytor.com
+In-Reply-To: <20180716084927.24869-1-alexander.sverdlin@nokia.com>
+References: <20180716084927.24869-1-alexander.sverdlin@nokia.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/MCE: Remove min interval polling limitation
+Git-Commit-ID: fd4054b31af283af9ec44895e561bbb3449ad81d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180715122826.GB2342@localhost.localdomain>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 15, 2018 at 02:28:27PM +0200, Fredrik Noring wrote:
-> Hi Christoph, Robin,
-> 
-> On Thu, Jul 05, 2018 at 09:36:13PM +0200, Christoph Hellwig wrote:
-> > > -	BUG_ON(!ops);
-> > > -	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
-> > > -
-> > >  	if (dma_alloc_from_dev_coherent(dev, size, dma_handle, &cpu_addr))
-> > >  		return cpu_addr;
-> > >  
-> > > +	BUG_ON(!ops);
-> > > +	WARN_ON_ONCE(dev && !dev->coherent_dma_mask);
-> > 
-> > I think doing dma on a device without ops is completely broken no matter
-> > what you think of it, so I very much disagree with that part of the change.
-> > 
-> > Also while I don't think not having a dma mask is a good idea even for
-> > a driver purely using dma coherent pools.  If the pools really are on
-> > the device itself I can see why it might not matter, but for the case
-> > commonly used on some ARM SOCs where we just reserve memory for certain
-> > devices from a system pool it very much does matter.
-> > 
-> > There really is no good excuse to not set a coherent mask in the drivers.
-> 
-> Here are three other regressions related to the coherent mask WARN_ON_ONCE:
+Commit-ID:  fd4054b31af283af9ec44895e561bbb3449ad81d
+Gitweb:     https://git.kernel.org/tip/fd4054b31af283af9ec44895e561bbb3449ad81d
+Author:     Dewet Thibaut <thibaut.dewet@nokia.com>
+AuthorDate: Mon, 16 Jul 2018 10:49:27 +0200
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 17 Jul 2018 16:50:17 +0200
 
-They are a pretty strong indication that yes, you should really set
-the coherent mask if you ever do coherent allocations..
+x86/MCE: Remove min interval polling limitation
+
+commit b3b7c4795c ("x86/MCE: Serialize sysfs changes") introduced a min
+interval limitation when setting the check interval for polled MCEs.
+However, the logic is that 0 disables polling for corrected MCEs, see
+Documentation/x86/x86_64/machinecheck. The limitation prevents disabling.
+
+Remove this limitation and allow the value 0 to disable polling again.
+
+Fixes: b3b7c4795c ("x86/MCE: Serialize sysfs changes")
+Signed-off-by: Dewet Thibaut <thibaut.dewet@nokia.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+[ Massage commit message. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/20180716084927.24869-1-alexander.sverdlin@nokia.com
+---
+ arch/x86/kernel/cpu/mcheck/mce.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index c102ad51025e..8c50754c09c1 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -2165,9 +2165,6 @@ static ssize_t store_int_with_restart(struct device *s,
+ 	if (check_interval == old_check_interval)
+ 		return ret;
+ 
+-	if (check_interval < 1)
+-		check_interval = 1;
+-
+ 	mutex_lock(&mce_sysfs_mutex);
+ 	mce_restart();
+ 	mutex_unlock(&mce_sysfs_mutex);
