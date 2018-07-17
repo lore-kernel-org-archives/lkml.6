@@ -1,147 +1,81 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C86CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6243ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C9C20693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:39:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B0B2206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:42:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="quGpYoFc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8C9C20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAnThuET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B0B2206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730040AbeGQRNJ (ORCPT
+        id S1729738AbeGQRPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:13:09 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35815 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729648AbeGQRNI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:13:08 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e6-v6so686332pgv.2;
-        Tue, 17 Jul 2018 09:39:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ZMd2FRiR6W2pZKbshIRcfu1N2WVCxhkw80AZqiUJUMU=;
-        b=quGpYoFcrUS9bmTV5YOmzEIPI2gqMSMrCP+I3WLBlN8UgKq3cWK8wBf1CTmMeE6VsP
-         xnLf/y6uFTVW9PejfBDc4cDrA56Fro7IKCgOKgKWGSvpEsx220kDjtOLwfL1zjn4KOQj
-         TgGBMqr+Pm//UH2oM2H5TlPrlTsIFZEPQhS1DVt478dqzjJKNG4yJPJaw7hOq1YgLSNx
-         Nt4Rbi4deje8PzKKOJifrcIdxeTCoEtFliKAaMgq7cCy2CEbchtKYO8LIMvNEy7KzXzT
-         sauModa6R/aa1KhDyKFboTfExHDTgkQVk+LpwJGM76AMnyT+Yg1q38DoVaIcXcg2YSHw
-         zDSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZMd2FRiR6W2pZKbshIRcfu1N2WVCxhkw80AZqiUJUMU=;
-        b=oMSGbb9nEp52IWhpQZNs/TIYms6Ua4tfIY4htTwRCUQv7UqRizFdHpU8sragJK9mPn
-         dC02C601wWKtLPvq0zOXGNT6HXPiwi1PWikua9bwJyyC1zDDaXwDu52/pxHjv5ueh/vJ
-         /JRtIZQGRvhloVC2sF+pgMvpJLTVffn7GgQorxEjaP6TkyVI6XhR2jXl3fwDmO4CAddF
-         udb8W6DQgnHoItmpLlcEeKJ4Q5LyQhjPReZ29EsUaEKKeb3OsZ+ov/zrPTB1fFTdqkyG
-         V8OJL2hDBNxxvEZ5Stk7cuWw3duBO6sNAWor49pdf8MA2VoAzhBUyRwNSZgoNXKQuPYP
-         BysA==
-X-Gm-Message-State: AOUpUlG1AWV7mFSdhUq/MIIKvC6rEAwEUmUd0aYQK4KM964pbOzV98MX
-        CLUT8lMVmstle3BWorDpaRY=
-X-Google-Smtp-Source: AAOMgpfiKuUtBPKrY7jtTvAf3ePjoJSK26Ua28bOKDxL+vdsy+f6v53EYPrDCmwpt+oqbu0oCD81Zw==
-X-Received: by 2002:a63:a745:: with SMTP id w5-v6mr2348729pgo.374.1531845578868;
-        Tue, 17 Jul 2018 09:39:38 -0700 (PDT)
-Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id c19-v6sm2181884pfn.182.2018.07.17.09.39.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 09:39:38 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 09:39:36 -0700
-From:   Eric Biggers <ebiggers3@gmail.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Eric Biggers <ebiggers@google.com>, qat-linux@intel.com,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        linux-crypto@vger.kernel.org, Lars Persson <larper@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>
-Subject: Re: [dm-devel] [PATCH v5 05/11] crypto: ahash: Remove VLA usage
-Message-ID: <20180717163936.GB75957@gmail.com>
-References: <20180717042150.37761-1-keescook@chromium.org>
- <20180717042150.37761-6-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717042150.37761-6-keescook@chromium.org>
-User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
+        Tue, 17 Jul 2018 13:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729668AbeGQRPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:15:52 -0400
+Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC3520693;
+        Tue, 17 Jul 2018 16:42:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531845742;
+        bh=Zml4KVOe5bTGCTkVboe9/q4w7IdWSKZS6pVcASBEnQk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GAnThuETVFoazopoAmYnDwKZRpZMz0TD81Ww9rB866sCTIxu6SqxJhHBcdEc1juOc
+         qgHOTJHnOeEQ0yudsIrYZOyBhNCv06RHGJPPIhasHF8prpL1sdUU1racupC0egJ/Yf
+         5qJksgiESQwnbLHUnU8+tXTeBtj+kvy7f3vl0n1g=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Pantelis Antoniou <pantelis.antoniou@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Vitaly Bordug <vbordug@ru.mvista.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Vitaly Bordug <vitb@kernel.crashing.org>
+Subject: [PATCH] MAINTAINERS: Drop inactive Vitaly Bordug's email
+Date:   Tue, 17 Jul 2018 18:41:54 +0200
+Message-Id: <20180717164154.6577-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 09:21:44PM -0700, Kees Cook wrote:
-> In the quest to remove all stack VLA usage from the kernel[1], this
-> introduces max size macros for ahash, as already done for shash, and
-> adjust the crypto user to max state size.
-> 
-> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  crypto/ahash.c        | 4 ++--
->  crypto/algif_hash.c   | 2 +-
->  include/crypto/hash.h | 3 +++
->  3 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/crypto/ahash.c b/crypto/ahash.c
-> index a64c143165b1..6435bdbe42fd 100644
-> --- a/crypto/ahash.c
-> +++ b/crypto/ahash.c
-> @@ -550,8 +550,8 @@ static int ahash_prepare_alg(struct ahash_alg *alg)
->  {
->  	struct crypto_alg *base = &alg->halg.base;
->  
-> -	if (alg->halg.digestsize > PAGE_SIZE / 8 ||
-> -	    alg->halg.statesize > PAGE_SIZE / 8 ||
-> +	if (alg->halg.digestsize > AHASH_MAX_DIGESTSIZE ||
-> +	    alg->halg.statesize > AHASH_MAX_STATESIZE ||
->  	    alg->halg.statesize == 0)
->  		return -EINVAL;
->  
-> diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
-> index bfcf595fd8f9..8974ee8ebead 100644
-> --- a/crypto/algif_hash.c
-> +++ b/crypto/algif_hash.c
-> @@ -239,7 +239,7 @@ static int hash_accept(struct socket *sock, struct socket *newsock, int flags,
->  	struct alg_sock *ask = alg_sk(sk);
->  	struct hash_ctx *ctx = ask->private;
->  	struct ahash_request *req = &ctx->req;
-> -	char state[crypto_ahash_statesize(crypto_ahash_reqtfm(req)) ? : 1];
-> +	char state[AHASH_MAX_STATESIZE];
->  	struct sock *sk2;
->  	struct alg_sock *ask2;
->  	struct hash_ctx *ctx2;
-> diff --git a/include/crypto/hash.h b/include/crypto/hash.h
-> index ae14cc0e0cdb..4fcd0e2368cd 100644
-> --- a/include/crypto/hash.h
-> +++ b/include/crypto/hash.h
-> @@ -64,6 +64,9 @@ struct ahash_request {
->  	void *__ctx[] CRYPTO_MINALIGN_ATTR;
->  };
->  
-> +#define AHASH_MAX_DIGESTSIZE	512
-> +#define AHASH_MAX_STATESIZE	512
-> +
+The Vitaly Bordug's email bounces ("ru.mvista.com: Name or service not
+known") and there was no activity (ack, review, sign) since 2009.
 
-Why is AHASH_MAX_DIGESTSIZE (512) so much larger than SHASH_MAX_DIGESTSIZE (64)?
-I would have expected them to be the same.
+Cc: Vitaly Bordug <vitb@kernel.crashing.org>
+Cc: Pantelis Antoniou <pantelis.antoniou@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-- Eric
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fcefb7a19f58..c84c8085d5b9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5850,7 +5850,6 @@ F:	include/linux/fsl/
+ 
+ FREESCALE SOC FS_ENET DRIVER
+ M:	Pantelis Antoniou <pantelis.antoniou@gmail.com>
+-M:	Vitaly Bordug <vbordug@ru.mvista.com>
+ L:	linuxppc-dev@lists.ozlabs.org
+ L:	netdev@vger.kernel.org
+ S:	Maintained
+-- 
+2.14.1
+
