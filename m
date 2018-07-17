@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3297FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:58:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1E3ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1D520877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:58:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF1D520877
+	by mail.kernel.org (Postfix) with ESMTP id 6AF8E20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 07:58:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF8E20C0E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbeGQI3Y (ORCPT
+        id S1729663AbeGQI3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:29:24 -0400
-Received: from regular1.263xmail.com ([211.150.99.136]:36574 "EHLO
+        Tue, 17 Jul 2018 04:29:47 -0400
+Received: from regular1.263xmail.com ([211.150.99.132]:47744 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbeGQI3X (ORCPT
+        with ESMTP id S1727980AbeGQI3r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:29:23 -0400
-X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Jul 2018 04:29:21 EDT
-Received: from cl?rock-chips.com (unknown [192.168.167.42])
-        by regular1.263xmail.com (Postfix) with ESMTP id D064099;
-        Tue, 17 Jul 2018 15:51:58 +0800 (CST)
+        Tue, 17 Jul 2018 04:29:47 -0400
+Received: from cl?rock-chips.com (unknown [192.168.167.206])
+        by regular1.263xmail.com (Postfix) with ESMTP id 0B34495B1;
+        Tue, 17 Jul 2018 15:58:11 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 1B4583C6;
-        Tue, 17 Jul 2018 15:51:49 +0800 (CST)
+        by smtp.263.net (Postfix) with ESMTPA id F26AF3E8;
+        Tue, 17 Jul 2018 15:58:04 +0800 (CST)
+X-IP-DOMAINF: 1
 X-RL-SENDER: cl@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: cl@rock-chips.com
-X-UNIQUE-TAG: <7db74b6c942d13a080b185e327d85088>
+X-UNIQUE-TAG: <e8627263705550283215c039689eae24>
 X-ATTACHMENT-NUM: 0
 X-SENDER: cl@rock-chips.com
 X-DNS-TYPE: 0
-Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 16092GEIJMY;
-        Tue, 17 Jul 2018 15:51:55 +0800 (CST)
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 29087FQMMBT;
+        Tue, 17 Jul 2018 15:58:10 +0800 (CST)
 From:   <cl@rock-chips.com>
 To:     heiko@sntech.de
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
@@ -64,9 +64,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         huangtao@rock-chips.com, tony.xie@rock-chips.com,
         sugar.zhang@rock-chips.com, huibin.hong@rock-chips.com,
         william.wu@rock-chips.com, sandy.huang@rock-chips.com
-Subject: [PATCH v1 2/7] Documentation: rockchip-dw-mshc: add description for px30
-Date:   Tue, 17 Jul 2018 15:49:02 +0800
-Message-Id: <1531813747-8804-3-git-send-email-cl@rock-chips.com>
+Subject: [PATCH v1 5/7] Documentation: rockchip: grf: add grf and pmugrf description for px30
+Date:   Tue, 17 Jul 2018 15:56:01 +0800
+Message-Id: <1531814161-8940-1-git-send-email-cl@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1531813747-8804-1-git-send-email-cl@rock-chips.com>
 References: <1531813747-8804-1-git-send-email-cl@rock-chips.com>
@@ -77,26 +77,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Liang Chen <cl@rock-chips.com>
 
-Add "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc" for
-dwmmc on px30 platform.
+This patch adds the compatible of GRF and PMUGRF for PX30 SoCs.
 
 Signed-off-by: Liang Chen <cl@rock-chips.com>
 ---
- Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/soc/rockchip/grf.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-index 8ce49b2..6f629b1 100644
---- a/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/rockchip-dw-mshc.txt
-@@ -14,6 +14,7 @@ Required Properties:
- 							before RK3288
- 	- "rockchip,rk3288-dw-mshc": for Rockchip RK3288
- 	- "rockchip,rv1108-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RV1108
-+	- "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip PX30
- 	- "rockchip,rk3036-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3036
- 	- "rockchip,rk3228-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK322x
- 	- "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc": for Rockchip RK3328
+diff --git a/Documentation/devicetree/bindings/soc/rockchip/grf.txt b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+index 7dc5ce8..46e27cd 100644
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+@@ -13,6 +13,7 @@ On RK3328 SoCs, the GRF adds a section for USB2PHYGRF,
+ Required Properties:
+ 
+ - compatible: GRF should be one of the following:
++   - "rockchip,px30-grf", "syscon": for px30
+    - "rockchip,rk3036-grf", "syscon": for rk3036
+    - "rockchip,rk3066-grf", "syscon": for rk3066
+    - "rockchip,rk3188-grf", "syscon": for rk3188
+@@ -23,6 +24,7 @@ Required Properties:
+    - "rockchip,rk3399-grf", "syscon": for rk3399
+    - "rockchip,rv1108-grf", "syscon": for rv1108
+ - compatible: PMUGRF should be one of the following:
++   - "rockchip,px30-pmugrf", "syscon": for px30
+    - "rockchip,rk3368-pmugrf", "syscon": for rk3368
+    - "rockchip,rk3399-pmugrf", "syscon": for rk3399
+ - compatible: SGRF should be one of the following
 -- 
 1.9.1
 
