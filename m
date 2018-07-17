@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83AFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:07:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53036ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 939BE20839
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:07:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E5FF20839
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:07:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlQui/vZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 939BE20839
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd5vSLcq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5FF20839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731466AbeGQQkT (ORCPT
+        id S1731529AbeGQQkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:40:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60152 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 12:40:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729716AbeGQQkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:40:19 -0400
+        id S1729716AbeGQQkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:40:24 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AB932086D;
-        Tue, 17 Jul 2018 16:06:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1785D20841;
+        Tue, 17 Jul 2018 16:06:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531843617;
-        bh=+GQcUk1iUT7FX83Cyp9Jzp6VhgvFmOqhLVzZOzSfqco=;
+        s=default; t=1531843622;
+        bh=JbF86m1wvVVHwkSmHfVKvZ/jKN3TAKPOvx/K8hk49M0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KlQui/vZgsjTG+f5Bp1ysneRJ6vUkAEvUOBkR0Qw3bXUFzkHXB3gsc5Ky2COZdTsV
-         CKsm4ql6TNntop1RvOxJ4SUTRz7db5e8i6BQevjsGyFVStR8l838DBbbQzCTiZvMky
-         /n/nm6v7vvBhBhB5OANGLB8IE7miJDUNr1J9+oxg=
+        b=Xd5vSLcqrxLeb/voJjaUgLHZ9x6Bj8LXLNA3x7sxuLgCkT5R5tsIzWTxJxouzndvp
+         OXJljyNioOAtADbwlowMhpWZ9xJnFt8Lo6kayI6SZVaXUCQg9LpcrUwwX8tRjfuMUl
+         U5LJqywT2xbRpevwf6/kSrXS6CUKmea2C8YiOpYw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
@@ -57,9 +57,9 @@ To:     Herbert Xu <herbert@gondor.apana.org.au>,
         linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, devel@driverdev.osuosl.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 5/6] staging: rtl: Use existing define with polynomial
-Date:   Tue, 17 Jul 2018 18:05:40 +0200
-Message-Id: <20180717160541.3843-6-krzk@kernel.org>
+Subject: [PATCH 6/6] lib: Use existing define with polynomial
+Date:   Tue, 17 Jul 2018 18:05:41 +0200
+Message-Id: <20180717160541.3843-7-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180717160541.3843-1-krzk@kernel.org>
 References: <20180717160541.3843-1-krzk@kernel.org>
@@ -72,76 +72,52 @@ Do not define again the polynomial but use header with existing define.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
-Not tested
+ lib/decompress_bunzip2.c | 3 ++-
+ lib/xz/xz_crc32.c        | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-It would be nice to get some testing. Only generic lib/crc, bunzip, xz_crc32
-and Freescale's Ethernet driver were tested on HW.  Rest got just different
-builds.
-
- drivers/staging/rtl8712/rtl871x_security.c    | 5 ++---
- drivers/staging/rtl8723bs/core/rtw_security.c | 5 ++---
- 2 files changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/staging/rtl8712/rtl871x_security.c b/drivers/staging/rtl8712/rtl871x_security.c
-index 7bc74d7d8a3a..1075eacdb441 100644
---- a/drivers/staging/rtl8712/rtl871x_security.c
-+++ b/drivers/staging/rtl8712/rtl871x_security.c
-@@ -40,6 +40,7 @@
- #include <linux/uaccess.h>
- #include <asm/byteorder.h>
- #include <linux/atomic.h>
+diff --git a/lib/decompress_bunzip2.c b/lib/decompress_bunzip2.c
+index 0234361b24b8..7c4932eed748 100644
+--- a/lib/decompress_bunzip2.c
++++ b/lib/decompress_bunzip2.c
+@@ -51,6 +51,7 @@
+ #endif /* STATIC */
+ 
+ #include <linux/decompress/mm.h>
 +#include <linux/crc32poly.h>
- #include <linux/semaphore.h>
  
- #include "osdep_service.h"
-@@ -49,8 +50,6 @@
+ #ifndef INT_MAX
+ #define INT_MAX 0x7fffffff
+@@ -654,7 +655,7 @@ static int INIT start_bunzip(struct bunzip_data **bdp, void *inbuf, long len,
+ 	for (i = 0; i < 256; i++) {
+ 		c = i << 24;
+ 		for (j = 8; j; j--)
+-			c = c&0x80000000 ? (c << 1)^0x04c11db7 : (c << 1);
++			c = c&0x80000000 ? (c << 1)^(CRC32_POLY_BE) : (c << 1);
+ 		bd->crc32Table[i] = c;
+ 	}
  
- /* =====WEP related===== */
- 
--#define CRC32_POLY 0x04c11db7
--
- struct arc4context {
- 	u32 x;
- 	u32 y;
-@@ -135,7 +134,7 @@ static void crc32_init(void)
- 	for (i = 0; i < 256; ++i) {
- 		k = crc32_reverseBit((u8)i);
- 		for (c = ((u32)k) << 24, j = 8; j > 0; --j)
--			c = c & 0x80000000 ? (c << 1) ^ CRC32_POLY : (c << 1);
-+			c = c & 0x80000000 ? (c << 1) ^ CRC32_POLY_BE : (c << 1);
- 		p1 = (u8 *)&crc32_table[i];
- 		p1[0] = crc32_reverseBit(p[3]);
- 		p1[1] = crc32_reverseBit(p[2]);
-diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
-index 612277a555d2..6c8ac9e86c9f 100644
---- a/drivers/staging/rtl8723bs/core/rtw_security.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_security.c
-@@ -6,6 +6,7 @@
-  ******************************************************************************/
- #define  _RTW_SECURITY_C_
+diff --git a/lib/xz/xz_crc32.c b/lib/xz/xz_crc32.c
+index 34532d14fd4c..25a5d87e2e4c 100644
+--- a/lib/xz/xz_crc32.c
++++ b/lib/xz/xz_crc32.c
+@@ -15,6 +15,7 @@
+  * but they are bigger and use more memory for the lookup table.
+  */
  
 +#include <linux/crc32poly.h>
- #include <drv_types.h>
- #include <rtw_debug.h>
+ #include "xz_private.h"
  
-@@ -87,8 +88,6 @@ const char *security_type_str(u8 value)
+ /*
+@@ -29,7 +30,7 @@ STATIC_RW_DATA uint32_t xz_crc32_table[256];
  
- /* WEP related ===== */
+ XZ_EXTERN void xz_crc32_init(void)
+ {
+-	const uint32_t poly = 0xEDB88320;
++	const uint32_t poly = CRC32_POLY_LE;
  
--#define CRC32_POLY 0x04c11db7
--
- struct arc4context {
- 	u32 x;
- 	u32 y;
-@@ -178,7 +177,7 @@ static void crc32_init(void)
- 		for (i = 0; i < 256; ++i) {
- 			k = crc32_reverseBit((u8)i);
- 			for (c = ((u32)k) << 24, j = 8; j > 0; --j) {
--				c = c & 0x80000000 ? (c << 1) ^ CRC32_POLY : (c << 1);
-+				c = c & 0x80000000 ? (c << 1) ^ CRC32_POLY_BE : (c << 1);
- 			}
- 			p1 = (u8 *)&crc32_table[i];
- 
+ 	uint32_t i;
+ 	uint32_t j;
 -- 
 2.14.1
 
