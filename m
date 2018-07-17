@@ -2,452 +2,275 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49075ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8938ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0D1021470
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C6BF20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:45:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xcXPHimu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0D1021470
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FIEifA4/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hQ4KWYkK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C6BF20C0A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbeGQKQG (ORCPT
+        id S1729976AbeGQKRJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:16:06 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:57098 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729642AbeGQKQF (ORCPT
+        Tue, 17 Jul 2018 06:17:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51908 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729665AbeGQKRJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:16:05 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6H9i6lr040309;
-        Tue, 17 Jul 2018 04:44:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531820646;
-        bh=s0Sc1TbcCyvJtiYG8g7a3XSk0j+Sk9v7UvaXpZ8C768=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=xcXPHimu5wXK3K21StnyEPDue7h5SqaMoO8y+LbixXhOvF3p3KUsu9mMQsHjS65K0
-         ej2KRVvR2r/C5T57R3US4Ve/xcQDpEA5eUk/NqD5ff2pP3UwY83ktaPHH5bIo7JMuO
-         ThzAeeFIbG9nkShFlxeeU4ZzyL5rhFoYdZSexol4=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6H9i67M006476;
-        Tue, 17 Jul 2018 04:44:06 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 17
- Jul 2018 04:44:06 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 17 Jul 2018 04:44:05 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6H9i2b7029735;
-        Tue, 17 Jul 2018 04:44:03 -0500
-Subject: Re: [PATCH v12 10/12] pci_endpoint_test: Add 2 ioctl commands
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
-        <joao.pinto@synopsys.com>, <jingoohan1@gmail.com>,
-        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
-        <shawn.lin@rock-chips.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
- <0dc487515e28a6cd790888cb98f84fb7ea3a412e.1531818979.git.gustavo.pimentel@synopsys.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <f1745187-d3a1-b0c1-4792-350b57908533@ti.com>
-Date:   Tue, 17 Jul 2018 15:14:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 17 Jul 2018 06:17:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id CA09C60B77; Tue, 17 Jul 2018 09:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531820722;
+        bh=AsHLiTtpotssE7g8qgYDUsVROj3/xw/ngvFe4E3/UqA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FIEifA4/1CoX9Vvojk6ebR8DYXweKd2lQZXnsZYKQAjXqvhoSkYaOccZDQCPG9J4V
+         kINb/jxNP2MmYlh96xj2H5+TjiorLfLP7TEdeqKnieH1C8tHKddZQknbgjACsEgSk0
+         sxE2sjyDJlZ9GmFou1fpfVgMauBHnktMabIhLrI8=
+Received: from [10.252.222.164] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vviswana@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 156B56014B;
+        Tue, 17 Jul 2018 09:45:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531820721;
+        bh=AsHLiTtpotssE7g8qgYDUsVROj3/xw/ngvFe4E3/UqA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hQ4KWYkK+6Jd5HPXLQyhaJz7mpEVDhebF0CEuIwEcf4F/ZBBdRdZXGf5QGT9YTqNT
+         gBHxxtRdASIRql7JP9RYrnOOBfkk8rVuonygmSaJP8gmWCvNuCzKauN4/CKlz3P/Rn
+         n5A2v0fjy/9GRqpkF6Jd7ceVItvq/wY+fys1hhtM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 156B56014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
+Subject: Re: [PATCH RFC 1/2] mmc: sdhci: Allow platform controlled voltage
+ switching
+To:     Adrian Hunter <adrian.hunter@intel.com>, ulf.hansson@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, jeremymc@redhat.com,
+        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        vbadigan@codeaurora.org, dianders@google.com,
+        sayalil@codeaurora.org, Evan Green <evgreen@chromium.org>
+References: <1529583826-42020-1-git-send-email-vviswana@codeaurora.org>
+ <1529583826-42020-2-git-send-email-vviswana@codeaurora.org>
+ <53c6d61f-47f5-2e4e-8280-6f76f707799e@intel.com>
+ <0d9b1934-d80d-a726-8094-688c97474afa@codeaurora.org>
+ <78dfa5db-712b-bb0c-ad03-761371beef10@intel.com>
+ <c721395a-0198-d533-5e40-42e4856f34e5@codeaurora.org>
+ <6e8c713f-6569-25f3-dec5-f08001b3c6f3@intel.com>
+From:   Vijay Viswanath <vviswana@codeaurora.org>
+Message-ID: <8c4fb768-3d4f-da45-3115-30bc5c1058a6@codeaurora.org>
+Date:   Tue, 17 Jul 2018 15:15:12 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <0dc487515e28a6cd790888cb98f84fb7ea3a412e.1531818979.git.gustavo.pimentel@synopsys.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <6e8c713f-6569-25f3-dec5-f08001b3c6f3@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
 
-On Tuesday 17 July 2018 03:01 PM, Gustavo Pimentel wrote:
-> Add MSI-X support and update driver documentation accordingly.
-> 
-> Add 2 new IOCTL commands:
->  - Allow to reconfigure driver IRQ type in runtime.
->  - Allow to retrieve current driver IRQ type configured.
-> 
-> Add IRQ type validation before executing the READ/WRITE/COPY tests.
-> 
-> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-> ---
-> Change v2->v3:
->  - New patch file created base on the previous patch
-> "misc: pci_endpoint_test: Add MSI-X support" patch file following
-> Kishon's suggestion.
-> Change v3->v4:
->  - Rebased to Lorenzo's master branch v4.18-rc1.
-> Change v4->v5:
->  - Nothing changed, just to follow the patch set version.
-> Change v5->v6:
->  - Moved PCITEST_SET_IRQTYPE and PCITEST_GET_IRQTYPE ioctl entries
-> from patch #10 to here.
->  - Increased ioctl parameters range associated to
-> drivers/misc/pci_endpoint_test.c driver.
-> Change v6->v7:
->  - irq_type variable update just before returning the function.
-> Change v7->v8:
->  - Re-sending the patch series.
-> Change v8->v9:
->  - Added a extra parameter to pci_endpoint_test_alloc_irq_vectors,
-> that specifies which irq type should be allocated.
-> Change v9->v10:
->  - Fixed bug, report available: https://lkml.org/lkml/2018/7/16/11
->  - Added IRQ type validation before executing the READ/WRITE/COPY
-> tests.
-> Change v11->v12:
->  - Exchange pci_endpoint_test_release_irq() and
-> pci_endpoint_test_free_irq_vectors() content.
->  - Refactor all previous calls to those functions.
-> 
->  Documentation/ioctl/ioctl-number.txt             |   2 +-
->  Documentation/misc-devices/pci-endpoint-test.txt |   3 +
->  drivers/misc/pci_endpoint_test.c                 | 192 +++++++++++++++++------
->  include/uapi/linux/pcitest.h                     |   2 +
->  4 files changed, 152 insertions(+), 47 deletions(-)
-> 
-> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-> index 65259d4..c15c4f3 100644
-> --- a/Documentation/ioctl/ioctl-number.txt
-> +++ b/Documentation/ioctl/ioctl-number.txt
-> @@ -166,7 +166,7 @@ Code  Seq#(hex)	Include File		Comments
->  'P'	all	linux/soundcard.h	conflict!
->  'P'	60-6F	sound/sscape_ioctl.h	conflict!
->  'P'	00-0F	drivers/usb/class/usblp.c	conflict!
-> -'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
-> +'P'	01-09	drivers/misc/pci_endpoint_test.c	conflict!
->  'Q'	all	linux/soundcard.h
->  'R'	00-1F	linux/random.h		conflict!
->  'R'	01	linux/rfkill.h		conflict!
-> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
-> index fdfa0f6..58ccca4 100644
-> --- a/Documentation/misc-devices/pci-endpoint-test.txt
-> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
-> @@ -28,6 +28,9 @@ ioctl
->  	      to be tested should be passed as argument.
->   PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
->  	      to be tested should be passed as argument.
-> + PCITEST_SET_IRQTYPE: Changes driver IRQ type configuration. The IRQ type
-> +	      should be passed as argument (0: Legacy, 1:MSI, 2:MSI-X).
-> + PCITEST_GET_IRQTYPE: Gets driver IRQ type configuration.
->   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
->  		as argument.
->   PCITEST_READ: Perform read tests. The size of the buffer should be passed
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index f4fef10..d909ca5 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -37,6 +37,7 @@
->  
->  #define DRV_MODULE_NAME				"pci-endpoint-test"
->  
-> +#define IRQ_TYPE_UNDEFINED			-1
->  #define IRQ_TYPE_LEGACY				0
->  #define IRQ_TYPE_MSI				1
->  #define IRQ_TYPE_MSIX				2
-> @@ -157,6 +158,88 @@ static irqreturn_t pci_endpoint_test_irqhandler(int irq, void *dev_id)
->  	return IRQ_HANDLED;
->  }
->  
-> +static void pci_endpoint_test_free_irq_vectors(struct pci_endpoint_test *test)
-> +{
-> +	int i;
-> +	struct pci_dev *pdev = test->pdev;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	for (i = 0; i < test->num_irqs; i++)
-> +		devm_free_irq(dev, pci_irq_vector(pdev, i), test);
 
-The contents looks the same as in v11,
+On 7/17/2018 2:12 PM, Adrian Hunter wrote:
+> On 17/07/18 11:40, Vijay Viswanath wrote:
+>>
+>>
+>> On 7/17/2018 1:00 PM, Adrian Hunter wrote:
+>>> On 17/07/18 08:14, Vijay Viswanath wrote:
+>>>>
+>>>>
+>>>> On 7/10/2018 4:37 PM, Adrian Hunter wrote:
+>>>>> On 21/06/18 15:23, Vijay Viswanath wrote:
+>>>>>> Some controllers can have internal mechanism to inform the SW that it
+>>>>>> is ready for voltage switching. For such controllers, changing voltage
+>>>>>> before the HW is ready can result in various issues.
+>>>>>>
+>>>>>> Add a quirk, which can be used by drivers of such controllers.
+>>>>>>
+>>>>>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
+>>>>>> ---
+>>>>>>     drivers/mmc/host/sdhci.c | 20 +++++++++++++++-----
+>>>>>>     drivers/mmc/host/sdhci.h |  2 ++
+>>>>>>     2 files changed, 17 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>>>>> index 1c828e0..f0346d4 100644
+>>>>>> --- a/drivers/mmc/host/sdhci.c
+>>>>>> +++ b/drivers/mmc/host/sdhci.c
+>>>>>> @@ -1615,7 +1615,8 @@ void sdhci_set_power_noreg(struct sdhci_host *host,
+>>>>>> unsigned char mode,
+>>>>>>     void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
+>>>>>>                  unsigned short vdd)
+>>>>>>     {
+>>>>>> -    if (IS_ERR(host->mmc->supply.vmmc))
+>>>>>> +    if (IS_ERR(host->mmc->supply.vmmc) ||
+>>>>>> +            (host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>>
+>>>>> I think you should provide your own ->set_power() instead of this
+>>>>>
+>>>>
+>>>> will do
+>>>>
+>>>>>>             sdhci_set_power_noreg(host, mode, vdd);
+>>>>>>         else
+>>>>>>             sdhci_set_power_reg(host, mode, vdd);
+>>>>>> @@ -2009,7 +2010,9 @@ int sdhci_start_signal_voltage_switch(struct
+>>>>>> mmc_host *mmc,
+>>>>>>             ctrl &= ~SDHCI_CTRL_VDD_180;
+>>>>>>             sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>>>>>     -        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
+>>>>>> +                !(host->quirks2 &
+>>>>>> +                    SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
+>>>>>
+>>>>> And your own ->start_signal_voltage_switch()
+>>>>>
+>>>>
+>>>> sdhci_msm_start_signal_voltage_switch() would be an exact copy of
+>>>> sdhci_start_signal_voltage_switch()..... will incorporate this if not using
+>>>> quirk.
+>>>>
+>>>>>>                 ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>>                 if (ret) {
+>>>>>>                     pr_warn("%s: Switching to 3.3V signalling voltage
+>>>>>> failed\n",
+>>>>>> @@ -2032,7 +2035,8 @@ int sdhci_start_signal_voltage_switch(struct
+>>>>>> mmc_host *mmc,
+>>>>>>         case MMC_SIGNAL_VOLTAGE_180:
+>>>>>>             if (!(host->flags & SDHCI_SIGNALING_180))
+>>>>>>                 return -EINVAL;
+>>>>>> -        if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>> +        if (!IS_ERR(mmc->supply.vqmmc) &&
+>>>>>> +            !(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL)) {
+>>>>>>                 ret = mmc_regulator_set_vqmmc(mmc, ios);
+>>>>>>                 if (ret) {
+>>>>>>                     pr_warn("%s: Switching to 1.8V signalling voltage
+>>>>>> failed\n",
+>>>>>> @@ -3485,7 +3489,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>>>>          * the host can take the appropriate action if regulators are not
+>>>>>>          * available.
+>>>>>>          */
+>>>>>> -    ret = mmc_regulator_get_supply(mmc);
+>>>>>> +    if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>>
+>>>>> Since we expect mmc_regulator_get_supply() to have been called, this could
+>>>>> be:
+>>>>>
+>>>>>       if (!mmc->supply.vmmc) {
+>>>>>           ret = mmc_regulator_get_supply(mmc);
+>>>>>           enable_vqmmc = true;
+>>>>>       } else {
+>>>>>           ret = 0;
+>>>>>       }
+>>>>>>> +        ret = mmc_regulator_get_supply(mmc);
+>>>>>> +    else
+>>>>>> +        ret = 0;
+>>>>>>         if (ret)
+>>>>>>             return ret;
+>>>>>>     @@ -3736,7 +3743,10 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>>>>           /* If vqmmc regulator and no 1.8V signalling, then there's no
+>>>>>> UHS */
+>>>>>>         if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>>>> -        ret = regulator_enable(mmc->supply.vqmmc);
+>>>>>> +        if (!(host->quirks2 & SDHCI_QUIRK2_INTERNAL_PWR_CTL))
+>>>>>
+>>>>> And this could be:
+>>>>>
+>>>>>           if (enable_vqmmc)
+>>>>>               ret = regulator_enable(mmc->supply.vqmmc);
+>>>>>           else
+>>>>>               ret = 0;
+>>>>>    > However, you still need to ensure
+>>>>> regulator_disable(mmc->supply.vqmmc) is
+>>>>> only called if regulator_enable() was called.
+>>>> I missed this. Will cover it.
+>>>>
+>>>> Also I missed one more place where we are doing regulator_disable. During
+>>>> sdhci-msm unbinding, we would end up doing an extra regulator disable
+>>>> (thanks Evan for pointing it out) in sdhci_remove_host.
+>>>>
+>>>> To avoid the quirk( or having any flag), it would require copying the code
+>>>> of sdhci_start_signal_voltage_switch() and sdhci_remove_host() and creating
+>>>
+>>> You do not need to duplicate sdhci_remove_host(), just change it so that it
+>>> only  disables what was enabled i.e.
+>>>
+>>>      if (host->vqmmc_enabled)
+>>>          regulator_disable(mmc->supply.vqmmc);
+>>>
+>>
+>> Ok, so we will be adding a new flag "vqmmc_enabled" in sdhci_host, ryt ?
+> 
+> Yes
+> 
 
-Thanks
-Kishon
+Ok.
+Any particular reason why we are avoiding quirk and instead adding a new 
+flag ?
 
-> +
-> +	test->num_irqs = 0;
-> +}
-> +
-> +static bool pci_endpoint_test_alloc_irq_vectors(struct pci_endpoint_test *test,
-> +						int type)
-> +{
-> +	int irq = -1;
-> +	struct pci_dev *pdev = test->pdev;
-> +	struct device *dev = &pdev->dev;
-> +	bool res = true;
-> +
-> +	switch (type) {
-> +	case IRQ_TYPE_LEGACY:
-> +		irq = 0;
-> +		break;
-> +	case IRQ_TYPE_MSI:
-> +		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
-> +		if (irq < 0)
-> +			dev_err(dev, "Failed to get MSI interrupts\n");
-> +		break;
-> +	case IRQ_TYPE_MSIX:
-> +		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
-> +		if (irq < 0)
-> +			dev_err(dev, "Failed to get MSI-X interrupts\n");
-> +		break;
-> +	default:
-> +		dev_err(dev, "Invalid IRQ type selected\n");
-> +	}
-> +
-> +	if (irq < 0) {
-> +		irq = 0;
-> +		res = false;
-> +	}
-> +	test->num_irqs = irq;
-> +
-> +	return res;
-> +}
-> +
-> +static void pci_endpoint_test_release_irq(struct pci_endpoint_test *test)
-> +{
-> +	struct pci_dev *pdev = test->pdev;
-> +
-> +	pci_disable_msi(pdev);
-> +	pci_disable_msix(pdev);
-> +}
-> +
-> +static bool pci_endpoint_test_request_irq(struct pci_endpoint_test *test)
-> +{
-> +	int i;
-> +	int err;
-> +	struct pci_dev *pdev = test->pdev;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
-> +			       IRQF_SHARED, DRV_MODULE_NAME, test);
-> +	if (err) {
-> +		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
-> +		return false;
-> +	}
-> +
-> +	for (i = 1; i < test->num_irqs; i++) {
-> +		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
-> +				       pci_endpoint_test_irqhandler,
-> +				       IRQF_SHARED, DRV_MODULE_NAME, test);
-> +		if (err)
-> +			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
-> +				pci_irq_vector(pdev, i),
-> +				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
->  				  enum pci_barno barno)
->  {
-> @@ -247,6 +330,11 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
->  	if (size > SIZE_MAX - alignment)
->  		goto err;
->  
-> +	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
-> +		dev_err(dev, "Invalid IRQ type option\n");
-> +		goto err;
-> +	}
-> +
->  	orig_src_addr = dma_alloc_coherent(dev, size + alignment,
->  					   &orig_src_phys_addr, GFP_KERNEL);
->  	if (!orig_src_addr) {
-> @@ -337,6 +425,11 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
->  	if (size > SIZE_MAX - alignment)
->  		goto err;
->  
-> +	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
-> +		dev_err(dev, "Invalid IRQ type option\n");
-> +		goto err;
-> +	}
-> +
->  	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
->  				       GFP_KERNEL);
->  	if (!orig_addr) {
-> @@ -400,6 +493,11 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
->  	if (size > SIZE_MAX - alignment)
->  		goto err;
->  
-> +	if (irq_type < IRQ_TYPE_LEGACY || irq_type > IRQ_TYPE_MSIX) {
-> +		dev_err(dev, "Invalid IRQ type option\n");
-> +		goto err;
-> +	}
-> +
->  	orig_addr = dma_alloc_coherent(dev, size + alignment, &orig_phys_addr,
->  				       GFP_KERNEL);
->  	if (!orig_addr) {
-> @@ -440,6 +538,38 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
->  	return ret;
->  }
->  
-> +static bool pci_endpoint_test_set_irq(struct pci_endpoint_test *test,
-> +				      int req_irq_type)
-> +{
-> +	struct pci_dev *pdev = test->pdev;
-> +	struct device *dev = &pdev->dev;
-> +
-> +	if (req_irq_type < IRQ_TYPE_LEGACY || req_irq_type > IRQ_TYPE_MSIX) {
-> +		dev_err(dev, "Invalid IRQ type option\n");
-> +		return false;
-> +	}
-> +
-> +	if (irq_type == req_irq_type)
-> +		return true;
-> +
-> +	pci_endpoint_test_free_irq_vectors(test);
-> +	pci_endpoint_test_release_irq(test);
-> +
-> +	if (!pci_endpoint_test_alloc_irq_vectors(test, req_irq_type))
-> +		goto err;
-> +
-> +	if (!pci_endpoint_test_request_irq(test))
-> +		goto err;
-> +
-> +	irq_type = req_irq_type;
-> +	return true;
-> +
-> +err:
-> +	pci_endpoint_test_release_irq(test);
-> +	irq_type = IRQ_TYPE_UNDEFINED;
-> +	return false;
-> +}
-> +
->  static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
->  				    unsigned long arg)
->  {
-> @@ -471,6 +601,12 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
->  	case PCITEST_COPY:
->  		ret = pci_endpoint_test_copy(test, arg);
->  		break;
-> +	case PCITEST_SET_IRQTYPE:
-> +		ret = pci_endpoint_test_set_irq(test, arg);
-> +		break;
-> +	case PCITEST_GET_IRQTYPE:
-> +		ret = irq_type;
-> +		break;
->  	}
->  
->  ret:
-> @@ -486,9 +622,7 @@ static const struct file_operations pci_endpoint_test_fops = {
->  static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  				   const struct pci_device_id *ent)
->  {
-> -	int i;
->  	int err;
-> -	int irq = 0;
->  	int id;
->  	char name[20];
->  	enum pci_barno bar;
-> @@ -537,41 +671,11 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  
->  	pci_set_master(pdev);
->  
-> -	switch (irq_type) {
-> -	case IRQ_TYPE_LEGACY:
-> -		break;
-> -	case IRQ_TYPE_MSI:
-> -		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
-> -		if (irq < 0)
-> -			dev_err(dev, "Failed to get MSI interrupts\n");
-> -		test->num_irqs = irq;
-> -		break;
-> -	case IRQ_TYPE_MSIX:
-> -		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
-> -		if (irq < 0)
-> -			dev_err(dev, "Failed to get MSI-X interrupts\n");
-> -		test->num_irqs = irq;
-> -		break;
-> -	default:
-> -		dev_err(dev, "Invalid IRQ type selected\n");
-> -	}
-> -
-> -	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
-> -			       IRQF_SHARED, DRV_MODULE_NAME, test);
-> -	if (err) {
-> -		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
-> -		goto err_disable_msi;
-> -	}
-> +	if (!pci_endpoint_test_alloc_irq_vectors(test, irq_type))
-> +		goto err_disable_irq;
->  
-> -	for (i = 1; i < irq; i++) {
-> -		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
-> -				       pci_endpoint_test_irqhandler,
-> -				       IRQF_SHARED, DRV_MODULE_NAME, test);
-> -		if (err)
-> -			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
-> -				pci_irq_vector(pdev, i),
-> -				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
-> -	}
-> +	if (!pci_endpoint_test_request_irq(test))
-> +		goto err_disable_irq;
->  
->  	for (bar = BAR_0; bar <= BAR_5; bar++) {
->  		if (pci_resource_flags(pdev, bar) & IORESOURCE_MEM) {
-> @@ -631,12 +735,10 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  			pci_iounmap(pdev, test->bar[bar]);
->  	}
->  
-> -	for (i = 0; i < irq; i++)
-> -		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
-> +	pci_endpoint_test_free_irq_vectors(test);
->  
-> -err_disable_msi:
-> -	pci_disable_msi(pdev);
-> -	pci_disable_msix(pdev);
-> +err_disable_irq:
-> +	pci_endpoint_test_release_irq(test);
->  	pci_release_regions(pdev);
->  
->  err_disable_pdev:
-> @@ -648,7 +750,6 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
->  static void pci_endpoint_test_remove(struct pci_dev *pdev)
->  {
->  	int id;
-> -	int i;
->  	enum pci_barno bar;
->  	struct pci_endpoint_test *test = pci_get_drvdata(pdev);
->  	struct miscdevice *misc_device = &test->miscdev;
-> @@ -665,10 +766,9 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
->  		if (test->bar[bar])
->  			pci_iounmap(pdev, test->bar[bar]);
->  	}
-> -	for (i = 0; i < test->num_irqs; i++)
-> -		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
-> -	pci_disable_msi(pdev);
-> -	pci_disable_msix(pdev);
-> +	pci_endpoint_test_free_irq_vectors(test);
-> +
-> +	pci_endpoint_test_release_irq(test);
->  	pci_release_regions(pdev);
->  	pci_disable_device(pdev);
->  }
-> diff --git a/include/uapi/linux/pcitest.h b/include/uapi/linux/pcitest.h
-> index d746fb1..cbf422e 100644
-> --- a/include/uapi/linux/pcitest.h
-> +++ b/include/uapi/linux/pcitest.h
-> @@ -17,5 +17,7 @@
->  #define PCITEST_READ		_IOW('P', 0x5, unsigned long)
->  #define PCITEST_COPY		_IOW('P', 0x6, unsigned long)
->  #define PCITEST_MSIX		_IOW('P', 0x7, int)
-> +#define PCITEST_SET_IRQTYPE	_IOW('P', 0x8, int)
-> +#define PCITEST_GET_IRQTYPE	_IO('P', 0x9)
->  
->  #endif /* __UAPI_LINUX_PCITEST_H */
+>> Just wanted to clarify
+>>
+>>>> 2 new functions in sdhci_msm layer which would do the exact same as above,
+>>>> with just the regulator parts removed.
+>>>>
+>>>> This looks messy (considering any future changes to the 2 sdhci API will
+>>>> need to be copied to their duplicate sdhci_msm API) and a bit overkill to
+>>>> avoid quirk. At the same time, I don't know how useful such a quirk would be
+>>>> to other platform drivers.
+>>>>
+>>>> Please let me know your view/suggestions.
+>>>
+>>> Let's try without the quirk.
+>>>
+>>>>>
+>>>>>> +            ret = regulator_enable(mmc->supply.vqmmc);
+>>>>>> +        else
+>>>>>> +            ret = 0;
+>>>>>>             if (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
+>>>>>>                                 1950000))
+>>>>>>                 host->caps1 &= ~(SDHCI_SUPPORT_SDR104 |
+>>>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>>>>> index 23966f8..3b0c97a 100644
+>>>>>> --- a/drivers/mmc/host/sdhci.h
+>>>>>> +++ b/drivers/mmc/host/sdhci.h
+>>>>>> @@ -450,6 +450,8 @@ struct sdhci_host {
+>>>>>>      * obtainable timeout.
+>>>>>>      */
+>>>>>>     #define SDHCI_QUIRK2_DISABLE_HW_TIMEOUT            (1<<17)
+>>>>>> +/* Regulator voltage changes are being done from platform layer */
+>>>>>> +#define SDHCI_QUIRK2_INTERNAL_PWR_CTL                (1<<18)
+>>>>>
+>>>>> So maybe the quirk is not needed.
+>>>>>
+>>>>>>           int irq;        /* Device IRQ */
+>>>>>>         void __iomem *ioaddr;    /* Mapped address */
+>>>>>>
+>>>>>
+>>>>
+>>>> Thanks for the review & suggestions!
+>>>> Vijay
+>>>>
+>>>
+>>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
