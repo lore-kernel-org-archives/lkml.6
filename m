@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43735ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B155ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8AD0208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8AD0208AD
+	by mail.kernel.org (Postfix) with ESMTP id E9541208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9541208AD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731686AbeGQLyW (ORCPT
+        id S1731660AbeGQLyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:54:22 -0400
-Received: from mga07.intel.com ([134.134.136.100]:40796 "EHLO mga07.intel.com"
+        Tue, 17 Jul 2018 07:54:20 -0400
+Received: from mga07.intel.com ([134.134.136.100]:40800 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731629AbeGQLyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:54:21 -0400
+        id S1730667AbeGQLyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:54:20 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
   by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:22:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="67665020"
+   d="scan'208";a="67665041"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 17 Jul 2018 04:21:45 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 17 Jul 2018 04:21:48 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id E0E01341; Tue, 17 Jul 2018 14:21:48 +0300 (EEST)
+        id 7D14E85E; Tue, 17 Jul 2018 14:21:49 +0300 (EEST)
 From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,9 +43,9 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv5 05/19] mm/page_alloc: Handle allocation for encrypted memory
-Date:   Tue, 17 Jul 2018 14:20:15 +0300
-Message-Id: <20180717112029.42378-6-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv5 19/19] x86: Introduce CONFIG_X86_INTEL_MKTME
+Date:   Tue, 17 Jul 2018 14:20:29 +0300
+Message-Id: <20180717112029.42378-20-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
 References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
@@ -54,316 +54,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For encrypted memory, we need to allocate pages for a specific
-encryption KeyID.
+Add new config option to enabled/disable Multi-Key Total Memory
+Encryption support.
 
-There are two cases when we need to allocate a page for encryption:
-
- - Allocation for an encrypted VMA;
-
- - Allocation for migration of encrypted page;
-
-The first case can be covered within alloc_page_vma(). We know KeyID
-from the VMA.
-
-The second case requires few new page allocation routines that would
-allocate the page for a specific KeyID.
-
-An encrypted page has to be cleared after KeyID set. This is handled
-in prep_encrypted_page() that will be provided by arch-specific code.
+MKTME uses MEMORY_PHYSICAL_PADDING to reserve enough space in per-KeyID
+direct mappings for memory hotplug.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- include/linux/gfp.h     | 48 ++++++++++++++++++++++++++++++++++++-----
- include/linux/migrate.h | 12 ++++++++---
- mm/compaction.c         |  1 +
- mm/mempolicy.c          | 28 ++++++++++++++++++------
- mm/migrate.c            |  4 ++--
- mm/page_alloc.c         | 47 ++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 123 insertions(+), 17 deletions(-)
+ arch/x86/Kconfig | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 66f395737990..347a40558cfc 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -446,16 +446,46 @@ static inline void arch_free_page(struct page *page, int order) { }
- static inline void arch_alloc_page(struct page *page, int order) { }
- #endif
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index b6f1785c2176..023a22568c06 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1523,6 +1523,23 @@ config ARCH_USE_MEMREMAP_PROT
+ 	def_bool y
+ 	depends on AMD_MEM_ENCRYPT
  
-+#ifndef prep_encrypted_page
-+static inline void prep_encrypted_page(struct page *page, int order,
-+		int keyid, bool zero)
-+{
-+}
-+#endif
++config X86_INTEL_MKTME
++	bool "Intel Multi-Key Total Memory Encryption"
++	select DYNAMIC_PHYSICAL_MASK
++	select PAGE_EXTENSION
++	depends on X86_64 && CPU_SUP_INTEL
++	---help---
++	  Say yes to enable support for Multi-Key Total Memory Encryption.
++	  This requires an Intel processor that has support of the feature.
 +
-+/*
-+ * Encrypted page has to be cleared once keyid is set, not on allocation.
-+ */
-+static inline bool encrypted_page_needs_zero(int keyid, gfp_t *gfp_mask)
-+{
-+	if (!keyid)
-+		return false;
++	  Multikey Total Memory Encryption (MKTME) is a technology that allows
++	  transparent memory encryption in upcoming Intel platforms.
 +
-+	if (*gfp_mask & __GFP_ZERO) {
-+		*gfp_mask &= ~__GFP_ZERO;
-+		return true;
-+	}
++	  MKTME is built on top of TME. TME allows encryption of the entirety
++	  of system memory using a single key. MKTME allows having multiple
++	  encryption domains, each having own key -- different memory pages can
++	  be encrypted with different keys.
 +
-+	return false;
-+}
-+
- struct page *
- __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- 							nodemask_t *nodemask);
+ # Common NUMA Features
+ config NUMA
+ 	bool "Numa Memory Allocation and Scheduler Support"
+@@ -2199,7 +2216,7 @@ config RANDOMIZE_MEMORY
  
-+struct page *
-+__alloc_pages_nodemask_keyid(gfp_t gfp_mask, unsigned int order,
-+		int preferred_nid, nodemask_t *nodemask, int keyid);
-+
- static inline struct page *
- __alloc_pages(gfp_t gfp_mask, unsigned int order, int preferred_nid)
- {
- 	return __alloc_pages_nodemask(gfp_mask, order, preferred_nid, NULL);
- }
- 
-+struct page *__alloc_pages_node_keyid(int nid, int keyid,
-+		gfp_t gfp_mask, unsigned int order);
-+
- /*
-  * Allocate pages, preferring the node given as nid. The node must be valid and
-  * online. For more general interface, see alloc_pages_node().
-@@ -483,6 +513,19 @@ static inline struct page *alloc_pages_node(int nid, gfp_t gfp_mask,
- 	return __alloc_pages_node(nid, gfp_mask, order);
- }
- 
-+static inline struct page *alloc_pages_node_keyid(int nid, int keyid,
-+		gfp_t gfp_mask, unsigned int order)
-+{
-+	if (nid == NUMA_NO_NODE)
-+		nid = numa_mem_id();
-+
-+	return __alloc_pages_node_keyid(nid, keyid, gfp_mask, order);
-+}
-+
-+extern struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
-+			struct vm_area_struct *vma, unsigned long addr,
-+			int node, bool hugepage);
-+
- #ifdef CONFIG_NUMA
- extern struct page *alloc_pages_current(gfp_t gfp_mask, unsigned order);
- 
-@@ -491,14 +534,9 @@ alloc_pages(gfp_t gfp_mask, unsigned int order)
- {
- 	return alloc_pages_current(gfp_mask, order);
- }
--extern struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
--			struct vm_area_struct *vma, unsigned long addr,
--			int node, bool hugepage);
- #else
- #define alloc_pages(gfp_mask, order) \
- 		alloc_pages_node(numa_node_id(), gfp_mask, order)
--#define alloc_pages_vma(gfp_mask, order, vma, addr, node, false)\
--	alloc_pages(gfp_mask, order)
- #endif
- #define alloc_page(gfp_mask) alloc_pages(gfp_mask, 0)
- #define alloc_page_vma(gfp_mask, vma, addr)			\
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index f2b4abbca55e..fede9bfa89d9 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -38,9 +38,15 @@ static inline struct page *new_page_nodemask(struct page *page,
- 	unsigned int order = 0;
- 	struct page *new_page = NULL;
- 
--	if (PageHuge(page))
-+	if (PageHuge(page)) {
-+		/*
-+		 * HugeTLB doesn't support encryption. We shouldn't see
-+		 * such pages.
-+		 */
-+		WARN_ON(page_keyid(page));
- 		return alloc_huge_page_nodemask(page_hstate(compound_head(page)),
- 				preferred_nid, nodemask);
-+	}
- 
- 	if (PageTransHuge(page)) {
- 		gfp_mask |= GFP_TRANSHUGE;
-@@ -50,8 +56,8 @@ static inline struct page *new_page_nodemask(struct page *page,
- 	if (PageHighMem(page) || (zone_idx(page_zone(page)) == ZONE_MOVABLE))
- 		gfp_mask |= __GFP_HIGHMEM;
- 
--	new_page = __alloc_pages_nodemask(gfp_mask, order,
--				preferred_nid, nodemask);
-+	new_page = __alloc_pages_nodemask_keyid(gfp_mask, order,
-+				preferred_nid, nodemask, page_keyid(page));
- 
- 	if (new_page && PageTransHuge(new_page))
- 		prep_transhuge_page(new_page);
-diff --git a/mm/compaction.c b/mm/compaction.c
-index faca45ebe62d..fd51aa32ad96 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1187,6 +1187,7 @@ static struct page *compaction_alloc(struct page *migratepage,
- 	list_del(&freepage->lru);
- 	cc->nr_freepages--;
- 
-+	prep_encrypted_page(freepage, 0, page_keyid(migratepage), false);
- 	return freepage;
- }
- 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 581b729e05a0..ce7b436444b5 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -921,22 +921,28 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
- /* page allocation callback for NUMA node migration */
- struct page *alloc_new_node_page(struct page *page, unsigned long node)
- {
--	if (PageHuge(page))
-+	if (PageHuge(page)) {
-+		/*
-+		 * HugeTLB doesn't support encryption. We shouldn't see
-+		 * such pages.
-+		 */
-+		WARN_ON(page_keyid(page));
- 		return alloc_huge_page_node(page_hstate(compound_head(page)),
- 					node);
--	else if (PageTransHuge(page)) {
-+	} else if (PageTransHuge(page)) {
- 		struct page *thp;
- 
--		thp = alloc_pages_node(node,
-+		thp = alloc_pages_node_keyid(node, page_keyid(page),
- 			(GFP_TRANSHUGE | __GFP_THISNODE),
- 			HPAGE_PMD_ORDER);
- 		if (!thp)
- 			return NULL;
- 		prep_transhuge_page(thp);
- 		return thp;
--	} else
--		return __alloc_pages_node(node, GFP_HIGHUSER_MOVABLE |
--						    __GFP_THISNODE, 0);
-+	} else {
-+		return __alloc_pages_node_keyid(node, page_keyid(page),
-+				GFP_HIGHUSER_MOVABLE | __GFP_THISNODE, 0);
-+	}
- }
- 
- /*
-@@ -2013,9 +2019,16 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
- {
- 	struct mempolicy *pol;
- 	struct page *page;
--	int preferred_nid;
-+	bool zero = false;
-+	int keyid, preferred_nid;
- 	nodemask_t *nmask;
- 
-+	keyid = vma_keyid(vma);
-+	if (keyid && (gfp & __GFP_ZERO)) {
-+		zero = true;
-+		gfp &= ~__GFP_ZERO;
-+	}
-+
- 	pol = get_vma_policy(vma, addr);
- 
- 	if (pol->mode == MPOL_INTERLEAVE) {
-@@ -2058,6 +2071,7 @@ alloc_pages_vma(gfp_t gfp, int order, struct vm_area_struct *vma,
- 	page = __alloc_pages_nodemask(gfp, order, preferred_nid, nmask);
- 	mpol_cond_put(pol);
- out:
-+	prep_encrypted_page(page, order, keyid, zero);
- 	return page;
- }
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 8c0af0f7cab1..eb8dea219dcb 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1847,7 +1847,7 @@ static struct page *alloc_misplaced_dst_page(struct page *page,
- 	int nid = (int) data;
- 	struct page *newpage;
- 
--	newpage = __alloc_pages_node(nid,
-+	newpage = __alloc_pages_node_keyid(nid, page_keyid(page),
- 					 (GFP_HIGHUSER_MOVABLE |
- 					  __GFP_THISNODE | __GFP_NOMEMALLOC |
- 					  __GFP_NORETRY | __GFP_NOWARN) &
-@@ -2030,7 +2030,7 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
- 	if (numamigrate_update_ratelimit(pgdat, HPAGE_PMD_NR))
- 		goto out_dropref;
- 
--	new_page = alloc_pages_node(node,
-+	new_page = alloc_pages_node_keyid(node, page_keyid(page),
- 		(GFP_TRANSHUGE_LIGHT | __GFP_THISNODE),
- 		HPAGE_PMD_ORDER);
- 	if (!new_page)
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 5d800d61ddb7..d7dc54b75f5d 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3697,6 +3697,39 @@ should_compact_retry(struct alloc_context *ac, unsigned int order, int alloc_fla
- }
- #endif /* CONFIG_COMPACTION */
- 
-+#ifndef CONFIG_NUMA
-+struct page *alloc_pages_vma(gfp_t gfp_mask, int order,
-+		struct vm_area_struct *vma, unsigned long addr,
-+		int node, bool hugepage)
-+{
-+	struct page *page;
-+	bool need_zero;
-+	int keyid = vma_keyid(vma);
-+
-+	need_zero = encrypted_page_needs_zero(keyid, &gfp_mask);
-+	page = alloc_pages(gfp_mask, order);
-+	prep_encrypted_page(page, order, keyid, need_zero);
-+
-+	return page;
-+}
-+#endif
-+
-+struct page * __alloc_pages_node_keyid(int nid, int keyid,
-+		gfp_t gfp_mask, unsigned int order)
-+{
-+	struct page *page;
-+	bool need_zero;
-+
-+	VM_BUG_ON(nid < 0 || nid >= MAX_NUMNODES);
-+	VM_WARN_ON(!node_online(nid));
-+
-+	need_zero = encrypted_page_needs_zero(keyid, &gfp_mask);
-+	page = __alloc_pages(gfp_mask, order, nid);
-+	prep_encrypted_page(page, order, keyid, need_zero);
-+
-+	return page;
-+}
-+
- #ifdef CONFIG_LOCKDEP
- static struct lockdep_map __fs_reclaim_map =
- 	STATIC_LOCKDEP_MAP_INIT("fs_reclaim", &__fs_reclaim_map);
-@@ -4401,6 +4434,20 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
- }
- EXPORT_SYMBOL(__alloc_pages_nodemask);
- 
-+struct page *
-+__alloc_pages_nodemask_keyid(gfp_t gfp_mask, unsigned int order,
-+		int preferred_nid, nodemask_t *nodemask, int keyid)
-+{
-+	struct page *page;
-+	bool need_zero;
-+
-+	need_zero = encrypted_page_needs_zero(keyid, &gfp_mask);
-+	page = __alloc_pages_nodemask(gfp_mask, order, preferred_nid, nodemask);
-+	prep_encrypted_page(page, order, keyid, need_zero);
-+	return page;
-+}
-+EXPORT_SYMBOL(__alloc_pages_nodemask_keyid);
-+
- /*
-  * Common helper functions.
-  */
+ config MEMORY_PHYSICAL_PADDING
+ 	hex "Physical memory mapping padding" if EXPERT
+-	depends on RANDOMIZE_MEMORY
++	depends on RANDOMIZE_MEMORY || X86_INTEL_MKTME
+ 	default "0xa" if MEMORY_HOTPLUG
+ 	default "0x0"
+ 	range 0x1 0x40 if MEMORY_HOTPLUG
 -- 
 2.18.0
 
