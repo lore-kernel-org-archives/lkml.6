@@ -2,151 +2,156 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5F7ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F783ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D02FA206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:28:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="inFalKH/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02FA206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id D532E206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:28:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D532E206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbeGQVC2 (ORCPT
+        id S1730238AbeGQVDE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:02:28 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44752 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730052AbeGQVC2 (ORCPT
+        Tue, 17 Jul 2018 17:03:04 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:51731 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729741AbeGQVDE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:02:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r16-v6so2449774wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:28:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sri9jvkr4KDnCPLSnmkHTRzP5cXSp3bapXF/dnGKv8k=;
-        b=inFalKH/UDqoqtbOJS8lBLHD2RRU9OWnFQ86QZ6mA/q4IaHW29OLVmwRHC75LRX+/z
-         jWfWmMwsIjDtvYgLtY2hdawAJqxWhZQik46RHcRx6k35mgKImY58SB+Rqe3DUoFj0PRj
-         lTBPmmFjZauZDemYIxryVi334RaibfJktTZV/kUmLTIXrNMlT8+oE0yvLld+mg5Jx4PD
-         BzebwMcZjILQCw2nTQcTrCJ6PVH4pWCgf3N07wkyZVtpFP1PYDxqZ7bg2qNDGkzpaPY2
-         iTzz3Y1ARMVhVmF17+p2W1um9Bo46lgya05DoX2j4pvEfuMk1cIi5UDAdcP9hfDSCRb2
-         q7rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=sri9jvkr4KDnCPLSnmkHTRzP5cXSp3bapXF/dnGKv8k=;
-        b=jutAT0BZqRdnWxjMYcv/DrV8HghkWNdGupEkd26wdhMIG3rrHKx6CZr0sy+jc2W3hl
-         KOaY5zsu5c2cwBtKuJ9/UWkHpkk888FX7mCGDhERdQu2KbF80ysMYWx91qUD5WtI3Ctd
-         x3owFM00/GBj1M1ppQvBzDel9aHANv3CsP0TNqSEEr0eWNjCwJB5pPSjeEVY/3PJ2tao
-         qA0bm3O0oHROtXt1QGYxSKZOuCLSA2FO5XE1Aj1cJPQb6I8TgSHvMDHCUmJdwGKU2Vlz
-         nYsRAZX7KMpJiHoJTvxvpdHK1dPIrLVL1EEUMe5u5mCqdLeqEOrIQ7aMe1UWpLG/iV1d
-         meAw==
-X-Gm-Message-State: AOUpUlEchHJS91JLYyC0qHb35LAvqX1tvKAINho8eVdprkds8o/dqkoi
-        B1SYbd4LuyAgi1cewXhwM7YixA==
-X-Google-Smtp-Source: AAOMgpchAvUjJni6+xajA9PYXT8oqpF7lp1GR+MFZpq/V/8T95rQdPKX8t9iaXOdVngog1cyBQmGwQ==
-X-Received: by 2002:adf:e78d:: with SMTP id n13-v6mr2435367wrm.136.1531859287699;
-        Tue, 17 Jul 2018 13:28:07 -0700 (PDT)
-Received: from [192.168.1.24] (LFbn-MAR-1-570-38.w90-118.abo.wanadoo.fr. [90.118.15.38])
-        by smtp.gmail.com with ESMTPSA id r17-v6sm2694758wrt.44.2018.07.17.13.28.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 13:28:07 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/4] ARM: dts: am33xx: Add all fck timer clocks
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     daniel.lezcano@linaro.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aford173@gmail.com,
-        drivshin@awxrd.com
-References: <1531773542-15736-1-git-send-email-narmstrong@baylibre.com>
- <1531773542-15736-2-git-send-email-narmstrong@baylibre.com>
- <20180717055547.GV99251@atomide.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <70f28466-fd13-58cd-cb5b-9857d7670d69@baylibre.com>
-Date:   Tue, 17 Jul 2018 22:28:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180717055547.GV99251@atomide.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 17:03:04 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LlVhP-1gDUU02G1P-00bIVW; Tue, 17 Jul 2018 22:28:03 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Abhishek Sahu <absahu@codeaurora.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] nand: ranw: qcom_nand: stop using phys_to_dma()
+Date:   Tue, 17 Jul 2018 22:27:42 +0200
+Message-Id: <20180717202759.2288076-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:GgXbCwUIYC5OxfpXPg4WR65Who6Naz28NA//J4Mm5WXTJd7ZFBI
+ QelOwV4m+mLy5dTUSRLkCDSq/rPTO3csluXGWt6MBK/SPzXwLSPK/hTb6gDRPPXbFNHEQ5U
+ lJs+2qz29lBG5XZKpbLyNvWpexWer4JzKbWLw1z38tRGxLUZKZv9MlURqZrt7MQMvEOPXxj
+ A/MOlcLTGVXVHUEcFwMhQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:SokgHTinA8c=:t7Ve2WgcvNwYw6SBiBCsd7
+ WVDRHLBJc3LtAjX6Y3Tj2IM51IuFOnsfcDXcOy8lhfA1Bk0MnevHgWwUa0cIDA+AGMrlLIaXW
+ h4mXY7dbuamSbB9lTuUInU1qemi3zW4s0oa7kd6PyXZJJJLjaFH8rncvb3MAvoSDL9VbTJERs
+ iEJKj+j5DsGNsuElp4BUf/Dj+p9863M8It7TZysClcrpfFSxZVRWYojLehhnGTN6pqVBv+6E8
+ g7Kx7U4Li54ofYLKYs90eTZSiALHDW/gz3d5kzSq/arR8eJ2o6+hR5WGhOK8fr1EOz3Ol2VJ6
+ BSeJ+7jdcTQIq5Cw2OVTqCg7knjXD7p3vdxoJ0h+EVvGrDzDzIZcw1Qs/3vzQO2wuhyz9XXJP
+ sAr0oGC7WqNiU6A8q5etozoZpbJGnb+MeGDcXb5vi+9K/GxUIkMrRf/SHH7098Uy1sWoGLeOD
+ GWCt4c1bP7UXsgyeryEBWJ+wxdf8IMrjZTW2Z2Ub3ikNC/ogjXQL9UQSF+BUi711GLHwNkKuv
+ SeJLQsmlp1denzF30vqUf6mIgU2WxZJZOxFq9qFsoZuHJ/p3b2UG8pXgFOfKv1Ifo/U/50D15
+ TuU7IHr16Za4QGvNv23QT1M9i7CKz/RGBOE6c5mGA/+T/9N7pLcSV5AAw8hsve6qh+P45NoFj
+ FKPyDZTgMD53F2W/pIbph7IVfV2dvWScg/RXZTO8Zv3RuJHVT6LWBPASxXZqoYvz3OfM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
+Compile-testing this driver on x86 caused a link error:
 
-On 17/07/2018 07:55, Tony Lindgren wrote:
-> Hi,
-> 
-> * Neil Armstrong <narmstrong@baylibre.com> [180716 20:42]:
->> Add the missing fck clock to all timer nodes of the AM33XX dtsi.
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  arch/arm/boot/dts/am33xx.dtsi | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/am33xx.dtsi b/arch/arm/boot/dts/am33xx.dtsi
->> index 9cd62bc2..e8e665d 100644
->> --- a/arch/arm/boot/dts/am33xx.dtsi
->> +++ b/arch/arm/boot/dts/am33xx.dtsi
->> @@ -541,6 +541,8 @@
->>  			reg = <0x48042000 0x400>;
->>  			interrupts = <69>;
->>  			ti,hwmods = "timer3";
->> +			clocks = <&timer3_fck>;
->> +			clock-names = "fck";
->>  		};
-> 
-> These should all use the clkctrl clock nodes, see:
+ERROR: "__phys_to_dma" [drivers/mtd/nand/raw/qcom_nandc.ko] undefined!
 
-Even the already configured timer1 & timer2 ?
+The problem here is that the driver attempts to convert the physical
+address into the DMA controller as a dma_addr_t and calls phys_to_dma()
+to do the conversion.
 
-> 
-> $ git grep CLKCTRL include/dt-bindings/clock/ | grep TIMER
-> 
-> The module clock is bit 0, and on some SoCs bit 24 is the
-> timer fck. But I don't think these SoS use separate bit 24
-> clock.
-> 
-> Regards,
-> 
-> Tony
-> 
+The correct way to do the conversion is using the dma mapping interfaces.
+
+Fixes: c76b78d8ec05 ("mtd: nand: Qualcomm NAND controller driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mtd/nand/raw/qcom_nandc.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+index 994f980c6d86..645630953f38 100644
+--- a/drivers/mtd/nand/raw/qcom_nandc.c
++++ b/drivers/mtd/nand/raw/qcom_nandc.c
+@@ -2957,14 +2957,6 @@ static int qcom_nandc_probe(struct platform_device *pdev)
+ 
+ 	nandc->props = dev_data;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	nandc->base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(nandc->base))
+-		return PTR_ERR(nandc->base);
+-
+-	nandc->base_phys = res->start;
+-	nandc->base_dma = phys_to_dma(dev, (phys_addr_t)res->start);
+-
+ 	nandc->core_clk = devm_clk_get(dev, "core");
+ 	if (IS_ERR(nandc->core_clk))
+ 		return PTR_ERR(nandc->core_clk);
+@@ -2977,9 +2969,21 @@ static int qcom_nandc_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	nandc->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(nandc->base))
++		return PTR_ERR(nandc->base);
++
++	nandc->base_phys = res->start;
++	nandc->base_dma = dma_map_resource(dev, res->start,
++					   resource_size(res),
++					   DMA_BIDIRECTIONAL, 0);
++	if (!nandc->base_dma)
++		return -ENXIO;
++
+ 	ret = qcom_nandc_alloc(nandc);
+ 	if (ret)
+-		goto err_core_clk;
++		goto err_nandc_alloc;
+ 
+ 	ret = clk_prepare_enable(nandc->core_clk);
+ 	if (ret)
+@@ -3005,6 +3009,9 @@ static int qcom_nandc_probe(struct platform_device *pdev)
+ 	clk_disable_unprepare(nandc->core_clk);
+ err_core_clk:
+ 	qcom_nandc_unalloc(nandc);
++err_nandc_alloc:
++	dma_unmap_resource(dev, res->start, resource_size(res),
++			   DMA_BIDIRECTIONAL, 0);
+ 
+ 	return ret;
+ }
+@@ -3012,16 +3019,21 @@ static int qcom_nandc_probe(struct platform_device *pdev)
+ static int qcom_nandc_remove(struct platform_device *pdev)
+ {
+ 	struct qcom_nand_controller *nandc = platform_get_drvdata(pdev);
++	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	struct qcom_nand_host *host;
+ 
+ 	list_for_each_entry(host, &nandc->host_list, node)
+ 		nand_release(nand_to_mtd(&host->chip));
+ 
++
+ 	qcom_nandc_unalloc(nandc);
+ 
+ 	clk_disable_unprepare(nandc->aon_clk);
+ 	clk_disable_unprepare(nandc->core_clk);
+ 
++	dma_unmap_resource(&pdev->dev, nandc->base_dma, resource_size(res),
++			   DMA_BIDIRECTIONAL, 0);
++
+ 	return 0;
+ }
+ 
+-- 
+2.9.0
 
