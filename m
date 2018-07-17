@@ -2,99 +2,123 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB4FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85179ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B835B20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:21:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="RM3erbjG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B835B20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 0ECF020877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:29:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ECF020877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbeGQDvj (ORCPT
+        id S1730161AbeGQD7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 23:51:39 -0400
-Received: from vern.gendns.com ([206.190.152.46]:35635 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729952AbeGQDvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 23:51:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=References:In-Reply-To:Message-Id:Date:Subject
-        :Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ETlNqQYXbQxJqETHsGE2g1O1rdX9QJplc7dX4SJSXIg=; b=RM3erbjGSo7AwMbIFHZ92blvQ
-        9AZD5g1QGzC5pD6NV7chisSX+KPKwW2nrfxRKapaXFCVWyDNBFvRwWO0rzKYf3CNetllfPT7WJr/o
-        ZVXqoX5t/OVw9OTc87RY3W4zpcT/Lhvc6nMv7YBDMcjAkWwoMCoO+BdZ6mUIr2YcmJqsA5EpEW5Mn
-        KfQhGpCo7kyzTSLJnuzVq1VYbfzJRNsZd7jQ03mgj8vd97cBncRCRCco8R4rq2CMOPF1O0lxamxsE
-        bxocoltP6uKCRzh6uo10rCq0pA3OjKmpJ2rhtGi7ZhUE0QnSgJ0wpFu3lBceP2OfduaS6BbwsXJgj
-        SQy1pUW5w==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:53228 helo=freyr.lechnology.com)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1ffGY5-00CnnZ-LQ; Mon, 16 Jul 2018 23:21:13 -0400
-From:   David Lechner <david@lechnology.com>
-To:     linux-spi@vger.kernel.org, linux-iio@vger.kernel.org
-Cc:     David Lechner <david@lechnology.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/4] spi: spi-bitbang: change flags from u8 to u16
-Date:   Mon, 16 Jul 2018 22:20:49 -0500
-Message-Id: <20180717032052.12273-2-david@lechnology.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180717032052.12273-1-david@lechnology.com>
-References: <20180717032052.12273-1-david@lechnology.com>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 16 Jul 2018 23:59:54 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:48975 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729927AbeGQD7y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 23:59:54 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0T4mHunT_1531798121;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0T4mHunT_1531798121)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 17 Jul 2018 11:28:41 +0800
+Subject: Re: [PATCH v2] tg: show the sum wait time of an task group
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+References: <5c4c978d-e8fb-4bcb-b942-3c6d3dcfc13e@linux.alibaba.com>
+ <b9e74571-87d0-ef27-3f14-ebd21d72ee15@linux.alibaba.com>
+ <ff7dae3b-e5f9-7157-1caa-ff02c6b23dc1@linux.alibaba.com>
+Message-ID: <4abd1bae-dc1e-3a13-40d4-c6c73ecc07b1@linux.alibaba.com>
+Date:   Tue, 17 Jul 2018 11:28:40 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <ff7dae3b-e5f9-7157-1caa-ff02c6b23dc1@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This changes the data type of the flags field in struct spi_bitbang from
-u8 to u16. This matches the size of the mode field of struct spi_device
-where these flags are also used.
+Hi, folks
 
-This is done in preparation of adding a new SPI mode flag that will be
-used with this field that would otherwise not fit in 8 bits.
+On 2018/7/4 上午11:27, 王贇 wrote:
+> Although we can rely on cpuacct to present the cpu usage of task
+> group, it is hard to tell how intense the competition is between
+> these groups on cpu resources.
+> 
+> Monitoring the wait time of each process or sched_debug could cost
+> too much, and there is no good way to accurately represent the
+> conflict with these info, we need the wait time on group dimension.
+> 
+> Thus we introduced group's wait_sum represent the conflict between
+> task groups, which is simply sum the wait time of group's cfs_rq.
+> 
+> The 'cpu.stat' is modified to show the statistic, like:
+> 
+>    nr_periods 0
+>    nr_throttled 0
+>    throttled_time 0
+>    wait_sum 2035098795584
+> 
+> Now we can monitor the changing on wait_sum to tell how suffering
+> a task group is in the fight of cpu resources.
+> 
+> For example:
+>    (wait_sum - last_wait_sum) * 100 / (nr_cpu * period_ns) == X%
+> 
+> means the task group paid X percentage of period on waiting
+> for the cpu.
 
-Signed-off-by: David Lechner <david@lechnology.com>
----
- include/linux/spi/spi_bitbang.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Any comments please?
 
-diff --git a/include/linux/spi/spi_bitbang.h b/include/linux/spi/spi_bitbang.h
-index 51d8c060e513..c1e61641a7f1 100644
---- a/include/linux/spi/spi_bitbang.h
-+++ b/include/linux/spi/spi_bitbang.h
-@@ -8,7 +8,7 @@ struct spi_bitbang {
- 	struct mutex		lock;
- 	u8			busy;
- 	u8			use_dma;
--	u8			flags;		/* extra spi->mode support */
-+	u16			flags;		/* extra spi->mode support */
- 
- 	struct spi_master	*master;
- 
--- 
-2.17.1
+Regards,
+Michael Wang
 
+
+> 
+> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+> ---
+> 
+> Since v1:
+>    Use schedstat_val to avoid compile error
+>    Check and skip root_task_group
+> 
+>   kernel/sched/core.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 78d8fac..80ab995 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -6781,6 +6781,8 @@ static int __cfs_schedulable(struct task_group *tg, u64 period, u64 quota)
+> 
+>   static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
+>   {
+> +    int i;
+> +    u64 ws = 0;
+>       struct task_group *tg = css_tg(seq_css(sf));
+>       struct cfs_bandwidth *cfs_b = &tg->cfs_bandwidth;
+> 
+> @@ -6788,6 +6790,12 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
+>       seq_printf(sf, "nr_throttled %d\n", cfs_b->nr_throttled);
+>       seq_printf(sf, "throttled_time %llu\n", cfs_b->throttled_time);
+> 
+> +    if (schedstat_enabled() && tg != &root_task_group) {
+> +        for_each_possible_cpu(i)
+> +            ws += schedstat_val(tg->se[i]->statistics.wait_sum);
+> +        seq_printf(sf, "wait_sum %llu\n", ws);
+> +    }
+> +
+>       return 0;
+>   }
+>   #endif /* CONFIG_CFS_BANDWIDTH */
