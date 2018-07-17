@@ -2,191 +2,124 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF5AAECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6ECECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 263EB206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:30:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6936A206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:30:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jymfONg6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 263EB206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6EBeMG4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6936A206B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730810AbeGQVET (ORCPT
+        id S1730926AbeGQVEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:04:19 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39584 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730460AbeGQVEL (ORCPT
+        Tue, 17 Jul 2018 17:04:21 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38464 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730460AbeGQVEU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:04:11 -0400
-Received: by mail-pg1-f196.google.com with SMTP id g2-v6so932302pgs.6
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:29:52 -0700 (PDT)
+        Tue, 17 Jul 2018 17:04:20 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so2112441ljc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 13:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Wrgwbd3fMX17INzoIy6yVjrKRXAFscgjA8Y31R89O+s=;
-        b=jymfONg6N5moWhsxrz0TFh1ZBzE2WXqaoxoMjzZaQVlgVoDLDl7Sau854gpDIc0gWv
-         JhHR7jcB5FmfGU4QZkvu+gLNhTklQgzuxPCI+lwW8B8yBJMgV/wKFVyw2aeHyKK+uC1G
-         A2LbBUlNQgWeuDkbN8XVlkECBEGkZl6r1CfTo=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=N87sE6lWIM9PLTwn9Hdk33VRwdWnLfC4ocpZY4YoNfA=;
+        b=S6EBeMG4VH2HzJOqrOZPous2OcN8kagVz1/uSoMGLD71uuKQNY4z6XY2fDdLyQ5Xg8
+         ycqnqkJ9Jg3LQTPsWJqcsHxYYdUnnjcYywkn8d+T5ChN75V+oVx+R1Is3v0+bT5qGjyq
+         gtT0YePhS1j5qgDBllhEpWTj1nL/Li0ecfrffxGhW9XHrMA4hTQpqm4xPlTt3IA5b9Ee
+         TyhXPuWSy/0q6xgtYoUefxhEkqZtHiNIdp56Uvt4+uKDrAj9Jeezqf6XxRejWpnvJbvu
+         095IkI/w5y5lsA7ddvAfzhhAAlIpREbXmpelnE/IjKte44PPwmvIvwHHgIEoo9heQxRW
+         E3xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Wrgwbd3fMX17INzoIy6yVjrKRXAFscgjA8Y31R89O+s=;
-        b=qARwNcD2PiMvfuNedA3Z5YVbQM0Qw6m31Dlp94lE9uh6EKGDvUt3ZqO2k1K/l8lF4W
-         lIDZ4B2MuAw0UybGP4ozxmwIBWB1B6rfFQYA885Fzid5rzGgzCHb/ygv9cK2PTjzMwze
-         Wl9i/6FVE5v5xbcIm6aguFuSU7e5XcB65V1wEu0gjOoCnFJ2u5dU4i8F3mD+UmHuG6cT
-         xcgS8AN1uCQptyD1Ekd37Eb0u3nhB4RyHsA/nGUXfrFJefS8sNBR8RLuTuzQvIZm3VYL
-         encrAaKu7sRPa9y5xDUnn0Wc47H8PVuZdMrcHkP63dPfK/kcZJ8aRkbuxQSI+SNxxIab
-         tJ/Q==
-X-Gm-Message-State: AOUpUlGsuKUlU5isHysqA538qJUGfzhJiU7bwggA1affLUKwxsVTPCfo
-        0zUVowwF7VpNUuSerfcwdzGJWg==
-X-Google-Smtp-Source: AAOMgpf/0BQ4FFJ+ILITfExuF1ngRH1halHLEHsCYj6oYS46l2sP7MQu2UBhixTwFHrp5B64WOYoHw==
-X-Received: by 2002:a63:4857:: with SMTP id x23-v6mr3090788pgk.30.1531859392107;
-        Tue, 17 Jul 2018 13:29:52 -0700 (PDT)
-Received: from swboyd.mtv.corp.google.com ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id a20-v6sm2563426pfi.124.2018.07.17.13.29.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 13:29:51 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org,
-        Mahesh Sivasubramanian <msivasub@codeaurora.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>
-Subject: [PATCH 2/2] soc: qcom: cmd-db: Stop memcpy()ing in cmd_db_read_aux_data()
-Date:   Tue, 17 Jul 2018 13:29:47 -0700
-Message-Id: <20180717202947.197922-3-swboyd@chromium.org>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-In-Reply-To: <20180717202947.197922-1-swboyd@chromium.org>
-References: <20180717202947.197922-1-swboyd@chromium.org>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=N87sE6lWIM9PLTwn9Hdk33VRwdWnLfC4ocpZY4YoNfA=;
+        b=iL/W4RCacI3C6GzQLZ5hLf3FUXNCb8/GAs1FAVsaoWlfcowld4tzqumPm/gR9RfURy
+         Q0rNbv70bwsk+RNOGN538zjnJVKFazTTIZI5lDO1uXm25qS/tQUH8vkWm68rPn+pIAEy
+         ObopAt+F3KktlyhOjRiw2OXcKlfz3vGmvGU4azR9FGyt/BlbpFj8OKPY2MB+0rqJA6Df
+         ErzEmeFhSf239SKQIVJvGIfj2ohFMaENdpPzZGJeZCogbMAl7h89+xFx6bOl32UQM4aE
+         o2UGV8hpqdvSQc8MEHMO6CreQ/LPS73gDh7bR2fJulP8XwBIC9vS2ISxlypbuTENi908
+         mAIw==
+X-Gm-Message-State: AOUpUlGkObgHhMpM+cj7gyIvUBXaJACDE/wDAR/IaHqjTgNFzJtWyUh9
+        bVP4COzrwVLXuvZxwGuhtfqIlZNtLD14/mc2m7U=
+X-Google-Smtp-Source: AAOMgpcaOWfAFjThgEjoSTZDr0Ub36aMKCYPU4bHvVbsdLzqbSevGSIihZOwPqwoAogS0HEhOGAWfkMNMonpc/cG0ws=
+X-Received: by 2002:a2e:3101:: with SMTP id x1-v6mr2402117ljx.8.1531859399775;
+ Tue, 17 Jul 2018 13:29:59 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:29:58
+ -0700 (PDT)
+In-Reply-To: <20180717220136.2782fc5d@bbrezillon>
+References: <20180711122709.358159-1-arnd@arndb.de> <20180711150449.4152333c@bbrezillon>
+ <CAK8P3a1M4v1hMduAX3y39DEjBiT=70xm-+qJ8CPLZHQwKOzJ1g@mail.gmail.com> <20180717220136.2782fc5d@bbrezillon>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 17 Jul 2018 22:29:58 +0200
+X-Google-Sender-Auth: gZG_DCInxy5I_JBZMeVZltIBJqI
+Message-ID: <CAK8P3a1Pa1U+RsmhSk=iJErAdj0tKKh967X1dAqbA+Vz-nKCeg@mail.gmail.com>
+Subject: Re: [PATCH] nand: ranw: qcom_nand: stop using phys_to_dma()
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Abhishek Sahu <absahu@codeaurora.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's change the function signature to return the pointer to memory or
-an error pointer on failure, and take an argument that lets us return
-the size of the aux data read. This way we can remove the
-cmd_db_read_aux_data_len() API entirely and also get rid of the memcpy
-operation from cmd_db to the caller.
+On Tue, Jul 17, 2018 at 10:01 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> Hi Arnd,
+>
+> On Wed, 11 Jul 2018 16:26:31 +0200
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> On Wed, Jul 11, 2018 at 3:04 PM, Boris Brezillon
+>> <boris.brezillon@bootlin.com> wrote:
+>> > On Wed, 11 Jul 2018 14:26:58 +0200
+>> > Arnd Bergmann <arnd@arndb.de> wrote:
+>> >
+>> >> Compile-testing this driver on x86 caused a link error:
+>> >>
+>> >> ERROR: "__phys_to_dma" [drivers/mtd/nand/raw/qcom_nandc.ko] undefined!
+>> >>
+>> >> The problem here is that the driver attempts to convert the physical
+>> >> address into the DMA controller as a dma_addr_t and calls phys_to_dma()
+>> >> to do the conversion.
+>> >>
+>> >> However, there is no generic way to convert a phys_addr_t into a dma_addr_t
+>> >> for anything other than RAM (which should use the dma-mapping API instead).
+>> >> The only correct use of phys_to_dma() instead is inside of the dma-mapping
+>> >> implementation.
+>> >
+>> > Should we use dma_map_resource() to do the phys_addr_t to dma_addr_t
+>> > conversion?
+>>
+>> I had not seen that interface before, but yes, that does seem like the best
+>> way to do it here.
+>
+> Do you plan to send a new version using dma_map_resource()?
 
-Cc: Mahesh Sivasubramanian <msivasub@codeaurora.org>
-Cc: Lina Iyer <ilina@codeaurora.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Evan Green <evgreen@chromium.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/soc/qcom/cmd-db.c | 43 ++++++++-------------------------------
- include/soc/qcom/cmd-db.h | 12 +++--------
- 2 files changed, 11 insertions(+), 44 deletions(-)
+I somehow thought you were going to do that yourself, but have now
+posted a new version of the patch the way you suggested.
 
-diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-index 5c9cc6824891..c701b3b010f1 100644
---- a/drivers/soc/qcom/cmd-db.c
-+++ b/drivers/soc/qcom/cmd-db.c
-@@ -192,55 +192,28 @@ EXPORT_SYMBOL(cmd_db_read_addr);
- /**
-  * cmd_db_read_aux_data() - Query command db for aux data.
-  *
-- *  @id: Resource to retrieve AUX Data on.
-- *  @data: Data buffer to copy returned aux data to. Returns size on NULL
-- *  @len: Caller provides size of data buffer passed in.
-+ *  @id: Resource to retrieve AUX Data on
-+ *  @len: size of data buffer returned
-  *
-- *  Return: size of data on success, errno otherwise
-+ *  Return: pointer to data on success, error pointer otherwise
-  */
--int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
-+const void *cmd_db_read_aux_data(const char *id, size_t *len)
- {
- 	int ret;
- 	const struct entry_header *ent;
- 	const struct rsc_hdr *rsc_hdr;
--	u16 ent_len;
--
--	if (!data)
--		return -EINVAL;
- 
- 	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
- 	if (ret)
--		return ret;
--
--	ent_len = le16_to_cpu(ent->len);
--	if (len < ent_len)
--		return -EINVAL;
-+		return ERR_PTR(ret);
- 
--	len = min_t(u16, ent_len, len);
--	memcpy(data, rsc_offset(rsc_hdr, ent), len);
-+	if (len)
-+		*len = le16_to_cpu(ent->len);
- 
--	return len;
-+	return rsc_offset(rsc_hdr, ent);
- }
- EXPORT_SYMBOL(cmd_db_read_aux_data);
- 
--/**
-- * cmd_db_read_aux_data_len - Get the length of the auxiliary data stored in DB.
-- *
-- * @id: Resource to retrieve AUX Data.
-- *
-- * Return: size on success, 0 on error
-- */
--size_t cmd_db_read_aux_data_len(const char *id)
--{
--	int ret;
--	const struct entry_header *ent;
--
--	ret = cmd_db_get_header(id, &ent, NULL);
--
--	return ret < 0 ? 0 : le16_to_cpu(ent->len);
--}
--EXPORT_SYMBOL(cmd_db_read_aux_data_len);
--
- /**
-  * cmd_db_read_slave_id - Get the slave ID for a given resource address
-  *
-diff --git a/include/soc/qcom/cmd-db.h b/include/soc/qcom/cmd-db.h
-index 578180cbc134..af9722223925 100644
---- a/include/soc/qcom/cmd-db.h
-+++ b/include/soc/qcom/cmd-db.h
-@@ -18,9 +18,7 @@ enum cmd_db_hw_type {
- #if IS_ENABLED(CONFIG_QCOM_COMMAND_DB)
- u32 cmd_db_read_addr(const char *resource_id);
- 
--int cmd_db_read_aux_data(const char *resource_id, u8 *data, size_t len);
--
--size_t cmd_db_read_aux_data_len(const char *resource_id);
-+const void *cmd_db_read_aux_data(const char *resource_id, size_t *len);
- 
- enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id);
- 
-@@ -29,12 +27,8 @@ int cmd_db_ready(void);
- static inline u32 cmd_db_read_addr(const char *resource_id)
- { return 0; }
- 
--static inline int cmd_db_read_aux_data(const char *resource_id, u8 *data,
--				       size_t len)
--{ return -ENODEV; }
--
--static inline size_t cmd_db_read_aux_data_len(const char *resource_id)
--{ return -ENODEV; }
-+static inline const void *cmd_db_read_aux_data(const char *resource_id, size_t *len)
-+{ return ERR_PTR(-ENODEV); }
- 
- static inline enum cmd_db_hw_type cmd_db_read_slave_id(const char *resource_id)
- { return -ENODEV; }
--- 
-Sent by a computer through tubes
+> BTW, there's typo in the subject prefix (s/ranw/rawnand/).
 
+Hmm, missed that again in v2. Can you fix it up when applying?
+
+     Arnd
