@@ -2,133 +2,98 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 511FBECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9676ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0300520C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:28:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ue0xsx/e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0300520C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ABEF62083C
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEF62083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731591AbeGQNA6 (ORCPT
+        id S1731594AbeGQNBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:00:58 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:33532 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730246AbeGQNA6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:00:58 -0400
-Received: by mail-oi0-f68.google.com with SMTP id l10-v6so1654105oii.0;
-        Tue, 17 Jul 2018 05:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8LtrLdl4+rGjYZNiPeI6fm+hRtoSt9K/3MPCMYkAdOc=;
-        b=Ue0xsx/e4dpDm27vgD6OZoy4HgRWdcCUw0/uw0sDyWs72xGFI7QoslKJNzOkxtS/YY
-         pcjA8dM6puNmIV5XrZtsRl6v8aP6eXEoTFPngipL3gREx7R5ZGEmnvM3OhVmP2I/mlT3
-         xpdhr+D+DerbQEyd8tlaZTpdO1uOV6XHBDNbwIJ+LdV+rBpTcXO66jXGYmrzZFOlqiEj
-         XYIDm/xgLpoDDOWTj4sZ1jnBsYrGantctGRRFic85KmtQm/rRZ5u+dIHKvlCXBWWRwAl
-         pnoCTsu63Bt6SBmEnvJitrpHIQNE8NdesP5xm7yOlmB6ZghPciEqHjgKop4eSljGyW4+
-         WPyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8LtrLdl4+rGjYZNiPeI6fm+hRtoSt9K/3MPCMYkAdOc=;
-        b=jLsGlUEfPXjVPHp76lEduF+IMbnM4hcJftvw0Qy0F4X5wN3leOd8kvZHkzIpeWmvvC
-         xMHGPbSr2Dvio3Un5CqREgmU7TnVgrvvOcvbW0TMI129mJ+mkrBKFOHqysc7kuZhTqJ+
-         XA5Wpzazz1ObCp7J81ivX0/+axtwTDVEzKBNe3AjsVcOY289/mlKyxqDAd/46syoKFLj
-         NF3wtINRfxqbHKLOgtp1bb31VwGbz9FQefDPF9pM29l21eJFbw3UDUfIwsR+BgI8k+oQ
-         TfCejTMNLkAhVsNzaqoPwx7bTLK7tLMCujfMnjsBSugB5w8eDG2xAawKmlf9NHv0Iaw2
-         gD3Q==
-X-Gm-Message-State: AOUpUlHr6Heg5ME6g9pSiuY5uwAsktLRzfDPYcd+9MLmGSHf72z1LoQy
-        Dw8ebwAPnyRKMqykdYdN45FGEJYzhkEoUeWYThs=
-X-Google-Smtp-Source: AAOMgpclW9zeRnfFatVL7AmTOuIOhKFAhr7M/iR60IBYFYI5bXtVxScNLP+VZUW+VcVq09Sc3OvIo9bY/M1WpbSF+uM=
-X-Received: by 2002:aca:e510:: with SMTP id c16-v6mr1550723oih.44.1531830511756;
- Tue, 17 Jul 2018 05:28:31 -0700 (PDT)
+        Tue, 17 Jul 2018 09:01:38 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45842 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731242AbeGQNBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 09:01:38 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D61318A;
+        Tue, 17 Jul 2018 05:29:12 -0700 (PDT)
+Received: from [10.1.211.22] (e110467-lin.cambridge.arm.com [10.1.211.22])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C6743F5A0;
+        Tue, 17 Jul 2018 05:29:10 -0700 (PDT)
+Subject: Re: [PATCH] arm64: cpuinfo: Include cleartext implementer and part
+ strings
+To:     Olof Johansson <olof@lixom.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+References: <20180715035342.11371-1-olof@lixom.net>
+ <f619f0e9-b8b4-29fb-5ad6-7f5ebc3a4da8@arm.com>
+ <CAOesGMjq=d3ZPLTq5qudx+EE+XC2-zSsA1ViheTwM7fnTtJh2Q@mail.gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <e7e272e0-a7ad-1a97-a081-acf3bfa42b6f@arm.com>
+Date:   Tue, 17 Jul 2018 13:27:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:28:31
- -0700 (PDT)
-In-Reply-To: <20180717072318.18730-1-sebastien.szymanski@armadeus.com>
-References: <20180717072318.18730-1-sebastien.szymanski@armadeus.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 17 Jul 2018 09:28:31 -0300
-Message-ID: <CAOMZO5Dr0zqy4Sf3s=L4qoqePRhZAXWpDk1oTOUidy4_TUQ=QA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/panel: Add support for Armadeus ST0700 Adapt
-To:     =?UTF-8?Q?S=C3=A9bastien_Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAOesGMjq=d3ZPLTq5qudx+EE+XC2-zSsA1ViheTwM7fnTtJh2Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi S=C3=A9bastien,
+On 16/07/18 15:34, Olof Johansson wrote:
+[...]
+> There's also a growing expectation of the system to behave more like
+> x86, especially when it comes to trivial ways of detecting what kind
+> of machine you are running on. On x86 it's been trivial to look at
+> /proc/cpuinfo since it is provided by the platform there. Nobody wants
+> to change their implementation from having to read a file to exec a
+> program, dealing with errors, and parsing its output (sure, easier
+> from scripts, but more awkward from real source).
 
-On Tue, Jul 17, 2018 at 4:23 AM, S=C3=A9bastien Szymanski
-<sebastien.szymanski@armadeus.com> wrote:
-> This patch adds support for the Armadeus ST0700 Adapt. It comes with a
-> Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT and an adapter board so
-> that it can be connected on the TFT header of Armadeus Dev boards.
->
-> Signed-off-by: S=C3=A9bastien Szymanski <sebastien.szymanski@armadeus.com=
->
-> ---
->  .../display/panel/armadeus,st0700-adapt.txt        |  9 +++++++
->  drivers/gpu/drm/panel/panel-simple.c               | 29 ++++++++++++++++=
-++++++
->  2 files changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/armad=
-eus,st0700-adapt.txt
->
-> diff --git a/Documentation/devicetree/bindings/display/panel/armadeus,st0=
-700-adapt.txt b/Documentation/devicetree/bindings/display/panel/armadeus,st=
-0700-adapt.txt
-> new file mode 100644
-> index 000000000000..a30d63db3c8f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-ada=
-pt.txt
-> @@ -0,0 +1,9 @@
-> +Armadeus ST0700 Adapt. A Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT =
-with
-> +an adapter board.
-> +
-> +Required properties:
-> +- compatible: "armadeus,st0700-adapt"
+The thing with the "be more like x86" argument is that it never actually 
+stands up to scrutiny. What is proposed here (again) is for the kernel 
+to decode the raw MIDR description of the *CPU core microarchitecture* 
+to a human-readable string. What does the nearest Intel box say about 
+its microarchitecture name?
 
-Shouldn't this be named "santek,st0700i5y" instead?
+cpu family	: 6
+model		: 79
 
-Santek is the vendor of the panel and st0700i5y is the model.
+OK, I had to go and look up that that apparently implies "Broadwell", so 
+the x86 kernel is in fact no more helpful in that regard than arm64.
 
-Then you could add a "santek" entry in
-Documentation/devicetree/bindings/vendor-prefixes.txt.
+Furthermore, telling the user that they have have 4 "Cortex-A53" cores 
+vs. 4 "part: 0xd03" cores doesn't actually give them any more meaningful 
+information about their *system*, because that example reflects about 
+half the low-to-mid-range SoCs on the market today. What the "model 
+name" on x86 describes is a specific processor SKU, of which Arm has no 
+*architectural* equivalent, for reasons which should hopefully be 
+obvious from the fundamental differences in the business models driving 
+the respective architectures.
 
-Regards,
+And yet whenever /proc/cpuinfo/ comes up, nobody ever seems to ask for 
+some kind of SoC identifier in there; it's always just decoding MIDR 
+into a microarchitecture name, which implies that all these people want 
+is to see a string for the sake of seeing a string, regardless of how 
+meaningful it actually might be (and yes, I do realise that in *some* 
+cases a CPU core is essentially unique to a particular SoC, but we have 
+to look at the big picture here).
 
-Fabio Estevam
+In summary; when a small minority of users are complaining that oranges 
+aren't apples, the sensible response is not to start debating whether to 
+paint the oranges green or red.
+
+Robin.
