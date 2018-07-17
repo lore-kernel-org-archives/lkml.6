@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D1BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022B1ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CBAF208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:23:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CBAF208AD
+	by mail.kernel.org (Postfix) with ESMTP id 77B50208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:23:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77B50208AD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731587AbeGQLzV (ORCPT
+        id S1731235AbeGQLxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:55:21 -0400
-Received: from mga01.intel.com ([192.55.52.88]:16951 "EHLO mga01.intel.com"
+        Tue, 17 Jul 2018 07:53:54 -0400
+Received: from mga02.intel.com ([134.134.136.20]:45425 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731300AbeGQLx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:53:57 -0400
+        id S1730600AbeGQLxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:53:53 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:48 -0700
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="72049658"
+   d="scan'208";a="57138270"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Jul 2018 04:21:45 -0700
+  by orsmga007.jf.intel.com with ESMTP; 17 Jul 2018 04:21:42 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 0FA4B4EA; Tue, 17 Jul 2018 14:21:49 +0300 (EEST)
+        id BA0A9309; Tue, 17 Jul 2018 14:21:48 +0300 (EEST)
 From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,9 +43,9 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv5 08/19] x86/mm: Introduce variables to store number, shift and mask of KeyIDs
-Date:   Tue, 17 Jul 2018 14:20:18 +0300
-Message-Id: <20180717112029.42378-9-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv5 02/19] mm: Do not use zero page in encrypted pages
+Date:   Tue, 17 Jul 2018 14:20:12 +0300
+Message-Id: <20180717112029.42378-3-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
 References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
@@ -54,103 +54,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mktme_nr_keyids holds number of KeyIDs available for MKTME, excluding
-KeyID zero which used by TME. MKTME KeyIDs start from 1.
+Zero page is not encrypted and putting it into encrypted VMA produces
+garbage.
 
-mktme_keyid_shift holds shift of KeyID within physical address.
+We can map zero page with KeyID-0 into an encrypted VMA, but this would
+be violation security boundary between encryption domains.
 
-mktme_keyid_mask holds mask to extract KeyID from physical address.
+Forbid zero pages in encrypted VMAs.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- arch/x86/include/asm/mktme.h | 16 ++++++++++++++++
- arch/x86/kernel/cpu/intel.c  | 12 ++++++++----
- arch/x86/mm/Makefile         |  2 ++
- arch/x86/mm/mktme.c          |  5 +++++
- 4 files changed, 31 insertions(+), 4 deletions(-)
- create mode 100644 arch/x86/include/asm/mktme.h
- create mode 100644 arch/x86/mm/mktme.c
+ arch/s390/include/asm/pgtable.h | 2 +-
+ include/linux/mm.h              | 4 ++--
+ mm/huge_memory.c                | 3 +--
+ mm/memory.c                     | 3 +--
+ 4 files changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-new file mode 100644
-index 000000000000..df31876ec48c
---- /dev/null
-+++ b/arch/x86/include/asm/mktme.h
-@@ -0,0 +1,16 @@
-+#ifndef	_ASM_X86_MKTME_H
-+#define	_ASM_X86_MKTME_H
-+
-+#include <linux/types.h>
-+
-+#ifdef CONFIG_X86_INTEL_MKTME
-+extern phys_addr_t mktme_keyid_mask;
-+extern int mktme_nr_keyids;
-+extern int mktme_keyid_shift;
-+#else
-+#define mktme_keyid_mask	((phys_addr_t)0)
-+#define mktme_nr_keyids		0
-+#define mktme_keyid_shift	0
-+#endif
-+
-+#endif
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index bf2caf9d52dd..efc9e9fc47d4 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -573,6 +573,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
- 
- #ifdef CONFIG_X86_INTEL_MKTME
- 	if (mktme_status == MKTME_ENABLED && nr_keyids) {
-+		mktme_nr_keyids = nr_keyids;
-+		mktme_keyid_shift = c->x86_phys_bits - keyid_bits;
-+
- 		/*
- 		 * Mask out bits claimed from KeyID from physical address mask.
- 		 *
-@@ -580,10 +583,8 @@ static void detect_tme(struct cpuinfo_x86 *c)
- 		 * and number of bits claimed for KeyID is 6, bits 51:46 of
- 		 * physical address is unusable.
- 		 */
--		phys_addr_t keyid_mask;
--
--		keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, c->x86_phys_bits - keyid_bits);
--		physical_mask &= ~keyid_mask;
-+		mktme_keyid_mask = GENMASK_ULL(c->x86_phys_bits - 1, mktme_keyid_shift);
-+		physical_mask &= ~mktme_keyid_mask;
- 	} else {
- 		/*
- 		 * Reset __PHYSICAL_MASK.
-@@ -591,6 +592,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
- 		 * between CPUs.
- 		 */
- 		physical_mask = (1ULL << __PHYSICAL_MASK_SHIFT) - 1;
-+		mktme_keyid_mask = 0;
-+		mktme_keyid_shift = 0;
-+		mktme_nr_keyids = 0;
- 	}
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index 5ab636089c60..2e8658962aae 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -505,7 +505,7 @@ static inline int mm_alloc_pgste(struct mm_struct *mm)
+  * In the case that a guest uses storage keys
+  * faults should no longer be backed by zero pages
+  */
+-#define mm_forbids_zeropage mm_has_pgste
++#define vma_forbids_zeropage(vma) mm_has_pgste(vma->vm_mm)
+ static inline int mm_uses_skeys(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_PGSTE
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c8780c5835ad..151d6e6b16e5 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -92,8 +92,8 @@ extern int mmap_rnd_compat_bits __read_mostly;
+  * s390 does this to prevent multiplexing of hardware bits
+  * related to the physical page in case of virtualization.
+  */
+-#ifndef mm_forbids_zeropage
+-#define mm_forbids_zeropage(X)	(0)
++#ifndef vma_forbids_zeropage
++#define vma_forbids_zeropage(vma)	vma_keyid(vma)
  #endif
  
-diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-index 4b101dd6e52f..4ebee899c363 100644
---- a/arch/x86/mm/Makefile
-+++ b/arch/x86/mm/Makefile
-@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
- obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-+
-+obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
-diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-new file mode 100644
-index 000000000000..467f1b26c737
---- /dev/null
-+++ b/arch/x86/mm/mktme.c
-@@ -0,0 +1,5 @@
-+#include <asm/mktme.h>
-+
-+phys_addr_t mktme_keyid_mask;
-+int mktme_nr_keyids;
-+int mktme_keyid_shift;
+ /*
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1cd7c1a57a14..83f096c7299b 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -676,8 +676,7 @@ int do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+ 		return VM_FAULT_OOM;
+ 	if (unlikely(khugepaged_enter(vma, vma->vm_flags)))
+ 		return VM_FAULT_OOM;
+-	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
+-			!mm_forbids_zeropage(vma->vm_mm) &&
++	if (!(vmf->flags & FAULT_FLAG_WRITE) && !vma_forbids_zeropage(vma) &&
+ 			transparent_hugepage_use_zero_page()) {
+ 		pgtable_t pgtable;
+ 		struct page *zero_page;
+diff --git a/mm/memory.c b/mm/memory.c
+index 02fbef2bd024..a705637d2ded 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3139,8 +3139,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 		return 0;
+ 
+ 	/* Use the zero-page for reads */
+-	if (!(vmf->flags & FAULT_FLAG_WRITE) &&
+-			!mm_forbids_zeropage(vma->vm_mm)) {
++	if (!(vmf->flags & FAULT_FLAG_WRITE) && !vma_forbids_zeropage(vma)) {
+ 		entry = pte_mkspecial(pfn_pte(my_zero_pfn(vmf->address),
+ 						vma->vm_page_prot));
+ 		vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
 -- 
 2.18.0
 
