@@ -2,442 +2,329 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60320ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:32:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 082D9ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF89F20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:32:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="BANz+y4S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF89F20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id A8F1D2086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:32:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F1D2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbeGQKEQ (ORCPT
+        id S1731175AbeGQKEV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:04:16 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:39007 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730232AbeGQKDS (ORCPT
+        Tue, 17 Jul 2018 06:04:21 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51153 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729679AbeGQKEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:03:18 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id D7A2C10C175C;
-        Tue, 17 Jul 2018 02:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531819896; bh=1VYlzduLy6HVmgukINnfsl75WE89JNugmeg0HQIAiJQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=BANz+y4SlpAOu3C8omV5qTu64WICh4vT8iU+Es4OGvZM05yU9XLEpYtd6K3r2lJzB
-         8MOXslHfJbSSoLGOZQMaq1LsHsodA5OTd3IvGnkoXiW4uMJDkcxmh0UHKsLhAlkaHN
-         RgzxcnUVw1AcejedfMXonkgrCd1G5LHhsLeK1mHkj6zn/oq0WXm4FSD+FF5+0ZC6v2
-         srwCb2SBU9mHb+VVaonSxdOEc6WeIEWObZVM6OBeB9BKErBdpOYAbMubRsrvUjyglH
-         iYVAMUvmHj/dmKGyogXvwu/uyXjb49amHotyvLamqvCVM/Fljy4SvgP/3/Kl45cSA3
-         kQ6eDLucaXPrA==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 84D7059A8;
-        Tue, 17 Jul 2018 02:31:36 -0700 (PDT)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 4DC323BC05;
-        Tue, 17 Jul 2018 11:31:34 +0200 (CEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v12 07/12] pci-epf-test/pci_endpoint_test: Cleanup PCI_ENDPOINT_TEST memspace
-Date:   Tue, 17 Jul 2018 11:31:27 +0200
-Message-Id: <26fc54d264ca4229360cf632f08e6935b1abb30c.1531818979.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
+        Tue, 17 Jul 2018 06:04:21 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9VsUN1462871
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 02:31:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9VsRk1462868;
+        Tue, 17 Jul 2018 02:31:54 -0700
+Date:   Tue, 17 Jul 2018 02:31:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andrea Parri <tipbot@zytor.com>
+Message-ID: <tip-7696f9910a9a40b8a952f57d3428515fabd2d889@git.kernel.org>
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        tglx@linutronix.de, stern@rowland.harvard.edu,
+        paulmck@linux.vnet.ibm.com, boqun.feng@gmail.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        j.alglave@ucl.ac.uk, dlustig@nvidia.com, hpa@zytor.com,
+        mingo@kernel.org, npiggin@gmail.com, will.deacon@arm.com,
+        andrea.parri@amarulasolutions.com, akiyks@gmail.com,
+        luc.maranget@inria.fr, corbet@lwn.net
+Reply-To: corbet@lwn.net, luc.maranget@inria.fr, akiyks@gmail.com,
+          mingo@kernel.org, npiggin@gmail.com,
+          andrea.parri@amarulasolutions.com, will.deacon@arm.com,
+          hpa@zytor.com, dlustig@nvidia.com, j.alglave@ucl.ac.uk,
+          linux-kernel@vger.kernel.org, stern@rowland.harvard.edu,
+          paulmck@linux.vnet.ibm.com, boqun.feng@gmail.com,
+          peterz@infradead.org, dhowells@redhat.com,
+          torvalds@linux-foundation.org, tglx@linutronix.de
+In-Reply-To: <20180716180605.16115-12-paulmck@linux.vnet.ibm.com>
+References: <20180716180605.16115-12-paulmck@linux.vnet.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] sched/Documentation: Update wake_up() & co.
+ memory-barrier guarantees
+Git-Commit-ID: 7696f9910a9a40b8a952f57d3428515fabd2d889
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup PCI_ENDPOINT_TEST memspace (by moving the interrupt number away
-from command section).
+Commit-ID:  7696f9910a9a40b8a952f57d3428515fabd2d889
+Gitweb:     https://git.kernel.org/tip/7696f9910a9a40b8a952f57d3428515fabd2d889
+Author:     Andrea Parri <andrea.parri@amarulasolutions.com>
+AuthorDate: Mon, 16 Jul 2018 11:06:03 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 17 Jul 2018 09:30:34 +0200
 
-Add IRQ_TYPE register to identify the triggered ID interrupt required
-for the READ/WRITE/COPY tests and raise IRQ test commands.
+sched/Documentation: Update wake_up() & co. memory-barrier guarantees
 
-Update documentation accordingly.
+Both the implementation and the users' expectation [1] for the various
+wakeup primitives have evolved over time, but the documentation has not
+kept up with these changes: brings it into 2018.
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+[1] http://lkml.kernel.org/r/20180424091510.GB4064@hirez.programming.kicks-ass.net
+
+Also applied feedback from Alan Stern.
+
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Akira Yokosawa <akiyks@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Daniel Lustig <dlustig@nvidia.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: parri.andrea@gmail.com
+Link: http://lkml.kernel.org/r/20180716180605.16115-12-paulmck@linux.vnet.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Change v2->v3:
- - New patch file created base on the previous patch
-"misc: pci_endpoint_test: Add MSI-X support" patch file following
-Kishon's suggestion.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Reverted irq_num rename to msi_num.
- - Added comment about the MSI-X bit reservation for future implementation.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Updated documentation.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Nothing changed, just to follow the patch set version.
-Change v9->v10:
- - Update documentation and patch description.
-Change v10->v11:
- - Nothing changed, just to follow the patch set version.
-Change v11->v12:
- - Nothing changed, just to follow the patch set version.
+ Documentation/memory-barriers.txt | 43 ++++++++++++++++++++++++---------------
+ include/linux/sched.h             |  4 ++--
+ kernel/sched/completion.c         |  8 ++++----
+ kernel/sched/core.c               | 30 +++++++++++----------------
+ kernel/sched/wait.c               |  8 ++++----
+ 5 files changed, 49 insertions(+), 44 deletions(-)
 
- Documentation/PCI/endpoint/pci-test-function.txt |  8 +--
- Documentation/PCI/endpoint/pci-test-function.txt | 27 ++++++--
- drivers/misc/pci_endpoint_test.c                 | 81 +++++++++++++++---------
- drivers/pci/endpoint/functions/pci-epf-test.c    | 61 ++++++++++++------
- 3 files changed, 114 insertions(+), 55 deletions(-)
-
-diff --git a/Documentation/PCI/endpoint/pci-test-function.txt b/Documentation/PCI/endpoint/pci-test-function.txt
-index 0c519c9..bf4b5cf 100644
---- a/Documentation/PCI/endpoint/pci-test-function.txt
-+++ b/Documentation/PCI/endpoint/pci-test-function.txt
-@@ -20,6 +20,8 @@ The PCI endpoint test device has the following registers:
- 	5) PCI_ENDPOINT_TEST_DST_ADDR
- 	6) PCI_ENDPOINT_TEST_SIZE
- 	7) PCI_ENDPOINT_TEST_CHECKSUM
-+	8) PCI_ENDPOINT_TEST_IRQ_TYPE
-+	9) PCI_ENDPOINT_TEST_IRQ_NUMBER
+diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+index a02d6bbfc9d0..0d8d7ef131e9 100644
+--- a/Documentation/memory-barriers.txt
++++ b/Documentation/memory-barriers.txt
+@@ -2179,32 +2179,41 @@ or:
+ 	event_indicated = 1;
+ 	wake_up_process(event_daemon);
  
- *) PCI_ENDPOINT_TEST_MAGIC
+-A write memory barrier is implied by wake_up() and co.  if and only if they
+-wake something up.  The barrier occurs before the task state is cleared, and so
+-sits between the STORE to indicate the event and the STORE to set TASK_RUNNING:
++A general memory barrier is executed by wake_up() if it wakes something up.
++If it doesn't wake anything up then a memory barrier may or may not be
++executed; you must not rely on it.  The barrier occurs before the task state
++is accessed, in particular, it sits between the STORE to indicate the event
++and the STORE to set TASK_RUNNING:
  
-@@ -34,10 +36,10 @@ that the endpoint device must perform.
- Bitfield Description:
-   Bit 0		: raise legacy IRQ
-   Bit 1		: raise MSI IRQ
--  Bit 2 - 7	: MSI interrupt number
--  Bit 8		: read command (read data from RC buffer)
--  Bit 9		: write command (write data to RC buffer)
--  Bit 10	: copy command (copy data from one RC buffer to another
-+  Bit 2		: raise MSI-X IRQ (reserved for future implementation)
-+  Bit 3		: read command (read data from RC buffer)
-+  Bit 4		: write command (write data to RC buffer)
-+  Bit 5		: copy command (copy data from one RC buffer to another
- 		  RC buffer)
+-	CPU 1				CPU 2
++	CPU 1 (Sleeper)			CPU 2 (Waker)
+ 	===============================	===============================
+ 	set_current_state();		STORE event_indicated
+ 	  smp_store_mb();		wake_up();
+-	    STORE current->state	  <write barrier>
+-	    <general barrier>		  STORE current->state
+-	LOAD event_indicated
++	    STORE current->state	  ...
++	    <general barrier>		  <general barrier>
++	LOAD event_indicated		  if ((LOAD task->state) & TASK_NORMAL)
++					    STORE task->state
  
- *) PCI_ENDPOINT_TEST_STATUS
-@@ -64,3 +66,20 @@ COPY/READ command.
+-To repeat, this write memory barrier is present if and only if something
+-is actually awakened.  To see this, consider the following sequence of
+-events, where X and Y are both initially zero:
++where "task" is the thread being woken up and it equals CPU 1's "current".
++
++To repeat, a general memory barrier is guaranteed to be executed by wake_up()
++if something is actually awakened, but otherwise there is no such guarantee.
++To see this, consider the following sequence of events, where X and Y are both
++initially zero:
  
- This register contains the destination address (RC buffer address) for
- the COPY/WRITE command.
+ 	CPU 1				CPU 2
+ 	===============================	===============================
+-	X = 1;				STORE event_indicated
++	X = 1;				Y = 1;
+ 	smp_mb();			wake_up();
+-	Y = 1;				wait_event(wq, Y == 1);
+-	wake_up();			  load from Y sees 1, no memory barrier
+-					load from X might see 0
++	LOAD Y				LOAD X
 +
-+*) PCI_ENDPOINT_TEST_IRQ_TYPE
-+
-+This register contains the interrupt type (Legacy/MSI) triggered
-+for the READ/WRITE/COPY and raise IRQ (Legacy/MSI) commands.
-+
-+Possible types:
-+ - Legacy	: 0
-+ - MSI		: 1
-+
-+*) PCI_ENDPOINT_TEST_IRQ_NUMBER
-+
-+This register contains the triggered ID interrupt.
-+
-+Admissible values:
-+ - Legacy	: 0
-+ - MSI		: [1 .. 32]
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 7b37046..35fbfbd 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -35,38 +35,43 @@
++If a wakeup does occur, one (at least) of the two loads must see 1.  If, on
++the other hand, a wakeup does not occur, both loads might see 0.
  
- #include <uapi/linux/pcitest.h>
+-In contrast, if a wakeup does occur, CPU 2's load from X would be guaranteed
+-to see 1.
++wake_up_process() always executes a general memory barrier.  The barrier again
++occurs before the task state is accessed.  In particular, if the wake_up() in
++the previous snippet were replaced by a call to wake_up_process() then one of
++the two loads would be guaranteed to see 1.
  
--#define DRV_MODULE_NAME			"pci-endpoint-test"
--
--#define PCI_ENDPOINT_TEST_MAGIC		0x0
--
--#define PCI_ENDPOINT_TEST_COMMAND	0x4
--#define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
--#define COMMAND_RAISE_MSI_IRQ		BIT(1)
--#define MSI_NUMBER_SHIFT		2
--/* 6 bits for MSI number */
--#define COMMAND_READ                    BIT(8)
--#define COMMAND_WRITE                   BIT(9)
--#define COMMAND_COPY                    BIT(10)
--
--#define PCI_ENDPOINT_TEST_STATUS	0x8
--#define STATUS_READ_SUCCESS             BIT(0)
--#define STATUS_READ_FAIL                BIT(1)
--#define STATUS_WRITE_SUCCESS            BIT(2)
--#define STATUS_WRITE_FAIL               BIT(3)
--#define STATUS_COPY_SUCCESS             BIT(4)
--#define STATUS_COPY_FAIL                BIT(5)
--#define STATUS_IRQ_RAISED               BIT(6)
--#define STATUS_SRC_ADDR_INVALID         BIT(7)
--#define STATUS_DST_ADDR_INVALID         BIT(8)
--
--#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
-+#define DRV_MODULE_NAME				"pci-endpoint-test"
-+
-+#define IRQ_TYPE_LEGACY				0
-+#define IRQ_TYPE_MSI				1
-+
-+#define PCI_ENDPOINT_TEST_MAGIC			0x0
-+
-+#define PCI_ENDPOINT_TEST_COMMAND		0x4
-+#define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
-+#define COMMAND_RAISE_MSI_IRQ			BIT(1)
-+/* BIT(2) is reserved for raising MSI-X IRQ command */
-+#define COMMAND_READ				BIT(3)
-+#define COMMAND_WRITE				BIT(4)
-+#define COMMAND_COPY				BIT(5)
-+
-+#define PCI_ENDPOINT_TEST_STATUS		0x8
-+#define STATUS_READ_SUCCESS			BIT(0)
-+#define STATUS_READ_FAIL			BIT(1)
-+#define STATUS_WRITE_SUCCESS			BIT(2)
-+#define STATUS_WRITE_FAIL			BIT(3)
-+#define STATUS_COPY_SUCCESS			BIT(4)
-+#define STATUS_COPY_FAIL			BIT(5)
-+#define STATUS_IRQ_RAISED			BIT(6)
-+#define STATUS_SRC_ADDR_INVALID			BIT(7)
-+#define STATUS_DST_ADDR_INVALID			BIT(8)
-+
-+#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
- #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
+ The available waker functions include:
  
- #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
- #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
+@@ -2224,6 +2233,8 @@ The available waker functions include:
+ 	wake_up_poll();
+ 	wake_up_process();
  
--#define PCI_ENDPOINT_TEST_SIZE		0x1c
--#define PCI_ENDPOINT_TEST_CHECKSUM	0x20
-+#define PCI_ENDPOINT_TEST_SIZE			0x1c
-+#define PCI_ENDPOINT_TEST_CHECKSUM		0x20
-+
-+#define PCI_ENDPOINT_TEST_IRQ_TYPE		0x24
-+#define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
++In terms of memory ordering, these functions all provide the same guarantees of
++a wake_up() (or stronger).
  
- static DEFINE_IDA(pci_endpoint_test_ida);
- 
-@@ -179,6 +184,9 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+ [!] Note that the memory barriers implied by the sleeper and the waker do _not_
+ order multiple stores before the wake-up with respect to loads of those stored
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 43731fe51c97..05cd419f962d 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -167,8 +167,8 @@ struct task_group;
+  *   need_sleep = false;
+  *   wake_up_state(p, TASK_UNINTERRUPTIBLE);
+  *
+- * Where wake_up_state() (and all other wakeup primitives) imply enough
+- * barriers to order the store of the variable against wakeup.
++ * where wake_up_state() executes a full memory barrier before accessing the
++ * task state.
+  *
+  * Wakeup will do: if (@state & p->state) p->state = TASK_RUNNING, that is,
+  * once it observes the TASK_UNINTERRUPTIBLE store the waking CPU can issue a
+diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
+index e426b0cb9ac6..a1ad5b7d5521 100644
+--- a/kernel/sched/completion.c
++++ b/kernel/sched/completion.c
+@@ -22,8 +22,8 @@
+  *
+  * See also complete_all(), wait_for_completion() and related routines.
+  *
+- * It may be assumed that this function implies a write memory barrier before
+- * changing the task state if and only if any tasks are woken up.
++ * If this function wakes up a task, it executes a full memory barrier before
++ * accessing the task state.
+  */
+ void complete(struct completion *x)
  {
- 	u32 val;
+@@ -44,8 +44,8 @@ EXPORT_SYMBOL(complete);
+  *
+  * This will wake up all threads waiting on this particular completion event.
+  *
+- * It may be assumed that this function implies a write memory barrier before
+- * changing the task state if and only if any tasks are woken up.
++ * If this function wakes up a task, it executes a full memory barrier before
++ * accessing the task state.
+  *
+  * Since complete_all() sets the completion of @x permanently to done
+  * to allow multiple waiters to finish, a call to reinit_completion()
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 0c5ec2abdf93..a0065c84e73f 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -412,8 +412,8 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+ 	 * its already queued (either by us or someone else) and will get the
+ 	 * wakeup due to that.
+ 	 *
+-	 * This cmpxchg() implies a full barrier, which pairs with the write
+-	 * barrier implied by the wakeup in wake_up_q().
++	 * This cmpxchg() executes a full barrier, which pairs with the full
++	 * barrier executed by the wakeup in wake_up_q().
+ 	 */
+ 	if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL))
+ 		return;
+@@ -441,8 +441,8 @@ void wake_up_q(struct wake_q_head *head)
+ 		task->wake_q.next = NULL;
  
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 IRQ_TYPE_LEGACY);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 0);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_RAISE_LEGACY_IRQ);
- 	val = wait_for_completion_timeout(&test->irq_raised,
-@@ -195,8 +203,10 @@ static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
- 	u32 val;
- 	struct pci_dev *pdev = test->pdev;
+ 		/*
+-		 * wake_up_process() implies a wmb() to pair with the queueing
+-		 * in wake_q_add() so as not to miss wakeups.
++		 * wake_up_process() executes a full barrier, which pairs with
++		 * the queueing in wake_q_add() so as not to miss wakeups.
+ 		 */
+ 		wake_up_process(task);
+ 		put_task_struct(task);
+@@ -1879,8 +1879,7 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
+  *     rq(c1)->lock (if not at the same time, then in that order).
+  *  C) LOCK of the rq(c1)->lock scheduling in task
+  *
+- * Transitivity guarantees that B happens after A and C after B.
+- * Note: we only require RCpc transitivity.
++ * Release/acquire chaining guarantees that B happens after A and C after B.
+  * Note: the CPU doing B need not be c0 or c1
+  *
+  * Example:
+@@ -1942,16 +1941,9 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
+  *   UNLOCK rq(0)->lock
+  *
+  *
+- * However; for wakeups there is a second guarantee we must provide, namely we
+- * must observe the state that lead to our wakeup. That is, not only must our
+- * task observe its own prior state, it must also observe the stores prior to
+- * its wakeup.
+- *
+- * This means that any means of doing remote wakeups must order the CPU doing
+- * the wakeup against the CPU the task is going to end up running on. This,
+- * however, is already required for the regular Program-Order guarantee above,
+- * since the waking CPU is the one issueing the ACQUIRE (smp_cond_load_acquire).
+- *
++ * However, for wakeups there is a second guarantee we must provide, namely we
++ * must ensure that CONDITION=1 done by the caller can not be reordered with
++ * accesses to the task state; see try_to_wake_up() and set_current_state().
+  */
  
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, msi_num);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 msi_num << MSI_NUMBER_SHIFT |
- 				 COMMAND_RAISE_MSI_IRQ);
- 	val = wait_for_completion_timeout(&test->irq_raised,
- 					  msecs_to_jiffies(1000));
-@@ -281,8 +291,11 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
- 				 size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_COPY);
-+				 COMMAND_COPY);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-@@ -348,8 +361,11 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_READ);
-+				 COMMAND_READ);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-@@ -403,8 +419,11 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_WRITE);
-+				 COMMAND_WRITE);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 63ed706..eb9cd00 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -18,13 +18,15 @@
- #include <linux/pci-epf.h>
- #include <linux/pci_regs.h>
- 
-+#define IRQ_TYPE_LEGACY			0
-+#define IRQ_TYPE_MSI			1
-+
- #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
- #define COMMAND_RAISE_MSI_IRQ		BIT(1)
--#define MSI_NUMBER_SHIFT		2
--#define MSI_NUMBER_MASK			(0x3f << MSI_NUMBER_SHIFT)
--#define COMMAND_READ			BIT(8)
--#define COMMAND_WRITE			BIT(9)
--#define COMMAND_COPY			BIT(10)
-+/* BIT(2) is reserved for raising MSI-X IRQ command */
-+#define COMMAND_READ			BIT(3)
-+#define COMMAND_WRITE			BIT(4)
-+#define COMMAND_COPY			BIT(5)
- 
- #define STATUS_READ_SUCCESS		BIT(0)
- #define STATUS_READ_FAIL		BIT(1)
-@@ -56,6 +58,8 @@ struct pci_epf_test_reg {
- 	u64	dst_addr;
- 	u32	size;
- 	u32	checksum;
-+	u32	irq_type;
-+	u32	irq_number;
- } __packed;
- 
- static struct pci_epf_header test_header = {
-@@ -244,31 +248,39 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
- 	return ret;
- }
- 
--static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq)
-+static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq_type,
-+				   u16 irq)
+ /**
+@@ -1967,6 +1959,9 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
+  * Atomic against schedule() which would dequeue a task, also see
+  * set_current_state().
+  *
++ * This function executes a full memory barrier before accessing the task
++ * state; see set_current_state().
++ *
+  * Return: %true if @p->state changes (an actual wakeup was done),
+  *	   %false otherwise.
+  */
+@@ -2141,8 +2136,7 @@ out:
+  *
+  * Return: 1 if the process was woken up, 0 if it was already running.
+  *
+- * It may be assumed that this function implies a write memory barrier before
+- * changing the task state if and only if any tasks are woken up.
++ * This function executes a full memory barrier before accessing the task state.
+  */
+ int wake_up_process(struct task_struct *p)
  {
--	u8 msi_count;
- 	struct pci_epf *epf = epf_test->epf;
-+	struct device *dev = &epf->dev;
- 	struct pci_epc *epc = epf->epc;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
- 
- 	reg->status |= STATUS_IRQ_RAISED;
--	msi_count = pci_epc_get_msi(epc, epf->func_no);
--	if (irq > msi_count || msi_count <= 0)
-+
-+	switch (irq_type) {
-+	case IRQ_TYPE_LEGACY:
- 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_LEGACY, 0);
--	else
-+		break;
-+	case IRQ_TYPE_MSI:
- 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-+		break;
-+	default:
-+		dev_err(dev, "Failed to raise IRQ, unknown type\n");
-+		break;
-+	}
- }
- 
- static void pci_epf_test_cmd_handler(struct work_struct *work)
- {
- 	int ret;
--	u8 irq;
--	u8 msi_count;
-+	u16 count;
- 	u32 command;
- 	struct pci_epf_test *epf_test = container_of(work, struct pci_epf_test,
- 						     cmd_handler.work);
- 	struct pci_epf *epf = epf_test->epf;
-+	struct device *dev = &epf->dev;
- 	struct pci_epc *epc = epf->epc;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-@@ -280,7 +292,10 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 	reg->command = 0;
- 	reg->status = 0;
- 
--	irq = (command & MSI_NUMBER_MASK) >> MSI_NUMBER_SHIFT;
-+	if (reg->irq_type > IRQ_TYPE_MSI) {
-+		dev_err(dev, "Failed to detect IRQ type\n");
-+		goto reset_handler;
-+	}
- 
- 	if (command & COMMAND_RAISE_LEGACY_IRQ) {
- 		reg->status = STATUS_IRQ_RAISED;
-@@ -294,7 +309,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_WRITE_FAIL;
- 		else
- 			reg->status |= STATUS_WRITE_SUCCESS;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -304,7 +320,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_READ_SUCCESS;
- 		else
- 			reg->status |= STATUS_READ_FAIL;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -314,16 +331,18 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_COPY_SUCCESS;
- 		else
- 			reg->status |= STATUS_COPY_FAIL;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
- 	if (command & COMMAND_RAISE_MSI_IRQ) {
--		msi_count = pci_epc_get_msi(epc, epf->func_no);
--		if (irq > msi_count || msi_count <= 0)
-+		count = pci_epc_get_msi(epc, epf->func_no);
-+		if (reg->irq_number > count || count <= 0)
- 			goto reset_handler;
- 		reg->status = STATUS_IRQ_RAISED;
--		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-+		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI,
-+				  reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -457,8 +476,10 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 		return ret;
- 
- 	ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
--	if (ret)
-+	if (ret) {
-+		dev_err(dev, "MSI configuration failed\n");
- 		return ret;
-+	}
- 
- 	if (!epf_test->linkup_notifier)
- 		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
--- 
-2.7.4
-
+diff --git a/kernel/sched/wait.c b/kernel/sched/wait.c
+index a7a2aaa3026a..870f97b313e3 100644
+--- a/kernel/sched/wait.c
++++ b/kernel/sched/wait.c
+@@ -134,8 +134,8 @@ static void __wake_up_common_lock(struct wait_queue_head *wq_head, unsigned int
+  * @nr_exclusive: how many wake-one or wake-many threads to wake up
+  * @key: is directly passed to the wakeup function
+  *
+- * It may be assumed that this function implies a write memory barrier before
+- * changing the task state if and only if any tasks are woken up.
++ * If this function wakes up a task, it executes a full memory barrier before
++ * accessing the task state.
+  */
+ void __wake_up(struct wait_queue_head *wq_head, unsigned int mode,
+ 			int nr_exclusive, void *key)
+@@ -180,8 +180,8 @@ EXPORT_SYMBOL_GPL(__wake_up_locked_key_bookmark);
+  *
+  * On UP it can prevent extra preemption.
+  *
+- * It may be assumed that this function implies a write memory barrier before
+- * changing the task state if and only if any tasks are woken up.
++ * If this function wakes up a task, it executes a full memory barrier before
++ * accessing the task state.
+  */
+ void __wake_up_sync_key(struct wait_queue_head *wq_head, unsigned int mode,
+ 			int nr_exclusive, void *key)
