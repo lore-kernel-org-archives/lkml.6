@@ -2,94 +2,110 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C391AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A62ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E43120C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:32:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hHAYmvK5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E43120C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 1404420877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:33:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1404420877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729719AbeGQQF6 (ORCPT
+        id S1730043AbeGQQGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:05:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44996 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729602AbeGQQF6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:05:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sivGMNeEa4hjba3vK8UUdaWd0cu+fx+tu0F6HbvTrKA=; b=hHAYmvK5aBQZ/JPLolPltIS+R
-        oIt6zn65AFHH8Xyv1WVfZmTOK4s1oPtWpTY/LE7traJl+mb5dIsiUqeEbmIBbAQ3V5hUR8qmtvnxj
-        oUz2cwFyOCIRvX7k6+fCZ/dt6FElVDBlHXlu4LLju8lKu4szc2UzvDHNgPYM7nq7DFKZC6g2mUdGi
-        NGyqbyI1IGm4DlCVsTKaFtDR9Hw7XqBkzJG+8h0uhc4XdCH6vqaZiw6bzR2eVPyvGG8kzG88vYZ59
-        626IRZOrhLVKyAdGVYXryCuFys1yKUtNAc9qlpvb4Lu/ExBwd3rbHwAochgQFTYZ95DfB9MdWoVoh
-        tc7UrhftQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffRxw-0001I0-NV; Tue, 17 Jul 2018 15:32:40 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EBA2A20275F36; Tue, 17 Jul 2018 17:32:38 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 17:32:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
- and IO
-Message-ID: <20180717153238.GA2476@hirez.programming.kicks-ass.net>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-9-hannes@cmpxchg.org>
+        Tue, 17 Jul 2018 12:06:32 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45223 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729663AbeGQQGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:06:32 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6307220717; Tue, 17 Jul 2018 17:33:19 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 322C820717;
+        Tue, 17 Jul 2018 17:33:09 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 17:33:09 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [PATCH v2] drm/sun4i: sun8i: Avoid clearing blending order at
+ each atomic commit
+Message-ID: <20180717153309.bhxw6gdeyz7lwq7s@flea>
+References: <20180717122522.11327-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a5bmnfticdas2aey"
 Content-Disposition: inline
-In-Reply-To: <20180712172942.10094-9-hannes@cmpxchg.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180717122522.11327-1-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 01:29:40PM -0400, Johannes Weiner wrote:
-> +struct psi_group {
-> +	struct psi_group_cpu *cpus;
 
-That one wants a __percpu annotation on I think. Also, maybe a rename.
+--a5bmnfticdas2aey
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +
-> +	struct mutex stat_lock;
-> +
-> +	u64 some[NR_PSI_RESOURCES];
-> +	u64 full[NR_PSI_RESOURCES];
-> +
-> +	unsigned long period_expires;
-> +
-> +	u64 last_some[NR_PSI_RESOURCES];
-> +	u64 last_full[NR_PSI_RESOURCES];
-> +
-> +	unsigned long avg_some[NR_PSI_RESOURCES][3];
-> +	unsigned long avg_full[NR_PSI_RESOURCES][3];
-> +
-> +	struct delayed_work clock_work;
-> +};
+On Tue, Jul 17, 2018 at 02:25:22PM +0200, Paul Kocialkowski wrote:
+> Blending order is set based on the z position of each DRM plane. The
+> blending order register is currently cleared at each atomic DRM commit,
+> with the intent that each committed plane will set the appropriate
+> bits (based on its z-pos) when enabling the plane.
+>=20
+> However, it sometimes happens that a particular plane is left unchanged
+> by an atomic commit and thus will not be configured again. In that
+> scenario, blending order is cleared and only the bits relevant for the
+> planes affected by the commit are set. This leaves the planes that did
+> not change without their blending order set in the register, leading
+> to that plane not being displayed.
+>=20
+> Instead of clearing the blending order register at every atomic commit,
+> this change moves the register's initial clear at bind time and only
+> clears the bits for a specific plane when disabling it or changing its
+> zpos.
+>=20
+> This way, planes that are left untouched by a DRM atomic commit are
+> no longer disabled.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--a5bmnfticdas2aey
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltODDQACgkQ0rTAlCFN
+r3S0Yw//RtZqZal/rupm0nBsH7yHgbC9dTXAvMI0i4nX9y3hZwOExd82pREUpx7c
+WL+JZcFyhRA2PmWqGPBVEL+1Ge4rGbZj4fn3YJD3LTn4TiFQFekRDeYUQQJ9u0Zt
+6PZ5Fe/tFb9FOG2b7C62JMyKnT05JcCDKIh1vd29JtZiPoQTj0INBQi4K+f1D4fK
+AAnJSH6k8Bj8xlaAZoHxvKwyruFC4cje/avZ9PD3r7mO4oBX+Xu0Ich+bM9YRVUu
+r6dmT/if2I89whqJ0gPeIN1v7cBKcZKg9+/5DEVnQ5P8748yfAgUvE+TlwHV8WwA
+VnFQe/jxmdDtEM4nKInhnnuWlt/W6JQKtEyWGVQI+GGbNO/aWIP2IvTgMGOkLBEC
+6rxnUiLIkJ8GW/cIAnb5VuzE7OvcYiM91vsZBAstVMOt22rpryOZkcVKKetuB0hp
+k4P7gpeNhEhiHPrm4NxsexjADqNoe9PQ59j3AHe/LvrtIx2u+a3jcx76OkqbBe4z
+SgpZ6c7g7gns2ROR8cIgLLtyVLG4ITSYPka1EkxJb6GGbwpU9FQg9oY9UXBxpOYq
+TAPjqXcxGvAK3xVB5181lgzQC2ctLAZeL9k7gppp8tQPhG8ZZkC9/F6+EPZqBZ6z
+DqalGbflswI7o4KZDv86fOJR2yO534gN/9co/ChEt3DL2vpJxL4=
+=w5Ux
+-----END PGP SIGNATURE-----
+
+--a5bmnfticdas2aey--
