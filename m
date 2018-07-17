@@ -2,84 +2,110 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF73BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8933AECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CBF52064D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:28:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CBF52064D
+	by mail.kernel.org (Postfix) with ESMTP id 37B1520657
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:29:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="re3oNLCg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B1520657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731856AbeGQPB0 (ORCPT
+        id S1731706AbeGQPCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:01:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47980 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729389AbeGQPB0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:01:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25A05AFC9;
-        Tue, 17 Jul 2018 14:28:29 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 16:28:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] mm/page_alloc: Deprecate kernelcore=nn and movable_core=
-Message-ID: <20180717142828.GK7193@dhcp22.suse.cz>
-References: <20180717131837.18411-1-bhe@redhat.com>
- <20180717133109.GI7193@dhcp22.suse.cz>
- <20180717142443.GG1724@MiWiFi-R3L-srv>
+        Tue, 17 Jul 2018 11:02:22 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:36243 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729208AbeGQPCW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 11:02:22 -0400
+Received: by mail-lj1-f177.google.com with SMTP id u7-v6so1184836lji.3;
+        Tue, 17 Jul 2018 07:29:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rHlT8llOxp0mS21QB2Nr8GxwzV53CN5PpxqzVizfUi8=;
+        b=re3oNLCgJbaHhXrPtGTIyXimEduJTaCkfPyBeSjJ9gh5fqIWxkGu2fzC9U2fUpf/7c
+         IHzeolekHTJAysYjesqqFYOLoVqnhNYc4cY4a3DkqhD7+bO8eixHB7Iua89Ja+eIdiDX
+         FPNsljvfN+iYPenRM5YPVrt5Af1+Q1MisB499nQ0rLqHrwT0eKC62eToQnbNKzSofOe2
+         o5UOpqv3zfNEJ1rqyvg1GoPMgUg6Io6uBjTdvzV6tsGgVeGYKVM7u/QXeFdo7A+B57hZ
+         j5ViHc0FHy3DEsp1pBEhtHb7k8VwJbtR4V1y63vpdEkegw6mCwlJF+xNnhceWJCY3kPY
+         te1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rHlT8llOxp0mS21QB2Nr8GxwzV53CN5PpxqzVizfUi8=;
+        b=YDBvTYnv8p/xWYP2OKzEfSalnCiV0yIFan5/BD3FTa0pLmKlXWaRFnbtAJC07Oi85z
+         Of7jMfqZNh/QlFDo6CEmGKmXCjxEPv7kvWcw48qc6HjArZpixrlwBPyOmNtgOBeGMWg1
+         kRHxnPGQmmqrtlZNufswWHv0yQASslPm9xOSPCAPiNUE6Zs5nUTJe9GwAtxkozhZ38Ka
+         tst6HQNdw6KhglvlWjjHzYtpVzprifaIQaFhDW5LYUjnTFAqTf/JBpYVgeBf8FFmOePx
+         HE0Vl4h6o0NyrdkNV4wwWJJ06PWqnx/kkBTdhNzboyxVcd+wAnI3EWJ68MICyMWyYkWV
+         4KdA==
+X-Gm-Message-State: AOUpUlFQdjaia02gChkdj9s8HG+BciU/bhuJlacCg3shrAjyHyrFXzA/
+        DUgpQqYgcO7DyhANAWtEoT0=
+X-Google-Smtp-Source: AAOMgpd0FQs6cfcksfGjKDqzfWCdNJ1jqz41cYT6R9rEM55AQHR25UGTTQ9Mr9ObPEysS2A2OU7D3Q==
+X-Received: by 2002:a2e:9e17:: with SMTP id e23-v6mr1653172ljk.14.1531837764866;
+        Tue, 17 Jul 2018 07:29:24 -0700 (PDT)
+Received: from pi.lan (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id f28-v6sm194089lje.61.2018.07.17.07.29.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 07:29:23 -0700 (PDT)
+X-Google-Original-Sender: <johan@kernel.org>
+Received: from johan by pi.lan with local (Exim 4.90_1)
+        (envelope-from <johan@pi.lan>)
+        id 1ffQxm-00019c-R2; Tue, 17 Jul 2018 16:28:26 +0200
+Date:   Tue, 17 Jul 2018 16:28:26 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     m13297920107 <m13297920107@163.com>
+Cc:     "johan@kernel.org" <johan@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moviesong@aten-itlab.cn" <moviesong@aten-itlab.cn>,
+        "billli@aten-itlab.cn" <billli@aten-itlab.cn>
+Subject: Re: =?utf-8?B?5p2l6IeqbTEzMjk3OTIwMTA355qE?= =?utf-8?B?6YKu5Lu2?=
+Message-ID: <20180717142826.GA3464@localhost>
+References: <9d354b9.f72d.164a87468d7.Coremail.m13297920107@163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717142443.GG1724@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <9d354b9.f72d.164a87468d7.Coremail.m13297920107@163.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-07-18 22:24:43, Baoquan He wrote:
-> Hi Michal,
-> 
-> On 07/17/18 at 03:31pm, Michal Hocko wrote:
-> > On Tue 17-07-18 21:18:37, Baoquan He wrote:
-> > > We can still use 'kernelcore=mirror' or 'movable_node' for the usage
-> > > of hotplug and movable zone. If somebody shows up with a valid usecase
-> > > we can reconsider.
-> > 
-> > Well this doesn't really explain why to deprecate this functionality.
-> > It is a rather ugly hack that has been originally introduced for large
-> > order allocations. But we do have compaction these days. Even though the
-> > compaction cannot solve all the fragmentation issues the zone movable is
-> > not a great answer as it introduces other issues (basically highmem kind
-> > of issues we used to have on 32b systems).
-> > The current code doesn't work with KASLR and the code is too subtle to
-> > work properly in other cases as well. E.g. movablecore range might cover
-> > already used memory (e.g. bootmem allocations) and therefore it doesn't
-> > comply with the basic assumption that the memory is movable and that
-> > confuses memory hotplug (e.g. 15c30bc09085 ("mm, memory_hotplug: make
-> > has_unmovable_pages more robust").
-> > 
-> > There are probably other issues I am not aware of but primarily the code
-> > adds a maintenance burden which would be better to get rid of.
-> > 
-> > I would also go further and remove all the code the feature is using at
-> > one go. If somebody really needs this functionality we would need to
-> > revert the whole thing anyway.
-> 
-> Thanks for these details. I can arrange your above saying and rewrite
-> patch log. Are you suggesting removing the code "kernelcore=nn" and
-> "movablecore=" are using? If yes, I can repost with these changes.
+On Tue, Jul 17, 2018 at 09:35:58PM +0800, m13297920107 wrote:
+> From dcd3f0aafbd3ac40c0bceb8e9d5941a29a1a5edd Mon Sep 17 00:00:00 2001
+> From: Movie Song <MovieSong@aten-itlab.cn>
+> Date: Tue, 17 Jul 2018 21:13:52 +0800
+> Subject: [PATCH] This add a new device for ATEN
+> Signed-off-by:MovieSong<MovieSong@aten-itlab.cn>
 
-Yes.
--- 
-Michal Hocko
-SUSE Labs
+You're getting closer, but the patch is still whitespace damaged.
+
+Again, try sending the patch to yourself first and make sure you can
+apply it with git-am. You can also run checkpatch on the result to catch
+some common mistakes.
+
+Please also use a more descriptive commit summary (Subject) by using the
+common prefix, for example:
+
+	USB: serial: pl2303: add new device id for ATEN
+	
+and add a short commit message (which is currently empty).
+
+The link I sent you earlier will show you an example of what the
+end-result may look like.
+
+Thanks,
+Johan
