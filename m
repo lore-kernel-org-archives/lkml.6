@@ -2,164 +2,183 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C06ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07839ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07DD320647
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5A6C20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:32:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qqi3oLnm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DD320647
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="I8JFBfhf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A6C20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbeGQSCW (ORCPT
+        id S1730054AbeGQSG0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 14:02:22 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:33375 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729713AbeGQSCW (ORCPT
+        Tue, 17 Jul 2018 14:06:26 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:54767 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729713AbeGQSG0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 14:02:22 -0400
-Received: by mail-oi0-f67.google.com with SMTP id l10-v6so3555820oii.0;
-        Tue, 17 Jul 2018 10:28:42 -0700 (PDT)
+        Tue, 17 Jul 2018 14:06:26 -0400
+Received: by mail-it0-f66.google.com with SMTP id s7-v6so267702itb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 10:32:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=aDyDjwaAD1SIN1UC3ibG05PEbeLGqp2u0SKPH49Fp64=;
-        b=qqi3oLnmjCtwGtO3McdCraYlirZDpq22NeggAju7+AXNXf1BwhrrVrG8Us9MyxRVmq
-         T8NGAIdCToJC596c6Au2bdVlam+S2BLgFWAdJWRiiFXYNX+96P5vyuJt0v2S8S7aPoOv
-         0+tWwGdggEN/VLdj4Y7o4LDPBJWat367HP7uOH5wxWrLvL9qC+CaaQehAPYsSpZi2seq
-         P+JuQ6fMUu/p0C5i0GRgml8PbO2jWYWbieuCiexKj5kTgCXd4FVihtX+KNs+QD1zdlVG
-         SWhrhXGyMGG/hUv+j5qI8//UDHGusKOZoe4CHHG5Ksp1YNzwRFDCdSI0MZIfsshNeGTx
-         vAdQ==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ysh1gY8sUsIllb6gjGmMXZqHePjvlipDu2vSy/OTmRw=;
+        b=I8JFBfhf5nVKBWAGjrOm8wtIV22SaT9MT4uR3bqOfbsXZnJGuK+81CryYTpqHbNHEW
+         MkRX1O1DMNxoNQ45OYojp7tkW5Ih8T7FyxgUcHuAM9yAvw2fu9VrmiJJlIZuMqhFiLzP
+         l23I8xKMlL3hQ6txGEvwqUpp0YMlmMYv0ucPq/UKwpeHvJ2L1iqFp8mJaWHrYVWD1up0
+         gkFRUhN5tVgtM1C4b9PnC4PJ0SJcmEGkBwccJqstbIy9lHkmqvDOZltfpfr2WjbIArS5
+         6pzw+OomwIn55/5e7NC8oiEF8SW+OdoUl/+OMazoeJPGnOlqT9WjwSRUiWSs0QqbDNAF
+         274w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=aDyDjwaAD1SIN1UC3ibG05PEbeLGqp2u0SKPH49Fp64=;
-        b=acvIe2a7QDzr9oiufICaBYnSGVLrF8YONkYMZ1a6YM2PMmAMIF7PrBzx7G5hvjsV2m
-         xbb8x9p8l13S1ODp7g0Rti3/5H+Ijx6U7lbAdFXCa2r5VPm27PQ1vx1xhGgFka36ox3k
-         8UPFZlNgrajFLXKeGYaS9rKEqlTqzv33Oci9Xse6dBQFKl5oY1bZoC3sJCnQMfchOqpR
-         S5QBAf7lo9efaVKLbN8sqQL77TFCLD0kgiK2riBsgnsohe4+VwaS+LBAxO6WoXW5eB7M
-         XOfdimdSH35swzSZI6szxV9mQVJP24WoNBBoLVBt7ZntICmxFdTJXCCLV7cgQc0Pfgjo
-         geRg==
-X-Gm-Message-State: AOUpUlHvdwcsmJLH2xzci2ULN+/ZGdbPNnCU2DEAYFF6KIqtaa9XVZ/w
-        mec4WtCeYJrhWSiFCWaTaStymFEZucnvDRLjcnU=
-X-Google-Smtp-Source: AAOMgpfiRmE/WYbmXzBCs0ztM26vsk4oQYUdMF2BM/OA6Jf7rn7BtSQQv2pNeO6JWPv5+dxBjgDg7FgJNPwigAGKiDk=
-X-Received: by 2002:aca:42:: with SMTP id 63-v6mr2480708oia.154.1531848522082;
- Tue, 17 Jul 2018 10:28:42 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ysh1gY8sUsIllb6gjGmMXZqHePjvlipDu2vSy/OTmRw=;
+        b=BLSW4NL0Hzyvat/O1Qgt4mBeiHWPqUV0VPHtXqOMS0DT83XKGXldC2fStHTE9WkR3x
+         jE3RMhKC+ZCTL+iVhmVA3he1i4mFSpaxNHcRcMeRENDrJnIFvt9VxA6ZM5mp3cIC8qky
+         WRNGnfDOOQEB2KYgGfbTBLLkr8Upcr5jOmlOadQpZb+nKl3C7ex7ItjSm5BBnUvdjYnJ
+         YWmAi5vVzIcR1RQCboeQHehg8OGkqJuqScmORUMncMC9SrMhLxX2XwfUjYxlgegJB1bD
+         XYcUpoEum2c8R4P5RYrnKfIifViJUlSJZVBvlo6erl3GzC3ZFz3tPuzKP8fUGprG0NVt
+         9AxQ==
+X-Gm-Message-State: AOUpUlFUrzV5WGaF3cVrIuiXBYlQsqhlnhT3GVZiakN+SD0MMHm5/rtK
+        wtEntzpVYeDWrCrKLWeeBTVT8oFqNaffReiugHU=
+X-Google-Smtp-Source: AAOMgperIMvstX88b9Pb5EWnpqSxP27FQGWxhydWXn4lv9fqO9CygATEsNQJEi7AmTbZLPfrKeV9bFZ9sTTx8OXNpu4=
+X-Received: by 2002:a24:3041:: with SMTP id q62-v6mr2354218itq.86.1531848764772;
+ Tue, 17 Jul 2018 10:32:44 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 10:28:41
- -0700 (PDT)
-In-Reply-To: <d4419603cb727bb28fe9ab7abfc9595b78cb7554.camel@linux.intel.com>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix> <20180717102136.snayvzmv2h3dcwiq@suselix>
- <20180717140336.ayovaz4ksdlak6bb@suselix> <8115130.Fhkpr82c7G@aspire.rjw.lan> <d4419603cb727bb28fe9ab7abfc9595b78cb7554.camel@linux.intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 17 Jul 2018 19:28:41 +0200
-X-Google-Sender-Auth: pR0jJz_m99TcP714uIawkhVnvJI
-Message-ID: <CAJZ5v0hFAWr7ozVb9OfVTUPCyjZAtsQsDSm=Le_oMwOxAgTJbA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: intel_pstate: Load when ACPI PCCH is present
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Andreas Herrmann <aherrmann@suse.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <153176041838.12695.3365448145295112857.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAGM2rea9AwQGaf1JiV_SDDKTKyP_n+dG9Z20gtTZEkuZPFnXFQ@mail.gmail.com>
+ <CAPcyv4jo91jKjwn-M7cOhG=6vJ3c-QCyp0W+T+CtmiKGyZP1ng@mail.gmail.com>
+ <CAGM2reacO1HF91yH8OR5w5AdZwPgwfSFfjDNBsHbP66v1rEg=g@mail.gmail.com> <20180717155006.GL7193@dhcp22.suse.cz>
+In-Reply-To: <20180717155006.GL7193@dhcp22.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 17 Jul 2018 10:32:32 -0700
+Message-ID: <CAA9_cmez_vrjBYvcpXT_5ziQ2CqRFzPbEWMO2kdmjW0rWhkaCA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/14] mm: Asynchronous + multithreaded memmap init for ZONE_DEVICE
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     pasha.tatashin@oracle.com, dalias@libc.org,
+        Jan Kara <jack@suse.cz>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-mm <linux-mm@kvack.org>, Paul Mackerras <paulus@samba.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        daniel.m.jordan@oracle.com, Ingo Molnar <mingo@redhat.com>,
+        fenghua.yu@intel.com, Jerome Glisse <jglisse@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 7:23 PM, Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
-> On Tue, 2018-07-17 at 18:13 +0200, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> Currently, intel_pstate doesn't load if _PSS is not present on
->> HP Proliant systems, because it expects the firmware to take over
->> CPU performance scaling in that case.  However, if ACPI PCCH is
->> present, the firmware expects the kernel to use it for CPU
->> performance scaling and the pcc-cpufreq driver is loaded for that.
->>
->> Unfortunately, the firmware interface used by that driver is not
->> scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
->> on systems with more than just a few CPUs.  In fact, it is better to
->> avoid using it at all.
->>
->> For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
->> is not present and load if it is there.
->>
->> Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power
->> mgmt option)
->> Reported-by: Andreas Herrmann <aherrmann@suse.com>
->> Tested-by: Andreas Herrmann <aherrmann@suse.com>
->> Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
->> Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+On Tue, Jul 17, 2018 at 8:50 AM Michal Hocko <mhocko@kernel.org> wrote:
 >
-> But do we need a change as done by the following commit in in pcc-
-> cpufreq.c?
+> On Tue 17-07-18 10:46:39, Pavel Tatashin wrote:
+> > > > Hi Dan,
+> > > >
+> > > > I am worried that this work adds another way to multi-thread struct
+> > > > page initialization without re-use of already existing method. The
+> > > > code is already a mess, and leads to bugs [1] because of the number of
+> > > > different memory layouts, architecture specific quirks, and different
+> > > > struct page initialization methods.
+> > >
+> > > Yes, the lamentations about the complexity of the memory hotplug code
+> > > are known. I didn't think this set made it irretrievably worse, but
+> > > I'm biased and otherwise certainly want to build consensus with other
+> > > mem-hotplug folks.
+> > >
+> > > >
+> > > > So, when DEFERRED_STRUCT_PAGE_INIT is used we initialize struct pages
+> > > > on demand until page_alloc_init_late() is called, and at that time we
+> > > > initialize all the rest of struct pages by calling:
+> > > >
+> > > > page_alloc_init_late()
+> > > >   deferred_init_memmap() (a thread per node)
+> > > >     deferred_init_pages()
+> > > >        __init_single_page()
+> > > >
+> > > > This is because memmap_init_zone() is not multi-threaded. However,
+> > > > this work makes memmap_init_zone() multi-threaded. So, I think we
+> > > > should really be either be using deferred_init_memmap() here, or teach
+> > > > DEFERRED_STRUCT_PAGE_INIT to use new multi-threaded memmap_init_zone()
+> > > > but not both.
+> > >
+> > > I agree it would be good to look at unifying the 2 async
+> > > initialization approaches, however they have distinct constraints. All
+> > > of the ZONE_DEVICE memmap initialization work happens as a hotplug
+> > > event where the deferred_init_memmap() threads have already been torn
+> > > down. For the memory capacities where it takes minutes to initialize
+> > > the memmap it is painful to incur a global flush of all initialization
+> > > work. So, I think that a move to rework deferred_init_memmap() in
+> > > terms of memmap_init_async() is warranted because memmap_init_async()
+> > > avoids a global sync and supports the hotplug case.
+> > >
+> > > Unfortunately, the work to unite these 2 mechanisms is going to be
+> > > 4.20 material, at least for me, since I'm taking an extended leave,
+> > > and there is little time for me to get this in shape for 4.19. I
+> > > wouldn't be opposed to someone judiciously stealing from this set and
+> > > taking a shot at the integration, I likely will not get back to this
+> > > until September.
+> >
+> > Hi Dan,
+> >
+> > I do not want to hold your work, so if Michal or Andrew are OK with
+> > the general approach of teaching    memmap_init_zone() to be async
+> > without re-using deferred_init_memmap() or without changing
+> > deferred_init_memmap() to use the new memmap_init_async() I will
+> > review your patches.
 >
-> "
-> commit 8a61e12e84597b5f8155ac91b44dea866ccfaac2
-> Author: Yinghai Lu <yinghai@kernel.org>
-> Date:   Fri Sep 20 10:43:56 2013 -0700
->
->     acpi-cpufreq: skip loading acpi_cpufreq after intel_pstate
->
-> "
+> Well, I would rather have a sane code base than rush anything in. I do
+> agree with Pavel that we the number of async methods we have right now
+> is really disturbing. Applying yet another one will put additional
+> maintenance burden on whoever comes next.
 
-Quite likely yes, good point!
+I thought we only had the one async implementation presently, this
+makes it sound like we have more than one? Did I miss the other(s)?
 
+> Is there any reason that this work has to target the next merge window?
+> The changelog is not really specific about that.
 
->> ---
->>  drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
->>  1 file changed, 16 insertions(+), 1 deletion(-)
->>
->> Index: linux-pm/drivers/cpufreq/intel_pstate.c
->> ===================================================================
->> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
->> +++ linux-pm/drivers/cpufreq/intel_pstate.c
->> @@ -2391,6 +2391,18 @@ static bool __init intel_pstate_no_acpi_
->>       return true;
->>  }
->>
->> +static bool __init intel_pstate_no_acpi_pcch(void)
->> +{
->> +     acpi_status status;
->> +     acpi_handle handle;
->> +
->> +     status = acpi_get_handle(NULL, "\\_SB", &handle);
->> +     if (ACPI_FAILURE(status))
->> +             return true;
->> +
->> +     return !acpi_has_method(handle, "PCCH");
->> +}
->> +
->>  static bool __init intel_pstate_has_acpi_ppc(void)
->>  {
->>       int i;
->> @@ -2450,7 +2462,10 @@ static bool __init intel_pstate_platform
->>
->>       switch (plat_info[idx].data) {
->>       case PSS:
->> -             return intel_pstate_no_acpi_pss();
->> +             if (!intel_pstate_no_acpi_pss())
->> +                     return false;
->> +
->> +             return intel_pstate_no_acpi_pcch();
->>       case PPC:
->>               return intel_pstate_has_acpi_ppc() && !force_load;
->>       }
->>
+Same reason as any other change in this space, hardware availability
+continues to increase. These patches are a direct response to end user
+reports of unacceptable init latency with current kernels.
+
+> There no numbers or
+> anything that would make this sound as a high priority stuff.
+
+From the end of the cover letter:
+
+"With this change an 8 socket system was observed to initialize pmem
+namespaces in ~4 seconds whereas it was previously taking ~4 minutes."
+
+My plan if this is merged would be to come back and refactor it with
+the deferred_init_memmap() implementation, my plan if this is not
+merged would be to come back and refactor it with the
+deferred_init_memmap() implementation.
+
+In practical terms, 0day has noticed a couple minor build fixes are needed:
+https://lists.01.org/pipermail/kbuild-all/2018-July/050229.html
+https://lists.01.org/pipermail/kbuild-all/2018-July/050231.html
+
+...and I'm going to be offline until September. I thought it best to
+post this before I go, and I'm open to someone else picking up this
+work to get in shape for merging per community feedback.
