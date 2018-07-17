@@ -3,105 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6240ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DECFECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A449206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A449206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id C5F49206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F49206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730745AbeGQJZP (ORCPT
+        id S1730839AbeGQJZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:25:15 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:52846 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729682AbeGQJYX (ORCPT
+        Tue, 17 Jul 2018 05:25:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40189 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729682AbeGQJZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:24:23 -0400
-X-UUID: afe0ecc9911044b3a5f8c30737ad0888-20180717
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 392532329; Tue, 17 Jul 2018 16:52:36 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 17 Jul 2018 16:52:34 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 17 Jul 2018 16:52:34 +0800
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>
-CC:     CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v5 03/11] dt-bindings: mediatek: add MT6765 power dt-bindings
-Date:   Tue, 17 Jul 2018 16:52:24 +0800
-Message-ID: <1531817552-17221-4-git-send-email-mars.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
-References: <1531817552-17221-1-git-send-email-mars.cheng@mediatek.com>
+        Tue, 17 Jul 2018 05:25:16 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ffLjr-00013U-5I; Tue, 17 Jul 2018 08:53:43 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fscache, cachefiles: remove redundant pointer 'cache'
+Date:   Tue, 17 Jul 2018 09:53:42 +0100
+Message-Id: <20180717085342.17864-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds power dt-bindings for MT6765
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+Pointer 'cache' is being assigned but is never used hence it is
+redundant and can be removed.
+
+Cleans up clang warning:
+warning: variable 'cache' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- .../devicetree/bindings/soc/mediatek/scpsys.txt    |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/cachefiles/rdwr.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-index d6fe16f..62a416a 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-+++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-@@ -11,6 +11,7 @@ The driver implements the Generic PM domain bindings described in
- power/power_domain.txt. It provides the power domains defined in
- - include/dt-bindings/power/mt8173-power.h
- - include/dt-bindings/power/mt6797-power.h
-+- include/dt-bindings/power/mt6765-power.h
- - include/dt-bindings/power/mt2701-power.h
- - include/dt-bindings/power/mt2712-power.h
- - include/dt-bindings/power/mt7622-power.h
-@@ -19,6 +20,7 @@ Required properties:
- - compatible: Should be one of:
- 	- "mediatek,mt2701-scpsys"
- 	- "mediatek,mt2712-scpsys"
-+	- "mediatek,mt6765-scpsys"
- 	- "mediatek,mt6797-scpsys"
- 	- "mediatek,mt7622-scpsys"
- 	- "mediatek,mt7623-scpsys", "mediatek,mt2701-scpsys": For MT7623 SoC
-@@ -32,6 +34,10 @@ Required properties:
-                       enabled before enabling certain power domains.
- 	Required clocks for MT2701 or MT7623: "mm", "mfg", "ethif"
- 	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
-+	Required clocks for MT6765: MUX: "mm", "mfg"
-+				    CG: "mm-0", "mm-1", "mm-2", "mm-3", "isp-0",
-+					"isp-1", "cam-0", "cam-1", "cam-2",
-+					"cam-3","cam-4"
- 	Required clocks for MT6797: "mm", "mfg", "vdec"
- 	Required clocks for MT7622: "hif_sel"
- 	Required clocks for MT7622A: "ethif"
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 5082c8a49686..548790c4a027 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -955,11 +955,8 @@ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
+ 	__releases(&object->fscache.cookie->lock)
+ {
+ 	struct cachefiles_object *object;
+-	struct cachefiles_cache *cache;
+ 
+ 	object = container_of(_object, struct cachefiles_object, fscache);
+-	cache = container_of(object->fscache.cache,
+-			     struct cachefiles_cache, cache);
+ 
+ 	_enter("%p,{%lu}", object, page->index);
+ 
 -- 
-1.7.9.5
+2.17.1
 
