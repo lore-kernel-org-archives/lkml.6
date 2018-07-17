@@ -2,176 +2,90 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AAE1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0292EECDFB4
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E491D2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzzXGz/+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E491D2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8194D20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8194D20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=neuling.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731458AbeGQXuM (ORCPT
+        id S1731186AbeGQX7R convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 19:50:12 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42446 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731293AbeGQXuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 19:50:12 -0400
-Received: by mail-lj1-f196.google.com with SMTP id f1-v6so767319ljc.9;
-        Tue, 17 Jul 2018 16:15:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nmcWxWoikEbDNaZCRKo/J0Uz6KG1YNRlldic6QUC8aI=;
-        b=DzzXGz/+lWgmg/ZjOA7s/vKhkMP9WJXhYwRk4+xTVpyumBTMcZUu839mbmu8RFPJ22
-         LTBwTQF9ysUnZjbjrRmpq4LDVDf8dY4fA1bWa5QhxdEb1iGT7lYy8yARWLlD5kaR+Y6D
-         uFXzSowAI8VEGomKyYn5o9NwNtIK+Pj//1rb8BieTFFxpJYmX1swA1b3jCNoBFzb8Xfk
-         BrO9CpnqNSa1td83Emp0ok4BCdWQffPIdQKivA9jrzXBSw+8jxkmDOeCsaXW1zajEXfj
-         iK81e55WHTyZ2mc2HV0ZuQzp5wwXEE9oKINW7AsXzFyNrzlBi5rzHoJ5wzk4f7hlKlY8
-         DvgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nmcWxWoikEbDNaZCRKo/J0Uz6KG1YNRlldic6QUC8aI=;
-        b=c8A95NJLr/TIIw6Z1GrnjX5FOTvlNNbnwucZubn3lOcgennEEMiA7drzFKD7ow9fre
-         XKvTYju22jemtpyKK8iiFu6v1VEEjgsfYAW72TmsHBm5Ii+NsDvOB/HClJ4ymiJ3iYIA
-         b8JshkzLaU+NBSBTHnqSDbW3JJ9xrrcsXUCxoGb2b+I3mtVZLfTwufBWTa+yW/ekgaZn
-         KfdLVfP/236ayQTuM/FYzwhZ2/6gGYQvms4ySWuE1YSOfudUSfxjAYhWo34WUKzIMMTx
-         qZr2qkDHbMJ0tRexApVWhSp4xigcoAXixD0qtwrJgt85q550v+JcGzk3J51EpLZGsqAt
-         Donw==
-X-Gm-Message-State: AOUpUlGch0mWZovNdA5gWQNwRs+st7aq09hkKYJzVx77BZx0g9Jw2Qz/
-        go0ZEQNlESAXHqTjgxBqFbE=
-X-Google-Smtp-Source: AAOMgpcBlcxGy/IRZla1uI8xVWzF90aO2wceNXs5IOIkAT/e3TTQcBOR0f4LXpGBSA5BRgy/ttE1Dw==
-X-Received: by 2002:a2e:4e02:: with SMTP id c2-v6mr2645900ljb.108.1531869315815;
-        Tue, 17 Jul 2018 16:15:15 -0700 (PDT)
-Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id n24-v6sm350827ljc.7.2018.07.17.16.15.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 16:15:15 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [PATCH v2 3/3] ARM: OMAP1: ams-delta: make board header file local to mach-omap1
-Date:   Wed, 18 Jul 2018 01:14:48 +0200
-Message-Id: <20180717231448.14958-4-jmkrzyszt@gmail.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180717231448.14958-1-jmkrzyszt@gmail.com>
-References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
- <20180717231448.14958-1-jmkrzyszt@gmail.com>
+        Tue, 17 Jul 2018 19:59:17 -0400
+Received: from ozlabs.org ([203.11.71.1]:49799 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730460AbeGQX7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 19:59:17 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by ozlabs.org (Postfix) with ESMTP id 41Vbvl4rgFz9s0w;
+        Wed, 18 Jul 2018 09:24:19 +1000 (AEST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 982D0EE78BD; Wed, 18 Jul 2018 09:24:19 +1000 (AEST)
+Message-ID: <80bbdf47081e3e302ab5f28b5ddc9e2faabba842.camel@neuling.org>
+Subject: Re: [RESEND][PATCH] powerpc/powernv : Save/Restore SPRG3 on
+ entry/exit from stop.
+From:   Michael Neuling <mikey@neuling.org>
+To:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Florian Weimer <fweimer@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Date:   Wed, 18 Jul 2018 09:24:19 +1000
+In-Reply-To: <1531843216-22209-1-git-send-email-ego@linux.vnet.ibm.com>
+References: <1531826849-31838-1-git-send-email-ego@linux.vnet.ibm.com>
+         <1531843216-22209-1-git-send-email-ego@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now as board header file is no longer included by drivers, move it to
-the root directory of mach-omap1.
 
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
----
-Depends on patches 1/3 and 2/3 of the series.
+>  	DEFINE(PPC_DBELL_SERVER, PPC_DBELL_SERVER);
+> diff --git a/arch/powerpc/kernel/idle_book3s.S
+> b/arch/powerpc/kernel/idle_book3s.S
+> index d85d551..5069d42 100644
+> --- a/arch/powerpc/kernel/idle_book3s.S
+> +++ b/arch/powerpc/kernel/idle_book3s.S
+> @@ -120,6 +120,9 @@ power9_save_additional_sprs:
+>  	mfspr	r4, SPRN_MMCR2
+>  	std	r3, STOP_MMCR1(r13)
+>  	std	r4, STOP_MMCR2(r13)
+> +
+> +	mfspr	r3, SPRN_SPRG3
+> +	std	r3, STOP_SPRG3(r13)
 
- arch/arm/mach-omap1/ams-delta-fiq-handler.S              | 2 +-
- arch/arm/mach-omap1/ams-delta-fiq.c                      | 3 +--
- arch/arm/mach-omap1/board-ams-delta.c                    | 2 +-
- arch/arm/mach-omap1/{include/mach => }/board-ams-delta.h | 2 +-
- 4 files changed, 4 insertions(+), 5 deletions(-)
- rename arch/arm/mach-omap1/{include/mach => }/board-ams-delta.h (98%)
+We don't need to save it.  Just restore it from paca->sprg_vdso which should
+never change.
 
-diff --git a/arch/arm/mach-omap1/ams-delta-fiq-handler.S b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
-index ddc27638ba2a..2e2a17364dc9 100644
---- a/arch/arm/mach-omap1/ams-delta-fiq-handler.S
-+++ b/arch/arm/mach-omap1/ams-delta-fiq-handler.S
-@@ -17,9 +17,9 @@
- #include <linux/platform_data/ams-delta-fiq.h>
- 
- #include <asm/assembler.h>
--#include <mach/board-ams-delta.h>
- 
- #include "ams-delta-fiq.h"
-+#include "board-ams-delta.h"
- #include "iomap.h"
- #include "soc.h"
- 
-diff --git a/arch/arm/mach-omap1/ams-delta-fiq.c b/arch/arm/mach-omap1/ams-delta-fiq.c
-index b0dc7ddf5877..14c3d3f5255e 100644
---- a/arch/arm/mach-omap1/ams-delta-fiq.c
-+++ b/arch/arm/mach-omap1/ams-delta-fiq.c
-@@ -22,11 +22,10 @@
- #include <linux/platform_data/ams-delta-fiq.h>
- #include <linux/platform_device.h>
- 
--#include <mach/board-ams-delta.h>
--
- #include <asm/fiq.h>
- 
- #include "ams-delta-fiq.h"
-+#include "board-ams-delta.h"
- 
- static struct fiq_handler fh = {
- 	.name	= "ams-delta-fiq"
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index dd28d2614d7f..34cb63ff45b3 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -36,7 +36,6 @@
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- 
--#include <mach/board-ams-delta.h>
- #include <linux/platform_data/keypad-omap.h>
- #include <mach/mux.h>
- 
-@@ -45,6 +44,7 @@
- #include <mach/usb.h>
- 
- #include "ams-delta-fiq.h"
-+#include "board-ams-delta.h"
- #include "iomap.h"
- #include "common.h"
- 
-diff --git a/arch/arm/mach-omap1/include/mach/board-ams-delta.h b/arch/arm/mach-omap1/board-ams-delta.h
-similarity index 98%
-rename from arch/arm/mach-omap1/include/mach/board-ams-delta.h
-rename to arch/arm/mach-omap1/board-ams-delta.h
-index ad6f865d1f16..1fbada29431a 100644
---- a/arch/arm/mach-omap1/include/mach/board-ams-delta.h
-+++ b/arch/arm/mach-omap1/board-ams-delta.h
-@@ -1,5 +1,5 @@
- /*
-- * arch/arm/plat-omap/include/mach/board-ams-delta.h
-+ * arch/arm/mach-omap1/board-ams-delta.h
-  *
-  * Copyright (C) 2006 Jonathan McDowell <noodles@earth.li>
-  *
--- 
-2.16.4
+How can we do better at catching these missing SPRGs? 
 
+We missed this one and looking at c1b25a17d249 we missed the AMOR a couple of
+months back. I'd rather we had some systematic way of finding the ones we are
+missing, rather than playing wake-a-mole.
+
+Mikey 
+
+>  	blr
+>  
+>  power9_restore_additional_sprs:
+> @@ -144,7 +147,9 @@ power9_restore_additional_sprs:
+>  	mtspr	SPRN_MMCR1, r4
+>  
+>  	ld	r3, STOP_MMCR2(r13)
+> +	ld	r4, STOP_SPRG3(r13)
+>  	mtspr	SPRN_MMCR2, r3
+> +	mtspr	SPRN_SPRG3, r4
+>  	blr
+>  
+>  /*
