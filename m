@@ -2,148 +2,182 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E61CFECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFCAECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F7A20C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F7A20C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 5051520C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:05:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BRD/OMGO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5051520C10
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731768AbeGQOhl (ORCPT
+        id S1731788AbeGQOhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:37:41 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:38514 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731548AbeGQOhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:37:41 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 437271E6625CE;
-        Tue, 17 Jul 2018 22:04:47 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Tue, 17 Jul 2018
- 22:04:41 +0800
-From:   Yunlong Song <yunlong.song@huawei.com>
-To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] f2fs: issue discard align to section in LFS mode
-Date:   Tue, 17 Jul 2018 22:04:35 +0800
-Message-ID: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
+        Tue, 17 Jul 2018 10:37:52 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43828 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730043AbeGQOhw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 10:37:52 -0400
+Received: by mail-pg1-f193.google.com with SMTP id v13-v6so487000pgr.10
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:05:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jL/X9m+bnOfsRA7FTfnIuNgDUtwpFOSvFGvO4iQWk2Q=;
+        b=BRD/OMGOlm+76cL4A6OF/YoSIa69t8qLKYml1501blU5K2bnKrAqwemKKPWBTHwLen
+         K1xjtrtnWRCovDkKv2E0MHFgkeG5Ec8klzvp3hiwp9MnhqmRgHnWBS/qGSWIDUa8ltNd
+         v4ie0/JUCFSxtjel8RHSFTSoviJJwfpeEDyxY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jL/X9m+bnOfsRA7FTfnIuNgDUtwpFOSvFGvO4iQWk2Q=;
+        b=RAPXZhthLPsjuik/eZsm6hsajaEk7y3QEyYAl+tHAv96S5yx9/pKB49cEYsuCc60mW
+         3brphtGvRE2Y27kNNjW/ipISa8I8K8KMlCo47+OnpLTLD5NU+39NWoKO/QxYpQpkUqup
+         SfdhId/cJ3ErZw1CDIWjLF7XVwAMGaXECtnp4VQjtguQEDOE49BnHHd6mO5F/6nqfD7U
+         UmyVrRo/47mRndiV2Q9pwRcEIgXS9CrQ2NK/ranIeIbLWmYfWz0B1BLw+Fcaqi0bMNHj
+         ZRxpXUpISSKDXkuKiREYQ5RO+N1Gi6QMVok2wawaA1IjKK4yZhj0BWBngc90LLUpp2ss
+         TNpQ==
+X-Gm-Message-State: AOUpUlEWRKTdTAYeXYwc3KmPHdNEys6rsMAJ0PVgMiG/+k71BZUcRzh6
+        tCqemMBqspIumDQstnqGrJM+
+X-Google-Smtp-Source: AAOMgpfj3+83blEfnRaJJtHP/667Vml68ph6kIOyLasZoKL5YzBtKxX9FhylRmQgLjakEYtJsYN8Cg==
+X-Received: by 2002:aa7:88d3:: with SMTP id p19-v6mr847953pfo.160.1531836302247;
+        Tue, 17 Jul 2018 07:05:02 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id b192-v6sm9272230pga.2.2018.07.17.07.04.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 07:05:01 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 19:34:53 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     robh+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, taiten.peng@linaro.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        manivannanece23@gmail.com
+Subject: Re: [PATCH v2 2/2] arm64: dts: Add Mediatek X20 Development Board
+ support
+Message-ID: <20180717140453.GA19076@mani>
+References: <20180605163442.4812-1-manivannan.sadhasivam@linaro.org>
+ <20180605163442.4812-3-manivannan.sadhasivam@linaro.org>
+ <d88504b4-409c-c42b-f816-bedefce2a819@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d88504b4-409c-c42b-f816-bedefce2a819@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the case when sbi->segs_per_sec > 1 with lfs mode, take
-section:segment = 5 for example, if the section prefree_map is
-...previous section | current section (1 1 0 1 1) | next section...,
-then the start = x, end = x + 1, after start = start_segno +
-sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
-their bitmap is still set, which will cause duplicated
-f2fs_issue_discard of this same section in the next write_checkpoint:
+Hi Matthias,
 
-round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
-then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
-write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
-prefree of NO.2 is cleared, and no discard issued
+On Mon, Jul 16, 2018 at 03:24:44PM +0200, Matthias Brugger wrote:
+> Hi Manivanna,
+> 
+> On 05/06/18 18:34, Manivannan Sadhasivam wrote:
+> > Add initial device tree support for Mediatek X20 Development Board
+> > based on MT6797 Deca core SoC. This board is one of the 96Boards
+> > Consumer Edition platform.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/mediatek/Makefile         |  1 +
+> >  .../boot/dts/mediatek/mt6797-x20-dev.dts      | 33 +++++++++++++++++++
+> >  2 files changed, 34 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+> > 
+> > diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+> > index ac17f60f998c..5b7fd6ad96e4 100644
+> > --- a/arch/arm64/boot/dts/mediatek/Makefile
+> > +++ b/arch/arm64/boot/dts/mediatek/Makefile
+> > @@ -3,5 +3,6 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
+> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
+> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
+> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
+> > +dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
+> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt7622-rfb1.dtb
+> >  dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+> > new file mode 100644
+> > index 000000000000..2c09ca95d9e2
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt6797-x20-dev.dts
+> > @@ -0,0 +1,33 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Device Tree Source for MediaTek X20 Development Board
+> > + *
+> > + * Copyright (C) 2018, Linaro Ltd.
+> > + *
+> > + */
+> > +
+> > +/dts-v1/;
+> > +
+> > +#include "mt6797.dtsi"
+> > +
+> > +/ {
+> > +	model = "Mediatek X20 Development Board";
+> > +	compatible = "archermind,mt6797-x20-dev", "mediatek,mt6797";
+> > +
+> > +	aliases {
+> > +		serial0 = &uart1;
+> > +	};
+> 
+> Sorry for the late answer.
+> Why did you use uart1 instead of uart0?
+> I know that uart0 is used by the bootloader, but because of their exotic flash
+> procedure I find it quite useful to see this messages in my serial connection.
+> Of course you can only use 921600 baudrate then.
+> 
 
-round 2: rm data block NO.0, NO.1, NO.3, NO.4
-all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
-prefree_map: 1 1 0 1 1
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
-valid blocks of this section, so discard issued, but this time prefree
-bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
+The reason is, most of the Mezzanine boards use USB to UART bridge on the
+UART1 port available on the Low Speed Expansion header. Additionally, the
+convention followed by most of the Consumer Edition 96Boards is to use UART1
+as the debug serial port. That's why eventhough the bootloader is using UART0,
+I forced the kernel to use UART1.
 
-round 3:
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
-0 0 0 0 0, no valid blocks of this section, so discard issued,
-this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
-this section is sent again...
+> > +
+> > +	memory@40000000 {
+> > +		device_type = "memory";
+> > +		reg = <0 0x40000000 0 0x1e605000>;
+> 
+> How comes this strange number for the memory size?
+> 
 
-To fix this problem, we can align the start and end value to section
-boundary for fstrim and real-time discard operation, and decide to issue
-discard only when the whole section is invalid, which can issue discard
-aligned to section size as much as possible and avoid redundant discard.
+Actually, the memory size is extracted from the downstream kernel [1].
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+> BTW do you know the differences between the EVB board and the x20 one?
+> I used the evb dts for booting up to now.
+> 
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index cfff7cf..ff5de34 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1710,6 +1710,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 	unsigned int start = 0, end = -1;
- 	unsigned int secno, start_segno;
- 	bool force = (cpc->reason & CP_DISCARD);
-+	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
- 
- 	mutex_lock(&dirty_i->seglist_lock);
- 
-@@ -1721,14 +1722,19 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 		end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
- 								start + 1);
- 
--		for (i = start; i < end; i++)
--			clear_bit(i, prefree_map);
--
--		dirty_i->nr_dirty[PRE] -= end - start;
--
- 		if (!test_opt(sbi, DISCARD))
- 			continue;
- 
-+		if (need_align) {
-+			start = rounddown(start, sbi->segs_per_sec);
-+			end = roundup(end, sbi->segs_per_sec);
-+		}
-+
-+		for (i = start; i < end; i++) {
-+			if (test_and_clear_bit(i, prefree_map))
-+				dirty_i->nr_dirty[PRE]--;
-+		}
-+
- 		if (force && start >= cpc->trim_start &&
- 					(end - 1) <= cpc->trim_end)
- 				continue;
-@@ -2511,6 +2517,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	struct discard_policy dpolicy;
- 	unsigned long long trimmed = 0;
- 	int err = 0;
-+	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
- 
- 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
- 		return -EINVAL;
-@@ -2528,6 +2535,13 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
- 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
- 						GET_SEGNO(sbi, end);
-+	if (need_align) {
-+		start_segno = rounddown(start_segno, sbi->segs_per_sec);
-+		end_segno = roundup(end_segno, sbi->segs_per_sec);
-+		if (start_segno == end_segno)
-+			end_segno += sbi->segs_per_sec;
-+		end_segno--;
-+	}
- 
- 	cpc.reason = CP_DISCARD;
- 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
--- 
-1.8.5.2
+Sorry, I don't know the difference between both boards!
 
+Thanks,
+Mani
+
+[1] https://github.com/helio-x20/linux/blob/helio-x20/arch/arm64/boot/dts/amt6797_64_open.dts#L8
+
+> Best regards,
+> Matthias
+> 
+> > +	};
+> > +
+> > +	chosen {
+> > +		stdout-path = "serial0:115200n8";
+> > +	};
+> > +};
+> > +
+> > +&uart1 {
+> > +	status = "okay";
+> > +};
+> > 
