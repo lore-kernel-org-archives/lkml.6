@@ -2,156 +2,189 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D182AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A88CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84CA720877
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:00:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC82A20877
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 08:01:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dj2shwCu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84CA720877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="mDp5iCFG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC82A20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbeGQIbv (ORCPT
+        id S1729690AbeGQIcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 04:31:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:53243 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728024AbeGQIbv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 04:31:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41VCPn2n3Bz9s3Z;
-        Tue, 17 Jul 2018 18:00:29 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531814429;
-        bh=daZ54g91/iMPDT/zhVsecLzFHsZfT86im8xT1SGKW5U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dj2shwCueH7NPQh7n7JILKDV66n2loMrBBgoucsbKi2eSiH3IiuO2JYG7rXMGgnDq
-         IY4ac20hyIincSQxAyaG5nIHvb1R7Ck1L4oMMAFiMtRhVGbE45CVCvqpIwhzursERT
-         3mr1tewWwKlvcHbJH/rkVb3q6ax/rxFvon5OAS4ZuZySJ8nTfsGcGiV6G2g6uks3x/
-         pibpFfpaEoa6vA4V6JQ2Ucnkox6zImCn8GuCBTAd5bxHJ9kWG79+Pq8RKt8n/32G2o
-         mAkqnlX444Qb8VrRt+24AYtcgTYOBAoBgSJuny8g09T2tZ3g+K4QTWQF0l3cmpTwal
-         yK517Q38opyGg==
-Date:   Tue, 17 Jul 2018 18:00:28 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Tejun Heo <tj@kernel.org>, Roger Quadros <rogerq@ti.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        linux-omap@vger.kernel.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org,
-        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Samuel Morris <samorris@lexmark.com>
-Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
-Message-ID: <20180717180028.0ba098f6@canb.auug.org.au>
-In-Reply-To: <20180717060808.GW99251@atomide.com>
-References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
-        <20180620102904.GC112168@atomide.com>
-        <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
-        <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
-        <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
-        <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
-        <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
-        <20180702093243.GO112168@atomide.com>
-        <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
-        <20180717060808.GW99251@atomide.com>
+        Tue, 17 Jul 2018 04:32:39 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:45970 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728861AbeGQIcj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 04:32:39 -0400
+Received: by mail-io0-f195.google.com with SMTP id l25-v6so153735ioh.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 01:01:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EbKbS9MsnOFZS0QcZojJdV1wGWqENjJLsIMfwPBHDqo=;
+        b=mDp5iCFGItPuIMuSHAPIbCG15A3E1SwaDR/0bDT5/2sFs6Gj1KH+iYsYSpKengEK+M
+         7VnbD1Ypa3btlUgICHSZ7yPaBA7sSsn/qsPSND3JaY24cm4Vjx9fKg9CQlDx0aCDccyV
+         GQ00aEhniGvzVCnNZ+1I0kJhHbzSRyoQSXi0GWYmxO0Z1e8f37ELbWl1H1nN2cYO4KJa
+         nneSehtt/4/jpaQ1JGamB498r6osgVYTlN35s2GdiWPVxFC8BnKsV+Erw4xL2csOz30e
+         8sc3uJ8VwUee0Q46wLOORrfGc7fA7i2Vvs1etdsWHqGAsappTYd0Ch0PLoSlIy3mSJsI
+         Qbsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EbKbS9MsnOFZS0QcZojJdV1wGWqENjJLsIMfwPBHDqo=;
+        b=Uj7767hdra/DqpmphQJ6JoRiOpghGqlCx4a/tMpsSGMcCspA0+yZgqqTRjav+7hg49
+         QXm1S/mHSyXaFbGuhKwhlyGKE4tY8K9VFcGSc4HKWhQgqpw3joXFOyeCx9wpEj9LRi7A
+         mCphzHxvQIc8WFEW4/qxvrVbj38HHx6X2Xx8VGpt+fJdAKhKoplxEVwzV5RohQYff5LK
+         oAkLoBQVSPsevfwT7vdnwByRcgRh9HzL4TZmAc7D6hXwGPTGOqxrAqyrst59wydnbuPO
+         PkC1QfNE8R1gCmtsJLCouzxis3D+EatBupS7eGA7IQWSaKJevtgdnGM5h30wry2+5acm
+         d/CQ==
+X-Gm-Message-State: AOUpUlH/pURHfp2xCe3m0ijx2fjx7FabdNKdeOxnGs6RTDK4eM/4PJn7
+        q15KNhr/jN8lFs1yIcw70jZ02BSKWSiML9ltuHyI3g==
+X-Google-Smtp-Source: AAOMgpeTFz/GPZNV8kjmwjVykNgvCKD4PyucBBe6TXHLO8VyMFhNhlVOkcnrbEQ/ZMgj5+AFoRSNSQsgr3KHeDCsibk=
+X-Received: by 2002:a5e:8d07:: with SMTP id m7-v6mr459088ioj.258.1531814477945;
+ Tue, 17 Jul 2018 01:01:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Hm7invgqnGXP7kvcNCVH6+o"; protocol="application/pgp-signature"
+Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 01:01:17
+ -0700 (PDT)
+In-Reply-To: <CAMRc=Mc4s6tJw6dAHYCPQdsPox9V8sBTqY3LHi5XMWALwOZdyA@mail.gmail.com>
+References: <1530522740-2798-1-git-send-email-alanx.chiang@intel.com>
+ <1530522740-2798-2-git-send-email-alanx.chiang@intel.com> <20180705212204.GA10449@rob-hp-laptop>
+ <alpine.LFD.2.21.1807051623400.12206@localhost.localdomain>
+ <0772C36F3434E145A062D024A4869A09010B1E4D@PGSMSX101.gar.corp.intel.com> <CAMRc=Mc4s6tJw6dAHYCPQdsPox9V8sBTqY3LHi5XMWALwOZdyA@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 17 Jul 2018 10:01:17 +0200
+Message-ID: <CAMRc=MfNa0OwMbJ6ibbCJJD0pV9tKtyTZ3cQi34ra5oc_-5jYw@mail.gmail.com>
+Subject: Re: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width property
+To:     "Chiang, AlanX" <alanx.chiang@intel.com>
+Cc:     "Robert P. J. Day" <rpjday@crashcourse.ca>,
+        Rob Herring <robh@kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "Yeh, Andy" <andy.yeh@intel.com>,
+        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        "Mani, Rajmohan" <rajmohan.mani@intel.com>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "tfiga@chromium.org" <tfiga@chromium.org>,
+        "jcliang@chromium.org" <jcliang@chromium.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Hm7invgqnGXP7kvcNCVH6+o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Tony,
-
-On Mon, 16 Jul 2018 23:08:08 -0700 Tony Lindgren <tony@atomide.com> wrote:
+2018-07-09 10:52 GMT+02:00 Bartosz Golaszewski <brgl@bgdev.pl>:
+> 2018-07-09 5:12 GMT+02:00 Chiang, AlanX <alanx.chiang@intel.com>:
+>> Hi Robert,
+>>
+>>> -----Original Message-----
+>>> From: Robert P. J. Day [mailto:rpjday@crashcourse.ca]
+>>> Sent: Friday, July 6, 2018 4:24 AM
+>>> To: Rob Herring <robh@kernel.org>
+>>> Cc: Chiang, AlanX <alanx.chiang@intel.com>; linux-i2c@vger.kernel.org; Yeh,
+>>> Andy <andy.yeh@intel.com>; sakari.ailus@linux.intel.com;
+>>> andriy.shevchenko@linux.intel.com; Shevchenko, Andriy
+>>> <andriy.shevchenko@intel.com>; Mani, Rajmohan
+>>> <rajmohan.mani@intel.com>; andy.shevchenko@gmail.com;
+>>> tfiga@chromium.org; jcliang@chromium.org; brgl@bgdev.pl;
+>>> mark.rutland@arm.com; arnd@arndb.de; gregkh@linuxfoundation.org;
+>>> linux-kernel@vger.kernel.org; devicetree@vger.kernel.org
+>>> Subject: Re: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width
+>>> property
+>>>
+>>> On Thu, 5 Jul 2018, Rob Herring wrote:
+>>>
+>>> > On Mon, Jul 02, 2018 at 05:12:19PM +0800, alanx.chiang@intel.com wrote:
+>>> > > From: Alan Chiang <alanx.chiang@intel.com>
+>>> > >
+>>> > > The AT24 series chips use 8-bit address by default. If some chips
+>>> > > would like to support more than 8 bits, the at24 driver should be
+>>> > > added the compatible field for specfic chips.
+>>> > >
+>>> > > Provide a flexible way to determine the addressing bits through
+>>> > > address-width in this patch.
+>>> > >
+>>> > > Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
+>>> > > Signed-off-by: Andy Yeh <andy.yeh@intel.com>
+>>> > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+>>> > >
+>>> > > ---
+>>> > > since v1:
+>>> > > -- Remove the address-width field in the example.
+>>> > > since v2:
+>>> > > -- Remove redundant space.
+>>> > > since v3:
+>>> > > -- Add Acked-by.
+>>> > >
+>>> > > ---
+>>> > >  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
+>>> > >  1 file changed, 2 insertions(+)
+>>> >
+>>> > Reviewed-by: Rob Herring <robh@kernel.org>
+>>>
+>>>   "... should be added the compatible field ..."??
+>>>
+>>> rday
+>>
+>> Maybe I should modify the sentence as below that makes it clear.
+>> "The compatible field should be added in the at24.c for specific chips.".
+>>
+>> I quote Andy's words in patch v2:
+>> "The current at24 driver has no address width support, thus, reusing same
+>> (allocated) IDs (non-DT case) is hard."
+>>
+>> This is the reason that I submitted the patch.
+>>
+>> Thanks
+>>
 >
-> The following regression is still pending in next, see below.
->=20
-> * Samuel Morris <samorris@lexmark.com> [180702 13:35]:
-> > On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:=
- =20
-> > > Hi,
-> > >
-> > > * Roger Quadros <rogerq@ti.com> [180621 14:56]: =20
-> > >> On 21/06/18 17:31, Samuel Morris wrote: =20
-> > >> > On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wro=
-te: =20
-> > >> >> +Rafael
-> > >> >>
-> > >> >> On 20/06/18 18:30, Samuel Morris wrote: =20
-> > >> >>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> w=
-rote: =20
-> > >> >>>> Tony,
-> > >> >>>>
-> > >> >>>> On 20/06/18 13:29, Tony Lindgren wrote: =20
-> > >> >>>>> Hi,
-> > >> >>>>>
-> > >> >>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]: =
-=20
-> > >> >>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle b=
-oard x15. =20
-> > >> >>>>>
-> > >> >>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: all=
-ow disabling of
-> > >> >>>>> hotplug to save power").
-> > >> >>>>>
-> > >> >>>>> Reverting the patch makes things work again. Any ideas what
-> > >> >>>>> might be going wrong here? Things clearly idle but then there
-> > >> >>>>> seems to be some register access with clocks disabled. =20
-> > >
-> > > So this issue is still happening as of next-20180702. Can you guys
-> > > please revert the commit above while working on a better solution? =20
-> >=20
-> > That's fine with me. I'm not very familiar with the process here, does
-> > this require anything on my end? And would that require the
-> > accompanying patch to be reverted: "ata: ahci: rpm_put port on
-> > port_stop to match rpm_get in port_start"? There shouldn't be any
-> > problem leaving that one in, but I just want to know before submitting
-> > my next patch set. =20
->=20
-> Well usually the maintainer just reverts the regression causing
-> patch in the related branch and that's it.
->=20
-> Stephen, can you please revert in next until we hear back from
-> Tejun?
+> Make it something like:
+>
+> Currently the only way to use a variant of a supported model with
+> a different address width is to define a new compatible string and the
+> corresponding chip data structure.
+>
+> Provide a flexible way to specify the size of the address pointer by
+> defining a new property: address-width.
+>
+> Best regards,
+> Bartosz Golaszewski
+>
+>>>
+>>> --
+>>>
+>>> ==========================================================
+>>> ==============
+>>> Robert P. J. Day                                 Ottawa, Ontario, CANADA
+>>>                   http://crashcourse.ca/dokuwiki
+>>>
+>>> Twitter:                                       http://twitter.com/rpjday
+>>> LinkedIn:                               http://ca.linkedin.com/in/rpjday
+>>> ==========================================================
+>>> ==============
 
-OK, I have reverted that commit from today.  Please let me know when the
-problem is fixed in the libata tree ...
+Hi,
 
---=20
-Cheers,
-Stephen Rothwell
+I will soon be sending my pull request to Wolfram, so if you still
+want that applied for 4.19 - please resend with the commit message
+fixed.
 
---Sig_/Hm7invgqnGXP7kvcNCVH6+o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltNohwACgkQAVBC80lX
-0GzfBQf9Hef9gp4izYBLjKnFS8pOE8SylX5vLn+IxcljOyakrzwV1SLupQVI3+ZL
-bmL+xrbu5eY07Bt2xTjw/rkSfU38xxctWOFZiDXVGs1+N5n93LnTpDxbu567HyOK
-3Kolafh0l6FcjSYUEuyENFeFqbMhPYRIFuCwwtjxPPcTzMH/BNinxfCAELvJO2E8
-LZZ9kKiG0KWl4QkG7LdS8KYBsn9OmKQ8UGS7K7MHdxMKID+I8HVJdG52Cq+aVdgg
-8ntbHhRQChOHQRSLdkOKP6a7Ng9fe5sff9yDwkeBuw59l51i1N5RRzrc1pkWOmlo
-oVt5Y2BcaGIFor/0vKAj1Q3bJEJA/w==
-=HbdJ
------END PGP SIGNATURE-----
-
---Sig_/Hm7invgqnGXP7kvcNCVH6+o--
+Thanks,
+Bart
