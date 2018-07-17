@@ -2,166 +2,141 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B46BBECDFAA
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FF0ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60B132086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:12:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aiPPiu6O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B132086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F2536208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 03:16:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2536208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbeGQDnB (ORCPT
+        id S1730302AbeGQDqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 23:43:01 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34907 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729934AbeGQDnB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 23:43:01 -0400
-Received: by mail-io0-f194.google.com with SMTP id q4-v6so39880631iob.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 20:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=TMOJhCt+cFMGjV6Yk9QKP7Wwn94pdyXOBWfixEDIA5c=;
-        b=aiPPiu6O8zIJ7x3xpk1abad3ecFZZ4jAIIaQ9OvDMxPc/oK/AY6wLjZPNtJVa8ieg5
-         jp4rlWP8jOxSY/0JV2zKqAAZopRfWVDW6CvwZd4lEVugR5Ng6ErcyZ51L6LAyE1DjYJH
-         po9JCCwsJu9EhGKcu+MTHGNrS/DqBRqvMGR8k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=TMOJhCt+cFMGjV6Yk9QKP7Wwn94pdyXOBWfixEDIA5c=;
-        b=Dx6aPJwbzjhFwbW9mrCn5sIntgQwoTSMjISV47347Gs/EcAFaWcz/jXTqzvy9P0TUq
-         d9n+3CYAvAJATKRpd7dQNaPRtFwI5unxSdJs6e/S+tSjezx80727KsJ+CLn2h9AzABaN
-         QaARMrE9CKfuTSzyAZIWfCQb72nZLMAcsILpLeqKUFSwb6sUp7t3fn19DqBPDOwqLpN9
-         czckeEDm/WUnrNAZ9FPr43eqFWL6O5IR6wsBOgQH9U8524uYfl23fMRdxKzARYSZiWd1
-         2HOGsMsHYE/1solbRhl7xQK+ab2Pqd84imL7gkXtsFNRUbCf9pGRra1kfFUhzvifkjcv
-         5qsQ==
-X-Gm-Message-State: AOUpUlHmslvckzpaMt+ZBhQisFc32xhn45icRkPqVQ8AwmsO0vBQmFsS
-        zeg3IO8vtF1vwnfkfoKqXHiypR/gNHVb1t7PMUcU5Q==
-X-Google-Smtp-Source: AAOMgpetph/EM0BN/NrppplLJOP1ZddxKokrKkFanJzRQ7O+rZDpSQ1Geto3KZQgSaUAd9CsY5IdigSXQA+TPSZpnWg=
-X-Received: by 2002:a6b:5d1a:: with SMTP id r26-v6mr33414566iob.170.1531797158872;
- Mon, 16 Jul 2018 20:12:38 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Mon, 16 Jul 2018 20:12:38
- -0700 (PDT)
-In-Reply-To: <3b48a62e-8a5c-3e83-2935-03c9ab011403@amd.com>
-References: <1530624720-32004-1-git-send-email-brijesh.singh@amd.com>
- <CAKv+Gu_3kD+7O4oR9751VH2CsG=+NmBY-Gypc25LFo9eT6m3RQ@mail.gmail.com> <3b48a62e-8a5c-3e83-2935-03c9ab011403@amd.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 17 Jul 2018 11:12:38 +0800
-Message-ID: <CAKv+Gu9OmTgoREKxvvK57ybF1JUfkNeVNa8efAHSau0EFzvbNg@mail.gmail.com>
-Subject: Re: [PATCH] x86/efi: Access EFI MMIO data as unencrypted when SEV is active
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
+        Mon, 16 Jul 2018 23:46:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58678 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729952AbeGQDqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Jul 2018 23:46:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6C9F0AF4E;
+        Tue, 17 Jul 2018 03:16:14 +0000 (UTC)
+Subject: Re: [PATCH 1/4] lib/crc64: add crc64 option to lib/Kconfig
+To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        KVM devel mailing list <kvm@vger.kernel.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        "# 4 . 15 . x" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kate Stewart <kstewart@linuxfoundation.org>
+References: <20180716165507.23100-1-colyli@suse.de>
+ <20180716165507.23100-2-colyli@suse.de>
+ <9a57ba5a-ec33-b275-43f8-1fa103966d1d@infradead.org>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d692a9c4-9d25-0e8e-f2db-756a3ae0a0b0@suse.de>
+Date:   Tue, 17 Jul 2018 11:16:06 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <9a57ba5a-ec33-b275-43f8-1fa103966d1d@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17 July 2018 at 03:15, Brijesh Singh <brijesh.singh@amd.com> wrote:
-> Hi Ard,
->
->
->
-> On 07/11/2018 05:00 AM, Ard Biesheuvel wrote:
+On 2018/7/17 1:48 AM, Randy Dunlap wrote:
+> On 07/16/2018 09:55 AM, Coly Li wrote:
+>> From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 >>
->> On 3 July 2018 at 15:32, Brijesh Singh <brijesh.singh@amd.com> wrote:
->>>
->>> SEV guest fails to update the UEFI runtime variables stored in the
->>> flash. commit 1379edd59673 ("x86/efi: Access EFI data as encrypted
->>> when SEV is active") unconditionally maps all the UEFI runtime data
->>> as 'encrypted' (C=1). When SEV is active the UEFI runtime data marked
->>> as EFI_MEMORY_MAPPED_IO should be mapped as 'unencrypted' so that both
->>> guest and hypervisor can access the data.
->>>
->>> Fixes: 1379edd59673 (x86/efi: Access EFI data as encrypted ...)
->>> Cc: Tom Lendacky <thomas.lendacky@amd.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Borislav Petkov <bp@suse.de>
->>> Cc: linux-efi@vger.kernel.org
->>> Cc: kvm@vger.kernel.org
->>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>> Cc: Matt Fleming <matt@codeblueprint.co.uk>
->>> Cc: Andy Lutomirski <luto@kernel.org>
->>> Cc: <stable@vger.kernel.org> # 4.15.x
->>> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
->>> ---
->>>   arch/x86/platform/efi/efi_64.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/x86/platform/efi/efi_64.c
->>> b/arch/x86/platform/efi/efi_64.c
->>> index 77873ce..5f2eb32 100644
->>> --- a/arch/x86/platform/efi/efi_64.c
->>> +++ b/arch/x86/platform/efi/efi_64.c
->>> @@ -417,7 +417,7 @@ static void __init __map_region(efi_memory_desc_t
->>> *md, u64 va)
->>>          if (!(md->attribute & EFI_MEMORY_WB))
->>>                  flags |= _PAGE_PCD;
->>>
->>> -       if (sev_active())
->>> +       if (sev_active() && md->type != EFI_MEMORY_MAPPED_IO)
->>>                  flags |= _PAGE_ENC;
->>>
->>>          pfn = md->phys_addr >> PAGE_SHIFT;
+>> This patch adds crc64 option entry in lib/Kconfig. This patch is part of
+>> a patch originally written by Andy Shevchenko, Coly Li cherry-picks it
+>> and compose the commit log for a re-written crc64 source code.
 >>
+>> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> Signed-off-by: Coly Li <colyli@suse.de>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Luis R. Rodriguez <mcgrof@suse.com>
+>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+>> ---
+>>  lib/Kconfig | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
 >>
->> Is it safe to only update this occurrence and not the one in
->> efi_runtime_update_mappings() ?
->>
->
->
-> It's safe to update this occurrence only. The SEV support is added
-> in recent EDK2 bios, and the version of bios provides the
-> EFI_MEMORY_ATTRIBUTE_TABLE. Hence the efi_enabled(EFI_MEM_ATTR) check in
-> efi_runtime_update_mappings() will always be true. When EFI_MEM_ATTR is
-> set the code updates the mapping and returns (see below)
->
-> void __init efi_runtime_update_mappings(void)
-> {
->    .....
->    .....
->
->    /*
->     * Use the EFI Memory Attribute Table for mapping permissions if it
->     * exists, since it is intended to supersede EFI_PROPERTIES_TABLE.
->     */
->     if (efi_enabled(EFI_MEM_ATTR)) {
->         efi_memattr_apply_permissions(NULL, efi_update_mem_attr);
->         return;
->     }
->
->
->    ...
->
-> }
->
-> The EFI_MEMORY_ATTRIBUTE_TABLE table does not include MMIO regions, the
-> table describes the memory protections to EFI runtime code and data
-> regions only. Both EFI runtime code and data should be mapped as
-> encrypted. Hence I skipped updating the efi_runtime_update_mappings().
->
+>> diff --git a/lib/Kconfig b/lib/Kconfig
+>> index 706836ec314d..4059df9ec4c7 100644
+>> --- a/lib/Kconfig
+>> +++ b/lib/Kconfig
+>> @@ -170,6 +170,14 @@ config CRC32_BIT
+>>  
+>>  endchoice
+>>  
+>> +config CRC64
+>> +	tristate "CRC64 functions"
+>> +	help
+>> +	  This option is provided for the case where no in-kernel-tree
+>> +	  modules require CRC64 functions, but a module built outside
+>> +	  the kernel tree does. Such modules that use library CRC64
+>> +	  functions require M he
+> 
 
-Ok, thanks for clearing that up
+Hi Randy,
 
-Queued in efi/urgent
+> eh?  missing something here.
+> 
+
+Fix it in v2 series. Thanks.
+
+Coly Li
