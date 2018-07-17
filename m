@@ -2,102 +2,133 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F62ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26281ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 707992145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:10:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 707992145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id D42FB2146E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:11:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42FB2146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731608AbeGQNmx (ORCPT
+        id S1731613AbeGQNoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:42:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:41088 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731464AbeGQNmx (ORCPT
+        Tue, 17 Jul 2018 09:44:21 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:16929 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728889AbeGQNoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:42:53 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BCCBCCB8;
-        Tue, 17 Jul 2018 13:10:15 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 15:10:13 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH 4.4 14/43] tools build: fix # escaping in .cmd files for
- future Make
-Message-ID: <20180717131013.GB5171@kroah.com>
-References: <20180716073511.796555857@linuxfoundation.org>
- <20180716073513.350026232@linuxfoundation.org>
- <d1a883c6-1b7c-8bf5-49e6-3e29a60ca117@yandex-team.ru>
+        Tue, 17 Jul 2018 09:44:21 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6HD98oq010817;
+        Tue, 17 Jul 2018 15:11:25 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2k85rehe9e-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 17 Jul 2018 15:11:25 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 56DDA34;
+        Tue, 17 Jul 2018 13:11:24 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 38A35540D;
+        Tue, 17 Jul 2018 13:11:24 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.48) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 17 Jul
+ 2018 15:11:23 +0200
+Subject: Re: [PATCH 2/2] pinctrl: stm32: add syscfg mask parameter
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1531821387-29845-1-git-send-email-ludovic.Barre@st.com>
+ <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <4acc415d-f162-67a2-57d6-0a7defda434f@st.com>
+Date:   Tue, 17 Jul 2018 15:11:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1a883c6-1b7c-8bf5-49e6-3e29a60ca117@yandex-team.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1531821387-29845-3-git-send-email-ludovic.Barre@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE1.st.com (10.75.127.4) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 03:57:21PM +0300, Konstantin Khlebnikov wrote:
-> This commit depends on commit 9564a8cf422d7b58f6e857e3546d346fa970191e
-> "Kbuild: fix # escaping in .cmd files for future Make"
-> which is missing in 4.4.141
-> 
-> 
-> this breaks compilation of tools/perf for me
-> 
-> make -C tools/perf V=1 JOBS=24 WERROR=0 NO_GTK2=1 LDFLAGS=-static all
-> make[1]: Entering directory `/tmp/buildd/linux-yandex-4.4.141/tools/perf'
->   BUILD:   Doing 'make -j24' parallel build
-> 
-> Auto-detecting system features:
-> ...                         dwarf: [ on  ]
-> ...            dwarf_getlocations: [ OFF ]
-> ...                         glibc: [ on  ]
-> ...                          gtk2: [ OFF ]
-> ...                      libaudit: [ on  ]
-> ...                        libbfd: [ on  ]
-> ...                        libelf: [ on  ]
-> ...                       libnuma: [ on  ]
-> ...        numa_num_possible_cpus: [ on  ]
-> ...                       libperl: [ OFF ]
-> ...                     libpython: [ OFF ]
-> ...                      libslang: [ on  ]
-> ...                     libunwind: [ on  ]
-> ...            libdw-dwarf-unwind: [ OFF ]
-> ...                          zlib: [ on  ]
-> ...                          lzma: [ on  ]
-> ...                     get_cpuid: [ on  ]
-> ...                           bpf: [ on  ]
-> 
-> config/Makefile:274: No libdw DWARF unwind found, Please install elfutils-devel/libdw-dev >= 0.158 and/or set LIBDW_DIR
-> config/Makefile:282: Old libdw.h, finding variables at given 'perf probe' point will not work, install elfutils-devel/libdw-dev >= 0.157
-> config/Makefile:458: Missing perl devel files. Disabling perl scripting support, please install perl-ExtUtils-Embed/libperl-dev
-> config/Makefile:501: No 'Python.h' (for Python 2.x support) was found: disables Python support - please install python-devel/python-dev
-> $(:)
-> make -C /tmp/buildd/linux-yandex-4.4.141/tools/build fixdep
-> /bin/sh util/PERF-VERSION-GEN
-> make -f /tmp/buildd/linux-yandex-4.4.141/tools/build/Makefile.build dir=. obj=fixdep
-> . util/generate-cmdlist.sh > common-cmds.h+ && mv common-cmds.h+ common-cmds.h
-> .fixdep.o.cmd:1: *** missing separator.  Stop.
-> make[3]: *** [fixdep-in.o] Error 2
-> make[2]: *** [fixdep] Error 2
+Hi
 
-Ick.
+add Rob, I forgotten rob's mail.
 
-Ok, let me go backport the original patch to 4.4.y now to try to fix
-this up, sorry about that.
-
-greg k-h
+On 07/17/2018 11:56 AM, Ludovic Barre wrote:
+> From: Ludovic Barre <ludovic.barre@st.com>
+> 
+> This patch adds mask parameter to define IRQ mux field.
+> This field could vary depend of IRQ mux selection register.
+> To avoid backward compatibility, the drivers set
+> the legacy value by default.
+> 
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+> ---
+>   drivers/pinctrl/stm32/pinctrl-stm32.c | 16 ++++++++++++++--
+>   1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> index dfed609..f756232 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -46,6 +46,8 @@
+>   #define STM32_GPIO_PINS_PER_BANK 16
+>   #define STM32_GPIO_IRQ_LINE	 16
+>   
+> +#define SYSCFG_IRQMUX_MASK GENMASK(3, 0)
+> +
+>   #define gpio_range_to_bank(chip) \
+>   		container_of(chip, struct stm32_gpio_bank, range)
+>   
+> @@ -1033,6 +1035,7 @@ static int stm32_pctrl_dt_setup_irq(struct platform_device *pdev,
+>   	struct device *dev = &pdev->dev;
+>   	struct regmap *rm;
+>   	int offset, ret, i;
+> +	int mask, mask_width;
+>   
+>   	parent = of_irq_find_parent(np);
+>   	if (!parent)
+> @@ -1052,12 +1055,21 @@ static int stm32_pctrl_dt_setup_irq(struct platform_device *pdev,
+>   	if (ret)
+>   		return ret;
+>   
+> +	ret = of_property_read_u32_index(np, "st,syscfg", 2, &mask);
+> +	if (ret)
+> +		mask = SYSCFG_IRQMUX_MASK;
+> +
+> +	mask_width = fls(mask);
+> +
+>   	for (i = 0; i < STM32_GPIO_PINS_PER_BANK; i++) {
+>   		struct reg_field mux;
+>   
+>   		mux.reg = offset + (i / 4) * 4;
+> -		mux.lsb = (i % 4) * 4;
+> -		mux.msb = mux.lsb + 3;
+> +		mux.lsb = (i % 4) * mask_width;
+> +		mux.msb = mux.lsb + mask_width - 1;
+> +
+> +		dev_dbg(dev, "irqmux%d: reg:%#x, lsb:%d, msb:%d\n",
+> +			i, mux.reg, mux.lsb, mux.msb);
+>   
+>   		pctl->irqmux[i] = devm_regmap_field_alloc(dev, rm, mux);
+>   		if (IS_ERR(pctl->irqmux[i]))
+> 
