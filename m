@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC70ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFDDECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:29:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B4C206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:29:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B4C206B7
+	by mail.kernel.org (Postfix) with ESMTP id 8E1ED206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:29:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1ED206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731601AbeGQXDQ (ORCPT
+        id S1731748AbeGQXEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 19:03:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59093 "EHLO mail.bootlin.com"
+        Tue, 17 Jul 2018 19:04:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:59115 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731431AbeGQXDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 19:03:15 -0400
+        id S1731439AbeGQXDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 19:03:16 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0FD2C208C4; Wed, 18 Jul 2018 00:28:27 +0200 (CEST)
+        id 58239208FF; Wed, 18 Jul 2018 00:28:27 +0200 (CEST)
 Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 91540208FB;
-        Wed, 18 Jul 2018 00:28:08 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2953C20904;
+        Wed, 18 Jul 2018 00:28:09 +0200 (CEST)
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>
 Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -35,9 +35,9 @@ Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 08/16] dt-bindings: clk: at91: Document new PMC binding
-Date:   Wed, 18 Jul 2018 00:27:49 +0200
-Message-Id: <20180717222757.10253-9-alexandre.belloni@bootlin.com>
+Subject: [PATCH 10/16] clk: at91: add sama5d4 pmc driver
+Date:   Wed, 18 Jul 2018 00:27:51 +0200
+Message-Id: <20180717222757.10253-11-alexandre.belloni@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
 References: <20180717222757.10253-1-alexandre.belloni@bootlin.com>
@@ -46,567 +46,292 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the new PMC binding with only one PMC node for all the PMC clocks
-instead of one node per clock as this proved to be problematic.
+Add a driver for the PMC clocks of the sama5d4
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- .../devicetree/bindings/clock/at91-clock.txt  | 523 +-----------------
- 1 file changed, 21 insertions(+), 502 deletions(-)
+ drivers/clk/at91/Makefile  |   1 +
+ drivers/clk/at91/sama5d4.c | 262 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 263 insertions(+)
+ create mode 100644 drivers/clk/at91/sama5d4.c
 
-diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
-index 64fcbea10e12..e9f70fcdfe80 100644
---- a/Documentation/devicetree/bindings/clock/at91-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
-@@ -4,6 +4,8 @@ This binding uses the common clock binding[1].
- 
- [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
- 
-+Slow Clock controller:
+diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+index facc169ebb68..7cdb762f3e2e 100644
+--- a/drivers/clk/at91/Makefile
++++ b/drivers/clk/at91/Makefile
+@@ -14,3 +14,4 @@ obj-$(CONFIG_HAVE_AT91_SMD)		+= clk-smd.o
+ obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
+ obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
+ obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
++obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
+diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
+new file mode 100644
+index 000000000000..b98f14c1e138
+--- /dev/null
++++ b/drivers/clk/at91/sama5d4.c
+@@ -0,0 +1,262 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/slab.h>
 +
- Required properties:
- - compatible : shall be one of the following:
- 	"atmel,at91sam9x5-sckc" or
-@@ -16,84 +18,6 @@ Required properties:
- 
- 	"atmel,at91sam9x5-clk-slow-rc-osc":
- 		at91 internal slow RC oscillator
--
--	"atmel,<chip>-pmc":
--		at91 PMC (Power Management Controller)
--		All at91 specific clocks (clocks defined below) must be child
--		node of the PMC node.
--		<chip> can be: at91rm9200, at91sam9260, at91sam9261,
--		at91sam9263, at91sam9g45, at91sam9n12, at91sam9rl, at91sam9x5,
--		sama5d2, sama5d3 or sama5d4.
--
--	"atmel,at91sam9x5-clk-slow" (under sckc node)
--	or
--	"atmel,at91sam9260-clk-slow" (under pmc node):
--		at91 slow clk
--
--	"atmel,at91rm9200-clk-main-osc"
--	"atmel,at91sam9x5-clk-main-rc-osc"
--		at91 main clk sources
--
--	"atmel,at91sam9x5-clk-main"
--	"atmel,at91rm9200-clk-main":
--		at91 main clock
--
--	"atmel,at91rm9200-clk-master" or
--	"atmel,at91sam9x5-clk-master":
--		at91 master clock
--
--	"atmel,at91sam9x5-clk-peripheral" or
--	"atmel,at91rm9200-clk-peripheral":
--		at91 peripheral clocks
--
--	"atmel,at91rm9200-clk-pll" or
--	"atmel,at91sam9g45-clk-pll" or
--	"atmel,at91sam9g20-clk-pllb" or
--	"atmel,sama5d3-clk-pll":
--		at91 pll clocks
--
--	"atmel,at91sam9x5-clk-plldiv":
--		at91 plla divisor
--
--	"atmel,at91rm9200-clk-programmable" or
--	"atmel,at91sam9g45-clk-programmable" or
--	"atmel,at91sam9x5-clk-programmable":
--		at91 programmable clocks
--
--	"atmel,at91sam9x5-clk-smd":
--		at91 SMD (Soft Modem) clock
--
--	"atmel,at91rm9200-clk-system":
--		at91 system clocks
--
--	"atmel,at91rm9200-clk-usb" or
--	"atmel,at91sam9x5-clk-usb" or
--	"atmel,at91sam9n12-clk-usb":
--		at91 usb clock
--
--	"atmel,at91sam9x5-clk-utmi":
--		at91 utmi clock
--
--	"atmel,sama5d4-clk-h32mx":
--		at91 h32mx clock
--
--	"atmel,sama5d2-clk-generated":
--		at91 generated clock
--
--	"atmel,sama5d2-clk-audio-pll-frac":
--		at91 audio fractional pll
--
--	"atmel,sama5d2-clk-audio-pll-pad":
--		at91 audio pll CLK_AUDIO output pin
--
--	"atmel,sama5d2-clk-audio-pll-pmc"
--		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
--		and can be used by peripheral clock or generic clock
--
--	"atmel,sama5d2-clk-i2s-mux" (under pmc node):
--		at91 I2S clock source selection
--
--Required properties for SCKC node:
- - reg : defines the IO memory reserved for the SCKC.
- - #size-cells : shall be 0 (reg is used to encode clk id).
- - #address-cells : shall be 1 (reg is used to encode clk id).
-@@ -109,435 +33,30 @@ For example:
- 		/* put at91 slow clocks here */
- 	};
- 
-+Power Management Controller (PMC):
- 
--Required properties for internal slow RC oscillator:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clock-frequency : define the internal RC oscillator frequency.
--
--Optional properties:
--- clock-accuracy : define the internal RC oscillator accuracy.
--
--For example:
--	slow_rc_osc: slow_rc_osc {
--		compatible = "atmel,at91sam9x5-clk-slow-rc-osc";
--		clock-frequency = <32768>;
--		clock-accuracy = <50000000>;
--	};
--
--Required properties for slow oscillator:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the main osc source clk sources (see atmel datasheet).
-+Required properties:
-+- compatible : shall be "atmel,<chip>-pmc", "syscon":
-+	<chip> can be: at91rm9200, at91sam9260, at91sam9261,
-+	at91sam9263, at91sam9g45, at91sam9n12, at91sam9rl, at91sam9g15,
-+	at91sam9g25, at91sam9g35, at91sam9x25, at91sam9x35, at91sam9x5,
-+	sama5d2, sama5d3 or sama5d4.
-+- #clock-cells : from common clock binding; shall be set to 2. The first entry
-+  is the type of the clock (core, system, peripheral or generated) and the
-+  second entry its index as provided by the datasheet
-+- clocks : Must contain an entry for each entry in clock-names.
-+- clock-names: Must include the following entries: "slow_clk", "main_xtal"
- 
- Optional properties:
- - atmel,osc-bypass : boolean property. Set this when a clock signal is directly
-   provided on XIN.
- 
- For example:
--	slow_osc: slow_osc {
--		compatible = "atmel,at91rm9200-clk-slow-osc";
--		#clock-cells = <0>;
--		clocks = <&slow_xtal>;
--	};
--
--Required properties for slow clock:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the slow clk sources (see atmel datasheet).
--
--For example:
--	clk32k: slck {
--		compatible = "atmel,at91sam9x5-clk-slow";
--		#clock-cells = <0>;
--		clocks = <&slow_rc_osc &slow_osc>;
--	};
--
--Required properties for PMC node:
--- reg : defines the IO memory reserved for the PMC.
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- interrupts : shall be set to PMC interrupt line.
--- interrupt-controller : tell that the PMC is an interrupt controller.
--- #interrupt-cells : must be set to 1. The first cell encodes the interrupt id,
--	and reflect the bit position in the PMC_ER/DR/SR registers.
--	You can use the dt macros defined in dt-bindings/clock/at91.h.
--	0 (AT91_PMC_MOSCS) -> main oscillator ready
--	1 (AT91_PMC_LOCKA) -> PLL A ready
--	2 (AT91_PMC_LOCKB) -> PLL B ready
--	3 (AT91_PMC_MCKRDY) -> master clock ready
--	6 (AT91_PMC_LOCKU) -> UTMI PLL clock ready
--	8 .. 15 (AT91_PMC_PCKRDY(id)) -> programmable clock ready
--	16 (AT91_PMC_MOSCSELS) -> main oscillator selected
--	17 (AT91_PMC_MOSCRCS) -> RC main oscillator stabilized
--	18 (AT91_PMC_CFDEV) -> clock failure detected
--
--For example:
--	pmc: pmc@fffffc00 {
--		compatible = "atmel,sama5d3-pmc";
--		interrupts = <1 4 7>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--		#size-cells = <0>;
--		#address-cells = <1>;
--
--		/* put at91 clocks here */
--	};
--
--Required properties for main clock internal RC oscillator:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<0>".
--- clock-frequency : define the internal RC oscillator frequency.
--
--Optional properties:
--- clock-accuracy : define the internal RC oscillator accuracy.
--
--For example:
--	main_rc_osc: main_rc_osc {
--		compatible = "atmel,at91sam9x5-clk-main-rc-osc";
--		interrupt-parent = <&pmc>;
--		interrupts = <0>;
--		clock-frequency = <12000000>;
--		clock-accuracy = <50000000>;
--	};
--
--Required properties for main clock oscillator:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<0>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the main osc source clk sources (see atmel datasheet).
--
--Optional properties:
--- atmel,osc-bypass : boolean property. Specified if a clock signal is provided
--  on XIN.
--
--  clock signal is directly provided on XIN pin.
--
--For example:
--	main_osc: main_osc {
--		compatible = "atmel,at91rm9200-clk-main-osc";
--		interrupt-parent = <&pmc>;
--		interrupts = <0>;
--		#clock-cells = <0>;
--		clocks = <&main_xtal>;
--	};
--
--Required properties for main clock:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<0>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall encode the main clk sources (see atmel datasheet).
--
--For example:
--	main: mainck {
--		compatible = "atmel,at91sam9x5-clk-main";
--		interrupt-parent = <&pmc>;
--		interrupts = <0>;
--		#clock-cells = <0>;
--		clocks = <&main_rc_osc &main_osc>;
--	};
--
--Required properties for master clock:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<3>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the master clock sources (see atmel datasheet) phandles.
--	e.g. "<&ck32k>, <&main>, <&plla>, <&pllb>".
--- atmel,clk-output-range : minimum and maximum clock frequency (two u32
--			   fields).
--	   e.g. output = <0 133000000>; <=> 0 to 133MHz.
--- atmel,clk-divisors : master clock divisors table (four u32 fields).
--		0 <=> reserved value.
--		e.g. divisors = <1 2 4 6>;
--- atmel,master-clk-have-div3-pres : some SoC use the reserved value 7 in the
--				    PRES field as CLOCK_DIV3 (e.g sam9x5).
--
--For example:
--	mck: mck {
--		compatible = "atmel,at91rm9200-clk-master";
--		interrupt-parent = <&pmc>;
--		interrupts = <3>;
--		#clock-cells = <0>;
--		atmel,clk-output-range = <0 133000000>;
--		atmel,clk-divisors = <1 2 4 0>;
--	};
--
--Required properties for peripheral clocks:
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- clocks : shall be the master clock phandle.
--	e.g. clocks = <&mck>;
--- name: device tree node describing a specific peripheral clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg: peripheral id. See Atmel's datasheets to get a full
--	  list of peripheral ids.
--	* atmel,clk-output-range : minimum and maximum clock frequency
--	  (two u32 fields). Only valid on at91sam9x5-clk-peripheral
--	  compatible IPs.
--
--For example:
--	periph: periphck {
--		compatible = "atmel,at91sam9x5-clk-peripheral";
--		#size-cells = <0>;
--		#address-cells = <1>;
--		clocks = <&mck>;
--
--		ssc0_clk {
--			#clock-cells = <0>;
--			reg = <2>;
--			atmel,clk-output-range = <0 133000000>;
--		};
--
--		usart0_clk {
--			#clock-cells = <0>;
--			reg = <3>;
--			atmel,clk-output-range = <0 66000000>;
--		};
--	};
--
--
--Required properties for pll clocks:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<1>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the main clock phandle.
--- reg : pll id.
--	0 -> PLL A
--	1 -> PLL B
--- atmel,clk-input-range : minimum and maximum source clock frequency (two u32
--			  fields).
--	  e.g. input = <1 32000000>; <=> 1 to 32MHz.
--- #atmel,pll-clk-output-range-cells : number of cells reserved for pll output
--				      range description. Sould be set to 2, 3
--				      or 4.
--	* 1st and 2nd cells represent the frequency range (min-max).
--	* 3rd cell is optional and represents the OUT field value for the given
--	  range.
--	* 4th cell is optional and represents the ICPLL field (PLLICPR
--	  register)
--- atmel,pll-clk-output-ranges : pll output frequency ranges + optional parameter
--				depending on #atmel,pll-output-range-cells
--				property value.
--
--For example:
--	plla: pllack {
--		compatible = "atmel,at91sam9g45-clk-pll";
--		interrupt-parent = <&pmc>;
--		interrupts = <1>;
--		#clock-cells = <0>;
--		clocks = <&main>;
--		reg = <0>;
--		atmel,clk-input-range = <2000000 32000000>;
--		#atmel,pll-clk-output-range-cells = <4>;
--		atmel,pll-clk-output-ranges = <74500000 800000000 0 0
--					       69500000 750000000 1 0
--					       64500000 700000000 2 0
--					       59500000 650000000 3 0
--					       54500000 600000000 0 1
--					       49500000 550000000 1 1
--					       44500000 500000000 2 1
--					       40000000 450000000 3 1>;
--	};
--
--Required properties for plldiv clocks (plldiv = pll / 2):
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the plla clock phandle.
--
--The pll divisor is equal to 2 and cannot be changed.
--
--For example:
--	plladiv: plladivck {
--		compatible = "atmel,at91sam9x5-clk-plldiv";
--		#clock-cells = <0>;
--		clocks = <&plla>;
--	};
--
--Required properties for programmable clocks:
--- interrupt-parent : must reference the PMC node.
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- clocks : shall be the programmable clock source phandles.
--	e.g. clocks = <&clk32k>, <&main>, <&plla>, <&pllb>;
--- name: device tree node describing a specific prog clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg : programmable clock id (register offset from  PCKx
--			 register).
--	* interrupts : shall be set to "<(8 + id)>".
--
--For example:
--	prog: progck {
--		compatible = "atmel,at91sam9g45-clk-programmable";
--		#size-cells = <0>;
--		#address-cells = <1>;
--		interrupt-parent = <&pmc>;
--		clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>;
--
--		prog0 {
--			#clock-cells = <0>;
--			reg = <0>;
--			interrupts = <8>;
--		};
--
--		prog1 {
--			#clock-cells = <0>;
--			reg = <1>;
--			interrupts = <9>;
--		};
--	};
--
--
--Required properties for smd clock:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the smd clock source phandles.
--	e.g. clocks = <&plladiv>, <&utmi>;
--
--For example:
--	smd: smdck {
--		compatible = "atmel,at91sam9x5-clk-smd";
--		#clock-cells = <0>;
--		clocks = <&plladiv>, <&utmi>;
--	};
--
--Required properties for system clocks:
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- name: device tree node describing a specific system clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg: system clock id (bit position in SCER/SCDR/SCSR registers).
--	      See Atmel's datasheet to get a full list of system clock ids.
--
--For example:
--	system: systemck {
--		compatible = "atmel,at91rm9200-clk-system";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		ddrck {
--			#clock-cells = <0>;
--			reg = <2>;
--			clocks = <&mck>;
--		};
--
--		uhpck {
--			#clock-cells = <0>;
--			reg = <6>;
--			clocks = <&usb>;
--		};
--
--		udpck {
--			#clock-cells = <0>;
--			reg = <7>;
--			clocks = <&usb>;
--		};
--	};
--
--
--Required properties for usb clock:
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the smd clock source phandles.
--	e.g. clocks = <&pllb>;
--- atmel,clk-divisors (only available for "atmel,at91rm9200-clk-usb"):
--	usb clock divisor table.
--	e.g. divisors = <1 2 4 0>;
--
--For example:
--	usb: usbck {
--		compatible = "atmel,at91sam9x5-clk-usb";
--		#clock-cells = <0>;
--		clocks = <&plladiv>, <&utmi>;
--	};
--
--	usb: usbck {
--		compatible = "atmel,at91rm9200-clk-usb";
--		#clock-cells = <0>;
--		clocks = <&pllb>;
--		atmel,clk-divisors = <1 2 4 0>;
--	};
--
--
--Required properties for utmi clock:
--- interrupt-parent : must reference the PMC node.
--- interrupts : shall be set to "<AT91_PMC_LOCKU IRQ_TYPE_LEVEL_HIGH>".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the main clock source phandle.
--
--For example:
--	utmi: utmick {
--		compatible = "atmel,at91sam9x5-clk-utmi";
--		interrupt-parent = <&pmc>;
--		interrupts = <AT91_PMC_LOCKU IRQ_TYPE_LEVEL_HIGH>;
--		#clock-cells = <0>;
--		clocks = <&main>;
--	};
--
--Required properties for 32 bits bus Matrix clock (h32mx clock):
--- #clock-cells : from common clock binding; shall be set to 0.
--- clocks : shall be the master clock source phandle.
--
--For example:
--	h32ck: h32mxck {
--		#clock-cells = <0>;
--		compatible = "atmel,sama5d4-clk-h32mx";
--		clocks = <&mck>;
--	};
--
--Required properties for generated clocks:
--- #size-cells : shall be 0 (reg is used to encode clk id).
--- #address-cells : shall be 1 (reg is used to encode clk id).
--- clocks : shall be the generated clock source phandles.
--	e.g. clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
--- name: device tree node describing a specific generated clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* reg: peripheral id. See Atmel's datasheets to get a full
--	  list of peripheral ids.
--	* atmel,clk-output-range : minimum and maximum clock frequency
--	  (two u32 fields).
--
--For example:
--	gck {
--		compatible = "atmel,sama5d2-clk-generated";
--		#address-cells = <1>;
--		#size-cells = <0>;
--		clocks = <&clk32k>, <&main>, <&plladiv>, <&utmi>, <&mck>, <&audio_pll_pmc>;
--
--		tcb0_gclk: tcb0_gclk {
--			#clock-cells = <0>;
--			reg = <35>;
--			atmel,clk-output-range = <0 83000000>;
--		};
--
--		pwm_gclk: pwm_gclk {
--			#clock-cells = <0>;
--			reg = <38>;
--			atmel,clk-output-range = <0 83000000>;
--		};
--	};
--
--Required properties for I2S mux clocks:
--- #size-cells : shall be 0 (reg is used to encode I2S bus id).
--- #address-cells : shall be 1 (reg is used to encode I2S bus id).
--- name: device tree node describing a specific mux clock.
--	* #clock-cells : from common clock binding; shall be set to 0.
--	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
--	  peripheral and generated clock; the first phandle shall belong to the
--	  peripheral clock and the second one shall belong to the generated
--	  clock; "clock-indices" property can be user to specify
--	  the correct order.
--	* reg: I2S bus id of the corresponding mux clock.
--	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
--
--For example:
--	i2s_clkmux {
--		compatible = "atmel,sama5d2-clk-i2s-mux";
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		i2s0muxck: i2s0_muxclk {
--			clocks = <&i2s0_clk>, <&i2s0_gclk>;
--			#clock-cells = <0>;
--			reg = <0>;
--		};
--
--		i2s1muxck: i2s1_muxclk {
--			clocks = <&i2s1_clk>, <&i2s1_gclk>;
--			#clock-cells = <0>;
--			reg = <1>;
--		};
-+	pmc: pmc@f0018000 {
-+		compatible = "atmel,sama5d4-pmc", "syscon";
-+		reg = <0xf0018000 0x120>;
-+		interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-+		#clock-cells = <2>;
-+		clocks = <&clk32k>, <&main_xtal>;
-+		clock-names = "slow_clk", "main_xtal";
- 	};
++#include <dt-bindings/clock/at91.h>
++
++#include "pmc.h"
++
++static const struct clk_master_characteristics mck_characteristics = {
++	.output = { .min = 125000000, .max = 200000000 },
++	.divisors = { 1, 2, 4, 3 },
++};
++
++static u8 plla_out[] = { 0 };
++
++static u16 plla_icpll[] = { 0 };
++
++static struct clk_range plla_outputs[] = {
++	{ .min = 600000000, .max = 1200000000 },
++};
++
++static const struct clk_pll_characteristics plla_characteristics = {
++	.input = { .min = 12000000, .max = 12000000 },
++	.num_output = ARRAY_SIZE(plla_outputs),
++	.output = plla_outputs,
++	.icpll = plla_icpll,
++	.out = plla_out,
++};
++
++static const struct {
++	char *n;
++	char *p;
++	u8 id;
++} sama5d4_systemck[] = {
++	{ .n = "ddrck", .p = "masterck", .id = 2 },
++	{ .n = "lcdck", .p = "masterck", .id = 3 },
++	{ .n = "smdck", .p = "smdclk",   .id = 4 },
++	{ .n = "uhpck", .p = "usbck",    .id = 6 },
++	{ .n = "udpck", .p = "usbck",    .id = 7 },
++	{ .n = "pck0",  .p = "prog0",    .id = 8 },
++	{ .n = "pck1",  .p = "prog1",    .id = 9 },
++	{ .n = "pck2",  .p = "prog2",    .id = 10 },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++} sama5d4_periph32ck[] = {
++	{ .n = "pioD_clk", .id = 5 },
++	{ .n = "usart0_clk", .id = 6 },
++	{ .n = "usart1_clk", .id = 7 },
++	{ .n = "icm_clk", .id = 9 },
++	{ .n = "aes_clk", .id = 12 },
++	{ .n = "tdes_clk", .id = 14 },
++	{ .n = "sha_clk", .id = 15 },
++	{ .n = "matrix1_clk", .id = 17 },
++	{ .n = "hsmc_clk", .id = 22 },
++	{ .n = "pioA_clk", .id = 23 },
++	{ .n = "pioB_clk", .id = 24 },
++	{ .n = "pioC_clk", .id = 25 },
++	{ .n = "pioE_clk", .id = 26 },
++	{ .n = "uart0_clk", .id = 27 },
++	{ .n = "uart1_clk", .id = 28 },
++	{ .n = "usart2_clk", .id = 29 },
++	{ .n = "usart3_clk", .id = 30 },
++	{ .n = "usart4_clk", .id = 31 },
++	{ .n = "twi0_clk", .id = 32 },
++	{ .n = "twi1_clk", .id = 33 },
++	{ .n = "twi2_clk", .id = 34 },
++	{ .n = "mci0_clk", .id = 35 },
++	{ .n = "mci1_clk", .id = 36 },
++	{ .n = "spi0_clk", .id = 37 },
++	{ .n = "spi1_clk", .id = 38 },
++	{ .n = "spi2_clk", .id = 39 },
++	{ .n = "tcb0_clk", .id = 40 },
++	{ .n = "tcb1_clk", .id = 41 },
++	{ .n = "tcb2_clk", .id = 42 },
++	{ .n = "pwm_clk", .id = 43 },
++	{ .n = "adc_clk", .id = 44 },
++	{ .n = "dbgu_clk", .id = 45 },
++	{ .n = "uhphs_clk", .id = 46 },
++	{ .n = "udphs_clk", .id = 47 },
++	{ .n = "ssc0_clk", .id = 48 },
++	{ .n = "ssc1_clk", .id = 49 },
++	{ .n = "trng_clk", .id = 53 },
++	{ .n = "macb0_clk", .id = 54 },
++	{ .n = "macb1_clk", .id = 55 },
++	{ .n = "fuse_clk", .id = 57 },
++	{ .n = "securam_clk", .id = 59 },
++	{ .n = "smd_clk", .id = 61 },
++	{ .n = "twi3_clk", .id = 62 },
++	{ .n = "catb_clk", .id = 63 },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++} sama5d4_periphck[] = {
++	{ .n = "dma0_clk", .id = 8 },
++	{ .n = "cpkcc_clk", .id = 10 },
++	{ .n = "aesb_clk", .id = 13 },
++	{ .n = "mpddr_clk", .id = 16 },
++	{ .n = "matrix0_clk", .id = 18 },
++	{ .n = "vdec_clk", .id = 19 },
++	{ .n = "dma1_clk", .id = 50 },
++	{ .n = "lcdc_clk", .id = 51 },
++	{ .n = "isi_clk", .id = 52 },
++};
++
++static void __init sama5d4_pmc_setup(struct device_node *np)
++{
++	struct clk_range range = CLK_RANGE(0, 0);
++	const char *slck_name, *mainxtal_name;
++	struct pmc_data *sama5d4_pmc;
++	const char *parent_names[5];
++	struct regmap *regmap;
++	struct clk_hw *hw;
++	unsigned int i;
++	bool bypass;
++
++	i = of_property_match_string(np, "clock-names", "slow_clk");
++	if (i < 0)
++		return;
++
++	slck_name = of_clk_get_parent_name(np, i);
++
++	i = of_property_match_string(np, "clock-names", "main_xtal");
++	if (i < 0)
++		return;
++	mainxtal_name = of_clk_get_parent_name(np, i);
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		return;
++
++	sama5d4_pmc = pmc_data_allocate(3, 11, 64, 0);
++	if (!sama5d4_pmc)
++		return;
++
++	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
++					   100000000);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	bypass = of_property_read_bool(np, "atmel,osc-bypass");
++
++	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
++					bypass);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "main_rc_osc";
++	parent_names[1] = "main_osc";
++	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
++				   &sama5d3_pll_layout, &plla_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d4_pmc->chws[PMC_UTMI] = hw;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	hw = at91_clk_register_master(regmap, "masterck", 4, parent_names,
++				      &at91sam9x5_master_layout,
++				      &mck_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d4_pmc->chws[PMC_MCK] = hw;
++
++	hw = at91_clk_register_h32mx(regmap, "h32mxck", "masterck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d4_pmc->chws[PMC_MCK2] = hw;
++
++	parent_names[0] = "plladivck";
++	parent_names[1] = "utmick";
++	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "plladivck";
++	parent_names[1] = "utmick";
++	hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	parent_names[4] = "mck";
++	for (i = 0; i < 3; i++) {
++		char name[6];
++
++		snprintf(name, sizeof(name), "prog%d", i);
++
++		hw = at91_clk_register_programmable(regmap, name,
++						    parent_names, 5, i,
++						    &at91sam9x5_programmable_layout);
++		if (IS_ERR(hw))
++			goto err_free;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d4_systemck); i++) {
++		hw = at91_clk_register_system(regmap, sama5d4_systemck[i].n,
++					      sama5d4_systemck[i].p,
++					      sama5d4_systemck[i].id);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d4_pmc->shws[sama5d4_systemck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d4_periphck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 sama5d4_periphck[i].n,
++							 "masterck",
++							 sama5d4_periphck[i].id,
++							 &range);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d4_pmc->phws[sama5d4_periphck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d4_periph32ck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 sama5d4_periph32ck[i].n,
++							 "h32mxck",
++							 sama5d4_periph32ck[i].id,
++							 &range);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d4_pmc->phws[sama5d4_periph32ck[i].id] = hw;
++	}
++
++	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d4_pmc);
++
++	return;
++
++err_free:
++	pmc_data_free(sama5d4_pmc);
++}
++CLK_OF_DECLARE(sama5d4_pmc, "atmel,sama5d4-pmc", sama5d4_pmc_setup);
 -- 
 2.18.0
 
