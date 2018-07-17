@@ -2,76 +2,111 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D7BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE84ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9C16205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:12:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C16205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EBF4205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:15:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EBF4205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbeGQQqJ (ORCPT
+        id S1730003AbeGQQsY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:46:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53886 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729508AbeGQQqJ (ORCPT
+        Tue, 17 Jul 2018 12:48:24 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:42458 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729671AbeGQQsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:46:09 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ffSae-0002GN-5I; Tue, 17 Jul 2018 16:12:40 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        netdev@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ipv6: fix useless rol32 call on hash
-Date:   Tue, 17 Jul 2018 17:12:39 +0100
-Message-Id: <20180717161239.30782-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 17 Jul 2018 12:48:23 -0400
+Received: from 79.184.255.17.ipv4.supernova.orange.pl (79.184.255.17) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id c70ab66d59d54dc9; Tue, 17 Jul 2018 18:14:57 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Andreas Herrmann <aherrmann@suse.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH] cpufreq: intel_pstate: Load when ACPI PCCH is present
+Date:   Tue, 17 Jul 2018 18:13:19 +0200
+Message-ID: <8115130.Fhkpr82c7G@aspire.rjw.lan>
+In-Reply-To: <20180717140336.ayovaz4ksdlak6bb@suselix>
+References: <20180717065048.74mmgk4t5utjaa6a@suselix> <20180717102136.snayvzmv2h3dcwiq@suselix> <20180717140336.ayovaz4ksdlak6bb@suselix>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-The rol32 call is currently rotating hash but the rol'd value is
-being discarded. I believe the current code is incorrect and hash
-should be assigned the rotated value returned from rol32.
+Currently, intel_pstate doesn't load if _PSS is not present on
+HP Proliant systems, because it expects the firmware to take over
+CPU performance scaling in that case.  However, if ACPI PCCH is
+present, the firmware expects the kernel to use it for CPU
+performance scaling and the pcc-cpufreq driver is loaded for that.
 
-Thanks to David Lebrun for spotting this.
+Unfortunately, the firmware interface used by that driver is not
+scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
+on systems with more than just a few CPUs.  In fact, it is better to
+avoid using it at all.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
+is not present and load if it is there.
+
+Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power mgmt option)
+Reported-by: Andreas Herrmann <aherrmann@suse.com>
+Tested-by: Andreas Herrmann <aherrmann@suse.com>
+Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
+Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- include/net/ipv6.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/ipv6.h b/include/net/ipv6.h
-index 50eebccbf919..190015652168 100644
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -843,7 +843,7 @@ static inline __be32 ip6_make_flowlabel(struct net *net, struct sk_buff *skb,
- 	 * to minimize possbility that any useful information to an
- 	 * attacker is leaked. Only lower 20 bits are relevant.
- 	 */
--	rol32(hash, 16);
-+	hash = rol32(hash, 16);
+Index: linux-pm/drivers/cpufreq/intel_pstate.c
+===================================================================
+--- linux-pm.orig/drivers/cpufreq/intel_pstate.c
++++ linux-pm/drivers/cpufreq/intel_pstate.c
+@@ -2391,6 +2391,18 @@ static bool __init intel_pstate_no_acpi_
+ 	return true;
+ }
  
- 	flowlabel = (__force __be32)hash & IPV6_FLOWLABEL_MASK;
++static bool __init intel_pstate_no_acpi_pcch(void)
++{
++	acpi_status status;
++	acpi_handle handle;
++
++	status = acpi_get_handle(NULL, "\\_SB", &handle);
++	if (ACPI_FAILURE(status))
++		return true;
++
++	return !acpi_has_method(handle, "PCCH");
++}
++
+ static bool __init intel_pstate_has_acpi_ppc(void)
+ {
+ 	int i;
+@@ -2450,7 +2462,10 @@ static bool __init intel_pstate_platform
  
--- 
-2.17.1
+ 	switch (plat_info[idx].data) {
+ 	case PSS:
+-		return intel_pstate_no_acpi_pss();
++		if (!intel_pstate_no_acpi_pss())
++			return false;
++
++		return intel_pstate_no_acpi_pcch();
+ 	case PPC:
+ 		return intel_pstate_has_acpi_ppc() && !force_load;
+ 	}
 
