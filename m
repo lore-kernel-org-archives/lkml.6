@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C7BECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56134ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C97320C0B
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 105B820C0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:25:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgRZYfoC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C97320C0B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vs5RPsRz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105B820C0B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbeGQJ4m (ORCPT
+        id S1729749AbeGQJ4n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 05:56:42 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35702 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729633AbeGQJ4l (ORCPT
+        Tue, 17 Jul 2018 05:56:43 -0400
+Received: from mail-lj1-f175.google.com ([209.85.208.175]:37689 "EHLO
+        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728349AbeGQJ4m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 05:56:41 -0400
-Received: by mail-lj1-f195.google.com with SMTP id p10-v6so387452ljg.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:25:00 -0700 (PDT)
+        Tue, 17 Jul 2018 05:56:42 -0400
+Received: by mail-lj1-f175.google.com with SMTP id v9-v6so383415ljk.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QmTGzOh7KMYPlwZwHgwkrGvGcjJBHyyaPFz3zlsBZEg=;
-        b=hgRZYfoCNfHVV9HbxVo0JdrhxlqTp8a1+sKzCCLVUWCAAHqPodHHPay+IcuxErn+W9
-         04SFK+4S58Hc4kpqoUhD5D/TfqrR2FNKWMHVYidzl4sCFguzWMAIrenpE2phFDrKesBq
-         MxWeMqomBV9UP16susujSuOeR874XbnXWF/Nnf33rV/hdrJ2xpTXyBZzJKDhODixRcN2
-         up3+zZRCiBojWuXgzke9BbXhG5VhwFC4sclARiVtTFYftvVN3I2GdpTWO6l0YfasX7qr
-         VyjyRyTOCiOurhlXq3plEKosCMP/1QocStpbnBcbDrjR/rVEEA/6cC9/cj3HuG2VPRbH
-         jrOw==
+        bh=oILbyhkA9LWw+9jYecudW8QW535E6dsRmCcW5MWsh/Y=;
+        b=Vs5RPsRzrxtZiSG4o/OYkAyicABWkkeedP0op14pGvKOauKqGYduAaiV5ZrQJPCkNX
+         vFk+33m4B5Rb6t4po4Bd8O2STHNZvehks9X8x/EAlxbN9NkLSgD0VADPJong8+Jjbhuo
+         OUwKTyov51z6CAQsQojCUWkhBapDNhMffri7YATrwDDuoL5Y6jb5vE3VceqSD7nvBe9+
+         FkRbuGUtzre7Vtu3e5m/v6806tbC+1AemNWs4B+Pxl+/zmEsqBcc0Hr/7YqFxNykE23i
+         5VlTksCgqcGL2b6brJehl3h6h4+rpMv32ejFUq+nlV2kKp3CsIjD+2TXMTC2zjnpi/g1
+         vKpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=QmTGzOh7KMYPlwZwHgwkrGvGcjJBHyyaPFz3zlsBZEg=;
-        b=mOu8CNP3X9gCJbjAaPqcXsd2QmcruE+AHEwejJObrPIAqstfdbQQlS5UHwzFaS6oXF
-         5wJHYutRzQQMZqdJR2Rfo3UQjyPIfO64nZoGEH/wbJ6LgJ13SCF7qRN49eleabIi8C2b
-         MPSPpYREQxZfSbieVRsQfOPu65dE52gTrf2pnBuZGOckktmSOby3p/Ur7XYfps4ERgu+
-         DsoYUCuF9TaLaW5I8zRRySM4763ch4Z4CXYmOl+EHxzO0dwHwpvHtBk8ptXacT9zhjU7
-         4NKTCRIar1rBWIc5Jo+rLMEL2VCOZu+6DJ2/UuT2A4IMaMJVZqtFK6txsqUJ+vRTBK5A
-         GHWQ==
-X-Gm-Message-State: AOUpUlEpZXs2oIB5M+CNtBVH0bh45Orr1ctkrvz4EwoRnmLHBSi2GngD
-        cUPmZv6pXW5o+rGHIc9MzPYFtA==
-X-Google-Smtp-Source: AAOMgpfF8Fajb1DAIIGhTUV8ojJSzO8MM7T/o8026OiBikUFJKjRTlxn+BnMfKZludn8ybAme4rlPw==
-X-Received: by 2002:a2e:29da:: with SMTP id p87-v6mr809942ljp.12.1531819499562;
-        Tue, 17 Jul 2018 02:24:59 -0700 (PDT)
+        bh=oILbyhkA9LWw+9jYecudW8QW535E6dsRmCcW5MWsh/Y=;
+        b=VJ6QWRjdzq52v19TDz536nI33cW27cMRjdMfaaKrhHhHH+nkZISM9OSNkuLICWp83D
+         o6WRVCpGVN9i6ja2Ei3ziFRUq4aVF9NEB4ISO6xdai/XLBRNQfIjEKNrgbyGG7132JkI
+         yDzYeeiRIpDsicSzCC12zTcX2oMHE62hMiCILtUbMufrbqwroFy8CgVJJAjRf64XeUZj
+         gcdJx1+My/kyQqaHmX8zbmtaXidZl9d/Jvth3pq0Jm5EJ8JsGNYWQfqpuphiWx3yX0Ie
+         iQdNWdrpnVmyUANedNMMybXCRtjlBj8WV1vBLCaqynqTHQE8/QeDSC2lRV3PuFgvUUmd
+         sJKg==
+X-Gm-Message-State: AOUpUlHyKBhsMLKpjikVev45ZZJdokCKmPUXVGa8pQ/kO686sf1JyCAs
+        x40+197vjdE4zbp/IfhcpfQ=
+X-Google-Smtp-Source: AAOMgpd+S7W+LZBJ0MdKvAlHqfl6ESdmANv8I4SBJiFRWGbbfTfTbpTMR69Av88dXA2f9YYrTPT7+w==
+X-Received: by 2002:a2e:7c12:: with SMTP id x18-v6mr805589ljc.71.1531819501606;
+        Tue, 17 Jul 2018 02:25:01 -0700 (PDT)
 Received: from linux.local ([5.166.218.73])
-        by smtp.gmail.com with ESMTPSA id l1-v6sm94224lji.41.2018.07.17.02.24.58
+        by smtp.gmail.com with ESMTPSA id l1-v6sm94224lji.41.2018.07.17.02.25.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 17 Jul 2018 02:24:59 -0700 (PDT)
+        Tue, 17 Jul 2018 02:25:01 -0700 (PDT)
 From:   Serge Semin <fancer.lancer@gmail.com>
 To:     jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com
 Cc:     Sergey.Semin@t-platforms.ru, linux-ntb@googlegroups.com,
         linux-kernel@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2 3/4] ntb: idt: Discard temperature sensor IRQ handler
-Date:   Tue, 17 Jul 2018 12:24:36 +0300
-Message-Id: <20180717092437.18918-4-fancer.lancer@gmail.com>
+Subject: [PATCH v2 4/4] ntb: idt: Alter the driver info comments
+Date:   Tue, 17 Jul 2018 12:24:37 +0300
+Message-Id: <20180717092437.18918-5-fancer.lancer@gmail.com>
 X-Mailer: git-send-email 2.12.0
 In-Reply-To: <20180717092437.18918-1-fancer.lancer@gmail.com>
 References: <20180714115834.3350-1-fancer.lancer@gmail.com>
@@ -74,131 +74,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IDT PCIe-switch temperature sensor interface is very broken. First
-of all only a few combinations of TMPCTL threshold enable bits
-really cause the interrupts unmasked. Even if an individual bit
-indicates the event unmasked, corresponding IRQ just isn't generated.
-Most of the threshold enable bits combinations are in fact useless and
-non of them can help to create a fully functional alarm interface.
-So to speak, we can't create a well defined hwmon alarms based on
-the IDT PCI-switch threshold IRQs.
-
-Secondly a single threshold IRQ (not a combination of thresholds) can
-be successfully enabled without the issue described above. But in this
-case we experienced an enormous number of interrupts generated by
-the chip if the temperature got near the enabled threshold value. Filter
-adjustment didn't help much. It also doesn't provide a hysteresis settings.
-Due to the temperature sample fluctuations near the threshold the
-interrupts spate makes the system nearly unusable until the temperature
-value finally settled so being pushed either to be fully higher or lower
-the threshold.
-
-All of these issues makes the temperature sensor alarm interface useless
-and even at some point dangerous to be used in the driver. In this case
-it is safer to completely discard it and disable the temperature alarm
-interrupts.
+Since IDT PCIe-switch temperature sensor is now always available
+irregardless of the EEPROM/BIOS settings, Kconfig and in-code
+description should be properly altered. In addition lets update
+the driver copyright lines.
 
 Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 ---
- drivers/ntb/hw/idt/ntb_hw_idt.c | 41 +----------------------------------------
- drivers/ntb/hw/idt/ntb_hw_idt.h |  5 ++---
- 2 files changed, 3 insertions(+), 43 deletions(-)
+ drivers/ntb/hw/idt/Kconfig      |  4 +---
+ drivers/ntb/hw/idt/ntb_hw_idt.c | 11 ++++++-----
+ drivers/ntb/hw/idt/ntb_hw_idt.h |  2 +-
+ 3 files changed, 8 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/ntb/hw/idt/Kconfig b/drivers/ntb/hw/idt/Kconfig
+index 2ed147368fa8..f8948cf515ce 100644
+--- a/drivers/ntb/hw/idt/Kconfig
++++ b/drivers/ntb/hw/idt/Kconfig
+@@ -24,9 +24,7 @@ config NTB_IDT
+ 	 BAR settings of peer NT-functions, the BAR setups can't be done over
+ 	 kernel PCI fixups. That's why the alternative pre-initialization
+ 	 techniques like BIOS using SMBus interface or EEPROM should be
+-	 utilized. Additionally if one needs to have temperature sensor
+-	 information printed to system log, the corresponding registers must
+-	 be initialized within BIOS/EEPROM as well.
++	 utilized.
+ 
+ 	 If unsure, say N.
+ 
 diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
-index f12088c6a92d..55321086d59a 100644
+index 55321086d59a..8706b8e0864a 100644
 --- a/drivers/ntb/hw/idt/ntb_hw_idt.c
 +++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
-@@ -2075,38 +2075,6 @@ static struct attribute *idt_temp_attrs[] = {
- ATTRIBUTE_GROUPS(idt_temp);
- 
- /*
-- * idt_temp_isr() - temperature sensor alarm events ISR
-- * @ndev:	IDT NTB hardware driver descriptor
-- * @ntint_sts:	NT-function interrupt status
-- *
-- * It handles events of temperature crossing alarm thresholds. Since reading
-- * of TMPALARM register clears it up, the function doesn't analyze the
-- * read value, instead the current temperature value just warningly printed to
-- * log.
-- * The method is called from PCIe ISR bottom-half routine.
-- */
--static void idt_temp_isr(struct idt_ntb_dev *ndev, u32 ntint_sts)
--{
--	unsigned long mdeg;
--
--	/* Read the current temperature value */
--	idt_read_temp(ndev, IDT_TEMP_CUR, &mdeg);
--
--	/* Read the temperature alarm to clean the alarm status out */
--	/*(void)idt_sw_read(ndev, IDT_SW_TMPALARM);*/
--
--	/* Clean the corresponding interrupt bit */
--	idt_nt_write(ndev, IDT_NT_NTINTSTS, IDT_NTINTSTS_TMPSENSOR);
--
--	dev_dbg(&ndev->ntb.pdev->dev,
--		"Temp sensor IRQ detected %#08x", ntint_sts);
--
--	/* Print temperature value to log */
--	dev_warn(&ndev->ntb.pdev->dev, "Temperature %hhd.%hhuC",
--		idt_get_deg(mdeg), idt_get_deg_frac(mdeg));
--}
--
--/*
-  * idt_init_temp() - initialize temperature sensor interface
-  * @ndev:	IDT NTB hardware driver descriptor
+@@ -4,7 +4,7 @@
   *
-@@ -2188,7 +2156,7 @@ static int idt_init_isr(struct idt_ntb_dev *ndev)
- 		goto err_free_vectors;
- 	}
+  *   GPL LICENSE SUMMARY
+  *
+- *   Copyright (C) 2016 T-Platforms All Rights Reserved.
++ *   Copyright (C) 2016-2018 T-Platforms JSC All Rights Reserved.
+  *
+  *   This program is free software; you can redistribute it and/or modify it
+  *   under the terms and conditions of the GNU General Public License,
+@@ -1824,10 +1824,11 @@ static int idt_ntb_peer_msg_write(struct ntb_dev *ntb, int pidx, int midx,
+  *                      7. Temperature sensor operations
+  *
+  *    IDT PCIe-switch has an embedded temperature sensor, which can be used to
+- * warn a user-space of possible chip overheating. Since workload temperature
+- * can be different on different platforms, temperature thresholds as well as
+- * general sensor settings must be setup in the framework of BIOS/EEPROM
+- * initializations. It includes the actual sensor enabling as well.
++ * check current chip core temperature. Since a workload environment can be
++ * different on different platforms, an offset and ADC/filter settings can be
++ * specified. Although the offset configuration is only exposed to the sysfs
++ * hwmon interface at the moment. The rest of the settings can be adjusted
++ * for instance by the BIOS/EEPROM firmware.
+  *=============================================================================
+  */
  
--	/* Unmask Message/Doorbell/SE/Temperature interrupts */
-+	/* Unmask Message/Doorbell/SE interrupts */
- 	ntint_mask = idt_nt_read(ndev, IDT_NT_NTINTMSK) & ~IDT_NTINTMSK_ALL;
- 	idt_nt_write(ndev, IDT_NT_NTINTMSK, ntint_mask);
- 
-@@ -2203,7 +2171,6 @@ static int idt_init_isr(struct idt_ntb_dev *ndev)
- 	return ret;
- }
- 
--
- /*
-  * idt_deinit_ist() - deinitialize PCIe interrupt handler
-  * @ndev:	IDT NTB hardware driver descriptor
-@@ -2264,12 +2231,6 @@ static irqreturn_t idt_thread_isr(int irq, void *devid)
- 		handled = true;
- 	}
- 
--	/* Handle temperature sensor interrupt */
--	if (ntint_sts & IDT_NTINTSTS_TMPSENSOR) {
--		idt_temp_isr(ndev, ntint_sts);
--		handled = true;
--	}
--
- 	dev_dbg(&ndev->ntb.pdev->dev, "IDT IRQs 0x%08x handled", ntint_sts);
- 
- 	return handled ? IRQ_HANDLED : IRQ_NONE;
 diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.h b/drivers/ntb/hw/idt/ntb_hw_idt.h
-index 032f81cb4d44..3517cd2e2baa 100644
+index 3517cd2e2baa..2f1aa121b0cf 100644
 --- a/drivers/ntb/hw/idt/ntb_hw_idt.h
 +++ b/drivers/ntb/hw/idt/ntb_hw_idt.h
-@@ -688,15 +688,14 @@
-  * @IDT_NTINTMSK_DBELL:		Doorbell interrupt mask bit
-  * @IDT_NTINTMSK_SEVENT:	Switch Event interrupt mask bit
-  * @IDT_NTINTMSK_TMPSENSOR:	Temperature sensor interrupt mask bit
-- * @IDT_NTINTMSK_ALL:		All the useful interrupts mask
-+ * @IDT_NTINTMSK_ALL:		NTB-related interrupts mask
-  */
- #define IDT_NTINTMSK_MSG		0x00000001U
- #define IDT_NTINTMSK_DBELL		0x00000002U
- #define IDT_NTINTMSK_SEVENT		0x00000008U
- #define IDT_NTINTMSK_TMPSENSOR		0x00000080U
- #define IDT_NTINTMSK_ALL \
--	(IDT_NTINTMSK_MSG | IDT_NTINTMSK_DBELL | \
--	 IDT_NTINTMSK_SEVENT | IDT_NTINTMSK_TMPSENSOR)
-+	(IDT_NTINTMSK_MSG | IDT_NTINTMSK_DBELL | IDT_NTINTMSK_SEVENT)
- 
- /*
-  * NTGSIGNAL register fields related constants
+@@ -4,7 +4,7 @@
+  *
+  *   GPL LICENSE SUMMARY
+  *
+- *   Copyright (C) 2016 T-Platforms All Rights Reserved.
++ *   Copyright (C) 2016-2018 T-Platforms JSC All Rights Reserved.
+  *
+  *   This program is free software; you can redistribute it and/or modify it
+  *   under the terms and conditions of the GNU General Public License,
 -- 
 2.12.0
 
