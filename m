@@ -2,140 +2,103 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 569A6ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61211ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3AEC20864
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:35:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbQMKaBL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3AEC20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CA738208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:35:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA738208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729624AbeGQHGD (ORCPT
+        id S1729642AbeGQHGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 03:06:03 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:44187 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728601AbeGQHGD (ORCPT
+        Tue, 17 Jul 2018 03:06:37 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:35760 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728309AbeGQHGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 03:06:03 -0400
-Received: by mail-ua0-f193.google.com with SMTP id k25-v6so17487037uao.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 23:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Ua1s/J5nxP9BcUF/ip9hPLPY5Pq/lkBGj6HbKD6A1Fw=;
-        b=UbQMKaBLgdXa4eUh2y9i8LIeRbBtc41rKvozLrZfcH8muICzAftuH9Z4TxhzPDQWKw
-         I7kFhIXKkzEzXNZUmagnVhhIfS8juQNofVhcUdRsHJZpWOSADSY3AEoHbXd5CIZF2e5T
-         78b2RfB0SSOcz3V5dkDd5JbWMiYYnQSQ63JaxkF45Un446Uezu6XgpNQuQjZ/PHSahC4
-         f/2Uc7+TooSPvg+1xwk/iUwoVJMgWwyLGLxAzTwV/fLocMfgla4jWkp1yH//7EPSSHZG
-         sNzleetWzN5i0Jct+wc3SKT2CL/D4P3gqEcRdSHM7BXZ2r8CxIDSBP8CECMJHfKiRUSJ
-         9fFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=Ua1s/J5nxP9BcUF/ip9hPLPY5Pq/lkBGj6HbKD6A1Fw=;
-        b=i8pTOkd6QY8wxYKC04Fyw6DrosEDITH62OcAPXThtembfpaR8SYYfquN94iZsqvrS3
-         5MrYKA1P/CiHRAdV3ud/RJWEfu60np2TmW8VdwGqzetqK1VhhEDEv+zHg/DWJvjorZQw
-         sq5mHyeJqtey+g72nj/MvQuYIju8h6r04Ospycqv3nXJlt2t0YJm1QuF0UIwOs/1+McD
-         LZuH81xL0p0hjJmllvQNu+onVCpFWuAdLFskRwcC96UtV5YVXhX0xN/2BUx+tLF3YOCE
-         icBC790NCRBBcQpmyBWg4/DmesLxVprTwTLXD2L9RICMSVTbwnhvSK7gZ2Reb6fw9ldZ
-         UpgA==
-X-Gm-Message-State: AOUpUlE2Dev0BMBXv2wk87O/mMsJZ8TRUaVFHEQ3vCqwQ+x1606KzazR
-        xGZtD4gG+FjPwulwtAa2kEWHPIK39jhGzb9XSTc=
-X-Google-Smtp-Source: AAOMgpcWFGgbon4tk+t32ENpjIzE5XmkgOpxvA6tcR7m6Y35dU/wPBAVpIn02RYBlvp9+L3UVRKMr4rnd0zqfrP1uaQ=
-X-Received: by 2002:a9f:3666:: with SMTP id s35-v6mr218185uad.94.1531809302226;
- Mon, 16 Jul 2018 23:35:02 -0700 (PDT)
+        Tue, 17 Jul 2018 03:06:37 -0400
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1ffJZp-0005am-L8; Tue, 17 Jul 2018 14:35:13 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1ffJZd-0003AG-6y; Tue, 17 Jul 2018 14:35:01 +0800
+Date:   Tue, 17 Jul 2018 14:35:01 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Eric Biggers <ebiggers@google.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        linux-crypto@vger.kernel.org, qat-linux@intel.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 01/11] crypto: xcbc: Remove VLA usage
+Message-ID: <20180717063501.exqa54plsfjl4s73@gondor.apana.org.au>
+References: <20180717042150.37761-1-keescook@chromium.org>
+ <20180717042150.37761-2-keescook@chromium.org>
 MIME-Version: 1.0
-References: <cover.1531124135.git.greentime@andestech.com>
-In-Reply-To: <cover.1531124135.git.greentime@andestech.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Tue, 17 Jul 2018 14:34:26 +0800
-Message-ID: <CAEbi=3fi9dZCzZjMFDXQGPNjpbT9+PP0WDUNf2e1mFtXLP0Omg@mail.gmail.com>
-Subject: Re: [GIT PULL] nds32 fixes for 4.18
-To:     Greentime <greentime@andestech.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717042150.37761-2-keescook@chromium.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-Greentime Hu <green.hu@gmail.com> =E6=96=BC 2018=E5=B9=B47=E6=9C=889=E6=97=
-=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=884:19=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab=
-40:
->
->   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
->
-> are available in the Git repository at:
->
->   ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/greentime/linux.=
-git tags/nds32-for-linus-4.18
->
-> for you to fetch changes up to 987553894f0ce8c1d83578136603a89009f42d35:
->
->   nds32: fix build error "relocation truncated to fit: R_NDS32_25_PCREL_R=
-ELA" when make allyesconfig (2018-07-05 16:13:47 +0800)
->
-> ----------------------------------------------------------------
-> nds32 patches for 4.18
->
-> Here is the nds32 patch set based on 4.18-rc1.
-> Contained in here are the bug fixes and building error fixes for nds32.
->
-> These are the LTP20170427 testing results.
->
-> Total Tests: 1902
-> Total Skipped Tests: 593
-> Total Failures: 418
-> Kernel Version: 4.18.0-rc1-00006-g987553894f0c-dirty
-> Machine Architecture: nds32
->
-> Signed-off-by: Greentime Hu <greentime@andestech.com>
->
-> ----------------------------------------------------------------
->
-> Greentime Hu (4):
->   nds32: To implement these icache invalidation APIs since nds32 cores
->     don't snoop data cache. This issue is found by Guo Ren. Based on the
->     Documentation/core-api/cachetlb.rst and it says:
->   nds32: Fix the dts pointer is not passed correctly issue.
->   nds32: To simplify the implementation of update_mmu_cache()
->   nds32: fix build error "relocation truncated to fit:
->     R_NDS32_25_PCREL_RELA" when make allyesconfig
->
-> Guenter Roeck (1):
->   nds32: Fix build error caused by configuration flag rename
->
-> Luc Van Oostenryck (1):
->   nds32: define __NDS32_E[BL]__ for sparse
->
->  arch/nds32/Kconfig                  |  12 ++---
->  arch/nds32/Makefile                 |   2 +
->  arch/nds32/include/asm/cacheflush.h |   9 +++-
->  arch/nds32/include/asm/futex.h      |   2 +-
->  arch/nds32/kernel/setup.c           |   3 +-
->  arch/nds32/mm/cacheflush.c          | 100 +++++++++++++++---------------=
-------
->  6 files changed, 58 insertions(+), 70 deletions(-)
->
+On Mon, Jul 16, 2018 at 09:21:40PM -0700, Kees Cook wrote:
+> In the quest to remove all stack VLA usage from the kernel[1], this uses
+> the maximum blocksize and adds a sanity check. For xcbc, the blocksize
+> must always be 16, so use that, since it's already being enforced during
+> instantiation.
+> 
+> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+> 
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  crypto/xcbc.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/crypto/xcbc.c b/crypto/xcbc.c
+> index 25c75af50d3f..7aa03beed795 100644
+> --- a/crypto/xcbc.c
+> +++ b/crypto/xcbc.c
+> @@ -57,6 +57,8 @@ struct xcbc_desc_ctx {
+>  	u8 ctx[];
+>  };
+>  
+> +#define XCBC_BLOCKSIZE	16
+> +
+>  static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+>  				     const u8 *inkey, unsigned int keylen)
+>  {
+> @@ -65,7 +67,10 @@ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
+>  	int bs = crypto_shash_blocksize(parent);
+>  	u8 *consts = PTR_ALIGN(&ctx->ctx[0], alignmask + 1);
+>  	int err = 0;
+> -	u8 key1[bs];
+> +	u8 key1[XCBC_BLOCKSIZE];
+> +
+> +	if (WARN_ON(bs > sizeof(key1)))
+> +		return -EINVAL;
 
-Ping.
+Please remove this.  You already checked it in xcbc_create.
 
-Did this please-pull get lost or is there another reason that prevents
-the upstream integration?
+In fact, you should just make bs XCBC_BLOCKSIZE unconditinoally
+in this function.
 
-Thank you. :)
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
