@@ -2,90 +2,93 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC84ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 714E8ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A10C5208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:01:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10C5208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2040B208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:02:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kduwpb4P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2040B208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731408AbeGQMdm (ORCPT
+        id S1731470AbeGQMfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:33:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45762 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731300AbeGQMdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:33:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5E85CAF6A;
-        Tue, 17 Jul 2018 12:01:21 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH 3/4] xen: link platform-pci-unplug.o only if CONFIG_XEN_PVHVM
-Date:   Tue, 17 Jul 2018 14:01:12 +0200
-Message-Id: <20180717120113.12756-4-jgross@suse.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20180717120113.12756-1-jgross@suse.com>
-References: <20180717120113.12756-1-jgross@suse.com>
+        Tue, 17 Jul 2018 08:35:04 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37384 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731186AbeGQMfD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:35:03 -0400
+Received: by mail-pf0-f195.google.com with SMTP id a26-v6so400394pfo.4;
+        Tue, 17 Jul 2018 05:02:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZpA6K+CHXs0h/hfU8hcGiB7lprfK/b3I20WZX9HufpY=;
+        b=kduwpb4PqMFdVKjobYd8MgFMz6iRDtnWQpuTBY5unqCPPv1Mh0gmGWXZG7DVC4a9iA
+         BJw/QhDl694M3xfyE7zL0Ji3o5qJFxKEuOL8U6qsxnycbIciqbt0Le1Pzn/1NR3+9ta9
+         Ug5w7373tax6o2OQkLlaTBfUtCRZOxaFGL/mxxGuKhXdgygKOXHEdWSXuOerBg53rqFQ
+         XnrlmRCFG+pD6HF6WzHp1YE3aMdfXErVBcmcdx5tZHiUgRf4QJuyqff2KHYxaGPH7fgn
+         u/gYbzgQsP9skRVjnijvQzAUCOAejTcQK1kvkds7MEuStkBZzzMQPz15TiI5GIix5FO9
+         lqFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZpA6K+CHXs0h/hfU8hcGiB7lprfK/b3I20WZX9HufpY=;
+        b=iwutVLt5mzERvn+x1HfC8EMeToXQzM2QmERhDhCqIs95VmxJ/oH1IwaCyv71a3c8nf
+         bGh7TcBvKY3CvS86mCw5MvLTvJTxQkA8Fj1mctW5Rn8NuZSDUBOO/j8Qbi9RtmAa1ARv
+         0Ydxw5wNim9J7h+3dYH6hKLjMRDqnzEJG429Aqf8L/1oB4lsCIbr307C1iMYvoj1TRDB
+         pFHQU/BbCSKi+KDr0RKruPhV3z5JH5F+YNijjFdOIYwvMUvMe8uLPng8gOWoysVp7m+0
+         N0Vgj4Oc9NuXEq6V0gSzRtOVAFSc8w9xpAF7gbgoB+c/COGeKducE2CrasvU3T4afvk7
+         cG6A==
+X-Gm-Message-State: AOUpUlGZY9xWCl4DvhT4lwkuUByvPa6wxdutHGDy/U3TSqAowyvx+mno
+        uAHYlO4UpBtBK6XJ0Q8+1qwDq72C
+X-Google-Smtp-Source: AAOMgpcYE/H3a7TjTv8E0f5Sq1wQNju/u6vg3Kx8mLDEGmqULMqv8cMmryYummxZdv7ic1cOQnOrSQ==
+X-Received: by 2002:a62:d8c:: with SMTP id 12-v6mr407736pfn.202.1531828964270;
+        Tue, 17 Jul 2018 05:02:44 -0700 (PDT)
+Received: from raghu-VirtualBox ([116.197.184.12])
+        by smtp.gmail.com with ESMTPSA id o26-v6sm1663804pfi.167.2018.07.17.05.02.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 05:02:43 -0700 (PDT)
+From:   RAGHU Halharvi <raghuhack78@gmail.com>
+To:     inux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org
+Cc:     RAGHU Halharvi <raghuhack78@gmail.com>, marcel@holtmann.org,
+        johan.hedberg@gmail.com
+Subject: [PATCH] Bluetooth:hci_bcm:Check return value from devm_clk_get
+Date:   Tue, 17 Jul 2018 17:32:37 +0530
+Message-Id: <20180717120237.25030-1-raghuhack78@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using one large #ifdef CONFIG_XEN_PVHVM in
-arch/x86/xen/platform-pci-unplug.c add the object file depending on
-CONFIG_XEN_PVHVM being set.
-
-Signed-off-by: Juergen Gross <jgross@suse.com>
+* Check return value from devm_clk_get & return appropriate error.
 ---
- arch/x86/xen/Makefile              | 2 +-
- arch/x86/xen/platform-pci-unplug.c | 2 --
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ drivers/bluetooth/hci_bcm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-index a964f307a266..dd2550d33b38 100644
---- a/arch/x86/xen/Makefile
-+++ b/arch/x86/xen/Makefile
-@@ -19,11 +19,11 @@ obj-y				+= mmu.o
- obj-y				+= time.o
- obj-y				+= grant-table.o
- obj-y				+= suspend.o
--obj-y				+= platform-pci-unplug.o
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index 441f5e1deb11..1295cc89d702 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -910,6 +910,8 @@ static int bcm_get_resources(struct bcm_device *dev)
+ 		return 0;
  
- obj-$(CONFIG_XEN_PVHVM)		+= enlighten_hvm.o
- obj-$(CONFIG_XEN_PVHVM)		+= mmu_hvm.o
- obj-$(CONFIG_XEN_PVHVM)		+= suspend_hvm.o
-+obj-$(CONFIG_XEN_PVHVM)		+= platform-pci-unplug.o
+ 	dev->clk = devm_clk_get(dev->dev, NULL);
++	if (IS_ERR(dev->clk))
++		return PTR_ERR(dev->clk);
  
- obj-$(CONFIG_XEN_PV)		+= setup.o
- obj-$(CONFIG_XEN_PV)		+= apic.o
-diff --git a/arch/x86/xen/platform-pci-unplug.c b/arch/x86/xen/platform-pci-unplug.c
-index 33a783c77d96..3957946a6cfe 100644
---- a/arch/x86/xen/platform-pci-unplug.c
-+++ b/arch/x86/xen/platform-pci-unplug.c
-@@ -30,7 +30,6 @@
- #define XEN_PLATFORM_ERR_PROTOCOL -2
- #define XEN_PLATFORM_ERR_BLACKLIST -3
- 
--#ifdef CONFIG_XEN_PVHVM
- /* store the value of xen_emul_unplug after the unplug is done */
- static int xen_platform_pci_unplug;
- static int xen_emul_unplug;
-@@ -214,4 +213,3 @@ static int __init parse_xen_emul_unplug(char *arg)
- 	return 0;
- }
- early_param("xen_emul_unplug", parse_xen_emul_unplug);
--#endif
+ 	dev->device_wakeup = devm_gpiod_get_optional(dev->dev, "device-wakeup",
+ 						     GPIOD_OUT_LOW);
 -- 
-2.13.7
+2.17.1
 
