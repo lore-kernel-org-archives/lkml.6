@@ -6,580 +6,564 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5262ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4F0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6182D20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF00F20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 13:47:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EgbNIuB+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YJ3h9lvp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6182D20C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGLC/jX1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF00F20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731710AbeGQOS6 (ORCPT
+        id S1731646AbeGQOUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 10:18:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44814 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731574AbeGQOS6 (ORCPT
+        Tue, 17 Jul 2018 10:20:24 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34346 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731497AbeGQOUY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 10:18:58 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 79E6D6074D; Tue, 17 Jul 2018 13:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531835172;
-        bh=T5fuFW13wyoDVI+saYqSW3Xkz7w8WVJv/8w/+cbUwUc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EgbNIuB+SCWIUhtmV04fBeEjopZ6LKwfhp8ZPDXvLfNnYGx30RKXT4AUKQBNl7dkL
-         RHiOxIxxDAhFtO/vlFYEUwgcQchYGNYsZ+zj/XvUwIUEKC1qupH3JdTV/w/zkKzAhb
-         imHwUAmG1/eu9tQmD4CF/RFwD4Qqe06ApIIzsXAw=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 811626063A;
-        Tue, 17 Jul 2018 13:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531835171;
-        bh=T5fuFW13wyoDVI+saYqSW3Xkz7w8WVJv/8w/+cbUwUc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YJ3h9lvpqwxq3khSajId/Deo7yLRfb3RA3QXpeyrGgFZpcMliEuigJgj/LgQRDkrk
-         iN9epMQ3JLFwMBjiA8G09tnx7UZDJZcbp67ZF4mrdTR84cx37t4v6WNFbW74VKfllm
-         YX1ayvql+RlThR7cfEpnP/rVTcnDi34ddWjoylOU=
+        Tue, 17 Jul 2018 10:20:24 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y5-v6so476732pgv.1;
+        Tue, 17 Jul 2018 06:47:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=y+xPTZgg6SmrkoDtBKMQ0DsU2oqBU6IDxQksMQK60nQ=;
+        b=VGLC/jX1mP5aApd6SbF0q6xwToJUEW1Yze1B0t3MGkd4pnN66gZR3gYwIjrtnc1fyO
+         7ArOoO8mXPFXaf+tIqu2/R1ZTPkeKy4zlOfLvq8kIHCfiCHxba4+DrfKYQhl8s+DhQeC
+         VXXGlNudow4S4YU6uT9Omjx1WMuoSx6Ji5mAWAj5zQWbW4dPXc3/xgcThSP9M3Obketf
+         9ngFsqbdSurxsblAzQ0LmWPsnFqWw7fVizsb/R6uEyEcmkO0FcClXAfKHi4w1c2osjtn
+         IwQh+WFHNxrtchv3ix58IzjYjn/ObXYi2Rh1TwX7JatQ7k2ChoR+J2AdHTGk7MK004NX
+         HFAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=y+xPTZgg6SmrkoDtBKMQ0DsU2oqBU6IDxQksMQK60nQ=;
+        b=n2t8w2OKml6dzVdD898wOPiCDZ+7CpLoIWATAB0RoWzSvRNdCjgLeMOrFxljCVQOW+
+         OOjwkgK5ewkmk7AoJCBS5NjpyOFT6BQGTnzJxcFOw3M10cigdu7D+bN25QC5lUjahoK9
+         wlVPziO2EwfqpvCuKYMRInPTnotE9i0CGZL70Uwd7+cGREeRiT2LncP8sc82GCyrSuAh
+         bwhgwTJdx7kG5KVua6wsgTcWmZdc16n/KB76k845ywr16VhXdBr30eeg+y7zEc5XoDIH
+         n2EFTvblWUtjzFrHqVZ6xIGSKKy0rF+bZLe/UzkU5YLHj6Qe6kcXYVtM5mu7Xuq4SfPZ
+         oI1A==
+X-Gm-Message-State: AOUpUlGHBp4oiUcoKvjUNxJ+Uk1/+BKVxxNq4E1O0WlZJ0vlz2ztd8hE
+        RkLYhaCgCS1Nq9Hcf6wAGdQ=
+X-Google-Smtp-Source: AAOMgpdlG8nZVO0hO1H1mdWXmDkcjU/RKWqmeVCRfeRUPL/mQ3wmNrEP2q9mUX0ln36lFwPIWhMTOA==
+X-Received: by 2002:a63:6743:: with SMTP id b64-v6mr1645834pgc.91.1531835258384;
+        Tue, 17 Jul 2018 06:47:38 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id e9-v6sm1945127pgu.5.2018.07.17.06.47.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 06:47:37 -0700 (PDT)
+Subject: Re: [PATCH v5 2/2] hwmon: ibmpowernv: Add attributes to
+ enable/disable sensor groups
+To:     Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        mpe@ellerman.id.au
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ego@linux.vnet.ibm.com
+References: <1531637685-23250-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+ <1531637685-23250-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <9e7f301e-c169-d034-eee7-a45f0afb03a1@roeck-us.net>
+Date:   Tue, 17 Jul 2018 06:47:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <1531637685-23250-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 17 Jul 2018 19:16:11 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v9 7/7] Bluetooth: hci_qca: Add support for Qualcomm
- Bluetooth chip wcn3990
-In-Reply-To: <20180716160557.GY129942@google.com>
-References: <20180705165515.13340-1-bgodavar@codeaurora.org>
- <20180705165515.13340-8-bgodavar@codeaurora.org>
- <20180706222110.GK129942@google.com>
- <ecc9d46aadb05d36f43ca9649cf44bf4@codeaurora.org>
- <20180716160557.GY129942@google.com>
-Message-ID: <2ccfce245c96b1cac75b2836f6489d9e@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
-
-On 2018-07-16 21:35, Matthias Kaehlcke wrote:
-> On Mon, Jul 16, 2018 at 07:21:56PM +0530, Balakrishna Godavarthi wrote:
->> Hi Matthias,
->> 
->> On 2018-07-07 03:51, Matthias Kaehlcke wrote:
->> > On Thu, Jul 05, 2018 at 10:25:15PM +0530, Balakrishna Godavarthi wrote:
->> > > Add support to set voltage/current of various regulators
->> > > to power up/down Bluetooth chip wcn3990.
->> > >
->> > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> > > ---
->> > > changes in v9:
->> > >     * moved flow control to vendor and set_baudarte functions.
->> > >     * removed parent regs.
->> > >
->> > > changes in v8:
->> > >     * closing qca buffer, if qca_power_setup fails
->> > >     * chnaged ibs start timer function call location.
->> > >     * updated review comments.
->> > >
->> > > changes in v7:
->> > >     * addressed review comments.
->> > >
->> > > changes in v6:
->> > >     * Hooked up qca_power to qca_serdev.
->> > >     * renamed all the naming inconsistency functions with qca_*
->> > >     * leveraged common code of ROME for wcn3990.
->> > >     * created wrapper functions for re-usable blocks.
->> > >     * updated function of _*regulator_enable and _*regualtor_disable.
->> > >     * removed redundant comments and functions.
->> > >     * addressed review comments.
->> > >
->> > > Changes in v5:
->> > >     * updated regulator vddpa min_uV to 1304000.
->> > >       * addressed review comments.
->> > >
->> > > Changes in v4:
->> > >     * Segregated the changes of btqca from hci_qca
->> > >     * rebased all changes on top of bluetooth-next.
->> > >     * addressed review comments.
->> > >
->> > > ---
->> > >  drivers/bluetooth/btqca.h   |   3 +
->> > >  drivers/bluetooth/hci_qca.c | 387
->> > > +++++++++++++++++++++++++++++++-----
->> > >  2 files changed, 345 insertions(+), 45 deletions(-)
->> > >
->> > > diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
->> > > index a9c2779f3e07..0c01f375fe83 100644
->> > > --- a/drivers/bluetooth/btqca.h
->> > > +++ b/drivers/bluetooth/btqca.h
->> > > @@ -37,6 +37,9 @@
->> > >  #define EDL_TAG_ID_HCI			(17)
->> > >  #define EDL_TAG_ID_DEEP_SLEEP		(27)
->> > >
->> > > +#define QCA_WCN3990_POWERON_PULSE	0xFC
->> > > +#define QCA_WCN3990_POWEROFF_PULSE	0xC0
->> > > +
->> > >  enum qca_bardrate {
->> > >  	QCA_BAUDRATE_115200 	= 0,
->> > >  	QCA_BAUDRATE_57600,
->> > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> > > index 7ebfaa0edf3f..d62c7785a618 100644
->> > > --- a/drivers/bluetooth/hci_qca.c
->> > > +++ b/drivers/bluetooth/hci_qca.c
->> > > @@ -5,7 +5,7 @@
->> > >   *  protocol extension to H4.
->> > >   *
->> > >   *  Copyright (C) 2007 Texas Instruments, Inc.
->> > > - *  Copyright (c) 2010, 2012 The Linux Foundation. All rights
->> > > reserved.
->> > > + *  Copyright (c) 2010, 2012, 2018 The Linux Foundation. All rights
->> > > reserved.
->> > >   *
->> > >   *  Acknowledgements:
->> > >   *  This file is based on hci_ll.c, which was...
->> > > @@ -31,9 +31,14 @@
->> > >  #include <linux/kernel.h>
->> > >  #include <linux/clk.h>
->> > >  #include <linux/debugfs.h>
->> > > +#include <linux/delay.h>
->> > > +#include <linux/device.h>
->> > >  #include <linux/gpio/consumer.h>
->> > >  #include <linux/mod_devicetable.h>
->> > >  #include <linux/module.h>
->> > > +#include <linux/of_device.h>
->> > > +#include <linux/platform_device.h>
->> > > +#include <linux/regulator/consumer.h>
->> > >  #include <linux/serdev.h>
->> > >
->> > >  #include <net/bluetooth/bluetooth.h>
->> > > @@ -124,12 +129,46 @@ enum qca_speed_type {
->> > >  	QCA_OPER_SPEED
->> > >  };
->> > >
->> > > +/*
->> > > + * Voltage regulator information required for configuring the
->> > > + * QCA Bluetooth chipset
->> > > + */
->> > > +struct qca_vreg {
->> > > +	const char *name;
->> > > +	unsigned int min_uV;
->> > > +	unsigned int max_uV;
->> > > +	unsigned int load_uA;
->> > > +};
->> > > +
->> > > +struct qca_vreg_data {
->> > > +	enum qca_btsoc_type soc_type;
->> > > +	struct qca_vreg *vregs;
->> > > +	size_t num_vregs;
->> > > +};
->> > > +
->> > > +/*
->> > > + * Platform data for the QCA Bluetooth power driver.
->> > > + */
->> > > +struct qca_power {
->> > > +	struct device *dev;
->> > > +	const struct qca_vreg_data *vreg_data;
->> > > +	struct regulator_bulk_data *vreg_bulk;
->> > > +	bool vregs_on;
->> > > +};
->> > > +
->> > >  struct qca_serdev {
->> > >  	struct hci_uart	 serdev_hu;
->> > >  	struct gpio_desc *bt_en;
->> > >  	struct clk	 *susclk;
->> > > +	enum qca_btsoc_type btsoc_type;
->> > > +	struct qca_power *bt_power;
->> > > +	u32 init_speed;
->> > > +	u32 oper_speed;
->> > >  };
->> > >
->> > > +static int qca_power_setup(struct hci_uart *hu, bool on);
->> > > +static void qca_power_shutdown(struct hci_uart *hu);
->> > > +
->> > >  static void __serial_clock_on(struct tty_struct *tty)
->> > >  {
->> > >  	/* TODO: Some chipset requires to enable UART clock on client
->> > > @@ -407,6 +446,7 @@ static int qca_open(struct hci_uart *hu)
->> > >  {
->> > >  	struct qca_serdev *qcadev;
->> > >  	struct qca_data *qca;
->> > > +	int ret;
->> > >
->> > >  	BT_DBG("hu %p qca_open", hu);
->> > >
->> > > @@ -458,19 +498,32 @@ static int qca_open(struct hci_uart *hu)
->> > >
->> > >  	hu->priv = qca;
->> > >
->> > > -	timer_setup(&qca->wake_retrans_timer,
->> > > hci_ibs_wake_retrans_timeout, 0);
->> > > -	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
->> > > -
->> > > -	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
->> > > -	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
->> > > -
->> > >  	if (hu->serdev) {
->> > >  		serdev_device_open(hu->serdev);
->> > >
->> > >  		qcadev = serdev_device_get_drvdata(hu->serdev);
->> > > -		gpiod_set_value_cansleep(qcadev->bt_en, 1);
->> > > +		if (qcadev->btsoc_type != QCA_WCN3990) {
->> > > +			gpiod_set_value_cansleep(qcadev->bt_en, 1);
->> > > +		} else {
->> > > +			hu->init_speed = qcadev->init_speed;
->> > > +			hu->oper_speed = qcadev->oper_speed;
->> > > +			ret = qca_power_setup(hu, true);
->> > > +			if (ret) {
->> > > +				destroy_workqueue(qca->workqueue);
->> > > +				kfree_skb(qca->rx_skb);
->> > > +				hu->priv = NULL;
->> > > +				kfree(qca);
->> > > +				return ret;
->> > > +			}
->> > > +		}
->> > >  	}
->> > >
->> > > +	timer_setup(&qca->wake_retrans_timer,
->> > > hci_ibs_wake_retrans_timeout, 0);
->> > > +	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
->> > > +
->> > > +	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
->> > > +	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
->> > > +
->> > >  	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
->> > >  	       qca->tx_idle_delay, qca->wake_retrans);
->> > >
->> > > @@ -554,10 +607,13 @@ static int qca_close(struct hci_uart *hu)
->> > >  	qca->hu = NULL;
->> > >
->> > >  	if (hu->serdev) {
->> > > -		serdev_device_close(hu->serdev);
->> > > -
->> > >  		qcadev = serdev_device_get_drvdata(hu->serdev);
->> > > -		gpiod_set_value_cansleep(qcadev->bt_en, 0);
->> > > +		if (qcadev->btsoc_type == QCA_WCN3990)
->> > > +			qca_power_shutdown(hu);
->> > > +		else
->> > > +			gpiod_set_value_cansleep(qcadev->bt_en, 0);
->> > > +
->> > > +		serdev_device_close(hu->serdev);
->> > >  	}
->> > >
->> > >  	kfree_skb(qca->rx_skb);
->> > > @@ -891,6 +947,7 @@ static int qca_set_baudrate(struct hci_dev
->> > > *hdev, uint8_t baudrate)
->> > >  	struct hci_uart *hu = hci_get_drvdata(hdev);
->> > >  	struct qca_data *qca = hu->priv;
->> > >  	struct sk_buff *skb;
->> > > +	struct qca_serdev *qcadev;
->> > >  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
->> > >
->> > >  	if (baudrate > QCA_BAUDRATE_3200000)
->> > > @@ -904,6 +961,13 @@ static int qca_set_baudrate(struct hci_dev
->> > > *hdev, uint8_t baudrate)
->> > >  		return -ENOMEM;
->> > >  	}
->> > >
->> > > +	/* Disabling hardware flow control is mandate while
->> >
->> > nit: s/mandate/mandatory|required/
->> >
->> > > +	 * sending change baudrate request to wcn3990 SoC.
->> > > +	 */
->> > > +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> > > +	if (qcadev->btsoc_type == QCA_WCN3990)
->> > > +		hci_uart_set_flow_control(hu, true);
->> > > +
->> > >  	/* Assign commands to change baudrate and packet type. */
->> > >  	skb_put_data(skb, cmd, sizeof(cmd));
->> > >  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> > > @@ -919,6 +983,9 @@ static int qca_set_baudrate(struct hci_dev
->> > > *hdev, uint8_t baudrate)
->> > >  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
->> > >  	set_current_state(TASK_RUNNING);
->> > >
->> > > +	if (qcadev->btsoc_type == QCA_WCN3990)
->> > > +		hci_uart_set_flow_control(hu, false);
->> > > +
->> > >  	return 0;
->> > >  }
->> > >
->> > > @@ -930,6 +997,36 @@ static inline void host_set_baudrate(struct
->> > > hci_uart *hu, unsigned int speed)
->> > >  		hci_uart_set_baudrate(hu, speed);
->> > >  }
->> > >
->> > > +static int qca_send_vendor_cmd(struct hci_dev *hdev, u8 cmd)
->> > > +{
->> > > +	struct hci_uart *hu = hci_get_drvdata(hdev);
->> > > +	struct qca_data *qca = hu->priv;
->> > > +	struct sk_buff *skb;
->> > > +
->> > > +	bt_dev_dbg(hdev, "sending command %02x to SoC", cmd);
->> > > +
->> > > +	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
->> > > +	if (!skb)
->> > > +		return -ENOMEM;
->> > > +
->> > > +	/* Disabling hardware flow control is mandate while
->> >
->> > Same nit as above
->> >
->> > > +	 * sending vendor power on and off pulse to SoC.
->> > > +	 */
->> >
->> > The function is called qca_send_vendor_cmd(), the comment about power
->> > on/off pulses seems misplaced here. Are there other 'vendor commands'
->> > that require a different flow control behavior?
->> >
->> > Perhaps the function should have a different name or we need another
->> > wrapper.
->> >
->> > > +	hci_uart_set_flow_control(hu, true);
->> >
->> > Should the changing of the flow control be limited to wcn3990? As of
->> > now the function is only called for wcn3990, however this is not
->> > stated as a requirement and might change in the future.
->> >
->> > > +	skb_put_u8(skb, cmd);
->> > > +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> > > +
->> > > +	skb_queue_tail(&qca->txq, skb);
->> > > +	hci_uart_tx_wakeup(hu);
->> > > +
->> > > +	/* Wait for 100 uS for SoC to settle down */
->> > > +	usleep_range(100, 200);
->> >
->> > Is this needed for any 'vendor command' or directly related with the
->> > power on/off pulses?
->> >
->> > > +	hci_uart_set_flow_control(hu, false);
->> > > +
->> > > +	return 0;
->> > > +}
->> > > +
->> > >  static unsigned int qca_get_speed(struct hci_uart *hu,
->> > >  				  enum qca_speed_type speed_type)
->> > >  {
->> > > @@ -952,10 +1049,19 @@ static unsigned int qca_get_speed(struct
->> > > hci_uart *hu,
->> > >
->> > >  static int qca_check_speeds(struct hci_uart *hu)
->> > >  {
->> > > -	/* One or the other speeds should be non zero. */
->> > > -	if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
->> > > -	    !qca_get_speed(hu, QCA_OPER_SPEED))
->> > > +	struct qca_serdev *qcadev;
->> > > +
->> > > +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> > > +	if ((qcadev->btsoc_type == QCA_WCN3990 &&
->> > > +	    !qca_get_speed(hu, QCA_INIT_SPEED)) ||
->> > > +	    !qca_get_speed(hu, QCA_OPER_SPEED)) {
->> > > +		/* Both INIT and OPER speed should be non zero. */
->> > >  		return -EINVAL;
->> > > +	} else if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
->> > > +		    !qca_get_speed(hu, QCA_OPER_SPEED)) {
->> > > +		/* One or the other speeds should be non zero. */
->> > > +		return -EINVAL;
->> > > +	}
->> >
->> > It is questionable if the comments are useful, they are basically
->> > stating the same as the conditions.
->> >
->> > if-else statements with a single statement in all branches shouldn't
->> > use curly braces. Personally I don't dislike them in this case with
->> > the multi-line conditions, but in principle they shoulnd't be there.
->> >
->> > nit: this would be easier to read with nested if statements:
->> >
->> > 	if (qcadev->btsoc_type == QCA_WCN3990)
->> > 		if (!qca_get_speed(hu, QCA_INIT_SPEED)) ||
->> > 		    !qca_get_speed(hu, QCA_OPER_SPEED))
->> > 			return -EINVAL;
->> > 	else
->> > 		if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
->> > 		    !qca_get_speed(hu, QCA_OPER_SPEED)) {
->> > 			return -EINVAL;
->> >
->> > >  	return 0;
->> > >  }
->> > > @@ -986,15 +1092,40 @@ static int qca_set_speed(struct hci_uart *hu,
->> > > enum qca_speed_type speed_type)
->> > >  	return 0;
->> > >  }
->> > >
->> > > +static int qca_wcn3990_init(struct hci_uart *hu)
->> > > +{
->> > > +	int ret;
->> > > +
->> > > +	ret = qca_send_vendor_cmd(hu->hdev, QCA_WCN3990_POWERON_PULSE);
->> > > +	if (ret)
->> > > +		return ret;
->> > > +
->> > > +	/* Wait for 100 ms for SoC to boot up */
->> > > +	msleep(100);
->> > > +	serdev_device_close(hu->serdev);
->> > > +	ret = serdev_device_open(hu->serdev);
->> > > +	if (ret) {
->> > > +		bt_dev_err(hu->hdev, "failed to open port");
->> > > +		return ret;
->> > > +	}
->> > > +
->> > > +	/* Setup initial baudrate */
->> > > +	qca_set_speed(hu, QCA_INIT_SPEED);
->> >
->> > The comment is a bit redundant.
->> >
->> > > +	hci_uart_set_flow_control(hu, false);
->> > > +
->> > > +	return 0;
->> > > +}
->> > > +
->> > >  static int qca_setup(struct hci_uart *hu)
->> > >  {
->> > >  	struct hci_dev *hdev = hu->hdev;
->> > >  	struct qca_data *qca = hu->priv;
->> > >  	unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
->> > > +	struct qca_serdev *qcadev;
->> > >  	int ret;
->> > >  	int soc_ver = 0;
->> > >
->> > > -	bt_dev_info(hdev, "ROME setup");
->> > > +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> > >
->> > >  	ret = qca_check_speeds(hu);
->> > >  	if (ret)
->> > > @@ -1006,6 +1137,21 @@ static int qca_setup(struct hci_uart *hu)
->> > >  	/* Setup initial baudrate */
->> > >  	qca_set_speed(hu, QCA_INIT_SPEED);
->> > >
->> > > +	if (qcadev->btsoc_type == QCA_WCN3990) {
->> > > +		bt_dev_dbg(hdev, "setting up wcn3990");
->> >
->> > Seems like this should be bt_dev_info() for consistency with Rome.
->> >
->> > > +		ret = qca_wcn3990_init(hu);
->> > > +		if (ret)
->> > > +			return ret;
->> > > +
->> > > +		ret = qca_read_soc_version(hdev, &soc_ver);
->> > > +		if (ret < 0 || soc_ver == 0) {
->> > > +			bt_dev_err(hdev, "Failed to get version %d", ret);
->> > > +			return ret;
->> > > +		}
->> > > +	} else {
->> > > +		bt_dev_info(hdev, "ROME setup");
->> > > +	}
->> > > +
->> > >  	/* Setup user speed if needed */
->> > >  	speed = qca_get_speed(hu, QCA_OPER_SPEED);
->> > >  	if (speed) {
->> > > @@ -1016,16 +1162,18 @@ static int qca_setup(struct hci_uart *hu)
->> > >  		qca_baudrate = qca_get_baudrate_value(speed);
->> > >  	}
->> > >
->> > > -	/* Get QCA version information */
->> > > -	ret = qca_read_soc_version(hdev, &soc_ver);
->> > > -	if (ret < 0 || soc_ver == 0) {
->> > > -		bt_dev_err(hdev, "QCA Failed to get version (%d)", ret);
->> > > -		return ret;
->> > > +	if (!soc_ver) {
->> >
->> >
->> > The following would probably be clearer:
->> >
->> >   	if (qcadev->btsoc_type != QCA_WCN3990) {
->> >
->> > > +		/* Get QCA version information */
->> > > +		ret = qca_read_soc_version(hdev, &soc_ver);
->> > > +		if (ret < 0 || soc_ver == 0) {
->> > > +			bt_dev_err(hdev, "QCA Failed to get version (%d)", ret);
->> > > +			return ret;
->> > > +		}
->> > > +		bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
->> >
->> > Couldn't we hide some of this in qca_read_soc_version()?
->> >
->> > qca_read_soc_version() could at least do the logging in the error case
->> > (the 'soc_ver == 0' case could be handled there as well), which would
->> > leave us with:
->> >
->> >
->> > 	ret = qca_read_soc_version(hdev, &soc_ver);
->> > 	if (ret)
->> > 		return ret;
->> >
->> > And the same above.
->> >
->> > The controller version can be logged outside of the branch for both
->> > wcn3990 and Rome.
->> >
->> > >  	}
->> > > -	bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
->> > >
->> > >  	/* Setup patch / NVM configurations */
->> > > -	ret = qca_uart_setup(hdev, qca_baudrate, QCA_ROME, soc_ver);
->> > > +	ret = qca_uart_setup(hdev, qca_baudrate, qcadev->btsoc_type,
->> > > soc_ver);
->> > >  	if (!ret) {
->> > >  		set_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
->> > >  		qca_debugfs_init(hdev);
->> > > @@ -1061,9 +1209,123 @@ static struct hci_uart_proto qca_proto = {
->> > >  	.dequeue	= qca_dequeue,
->> > >  };
->> > >
->> > > +static const struct qca_vreg_data qca_soc_data = {
->> > > +	.soc_type = QCA_WCN3990,
->> > > +	.vregs = (struct qca_vreg []) {
->> > > +		{ "vddio",   1800000, 1800000,  0 },
->> > > +		{ "vddxo",   1800000, 1800000,  1 },
->> > > +		{ "vddrf",   1304000, 1304000,  1 },
->> > > +		{ "vddch0",  3000000, 3312000,  1 },
->> > > +	},
->> > > +	.num_vregs = 4,
->> > > +};
->> >
->> > I didn't chime in earlier in the discussion with Stephen on the
->> > regulators (https://patchwork.kernel.org/patch/10467911/), however I
->> > agree with him that specifying at load of 1uA doesn't seem to make
->> > much sense. What would happen if the load remained unspecified (or 0)?
->> 
->> [Bala]: On RPMh based designs, calling a regulator_set_load with a 
->> non-zero
->> value moves the regulator to NPM (high power mode) which is required 
->> for BT
->> communication.
->>         and call with 0uA  moves it to low-power-mode (vote from 
->> APPS).
->> Basically whenever BT wants these in NPM  it calls set-load with 1.
+On 07/14/2018 11:54 PM, Shilpasri G Bhat wrote:
+> On-Chip-Controller(OCC) is an embedded micro-processor in POWER9 chip
+> which measures various system and chip level sensors. These sensors
+> comprises of environmental sensors (like power, temperature, current
+> and voltage) and performance sensors (like utilization, frequency).
+> All these sensors are copied to main memory at a regular interval of
+> 100ms. OCC provides a way to select a group of sensors that is copied
+> to the main memory to increase the update frequency of selected sensor
+> groups. When a sensor-group is disabled, OCC will not copy it to main
+> memory and those sensors read 0 values.
 > 
-> This assumes that the chip is powered by RPMh regulators, which
-> depending on the system may or may not be true. On systems with other
-> regulators you are telling the regulator that the max load is 1uA, and
-> the regulator might comply, going in a low power mode that does not
-> provide enough current for the chip to operate properly.
+> This patch provides support for enabling/disabling the sensor groups
+> like power, temperature, current and voltage. This patch adds new
+> per-senor sysfs attribute to disable and enable them.
 > 
-> Doesn't the datasheet of the chip specify actual max currents for
-> these consumers that could be used instead of the bogus 1uA? If not
-> you could ask the designers of the chip for an approximate number
-> (preferably erring on the upper side).
+> Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+> ---
+> Changes from v4:
+> - As per Mpe's suggestion store device_node instead of phandles and
+>    clean it after init
+> - s/sg_data/sgrp_data
+> 
+>   Documentation/hwmon/ibmpowernv |  43 ++++++-
+>   drivers/hwmon/ibmpowernv.c     | 256 +++++++++++++++++++++++++++++++++++------
+>   2 files changed, 265 insertions(+), 34 deletions(-)
+> 
+> diff --git a/Documentation/hwmon/ibmpowernv b/Documentation/hwmon/ibmpowernv
+> index 8826ba2..5646825 100644
+> --- a/Documentation/hwmon/ibmpowernv
+> +++ b/Documentation/hwmon/ibmpowernv
+> @@ -33,9 +33,48 @@ fanX_input		Measured RPM value.
+>   fanX_min		Threshold RPM for alert generation.
+>   fanX_fault		0: No fail condition
+>   			1: Failing fan
+> +
+>   tempX_input		Measured ambient temperature.
+>   tempX_max		Threshold ambient temperature for alert generation.
+> -inX_input		Measured power supply voltage
+> +tempX_highest		Historical maximum temperature
+> +tempX_lowest		Historical minimum temperature
+> +tempX_enable		Enable/disable all temperature sensors belonging to the
+> +			sub-group. In POWER9, this attribute corresponds to
+> +			each OCC. Using this attribute each OCC can be asked to
+> +			disable/enable all of its temperature sensors.
+> +			1: Enable
+> +			0: Disable
+> +
+> +inX_input		Measured power supply voltage (millivolt)
+>   inX_fault		0: No fail condition.
+>   			1: Failing power supply.
+> -power1_input		System power consumption (microWatt)
+> +inX_highest		Historical maximum voltage
+> +inX_lowest		Historical minimum voltage
+> +inX_enable		Enable/disable all voltage sensors belonging to the
+> +			sub-group. In POWER9, this attribute corresponds to
+> +			each OCC. Using this attribute each OCC can be asked to
+> +			disable/enable all of its voltage sensors.
+> +			1: Enable
+> +			0: Disable
+> +
+> +powerX_input		Power consumption (microWatt)
+> +powerX_input_highest	Historical maximum power
+> +powerX_input_lowest	Historical minimum power
+> +powerX_enable		Enable/disable all power sensors belonging to the
+> +			sub-group. In POWER9, this attribute corresponds to
+> +			each OCC. Using this attribute each OCC can be asked to
+> +			disable/enable all of its power sensors.
+> +			1: Enable
+> +			0: Disable
+> +
+> +currX_input		Measured current (milliampere)
+> +currX_highest		Historical maximum current
+> +currX_lowest		Historical minimum current
+> +currX_enable		Enable/disable all current sensors belonging to the
+> +			sub-group. In POWER9, this attribute corresponds to
+> +			each OCC. Using this attribute each OCC can be asked to
+> +			disable/enable all of its current sensors.
+> +			1: Enable
+> +			0: Disable
+> +
+> +energyX_input		Cumulative energy (microJoule)
+> diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
+> index f829dad..a509b9b 100644
+> --- a/drivers/hwmon/ibmpowernv.c
+> +++ b/drivers/hwmon/ibmpowernv.c
+> @@ -90,11 +90,23 @@ struct sensor_data {
+>   	char label[MAX_LABEL_LEN];
+>   	char name[MAX_ATTR_LEN];
+>   	struct device_attribute dev_attr;
+> +	struct sensor_group_data *sgrp_data;
+> +};
+> +
+> +struct sensor_group_data {
+> +	struct mutex mutex;
+> +	struct device_node **of_nodes;
+> +	u32 gid;
+> +	u32 nr_nodes;
+> +	enum sensors type;
+> +	bool enable;
+>   };
+>   
+>   struct platform_data {
+>   	const struct attribute_group *attr_groups[MAX_SENSOR_TYPE + 1];
+> +	struct sensor_group_data *sgrp_data;
+>   	u32 sensors_count; /* Total count of sensors from each group */
+> +	u32 nr_sensor_groups; /* Total number of sensor groups */
+>   };
+>   
+>   static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
+> @@ -105,6 +117,9 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
+>   	ssize_t ret;
+>   	u64 x;
+>   
+> +	if (sdata->sgrp_data && !sdata->sgrp_data->enable)
+> +		return -ENODATA;
+> +
+>   	ret =  opal_get_sensor_data_u64(sdata->id, &x);
+>   
+>   	if (ret)
+> @@ -120,6 +135,46 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
+>   	return sprintf(buf, "%llu\n", x);
+>   }
+>   
+> +static ssize_t show_enable(struct device *dev,
+> +			   struct device_attribute *devattr, char *buf)
+> +{
+> +	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
+> +						 dev_attr);
+> +
+> +	return sprintf(buf, "%u\n", sdata->sgrp_data->enable);
+> +}
+> +
+> +static ssize_t store_enable(struct device *dev,
+> +			    struct device_attribute *devattr,
+> +			    const char *buf, size_t count)
+> +{
+> +	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
+> +						 dev_attr);
+> +	struct sensor_group_data *sgrp_data = sdata->sgrp_data;
+> +	bool data;
+> +	int ret;
+> +
+> +	ret = kstrtobool(buf, &data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = mutex_lock_interruptible(&sgrp_data->mutex);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (data != sgrp_data->enable) {
+> +		ret =  sensor_group_enable(sgrp_data->gid, data);
+> +		if (!ret)
+> +			sgrp_data->enable = data;
+> +	}
+> +
+> +	if (!ret)
+> +		ret = count;
+> +
+> +	mutex_unlock(&sgrp_data->mutex);
+> +	return ret;
+> +}
+> +
+>   static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
+>   			  char *buf)
+>   {
+> @@ -292,12 +347,129 @@ static u32 get_sensor_hwmon_index(struct sensor_data *sdata,
+>   	return ++sensor_groups[sdata->type].hwmon_index;
+>   }
+>   
+> +static int init_sensor_group_data(struct platform_device *pdev,
+> +				  struct platform_data *pdata)
+> +{
+> +	struct sensor_group_data *sgrp_data;
+> +	struct device_node *groups, *sgrp;
+> +	enum sensors type;
+> +	int count = 0, ret = 0;
+> +
+> +	groups = of_find_node_by_path("/ibm,opal/sensor-groups");
+> +	if (!groups)
+> +		return ret;
+> +
+> +	for_each_child_of_node(groups, sgrp) {
+> +		type = get_sensor_type(sgrp);
+> +		if (type != MAX_SENSOR_TYPE)
+> +			pdata->nr_sensor_groups++;
+> +	}
+> +
+> +	if (!pdata->nr_sensor_groups)
+> +		goto out;
+> +
+> +	sgrp_data = devm_kcalloc(&pdev->dev, pdata->nr_sensor_groups,
+> +				 sizeof(*sgrp_data), GFP_KERNEL);
+> +	if (!sgrp_data) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	for_each_child_of_node(groups, sgrp) {
+> +		const __be32 *phandles;
+> +		int len, gid, i, k = 0;
+> +
+> +		type = get_sensor_type(sgrp);
+> +		if (type == MAX_SENSOR_TYPE)
+> +			continue;
+> +
+> +		if (of_property_read_u32(sgrp, "sensor-group-id", &gid))
+> +			continue;
+> +
+> +		phandles = of_get_property(sgrp, "sensors", &len);
+> +		if (!phandles)
+> +			continue;
+> +
+> +		len /= sizeof(u32);
+> +		if (!len)
+> +			continue;
+> +
+> +		sgrp_data[count].of_nodes = devm_kcalloc(&pdev->dev,
+> +						sizeof(struct device_node *),
+> +						len, GFP_KERNEL);
+> +		if (!sgrp_data[count].of_nodes) {
+> +			ret = -ENOMEM;
+> +			of_node_put(sgrp);
+> +			goto out;
+> +		}
+> +
+> +		for (i = 0; i < len; i++) {
+> +			struct device_node *node;
+> +
+> +			node = of_parse_phandle(sgrp, "sensors", i);
+> +			if (!node)
+> +				continue;
+> +			sgrp_data[count].of_nodes[k++] = node;
 
-[Bala]: will check and update you on this.
+I don't immediately see where "node" is used later. As mentioned below,
+I'll need to have a much closer look into the code to understand what
+is going on here.
 
--- 
-Regards
-Balakrishna.
+> +		}
+> +
+> +		sensor_groups[type].attr_count++;
+> +		sgrp_data[count].gid = gid;
+> +		sgrp_data[count].type = type;
+> +		sgrp_data[count].nr_nodes = len;
+> +		mutex_init(&sgrp_data[count].mutex);
+> +		sgrp_data[count++].enable = false;
+> +	}
+> +	pdata->sgrp_data = sgrp_data;
+> +out:
+> +	of_node_put(groups);
+> +	return ret;
+> +}
+> +
+> +static struct sensor_group_data *get_sensor_group(struct platform_data *pdata,
+> +						  struct device_node *node,
+> +						  enum sensors type)
+> +{
+> +	struct sensor_group_data *sgrp_data = pdata->sgrp_data;
+> +	int i, j;
+> +
+> +	for (i = 0; i < pdata->nr_sensor_groups; i++) {
+> +		if (type != sgrp_data[i].type)
+> +			continue;
+> +
+> +		for (j = 0; j < sgrp_data[i].nr_nodes; j++)
+> +			if (sgrp_data[i].of_nodes[j] == node)
+> +				return &sgrp_data[i];
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static void clean_sensor_group_of_node(struct platform_device *pdev)
+> +{
+> +	struct platform_data *pdata = platform_get_drvdata(pdev);
+> +	struct sensor_group_data *sgrp_data = pdata->sgrp_data;
+> +	int i, j;
+> +
+> +	for (i = 0; i < pdata->nr_sensor_groups; i++) {
+> +		for (j = 0; j < sgrp_data[i].nr_nodes; j++)
+> +			of_node_put(sgrp_data[i].of_nodes[j]);
+> +
+> +		devm_kfree(&pdev->dev, sgrp_data[i].of_nodes);
+
+The whole point of calling devm_kzalloc() is that calling devm_kfree()
+is not necessary. Any call to devm_kfree() is a strong indication
+that something is wrong.
+
+> +		sgrp_data[i].of_nodes = NULL;
+> +	}
+> +}
+> +
+
+Ok, this will require a detailed review. I don't understand what this
+function is about. It seems that sgrp_data[].of_nodes is only allocated
+to be  freed at the end of create_dev_attrs(), suggesting that the cleared
+data isn't needed for runtime and thus should not be stored in an
+array in the first place. I'll have to understand this much better
+than I do right now before approving it.
+
+Guenter
+
+>   static int populate_attr_groups(struct platform_device *pdev)
+>   {
+>   	struct platform_data *pdata = platform_get_drvdata(pdev);
+>   	const struct attribute_group **pgroups = pdata->attr_groups;
+>   	struct device_node *opal, *np;
+>   	enum sensors type;
+> +	int ret;
+> +
+> +	ret = init_sensor_group_data(pdev, pdata);
+> +	if (ret)
+> +		return ret;
+>   
+>   	opal = of_find_node_by_path("/ibm,opal/sensors");
+>   	for_each_child_of_node(opal, np) {
+> @@ -344,7 +516,10 @@ static int populate_attr_groups(struct platform_device *pdev)
+>   static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
+>   			      ssize_t (*show)(struct device *dev,
+>   					      struct device_attribute *attr,
+> -					      char *buf))
+> +					      char *buf),
+> +			    ssize_t (*store)(struct device *dev,
+> +					     struct device_attribute *attr,
+> +					     const char *buf, size_t count))
+>   {
+>   	snprintf(sdata->name, MAX_ATTR_LEN, "%s%d_%s",
+>   		 sensor_groups[sdata->type].name, sdata->hwmon_index,
+> @@ -352,23 +527,33 @@ static void create_hwmon_attr(struct sensor_data *sdata, const char *attr_name,
+>   
+>   	sysfs_attr_init(&sdata->dev_attr.attr);
+>   	sdata->dev_attr.attr.name = sdata->name;
+> -	sdata->dev_attr.attr.mode = S_IRUGO;
+>   	sdata->dev_attr.show = show;
+> +	if (store) {
+> +		sdata->dev_attr.store = store;
+> +		sdata->dev_attr.attr.mode = 0664;
+> +	} else {
+> +		sdata->dev_attr.attr.mode = 0444;
+> +	}
+>   }
+>   
+>   static void populate_sensor(struct sensor_data *sdata, int od, int hd, int sid,
+>   			    const char *attr_name, enum sensors type,
+>   			    const struct attribute_group *pgroup,
+> +			    struct sensor_group_data *sgrp_data,
+>   			    ssize_t (*show)(struct device *dev,
+>   					    struct device_attribute *attr,
+> -					    char *buf))
+> +					    char *buf),
+> +			    ssize_t (*store)(struct device *dev,
+> +					     struct device_attribute *attr,
+> +					     const char *buf, size_t count))
+>   {
+>   	sdata->id = sid;
+>   	sdata->type = type;
+>   	sdata->opal_index = od;
+>   	sdata->hwmon_index = hd;
+> -	create_hwmon_attr(sdata, attr_name, show);
+> +	create_hwmon_attr(sdata, attr_name, show, store);
+>   	pgroup->attrs[sensor_groups[type].attr_count++] = &sdata->dev_attr.attr;
+> +	sdata->sgrp_data = sgrp_data;
+>   }
+>   
+>   static char *get_max_attr(enum sensors type)
+> @@ -403,24 +588,23 @@ static int create_device_attrs(struct platform_device *pdev)
+>   	const struct attribute_group **pgroups = pdata->attr_groups;
+>   	struct device_node *opal, *np;
+>   	struct sensor_data *sdata;
+> -	u32 sensor_id;
+> -	enum sensors type;
+>   	u32 count = 0;
+> -	int err = 0;
+> +	u32 group_attr_id[MAX_SENSOR_TYPE] = {0};
+>   
+> -	opal = of_find_node_by_path("/ibm,opal/sensors");
+>   	sdata = devm_kcalloc(&pdev->dev,
+>   			     pdata->sensors_count, sizeof(*sdata),
+>   			     GFP_KERNEL);
+> -	if (!sdata) {
+> -		err = -ENOMEM;
+> -		goto exit_put_node;
+> -	}
+> +	if (!sdata)
+> +		return -ENOMEM;
+>   
+> +	opal = of_find_node_by_path("/ibm,opal/sensors");
+>   	for_each_child_of_node(opal, np) {
+> +		struct sensor_group_data *sgrp_data;
+>   		const char *attr_name;
+> -		u32 opal_index;
+> +		u32 opal_index, hw_id;
+> +		u32 sensor_id;
+>   		const char *label;
+> +		enum sensors type;
+>   
+>   		if (np->name == NULL)
+>   			continue;
+> @@ -456,14 +640,12 @@ static int create_device_attrs(struct platform_device *pdev)
+>   			opal_index = INVALID_INDEX;
+>   		}
+>   
+> -		sdata[count].opal_index = opal_index;
+> -		sdata[count].hwmon_index =
+> -			get_sensor_hwmon_index(&sdata[count], sdata, count);
+> -
+> -		create_hwmon_attr(&sdata[count], attr_name, show_sensor);
+> -
+> -		pgroups[type]->attrs[sensor_groups[type].attr_count++] =
+> -				&sdata[count++].dev_attr.attr;
+> +		hw_id = get_sensor_hwmon_index(&sdata[count], sdata, count);
+> +		sgrp_data = get_sensor_group(pdata, np, type);
+> +		populate_sensor(&sdata[count], opal_index, hw_id, sensor_id,
+> +				attr_name, type, pgroups[type], sgrp_data,
+> +				show_sensor, NULL);
+> +		count++;
+>   
+>   		if (!of_property_read_string(np, "label", &label)) {
+>   			/*
+> @@ -474,35 +656,44 @@ static int create_device_attrs(struct platform_device *pdev)
+>   			 */
+>   
+>   			make_sensor_label(np, &sdata[count], label);
+> -			populate_sensor(&sdata[count], opal_index,
+> -					sdata[count - 1].hwmon_index,
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+>   					sensor_id, "label", type, pgroups[type],
+> -					show_label);
+> +					NULL, show_label, NULL);
+>   			count++;
+>   		}
+>   
+>   		if (!of_property_read_u32(np, "sensor-data-max", &sensor_id)) {
+>   			attr_name = get_max_attr(type);
+> -			populate_sensor(&sdata[count], opal_index,
+> -					sdata[count - 1].hwmon_index,
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+>   					sensor_id, attr_name, type,
+> -					pgroups[type], show_sensor);
+> +					pgroups[type], sgrp_data, show_sensor,
+> +					NULL);
+>   			count++;
+>   		}
+>   
+>   		if (!of_property_read_u32(np, "sensor-data-min", &sensor_id)) {
+>   			attr_name = get_min_attr(type);
+> -			populate_sensor(&sdata[count], opal_index,
+> -					sdata[count - 1].hwmon_index,
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+>   					sensor_id, attr_name, type,
+> -					pgroups[type], show_sensor);
+> +					pgroups[type], sgrp_data, show_sensor,
+> +					NULL);
+> +			count++;
+> +		}
+> +
+> +		if (sgrp_data && !sgrp_data->enable) {
+> +			sgrp_data->enable = true;
+> +			hw_id = ++group_attr_id[type];
+> +			populate_sensor(&sdata[count], opal_index, hw_id,
+> +					sgrp_data->gid, "enable", type,
+> +					pgroups[type], sgrp_data, show_enable,
+> +					store_enable);
+>   			count++;
+>   		}
+>   	}
+>   
+> -exit_put_node:
+>   	of_node_put(opal);
+> -	return err;
+> +	clean_sensor_group_of_node(pdev);
+> +	return 0;
+>   }
+>   
+>   static int ibmpowernv_probe(struct platform_device *pdev)
+> @@ -517,6 +708,7 @@ static int ibmpowernv_probe(struct platform_device *pdev)
+>   
+>   	platform_set_drvdata(pdev, pdata);
+>   	pdata->sensors_count = 0;
+> +	pdata->nr_sensor_groups = 0;
+>   	err = populate_attr_groups(pdev);
+>   	if (err)
+>   		return err;
+> 
+
