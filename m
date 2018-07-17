@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAE0ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02478ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3382E20BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F14920BED
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:50:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="HO87daZh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3382E20BED
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="GgfnE7Iw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F14920BED
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbeGQBUC (ORCPT
+        id S1730736AbeGQBUD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 21:20:02 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38607 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729930AbeGQBUB (ORCPT
+        Mon, 16 Jul 2018 21:20:03 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34058 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730056AbeGQBUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 21:20:01 -0400
-Received: by mail-ed1-f65.google.com with SMTP id t2-v6so16718022edr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 17:50:07 -0700 (PDT)
+        Mon, 16 Jul 2018 21:20:02 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h1-v6so2664005eds.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 17:50:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id;
-        bh=M1ylQ2h6nt5cB5CdLkcoQhEX7ylNyRSBzL+F5Mo/yeE=;
-        b=HO87daZhGkKKK/Qdlf30//cpHln5xjbMSqflS/HxRp4ZlGug2btjOQTqV9+DltLwd8
-         Umg+ri9Gk4JAdAmdFox8Rn00VvEH4hn0EUUiUKTK+cdXOEOxzd8hoBVrnBDxuFN02dTt
-         DjssaLFaOEEbn9f1gvidIteOcHjxNFg3PzjqgC01y8g8xaKZrbPaihc84yxs3flMpDlX
-         pYbRxX/rWtS9MTwnbchhqaQhefq6YUuGAdenHS680WPEv+JRpphzvgPncbBLfKyvr7Yd
-         lBHTtMEtCU/S5/XdoQL1CFrMkzVRKsu7T6JOS3jALE8OUykshQe0/32JjAh1dzXtw9vs
-         lquQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=brv3WBXWSFN85KaiHEVJ6aMci5yDHJ4mor0ZSdp5MGg=;
+        b=GgfnE7IwBewB/EGsX67/Ij0xM4ArbixyBOVr+xbxbx9MWC2XWn1uvP5RGGEH8OH8B5
+         Yh3FfE0XL+IK4Lm5PHm2JPS/P8rpVUMd0qhiSzpKXEt4bxk+v4TUCMVTaaackGiyyKWy
+         pJYqQJgSHUIYpecXJW5Ib5ri6c7J+ietawxETYFdKuRnINzRIn2TvjZgegn9gsYClWNc
+         90qxDFCHx4sKla+x+5DqADwCm8v2EJGrAK2u5alHFwk4FOHqISxQ6EjI7dQSKwXgyyr8
+         0UBqBQVu5xeA7D/jeNnZ9fhkyi4rVCj+GaGE1JF/KrWYEjTLCnyklU+lZRXq7SbtHU4g
+         t3FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=M1ylQ2h6nt5cB5CdLkcoQhEX7ylNyRSBzL+F5Mo/yeE=;
-        b=L1/EKvKRuoFfuBjKzRtENcwuor0EpaAaP29Od3WYlBl46YguLaXsHk3shTwSsoR4n/
-         2+c/8/2+ii5J0UAgEPeOfPh3QvUozu7G9UPI5DldCmrEi6Kw/wpxAoDFse4iZFxarNf0
-         cG3hasWN3mI4HqeaGbzpMls72RywHdW0lbNS6aI+dHXOyWFFyIYTIHn8E1w1uknLhj5h
-         W1iXVzk1LNAl+GrX/ViBWKpyK0iJqmeinWw344ftkHWPBxKDYU2lX9GECeau5XFtsk5h
-         tTtdcsTjIS0OV2dQFQb5eGvVJ4H+6mW+1WDSFlc0i2haoxatwjf1vjvxIVyNcgownqZ8
-         uu0Q==
-X-Gm-Message-State: AOUpUlHYzztGITSsuv49Lkvuj24n7Qtsh15+HqnMF3RIfKroQFi1m9n+
-        HIE2ybA5I2pyZ4KgvqgAx0bP468qY64=
-X-Google-Smtp-Source: AAOMgpcLX3sgyPVUFm7JiPQCcolFzw9OMBpEgiJmD3YDCDzxhojDwLoxBbmc7drYt7+XBOsmoXScyg==
-X-Received: by 2002:a50:8d12:: with SMTP id s18-v6mr14829469eds.238.1531788606313;
-        Mon, 16 Jul 2018 17:50:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=brv3WBXWSFN85KaiHEVJ6aMci5yDHJ4mor0ZSdp5MGg=;
+        b=a0QptRuNOBy5vMk3Z6sZatsKeOU/gsxK/KA0tzzxtB3mpw3iWZhLIYgmDOMZxRUxRM
+         HjAJ/ea0n9pcGUqXWjd7mJV7qr1PLBQTVdkmginR1b9rxrkrOKlbDiWE7zp5SA0mIycj
+         MQMim1of9Y3+XeRF4GQ65pex+MacgPAmGvjKfBi2uLvAXaXWtnL6bcH4Mq72Z8uGev0V
+         pZqGWACpX+t91R8gvU3EiqZdsNTnqDBaJB4kgb8et2bo2zLwYHgMjbODvn4cTLS5T7uW
+         r7IDnUAnsYdMV35Xs3iJuKWMiuEDRVuY/hd7MvuHCfUE/Kn4c6QdaMyK8L29Uk7375jK
+         OrIA==
+X-Gm-Message-State: AOUpUlGj779uiBVs3LVDdDg4zJr7HM63/jmemikMkrTcMuixAp9E0Ohl
+        u/ETzm2kUn8XY+oxHbPRvuaNSJw1waQ=
+X-Google-Smtp-Source: AAOMgpfJ8xAMbMZv08PbCaHoKtbBXSODLShFf4icWiS7M+V1jkN6CBge4XdpgXHPodSh/fZ12DM37g==
+X-Received: by 2002:a50:b399:: with SMTP id s25-v6mr20065406edd.217.1531788607534;
+        Mon, 16 Jul 2018 17:50:07 -0700 (PDT)
 Received: from dhcp.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm15063842edi.90.2018.07.16.17.50.05
+        by smtp.gmail.com with ESMTPSA id z4-v6sm15063842edi.90.2018.07.16.17.50.06
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 16 Jul 2018 17:50:05 -0700 (PDT)
+        Mon, 16 Jul 2018 17:50:07 -0700 (PDT)
 From:   Dmitry Safonov <dima@arista.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Dmitry Safonov <dima@arista.com>,
@@ -73,63 +73,220 @@ Cc:     Dmitry Safonov <dima@arista.com>,
         Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
         linux-efi@vger.kernel.org, netdev@vger.kernel.org,
         Dmitry Safonov <0x7f454c46@gmail.com>
-Subject: [RFC 0/2] compat: in_compat_syscall() differs on x86
-Date:   Tue, 17 Jul 2018 01:50:02 +0100
-Message-Id: <20180717005004.25984-1-dima@arista.com>
+Subject: [RFC 1/2] x86/compat: Adjust in_compat_syscall() to generic code under !COMPAT
+Date:   Tue, 17 Jul 2018 01:50:03 +0100
+Message-Id: <20180717005004.25984-2-dima@arista.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180717005004.25984-1-dima@arista.com>
+References: <20180717005004.25984-1-dima@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reading xfrm (ipsec) code I've found such code:
+The result of in_compat_syscall() can be pictured as:
 
-: #ifdef CONFIG_COMPAT
-:         if (in_compat_syscall())
-:                 return -EOPNOTSUPP;
-: #endif
+x86 platform:
+    ---------------------------------------------------
+    |  Arch\syscall  |  64-bit  |   ia32   |   x32    |
+    |-------------------------------------------------|
+    |     x86_64     |  false   |   true   |   true   |
+    |-------------------------------------------------|
+    |      i686      |  false   |  <true>  |   false  |
+    ---------------------------------------------------
 
-While I can read that it's false on native i386, it's a bit misleading
-and in result it's better to introduce a helper for that.
-Grepping other code, I've found that there are already such helpers.
-And the uniq behavior of in_compat_syscall() on x86 is disturbing.
+Other platforms:
+    ------------------------------------------------
+    |  Arch\syscall  |  64-bit  |   compat (32?)   |
+    |----------------------------------------------|
+    |     64-bit     |  false   |       true       |
+    |----------------------------------------------|
+    |    32-bit(?)   |  false   |     <false>      |
+    ------------------------------------------------
 
-Adjusting it to generic with the following..
+As it seen, the result of in_compat_syscall() on generic 32-bit platform
+differs from i686.
 
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86@kernel.org
-Cc: linux-efi@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+There is no reason for in_compat_syscall() == true on native i686.
+It also easy to misread code if the result on native 32-bit platform
+differs between arches.
+Because of that non arch-specific code has many places with:
+    if (IS_ENABLED(CONFIG_COMPAT) && in_compat_syscall())
+in different variations.
 
-Dmitry Safonov (2):
-  x86/compat: Adjust in_compat_syscall() to generic code under !COMPAT
-  compat: Cleanup in_compat_syscall() callers
+It looks-like the only non-x86 code which uses in_compat_syscall() not
+under CONFIG_COMPAT guard is in amd/amdkfd. But according to
+the commit a18069c132cb ("amdkfd: Disable support for 32-bit user
+processes"), it actually should be disabled on native i686.
 
- arch/x86/include/asm/compat.h  |  9 ++++++++-
- arch/x86/include/asm/ftrace.h  |  4 +---
- arch/x86/kernel/process_64.c   |  4 ++--
- arch/x86/kernel/sys_x86_64.c   | 11 ++++++-----
- arch/x86/mm/hugetlbpage.c      |  4 ++--
- arch/x86/mm/mmap.c             |  2 +-
- drivers/firmware/efi/efivars.c | 16 ++++------------
- include/linux/compat.h         |  4 ++--
- kernel/time/time.c             |  2 +-
- net/xfrm/xfrm_state.c          |  2 --
- net/xfrm/xfrm_user.c           |  2 --
- 11 files changed, 27 insertions(+), 33 deletions(-)
+Rename in_compat_syscall() to in_32bit_syscall() for x86-specific code
+and make in_compat_syscall() false under !CONFIG_COMPAT.
 
+With a following patch I'll clean generic users which were forced
+to check IS_ENABLED(CONFIG_COMPAT) with in_compat_syscall().
+
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ arch/x86/include/asm/compat.h |  9 ++++++++-
+ arch/x86/include/asm/ftrace.h |  4 +---
+ arch/x86/kernel/process_64.c  |  4 ++--
+ arch/x86/kernel/sys_x86_64.c  | 11 ++++++-----
+ arch/x86/mm/hugetlbpage.c     |  4 ++--
+ arch/x86/mm/mmap.c            |  2 +-
+ include/linux/compat.h        |  4 ++--
+ 7 files changed, 22 insertions(+), 16 deletions(-)
+
+diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
+index fb97cf7c4137..626bcf1d037d 100644
+--- a/arch/x86/include/asm/compat.h
++++ b/arch/x86/include/asm/compat.h
+@@ -232,11 +232,18 @@ static inline bool in_x32_syscall(void)
+ 	return false;
+ }
+ 
+-static inline bool in_compat_syscall(void)
++static inline bool in_32bit_syscall(void)
+ {
+ 	return in_ia32_syscall() || in_x32_syscall();
+ }
++
++#ifdef CONFIG_COMPAT
++static inline bool in_compat_syscall(void)
++{
++	return in_32bit_syscall();
++}
+ #define in_compat_syscall in_compat_syscall	/* override the generic impl */
++#endif
+ 
+ struct compat_siginfo;
+ int __copy_siginfo_to_user32(struct compat_siginfo __user *to,
+diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
+index c18ed65287d5..cf350639e76d 100644
+--- a/arch/x86/include/asm/ftrace.h
++++ b/arch/x86/include/asm/ftrace.h
+@@ -76,9 +76,7 @@ static inline bool arch_syscall_match_sym_name(const char *sym, const char *name
+ #define ARCH_TRACE_IGNORE_COMPAT_SYSCALLS 1
+ static inline bool arch_trace_is_compat_syscall(struct pt_regs *regs)
+ {
+-	if (in_compat_syscall())
+-		return true;
+-	return false;
++	return in_32bit_syscall();
+ }
+ #endif /* CONFIG_FTRACE_SYSCALLS && CONFIG_IA32_EMULATION */
+ #endif /* !COMPILE_OFFSETS */
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 12bb445fb98d..3a6f3cf27808 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -564,10 +564,10 @@ static void __set_personality_x32(void)
+ 		current->mm->context.ia32_compat = TIF_X32;
+ 	current->personality &= ~READ_IMPLIES_EXEC;
+ 	/*
+-	 * in_compat_syscall() uses the presence of the x32 syscall bit
++	 * in_32bit_syscall() uses the presence of the x32 syscall bit
+ 	 * flag to determine compat status.  The x86 mmap() code relies on
+ 	 * the syscall bitness so set x32 syscall bit right here to make
+-	 * in_compat_syscall() work during exec().
++	 * in_32bit_syscall() work during exec().
+ 	 *
+ 	 * Pretend to come from a x32 execve.
+ 	 */
+diff --git a/arch/x86/kernel/sys_x86_64.c b/arch/x86/kernel/sys_x86_64.c
+index 6a78d4b36a79..f7476ce23b6e 100644
+--- a/arch/x86/kernel/sys_x86_64.c
++++ b/arch/x86/kernel/sys_x86_64.c
+@@ -105,7 +105,7 @@ SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len,
+ static void find_start_end(unsigned long addr, unsigned long flags,
+ 		unsigned long *begin, unsigned long *end)
+ {
+-	if (!in_compat_syscall() && (flags & MAP_32BIT)) {
++	if (!in_32bit_syscall() && (flags & MAP_32BIT)) {
+ 		/* This is usually used needed to map code in small
+ 		   model, so it needs to be in the first 31bit. Limit
+ 		   it to that.  This means we need to move the
+@@ -122,7 +122,7 @@ static void find_start_end(unsigned long addr, unsigned long flags,
+ 	}
+ 
+ 	*begin	= get_mmap_base(1);
+-	if (in_compat_syscall())
++	if (in_32bit_syscall())
+ 		*end = task_size_32bit();
+ 	else
+ 		*end = task_size_64bit(addr > DEFAULT_MAP_WINDOW);
+@@ -193,7 +193,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
+ 		return addr;
+ 
+ 	/* for MAP_32BIT mappings we force the legacy mmap base */
+-	if (!in_compat_syscall() && (flags & MAP_32BIT))
++	if (!in_32bit_syscall() && (flags & MAP_32BIT))
+ 		goto bottomup;
+ 
+ 	/* requesting a specific address */
+@@ -217,9 +217,10 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
+ 	 * If hint address is above DEFAULT_MAP_WINDOW, look for unmapped area
+ 	 * in the full address space.
+ 	 *
+-	 * !in_compat_syscall() check to avoid high addresses for x32.
++	 * !in_32bit_syscall() check to avoid high addresses for x32
++	 * (and make it no op on native i386).
+ 	 */
+-	if (addr > DEFAULT_MAP_WINDOW && !in_compat_syscall())
++	if (addr > DEFAULT_MAP_WINDOW && !in_32bit_syscall())
+ 		info.high_limit += TASK_SIZE_MAX - DEFAULT_MAP_WINDOW;
+ 
+ 	info.align_mask = 0;
+diff --git a/arch/x86/mm/hugetlbpage.c b/arch/x86/mm/hugetlbpage.c
+index 00b296617ca4..92e4c4b85bba 100644
+--- a/arch/x86/mm/hugetlbpage.c
++++ b/arch/x86/mm/hugetlbpage.c
+@@ -92,7 +92,7 @@ static unsigned long hugetlb_get_unmapped_area_bottomup(struct file *file,
+ 	 * If hint address is above DEFAULT_MAP_WINDOW, look for unmapped area
+ 	 * in the full address space.
+ 	 */
+-	info.high_limit = in_compat_syscall() ?
++	info.high_limit = in_32bit_syscall() ?
+ 		task_size_32bit() : task_size_64bit(addr > DEFAULT_MAP_WINDOW);
+ 
+ 	info.align_mask = PAGE_MASK & ~huge_page_mask(h);
+@@ -116,7 +116,7 @@ static unsigned long hugetlb_get_unmapped_area_topdown(struct file *file,
+ 	 * If hint address is above DEFAULT_MAP_WINDOW, look for unmapped area
+ 	 * in the full address space.
+ 	 */
+-	if (addr > DEFAULT_MAP_WINDOW && !in_compat_syscall())
++	if (addr > DEFAULT_MAP_WINDOW && !in_32bit_syscall())
+ 		info.high_limit += TASK_SIZE_MAX - DEFAULT_MAP_WINDOW;
+ 
+ 	info.align_mask = PAGE_MASK & ~huge_page_mask(h);
+diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
+index 48c591251600..36334ce78be8 100644
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -166,7 +166,7 @@ unsigned long get_mmap_base(int is_legacy)
+ 	struct mm_struct *mm = current->mm;
+ 
+ #ifdef CONFIG_HAVE_ARCH_COMPAT_MMAP_BASES
+-	if (in_compat_syscall()) {
++	if (in_32bit_syscall()) {
+ 		return is_legacy ? mm->mmap_compat_legacy_base
+ 				 : mm->mmap_compat_base;
+ 	}
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index c68acc47da57..4dd4b00407ab 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -1031,9 +1031,9 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
+ #else /* !CONFIG_COMPAT */
+ 
+ #define is_compat_task() (0)
+-#ifndef in_compat_syscall
++/* Ensure no one redefines in_compat_syscall() under !CONFIG_COMPAT */
++#define in_compat_syscall in_compat_syscall
+ static inline bool in_compat_syscall(void) { return false; }
+-#endif
+ 
+ #endif /* CONFIG_COMPAT */
+ 
 -- 
 2.13.6
 
