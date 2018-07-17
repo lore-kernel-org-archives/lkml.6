@@ -2,139 +2,116 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8ECECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 969A4ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE8520693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:54:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE8520693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 3ECF120693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 20:59:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O5O5KiR0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ECF120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730397AbeGQV3A (ORCPT
+        id S1730301AbeGQVd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:29:00 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:48314 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729907AbeGQV27 (ORCPT
+        Tue, 17 Jul 2018 17:33:29 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44265 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729675AbeGQVd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:28:59 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6HKsVhF030632;
-        Wed, 18 Jul 2018 05:54:31 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
- Wed, 18 Jul 2018 05:54:31 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6HKsPYv030612
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 18 Jul 2018 05:54:31 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20180707111209.GA27768@gmail.com>
- <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
- <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
- <f486debf-e824-0d0c-c0c9-cf1e278ee9eb@i-love.sakura.ne.jp>
- <218baff7-9473-ac1e-2449-13de98fa6dc9@rasmusvillemoes.dk>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <2c8fe03e-36f5-5126-283c-cabc358a7d52@i-love.sakura.ne.jp>
-Date:   Wed, 18 Jul 2018 05:54:20 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 17 Jul 2018 17:33:29 -0400
+Received: by mail-lf0-f67.google.com with SMTP id g6-v6so1839812lfb.11;
+        Tue, 17 Jul 2018 13:59:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=xQD8rXDSZuNUjODavj/BObqQe1YuTPyRihz1AZ/+1O4=;
+        b=O5O5KiR0qcvMhAgfiCepX2Wjp2X5YbQzXEiMyCtzpHPRsDyuGm+N5HGAYfH1rs/bfZ
+         FPqeJJMl/CNA2fKk/g9eP8RhzpEpBpvFWEEc9cdaIPL9JE5ujLAogZFb4MieW7bAa3aM
+         uPuaMBiaNINJikrpeMjpYsH3MkyTK1QYxhgzLwGBORFfnETx53LfsWMeCj8nVEiYTrSJ
+         YYeqrfIYKu/OpgkMojXILR1ZICZayR3OujDSIytaXOmGzj/gVeT1dHEPPbDhiejLPePs
+         EiX8TAnYAtTSiEqMHz9jUq4nbnC7pBPZYAoh2iR7EXi3Tdw9ylEayzI8OjYbYV+t0v+z
+         Nvkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=xQD8rXDSZuNUjODavj/BObqQe1YuTPyRihz1AZ/+1O4=;
+        b=QQoPlEWdnT8m0u90KL8nNvI5amwwtOzzy43Txw5/i6wRXCsoDGXMTZ2eDx5p/uACMa
+         cn013ROlf1HchyK/sRvLdXCjv/WdJelUapRqPEK8HDdcr6Rwf39bBP+SJCikSVySFiy8
+         DfXfBl65x93KAr/ByeftvvAUUnvYeeDFRwponBEtlHhigKeqRQ447YRxA5SRwGeitF0z
+         AgMvxsrxsTmtslizNpKmKJ3U+6+vkl+Jp2AJdQttKQGDVaVMaqL8GWHsVgi4o6oGMgyb
+         d7BVBGlC57t+hu/qUJWYa9moWuIwUu4q3vCgF6pf3z+wAsHrdVEup4OxVO+RuJ/5hlIw
+         fYsA==
+X-Gm-Message-State: AOUpUlEiBqQDMWqWx4KaBShTfgdahzZP/h3EvB/Uc9YTFu4MioZIeJSC
+        tig2yivpY9PbKfmBQTSso7dYiu87Kodf2jfgHdk=
+X-Google-Smtp-Source: AAOMgpdfBH/3ThwNmGdiXnmKqYdHMVitAFxiNadDAsvx5bxnPjAovUpbNzWjHJ2gdC3nZEzkS/GpoZVHMKymeSbZGH8=
+X-Received: by 2002:a19:a705:: with SMTP id q5-v6mr2321816lfe.148.1531861141737;
+ Tue, 17 Jul 2018 13:59:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <218baff7-9473-ac1e-2449-13de98fa6dc9@rasmusvillemoes.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 13:59:00
+ -0700 (PDT)
+In-Reply-To: <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
+ <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
+ <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
+ <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au> <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
+ <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com> <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 17 Jul 2018 22:59:00 +0200
+X-Google-Sender-Auth: ygSPwkRKrTzzbBxLpxAZEi-9gWY
+Message-ID: <CAK8P3a3Dh+g=v++BMCtmmiOSnVu4CEUgss0U7BZS_K45aTddqg@mail.gmail.com>
+Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Corrected Signed-off-by: addresses.
+On Sun, Jul 15, 2018 at 6:28 AM, Kees Cook <keescook@chromium.org> wrote:
+>
+> After my ahash to shash conversions, only ccm is left as an ahash
+> user, since it actually uses sg. But with the hard-coded value reduced
+> to 376, this doesn't trip the frame warnings any more. :)
+>
+> I'll send an updated series soon.
 
-From 96d9d4d135994a081e54d33d23f5007c53d9b5dd Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Tue, 17 Jul 2018 22:47:11 +0900
-Subject: [PATCH v4] x86: Avoid pr_cont() in show_opcodes()
+Maybe we should get rid of that one as well then and remove
+AHASH_REQUEST_ON_STACK()?
 
-Since syzbot is confused by concurrent printk() messages [1],
-this patch changes show_opcodes() to use %*ph format string.
+I see that Ard (now on Cc) added this usage only recently. Looking
+at the code some more, I also find that the descsize is probably
+much smaller than 376 for all possible cases   of "cbcmac(*)",
+either alg->cra_blocksize plus a few bytes or sizeof(mac_desc_ctx)
+(i.e. 20) for arch/arm64/crypto/aes-glue.c.
 
-When we start adding prefix to each line of printk() output,
-we will be able to handle concurrent printk() messages.
+Walking the sglist here means open-coding a shash_ahash_update()
+implementation in crypto_ccm_auth(), that that doesn't seem to
+add much complexity over what it already has to do to chain
+the sglist today.
 
-[1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
----
- arch/x86/kernel/dumpstack.c | 25 +++++++------------------
- 1 file changed, 7 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index 666a284..ffdd484 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -93,26 +93,15 @@ static void printk_stack_address(unsigned long address, int reliable,
-  */
- void show_opcodes(u8 *rip, const char *loglvl)
- {
--	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
-+	const unsigned int prologue = OPCODE_BUFSIZE * 2 / 3;
- 	u8 opcodes[OPCODE_BUFSIZE];
--	u8 *ip;
--	int i;
- 
--	printk("%sCode: ", loglvl);
--
--	ip = (u8 *)rip - code_prologue;
--	if (probe_kernel_read(opcodes, ip, OPCODE_BUFSIZE)) {
--		pr_cont("Bad RIP value.\n");
--		return;
--	}
--
--	for (i = 0; i < OPCODE_BUFSIZE; i++, ip++) {
--		if (ip == rip)
--			pr_cont("<%02x> ", opcodes[i]);
--		else
--			pr_cont("%02x ", opcodes[i]);
--	}
--	pr_cont("\n");
-+	if (probe_kernel_read(opcodes, rip - prologue, OPCODE_BUFSIZE))
-+		printk("%sCode: Bad RIP value.\n", loglvl);
-+	else
-+		printk("%sCode: %*ph <%02x> %*ph\n", loglvl, prologue, opcodes,
-+		       opcodes[prologue], OPCODE_BUFSIZE - prologue - 1,
-+		       &opcodes[prologue + 1]);
- }
- 
- void show_ip(struct pt_regs *regs, const char *loglvl)
--- 
-1.8.3.1
-
-
-
+      Arnd
