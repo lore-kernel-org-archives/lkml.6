@@ -2,98 +2,104 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9676ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E3CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABEF62083C
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABEF62083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D2C620C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:29:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiTeHX1a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2C620C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbeGQNBi (ORCPT
+        id S1731569AbeGQNCO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 09:01:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45842 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731242AbeGQNBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 09:01:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D61318A;
-        Tue, 17 Jul 2018 05:29:12 -0700 (PDT)
-Received: from [10.1.211.22] (e110467-lin.cambridge.arm.com [10.1.211.22])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C6743F5A0;
-        Tue, 17 Jul 2018 05:29:10 -0700 (PDT)
-Subject: Re: [PATCH] arm64: cpuinfo: Include cleartext implementer and part
- strings
-To:     Olof Johansson <olof@lixom.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-References: <20180715035342.11371-1-olof@lixom.net>
- <f619f0e9-b8b4-29fb-5ad6-7f5ebc3a4da8@arm.com>
- <CAOesGMjq=d3ZPLTq5qudx+EE+XC2-zSsA1ViheTwM7fnTtJh2Q@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <e7e272e0-a7ad-1a97-a081-acf3bfa42b6f@arm.com>
-Date:   Tue, 17 Jul 2018 13:27:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 17 Jul 2018 09:02:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40338 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728515AbeGQNCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 09:02:14 -0400
+Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com [74.125.82.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8604420C0A;
+        Tue, 17 Jul 2018 12:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531830587;
+        bh=O3xvb6Wke7ojEh0Rmt4s5tVke9CS6pW1vIBvxLHz8nA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=RiTeHX1aDP+yA3amjuaa5jNtsl6X2N8mTqCKk7Ti0PPBw27jLeGxE+CBVnXF0RpWC
+         n0UqF/XrCZQu8mjMzA1Md9ERLTucnKOZkiRBBKNBDtCntLvTNc2w1zLMkm0swG+PJ+
+         a4COLZ6JWGoN2BcOD4qShIjdoay/cQSpASxM1LEM=
+Received: by mail-wm0-f46.google.com with SMTP id s14-v6so1345815wmc.1;
+        Tue, 17 Jul 2018 05:29:47 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEzPwwTLB4Ppq70cMTKvf/WTOO2Ern+LS8fGvZWuZ7P7SrMSgWb
+        D/xgT9022+qN0CrlijM7NwOuP4KGiZEqf3ox+To=
+X-Google-Smtp-Source: AAOMgpelckraYnH3Y6FSecJQEh9+0IiSSQ2j9Efd2Cvd3jyp+GKfd3mNJazY9xgGm2poMZb82UBjoOLJ0zMZHcDcwZY=
+X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr1261579wma.72.1531830586094;
+ Tue, 17 Jul 2018 05:29:46 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAOesGMjq=d3ZPLTq5qudx+EE+XC2-zSsA1ViheTwM7fnTtJh2Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:29:45
+ -0700 (PDT)
+In-Reply-To: <1531822342-4293-5-git-send-email-linux.amoon@gmail.com>
+References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com> <1531822342-4293-5-git-send-email-linux.amoon@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 17 Jul 2018 14:29:45 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPc256dCWWWaoJBOB9NUc=CUYtqgfeKh=LBOoFAfh_T8Ng@mail.gmail.com>
+Message-ID: <CAJKOXPc256dCWWWaoJBOB9NUc=CUYtqgfeKh=LBOoFAfh_T8Ng@mail.gmail.com>
+Subject: Re: [PATCH 5/5] ARM: dts: exynos: add tmu aliases nodes
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/07/18 15:34, Olof Johansson wrote:
-[...]
-> There's also a growing expectation of the system to behave more like
-> x86, especially when it comes to trivial ways of detecting what kind
-> of machine you are running on. On x86 it's been trivial to look at
-> /proc/cpuinfo since it is provided by the platform there. Nobody wants
-> to change their implementation from having to read a file to exec a
-> program, dealing with errors, and parsing its output (sure, easier
-> from scripts, but more awkward from real source).
+On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
+> add tmuctrl aliases node for exynos542x
 
-The thing with the "be more like x86" argument is that it never actually 
-stands up to scrutiny. What is proposed here (again) is for the kernel 
-to decode the raw MIDR description of the *CPU core microarchitecture* 
-to a human-readable string. What does the nearest Intel box say about 
-its microarchitecture name?
+Please use full sentence, starting with capital letter and ending with
+a dot. Also please explain why you need tmuctrl aliases.
 
-cpu family	: 6
-model		: 79
+>
+> CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts         |  8 ++++----
+>  arch/arm/boot/dts/exynos5420.dtsi                  | 20 ++++++++++++--------
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi      |  8 ++++----
+>  arch/arm/boot/dts/exynos5422-odroidhc1.dts         |  8 ++++----
+>  arch/arm/boot/dts/exynos5422-odroidxu3-common.dtsi |  8 ++++----
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts          |  8 ++++----
+>  6 files changed, 32 insertions(+), 28 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index 57c2332..ff79f0b 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -1061,19 +1061,19 @@
+>         status = "okay";
+>  };
+>
+> -&tmu_cpu0 {
+> +&tmu_cpu_0 {
 
-OK, I had to go and look up that that apparently implies "Broadwell", so 
-the x86 kernel is in fact no more helpful in that regard than arm64.
+This looks irrelevant to the topic of adding aliases.
 
-Furthermore, telling the user that they have have 4 "Cortex-A53" cores 
-vs. 4 "part: 0xd03" cores doesn't actually give them any more meaningful 
-information about their *system*, because that example reflects about 
-half the low-to-mid-range SoCs on the market today. What the "model 
-name" on x86 describes is a specific processor SKU, of which Arm has no 
-*architectural* equivalent, for reasons which should hopefully be 
-obvious from the fundamental differences in the business models driving 
-the respective architectures.
-
-And yet whenever /proc/cpuinfo/ comes up, nobody ever seems to ask for 
-some kind of SoC identifier in there; it's always just decoding MIDR 
-into a microarchitecture name, which implies that all these people want 
-is to see a string for the sake of seeing a string, regardless of how 
-meaningful it actually might be (and yes, I do realise that in *some* 
-cases a CPU core is essentially unique to a particular SoC, but we have 
-to look at the big picture here).
-
-In summary; when a small minority of users are complaining that oranges 
-aren't apples, the sensible response is not to start debating whether to 
-paint the oranges green or red.
-
-Robin.
+Best regards,
+Krzysztof
