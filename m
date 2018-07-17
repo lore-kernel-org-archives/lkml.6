@@ -2,254 +2,115 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F75FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977C6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2663220C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:27:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2663220C09
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B46520C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:28:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSrtmiqC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B46520C09
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbeGQM7w (ORCPT
+        id S1731584AbeGQNAi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:59:52 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37859 "EHLO mail.bootlin.com"
+        Tue, 17 Jul 2018 09:00:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731465AbeGQM7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:59:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 76C2620884; Tue, 17 Jul 2018 14:27:25 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 24E3B206ED;
-        Tue, 17 Jul 2018 14:27:15 +0200 (CEST)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: [PATCH v2] drm/sun4i: sun8i: Avoid clearing blending order at each atomic commit
-Date:   Tue, 17 Jul 2018 14:25:22 +0200
-Message-Id: <20180717122522.11327-1-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730246AbeGQNAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 09:00:37 -0400
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EE5021470;
+        Tue, 17 Jul 2018 12:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531830491;
+        bh=SMTmtmaZDXjs7VA9RSDWfoAg6up0p+yoME3FOuqVAXg=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=YSrtmiqCAnjqANaFTxIohhxJ6qWffa4etCGGMKvOj8/izsp9loj+NDFo/JTO/hn8h
+         l/UTpybupErkWTEfG+H83a7rDJ1LdAGvAdxMlcmc9HuTAPwd/sKPzoEo7mdO54Cqv/
+         FAhVvD/5dDPT897Mh/0T3pqDLh37Lux/FOB5ldTQ=
+Received: by mail-wr1-f45.google.com with SMTP id c13-v6so1091803wrt.1;
+        Tue, 17 Jul 2018 05:28:11 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHC/2mxI4/PKTeEMbA2kWP71YNLUfnCeYeD32aaFgt7A6Pv3Wql
+        WrN8tg1VReyBZVzwPJ00KU5r/iNQZxK8beEHwm8=
+X-Google-Smtp-Source: AAOMgpck+9Qm1j81Hg5efyGCKA3IBeNpz98KMdUoTnQrHiDPjkQUuueYxBvSTTEqqzxqLqXqf4RehZuwDJguZIvH7Y4=
+X-Received: by 2002:adf:81a3:: with SMTP id 32-v6mr1334813wra.9.1531830490049;
+ Tue, 17 Jul 2018 05:28:10 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:28:09
+ -0700 (PDT)
+In-Reply-To: <1531822342-4293-4-git-send-email-linux.amoon@gmail.com>
+References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com> <1531822342-4293-4-git-send-email-linux.amoon@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 17 Jul 2018 14:28:09 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfOiTARmtkcJeC49RicWOt8q98GKPJOQkYmqG_nJtY=aQ@mail.gmail.com>
+Message-ID: <CAJKOXPfOiTARmtkcJeC49RicWOt8q98GKPJOQkYmqG_nJtY=aQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] thermal: exynos: fixed the efuse min/max value for exynos5422
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Blending order is set based on the z position of each DRM plane. The
-blending order register is currently cleared at each atomic DRM commit,
-with the intent that each committed plane will set the appropriate
-bits (based on its z-pos) when enabling the plane.
+On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
+> e-fuse range min~max range is 16~76. if e-fuse value is out of
 
-However, it sometimes happens that a particular plane is left unchanged
-by an atomic commit and thus will not be configured again. In that
-scenario, blending order is cleared and only the bits relevant for the
-planes affected by the commit are set. This leaves the planes that did
-not change without their blending order set in the register, leading
-to that plane not being displayed.
+s/e-fuse/Fuse/
+s/if/If/
 
-Instead of clearing the blending order register at every atomic commit,
-this change moves the register's initial clear at bind time and only
-clears the bits for a specific plane when disabling it or changing its
-zpos.
+Can you share the sources confirming that fuse values are between 16 and 76?
 
-This way, planes that are left untouched by a DRM atomic commit are
-no longer disabled.
+Best regards,
+Krzysztof
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- drivers/gpu/drm/sun4i/sun8i_mixer.c    | 15 +++------------
- drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 24 ++++++++++++++++++++----
- drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 24 ++++++++++++++++++++----
- 3 files changed, 43 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-index 8e81c24d736e..12cb7183ce51 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-@@ -260,17 +260,6 @@ const struct de2_fmt_info *sun8i_mixer_format_info(u32 format)
- 	return NULL;
- }
- 
--static void sun8i_mixer_atomic_begin(struct sunxi_engine *engine,
--				     struct drm_crtc_state *old_state)
--{
--	/*
--	 * Disable all pipes at the beginning. They will be enabled
--	 * again if needed in plane update callback.
--	 */
--	regmap_update_bits(engine->regs, SUN8I_MIXER_BLEND_PIPE_CTL,
--			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
--}
--
- static void sun8i_mixer_commit(struct sunxi_engine *engine)
- {
- 	DRM_DEBUG_DRIVER("Committing changes\n");
-@@ -322,7 +311,6 @@ static struct drm_plane **sun8i_layers_init(struct drm_device *drm,
- }
- 
- static const struct sunxi_engine_ops sun8i_engine_ops = {
--	.atomic_begin	= sun8i_mixer_atomic_begin,
- 	.commit		= sun8i_mixer_commit,
- 	.layers_init	= sun8i_layers_init,
- };
-@@ -449,6 +437,9 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
- 		regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_MODE(i),
- 			     SUN8I_MIXER_BLEND_MODE_DEF);
- 
-+	regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL,
-+			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
-+
- 	return 0;
- 
- err_disable_bus_clk:
-diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-index 518e1921f47e..28c15c6ef1ef 100644
---- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-@@ -27,7 +27,8 @@
- #include "sun8i_ui_scaler.h"
- 
- static void sun8i_ui_layer_enable(struct sun8i_mixer *mixer, int channel,
--				  int overlay, bool enable, unsigned int zpos)
-+				  int overlay, bool enable, unsigned int zpos,
-+				  unsigned int old_zpos)
- {
- 	u32 val;
- 
-@@ -43,6 +44,18 @@ static void sun8i_ui_layer_enable(struct sun8i_mixer *mixer, int channel,
- 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(channel, overlay),
- 			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR_EN, val);
- 
-+	if (!enable || zpos != old_zpos) {
-+		regmap_update_bits(mixer->engine.regs,
-+				   SUN8I_MIXER_BLEND_PIPE_CTL,
-+				   SUN8I_MIXER_BLEND_PIPE_CTL_EN(old_zpos),
-+				   0);
-+
-+		regmap_update_bits(mixer->engine.regs,
-+				   SUN8I_MIXER_BLEND_ROUTE,
-+				   SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(old_zpos),
-+				   0);
-+	}
-+
- 	if (enable) {
- 		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
- 
-@@ -242,9 +255,11 @@ static void sun8i_ui_layer_atomic_disable(struct drm_plane *plane,
- 					  struct drm_plane_state *old_state)
- {
- 	struct sun8i_ui_layer *layer = plane_to_sun8i_ui_layer(plane);
-+	unsigned int old_zpos = old_state->normalized_zpos;
- 	struct sun8i_mixer *mixer = layer->mixer;
- 
--	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay, false, 0);
-+	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay, false, 0,
-+			      old_zpos);
- }
- 
- static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
-@@ -252,11 +267,12 @@ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
- {
- 	struct sun8i_ui_layer *layer = plane_to_sun8i_ui_layer(plane);
- 	unsigned int zpos = plane->state->normalized_zpos;
-+	unsigned int old_zpos = old_state->normalized_zpos;
- 	struct sun8i_mixer *mixer = layer->mixer;
- 
- 	if (!plane->state->visible) {
- 		sun8i_ui_layer_enable(mixer, layer->channel,
--				      layer->overlay, false, 0);
-+				      layer->overlay, false, 0, old_zpos);
- 		return;
- 	}
- 
-@@ -267,7 +283,7 @@ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
- 	sun8i_ui_layer_update_buffer(mixer, layer->channel,
- 				     layer->overlay, plane);
- 	sun8i_ui_layer_enable(mixer, layer->channel, layer->overlay,
--			      true, zpos);
-+			      true, zpos, old_zpos);
- }
- 
- static struct drm_plane_helper_funcs sun8i_ui_layer_helper_funcs = {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-index 17e0d00cfd8a..f4fe97813f94 100644
---- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-@@ -21,7 +21,8 @@
- #include "sun8i_vi_scaler.h"
- 
- static void sun8i_vi_layer_enable(struct sun8i_mixer *mixer, int channel,
--				  int overlay, bool enable, unsigned int zpos)
-+				  int overlay, bool enable, unsigned int zpos,
-+				  unsigned int old_zpos)
- {
- 	u32 val;
- 
-@@ -37,6 +38,18 @@ static void sun8i_vi_layer_enable(struct sun8i_mixer *mixer, int channel,
- 			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR(channel, overlay),
- 			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR_EN, val);
- 
-+	if (!enable || zpos != old_zpos) {
-+		regmap_update_bits(mixer->engine.regs,
-+				   SUN8I_MIXER_BLEND_PIPE_CTL,
-+				   SUN8I_MIXER_BLEND_PIPE_CTL_EN(old_zpos),
-+				   0);
-+
-+		regmap_update_bits(mixer->engine.regs,
-+				   SUN8I_MIXER_BLEND_ROUTE,
-+				   SUN8I_MIXER_BLEND_ROUTE_PIPE_MSK(old_zpos),
-+				   0);
-+	}
-+
- 	if (enable) {
- 		val = SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
- 
-@@ -270,9 +283,11 @@ static void sun8i_vi_layer_atomic_disable(struct drm_plane *plane,
- 					  struct drm_plane_state *old_state)
- {
- 	struct sun8i_vi_layer *layer = plane_to_sun8i_vi_layer(plane);
-+	unsigned int old_zpos = old_state->normalized_zpos;
- 	struct sun8i_mixer *mixer = layer->mixer;
- 
--	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay, false, 0);
-+	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay, false, 0,
-+			      old_zpos);
- }
- 
- static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
-@@ -280,11 +295,12 @@ static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
- {
- 	struct sun8i_vi_layer *layer = plane_to_sun8i_vi_layer(plane);
- 	unsigned int zpos = plane->state->normalized_zpos;
-+	unsigned int old_zpos = old_state->normalized_zpos;
- 	struct sun8i_mixer *mixer = layer->mixer;
- 
- 	if (!plane->state->visible) {
- 		sun8i_vi_layer_enable(mixer, layer->channel,
--				      layer->overlay, false, 0);
-+				      layer->overlay, false, 0, old_zpos);
- 		return;
- 	}
- 
-@@ -295,7 +311,7 @@ static void sun8i_vi_layer_atomic_update(struct drm_plane *plane,
- 	sun8i_vi_layer_update_buffer(mixer, layer->channel,
- 				     layer->overlay, plane);
- 	sun8i_vi_layer_enable(mixer, layer->channel, layer->overlay,
--			      true, zpos);
-+			      true, zpos, old_zpos);
- }
- 
- static struct drm_plane_helper_funcs sun8i_vi_layer_helper_funcs = {
--- 
-2.17.1
-
+> this range, then thermal sensor may not sense thermal data properly.
+>
+> CC: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 4a2733c..6481d91 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -940,11 +940,13 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>                 data->reference_voltage = 16;
+>                 data->efuse_value = 55;
+>                 if (data->soc != SOC_ARCH_EXYNOS5420 &&
+> -                   data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO)
+> +                   data->soc != SOC_ARCH_EXYNOS5420_TRIMINFO) {
+> +                       data->min_efuse_value = 16;
+> +                       data->max_efuse_value = 76;
+> +               } else {
+>                         data->min_efuse_value = 40;
+> -               else
+> -                       data->min_efuse_value = 0;
+> -               data->max_efuse_value = 100;
+> +                       data->max_efuse_value = 100;
+> +               }
+>                 break;
+>         case SOC_ARCH_EXYNOS5433:
+>                 data->tmu_set_trip_temp = exynos5433_tmu_set_trip_temp;
+> --
+> 2.7.4
+>
