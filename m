@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFBCECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31A8EECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41D4208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41D4208AD
+	by mail.kernel.org (Postfix) with ESMTP id DEF15208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:22:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF15208AD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731546AbeGQLyC (ORCPT
+        id S1731488AbeGQLx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:54:02 -0400
-Received: from mga17.intel.com ([192.55.52.151]:62278 "EHLO mga17.intel.com"
+        Tue, 17 Jul 2018 07:53:59 -0400
+Received: from mga01.intel.com ([192.55.52.88]:16951 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730180AbeGQLyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:54:01 -0400
+        id S1731458AbeGQLx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:53:59 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:44 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:21:50 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="57508412"
+   d="scan'208";a="58320644"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 17 Jul 2018 04:21:42 -0700
+  by orsmga006.jf.intel.com with ESMTP; 17 Jul 2018 04:21:45 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id AE18C166; Tue, 17 Jul 2018 14:21:48 +0300 (EEST)
+        id 293D270F; Tue, 17 Jul 2018 14:21:49 +0300 (EEST)
 From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -43,9 +43,9 @@ Cc:     Dave Hansen <dave.hansen@intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCHv5 01/19] mm: Do no merge VMAs with different encryption KeyIDs
-Date:   Tue, 17 Jul 2018 14:20:11 +0300
-Message-Id: <20180717112029.42378-2-kirill.shutemov@linux.intel.com>
+Subject: [PATCHv5 11/19] x86/mm: Implement vma_keyid()
+Date:   Tue, 17 Jul 2018 14:20:21 +0300
+Message-Id: <20180717112029.42378-12-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
 References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
@@ -54,246 +54,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VMAs with different KeyID do not mix together. Only VMAs with the same
-KeyID are compatible.
+We store KeyID in upper bits for vm_page_prot that match position of
+KeyID in PTE. vma_keyid() extracts KeyID from vm_page_prot.
+
+With KeyID in vm_page_prot we don't need to modify any page table helper
+to propagate the KeyID to page table entires.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 ---
- fs/userfaultfd.c   |  7 ++++---
- include/linux/mm.h |  9 ++++++++-
- mm/madvise.c       |  2 +-
- mm/mempolicy.c     |  3 ++-
- mm/mlock.c         |  2 +-
- mm/mmap.c          | 31 +++++++++++++++++++------------
- mm/mprotect.c      |  2 +-
- 7 files changed, 36 insertions(+), 20 deletions(-)
+ arch/x86/include/asm/mktme.h |  5 +++++
+ arch/x86/mm/mktme.c          | 12 ++++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 594d192b2331..bb0db9f9d958 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -890,7 +890,7 @@ static int userfaultfd_release(struct inode *inode, struct file *file)
- 				 new_flags, vma->anon_vma,
- 				 vma->vm_file, vma->vm_pgoff,
- 				 vma_policy(vma),
--				 NULL_VM_UFFD_CTX);
-+				 NULL_VM_UFFD_CTX, vma_keyid(vma));
- 		if (prev)
- 			vma = prev;
- 		else
-@@ -1423,7 +1423,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
- 		prev = vma_merge(mm, prev, start, vma_end, new_flags,
- 				 vma->anon_vma, vma->vm_file, vma->vm_pgoff,
- 				 vma_policy(vma),
--				 ((struct vm_userfaultfd_ctx){ ctx }));
-+				 ((struct vm_userfaultfd_ctx){ ctx }),
-+				 vma_keyid(vma));
- 		if (prev) {
- 			vma = prev;
- 			goto next;
-@@ -1581,7 +1582,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
- 		prev = vma_merge(mm, prev, start, vma_end, new_flags,
- 				 vma->anon_vma, vma->vm_file, vma->vm_pgoff,
- 				 vma_policy(vma),
--				 NULL_VM_UFFD_CTX);
-+				 NULL_VM_UFFD_CTX, vma_keyid(vma));
- 		if (prev) {
- 			vma = prev;
- 			goto next;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 9a35362bbc92..c8780c5835ad 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1544,6 +1544,13 @@ static inline bool vma_is_anonymous(struct vm_area_struct *vma)
- 	return vma->vm_ops == &anon_vm_ops;
- }
+diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
+index 7266494b4f0a..f0b7844e36a4 100644
+--- a/arch/x86/include/asm/mktme.h
++++ b/arch/x86/include/asm/mktme.h
+@@ -4,6 +4,8 @@
+ #include <linux/types.h>
+ #include <linux/page_ext.h>
  
-+#ifndef vma_keyid
-+static inline int vma_keyid(struct vm_area_struct *vma)
-+{
-+	return 0;
-+}
-+#endif
++struct vm_area_struct;
 +
- #ifdef CONFIG_SHMEM
- /*
-  * The vma_is_shmem is not inline because it is used only by slow
-@@ -2219,7 +2226,7 @@ static inline int vma_adjust(struct vm_area_struct *vma, unsigned long start,
- extern struct vm_area_struct *vma_merge(struct mm_struct *,
- 	struct vm_area_struct *prev, unsigned long addr, unsigned long end,
- 	unsigned long vm_flags, struct anon_vma *, struct file *, pgoff_t,
--	struct mempolicy *, struct vm_userfaultfd_ctx);
-+	struct mempolicy *, struct vm_userfaultfd_ctx, int keyid);
- extern struct anon_vma *find_mergeable_anon_vma(struct vm_area_struct *);
- extern int __split_vma(struct mm_struct *, struct vm_area_struct *,
- 	unsigned long addr, int new_below);
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 4d3c922ea1a1..c88fb12be6e5 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -138,7 +138,7 @@ static long madvise_behavior(struct vm_area_struct *vma,
- 	pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
- 	*prev = vma_merge(mm, *prev, start, end, new_flags, vma->anon_vma,
- 			  vma->vm_file, pgoff, vma_policy(vma),
--			  vma->vm_userfaultfd_ctx);
-+			  vma->vm_userfaultfd_ctx, vma_keyid(vma));
- 	if (*prev) {
- 		vma = *prev;
- 		goto success;
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index f0fcf70bcec7..581b729e05a0 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -705,7 +705,8 @@ static int mbind_range(struct mm_struct *mm, unsigned long start,
- 			((vmstart - vma->vm_start) >> PAGE_SHIFT);
- 		prev = vma_merge(mm, prev, vmstart, vmend, vma->vm_flags,
- 				 vma->anon_vma, vma->vm_file, pgoff,
--				 new_pol, vma->vm_userfaultfd_ctx);
-+				 new_pol, vma->vm_userfaultfd_ctx,
-+				 vma_keyid(vma));
- 		if (prev) {
- 			vma = prev;
- 			next = vma->vm_next;
-diff --git a/mm/mlock.c b/mm/mlock.c
-index 74e5a6547c3d..3c96321b66bb 100644
---- a/mm/mlock.c
-+++ b/mm/mlock.c
-@@ -534,7 +534,7 @@ static int mlock_fixup(struct vm_area_struct *vma, struct vm_area_struct **prev,
- 	pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
- 	*prev = vma_merge(mm, *prev, start, end, newflags, vma->anon_vma,
- 			  vma->vm_file, pgoff, vma_policy(vma),
--			  vma->vm_userfaultfd_ctx);
-+			  vma->vm_userfaultfd_ctx, vma_keyid(vma));
- 	if (*prev) {
- 		vma = *prev;
- 		goto success;
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 180f19dfb83f..4c604eb644b4 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -984,7 +984,8 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
-  */
- static inline int is_mergeable_vma(struct vm_area_struct *vma,
- 				struct file *file, unsigned long vm_flags,
--				struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-+				struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-+				int keyid)
- {
- 	/*
- 	 * VM_SOFTDIRTY should not prevent from VMA merging, if we
-@@ -998,6 +999,8 @@ static inline int is_mergeable_vma(struct vm_area_struct *vma,
- 		return 0;
- 	if (vma->vm_file != file)
- 		return 0;
-+	if (vma_keyid(vma) != keyid)
+ #ifdef CONFIG_X86_INTEL_MKTME
+ extern phys_addr_t mktme_keyid_mask;
+ extern int mktme_nr_keyids;
+@@ -14,6 +16,9 @@ extern struct page_ext_operations page_mktme_ops;
+ #define page_keyid page_keyid
+ int page_keyid(const struct page *page);
+ 
++#define vma_keyid vma_keyid
++int vma_keyid(struct vm_area_struct *vma);
++
+ #else
+ #define mktme_keyid_mask	((phys_addr_t)0)
+ #define mktme_nr_keyids		0
+diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
+index 09cbff678b9f..a1f40ee61b25 100644
+--- a/arch/x86/mm/mktme.c
++++ b/arch/x86/mm/mktme.c
+@@ -1,3 +1,4 @@
++#include <linux/mm.h>
+ #include <asm/mktme.h>
+ 
+ phys_addr_t mktme_keyid_mask;
+@@ -37,3 +38,14 @@ struct page_ext_operations page_mktme_ops = {
+ 	.need = need_page_mktme,
+ 	.init = init_page_mktme,
+ };
++
++int vma_keyid(struct vm_area_struct *vma)
++{
++	pgprotval_t prot;
++
++	if (!mktme_enabled())
 +		return 0;
- 	if (vma->vm_ops->close)
- 		return 0;
- 	if (!is_mergeable_vm_userfaultfd_ctx(vma, vm_userfaultfd_ctx))
-@@ -1034,9 +1037,10 @@ static int
- can_vma_merge_before(struct vm_area_struct *vma, unsigned long vm_flags,
- 		     struct anon_vma *anon_vma, struct file *file,
- 		     pgoff_t vm_pgoff,
--		     struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-+		     struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-+		     int keyid)
- {
--	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx) &&
-+	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx, keyid) &&
- 	    is_mergeable_anon_vma(anon_vma, vma->anon_vma, vma)) {
- 		if (vma->vm_pgoff == vm_pgoff)
- 			return 1;
-@@ -1055,9 +1059,10 @@ static int
- can_vma_merge_after(struct vm_area_struct *vma, unsigned long vm_flags,
- 		    struct anon_vma *anon_vma, struct file *file,
- 		    pgoff_t vm_pgoff,
--		    struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-+		    struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-+		    int keyid)
- {
--	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx) &&
-+	if (is_mergeable_vma(vma, file, vm_flags, vm_userfaultfd_ctx, keyid) &&
- 	    is_mergeable_anon_vma(anon_vma, vma->anon_vma, vma)) {
- 		pgoff_t vm_pglen;
- 		vm_pglen = vma_pages(vma);
-@@ -1112,7 +1117,8 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
- 			unsigned long end, unsigned long vm_flags,
- 			struct anon_vma *anon_vma, struct file *file,
- 			pgoff_t pgoff, struct mempolicy *policy,
--			struct vm_userfaultfd_ctx vm_userfaultfd_ctx)
-+			struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
-+			int keyid)
- {
- 	pgoff_t pglen = (end - addr) >> PAGE_SHIFT;
- 	struct vm_area_struct *area, *next;
-@@ -1145,7 +1151,7 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
- 			mpol_equal(vma_policy(prev), policy) &&
- 			can_vma_merge_after(prev, vm_flags,
- 					    anon_vma, file, pgoff,
--					    vm_userfaultfd_ctx)) {
-+					    vm_userfaultfd_ctx, keyid)) {
- 		/*
- 		 * OK, it can.  Can we now merge in the successor as well?
- 		 */
-@@ -1154,7 +1160,8 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
- 				can_vma_merge_before(next, vm_flags,
- 						     anon_vma, file,
- 						     pgoff+pglen,
--						     vm_userfaultfd_ctx) &&
-+						     vm_userfaultfd_ctx,
-+						     keyid) &&
- 				is_mergeable_anon_vma(prev->anon_vma,
- 						      next->anon_vma, NULL)) {
- 							/* cases 1, 6 */
-@@ -1177,7 +1184,7 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
- 			mpol_equal(policy, vma_policy(next)) &&
- 			can_vma_merge_before(next, vm_flags,
- 					     anon_vma, file, pgoff+pglen,
--					     vm_userfaultfd_ctx)) {
-+					     vm_userfaultfd_ctx, keyid)) {
- 		if (prev && addr < prev->vm_end)	/* case 4 */
- 			err = __vma_adjust(prev, prev->vm_start,
- 					 addr, prev->vm_pgoff, NULL, next);
-@@ -1722,7 +1729,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	 * Can we just expand an old mapping?
- 	 */
- 	vma = vma_merge(mm, prev, addr, addr + len, vm_flags,
--			NULL, file, pgoff, NULL, NULL_VM_UFFD_CTX);
-+			NULL, file, pgoff, NULL, NULL_VM_UFFD_CTX, 0);
- 	if (vma)
- 		goto out;
- 
-@@ -2987,7 +2994,7 @@ static int do_brk_flags(unsigned long addr, unsigned long len, unsigned long fla
- 
- 	/* Can we just expand an old private anonymous mapping? */
- 	vma = vma_merge(mm, prev, addr, addr + len, flags,
--			NULL, NULL, pgoff, NULL, NULL_VM_UFFD_CTX);
-+			NULL, NULL, pgoff, NULL, NULL_VM_UFFD_CTX, 0);
- 	if (vma)
- 		goto out;
- 
-@@ -3189,7 +3196,7 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
- 		return NULL;	/* should never get here */
- 	new_vma = vma_merge(mm, prev, addr, addr + len, vma->vm_flags,
- 			    vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
--			    vma->vm_userfaultfd_ctx);
-+			    vma->vm_userfaultfd_ctx, vma_keyid(vma));
- 	if (new_vma) {
- 		/*
- 		 * Source vma may have been merged into new_vma
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 625608bc8962..68dc476310c0 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -349,7 +349,7 @@ mprotect_fixup(struct vm_area_struct *vma, struct vm_area_struct **pprev,
- 	pgoff = vma->vm_pgoff + ((start - vma->vm_start) >> PAGE_SHIFT);
- 	*pprev = vma_merge(mm, *pprev, start, end, newflags,
- 			   vma->anon_vma, vma->vm_file, pgoff, vma_policy(vma),
--			   vma->vm_userfaultfd_ctx);
-+			   vma->vm_userfaultfd_ctx, vma_keyid(vma));
- 	if (*pprev) {
- 		vma = *pprev;
- 		VM_WARN_ON((vma->vm_flags ^ newflags) & ~VM_SOFTDIRTY);
++
++	prot = pgprot_val(vma->vm_page_prot);
++	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
++}
 -- 
 2.18.0
 
