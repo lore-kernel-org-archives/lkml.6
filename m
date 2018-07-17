@@ -2,131 +2,109 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83883ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC51ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ADE320BED
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ADE320BED
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 76AA020C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:37:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="xpWW6oTs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76AA020C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730742AbeGQKIu (ORCPT
+        id S1730926AbeGQKIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:08:50 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:51177 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729640AbeGQKIt (ORCPT
+        Tue, 17 Jul 2018 06:08:53 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:34042 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729640AbeGQKIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:08:49 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9aiBB1463713
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 02:36:44 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9ahFF1463710;
-        Tue, 17 Jul 2018 02:36:44 -0700
-Date:   Tue, 17 Jul 2018 02:36:44 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rik van Riel <tipbot@zytor.com>
-Message-ID: <tip-e9d8c61557687b7126101e9550bdf243223f0d8f@git.kernel.org>
-Cc:     tglx@linutronix.de, peterz@infradead.org, hpa@zytor.com,
-        torvalds@linux-foundation.org, riel@surriel.com,
-        songliubraving@fb.com, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, dave.hansen@intel.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          dave.hansen@intel.com, hpa@zytor.com, peterz@infradead.org,
-          mingo@kernel.org, songliubraving@fb.com,
-          torvalds@linux-foundation.org, riel@surriel.com
-In-Reply-To: <20180716190337.26133-8-riel@surriel.com>
-References: <20180716190337.26133-8-riel@surriel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/mm/tlb: Skip atomic operations for 'init_mm' in
- switch_mm_irqs_off()
-Git-Commit-ID: e9d8c61557687b7126101e9550bdf243223f0d8f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 17 Jul 2018 06:08:52 -0400
+Received: by mail-lf0-f68.google.com with SMTP id n96-v6so361358lfi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 02:37:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oqxkWcRxBMfo/zP/kCfOB/czMGRIlqWHAllG89WBNzE=;
+        b=xpWW6oTstwopWDBEXmYynYpQMwcACojTiWKVTEmNCZmXeX1yBBiq1+QCxP7ACDeO07
+         IWwhZb+3k2UT6//2JExYJuBJk1FPlbvu3r3ncRWbO4t8L52Yvbmydw63Ltb7ONxy4dZz
+         lCb9NxpmlmJ8rR5RnAiXc+rKXRQ7oMMWDP9P/FmR3bd2U1DvvTNDvixueSd+7hQqP3f4
+         O6VHJOn2FXThN57fOdKv9ZRM2OECkxVaQZhKPmaSTy2Z+9GRGNx8o0g9sx4S2XJEiPuz
+         BzzGbpEAm+yB+E66sgpad1S9UawM0aE2e3KokAe58R9PQjmUWDgF1TBNizdMuFgS6o/8
+         tH2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oqxkWcRxBMfo/zP/kCfOB/czMGRIlqWHAllG89WBNzE=;
+        b=XjqXWsCxLe0j/V6IwKM7H53meANGu+0Bo32ptUF9enOc3iK050twoME5Kg7IYVNrI7
+         hmGMIIwqzP7DChMOkI0k6IdV7NcuTCCISsTKdFBdqtmWU8vga84IYuFlOQgiJnU8rwdS
+         JmTBh2hZer1Tv7I9zeFak69OlP5TatB/coqTr83Iw9B06HWiodWMmZ9+9EP267yMYTvZ
+         3D338fGnkI7PO6KS5qUcAVl4Bf/ocTrBH112vLcJVD/BKc6S0h5m2vaKKNK0NiMsc7qe
+         VDcOJNlPyh/SVRbHmG2uu4nkagB6VippcneAus47p/45PMCw1ip67jcqCKN2beBukNea
+         s1+Q==
+X-Gm-Message-State: AOUpUlFM/9bO3yYJOA/fu+wGtq8ozos1irLRD2FRpZzcCZ2mH7n8SJ+q
+        6BwbFzlIB8PF0hPqvT/usFjtkq7Qv3A=
+X-Google-Smtp-Source: AAOMgpejhhRmD+vCIYsN/erZBmST4gNBfdU1T1bUETf32VAwEqfnJU2uoUUZCTLzmY43wDwKIIi5Hw==
+X-Received: by 2002:a19:138b:: with SMTP id 11-v6mr790129lft.74.1531820227536;
+        Tue, 17 Jul 2018 02:37:07 -0700 (PDT)
+Received: from [192.168.0.126] ([31.173.86.160])
+        by smtp.gmail.com with ESMTPSA id q65-v6sm84841lfb.80.2018.07.17.02.37.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 02:37:06 -0700 (PDT)
+Subject: Re: [PATCH net-next 7/9] net: hns3: Fix for reset_level default
+ assignment probelm
+To:     Salil Mehta <salil.mehta@huawei.com>, davem@davemloft.net
+Cc:     yisen.zhuang@huawei.com, lipeng321@huawei.com,
+        mehta.salil@opnsrc.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+        Yunsheng Lin <linyunsheng@huawei.com>
+References: <20180716153627.476-1-salil.mehta@huawei.com>
+ <20180716153627.476-8-salil.mehta@huawei.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <5b83ce92-a9bd-df76-4566-f5b2e1cce86e@cogentembedded.com>
+Date:   Tue, 17 Jul 2018 12:37:06 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180716153627.476-8-salil.mehta@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e9d8c61557687b7126101e9550bdf243223f0d8f
-Gitweb:     https://git.kernel.org/tip/e9d8c61557687b7126101e9550bdf243223f0d8f
-Author:     Rik van Riel <riel@surriel.com>
-AuthorDate: Mon, 16 Jul 2018 15:03:37 -0400
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 17 Jul 2018 09:35:34 +0200
+Hello!
 
-x86/mm/tlb: Skip atomic operations for 'init_mm' in switch_mm_irqs_off()
+On 7/16/2018 6:36 PM, Salil Mehta wrote:
 
-Song Liu noticed switch_mm_irqs_off() taking a lot of CPU time in recent
-kernels,using 1.8% of a 48 CPU system during a netperf to localhost run.
-Digging into the profile, we noticed that cpumask_clear_cpu and
-cpumask_set_cpu together take about half of the CPU time taken by
-switch_mm_irqs_off().
+> From: Yunsheng Lin <linyunsheng@huawei.com>
+> 
+> handle->reset_level is assigned to HNAE3_NONE_RESET when client is
+> initialized, if a tx timeout happens right after initialization,
+> then handle->reset_level is not resetted to HNAE3_FUNC_RESET in
 
-However, the CPUs running netperf end up switching back and forth
-between netperf and the idle task, which does not require changes
-to the mm_cpumask. Furthermore, the init_mm cpumask ends up being
-the most heavily contended one in the system.
+    s/resetted/reset/.
 
-Simply skipping changes to mm_cpumask(&init_mm) reduces overhead.
+> hclge_reset_event, which will cause reset event not properly
+> handled problem.
+> 
+> This patch fixes it by setting handle->reset_level properly when
+> client is initialized.
+> 
+> Fixes: 6d4c3981a8d8 ("net: hns3: Changes to make enet watchdog timeout func common for PF/VF")
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> Signed-off-by: Peng Li <lipeng321@huawei.com>
+> Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+[...]
 
-Reported-and-tested-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Acked-by: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: efault@gmx.de
-Cc: kernel-team@fb.com
-Cc: luto@kernel.org
-Link: http://lkml.kernel.org/r/20180716190337.26133-8-riel@surriel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/tlb.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 493559cae2d5..f086195f644c 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -310,15 +310,22 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
- 			sync_current_stack_to_mm(next);
- 		}
- 
--		/* Stop remote flushes for the previous mm */
--		VM_WARN_ON_ONCE(!cpumask_test_cpu(cpu, mm_cpumask(real_prev)) &&
--				real_prev != &init_mm);
--		cpumask_clear_cpu(cpu, mm_cpumask(real_prev));
-+		/*
-+		 * Stop remote flushes for the previous mm.
-+		 * Skip kernel threads; we never send init_mm TLB flushing IPIs,
-+		 * but the bitmap manipulation can cause cache line contention.
-+		 */
-+		if (real_prev != &init_mm) {
-+			VM_WARN_ON_ONCE(!cpumask_test_cpu(cpu,
-+						mm_cpumask(real_prev)));
-+			cpumask_clear_cpu(cpu, mm_cpumask(real_prev));
-+		}
- 
- 		/*
- 		 * Start remote flushes and then read tlb_gen.
- 		 */
--		cpumask_set_cpu(cpu, mm_cpumask(next));
-+		if (next != &init_mm)
-+			cpumask_set_cpu(cpu, mm_cpumask(next));
- 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
- 
- 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+MBR, Sergei
