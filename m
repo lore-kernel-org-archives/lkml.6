@@ -3,186 +3,185 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 096CDECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFEEECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DDD920C10
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:28:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDD920C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 6105D20C10
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:28:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6105D20C10
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbeGQMAL (ORCPT
+        id S1731466AbeGQMAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:00:11 -0400
-Received: from mx.socionext.com ([202.248.49.38]:10116 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730731AbeGQMAL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:00:11 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 17 Jul 2018 20:27:58 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id BE0851800E5;
-        Tue, 17 Jul 2018 20:27:58 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 17 Jul 2018 20:27:58 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 3BB2B40375;
-        Tue, 17 Jul 2018 20:27:58 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 06D76120424;
-        Tue, 17 Jul 2018 20:27:58 +0900 (JST)
-Date:   Tue, 17 Jul 2018 20:27:57 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 2/4] phy: socionext: add USB3 PHY driver for UniPhier SoC
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <52b96200-2234-9017-a317-f929eac9b266@ti.com>
-References: <20180711210514.BB32.4A936039@socionext.com> <52b96200-2234-9017-a317-f929eac9b266@ti.com>
-Message-Id: <20180717202757.858B.4A936039@socionext.com>
+        Tue, 17 Jul 2018 08:00:32 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43020 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730591AbeGQMAb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:00:31 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6HBNfVR141232
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:28:19 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k9eqpj7j9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:28:19 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mahesh@linux.vnet.ibm.com>;
+        Tue, 17 Jul 2018 12:28:17 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 17 Jul 2018 12:28:15 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6HBSEgZ40108114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Jul 2018 11:28:14 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05D224C059;
+        Tue, 17 Jul 2018 14:28:33 +0100 (BST)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9D7AB4C050;
+        Tue, 17 Jul 2018 14:28:30 +0100 (BST)
+Received: from [9.193.101.166] (unknown [9.193.101.166])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 17 Jul 2018 14:28:30 +0100 (BST)
+Subject: Re: [RFC PATCH v6 0/4] powerpc/fadump: Improvements and fixes for
+ firmware-assisted dump.
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linuxppc-dev <linuxppc-dev@ozlabs.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Ananth Narayan <ananth@in.ibm.com>, kernelfans@gmail.com
+References: <153172096333.29252.4376707071382727345.stgit@jupiter.in.ibm.com>
+ <20180716082646.GF17280@dhcp22.suse.cz>
+From:   Mahesh Jagannath Salgaonkar <mahesh@linux.vnet.ibm.com>
+Date:   Tue, 17 Jul 2018 16:58:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <20180716082646.GF17280@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+X-TM-AS-GCONF: 00
+x-cbid: 18071711-0012-0000-0000-0000028B1F28
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071711-0013-0000-0000-000020BCDDC0
+Message-Id: <cb5fc554-7fa3-1356-c304-ae8c27a0c70c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-17_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807170119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
-
-On Fri, 13 Jul 2018 12:45:06 +0530 <kishon@ti.com> wrote:
-
-> Hi,
+On 07/16/2018 01:56 PM, Michal Hocko wrote:
+> On Mon 16-07-18 11:32:56, Mahesh J Salgaonkar wrote:
+>> One of the primary issues with Firmware Assisted Dump (fadump) on Power
+>> is that it needs a large amount of memory to be reserved. This reserved
+>> memory is used for saving the contents of old crashed kernel's memory before
+>> fadump capture kernel uses old kernel's memory area to boot. However, This
+>> reserved memory area stays unused until system crash and isn't available
+>> for production kernel to use.
 > 
-> On Wednesday 11 July 2018 05:35 PM, Kunihiko Hayashi wrote:
-> > On Mon, 9 Jul 2018 20:23:19 +0900 <hayashi.kunihiko@socionext.com> wrote:
-> > 
-> >> Hi Kishon,
-> >> Thank you for your comments.
-> >>
-> >> On Mon, 9 Jul 2018 10:49:50 +0530 <kishon@ti.com> wrote:
-> >>
-> >>> Hi,
-> >>>
-> >>> On Friday 29 June 2018 02:08 PM, Kunihiko Hayashi wrote:
-> >>>> Add a driver for PHY interface built into USB3 controller
-> >>>> implemented in UniPhier SoCs.
-> >>>> This driver supports High-Speed PHY and Super-Speed PHY.
-> >>>>
-> >>>> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> >>>> Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> >>>> Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> >>>> ---
-> >>>>  drivers/phy/Kconfig                         |   1 +
-> >>>>  drivers/phy/Makefile                        |   1 +
-> >>>>  drivers/phy/socionext/Kconfig               |  12 +
-> >>>>  drivers/phy/socionext/Makefile              |   6 +
-> >>>>  drivers/phy/socionext/phy-uniphier-usb3hs.c | 422 ++++++++++++++++++++++++++++
-> >>>>  drivers/phy/socionext/phy-uniphier-usb3ss.c | 369 ++++++++++++++++++++++++
-> >>>>  6 files changed, 811 insertions(+)
-> >>>>  create mode 100644 drivers/phy/socionext/Kconfig
-> >>>>  create mode 100644 drivers/phy/socionext/Makefile
-> >>>>  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
-> >>>>  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
-> >>
-> >> (snip...)
-> >>
-> >>>> --- /dev/null
-> >>>> +++ b/drivers/phy/socionext/phy-uniphier-usb3hs.c
-> >>>> @@ -0,0 +1,422 @@
-> >>>> +// SPDX-License-Identifier: GPL-2.0
-> >>>> +/*
-> >>>> + * phy-uniphier-usb3hs.c - HS-PHY driver for Socionext UniPhier USB3 controller
-> >>>> + * Copyright 2015-2018 Socionext Inc.
-> >>>> + * Author:
-> >>>> + *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> >>>> + * Contributors:
-> >>>> + *      Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> >>>> + *      Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> >>>> + */
-> >>>> +
-> >>>> +#include <linux/bitfield.h>
-> >>>> +#include <linux/bitops.h>
-> >>>> +#include <linux/clk.h>
-> >>>> +#include <linux/io.h>
-> >>>> +#include <linux/mfd/syscon.h>
-> >>>> +#include <linux/module.h>
-> >>>> +#include <linux/nvmem-consumer.h>
-> >>>> +#include <linux/of.h>
-> >>>> +#include <linux/of_platform.h>
-> >>>> +#include <linux/phy/phy.h>
-> >>>> +#include <linux/platform_device.h>
-> >>>> +#include <linux/reset.h>
-> >>>> +#include <linux/slab.h>
-> >>>> +
-> >>>> +#define HSPHY_CFG0		0x0
-> >>>> +#define HSPHY_CFG0_HS_I_MASK	GENMASK(31, 28)
-> >>>> +#define HSPHY_CFG0_HSDISC_MASK	GENMASK(27, 26)
-> >>>> +#define HSPHY_CFG0_SWING_MASK	GENMASK(17, 16)
-> >>>> +#define HSPHY_CFG0_SEL_T_MASK	GENMASK(15, 12)
-> >>>> +#define HSPHY_CFG0_RTERM_MASK	GENMASK(7, 6)
-> >>>> +#define HSPHY_CFG0_TRIMMASK	(HSPHY_CFG0_HS_I_MASK \
-> >>>> +				 | HSPHY_CFG0_SEL_T_MASK \
-> >>>> +				 | HSPHY_CFG0_RTERM_MASK)
-> >>>> +
-> >>>> +#define HSPHY_CFG1		0x4
-> >>>> +#define HSPHY_CFG1_DAT_EN	BIT(29)
-> >>>> +#define HSPHY_CFG1_ADR_EN	BIT(28)
-> >>>> +#define HSPHY_CFG1_ADR_MASK	GENMASK(27, 16)
-> >>>> +#define HSPHY_CFG1_DAT_MASK	GENMASK(23, 16)
-> >>>> +
-> >>>> +#define MAX_CLKS	3
-> >>>> +#define MAX_RSTS	2
-> >>>> +#define MAX_PHY_PARAMS	1
-> >>>> +
-> >>>> +struct uniphier_u3hsphy_param {
-> >>>> +	u32 addr;
-> >>>> +	u32 mask;
-> >>>> +	u32 val;
-> >>>> +};
-> >>>
-> >>> I'd like to avoid configure the PHY this way, since it's impossible to know
-> >>> which register is being configured.
-> >>
-> > 
-> > This way might be misunderstood.
-> > These HS-PHY and SS-PHY have "internal" registers, which are not memory-mapped.
-> > 
-> > And to access these internal registers, we need to specify the number
-> > corresponding to the register.
-> > 
-> > The "addr" in "uniphier_u3hsphy_param" is just the number of the register.
-> > The "mask" shows a bitfield of the register, that means one of PHY parameters.
-> > The "value" shows a parameter value to set to the bitfield.
+> How much memory are we talking about. Regular kernel dump process needs
+> some reserved memory as well. Why that is not a big problem?
+
+We reserve around 5% of total system RAM. On large systems with
+TeraBytes of memory, this reservation can be quite significant.
+
+The regular kernel dump uses the kexec method to boot into capture
+kernel and it can control the parameters that are being passed to
+capture kernel. This allows a capability to strip down the parameters
+that can help lowering down the memory requirement for capture kernel to
+boot. This allows regular kdump to reserve less memory to start with.
+
+Where as fadump depends on power firmware (pHyp) to load the capture
+kernel after full reset and boots like a regular kernel. It needs same
+amount of memory to boot as the production kernel. On large systems
+production kernel needs significant amount of memory to boot. Hence
+fadump needs to reserve enough memory for capture kernel to boot
+successfully and execute dump capturing operations. By default fadump
+reserves 5% of total system RAM and in most cases this has worked
+flawlessly on variety of system configurations. Optionally,
+'crashkernel=X' can also be used to specify more fine-tuned memory size
+for reservation.
+
+
 > 
-> What does each of these bitfields represent? Which PHY parameter does it
-> configure. Are they really PHY parameters or they also configure clocks/mux
-> etc? I would like the configurations to be more descriptive so that we get to
-> know at least what's getting configured here.
+>> Instead of setting aside a significant chunk of memory that nobody can use,
+>> take advantage ZONE_MOVABLE to mark a significant chunk of reserved memory
+>> as ZONE_MOVABLE, so that the kernel is prevented from using, but
+>> applications are free to use it.
+> 
+> Why kernel cannot use that memory while userspace can?
 
-These bitfields represent phy parameters only, not include clocks/mux etc.
-We can express the register (bitfield) name with macros.
+fadump needs to reserve memory to be able to save crashing kernel's
+memory, with help from power firmware, before the capture kernel loads
+into crashing kernel's memory area. Any contents present in this
+reserved memory will be over-written. If kernel is allowed to use this
+memory, then we loose that kernel data and won't be part of captured
+dump, which could be critical to debug root cause of system crash.
 
-However, only recommended values are noted for the bitfields in the specsheet,
-because there are the trimmed values that aren't set as power-on values,
-and we should use the values for stable operation.
+Kdump and fadump both uses same infrastructure/tool (makedumpfile) to
+capture the memory dump. While the tool provides flexibility to
+determine what needs to be part of the dump and what memory to filter
+out, all supported distributions defaults to "Capture only kernel data
+and nothing else". Taking advantage of this default we can at least make
+the reserved memory available for userspace to use.
 
-This driver includes only minimal parameter set, so I think it's difficult
-to express them more configurable.
+If someone wants to capture userspace data as well then
+'fadump=nonmovable' option can be used where reserved pages won't be
+marked zone movable.
 
-Thank you,
+Advantage of movable method is the reserved memory chunk is also
+available for use.
 
----
-Best Regards,
-Kunihiko Hayashi
+> [...]
+>>  Documentation/powerpc/firmware-assisted-dump.txt |   18 +++
+>>  arch/powerpc/include/asm/fadump.h                |    7 +
+>>  arch/powerpc/kernel/fadump.c                     |  123 +++++++++++++++++--
+>>  arch/powerpc/platforms/pseries/hotplug-memory.c  |    7 +
+>>  include/linux/mmzone.h                           |    2 
+>>  mm/page_alloc.c                                  |  146 ++++++++++++++++++++++
+>>  6 files changed, 290 insertions(+), 13 deletions(-)
+> 
+> This is quite a large change and you didn't seem to explain why we need
+> it.
+> 
+
+In fadump case, the reserved memory stays unused until system is
+crashed. fadump uses very small portion of this reserved memory, few
+KBs, for storing fadump metadata. Otherwise, the significant chunk of
+memory is completely unused. Hence, instead of blocking a memory that is
+un-utilized through out the lifetime of system, it's better to give it
+back to production kernel to use. But at the same time we don't want
+kernel to use that memory. While exploring we found 1) Linux kernel's
+Contiguous Memory Allocator (CMA) feature and 2) ZONE_MOVABLE, that
+suites the requirement. Initial 5 revisions of this patchset () was
+using CMA feature. However, fadump does not do any cma allocations,
+hence it will be more appropriate to use zone movable to achieve the same.
+
+But unlike CMA, there is no interface available to mark a custom
+reserved memory area as ZONE_MOVABLE. Hence patch 1/4 proposes the same.
+
+Thanks,
+-Mahesh.
 
 
