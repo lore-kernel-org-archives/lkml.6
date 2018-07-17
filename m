@@ -5,83 +5,112 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E9AECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57776ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F319B20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:46:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F319B20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B37520657
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:48:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B37520657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730707AbeGQQUN (ORCPT
+        id S1730267AbeGQQVh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:20:13 -0400
-Received: from mga06.intel.com ([134.134.136.31]:22965 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730128AbeGQQUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:20:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 08:46:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
-   d="scan'208";a="67640899"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga003.jf.intel.com with ESMTP; 17 Jul 2018 08:46:53 -0700
-Message-ID: <b9e186e35d780a31077c8336315e86a8f0551523.camel@linux.intel.com>
-Subject: Re: [PATCH v3 0/3] add crc64 calculation as kernel library
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
-Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Lyle <mlyle@lyle.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Date:   Tue, 17 Jul 2018 18:46:53 +0300
-In-Reply-To: <20180717145525.50852-1-colyli@suse.de>
-References: <20180717145525.50852-1-colyli@suse.de>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 12:21:37 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48862 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729671AbeGQQVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:21:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5B907A9;
+        Tue, 17 Jul 2018 08:48:20 -0700 (PDT)
+Received: from [10.1.207.53] (e112298-lin.cambridge.arm.com [10.1.207.53])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A34603F318;
+        Tue, 17 Jul 2018 08:48:19 -0700 (PDT)
+Subject: Re: [RFC PATCH 1/4] genirq: Provide basic NMI management for
+ interrupt lines
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        ricardo.neri-calderon@linux.intel.com, marc.zyngier@arm.com,
+        peterz@infradead.org, mingo@kernel.org
+References: <1531152846-19374-1-git-send-email-julien.thierry@arm.com>
+ <1531152846-19374-2-git-send-email-julien.thierry@arm.com>
+ <alpine.DEB.2.21.1807171114280.3238@nanos.tec.linutronix.de>
+ <e0c00482-7125-32e5-faa1-4251c118de5e@arm.com>
+Message-ID: <c4f7e808-d416-63c9-2972-fb90a5c72753@arm.com>
+Date:   Tue, 17 Jul 2018 16:48:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <e0c00482-7125-32e5-faa1-4251c118de5e@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 22:55 +0800, Coly Li wrote:
-> This patch set adds basic implementation of crc64 calculation as Linux
-> kernel library. Since bcache already does crc64 by itself, this patch
-> set also modifies bcache code to use the new crc64 library routine.
+
+
+On 17/07/18 12:13, Julien Thierry wrote:
+> Hi Thomas,
 > 
-> bcache uses crc64 as storage checksum, if a change of crc lib routines
-> results an inconsistent result, the unmatched checksum may make bcache
-> 'think' the on-disk is corrupted, such change should be avoided or
-> detected as early as possible. Therefore the last patch in this series
-> adds a crc test framework, to check consistency of different
-> calculations.
+> Thanks for the review.
 > 
+> On 17/07/18 10:22, Thomas Gleixner wrote:
 
-Thanks, I have commented individual patches, though I didn't see patch
-3/3 and...
+[...]
 
-> Andy Shevchenko (1):
->   lib/crc64: add crc64 option to lib/Kconfig
+>> On Mon, 9 Jul 2018, Julien Thierry wrote:
+>>> +/* This function must be called with desc->lock held */
+>>> +static const void *__cleanup_nmi(unsigned int irq, struct irq_desc 
+>>> *desc)
+>>> +{
+>>> +    const char *devname = NULL;
+>>> +
+>>> +    desc->istate &= ~IRQS_NMI;
+>>> +
+>>> +#ifdef CONFIG_SMP
+>>> +    if (WARN_ON(desc->affinity_notify))
+>>> +        desc->affinity_notify = NULL;
+>>> +#endif
+>>
+>> We should not support that affinity notify horror for NMIs at all.
+>>
 > 
-> Coly Li (3):
->   lib: add crc64 calculation routines
->   bcache: use routines from lib/crc64.c for CRC64 calculation
->   lib/test_crc: Add test cases for crc calculation
+> Makes sense, I'll add it to the constraints for NMIs and remove that part.
+> 
+>>> +    if (!WARN_ON(desc->action == NULL)) {
+>>> +        irq_pm_remove_action(desc, desc->action);
+>>> +        devname = desc->action->name;
+>>> +        unregister_handler_proc(irq, desc->action);
+>>> +
+>>> +        kfree(desc->action);
+>>> +        desc->action = NULL;
+>>> +    }
+>>> +
+>>> +    irq_settings_clr_disable_unlazy(desc);
+>>> +    irq_shutdown(desc);
+>>> +
+>>> +#ifdef CONFIG_SMP
+>>> +    /* make sure affinity_hint is cleaned up */
+>>> +    if (WARN_ON_ONCE(desc->affinity_hint))
+>>> +        desc->affinity_hint = NULL;
+>>> +#endif
+>>
+>> Especially not twice :)
+>>
+> 
+> Oops... I'll remove that as well.
 
-...this part looks weird.
+Re-reading this I realized that second part was about 
+desc->affinity_hint and not desc->affinity_notify.
 
-Do you use `git format-patch --cover-letter`?
+Supporting desc->affinity_hint for NMIs shouldn't be an issue, right?
+
+Thanks,
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Julien Thierry
