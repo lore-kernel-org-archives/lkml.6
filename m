@@ -2,106 +2,135 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98ECDECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1CCECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AC0F2075C
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:09:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqjdwytD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AC0F2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CA1AC2075C
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 12:10:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA1AC2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbeGQMlu (ORCPT
+        id S1731562AbeGQMmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:41:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731293AbeGQMjG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:39:06 -0400
-Received: from kenny.it.cumulusnetworks.com. (fw.cumulusnetworks.com [216.129.126.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A4DA2145D;
-        Tue, 17 Jul 2018 12:06:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531829205;
-        bh=l0XadBySdZEszOh3O0s3O72VhezJaGmZX7d9gRWWLFU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AqjdwytD4h5kuWzXrVkehOCykoAFkafqa9pzuhtDReinks3NOTL274FVILZKT+Ru1
-         /sMvO+2wsWybc14iwAdS0dtGCgAiwKs3xFbjlhrYP7U8TOs64+e2l2k5d0ZiIejptj
-         VqnEas24NBL0rkkT//2yjb+iFpfGTGX6IjLjiwzc=
-From:   dsahern@kernel.org
-To:     netdev@vger.kernel.org
-Cc:     nikita.leshchenko@oracle.com, roopa@cumulusnetworks.com,
-        stephen@networkplumber.org, idosch@mellanox.com, jiri@mellanox.com,
-        saeedm@mellanox.com, alex.aring@gmail.com,
-        linux-wpan@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Ahern <dsahern@gmail.com>
-Subject: [PATCH RFC/RFT net-next 01/17] net/ipv4: rename ipv4_neigh_lookup to ipv4_dst_neigh_lookup
-Date:   Tue, 17 Jul 2018 05:06:35 -0700
-Message-Id: <20180717120651.15748-2-dsahern@kernel.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180717120651.15748-1-dsahern@kernel.org>
-References: <20180717120651.15748-1-dsahern@kernel.org>
+        Tue, 17 Jul 2018 08:42:42 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:55966 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731219AbeGQMml (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 08:42:41 -0400
+Received: by mail-wm0-f66.google.com with SMTP id f21-v6so1247231wmc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 05:10:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=aJ3WmcTuIZHUvZFqzzBPMi3u/VRKHjLVLnRKI8s2avU=;
+        b=JelZKxlKk6LMRkzDqQ5j0je95RzYDvwIsxVZklL8dSSJag8VBODRaHSeUSjrBht4eY
+         8sdPZYQUiN2P/ewqFdgOq0QK/nNPffiCy0wh/qHoqjkUAO7idTcgQy/X+3/hItQppqZJ
+         vKmWfLiMGN0vM2qcuHVr1EZLbIwYshRjr+DnsZ9e5nBOp/GqtyrjVT39jjYep5U7X4zI
+         9rfDmU9Ky2OSXJE0uzxnQyx2g8FOJMclYhke9nf58TL2FG8Pfk/87Fx8Unf+hnBnwE0Y
+         PIG1Ox6aWFN6XGypZx2n9fBD4kY6z+zssBXEEVZK66zGThKMvbrYzqfGnwya6bfwbgLC
+         C/UQ==
+X-Gm-Message-State: AOUpUlHqJTN+H4zu0j8S59JVw+AWMpdenIbgNB7v28NhWiodVkhXBWDW
+        3u4V2qfih1I2xQ+YDtc8si7yvrrAVFybhztq40HB0g==
+X-Google-Smtp-Source: AAOMgpelaz+CkJJPvZAchwegiXopI9SBPM7LrfX3p6sjfvkO1+hciSLsm+C+l6w1oHVmX+MmOtUKRera8vMlH5JxBLs=
+X-Received: by 2002:a1c:be13:: with SMTP id o19-v6mr1134413wmf.1.1531829418423;
+ Tue, 17 Jul 2018 05:10:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1c:28c2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 05:10:17
+ -0700 (PDT)
+In-Reply-To: <CACAvsv4Rg32Fhq-4yOBWhUooWE+WzG5fQzvN+jYn4Uruc5kDLw@mail.gmail.com>
+References: <20180716235936.11268-1-lyude@redhat.com> <20180716235936.11268-5-lyude@redhat.com>
+ <CACO55tv9B+GNM=nhpH1UfeWd9F1x5nTp+vHSuJ-TsuzRFK_AEA@mail.gmail.com> <CACAvsv4Rg32Fhq-4yOBWhUooWE+WzG5fQzvN+jYn4Uruc5kDLw@mail.gmail.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Tue, 17 Jul 2018 14:10:17 +0200
+Message-ID: <CACO55tvMRd8jpmq8-J4eyqzqHeoVgnbRLYEqvYBhrVJ9O9+gXA@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH 4/5] drm/nouveau: Grab RPM ref when i2c bus is
+ in use
+To:     Ben Skeggs <skeggsb@gmail.com>
+Cc:     Lyude Paul <lyude@redhat.com>, Dave Airlie <airlied@linux.ie>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Ahern <dsahern@gmail.com>
+On Tue, Jul 17, 2018 at 1:54 PM, Ben Skeggs <skeggsb@gmail.com> wrote:
+> On Tue, 17 Jul 2018 at 20:18, Karol Herbst <kherbst@redhat.com> wrote:
+>>
+>> mhh, we shouldn't call to Linux APIs from within of nvkm. Rather gaurd
+>> the Linux glue code to the i2c stuff instead, but this is all done
+>> from inside of nvkm. I think we should move it out into
+>> drm/nouveau/nouveau_i2c.c and do the handling there.
+> Huh?  No, this is completely fine.
+>
 
-Consistency with ipv6 name for similar function and allows
-ipv4_neigh_lookup to be reused for the wrapper to the arp table.
----
- net/ipv4/route.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+okay, then the the two patches adding that guard code is reviewed-by me
 
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 1df6e97106d7..74e1df60ab7f 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -153,7 +153,7 @@ static u32 *ipv4_cow_metrics(struct dst_entry *dst, unsigned long old)
- 	return NULL;
- }
- 
--static struct neighbour *ipv4_neigh_lookup(const struct dst_entry *dst,
-+static struct neighbour *ipv4_dst_neigh_lookup(const struct dst_entry *dst,
- 					   struct sk_buff *skb,
- 					   const void *daddr);
- static void ipv4_confirm_neigh(const struct dst_entry *dst, const void *daddr);
-@@ -170,7 +170,7 @@ static struct dst_ops ipv4_dst_ops = {
- 	.update_pmtu =		ip_rt_update_pmtu,
- 	.redirect =		ip_do_redirect,
- 	.local_out =		__ip_local_out,
--	.neigh_lookup =		ipv4_neigh_lookup,
-+	.neigh_lookup =		ipv4_dst_neigh_lookup,
- 	.confirm_neigh =	ipv4_confirm_neigh,
- };
- 
-@@ -430,7 +430,7 @@ void rt_cache_flush(struct net *net)
- 	rt_genid_bump_ipv4(net);
- }
- 
--static struct neighbour *ipv4_neigh_lookup(const struct dst_entry *dst,
-+static struct neighbour *ipv4_dst_neigh_lookup(const struct dst_entry *dst,
- 					   struct sk_buff *skb,
- 					   const void *daddr)
- {
-@@ -2537,7 +2537,7 @@ static struct dst_ops ipv4_dst_blackhole_ops = {
- 	.update_pmtu		=	ipv4_rt_blackhole_update_pmtu,
- 	.redirect		=	ipv4_rt_blackhole_redirect,
- 	.cow_metrics		=	ipv4_rt_blackhole_cow_metrics,
--	.neigh_lookup		=	ipv4_neigh_lookup,
-+	.neigh_lookup		=	ipv4_dst_neigh_lookup,
- };
- 
- struct dst_entry *ipv4_blackhole_route(struct net *net, struct dst_entry *dst_orig)
--- 
-2.11.0
-
+>>
+>> On Tue, Jul 17, 2018 at 1:59 AM, Lyude Paul <lyude@redhat.com> wrote:
+>> > The i2c bus can be both accessed by DRM itself, along with any of it's
+>> > devnodes (/sys/class/i2c). So, we need to make sure that all codepaths
+>> > using the i2c bus keep the GPU resumed.
+>> >
+>> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+>> > Cc: Karol Herbst <karolherbst@gmail.com>
+>> > Cc: stable@vger.kernel.org
+>> > ---
+>> >  drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c | 12 +++++++++++-
+>> >  1 file changed, 11 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c
+>> > index 807a2b67bd64..1de48c990b80 100644
+>> > --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c
+>> > +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/bus.c
+>> > @@ -119,18 +119,28 @@ nvkm_i2c_bus_release(struct nvkm_i2c_bus *bus)
+>> >         BUS_TRACE(bus, "release");
+>> >         nvkm_i2c_pad_release(pad);
+>> >         mutex_unlock(&bus->mutex);
+>> > +       pm_runtime_put_autosuspend(pad->i2c->subdev.device->dev);
+>> >  }
+>> >
+>> >  int
+>> >  nvkm_i2c_bus_acquire(struct nvkm_i2c_bus *bus)
+>> >  {
+>> >         struct nvkm_i2c_pad *pad = bus->pad;
+>> > +       struct device *dev = pad->i2c->subdev.device->dev;
+>> >         int ret;
+>> > +
+>> >         BUS_TRACE(bus, "acquire");
+>> > +
+>> > +       ret = pm_runtime_get_sync(dev);
+>> > +       if (ret < 0 && ret != -EACCES)
+>> > +               return ret;
+>> > +
+>> >         mutex_lock(&bus->mutex);
+>> >         ret = nvkm_i2c_pad_acquire(pad, NVKM_I2C_PAD_I2C);
+>> > -       if (ret)
+>> > +       if (ret) {
+>> >                 mutex_unlock(&bus->mutex);
+>> > +               pm_runtime_put_autosuspend(dev);
+>> > +       }
+>> >         return ret;
+>> >  }
+>> >
+>> > --
+>> > 2.17.1
+>> >
+>> > _______________________________________________
+>> > Nouveau mailing list
+>> > Nouveau@lists.freedesktop.org
+>> > https://lists.freedesktop.org/mailman/listinfo/nouveau
+>> _______________________________________________
+>> Nouveau mailing list
+>> Nouveau@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/nouveau
