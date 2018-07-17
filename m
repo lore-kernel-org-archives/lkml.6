@@ -2,111 +2,113 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DA8ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37310ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFCBC208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B4C20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:52:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Utjv+Qjl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFCBC208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+os0n54"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B4C20852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731923AbeGQPUh (ORCPT
+        id S1731738AbeGQPZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:20:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38884 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 11:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731532AbeGQPUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:20:37 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731488AbeGQPZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 11:25:27 -0400
+Received: from mail-yw0-f179.google.com (mail-yw0-f179.google.com [209.85.161.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6306320858;
-        Tue, 17 Jul 2018 14:47:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2A68208A3;
+        Tue, 17 Jul 2018 14:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531838857;
-        bh=ftrHJDk3oEpck5511hdVBQiH6Brzhpf1CiXVb9xT93w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Utjv+Qjl/yxsr7q7H/qBmYJWzRhT3nY1/QvapZ+bRVfl2D8Rb9N5cLeCQMu6D0JHJ
-         VnuzgQyjDBwDgPUMS0/52BbEp6Nuz85VS/4u+4b4G7/SvDGiyygyzxEEQSBF5Uda/6
-         rLuvMzXkuAL4kcXHSY2Mb8oq5DHHN13A65jr52QY=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 25DC5144881; Tue, 17 Jul 2018 10:47:35 -0400 (EDT)
-Date:   Tue, 17 Jul 2018 10:47:35 -0400
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>, Jiri Olsa <jolsa@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH V4 3/3] x86: Add entry trampolines to kcore
-Message-ID: <20180717144735.GA3614@kernel.org>
-References: <1528289651-4113-1-git-send-email-adrian.hunter@intel.com>
- <1528289651-4113-4-git-send-email-adrian.hunter@intel.com>
- <20180606131631.GD12180@hirez.programming.kicks-ass.net>
- <20180606131946.GF24381@kernel.org>
- <90e24c0c-6ec9-f2c0-54af-0a946b05e574@intel.com>
+        s=default; t=1531839146;
+        bh=z3WZjyx8w/7SsHTciRTK872Dj0oS3yiCr60FsOIyNmQ=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=k+os0n54PyL91pYS2qb8/UwOiS4o3uoR5JFmKVwju3wGt20FXxMcR+UDX8ikTf+iI
+         ijyB204Ol65+t0hT6uUY+0xz1Oi6YuTJjt0BVEXHDyRQhh1sN2I7vrzy9pa/IX20//
+         BOBbAO1BskgxjzauaD41azSEMXZpLaL55TovOEsY=
+Received: by mail-yw0-f179.google.com with SMTP id q129-v6so479657ywg.8;
+        Tue, 17 Jul 2018 07:52:25 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFFsXRUgCmzjP9ZGpgFa/1s4afyACo072qlk7TcCwLvMKQ6YIUH
+        ljORgYn7xlNIZ6Kcn0fbqDE16spuq9hlUni+HzI=
+X-Google-Smtp-Source: AAOMgpd7WwhgPVKzTUMtdG7/qgQ78qFoYHzaFICmFii2R0wylptECEvefHlFn7OWY1JIDfOdNITPzb3N2mHhG6OdqDk=
+X-Received: by 2002:a81:a348:: with SMTP id a69-v6mr974137ywh.142.1531839145071;
+ Tue, 17 Jul 2018 07:52:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90e24c0c-6ec9-f2c0-54af-0a946b05e574@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 07:51:44
+ -0700 (PDT)
+In-Reply-To: <20180717092138.19010-1-colin.king@canonical.com>
+References: <20180717092138.19010-1-colin.king@canonical.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Tue, 17 Jul 2018 09:51:44 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTWqY1OvGYE_FxtEPx=QtcVgQ9Bx3ss3Lc23ZSB1bRctg@mail.gmail.com>
+Message-ID: <CANk1AXTWqY1OvGYE_FxtEPx=QtcVgQ9Bx3ss3Lc23ZSB1bRctg@mail.gmail.com>
+Subject: Re: [PATCH] drivers: fpga: fix two trivial spelling mistakes
+To:     Colin King <colin.king@canonical.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Wu Hao <hao.wu@intel.com>, Moritz Fischer <mdf@kernel.org>,
+        Jiri Kosina <trivial@kernel.org>, linux-fpga@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jul 17, 2018 at 11:54:30AM +0300, Adrian Hunter escreveu:
-> On 06/06/18 16:19, Arnaldo Carvalho de Melo wrote:
-> > Em Wed, Jun 06, 2018 at 03:16:31PM +0200, Peter Zijlstra escreveu:
-> >> On Wed, Jun 06, 2018 at 03:54:11PM +0300, Adrian Hunter wrote:
-> >>> Without program headers for PTI entry trampoline pages, the trampoline
-> >>> virtual addresses do not map to anything.
-> >>>
-> >>
-> >>>
-> >>> In addition, entry trampolines all map to the same page.  Represent that by
-> >>> giving the corresponding program headers in kcore the same offset.
-> >>>
-> >>> This has the benefit that, when perf tools uses /proc/kcore as a source for
-> >>> kernel object code, samples from different CPU trampolines are aggregated
-> >>> together.  Note, such aggregation is normal for profiling i.e. people want
-> >>> to profile the object code, not every different virtual address the object
-> >>> code might be mapped to (across different processes for example).
-> >>>
-> >>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-> >>> Acked-by: Andi Kleen <ak@linux.intel.com>
-> >>> ---
-> >>>  arch/x86/mm/cpu_entry_area.c | 10 ++++++++++
-> >>>  fs/proc/kcore.c              |  7 +++++--
-> >>>  include/linux/kcore.h        | 13 +++++++++++++
-> >>>  3 files changed, 28 insertions(+), 2 deletions(-)
-> >>
-> >> This also adds the KCORE_REMAP functionality, but isn't mentioned at all
-> >> in the Changelog.
-> >>
-> >> Still, looks OK I suppose,
-> > 
-> > I can add a note about that,
-> >  
-> >> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > 
-> > Thanks, giving it some more hours and will apply and try to test it.
-> 
-> Any update on this?
+On Tue, Jul 17, 2018 at 4:21 AM, Colin King <colin.king@canonical.com> wrote:'
 
-On the post-vacation pile, will get to it.
+Thanks Colin!
 
-- Arnaldo
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trival fix to two spellling mistakes
+> "execeeded" -> "exceeded"
+> "Invaild" -> "Invalid"
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Alan Tull <atull@kernel.org>
+
+> ---
+>  drivers/fpga/dfl-afu-dma-region.c | 2 +-
+>  drivers/fpga/dfl-fme-mgr.c        | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/fpga/dfl-afu-dma-region.c b/drivers/fpga/dfl-afu-dma-region.c
+> index 0e81d33af856..025aba3ea76c 100644
+> --- a/drivers/fpga/dfl-afu-dma-region.c
+> +++ b/drivers/fpga/dfl-afu-dma-region.c
+> @@ -70,7 +70,7 @@ static int afu_dma_adjust_locked_vm(struct device *dev, long npages, bool incr)
+>         dev_dbg(dev, "[%d] RLIMIT_MEMLOCK %c%ld %ld/%ld%s\n", current->pid,
+>                 incr ? '+' : '-', npages << PAGE_SHIFT,
+>                 current->mm->locked_vm << PAGE_SHIFT, rlimit(RLIMIT_MEMLOCK),
+> -               ret ? "- execeeded" : "");
+> +               ret ? "- exceeded" : "");
+>
+>         up_write(&current->mm->mmap_sem);
+>
+> diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+> index b5ef405b6d88..9f045d058cfd 100644
+> --- a/drivers/fpga/dfl-fme-mgr.c
+> +++ b/drivers/fpga/dfl-fme-mgr.c
+> @@ -201,7 +201,7 @@ static int fme_mgr_write(struct fpga_manager *mgr,
+>                 }
+>
+>                 if (count < 4) {
+> -                       dev_err(dev, "Invaild PR bitstream size\n");
+> +                       dev_err(dev, "Invalid PR bitstream size\n");
+>                         return -EINVAL;
+>                 }
+>
+> --
+> 2.17.1
+>
