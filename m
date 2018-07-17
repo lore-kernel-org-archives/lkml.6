@@ -2,148 +2,142 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82848ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D8CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA6020693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBP744On"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA6020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5432020693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5432020693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731426AbeGQVj0 (ORCPT
+        id S1731789AbeGQVlf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:39:26 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34523 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731325AbeGQVjZ (ORCPT
+        Tue, 17 Jul 2018 17:41:35 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58594 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730571AbeGQVle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:39:25 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f6-v6so996430plo.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gke86c6QC7gVdcAYcERqw/Q9FflT847Q1zoLYsNJQV0=;
-        b=XBP744OnmV84syW15cjJZwnikdSIb/GUrU8a/9y/6RvwWJbVPqI1DVcwHvlTUupNSP
-         7O9HL0oDBuFWzxT9eRDF6ffcvoaaJK0pCCAIX6LaqRAgwpJxiF2QBIPaQngr+xLPK0U5
-         JMOsjHaq6H0QcP4XxQRMfg0wHiYdTKJ4fm0SYSpipmsPC4T3mY6H2uqpXWMCjF1Kvp8B
-         bM3CzvGVslceLEX4dmR+tR3YFadBs9a6WCa9slRsFwHr8bs+MIMnlPyLrvURLia5Amtz
-         5Uruh6+5elA6btAVoY+KO6pN9gHu5+6EHkmYnQyPNnLX2LfQPpE7Hp1aioqQVUnMmoNz
-         itmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gke86c6QC7gVdcAYcERqw/Q9FflT847Q1zoLYsNJQV0=;
-        b=Giss3G142eof9wpZtLhS7lvz1/74Ptuny+LJr0+39tlQLMTi+OZ931WhlrDmfXgQGN
-         +VmAAFEhwRbkzJKQiQ7Cqg4IqJ1KrX58FZtKRDl4me/FSkt8vrzMW1Z+uczU+OLHDeMF
-         nseSPJwr4RCXgVpJOsW/8zx8PPK1Tqf7lDAys2x8U5l5MwHgjyg1m16q0zxOzVvPbKfC
-         qzfTeGvmnQbxvRgpGJJTxX9xF53EpGRu5RrJETDkIyh9ROkGeXTaxLqTcbzLk3p6anRq
-         /xrq3y4YAywVGv8HXnp84gTZyMKQpiePCGR5wDscPFK0RWIQgNQAEgDNfS5bhYhY1m3Z
-         tcFA==
-X-Gm-Message-State: AOUpUlHzt30izRSvUp80olFTLg9CxlRXXaLcq2SyPemHVaZMA//SnDL1
-        nvlGJPo3E2fsw/h5YuphCus=
-X-Google-Smtp-Source: AAOMgpdFN8Xu18k8aMUt5wv1n1+kHWJPr0T2c2zryBer6hPtLKIxlv0Bsx0renPoXdbOq/Q/wQ2ddw==
-X-Received: by 2002:a17:902:42e4:: with SMTP id h91-v6mr3087591pld.27.1531861497034;
-        Tue, 17 Jul 2018 14:04:57 -0700 (PDT)
-Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:04:56 -0700 (PDT)
-From:   Todd Poynor <toddpoynor@gmail.com>
-To:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 10/32] staging: gasket: fix gasket_wait_with_reschedule timeout return code
-Date:   Tue, 17 Jul 2018 13:56:50 -0700
-Message-Id: <20180717205712.29495-11-toddpoynor@gmail.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
-References: <20180717205712.29495-1-toddpoynor@gmail.com>
+        Tue, 17 Jul 2018 17:41:34 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 0F79A8028C; Tue, 17 Jul 2018 23:07:03 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 23:07:00 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     David Lechner <david@lechnology.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
+Message-ID: <20180717210700.GA9090@amd>
+References: <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
+ <20180714212033.GA31950@amd>
+ <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
+ <20180714222924.GA2776@amd>
+ <20180714223907.GB2776@amd>
+ <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
+ <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
+ <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
+ <20180716215616.GB10734@amd>
+ <8c07a016-d77d-4799-b005-6a9ea94954ce@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Content-Disposition: inline
+In-Reply-To: <8c07a016-d77d-4799-b005-6a9ea94954ce@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Todd Poynor <toddpoynor@google.com>
 
-Return -ETIMEDOUT, not -EINVAL, on timeout, including callers.
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Dmitry Torokhov <dtor@chromium.org>
-Signed-off-by: Zhongze Hu <frankhu@chromium.org>
-Signed-off-by: Todd Poynor <toddpoynor@google.com>
----
- drivers/staging/gasket/apex_driver.c | 8 ++++----
- drivers/staging/gasket/gasket_core.c | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+Hi!
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index a31937dfff836..3a83c3d4d5561 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -490,7 +490,7 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type)
- 		gasket_log_error(gasket_dev,
- 				 "DMAs did not quiesce within timeout (%d ms)",
- 				 APEX_RESET_RETRY * APEX_RESET_DELAY);
--		return -EINVAL;
-+		return -ETIMEDOUT;
- 	}
- 
- 	/*  - Enable GCB reset (0x1 to rg_rst_gcb) */
-@@ -513,7 +513,7 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type)
- 			gasket_dev,
- 			"RAM did not shut down within timeout (%d ms)",
- 			APEX_RESET_RETRY * APEX_RESET_DELAY);
--		return -EINVAL;
-+		return -ETIMEDOUT;
- 	}
- 
- 	return 0;
-@@ -562,7 +562,7 @@ static int apex_quit_reset(struct gasket_dev *gasket_dev, uint type)
- 			gasket_dev,
- 			"RAM did not enable within timeout (%d ms)",
- 			APEX_RESET_RETRY * APEX_RESET_DELAY);
--		return -EINVAL;
-+		return -ETIMEDOUT;
- 	}
- 
- 	/*    - Wait for Reset complete. */
-@@ -574,7 +574,7 @@ static int apex_quit_reset(struct gasket_dev *gasket_dev, uint type)
- 			gasket_dev,
- 			"GCB did not leave reset within timeout (%d ms)",
- 			APEX_RESET_RETRY * APEX_RESET_DELAY);
--		return -EINVAL;
-+		return -ETIMEDOUT;
- 	}
- 
- 	if (!allow_hw_clock_gating) {
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 248d717e1df65..803566229bfcb 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -2106,7 +2106,7 @@ int gasket_wait_with_reschedule(
- 			"%s timeout: reg %llx timeout (%llu ms)",
- 			__func__,
- 			offset, max_retries * delay_ms);
--		return -EINVAL;
-+		return -ETIMEDOUT;
- 	}
- 	return 0;
- }
--- 
-2.18.0.203.gfac676dfb9-goog
+> >>- different hardware means via which brightness is set (MMIO, I2C, SPI,
+> >>   PWM and other pulsed fashion based protocols),
+> >>- the need for deferring brightness setting to a workqueue task to
+> >>   allow for setting LED brightness from atomic context,
+> >>- contention on locks
+> >
+> >I disagree here. Yes, it would be hard to synchronize blinking down to
+> >microseconds, but it would be easy to get synchronization right down
+> >to miliseconds and humans will not be able to tell the difference.
+>=20
+> There have been problems with blink interval stability close to
+> 1ms, and thus there were some attempts of employing hr timers,
+> which in turn introduced a new class of issues related to
+> system performance etc.
 
+Yeah, well. This is LED subsystem. Noone should program blink
+intervals at 1 msec.
+
+> >>For the LEDs driven by the same chip it would make more sense
+> >>to allow for synchronization, but it can be achieved on driver
+> >>level, with help of some subsystem level interface to indicate
+> >>which LEDs should be synchronized.
+> >>
+> >>However, when we start to pretend that we can synchronize the
+> >>devices, we must answer how accurate we can be. The accuracy
+> >>will decrease as blink frequency rises. We'd need to define
+> >>reliability limit.
+> >
+> >We don't need _that_ ammount of overengineering. We just need to
+> >synchronize them well enough :-).
+>=20
+> Well, it would be disappointing for the users to realize that
+> they don't get the effect advertised by the ABI documentation.
+
+Linux is always best-effort, w.r.t. timing. And we can do well enough
+that user will not see anything bad on "normal" systems.
+
+> >>We've had few attempts of approaching the subject of synchronized
+> >>blinking but none of them proved to be good enough to be merged.
+> >
+> >I'm sure interested person could do something like that in less than
+> >two weeks fulltime... It is not rocket science, just a lot of work in
+> >kernel...
+> >
+> >But patterns are few years overdue and I believe we should not delay
+> >them any further.
+> >
+> >So... I guess I agree with Jacek in the end :-).
+>=20
+> How about taking Baolin's patches as of v5? Later, provided that
+> the pattern trigger yet to be implemented will create pattern file
+> on activation, we'll need to initialize default-trigger DT property,
+> to keep the interface unchanged.
+
+I have yet to look at the v5 of patches. But I agree that we do not
+need to design synchronization at this moment.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltOWnQACgkQMOfwapXb+vK+BgCgi8BFHlK77ZlmasnTYuSICrbz
+uc8AoMCy1B/YoIs4mGUQwRRpUrFC11SW
+=kX9A
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
