@@ -2,193 +2,169 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E4FECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB2EBECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF25208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF25208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A393208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:18:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A393208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731439AbeGQLtA (ORCPT
+        id S1731063AbeGQLue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:49:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36540 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730180AbeGQLtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:49:00 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 322A2AEE3;
-        Tue, 17 Jul 2018 11:16:51 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 13:16:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     ufo19890607@gmail.com
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhoujian@didichuxing.com
-Subject: Re: [PATCH v14 2/2] Add oom victim's memcg to the oom context
- information
-Message-ID: <20180717111649.GD7193@dhcp22.suse.cz>
-References: <1531825548-27761-1-git-send-email-ufo19890607@gmail.com>
- <1531825548-27761-2-git-send-email-ufo19890607@gmail.com>
+        Tue, 17 Jul 2018 07:50:34 -0400
+Received: from mga07.intel.com ([134.134.136.100]:40700 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730169AbeGQLud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:50:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 04:18:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
+   d="scan'208";a="73026217"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 04:17:50 -0700
+Subject: Re: [PATCH V3 5/7] mmc: sdhci: add Auto CMD Auto Select support
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
+References: <1531106398-14062-1-git-send-email-zhang.chunyan@linaro.org>
+ <1531106398-14062-6-git-send-email-zhang.chunyan@linaro.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <3cc11907-5248-ea5a-5e2a-f93e12ef4e68@intel.com>
+Date:   Tue, 17 Jul 2018 14:16:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531825548-27761-2-git-send-email-ufo19890607@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1531106398-14062-6-git-send-email-zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-07-18 19:05:48, ufo19890607@gmail.com wrote:
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
+On 09/07/18 06:19, Chunyan Zhang wrote:
+> As SD Host Controller Specification v4.10 documents:
+> Host Controller Version 4.10 defines this "Auto CMD Auto Select" mode.
+> Selection of Auto CMD depends on setting of CMD23 Enable in the Host
+> Control 2 register which indicates whether card supports CMD23. If CMD23
+> Enable =1, Auto CMD23 is used and if CMD23 Enable =0, Auto CMD12 is
+> used. In case of Version 4.10 or later, use of Auto CMD Auto Select is
+> recommended rather than use of Auto CMD12 Enable or Auto CMD23
+> Enable.
 > 
-> The current oom report doesn't display victim's memcg context during the
-> global OOM situation. While this information is not strictly needed, it
-> can be really helpful for containerized environments to locate which
-> container has lost a process. Now that we have a single line for the oom
-> context, we can trivially add both the oom memcg (this can be either
-> global_oom or a specific memcg which hits its hard limits) and task_memcg
-> which is the victim's memcg.
+> This patch add this new mode support.
 > 
-> Below is the single line output in the oom report after this patch.
-> - global oom context information:
-> oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,global_oom,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
-> - memcg oom context information:
-> oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
-> 
-> Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-still applies.
-
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 > ---
->  include/linux/memcontrol.h | 14 +++++++++++---
->  mm/memcontrol.c            | 36 ++++++++++++++++++++++--------------
->  mm/oom_kill.c              |  3 ++-
->  3 files changed, 35 insertions(+), 18 deletions(-)
+>  drivers/mmc/host/sdhci.c | 39 ++++++++++++++++++++++++++++-----------
+>  drivers/mmc/host/sdhci.h |  2 ++
+>  2 files changed, 30 insertions(+), 11 deletions(-)
 > 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 6c6fb116e925..96a73f989101 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -491,8 +491,10 @@ void mem_cgroup_handle_over_high(void);
->  
->  unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
->  
-> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
-> -				struct task_struct *p);
-> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-> +		struct task_struct *p);
-> +
-> +void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
->  
->  static inline void mem_cgroup_oom_enable(void)
->  {
-> @@ -903,7 +905,13 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index f64e766..1ca3871 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1033,6 +1033,33 @@ static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+>  	       !mrq->cap_cmd_during_tfr;
 >  }
 >  
->  static inline void
-> -mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-> +mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-> +				struct task_struct *p)
+> +static inline void sdhci_auto_cmd_enable(struct sdhci_host *host,
+> +					 struct mmc_command *cmd,
+> +					 u16 *mode)
 > +{
+> +	/*
+> +	 * In case of Version 4.10 or later, use of 'Auto CMD Auto
+> +	 * Select' is recommended rather than use of 'Auto CMD12
+> +	 * Enable' or 'Auto CMD23 Enable'.
+> +	 */
+> +	if (host->version >= SDHCI_SPEC_410) {
+> +		*mode |= SDHCI_TRNS_AUTO_SEL;
+
+The rules for selecting auto commands still need to be applied.  In effect:
+
+	if (sdhci_auto_cmd12(host, cmd->mrq) &&
+	    (cmd->opcode != SD_IO_RW_EXTENDED)) {
+		*mode |= SDHCI_TRNS_AUTO_SEL;
+	} else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
+		*mode |= SDHCI_TRNS_AUTO_SEL;
+		sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+	}
+
+Also the selection of Host Control 2 register CMD23 Enable should be done by
+SDHCI (if supported by the card) not the Spreadtrum driver.
+
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * If we are sending CMD23, CMD12 never gets sent
+> +	 * on successful completion (so no Auto-CMD12).
+> +	 */
+> +	if (sdhci_auto_cmd12(host, cmd->mrq) &&
+> +	    (cmd->opcode != SD_IO_RW_EXTENDED)) {
+> +		*mode |= SDHCI_TRNS_AUTO_CMD12;
+> +	} else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
+> +		*mode |= SDHCI_TRNS_AUTO_CMD23;
+> +		sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+> +	}
 > +}
 > +
-> +static inline void
-> +mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+>  static void sdhci_set_transfer_mode(struct sdhci_host *host,
+>  	struct mmc_command *cmd)
 >  {
->  }
+> @@ -1059,17 +1086,7 @@ static void sdhci_set_transfer_mode(struct sdhci_host *host,
 >  
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e6f0d5ef320a..18deea974cfd 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1119,32 +1119,40 @@ static const char *const memcg1_stat_names[] = {
->  
->  #define K(x) ((x) << (PAGE_SHIFT-10))
->  /**
-> - * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
-> - * @memcg: The memory cgroup that went over limit
-> + * mem_cgroup_print_oom_context: Print OOM context information relevant to
-> + * memory controller.
-> + * @memcg: The origin memory cgroup that went over limit
->   * @p: Task that is going to be killed
->   *
->   * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
->   * enabled
->   */
-> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
->  {
-> -	struct mem_cgroup *iter;
-> -	unsigned int i;
-> +	struct cgroup *origin_cgrp, *kill_cgrp;
->  
->  	rcu_read_lock();
-> -
-> +	if (memcg) {
-> +		pr_cont(",oom_memcg=");
-> +		pr_cont_cgroup_path(memcg->css.cgroup);
-> +	} else
-> +		pr_cont(",global_oom");
->  	if (p) {
-> -		pr_info("Task in ");
-> +		pr_cont(",task_memcg=");
->  		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
-> -		pr_cont(" killed as a result of limit of ");
-> -	} else {
-> -		pr_info("Memory limit reached of cgroup ");
+>  	if (mmc_op_multi(cmd->opcode) || data->blocks > 1) {
+>  		mode = SDHCI_TRNS_BLK_CNT_EN | SDHCI_TRNS_MULTI;
+> -		/*
+> -		 * If we are sending CMD23, CMD12 never gets sent
+> -		 * on successful completion (so no Auto-CMD12).
+> -		 */
+> -		if (sdhci_auto_cmd12(host, cmd->mrq) &&
+> -		    (cmd->opcode != SD_IO_RW_EXTENDED))
+> -			mode |= SDHCI_TRNS_AUTO_CMD12;
+> -		else if (cmd->mrq->sbc && (host->flags & SDHCI_AUTO_CMD23)) {
+> -			mode |= SDHCI_TRNS_AUTO_CMD23;
+> -			sdhci_writel(host, cmd->mrq->sbc->arg, SDHCI_ARGUMENT2);
+> -		}
+> +		sdhci_auto_cmd_enable(host, cmd, &mode);
 >  	}
-> -
-> -	pr_cont_cgroup_path(memcg->css.cgroup);
-> -	pr_cont("\n");
-> -
->  	rcu_read_unlock();
-> +}
-> +
-> +/**
-> + * mem_cgroup_print_oom_meminfo: Print OOM memory information relevant to
-> + * memory controller.
-> + * @memcg: The memory cgroup that went over limit
-> + */
-> +void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
-> +{
-> +	struct mem_cgroup *iter;
-> +	unsigned int i;
 >  
->  	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
->  		K((u64)page_counter_read(&memcg->memory)),
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 4e18b69fd464..4f3e4382900f 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -434,10 +434,11 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
->  			oom_constraint_text[oc->constraint],
->  			nodemask_pr_args(oc->nodemask));
->  	cpuset_print_current_mems_allowed();
-> +	mem_cgroup_print_oom_context(oc->memcg, p);
->  	pr_cont(",task=%s,pid=%d,uid=%d\n", p->comm, p->pid,
->  		from_kuid(&init_user_ns, task_uid(p)));
->  	if (is_memcg_oom(oc))
-> -		mem_cgroup_print_oom_info(oc->memcg, p);
-> +		mem_cgroup_print_oom_meminfo(oc->memcg);
->  	else {
->  		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
->  		if (is_dump_unreclaim_slabs())
-> -- 
-> 2.14.1
+>  	if (data->flags & MMC_DATA_READ)
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 889e48b..8263ac6 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -42,6 +42,7 @@
+>  #define  SDHCI_TRNS_BLK_CNT_EN	0x02
+>  #define  SDHCI_TRNS_AUTO_CMD12	0x04
+>  #define  SDHCI_TRNS_AUTO_CMD23	0x08
+> +#define  SDHCI_TRNS_AUTO_SEL	0x0C
+>  #define  SDHCI_TRNS_READ	0x10
+>  #define  SDHCI_TRNS_MULTI	0x20
+>  
+> @@ -185,6 +186,7 @@
+>  #define   SDHCI_CTRL_DRV_TYPE_D		0x0030
+>  #define  SDHCI_CTRL_EXEC_TUNING		0x0040
+>  #define  SDHCI_CTRL_TUNED_CLK		0x0080
+> +#define  SDHCI_CMD23_ENABLE		0x0800
+>  #define  SDHCI_CTRL_V4_MODE		0x1000
+>  #define  SDHCI_CTRL_64BIT_ADDR		0x2000
+>  #define  SDHCI_CTRL_PRESET_VAL_ENABLE	0x8000
 > 
 
--- 
-Michal Hocko
-SUSE Labs
