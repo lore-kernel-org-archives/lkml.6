@@ -2,99 +2,111 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18325ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A52ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C174520850
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:06:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C174520850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id CBA5A2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:08:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pRHv8Lnx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA5A2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbeGQPjy (ORCPT
+        id S1729706AbeGQPmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:39:54 -0400
-Received: from gateway33.websitewelcome.com ([192.185.146.68]:27983 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728489AbeGQPjx (ORCPT
+        Tue, 17 Jul 2018 11:42:01 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35414 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728883AbeGQPmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:39:53 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id A6C5B249FC
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 10:06:48 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fRYJf0nh1bXuJfRYgf8gSp; Tue, 17 Jul 2018 10:06:48 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=44282 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ffRYJ-0027eH-7M; Tue, 17 Jul 2018 10:06:11 -0500
-Date:   Tue, 17 Jul 2018 10:06:10 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embededdor.com>
-Subject: [PATCH] ALSA: emu8000: Use swap macro in snd_emu8000_sample_new
-Message-ID: <20180717150610.GA10577@embeddedor.com>
+        Tue, 17 Jul 2018 11:42:01 -0400
+Received: by mail-it0-f66.google.com with SMTP id q20-v6so2380623ith.0;
+        Tue, 17 Jul 2018 08:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=E1XMdSYM49vbxZVEGoHGIfPrM8E0ywA3S2xqvFFx2cA=;
+        b=pRHv8LnxJGm1/sYsyezDqOTmYWWYHLJEWmTfgAPEaMgbQFBvGmKYzO+2j7W9PVNtNz
+         BIbGYjdws5x3y1ny2rUPHVGQrX2ThPRy/OAjYXn1Az7FR9fCx9j0c5HooPIwKxPljQHm
+         E0gLzsm5UJGBGkcbI4KHp+VZkkMTvCYAZxMTvrs9MFBCGOEsJE9iVdx+mLOgTrddKe75
+         ILN3oou/0ApoaY5YA53SQ3VOWfvqTLfFqmEvCyCNF1T/nwqbSmmCYGiOcH7b4TT77XNF
+         Sc3bFYPXb2lt39Hl81lmBGyP8yDhRvfKVmHTPmvRFqfLdyj6sW/uqR//KEqKj7otKAma
+         hZuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=E1XMdSYM49vbxZVEGoHGIfPrM8E0ywA3S2xqvFFx2cA=;
+        b=bo36KjRAgnPab/Q4q2py7Gj/6X73EB+Oct8+NJq3O3kNOI8Wk5Q4Ywo4zpaimFdk/T
+         VBI9M+7X/aj5TTrmZE4sXW7enshDzuPt0RrqYQagUjqfM4+gQyxZz5r8kpXqdKzq+Ogl
+         66kJowDjJleQ03BoQEl8bpjtgfWEAzDQ+qORzUpdfWpXuzUWjL7TVa/4lQk5pcQ/N6ro
+         u9wH2eIB+ZKbalpqbsefleoNH5kuxySPJ3gHKOaBev0j+ykkpbjClcnBf4zOtVN/trQx
+         7pO2MzSiQPOAgGqXqCPwvWuqFT8t7AS4/HnICUUUXcI2iE1D0xv750eiwch+PZIJ5YWb
+         6NNw==
+X-Gm-Message-State: AOUpUlFXXw14wludRwwvXPHrxKYRZCXLPCPV9J9WwOJNYOzz/4rczLZ4
+        /T0rOMahcEnej2LxS9KYcGBoJKyftnn9ij6kL8U=
+X-Google-Smtp-Source: AAOMgpey/h+6b5GRu2G71oAr1cb0+bZpBIhzs2JMYXPMBWC1Qzt9LpUZftH4FaqxPHf2p3mklCmg8g989P8bxAo48No=
+X-Received: by 2002:a24:4f57:: with SMTP id c84-v6mr1887786itb.94.1531840135986;
+ Tue, 17 Jul 2018 08:08:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1ffRYJ-0027eH-7M
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:44282
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Received: by 2002:a4f:d00d:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 08:08:55
+ -0700 (PDT)
+In-Reply-To: <20180717040651.641-1-andrew.smirnov@gmail.com>
+References: <20180717040651.641-1-andrew.smirnov@gmail.com>
+From:   Chris Healy <cphealy@gmail.com>
+Date:   Tue, 17 Jul 2018 08:08:55 -0700
+Message-ID: <CAFXsbZpdJvB3OtEnjjx5rNvgutmhFs=VK3uimRJnvQHLwzwYSw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: vf610: Add ZII SSMB SPU3 board
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of the swap macro and remove unnecessary variable *tmp*. This
-makes the code easier to read and maintain.
+On Mon, Jul 16, 2018 at 9:06 PM, Andrey Smirnov
+<andrew.smirnov@gmail.com> wrote:
+> Add support for Zodiac Inflight Innovations SSMB SPU3
+> board (VF610-based).
+>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> Cc: cphealy@gmail.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  arch/arm/boot/dts/Makefile                |   3 +-
+>  arch/arm/boot/dts/vf610-zii-ssmb-spu3.dts | 343 ++++++++++++++++++++++
+>  2 files changed, 345 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/vf610-zii-ssmb-spu3.dts
+>
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index bea41b129493..e331b2c16539 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -570,7 +570,8 @@ dtb-$(CONFIG_SOC_VF610) += \
+>         vf610m4-cosmic.dtb \
+>         vf610-twr.dtb \
+>         vf610-zii-dev-rev-b.dtb \
+> -       vf610-zii-dev-rev-c.dtb
+> +       vf610-zii-dev-rev-c.dtb \
+> +       vf610-zii-ssmb-spu3.dtb
 
-This code was detected with the help of Coccinelle.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/isa/sb/emu8000_patch.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/sound/isa/sb/emu8000_patch.c b/sound/isa/sb/emu8000_patch.c
-index c2e41d2..d45a6b9 100644
---- a/sound/isa/sb/emu8000_patch.c
-+++ b/sound/isa/sb/emu8000_patch.c
-@@ -165,11 +165,8 @@ snd_emu8000_sample_new(struct snd_emux *rec, struct snd_sf_sample *sp,
- 		return 0;
- 
- 	/* be sure loop points start < end */
--	if (sp->v.loopstart > sp->v.loopend) {
--		int tmp = sp->v.loopstart;
--		sp->v.loopstart = sp->v.loopend;
--		sp->v.loopend = tmp;
--	}
-+	if (sp->v.loopstart > sp->v.loopend)
-+		swap(sp->v.loopstart, sp->v.loopend);
- 
- 	/* compute true data size to be loaded */
- 	truesize = sp->v.size;
--- 
-2.7.4
-
+Tested-by: Chris Healy <cphealy@gmail.com>
