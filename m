@@ -2,114 +2,151 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F75BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9082FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5B7D206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36C872075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:36:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pZcHJtAU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5B7D206B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0UBdtWud"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C872075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730795AbeGQWJM (ORCPT
+        id S1730922AbeGQWKj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 18:09:12 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:39268 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729675AbeGQWJM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 18:09:12 -0400
-Received: by mail-ua0-f196.google.com with SMTP id g18-v6so1628764uam.6;
-        Tue, 17 Jul 2018 14:34:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=SSgaQbajrGW516224Z0u0OepwxYlwlsqhHVnIr8soto=;
-        b=pZcHJtAU0xHm+vg+JmHZABs0UejizdoMyDV7396hiaJFSbWEE9mudHbwxwHOZ7Lxvp
-         XT9PAFhFINT03cRDwykLyXosHqPTXVMIeV0udlhHef8L7IUsqCSXOsiQPYMYMDgEbAHf
-         w+FShurAz7wa9OcBcUHlqWqqt81AfXIyHaKOXWxAoGcyviOCrsXKiS25Ps3Gc3OeFHF3
-         yrLx84kePrMkPQZ4lQuIuZfoVWFG7a97Jqo7xORqDTNQUkaKPQWpAOsA0fo0hjLBv0iX
-         vfXdAxza+6c5v62v9C6yNflAgaeA8B9byZbw4yM2rYxeUHHvJrbI72LSNOKDIeJ37NqQ
-         mUsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=SSgaQbajrGW516224Z0u0OepwxYlwlsqhHVnIr8soto=;
-        b=kjiQQfTw0nJGCpJZ8YgQfFf5x2PO/ySugVs7WJKEFWqq+sNB8miPisPm3/s9jZTnm6
-         e9p3tz9R7mR7DQ3xNbdap9YYljJ7nvzxVmTy+LE1G+cRTiTonqf3ocTQPQnFvhSo1FbV
-         pCopQuqf8V+b/QaGsq93ZQR9a2WyJ6XbVEBfPNEBsWjopozV9Sc4y27xw8jIyJDaakoR
-         ub3KNoHFXpqoDglv4YajGeI0YDNyz3pl84D/2VTrjXvw1c4sFy9LPZloa+k++Fk3EeET
-         LW2WuZtAeADt5gIi4Pr/JBpi8RZav5pUQHaiQgqXEnSOu748EyEA+rm463eycTK1e1w1
-         IuRQ==
-X-Gm-Message-State: AOUpUlG7LbnXlaoBbP0cOAc0orEtfzoOXeXrEGfqD2mDt8/Mb7cM522p
-        nNbWVJoODD8umBI0c1YzJJWprFy7ikVXqiz88wvNEQ==
-X-Google-Smtp-Source: AAOMgpf6rCJmS8l58CXw86X7rfgeUEKgAAEvl8dcVrtWFx+CVYmLtUd8N6KXGCG6nJOkqTVTNTz1nEeqiBpCXMUYGGw=
-X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr2192189uaf.199.1531863277679;
- Tue, 17 Jul 2018 14:34:37 -0700 (PDT)
+        Tue, 17 Jul 2018 18:10:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729759AbeGQWKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 18:10:39 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3037B206B8;
+        Tue, 17 Jul 2018 21:36:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531863364;
+        bh=CDcjd7SbHLYCfTvCU+qAr4k4diKnA3UPG9vqMfhZ7NI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0UBdtWudNNOVMkDgm0gDfWijaweRvwL4JF2BpTCguAWvPEjWDknBfcQzC/2SEceXs
+         XAdbvQqzPct3N6AXPheebs8Iwd7/nwWTWcNJtq3kKhOgaFYaQvWHp/NFvVJtnDtEe1
+         0ITbe7nDRz/0jafXMBU1Zfg7b8v489YCHD0+4dH0=
+Date:   Tue, 17 Jul 2018 16:36:01 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Oza Pawandeep <poza@codeaurora.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dongdong Liu <liudongdong3@huawei.com>,
+        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH v2 1/6] PCI/AER: Take severity mask into account while
+ clearing error bits
+Message-ID: <20180717213601.GC128988@bhelgaas-glaptop.roam.corp.google.com>
+References: <1529661494-20936-1-git-send-email-poza@codeaurora.org>
+ <1529661494-20936-2-git-send-email-poza@codeaurora.org>
+ <20180717190329.GA128988@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 14:34:37
- -0700 (PDT)
-In-Reply-To: <20180717142314.32337-4-alexandre.belloni@bootlin.com>
-References: <20180717142314.32337-1-alexandre.belloni@bootlin.com> <20180717142314.32337-4-alexandre.belloni@bootlin.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 18 Jul 2018 00:34:37 +0300
-Message-ID: <CAHp75Vcvqqv4kHHDE2wbtVFFa3a5FLqg8meDeOa59-qaDFGFTw@mail.gmail.com>
-Subject: Re: [PATCH 3/5] spi: dw-mmio: add MSCC Ocelot support
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Mark Brown <broonie@kernel.org>, James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microsemi.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717190329.GA128988@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 5:23 PM, Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> Because the SPI controller deasserts the chip select when the TX fifo is
-> empty (which may happen in the middle of a transfer), the CS should be
-> handled by linux. Unfortunately, some or all of the first four chip
-> selects are not muxable as GPIOs, depending on the SoC.
->
-> There is a way to bitbang those pins by using the SPI boot controller so
-> use it to set the chip selects.
->
-> At init time, it is also necessary to give control of the SPI interface to
-> the Designware IP.
+On Tue, Jul 17, 2018 at 02:03:29PM -0500, Bjorn Helgaas wrote:
+> Hi Oza,
+> 
+> Thanks for doing this!
+> 
+> On Fri, Jun 22, 2018 at 05:58:09AM -0400, Oza Pawandeep wrote:
+> > pci_cleanup_aer_uncorrect_error_status() is called by different slot_reset
+> > callbacks in case of ERR_NONFATAL.
+> 
+> IIRC, the current strategy is:
+> 
+>   ERR_COR: log only
+>   ERR_NONFATAL: call driver callbacks (pci_error_handlers)
+>   ERR_FATAL: remove device and re-enumerate
+> 
+> So these slot_reset callbacks are only used for ERR_NONFATAL, which
+> are all uncorrectable errors, of course.
+> 
+> This patch makes it so that when the slot_reset callbacks call
+> pci_cleanup_aer_uncorrect_error_status(), we only clear the
+> bits set by ERR_NONFATAL events (this is determined by
+> PCI_ERR_UNCOR_SEVER).
+> 
+> That makes good sense to me.  All these status bits are RW1CS, so they
+> will be preserved across a reset but will be cleared when we
+> re-enumerate, in this path:
+> 
+>   pci_init_capabilities
+>     pci_aer_init
+>       pci_cleanup_aer_error_status_regs
+>       # clear all PCI_ERR_UNCOR_STATUS and PCI_ERR_COR_STATUS bits
+> 
+> > AER uncorrectable error status should take severity into account in order
+> > to clear the bits, so that ERR_NONFATAL path does not clear the bit which
+> > are marked with severity fatal.
+> 
+> Two comments:
+> 
+> 1) Can you split this into two patches, one that changes
+> pci_cleanup_aer_uncorrect_error_status() so it looks like the error
+> clearing code in aer_error_resume(), and a second that factors out the
+> duplicate code?
+> 
+> 2) Maybe use "sev" or "sever" instead of "mask" for the local
+> variable, since there is also a separate PCI_ERR_UNCOR_MASK register,
+> which is not involved here.
 
-> +       ret = dw_spi_mscc_init(pdev, dwsmmio);
-> +       if (ret)
-> +               goto out;
+Let me back up a little here: I'm not asking you to do the things
+below here.  They're just possible future things, so we can think
+about them after this series.  And the things above are things I can
+easily do myself.  So no action required from you, unless you think
+I'm on the wrong track :)
 
-> +       { .compatible = "mscc,ocelot-spi", .data = dw_spi_mscc_init},
-
-Looks like you were thinking about something like
-
-init_func = device_get_match_data(...);
-if (init_func) {
- ret = init_func();
- if (ret)
-   return ret;
-}
-
-?
-
--- 
-With Best Regards,
-Andy Shevchenko
+> 3) The "pci_cleanup_aer_uncorrect_error_status()" name no longer
+> really describes what this does.  Something like
+> "pci_aer_clear_nonfatal_status()" would be more descriptive.  But I
+> see you have a subsequent patch (which I haven't looked at yet) that
+> is related to this.
+> 
+> 4) I don't think the driver slot_reset callbacks should be responsible
+> for clearing these AER status bits.  Can we clear them somewhere in
+> the pcie_do_nonfatal_recovery() path and remove these calls from the
+> drivers?
+> 
+> 5) In principle, we should only read PCI_ERR_UNCOR_STATUS *once* per
+> device when handling an error.  We currently read it three times:
+> 
+>   aer_isr
+>     aer_isr_one_error
+>       find_source_device
+>         find_device_iter
+>           is_error_source
+>             read PCI_ERR_UNCOR_STATUS              # 1
+>       aer_process_err_devices
+>         get_device_error_info(e_info->dev[i])
+>           read PCI_ERR_UNCOR_STATUS                # 2
+>         handle_error_source
+>           pcie_do_nonfatal_recovery
+>             ...
+>               report_slot_reset
+>                 driver->err_handler->slot_reset
+>                   pci_cleanup_aer_uncorrect_error_status
+>                     read PCI_ERR_UNCOR_STATUS      # 3
+> 
+> OK, that was more than two comments :)
