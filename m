@@ -2,120 +2,116 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C190ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40984ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3366F208AD
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:34:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3366F208AD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id EAD42208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 00:35:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FwiiI4j9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAD42208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbeGQBEM convert rfc822-to-8bit (ORCPT
+        id S1730598AbeGQBFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 16 Jul 2018 21:04:12 -0400
-Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:36781 "EHLO
-        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729842AbeGQBEM (ORCPT
+        Mon, 16 Jul 2018 21:05:25 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37240 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729466AbeGQBFZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Jul 2018 21:04:12 -0400
-Received: from mailgate01.nec.co.jp ([114.179.233.122])
-        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w6H0YBcg011770
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 17 Jul 2018 09:34:11 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6H0YBYQ015692;
-        Tue, 17 Jul 2018 09:34:11 +0900
-Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6H0Wqxc004895;
-        Tue, 17 Jul 2018 09:34:11 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.147] [10.38.151.147]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-1970953; Tue, 17 Jul 2018 09:27:33 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC19GP.gisp.nec.co.jp ([10.38.151.147]) with mapi id 14.03.0319.002; Tue,
- 17 Jul 2018 09:27:32 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] mm: soft-offline: close the race against page
- allocation
-Thread-Topic: [PATCH v1 2/2] mm: soft-offline: close the race against page
- allocation
-Thread-Index: AQHUGllLPw0CmtrOu0aJXCyoyx0DG6SNB8YAgAT2jYA=
-Date:   Tue, 17 Jul 2018 00:27:31 +0000
-Message-ID: <20180717002731.GA11433@hori1.linux.bs1.fc.nec.co.jp>
-References: <1531452366-11661-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <1531452366-11661-3-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180713134002.a365049a79d41be3c28916cc@linux-foundation.org>
-In-Reply-To: <20180713134002.a365049a79d41be3c28916cc@linux-foundation.org>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.81]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <317E8E8C8B68C64890D63BEBEA885BB8@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-TM-AS-MML: disable
+        Mon, 16 Jul 2018 21:05:25 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n7-v6so1295739pgq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Jul 2018 17:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=DpfcA4DL5DGiiXNwkLOURJ+Yp3GG6BMVyLv9uuXYaWU=;
+        b=FwiiI4j9lzXbwCUGZ35pPm6QqcSJu9MosBo+5cSpVpb9hzMZfwhSyEH5SJlhdsn6gN
+         bOeeCvLIf3RbhNvgPVN1G6xwrlA8x5zPaljJyIwk8gdWOOOQg0Cayn6e5odrPTrQ4MfM
+         Kb/0H4Vn9XG2ahe10c6CTAHn3Q6SXT1VAclo0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DpfcA4DL5DGiiXNwkLOURJ+Yp3GG6BMVyLv9uuXYaWU=;
+        b=iiQ9WOgKA1K/+kz8cFaNFATrKfNFUVvlhBPc+Par/HNsXsRZhzQd30rv9Y+khEqkJC
+         29Q43HrZZF88aBiKm0DPaE3bE+MvjFA/PKthprQHFYOqNrwZRWWs3jn6Jp8SRF+Q+5bz
+         XXqV1nw8hhxoHkSbRjdudnljRmEJdL88UFVyPnTkPfFSgrtK8ZmzeqP+FlX+9xSi1Rzz
+         iJ9VkEdndLMKsNLzIIRBR5+BLtv4jurLMvMb6qoWvoYCHvglb/I7T0CWQTKxN/mg6pwC
+         u2B8hSGubrTOUgUtEOPA7VPKTC8SYxeZCzyNQLip7oIjBuNpU2snFFCqcqIymaLA95p9
+         yE+A==
+X-Gm-Message-State: AOUpUlFhbyTwedijfE49MSsd8f7sqIbuCc8Ip8lzDnWenrCKcC3JoXnz
+        7Mn2Qkj/HI3Llg5N8mUQzA6oZM0DsYQ=
+X-Google-Smtp-Source: AAOMgpd7qF1KJCdBwN/SUwJREMt60xOm6nvCD1adpnPqPsF77Dm5UZc99LsQpCFCqwpkQ2mc5j4NLg==
+X-Received: by 2002:a63:fb07:: with SMTP id o7-v6mr2805267pgh.333.1531787734225;
+        Mon, 16 Jul 2018 17:35:34 -0700 (PDT)
+Received: from belgium.mtv.corp.google.com ([2620:0:1000:1501:d2b0:ee44:7e40:11aa])
+        by smtp.gmail.com with ESMTPSA id g11-v6sm44864206pfh.63.2018.07.16.17.35.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Jul 2018 17:35:33 -0700 (PDT)
+From:   Chirantan Ekbote <chirantan@chromium.org>
+To:     asmadeus@codewreck.org
+Cc:     groug@kaod.org, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, dgreid@chromium.org,
+        groeck@chromium.org, Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCH v2] Fix zero-copy path in the 9p virtio transport
+Date:   Mon, 16 Jul 2018 17:35:29 -0700
+Message-Id: <20180717003529.114368-1-chirantan@chromium.org>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 01:40:02PM -0700, Andrew Morton wrote:
-> On Fri, 13 Jul 2018 12:26:06 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
-> 
-> > A process can be killed with SIGBUS(BUS_MCEERR_AR) when it tries to
-> > allocate a page that was just freed on the way of soft-offline.
-> > This is undesirable because soft-offline (which is about corrected error)
-> > is less aggressive than hard-offline (which is about uncorrected error),
-> > and we can make soft-offline fail and keep using the page for good reason
-> > like "system is busy."
-> > 
-> > Two main changes of this patch are:
-> > 
-> > - setting migrate type of the target page to MIGRATE_ISOLATE. As done
-> >   in free_unref_page_commit(), this makes kernel bypass pcplist when
-> >   freeing the page. So we can assume that the page is in freelist just
-> >   after put_page() returns,
-> > 
-> > - setting PG_hwpoison on free page under zone->lock which protects
-> >   freelists, so this allows us to avoid setting PG_hwpoison on a page
-> >   that is decided to be allocated soon.
-> > 
-> >
-> > ...
-> >
-> > +
-> > +#ifdef CONFIG_MEMORY_FAILURE
-> > +/*
-> > + * Set PG_hwpoison flag if a given page is confirmed to be a free page
-> > + * within zone lock, which prevents the race against page allocation.
-> > + */
-> 
-> I think this is clearer?
-> 
-> --- a/mm/page_alloc.c~mm-soft-offline-close-the-race-against-page-allocation-fix
-> +++ a/mm/page_alloc.c
-> @@ -8039,8 +8039,9 @@ bool is_free_buddy_page(struct page *pag
->  
->  #ifdef CONFIG_MEMORY_FAILURE
->  /*
-> - * Set PG_hwpoison flag if a given page is confirmed to be a free page
-> - * within zone lock, which prevents the race against page allocation.
-> + * Set PG_hwpoison flag if a given page is confirmed to be a free page.  This
-> + * test is performed under the zone lock to prevent a race against page
-> + * allocation.
+The zero-copy optimization when reading or writing large chunks of data
+is quite useful.  However, the 9p messages created through the zero-copy
+write path have an incorrect message size: it should be the size of the
+header + size of the data being written but instead it's just the size
+of the header.
 
-Yes, I like it.
+This only works if the server ignores the size field of the message and
+otherwise breaks the framing of the protocol. Fix this by re-writing the
+message size field with the correct value.
 
-Thanks,
-Naoya Horiguchi
+Tested by running `dd if=/dev/zero of=out bs=4k count=1` inside a
+virtio-9p mount.
+
+Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+Reviewed-by: Greg Kurz <groug@kaod.org>
+Tested-by: Greg Kurz <groug@kaod.org>
+---
+ net/9p/trans_virtio.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 05006cbb3361..65761381c58f 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -406,6 +406,7 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+ 	p9_debug(P9_DEBUG_TRANS, "virtio request\n");
+ 
+ 	if (uodata) {
++		__le32 sz;
+ 		int n = p9_get_mapped_pages(chan, &out_pages, uodata,
+ 					    outlen, &offs, &need_drop);
+ 		if (n < 0)
+@@ -416,6 +417,12 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+ 			memcpy(&req->tc->sdata[req->tc->size - 4], &v, 4);
+ 			outlen = n;
+ 		}
++		/* The size field of the message must include the length of the
++		 * header and the length of the data.  We didn't actually know
++		 * the length of the data until this point so add it in now.
++		 */
++		sz = cpu_to_le32(req->tc->size + outlen);
++		memcpy(&req->tc->sdata[0], &sz, sizeof(sz));
+ 	} else if (uidata) {
+ 		int n = p9_get_mapped_pages(chan, &in_pages, uidata,
+ 					    inlen, &offs, &need_drop);
+-- 
+2.18.0.203.gfac676dfb9-goog
+
