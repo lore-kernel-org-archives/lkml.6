@@ -2,41 +2,40 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F112ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:03:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A099CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF60C2075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A5232077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 22:04:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="imFHgyW/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF60C2075E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AvylgIcs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5232077B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbeGQWih (ORCPT
+        id S1731469AbeGQWim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 18:38:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 18:38:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730092AbeGQWig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 18:38:36 -0400
+        id S1731404AbeGQWim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 18:38:42 -0400
 Received: from ziggy.de (144.pool85-56-49.dynamic.orange.es [85.56.49.144])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6732D20839;
-        Tue, 17 Jul 2018 22:03:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3673220693;
+        Tue, 17 Jul 2018 22:03:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531865035;
-        bh=U0ilIxN8f7Iu4VX226MDd/I68fU+92CDuDprBIA7res=;
+        s=default; t=1531865041;
+        bh=N9KVlc87ADl1cpTrfAOr4Pv9YxzTCgoDn6201pGoWlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=imFHgyW/x1HLMHbH57UziCZQbgKDWaI0nkuy3ZiuhyCD7FmowpowUZih6zpeCekU/
-         JToNnWLt+VyUp/Iwu7WAyKxwRVQEtu5DRpWwHm+Eu5BnQNXiGawxXSlRj0nPKbkf2T
-         NclZdF0a68YptvnxaOaPSpR91njXpfkDws3dUvY0=
+        b=AvylgIcsss62vawR5EX9VQMi35NExD/7Humak+vRns6XFmHNBIR00QqqU95/ApyVy
+         +cKbjVo3qa3aXNQKF7ypxbivpz4aN3eXFmaczJ7fSevg9w59UkaOwL7G+9e1VM9NHr
+         Lh5UAvtcKdbva5u6Ktdt7rnEjbwmU3nw952vOgJY=
 From:   matthias.bgg@kernel.org
 To:     ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
         ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
@@ -50,9 +49,9 @@ Cc:     davem@davemloft.net, gregkh@linuxfoundation.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org,
         Matthias Brugger <mbrugger@suse.com>
-Subject: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to platform device probing
-Date:   Wed, 18 Jul 2018 00:03:26 +0200
-Message-Id: <20180717220328.792-4-matthias.bgg@kernel.org>
+Subject: [resend PATCH v4 4/5] drm/mediatek: Add support for mmsys through a pdev
+Date:   Wed, 18 Jul 2018 00:03:27 +0200
+Message-Id: <20180717220328.792-5-matthias.bgg@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180717220328.792-1-matthias.bgg@kernel.org>
 References: <20180717220328.792-1-matthias.bgg@kernel.org>
@@ -63,102 +62,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Matthias Brugger <mbrugger@suse.com>
 
-Switch probing for the MMSYS to support invocation to a
-plain paltform device. The driver will be probed by the DRM subsystem.
+The MMSYS subsystem includes clocks and drm components.
+This patch adds an initailization path through a platform device
+for the clock part, so that both drivers get probed from the same
+device tree compatible.
 
 Signed-off-by: Matthias Brugger <mbrugger@suse.com>
 ---
- drivers/clk/mediatek/clk-mt8173.c | 51 ++++++++++++++++++++++++++-----
- 1 file changed, 44 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 18 ++++++++++++++++++
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
+ 2 files changed, 20 insertions(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt8173.c b/drivers/clk/mediatek/clk-mt8173.c
-index 96c292c3e440..10b6a0251123 100644
---- a/drivers/clk/mediatek/clk-mt8173.c
-+++ b/drivers/clk/mediatek/clk-mt8173.c
-@@ -13,8 +13,11 @@
-  */
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index dd249cf5121e..c946aea722e5 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -173,6 +173,7 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
+ 	.ext_path = mt2701_mtk_ddp_ext,
+ 	.ext_len = ARRAY_SIZE(mt2701_mtk_ddp_ext),
+ 	.shadow_register = true,
++	.clk_drv_name = "clk-mt2701-mm",
+ };
  
- #include <linux/clk.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
+ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+@@ -180,6 +181,7 @@ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
+ 	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
+ 	.ext_path = mt8173_mtk_ddp_ext,
+ 	.ext_len = ARRAY_SIZE(mt8173_mtk_ddp_ext),
++	.clk_drv_name = "clk-mt8173-mm",
+ };
  
- #include "clk-mtk.h"
- #include "clk-gate.h"
-@@ -791,7 +794,7 @@ static const struct mtk_gate_regs mm1_cg_regs __initconst = {
- 		.ops = &mtk_clk_gate_ops_setclr,		\
- 	}
+ static int mtk_drm_kms_init(struct drm_device *drm)
+@@ -411,6 +413,19 @@ static int mtk_drm_probe(struct platform_device *pdev)
+ 	if (IS_ERR(private->config_regs))
+ 		return PTR_ERR(private->config_regs);
  
--static const struct mtk_gate mm_clks[] __initconst = {
-+static const struct mtk_gate mm_clks[] = {
- 	/* MM0 */
- 	GATE_MM0(CLK_MM_SMI_COMMON, "mm_smi_common", "mm_sel", 0),
- 	GATE_MM0(CLK_MM_SMI_LARB0, "mm_smi_larb0", "mm_sel", 1),
-@@ -1152,22 +1155,56 @@ static void __init mtk_imgsys_init(struct device_node *node)
++	if (private->data->clk_drv_name) {
++		private->clk_dev = platform_device_register_data(dev,
++						private->data->clk_drv_name, -1,
++						NULL, 0);
++
++		if (IS_ERR(private->clk_dev)) {
++			pr_err("failed to register %s platform device\n",
++						private->data->clk_drv_name);
++
++			return PTR_ERR(private->clk_dev);
++		}
++	}
++
+ 	/* Iterate over sibling DISP function blocks */
+ 	for_each_child_of_node(dev->of_node->parent, node) {
+ 		const struct of_device_id *of_id;
+@@ -515,6 +530,9 @@ static int mtk_drm_remove(struct platform_device *pdev)
+ 	for (i = 0; i < DDP_COMPONENT_ID_MAX; i++)
+ 		of_node_put(private->comp_node[i]);
+ 
++	if (private->clk_dev)
++		platform_device_unregister(private->clk_dev);
++
+ 	return 0;
  }
- CLK_OF_DECLARE(mtk_imgsys, "mediatek,mt8173-imgsys", mtk_imgsys_init);
  
--static void __init mtk_mmsys_init(struct device_node *node)
--{
-+struct mtk_mmsys_priv {
- 	struct clk_onecell_data *clk_data;
-+};
-+
-+static int mtk_mmsys_probe(struct platform_device *pdev)
-+{
- 	int r;
-+	struct device_node *node;
-+	struct mtk_mmsys_priv *private;
-+
-+	node = pdev->dev.parent->of_node;
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+index 86cec19193c4..200eee5de419 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+@@ -34,11 +34,13 @@ struct mtk_mmsys_driver_data {
+ 	const enum mtk_ddp_comp_id *ext_path;
+ 	unsigned int ext_len;
+ 	bool shadow_register;
++	const char *clk_drv_name;
+ };
  
--	clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
-+	private = devm_kzalloc(&pdev->dev, sizeof(*private), GFP_KERNEL);
-+	if (!private)
-+		return -ENOMEM;
-+
-+	private->clk_data = mtk_alloc_clk_data(CLK_MM_NR_CLK);
-+
-+	platform_set_drvdata(pdev, private);
+ struct mtk_drm_private {
+ 	struct drm_device *drm;
+ 	struct device *dma_dev;
++	struct platform_device *clk_dev;
  
- 	mtk_clk_register_gates(node, mm_clks, ARRAY_SIZE(mm_clks),
--						clk_data);
-+					private->clk_data);
+ 	unsigned int num_pipes;
  
--	r = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	r = of_clk_add_provider(node, of_clk_src_onecell_get,
-+					private->clk_data);
- 	if (r)
- 		pr_err("%s(): could not register clock provider: %d\n",
- 			__func__, r);
-+
-+	return r;
-+}
-+
-+static int mtk_mmsys_remove(struct platform_device *pdev)
-+{
-+	struct mtk_mmsys_priv *private = platform_get_drvdata(pdev);
-+
-+	kfree(private->clk_data);
-+	kfree(private);
-+
-+	return 0;
- }
--CLK_OF_DECLARE(mtk_mmsys, "mediatek,mt8173-mmsys", mtk_mmsys_init);
-+
-+static struct platform_driver clk_mt8173_mm_drv = {
-+	.probe = mtk_mmsys_probe,
-+	.probe = mtk_mmsys_remove,
-+	.driver = {
-+		.name = "clk-mt8173-mm",
-+	},
-+};
-+module_platform_driver(clk_mt8173_mm_drv);
- 
- static void __init mtk_vdecsys_init(struct device_node *node)
- {
 -- 
 2.17.1
 
