@@ -2,66 +2,72 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E4DECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41142ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 714FC208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:46:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xj4oq6ke"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714FC208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EC429208AD
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 06:48:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC429208AD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbeGQHRw (ORCPT
+        id S1728330AbeGQHTR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 03:17:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46348 "EHLO mail.kernel.org"
+        Tue, 17 Jul 2018 03:19:17 -0400
+Received: from muru.com ([72.249.23.125]:51746 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbeGQHRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 03:17:52 -0400
-Received: from dragon (unknown [104.237.91.210])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E9C82086D;
-        Tue, 17 Jul 2018 06:46:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531810009;
-        bh=SO8mdKvFhUlxK9G/TpTFvXRpYyuZasnp7P6i4yds8vM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xj4oq6kezmA8ko/pruSbcPKuhb7h1lVxvcMaKPpuhWHUlxUSlQltMfoTvjs2GqSWo
-         96UkFmcKpkCI9pazW4fGXTs2CsRf//bEKJTmOQL92Tg897Yf2LZ61qi3wNKUikzdvw
-         CPjo/wOdg2exgNj58uWg4Pc2BEzoMo2YV13yzqyw=
-Date:   Tue, 17 Jul 2018 14:46:40 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Lucas Stach <l.stach@pengutronix.de>, cphealy@gmail.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v2 0/2] Follow up fixes for SCU3 ESB
-Message-ID: <20180717064639.GK4576@dragon>
-References: <20180713173005.19552-1-andrew.smirnov@gmail.com>
+        id S1727481AbeGQHTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 03:19:17 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 4F24F80C5;
+        Tue, 17 Jul 2018 06:51:24 +0000 (UTC)
+Date:   Mon, 16 Jul 2018 23:48:11 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
+        merlijn@wizzup.org
+Subject: Re: [PATCH] dts/droid4: fix dts w.r.t. pwm
+Message-ID: <20180717064811.GA99251@atomide.com>
+References: <20180709214910.tes6u4ivxomd3aja@earth.universe>
+ <20180709220211.GA7760@amd>
+ <20180710101147.lyu65ro4czvrs2da@earth.universe>
+ <20180710133040.GA4391@amd>
+ <20180710161123.azym6sbboriuj4yc@earth.universe>
+ <20180711080218.GA21225@amd>
+ <20180711132739.GL99251@atomide.com>
+ <20180711142526.dto6iost57zx5t5l@earth.universe>
+ <20180716071048.GA23110@amd>
+ <20180716101106.vgmjz3ic7gqy2u2q@earth.universe>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180713173005.19552-1-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180716101106.vgmjz3ic7gqy2u2q@earth.universe>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 10:30:03AM -0700, Andrey Smirnov wrote:
-> Andrey Smirnov (2):
->   ARM: dts: imx51-zii-scu3-esb: Add switch IRQ line pinumx config
->   ARM: dts: imx51-zii-scu3-esb: Fix RAVE SP watchdog compatible string
+* Sebastian Reichel <sre@kernel.org> [180716 10:14]:
+> Hi,
+> 
+> On Mon, Jul 16, 2018 at 09:10:48AM +0200, Pavel Machek wrote:
+> > pwm node should not be under gpio6 node in the device tree.
+> >    
+> > This fixes detection of the pwm on Droid 4.
+> >     
+> > Signed-off-by: Pavel Machek <pavel@ucw.cz>
+> 
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-Applied both, thanks.
+Applying into omap-for-v4.18/fixes thanks.
+
+Tony
