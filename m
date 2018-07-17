@@ -2,96 +2,118 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D3AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA4FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E0820837
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:40:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E0820837
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id D29F62077B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:43:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a7lBy4oz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D29F62077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbeGQTOE (ORCPT
+        id S1730502AbeGQTRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 15:14:04 -0400
-Received: from anholt.net ([50.246.234.109]:46716 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729717AbeGQTOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 15:14:04 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id D778F10A18B0;
-        Tue, 17 Jul 2018 11:40:09 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id HK35PBbdt-9v; Tue, 17 Jul 2018 11:40:08 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id B110510A0353;
-        Tue, 17 Jul 2018 11:40:08 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 224E02FE2D94; Tue, 17 Jul 2018 11:40:08 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: [PATCH v2] drm/pl111: Use 64-bit arithmetic instead of 32-bit
-In-Reply-To: <20180704142255.GA8614@embeddedor.com>
-References: <20180704142255.GA8614@embeddedor.com>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Tue, 17 Jul 2018 11:40:07 -0700
-Message-ID: <87d0vlg0zc.fsf@anholt.net>
+        Tue, 17 Jul 2018 15:17:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49506 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729741AbeGQTRP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 15:17:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mbhi9UOHjJoUMSiF5CPD0d0YTUQMuKa7eRANov79eqU=; b=a7lBy4ozIeW6L6lDPksDRnHzF
+        m/N2Dv9jrQVf/diClKhXtznADcoa71ng0NV8ke1e6jfDrWulSW0////f8ei7VZYRuYflP552CBaVh
+        N3LpqG1UX2aFIyLej2j7a4Fwc1mv5jQZIueLSBQxoChziRXYn1kHomCv8VwOPDWN+O9rH+Yyk95m4
+        zNqRxkfg5zBvAaeXK2SuUmLF+aEX4KPs9EbRvyyOZPOgeSQQ2rChjT7q84/BfV6PHxweQoB3kTBsa
+        GTnfTE/9mrkkcdJcY1czv0+CURUbdJq12dhnBW4qhVvSMsnoR2n6K/QTAgLOfiRv9fpJsnvKwufJE
+        RutOqkdOA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ffUw5-0002rJ-3W; Tue, 17 Jul 2018 18:42:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D7C5220275F36; Tue, 17 Jul 2018 20:42:55 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 20:42:55 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nick Piggin <npiggin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Message-ID: <20180717184255.GM2494@hirez.programming.kicks-ass.net>
+References: <20180712180511.GP2476@hirez.programming.kicks-ass.net>
+ <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
+ <20180713110851.GY2494@hirez.programming.kicks-ass.net>
+ <87tvp3xonl.fsf@concordia.ellerman.id.au>
+ <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
+ <87601fz1kc.fsf@concordia.ellerman.id.au>
+ <CA+55aFzjcKv40hT_aD4jsdERi+a1pLU2SWPTwvyT2PDnoOmSpQ@mail.gmail.com>
+ <87va9dyl8y.fsf@concordia.ellerman.id.au>
+ <CA+55aFyFLzH71Tke858x0cjCiRO48vc1W9oVmVkO43rtjezqOg@mail.gmail.com>
+ <20180717183341.GQ12945@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717183341.GQ12945@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On Tue, Jul 17, 2018 at 11:33:41AM -0700, Paul E. McKenney wrote:
+> On Tue, Jul 17, 2018 at 09:19:15AM -0700, Linus Torvalds wrote:
+> > 
+> > In particular, I find:
+> > 
+> >   "isync is not a memory barrier instruction, but the
+> > load-compare-conditional branch-isync sequence can provide this
+> > ordering property"
+> > 
+> > so why are you doing "sync/lwsync", when it sounds like "isync/lwsync"
+> > (for lock/unlock) is the right thing and would already give memory
+> > barrier semantics?
+> 
+> The PowerPC guys will correct me if I miss something here...
+> 
+> The isync provides ordering roughly similar to lwsync, but nowhere near
+> as strong as sync, and it is sync that would be needed to cause lock
+> acquisition to provide full ordering.  The reason for using lwsync instead
+> of isync is that the former proved to be faster on recent hardware.
+> The reason that the kernel still has the ability to instead generate
+> isync instructions is that some older PowerPC hardware does not provide
+> the lwsync instruction.  If the hardware does support lwsync, the isync
+> instructions are overwritten with lwsync at boot time.
 
-"Gustavo A. R. Silva" <gustavo@embeddedor.com> writes:
+Isn't ISYNC the instruction-sync pipeline flush instruction? That is
+used as an smp_rmb() here to, together with the control dependency from the
+LL/SC, to form a LOAD->{LOAD,STORE} (aka LOAD-ACQUIRE) ordering?
 
-> Add suffix ULL to constant 1000 in order to give the compiler complete
-> information about the proper arithmetic to use.
->
-> Notice that such constant is used in a context that expects an
-> expression of type u64 (64 bits, unsigned) and the following
-> expression is currently being evaluated using 32-bit arithmetic:
->
-> mode->clock * 1000
->
-> Addresses-Coverity-ID: 1466139 ("Unintentional integer overflow")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Where LWSYNC provides a TSO like ordering and SYNC provides a full
+transitive barrier aka. smp_mb() (althgouh I think it is strictly
+stronger than smp_mb() since it also implies completion, which smp_mb()
+does not).
 
-This is silly.  The clock won't be over 4ghz -- we haven't seen anything
-over 1024x768 on this hardware as far as I know.  The u64 is for the
-multiplication by width/height below.
+And since both LL/SC-CTRL + ISYNC / LWSYNC are strictly CPU local, they
+cannot be used to create RCsc ordering.
 
-I've still applied the patch to shut up the tool.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAltOOAcACgkQtdYpNtH8
-nuiPjQ/9GimicpQZHzxGqUb41WrnQN59Y4/uFX0Ux3CWKY33rzOh/vfIL3WxW6hn
-moso2oYRMGrLs2ZLZXVVtiiUPYNP71oXPDPGIuXN9Ur4gPoGCzPUSjHmQ6fBYbuk
-QGFNq4J1OG9e8p7nhT22DMTctC6Fwdrf4tMFcqqBbam1kQHR2k/6yWLgOmlwr173
-O9RQtQJVwtPo75Qs5hWdUG6NFcTiEhWuDV/gEWhMNZ1VwtVt01ztOVJCgiPOqlbe
-q0Fgz/7ttkxIWHTqkFpP1FIzRQOmPYuFsBY+KotjROt42KjVelCMMsjI1ZgNQtcU
-0nFUrKxuA3leRQ5xEIyT9rleyzXPJ+knumyyd7biC+/3nIKXM2yfOeubtwh2TY7J
-nSo+tlak8B11A2GCo9tX0I//sUTTICZyMnNAGZsjwnT1KRvr5EILJaI/k8pW73BK
-D++5MdZsdDj11k5Ffo50e53qriqqbBZHPiylXxVis44kUEKuvLcJAEBvkII5zlL0
-rM4n18dZv0wrSZFo++IQ3803N6PZoSeJupH9A3CM3ylUUS7kN1OEo46Mwhejq2s+
-8EAdxokJpOjBytmdxvES/0WSOrwdPOyDS+OWsvamUayigv+JtEElejXSdlDUhkfO
-j7deKGW5aHMSzuyAcZmQrvA5dqtX0VUgCflq+75FGC0Vjrqb03w=
-=njA4
------END PGP SIGNATURE-----
---=-=-=--
