@@ -2,116 +2,143 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7A83ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3360FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B50020C0E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B50020C0E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id ECBDB20C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:36:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECBDB20C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730421AbeGQKIK (ORCPT
+        id S1730616AbeGQKIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:08:10 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:40329 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728835AbeGQKIK (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 17 Jul 2018 06:08:10 -0400
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Tue, 17 Jul 2018 11:36:25 +0200
-Received: from suselix (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Tue, 17 Jul 2018 10:36:23 +0100
-Date:   Tue, 17 Jul 2018 11:36:20 +0200
-From:   Andreas Herrmann <aherrmann@suse.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Commit 554c8aa8ecad causing severe performance degression with
- pcc-cpufreq
-Message-ID: <20180717093620.ym6phfmr3rfvsxyo@suselix>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix>
- <CAJZ5v0ihkNKPrtzKynt8jgQi1JjwCm+SdoUnu4XqoPSkOroHvA@mail.gmail.com>
- <CAJZ5v0gG5XNmpR_0U+6EOFHPeVz+EhunLoQ0-sXDCBg8QL3mQw@mail.gmail.com>
- <20180717085039.kqxwbkgruhj5qxtx@suselix>
- <CAJZ5v0ivJiPhuh7Gk3KpujKjvFGAY6EYQrNdu8=kao59xqsgHw@mail.gmail.com>
- <20180717091152.l4ixicbp6imvqtsr@suselix>
- <CAJZ5v0hu6d26Qu1d-NRoO8RXic2ooTEfXzcmJyRGPSOsH6OznA@mail.gmail.com>
- <20180717092721.onkaf3qsu7te6syi@suselix>
+        Tue, 17 Jul 2018 06:08:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:43603 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbeGQKIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 06:08:18 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9aCx21463667
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 02:36:13 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9aCes1463664;
+        Tue, 17 Jul 2018 02:36:12 -0700
+Date:   Tue, 17 Jul 2018 02:36:12 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rik van Riel <tipbot@zytor.com>
+Message-ID: <tip-95b0e6357d3e4e05349668940d7ff8f3b7e7e11e@git.kernel.org>
+Cc:     mingo@kernel.org, riel@surriel.com, tglx@linutronix.de,
+        dave.hansen@intel.com, hpa@zytor.com, songliubraving@fb.com,
+        peterz@infradead.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, riel@surriel.com,
+          dave.hansen@intel.com, hpa@zytor.com, peterz@infradead.org,
+          songliubraving@fb.com, linux-kernel@vger.kernel.org,
+          torvalds@linux-foundation.org
+In-Reply-To: <20180716190337.26133-7-riel@surriel.com>
+References: <20180716190337.26133-7-riel@surriel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/mm/tlb: Always use lazy TLB mode
+Git-Commit-ID: 95b0e6357d3e4e05349668940d7ff8f3b7e7e11e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180717092721.onkaf3qsu7te6syi@suselix>
-User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 11:27:21AM +0200, Andreas Herrmann wrote:
-> On Tue, Jul 17, 2018 at 11:23:25AM +0200, Rafael J. Wysocki wrote:
-> > On Tue, Jul 17, 2018 at 11:11 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
-> > > On Tue, Jul 17, 2018 at 11:06:29AM +0200, Rafael J. Wysocki wrote:
-> > >> On Tue, Jul 17, 2018 at 10:50 AM, Andreas Herrmann <aherrmann@suse.com> wrote:
-> > >>
-> > >> [cut]
-> > >>
-> > >> >
-> > >> > On balance before this commit users could use pcc-cpufreq but had
-> > >> > already suboptimal performance (compared to say intel_pstate driver
-> > >> > which can be used changing BIOS options).
-> > >>
-> > >> BTW, I wonder why you need to change the BIOS options for intel_pstate to load.
-> > >
-> > > I think this is because of (in intel_pstate_init()):
-> > >
-> > >         /*
-> > >          * The Intel pstate driver will be ignored if the platform
-> > >          * firmware has its own power management modes.
-> > >          */
-> > >         if (intel_pstate_platform_pwr_mgmt_exists())
-> > >                 return -ENODEV;
-> > >
-> > 
-> > OK, because of the "Proliant" entry, right?
-> > 
-> > So it looks like we have an issue there.  We find the entry and we
-> > look for _PSS.  It is not there, so we assume that the firmware is
-> > expected to control performance, which is not the case.
+Commit-ID:  95b0e6357d3e4e05349668940d7ff8f3b7e7e11e
+Gitweb:     https://git.kernel.org/tip/95b0e6357d3e4e05349668940d7ff8f3b7e7e11e
+Author:     Rik van Riel <riel@surriel.com>
+AuthorDate: Mon, 16 Jul 2018 15:03:36 -0400
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 17 Jul 2018 09:35:34 +0200
 
-FYI, there is another BIOS setting on those systems. It's called
-"Collaborative Power Control" (AFAIK enabled by default).
+x86/mm/tlb: Always use lazy TLB mode
 
-Only if this is disabled, firmware is (alone) in control of
-performance. (And of course in this case neither pcc-cpufreq nor
-intel_pstate will be loaded).
+Now that CPUs in lazy TLB mode no longer receive TLB shootdown IPIs, except
+at page table freeing time, and idle CPUs will no longer get shootdown IPIs
+for things like mprotect and madvise, we can always use lazy TLB mode.
 
-> > It looks like we also should look for the presence of the PCC
-> > interface in there.
-> >
-> > I can provide a patch for that, will you be able to test it?
-> 
-> Yes, I can test it.
-> 
-> > >> It should be initialized before pcc-cpufreq (according to their
-> > >> respective initcall levels), so in theory intel_pstate should be used
-> > >> by default on the affected systems anyway.
-> > >
-> > >> What BIOS settings need to be changed for that?
-> > >
-> > > Already answered in other mail.
-> > 
-> > Indeed.
-> 
-> 
-> Andreas
-> 
+Tested-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: efault@gmx.de
+Cc: kernel-team@fb.com
+Cc: luto@kernel.org
+Link: http://lkml.kernel.org/r/20180716190337.26133-7-riel@surriel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/tlbflush.h | 16 ----------------
+ arch/x86/mm/tlb.c               | 15 +--------------
+ 2 files changed, 1 insertion(+), 30 deletions(-)
+
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 3aa3204b5dc0..511bf5fae8b8 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -148,22 +148,6 @@ static inline unsigned long build_cr3_noflush(pgd_t *pgd, u16 asid)
+ #define __flush_tlb_one_user(addr) __native_flush_tlb_one_user(addr)
+ #endif
+ 
+-static inline bool tlb_defer_switch_to_init_mm(void)
+-{
+-	/*
+-	 * If we have PCID, then switching to init_mm is reasonably
+-	 * fast.  If we don't have PCID, then switching to init_mm is
+-	 * quite slow, so we try to defer it in the hopes that we can
+-	 * avoid it entirely.  The latter approach runs the risk of
+-	 * receiving otherwise unnecessary IPIs.
+-	 *
+-	 * This choice is just a heuristic.  The tlb code can handle this
+-	 * function returning true or false regardless of whether we have
+-	 * PCID.
+-	 */
+-	return !static_cpu_has(X86_FEATURE_PCID);
+-}
+-
+ struct tlb_context {
+ 	u64 ctx_id;
+ 	u64 tlb_gen;
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index e4156e37aa71..493559cae2d5 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -379,20 +379,7 @@ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk)
+ 	if (this_cpu_read(cpu_tlbstate.loaded_mm) == &init_mm)
+ 		return;
+ 
+-	if (tlb_defer_switch_to_init_mm()) {
+-		/*
+-		 * There's a significant optimization that may be possible
+-		 * here.  We have accurate enough TLB flush tracking that we
+-		 * don't need to maintain coherence of TLB per se when we're
+-		 * lazy.  We do, however, need to maintain coherence of
+-		 * paging-structure caches.  We could, in principle, leave our
+-		 * old mm loaded and only switch to init_mm when
+-		 * tlb_remove_page() happens.
+-		 */
+-		this_cpu_write(cpu_tlbstate.is_lazy, true);
+-	} else {
+-		switch_mm(NULL, &init_mm, NULL);
+-	}
++	this_cpu_write(cpu_tlbstate.is_lazy, true);
+ }
+ 
+ /*
