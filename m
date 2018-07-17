@@ -2,142 +2,115 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D8CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F4BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5432020693
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5432020693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id C169D20693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:07:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHhPoSEv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C169D20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731789AbeGQVlf (ORCPT
+        id S1731379AbeGQVj0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:41:35 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58594 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730571AbeGQVle (ORCPT
+        Tue, 17 Jul 2018 17:39:26 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:46906 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731334AbeGQVjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:41:34 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0F79A8028C; Tue, 17 Jul 2018 23:07:03 +0200 (CEST)
-Date:   Tue, 17 Jul 2018 23:07:00 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     David Lechner <david@lechnology.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-Message-ID: <20180717210700.GA9090@amd>
-References: <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd>
- <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd>
- <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
- <20180716215616.GB10734@amd>
- <8c07a016-d77d-4799-b005-6a9ea94954ce@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
-Content-Disposition: inline
-In-Reply-To: <8c07a016-d77d-4799-b005-6a9ea94954ce@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Tue, 17 Jul 2018 17:39:25 -0400
+Received: by mail-pf0-f194.google.com with SMTP id l123-v6so1081324pfl.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=JHpAaAcqc44ClJzMQ42YALBYUZKV3DbZInBuPaeJSz0=;
+        b=BHhPoSEvR3TxGX5wJxobGobWG/yksS9RaL9HNDvitxdLWIZaXNDISLlAiY3Qfro4Ps
+         fISpgmezV1kCbUOscizft41U1O/GErRdyaw01N7nmhYcYw1p9zGYPxE8difffBcx7b+m
+         R7T36wH8gdoXQ1eiHcDS1onTkGddduuSliZL0AIlfh0qp89pjQd/5HGiVocVRxvYHakV
+         6ES5w5DiO6CxaiwLvqfc3jwN58RE+44xtDhNUcDAyjyM48jS8Z1a0JcFfJFI2z2qHbkz
+         730MGToT+POQC8VHz1nLb8+R2ivVvapIWyQRHnXUtSCOGr5RVJ2fJpyHEi+pltzifNcw
+         AeMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=JHpAaAcqc44ClJzMQ42YALBYUZKV3DbZInBuPaeJSz0=;
+        b=ZOFIhjtonenCkS1nvq0gFDO9eRCz4bxPJRqpqgvgP+I5FoPTBL4BnUXfd46gK/Ni3x
+         92N/nHH0+r0nFsPsc/chf3UUPPNlfJpvLBy5a34mDXCwYVcWWdpcwIVOi/9cE/POn3SB
+         gqiMfttGt/byez6EBFq+rHNggPx8rivD+qIENNMEgVE9nJjyKSwrkwXyLosj9Czt8I5K
+         MCwmdd2U8YDN5lEoi2+hOGqiE9lZf763Mdd92FzvJaG/AbCg5IqhXqkKqxpW8N9DDfKz
+         H4hDD8xGetu9O3EAoQg0XqmNv0QFUTp+6gNdwaWV61kPWIX8tfnhkPDr3tpN7nWDPBl0
+         QTeQ==
+X-Gm-Message-State: AOUpUlFbFBX8Nm+171Sv5qwQVqeJ2VFLbes29VVXsrEF5BHpkoz4pEkE
+        2mkTBZC70rge6pcy+k4A+zRdFg68
+X-Google-Smtp-Source: AAOMgpdVgptDwEXRVIYYrdkvY53vFK4hi4hz5Z40QRtkqD1DWEAUbtSecc3yiLnIPi9aTyHk3kWriA==
+X-Received: by 2002:a63:c20:: with SMTP id b32-v6mr3011680pgl.400.1531861498183;
+        Tue, 17 Jul 2018 14:04:58 -0700 (PDT)
+Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
+        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 14:04:57 -0700 (PDT)
+From:   Todd Poynor <toddpoynor@gmail.com>
+To:     Rob Springer <rspringer@google.com>,
+        John Joseph <jnjoseph@google.com>,
+        Ben Chan <benchan@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Todd Poynor <toddpoynor@google.com>
+Subject: [PATCH 11/32] staging: gasket: gasket_wait_with_reschedule use msleep
+Date:   Tue, 17 Jul 2018 13:56:51 -0700
+Message-Id: <20180717205712.29495-12-toddpoynor@gmail.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
+References: <20180717205712.29495-1-toddpoynor@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Todd Poynor <toddpoynor@google.com>
 
---EeQfGwPcQSOJBaQU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Replace schedule_timeout() call with msleep() for simplicity.
 
-Hi!
+Reported-by: Dmitry Torokhov <dtor@chromium.org>
+Signed-off-by: Zhongze Hu <frankhu@chromium.org>
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
+---
+ drivers/staging/gasket/gasket_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> >>- different hardware means via which brightness is set (MMIO, I2C, SPI,
-> >>   PWM and other pulsed fashion based protocols),
-> >>- the need for deferring brightness setting to a workqueue task to
-> >>   allow for setting LED brightness from atomic context,
-> >>- contention on locks
-> >
-> >I disagree here. Yes, it would be hard to synchronize blinking down to
-> >microseconds, but it would be easy to get synchronization right down
-> >to miliseconds and humans will not be able to tell the difference.
->=20
-> There have been problems with blink interval stability close to
-> 1ms, and thus there were some attempts of employing hr timers,
-> which in turn introduced a new class of issues related to
-> system performance etc.
+diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
+index 803566229bfcb..442543573f6e9 100644
+--- a/drivers/staging/gasket/gasket_core.c
++++ b/drivers/staging/gasket/gasket_core.c
+@@ -14,6 +14,7 @@
+ #include "gasket_page_table.h"
+ #include "gasket_sysfs.h"
+ 
++#include <linux/delay.h>
+ #include <linux/fs.h>
+ #include <linux/init.h>
+ #include <linux/of.h>
+@@ -2097,7 +2098,7 @@ int gasket_wait_with_reschedule(
+ 		tmp = gasket_dev_read_64(gasket_dev, bar, offset);
+ 		if ((tmp & mask) == val)
+ 			break;
+-		schedule_timeout(msecs_to_jiffies(delay_ms));
++		msleep(delay_ms);
+ 		retries++;
+ 	}
+ 	if (retries == max_retries) {
+-- 
+2.18.0.203.gfac676dfb9-goog
 
-Yeah, well. This is LED subsystem. Noone should program blink
-intervals at 1 msec.
-
-> >>For the LEDs driven by the same chip it would make more sense
-> >>to allow for synchronization, but it can be achieved on driver
-> >>level, with help of some subsystem level interface to indicate
-> >>which LEDs should be synchronized.
-> >>
-> >>However, when we start to pretend that we can synchronize the
-> >>devices, we must answer how accurate we can be. The accuracy
-> >>will decrease as blink frequency rises. We'd need to define
-> >>reliability limit.
-> >
-> >We don't need _that_ ammount of overengineering. We just need to
-> >synchronize them well enough :-).
->=20
-> Well, it would be disappointing for the users to realize that
-> they don't get the effect advertised by the ABI documentation.
-
-Linux is always best-effort, w.r.t. timing. And we can do well enough
-that user will not see anything bad on "normal" systems.
-
-> >>We've had few attempts of approaching the subject of synchronized
-> >>blinking but none of them proved to be good enough to be merged.
-> >
-> >I'm sure interested person could do something like that in less than
-> >two weeks fulltime... It is not rocket science, just a lot of work in
-> >kernel...
-> >
-> >But patterns are few years overdue and I believe we should not delay
-> >them any further.
-> >
-> >So... I guess I agree with Jacek in the end :-).
->=20
-> How about taking Baolin's patches as of v5? Later, provided that
-> the pattern trigger yet to be implemented will create pattern file
-> on activation, we'll need to initialize default-trigger DT property,
-> to keep the interface unchanged.
-
-I have yet to look at the v5 of patches. But I agree that we do not
-need to design synchronization at this moment.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---EeQfGwPcQSOJBaQU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltOWnQACgkQMOfwapXb+vK+BgCgi8BFHlK77ZlmasnTYuSICrbz
-uc8AoMCy1B/YoIs4mGUQwRRpUrFC11SW
-=kX9A
------END PGP SIGNATURE-----
-
---EeQfGwPcQSOJBaQU--
