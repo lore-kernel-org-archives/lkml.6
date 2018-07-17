@@ -6,103 +6,307 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8BDECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7401FECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E31620684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E31620684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
+	by mail.kernel.org (Postfix) with ESMTP id 24EEC20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:12:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24EEC20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731560AbeGQRqL (ORCPT
+        id S1731336AbeGQRp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:46:11 -0400
-Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:42450
-        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730362AbeGQRqL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:46:11 -0400
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with SMTP
-        id fTVcfjA4j8JHPfTVcfnyLx; Tue, 17 Jul 2018 10:11:33 -0700
-x-originating-ip: 107.180.71.197
-Received: from haiyangz by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <haiyangz@linuxonhyperv2.linuxonhyperv.com>)
-        id 1ffTVc-0001fj-Ho; Tue, 17 Jul 2018 10:11:32 -0700
-From:   Haiyang Zhang <haiyangz@linuxonhyperv.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org
-Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org,
-        Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH net,v2] hv_netvsc: Fix napi reschedule while receive completion is busy
-Date:   Tue, 17 Jul 2018 17:11:13 +0000
-Message-Id: <20180717171113.6390-1-haiyangz@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.1
-Reply-To: haiyangz@microsoft.com
-X-CMAE-Envelope: MS4wfDUeV8OGASemZmNUq5BiZwG7nzkXlq7E6AUjbkJJc7HhqoJL/sAMjLMnmwluZ/ECruUI7S7O6CyQVq1ssrFhSubvnP20YbYWgbzdrQLxGdoEiImTHRkS
- MKLp+iySKPfguQGQcepNaJDOFLe13S5W2lBA55zJ85yxhh7tLQ2MAUV0I/TigQv3aQcjT1lWjsCz3s69S5JUEDe05QMpAw/6+II9/kptAzsNlRmfYL3zKhgz
- mkK5Vu469yFmvwM4TdRE6DjP+O6fZyyzpibmYrhJQLDAfq8ePco/Tisgfa6puotfnGAEx6qypZCqouQcokxiH5A99xD4Pflcpf2iicSB+WDMSeTb5eAwc18z
- FRAUZQBS6Tw9fEeDPapox2t0L0956sXIfVxWEunR3VW6nXoPMol6SHis31j5aJaC9VD/CimUl07TC4HdE77iANHoQ7hBAeMJyqOahPn1A12//vIbxwGzfyun
- H7Gq/8Gl5MxH8uunVDaZVmo4sZpB9oL5RZZPMuj6yTAxQQtpxXPfpHHmiVf3Ux2qicQVAlmlcYUBU1Eb
+        Tue, 17 Jul 2018 13:45:56 -0400
+Received: from foss.arm.com ([217.140.101.70]:50168 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731215AbeGQRpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:45:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 005411993;
+        Tue, 17 Jul 2018 10:12:19 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9DD823F5A0;
+        Tue, 17 Jul 2018 10:12:17 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, robert.walker@arm.com,
+        mathieu.poirier@linaro.org, mike.leach@linaro.org,
+        coresight@lists.linaro.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 07/10] coresight: perf: Remove reset_buffer call back for sinks
+Date:   Tue, 17 Jul 2018 18:11:38 +0100
+Message-Id: <1531847501-22226-8-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531847501-22226-1-git-send-email-suzuki.poulose@arm.com>
+References: <1531847501-22226-1-git-send-email-suzuki.poulose@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+Right now we issue an update_buffer() and reset_buffer() call backs
+in succession when we stop tracing an event. The update_buffer is
+supposed to check the status of the buffer and make sure the ring buffer
+is updated with the trace data. And we store information about the
+size of the data collected only to be consumed by the reset_buffer
+callback which always follows the update_buffer. This was originally
+designed for handling future IPs which could trigger a buffer overflow
+interrupt. This patch gets rid of the reset_buffer callback altogether
+and performs the actions in update_buffer, making it return the size
+collected. We can always add the support for handling the overflow
+interrupt case later.
 
-If out ring is full temporarily and receive completion cannot go out,
-we may still need to reschedule napi if certain conditions are met.
-Otherwise the napi poll might be stopped forever, and cause network
-disconnect.
+This removes some not-so pretty hack (storing the new head in the
+size field for snapshot mode) and cleans it up a little bit.
 
-Fixes: 7426b1a51803 ("netvsc: optimize receive completions")
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/net/hyperv/netvsc.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+ drivers/hwtracing/coresight/coresight-etb10.c    | 56 +++++------------------
+ drivers/hwtracing/coresight/coresight-etm-perf.c |  9 +---
+ drivers/hwtracing/coresight/coresight-tmc-etf.c  | 58 +++++-------------------
+ include/linux/coresight.h                        |  6 +--
+ 4 files changed, 26 insertions(+), 103 deletions(-)
 
-diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-index 8e9d0ee1572b..31c3d77b4733 100644
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -1274,6 +1274,7 @@ int netvsc_poll(struct napi_struct *napi, int budget)
- 	struct hv_device *device = netvsc_channel_to_device(channel);
- 	struct net_device *ndev = hv_get_drvdata(device);
- 	int work_done = 0;
-+	int ret;
+diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+index 73878a6..a729a7b 100644
+--- a/drivers/hwtracing/coresight/coresight-etb10.c
++++ b/drivers/hwtracing/coresight/coresight-etb10.c
+@@ -315,37 +315,7 @@ static int etb_set_buffer(struct coresight_device *csdev,
+ 	return ret;
+ }
  
- 	/* If starting a new interval */
- 	if (!nvchan->desc)
-@@ -1285,16 +1286,18 @@ int netvsc_poll(struct napi_struct *napi, int budget)
- 		nvchan->desc = hv_pkt_iter_next(channel, nvchan->desc);
+-static unsigned long etb_reset_buffer(struct coresight_device *csdev,
+-				      struct perf_output_handle *handle,
+-				      void *sink_config)
+-{
+-	unsigned long size = 0;
+-	struct cs_buffers *buf = sink_config;
+-
+-	if (buf) {
+-		/*
+-		 * In snapshot mode ->data_size holds the new address of the
+-		 * ring buffer's head.  The size itself is the whole address
+-		 * range since we want the latest information.
+-		 */
+-		if (buf->snapshot)
+-			handle->head = local_xchg(&buf->data_size,
+-						  buf->nr_pages << PAGE_SHIFT);
+-
+-		/*
+-		 * Tell the tracer PMU how much we got in this run and if
+-		 * something went wrong along the way.  Nobody else can use
+-		 * this cs_buffers instance until we are done.  As such
+-		 * resetting parameters here and squaring off with the ring
+-		 * buffer API in the tracer PMU is fine.
+-		 */
+-		size = local_xchg(&buf->data_size, 0);
+-	}
+-
+-	return size;
+-}
+-
+-static void etb_update_buffer(struct coresight_device *csdev,
++static unsigned long etb_update_buffer(struct coresight_device *csdev,
+ 			      struct perf_output_handle *handle,
+ 			      void *sink_config)
+ {
+@@ -354,13 +324,13 @@ static void etb_update_buffer(struct coresight_device *csdev,
+ 	u8 *buf_ptr;
+ 	const u32 *barrier;
+ 	u32 read_ptr, write_ptr, capacity;
+-	u32 status, read_data, to_read;
+-	unsigned long offset;
++	u32 status, read_data;
++	unsigned long offset, to_read;
+ 	struct cs_buffers *buf = sink_config;
+ 	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+ 	if (!buf)
+-		return;
++		return 0;
+ 
+ 	capacity = drvdata->buffer_depth * ETB_FRAME_SIZE_WORDS;
+ 
+@@ -465,18 +435,17 @@ static void etb_update_buffer(struct coresight_device *csdev,
+ 	writel_relaxed(0x0, drvdata->base + ETB_RAM_WRITE_POINTER);
+ 
+ 	/*
+-	 * In snapshot mode all we have to do is communicate to
+-	 * perf_aux_output_end() the address of the current head.  In full
+-	 * trace mode the same function expects a size to move rb->aux_head
+-	 * forward.
++	 * In snapshot mode we have to update the handle->head to point
++	 * to the new location.
+ 	 */
+-	if (buf->snapshot)
+-		local_set(&buf->data_size, (cur * PAGE_SIZE) + offset);
+-	else
+-		local_add(to_read, &buf->data_size);
+-
++	if (buf->snapshot) {
++		handle->head = (cur * PAGE_SIZE) + offset;
++		to_read = buf->nr_pages << PAGE_SHIFT;
++	}
+ 	etb_enable_hw(drvdata);
+ 	CS_LOCK(drvdata->base);
++
++	return to_read;
+ }
+ 
+ static const struct coresight_ops_sink etb_sink_ops = {
+@@ -485,7 +454,6 @@ static const struct coresight_ops_sink etb_sink_ops = {
+ 	.alloc_buffer	= etb_alloc_buffer,
+ 	.free_buffer	= etb_free_buffer,
+ 	.set_buffer	= etb_set_buffer,
+-	.reset_buffer	= etb_reset_buffer,
+ 	.update_buffer	= etb_update_buffer,
+ };
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index 48b7d65b..6a4252b 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -352,15 +352,8 @@ static void etm_event_stop(struct perf_event *event, int mode)
+ 		if (!sink_ops(sink)->update_buffer)
+ 			return;
+ 
+-		sink_ops(sink)->update_buffer(sink, handle,
++		size = sink_ops(sink)->update_buffer(sink, handle,
+ 					      event_data->snk_config);
+-
+-		if (!sink_ops(sink)->reset_buffer)
+-			return;
+-
+-		size = sink_ops(sink)->reset_buffer(sink, handle,
+-						    event_data->snk_config);
+-
+ 		perf_aux_output_end(handle, size);
  	}
  
--	/* If send of pending receive completions suceeded
--	 *   and did not exhaust NAPI budget this time
--	 *   and not doing busy poll
-+	/* Send any pending receive completions */
-+	ret = send_recv_completions(ndev, net_device, nvchan);
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index 434003a..31a98f9 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -349,36 +349,7 @@ static int tmc_set_etf_buffer(struct coresight_device *csdev,
+ 	return ret;
+ }
+ 
+-static unsigned long tmc_reset_etf_buffer(struct coresight_device *csdev,
+-					  struct perf_output_handle *handle,
+-					  void *sink_config)
+-{
+-	long size = 0;
+-	struct cs_buffers *buf = sink_config;
+-
+-	if (buf) {
+-		/*
+-		 * In snapshot mode ->data_size holds the new address of the
+-		 * ring buffer's head.  The size itself is the whole address
+-		 * range since we want the latest information.
+-		 */
+-		if (buf->snapshot)
+-			handle->head = local_xchg(&buf->data_size,
+-						  buf->nr_pages << PAGE_SHIFT);
+-		/*
+-		 * Tell the tracer PMU how much we got in this run and if
+-		 * something went wrong along the way.  Nobody else can use
+-		 * this cs_buffers instance until we are done.  As such
+-		 * resetting parameters here and squaring off with the ring
+-		 * buffer API in the tracer PMU is fine.
+-		 */
+-		size = local_xchg(&buf->data_size, 0);
+-	}
+-
+-	return size;
+-}
+-
+-static void tmc_update_etf_buffer(struct coresight_device *csdev,
++static unsigned long tmc_update_etf_buffer(struct coresight_device *csdev,
+ 				  struct perf_output_handle *handle,
+ 				  void *sink_config)
+ {
+@@ -387,17 +358,17 @@ static void tmc_update_etf_buffer(struct coresight_device *csdev,
+ 	const u32 *barrier;
+ 	u32 *buf_ptr;
+ 	u64 read_ptr, write_ptr;
+-	u32 status, to_read;
+-	unsigned long offset;
++	u32 status;
++	unsigned long offset, to_read;
+ 	struct cs_buffers *buf = sink_config;
+ 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+ 	if (!buf)
+-		return;
++		return 0;
+ 
+ 	/* This shouldn't happen */
+ 	if (WARN_ON_ONCE(drvdata->mode != CS_MODE_PERF))
+-		return;
++		return 0;
+ 
+ 	CS_UNLOCK(drvdata->base);
+ 
+@@ -486,18 +457,14 @@ static void tmc_update_etf_buffer(struct coresight_device *csdev,
+ 		}
+ 	}
+ 
+-	/*
+-	 * In snapshot mode all we have to do is communicate to
+-	 * perf_aux_output_end() the address of the current head.  In full
+-	 * trace mode the same function expects a size to move rb->aux_head
+-	 * forward.
+-	 */
+-	if (buf->snapshot)
+-		local_set(&buf->data_size, (cur * PAGE_SIZE) + offset);
+-	else
+-		local_add(to_read, &buf->data_size);
+-
++	/* In snapshot mode we have to update the head */
++	if (buf->snapshot) {
++		handle->head = (cur * PAGE_SIZE) + offset;
++		to_read = buf->nr_pages << PAGE_SHIFT;
++	}
+ 	CS_LOCK(drvdata->base);
 +
-+	/* If it did not exhaust NAPI budget this time
-+	 *  and not doing busy poll
- 	 * then re-enable host interrupts
--	 *     and reschedule if ring is not empty.
-+	 *  and reschedule if ring is not empty
-+	 *   or sending receive completion failed.
- 	 */
--	if (send_recv_completions(ndev, net_device, nvchan) == 0 &&
--	    work_done < budget &&
-+	if (work_done < budget &&
- 	    napi_complete_done(napi, work_done) &&
--	    hv_end_read(&channel->inbound) &&
-+	    (ret || hv_end_read(&channel->inbound)) &&
- 	    napi_schedule_prep(napi)) {
- 		hv_begin_read(&channel->inbound);
- 		__napi_schedule(napi);
++	return to_read;
+ }
+ 
+ static const struct coresight_ops_sink tmc_etf_sink_ops = {
+@@ -506,7 +473,6 @@ static const struct coresight_ops_sink tmc_etf_sink_ops = {
+ 	.alloc_buffer	= tmc_alloc_etf_buffer,
+ 	.free_buffer	= tmc_free_etf_buffer,
+ 	.set_buffer	= tmc_set_etf_buffer,
+-	.reset_buffer	= tmc_reset_etf_buffer,
+ 	.update_buffer	= tmc_update_etf_buffer,
+ };
+ 
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index d828a6e..eafe4d1 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -191,7 +191,6 @@ struct coresight_device {
+  * @alloc_buffer:	initialises perf's ring buffer for trace collection.
+  * @free_buffer:	release memory allocated in @get_config.
+  * @set_buffer:		initialises buffer mechanic before a trace session.
+- * @reset_buffer:	finalises buffer mechanic after a trace session.
+  * @update_buffer:	update buffer pointers after a trace session.
+  */
+ struct coresight_ops_sink {
+@@ -203,10 +202,7 @@ struct coresight_ops_sink {
+ 	int (*set_buffer)(struct coresight_device *csdev,
+ 			  struct perf_output_handle *handle,
+ 			  void *sink_config);
+-	unsigned long (*reset_buffer)(struct coresight_device *csdev,
+-				      struct perf_output_handle *handle,
+-				      void *sink_config);
+-	void (*update_buffer)(struct coresight_device *csdev,
++	unsigned long (*update_buffer)(struct coresight_device *csdev,
+ 			      struct perf_output_handle *handle,
+ 			      void *sink_config);
+ };
 -- 
-2.17.1
+2.7.4
 
