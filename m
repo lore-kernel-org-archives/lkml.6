@@ -2,151 +2,122 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9082FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7417DECDFB4
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C872075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB65206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:37:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0UBdtWud"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C872075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QjzDsvQV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB65206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730922AbeGQWKj (ORCPT
+        id S1731041AbeGQWLm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 18:10:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729759AbeGQWKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 18:10:39 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3037B206B8;
-        Tue, 17 Jul 2018 21:36:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531863364;
-        bh=CDcjd7SbHLYCfTvCU+qAr4k4diKnA3UPG9vqMfhZ7NI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0UBdtWudNNOVMkDgm0gDfWijaweRvwL4JF2BpTCguAWvPEjWDknBfcQzC/2SEceXs
-         XAdbvQqzPct3N6AXPheebs8Iwd7/nwWTWcNJtq3kKhOgaFYaQvWHp/NFvVJtnDtEe1
-         0ITbe7nDRz/0jafXMBU1Zfg7b8v489YCHD0+4dH0=
-Date:   Tue, 17 Jul 2018 16:36:01 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Oza Pawandeep <poza@codeaurora.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dongdong Liu <liudongdong3@huawei.com>,
-        Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Timur Tabi <timur@codeaurora.org>
-Subject: Re: [PATCH v2 1/6] PCI/AER: Take severity mask into account while
- clearing error bits
-Message-ID: <20180717213601.GC128988@bhelgaas-glaptop.roam.corp.google.com>
-References: <1529661494-20936-1-git-send-email-poza@codeaurora.org>
- <1529661494-20936-2-git-send-email-poza@codeaurora.org>
- <20180717190329.GA128988@bhelgaas-glaptop.roam.corp.google.com>
+        Tue, 17 Jul 2018 18:11:42 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:33783 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729754AbeGQWLl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 18:11:41 -0400
+Received: by mail-ua0-f196.google.com with SMTP id i4-v6so1644806uak.0;
+        Tue, 17 Jul 2018 14:37:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rLJiupaUHY+b6kxvpAgfzkuqWLZAQVQvQ/BLG0NiGOM=;
+        b=QjzDsvQVwt3BHsYrSdfC6Y+js84dfaGeOQbOFEG5mHr49j0a4lEFZwTljgzDciMd9T
+         lYbzOF0+EyQBNwCSf/TaNTdEaw/ZLzudtDEpOhVgp2C/2QXbE+eS7As3GOykzicoYa2Y
+         lAJC+MGjnaKELgciYQYMUCxlArpJKbMvO5i8EIjkTGBiAiqhW7efti1nJPAPxSxIxPrk
+         4nsTNGbaV1tlZ0oFyjmDpSN2PERZWUD54API1tHLPTp3cdU5K5qRJ9mqfYNukvBzmlbG
+         mUJLdimVTi4TMdzdlWFsz4IguXjVyH8JkkuAvyfDWRO8rIrdBfWAqJTJ6xwfGEBwY7vN
+         FEWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rLJiupaUHY+b6kxvpAgfzkuqWLZAQVQvQ/BLG0NiGOM=;
+        b=Vbfz7SA5ZcmbQCTKtALFFaylu4tCZOji1KthFsrGQp3coVo+RvLBeQtgYFj7fnuJre
+         OKCh0e0llzNTiFycXSfAjgDrJGKygcr0oxS5WdZodg5r4qysx5tGdK9jTvsgT+L6OGC7
+         KnA1pRv0olb1t+D9k/MeCtwwHxSf9yt8YfiGTF3e0D/PqXUqw4SdfR9jzDSDvVTtsDnS
+         FwHyiN73YUPWtMSiZzW3b5JmRAPy9J7XvXdDpxF0lZd1gpxRU/icQZ7IDvAtJQTR/o5t
+         dvOrVTWhAA2OGcsGhyPSxZ+zZT1D6kmPjsAiuGuKth9HgyDGsTAlu5fEcmA9UsDX7v3K
+         YpPg==
+X-Gm-Message-State: AOUpUlEneO1IKJGWeVBVeWU5hJFE5fiUVCgXkvjrNy0RwC+6z1Di3Bnt
+        eUhW//EOziF5GE27iopsJFMG/vfcnGasXjAssKA=
+X-Google-Smtp-Source: AAOMgpf95Quc5LlpabvpK68OZsenSXjuarBTF8gZpQckqCxjd7iWWjLZAEiNpr48/xPFZT8oH3dMM1eB86StOIqsd1M=
+X-Received: by 2002:ab0:4c24:: with SMTP id l36-v6mr2196819uaf.199.1531863426242;
+ Tue, 17 Jul 2018 14:37:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717190329.GA128988@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 14:37:05
+ -0700 (PDT)
+In-Reply-To: <20180709151947.940759-1-arnd@arndb.de>
+References: <20180709151947.940759-1-arnd@arndb.de>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 18 Jul 2018 00:37:05 +0300
+Message-ID: <CAHp75VdHZ4jCMLZn3RwhQ3ZCabZVsPMMUUOeXLvKT1y=m_z+WQ@mail.gmail.com>
+Subject: Re: [PATCH] headers: fix linux/mod_devicetable.h inclusions
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gabriel Somlo <somlo@cmu.edu>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Jean-Christophe Trotin <jean-christophe.trotin@st.com>,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        =?UTF-8?B?TWFyYy1BbmRyw6kgTHVyZWF1?= <marcandre.lureau@redhat.com>,
+        qemu-devel@nongnu.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 02:03:29PM -0500, Bjorn Helgaas wrote:
-> Hi Oza,
-> 
-> Thanks for doing this!
-> 
-> On Fri, Jun 22, 2018 at 05:58:09AM -0400, Oza Pawandeep wrote:
-> > pci_cleanup_aer_uncorrect_error_status() is called by different slot_reset
-> > callbacks in case of ERR_NONFATAL.
-> 
-> IIRC, the current strategy is:
-> 
->   ERR_COR: log only
->   ERR_NONFATAL: call driver callbacks (pci_error_handlers)
->   ERR_FATAL: remove device and re-enumerate
-> 
-> So these slot_reset callbacks are only used for ERR_NONFATAL, which
-> are all uncorrectable errors, of course.
-> 
-> This patch makes it so that when the slot_reset callbacks call
-> pci_cleanup_aer_uncorrect_error_status(), we only clear the
-> bits set by ERR_NONFATAL events (this is determined by
-> PCI_ERR_UNCOR_SEVER).
-> 
-> That makes good sense to me.  All these status bits are RW1CS, so they
-> will be preserved across a reset but will be cleared when we
-> re-enumerate, in this path:
-> 
->   pci_init_capabilities
->     pci_aer_init
->       pci_cleanup_aer_error_status_regs
->       # clear all PCI_ERR_UNCOR_STATUS and PCI_ERR_COR_STATUS bits
-> 
-> > AER uncorrectable error status should take severity into account in order
-> > to clear the bits, so that ERR_NONFATAL path does not clear the bit which
-> > are marked with severity fatal.
-> 
-> Two comments:
-> 
-> 1) Can you split this into two patches, one that changes
-> pci_cleanup_aer_uncorrect_error_status() so it looks like the error
-> clearing code in aer_error_resume(), and a second that factors out the
-> duplicate code?
-> 
-> 2) Maybe use "sev" or "sever" instead of "mask" for the local
-> variable, since there is also a separate PCI_ERR_UNCOR_MASK register,
-> which is not involved here.
+On Mon, Jul 9, 2018 at 6:19 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> A couple of drivers produced build errors after the mod_devicetable.h
+> header was split out from the platform_device one, e.g.
+>
+> drivers/media/platform/davinci/vpbe_osd.c:42:40: error: array type has incomplete element type 'struct platform_device_id'
+> drivers/media/platform/davinci/vpbe_venc.c:42:40: error: array type has incomplete element type 'struct platform_device_id'
+>
+> This adds the inclusion where needed.
+>
+> Fixes: ac3167257b9f ("headers: separate linux/mod_devicetable.h from linux/platform_device.h")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Let me back up a little here: I'm not asking you to do the things
-below here.  They're just possible future things, so we can think
-about them after this series.  And the things above are things I can
-easily do myself.  So no action required from you, unless you think
-I'm on the wrong track :)
+>  drivers/platform/x86/intel_punit_ipc.c     | 1 +
 
-> 3) The "pci_cleanup_aer_uncorrect_error_status()" name no longer
-> really describes what this does.  Something like
-> "pci_aer_clear_nonfatal_status()" would be more descriptive.  But I
-> see you have a subsequent patch (which I haven't looked at yet) that
-> is related to this.
-> 
-> 4) I don't think the driver slot_reset callbacks should be responsible
-> for clearing these AER status bits.  Can we clear them somewhere in
-> the pcie_do_nonfatal_recovery() path and remove these calls from the
-> drivers?
-> 
-> 5) In principle, we should only read PCI_ERR_UNCOR_STATUS *once* per
-> device when handling an error.  We currently read it three times:
-> 
->   aer_isr
->     aer_isr_one_error
->       find_source_device
->         find_device_iter
->           is_error_source
->             read PCI_ERR_UNCOR_STATUS              # 1
->       aer_process_err_devices
->         get_device_error_info(e_info->dev[i])
->           read PCI_ERR_UNCOR_STATUS                # 2
->         handle_error_source
->           pcie_do_nonfatal_recovery
->             ...
->               report_slot_reset
->                 driver->err_handler->slot_reset
->                   pci_cleanup_aer_uncorrect_error_status
->                     read PCI_ERR_UNCOR_STATUS      # 3
-> 
-> OK, that was more than two comments :)
+
+> --- a/drivers/platform/x86/intel_punit_ipc.c
+> +++ b/drivers/platform/x86/intel_punit_ipc.c
+> @@ -12,6 +12,7 @@
+>   */
+>
+>  #include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+>  #include <linux/acpi.h>
+>  #include <linux/delay.h>
+>  #include <linux/bitops.h>
+
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+
+for the above bits.
+
+-- 
+With Best Regards,
+Andy Shevchenko
