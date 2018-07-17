@@ -2,267 +2,178 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF4DECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E80C9ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D62D20C0A
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iC+NBBvw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D62D20C0A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C53E20C0A
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 10:27:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C53E20C0A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731462AbeGQK7l (ORCPT
+        id S1731488AbeGQK7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:59:41 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:39966 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729718AbeGQK61 (ORCPT
+        Tue, 17 Jul 2018 06:59:48 -0400
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:51538 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729718AbeGQK7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:58:27 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 7CBE210C17B4;
-        Tue, 17 Jul 2018 03:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531823190; bh=wPZ1/ynnt2gLoLxPLG6nsrC4eoxqTf58tQH8dW6t3YM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=iC+NBBvwkgGkBZoXK0h9qktBs3n+B+1srZNALiLPCCU+YNXVBkRj8BaZ1QWNMXlcG
-         aMbqQeoAbdRhzFtP30HqrU+pcvKIFIAtKTjKfzTbH0k5Ykv4PwFTSnWEajp7WzRjPO
-         CvFt7YFJGe4IoSc7r5pXWsupU39OdQuGg4CpBClpXGyrQ6GEllgyfvUwYUXJmiyMsl
-         ubFAqDB8KcAzIMmFm6g3PBuK+eDsio5Vjwp/SlTOJkpDnTkWIrTnLSyaYaNxKtZLnH
-         F17vZ+fhVjVenSNO6Q26F2AH3VdjN8NqBuPJV6orb9N3R+CfASy7318ZO120RhLE0r
-         DeJr4fVO9vSCw==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 18CA95549;
-        Tue, 17 Jul 2018 03:26:30 -0700 (PDT)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id 41FE13C321;
-        Tue, 17 Jul 2018 12:26:29 +0200 (CEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v13 03/12] PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
-Date:   Tue, 17 Jul 2018 12:26:18 +0200
-Message-Id: <57701b3fe8a92a516448455ce6b6e17d2de12847.1531822532.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531822532.git.gustavo.pimentel@synopsys.com>
+        Tue, 17 Jul 2018 06:59:47 -0400
+Received: by mail-wm0-f44.google.com with SMTP id s12-v6so954401wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 03:27:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hX/4nWBLOv9cV571YboMDyHFje1lzsIY0N+Y+aoUQmw=;
+        b=lFtwP/kf+g30De5Gk13svgkQCtK6qCYh+vajVRZt9IK+07GbVCRdGXIwyF8rPeAfBW
+         se92uBf/4H0aJNBf8xUmaQtXy9V6gy8LDduAdPqHGG5EZbzNKFn3LrW8N7SXEaqlcOkM
+         aedoaesgvw1iOwWwQHG9e6k7B+0hZCfKTgraGuehBZDPXWKMtazvF1lcqJpR1XGaGvYs
+         un+neAH3tSfDwZ1RLTaExa0DR8HyWM2r3aQm0AHXftkdH64LRoxWIsBPo2tEhguGN5IY
+         HozW9feY3zx1WdQo/SYjpTu1cGXQP8WGuEVtvqdtRPk0OEpZeBqLDPF145tuq3eNyYxa
+         5Blg==
+X-Gm-Message-State: AOUpUlELGC1aZkTnd4zWq/h6sUHwEEpL/ETO//yYGa3ROMNzDoH/3YVr
+        T8Nvg/Mz2LeC6lDDZCOF6dSkoQ1+J8NnlbFwjcun3g==
+X-Google-Smtp-Source: AAOMgpfdnAyjKUrh/CrVc/QUnIPSedyhkuCJa8/iauUymmJ44AUFWxkz/t9rofGbcZ89bhVjWsQJhjA0/IspEBF4TBw=
+X-Received: by 2002:a1c:7408:: with SMTP id p8-v6mr931534wmc.118.1531823270322;
+ Tue, 17 Jul 2018 03:27:50 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a1c:28c2:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 03:27:49
+ -0700 (PDT)
+In-Reply-To: <20180712171356.10227-1-lyude@redhat.com>
+References: <20180712171356.10227-1-lyude@redhat.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Tue, 17 Jul 2018 12:27:49 +0200
+Message-ID: <CACO55tv2xQwpvL_KtXXj+UNAHnvuPSwhHZ5ny+LuWN892YR8Kw@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH] drm/nouveau: Don't forget to label dp_aux devices
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     nouveau <nouveau@lists.freedesktop.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change {cdns, dra7xx, artpec6, dw, rockchip}_pcie_ep_raise_irq() and
-pci_epc_raise_irq() signature, namely the interrupt_num variable type
-from u8 to u16 to accommodate 2048 maximum MSI-X interrupts.
+Reviewed-by: Karol Herbst <karolherbst@gmail.com>
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Alan Douglas <adouglas@cadence.com>
-Acked-by: Shawn Lin <shawn.lin@rock-chips.com>
-Acked-by: Jesper Nilsson <jesper.nilsson@axis.com>
-Acked-by: Joao Pinto <jpinto@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
----
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Move into here the pci_epc_raise_irq() signature change from patch
-file #1.
- - Move into here the {dra7xx, artpec6}_pcie_ep_raise_irq() signature
-changes from patch file #2.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Swap patch files position (#3 -> #2).
- - Moved dw_pcie_ep_raise_irq and dw_plat_pcie_ep_raise_irq functions
-signatures changes from patch file #3.
- - Changed rockchip_pcie_ep_raise_irq function signature.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Nothing changed, just to follow the patch set version.
-Change v9->v10:
- - Nothing changed, just to follow the patch set version.
-Change v10->v11:
- - Nothing changed, just to follow the patch set version.
-Change v11->v12:
- - Nothing changed, just to follow the patch set version.
-Change v12->v13:
- - Re-sending the patch series.
-
- drivers/pci/controller/dwc/pci-dra7xx.c           | 2 +-
- drivers/pci/controller/dwc/pcie-artpec6.c         | 2 +-
- drivers/pci/controller/dwc/pcie-designware-ep.c   | 2 +-
- drivers/pci/controller/dwc/pcie-designware-plat.c | 2 +-
- drivers/pci/controller/dwc/pcie-designware.h      | 2 +-
- drivers/pci/controller/pcie-cadence-ep.c          | 3 ++-
- drivers/pci/controller/pcie-rockchip-ep.c         | 2 +-
- drivers/pci/endpoint/pci-epc-core.c               | 8 ++++----
- include/linux/pci-epc.h                           | 6 +++---
- 9 files changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 345aab5..ce9224a 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -370,7 +370,7 @@ static void dra7xx_pcie_raise_msi_irq(struct dra7xx_pcie *dra7xx,
- }
- 
- static int dra7xx_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
--				 enum pci_epc_irq_type type, u8 interrupt_num)
-+				 enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 	struct dra7xx_pcie *dra7xx = to_dra7xx_pcie(pci);
-diff --git a/drivers/pci/controller/dwc/pcie-artpec6.c b/drivers/pci/controller/dwc/pcie-artpec6.c
-index 321b56c..9a2474b 100644
---- a/drivers/pci/controller/dwc/pcie-artpec6.c
-+++ b/drivers/pci/controller/dwc/pcie-artpec6.c
-@@ -428,7 +428,7 @@ static void artpec6_pcie_ep_init(struct dw_pcie_ep *ep)
- }
- 
- static int artpec6_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
--				  enum pci_epc_irq_type type, u8 interrupt_num)
-+				  enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index 04092a7..69d039d 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -242,7 +242,7 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
- }
- 
- static int dw_pcie_ep_raise_irq(struct pci_epc *epc, u8 func_no,
--				enum pci_epc_irq_type type, u8 interrupt_num)
-+				enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
- 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 0ce3440..0efb318 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -81,7 +81,7 @@ static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
- 
- static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
- 				     enum pci_epc_irq_type type,
--				     u8 interrupt_num)
-+				     u16 interrupt_num)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
- 
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index bee4e25..9d581c0 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -191,7 +191,7 @@ enum dw_pcie_as_type {
- struct dw_pcie_ep_ops {
- 	void	(*ep_init)(struct dw_pcie_ep *ep);
- 	int	(*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
--			     enum pci_epc_irq_type type, u8 interrupt_num);
-+			     enum pci_epc_irq_type type, u16 interrupt_num);
- };
- 
- struct dw_pcie_ep {
-diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
-index e3fe412..208d11f 100644
---- a/drivers/pci/controller/pcie-cadence-ep.c
-+++ b/drivers/pci/controller/pcie-cadence-ep.c
-@@ -363,7 +363,8 @@ static int cdns_pcie_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn,
- }
- 
- static int cdns_pcie_ep_raise_irq(struct pci_epc *epc, u8 fn,
--				  enum pci_epc_irq_type type, u8 interrupt_num)
-+				  enum pci_epc_irq_type type,
-+				  u16 interrupt_num)
- {
- 	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
- 
-diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-index 6beba8e..b8163c5 100644
---- a/drivers/pci/controller/pcie-rockchip-ep.c
-+++ b/drivers/pci/controller/pcie-rockchip-ep.c
-@@ -472,7 +472,7 @@ static int rockchip_pcie_ep_send_msi_irq(struct rockchip_pcie_ep *ep, u8 fn,
- 
- static int rockchip_pcie_ep_raise_irq(struct pci_epc *epc, u8 fn,
- 				      enum pci_epc_irq_type type,
--				      u8 interrupt_num)
-+				      u16 interrupt_num)
- {
- 	struct rockchip_pcie_ep *ep = epc_get_drvdata(epc);
- 
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index 7d77bd0..c72e656 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -131,13 +131,13 @@ EXPORT_SYMBOL_GPL(pci_epc_start);
-  * pci_epc_raise_irq() - interrupt the host system
-  * @epc: the EPC device which has to interrupt the host
-  * @func_no: the endpoint function number in the EPC device
-- * @type: specify the type of interrupt; legacy or MSI
-- * @interrupt_num: the MSI interrupt number
-+ * @type: specify the type of interrupt; legacy, MSI or MSI-X
-+ * @interrupt_num: the MSI or MSI-X interrupt number
-  *
-- * Invoke to raise an MSI or legacy interrupt
-+ * Invoke to raise an legacy, MSI or MSI-X interrupt
-  */
- int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
--		      enum pci_epc_irq_type type, u8 interrupt_num)
-+		      enum pci_epc_irq_type type, u16 interrupt_num)
- {
- 	int ret;
- 	unsigned long flags;
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 89f079f..bb2395b 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -35,7 +35,7 @@ enum pci_epc_irq_type {
-  *	     MSI-X capability register
-  * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
-  *	     from the MSI-X capability register
-- * @raise_irq: ops to raise a legacy or MSI interrupt
-+ * @raise_irq: ops to raise a legacy, MSI or MSI-X interrupt
-  * @start: ops to start the PCI link
-  * @stop: ops to stop the PCI link
-  * @owner: the module owner containing the ops
-@@ -56,7 +56,7 @@ struct pci_epc_ops {
- 	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
- 	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
- 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
--			     enum pci_epc_irq_type type, u8 interrupt_num);
-+			     enum pci_epc_irq_type type, u16 interrupt_num);
- 	int	(*start)(struct pci_epc *epc);
- 	void	(*stop)(struct pci_epc *epc);
- 	struct module *owner;
-@@ -154,7 +154,7 @@ int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
- int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
- int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
- int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
--		      enum pci_epc_irq_type type, u8 interrupt_num);
-+		      enum pci_epc_irq_type type, u16 interrupt_num);
- int pci_epc_start(struct pci_epc *epc);
- void pci_epc_stop(struct pci_epc *epc);
- struct pci_epc *pci_epc_get(const char *epc_name);
--- 
-2.7.4
-
+2018-07-12 19:13 GMT+02:00 Lyude Paul <lyude@redhat.com>:
+> This makes debugging with DP tracing a lot harder to interpret, so name
+> each i2c based off the name of the encoder that it's for
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> ---
+>  drivers/gpu/drm/nouveau/dispnv04/disp.c     |  2 +-
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c     |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_connector.c | 12 ++++++++++--
+>  drivers/gpu/drm/nouveau/nouveau_connector.h |  3 ++-
+>  4 files changed, 14 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/dispnv04/disp.c b/drivers/gpu/drm/nouveau/dispnv04/disp.c
+> index 501d2d290e9c..45ff1872d894 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv04/disp.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/disp.c
+> @@ -64,7 +64,7 @@ nv04_display_create(struct drm_device *dev)
+>         for (i = 0; i < dcb->entries; i++) {
+>                 struct dcb_output *dcbent = &dcb->entry[i];
+>
+> -               connector = nouveau_connector_create(dev, dcbent->connector);
+> +               connector = nouveau_connector_create(dev, dcbent);
+>                 if (IS_ERR(connector))
+>                         continue;
+>
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> index 9382e99a0bc7..4f8d51590bbb 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> @@ -2198,7 +2198,7 @@ nv50_display_create(struct drm_device *dev)
+>
+>         /* create encoder/connector objects based on VBIOS DCB table */
+>         for (i = 0, dcbe = &dcb->entry[0]; i < dcb->entries; i++, dcbe++) {
+> -               connector = nouveau_connector_create(dev, dcbe->connector);
+> +               connector = nouveau_connector_create(dev, dcbe);
+>                 if (IS_ERR(connector))
+>                         continue;
+>
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+> index 7b557c354307..0c5cc600c973 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+> @@ -408,8 +408,10 @@ nouveau_connector_destroy(struct drm_connector *connector)
+>         kfree(nv_connector->edid);
+>         drm_connector_unregister(connector);
+>         drm_connector_cleanup(connector);
+> -       if (nv_connector->aux.transfer)
+> +       if (nv_connector->aux.transfer) {
+>                 drm_dp_aux_unregister(&nv_connector->aux);
+> +               kfree(nv_connector->aux.name);
+> +       }
+>         kfree(connector);
+>  }
+>
+> @@ -1201,13 +1203,16 @@ drm_conntype_from_dcb(enum dcb_connector_type dcb)
+>  }
+>
+>  struct drm_connector *
+> -nouveau_connector_create(struct drm_device *dev, int index)
+> +nouveau_connector_create(struct drm_device *dev,
+> +                        const struct dcb_output *dcbe)
+>  {
+>         const struct drm_connector_funcs *funcs = &nouveau_connector_funcs;
+>         struct nouveau_drm *drm = nouveau_drm(dev);
+>         struct nouveau_display *disp = nouveau_display(dev);
+>         struct nouveau_connector *nv_connector = NULL;
+>         struct drm_connector *connector;
+> +       char aux_name[48] = {0};
+> +       int index = dcbe->connector;
+>         int type, ret = 0;
+>         bool dummy;
+>
+> @@ -1306,6 +1311,9 @@ nouveau_connector_create(struct drm_device *dev, int index)
+>         case DRM_MODE_CONNECTOR_eDP:
+>                 nv_connector->aux.dev = dev->dev;
+>                 nv_connector->aux.transfer = nouveau_connector_aux_xfer;
+> +               snprintf(aux_name, sizeof(aux_name), "sor-%04x-%04x",
+> +                        dcbe->hasht, dcbe->hashm);
+> +               nv_connector->aux.name = kstrdup(aux_name, GFP_KERNEL);
+>                 ret = drm_dp_aux_register(&nv_connector->aux);
+>                 if (ret) {
+>                         NV_ERROR(drm, "failed to register aux channel\n");
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.h b/drivers/gpu/drm/nouveau/nouveau_connector.h
+> index a4d1a059bd3d..2c5cb51c7c33 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_connector.h
+> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
+> @@ -35,6 +35,7 @@
+>  #include "nouveau_crtc.h"
+>
+>  struct nvkm_i2c_port;
+> +struct dcb_output;
+>
+>  struct nouveau_connector {
+>         struct drm_connector base;
+> @@ -76,7 +77,7 @@ nouveau_crtc_connector_get(struct nouveau_crtc *nv_crtc)
+>  }
+>
+>  struct drm_connector *
+> -nouveau_connector_create(struct drm_device *, int index);
+> +nouveau_connector_create(struct drm_device *, const struct dcb_output *);
+>
+>  extern int nouveau_tv_disable;
+>  extern int nouveau_ignorelid;
+> --
+> 2.17.1
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
