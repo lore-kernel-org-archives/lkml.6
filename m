@@ -2,109 +2,100 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F06AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAB3ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C03C420C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:00:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="i7x45M6B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03C420C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	by mail.kernel.org (Postfix) with ESMTP id BB06120C0B
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:03:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB06120C0B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731073AbeGQLcq (ORCPT
+        id S1730780AbeGQLf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 07:32:46 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:47088 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730429AbeGQLcq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 07:32:46 -0400
-Date:   Tue, 17 Jul 2018 13:00:29 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 05/14] dmaengine: dma-jz4780: Add support for the JZ4740
- SoC
-To:     Rob Herring <robh@kernel.org>
-Cc:     Vinod <vkoul@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Message-Id: <1531825229.5992.0@smtp.crapouillou.net>
-In-Reply-To: <20180716213339.GA19161@rob-hp-laptop>
-References: <20180703123214.23090-1-paul@crapouillou.net>
-        <20180703123214.23090-6-paul@crapouillou.net>
-        <20180709171226.GK22377@vkoul-mobl> <20180716213339.GA19161@rob-hp-laptop>
+        Tue, 17 Jul 2018 07:35:58 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9687 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729983AbeGQLf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 07:35:58 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4CFC2A9AB2C78;
+        Tue, 17 Jul 2018 19:03:40 +0800 (CST)
+Received: from [127.0.0.1] (10.177.16.168) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.382.0; Tue, 17 Jul 2018
+ 19:03:40 +0800
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Ron Minnich <rminnich@sandia.gov>,
+        Latchesar Ionkov <lucho@ionkov.net>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>,
+        Dominique Martinet <asmadeus@codewreck.org>
+From:   jiangyiwen <jiangyiwen@huawei.com>
+Subject: [V9fs-developer] [PATCH v2] net/9p: Fix a deadlock case in the virtio
+ transport
+Message-ID: <5B4DCD0A.8040600@huawei.com>
+Date:   Tue, 17 Jul 2018 19:03:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531825239; bh=aEZbmjqPBJqaEsjPMfUzrceU4haKjosnEaqcb+UBvtA=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=i7x45M6BeTXgcHXrZzOYUCwum1Nm7KcCCLDCwDR7w0Bio+7iMWF8wGyvgq/Eep/Os1creiQ64lvTEIvkq+dc8C6OszRHXh81p3zh/idyMxVAEAuQbpJ3RMZ/iDhFv0Uvw7BXKtEaupI8nbtbNioyyoaRQUtQPuVi1RlaLaQb3ak=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.16.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+When client has multiple threads that issue io requests
+all the time, and the server has a very good performance,
+it may cause cpu is running in the irq context for a long
+time because it can check virtqueue has buf in the *while*
+loop.
 
-Le lun. 16 juil. 2018 =E0 23:33, Rob Herring <robh@kernel.org> a =E9crit :
-> On Mon, Jul 09, 2018 at 10:42:26PM +0530, Vinod wrote:
->>  On 03-07-18, 14:32, Paul Cercueil wrote:
->>=20
->>  >  enum jz_version {
->>  > +	ID_JZ4740,
->>  >  	ID_JZ4770,
->>  >  	ID_JZ4780,
->>  >  };
->>  > @@ -247,6 +248,7 @@ static void jz4780_dma_desc_free(struct=20
->> virt_dma_desc *vdesc)
->>  >  }
->>  >
->>  >  static const unsigned int jz4780_dma_ord_max[] =3D {
->>  > +	[ID_JZ4740] =3D 5,
->>  >  	[ID_JZ4770] =3D 6,
->>  >  	[ID_JZ4780] =3D 7,
->>  >  };
->>  > @@ -801,11 +803,13 @@ static struct dma_chan=20
->> *jz4780_of_dma_xlate(struct of_phandle_args *dma_spec,
->>  >  }
->>  >
->>  >  static const unsigned int jz4780_dma_nb_channels[] =3D {
->>  > +	[ID_JZ4740] =3D 6,
->>  >  	[ID_JZ4770] =3D 6,
->>  >  	[ID_JZ4780] =3D 32,
->>  >  };
->>=20
->>  I feel these should be done away with if we describe hardware in DT
->=20
-> The compatible property can imply things like this.
->=20
-> But how this is structured is a bit strange. Normally you have a per
-> compatible struct with these as elements and the compatible matching
-> selects the struct.
+So we should keep chan->lock in the whole loop.
 
-You're right, I'll change that.
+Signed-off-by: Yiwen Jiang <jiangyiwen@huawei.com>
+---
+ net/9p/trans_virtio.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
->>=20
->>  >
->>  >  static const struct of_device_id jz4780_dma_dt_match[] =3D {
->>  > +	{ .compatible =3D "ingenic,jz4740-dma", .data =3D (void *)ID_JZ4740=
-=20
->> },
->>=20
->>  adding .compatible should be the only thing required, if at all for=20
->> this
->>  addition :)
->>=20
->>  --
->>  ~Vinod
-=
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 05006cb..e5fea8b 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -148,20 +148,15 @@ static void req_done(struct virtqueue *vq)
+
+ 	p9_debug(P9_DEBUG_TRANS, ": request done\n");
+
+-	while (1) {
+-		spin_lock_irqsave(&chan->lock, flags);
+-		req = virtqueue_get_buf(chan->vq, &len);
+-		if (req == NULL) {
+-			spin_unlock_irqrestore(&chan->lock, flags);
+-			break;
+-		}
+-		chan->ring_bufs_avail = 1;
+-		spin_unlock_irqrestore(&chan->lock, flags);
+-		/* Wakeup if anyone waiting for VirtIO ring space. */
+-		wake_up(chan->vc_wq);
++	spin_lock_irqsave(&chan->lock, flags);
++	while ((req = virtqueue_get_buf(chan->vq, &len)) != NULL) {
+ 		if (len)
+ 			p9_client_cb(chan->client, req, REQ_STATUS_RCVD);
+ 	}
++	chan->ring_bufs_avail = 1;
++	spin_unlock_irqrestore(&chan->lock, flags);
++	/* Wakeup if anyone waiting for VirtIO ring space. */
++	wake_up(chan->vc_wq);
+ }
+
+ /**
+-- 
+1.8.3.1
 
