@@ -2,122 +2,101 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A152ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95AFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D429F206B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:29:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D429F206B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 84CBE206B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:30:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NSfc9KRt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84CBE206B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbeGQWDm (ORCPT
+        id S1730693AbeGQWEe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 18:03:42 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.182]:37387 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729738AbeGQWDm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 18:03:42 -0400
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 6D4096C5DB
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 16:29:09 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fXWZfKMGNbXuJfXWmfSCYU; Tue, 17 Jul 2018 16:29:09 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=58594 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ffXWZ-001K4K-CX; Tue, 17 Jul 2018 16:28:47 -0500
-Date:   Tue, 17 Jul 2018 16:28:46 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Sebastian Reichel <sre@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] power: supply: mark expected switch fall-throughs
-Message-ID: <20180717212846.GA13179@embeddedor.com>
+        Tue, 17 Jul 2018 18:04:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729742AbeGQWEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 18:04:34 -0400
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED2FC20835
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 21:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531863001;
+        bh=vhzNjPZPH7URPqYqI6QDcxV7h7klUk6Hf2qBzSiEoHE=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=NSfc9KRtDK3J5zF6VjHNhH4UTykZy1jAefYlij+dZ4y76rQfpwq6vVe8IBCG0R0CA
+         B773183wuwq5zb7xDtFhU7WUgtr//ThTDNnKAHXrExvpILhI9Rt09tkYylfb6+NH8Q
+         2kgNmRQq1/fD9CqQ0cansb8KbpbKrLJ5XZBNcehY=
+Received: by mail-wr1-f52.google.com with SMTP id g6-v6so2602048wrp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:30:00 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFuEqO/MdjZF9/F5KqrCvN4Bqnk+zKv7QPchmpaAZFJ/miaNVct
+        t2JDJqjA5RUhJafLasbUE1VNit3kOGFy4rX/rG1+JA==
+X-Google-Smtp-Source: AAOMgper8QeXdCGsY60b+GNPqZSHlohsSVBCPxgeh6W4hLuqLtnfaZPdceqKEcZrwwk100snnZYeBUs77nqbuMdBd80=
+X-Received: by 2002:adf:81c3:: with SMTP id 61-v6mr2539343wra.120.1531862999454;
+ Tue, 17 Jul 2018 14:29:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1ffXWZ-001K4K-CX
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:58594
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 14:29:38
+ -0700 (PDT)
+In-Reply-To: <FF977B78-140F-4787-AA57-0EA934017D85@surriel.com>
+References: <20180716190337.26133-1-riel@surriel.com> <20180716190337.26133-5-riel@surriel.com>
+ <CALCETrUMntRe_LYX5wj9YD4xZ+84QExK+ZNb3yxEBDEKa7nePQ@mail.gmail.com> <FF977B78-140F-4787-AA57-0EA934017D85@surriel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 17 Jul 2018 14:29:38 -0700
+X-Gmail-Original-Message-ID: <CALCETrXtpGPm2Hgm3R=p1ezvNQi==jhQWw5ee9K+H2avNNGsUg@mail.gmail.com>
+Message-ID: <CALCETrXtpGPm2Hgm3R=p1ezvNQi==jhQWw5ee9K+H2avNNGsUg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] x86,tlb: make lazy TLB mode lazier
+To:     Rik van Riel <riel@surriel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Mike Galbraith <efault@gmx.de>,
+        kernel-team <kernel-team@fb.com>, Ingo Molnar <mingo@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Tue, Jul 17, 2018 at 1:16 PM, Rik van Riel <riel@surriel.com> wrote:
+> Can I skip both the cr4 and let switches when the TLB contents
+> are no longer valid and got reloaded?
+>
+> If the TLB contents are still valid, either because we never went
+> into lazy TLB mode, or because no invalidates happened while
+> we were lazy, we immediately return.
+>
+> The cr4 and ldt reloads only happen if the TLB was invalidated
+> while we were in lazy TLB mode.
 
-Addresses-Coverity-ID: 1394724 ("Missing break in switch")
-Addresses-Coverity-ID: 114958 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/power/supply/axp20x_usb_power.c   | 1 +
- drivers/power/supply/cros_usbpd-charger.c | 1 +
- drivers/power/supply/wm8350_power.c       | 3 ++-
- 3 files changed, 4 insertions(+), 1 deletion(-)
+Yes, since the only events that would change the LDT or the required
+CR4 value will unconditionally broadcast to every CPU in mm_cpumask
+regardless of whether they're lazy.  The interesting case is that you
+go lazy, you miss an invalidation IPI because you were lazy, then you
+go unlazy, notice the tlb_gen change, and flush.  If this happens, you
+know that you only missed a page table update and not an LDT update or
+a CR4 update, because the latter would have sent the IPI even though
+you were lazy.  So you should skip the CR4 and LDT updates.
 
-diff --git a/drivers/power/supply/axp20x_usb_power.c b/drivers/power/supply/axp20x_usb_power.c
-index 44f70dc..42001df 100644
---- a/drivers/power/supply/axp20x_usb_power.c
-+++ b/drivers/power/supply/axp20x_usb_power.c
-@@ -222,6 +222,7 @@ static int axp20x_usb_power_set_current_max(struct axp20x_usb_power *power,
- 	case 100000:
- 		if (power->axp20x_id == AXP221_ID)
- 			return -EINVAL;
-+		/* fall through */
- 	case 500000:
- 	case 900000:
- 		val = (900000 - intval) / 400000;
-diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
-index 3a0c96f..688a16b 100644
---- a/drivers/power/supply/cros_usbpd-charger.c
-+++ b/drivers/power/supply/cros_usbpd-charger.c
-@@ -325,6 +325,7 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
- 		 */
- 		if (ec_device->mkbp_event_supported || port->psy_online)
- 			break;
-+		/* fall through */
- 	case POWER_SUPPLY_PROP_CURRENT_MAX:
- 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-diff --git a/drivers/power/supply/wm8350_power.c b/drivers/power/supply/wm8350_power.c
-index a2740cf..15c0ca1 100644
---- a/drivers/power/supply/wm8350_power.c
-+++ b/drivers/power/supply/wm8350_power.c
-@@ -230,7 +230,8 @@ static irqreturn_t wm8350_charger_handler(int irq, void *data)
- 	case WM8350_IRQ_EXT_USB_FB:
- 	case WM8350_IRQ_EXT_WALL_FB:
- 		wm8350_charger_config(wm8350, policy);
--	case WM8350_IRQ_EXT_BAT_FB:   /* Fall through */
-+		/* Fall through */
-+	case WM8350_IRQ_EXT_BAT_FB:
- 		power_supply_changed(power->battery);
- 		power_supply_changed(power->usb);
- 		power_supply_changed(power->ac);
--- 
-2.7.4
+I suppose a different approach would be to fix the issue below and to
+try to track when the LDT actually needs reloading.  But that latter
+part seems a bit complicated for minimal gain.
 
+(Do you believe me?  If not, please argue back!)
+
+>> Hmm.  load_mm_cr4() should bypass itself when mm == &init_mm.  Want to
+>> fix that part or should I?
+>
+> I would be happy to send in a patch for this, and one for
+> the above optimization you pointed out.
+>
+
+Yes please!
