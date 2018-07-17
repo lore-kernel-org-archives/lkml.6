@@ -1,72 +1,75 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0255AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA461ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A399520858
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87CC520858
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 14:42:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="d/VXd+PD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A399520858
+	dkim=pass (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="0MhhtBeD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87CC520858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731743AbeGQPPP (ORCPT
+        id S1731810AbeGQPPw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 11:15:15 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46537 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731574AbeGQPPO (ORCPT
+        Tue, 17 Jul 2018 11:15:52 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39821 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731613AbeGQPPv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 11:15:14 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s11-v6so1508898wra.13
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:42:13 -0700 (PDT)
+        Tue, 17 Jul 2018 11:15:51 -0400
+Received: by mail-wm0-f65.google.com with SMTP id h20-v6so1786864wmb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 07:42:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
          :date:user-agent:mime-version:in-reply-to;
-        bh=v5ncRrf8HRTKs3DcplUkUrghsOUSNnl9vzQFwCPS/Xk=;
-        b=d/VXd+PDEOKi2XqtRyJKBXe2KrfGmBB+xeNKDeRpJ/CwQKrtAMy2f3mP0pyItghp7U
-         Ypmvwcrk1ixlmSGgwzQGuyPvAuzf+bz5YtTLZFOvmMMBdINHobjOl9yXSEk9FgKe/Fct
-         FIxAiOjEJRDJ6RfuFz0Tq0TRsNLKUrssAfuUxdD0doYqF5PFQGVfEkYdo/YiktLD3ntm
-         u0XpXhCFNi1jChE/fsiHhFkVaeLih5On6lTiuxvTmrNegRZI2m3HYuoNn7h/AvlTH7jd
-         cM1hZNGh9UlX2qQdLynsP93e9BjUJF+7bj/i7w3z+DS68EkEm0+4jkDdyiG89gAqVc5p
-         4BAw==
+        bh=Jr3ZXAaZp+fG0BsDre0SQu8BcOQv47QE2HDUkPeXCfo=;
+        b=0MhhtBeDOYTi+q5SkBNbQAwzLejnXfmqjPSoSYXdo1/FhnrfHDuTTfr5djTvXoJ4z0
+         dyheeCbiLRCEOaCZ59IAXKTgVp5SQyfIPLDpaNUPAFEzl7o0Sav7Y76YT4gVhpA7Pc3f
+         ommxZjW5HVd37VJcvg/4OfG7cNaQVI5zVsXnR1Yj0vGQxVwJ9RVaP8bNUjvBW9XqIGV7
+         MdAnhny7wxMGjSpesI2PHxHFSjas/k8we4MS2HqRaW1tVjjyEHmqK1/SJL9ko5PFbr9O
+         UQn9r6hglHY4I1EySfkLEFZFlfwkmgl7DGUCe9mgqqg0cms+Piiqueqqm41myh1QnyCg
+         cXZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
          :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
-        bh=v5ncRrf8HRTKs3DcplUkUrghsOUSNnl9vzQFwCPS/Xk=;
-        b=sfavabh43XE/aQoGMyaJFASbryTsQ0ux7Nml2+K5O4PtvTbOJfbggBdG1JpnmaXcyS
-         yeDsLEBKOtjhBeNWC75rhYELJxwwaa9QlJFOp1XLoc8gNU5IkLUsFGBFF6Q+H4iMHDa+
-         KOgIfZlQ/mL+/RQsSztUiu0pJRTCLkDmVMmFVfukC11aFY70hYpdk9JgWabg+jSvFFck
-         OJUfBXUGK9urQMBtHIC2OL0zeD4eDhaZISx7ICkEOOoTRkdO3YhCLsOTSR0N/d7ZGoDe
-         jreQgCnRWhHhlKYXxEOftLsYdrbtoJhKAWHYdA+S3OF+gY/R+mQ8Av9Z1D+UxiJJ9hVM
-         ZLUg==
-X-Gm-Message-State: AOUpUlG6fhBS5Slm5b1KDbfYsST6BZwxnz/tPmTgZ7Y0HRMYzRS2pqKV
-        aiQVxxkdhRsLfzqnZk9UKUan2V6Ykd4=
-X-Google-Smtp-Source: AAOMgpffTFsghZyQyoOLds5/Lnp9wxdmlTpPajFdK2EWVTIVYtIPY3iSAjdRWG0niZHIanEPtDcYxQ==
-X-Received: by 2002:adf:e14a:: with SMTP id f10-v6mr1564614wri.42.1531838533032;
-        Tue, 17 Jul 2018 07:42:13 -0700 (PDT)
+        bh=Jr3ZXAaZp+fG0BsDre0SQu8BcOQv47QE2HDUkPeXCfo=;
+        b=HLAaczJDja0d0y/tB1ZZhq/rSX/NFNkTVcgqcHIsRks2EtunnPonQzCU1L43KTXXcc
+         Eoi+F2xBbQxBzSf4/hN15jCvC3m0XaFnk48vJnp8LQqxGRMQs+MtB1TGnpEQHJoegovw
+         ju/6++LNUXhX0bAlz4nzVGmq3XyQfxBpYkGEuypXLwv6hnmTaIQ6xS7JuX0RpBKnVepP
+         kWB4Vazsw953p73kporUrHE+z9ojEv4kt4ga1ZDyxDL4YeRfhEFZllWugDSYkaiS4sDm
+         CJ139BKaDpflJEmJVMOfb7y7NvSPLQ1qtOB4Hu5BjtR/bnmvgta01PhijjmfI0rIpL/i
+         IQ4g==
+X-Gm-Message-State: AOUpUlHewx02NmgUI3sybVzb6KZ+1Mxjai12T5m5/FmcLdrLRoLT4TjU
+        7NcJ2W7HeiYSLi1ZjE6QhM2Xreg1NBg=
+X-Google-Smtp-Source: AAOMgpfEyh+IGa/XmA1xasrGReDrhRYzaP/ikYanRFOwUEJIKRQq8Xrdw4+oJ5YEpjmZy3uwxXvRdA==
+X-Received: by 2002:a1c:2142:: with SMTP id h63-v6mr1614983wmh.51.1531838570578;
+        Tue, 17 Jul 2018 07:42:50 -0700 (PDT)
 Received: from [173.194.76.109] ([149.199.62.254])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm1338692wrp.55.2018.07.17.07.42.08
+        by smtp.gmail.com with ESMTPSA id m17-v6sm1824296wrg.65.2018.07.17.07.42.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 07:42:12 -0700 (PDT)
+        Tue, 17 Jul 2018 07:42:49 -0700 (PDT)
 Reply-To: monstr@monstr.eu
-Subject: Re: [PATCH] arm64: zynqmp: Remove #address/#size-cells from gpio-keys
+Subject: Re: [PATCH] arm64: zynqmp: Add support for Avnet Ultra96 rev1 board
 To:     Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org
-References: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
+References: <80d21c84d427cb6b4122efd3dea7f1c4ab4cf2be.1525261987.git.michal.simek@xilinx.com>
 From:   Michal Simek <monstr@monstr.eu>
 Openpgp: preference=signencrypt
 Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
@@ -112,112 +115,99 @@ Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
  HIic/FvF0oY3lecyr+v1jvS5FXJ6rCn3uwotd30azG5pKDtAkpRqW283+LueDVQ5P/Gwp5V1
  9e6oMggSVn53IRVPB4MzTXVm/Q03c5YXPqgP4bPIF624HAPRnUxCWY1yrZuE4zNPG5dfY0PN
  RmzhqoTJlA==
-Message-ID: <50a270ad-93e6-5be2-ab57-bd4cbd9fe49a@monstr.eu>
-Date:   Tue, 17 Jul 2018 16:42:05 +0200
+Message-ID: <c94812e7-b213-2a3a-30c9-c0f88ecbefb1@monstr.eu>
+Date:   Tue, 17 Jul 2018 16:42:42 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
+In-Reply-To: <80d21c84d427cb6b4122efd3dea7f1c4ab4cf2be.1525261987.git.michal.simek@xilinx.com>
 Content-Type: multipart/signed; micalg=pgp-sha1;
  protocol="application/pgp-signature";
- boundary="rNj6OcjYfbJvEiaEta93scPgEff3uU0w7"
+ boundary="Q4VoWRSlmvPqtZehKNftJlcapFmqIaoIV"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---rNj6OcjYfbJvEiaEta93scPgEff3uU0w7
-Content-Type: multipart/mixed; boundary="bpAOc0hM4YirHXmYmS6kfcoRqLeshgDHH";
+--Q4VoWRSlmvPqtZehKNftJlcapFmqIaoIV
+Content-Type: multipart/mixed; boundary="fL0VbY7oosjZ8vhlV0HbmmaeaYZUnY7EE";
  protected-headers="v1"
 From: Michal Simek <monstr@monstr.eu>
 Reply-To: monstr@monstr.eu
 To: Michal Simek <michal.simek@xilinx.com>, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
  Will Deacon <will.deacon@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Mark Rutland <mark.rutland@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Message-ID: <50a270ad-93e6-5be2-ab57-bd4cbd9fe49a@monstr.eu>
-Subject: Re: [PATCH] arm64: zynqmp: Remove #address/#size-cells from gpio-keys
-References: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
-In-Reply-To: <cc96e8372881438fb069d49126ab713fa03fb074.1525260692.git.michal.simek@xilinx.com>
+ <catalin.marinas@arm.com>, Rob Herring <robh+dt@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, linux-arm-kernel@lists.infradead.org
+Message-ID: <c94812e7-b213-2a3a-30c9-c0f88ecbefb1@monstr.eu>
+Subject: Re: [PATCH] arm64: zynqmp: Add support for Avnet Ultra96 rev1 board
+References: <80d21c84d427cb6b4122efd3dea7f1c4ab4cf2be.1525261987.git.michal.simek@xilinx.com>
+In-Reply-To: <80d21c84d427cb6b4122efd3dea7f1c4ab4cf2be.1525261987.git.michal.simek@xilinx.com>
 
---bpAOc0hM4YirHXmYmS6kfcoRqLeshgDHH
+--fL0VbY7oosjZ8vhlV0HbmmaeaYZUnY7EE
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-On 2.5.2018 13:34, Michal Simek wrote:
-> dts reports incorrect usage of these properties in gpio-keys node.
-> Warning (avoid_unnecessary_addr_size): /gpio-keys: unnecessary
->=20
-> The patch is removing these useless properties.
+On 2.5.2018 13:53, Michal Simek wrote:
+> Avnet Ultra96 rev1 board is commercialized Xilinx zcu100 revC/D
+> internal board. The patch is reusing zcu100 revC files but changing
+> model description and compatible strings which are used for example by
+> libmraa.
 >=20
 > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
 >=20
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts | 2 --
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts | 2 --
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts | 2 --
->  arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts | 2 --
->  4 files changed, 8 deletions(-)
+> I choose this option because there are houndreds of zcu100 boards
+> created and this will enable support both versions.
 >=20
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts b/arch/a=
-rm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> index c7f713c8e69e..eb5e8bddb610 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu100-revC.dts
-> @@ -44,8 +44,6 @@
-> =20
->  	gpio-keys {
->  		compatible =3D "gpio-keys";
-> -		#address-cells =3D <1>;
-> -		#size-cells =3D <0>;
->  		autorepeat;
->  		sw4 {
->  			label =3D "sw4";
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts b/arch/a=
-rm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-> index 5b4ffe646a9b..25dd57485323 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-> @@ -41,8 +41,6 @@
-> =20
->  	gpio-keys {
->  		compatible =3D "gpio-keys";
-> -		#address-cells =3D <1>;
-> -		#size-cells =3D <0>;
->  		autorepeat;
->  		sw19 {
->  			label =3D "sw19";
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts b/arch/a=
-rm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
-> index 668f7f26716a..259f21b0c001 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu106-revA.dts
-> @@ -41,8 +41,6 @@
-> =20
->  	gpio-keys {
->  		compatible =3D "gpio-keys";
-> -		#address-cells =3D <1>;
-> -		#size-cells =3D <0>;
->  		autorepeat;
->  		sw19 {
->  			label =3D "sw19";
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts b/arch/a=
-rm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
-> index 9a9dd6a0142b..a61b3cc6f4c9 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu111-revA.dts
-> @@ -41,8 +41,6 @@
-> =20
->  	gpio-keys {
->  		compatible =3D "gpio-keys";
-> -		#address-cells =3D <1>;
-> -		#size-cells =3D <0>;
->  		autorepeat;
->  		sw19 {
->  			label =3D "sw19";
+> Record avnet prefix was sent by separate patch.
+> ---
+>  arch/arm64/boot/dts/xilinx/Makefile           |  1 +
+>  .../boot/dts/xilinx/avnet-ultra96-rev1.dts    | 19 +++++++++++++++++++=
+
+>  2 files changed, 20 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
+>=20
+> diff --git a/arch/arm64/boot/dts/xilinx/Makefile b/arch/arm64/boot/dts/=
+xilinx/Makefile
+> index d452f80e7601..60f5443f3ef4 100644
+> --- a/arch/arm64/boot/dts/xilinx/Makefile
+> +++ b/arch/arm64/boot/dts/xilinx/Makefile
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_ARCH_ZYNQMP) +=3D avnet-ultra96-rev1.dtb
+>  dtb-$(CONFIG_ARCH_ZYNQMP) +=3D zynqmp-zc1232-revA.dtb
+>  dtb-$(CONFIG_ARCH_ZYNQMP) +=3D zynqmp-zc1254-revA.dtb
+>  dtb-$(CONFIG_ARCH_ZYNQMP) +=3D zynqmp-zc1275-revA.dtb
+> diff --git a/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts b/arch/a=
+rm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
+> new file mode 100644
+> index 000000000000..88aa06fa78a8
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * dts file for Avnet Ultra96 rev1
+> + *
+> + * (C) Copyright 2018, Xilinx, Inc.
+> + *
+> + * Michal Simek <michal.simek@xilinx.com>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "zynqmp-zcu100-revC.dts"
+> +
+> +/ {
+> +	model =3D "Avnet Ultra96 Rev1";
+> +	compatible =3D "avnet,ultra96-rev1", "avnet,ultra96",
+> +		     "xlnx,zynqmp-zcu100-revC", "xlnx,zynqmp-zcu100",
+> +		     "xlnx,zynqmp";
+> +};
 >=20
 
 Applied.
@@ -234,9 +224,9 @@ U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
 
 
 
---bpAOc0hM4YirHXmYmS6kfcoRqLeshgDHH--
+--fL0VbY7oosjZ8vhlV0HbmmaeaYZUnY7EE--
 
---rNj6OcjYfbJvEiaEta93scPgEff3uU0w7
+--Q4VoWRSlmvPqtZehKNftJlcapFmqIaoIV
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -244,9 +234,9 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iEYEARECAAYFAltOAD0ACgkQykllyylKDCFJ9gCfR4xAncQz6PzgQ/+BVn7ZWP3d
-1mgAoIjY4vHuoCrBpcTsKJL1IT5Vbju3
-=dHkX
+iEYEARECAAYFAltOAGIACgkQykllyylKDCFsxQCfYH1+JYQnMNxB4JzugDdMInPa
+bp8AoIe6BsggR0prRIkOpRrQTJnBpySl
+=b6+P
 -----END PGP SIGNATURE-----
 
---rNj6OcjYfbJvEiaEta93scPgEff3uU0w7--
+--Q4VoWRSlmvPqtZehKNftJlcapFmqIaoIV--
