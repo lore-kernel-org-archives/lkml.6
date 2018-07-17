@@ -2,108 +2,109 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC67ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E47ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659AE20852
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:32:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="YT6mAULS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 659AE20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id F305120C0E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:33:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F305120C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeGQKEc (ORCPT
+        id S1731259AbeGQKEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:04:32 -0400
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:39010 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730281AbeGQKDS (ORCPT
+        Tue, 17 Jul 2018 06:04:40 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38457 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729672AbeGQKEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:03:18 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id DF92710C178A;
-        Tue, 17 Jul 2018 02:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531819896; bh=xJSdY6uhyjBuUskjVw0J29wx+bM9NbrOw6x6tTWCIoM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=YT6mAULS8ts2lmMYuUCXH0N8xakwce3Eq6ywqbXR+I6MS/qnX8sI3j+UrLh8/D0CI
-         mIy4jYvoNz81wmxi1/8S6EcB8496Ieng2+4bklmCl0ljonP5kIqsJ+oMRiNXAkfMBV
-         xwxtSvJDgZuYBgrnP/uxs3nR42WgrgF5jk0MdD0MXMgTa1PLAXcTAHfBENX+QSFAxF
-         ciGEaTlMNnkme7BIcPyyowi5NCWBUxgbNsj3kUVozjzmY/lKTvFZzKjcbD2vb/pAMO
-         BqYoWPULlPR9O14SxB1UfaHoQQ6wNgyjI9v1BIUJW+/scaHyO2UdYDeZKUwXinsG14
-         FQiWxYiTnvtgA==
-Received: from de02.synopsys.com (de02.internal.synopsys.com [10.225.17.21])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 8E2543FB5;
-        Tue, 17 Jul 2018 02:31:36 -0700 (PDT)
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by de02.synopsys.com (Postfix) with ESMTP id CADB13BC26;
-        Tue, 17 Jul 2018 11:31:34 +0200 (CEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v12 12/12] PCI: endpoint: Add MSI set maximum restriction
-Date:   Tue, 17 Jul 2018 11:31:32 +0200
-Message-Id: <7d5a9708368226edd1d461dec4b719ea5bffdf6c.1531818979.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531818979.git.gustavo.pimentel@synopsys.com>
+        Tue, 17 Jul 2018 06:04:40 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9WSpr1462956
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 02:32:28 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9WRRJ1462953;
+        Tue, 17 Jul 2018 02:32:27 -0700
+Date:   Tue, 17 Jul 2018 02:32:27 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yauheni Kaliuta <tipbot@zytor.com>
+Message-ID: <tip-0fcff1715bec7593a0ba86f3fef46cd89af37a8b@git.kernel.org>
+Cc:     mingo@kernel.org, peterz@infradead.org, stern@rowland.harvard.edu,
+        yauheni.kaliuta@redhat.com, hpa@zytor.com,
+        paulmck@linux.vnet.ibm.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org
+Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
+          linux-kernel@vger.kernel.org, peterz@infradead.org,
+          mingo@kernel.org, paulmck@linux.vnet.ibm.com, hpa@zytor.com,
+          yauheni.kaliuta@redhat.com, stern@rowland.harvard.edu
+In-Reply-To: <20180716180605.16115-13-paulmck@linux.vnet.ibm.com>
+References: <20180716180605.16115-13-paulmck@linux.vnet.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] tools/memory-model/Documentation: Fix typo,
+ smb->smp
+Git-Commit-ID: 0fcff1715bec7593a0ba86f3fef46cd89af37a8b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pci_epc_set_msi() maximum 32 interrupts validation.
+Commit-ID:  0fcff1715bec7593a0ba86f3fef46cd89af37a8b
+Gitweb:     https://git.kernel.org/tip/0fcff1715bec7593a0ba86f3fef46cd89af37a8b
+Author:     Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+AuthorDate: Mon, 16 Jul 2018 11:06:04 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 17 Jul 2018 09:30:35 +0200
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+tools/memory-model/Documentation: Fix typo, smb->smp
+
+The tools/memory-model/Documentation/explanation.txt file says
+"For each other CPU C', smb_wmb() forces all po-earlier stores"
+This commit therefore replaces the "smb_wmb()" with "smp_wmb()".
+
+Signed-off-by: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akiyks@gmail.com
+Cc: boqun.feng@gmail.com
+Cc: dhowells@redhat.com
+Cc: j.alglave@ucl.ac.uk
+Cc: linux-arch@vger.kernel.org
+Cc: luc.maranget@inria.fr
+Cc: npiggin@gmail.com
+Cc: parri.andrea@gmail.com
+Cc: will.deacon@arm.com
+Link: http://lkml.kernel.org/r/20180716180605.16115-13-paulmck@linux.vnet.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Change v4->v5:
- - New patch file.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Nothing changed, just to follow the patch set version.
-Change v9->v10:
- - Nothing changed, just to follow the patch set version.
-Change v10->v11:
- - Nothing changed, just to follow the patch set version.
-Change v11->v12:
- - Nothing changed, just to follow the patch set version.
+ tools/memory-model/Documentation/explanation.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pci/endpoint/pci-epc-core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index c72e656..094dcc3 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- 	u8 encode_int;
- 	unsigned long flags;
+diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
+index 1b09f3175a1f..0cbd1ef8f86d 100644
+--- a/tools/memory-model/Documentation/explanation.txt
++++ b/tools/memory-model/Documentation/explanation.txt
+@@ -804,7 +804,7 @@ type of fence:
+ Second, some types of fence affect the way the memory subsystem
+ propagates stores.  When a fence instruction is executed on CPU C:
  
--	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
-+	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
-+	    interrupts > 32)
- 		return -EINVAL;
+-	For each other CPU C', smb_wmb() forces all po-earlier stores
++	For each other CPU C', smp_wmb() forces all po-earlier stores
+ 	on C to propagate to C' before any po-later stores do.
  
- 	if (!epc->ops->set_msi)
--- 
-2.7.4
-
+ 	For each other CPU C', any store which propagates to C before
