@@ -1,149 +1,191 @@
 Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF0E9ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6663BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99DA3206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:30:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 148E3206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 16:31:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QwLtm8Ch";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QC0MWs+4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99DA3206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HStJ8CHu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148E3206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730511AbeGQRD7 (ORCPT
+        id S1729927AbeGQREr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:03:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60280 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729641AbeGQRD7 (ORCPT
+        Tue, 17 Jul 2018 13:04:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44906 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729669AbeGQREr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:03:59 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 632C0607C6; Tue, 17 Jul 2018 16:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531845031;
-        bh=o/MmxlsRLDcZX/3ufmC5YLiCfFkKOCiNtV0e2YnFQEk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QwLtm8Ch1fIEwiKsC/xuc/uVzCSjJxP+8hTWrNUcjXBa71BvzzRCM6iaqwBrpeEpi
-         GF77z+7evjST5WtKMgQFAPB8kijWXPT24dIe7LGiRRhKcO3XCxjAigOBIrZLczfAi1
-         xBjPq2cjIQfQgSgi6ZV3yYNvpQ66Jv/Q5CCPjq80=
-Received: from isaacm-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: isaacm@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 44E0760481;
-        Tue, 17 Jul 2018 16:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531845030;
-        bh=o/MmxlsRLDcZX/3ufmC5YLiCfFkKOCiNtV0e2YnFQEk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QC0MWs+4oy46Bx5xea9p1Rdrn6OwowLeXCR8VZDJGI1dspzc+l6aRfvOeFztSd7xD
-         dfUmXcd0gz3Yx4iVrv+6XAe2Ep7k8kra8DizR6yh2UPn5nEvENqg4+EVUgGgG1lt63
-         35tlZmSvxjbWB+t6gfOPJnvq0uVKH3Q7wkyZ2UNM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 44E0760481
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=isaacm@codeaurora.org
-From:   "Isaac J. Manjarres" <isaacm@codeaurora.org>
-To:     peterz@infradead.org, matt@codeblueprint.co.uk, mingo@kernel.org,
-        tglx@linutronix.de, bigeasy@linutronix.de
-Cc:     "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        linux-kernel@vger.kernel.org, psodagud@codeaurora.org,
-        gregkh@linuxfoundation.org, pkondeti@codeaurora.org,
-        stable@vger.kernel.org
-Subject: [PATCH v4] stop_machine: Disable preemption after queueing stopper threads
-Date:   Tue, 17 Jul 2018 09:30:17 -0700
-Message-Id: <1531845017-19935-1-git-send-email-isaacm@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 17 Jul 2018 13:04:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r1-v6so664474pgp.11;
+        Tue, 17 Jul 2018 09:31:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4n0bFj6cuZbADw0VZKMH1SZ2g39tz5qHaKAil7Qnun8=;
+        b=HStJ8CHuoG98OFrkJgnDAl7+FX4jDZioOOfIkHe/qEWn+p8+1oxgofPE0OUkOZk6S6
+         Sawqlv/9RmCUNKmt14HV5mYm3mTNjAJHXQY4AUpTb7OxYmHmavVwsJYwfKo8TXF8IEs8
+         D/aqlMk1s2CpGTe0WJZTBqD99gpphotfz7FwUpmNgVQSes9qKuGAxv9KEUDvKTXS7y12
+         QVCfHclQQVgXvflcIgLHd4qDGQJLFSkQPQjV+qVBWI1sJICsQv2XeMy5ORci4qnBn94x
+         Fd/4WheTpqfOeYjs+Xe373/Vrl5h2vdIfz23sssF8wNvpnoCNsRbE2DOolYCDKVB8rvA
+         F70g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4n0bFj6cuZbADw0VZKMH1SZ2g39tz5qHaKAil7Qnun8=;
+        b=a/O7NSf8TtyfaUyPTwvE6X0HAprcx6AVNKz+eYEv6eIjWXadBCHwVI73rm+ZsbRprJ
+         rU6wWuHmNUmKhyw3ZmPPyac+wiaWPX+rlkJoT/4pXcM+5LeCiD9O5cZ/uTCl3IP0Ts7Z
+         xSGGHK4lbg3KNkR0JrkPLsuYaKlEUYkR2wTOd6hZtB8aQSqJRSGH5zXkdTyzEx5vVW/6
+         Y/CX7pIKPLBc8lYgX0G3djOoGSmJZiswz5klYQM4ommEU12P6Bw8dXq1zvh0bKyhk+f2
+         7s0dTuZ+FH8NStFtE2L1HI3/Zv6s/5SkZLsJK7zxGtBo4nx0oRdwJrXgViDBdpyjCExG
+         f8MA==
+X-Gm-Message-State: AOUpUlHen5fNxM/bsxFYfaLvTnbxKuXst1moeuq1KKy9S8uDyS3J1jsl
+        iCGkwHQzAqX9PMXQ8vxs79I=
+X-Google-Smtp-Source: AAOMgperV3rCmqmc5l35UzYKuHrYggGPgjbrfqV3NUCplCK12BiBkKF5OJLJe2AUpPCiekAs4gFnpw==
+X-Received: by 2002:a63:b705:: with SMTP id t5-v6mr2284841pgf.45.1531845079048;
+        Tue, 17 Jul 2018 09:31:19 -0700 (PDT)
+Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
+        by smtp.gmail.com with ESMTPSA id z2-v6sm1986571pgv.12.2018.07.17.09.31.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 09:31:18 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 09:31:16 -0700
+From:   Eric Biggers <ebiggers3@gmail.com>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Subject: Re: [PATCH v3 1/3] lib: add crc64 calculation routines
+Message-ID: <20180717163116.GA75957@gmail.com>
+References: <20180717145525.50852-1-colyli@suse.de>
+ <20180717145525.50852-2-colyli@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717145525.50852-2-colyli@suse.de>
+User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After cpu_stop_queue_two_works() queues the cpu_stop works
-for the stopper threads, it releases the locks held for
-both threads, which enables preemption, which allows the
-following race condition to occur:
+Hi Coly,
 
-On one CPU, call it CPU 3, thread 1 invokes
-cpu_stop_queue_two_works(2, 3,...), and the execution is such
-that thread 1 queues the works for migration/2 and migration/3,
-and is preempted after releasing the locks for migration/2 and
-migration/3, but before waking the threads.
+On Tue, Jul 17, 2018 at 10:55:23PM +0800, Coly Li wrote:
+> This patch adds the re-write crc64 calculation routines for Linux kernel.
+> The CRC64 polynomical arithmetic follows ECMA-182 specification, inspired
+> by CRC paper of Dr. Ross N. Williams
+> (see http://www.ross.net/crc/download/crc_v3.txt) and other public domain
+> implementations.
 
-Then, On CPU 2, a kworker, call it thread 2, is running,
-and it invokes cpu_stop_queue_two_works(1, 2,...), such that
-thread 2 queues the works for migration/1 and migration/2.
-Meanwhile, on CPU 3, thread 1 resumes execution, and wakes
-migration/2 and migration/3. This means that when CPU 2
-releases the locks for migration/1 and migration/2, but before
-it wakes those threads, it can be preempted by migration/2.
+Please also mention who is planned to use this CRC-64 code.  Again, if it's just
+one user then there's no need for this patchset yet.  If bcachefs is planned to
+be another user (separate from bcache) then you need to say so.
 
-If thread 2 is preempted by migration/2, then migration/2 will
-execute the first work item successfully, since migration/3
-was woken up by CPU 3, but when it goes to execute the second
-work item, it disables preemption, calls multi_cpu_stop(),
-and thus, CPU 2 will wait forever for migration/1, which should
-have been woken up by thread 2. However migration/1 cannot be
-woken up by thread 2, since it is a kworker, so it is affine to
-CPU 2, but CPU 2 is running migration/2 with preemption
-disabled, so thread 2 will never run.
+> 
+> All the changes work in this way,
+> - When Linux kernel is built, host program lib/gen_crc64table.c will be
+>   compiled to lib/gen_crc64table and executed.
+> - The output of gen_crc64table execution is an array called as lookup
+>   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64bits-long
+>   numbers, this talbe is dumped into header file lib/crc64table.h.
+> - Then the header file is included by lib/crc64.c for normal 64bit crc
+>   calculation.
+> - Function declaration of the crc64 calculation routines is placed in
+>   include/linux/crc64.h
+> 
+> Changelog:
+> v3: More fixes for review comments of v2
+>     By review comments from Eric Biggers, current functions naming with
+>     'le' is misleading. Remove 'le' from the crc function names, and use
+>     u64 to replace __le64 in parameters and return values. 
+> v2: Fix reivew comments of v1
+> v1: Initial version.
+> 
+> Signed-off-by: Coly Li <colyli@suse.de>
+> Co-developed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Michael Lyle <mlyle@lyle.org>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+> Cc: Eric Biggers <ebiggers3@gmail.com>
+> ---
+>  include/linux/crc64.h | 13 ++++++++
+>  lib/.gitignore        |  2 ++
+>  lib/Kconfig           |  8 +++++
+>  lib/Makefile          | 11 +++++++
+>  lib/crc64.c           | 71 +++++++++++++++++++++++++++++++++++++++++++
+>  lib/gen_crc64table.c  | 69 +++++++++++++++++++++++++++++++++++++++++
+>  6 files changed, 174 insertions(+)
+>  create mode 100644 include/linux/crc64.h
+>  create mode 100644 lib/crc64.c
+>  create mode 100644 lib/gen_crc64table.c
+> 
+> diff --git a/include/linux/crc64.h b/include/linux/crc64.h
+> new file mode 100644
+> index 000000000000..3e87b61cd54f
+> --- /dev/null
+> +++ b/include/linux/crc64.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * See lib/crc64.c for the related specification and polynomical arithmetic.
+> + */
+> +#ifndef _LINUX_CRC64_H
+> +#define _LINUX_CRC64_H
+> +
+> +#include <linux/types.h>
+> +
+> +u64 __pure crc64_update(u64 crc, const void *_p, size_t len);
+> +u64 __pure crc64(const void *p, size_t len);
+> +u64 __pure crc64_bch(const void *p, size_t len);
+> +#endif /* _LINUX_CRC64_H */
 
-Disable preemption after queueing works for stopper threads
-to ensure that the operation of queueing the works and waking
-the stopper threads is atomic.
+I still think you should make the API consistent with lib/crc32.c by replacing
+the three functions with just:
 
-Fixes: 0b26351b910f ("stop_machine, sched: Fix migrate_swap() vs. active_balance() deadlock")
-Co-Developed-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Co-Developed-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Isaac J. Manjarres <isaacm@codeaurora.org>
-Signed-off-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Cc: stable@vger.kernel.org
----
- kernel/stop_machine.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+	u64 __pure crc64_be(u64 crc, const void *p, size_t len);
 
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index f89014a..e190d1e 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -260,6 +260,15 @@ static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work *work1,
- 	err = 0;
- 	__cpu_stop_queue_work(stopper1, work1, &wakeq);
- 	__cpu_stop_queue_work(stopper2, work2, &wakeq);
-+	/*
-+	 * The waking up of stopper threads has to happen
-+	 * in the same scheduling context as the queueing.
-+	 * Otherwise, there is a possibility of one of the
-+	 * above stoppers being woken up by another CPU,
-+	 * and preempting us. This will cause us to n ot
-+	 * wake up the other stopper forever.
-+	 */
-+	preempt_disable();
- unlock:
- 	raw_spin_unlock(&stopper2->lock);
- 	raw_spin_unlock_irq(&stopper1->lock);
-@@ -270,7 +279,10 @@ static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work *work1,
- 		goto retry;
- 	}
- 
--	wake_up_q(&wakeq);
-+	if (!err) {
-+		wake_up_q(&wakeq);
-+		preempt_enable();
-+	}
- 
- 	return err;
- }
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Your API maps to it as follows:
 
+	crc64_update(crc, p, len) == crc64_be(crc, p, len)
+	crc64(p, len)             == crc64_be(0, p, len)
+	crc64_bch(p, len)         == ~crc64_be(~0, p, len)
+
+The "_be" suffix clarifies that it's not using the bit-reversed convention.  We
+don't want to have to rename everything when someone needs to do CRC-64 using
+the other convention.  The CRC-64 in the .xz file format, for example, uses the
+bit-reversed convention.
+
+The other problem with your API (besides it being inconsistent with lib/crc32.c)
+is that as soon as the caller needs to do something nontrivial, like passing the
+data in multiple chunks or using different conventions for the initial and final
+values, then they actually have to use only "crc64_update()" anyway, which is
+confusing as it makes it sound like there should be a "crc64_init()" and
+"crc64_final()" to go along with "crc64_update()".
+
+Also, naming CRC conventions after a specific user ("bch") isn't appropriate.
+
+Thanks,
+
+- Eric
