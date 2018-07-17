@@ -2,179 +2,135 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6260ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A73FECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1C32075E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 18:59:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1C32075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id B78582075E
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 19:02:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtHJUaPx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B78582075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbeGQTdS (ORCPT
+        id S1730107AbeGQTgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 15:33:18 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:43186
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729727AbeGQTdS (ORCPT
+        Tue, 17 Jul 2018 15:36:22 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37609 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729720AbeGQTgV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 15:33:18 -0400
-X-IronPort-AV: E=Sophos;i="5.51,366,1526335200"; 
-   d="scan'208";a="273321535"
-Received: from abo-214-111-68.mrs.modulonet.fr (HELO [192.168.0.15]) ([85.68.111.214])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 20:59:17 +0200
-Date:   Tue, 17 Jul 2018 20:59:16 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-cc:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kbuild-all@01.org
-Subject: Re: [PATCH v12 07/12] pci-epf-test/pci_endpoint_test: Cleanup
- PCI_ENDPOINT_TEST memspace (fwd)
-Message-ID: <alpine.DEB.2.20.1807172056580.2373@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Tue, 17 Jul 2018 15:36:21 -0400
+Received: by mail-pf0-f196.google.com with SMTP id a26-v6so951873pfo.4;
+        Tue, 17 Jul 2018 12:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ldvO+jgqLWwJPNAzX4H3vUxbDijlWzwNyDW88/cWLuU=;
+        b=AtHJUaPxHVtCPEyEMbDqOlV6Lf8CaoySvnHl1q1mW0vjb4ahlxhrq+EoGTkO6OTiXg
+         u66uZ4Lyk+eIl4UXgAbg7Iagn0BedXcKWBpzx44dLKg0BvPhAevPcq+yNABL0NdNk2IO
+         nqukcDl/1kTYvfWf1uAoSe/7H3I7sseILSuOFfOXJPxVKfXIpfNttHZAHdk12G96Bisi
+         jvwnlt62tKv+H6TSu36v+s6AlXUKj+I6mqT8bNbmu2shbE50YHeTHlQSNmjQHE1VYtG8
+         rjwr2/YBh5opasMvgF+c8Z0mGG8SMe0kq30qYEwSVZrsPW+iuL5HmQ13CQWjBHBnN/1o
+         RajQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ldvO+jgqLWwJPNAzX4H3vUxbDijlWzwNyDW88/cWLuU=;
+        b=Tjs/4mIusAH4F4xDm2UMBJv21E5OYcb3ih1mskZ7gACfrS9uSCQ0Wc7fcc/AC8bdnK
+         uPMt6YMPxQSIm7dp6G1kuTNp6TjltJWfjx2DvXhnW0OxWQCy2glpRCK4zwdFhOel1vd+
+         jbJMc5JXi2dblfvjky0LKkFk+OMUvEGUDINQ1XPihsxCWH82i7Me+jxHVSS4VtAoRbl0
+         RcvdV/bCU+ZqaEH2IkZY6qTAqPVNYO8t5kLwfJZ2uORg9hgT6VKYAT9ZseH41hTgDJ3u
+         Vf3aagm7GTeqvsWl7NKriYnYMM/F9YtylfoFU6NI7qg9JPr18TE+DqAuO9UGWpAux4uU
+         ZM1Q==
+X-Gm-Message-State: AOUpUlGr2OCdi8LKgq1O8x0o2UtmFQkQ8kxA/IgfTjyHS91XHRYUGTnX
+        Nh8ZJEbr+Eu3JppeGQ0WOCBdRaEm
+X-Google-Smtp-Source: AAOMgpfqTwLB/815T9vYtvDSfbkF5qhvCh7hDAazDAlGxmi+lIiJTRf4th7O4kPwE14SS2Piomo58w==
+X-Received: by 2002:a63:5542:: with SMTP id f2-v6mr2413563pgm.37.1531854141797;
+        Tue, 17 Jul 2018 12:02:21 -0700 (PDT)
+Received: from dsa-mb.local ([2601:282:800:fd80:442b:d01f:635c:39ec])
+        by smtp.googlemail.com with ESMTPSA id 21-v6sm10229836pgx.20.2018.07.17.12.02.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 12:02:20 -0700 (PDT)
+Subject: Re: [PATCH RFC/RFT net-next 00/17] net: Convert neighbor tables to
+ per-namespace
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        nikita.leshchenko@oracle.com,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>, alex.aring@gmail.com,
+        linux-wpan@vger.kernel.org,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180717120651.15748-1-dsahern@kernel.org>
+ <CAM_iQpW4g2v6xk49Gz+WBasKaO9VUk3Q-umX7iBRK-mAhn21Fw@mail.gmail.com>
+ <1a3f59a9-0ba5-c83f-16a6-f9550a84f693@gmail.com>
+ <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+From:   David Ahern <dsahern@gmail.com>
+Message-ID: <1a27e301-3275-b349-a2f8-afdfdc02f04f@gmail.com>
+Date:   Tue, 17 Jul 2018 13:02:18 -0600
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAM_iQpWabZorkMNswyfHyS4KT=f_bgMtK8K35=84uah6Kfqxew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following code contains the following lines:
+On 7/17/18 11:53 AM, Cong Wang wrote:
+> You can see the original discussion here:
+> https://marc.info/?l=linux-netdev&m=140356141019653&w=2
+> 
 
-045c759f Gustavo Pimentel       2018-07-17  340                 count = pci_epc_get_msi(epc, epf->func_no);
-045c759f Gustavo Pimentel       2018-07-17 @341                 if (reg->irq_number > count || count <= 0)
+Thanks for the reference.
 
-count has type u16, so it cannot be < 0.  Furthermore, pci_epc_get_msi
-never returns a negative value, so the test for < 0 is unnecessary.
+I was surprised that the tables are still global. A number of objections
+raised in that thread were due to a large patch tackling multiple
+issues. This set is focused one thing - moving the tables to net - and
+does so in small incremental changes to make it easy to review.
 
-julia
+One of DaveM's comments:
 
----------- Forwarded message ----------
-Date: Wed, 18 Jul 2018 02:50:45 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v12 07/12] pci-epf-test/pci_endpoint_test: Cleanup
-    PCI_ENDPOINT_TEST memspace
+"Finally, another problem are permanent neigh entries as those cannot
+be reclaimed, that might be part of the main problem here.
 
-CC: kbuild-all@01.org
-In-Reply-To: <26fc54d264ca4229360cf632f08e6935b1abb30c.1531818979.git.gustavo.pimentel@synopsys.com>
-References: <26fc54d264ca4229360cf632f08e6935b1abb30c.1531818979.git.gustavo.pimentel@synopsys.com>
-TO: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-CC: bhelgaas@google.com, lorenzo.pieralisi@arm.com, joao.pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com, adouglas@cadence.com, jesper.nilsson@axis.com, shawn.lin@rock-chips.com
-CC: linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+One idea wrt. permanent entries is that we could decide that, since
+they are administratively added, they don't count against the
+thresholds and limits."
 
-Hi Gustavo,
+this is another we have hit and with same thinking ... permanent entries
+should not count in the gc numbers. We need to address this for EVPN.
 
-Thank you for the patch! Perhaps something to improve:
+As for the per-namespace tables, it is 4 years later and over that time
+Linux supports a number of features: EVPN which is very mac heavy, VRR
+which doubles mac entries (one against the VRR device and one against
+the lower device) and NOS level features such as mlxsw which has to
+ensure mac entries for nexthop gateaways stay active. In addition there
+are other features on the horizon - like the ability to use namespaces
+to create virtual switches (what Cisco calls a VDC) where you absolutely
+want isolation and not allowing entries from virtual switch to evict
+entries from another. And of course the continued proliferation of
+containerized workloads where isolation is desired.
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on v4.18-rc5 next-20180717]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Gustavo-Pimentel/Add-MSI-X-support-on-pcitest-tool/20180717-233319
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git next
-:::::: branch date: 3 hours ago
-:::::: commit date: 3 hours ago
-
->> drivers/pci/endpoint/functions/pci-epf-test.c:341:33-38: WARNING: Unsigned expression compared with zero: count <= 0
-
-# https://github.com/0day-ci/linux/commit/045c759f7ad4eeb208d74b476af11c8bba90e80e
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 045c759f7ad4eeb208d74b476af11c8bba90e80e
-vim +341 drivers/pci/endpoint/functions/pci-epf-test.c
-
-349e7a85 Kishon Vijay Abraham I 2017-03-27  274
-349e7a85 Kishon Vijay Abraham I 2017-03-27  275  static void pci_epf_test_cmd_handler(struct work_struct *work)
-349e7a85 Kishon Vijay Abraham I 2017-03-27  276  {
-349e7a85 Kishon Vijay Abraham I 2017-03-27  277  	int ret;
-045c759f Gustavo Pimentel       2018-07-17  278  	u16 count;
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  279  	u32 command;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  280  	struct pci_epf_test *epf_test = container_of(work, struct pci_epf_test,
-349e7a85 Kishon Vijay Abraham I 2017-03-27  281  						     cmd_handler.work);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  282  	struct pci_epf *epf = epf_test->epf;
-045c759f Gustavo Pimentel       2018-07-17  283  	struct device *dev = &epf->dev;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  284  	struct pci_epc *epc = epf->epc;
-3235b994 Kishon Vijay Abraham I 2017-08-18  285  	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
-3235b994 Kishon Vijay Abraham I 2017-08-18  286  	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-349e7a85 Kishon Vijay Abraham I 2017-03-27  287
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  288  	command = reg->command;
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  289  	if (!command)
-349e7a85 Kishon Vijay Abraham I 2017-03-27  290  		goto reset_handler;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  291
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  292  	reg->command = 0;
-3235b994 Kishon Vijay Abraham I 2017-08-18  293  	reg->status = 0;
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  294
-045c759f Gustavo Pimentel       2018-07-17  295  	if (reg->irq_type > IRQ_TYPE_MSI) {
-045c759f Gustavo Pimentel       2018-07-17  296  		dev_err(dev, "Failed to detect IRQ type\n");
-045c759f Gustavo Pimentel       2018-07-17  297  		goto reset_handler;
-045c759f Gustavo Pimentel       2018-07-17  298  	}
-749aaf33 John Keeping           2017-09-20  299
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  300  	if (command & COMMAND_RAISE_LEGACY_IRQ) {
-349e7a85 Kishon Vijay Abraham I 2017-03-27  301  		reg->status = STATUS_IRQ_RAISED;
-4494738d Cyrille Pitchen        2018-01-30  302  		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_LEGACY, 0);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  303  		goto reset_handler;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  304  	}
-349e7a85 Kishon Vijay Abraham I 2017-03-27  305
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  306  	if (command & COMMAND_WRITE) {
-349e7a85 Kishon Vijay Abraham I 2017-03-27  307  		ret = pci_epf_test_write(epf_test);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  308  		if (ret)
-349e7a85 Kishon Vijay Abraham I 2017-03-27  309  			reg->status |= STATUS_WRITE_FAIL;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  310  		else
-349e7a85 Kishon Vijay Abraham I 2017-03-27  311  			reg->status |= STATUS_WRITE_SUCCESS;
-045c759f Gustavo Pimentel       2018-07-17  312  		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-045c759f Gustavo Pimentel       2018-07-17  313  				       reg->irq_number);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  314  		goto reset_handler;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  315  	}
-349e7a85 Kishon Vijay Abraham I 2017-03-27  316
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  317  	if (command & COMMAND_READ) {
-349e7a85 Kishon Vijay Abraham I 2017-03-27  318  		ret = pci_epf_test_read(epf_test);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  319  		if (!ret)
-349e7a85 Kishon Vijay Abraham I 2017-03-27  320  			reg->status |= STATUS_READ_SUCCESS;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  321  		else
-349e7a85 Kishon Vijay Abraham I 2017-03-27  322  			reg->status |= STATUS_READ_FAIL;
-045c759f Gustavo Pimentel       2018-07-17  323  		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-045c759f Gustavo Pimentel       2018-07-17  324  				       reg->irq_number);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  325  		goto reset_handler;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  326  	}
-349e7a85 Kishon Vijay Abraham I 2017-03-27  327
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  328  	if (command & COMMAND_COPY) {
-349e7a85 Kishon Vijay Abraham I 2017-03-27  329  		ret = pci_epf_test_copy(epf_test);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  330  		if (!ret)
-349e7a85 Kishon Vijay Abraham I 2017-03-27  331  			reg->status |= STATUS_COPY_SUCCESS;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  332  		else
-349e7a85 Kishon Vijay Abraham I 2017-03-27  333  			reg->status |= STATUS_COPY_FAIL;
-045c759f Gustavo Pimentel       2018-07-17  334  		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-045c759f Gustavo Pimentel       2018-07-17  335  				       reg->irq_number);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  336  		goto reset_handler;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  337  	}
-349e7a85 Kishon Vijay Abraham I 2017-03-27  338
-3ecf3232 Kishon Vijay Abraham I 2017-08-18  339  	if (command & COMMAND_RAISE_MSI_IRQ) {
-045c759f Gustavo Pimentel       2018-07-17  340  		count = pci_epc_get_msi(epc, epf->func_no);
-045c759f Gustavo Pimentel       2018-07-17 @341  		if (reg->irq_number > count || count <= 0)
-349e7a85 Kishon Vijay Abraham I 2017-03-27  342  			goto reset_handler;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  343  		reg->status = STATUS_IRQ_RAISED;
-045c759f Gustavo Pimentel       2018-07-17  344  		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI,
-045c759f Gustavo Pimentel       2018-07-17  345  				  reg->irq_number);
-349e7a85 Kishon Vijay Abraham I 2017-03-27  346  		goto reset_handler;
-349e7a85 Kishon Vijay Abraham I 2017-03-27  347  	}
-349e7a85 Kishon Vijay Abraham I 2017-03-27  348
-349e7a85 Kishon Vijay Abraham I 2017-03-27  349  reset_handler:
-349e7a85 Kishon Vijay Abraham I 2017-03-27  350  	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
-349e7a85 Kishon Vijay Abraham I 2017-03-27  351  			   msecs_to_jiffies(1));
-349e7a85 Kishon Vijay Abraham I 2017-03-27  352  }
-349e7a85 Kishon Vijay Abraham I 2017-03-27  353
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+I understand the concern about global resource and limits: as it stands
+you have to increase the limits in init_net to the max expected and hope
+for the best. With per namespace limits you can lower the limits of each
+namespace better control the total impact on the total memory used.
+Perhaps the defaults for namespaces after init_net could have really low
+defaults (e.g., 16 / 32 / 64 for gc_thresh 1/2/3) requiring admin
+intervention.
