@@ -2,108 +2,103 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 328F9ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9AF7ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1AFA20C09
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:44:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xrh4nW9T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1AFA20C09
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 999BB20C09
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 11:45:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 999BB20C09
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731242AbeGQMRI (ORCPT
+        id S1731282AbeGQMR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 08:17:08 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38684 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730933AbeGQMRI (ORCPT
+        Tue, 17 Jul 2018 08:17:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46212 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730933AbeGQMR2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 08:17:08 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6HBipTq063244;
-        Tue, 17 Jul 2018 06:44:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531827891;
-        bh=3SRWb6oU0vPg/ud/Zy7VmhW2GEGQuHLbXMZdhlq1RLY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=xrh4nW9TGiAAq4ITDqwfcfuEen/Kdn39p3q2HLcRckKcvRMQ1nHjR/ETDtamjXj6m
-         K1f6JH/O6PYV5lQ5EykFVydivXLvxcQniizYmeVqFiv+LEeKFdfdWaV/B7PKWoOwdl
-         c2xcztRZM7lb52B05kquYfGdfxoiVD2Ey3E6Rkdo=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6HBipim025665;
-        Tue, 17 Jul 2018 06:44:51 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 17
- Jul 2018 06:44:51 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 17 Jul 2018 06:44:51 -0500
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6HBimoY022179;
-        Tue, 17 Jul 2018 06:44:49 -0500
-Subject: Re: [PATCH 0/5] ti_am335x_tsc: Enable wakeup capability
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>
-CC:     <linux-iio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-input@vger.kernel.org>
-References: <20180630103318.25355-1-vigneshr@ti.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com>
-Date:   Tue, 17 Jul 2018 17:15:39 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 17 Jul 2018 08:17:28 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s11-v6so925083wra.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 04:45:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JtdSOb4GZ4U9el9BOSRyCzTTYhimPCCIaDmsHYe5Fek=;
+        b=LnHxgBOiA4qnjOOllAkQP9lH+SLlzey441mOvZBuVAY22vUgII3KapMF1Ts7r8tKKm
+         MUYOW5MC3kIy1kCCzIjwMZB+7ZslntEjz9lZdO+gkgHSFRA24eEWvHRGO/B0zyXRlNO5
+         PYsS7fiywpSYhJ0HNplX/ZE8S2//EQQ+MuJ8yOVEf1jjZ/FMPUYoot1R/lIU35i2na2h
+         a5NIVTnpgK31tFH/vka9s83Voc/yXr0h1396jw3S8aMAGzjnSGtY/8LRm6itrbyCe4q6
+         Vm4RSPxYEIgYB2dFqVjBSA4pc6JO2sCc+MucMb3ZBoPscwCx+tDnI8ykVB/xNCrCt6mM
+         FQew==
+X-Gm-Message-State: AOUpUlEb8/qxS/RLxXs99IEZ0lEm028+RLhx82x3OCNfPA7ibxlH+mHz
+        BbjLMMoO1ymmISrd2KAa1Kk=
+X-Google-Smtp-Source: AAOMgpcnt19ww76GHsitKvBwv6wIJwCA14uJsEUUj4XjHnWz/igBbK3MSOA8iCnbbuWiDmv00/Wtkg==
+X-Received: by 2002:adf:b786:: with SMTP id s6-v6mr1094306wre.247.1531827912306;
+        Tue, 17 Jul 2018 04:45:12 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id h2-v6sm993161wmf.28.2018.07.17.04.45.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 04:45:11 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 2D26712401A; Tue, 17 Jul 2018 13:45:11 +0200 (CEST)
+Date:   Tue, 17 Jul 2018 13:45:11 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
+        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
+        gregkh@linuxfoundation.org, vbabka@suse.cz,
+        richard.weiyang@gmail.com, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, abdhalee@linux.vnet.ibm.com,
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v6 1/5] mm/sparse: abstract sparse buffer allocations
+Message-ID: <20180717114511.GB24361@techadventures.net>
+References: <20180716174447.14529-1-pasha.tatashin@oracle.com>
+ <20180716174447.14529-2-pasha.tatashin@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <20180630103318.25355-1-vigneshr@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716174447.14529-2-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+On Mon, Jul 16, 2018 at 01:44:43PM -0400, Pavel Tatashin wrote:
+> When struct pages are allocated for sparse-vmemmap VA layout, we first try
+> to allocate one large buffer, and than if that fails allocate struct pages
+> for each section as we go.
+> 
+> The code that allocates buffer is uses global variables and is spread
+> across several call sites.
+> 
+> Cleanup the code by introducing three functions to handle the global
+> buffer:
+> 
+> sparse_buffer_init()	initialize the buffer
+> sparse_buffer_fini()	free the remaining part of the buffer
+> sparse_buffer_alloc()	alloc from the buffer, and if buffer is empty
+> return NULL
+> 
+> Define these functions in sparse.c instead of sparse-vmemmap.c because
+> later we will use them for non-vmemmap sparse allocations as well.
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-On Saturday 30 June 2018 04:03 PM, Vignesh R wrote:
-> On AM335x, resistive TSC can wakeup the system from low power state.
-> Currently, parent MFD device is marked as wakeup source, which is
-> inaccurate as its the touch event generated by TSC thats the wakeup
-> source. This series moves all wakeup related calls to operate on TSC
-> device instead of MFD. It also marks TSC IRQ as wakeup capable, so that
-> its not disabled during system suspend.
-> 
-> This series is based on Dmitry's comments here:
-> https://lkml.org/lkml/2018/4/24/65
-> 
-> There are many new patches in this series, hence did not mark this as v4.
-> 
-> Vignesh R (5):
->   mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
->   Input: ti_am335x_tsc: Mark TSC device as wakeup source
->   mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup
->     capable
->   iio: adc: ti_am335x_adc: Disable ADC during suspend unconditionally
->   Input: ti_am335x_tsc: Mark IRQ as wakeup capable
-> 
->  drivers/iio/adc/ti_am335x_adc.c           | 12 ++++--------
->  drivers/input/touchscreen/ti_am335x_tsc.c | 22 +++++++++++++++++-----
->  drivers/mfd/ti_am335x_tscadc.c            | 14 +++++++++++++-
->  3 files changed, 34 insertions(+), 14 deletions(-)
-> 
+I did not see anything wrong, so:
 
-Gentle ping... Could you review/pick this series? MFD amd IIO bits are
-already ACKed
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
+Thanks
 -- 
-Regards
-Vignesh
+Oscar Salvador
+SUSE L3
