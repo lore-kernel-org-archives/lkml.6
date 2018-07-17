@@ -2,191 +2,451 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B53ECDFB3
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D4EECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36DC420657
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MtCTkeHb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DC420657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FAC220779
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 15:44:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FAC220779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731744AbeGQQRg (ORCPT
+        id S1731758AbeGQQRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 12:17:36 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54378 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731728AbeGQQRf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 12:17:35 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6HFdJOd149503;
-        Tue, 17 Jul 2018 15:43:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=rdyJaK22xhrxzJi0ftxSd5dfu8+msKXs2nNjCN8u+E0=;
- b=MtCTkeHbZY39M/CpbKsZCThOMDxUmJGd+ZkHZct+GfVj/SMZfJzjXLqjaKG+BL1WM5Ef
- IznHofpbuBWU/Apq16PN8ulSdR4Re2AOJmYDmfNw0Vninn61tD4cw3a/rhBnoQerpQQ+
- hmhWy5SmSwynFwCmbrkxSouK7Y30i5ar6MhDkK9hZ10pvMXgcSZCsmQMUtnXgPcGupkO
- h2fQzO56zI4NzGou8u2XSneGZz25xl4HPMAUlc960R+7rXdesKTvZqT2VzdcSYQIGKrV
- SOQi26gI9AeaxItdm1CgEhevjGhWY92qkUge6R4NwVFN94oEOTke5I4DOO8mSAtT8ZIX 6w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2k7a341ar1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 15:43:28 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6HFhRwh001097
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Jul 2018 15:43:27 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6HFhOFU019170;
-        Tue, 17 Jul 2018 15:43:25 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 08:43:24 -0700
-Subject: Re: [PATCH v13 07/18] x86/xen/time: output xen sched_clock time from
- 0
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
-        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
-        linux-s390@vger.kernel.org, jgross@suse.com
-References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
- <20180712000419.5165-8-pasha.tatashin@oracle.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <93178b98-8464-ae36-3536-0baa639b3467@oracle.com>
-Date:   Tue, 17 Jul 2018 11:43:51 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180712000419.5165-8-pasha.tatashin@oracle.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 17 Jul 2018 12:17:38 -0400
+Received: from mga03.intel.com ([134.134.136.65]:39460 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729743AbeGQQRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 12:17:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 08:44:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
+   d="scan'208";a="55040226"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Jul 2018 08:44:16 -0700
+Message-ID: <091e7e06e19a1fa8330409192d388d8cfeb40068.camel@linux.intel.com>
+Subject: Re: [PATCH v3 2/3] bcache: use routines from lib/crc64.c for CRC64
+ calculation
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Coly Li <colyli@suse.de>, linux-kernel@vger.kernel.org
+Cc:     linux-bcache@vger.kernel.org, linux-block@vger.kernel.org,
+        Michael Lyle <mlyle@lyle.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Date:   Tue, 17 Jul 2018 18:44:15 +0300
+In-Reply-To: <20180717145525.50852-3-colyli@suse.de>
+References: <20180717145525.50852-1-colyli@suse.de>
+         <20180717145525.50852-3-colyli@suse.de>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8956 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807170164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 08:04 PM, Pavel Tatashin wrote:
-> It is expected for sched_clock() to output data from 0, when system boots.
-> Add an offset xen_sched_clock_offset (similarly how it is done in other
-> hypervisors i.e. kvm_sched_clock_offset) to count sched_clock() from 0,
-> when time is first initialized.
->
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+On Tue, 2018-07-17 at 22:55 +0800, Coly Li wrote:
+> Now we have crc64 calculation in lib/crc64.c, it is unnecessary for
+> bcache to use it own version. This patch changes bcache code to use
+> crc64 routines in lib/crc64.c.
+> 
+
+Yes, no more PostgreSQL code in kernel!
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+> Signed-off-by: Coly Li <colyli@suse.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Michael Lyle <mlyle@lyle.org>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kate Stewart <kstewart@linuxfoundation.org>
 > ---
->  arch/x86/xen/time.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
-> index 2ad61bf896d6..3c6f3d603373 100644
-> --- a/arch/x86/xen/time.c
-> +++ b/arch/x86/xen/time.c
-> @@ -31,6 +31,8 @@
->  /* Xen may fire a timer up to this many ns early */
->  #define TIMER_SLOP	100000
+>  drivers/md/bcache/Kconfig   |   1 +
+>  drivers/md/bcache/bcache.h  |   7 +-
+>  drivers/md/bcache/btree.c   |   2 +-
+>  drivers/md/bcache/request.c |   2 +-
+>  drivers/md/bcache/super.c   |   5 +-
+>  drivers/md/bcache/util.c    | 131 ---------------------------------
+> ---
+>  drivers/md/bcache/util.h    |   5 +-
+>  7 files changed, 11 insertions(+), 142 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
+> index 17bf109c58e9..af247298409a 100644
+> --- a/drivers/md/bcache/Kconfig
+> +++ b/drivers/md/bcache/Kconfig
+> @@ -1,6 +1,7 @@
 >  
-> +static u64 xen_sched_clock_offset __read_mostly;
-> +
->  /* Get the TSC speed from Xen */
->  static unsigned long xen_tsc_khz(void)
->  {
-> @@ -57,6 +59,11 @@ static u64 xen_clocksource_get_cycles(struct clocksource *cs)
->  	return xen_clocksource_read();
+>  config BCACHE
+>  	tristate "Block device as cache"
+> +	select CRC64
+>  	---help---
+>  	Allows a block device to be used as cache for other devices;
+> uses
+>  	a btree for indexing and the layout is optimized for SSDs.
+> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+> index d6bf294f3907..6d4d2356c3cc 100644
+> --- a/drivers/md/bcache/bcache.h
+> +++ b/drivers/md/bcache/bcache.h
+> @@ -189,6 +189,7 @@
+>  #include <linux/types.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/kthread.h>
+> +#include <linux/crc64.h>
+>  
+>  #include "bset.h"
+>  #include "util.h"
+> @@ -803,9 +804,9 @@ static inline bool ptr_available(struct cache_set
+> *c, const struct bkey *k,
+>   * jset: The checksum is _always_ the first 8 bytes of these structs
+>   */
+>  #define csum_set(i)							
+> \
+> -	bch_crc64(((void *) (i)) + sizeof(uint64_t),			
+> \
+> -		  ((void *) bset_bkey_last(i)) -			
+> \
+> -		  (((void *) (i)) + sizeof(uint64_t)))
+> +	crc64_bch(((void *) (i)) + sizeof(uint64_t),			
+> \
+> +		   ((void *) bset_bkey_last(i)) -			
+> \
+> +		   (((void *) (i)) + sizeof(uint64_t)))
+>  
+>  /* Error handling macros */
+>  
+> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
+> index 547c9eedc2f4..72619508c928 100644
+> --- a/drivers/md/bcache/btree.c
+> +++ b/drivers/md/bcache/btree.c
+> @@ -194,7 +194,7 @@ static uint64_t btree_csum_set(struct btree *b,
+> struct bset *i)
+>  	uint64_t crc = b->key.ptr[0];
+>  	void *data = (void *) i + 8, *end = bset_bkey_last(i);
+>  
+> -	crc = bch_crc64_update(crc, data, end - data);
+> +	crc = crc64_update(crc, data, end - data);
+>  	return crc ^ 0xffffffffffffffffULL;
 >  }
 >  
-> +static u64 xen_sched_clock(void)
-> +{
-> +	return xen_clocksource_read() - xen_sched_clock_offset;
-> +}
-
-
-Should other invocations of xen_clocksource_read() also be offset?
-
--boris
-
-
-> +
->  static void xen_read_wallclock(struct timespec64 *ts)
->  {
->  	struct shared_info *s = HYPERVISOR_shared_info;
-> @@ -367,7 +374,7 @@ void xen_timer_resume(void)
+> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
+> index ae67f5fa8047..28b2fb11a3d5 100644
+> --- a/drivers/md/bcache/request.c
+> +++ b/drivers/md/bcache/request.c
+> @@ -45,7 +45,7 @@ static void bio_csum(struct bio *bio, struct bkey
+> *k)
+>  
+>  	bio_for_each_segment(bv, bio, iter) {
+>  		void *d = kmap(bv.bv_page) + bv.bv_offset;
+> -		csum = bch_crc64_update(csum, d, bv.bv_len);
+> +		csum = crc64_update(csum, d, bv.bv_len);
+>  		kunmap(bv.bv_page);
+>  	}
+>  
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index fa4058e43202..c425c52f0c42 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -549,7 +549,7 @@ void bch_prio_write(struct cache *ca)
+>  
+>  		p->next_bucket	= ca->prio_buckets[i + 1];
+>  		p->magic	= pset_magic(&ca->sb);
+> -		p->csum		= bch_crc64(&p->magic,
+> bucket_bytes(ca) - 8);
+> +		p->csum		= crc64_bch(&p->magic,
+> bucket_bytes(ca) - 8);
+>  
+>  		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, true);
+>  		BUG_ON(bucket == -1);
+> @@ -599,7 +599,8 @@ static void prio_read(struct cache *ca, uint64_t
+> bucket)
+>  
+>  			prio_io(ca, bucket, REQ_OP_READ, 0);
+>  
+> -			if (p->csum != bch_crc64(&p->magic,
+> bucket_bytes(ca) - 8))
+> +			if (p->csum != crc64_bch(&p->magic,
+> +						   bucket_bytes(ca) -
+> 8))
+>  				pr_warn("bad csum reading
+> priorities");
+>  
+>  			if (p->magic != pset_magic(&ca->sb))
+> diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+> index fc479b026d6d..f912c372978c 100644
+> --- a/drivers/md/bcache/util.c
+> +++ b/drivers/md/bcache/util.c
+> @@ -279,134 +279,3 @@ int bch_bio_alloc_pages(struct bio *bio, gfp_t
+> gfp_mask)
+>  
+>  	return 0;
 >  }
+> -
+> -/*
+> - * Portions Copyright (c) 1996-2001, PostgreSQL Global Development
+> Group (Any
+> - * use permitted, subject to terms of PostgreSQL license; see.)
+> -
+> - * If we have a 64-bit integer type, then a 64-bit CRC looks just
+> like the
+> - * usual sort of implementation. (See Ross Williams' excellent
+> introduction
+> - * A PAINLESS GUIDE TO CRC ERROR DETECTION ALGORITHMS, available from
+> - * ftp://ftp.rocksoft.com/papers/crc_v3.txt or several other net
+> sites.)
+> - * If we have no working 64-bit type, then fake it with two 32-bit
+> registers.
+> - *
+> - * The present implementation is a normal (not "reflected", in
+> Williams'
+> - * terms) 64-bit CRC, using initial all-ones register contents and a
+> final
+> - * bit inversion. The chosen polynomial is borrowed from the DLT1
+> spec
+> - * (ECMA-182, available from http://www.ecma.ch/ecma1/STAND/ECMA-182.
+> HTM):
+> - *
+> - * x^64 + x^62 + x^57 + x^55 + x^54 + x^53 + x^52 + x^47 + x^46 +
+> x^45 +
+> - * x^40 + x^39 + x^38 + x^37 + x^35 + x^33 + x^32 + x^31 + x^29 +
+> x^27 +
+> - * x^24 + x^23 + x^22 + x^21 + x^19 + x^17 + x^13 + x^12 + x^10 + x^9
+> +
+> - * x^7 + x^4 + x + 1
+> -*/
+> -
+> -static const uint64_t crc_table[256] = {
+> -	0x0000000000000000ULL, 0x42F0E1EBA9EA3693ULL,
+> 0x85E1C3D753D46D26ULL,
+> -	0xC711223CFA3E5BB5ULL, 0x493366450E42ECDFULL,
+> 0x0BC387AEA7A8DA4CULL,
+> -	0xCCD2A5925D9681F9ULL, 0x8E224479F47CB76AULL,
+> 0x9266CC8A1C85D9BEULL,
+> -	0xD0962D61B56FEF2DULL, 0x17870F5D4F51B498ULL,
+> 0x5577EEB6E6BB820BULL,
+> -	0xDB55AACF12C73561ULL, 0x99A54B24BB2D03F2ULL,
+> 0x5EB4691841135847ULL,
+> -	0x1C4488F3E8F96ED4ULL, 0x663D78FF90E185EFULL,
+> 0x24CD9914390BB37CULL,
+> -	0xE3DCBB28C335E8C9ULL, 0xA12C5AC36ADFDE5AULL,
+> 0x2F0E1EBA9EA36930ULL,
+> -	0x6DFEFF5137495FA3ULL, 0xAAEFDD6DCD770416ULL,
+> 0xE81F3C86649D3285ULL,
+> -	0xF45BB4758C645C51ULL, 0xB6AB559E258E6AC2ULL,
+> 0x71BA77A2DFB03177ULL,
+> -	0x334A9649765A07E4ULL, 0xBD68D2308226B08EULL,
+> 0xFF9833DB2BCC861DULL,
+> -	0x388911E7D1F2DDA8ULL, 0x7A79F00C7818EB3BULL,
+> 0xCC7AF1FF21C30BDEULL,
+> -	0x8E8A101488293D4DULL, 0x499B3228721766F8ULL,
+> 0x0B6BD3C3DBFD506BULL,
+> -	0x854997BA2F81E701ULL, 0xC7B97651866BD192ULL,
+> 0x00A8546D7C558A27ULL,
+> -	0x4258B586D5BFBCB4ULL, 0x5E1C3D753D46D260ULL,
+> 0x1CECDC9E94ACE4F3ULL,
+> -	0xDBFDFEA26E92BF46ULL, 0x990D1F49C77889D5ULL,
+> 0x172F5B3033043EBFULL,
+> -	0x55DFBADB9AEE082CULL, 0x92CE98E760D05399ULL,
+> 0xD03E790CC93A650AULL,
+> -	0xAA478900B1228E31ULL, 0xE8B768EB18C8B8A2ULL,
+> 0x2FA64AD7E2F6E317ULL,
+> -	0x6D56AB3C4B1CD584ULL, 0xE374EF45BF6062EEULL,
+> 0xA1840EAE168A547DULL,
+> -	0x66952C92ECB40FC8ULL, 0x2465CD79455E395BULL,
+> 0x3821458AADA7578FULL,
+> -	0x7AD1A461044D611CULL, 0xBDC0865DFE733AA9ULL,
+> 0xFF3067B657990C3AULL,
+> -	0x711223CFA3E5BB50ULL, 0x33E2C2240A0F8DC3ULL,
+> 0xF4F3E018F031D676ULL,
+> -	0xB60301F359DBE0E5ULL, 0xDA050215EA6C212FULL,
+> 0x98F5E3FE438617BCULL,
+> -	0x5FE4C1C2B9B84C09ULL, 0x1D14202910527A9AULL,
+> 0x93366450E42ECDF0ULL,
+> -	0xD1C685BB4DC4FB63ULL, 0x16D7A787B7FAA0D6ULL,
+> 0x5427466C1E109645ULL,
+> -	0x4863CE9FF6E9F891ULL, 0x0A932F745F03CE02ULL,
+> 0xCD820D48A53D95B7ULL,
+> -	0x8F72ECA30CD7A324ULL, 0x0150A8DAF8AB144EULL,
+> 0x43A04931514122DDULL,
+> -	0x84B16B0DAB7F7968ULL, 0xC6418AE602954FFBULL,
+> 0xBC387AEA7A8DA4C0ULL,
+> -	0xFEC89B01D3679253ULL, 0x39D9B93D2959C9E6ULL,
+> 0x7B2958D680B3FF75ULL,
+> -	0xF50B1CAF74CF481FULL, 0xB7FBFD44DD257E8CULL,
+> 0x70EADF78271B2539ULL,
+> -	0x321A3E938EF113AAULL, 0x2E5EB66066087D7EULL,
+> 0x6CAE578BCFE24BEDULL,
+> -	0xABBF75B735DC1058ULL, 0xE94F945C9C3626CBULL,
+> 0x676DD025684A91A1ULL,
+> -	0x259D31CEC1A0A732ULL, 0xE28C13F23B9EFC87ULL,
+> 0xA07CF2199274CA14ULL,
+> -	0x167FF3EACBAF2AF1ULL, 0x548F120162451C62ULL,
+> 0x939E303D987B47D7ULL,
+> -	0xD16ED1D631917144ULL, 0x5F4C95AFC5EDC62EULL,
+> 0x1DBC74446C07F0BDULL,
+> -	0xDAAD56789639AB08ULL, 0x985DB7933FD39D9BULL,
+> 0x84193F60D72AF34FULL,
+> -	0xC6E9DE8B7EC0C5DCULL, 0x01F8FCB784FE9E69ULL,
+> 0x43081D5C2D14A8FAULL,
+> -	0xCD2A5925D9681F90ULL, 0x8FDAB8CE70822903ULL,
+> 0x48CB9AF28ABC72B6ULL,
+> -	0x0A3B7B1923564425ULL, 0x70428B155B4EAF1EULL,
+> 0x32B26AFEF2A4998DULL,
+> -	0xF5A348C2089AC238ULL, 0xB753A929A170F4ABULL,
+> 0x3971ED50550C43C1ULL,
+> -	0x7B810CBBFCE67552ULL, 0xBC902E8706D82EE7ULL,
+> 0xFE60CF6CAF321874ULL,
+> -	0xE224479F47CB76A0ULL, 0xA0D4A674EE214033ULL,
+> 0x67C58448141F1B86ULL,
+> -	0x253565A3BDF52D15ULL, 0xAB1721DA49899A7FULL,
+> 0xE9E7C031E063ACECULL,
+> -	0x2EF6E20D1A5DF759ULL, 0x6C0603E6B3B7C1CAULL,
+> 0xF6FAE5C07D3274CDULL,
+> -	0xB40A042BD4D8425EULL, 0x731B26172EE619EBULL,
+> 0x31EBC7FC870C2F78ULL,
+> -	0xBFC9838573709812ULL, 0xFD39626EDA9AAE81ULL,
+> 0x3A28405220A4F534ULL,
+> -	0x78D8A1B9894EC3A7ULL, 0x649C294A61B7AD73ULL,
+> 0x266CC8A1C85D9BE0ULL,
+> -	0xE17DEA9D3263C055ULL, 0xA38D0B769B89F6C6ULL,
+> 0x2DAF4F0F6FF541ACULL,
+> -	0x6F5FAEE4C61F773FULL, 0xA84E8CD83C212C8AULL,
+> 0xEABE6D3395CB1A19ULL,
+> -	0x90C79D3FEDD3F122ULL, 0xD2377CD44439C7B1ULL,
+> 0x15265EE8BE079C04ULL,
+> -	0x57D6BF0317EDAA97ULL, 0xD9F4FB7AE3911DFDULL,
+> 0x9B041A914A7B2B6EULL,
+> -	0x5C1538ADB04570DBULL, 0x1EE5D94619AF4648ULL,
+> 0x02A151B5F156289CULL,
+> -	0x4051B05E58BC1E0FULL, 0x87409262A28245BAULL,
+> 0xC5B073890B687329ULL,
+> -	0x4B9237F0FF14C443ULL, 0x0962D61B56FEF2D0ULL,
+> 0xCE73F427ACC0A965ULL,
+> -	0x8C8315CC052A9FF6ULL, 0x3A80143F5CF17F13ULL,
+> 0x7870F5D4F51B4980ULL,
+> -	0xBF61D7E80F251235ULL, 0xFD913603A6CF24A6ULL,
+> 0x73B3727A52B393CCULL,
+> -	0x31439391FB59A55FULL, 0xF652B1AD0167FEEAULL,
+> 0xB4A25046A88DC879ULL,
+> -	0xA8E6D8B54074A6ADULL, 0xEA16395EE99E903EULL,
+> 0x2D071B6213A0CB8BULL,
+> -	0x6FF7FA89BA4AFD18ULL, 0xE1D5BEF04E364A72ULL,
+> 0xA3255F1BE7DC7CE1ULL,
+> -	0x64347D271DE22754ULL, 0x26C49CCCB40811C7ULL,
+> 0x5CBD6CC0CC10FAFCULL,
+> -	0x1E4D8D2B65FACC6FULL, 0xD95CAF179FC497DAULL,
+> 0x9BAC4EFC362EA149ULL,
+> -	0x158E0A85C2521623ULL, 0x577EEB6E6BB820B0ULL,
+> 0x906FC95291867B05ULL,
+> -	0xD29F28B9386C4D96ULL, 0xCEDBA04AD0952342ULL,
+> 0x8C2B41A1797F15D1ULL,
+> -	0x4B3A639D83414E64ULL, 0x09CA82762AAB78F7ULL,
+> 0x87E8C60FDED7CF9DULL,
+> -	0xC51827E4773DF90EULL, 0x020905D88D03A2BBULL,
+> 0x40F9E43324E99428ULL,
+> -	0x2CFFE7D5975E55E2ULL, 0x6E0F063E3EB46371ULL,
+> 0xA91E2402C48A38C4ULL,
+> -	0xEBEEC5E96D600E57ULL, 0x65CC8190991CB93DULL,
+> 0x273C607B30F68FAEULL,
+> -	0xE02D4247CAC8D41BULL, 0xA2DDA3AC6322E288ULL,
+> 0xBE992B5F8BDB8C5CULL,
+> -	0xFC69CAB42231BACFULL, 0x3B78E888D80FE17AULL,
+> 0x7988096371E5D7E9ULL,
+> -	0xF7AA4D1A85996083ULL, 0xB55AACF12C735610ULL,
+> 0x724B8ECDD64D0DA5ULL,
+> -	0x30BB6F267FA73B36ULL, 0x4AC29F2A07BFD00DULL,
+> 0x08327EC1AE55E69EULL,
+> -	0xCF235CFD546BBD2BULL, 0x8DD3BD16FD818BB8ULL,
+> 0x03F1F96F09FD3CD2ULL,
+> -	0x41011884A0170A41ULL, 0x86103AB85A2951F4ULL,
+> 0xC4E0DB53F3C36767ULL,
+> -	0xD8A453A01B3A09B3ULL, 0x9A54B24BB2D03F20ULL,
+> 0x5D45907748EE6495ULL,
+> -	0x1FB5719CE1045206ULL, 0x919735E51578E56CULL,
+> 0xD367D40EBC92D3FFULL,
+> -	0x1476F63246AC884AULL, 0x568617D9EF46BED9ULL,
+> 0xE085162AB69D5E3CULL,
+> -	0xA275F7C11F7768AFULL, 0x6564D5FDE549331AULL,
+> 0x279434164CA30589ULL,
+> -	0xA9B6706FB8DFB2E3ULL, 0xEB46918411358470ULL,
+> 0x2C57B3B8EB0BDFC5ULL,
+> -	0x6EA7525342E1E956ULL, 0x72E3DAA0AA188782ULL,
+> 0x30133B4B03F2B111ULL,
+> -	0xF7021977F9CCEAA4ULL, 0xB5F2F89C5026DC37ULL,
+> 0x3BD0BCE5A45A6B5DULL,
+> -	0x79205D0E0DB05DCEULL, 0xBE317F32F78E067BULL,
+> 0xFCC19ED95E6430E8ULL,
+> -	0x86B86ED5267CDBD3ULL, 0xC4488F3E8F96ED40ULL,
+> 0x0359AD0275A8B6F5ULL,
+> -	0x41A94CE9DC428066ULL, 0xCF8B0890283E370CULL,
+> 0x8D7BE97B81D4019FULL,
+> -	0x4A6ACB477BEA5A2AULL, 0x089A2AACD2006CB9ULL,
+> 0x14DEA25F3AF9026DULL,
+> -	0x562E43B4931334FEULL, 0x913F6188692D6F4BULL,
+> 0xD3CF8063C0C759D8ULL,
+> -	0x5DEDC41A34BBEEB2ULL, 0x1F1D25F19D51D821ULL,
+> 0xD80C07CD676F8394ULL,
+> -	0x9AFCE626CE85B507ULL,
+> -};
+> -
+> -uint64_t bch_crc64_update(uint64_t crc, const void *_data, size_t
+> len)
+> -{
+> -	const unsigned char *data = _data;
+> -
+> -	while (len--) {
+> -		int i = ((int) (crc >> 56) ^ *data++) & 0xFF;
+> -		crc = crc_table[i] ^ (crc << 8);
+> -	}
+> -
+> -	return crc;
+> -}
+> -
+> -uint64_t bch_crc64(const void *data, size_t len)
+> -{
+> -	uint64_t crc = 0xffffffffffffffffULL;
+> -
+> -	crc = bch_crc64_update(crc, data, len);
+> -
+> -	return crc ^ 0xffffffffffffffffULL;
+> -}
+> diff --git a/drivers/md/bcache/util.h b/drivers/md/bcache/util.h
+> index cced87f8eb27..b1deec0dc958 100644
+> --- a/drivers/md/bcache/util.h
+> +++ b/drivers/md/bcache/util.h
+> @@ -11,6 +11,7 @@
+>  #include <linux/ratelimit.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/workqueue.h>
+> +#include <linux/crc64.h>
 >  
->  static const struct pv_time_ops xen_time_ops __initconst = {
-> -	.sched_clock = xen_clocksource_read,
-> +	.sched_clock = xen_sched_clock,
->  	.steal_clock = xen_steal_clock,
->  };
+>  #include "closure.h"
 >  
-> @@ -505,6 +512,7 @@ static void __init xen_time_init(void)
->  
->  void __init xen_init_time_ops(void)
+> @@ -561,8 +562,4 @@ static inline sector_t bdev_sectors(struct
+> block_device *bdev)
 >  {
-> +	xen_sched_clock_offset = xen_clocksource_read();
->  	pv_time_ops = xen_time_ops;
->  
->  	x86_init.timers.timer_init = xen_time_init;
+>  	return bdev->bd_inode->i_size >> 9;
+>  }
+> -
+> -uint64_t bch_crc64_update(uint64_t, const void *, size_t);
+> -uint64_t bch_crc64(const void *, size_t);
+> -
+>  #endif /* _BCACHE_UTIL_H */
 
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
