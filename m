@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89DD1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE63ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278C12077B
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E66C120647
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 23:15:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYYqzRm1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 278C12077B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSouMoJ0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66C120647
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbeGQXtt (ORCPT
+        id S1731234AbeGQXuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 19:49:49 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40317 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730092AbeGQXtt (ORCPT
+        Tue, 17 Jul 2018 19:50:03 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39456 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730092AbeGQXuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 19:49:49 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j19-v6so2398490ljc.7;
-        Tue, 17 Jul 2018 16:14:54 -0700 (PDT)
+        Tue, 17 Jul 2018 19:50:03 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so2412589lji.6;
+        Tue, 17 Jul 2018 16:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PIDJcCHy+v6rKaQ84eE9rtH0lKlpBdz1O5fIu6GRMro=;
-        b=EYYqzRm1cHZ91uaVVDcCLd3IYNBFYcGX9Dadn4ygyepG146EZocAjc4Ji6A5nE4rjw
-         OHfdxk6Q8hdOvJTLuWvYhlyAX5aJL1eMVLHPZ+fJIdBhI9bW4JSEdU0o2NChtMHdaD/y
-         S6zg165iT2pn6zwQQBfAFxeu7KvaBDke6m2qxAf+zxFaPzrSttO+ngLnGok+nGL25nF9
-         3qy4T2bLL/oCg1uQQeiAeq/DstmWOe/5HROtXpEob8qHEAdnTGExGnx7yeysbVdDHT1R
-         vPDo12/M/azMyPZaNOBlP30ngMD0ZSNWk5ydNTJ8a78Np/+KtIvkMENtSluaRzfR8ATy
-         kjPw==
+        bh=qxJYpWidCfKa9iYVekeWO6dAh9gWrR/YyGHbbCX1psE=;
+        b=QSouMoJ0fwCnnqNWTVH8yd3iJe6MGFsb5IdKbOnw/5eUTbh9p4qWM8nCLanrrGmqld
+         s7tvqhpPNch90Z9V7SZJUU4LcF5UqLdNn6Ea+CpxKSzY9BWBZgwHWGZljeutg+6+O1sB
+         3qy2Q7ac0VHg51HnCQjeQd0KAfD9wEteynDec/4CqXR/uK8SYbpdPoyYWc5eDwc5L8Ij
+         vvMnV10YYgGmVrh1UolmAo8E6y0G1O0Pg6AwhoHSMjqxSaPxOAG5QixEDbnAEQAqEP9H
+         Fqy2mL7qLtkVfxtl0ZI05r2zypqlSjV5+WRTuHBBTDJOIN5G/DusGibSLll6h7PpoYrZ
+         9mMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PIDJcCHy+v6rKaQ84eE9rtH0lKlpBdz1O5fIu6GRMro=;
-        b=kKax2zyg5ELk1MjTmCuvaRbwgUGg1sHU4T79jZCXHv0UJmfkcCOohmZZkThCfXVhZv
-         GefgHgjnTLIRhlaFf//3xvZM46cJSvkcGi0aCNhvIzC2mqcTNbtC9guP6LmJTxpz92Nb
-         izMQRDAC5Ome0nPmUQ2gLj4RycuIdvkRAmpKu23wQPCkfuQUHJcNL8vssjkMilcRyVW2
-         qC9kPIPn+wLfcKY9JLs4H4Han2evHxw2bw1w7qYD0bjOwZLJcs/xKSAr3jeD6MXMNrW2
-         P9e0DZYXI/EkAd1RXPx52aeC+/MTxzbZdYwWuJsVqukLnGTSPYxqeT99Hcyj0AeIEEWR
-         ajog==
-X-Gm-Message-State: AOUpUlE7ZVVKsKn9RNTNi5wZmyLiedjg+THwGFitX715EvuERy1VGsX7
-        wPVKsJCCIUCfdP+11GxERkM=
-X-Google-Smtp-Source: AAOMgpcbL8lOb4NiHlBsTRWUeYOzc5YyqxHmTA2eIUXA7wxSJEZZFYqRs109YESu7m9tvQTTh9u5Og==
-X-Received: by 2002:a2e:458b:: with SMTP id s133-v6mr2608754lja.151.1531869293427;
-        Tue, 17 Jul 2018 16:14:53 -0700 (PDT)
+        bh=qxJYpWidCfKa9iYVekeWO6dAh9gWrR/YyGHbbCX1psE=;
+        b=YBVG4PEvSjftRjYlj0vHv1DFeumVnJdH97hzoee6GItiaSvX/uGZOgbl0/QjpcV1Vo
+         OHYstJSKElxqgAq+ckfYIzy6kQiiiBDfWE2rsrvbDx19rJVBOkGo5fh/ySV2Ayl7sclg
+         fBJXHNJ2iJMAR8SCyWmpmP6aNhsMdVViOaHFsYzkcEPLTcGWNZDUogkg934h4q4+ZsBQ
+         FAb0/4XGcxgtWbtkVDKMg9vw1X+sJEjma+AjwsgaLx3HORPEMDfLMFkQ4RUaFxj6MYQq
+         +9DlUDV448RnUpVn0sPhj5xsBJV9ia72I0+VEglcbTRwhCTqkYXfBwp9qdZGOkbF4IHy
+         36Tg==
+X-Gm-Message-State: AOUpUlGz9RNafSEdL4F3QQm90C+Q1G3bUJ9MwsCfjC5sn6b2hdmzKVZz
+        FVFWNGagml1jhnTLHbds9hk=
+X-Google-Smtp-Source: AAOMgpfpRbQVTAxkk+8MxMp5mbBaWh7aJhRee/Ubtb0OfGpX9uZazXx/ALbAkpId+Yvq1ObEPq0lGw==
+X-Received: by 2002:a2e:998e:: with SMTP id w14-v6mr1434604lji.7.1531869306199;
+        Tue, 17 Jul 2018 16:15:06 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id n24-v6sm350827ljc.7.2018.07.17.16.14.51
+        by smtp.gmail.com with ESMTPSA id n24-v6sm350827ljc.7.2018.07.17.16.15.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 16:14:52 -0700 (PDT)
+        Tue, 17 Jul 2018 16:15:05 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Tony Lindgren <tony@atomide.com>
 Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
@@ -78,61 +78,156 @@ Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
         linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
         dri-devel@lists.freedesktop.org,
         Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: [PATCH v2 0/3] ARM: OMAP1: ams-delta: Complete driver gpiod migration 
-Date:   Wed, 18 Jul 2018 01:14:45 +0200
-Message-Id: <20180717231448.14958-1-jmkrzyszt@gmail.com>
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH v2 1/3 v2] video: fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
+Date:   Wed, 18 Jul 2018 01:14:46 +0200
+Message-Id: <20180717231448.14958-2-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+In-Reply-To: <20180717231448.14958-1-jmkrzyszt@gmail.com>
 References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+ <20180717231448.14958-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now as Amstrad Delta board - the only user of this driver - provides
+GPIO lookup tables, switch from GPIO numbers to GPIO descriptors and
+use the table to locate required GPIO pins.
 
-This is a follow up of initial submission of a series consisted of 
-6 changes, 3 of which have been already applied or reworkeed.
+Declare static variables for storing GPIO descriptors and replace
+gpio_ function calls with their gpiod_ equivalents. Move GPIO lookup
+to the driver probe function so device initialization can be deferred
+instead of aborted if a GPIO pin is not yet available.
 
-V2 changelog:
-[PATCH 1/6] ARM: OMAP1: ams-delta: add GPIO lookup tables
-	- already in mainline, commit 68e62a15a914
-[PATCH 2/6] Input: ams_delta_serio: use GPIO lookup table
-	- reworked and submitted as a series, already in linux-omap,
-	  commit 68e62a15a914 ("ARM: OMAP1: ams-delta: drop GPIO lookup
-	  table for serio device") followed by 9 more
-[PATCH 3/6] ASoC: ams_delta: use GPIO lookup table
-	- already in mainline, commit d65777d1a2cd
-[PATCH 4/6] fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
-	- resubmitting as [PATCH v2 1/3 v2]
-	v2: Remove problematic error code conversion no longer
-	    needed if used on top of commit d08605a64e67 ("ARM: OMAP1:
-	    ams-delta: move late devices back to init_machine")
-	    and commit 8853daf3b4ac ("gpiolib: Defer on non-DT
-	    find_chip_by_name() failure") already in linux-next
-[PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
-	- resubmitting as [PATCH v2 2/3 v4]
-	v2: Fix handling of devm_gpiod_get_optional() return values -
-	    thanks to Andy Shevchenko.
-	v3: Remove problematic error code conversion no longer needed
-	    if used on top of commit d08605a64e67 ("ARM: OMAP1:
-	    ams-delta: move late devices back to init_machine") and
-	    commit 8853daf3b4ac ("gpiolib: Defer on non-DT
-	    find_chip_by_name() failure") already in linux-next - thanks
-	    to Boris Brezillon
-	v4: fix style issue - thanks to Boris Brezillon
-[PATCH 6/6] ARM: OMAP1: ams-delta: make board header file local to
-	mach-omap1
-	- resending as [PATCH v2 3/3]
+Pin naming used by the driver should be followed while respective GPIO
+lookup table is initialized by a board init code.
+
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+Changelog:
+v2: Remove problematic error code conversion no longer needed if used
+    on top of commit d08605a64e67 ("ARM: OMAP1: ams-delta: move late
+    devices back to init_machine") already in linux-omap and commit
+    8853daf3b4ac ("gpiolib: Defer on non-DT find_chip_by_name()
+    failure") already in linux-next
 
 Dependency on commit 8853daf3b4ac ("gpiolib: Defer on non-DT
-find_chip_by_name() failure") is not critical - it is not needed for
-clean build or run, it only prevents from potential future changes to
-driver initializaton order during device_initcall.
+find_chip_by_name() failure") is not critical for clean build or run, it
+only prevents from unexpected future changes to driver initialization
+order durin device_initall.
 
-I'm submitting the three patches in series because the last one depends
-on the other two.
+ drivers/video/fbdev/omap/lcd_ams_delta.c | 55 +++++++++++++-------------------
+ 1 file changed, 22 insertions(+), 33 deletions(-)
 
-Thanks,
-Janusz
+diff --git a/drivers/video/fbdev/omap/lcd_ams_delta.c b/drivers/video/fbdev/omap/lcd_ams_delta.c
+index e8c748a0dfe2..cddbd00cbf9f 100644
+--- a/drivers/video/fbdev/omap/lcd_ams_delta.c
++++ b/drivers/video/fbdev/omap/lcd_ams_delta.c
+@@ -24,11 +24,10 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/delay.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/lcd.h>
+-#include <linux/gpio.h>
+ 
+ #include <mach/hardware.h>
+-#include <mach/board-ams-delta.h>
+ 
+ #include "omapfb.h"
+ 
+@@ -41,6 +40,8 @@
+ /* LCD class device section */
+ 
+ static int ams_delta_lcd;
++static struct gpio_desc *gpiod_vblen;
++static struct gpio_desc *gpiod_ndisp;
+ 
+ static int ams_delta_lcd_set_power(struct lcd_device *dev, int power)
+ {
+@@ -99,41 +100,17 @@ static struct lcd_ops ams_delta_lcd_ops = {
+ 
+ /* omapfb panel section */
+ 
+-static const struct gpio _gpios[] = {
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_LCD_VBLEN,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "lcd_vblen",
+-	},
+-	{
+-		.gpio	= AMS_DELTA_GPIO_PIN_LCD_NDISP,
+-		.flags	= GPIOF_OUT_INIT_LOW,
+-		.label	= "lcd_ndisp",
+-	},
+-};
+-
+-static int ams_delta_panel_init(struct lcd_panel *panel,
+-		struct omapfb_device *fbdev)
+-{
+-	return gpio_request_array(_gpios, ARRAY_SIZE(_gpios));
+-}
+-
+-static void ams_delta_panel_cleanup(struct lcd_panel *panel)
+-{
+-	gpio_free_array(_gpios, ARRAY_SIZE(_gpios));
+-}
+-
+ static int ams_delta_panel_enable(struct lcd_panel *panel)
+ {
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 1);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 1);
++	gpiod_set_value(gpiod_ndisp, 1);
++	gpiod_set_value(gpiod_vblen, 1);
+ 	return 0;
+ }
+ 
+ static void ams_delta_panel_disable(struct lcd_panel *panel)
+ {
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_VBLEN, 0);
+-	gpio_set_value(AMS_DELTA_GPIO_PIN_LCD_NDISP, 0);
++	gpiod_set_value(gpiod_vblen, 0);
++	gpiod_set_value(gpiod_ndisp, 0);
+ }
+ 
+ static struct lcd_panel ams_delta_panel = {
+@@ -154,8 +131,6 @@ static struct lcd_panel ams_delta_panel = {
+ 	.pcd		= 0,
+ 	.acb		= 37,
+ 
+-	.init		= ams_delta_panel_init,
+-	.cleanup	= ams_delta_panel_cleanup,
+ 	.enable		= ams_delta_panel_enable,
+ 	.disable	= ams_delta_panel_disable,
+ };
+@@ -166,9 +141,23 @@ static struct lcd_panel ams_delta_panel = {
+ static int ams_delta_panel_probe(struct platform_device *pdev)
+ {
+ 	struct lcd_device *lcd_device = NULL;
+-#ifdef CONFIG_LCD_CLASS_DEVICE
+ 	int ret;
+ 
++	gpiod_vblen = devm_gpiod_get(&pdev->dev, "vblen", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_vblen)) {
++		ret = PTR_ERR(gpiod_vblen);
++		dev_err(&pdev->dev, "VBLEN GPIO request failed (%d)\n", ret);
++		return ret;
++	}
++
++	gpiod_ndisp = devm_gpiod_get(&pdev->dev, "ndisp", GPIOD_OUT_LOW);
++	if (IS_ERR(gpiod_ndisp)) {
++		ret = PTR_ERR(gpiod_ndisp);
++		dev_err(&pdev->dev, "NDISP GPIO request failed (%d)\n", ret);
++		return ret;
++	}
++
++#ifdef CONFIG_LCD_CLASS_DEVICE
+ 	lcd_device = lcd_device_register("omapfb", &pdev->dev, NULL,
+ 						&ams_delta_lcd_ops);
+ 
+-- 
+2.16.4
 
