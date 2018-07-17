@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C5ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6E6ECDFB3
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B07206B7
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 963CB206B7
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 21:04:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJv8kVYe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B07206B7
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLsIFARE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963CB206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731241AbeGQVjT (ORCPT
+        id S1731323AbeGQVjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 17:39:19 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:38085 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeGQVjS (ORCPT
+        Tue, 17 Jul 2018 17:39:22 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:34518 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729684AbeGQVjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 17:39:18 -0400
-Received: by mail-pl0-f67.google.com with SMTP id b1-v6so985818pls.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:51 -0700 (PDT)
+        Tue, 17 Jul 2018 17:39:20 -0400
+Received: by mail-pl0-f66.google.com with SMTP id f6-v6so996347plo.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 14:04:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=inPp99IyCggJ5JzoBgEQkIf2dCom/uUiaC1+Y2uOfNo=;
-        b=FJv8kVYeu+5dNl+wA7gxtWrz6hQbiZNCNmatssGvL3o4/c3dYeKE1kPpZqcwxfc8Og
-         Kj4/hlwTYYCD5+/l7NJmDzTHjmso2jT0RyaidiSy9pPG8dZUjEPOMLBHFsmyuXFuMztK
-         2d5dTGwBXXW2bYpntuNU/MJgzt6w1wwJs9NwZ26eUZl+qwSWgFbweaiMS4PtTDndNZrT
-         MRKDhnCpkeEGFvqDh4oamVqXlzFwllIgf2jwLXNfFGBUHX0tnELxbg+tNaShVWDxhJPl
-         Rp8ObKANbMK6wB4ReoCr6O3EX7wHYfzRiEOvdTL/DYn16SUkB+/8x+It08zLfs0eabKu
-         5ugQ==
+        bh=TftPCUPwfmc5ZcdU96Tn9M0gpvgY383LiLn7FPvDdEE=;
+        b=jLsIFAREOyjzounBGKXUEE2Teqx4mKd51V7ZLe8PdXkuGCLRfJadbLCIrD8nNyVmcW
+         0bfYJdI6geUnkc8NtZy6WtCizGQc4BCc9vTJzLiOJiw8Px8358q/46Y/q1t4AnleVaVc
+         0cAr8Ny7UQF5uwWnU+8U2PCPG++aif0hLpT3DR2Y8Z0kriFsHjIgAYMLvcGODkjDSUiP
+         u8RE3iAqbwoRROOzV56X5XuSvD0ZYoCgIGistx0n1U3SKLMMHykQxttj7Vq1+aoxiRz9
+         z9Dj9bGkbTGnDxh4mK4pp4uVDT+R8Dd2qarSSk0J+2uWrqmgg+gf9DiClV+mB5/smdOk
+         DIhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=inPp99IyCggJ5JzoBgEQkIf2dCom/uUiaC1+Y2uOfNo=;
-        b=OmsdWGyWJpSoR19reUI9oYDHSyPl7JGay8Whvk/w5hORp94dwRulzl0wOCmGV9f85T
-         77fr4m0PpxwnVIed8k4ha8je+JwQknwwPp5PoyEUv6mrq0vSOlm3wtb2jXWzUUj2VY+f
-         fyScZ+8sCW50MnZPcEKjgAcG2QqyaWGRowMGnFNtR51KYYYpryZ0gdMEG6KAP1e0ZpOm
-         rgtdqFdkwj1yEKGEBtOg8BmxHJ0bSaZIcNXdlAK7I0vr/ISzBHLIks6sheNye/gv+0IV
-         RRgjLr63khYyeCvJ0w4LbR51myEiUcpVis3artNY3/MMImisU7heyD7aXVgJTIRaxHxI
-         i0fA==
-X-Gm-Message-State: AOUpUlH3+4HbRvA/Yvv597GNoNSe11CtsqJIh3ldelsQpntmy+6B2cgv
-        3nD2mHrs1X2AGCGlZLfUKTQ=
-X-Google-Smtp-Source: AAOMgpeM5+sTG89B0LOmiRCUzKNgtC+PUfz/Qdiopf/VNbrLpVrys6j5M8MoZODoApSlFHLnks3a7g==
-X-Received: by 2002:a17:902:8ecb:: with SMTP id x11-v6mr3190159plo.308.1531861491168;
-        Tue, 17 Jul 2018 14:04:51 -0700 (PDT)
+        bh=TftPCUPwfmc5ZcdU96Tn9M0gpvgY383LiLn7FPvDdEE=;
+        b=cgiduwsP9gwRJ8ZhnyF9sDxYkpeMq/ZWeQhKDMeVzhDVtodMGEB1EvfOzHBB+twRPc
+         4mxdEFN9ope5CYrtMoxgRJbZ/r6rjsGqbI7947ZEuOOAIJv9bzwILJRfhsN9zYLW99Lr
+         AJWeHe3nQ0Ox1F0PTczhHdDBbxwEAz2y17hnXw168hYXjnN+7sb6gPSIg/velZTDo0Wa
+         gm+W1VK9DoQBcflLOkYSw059O1gPiFhLjeW2rh9lUy5ypeAKbjWthNxFasqmZZJeENUt
+         JKstzmURkvzqoldqStepv6TK1VRl+Adg2orGEpjfSqvqVR43aWJFQc7hjoabYz/qcgH1
+         cmiQ==
+X-Gm-Message-State: AOUpUlGVFo7hg/W+t9EeaWrs8EpIywRDRhuQpNZjhFgrHuJUFd99UoOv
+        anYBJOxKRV7zxNv3BGVuzDA=
+X-Google-Smtp-Source: AAOMgpfiA2C60gf9Dv0dI42V37WZ9xloCDzt69klOZ8BsUHhsqKfu0Spoqyb/z8jKstWVHreeEOwnA==
+X-Received: by 2002:a17:902:9690:: with SMTP id n16-v6mr3110347plp.94.1531861492379;
+        Tue, 17 Jul 2018 14:04:52 -0700 (PDT)
 Received: from toddpoynor2.mtv.corp.google.com ([2620:0:1000:3701:7d29:cd13:d903:7908])
-        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.49
+        by smtp.gmail.com with ESMTPSA id m86-v6sm3361487pfi.47.2018.07.17.14.04.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 14:04:50 -0700 (PDT)
+        Tue, 17 Jul 2018 14:04:51 -0700 (PDT)
 From:   Todd Poynor <toddpoynor@gmail.com>
 To:     Rob Springer <rspringer@google.com>,
         John Joseph <jnjoseph@google.com>,
@@ -68,9 +68,9 @@ Cc:     Zhongze Hu <frankhu@chromium.org>, Simon Que <sque@chromium.org>,
         Guenter Roeck <groeck@chromium.org>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Todd Poynor <toddpoynor@google.com>
-Subject: [PATCH 05/32] staging: gasket: remove driver registration on class creation failure
-Date:   Tue, 17 Jul 2018 13:56:45 -0700
-Message-Id: <20180717205712.29495-6-toddpoynor@gmail.com>
+Subject: [PATCH 06/32] staging: gasket: hold mutex on gasket driver unregistration
+Date:   Tue, 17 Jul 2018 13:56:46 -0700
+Message-Id: <20180717205712.29495-7-toddpoynor@gmail.com>
 X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 In-Reply-To: <20180717205712.29495-1-toddpoynor@gmail.com>
 References: <20180717205712.29495-1-toddpoynor@gmail.com>
@@ -81,36 +81,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Todd Poynor <toddpoynor@google.com>
 
-If class_create() fails, remove the gasket driver from the global
-registration table.
+Take the global mutex on driver unregistration updates for proper
+ordering of updates and consistent access procedures.
 
 Signed-off-by: Zhongze Hu <frankhu@chromium.org>
 Signed-off-by: Todd Poynor <toddpoynor@google.com>
 ---
- drivers/staging/gasket/gasket_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/staging/gasket/gasket_core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index b69b630f1b79b..cbadab7544c81 100644
+index cbadab7544c81..2ff328652356a 100644
 --- a/drivers/staging/gasket/gasket_core.c
 +++ b/drivers/staging/gasket/gasket_core.c
-@@ -335,7 +335,8 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- 	if (IS_ERR_OR_NULL(internal->class)) {
- 		gasket_nodev_error("Cannot register %s class [ret=%ld]",
- 				   driver_desc->name, PTR_ERR(internal->class));
--		return PTR_ERR(internal->class);
-+		ret = PTR_ERR(internal->class);
-+		goto unregister_gasket_driver;
- 	}
- 
- 	/*
-@@ -369,6 +370,7 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
- fail1:
+@@ -371,7 +371,9 @@ int gasket_register_device(const struct gasket_driver_desc *driver_desc)
  	class_destroy(internal->class);
  
-+unregister_gasket_driver:
+ unregister_gasket_driver:
++	mutex_lock(&g_mutex);
  	g_descs[desc_idx].driver_desc = NULL;
++	mutex_unlock(&g_mutex);
  	return ret;
+ }
+ EXPORT_SYMBOL(gasket_register_device);
+@@ -408,7 +410,9 @@ void gasket_unregister_device(const struct gasket_driver_desc *driver_desc)
+ 	class_destroy(internal_desc->class);
+ 
+ 	/* Finally, effectively "remove" the driver. */
++	mutex_lock(&g_mutex);
+ 	g_descs[desc_idx].driver_desc = NULL;
++	mutex_unlock(&g_mutex);
+ 
+ 	gasket_nodev_info("removed %s driver", driver_desc->name);
  }
 -- 
 2.18.0.203.gfac676dfb9-goog
