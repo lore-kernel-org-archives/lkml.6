@@ -2,141 +2,126 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E191ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7907CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 332CE2086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:30:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332CE2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C83B20852
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 09:31:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C83B20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbeGQKCJ (ORCPT
+        id S1729689AbeGQKCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 06:02:09 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6440 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728720AbeGQKCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 06:02:09 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 02:30:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,365,1526367600"; 
-   d="scan'208";a="57485641"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 17 Jul 2018 02:30:25 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 0AB5E166; Tue, 17 Jul 2018 12:30:30 +0300 (EEST)
-Date:   Tue, 17 Jul 2018 12:30:30 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: Fix vma_is_anonymous() false-positives
-Message-ID: <20180717093030.cu2jyuw5kuw7nvwo@black.fi.intel.com>
-References: <20180710134821.84709-1-kirill.shutemov@linux.intel.com>
- <20180710134821.84709-2-kirill.shutemov@linux.intel.com>
- <20180710134858.3506f097104859b533c81bf3@linux-foundation.org>
- <20180716133028.GQ17280@dhcp22.suse.cz>
- <20180716140440.fd3sjw5xys5wozw7@black.fi.intel.com>
- <20180716142245.GT17280@dhcp22.suse.cz>
- <20180716144739.que5362bofty6ocp@kshutemo-mobl1>
- <20180716174042.GA17280@dhcp22.suse.cz>
- <20180716203846.roolhtesloabxr2g@kshutemo-mobl1>
- <20180717090053.GE16803@dhcp22.suse.cz>
+        Tue, 17 Jul 2018 06:02:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44559 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728720AbeGQKCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 06:02:49 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6H9UHp61462729
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 17 Jul 2018 02:30:17 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6H9UGjA1462726;
+        Tue, 17 Jul 2018 02:30:16 -0700
+Date:   Tue, 17 Jul 2018 02:30:16 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   "tip-bot for Paul E. McKenney" <tipbot@zytor.com>
+Message-ID: <tip-70b83069f70d185356beba3202b9d167ee39f051@git.kernel.org>
+Cc:     tglx@linutronix.de, stern@rowland.harvard.edu,
+        linux-kernel@vger.kernel.org, davem@davemloft.net,
+        akiyks@gmail.com, andrea.parri@amarulasolutions.com,
+        luc.maranget@inria.fr, boqun.feng@gmail.com, npiggin@gmail.com,
+        hpa@zytor.com, paulmck@linux.vnet.ibm.com, dhowells@redhat.com,
+        dlustig@nvidia.com, j.alglave@ucl.ac.uk, mingo@kernel.org,
+        will.deacon@arm.com, torvalds@linux-foundation.org,
+        peterz@infradead.org
+Reply-To: andrea.parri@amarulasolutions.com, stern@rowland.harvard.edu,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          akiyks@gmail.com, davem@davemloft.net, boqun.feng@gmail.com,
+          luc.maranget@inria.fr, npiggin@gmail.com, dhowells@redhat.com,
+          dlustig@nvidia.com, paulmck@linux.vnet.ibm.com, hpa@zytor.com,
+          torvalds@linux-foundation.org, peterz@infradead.org,
+          j.alglave@ucl.ac.uk, mingo@kernel.org, will.deacon@arm.com
+In-Reply-To: <20180716180605.16115-9-paulmck@linux.vnet.ibm.com>
+References: <20180716180605.16115-9-paulmck@linux.vnet.ibm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:locking/core] tools/memory-model: Add informal LKMM
+ documentation to MAINTAINERS
+Git-Commit-ID: 70b83069f70d185356beba3202b9d167ee39f051
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180717090053.GE16803@dhcp22.suse.cz>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 09:00:53AM +0000, Michal Hocko wrote:
-> On Mon 16-07-18 23:38:46, Kirill A. Shutemov wrote:
-> > On Mon, Jul 16, 2018 at 07:40:42PM +0200, Michal Hocko wrote:
-> > > On Mon 16-07-18 17:47:39, Kirill A. Shutemov wrote:
-> > > > On Mon, Jul 16, 2018 at 04:22:45PM +0200, Michal Hocko wrote:
-> > > > > On Mon 16-07-18 17:04:41, Kirill A. Shutemov wrote:
-> > > > > > On Mon, Jul 16, 2018 at 01:30:28PM +0000, Michal Hocko wrote:
-> > > > > > > On Tue 10-07-18 13:48:58, Andrew Morton wrote:
-> > > > > > > > On Tue, 10 Jul 2018 16:48:20 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
-> > > > > > > > 
-> > > > > > > > > vma_is_anonymous() relies on ->vm_ops being NULL to detect anonymous
-> > > > > > > > > VMA. This is unreliable as ->mmap may not set ->vm_ops.
-> > > > > > > > > 
-> > > > > > > > > False-positive vma_is_anonymous() may lead to crashes:
-> > > > > > > > > 
-> > > > > > > > > ...
-> > > > > > > > > 
-> > > > > > > > > This can be fixed by assigning anonymous VMAs own vm_ops and not relying
-> > > > > > > > > on it being NULL.
-> > > > > > > > > 
-> > > > > > > > > If ->mmap() failed to set ->vm_ops, mmap_region() will set it to
-> > > > > > > > > dummy_vm_ops. This way we will have non-NULL ->vm_ops for all VMAs.
-> > > > > > > > 
-> > > > > > > > Is there a smaller, simpler fix which we can use for backporting
-> > > > > > > > purposes and save the larger rework for development kernels?
-> > > > > > > 
-> > > > > > > Why cannot we simply keep anon vma with null vm_ops and set dummy_vm_ops
-> > > > > > > for all users who do not initialize it in their mmap callbacks?
-> > > > > > > Basically have a sanity check&fixup in call_mmap?
-> > > > > > 
-> > > > > > As I said, there's a corner case of MAP_PRIVATE of /dev/zero.
-> > > > > 
-> > > > > This is really creative. I really didn't think about that. I am
-> > > > > wondering whether this really has to be handled as a private anonymous
-> > > > > mapping implicitly. Why does vma_is_anonymous has to succeed for these
-> > > > > mappings? Why cannot we simply handle it as any other file backed
-> > > > > PRIVATE mapping?
-> > > > 
-> > > > Because it's established way to create anonymous mappings in Linux.
-> > > > And we cannot break the semantics.
-> > > 
-> > > How exactly would semantic break? You would still get zero pages on read
-> > > faults and anonymous pages on CoW. So basically the same thing as for
-> > > any other file backed MAP_PRIVATE mapping.
-> > 
-> > You are wrong about zero page.
-> 
-> Well, if we redirect ->fault to do_anonymous_page and
+Commit-ID:  70b83069f70d185356beba3202b9d167ee39f051
+Gitweb:     https://git.kernel.org/tip/70b83069f70d185356beba3202b9d167ee39f051
+Author:     Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+AuthorDate: Mon, 16 Jul 2018 11:06:00 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 17 Jul 2018 09:30:32 +0200
 
-Yeah. And it will make write fault to allocate *two* pages. One in
-do_anonymous_page() and one in do_cow_fault(). Just no.
+tools/memory-model: Add informal LKMM documentation to MAINTAINERS
 
-We have a reason why anon VMAs handled separately. It's possible to unify
-them, but it requires substantial ground work.
+The Linux-kernel memory model has been informal, with a number of
+text files documenting it.  It would be good to make sure that these
+informal descriptions are kept up to date and/or pruned appropriately.
+This commit therefore brings more of those text files into the LKMM
+MAINTAINERS file entry.
 
-> > And you won't get THP.
-> 
-> huge_fault to do_huge_pmd_anonymous_page then we should emulate the
-> standard anonymous mapping.
-> 
-> > And I'm sure there's more differences. Just grep for
-> > vma_is_anonymous().
-> 
-> I am sorry to push on this but if we have one odd case I would rather
-> handle it and have a simple _rule_ that every mmap provide _has_ to
-> provide vm_ops and have a trivial fix up at a single place rather than
-> patch a subtle placeholders you were proposing.
-> 
-> I will not insist of course but this looks less fragile to me.
+Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Acked-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Akira Yokosawa <akiyks@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Daniel Lustig <dlustig@nvidia.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-arch@vger.kernel.org
+Cc: parri.andrea@gmail.com
+Link: http://lkml.kernel.org/r/20180716180605.16115-9-paulmck@linux.vnet.ibm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ MAINTAINERS | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-You propose quite a big redesign on how we handle anonymous VMAs.
-Feel free to propose the patch(set). But I don't think it would fly for
-stable@.
-
--- 
- Kirill A. Shutemov
+diff --git a/MAINTAINERS b/MAINTAINERS
+index eb427596f3e0..900889a47627 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8318,9 +8318,14 @@ M:	"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+ R:	Akira Yokosawa <akiyks@gmail.com>
+ R:	Daniel Lustig <dlustig@nvidia.com>
+ L:	linux-kernel@vger.kernel.org
++L:	linux-arch@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git
+ F:	tools/memory-model/
++F:	Documentation/atomic_bitops.txt
++F:	Documentation/atomic_t.txt
++F:	Documentation/core-api/atomic_ops.rst
++F:	Documentation/core-api/refcount-vs-atomic.rst
+ F:	Documentation/memory-barriers.txt
+ 
+ LINUX SECURITY MODULE (LSM) FRAMEWORK
