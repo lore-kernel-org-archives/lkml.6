@@ -2,102 +2,171 @@ Return-Path: <SRS0=QM4b=KB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03CA4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D96E4ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B178020684
-	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:17:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B178020684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 885D520693
+	for <linux-kernel@archiver.kernel.org>; Tue, 17 Jul 2018 17:20:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTUp1oDA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885D520693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730185AbeGQRvM (ORCPT
+        id S1730161AbeGQRyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 13:51:12 -0400
-Received: from mga11.intel.com ([192.55.52.93]:38335 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729697AbeGQRvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 13:51:12 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 10:17:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,366,1526367600"; 
-   d="scan'208";a="75529060"
-Received: from theros.lm.intel.com (HELO linux.intel.com) ([10.232.112.164])
-  by orsmga002.jf.intel.com with ESMTP; 17 Jul 2018 10:17:24 -0700
-Date:   Tue, 17 Jul 2018 11:17:24 -0600
-From:   Ross Zwisler <ross.zwisler@linux.intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ross Zwisler <ross.zwisler@linux.intel.com>,
-        kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
-        linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 1/5] radix tree test suite: fix mapshift build target
-Message-ID: <20180717171724.GB2251@linux.intel.com>
-References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
- <20180503192430.7582-2-ross.zwisler@linux.intel.com>
- <20180715230052.GA6486@bombadil.infradead.org>
- <20180716160710.GA2287@linux.intel.com>
- <20180717031811.GD7934@bombadil.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717031811.GD7934@bombadil.infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 17 Jul 2018 13:54:04 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:39330 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729668AbeGQRyE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 13:54:04 -0400
+Received: by mail-lf0-f67.google.com with SMTP id a134-v6so1408168lfe.6;
+        Tue, 17 Jul 2018 10:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=i9wkBg7Hsu4Be5vqekATgyLF7+tVr2R69O6VYweQI5M=;
+        b=LTUp1oDAEF5g4L+LKimE8yYLIpRg/xd/FIPiJoZ/QtKKPulL/MEwdsuE+uYpqc8+Cn
+         CThURZqU5i1VLBvqUhe/XP+ALbJacGhPy6b6T1P34i8XMP3tANm8lm2gdUXorZE2j7zH
+         cnB/SZQT3EpBc6m4j7HnURsUbDgf9aE+8eXvBWKBWEVP+bsQTaNWykTzb+y5bSbqvE6P
+         QwnIztxY8zErTc7zPZrjE46ZwEq/LSlv9DHiRyAJy6VOifdpprMvesnIfFUQ6GOKPArC
+         CUhTjfscdAXcdK0MQ+Xt5MzYZ/Rjr7ywRHqu9UvCzdBb4bq4VkENaK1227Cb/xK7Bs2j
+         v6pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=i9wkBg7Hsu4Be5vqekATgyLF7+tVr2R69O6VYweQI5M=;
+        b=P8md6fin3dDc193wcqRkMZHBGkD42+6PebiCpGTLKE5IgWoLEBZMeYNVrnpvRUv8gQ
+         swWAy3WpJBIdn19bZR1uFTliamLCdhBn6pW8IOlQqLkq1QpPTSWrbudgjqBdkAP+/KUk
+         xgFc4dGtvZJEM5/XDwUbzfvBPY6z3PQ0Gx5FBSnxuspmisvQDxv7sll9GzH5d2AAP/1M
+         Jvd/H4MYK3EqkSePDKVhrYBZ1FWED8mVpiWQJ+mZUUzZKbmQB2qpFgi0lDwcrnWlZU0/
+         1vyFFce0hRn4wxaRRI1G86dtdf00Mo8O0KM5+YsBya1B01Q3pUDBswsk/C5AMp5lO2GZ
+         NL3A==
+X-Gm-Message-State: AOUpUlGBYH99rtJcCFDMOGEuTGVHNVbJPMPRcMFYzy7os9XSwBoWMeHL
+        BY4f3MpuLH39vdM+Z0w5HgQ=
+X-Google-Smtp-Source: AAOMgpexACbEhSGbFleJ/AmDqCcZmqpB0OrVU1C+Wkbea9lyMagISJiGS8JhZxZpTicknFQfTUAJ1A==
+X-Received: by 2002:a19:4b90:: with SMTP id y138-v6mr1772416lfa.118.1531848023784;
+        Tue, 17 Jul 2018 10:20:23 -0700 (PDT)
+Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id j9-v6sm250086ljh.40.2018.07.17.10.20.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 10:20:22 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: [PATCH] ARM: OMAP1: ams-delta: assign MODEM IRQ from GPIO descriptor
+Date:   Tue, 17 Jul 2018 19:20:56 +0200
+Message-Id: <20180717172056.18472-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 16, 2018 at 08:18:11PM -0700, Matthew Wilcox wrote:
-> On Mon, Jul 16, 2018 at 10:07:10AM -0600, Ross Zwisler wrote:
-> > Incidentally, in the current linux/master the radix tree test suite again
-> > fails to build:
-> > 
-> >   $ make
-> >   sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < ../../../lib/radix-tree.c > radix-tree.c
-> >   sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < ../../../lib/idr.c > idr.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o main.o main.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o linux.o linux.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o test.o test.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o find_bit.o ../../lib/find_bit.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o regression1.o regression1.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o regression2.o regression2.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o regression3.o regression3.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o tag_check.o tag_check.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o multiorder.o multiorder.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o idr-test.o idr-test.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o iteration_check.o iteration_check.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o benchmark.o benchmark.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o idr.o idr.c
-> >   cc -I. -I../../include -g -O2 -Wall -D_LGPL_SOURCE -fsanitize=address   -c -o radix-tree.o radix-tree.c
-> >   idr.c:7:10: fatal error: linux/xarray.h: No such file or directory
-> >    #include <linux/xarray.h>
-> >             ^~~~~~~~~~~~~~~~
-> >   compilation terminated.
-> 
-> Umm.  I think I know the problem here.  I have a suspicion that either
-> Fedora or you have changed make to be parallel by default (or you're
-> lying to me and saying you typed 'make' when you actually typed 'make
-> -j4', but I'm pretty sure you wouldn't do that).  Because there's no
-> way you'd get this output if you were compiling with make -j1.
-> 
-> Indeed, if I revert your commit and then build with make -j4, I see the
-> same error as you.  I'll look at how to fix this properly tomorrow.
+In ams_delta_modem_init(), replace request for hardcoded GPIO and
+assignment of related IRQ number to MODEM platform data with a check
+for that number having already been assigned.  Then, from init_machine,
+request MODEM IRQ GPIO descriptor by its GPIO chip hardware pin number
+and assign related IRQ to the MODEM.
 
-Ah, yep.
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+---
+ arch/arm/mach-omap1/board-ams-delta.c | 46 ++++++++++++++++++++++++++---------
+ 1 file changed, 35 insertions(+), 11 deletions(-)
 
-  $ alias make
-  alias make='make -j32'
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index dd28d2614d7f..9c376ac31e25 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -630,6 +630,28 @@ static struct gpiod_hog ams_delta_gpio_hogs[] = {
+ 	{},
+ };
+ 
++static struct plat_serial8250_port ams_delta_modem_ports[];
++
++/*
++ * Obtain MODEM IRQ GPIO descriptor using its hardware pin
++ * number and assign related IRQ number to the MODEM port.
++ * Keep the GPIO descriptor open so nobody steps in.
++ */
++static void __init modem_assign_irq(struct gpio_chip *chip)
++{
++	struct gpio_desc *gpiod;
++
++	gpiod = gpiochip_request_own_desc(chip, AMS_DELTA_GPIO_PIN_MODEM_IRQ,
++					  "modem_irq");
++	if (IS_ERR(gpiod)) {
++		pr_err("%s: modem IRQ GPIO request failed (%ld)\n", __func__,
++		       PTR_ERR(gpiod));
++	} else {
++		gpiod_direction_input(gpiod);
++		ams_delta_modem_ports[0].irq = gpiod_to_irq(gpiod);
++	}
++}
++
+ /*
+  * The purpose of this function is to take care of proper initialization of
+  * devices and data structures which depend on GPIO lines provided by OMAP GPIO
+@@ -649,7 +671,13 @@ static void __init omap_gpio_deps_init(void)
+ 		return;
+ 	}
+ 
++	/*
++	 * Start with FIQ initialization as it may have to request
++	 * and release successfully each OMAP GPIO pin in turn.
++	 */
+ 	ams_delta_init_fiq(chip, &ams_delta_serio_device);
++
++	modem_assign_irq(chip);
+ }
+ 
+ static void __init ams_delta_init(void)
+@@ -844,20 +872,18 @@ static int __init modem_nreset_init(void)
+ }
+ 
+ 
++/*
++ * This function expects MODEM IRQ number already assigned to the port
++ * and fails if it's not.
++ */
+ static int __init ams_delta_modem_init(void)
+ {
+ 	int err;
+ 
+-	omap_cfg_reg(M14_1510_GPIO2);
+-	ams_delta_modem_ports[0].irq =
+-			gpio_to_irq(AMS_DELTA_GPIO_PIN_MODEM_IRQ);
++	if (ams_delta_modem_ports[0].irq < 0)
++		return ams_delta_modem_ports[0].irq;
+ 
+-	err = gpio_request(AMS_DELTA_GPIO_PIN_MODEM_IRQ, "modem");
+-	if (err) {
+-		pr_err("Couldn't request gpio pin for modem\n");
+-		return err;
+-	}
+-	gpio_direction_input(AMS_DELTA_GPIO_PIN_MODEM_IRQ);
++	omap_cfg_reg(M14_1510_GPIO2);
+ 
+ 	/* Initialize the modem_nreset regulator consumer before use */
+ 	modem_priv.regulator = ERR_PTR(-ENODEV);
+@@ -866,8 +892,6 @@ static int __init ams_delta_modem_init(void)
+ 			AMS_DELTA_LATCH2_MODEM_CODEC);
+ 
+ 	err = platform_device_register(&ams_delta_modem_device);
+-	if (err)
+-		gpio_free(AMS_DELTA_GPIO_PIN_MODEM_IRQ);
+ 
+ 	return err;
+ }
+-- 
+2.16.4
 
-You've found it. :)
