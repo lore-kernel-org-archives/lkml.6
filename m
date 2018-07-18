@@ -2,91 +2,146 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCCAECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FECECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F3E20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lsitec-org-br.20150623.gappssmtp.com header.i=@lsitec-org-br.20150623.gappssmtp.com header.b="IoGRvHA3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F3E20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lsitec.org.br
+	by mail.kernel.org (Postfix) with ESMTP id 1D2F92075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2F92075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731190AbeGRQGX (ORCPT
+        id S1731258AbeGRQG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:06:23 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34869 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728686AbeGRQGX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:06:23 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b10-v6so4599559edi.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lsitec-org-br.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=F7+oGE5RUvap16ocpYdmnUtCQ73ScOEIE+oLmhoLXQw=;
-        b=IoGRvHA3pZNClA6h2FvBIu0kPSbpm+EfKY6jAwkxHFuwjaPQRgRgXAMqr1dUh7XnpN
-         /CCIMmTQoZ0+y3p73JvCOPcvGTsxPbB4j5UvcBaQmhXjCfFVDGo9xCt3MH7K95LeuBsC
-         f2shR2RvV/pLJn8z5io1k5+ZYWLDTZVF4VSRf1ftSy2votEIbsHShNBPWBDa6T48BJfk
-         Eo7LnUFsqLlWY1JbBeYntSJ0dSHRRg0cdDjx8bHxRopIZW7ex4hsBjqxD0gBtddUSYa8
-         zks3FnejlPcMJ+ELb3R2tb7/WVhCzXkCrm4P1cMBS6Gq7F7O4Fjx6wJEEqIECD2g8KqM
-         hU2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=F7+oGE5RUvap16ocpYdmnUtCQ73ScOEIE+oLmhoLXQw=;
-        b=Nn8hJWznHTTScN20upDxDNA9LSYZBLtb8pi8YnVr2o5Tasbm0DYDjNxvg5XocvDmTd
-         ht73/5YYchcR1pupWhxGnpry+WY4mZ6cltKPqo10UJpwVI1Jt1mPXXZc2xtw0+33Uo7Q
-         NrrSjHWYFIFSDGdgGLBneypo+CnrvKRm68QQg6G0662jtEq4cfT0pMHC0hpbgnBKNW/f
-         CFxQJMlyulaFKceClWMQWXxYC2yTQ1qWZNgJzrY2TxhRwOaB20nqpEGRE9VSpG8oSDs5
-         9WHZ22PBtxCiMyvpEGnpELKxINJsgiZdIPfaGxYhqWGoJuxDVC2D2smV9dv0KI0YlSg8
-         F1rw==
-X-Gm-Message-State: AOUpUlEyxfXJekLZRq1vw6onmHJUo/MfHmKwc6830jWqZQWatecsglXl
-        FkurrbxgV2+ZayY1cn1ZsYv1tZs0WidUSA61gcw1Lw==
-X-Google-Smtp-Source: AAOMgpfJ7X49t3ukprlz9pfDgaTaILnKZNvP7ZtQ4rwIwvdbiD34rCsdMgOo2IMpA5gi7ECpe9M391E5YTda4x5cA6E=
-X-Received: by 2002:a50:a666:: with SMTP id d93-v6mr7706420edc.244.1531927676880;
- Wed, 18 Jul 2018 08:27:56 -0700 (PDT)
+        Wed, 18 Jul 2018 12:06:28 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35874 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731193AbeGRQG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:06:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 430E5ED1;
+        Wed, 18 Jul 2018 08:28:02 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 086873FAA1;
+        Wed, 18 Jul 2018 08:27:58 -0700 (PDT)
+Subject: Re: NULL pointer dereference in msi_set_mask_bit
+To:     Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        Zou Cao <cao.zou@windriver.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <b9bd8405-64b6-2bea-f5ce-d3ab4d82452a@molgen.mpg.de>
+ <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com>
+ <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de>
+ <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <fcc2d1b4-8a10-bc8c-9a9c-2b33e6745b04@arm.com>
+Date:   Wed, 18 Jul 2018 16:27:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a17:906:d1cd:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:27:56
- -0700 (PDT)
-From:   Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
-Date:   Wed, 18 Jul 2018 12:27:56 -0300
-Message-ID: <CADHB5bA2KiPSN32+G-Oyf9AfOkFrOB48sc54K5rFem9+xyWtAQ@mail.gmail.com>
-Subject: [PATCH v1 00/04] Add clock driver for Actions Semi S500 SoC
-To:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= 
-        <guilherme.simoes@lsitec.org.br>,
-        Jon maddog Hall <jon.maddog.hall@gmail.com>,
-        mkzuffo@lsi.usp.br,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
-        support@cubietech.com, catalin.marinas@arm.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        will.deacon@arm.com, thomas liau <thomas.liau@actions-semi.com>,
-        darren@cubietech.com, robh+dt@kernel.org,
-        jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
-        Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds clock support for Actions Semi Owl series S500 SoC
-with relevant clock bindings and device tree info.
+On 18/07/18 16:12, Paul Menzel wrote:
+> Dear Thomas, dear Bjorn,
+> 
+> 
+> Thank you for your quick responses.
+> 
+> 
+> On 07/18/18 17:02, Thomas Gleixner wrote:
+>> On Wed, 18 Jul 2018, Bjorn Helgaas wrote:
+>>> [+cc Marc, Thomas]
+>>
+>> Uurgh. That's definitely what I need right now ... :)
+>>
+>>> On Wed, Jul 18, 2018 at 03:28:15PM +0200, Paul Menzel wrote:
+>>>>
+>>>> 93.885: [   23.020572] BUG: unable to handle kernel NULL pointer dereference at 000000000000003c
+>>>> 93.885: [   23.029011] PGD 0 P4D 0 
+>>>> 93.885: [   23.031670] Oops: 0000 [#1] SMP NOPTI
+>>>> 93.885: [   23.035455] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.18.0-rc5+ #1
+>>>> 93.885: [   23.042079] Hardware name: MSI MS-7A37/B350M MORTAR (MS-7A37), BIOS 1.G1 05/17/2018
+>>>> 93.886: [   23.049868] RIP: 0010:msi_set_mask_bit+0xe/0x70
+>>
+>>>> 93.913: [   23.049868] Code: 00 53 48 89 fb e8 12 f8 ff ff 48 89 df 5b e9 c9 fe ff ff 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 8b 47 10 48 8b 58 10 <f6> 43 3c 01 74 3c 8b 15 2e 85 21 01 31 c0 85 d2 75 25 8b 43 38 48
+>>
+>>   f6 43 3c 01          	testb  $0x1,0x3c(%rbx)
+>>
+>> That's:
+>>
+>> 	if (desc->msi_attrib.is_msix)
+> 
+> Is there a tool to translate that?
+> 
+>>>> 93.957: [   23.049880] RSP: 0018:ffff9e8e5e803f78 EFLAGS: 00010046
+>>>> 93.957: [   23.049881] RAX: ffff9e8e45919000 RBX: 0000000000000000 RCX: 0000000000000000
+>>>> 93.958: [   23.049882] RDX: ffff9e8e45919000 RSI: 0000000000000001 RDI: ffff9e8e45919098
+>>>> 93.958: [   23.049882] RBP: ffff9e8e45919098 R08: 0000000000000000 R09: 0000000000000000
+>>>> 93.958: [   23.049882] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9e8e45919000
+>>>> 93.958: [   23.049883] R13: 0000000000000027 R14: 0000000000000000 R15: 0000000000000000
+>>>> 93.959: [   23.049884] FS:  0000000000000000(0000) GS:ffff9e8e5e800000(0000) knlGS:0000000000000000
+>>>> 93.959: [   23.049884] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> 93.959: [   23.049885] CR2: 000000000000003c CR3: 00000003fc5a4000 CR4: 00000000003406f0
+>>>> 93.959: [   23.049885] Call Trace:
+>>>> 93.959: [   23.049887]  <IRQ>
+>>>> 93.960: [   23.049889]  __irq_move_irq+0x3c/0x70
+>>>> 93.960: [   23.049892]  apic_ack_irq+0x2b/0x30
+>>>> 93.960: [   23.049893]  handle_edge_irq+0x7d/0x1d0
+>>>> 93.960: [   23.049895]  handle_irq+0x1f/0x30
+>>>> 93.960: [   23.049898]  do_IRQ+0x41/0xc0
+>>>> 93.960: [   23.049899]  common_interrupt+0xf/0xf
+>>>> 93.961: [   23.049900]  </IRQ>
+>>
+>> and desc comes from irq_data->common->msi_desc
+>>
+>> I have no idea how that can happen for an MSI interrupt.
+>>
+>> Paul, is this reproducible?
+> 
+> No, unfortunately not. I only hit this once, since I attached the serial
+> console.
+> 
+> But I found others having the same(?) problem [1][2].
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
+> 
+> [1]: https://lkml.org/lkml/2018/1/16/122
+>      "[PATCH 0/1] PCI/MSI: add NULL check before use of msi_desc"
+> [2]: https://marc.info/?l=linux-kernel&m=151321815226439&w=2
+>      "[PATCH] PCI: designware: add a check of msi_desc in irqchip"
+> 
 
-This patchset depends on patch "[PATCH v6 1/5] clk: actions: Add
-missing REGMAP_MMIO dependency" by Saravanan Sekar.
-This patchset depends on patch "[PATCH] clk: actions: Add custom delay
-option to Actions Semi OWL pll clock driver" by Edgar Bernardi Righi.
+This seems to be a very different issue.
 
-Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+These PCI host controllers pre-allocate a bunch of irqdescs which are
+not bound to any MSI yet (this occurs much later, when the interrupt is
+actually allocated to a device). But the kexec code tries to mask all
+interrupts, including some of these half baked interrupts, and bad
+things happen. This is very much a case of "don't do that".
+
+Unless I'm grossly mistaken, this isn't what happens in your case (the
+interrupt is very much active, but the msi_desc pointer has vanished).
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
