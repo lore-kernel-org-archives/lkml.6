@@ -2,151 +2,156 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A593ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C1CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BB802075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:07:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BB802075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8AE6A2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:09:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bsI7yQTf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AE6A2075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbeGRIoD (ORCPT
+        id S1728826AbeGRIp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 04:44:03 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57515 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726067AbeGRIoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 04:44:03 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9B707D89625E3;
-        Wed, 18 Jul 2018 16:07:18 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 18 Jul 2018
- 16:07:16 +0800
-To:     Dominique Martinet <asmadeus@codewreck.org>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "Eric Van Hensbergen" <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        "Latchesar Ionkov" <lucho@ionkov.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   piaojun <piaojun@huawei.com>
-Subject: [PATCH] net/9p/trans_virtio.c: replace mutex_lock with spin_lock to
- protect 'virtio_chan_list'
-Message-ID: <5B4EF511.7090104@huawei.com>
-Date:   Wed, 18 Jul 2018 16:06:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        Wed, 18 Jul 2018 04:45:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45297 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbeGRIp6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 04:45:58 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c4-v6so3652851wrs.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 01:09:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=2pSlMJC9hxDL+y2l4uA71YPcpZQLRESfor/PoAxgbcU=;
+        b=bsI7yQTfA506toiWMrRLrtT3UOcwMCeFtPiH9IpZ95scJOo06S6mpxlDMikN512iTE
+         ZuLhZZedj0LOJy14VW+jwlft2ErIA37+GlaGAzsNxoVDV49bCIK8nYH5Kiq4Cmd+tx1L
+         JGsSkVjBsjWvOeyJcbJDo3QyxVKjVh3Kw9Olc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2pSlMJC9hxDL+y2l4uA71YPcpZQLRESfor/PoAxgbcU=;
+        b=qzlZZjXUcFYMUkWCO1cJdH+fU+Ck+gVs6+FLcZt26Nd2csD6McRgGPeWAMZZfObh/Z
+         NeQRKcatl7EZUuQ1kjG6LGu0oxEFrsDiCY+pxI0TLtbmrE8YUamlK69pkKqWeFCLzWNk
+         ZJBg4tqbyfGn3jimdeZ10WiqZtmi10DrFp9IDo1cOhUdTDE2hDl3MWnpuS53SYMxFx/j
+         CjTZWDRIAa996pasi9m8FLvbGgOMwF/ULGMqWbCCtGX9ykVfxbyYOceJ6q40vCOreoYw
+         ukTwATG3VluNbp2uBh/1AsKo2ak/6hShLW11b+AvH998mxljifQ+rq1WHpXqP5WSRUyJ
+         6big==
+X-Gm-Message-State: AOUpUlGzbeMmD8MMqw1mtjINk5CrnwZ4K9NyHv/0kUhEq2ipVGIUO2oA
+        +OX8TpdxZD0euWTdoWhy2+DSQw==
+X-Google-Smtp-Source: AAOMgpf+KKiAMy7Rh4AqIDkMguU7/i/zg7VCxmpwSu7e0Jp0tJZ9kw9IkLtQ0CsJ2fUL5N7/l5elBA==
+X-Received: by 2002:adf:9c91:: with SMTP id d17-v6mr3523435wre.11.1531901355748;
+        Wed, 18 Jul 2018 01:09:15 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id g1-v6sm3245710wrq.51.2018.07.18.01.09.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 01:09:14 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 09:09:13 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@linaro.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH] backlight: pwm_bl: Fix uninitialized variable
+Message-ID: <20180718080913.GB4641@dell>
+References: <20180716210241.9457-1-daniel.thompson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180716210241.9457-1-daniel.thompson@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-spin_lock is more effective for short time protection than mutex_lock, as
-mutex lock may cause process sleep and wake up which consume much cpu
-time.
+On Mon, 16 Jul 2018, Daniel Thompson wrote:
 
-Signed-off-by: Jun Piao <piaojun@huawei.com>
----
- net/9p/trans_virtio.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+> Currently, if the DT does not define num-interpolated-steps then
+> num_steps is undefined and the interpolation code will deploy randomly.
+> Fix this.
+> 
+> Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
+> brightness-levels")
+> Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 86077f7..7ec0dbf 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -53,8 +53,8 @@
+This line is confusing.  Did you guys author this patch together?
 
- #define VIRTQUEUE_NUM	128
+My guess is that this line should be dropped and the RB and TB tags
+should remain?  If it was reviewed too, perhaps an AB too?
 
--/* a single mutex to manage channel initialization and attachment */
--static DEFINE_MUTEX(virtio_9p_lock);
-+/* a single spinlock to manage channel initialization and attachment */
-+static DEFINE_SPINLOCK(virtio_9p_lock);
- static DECLARE_WAIT_QUEUE_HEAD(vp_wq);
- static atomic_t vp_pinned = ATOMIC_INIT(0);
+> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> ---
+>  drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
+>  1 file changed, 8 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> index 9ee4c1b735b2..e3c22b79fbcd 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct device *dev,
+>  		 * interpolation between each of the values of brightness levels
+>  		 * and creates a new pre-computed table.
+>  		 */
+> -		of_property_read_u32(node, "num-interpolated-steps",
+> -				     &num_steps);
+> -
+> -		/*
+> -		 * Make sure that there is at least two entries in the
+> -		 * brightness-levels table, otherwise we can't interpolate
+> -		 * between two points.
+> -		 */
+> -		if (num_steps) {
+> +		if ((of_property_read_u32(node, "num-interpolated-steps",
+> +					  &num_steps) == 0) && num_steps) {
 
-@@ -120,10 +120,10 @@ static void p9_virtio_close(struct p9_client *client)
- {
- 	struct virtio_chan *chan = client->trans;
+This is pretty ugly, and isn't it suffering from over-bracketing?  My
+suggestion would be to break out the invocation of
+of_property_read_u32() from the if and test only the result.
 
--	mutex_lock(&virtio_9p_lock);
-+	spin_lock(&virtio_9p_lock);
- 	if (chan)
- 		chan->inuse = false;
--	mutex_unlock(&virtio_9p_lock);
-+	spin_unlock(&virtio_9p_lock);
- }
+		of_property_read_u32(node, "num-interpolated-steps", &num_steps);
+		if (!ret && num_steps) {
 
- /**
-@@ -605,9 +605,9 @@ static int p9_virtio_probe(struct virtio_device *vdev)
+I haven't checked the underling code, but is it even feasible for
+of_property_read_u32() to not succeed AND for num_steps to be set?
 
- 	virtio_device_ready(vdev);
+If not, the check for !ret if superfluous and you can drop it.
 
--	mutex_lock(&virtio_9p_lock);
-+	spin_lock(&virtio_9p_lock);
- 	list_add_tail(&chan->chan_list, &virtio_chan_list);
--	mutex_unlock(&virtio_9p_lock);
-+	spin_unlock(&virtio_9p_lock);
+> +			/*
+> +			 * Make sure that there is at least two entries in the
 
- 	/* Let udev rules use the new mount_tag attribute. */
- 	kobject_uevent(&(vdev->dev.kobj), KOBJ_CHANGE);
-@@ -645,7 +645,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
- 	int ret = -ENOENT;
- 	int found = 0;
+s/is/are/
 
--	mutex_lock(&virtio_9p_lock);
-+	spin_lock(&virtio_9p_lock);
- 	list_for_each_entry(chan, &virtio_chan_list, chan_list) {
- 		if (!strncmp(devname, chan->tag, chan->tag_len) &&
- 		    strlen(devname) == chan->tag_len) {
-@@ -657,7 +657,7 @@ static int p9_virtio_probe(struct virtio_device *vdev)
- 			ret = -EBUSY;
- 		}
- 	}
--	mutex_unlock(&virtio_9p_lock);
-+	spin_unlock(&virtio_9p_lock);
+> +			 * brightness-levels table, otherwise we can't
+> +			 * interpolate
 
- 	if (!found) {
- 		pr_err("no channels available for device %s\n", devname);
-@@ -682,7 +682,7 @@ static void p9_virtio_remove(struct virtio_device *vdev)
- 	struct virtio_chan *chan = vdev->priv;
- 	unsigned long warning_time;
+Why break the line here?
 
--	mutex_lock(&virtio_9p_lock);
-+	spin_lock(&virtio_9p_lock);
+> +			 * between two points.
+> +			 */
+>  			if (data->max_brightness < 2) {
+>  				dev_err(dev, "can't interpolate\n");
+>  				return -EINVAL;
 
- 	/* Remove self from list so we don't get new users. */
- 	list_del(&chan->chan_list);
-@@ -690,17 +690,17 @@ static void p9_virtio_remove(struct virtio_device *vdev)
-
- 	/* Wait for existing users to close. */
- 	while (chan->inuse) {
--		mutex_unlock(&virtio_9p_lock);
-+		spin_unlock(&virtio_9p_lock);
- 		msleep(250);
- 		if (time_after(jiffies, warning_time + 10 * HZ)) {
- 			dev_emerg(&vdev->dev,
- 				  "p9_virtio_remove: waiting for device in use.\n");
- 			warning_time = jiffies;
- 		}
--		mutex_lock(&virtio_9p_lock);
-+		spin_lock(&virtio_9p_lock);
- 	}
-
--	mutex_unlock(&virtio_9p_lock);
-+	spin_unlock(&virtio_9p_lock);
-
- 	vdev->config->reset(vdev);
- 	vdev->config->del_vqs(vdev);
 -- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
