@@ -2,144 +2,100 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AFEECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0EF8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D3FC2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:44:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3FC2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A33DA2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:44:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33DA2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=diehl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729306AbeGRLVa (ORCPT
+        id S1728936AbeGRLWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:21:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42532 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728711AbeGRLVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:21:30 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F518401EF0B;
-        Wed, 18 Jul 2018 10:44:12 +0000 (UTC)
-Received: from krava (unknown [10.43.17.196])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3B512178B8;
-        Wed, 18 Jul 2018 10:44:09 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 12:44:08 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Lukasz Odzioba <lukasz.odzioba@intel.com>,
-        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com
-Subject: Re: [PATCH 1/4] perf tools: Fix struct comm_str removal crash
-Message-ID: <20180718104408.GA15068@krava>
-References: <20180712142023.16915-1-jolsa@kernel.org>
- <20180712142023.16915-2-jolsa@kernel.org>
- <20180715130827.GA5071@danjae.aot.lge.com>
- <20180716102934.GA14153@krava>
- <20180717014940.GA9295@sejong>
- <20180717090245.GB8631@krava>
+        Wed, 18 Jul 2018 07:22:13 -0400
+Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:26753 "EHLO
+        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726869AbeGRLWN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 07:22:13 -0400
+X-$ESA-Groupmapping: true
+X-IronPort-AV: E=Sophos;i="5.51,370,1526335200"; 
+   d="scan'208";a="34285486"
+From:   Denis OSTERLAND <denis.osterland@diehl.com>
+To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v4 2/5] rtc: isl1208: add support for isl1219 with tamper
+ detection
+Thread-Topic: [PATCH v4 2/5] rtc: isl1208: add support for isl1219 with tamper
+ detection
+Thread-Index: AQHUGDKQWWI1tXLeOU6HiRfwsL9pvqSUjGuAgAAqXwA=
+Date:   Wed, 18 Jul 2018 10:44:52 +0000
+Message-ID: <1531910692.6017.18.camel@diehl.com>
+References: <20180710090710.9066-1-Denis.Osterland@diehl.com>
+         <20180710090710.9066-3-Denis.Osterland@diehl.com>
+         <20180718081313.GI3211@piout.net>
+In-Reply-To: <20180718081313.GI3211@piout.net>
+Accept-Language: de-DE, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717090245.GB8631@krava>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 10:44:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 10:44:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+X-TrailerSkip: 1
+X-GBS-PROC: byQFdw3ukCM+zy1/poiPc3IS6AR/NFilMnzgm2Ves0ahI+udyIA6o5iqoQO19AhU
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-ID: <ED44C69EC80A27448F3F68A28901759B@diehl.internal>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 11:02:45AM +0200, Jiri Olsa wrote:
-
-SNIP
-
-> +/*
-> + * Pure refs increase without any chec/warn.
-> + */
-> +static inline void refcount_inc_no_warn(refcount_t *r)
-> +{
-> +	atomic_inc(&r->refs);
-> +}
-> +
->  /*
->   * Similar to atomic_dec_and_test(), it will WARN on underflow and fail to
->   * decrement when saturated at UINT_MAX.
-> diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
-> index 7798a2cc8a86..a2e338cf29d7 100644
-> --- a/tools/perf/util/comm.c
-> +++ b/tools/perf/util/comm.c
-> @@ -21,7 +21,7 @@ static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,}
->  static struct comm_str *comm_str__get(struct comm_str *cs)
->  {
->  	if (cs)
-> -		refcount_inc(&cs->refcnt);
-> +		refcount_inc_no_warn(&cs->refcnt);
->  	return cs;
->  }
->  
-> @@ -29,10 +29,12 @@ static void comm_str__put(struct comm_str *cs)
->  {
->  	if (cs && refcount_dec_and_test(&cs->refcnt)) {
->  		down_write(&comm_str_lock);
-> -		rb_erase(&cs->rb_node, &comm_str_root);
-> +		if (refcount_read(&cs->refcnt) == 0) {
-> +			rb_erase(&cs->rb_node, &comm_str_root);
-> +			zfree(&cs->str);
-> +			free(cs);
-> +		}
->  		up_write(&comm_str_lock);
-> -		zfree(&cs->str);
-> -		free(cs);
->  	}
->  }
->  
-
-I'm still getting crashes with this code, there's another race
-in comm_str__put, consider following paths (with 'cs' struct comm_str data):
-
-thread 0:
-  ...
-  comm_str__put
-    refcount_dec_and_test(&cs->refcnt) == true
-    down_write(&comm_str_lock);
---> cs->refcnt == 0, but we are blocked and waiting for the lock to remove cs, and meanwhile:
-
-	thread 1:
-	  ...
-	  __comm_str__findnew(...
-	    comm_str__get(cs)
-----------> cs->refcnt == 1
-
-	thread 2:
-	  ...
-	  comm_str__put
-	    refcount_dec_and_test(&cs->refcnt) == true
-----------> cs->refcnt == 0, thread 2 gets the lock and removes cs
-	  ...
-
-
-thread 0:
-  ...
---> comm_str__put gets the lock and removes 'cs' which aborts with double free
-
-
-we don't have this problem if we ignore objects that dropped to
-refcnt == 0, which was what my previous change was doing
-
-jirka
+SGksDQoNCkFtIE1pdHR3b2NoLCBkZW4gMTguMDcuMjAxOCwgMTA6MTMgKzAyMDAgc2Nocmll
+YiBBbGV4YW5kcmUgQmVsbG9uaToNCj4gT24gMTAvMDcvMjAxOCAwOTo0NDoxNSswMDAwLCBE
+ZW5pcyBPU1RFUkxBTkQgd3JvdGU6DQo+ID7CoA0KPiA+ICsJaWYgKGlkLT5kcml2ZXJfZGF0
+YSA9PSBUWVBFX0lTTDEyMTkpIHsNCj4gPiArCQlyYyA9IElTTDEyMTlfUkVHX0VWX0VWRU47
+DQo+ID4gKwkJcmMgPSBpMmNfc21idXNfd3JpdGVfYnl0ZV9kYXRhKGNsaWVudCwgSVNMMTIx
+OV9SRUdfRVYsIHJjKTsNCj4gSSdkIHBhc3MgSVNMMTIxOV9SRUdfRVZfRVZFTiBkaXJlY3Rs
+eSBpbnN0ZWFkIG9mIGFzc2lnbmluZyBpdCB0byByYy4NCj4gDQpCZWNhdXNlIG9mIHRoZSA4
+MCBjaGFyYWN0ZXIgbGltaXQgcGVyIHJvdywgSSB0aG91Z2h0IHRoaXM6DQrCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJjID0gSVNMMTIxOV9SRUdfRVZfRVZFTjsNCsKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmMgPSBpMmNfc21idXNfd3JpdGVfYnl0ZV9k
+YXRhKGNsaWVudCwgSVNMMTIxOV9SRUdfRVYsIHJjKTsNCndvdWxkIGxvb2sgbmljZXIgdGhh
+biB0aGF0Og0KwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqByYyA9IGkyY19zbWJ1
+c193cml0ZV9ieXRlX2RhdGEoY2xpZW50LCBJU0wxMjE5X1JFR19FViwNCsKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBJU0wxMjE5
+X1JFR19FVl9FVkVOKTsNCkFyZSB0aGVyZSBhbnkgcmVhc29ucyB3aHkgSSBzaG91bGQgcHJl
+ZmVyIHRoZSBzZWNvbmQgb25lPw0KDQpSZWdhcmRzIERlbmlzDQoNCkRpZWhsIENvbm5lY3Rp
+dml0eSBTb2x1dGlvbnMgR21iSA0KR2VzY2jDpGZ0c2bDvGhydW5nOiBIb3JzdCBMZW9uYmVy
+Z2VyDQpTaXR6IGRlciBHZXNlbGxzY2hhZnQ6IE7DvHJuYmVyZyAtIFJlZ2lzdGVyZ2VyaWNo
+dDogQW10c2dlcmljaHQNCk7DvHJuYmVyZzogSFJCIDMyMzE1DQpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCg0KRGVyIEluaGFsdCBkZXIgdm9yc3Rl
+aGVuZGVuIEUtTWFpbCBpc3QgbmljaHQgcmVjaHRsaWNoIGJpbmRlbmQuIERpZXNlIEUtTWFp
+bCBlbnRoYWVsdCB2ZXJ0cmF1bGljaGUgdW5kL29kZXIgcmVjaHRsaWNoIGdlc2NodWV0enRl
+IEluZm9ybWF0aW9uZW4uDQpJbmZvcm1pZXJlbiBTaWUgdW5zIGJpdHRlLCB3ZW5uIFNpZSBk
+aWVzZSBFLU1haWwgZmFlbHNjaGxpY2hlcndlaXNlIGVyaGFsdGVuIGhhYmVuLiBCaXR0ZSBs
+b2VzY2hlbiBTaWUgaW4gZGllc2VtIEZhbGwgZGllIE5hY2hyaWNodC4NCkplZGUgdW5lcmxh
+dWJ0ZSBGb3JtIGRlciBSZXByb2R1a3Rpb24sIEJla2FubnRnYWJlLCBBZW5kZXJ1bmcsIFZl
+cnRlaWx1bmcgdW5kL29kZXIgUHVibGlrYXRpb24gZGllc2VyIEUtTWFpbCBpc3Qgc3RyZW5n
+c3RlbnMgdW50ZXJzYWd0Lg0KVGhlIGNvbnRlbnRzIG9mIHRoZSBhYm92ZSBtZW50aW9uZWQg
+ZS1tYWlsIGlzIG5vdCBsZWdhbGx5IGJpbmRpbmcuIFRoaXMgZS1tYWlsIGNvbnRhaW5zIGNv
+bmZpZGVudGlhbCBhbmQvb3IgbGVnYWxseSBwcm90ZWN0ZWQgaW5mb3JtYXRpb24uIFBsZWFz
+ZSBpbmZvcm0gdXMgaWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBlLW1haWwgYnkNCm1pc3Rh
+a2UgYW5kIGRlbGV0ZSBpdCBpbiBzdWNoIGEgY2FzZS4gRWFjaCB1bmF1dGhvcml6ZWQgcmVw
+cm9kdWN0aW9uLCBkaXNjbG9zdXJlLCBhbHRlcmF0aW9uLCBkaXN0cmlidXRpb24gYW5kL29y
+IHB1YmxpY2F0aW9uIG9mIHRoaXMgZS1tYWlsIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIA0K
