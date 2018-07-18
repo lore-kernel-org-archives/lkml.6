@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8F9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574E5ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B34F820854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:11:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34F820854
+	by mail.kernel.org (Postfix) with ESMTP id EB37A20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB37A20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbeGRQtr (ORCPT
+        id S1731794AbeGRQue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:49:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60397 "EHLO mail.bootlin.com"
+        Wed, 18 Jul 2018 12:50:34 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60386 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731672AbeGRQtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:49:45 -0400
+        id S1731600AbeGRQtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:49:46 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8495220884; Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
+        id 3DD9620799; Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5E1F420741;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 16D1120740;
         Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -43,9 +43,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v3 2/8] net: mvneta: fix mtu change on port without link
-Date:   Wed, 18 Jul 2018 18:10:51 +0200
-Message-Id: <20180718161057.28704-3-gregory.clement@bootlin.com>
+Subject: [PATCH net-next v3 1/8] net: ethernet: mvneta: Fix napi structure mixup on armada 3700
+Date:   Wed, 18 Jul 2018 18:10:50 +0200
+Message-Id: <20180718161057.28704-2-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180718161057.28704-1-gregory.clement@bootlin.com>
 References: <20180718161057.28704-1-gregory.clement@bootlin.com>
@@ -54,33 +54,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yelena Krivosheev <yelena@marvell.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-It is incorrect to enable TX/RX queues (call by mvneta_port_up()) for
-port without link. Indeed MTU change for interface without link causes TX
-queues to stuck.
+The mvneta Ethernet driver is used on a few different Marvell SoCs.
+Some SoCs have per cpu interrupts for Ethernet events. Some SoCs have
+a single interrupt, independent of the CPU. The driver handles this by
+having a per CPU napi structure when there are per CPU interrupts, and
+a global napi structure when there is a single interrupt.
 
-Fixes: c5aff18204da ("net: mvneta: driver for Marvell Armada 370/XP
-network unit")
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory.clement: adding Fixes tags and rewording commit log]
+When the napi core calls mvneta_poll(), it passes the napi
+instance. This was not being propagated through the call chain, and
+instead the per-cpu napi instance was passed to napi_gro_receive()
+call. This breaks when there is a single global napi instance.
+
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: 2636ac3cc2b4 ("net: mvneta: Add network support for Armada 3700 SoC")
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/marvell/mvneta.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index ec84db47d82d..3d1f4335b0d3 100644
+index 0ad2f3f7da85..ec84db47d82d 100644
 --- a/drivers/net/ethernet/marvell/mvneta.c
 +++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -3196,7 +3196,6 @@ static int mvneta_change_mtu(struct net_device *dev, int mtu)
+@@ -1901,10 +1901,10 @@ static void mvneta_rxq_drop_pkts(struct mvneta_port *pp,
+ }
  
- 	on_each_cpu(mvneta_percpu_enable, pp, true);
- 	mvneta_start_dev(pp);
--	mvneta_port_up(pp);
+ /* Main rx processing when using software buffer management */
+-static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
++static int mvneta_rx_swbm(struct napi_struct *napi,
++			  struct mvneta_port *pp, int rx_todo,
+ 			  struct mvneta_rx_queue *rxq)
+ {
+-	struct mvneta_pcpu_port *port = this_cpu_ptr(pp->ports);
+ 	struct net_device *dev = pp->dev;
+ 	int rx_done;
+ 	u32 rcvd_pkts = 0;
+@@ -1959,7 +1959,7 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
  
- 	netdev_update_features(dev);
+ 			skb->protocol = eth_type_trans(skb, dev);
+ 			mvneta_rx_csum(pp, rx_status, skb);
+-			napi_gro_receive(&port->napi, skb);
++			napi_gro_receive(napi, skb);
  
+ 			rcvd_pkts++;
+ 			rcvd_bytes += rx_bytes;
+@@ -2001,7 +2001,7 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
+ 
+ 		mvneta_rx_csum(pp, rx_status, skb);
+ 
+-		napi_gro_receive(&port->napi, skb);
++		napi_gro_receive(napi, skb);
+ 	}
+ 
+ 	if (rcvd_pkts) {
+@@ -2020,10 +2020,10 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
+ }
+ 
+ /* Main rx processing when using hardware buffer management */
+-static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
++static int mvneta_rx_hwbm(struct napi_struct *napi,
++			  struct mvneta_port *pp, int rx_todo,
+ 			  struct mvneta_rx_queue *rxq)
+ {
+-	struct mvneta_pcpu_port *port = this_cpu_ptr(pp->ports);
+ 	struct net_device *dev = pp->dev;
+ 	int rx_done;
+ 	u32 rcvd_pkts = 0;
+@@ -2085,7 +2085,7 @@ static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
+ 
+ 			skb->protocol = eth_type_trans(skb, dev);
+ 			mvneta_rx_csum(pp, rx_status, skb);
+-			napi_gro_receive(&port->napi, skb);
++			napi_gro_receive(napi, skb);
+ 
+ 			rcvd_pkts++;
+ 			rcvd_bytes += rx_bytes;
+@@ -2129,7 +2129,7 @@ static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
+ 
+ 		mvneta_rx_csum(pp, rx_status, skb);
+ 
+-		napi_gro_receive(&port->napi, skb);
++		napi_gro_receive(napi, skb);
+ 	}
+ 
+ 	if (rcvd_pkts) {
+@@ -2722,9 +2722,11 @@ static int mvneta_poll(struct napi_struct *napi, int budget)
+ 	if (rx_queue) {
+ 		rx_queue = rx_queue - 1;
+ 		if (pp->bm_priv)
+-			rx_done = mvneta_rx_hwbm(pp, budget, &pp->rxqs[rx_queue]);
++			rx_done = mvneta_rx_hwbm(napi, pp, budget,
++						 &pp->rxqs[rx_queue]);
+ 		else
+-			rx_done = mvneta_rx_swbm(pp, budget, &pp->rxqs[rx_queue]);
++			rx_done = mvneta_rx_swbm(napi, pp, budget,
++						 &pp->rxqs[rx_queue]);
+ 	}
+ 
+ 	if (rx_done < budget) {
 -- 
 2.18.0
 
