@@ -6,62 +6,99 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2ADCECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF819ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 953D42084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953D42084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 6E49D2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E49D2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730999AbeGRVNH (ORCPT
+        id S1731065AbeGRVNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:13:07 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43034 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeGRVNH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:13:07 -0400
-Received: from localhost (179-64-212-66.spl.org [66.212.64.179])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6A9591479C5F2;
-        Wed, 18 Jul 2018 13:33:33 -0700 (PDT)
-Date:   Thu, 19 Jul 2018 05:33:33 +0900 (KST)
-Message-Id: <20180719.053333.396851874410198344.davem@davemloft.net>
-To:     keescook@chromium.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        s.mesoraca16@gmail.com, f.fainelli@gmail.com, andrew@lunn.ch,
-        David.Laight@aculab.com
-Subject: Re: [PATCH v2] net: dsa: Remove VLA usage
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180717041034.GA37382@beast>
-References: <20180717041034.GA37382@beast>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 18 Jul 2018 17:13:11 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59970 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726992AbeGRVNL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 17:13:11 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 702715F73D;
+        Wed, 18 Jul 2018 20:33:37 +0000 (UTC)
+Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3ABB819485;
+        Wed, 18 Jul 2018 20:33:37 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 14:33:36 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio/pci: Fix potential Spectre v1
+Message-ID: <20180718143336.103279e1@t450s.home>
+In-Reply-To: <20180717173900.GA24627@embeddedor.com>
+References: <20180717173900.GA24627@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 18 Jul 2018 13:33:33 -0700 (PDT)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Wed, 18 Jul 2018 20:33:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
-Date: Mon, 16 Jul 2018 21:10:34 -0700
+On Tue, 17 Jul 2018 12:39:00 -0500
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-> From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+> info.index can be indirectly controlled by user-space, hence leading
+> to a potential exploitation of the Spectre variant 1 vulnerability.
 > 
-> We avoid 2 VLAs by using a pre-allocated field in dsa_switch. We also
-> try to avoid dynamic allocation whenever possible (when using fewer than
-> bits-per-long ports, which is the common case).
+> This issue was detected with the help of Smatch:
 > 
-> Link: http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-> Link: http://lkml.kernel.org/r/20180505185145.GB32630@lunn.ch
-> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-> [kees: tweak commit subject and message slightly]
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> drivers/vfio/pci/vfio_pci.c:734 vfio_pci_ioctl()
+> warn: potential spectre issue 'vdev->region'
+> 
+> Fix this by sanitizing info.index before indirectly using it to index
+> vdev->region
+> 
+> Notice that given that speculation windows are large, the policy is
+> to kill the speculation on the first load and not worry if it can be
+> completed with a dependent load/store [1].
+> 
+> [1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/vfio/pci/vfio_pci.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-Florian and Andrew, please review.
+Applied to vfio for-linus branch for v4.18.  Thanks!
+
+Alex
+
+
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index b423a30..125b58e 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/vfio.h>
+>  #include <linux/vgaarb.h>
+> +#include <linux/nospec.h>
+>  
+>  #include "vfio_pci_private.h"
+>  
+> @@ -727,6 +728,9 @@ static long vfio_pci_ioctl(void *device_data,
+>  			if (info.index >=
+>  			    VFIO_PCI_NUM_REGIONS + vdev->num_regions)
+>  				return -EINVAL;
+> +			info.index = array_index_nospec(info.index,
+> +							VFIO_PCI_NUM_REGIONS +
+> +							vdev->num_regions);
+>  
+>  			i = info.index - VFIO_PCI_NUM_REGIONS;
+>  
+
