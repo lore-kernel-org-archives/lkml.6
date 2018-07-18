@@ -6,76 +6,131 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E3AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5083ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD6382084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD6382084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A96A62084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:15:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96A62084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbeGRKwL (ORCPT
+        id S1729306AbeGRKxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:52:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37930 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeGRKwL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:52:11 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12596D2E;
-        Wed, 18 Jul 2018 10:14:59 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 12:14:57 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.17 0/1] 4.17.8-stable review
-Message-ID: <20180718101457.GA28191@kroah.com>
-References: <20180717114728.444937016@linuxfoundation.org>
- <CA+G9fYs1j-KooQher961b1Rw-hzX_gstgJPyyydQdecsrV5A0w@mail.gmail.com>
+        Wed, 18 Jul 2018 06:53:00 -0400
+Received: from mga01.intel.com ([192.55.52.88]:11979 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726834AbeGRKw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:52:59 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 03:15:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,369,1526367600"; 
+   d="scan'208";a="58604211"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga006.jf.intel.com with SMTP; 18 Jul 2018 03:15:40 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 18 Jul 2018 13:15:40 +0300
+Date:   Wed, 18 Jul 2018 13:15:40 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Ayan Kumar Halder <ayan.halder@arm.com>
+Cc:     liviu.dudau@arm.com, brian.starkey@arm.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        airlied@linux.ie, jani.nikula@linux.intel.com,
+        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
+        intel-gfx@lists.freedesktop.org, hjc@rock-chips.com,
+        heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tomi.valkeinen@ti.com, laurent.pinchart@ideasonboard.com,
+        sre@kernel.org, bparrot@ti.com, peter.ujfalusi@ti.com, afd@ti.com,
+        dri-devel@lists.freedesktop.org, maxime.ripard@bootlin.com,
+        wens@csie.org, malidp@foss.arm.com, nd@arm.com
+Subject: Re: [Intel-gfx] [PATCH 5/5] drm/sun4i: Substitute
+ sun4i_backend_format_is_yuv() with format->is_yuv
+Message-ID: <20180718101540.GT5565@intel.com>
+References: <1531847626-22248-1-git-send-email-ayan.halder@arm.com>
+ <1531847626-22248-5-git-send-email-ayan.halder@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYs1j-KooQher961b1Rw-hzX_gstgJPyyydQdecsrV5A0w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1531847626-22248-5-git-send-email-ayan.halder@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 03:31:50PM +0530, Naresh Kamboju wrote:
-> On 17 July 2018 at 17:17, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.17.8 release.
-> > There are 1 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu Jul 19 11:47:15 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.17.8-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.17.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Tue, Jul 17, 2018 at 06:13:46PM +0100, Ayan Kumar Halder wrote:
+> drm_format_info table has a field 'is_yuv' to denote if the format
+> is yuv or not. The driver is expected to use this instead of
+> having a function for the same purpose.
 > 
-> Results from Linaroâ€™s test farm.
-> No regressions on arm64, arm and x86_64.
+> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_backend.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_backend.c b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> index de0a76d..d7950b5 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_backend.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_backend.c
+> @@ -86,12 +86,6 @@ static inline bool sun4i_backend_format_is_packed_yuv422(uint32_t format)
+>  	}
+>  }
+>  
+> -static inline bool sun4i_backend_format_is_yuv(uint32_t format)
+> -{
+> -	return sun4i_backend_format_is_planar_yuv(format) ||
+> -		sun4i_backend_format_is_packed_yuv422(format);
+> -}
 
-Thanks, glad it all still works, it should have only affected i386
-systems :)
+sun4i_backend_format_is_planar_yuv() is now unused so could be nuked.
+Also the one remaining use of sun4i_backend_format_is_packed_yuv422()
+could be replaced with 'is_yuv && num_planes == 1', so that one could
+be easily killed off ass well.
 
-greg k-h
+> -
+>  static void sun4i_backend_apply_color_correction(struct sunxi_engine *engine)
+>  {
+>  	int i;
+> @@ -304,7 +298,7 @@ int sun4i_backend_update_layer_formats(struct sun4i_backend *backend,
+>  			   SUN4I_BACKEND_ATTCTL_REG0_LAY_GLBALPHA_EN,
+>  			   val);
+>  
+> -	if (sun4i_backend_format_is_yuv(fb->format->format))
+> +	if (fb->format->is_yuv)
+>  		return sun4i_backend_update_yuv_format(backend, layer, plane);
+>  
+>  	ret = sun4i_backend_drm_format_to_layer(fb->format->format, &val);
+> @@ -384,7 +378,7 @@ int sun4i_backend_update_layer_buffer(struct sun4i_backend *backend,
+>  	 */
+>  	paddr -= PHYS_OFFSET;
+>  
+> -	if (sun4i_backend_format_is_yuv(fb->format->format))
+> +	if (fb->format->is_yuv)
+>  		return sun4i_backend_update_yuv_buffer(backend, fb, paddr);
+>  
+>  	/* Write the 32 lower bits of the address (in bits) */
+> @@ -502,7 +496,7 @@ static int sun4i_backend_atomic_check(struct sunxi_engine *engine,
+>  		if (fb->format->has_alpha || (plane_state->alpha != DRM_BLEND_ALPHA_OPAQUE))
+>  			num_alpha_planes++;
+>  
+> -		if (sun4i_backend_format_is_yuv(fb->format->format)) {
+> +		if (fb->format->is_yuv) {
+>  			DRM_DEBUG_DRIVER("Plane FB format is YUV\n");
+>  			num_yuv_planes++;
+>  		}
+> -- 
+> 2.7.4
+> 
+> _______________________________________________
+> Intel-gfx mailing list
+> Intel-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+
+-- 
+Ville Syrjälä
+Intel
