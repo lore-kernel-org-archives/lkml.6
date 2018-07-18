@@ -2,152 +2,128 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575B4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA1CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F102E20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:35:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YQauBU5m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F102E20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 5379820850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:39:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5379820850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbeGRTO3 (ORCPT
+        id S1728668AbeGRTTB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:14:29 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34027 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbeGRTO3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:14:29 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so10699861ois.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 11:35:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=lZY8QMuT7Vbq3sfluO9YRRPcacvm2T6ysDJmWYWu9vM=;
-        b=YQauBU5mI6eUMYr+FjliNb6O+N8Mx3Ssnho3SI2YC4E/3eZeAt+379V0wC9iTmvMFy
-         ouA+hzgQ1qxoqXkDjeuA5qZGQAIulIzy32Rb2YqnNUmrN/b8ulSKVN2F4JdcxfdbgFrb
-         FuRnUZ5x8CzWzNG7Sg/i0KriVlW8IqHmeYpBI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=lZY8QMuT7Vbq3sfluO9YRRPcacvm2T6ysDJmWYWu9vM=;
-        b=SgOBN0gr6eNR9BRCgehn6SZpvrFzncax5aVa8KDw0GMRWnxgqv8WJFVhjTWCR/N5wQ
-         p/JYPJDFVL6p1bAudSPfd8aGq2ZuMhYBSrpAVTeHdWQahP3JjJx7VmIt/6b/L0LukZ9V
-         D7AGo+Tx64Wg00KYS1P1tJr6UoJErobCV9HmH18XHPdRz3qHsGcOWP44Z50xXclKsuOG
-         /Fah0wCRydK6GdyiDMJYJMgWurIXO6jOnQX6eu/LNdbsR6GyhEVHulcBf4bm/opBuHQ0
-         /vAtd6Sc98/HDHmtk037cbIFZoA0j1/70XitlrHE5LtMbkpMjc5ius8ZUVn9Gy1OM+ff
-         84ew==
-X-Gm-Message-State: AOUpUlFyEC8IEfwY5CixAiP9DkOmUOvxwKF9eO9TpA08jwRTRxKMB93g
-        ZANofqvAxkdEzyYs/scPj6pjntNyahFAjMnC6y2uYA==
-X-Google-Smtp-Source: AAOMgpczx7YI42OlJOr3+0Xye9rdQcjWNxC/jNT6UdUmj2u3QYcaa8BgLXQTeBjRmBRSCgz3Tg7Lk3eu8CqpJzPo/Ss=
-X-Received: by 2002:aca:d986:: with SMTP id q128-v6mr7159605oig.349.1531938919362;
- Wed, 18 Jul 2018 11:35:19 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 11:35:18
- -0700 (PDT)
-In-Reply-To: <20180717092207.775e381c@t450s.home>
-References: <1531457777-11825-1-git-send-email-srinath.mannam@broadcom.com> <20180717092207.775e381c@t450s.home>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Thu, 19 Jul 2018 00:05:18 +0530
-Message-ID: <CABe79T7eVS5Z5+CkNRfWik=jFeejq54xheUOS=Jc9oU6qX8=kA@mail.gmail.com>
-Subject: Re: [RFC PATCH] vfio/pci: map prefetchble bars as writecombine
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Ray Jui <ray.jui@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        kvm@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Wed, 18 Jul 2018 15:19:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726445AbeGRTTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 15:19:01 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 25331402315B;
+        Wed, 18 Jul 2018 18:39:50 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 36A28111E406;
+        Wed, 18 Jul 2018 18:39:48 +0000 (UTC)
+Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        aik@ozlabs.ru, David Gibson <david@gibson.dropbear.id.au>,
-        benh@kernel.crashing.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Larry Woodman <lwoodman@redhat.com>,
+        "Wangkai (Kevin,C)" <wangkai86@huawei.com>
+References: <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
+ <1531336913.3260.18.camel@HansenPartnership.com>
+ <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
+ <1531411494.18255.6.camel@HansenPartnership.com>
+ <20180712164932.GA3475@bombadil.infradead.org>
+ <1531416080.18255.8.camel@HansenPartnership.com>
+ <CA+55aFzfQz7c8pcMfLDaRNReNF2HaKJGoWpgB6caQjNAyjg-hA@mail.gmail.com>
+ <1531425435.18255.17.camel@HansenPartnership.com>
+ <20180713003614.GW2234@dastard> <20180716090901.GG17280@dhcp22.suse.cz>
+ <20180716124115.GA7072@bombadil.infradead.org>
+ <20180716164032.94e13f765c5f33c6022eca38@linux-foundation.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <d37af7a4-b9a9-0928-eed0-10ab818d08c0@redhat.com>
+Date:   Wed, 18 Jul 2018 14:39:48 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180716164032.94e13f765c5f33c6022eca38@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 18 Jul 2018 18:39:50 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 18 Jul 2018 18:39:50 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On 07/16/2018 07:40 PM, Andrew Morton wrote:
+> On Mon, 16 Jul 2018 05:41:15 -0700 Matthew Wilcox <willy@infradead.org> wrote:
+>
+>> On Mon, Jul 16, 2018 at 11:09:01AM +0200, Michal Hocko wrote:
+>>> On Fri 13-07-18 10:36:14, Dave Chinner wrote:
+>>> [...]
+>>>> By limiting the number of negative dentries in this case, internal
+>>>> slab fragmentation is reduced such that reclaim cost never gets out
+>>>> of control. While it appears to "fix" the symptoms, it doesn't
+>>>> address the underlying problem. It is a partial solution at best but
+>>>> at worst it's another opaque knob that nobody knows how or when to
+>>>> tune.
+>>> Would it help to put all the negative dentries into its own slab cache?
+>> Maybe the dcache should be more sensitive to its own needs.  In __d_alloc,
+>> it could check whether there are a high proportion of negative dentries
+>> and start recycling some existing negative dentries.
+> Well, yes.
+>
+> The proposed patchset adds all this background reclaiming.  Problem is
+> a) that background reclaiming sometimes can't keep up so a synchronous
+> direct-reclaim was added on top and b) reclaiming dentries in the
+> background will cause non-dentry-allocating tasks to suffer because of
+> activity from the dentry-allocating tasks, which is inappropriate.
 
-On Tue, Jul 17, 2018 at 8:52 PM, Alex Williamson
-<alex.williamson@redhat.com> wrote:
-> On Fri, 13 Jul 2018 10:26:17 +0530
-> Srinath Mannam <srinath.mannam@broadcom.com> wrote:
->
->> By default all BARs map with VMA access permissions
->> as pgprot_noncached.
->>
->> In ARM64 pgprot_noncached is MT_DEVICE_nGnRnE which
->> is strongly ordered and allows aligned access.
->> This type of mapping works for NON-PREFETCHABLE bars
->> containing EP controller registers.
->> But it restricts PREFETCHABLE bars from doing
->> unaligned access.
->>
->> In CMB NVMe drives PREFETCHABLE bars are required to
->> map as MT_NORMAL_NC to do unaligned access.
->>
->> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
->> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->> Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
->> ---
->
-> This has been discussed before:
->
-> https://www.spinics.net/lists/kvm/msg156548.html
-Thank you for inputs.. I have gone through the long list of mail chain
-discussion.
->
-> CC'ing the usual suspects from the previous thread.  I'm not convinced
-> that the patch here has considered anything other than the ARM64
-> implications and it's not clear that it considers compatibility with
-> existing users or devices at all.  Can we guarantee for all devices and
-> use cases that WC is semantically equivalent and preferable to UC?  If
-> not then we need to device an extension to the interface that allows
-> the user to specify WC.  Thanks,
->
-To implement with user specified WC flags, many changes need to be done.
-Suppose In DPDK, prefetcable BARs map using WC flag, then also same
-question comes
-that WC may be different for different CPUs.
-As per functionality, both WC and PREFETCHABLE are same, like merging writes and
-typically WC is uncached.
-So, based on prefetchable BARs behavior and usage we need to map bar memory.
-Is it right to map prefetchable BARs as strongly ordered, aligned
-access and uncached?
+I have taken out the background reclaiming in the latest v7 patch for
+the concern people have on duplicating the reclaim effort. We can always
+add it back on later on if we want to.
 
-Please correct me if my understanding is wrong.
-
-Regards,
-Srinath.
-
-> Alex
+> I expect a better design is something like
 >
->>  drivers/vfio/pci/vfio_pci.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
->> index b423a30..eff6b65 100644
->> --- a/drivers/vfio/pci/vfio_pci.c
->> +++ b/drivers/vfio/pci/vfio_pci.c
->> @@ -1142,7 +1142,10 @@ static int vfio_pci_mmap(void *device_data, struct vm_area_struct *vma)
->>       }
->>
->>       vma->vm_private_data = vdev;
->> -     vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
->> +     if (pci_resource_flags(pdev, index) & IORESOURCE_PREFETCH)
->> +             vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
->> +     else
->> +             vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
->>       vma->vm_pgoff = (pci_resource_start(pdev, index) >> PAGE_SHIFT) + pgoff;
->>
->>       return remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
+> __d_alloc()
+> {
+> 	...
+> 	while (too many dentries)
+> 		call the dcache shrinker
+> 	...
+> }
 >
+> and that's it.  This way we have a hard upper limit and only the tasks
+> which are creating dentries suffer the cost.
+
+Yes, that is certainly one way of doing it.
+
+Cheers,
+Longman
+
