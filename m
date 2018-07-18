@@ -6,190 +6,170 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B433ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C88ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD1D206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD1D206B7
+	by mail.kernel.org (Postfix) with ESMTP id E829F206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E829F206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730053AbeGRM2X (ORCPT
+        id S1730384AbeGRM23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:28:23 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:40520 "EHLO
+        Wed, 18 Jul 2018 08:28:29 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:58581 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbeGRM2W (ORCPT
+        with ESMTP id S1726180AbeGRM23 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:28:22 -0400
+        Wed, 18 Jul 2018 08:28:29 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
  (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0Lpijq-1gHrgd01yA-00fQYG; Wed, 18 Jul 2018 13:50:33 +0200
+ 0M9cAV-1fkOUL3v5j-00CwU9; Wed, 18 Jul 2018 13:50:47 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     akpm@linux-foundation.org, Anton Altaparmakov <anton@tuxera.com>
+To:     akpm@linux-foundation.org,
+        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>
 Cc:     viro@zeniv.linux.org.uk, y2038@lists.linaro.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] [RESEND] ntfs: use timespec64 directly for timestamp conversion
-Date:   Wed, 18 Jul 2018 13:49:25 +0200
-Message-Id: <20180718115017.742609-2-arnd@arndb.de>
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/3] [RESEND] hpfs: extend gmt_to_local() conversion to 64-bit times
+Date:   Wed, 18 Jul 2018 13:49:26 +0200
+Message-Id: <20180718115017.742609-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
 In-Reply-To: <20180718115017.742609-1-arnd@arndb.de>
 References: <20180718115017.742609-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:48HS6bUrv82M+wTECIkvvM0e/wX0MoM1hFhZUZC8jtt8TrMTJbl
- dMink4CvqSzJoNiGejrjXT8dKfW58V8yv3Ddmb3AM6sDs/JTSgY6AnMLnXfDh6s53znUy9b
- OjhCItBi4pEtbKDvtXSAkucVGUBRc3nAHNKnepC1ucnwWLS63+rVNmtxFXIEpm0rvKNNG4D
- Y6l62X8H/vIaSs8nQMExw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:LzqsGoFDgLk=:p4bHRCyay8txTcpFNq33No
- zNJZSjywMEerCiTwNopQPrVbgzA/zdkxjS/P8jJ4bUfhCICcHXLW2bZg7UOLlbWMpKljKj53c
- 3exTiSQZWwSeu/kmMiCVIHzKbk58kkNhHcNObHppykiIRWcg4cmd3Ta3Wf5/SRzl/wy/MRDoE
- saW8FYeLylp08yMY71CqIPjOAzGr9rMfT4z0EV2Ex8BjfPFa4Ibcxit2dIepNDqJ8Yd9B0YJ+
- x1xm6wSdmxlAUWvJkG6dmutHVVbN8Vb4SXQcYH69wHfc+ZSYTrZJ+e3UXG6ChZQk4KCMEJBG3
- qEppI7mhV2yfe9ejFMGUgGlhKwp2zFfVR6ihGgysrPdK7exzgoq0NFhqdI8RS/2I80653HfH1
- McG7ht8dN/V8TDXvasQU9xikYW5sv72ejwfSKdtYyf5EY/DfzSKKVP+C6hKRbVtWLybMNDIST
- A1ozY38lcbnTR1RB5PvCo9ElThuwAvNfDpnvncoRehebn7/lldSVn5p3HiE+VqtpKQMtYZJam
- XkN2s90sACKa4dRqpeiGvB10lVVsInFfCMr5HXy6O5X7P0pRXKuv5wTQvmlRdM0yaNLC5SwF+
- AqpOl69oDjfeCmYY2fXdBZNjfy8byYN0zxL9fNVQQm2Jd6Zz8IofQsC9Fsv27om4SZBkYweMj
- UOBF7hY5RmOxqM5RyyF04pbxWo24LAZ00u5yuBTCx6Xn8ZjO72CMLGY4lGnWkBU9Aw0I=
+X-Provags-ID: V03:K1:JZwT7DxOgtYM8bHfurcaegwXpIyKn68Ug9IAHnmJ4BSmgkmal/F
+ mjWKl5Y5dBhD5ltFygPAulTIvmGspZgN8443IC/OyB2xTVe5ITmT6o8ALcZV6oMqQmENqFd
+ QX5dYD1vNDLAFOVAxoMhHDF4KOk/h78UiM+DxFMgOiZW4+lMfM16jothYS2IyeQKeD1MZ6/
+ CZlYd44C8GXz5AE96lDug==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:TRSt9876ecw=:dKKG8faYZqu5oiH4a6JMgJ
+ jVdw6VlvEHWwkOr0yIAP/MGiErMnT8564ldRFhkjy43fn449ez9yEZmXrbp7kzPSyCp9u8to6
+ TvWiMPz6uH6MtaPBpp2h9ZxA0cxvR+FMKoEu0UsrKlTzzn/hiZmhZkpfohxqikqj49VbOQ1yY
+ pCWtSjf1RPX8zVjj69IjM24UOnGbMzqD7Tmp1sD1n+iUF1LcS/k+7c4okN3eqvoyo23LMM7ix
+ 7Y2Pk3vc7OgTPSIb1ezAzCTqEhq6qrKuqCCQJos2cKwT9zWa/Xar/0p/iwlC7CSTBLVPjc2u0
+ ZiOe+W415/WG1OhoHyLzRjF1YEgIrfUuSkBn7a9RU2IsF2vPEFmvY3a44TEHpLPNIHfkTJzRG
+ TJ+aBAf7GEELMCXa+cssiT45KIQ85utDg4LdUDAK964nh/6N1xHTH+OLkAm1tQ13wXqX7tznq
+ 7eZS+T7f3ruM/7ZROVt6YVOcwX8ZQKNM4JfvrL1flYHyJ0dORdCAGa74kSEi23rOSxEThDjgR
+ B1u0BMRIoHlmmCvlNRe/69+ufWNJ919vfDPSrVrqlykC73gr1Ps5XG6x+smOSKF/Cy0IqzpAY
+ pyY+IliUwv6gdHaV8yuOZExXeFcVToFKxY9UB83ROY4/Kr6M0JjILR9jTR6OSexjRI6hsjmvx
+ qyGD1koV/IDRNRK7oHHhZ/yowawndQSG/a2K6zKTWZbF6M9ErZTT3+vXAGYjYcpRI1x4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the VFS has been converted from timespec to timespec64
-timestamps, only the conversion to/from ntfs timestamps uses 32-bit
-seconds.
+The VFS timestamps are all 64-bit now, the only missing piece for
+hpfs is the internal conversion function. One interesting bit about
+hpfs is that it can already deal with moving the 136 year window of
+its timestamps to support a much wider range than other file systems
+with 32-bit timestamps. It also treats the timestamps as 'unsigned'
+on 64-bit architectures (but signed on 32-bit, because time_t always
+around to negative numbers in 2038).
 
-This changes that last missing piece to get the ntfs implementation
-y2038 safe on 32-bit architectures.
+Changing the conversion to use time64_t makes 32-bit architectures
+behave the same way as 64-bit. For completeness, this also adds
+a clamp_t call for each conversion, so we don't wrap the timestamps
+but instead stay within the [0..U32_MAX] range of the on-disk
+timestamps.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
 Originally sent on June 19, but got no reply
 ---
- fs/ntfs/inode.c | 12 ++++++------
- fs/ntfs/time.h  | 27 +++++++++++++++------------
- 2 files changed, 21 insertions(+), 18 deletions(-)
+ fs/hpfs/hpfs_fn.h | 13 ++++++++++---
+ fs/hpfs/namei.c   | 12 ++++++------
+ 2 files changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-index decaf75d1cd5..bd3221cbdd95 100644
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -667,18 +667,18 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 	 * mtime is the last change of the data within the file. Not changed
- 	 * when only metadata is changed, e.g. a rename doesn't affect mtime.
- 	 */
--	vi->i_mtime = timespec_to_timespec64(ntfs2utc(si->last_data_change_time));
-+	vi->i_mtime = ntfs2utc(si->last_data_change_time);
- 	/*
- 	 * ctime is the last change of the metadata of the file. This obviously
- 	 * always changes, when mtime is changed. ctime can be changed on its
- 	 * own, mtime is then not changed, e.g. when a file is renamed.
- 	 */
--	vi->i_ctime = timespec_to_timespec64(ntfs2utc(si->last_mft_change_time));
-+	vi->i_ctime = ntfs2utc(si->last_mft_change_time);
- 	/*
- 	 * Last access to the data within the file. Not changed during a rename
- 	 * for example but changed whenever the file is written to.
- 	 */
--	vi->i_atime = timespec_to_timespec64(ntfs2utc(si->last_access_time));
-+	vi->i_atime = ntfs2utc(si->last_access_time);
+diff --git a/fs/hpfs/hpfs_fn.h b/fs/hpfs/hpfs_fn.h
+index 2a153aed4c19..ab2e7cc2ff33 100644
+--- a/fs/hpfs/hpfs_fn.h
++++ b/fs/hpfs/hpfs_fn.h
+@@ -334,16 +334,23 @@ long hpfs_ioctl(struct file *file, unsigned cmd, unsigned long arg);
+  * local time (HPFS) to GMT (Unix)
+  */
  
- 	/* Find the attribute list attribute if present. */
- 	ntfs_attr_reinit_search_ctx(ctx);
-@@ -2997,7 +2997,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
- 	si = (STANDARD_INFORMATION*)((u8*)ctx->attr +
- 			le16_to_cpu(ctx->attr->data.resident.value_offset));
- 	/* Update the access times if they have changed. */
--	nt = utc2ntfs(timespec64_to_timespec(vi->i_mtime));
-+	nt = utc2ntfs(vi->i_mtime);
- 	if (si->last_data_change_time != nt) {
- 		ntfs_debug("Updating mtime for inode 0x%lx: old = 0x%llx, "
- 				"new = 0x%llx", vi->i_ino, (long long)
-@@ -3006,7 +3006,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
- 		si->last_data_change_time = nt;
- 		modified = true;
- 	}
--	nt = utc2ntfs(timespec64_to_timespec(vi->i_ctime));
-+	nt = utc2ntfs(vi->i_ctime);
- 	if (si->last_mft_change_time != nt) {
- 		ntfs_debug("Updating ctime for inode 0x%lx: old = 0x%llx, "
- 				"new = 0x%llx", vi->i_ino, (long long)
-@@ -3015,7 +3015,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
- 		si->last_mft_change_time = nt;
- 		modified = true;
- 	}
--	nt = utc2ntfs(timespec64_to_timespec(vi->i_atime));
-+	nt = utc2ntfs(vi->i_atime);
- 	if (si->last_access_time != nt) {
- 		ntfs_debug("Updating atime for inode 0x%lx: old = 0x%llx, "
- 				"new = 0x%llx", vi->i_ino,
-diff --git a/fs/ntfs/time.h b/fs/ntfs/time.h
-index 01233989d5d1..24cd719f1fd2 100644
---- a/fs/ntfs/time.h
-+++ b/fs/ntfs/time.h
-@@ -36,16 +36,16 @@
-  * Convert the Linux UTC time @ts to its corresponding NTFS time and return
-  * that in little endian format.
-  *
-- * Linux stores time in a struct timespec consisting of a time_t (long at
-- * present) tv_sec and a long tv_nsec where tv_sec is the number of 1-second
-- * intervals since 1st January 1970, 00:00:00 UTC and tv_nsec is the number of
-- * 1-nano-second intervals since the value of tv_sec.
-+ * Linux stores time in a struct timespec64 consisting of a time64_t tv_sec
-+ * and a long tv_nsec where tv_sec is the number of 1-second intervals since
-+ * 1st January 1970, 00:00:00 UTC and tv_nsec is the number of 1-nano-second
-+ * intervals since the value of tv_sec.
-  *
-  * NTFS uses Microsoft's standard time format which is stored in a s64 and is
-  * measured as the number of 100-nano-second intervals since 1st January 1601,
-  * 00:00:00 UTC.
-  */
--static inline sle64 utc2ntfs(const struct timespec ts)
-+static inline sle64 utc2ntfs(const struct timespec64 ts)
+-static inline time_t local_to_gmt(struct super_block *s, time32_t t)
++static inline time64_t local_to_gmt(struct super_block *s, time32_t t)
  {
- 	/*
- 	 * Convert the seconds to 100ns intervals, add the nano-seconds
-@@ -63,7 +63,10 @@ static inline sle64 utc2ntfs(const struct timespec ts)
-  */
- static inline sle64 get_current_ntfs_time(void)
- {
--	return utc2ntfs(current_kernel_time());
-+	struct timespec64 ts;
-+
-+	ktime_get_coarse_real_ts64(&ts);
-+	return utc2ntfs(ts);
+ 	extern struct timezone sys_tz;
+ 	return t + sys_tz.tz_minuteswest * 60 + hpfs_sb(s)->sb_timeshift;
  }
  
- /**
-@@ -73,18 +76,18 @@ static inline sle64 get_current_ntfs_time(void)
-  * Convert the little endian NTFS time @time to its corresponding Linux UTC
-  * time and return that in cpu format.
-  *
-- * Linux stores time in a struct timespec consisting of a time_t (long at
-- * present) tv_sec and a long tv_nsec where tv_sec is the number of 1-second
-- * intervals since 1st January 1970, 00:00:00 UTC and tv_nsec is the number of
-- * 1-nano-second intervals since the value of tv_sec.
-+ * Linux stores time in a struct timespec64 consisting of a time64_t tv_sec
-+ * and a long tv_nsec where tv_sec is the number of 1-second intervals since
-+ * 1st January 1970, 00:00:00 UTC and tv_nsec is the number of 1-nano-second
-+ * intervals since the value of tv_sec.
-  *
-  * NTFS uses Microsoft's standard time format which is stored in a s64 and is
-  * measured as the number of 100 nano-second intervals since 1st January 1601,
-  * 00:00:00 UTC.
-  */
--static inline struct timespec ntfs2utc(const sle64 time)
-+static inline struct timespec64 ntfs2utc(const sle64 time)
+-static inline time32_t gmt_to_local(struct super_block *s, time_t t)
++static inline time32_t gmt_to_local(struct super_block *s, time64_t t)
  {
--	struct timespec ts;
-+	struct timespec64 ts;
+ 	extern struct timezone sys_tz;
+-	return t - sys_tz.tz_minuteswest * 60 - hpfs_sb(s)->sb_timeshift;
++	t = t - sys_tz.tz_minuteswest * 60 - hpfs_sb(s)->sb_timeshift;
++
++	return clamp_t(time64_t, t, 0, U32_MAX);
++}
++
++static inline time32_t local_get_seconds(struct super_block *s)
++{
++	return gmt_to_local(s, ktime_get_real_seconds());
+ }
  
- 	/* Subtract the NTFS time offset. */
- 	u64 t = (u64)(sle64_to_cpu(time) - NTFS_TIME_OFFSET);
+ /*
+diff --git a/fs/hpfs/namei.c b/fs/hpfs/namei.c
+index a3615e4c730d..082b7c76dd0c 100644
+--- a/fs/hpfs/namei.c
++++ b/fs/hpfs/namei.c
+@@ -11,7 +11,7 @@
+ 
+ static void hpfs_update_directory_times(struct inode *dir)
+ {
+-	time_t t = get_seconds();
++	time64_t t = local_to_gmt(dir->i_sb, local_get_seconds(dir->i_sb));
+ 	if (t == dir->i_mtime.tv_sec &&
+ 	    t == dir->i_ctime.tv_sec)
+ 		return;
+@@ -50,7 +50,7 @@ static int hpfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	/*dee.archive = 0;*/
+ 	dee.hidden = name[0] == '.';
+ 	dee.fnode = cpu_to_le32(fno);
+-	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(gmt_to_local(dir->i_sb, get_seconds()));
++	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
+ 	result = new_inode(dir->i_sb);
+ 	if (!result)
+ 		goto bail2;
+@@ -91,7 +91,7 @@ static int hpfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	dnode->root_dnode = 1;
+ 	dnode->up = cpu_to_le32(fno);
+ 	de = hpfs_add_de(dir->i_sb, dnode, "\001\001", 2, 0);
+-	de->creation_date = de->write_date = de->read_date = cpu_to_le32(gmt_to_local(dir->i_sb, get_seconds()));
++	de->creation_date = de->write_date = de->read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
+ 	if (!(mode & 0222)) de->read_only = 1;
+ 	de->first = de->directory = 1;
+ 	/*de->hidden = de->system = 0;*/
+@@ -151,7 +151,7 @@ static int hpfs_create(struct inode *dir, struct dentry *dentry, umode_t mode, b
+ 	dee.archive = 1;
+ 	dee.hidden = name[0] == '.';
+ 	dee.fnode = cpu_to_le32(fno);
+-	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(gmt_to_local(dir->i_sb, get_seconds()));
++	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
+ 
+ 	result = new_inode(dir->i_sb);
+ 	if (!result)
+@@ -238,7 +238,7 @@ static int hpfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, de
+ 	dee.archive = 1;
+ 	dee.hidden = name[0] == '.';
+ 	dee.fnode = cpu_to_le32(fno);
+-	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(gmt_to_local(dir->i_sb, get_seconds()));
++	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
+ 
+ 	result = new_inode(dir->i_sb);
+ 	if (!result)
+@@ -314,7 +314,7 @@ static int hpfs_symlink(struct inode *dir, struct dentry *dentry, const char *sy
+ 	dee.archive = 1;
+ 	dee.hidden = name[0] == '.';
+ 	dee.fnode = cpu_to_le32(fno);
+-	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(gmt_to_local(dir->i_sb, get_seconds()));
++	dee.creation_date = dee.write_date = dee.read_date = cpu_to_le32(local_get_seconds(dir->i_sb));
+ 
+ 	result = new_inode(dir->i_sb);
+ 	if (!result)
 -- 
 2.9.0
 
