@@ -8,57 +8,57 @@ X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1F5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B33DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320AB20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADCE20661
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tyFsGI8q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320AB20671
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idMPapN1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADCE20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731249AbeGSAhW (ORCPT
+        id S1731171AbeGSAhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 20:37:22 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39472 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730813AbeGSAhW (ORCPT
+        Wed, 18 Jul 2018 20:37:21 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:37936 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727635AbeGSAhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 20:37:22 -0400
-Received: by mail-lj1-f196.google.com with SMTP id l15-v6so5614656lji.6;
-        Wed, 18 Jul 2018 16:57:02 -0700 (PDT)
+        Wed, 18 Jul 2018 20:37:19 -0400
+Received: by mail-lf0-f66.google.com with SMTP id a4-v6so4709295lff.5;
+        Wed, 18 Jul 2018 16:56:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3XKuupnBNY0j4f8PnyiVgn0XIL1ETYrfOS2aLECZyzU=;
-        b=tyFsGI8qYwOWZDq961kQ20o2H3IClKB5JUibFHqzN+d+NN8/UtYwbougAaSk8gnQHL
-         DpUrRvH2BjRO8rTduGw3sI1aYonxAJ6S0dHlS8CO2WUD85b3cCNIH95b1o52PGUCle72
-         qVIL0t45B7v25MSrOiKXC/8V2JrP5fEuIh2ihA9hpM3hGYxUdImiP5Boc01jCsc8R0Co
-         ZFBHMBFXp8UkXTg94ksoDJ8HV/FnMs+WWXu2Z4RJElCVn8aZfOYWRdqaMTw4fo0O5iVj
-         AUuMsuq7DcKq5Cgv4nygYvKE/ywnIx8Z1NGkaHRit+rQad6GzYCFlzZ6ESrJq03ivRLc
-         oxJQ==
+        bh=CE/jxx2sQAbPpsFa3TmZtxhtrPIRLZ2UctIF4wmgTIo=;
+        b=idMPapN1PMb2v3kaVFZwajOJPP3xHfJcUb8WU3xBxgb+nbB6xrDNlzN8y8Px1lWSJx
+         +xpnKFkJLID0cyzWLQg0j5n/JSDIWy5MCZmWgCyAQm5qJpgzRAG/gcjhFzv76h/yawVY
+         er4SSvjYM9V2AQTlxv6VajL6TJRPFNnG7L0yAoriRX1kUN/8o467HD9P+4E1MLFKrtZP
+         +UfzF2TUcK50yK/peWuK9bui82ZoHG95gZRxlpmuvwtRb5ATKnahrT1EUqB3X5WBWlqD
+         o48nQVH1bfOCMP9vN6+RISFx8mxbjnQG4HhE2Lzkwm4mBVFxhK2E81qc8XCDJNEnEEGo
+         3qVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3XKuupnBNY0j4f8PnyiVgn0XIL1ETYrfOS2aLECZyzU=;
-        b=mCdrCwQMOnOo4AD5RwBjkpF9zZrtjJeoxl4z9Y6Zi/CAzQ/+/NmR2vJslLE1+c1l1A
-         ji8f0lgcO8EFUsOWCSrBHD6IYAG5Tcw/k/i3VzxqEAN4J3zxt5YsCzn/3MeBEgrraK5f
-         2I5DBXXI6Xj7cm9piA2iXCl+7VNgtABh/zLBlCvYjagrxf0iO9vbZtSN4MLe2wJtjeKf
-         AkWxp0a/Jrr+jNmUnBNGZV1eSotTu4znN7eky/K2lib4eCGJhvjrWcZRT9YvSZh6hghb
-         ZZvt3lQAGrslgNZuM73pE2DX052QkfB86rhwWn0pCFwJiJotmHRBYR9HPxbweMFDIrCo
-         h8+A==
-X-Gm-Message-State: AOUpUlHtCDzU86RF+K//XE86r0W5E90d3VXVfkQ35rmASBkOyQdracui
-        7bRbaEwB/ZrhuJHimIdF64o=
-X-Google-Smtp-Source: AAOMgpfPjigYXvKAL0ryICc8DoWIIQ09EswScp7vDya6SEnjTb1i24lJxYDamyWo8p3/kghFZieYvg==
-X-Received: by 2002:a2e:9f4d:: with SMTP id v13-v6mr5783528ljk.42.1531958221471;
-        Wed, 18 Jul 2018 16:57:01 -0700 (PDT)
+        bh=CE/jxx2sQAbPpsFa3TmZtxhtrPIRLZ2UctIF4wmgTIo=;
+        b=T6Jh5Y3jAXE96cpvmURDphVxHLKumsymlQ1SIA0ZeHvgHSyihmhmrudMjwJbKXl90P
+         YMstnjAAXFRoDN2O+6nYVucERq6mGknKZKtGKBpI/fZh9NjX7Mj01PPmAAcEy07UU6l9
+         qYkAmeKUjLT8TVJDBRepgE5nQyXh7+qw30ACzjDNqElcARDCWWNOVYCn7T+D8WEyUH/N
+         LuDHENdR8KxnXHnwXHFOBHnvrKQ5NOnZQ3nZB3WA//xq/svhTlD7/qxWya+J4aROFQZh
+         2tEEX4YE0CBMs0eusT7mDIBwYoeufdIYs8ps+9I3LVIUs0mxIBzJ5rBQ6pxNMLYILoue
+         xlyg==
+X-Gm-Message-State: AOUpUlHZKKABpd+nXzMROTFPoU9KlPEPmfMosAbqkP2giZUftJHkJ8Hg
+        ROKKHcCTf2pv45cl65ZNOlE=
+X-Google-Smtp-Source: AAOMgpcKNid2fOSMPG4hIn05+moSynVjPs/1EOVnUIR+ZtsKh2JJ2UvoeBTuHTgJftkgB41Ewr2dEQ==
+X-Received: by 2002:a19:4e06:: with SMTP id c6-v6mr4970804lfb.30.1531958218420;
+        Wed, 18 Jul 2018 16:56:58 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm826584ljk.27.2018.07.18.16.56.59
+        by smtp.gmail.com with ESMTPSA id h7-v6sm826584ljk.27.2018.07.18.16.56.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 16:57:00 -0700 (PDT)
+        Wed, 18 Jul 2018 16:56:57 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
@@ -77,9 +77,9 @@ Cc:     Tony Lindgren <tony@atomide.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC PATCH 8/8] mtd: rawnand: ams-delta: Use GPIO callbacks for data I/O
-Date:   Thu, 19 Jul 2018 01:57:10 +0200
-Message-Id: <20180718235710.18242-9-jmkrzyszt@gmail.com>
+Subject: [RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
+Date:   Thu, 19 Jul 2018 01:57:08 +0200
+Message-Id: <20180718235710.18242-7-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180718235710.18242-1-jmkrzyszt@gmail.com>
 References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
@@ -88,370 +88,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't readw()/writew() data directly from/to GPIO port which is under
-control of gpio-omap driver, use GPIO chip callbacks instead.
-
-Thanks to utilization of get/set_multiple() callbacks, performance
-degrade is minor for typical data transfers.
-
-The driver should now work with any 8+-bit bidirectional GPIO port,
-not only OMAP.
+This should make applications utilizing whole banks work faster.
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-
-# Conflicts:
-#	drivers/mtd/nand/raw/ams-delta.c
 ---
- arch/arm/mach-omap1/board-ams-delta.c |  11 ----
- drivers/mtd/nand/raw/ams-delta.c      | 119 +++++++++++++++-------------------
- 2 files changed, 52 insertions(+), 78 deletions(-)
+ drivers/gpio/gpio-omap.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 86 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index 16f7bbe47607..08e732bc1cd2 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -321,20 +321,9 @@ struct modem_private_data {
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index d1afedf4dcbf..e81008678a38 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -77,6 +77,8 @@ struct gpio_bank {
+ 	bool workaround_enabled;
  
- static struct modem_private_data modem_priv;
+ 	void (*set_dataout)(struct gpio_bank *bank, unsigned gpio, int enable);
++	void (*set_dataout_multiple)(struct gpio_bank *bank,
++				     unsigned long *mask, unsigned long *bits);
+ 	int (*get_context_loss_count)(struct device *dev);
  
--static struct resource ams_delta_nand_resources[] = {
--	[0] = {
--		.start	= OMAP1_MPUIO_BASE,
--		.end	= OMAP1_MPUIO_BASE +
--				OMAP_MPUIO_IO_CNTL + sizeof(u32) - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--};
--
- static struct platform_device ams_delta_nand_device = {
- 	.name	= "ams-delta-nand",
- 	.id	= -1,
--	.num_resources	= ARRAY_SIZE(ams_delta_nand_resources),
--	.resource	= ams_delta_nand_resources,
- };
- 
- #define OMAP_GPIO_LABEL		"gpio-0-15"
-diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
-index bd501f385e78..8fac8d2a444a 100644
---- a/drivers/mtd/nand/raw/ams-delta.c
-+++ b/drivers/mtd/nand/raw/ams-delta.c
-@@ -25,13 +25,11 @@
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/rawnand.h>
- #include <linux/mtd/partitions.h>
--#include <linux/platform_data/gpio-omap.h>
-+#include <linux/platform_device.h>
- 
- #include <asm/io.h>
- #include <asm/sizes.h>
- 
--#include <mach/hardware.h>
--
- /*
-  * MTD structure for E3 (Delta)
-  */
-@@ -45,7 +43,9 @@ struct ams_delta_nand {
- 	struct gpio_desc	*gpiod_nwe;
- 	struct gpio_desc	*gpiod_ale;
- 	struct gpio_desc	*gpiod_cle;
--	void __iomem		*io_base;
-+	struct gpio_chip	*data_gpioc;
-+	unsigned long		data_mask;
-+	int			data_width;
- };
- 
- /*
-@@ -73,43 +73,55 @@ static const struct mtd_partition partition_info[] = {
- 	  .size		=  3 * SZ_256K },
- };
- 
--static void ams_delta_write_next_byte(struct ams_delta_nand *priv, u_char byte)
-+static void ams_delta_write_commit(struct ams_delta_nand *priv)
- {
--	struct nand_chip *this = &priv->nand_chip;
--
--	writew(byte, this->IO_ADDR_W);
- 	gpiod_set_value(priv->gpiod_nwe, 0);
- 	ndelay(40);
- 	gpiod_set_value(priv->gpiod_nwe, 1);
+ 	struct omap_gpio_reg_offs *regs;
+@@ -161,6 +163,51 @@ static int omap_get_gpio_dataout(struct gpio_bank *bank, int offset)
+ 	return (readl_relaxed(reg) & (BIT(offset))) != 0;
  }
  
-+static void ams_delta_write_next_byte(struct ams_delta_nand *priv, u_char byte)
++/* set multiple data out values using dedicate set/clear register */
++static void omap_set_gpio_dataout_reg_multiple(struct gpio_bank *bank,
++					       unsigned long *mask,
++					       unsigned long *bits)
 +{
-+	struct gpio_chip *data_gpioc = priv->data_gpioc;
-+	unsigned long bits = byte;
++	void __iomem *reg = bank->base;
++	u32 l;
 +
-+	data_gpioc->set_multiple(data_gpioc, &priv->data_mask, &bits);
++	l = *bits & *mask;
++	writel_relaxed(l, reg + bank->regs->set_dataout);
++	bank->context.dataout |= l;
 +
-+	ams_delta_write_commit(priv);
++	l = ~*bits & *mask;
++	writel_relaxed(l, reg + bank->regs->clr_dataout);
++	bank->context.dataout &= ~l;
 +}
 +
- static void ams_delta_write_first_byte(struct ams_delta_nand *priv, u_char byte)
- {
--	void __iomem *io_base = priv->io_base;
-+	struct gpio_chip *data_gpioc = priv->data_gpioc;
-+	unsigned long bits = byte;
-+	int i;
- 
--	writew(0, io_base + OMAP_MPUIO_IO_CNTL);
-+	for (i = 0; i < priv->data_width; i++)
-+		data_gpioc->direction_output(data_gpioc, i, test_bit(i, &bits));
- 
--	ams_delta_write_next_byte(priv, byte);
-+	ams_delta_write_commit(priv);
- }
- 
- static u_char ams_delta_read_next_byte(struct ams_delta_nand *priv)
- {
--	struct nand_chip *this = &priv->nand_chip;
--	u_char res;
-+	struct gpio_chip *data_gpioc = priv->data_gpioc;
-+	unsigned long bits;
- 
- 	gpiod_set_value(priv->gpiod_nre, 0);
- 	ndelay(40);
--	res = readw(this->IO_ADDR_R);
-+	data_gpioc->get_multiple(data_gpioc, &priv->data_mask, &bits);
- 	gpiod_set_value(priv->gpiod_nre, 1);
- 
--	return res;
-+	return bits;
- }
- 
- static u_char ams_delta_read_first_byte(struct ams_delta_nand *priv)
- {
--	void __iomem *io_base = priv->io_base;
-+	struct gpio_chip *data_gpioc = priv->data_gpioc;
-+	int i;
- 
--	writew(~0, io_base + OMAP_MPUIO_IO_CNTL);
-+	for (i = 0; i < priv->data_width; i++)
-+		data_gpioc->direction_input(data_gpioc, i);
- 
- 	return ams_delta_read_next_byte(priv);
- }
-@@ -188,16 +200,11 @@ static int ams_delta_init(struct platform_device *pdev)
- 	struct ams_delta_nand *priv;
- 	struct nand_chip *this;
- 	struct mtd_info *mtd;
--	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	void __iomem *io_base;
- 	struct gpio_descs *data_gpiods;
- 	struct gpio_chip *data_gpioc;
- 	unsigned long mask, bits;
- 	int i, err = 0;
- 
--	if (!res)
--		return -ENXIO;
--
- 	/* Allocate memory for MTD device structure and private data */
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct ams_delta_nand),
- 			    GFP_KERNEL);
-@@ -210,25 +217,8 @@ static int ams_delta_init(struct platform_device *pdev)
- 	mtd = nand_to_mtd(this);
- 	mtd->dev.parent = &pdev->dev;
- 
--	/*
--	 * Don't try to request the memory region from here,
--	 * it should have been already requested from the
--	 * gpio-omap driver and requesting it again would fail.
--	 */
--
--	io_base = ioremap(res->start, resource_size(res));
--	if (io_base == NULL) {
--		dev_err(&pdev->dev, "ioremap failed\n");
--		err = -EIO;
--		goto out_free;
--	}
--
--	priv->io_base = io_base;
- 	nand_set_controller_data(this, priv);
- 
--	/* Set address of NAND IO lines */
--	this->IO_ADDR_R = io_base + OMAP_MPUIO_INPUT_LATCH;
--	this->IO_ADDR_W = io_base + OMAP_MPUIO_OUTPUT;
- 	this->read_byte = ams_delta_read_byte;
- 	this->write_buf = ams_delta_write_buf;
- 	this->read_buf = ams_delta_read_buf;
-@@ -238,7 +228,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 	if (IS_ERR(priv->gpiod_rdy)) {
- 		err = PTR_ERR(priv->gpiod_rdy);
- 		dev_warn(&pdev->dev, "RDY GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	if (priv->gpiod_rdy)
-@@ -256,49 +246,49 @@ static int ams_delta_init(struct platform_device *pdev)
- 	if (IS_ERR(priv->gpiod_nwp)) {
- 		err = PTR_ERR(priv->gpiod_nwp);
- 		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_nce = devm_gpiod_get(&pdev->dev, "nce", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpiod_nce)) {
- 		err = PTR_ERR(priv->gpiod_nce);
- 		dev_err(&pdev->dev, "NCE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_nre = devm_gpiod_get(&pdev->dev, "nre", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpiod_nre)) {
- 		err = PTR_ERR(priv->gpiod_nre);
- 		dev_err(&pdev->dev, "NRE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_nwe = devm_gpiod_get(&pdev->dev, "nwe", GPIOD_OUT_HIGH);
- 	if (IS_ERR(priv->gpiod_nwe)) {
- 		err = PTR_ERR(priv->gpiod_nwe);
- 		dev_err(&pdev->dev, "NWE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_ale = devm_gpiod_get(&pdev->dev, "ale", GPIOD_OUT_LOW);
- 	if (IS_ERR(priv->gpiod_ale)) {
- 		err = PTR_ERR(priv->gpiod_ale);
- 		dev_err(&pdev->dev, "ALE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	priv->gpiod_cle = devm_gpiod_get(&pdev->dev, "cle", GPIOD_OUT_LOW);
- 	if (IS_ERR(priv->gpiod_cle)) {
- 		err = PTR_ERR(priv->gpiod_cle);
- 		dev_err(&pdev->dev, "CLE GPIO request failed (%d)\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 	/* Request array of data pins, initialize them as output and set low */
- 	data_gpiods = devm_gpiod_get_array(&pdev->dev, "data", GPIOD_OUT_LOW);
- 	if (IS_ERR(data_gpiods)) {
- 		err = PTR_ERR(data_gpiods);
- 		dev_err(&pdev->dev, "data GPIO request failed: %d\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	/* Use GPIO chip of first data GPIO pin descriptor */
-@@ -312,7 +302,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 		err = -EINVAL;
- 		dev_err(&pdev->dev,
- 			"data GPIO chip does not support get/set_multiple()\n");
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	/* Verify if get_multiple() returns all pins low as initialized above */
-@@ -321,13 +311,13 @@ static int ams_delta_init(struct platform_device *pdev)
- 	if (err) {
- 		dev_err(&pdev->dev,
- 			"data GPIO chip get_multiple() failed: %d\n", err);
--		goto out_mtd;
-+		return err;
- 	}
- 	if (bits) {
- 		err = -EINVAL;
- 		dev_err(&pdev->dev,
- 			"mismmatch of data GPIO initial value: %lu\n", bits);
--		goto out_mtd;
-+		return err;
- 	}
- 
- 	/* Verify each data GPIO pin */
-@@ -337,7 +327,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 			err = -EINVAL;
- 			dev_err(&pdev->dev, "GPIO chip mismatch of data bit %d\n",
- 				i);
--			goto out_mtd;
-+			return err;
- 		}
- 
- 		/* Require all pins active high (not inverted) */
-@@ -346,7 +336,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 			dev_err(&pdev->dev,
- 				"unsupported polarity of data GPIO bit %d\n",
- 				i);
--			goto out_mtd;
-+			return err;
- 		}
- 
- 		/*
-@@ -360,13 +350,13 @@ static int ams_delta_init(struct platform_device *pdev)
- 			dev_err(&pdev->dev,
- 				"data bit %d GPIO chip get() failed: %d\n", i,
- 				err);
--			goto out_mtd;
-+			return err;
- 		}
- 		if (!err) {
- 			err = -EINVAL;
- 			dev_err(&pdev->dev, "mismatch of data GPIO bit %d value\n",
- 				i);
--			goto out_mtd;
-+			return err;
- 		}
- 
- 		/*
-@@ -379,14 +369,18 @@ static int ams_delta_init(struct platform_device *pdev)
- 			dev_err(&pdev->dev,
- 				"unsupported mode of data GPIO bit %d\n",
- 				i);
--			goto out_mtd;
-+			return err;
- 		}
- 	}
- 
-+	priv->data_gpioc = data_gpioc;
-+	priv->data_width = data_gpiods->ndescs;
-+	priv->data_mask = (1 << data_gpiods->ndescs) - 1;
++/* set multiple data out values using mask register */
++static void omap_set_gpio_dataout_mask_multiple(struct gpio_bank *bank,
++						unsigned long *mask,
++						unsigned long *bits)
++{
++	void __iomem *reg = bank->base + bank->regs->dataout;
++	u32 l = (readl_relaxed(reg) & ~*mask) | (*bits & *mask);
 +
- 	/* Scan to find existence of the device */
- 	err = nand_scan(mtd, 1);
- 	if (err)
--		goto out_mtd;
-+		return err;
- 
- 	/* As soon as the device is found, release write protection */
- 	gpiod_set_value(priv->gpiod_nwp, 1);
-@@ -394,13 +388,7 @@ static int ams_delta_init(struct platform_device *pdev)
- 	/* Register the partitions */
- 	mtd_device_register(mtd, partition_info, ARRAY_SIZE(partition_info));
- 
--	goto out;
--
-- out_mtd:
--	iounmap(io_base);
--out_free:
-- out:
--	return err;
-+	return 0;
- }
- 
- /*
-@@ -410,16 +398,13 @@ static int ams_delta_cleanup(struct platform_device *pdev)
++	writel_relaxed(l, reg);
++	bank->context.dataout = l;
++}
++
++static unsigned long omap_get_gpio_datain_multiple(struct gpio_bank *bank,
++					      unsigned long *mask)
++{
++	void __iomem *reg = bank->base + bank->regs->datain;
++
++	return readl_relaxed(reg) & *mask;
++}
++
++static unsigned long omap_get_gpio_dataout_multiple(struct gpio_bank *bank,
++					       unsigned long *mask)
++{
++	void __iomem *reg = bank->base + bank->regs->dataout;
++
++	return readl_relaxed(reg) & *mask;
++}
++
+ static inline void omap_gpio_rmw(void __iomem *base, u32 reg, u32 mask, bool set)
  {
- 	struct ams_delta_nand *priv = platform_get_drvdata(pdev);
- 	struct mtd_info *mtd = nand_to_mtd(&priv->nand_chip);
--	void __iomem *io_base = priv->io_base;
- 
- 	/* Apply write protection */
- 	gpiod_set_value(priv->gpiod_nwp, 0);
- 
--	/* Release resources, unregister device */
-+	/* Unregister device */
- 	nand_release(mtd);
- 
--	iounmap(io_base);
--
+ 	int l = readl_relaxed(base + reg);
+@@ -968,6 +1015,26 @@ static int omap_gpio_output(struct gpio_chip *chip, unsigned offset, int value)
  	return 0;
  }
  
++static int omap_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
++				  unsigned long *bits)
++{
++	struct gpio_bank *bank = gpiochip_get_data(chip);
++	void __iomem *reg = bank->base + bank->regs->direction;
++	unsigned long in = readl_relaxed(reg), l;
++
++	*bits = 0;
++
++	l = in & *mask;
++	if (l)
++		*bits |= omap_get_gpio_datain_multiple(bank, &l);
++
++	l = ~in & *mask;
++	if (l)
++		*bits |= omap_get_gpio_dataout_multiple(bank, &l);
++
++	return 0;
++}
++
+ static int omap_gpio_debounce(struct gpio_chip *chip, unsigned offset,
+ 			      unsigned debounce)
+ {
+@@ -1012,6 +1079,17 @@ static void omap_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
+ 	raw_spin_unlock_irqrestore(&bank->lock, flags);
+ }
+ 
++static void omap_gpio_set_multiple(struct gpio_chip *chip, unsigned long *mask,
++				   unsigned long *bits)
++{
++	struct gpio_bank *bank = gpiochip_get_data(chip);
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&bank->lock, flags);
++	bank->set_dataout_multiple(bank, mask, bits);
++	raw_spin_unlock_irqrestore(&bank->lock, flags);
++}
++
+ /*---------------------------------------------------------------------*/
+ 
+ static void omap_gpio_show_rev(struct gpio_bank *bank)
+@@ -1073,9 +1151,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
+ 	bank->chip.get_direction = omap_gpio_get_direction;
+ 	bank->chip.direction_input = omap_gpio_input;
+ 	bank->chip.get = omap_gpio_get;
++	bank->chip.get_multiple = omap_gpio_get_multiple;
+ 	bank->chip.direction_output = omap_gpio_output;
+ 	bank->chip.set_config = omap_gpio_set_config;
+ 	bank->chip.set = omap_gpio_set;
++	bank->chip.set_multiple = omap_gpio_set_multiple;
+ 	if (bank->is_mpuio) {
+ 		bank->chip.label = "mpuio";
+ 		if (bank->regs->wkup_en)
+@@ -1209,10 +1289,14 @@ static int omap_gpio_probe(struct platform_device *pdev)
+ 				pdata->get_context_loss_count;
+ 	}
+ 
+-	if (bank->regs->set_dataout && bank->regs->clr_dataout)
++	if (bank->regs->set_dataout && bank->regs->clr_dataout) {
+ 		bank->set_dataout = omap_set_gpio_dataout_reg;
+-	else
++		bank->set_dataout_multiple = omap_set_gpio_dataout_reg_multiple;
++	} else {
+ 		bank->set_dataout = omap_set_gpio_dataout_mask;
++		bank->set_dataout_multiple =
++				omap_set_gpio_dataout_mask_multiple;
++	}
+ 
+ 	raw_spin_lock_init(&bank->lock);
+ 	raw_spin_lock_init(&bank->wa_lock);
 -- 
 2.16.4
 
