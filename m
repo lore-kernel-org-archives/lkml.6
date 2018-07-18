@@ -5,43 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77ECECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D1E2ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984432084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 984432084E
+	by mail.kernel.org (Postfix) with ESMTP id EF6462084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:40:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6462084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbeGSASZ (ORCPT
+        id S1731012AbeGSAUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 20:18:25 -0400
-Received: from mga12.intel.com ([192.55.52.136]:45622 "EHLO mga12.intel.com"
+        Wed, 18 Jul 2018 20:20:47 -0400
+Received: from mga06.intel.com ([134.134.136.31]:6839 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729973AbeGSASZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 20:18:25 -0400
+        id S1730487AbeGSAUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 20:20:47 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 16:38:10 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 16:40:31 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,371,1526367600"; 
-   d="scan'208";a="73934853"
+   d="scan'208";a="73935115"
 Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga001.jf.intel.com with ESMTP; 18 Jul 2018 16:38:05 -0700
-Subject: Re: [PATCHv5 10/19] x86/mm: Implement page_keyid() using page_ext
+  by orsmga001.jf.intel.com with ESMTP; 18 Jul 2018 16:40:17 -0700
+Subject: Re: [PATCHv5 11/19] x86/mm: Implement vma_keyid()
 To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Tom Lendacky <thomas.lendacky@amd.com>
 References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-11-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-12-kirill.shutemov@linux.intel.com>
 Cc:     Kai Huang <kai.huang@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        "Schofield, Alison" <alison.schofield@intel.com>
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -87,12 +86,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <2166be55-3491-f620-5eb0-6f671a53645f@intel.com>
-Date:   Wed, 18 Jul 2018 16:38:02 -0700
+Message-ID: <a204a032-5e2b-63f6-31d3-c17014f94c8b@intel.com>
+Date:   Wed, 18 Jul 2018 16:40:14 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180717112029.42378-11-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20180717112029.42378-12-kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -101,32 +100,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
-> Store KeyID in bits 31:16 of extended page flags. These bits are unused.
+> --- a/arch/x86/mm/mktme.c
+> +++ b/arch/x86/mm/mktme.c
+> @@ -1,3 +1,4 @@
+> +#include <linux/mm.h>
+>  #include <asm/mktme.h>
+>  
+>  phys_addr_t mktme_keyid_mask;
+> @@ -37,3 +38,14 @@ struct page_ext_operations page_mktme_ops = {
+>  	.need = need_page_mktme,
+>  	.init = init_page_mktme,
+>  };
+> +
+> +int vma_keyid(struct vm_area_struct *vma)
+> +{
+> +	pgprotval_t prot;
+> +
+> +	if (!mktme_enabled())
+> +		return 0;
+> +
+> +	prot = pgprot_val(vma->vm_page_prot);
+> +	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
+> +}
 
-I'd love a two sentence remind of what page_ext is and why you chose to
-use it.  Yes, you need this.  No, not everybody that you want to review
-this patch set knows what it is or why you chose it.
+I'm a bit surprised this isn't inlined.  Not that function calls are
+expensive, but we *could* entirely avoid them using the normal pattern of:
 
-> page_keyid() returns zero until page_ext is ready.
+// In the header:
+static inline vma_keyid(...)
+{
+	if (!mktme_enabled())
+		return 0;
 
-Is there any implication of this?  Or does it not matter because we
-don't run userspace until after page_ext initialization is done?
-
-> page_ext initializer enables static branch to indicate that
-
-			"enables a static branch"
-
-> page_keyid() can use page_ext. The same static branch will gate MKTME
-> readiness in general.
-
-Can you elaborate on this a bit?  It would also be a nice place to hint
-to the folks working hard on the APIs to ensure she checks this.
-
-> We don't yet set KeyID for the page. It will come in the following
-> patch that implements prep_encrypted_page(). All pages have KeyID-0 for
-> now.
-
-It also wouldn't hurt to mention why you don't use an X86_FEATURE_* for
-this rather than an explicit static branch.  I'm sure the x86
-maintainers will be curious.
+	return __vma_keyid(...); // <- the .c file version
+}
