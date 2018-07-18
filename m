@@ -2,223 +2,162 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE46EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E802ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FDF620652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:31:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Kss740Fb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E3U3zOYF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDF620652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 3904120652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3904120652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731485AbeGROJh (ORCPT
+        id S1731170AbeGROLd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:09:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42436 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730234AbeGROJg (ORCPT
+        Wed, 18 Jul 2018 10:11:33 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:14322 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726990AbeGROLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:09:36 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0A354607C6; Wed, 18 Jul 2018 13:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531920699;
-        bh=O8qbacYd7wyHTriR5CYEZ5rA4Lva0BrVWMiygXVaW1Y=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Kss740Fb20feINQn2FcPLviGQvYlPXlBLpwsvJ83FYMAggIHP7HzfYxKlc/kwIsQ2
-         idfjMj2AeO8HVRZ4/8drJ2KcjD5JnNU4MAil20UudjAoSTyydJg0PcqJrd17nyiFBD
-         o+gOgP/hFhgkyQM3VxS7CuncJNvQAVme8S7BeYOo=
-Received: from mail-qt0-f170.google.com (mail-qt0-f170.google.com [209.85.216.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 245486078C;
-        Wed, 18 Jul 2018 13:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531920690;
-        bh=O8qbacYd7wyHTriR5CYEZ5rA4Lva0BrVWMiygXVaW1Y=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=E3U3zOYF4O/d+EQlLdSvCbVQdBtGYb+2nUcbFUYrqQYkdV6WFQbma4+5pJLIcHsGV
-         TzaIL/W+uq4plgi0g5Rp/33E8N+SPPxwQVD5FhJQGSrthtdajFPNVwNP522Ysv4pzo
-         B9Yr5v7sYEdNRsQPDHqTWaHDJC3i8BI1tk4HsvE8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 245486078C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f170.google.com with SMTP id h4-v6so3973006qtj.7;
-        Wed, 18 Jul 2018 06:31:30 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFPE4f9g0DLHURAinBemcmJQp0J3f4M/Y3Y744ffOMdlEYZ4Ow3
-        /9fJoe1SX+o5hEloyO0c4ggD0wrNvx+m8ieFrNg=
-X-Google-Smtp-Source: AAOMgpe2emM36vsxMd8J06FVQ5JQKuMva9Zl6NWryVWjVixgf51IBeRPyUg55dk0VL4cVOvgCHlLJgPonDbu5AmAgWQ=
-X-Received: by 2002:a0c:c489:: with SMTP id u9-v6mr6412035qvi.11.1531920689404;
- Wed, 18 Jul 2018 06:31:29 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac8:f25:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 06:31:28 -0700 (PDT)
-In-Reply-To: <48139f68-5a79-8531-00fa-fbdd787f50f5@arm.com>
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
- <20180708173413.1965-4-vivek.gautam@codeaurora.org> <5179668.PHK6S3sxLu@aspire.rjw.lan>
- <CAFp+6iGcwdK=wyPf++u3B+ORghuB1YhYmnJLSwvt1efG9H4YeA@mail.gmail.com> <48139f68-5a79-8531-00fa-fbdd787f50f5@arm.com>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Wed, 18 Jul 2018 19:01:28 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iF3vihGYLVkALmGa4USLcUaUOtpKD0EDC8CALv6Ch6VrQ@mail.gmail.com>
-Message-ID: <CAFp+6iF3vihGYLVkALmGa4USLcUaUOtpKD0EDC8CALv6Ch6VrQ@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
-        sboyd@kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "robh+dt" <robh+dt@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        freedreno <freedreno@lists.freedesktop.org>
+        Wed, 18 Jul 2018 10:11:33 -0400
+X-UUID: c34cae72afa14a1a91fa2ccffa541892-20180718
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2097678855; Wed, 18 Jul 2018 21:33:22 +0800
+Received: from MTKMBS06N2.mediatek.inc (172.21.101.130) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 18 Jul 2018 21:33:21 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 18 Jul 2018 21:33:20 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 18 Jul 2018 21:33:20 +0800
+Message-ID: <1531920800.8953.151.camel@mtkswgap22>
+Subject: Re: [PATCH v5 4/7] Bluetooth: Add new quirk for non-persistent
+ setup settings
+From:   Sean Wang <sean.wang@mediatek.com>
+To:     Marcel Holtmann <marcel@holtmann.org>
+CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Wed, 18 Jul 2018 21:33:20 +0800
+In-Reply-To: <E05CD0A8-B820-4900-970D-57F71E8E5583@holtmann.org>
+References: <cover.1531150733.git.sean.wang@mediatek.com>
+         <4b188c8a508340598dda233f6d49a16c9ac8784e.1531150733.git.sean.wang@mediatek.com>
+         <2825B722-E75C-4A3C-8110-879205E46C0E@holtmann.org>
+         <1531638169.3955.5.camel@mtkswgap22>
+         <6571C864-B2EC-4806-BC5D-F531792737F6@holtmann.org>
+         <1531757114.8953.12.camel@mtkswgap22>
+         <E05CD0A8-B820-4900-970D-57F71E8E5583@holtmann.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 6:13 PM, Robin Murphy <robin.murphy@arm.com> wrote:
-> On 18/07/18 10:30, Vivek Gautam wrote:
->>
->> On Wed, Jul 11, 2018 at 3:23 PM, Rafael J. Wysocki <rjw@rjwysocki.net>
->> wrote:
->>>
->>> On Sunday, July 8, 2018 7:34:12 PM CEST Vivek Gautam wrote:
->>>>
->>>> From: Sricharan R <sricharan@codeaurora.org>
->>>>
->>>> Finally add the device link between the master device and
->>>> smmu, so that the smmu gets runtime enabled/disabled only when the
->>>> master needs it. This is done from add_device callback which gets
->>>> called once when the master is added to the smmu.
->>>>
->>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->>>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->>>> Cc: Lukas Wunner <lukas@wunner.de>
->>>> ---
->>>>
->>>>   - Change since v11
->>>>     * Replaced DL_FLAG_AUTOREMOVE flag with DL_FLAG_AUTOREMOVE_SUPPLIER.
->>>>
->>>>   drivers/iommu/arm-smmu.c | 12 ++++++++++++
->>>>   1 file changed, 12 insertions(+)
->>>>
->>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>>> index 09265e206e2d..916cde4954d2 100644
->>>> --- a/drivers/iommu/arm-smmu.c
->>>> +++ b/drivers/iommu/arm-smmu.c
->>>> @@ -1461,8 +1461,20 @@ static int arm_smmu_add_device(struct device
->>>> *dev)
->>>>
->>>>        iommu_device_link(&smmu->iommu, dev);
->>>>
->>>> +     if (pm_runtime_enabled(smmu->dev) &&
->>>
->>>
->>> Why does the creation of the link depend on whether or not runtime PM
->>> is enabled for the MMU device?
->>>
->>> What about system-wide PM and system shutdown?  Are they always
->>> guaranteed
->>> to happen in the right order without the link?
->>
->>
->> Hi Robin,
->>
->> As Rafael pointed, we should the device link creation should not depend on
->> runtime PM being enabled or not, as we would also want to guarantee
->> that system wide PM callbacks are called in the right order for smmu
->> and clients.
->>
->> Does this change of removing the check for pm_runtime_enabled() from here
->> looks okay to you?
->
->
-> FWIW the existing system PM ops make no claim to be perfect, and I wouldn't
-> be at all surprised if it was only by coincidence that my devices happened
-> to put on the relevant lists in the right order to start with. If we no
-> longer need to worry about explicit device_link housekeeping in the SMMU
-> driver, then creating them unconditionally sounds like the sensible thing to
-> do. I'd be inclined to treat failure as non-fatal like we do for the sysfs
-> link, though, since it's another thing that correct SMMU operation doesn't
-> actually depend on (at this point we don't necessarily know if this consumer
-> even has a driver at all).
+On Wed, 2018-07-18 at 14:14 +0200, Marcel Holtmann wrote:
+> Hi Sean,
+> 
+> >>>>> Add a new quirk HCI_QUIRK_NON_PERSISTENT_SETUP allowing that a quirk that
+> >>>>> runs setup() after every open() and not just after the first open().
+> >>>>> 
+> >>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> >>>>> ---
+> >>>>> include/net/bluetooth/hci.h | 9 +++++++++
+> >>>>> net/bluetooth/hci_core.c    | 3 ++-
+> >>>>> 2 files changed, 11 insertions(+), 1 deletion(-)
+> >>>>> 
+> >>>>> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+> >>>>> index 73e48be..d3ec5b2a8 100644
+> >>>>> --- a/include/net/bluetooth/hci.h
+> >>>>> +++ b/include/net/bluetooth/hci.h
+> >>>>> @@ -183,6 +183,15 @@ enum {
+> >>>>> 	 * during the hdev->setup vendor callback.
+> >>>>> 	 */
+> >>>>> 	HCI_QUIRK_NON_PERSISTENT_DIAG,
+> >>>>> +
+> >>>>> +	/* When this quirk is set, setup() would be run after every
+> >>>>> +	 * open() and not just after the first open().
+> >>>>> +	 *
+> >>>>> +	 * This quirk can be set before hci_register_dev is called or
+> >>>>> +	 * during the hdev->setup vendor callback.
+> >>>>> +	 *
+> >>>>> +	 */
+> >>>>> +	HCI_QUIRK_NON_PERSISTENT_SETUP,
+> >>>>> };
+> >>>>> 
+> >>>>> /* HCI device flags */
+> >>>>> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> >>>>> index f5c21004..0111280 100644
+> >>>>> --- a/net/bluetooth/hci_core.c
+> >>>>> +++ b/net/bluetooth/hci_core.c
+> >>>>> @@ -1396,7 +1396,8 @@ static int hci_dev_do_open(struct hci_dev *hdev)
+> >>>>> 	atomic_set(&hdev->cmd_cnt, 1);
+> >>>>> 	set_bit(HCI_INIT, &hdev->flags);
+> >>>>> 
+> >>>>> -	if (hci_dev_test_flag(hdev, HCI_SETUP)) {
+> >>>>> +	if (hci_dev_test_flag(hdev, HCI_SETUP) ||
+> >>>>> +	    test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
+> >>>>> 		hci_sock_dev_event(hdev, HCI_DEV_SETUP);
+> >>>> 
+> >>>> can you include the extract of btmon on how the HCI_DEV_SETUP event shows up in the traces? I remember that I asked about something like that.
+> >>>> 
+> >>>> Regards
+> >>>> 
+> >>>> Marcel
+> >>>> 
+> >>> 
+> >>> No, I cannot see any event about HCI_DEV_SETUP in btmon trace, the trace I posted as below is doing some rounds of power off and then on
+> >> 
+> >> it will result in this:
+> >> 
+> >>        case HCI_DEV_SETUP:
+> >>                if (hdev->manufacturer == 0xffff)
+> >>                        return NULL;
+> >> 
+> >>        case HCI_DEV_UP:
+> >>                skb = bt_skb_alloc(HCI_MON_INDEX_INFO_SIZE, GFP_ATOMIC);
+> >> 
+> >> So we will see extra index info events, but I assume that is just fine this we also see them on DEV_UP. They also do not hurt as long as not magically the manufacturer information changes.
+> >> 
+> >> I do wonder though if this quirk is set, then hdev->manufacturer needs to be reset and allow hdev->setup() to reset it. This goes with a log of other information as well. Maybe just a look if there are no races here.
+> >> 
+> >> Regards
+> >> 
+> >> Marcel
+> >> 
+> > 
+> > I didn't set a value to hdev->manufacture.
+> > 
+> > Should I set it in hdev->setup() ? MediaTek is 0x46 according to [1].
+> 
+> it is generally useful so that it gets reported out in btmon and thus it can assign the correct vendor specific decoder. However you better set hdev->manufacturer = 70 in the probe() routine before calling hci_register_dev. You have a dedicated driver and thus will always know it.
+> 
+> The core tries to figure this out at some point, but then you are missing btmon decoding for the earlier messages. See btusb.c and how other drivers set it early on.
+> 
 
-Thanks. I will then respin the patch taking care of treating failure
-as non-fatal.
+thank for the point up, I will set hdev->manufacturer as 70 in probe
+routine before calling hci_register_dev in the next version.
 
->> FYI, as discussed in the first patch [1] of this series, I will add a
->> system wide
->> suspend callback - arm_smmu_pm_suspend, that would do clock disable, and
->> will
->> add corresponding clock enable calls in arm_smmu_pm_resume().
->
->
-> OK, I still don't really understand the finer points of how system PM and
-> runtime PM interact, but if making it robust is just a case of calling the
-> runtime suspend/resume hooks as appropriate from the system ones, that
-> sounds reasonable.
-
-Sure. Thanks.
-
-Best regards
-Vivek
-
->
-> Robin.
->
->>
->> [1] https://lore.kernel.org/patchwork/patch/960460/
->>
->>
->> Best regards
->> Vivek
->>
->>>
->>>> +         !device_link_add(dev, smmu->dev,
->>>> +                     DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER))
->>>> {
->>>> +             dev_err(smmu->dev, "Unable to add link to the consumer
->>>> %s\n",
->>>> +                     dev_name(dev));
->>>> +             ret = -ENODEV;
->>>> +             goto out_unlink;
->>>> +     }
->>>> +
->>>>        return 0;
->>>>
->>>> +out_unlink:
->>>> +     iommu_device_unlink(&smmu->iommu, dev);
->>>> +     arm_smmu_master_free_smes(fwspec);
->>>>   out_cfg_free:
->>>>        kfree(cfg);
->>>>   out_free:
->>>>
->>>
->>>
->>
->>
->>
+> Regards
+> 
+> Marcel
+> 
+> 
 > _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
