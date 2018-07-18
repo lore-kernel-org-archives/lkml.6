@@ -2,121 +2,190 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBBDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB853ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D0D2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:47:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D0D2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 82B5B2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:53:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YJslvL3x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82B5B2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731098AbeGRKYf (ORCPT
+        id S1731088AbeGRKaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:24:35 -0400
-Received: from foss.arm.com ([217.140.101.70]:59284 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729126AbeGRKYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:24:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDE8780D;
-        Wed, 18 Jul 2018 02:47:30 -0700 (PDT)
-Received: from red-moon (red-moon.cambridge.arm.com [10.1.206.55])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5E103F318;
-        Wed, 18 Jul 2018 02:47:27 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 10:49:24 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Honghui Zhang <honghui.zhang@mediatek.com>
-Cc:     marc.zyngier@arm.com, bhelgaas@google.com, matthias.bgg@gmail.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
-        youlin.pei@mediatek.com, yong.wu@mediatek.com,
-        yt.shen@mediatek.com, sean.wang@mediatek.com, rjw@rjwysocki.net,
-        khilman@kernel.org, ulf.hansson@linaro.org
-Subject: Re: [PATCH v3 3/4] PCI: mediatek: Add system pm support for MT2712
- and MT7622
-Message-ID: <20180718094924.GA21463@red-moon>
-References: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
- <1530518264-6125-4-git-send-email-honghui.zhang@mediatek.com>
- <20180717171543.GA20991@red-moon>
- <1531893761.31406.15.camel@mhfsdcap03>
+        Wed, 18 Jul 2018 06:30:46 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39810 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729619AbeGRKaq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:30:46 -0400
+Received: by mail-wm0-f68.google.com with SMTP id h20-v6so2174553wmb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 02:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Uyel6n6uZNKwB9mKaSwJWpWIMG9GDlPkMBde/FhE8nM=;
+        b=YJslvL3x/LCCRzWCV/vDnNLNLg7xlOL4gj9rxHnns9qBkAjDnZKRPJm1pfXe0rT+vN
+         4W5Gga7OKsc7Liyafo6Jg0Rbg1AJWROed0KgsyxpiW8f4WvCPE0uJdnBadPoqcw0R2B7
+         EMhrtv4/88mqGBOeBkz8SelNu8plEwdtqQqXw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Uyel6n6uZNKwB9mKaSwJWpWIMG9GDlPkMBde/FhE8nM=;
+        b=ua12e/B4mum+o/xnwuRwiXZUGm76sof21UfbEhHMEXKN9Vm0YKne4jVkX2LMbwduuY
+         52dMGvd3r65QhYEfh0YuhrIC8XhlHIz3BNCwVu4Hw3PZBRIFu8nWX9YF0VGACkvLSGHV
+         4QsEwbY1CcksFOExV9p2vYlpPs03V1LR5NZCwnCsVEfQM3jwnYN7AGdtdVqCZsT5jty+
+         Qp4j503chz9aXc5UOQhsFgA9qJns8TlxNLmUkhBorI/JRdx4/efZQK0bXMdyo+FrImfT
+         B+xgS3o723XuUpLFXaH2J1i/riit4JOj+7ZUCFjORCE9TtEbzE2ApGFngurWs3jvSI/F
+         qiWA==
+X-Gm-Message-State: AOUpUlHh5pBW7VwQlPRaRYOGrJKgwXs4Qw0dNVZfIARUTQCKv0g6J7T3
+        /tvL+8j3AN0BTFagjUhnAVvEuA==
+X-Google-Smtp-Source: AAOMgpc+zmV6afwn06jBy42ugCtecLnj36kTksXinsm7JGlG2BI2SI7btoaPGJRI/CukytlWlUKQkg==
+X-Received: by 2002:a1c:910f:: with SMTP id t15-v6mr1213865wmd.51.1531907618924;
+        Wed, 18 Jul 2018 02:53:38 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id z7-v6sm1814511wma.2.2018.07.18.02.53.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 02:53:37 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 10:53:35 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "patches@linaro.org" <patches@linaro.org>
+Subject: Re: [PATCH] backlight: pwm_bl: Fix uninitialized variable
+Message-ID: <20180718095335.GD4641@dell>
+References: <20180716210241.9457-1-daniel.thompson@linaro.org>
+ <20180718080913.GB4641@dell>
+ <1531902119.16896.13.camel@toradex.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1531893761.31406.15.camel@mhfsdcap03>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531902119.16896.13.camel@toradex.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 02:02:41PM +0800, Honghui Zhang wrote:
+On Wed, 18 Jul 2018, Marcel Ziswiler wrote:
 
-<snip>
-
-> > > +static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
-> > > +{
-> > > +	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-> > > +	const struct mtk_pcie_soc *soc = pcie->soc;
-> > > +	struct mtk_pcie_port *port, *tmp;
-> > > +
-> > > +	if (!soc->pm_support)
-> > > +		return 0;
-> > > +
-> > > +	if (list_empty(&pcie->ports))
-> > > +		return 0;
-> > > +
-> > > +	if (dev->pm_domain) {
-> > > +		pm_runtime_enable(dev);
-> > > +		pm_runtime_get_sync(dev);
-> > > +	}
+> On Wed, 2018-07-18 at 09:09 +0100, Lee Jones wrote:
+> > On Mon, 16 Jul 2018, Daniel Thompson wrote:
 > > 
-> > Are these runtime PM calls needed/abused here ?
+> > > Currently, if the DT does not define num-interpolated-steps then
+> > > num_steps is undefined and the interpolation code will deploy
+> > > randomly.
+> > > Fix this.
+> > > 
+> > > Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation
+> > > between
+> > > brightness-levels")
+> > > Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > > Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > > 
-> > Mind explaining the logic ?
-> > 
-> > There is certainly an asymmetry with the suspend callback which made me
-> > suspicious, I am pretty certain Rafael/Kevin/Ulf can help me clarify so
-> > that we can make progress with this patch.
-> > 
-> > Lorenzo
-> > 
-> Hi Lorenzo, thanks for your comments.
-> Sorry I don't get you.
-> I believe that in suspend callbacks the pm_runtime_put_sync and
-> pm_runtime_disable should be called to gated the CMOS for this module,
-> while the pm_rumtime_enable and pm_rumtime_get_sync should be called
-> in resume callback.
-
-That's why I CC'ed Rafael, Kevin and Ulf, to answer this question
-thoroughly, I am not sure it is needed and that's the right way
-of doing it in system suspend callbacks.
-
-> That's exactly this patch doing.
-> But the pm_rumtime_put_sync and pm_runtime_disable functions was wrapped
-> in the mtk_pcie_subsys_powerdown.
-
-Ah, sorry, I missed that.
-
-> I did not call mtk_pcie_subsys_powerup since it does not just wrapped
-> pm_rumtime related functions but also do the platform_resource_get,
-> devm_ioremap, and free_ck clock get which I do not needed in resume
-> callback.
+> > This line is confusing.  Did you guys author this patch together?
 > 
-> Do you think it will be much clear if I abstract the
-> platform_resource_get, devm_ioremap functions from
-> mtk_pcie_subsys_powerup and put it to a new functions like
-> mtk_pcie_subsys_resource_get, and then we may call the
-> mtk_pcie_subsys_powerup in the resume function?
+> Yes, I reported it and we came to a conclusion together.
 
-I think so but let's wait first for feedback on whether those
-runtime PM calls are needed in the first place.
+It sounds like you need to have all of the tags (except this one). :)
 
-Lorenzo
+ Reported-by:  for reporting the issue
+ Suggested-by: for suggesting a resolution
+ Acked-by:     for reviewing it
+ Tested-by:    for testing it
+
+Signed-off-by usually means you either wrote a significant amount of
+the diffstat or you were part of the submission path.
+
+> > My guess is that this line should be dropped and the RB and TB tags
+> > should remain?  If it was reviewed too, perhaps an AB too?
+> 
+> I'm OK either way and do not need any explicit authorship to be
+> expressed for me.
+
+In this instance I suggest keeping Reported-by and Tested-by.
+
+> > > Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > > ---
+> > >  drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
+> > >  1 file changed, 8 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/drivers/video/backlight/pwm_bl.c
+> > > b/drivers/video/backlight/pwm_bl.c
+> > > index 9ee4c1b735b2..e3c22b79fbcd 100644
+> > > --- a/drivers/video/backlight/pwm_bl.c
+> > > +++ b/drivers/video/backlight/pwm_bl.c
+> > > @@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct
+> > > device *dev,
+> > >  		 * interpolation between each of the values of
+> > > brightness levels
+> > >  		 * and creates a new pre-computed table.
+> > >  		 */
+> > > -		of_property_read_u32(node, "num-interpolated-
+> > > steps",
+> > > -				     &num_steps);
+> > > -
+> > > -		/*
+> > > -		 * Make sure that there is at least two entries in
+> > > the
+> > > -		 * brightness-levels table, otherwise we can't
+> > > interpolate
+> > > -		 * between two points.
+> > > -		 */
+> > > -		if (num_steps) {
+> > > +		if ((of_property_read_u32(node, "num-interpolated-
+> > > steps",
+> > > +					  &num_steps) == 0) &&
+> > > num_steps) {
+> > 
+> > This is pretty ugly, and isn't it suffering from over-bracketing?  My
+> > suggestion would be to break out the invocation of
+> > of_property_read_u32() from the if and test only the result.
+> > 
+> > 		of_property_read_u32(node, "num-interpolated-steps", 
+> > &num_steps);
+> 
+> you mean:
+> 
+> 		ret = of_property_read_u32(node, "num-interpolated-
+> steps", &num_steps);
+> 
+> > 		if (!ret && num_steps) {
+> > 
+> > I haven't checked the underling code, but is it even feasible for
+> > of_property_read_u32() to not succeed AND for num_steps to be set?
+> > 
+> > If not, the check for !ret if superfluous and you can drop it.
+> 
+> No, then we are back to the initial issue of num_steps potentially not
+> being initialised. We really want both of_property_read_u32() to
+> succeed AND num_steps to actually be set.
+
+I also think num_steps should be pre-initialised.
+
+Then it will only be set if of_property_read_u32() succeeds.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
