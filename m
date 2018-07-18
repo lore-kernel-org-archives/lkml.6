@@ -3,126 +3,147 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2DFECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FF0ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDCA220850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:13:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDCA220850
+	by mail.kernel.org (Postfix) with ESMTP id 4EFFE20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:14:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EFFE20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730910AbeGRPv6 (ORCPT
+        id S1731140AbeGRPwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:51:58 -0400
-Received: from mga06.intel.com ([134.134.136.31]:49053 "EHLO mga06.intel.com"
+        Wed, 18 Jul 2018 11:52:32 -0400
+Received: from mga03.intel.com ([134.134.136.65]:27294 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729702AbeGRPv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:51:58 -0400
+        id S1726409AbeGRPwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:52:32 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 08:13:36 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 08:14:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,370,1526367600"; 
-   d="scan'208";a="67931077"
-Received: from unknown (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga003.jf.intel.com with ESMTP; 18 Jul 2018 08:13:36 -0700
-Subject: Re: [PATCH v2 7/7] swap, put_swap_page: Share more between
- huge/normal code path
-To:     "Huang, Ying" <ying.huang@intel.com>
-References: <20180717005556.29758-1-ying.huang@intel.com>
- <20180717005556.29758-8-ying.huang@intel.com>
- <98288fec-1199-1b25-8c8c-18d60c33e596@linux.intel.com>
- <87k1ptgskf.fsf@yhuang-dev.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b8a9d250-81b2-0c0b-e1c6-57dbfa11be82@linux.intel.com>
-Date:   Wed, 18 Jul 2018 08:13:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <87k1ptgskf.fsf@yhuang-dev.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+   d="scan'208";a="58668810"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga006.jf.intel.com with ESMTP; 18 Jul 2018 08:14:04 -0700
+Message-ID: <c10bb604a6bf416e2092ae64a2cb9bb4658ea0eb.camel@linux.intel.com>
+Subject: Re: [PATCH v1 0/3] console, serial8250: Disable PM and DMA ops
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Tony Lindgren <tony@atomide.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 18 Jul 2018 18:14:03 +0300
+In-Reply-To: <20180523175859.GO98604@atomide.com>
+References: <20180515183409.78046-1-andriy.shevchenko@linux.intel.com>
+         <ca78895ac7ac84ec1c7f2f33024237af329ffd7a.camel@linux.intel.com>
+         <20180516100842.xuma7b3e727w7bpz@linutronix.de>
+         <CAHp75Vc2bJQHiWYcdKK+7wwMw2fSWxMauxP-dMRUAUdKnet7WQ@mail.gmail.com>
+         <20180516104734.357oevogppu5bsg4@linutronix.de>
+         <ed9879ef42a70d2609f60f73834cabb7e3df9e2f.camel@linux.intel.com>
+         <20180517135621.GJ98604@atomide.com>
+         <CAHp75VfqAK6+dPWWkQXjy0V-AFSGLSDJ9CmnUv=ba0F66TDTVg@mail.gmail.com>
+         <20180517193008.GV25808@atomide.com>
+         <CAHp75Ve56pyEC41XZ9i9yxBNberQe=ee2miQL0v9T4vRtkWPBQ@mail.gmail.com>
+         <20180523175859.GO98604@atomide.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/17/2018 07:56 PM, Huang, Ying wrote:
-> -.orc_unwind_ip                        1380      0
-> -.orc_unwind                           2070      0
-> -Total                                26810
-> +.orc_unwind_ip                        1480      0
-> +.orc_unwind                           2220      0
-> +Total                                27172
+On Wed, 2018-05-23 at 10:58 -0700, Tony Lindgren wrote:
+> * Andy Shevchenko <andy.shevchenko@gmail.com> [180522 21:42]:
+> > On Thu, May 17, 2018 at 10:30 PM, Tony Lindgren <tony@atomide.com>
+> > wrote:
+> > > So how about add some "noidle" kernel command line parameter for
+> > > console
+> > > that calls
+> > > pm_runtime_forbid() and then you have the UART permanently
+> > > on.
+> > 
+> > IIUC _forbid() can be overwritten via sysfs.
+> > And I would prefer to do other way around, something like
+> > console.idle
+> > and put default for OMAP to yes and no for everything else.
 > 
-> The total difference is same: 27172 - 26810 = 362 = 24577 - 24215.
-> 
-> The text section difference is small: 17927 - 17815 = 112.  The
-> additional size change comes from unwinder information: (1480 + 2220) -
-> (1380 + 2070) = 250.  If the frame pointer unwinder is chosen, this cost
-> nothing, but if the ORC unwinder is chosen, this is the real difference.
-> 
-> For 112 text section difference, use 'objdump -t' to get symbol size and
-> compare,
+> OK yeah console.idle sounds good to me. We should default to a
+> safe option.
 
-Cool, thanks for doing this!
+I'll see what we can do here.
 
-I think what you've done here is great for readability and the binary
-size increase is well worth the modest size increase.
+> > > Hmm I guess you could make also serial8250_rpm_get() do nothing
+> > > based on that.
+> > 
+> > Have you seen entire series which I keep here:
+> > https://bitbucket.org/andy-shev/linux/branch/topic/uart/rpm?
+> > Among other things it gets rid of those specific callbacks entirely.
+> 
+> Well I was not Cc:ed on it, I browsed it in some archive and it
+> seemed unsafe to me. But if you figured out a way to do it
+> conditionally
+> based on console.idle
+>  without causing regressions.
+
+I restored that branch with some updated patches. It's far from done and
+doesn't have any new stuff (yet) regrading to this discussion.
+
+> > > I do agree the serial runtime PM has an issue if it depends on
+> > > pm_runtime_irq_safe() being set.
+> > 
+> > It's more than an issue. The  so called "support" of RPM for UART is
+> > _based on the hack_.
+> > I would love to NAK that in the first place if I would have known of
+> > it in time.
+> 
+> Hmm well it seems that you too have been patching the 8250_rpm
+> functions for years and then now what after multiple years you
+> hit this issue? :)
+
+Nope, I hit it as soon as I tried.
+
+I can't find easily the discussion (hmm... yes, I was so pissed off that
+time, I put a bit of harsh in that) I had with Sebastian few years back,
+but at least I reported about an issue.
+
+> > > > So, I can, of course just remove callbacks from the console
+> > > > ->write().
+> > > > Though it will prevent to use kernel console anyway.
+> > > 
+> > > Please et's not start breaking things, we already see a constant
+> > > flow of regressions on weekly basis.
+> > 
+> > Now we are stick with a hack and the case based on that is against
+> > fixing things.
+> > This is how it looks from my side.
+> 
+> Sorry yeah I agree there are issues, but let's fix it properly
+
+Agree.
+
+>  with
+> no regressions.
+
+...though I think a word "regression" is inappropriate here. Regression
+is what the support did in the first place. Pity I didn't know about it
+at that time.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
