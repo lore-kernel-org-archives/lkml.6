@@ -2,113 +2,95 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 586D5ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD642ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FBC12075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:24:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="Jp6AXexd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FBC12075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 709182075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:26:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709182075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731664AbeGRD7t (ORCPT
+        id S1726064AbeGREBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:59:49 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41371 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731578AbeGRD7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:59:49 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w8-v6so1359093ply.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 20:24:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DOcETJK+mrW4NbvhRdPR+EyOGIwkzyC9IN9wH8Qu2Hw=;
-        b=Jp6AXexdaMvlztcDHp83Ymgs7u6VjgklMsIwRDmjXf6mQNPOhNfc2hTqt5jJZiyWf1
-         uRt1zmZTHX8q42zA4P5Y25Ovj0ihoaAWEIW7xyH2DzsRD1aEgZpURSZUjkHK1pvEiliK
-         bCqLXp+99Y7dfQ1WndBPgaXgz6athdwt7CJFAVwozA4dwdb8wD27NEgJWBA7SjXP6vEv
-         DBy0yq27jbUBtZjYLyeReBNUY34kvroNS83RXStM/RUuCIlLb/MbXp2yZIc0sRFG3/LI
-         8jJRPhBFjNj+lyD3vlu6fugkNqHqfjX8DDL0G+rI9e1ETLz+W3yOOKxWZSogZWQCiiIM
-         AsUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DOcETJK+mrW4NbvhRdPR+EyOGIwkzyC9IN9wH8Qu2Hw=;
-        b=I2BF2KNf2hHEpBMbqYBU39v37Mf5W68dRuKqHCtd+WqNPIAKj0I2vo4FgovE9vtn6V
-         4eMBtpWNAugMCJ3ivxbgHC8h0FwMCfKJ1VWM6QR70jNmNFtFxic5w8P3WYmWmlUSb+hH
-         LVv1WkvQ2rncUXnvIgTDOF0l8tklq/3WRHOcu3xJiQCC6PnEib/E9vhXEXiWwDbfjpzT
-         hlFChib33ZNp+dN3iyb49WzYFPddLcHZl2CTOoR44ZO0YyDMDsOXugBU6AV7JOnIdcLc
-         srjTFNTnpH3jkP5ezMN35w2+ex6fkgFeGr1vIkWHSUWQLh1HTeYG8jcZuy1g05mNcV5V
-         UbVw==
-X-Gm-Message-State: AOUpUlEkHuYAMJWMfFhRrngf0BWb/LdCM/DAFgEvaufnAKXBnoBp+Ejn
-        6SQ0vgUE7uZ9FxTB/OEobOiwaw==
-X-Google-Smtp-Source: AAOMgpcIT0gzIncCmwELJRMO560Sv30VfdOwv54kMW5PpQGaPSt/qLi5EOnDf4mh9HMRUilNLm2iRQ==
-X-Received: by 2002:a17:902:2006:: with SMTP id n6-v6mr4130645pla.325.1531884246713;
-        Tue, 17 Jul 2018 20:24:06 -0700 (PDT)
-Received: from vader ([2620:10d:c090:180::1:bc4f])
-        by smtp.gmail.com with ESMTPSA id r87-v6sm9869934pfb.1.2018.07.17.20.24.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 20:24:06 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 20:24:05 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: Re: [PATCH v2 2/7] proc/kcore: replace kclist_lock rwlock with rwsem
-Message-ID: <20180718032405.GB29351@vader>
-References: <cover.1531440458.git.osandov@fb.com>
- <783ba3becc424db45e5d5c93559fc40ef6173f01.1531440458.git.osandov@fb.com>
- <20180717193841.271d1c57b6f88d75c83892be@linux-foundation.org>
+        Wed, 18 Jul 2018 00:01:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:39758 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725721AbeGREBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 00:01:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 20:26:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,368,1526367600"; 
+   d="scan'208";a="67892378"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by fmsmga002.fm.intel.com with ESMTP; 17 Jul 2018 20:25:57 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v2 2/7] mm/swapfile.c: Replace some #ifdef with IS_ENABLED()
+References: <20180717005556.29758-1-ying.huang@intel.com>
+        <20180717005556.29758-3-ying.huang@intel.com>
+        <10878744-8db0-1d2c-e899-7c132d78e153@linux.intel.com>
+Date:   Wed, 18 Jul 2018 11:25:56 +0800
+In-Reply-To: <10878744-8db0-1d2c-e899-7c132d78e153@linux.intel.com> (Dave
+        Hansen's message of "Tue, 17 Jul 2018 11:32:48 -0700")
+Message-ID: <877eltgr7f.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717193841.271d1c57b6f88d75c83892be@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 07:38:41PM -0700, Andrew Morton wrote:
-> On Thu, 12 Jul 2018 17:09:34 -0700 Omar Sandoval <osandov@osandov.com> wrote:
-> 
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > Now we only need kclist_lock from user context and at fs init time, and
-> > the following changes need to sleep while holding the kclist_lock.
-> > 
-> > ...
-> >
-> > --- a/fs/proc/kcore.c
-> > +++ b/fs/proc/kcore.c
-> > @@ -59,8 +59,8 @@ struct memelfnote
-> >  };
-> >  
-> >  static LIST_HEAD(kclist_head);
-> > -static DEFINE_RWLOCK(kclist_lock);
-> > -static int kcore_need_update = 1;
-> > +static DECLARE_RWSEM(kclist_lock);
-> > +static atomic_t kcore_need_update = ATOMIC_INIT(1);
-> 
-> It's unclear why kcore_need_update was changed to atomic_t - it's still
-> updated under kclist_lock?
+Dave Hansen <dave.hansen@linux.intel.com> writes:
 
-Not in the hotplug notifier (kcore_callback()) anymore, so I need the
-atomic_cmpxchg() in __kcore_update_ram(). That could use a mention in
-the commit message.
+>> @@ -878,6 +877,11 @@ static int swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
+>>  	unsigned long offset, i;
+>>  	unsigned char *map;
+>>  
+>> +	if (!IS_ENABLED(CONFIG_THP_SWAP)) {
+>> +		VM_WARN_ON_ONCE(1);
+>> +		return 0;
+>> +	}
+>
+> I see you seized the opportunity to keep this code gloriously
+> unencumbered by pesky comments.  This seems like a time when you might
+> have slipped up and been temped to add a comment or two.  Guess not. :)
+>
+> Seriously, though, does it hurt us to add a comment or two to say
+> something like:
+>
+> 	/*
+> 	 * Should not even be attempting cluster allocations when
+> 	 * huge page swap is disabled.  Warn and fail the allocation.
+> 	 */
+> 	if (!IS_ENABLED(CONFIG_THP_SWAP)) {
+> 		VM_WARN_ON_ONCE(1);
+> 		return 0;
+> 	}
 
-> Maybe it's for a later patch.
-> 
-> 
+I totally agree with you that we should add more comments for THP swap
+to improve the code readability.  As for this specific case,
+VM_WARN_ON_ONCE() here is just to capture some programming error during
+development.  Do we really need comments here?
+
+I will try to add more comments for other places in code regardless this
+one.
+
+Best Regards,
+Huang, Ying
