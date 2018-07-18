@@ -7,75 +7,75 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A18CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D0CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8AD2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3A7A2064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:58:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHuODB6r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8AD2075C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uhsIC118"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3A7A2064D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731087AbeGRPgM (ORCPT
+        id S1731186AbeGRPg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:36:12 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42683 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730361AbeGRPgM (ORCPT
+        Wed, 18 Jul 2018 11:36:59 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:32860 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730763AbeGRPg7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:36:12 -0400
-Received: by mail-pf0-f196.google.com with SMTP id l9-v6so2331327pff.9;
-        Wed, 18 Jul 2018 07:57:54 -0700 (PDT)
+        Wed, 18 Jul 2018 11:36:59 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 6-v6so2170388plb.0;
+        Wed, 18 Jul 2018 07:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=nq51BrPwe1daJGoFWhW9/6BO+3gUd7vQEeg8W7aXAoE=;
-        b=MHuODB6r1pRBCvpt3Ba0X+nA5kUTSPonvsM3THq05aaqBDgAW6tz/PtwFRg2bYMNVt
-         jS5zg/K+EBledbvdLHaKfn2PwvwMKknKjMRAIGNBlzA/XHrb0lJrY5pMvyX7KfPLlUCY
-         h+Awsm2bnUv4N8qi4MIs3RwFThCRFykrwurpweC9YqA7+nELfES6UHm12T8Q91GmB0q4
-         zUkylK3grisKSoOjpPE1WCCEeXTiCG6VmH3XpQHM38HKmR/kfo2cs3kwSllDiTA/NLqG
-         wf/UoAMbVj9th3bbauFgkjkBkjq88FrYCjmc67wJx9iYdGIJwL0XmuNKbZLQdp4x2qTf
-         WNRg==
+        bh=6Pe0GBEFvs8mmLxK/dV6bQaeXSIx4b0D+btovw06Ybs=;
+        b=uhsIC118guJDkHjyzIOz0kbK+g8m67VaMaOR15Xnu2uSVVkDn0epPVVSpEnbs5nkvX
+         xOCjsfT7qKypQHRhn9twXOGWGyncFfagb8XZ1odAp48OTg40I1alSYXbFg5kMx89SLWn
+         c1rUaj+ZbMY0a7ODRsVZTQMo+CI8iUcchByCFbKuYXrTZd8KLGV4nMm/eTpbrGRmm1k8
+         gCKPfwp+lc7hv1Fiirn7LQm8AZFX40wGM01iLQxdDjuwDnobW+ydcf1chBf2dneLHfL6
+         VRp1kquMPnwWQg6lXJEvJTRQhI7Y8PDCTBcPQ2n6kr4TO7VaY0VYzEi/tPXVS6/YnvV4
+         1W2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=nq51BrPwe1daJGoFWhW9/6BO+3gUd7vQEeg8W7aXAoE=;
-        b=HmUAU4gQuhbJkzvRh4TXYRg8P7cod0sCWTj1xgEpn7pItEJLPxoSyp8rljG0y/Vex/
-         T1GwdjJWkar7EtRISyayqcb9zFZk9YVu+tjJ879zUvbEhHUAoBEVmkdrnsCOBsN+WnDM
-         hdB3tmMvA9puKH2R1TYb16I23Aue00gjMf+5+z2XfmkZLBIugBMFnKMSS93BIY2wHOWs
-         qQrlouA5Lm5Iug5UOxSBC7so4DgPq+qFekbnaIoN1kvNoNg+ekNElsxc6sGXtv18GHJc
-         do7unggpSWr6AEXcbrG+0p6AAUN0/O0rxRzan2y78qSS/14Bpg95R/WVk3nNlNAT2lUz
-         7N/Q==
-X-Gm-Message-State: AOUpUlEaNuXFNJ7AO4A9tfj6zMTQy8TxPkbkbvKRYb6PyOxlQ0CkDDR2
-        VuK7ILS7imnS5Ll3ODK6qDM=
-X-Google-Smtp-Source: AAOMgpc6G4dh3eAWfJXo4yknCgGhd5w+PS1VjkRlBmOmE6eOvvmfTVMqZgx/TDgd3BBUxdRW6G79Cg==
-X-Received: by 2002:a63:da04:: with SMTP id c4-v6mr5856030pgh.398.1531925873810;
-        Wed, 18 Jul 2018 07:57:53 -0700 (PDT)
+        bh=6Pe0GBEFvs8mmLxK/dV6bQaeXSIx4b0D+btovw06Ybs=;
+        b=nicHf6eyApmQO168mFkjBo9ROBxKSF0Zy+xLPQ/0/KLHkYN4P9XUYbNXdT5/rjS2Z+
+         MYe//VXBKoitQwTNnG+8i39005NsSML0haW0r3Q18mc9X+5HqP5J5hLXNc7mAnCKW7iA
+         DL1DTQBDl/zlfLmI7N730OtY2vdMhjR0yGeLT2tSFupf+bBOiwbVpAQ9tCHvVAQtI1aL
+         gOxRLo3huu1/v0RhCOOWeFj7Ahx3e9L7Bb0BHxRo1B9mmT4CiYJ07/U6bU6psB/Y5WJO
+         R8zK7drjYXrSuZuwH8XPaHaokfCJ6676+sv1EGkpn7FbIuI0EVChtuCNvgHLUP66A6Fl
+         3HVg==
+X-Gm-Message-State: AOUpUlFh+w/cQhZZVE93ojCHQV/XaOza7LcNBSh51rVyAy6qQoHlRZlh
+        3JHxWi9ExO+EKeap69JYeKk=
+X-Google-Smtp-Source: AAOMgpdDhfOA4ZgLNAdjFIfEAjD8jQmla6DAAbcZZD7DiZ446CXfBv2h1POuOKrsbEu5GlJBDd3lmg==
+X-Received: by 2002:a17:902:6845:: with SMTP id f5-v6mr6185291pln.173.1531925920660;
+        Wed, 18 Jul 2018 07:58:40 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.136.20])
-        by smtp.gmail.com with ESMTPSA id h69-v6sm18554021pfh.13.2018.07.18.07.57.47
+        by smtp.gmail.com with ESMTPSA id g15-v6sm11665398pfg.98.2018.07.18.07.58.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 07:57:52 -0700 (PDT)
-Subject: Re: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to
+        Wed, 18 Jul 2018 07:58:38 -0700 (PDT)
+Subject: Re: [resend PATCH v4 2/5] clk: mediatek: mt2701-mmsys: switch to
  platform device probing (fwd)
 To:     Julia Lawall <julia.lawall@lip6.fr>, matthias.bgg@kernel.org
 Cc:     ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
         ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
         robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, lee.jones@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, mchehab@kernel.org,
-        rdunlap@infradead.org, pi-cheng.chen@linaro.org,
-        sean.wang@mediatek.com, linux-clk@vger.kernel.org,
+        sboyd@codeaurora.org, lee.jones@linaro.org, sean.wang@mediatek.com,
+        gregkh@linuxfoundation.org, rdunlap@infradead.org,
         linux@armlinux.org.uk, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>,
         linux-mediatek@lists.infradead.org,
-        Matthias Brugger <mbrugger@suse.com>, kbuild-all@01.org
-References: <alpine.DEB.2.20.1807181651360.3113@hadrien>
+        linux-arm-kernel@lists.infradead.org, mchehab@kernel.org,
+        pi-cheng.chen@linaro.org, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, kbuild-all@01.org
+References: <alpine.DEB.2.20.1807181654200.3113@hadrien>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -121,12 +121,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <4a62b859-7d57-4901-d13f-5c5a9de8588c@gmail.com>
-Date:   Wed, 18 Jul 2018 16:57:46 +0200
+Message-ID: <11ba8df2-21f3-71e5-8467-813eda93f8ec@gmail.com>
+Date:   Wed, 18 Jul 2018 16:58:32 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.20.1807181651360.3113@hadrien>
+In-Reply-To: <alpine.DEB.2.20.1807181654200.3113@hadrien>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -137,31 +137,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 18/07/18 16:53, Julia Lawall wrote:
-> Hello,
-> 
-> Please check on whether the kfree in the remove function is still needed.
-> Also the platform_driver structure has two probe fields.
+On 18/07/18 16:54, Julia Lawall wrote:
+> Please check on whether the kfree is still needed.
 
-Fair enough, kfree(private) is not needed, because it is allocated with
-devm_kzalloc.
-
-I'll fix both errors. Thanks for noting.
+No it is not needed, thanks for noting.
 Matthias
 
 > 
 > julia
 > 
 > ---------- Forwarded message ----------
-> Date: Wed, 18 Jul 2018 22:31:13 +0800
+> Date: Wed, 18 Jul 2018 22:03:48 +0800
 > From: kbuild test robot <lkp@intel.com>
 > To: kbuild@01.org
 > Cc: Julia Lawall <julia.lawall@lip6.fr>
-> Subject: Re: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to
+> Subject: Re: [resend PATCH v4 2/5] clk: mediatek: mt2701-mmsys: switch to
 >     platform device probing
 > 
-> In-Reply-To: <20180717220328.792-4-matthias.bgg@kernel.org>
-> References: <20180717220328.792-4-matthias.bgg@kernel.org>
+> In-Reply-To: <20180717220328.792-3-matthias.bgg@kernel.org>
+> References: <20180717220328.792-3-matthias.bgg@kernel.org>
 > TO: matthias.bgg@kernel.org
 > 
 > Hi Matthias,
@@ -177,36 +171,25 @@ Matthias
 > :::::: branch date: 3 hours ago
 > :::::: commit date: 3 hours ago
 > 
->>> drivers/clk/mediatek/clk-mt8173.c:1195:1-6: WARNING: invalid free of devm_ allocated data
-> --
->>> drivers/clk/mediatek/clk-mt8173.c:1200:48-49: probe: first occurrence line 1201, second occurrence line 1202
+>>> drivers/clk/mediatek/clk-mt2701-mm.c:128:1-6: WARNING: invalid free of devm_ allocated data
 > 
-> # https://github.com/0day-ci/linux/commit/112857d0f58413a87875dfc9e1b43fdfde3b55eb
+> # https://github.com/0day-ci/linux/commit/555e11caac5f7729e8927939046adbfa2264f9f5
 > git remote add linux-review https://github.com/0day-ci/linux
 > git remote update linux-review
-> git checkout 112857d0f58413a87875dfc9e1b43fdfde3b55eb
-> vim +1195 drivers/clk/mediatek/clk-mt8173.c
+> git checkout 555e11caac5f7729e8927939046adbfa2264f9f5
+> vim +128 drivers/clk/mediatek/clk-mt2701-mm.c
 > 
-> 112857d0 Matthias Brugger 2018-07-18  1189
-> 112857d0 Matthias Brugger 2018-07-18  1190  static int mtk_mmsys_remove(struct platform_device *pdev)
-> 112857d0 Matthias Brugger 2018-07-18  1191  {
-> 112857d0 Matthias Brugger 2018-07-18  1192  	struct mtk_mmsys_priv *private = platform_get_drvdata(pdev);
-> 112857d0 Matthias Brugger 2018-07-18  1193
-> 112857d0 Matthias Brugger 2018-07-18  1194  	kfree(private->clk_data);
-> 112857d0 Matthias Brugger 2018-07-18 @1195  	kfree(private);
-> 112857d0 Matthias Brugger 2018-07-18  1196
-> 112857d0 Matthias Brugger 2018-07-18  1197  	return 0;
-> 29859d93 James Liao       2015-05-20  1198  }
-> 112857d0 Matthias Brugger 2018-07-18  1199
-> 112857d0 Matthias Brugger 2018-07-18 @1200  static struct platform_driver clk_mt8173_mm_drv = {
-> 112857d0 Matthias Brugger 2018-07-18 @1201  	.probe = mtk_mmsys_probe,
-> 112857d0 Matthias Brugger 2018-07-18 @1202  	.probe = mtk_mmsys_remove,
-> 112857d0 Matthias Brugger 2018-07-18  1203  	.driver = {
-> 112857d0 Matthias Brugger 2018-07-18  1204  		.name = "clk-mt8173-mm",
-> 112857d0 Matthias Brugger 2018-07-18  1205  	},
-> 112857d0 Matthias Brugger 2018-07-18  1206  };
-> 112857d0 Matthias Brugger 2018-07-18  1207  module_platform_driver(clk_mt8173_mm_drv);
-> 29859d93 James Liao       2015-05-20  1208
+> e98621182 Shunli Wang      2016-11-04  122
+> 555e11caa Matthias Brugger 2018-07-18  123  static int clk_mt2701_mm_remove(struct platform_device *pdev)
+> 555e11caa Matthias Brugger 2018-07-18  124  {
+> 555e11caa Matthias Brugger 2018-07-18  125  	struct clk_mt2701_mm_priv *private = platform_get_drvdata(pdev);
+> 555e11caa Matthias Brugger 2018-07-18  126
+> 555e11caa Matthias Brugger 2018-07-18  127  	kfree(private->clk_data);
+> 555e11caa Matthias Brugger 2018-07-18 @128  	kfree(private);
+> 555e11caa Matthias Brugger 2018-07-18  129
+> 555e11caa Matthias Brugger 2018-07-18  130  	return 0;
+> 555e11caa Matthias Brugger 2018-07-18  131  }
+> 555e11caa Matthias Brugger 2018-07-18  132
 > 
 > ---
 > 0-DAY kernel test infrastructure                Open Source Technology Center
