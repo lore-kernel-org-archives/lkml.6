@@ -2,319 +2,177 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3ACECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95D9ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A72C620852
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:06:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72C620852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 5EBE220854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:07:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WB4bkBeI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EBE220854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729989AbeGRKnr (ORCPT
+        id S1730798AbeGRKoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:43:47 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41602 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726264AbeGRKnq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:43:46 -0400
-X-UUID: c532c447b74f49b2a6b6e39bcba38414-20180718
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1176907391; Wed, 18 Jul 2018 18:06:29 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 18 Jul 2018 18:06:27 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 18 Jul 2018 18:06:27 +0800
-Message-ID: <1531908387.8953.147.camel@mtkswgap22>
-Subject: Re: [resend PATCH v4 4/5] drm/mediatek: Add support for mmsys
- through a pdev
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     <matthias.bgg@kernel.org>, <ulrich.hecht+renesas@gmail.com>,
-        <ck.hu@mediatek.com>, <p.zabel@pengutronix.de>, <airlied@linux.ie>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <lee.jones@linaro.org>, <davem@davemloft.net>,
-        <gregkh@linuxfoundation.org>, <mchehab@kernel.org>,
-        <rdunlap@infradead.org>, <pi-cheng.chen@linaro.org>,
-        <linux-clk@vger.kernel.org>, <linux@armlinux.org.uk>,
-        <matthias.bgg@gmail.com>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <mbrugger@suse.com>
-Date:   Wed, 18 Jul 2018 18:06:27 +0800
-In-Reply-To: <51066716.k5MkZnrqCl@avalon>
-References: <20180717220328.792-1-matthias.bgg@kernel.org>
-         <20180717220328.792-5-matthias.bgg@kernel.org>
-         <1531882655.8953.83.camel@mtkswgap22> <51066716.k5MkZnrqCl@avalon>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 06:44:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726402AbeGRKoH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:44:07 -0400
+Received: from mail-wm0-f50.google.com (mail-wm0-f50.google.com [74.125.82.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6C2420854;
+        Wed, 18 Jul 2018 10:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531908418;
+        bh=XhOxADjsx32nUgQMfU+EpRByMBYl3lic4JtC9OoX5ow=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=WB4bkBeII1EAUyQsk8jlWujcRMWXaoK77rlvAU+lX4olIHC66ikZ5R8hDTI9+FhBQ
+         SZZ48hPJ4IkGhLiuqtRvm1VCr7skdsXH+pPyw5MwiBNTugMVFeF+V15k0QfW2k8psa
+         rbLpd+ksa7LKUA6OSVIYHx3g40gXF3lb47t7HVm8=
+Received: by mail-wm0-f50.google.com with SMTP id y22-v6so2258680wma.0;
+        Wed, 18 Jul 2018 03:06:57 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEeCvUeMkug9J/p1T4ix4SxDJb5bXkfbctVAF84S7Lp1SaB3CuM
+        m3qf5DPgJWNK0gUin8UAUb8hN2I2Eu86jNAGKuI=
+X-Google-Smtp-Source: AAOMgpctHt5J3tIf0skJsj5yWC7AXDJgOeqn9Iv3K4FVzOnESNsvIP75VRlhH43f3gOjznhQ08XXRIhbHk671DsJ4Z4=
+X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr1205290wma.72.1531908416374;
+ Wed, 18 Jul 2018 03:06:56 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 03:06:55
+ -0700 (PDT)
+In-Reply-To: <CANAwSgRFehdmYZvPL3yD1=Ng_w1Yhtij=nvZEOqkof7zj8fcwA@mail.gmail.com>
+References: <1531822342-4293-1-git-send-email-linux.amoon@gmail.com>
+ <CAJKOXPdP78VFQgSQ9z9WsgYY_YhEKPUt=0MOra6Pz6smQeiNGg@mail.gmail.com>
+ <CANAwSgS=08fVsqn95WHzSF71WTTyD2-=K2C6-BEz0tY0t6A1-g@mail.gmail.com>
+ <CAJKOXPdXYz77Bqyjr3HK+EA0HpEABPqmPOD0f5ew-yq2SFVpVQ@mail.gmail.com> <CANAwSgRFehdmYZvPL3yD1=Ng_w1Yhtij=nvZEOqkof7zj8fcwA@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 18 Jul 2018 12:06:55 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfRBPgmGc17XEzW5+MK80JcudCbhBfLeMFTQYjWLJ3JeA@mail.gmail.com>
+Message-ID: <CAJKOXPfRBPgmGc17XEzW5+MK80JcudCbhBfLeMFTQYjWLJ3JeA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] thermal: exynos: enable core tmu clk on exynos platform
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 11:05 +0300, Laurent Pinchart wrote:
-> Hi Sean,
-> 
-> On Wednesday, 18 July 2018 05:57:35 EEST Sean Wang wrote:
-> > On Wed, 2018-07-18 at 00:03 +0200, matthias.bgg@kernel.org wrote:
-> > > From: Matthias Brugger <mbrugger@suse.com>
-> > > 
-> > > The MMSYS subsystem includes clocks and drm components.
-> > > This patch adds an initailization path through a platform device
-> > > for the clock part, so that both drivers get probed from the same
-> > > device tree compatible.
-> > 
-> > Sorry for that I should have a response earlier for the series.
-> > 
-> > Some points I felt they're not exactly right and should be fixed up
-> > before we're moving on
-> > 
-> > Currently, drm driver have a wrong reference to the dt-binding,
-> > "mediatek,mt2701-mmsys" or "mediatek,mt8173-mmsys", they should be all
-> > for the subsystem exporting clock and reset line such common resource to
-> > its sub-devices. Every subsystem has a similar shape. I hope mmsys
-> > shouldn't be an exception.
-> > 
-> > DRM device needs to have its own dt-binding show how connections between
-> > DRM components being made and its node should be put under mmsys node.
-> > 
-> > In this way, it becomes easy to see how the topology of the subsystem is
-> > and grows, like a tree "device tree", instead of hiding the details in
-> > the implementation.
-> > 
-> > The similar example we already did for audsys on mt2701 and mt7623 as
-> > below
-> > 
-> > 	audsys: clock-controller@11220000 {
-> > 		
-> compatible = "mediatek,mt7623-audsys",
-> > 		
-> 	     "mediatek,mt2701-audsys",
-> > 		
-> 	     "syscon";
-> > 		
-> 	...
-> > 
-> > 		
-> afe: audio-controller {
-> > 		
-> 	compatible = "mediatek,mt7623-audio",
-> > 		
-> 		
->      "mediatek,mt2701-audio";
-> > 
-> > 		
-> 	...
-> > 		
-> };
-> > 	};
-> 
-> This looks very strange to me. I'm not familiar with the hardware 
-> architecture, but a clock controller that includes an audio controller seems 
-> like a very weird design. It's usually the other way around, you have an audio
+On 18 July 2018 at 11:24, Anand Moon <linux.amoon@gmail.com> wrote:
+> Hi Krzysztof
+>
+> On 18 July 2018 at 11:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 17 July 2018 at 22:23, Anand Moon <linux.amoon@gmail.com> wrote:
+>>> Hi Krzysztof
+>>>
+>>> On 17 July 2018 at 17:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>> Hi Anand,
+>>>>
+>>>> Thanks for patch.
+>>>>
+>>>> On 17 July 2018 at 12:12, Anand Moon <linux.amoon@gmail.com> wrote:
+>>>>> clk_summary do not show tmu_apbif clk enable, so replace
+>>>>> the clk_prepare with clk_prepare_enables to enable tmu clk.
+>>>>
+>>>> This is not valid reason to do a change. What is clk_summary does not
+>>>> really matter. Your change has negative impact on power consumption as
+>>>> the clock stays enabled all the time. This is not what we want... so
+>>>> please explain it more - why you need the clock to be enabled all the
+>>>> time? What is broken (clk_summary is not broken in this case)?
+>>>>
+>>>
+>>> Opps I could not explain some more in my commit message.
+>>>
+>>> Actually TMU sensor for Exynos process are controlled by so external clk
+>>>
+>>> Exynos4412 have VDD18_TS sensor which controls the CLK_SENSE tmu.
+>>> Exynos5422 have VDD18_TS01 / VDD18_TS23 / VDD18_TS4 sensor which
+>>> control the CLK_SENSE tmu.
+>>>
+>>> So as per my understanding tmu is clk driver which control the flow  PMIC.
+>>>
+>>> clk_prepare_enable combine clk_prepare and clk_enable
+>>> and clk_disable_unprepare combine clk_disable and clk_unprepare.
+>>>
+>>> most of the driver prefer clk_prepare_enable and clk_disable_unprepare.
+>>>
+>>> clk_summary is just a reference looking point where we could check the
+>>> clk is enable/disable.
+>>>
+>>> what is broken ?
+>>> I still few more parameter need to tuned to configure the tmu driver.
+>>
+>> I am sorry but I am still unable to see what is broken and what are
+>> you trying to fix. I asked what is broken and you replied that there
+>> is a sensor, there is a clock, drivers use clk_prepare_enable and some
+>> more parameter need to be tuned... None of these are answers to
+>> question - what is broken. How can I reproduce the problem?
+>>
+>> Best regards,
+>> Krzysztof
+>
+> Basically I use thermal testing.
+>
+> # git clone https://git.linaro.org/power/pm-qa.git
+> # cd pm-qa
+> # make -C thermal check
+>
+> most of the testcase failed on Exynos5422 but some pass on Exynos4412.
+>
+> Attach is the software overview from Exynos5422 user manual.
+>
+> I am not able to explain in deep technically, but I have studied other thermal
+> driver to draw into conclusion that tmu clk's need to be enabled.
 
-yes, naming audsys as clock controller is really not good. it should be
-worth a better naming.
+That is true in general - the clk has to be enabled in certain cases.
+However you did not say at all when you want this clock to be
+enabled... and the your patch enables it for entire lifetime of
+device.
 
-mtk subsystem AFAIK works as a container, at least provides clocks,
-reset, syscon access, these common resource to these devices running on
-the subsystem. It also has a power gate independent from other
-subsystem, that can be controlled when these devices all powered down
-or once up.
+> If you feel the we should not enable these clk, them I will drop the
+> clk_prepare_enable check
+> and resubmit the changes with better commit message.
 
-And it should be better that we don't assume what exact devices are
-running on since it is possible that there're different devices running
-on the same subsystem per SoC. mtk has many subsystem working in this
-way. mmsys is just a case. we can see in [1]
+I don't know. This was fifth email in this thread and it is the first
+time some real problem is mentioned. Still the issue is not described
+entirely so I really do not have a clue whether this patch fixes
+something or not.
+What is more, you mentioned falling pm-qa tests here (not in commit
+msg) but did not say whether this patch fixes anything or not.
 
+So let me summarize it:
+1. You did not describe the problem you want to fix.
+2. The patch looks incorrect because it enables the clock for entire
+lifetime of device which we do not want.
+3. The patch might or not might fix some problem. We even do not know what...
+4. The clock not being enabled when not needed... is obviously not a problem.
 
-[1]
-https://elixir.bootlin.com/linux/v4.18-rc5/source/Documentation/devicetree/bindings/arm/mediatek
- 
-> controller, and it also contains hardware that produces clocks, and possibly 
-> handles miscellaneous audio-related routing tasks. I would thus expect the 
-> reverse in the device tree:
-> 
-> 	afe: audio-controller@11220000 {
-> 		
-> compatible = "mediatek,mt7623-audio",
-> 		
-> 	     "mediatek,mt2701-audio";
-> 		
-> ..
-> 
-> 		
-> audsys: clock-controller {
-> 		
-> 	compatible = "mediatek,mt7623-audsys",
-> 		
-> 		
->      "mediatek,mt2701-audsys",
-> 		
-> 		
->      "syscon";
-> 		
-> 	...
-> 		
-> };
-> 	};
-> 
-> And if audsys only exposes clocks, you don't even need a subnode to represent 
-> it, the audio controller itself can be a clock provider.
-> 
-> 	afe: audio-controller@11220000 {
-> 		
-> compatible = "mediatek,mt7623-audio",
-> 		
-> 	     "mediatek,mt2701-audio";
-> 		
-> #clock-cells = <1>;
-> 		
-> ..
-> 	};
-> 
-> > > Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> > > ---
-> > > 
-> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 18 ++++++++++++++++++
-> > >  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
-> > >  2 files changed, 20 insertions(+)
-> > > 
-> > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > > b/drivers/gpu/drm/mediatek/mtk_drm_drv.c index dd249cf5121e..c946aea722e5
-> > > 100644
-> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> > > @@ -173,6 +173,7 @@ static const struct mtk_mmsys_driver_data
-> > > mt2701_mmsys_driver_data = {> 
-> > >  	.ext_path = mt2701_mtk_ddp_ext,
-> > >  	.ext_len = 
-> ARRAY_SIZE(mt2701_mtk_ddp_ext),
-> > >  	.shadow_register = true,
-> > > 
-> > > +	.clk_drv_name = "clk-mt2701-mm",
-> > > 
-> > >  };
-> > >  
-> > >  static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
-> > > 
-> > > @@ -180,6 +181,7 @@ static const struct mtk_mmsys_driver_data
-> > > mt8173_mmsys_driver_data = {> 
-> > >  	.main_len = 
-> ARRAY_SIZE(mt8173_mtk_ddp_main),
-> > >  	.ext_path = mt8173_mtk_ddp_ext,
-> > >  	.ext_len = 
-> ARRAY_SIZE(mt8173_mtk_ddp_ext),
-> > > 
-> > > +	.clk_drv_name = "clk-mt8173-mm",
-> > > 
-> > >  };
-> > >  
-> > >  static int mtk_drm_kms_init(struct drm_device *drm)
-> > > 
-> > > @@ -411,6 +413,19 @@ static int mtk_drm_probe(struct platform_device
-> > > *pdev)
-> > > 
-> > >  	if (IS_ERR(private->config_regs))
-> > >  	
-> > >  		
-> return PTR_ERR(private->config_regs);
-> > > 
-> > > +	if (private->data->clk_drv_name) {
-> > > +		
-> private->clk_dev = platform_device_register_data(dev,
-> > > +		
-> 		
-> 		
-> private->data->clk_drv_name, -1,
-> > > +		
-> 		
-> 		
-> NULL, 0);
-> > > +
-> > > +		
-> if (IS_ERR(private->clk_dev)) {
-> > > +		
-> 	pr_err("failed to register %s platform 
-> device\n",
-> > > +		
-> 		
-> 		
-> private->data->clk_drv_name);
-> > > +
-> > > +		
-> 	return PTR_ERR(private->clk_dev);
-> > > +		
-> }
-> > > +	}
-> > > +
-> > > 
-> > >  	/* Iterate over sibling DISP 
-> function blocks */
-> > >  	for_each_child_of_node(dev->of_node-
-> >parent, node) {
-> > >  	
-> > >  		
-> const struct of_device_id *of_id;
-> > > 
-> > > @@ -515,6 +530,9 @@ static int mtk_drm_remove(struct platform_device
-> > > *pdev)
-> > > 
-> > >  	for (i = 0; i < 
-> DDP_COMPONENT_ID_MAX; i++)
-> > >  	
-> > >  		
-> of_node_put(private->comp_node[i]);
-> > > 
-> > > +	if (private->clk_dev)
-> > > +		
-> platform_device_unregister(private->clk_dev);
-> > > +
-> > > 
-> > >  	return 0;
-> > >  
-> > >  }
-> > > 
-> > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > > b/drivers/gpu/drm/mediatek/mtk_drm_drv.h index 86cec19193c4..200eee5de419
-> > > 100644
-> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> > > @@ -34,11 +34,13 @@ struct mtk_mmsys_driver_data {
-> > > 
-> > >  	const enum mtk_ddp_comp_id 
-> *ext_path;
-> > >  	unsigned int ext_len;
-> > >  	bool shadow_register;
-> > > 
-> > > +	const char *clk_drv_name;
-> > > 
-> > >  };
-> > >  
-> > >  struct mtk_drm_private {
-> > >  
-> > >  	struct drm_device *drm;
-> > >  	struct device *dma_dev;
-> > > 
-> > > +	struct platform_device *clk_dev;
-> > > 
-> > >  	unsigned int num_pipes;
-> 
-> 
+Please start from beginning. Find the problem, tell us how it can be
+reproduced and deliver a single patch which fixes the problem.
 
+This pattern of your code - fixing something without describing the
+problem - happened many time before. I repeated this some times before
+as well. I would prefer not to repeat to many times. Therefore I would
+be happy if you follow the path mentioned in paragraph before always:
+find the problem, tell how it can be reproduced, deliver single patch
+which fixes the problem.
 
+Best regards,
+Krzysztof
