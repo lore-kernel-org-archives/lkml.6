@@ -2,123 +2,161 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B6FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78539ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:19:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2E420850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 236DB20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:19:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="o1EXDWkI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C2E420850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GAKH4Fbt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236DB20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731269AbeGRPz6 (ORCPT
+        id S1731161AbeGRP6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:55:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49956 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeGRPz6 (ORCPT
+        Wed, 18 Jul 2018 11:58:14 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:53923 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730436AbeGRP6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:55:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=A29VCH7mTU0VzadmcO9JJBMiJQYZtnkkGOHWwcWiJ6M=; b=o1EXDWkIFHev
-        eNE2e4F9vM4JI/gB3KElR0gW8jfoCbsip8jIOI+bpMIyx2xyYquq2TzDfJSB6AJVHmQu6ahKJbdCr
-        CXK7fPjb3RabWp/nfSg0jho8AjHMYs9bddIqM0lS8/nxN25/DpX/9YShJzknLSTk9MVGyKgW+s9uS
-        KoRik=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffoCT-0003fs-Eq; Wed, 18 Jul 2018 15:17:09 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffoCT-0004O3-0g; Wed, 18 Jul 2018 16:17:09 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     David Lechner <david@lechnology.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: spi-bitbang: change flags from u8 to u16" to the spi tree
-In-Reply-To:  <20180717032052.12273-2-david@lechnology.com>
-Message-Id: <E1ffoCT-0004O3-0g@debutante>
-Date:   Wed, 18 Jul 2018 16:17:09 +0100
+        Wed, 18 Jul 2018 11:58:14 -0400
+Received: by mail-it0-f65.google.com with SMTP id 72-v6so4663568itw.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:19:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/hpJlyPTehmK42a6kJZbM8fWZcm6EoyU4opSxq9Gk/g=;
+        b=GAKH4FbtM9YE5JjGPSszydmNkXGV+DZ9vVB17/+p3C7KqMCey+mseQd/xKNQ2gg8y0
+         Lmpn+WEWbezPqrgXImJlmjdpyhabVqgsrf3cs6AhoB6/YdsbbmIEv/IuGi84H3s5rPYU
+         Qt07FhuFRphFevlXuXSuy5rzs3I6mvLzjbzQA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/hpJlyPTehmK42a6kJZbM8fWZcm6EoyU4opSxq9Gk/g=;
+        b=h9toe+4dM0AP0Ja+vB5dWPgVIw4XDiXxw1onTkBZzIYfC73ERaKmvwoFfbh68+3Pei
+         TelwuJ624j6LruudqXI9dQPcTnwPlA1meZ5BB5Ie6+wK0ZKypEnYth01ESPCXAgN9xpW
+         tRbsTiXtEyjRoow9kta837tyDX5jK2tv8yULyAw37BMApdeuM3a+Og7IqH7dUiYxDR6K
+         KM6+CKjlBSFB2izMjfn0X4nLaTcfGNxgZMvVeSAV7HMIogtxKS9/aEmkC+iXmsqnDocQ
+         6taGImB7G5cgQdHDE0jVDrBjjLzj63gCp7sNE2uGpRPVHN7hLMFfnkyRsJ6cLGwAEG7K
+         Ysjw==
+X-Gm-Message-State: AOUpUlG8Le0t15sKHzmzUCzrhHzjVznRhUj36NMkDtPRXguTDvCChGrr
+        y33VyB5aXdHXsgTTG597jwoWeADjlVqnjlk6rzfZlw==
+X-Google-Smtp-Source: AAOMgpehduyixesWI2rnFZkJUlUrGAAiEYg3fpjRd8PPqic5/LUjdhcaf0o7T2o8tz0H4LNuFDrUEYLBcNQG6p7YnHA=
+X-Received: by 2002:a02:35a:: with SMTP id y87-v6mr5922270jad.2.1531927190635;
+ Wed, 18 Jul 2018 08:19:50 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:19:49
+ -0700 (PDT)
+In-Reply-To: <CAKv+Gu-cOV6uo6MpLxr9uQSTT-ku_wn9+D7CC4+3maJtvcaGoA@mail.gmail.com>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
+ <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
+ <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
+ <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au> <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
+ <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com>
+ <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
+ <CAK8P3a3Dh+g=v++BMCtmmiOSnVu4CEUgss0U7BZS_K45aTddqg@mail.gmail.com> <CAKv+Gu-cOV6uo6MpLxr9uQSTT-ku_wn9+D7CC4+3maJtvcaGoA@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 19 Jul 2018 00:19:49 +0900
+Message-ID: <CAKv+Gu8e9sm42NKwQvQzD33JTHSaEY2q7sm0W0065dDz_rzSaA@mail.gmail.com>
+Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 18 July 2018 at 23:50, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> On 18 July 2018 at 05:59, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Sun, Jul 15, 2018 at 6:28 AM, Kees Cook <keescook@chromium.org> wrote:
+>>>
+>>> After my ahash to shash conversions, only ccm is left as an ahash
+>>> user, since it actually uses sg. But with the hard-coded value reduced
+>>> to 376, this doesn't trip the frame warnings any more. :)
+>>>
+>>> I'll send an updated series soon.
+>>
+>> Maybe we should get rid of that one as well then and remove
+>> AHASH_REQUEST_ON_STACK()?
+>>
+>> I see that Ard (now on Cc) added this usage only recently. Looking
+>> at the code some more, I also find that the descsize is probably
+>> much smaller than 376 for all possible cases   of "cbcmac(*)",
+>> either alg->cra_blocksize plus a few bytes or sizeof(mac_desc_ctx)
+>> (i.e. 20) for arch/arm64/crypto/aes-glue.c.
+>>
+>> Walking the sglist here means open-coding a shash_ahash_update()
+>> implementation in crypto_ccm_auth(), that that doesn't seem to
+>> add much complexity over what it already has to do to chain
+>> the sglist today.
+>>
+>
+> It would be better to add a variably sized ahash request member to
+> struct crypto_ccm_req_priv_ctx, the only problem is that the last
+> member of that struct (skreq) is variably sized already, so it would
+> involve having a struct ahash_request pointer pointing into the same
+> struct, after the skreq member.
 
-   spi: spi-bitbang: change flags from u8 to u16
+Actually, I think the below should already do the trick: ahreq and
+skreq are not used at the same time, so we can stick them in a union,
+and take the max() of the reqsize to ensure there's enough empty space
+after it.
 
-has been applied to the spi tree at
+--------8<----------
+diff --git a/crypto/ccm.c b/crypto/ccm.c
+index 0a083342ec8c..b242fd0d3262 100644
+--- a/crypto/ccm.c
++++ b/crypto/ccm.c
+@@ -50,7 +50,10 @@ struct crypto_ccm_req_priv_ctx {
+        u32 flags;
+        struct scatterlist src[3];
+        struct scatterlist dst[3];
+-       struct skcipher_request skreq;
++       union {
++               struct ahash_request ahreq;
++               struct skcipher_request skreq;
++       };
+ };
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+ struct cbcmac_tfm_ctx {
+@@ -181,7 +184,7 @@
+        struct crypto_ccm_req_priv_ctx *pctx = crypto_ccm_reqctx(req);
+        struct crypto_aead *aead = crypto_aead_reqtfm(req);
+        struct crypto_ccm_ctx *ctx = crypto_aead_ctx(aead);
+-       AHASH_REQUEST_ON_STACK(ahreq, ctx->mac);
++       struct ahash_request *ahreq = &pctx->ahreq;
+        unsigned int assoclen = req->assoclen;
+        struct scatterlist sg[3];
+        u8 *odata = pctx->odata;
+@@ -427,7 +430,7 @@
+        crypto_aead_set_reqsize(
+                tfm,
+                align + sizeof(struct crypto_ccm_req_priv_ctx) +
+-               crypto_skcipher_reqsize(ctr));
++               max(crypto_ahash_reqsize(mac), crypto_skcipher_reqsize(ctr)));
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 7c201ead1bfd19935f689fca69100c335028c047 Mon Sep 17 00:00:00 2001
-From: David Lechner <david@lechnology.com>
-Date: Mon, 16 Jul 2018 22:20:49 -0500
-Subject: [PATCH] spi: spi-bitbang: change flags from u8 to u16
-
-This changes the data type of the flags field in struct spi_bitbang from
-u8 to u16. This matches the size of the mode field of struct spi_device
-where these flags are also used.
-
-This is done in preparation of adding a new SPI mode flag that will be
-used with this field that would otherwise not fit in 8 bits.
-
-Signed-off-by: David Lechner <david@lechnology.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- include/linux/spi/spi_bitbang.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/spi/spi_bitbang.h b/include/linux/spi/spi_bitbang.h
-index 51d8c060e513..c1e61641a7f1 100644
---- a/include/linux/spi/spi_bitbang.h
-+++ b/include/linux/spi/spi_bitbang.h
-@@ -8,7 +8,7 @@ struct spi_bitbang {
- 	struct mutex		lock;
- 	u8			busy;
- 	u8			use_dma;
--	u8			flags;		/* extra spi->mode support */
-+	u16			flags;		/* extra spi->mode support */
- 
- 	struct spi_master	*master;
- 
--- 
-2.18.0
-
+        return 0;
