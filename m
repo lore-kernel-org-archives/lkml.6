@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2E2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95700ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76ED82084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 504F920850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="kEbwZduh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76ED82084E
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="aAIdyURn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504F920850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731139AbeGRTAK (ORCPT
+        id S1731235AbeGRTAO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:00:10 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:43014 "EHLO
+        Wed, 18 Jul 2018 15:00:14 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:44452 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731031AbeGRTAJ (ORCPT
+        with ESMTP id S1731104AbeGRTAL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:00:09 -0400
+        Wed, 18 Jul 2018 15:00:11 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -37,46 +37,70 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         Paul Cercueil <paul@crapouillou.net>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org
-Subject: [PATCH v2 15/17] MIPS: JZ4780: DTS: Update DMA node to match driver changes
-Date:   Wed, 18 Jul 2018 20:20:21 +0200
-Message-Id: <20180718182023.8182-16-paul@crapouillou.net>
+Subject: [PATCH v2 16/17] MIPS: JZ4770: DTS: Add DMA nodes
+Date:   Wed, 18 Jul 2018 20:20:22 +0200
+Message-Id: <20180718182023.8182-17-paul@crapouillou.net>
 In-Reply-To: <20180718182023.8182-1-paul@crapouillou.net>
 References: <20180718182023.8182-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938062; bh=Cpu4+FXv4H5DlfyW497VR7CSr79FQPC5zXApkMxm6iA=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=kEbwZduhPtlsjQDHQ1TZ7Bn0HOnn4rx0BtOrUSr8+qNt9FwpXKkhc7s/xwXHgZqZdn2CZYUXkWhuRF+G6Zuy3Yib8rYptP+7iEJ4j5I3fwpaWnr9I9Z+9mz6bNlXzcslL4Xf6oaRpgRee+rgNc3fg7re/4r1cie02tGhNs34gyw=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938064; bh=PdJg6RCl01sC7mpvnr7UEe/NSEqOZiIZ3gNYPOzW5wI=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=aAIdyURn8upqfttgXrELTT1HL9YIgB+raTJ3tV5U+60cepDYf2GDcySzp5UdSVRfZh3SydHuzznTj1VsxrzQR1sfOo1wMJXwmiO1ER1QWmmhZCwv7pUEauYAwpeUkMjpzZvKQpbitxhHpqz31QkwCRQHy1c1+RsAJaGVO8kALMw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver now accepts two memory resources, the first one for the
-channel-specific registers, the second one for the controller-specific
-registers.
-
-Note that older devicetrees, without this commit, will still work with
-the jz4780-dma driver.
+Add the two devicetree nodes for the two DMA cores of the JZ4770 SoC,
+disabled by default, as currently there are no clients for the DMA
+driver (until the MMC driver and/or others get a devicetree node).
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 ---
- arch/mips/boot/dts/ingenic/jz4780.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/mips/boot/dts/ingenic/jz4770.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
- v2: Update info about devicetree ABI compatibility in commit message
+ v2: No change
 
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index aa4e8f75ff5d..ad3b1f827cf5 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -247,7 +247,8 @@
+diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+index 7c2804f3f5f1..fda17beeb08b 100644
+--- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+@@ -196,6 +196,36 @@
+ 		status = "disabled";
+ 	};
  
- 	dma: dma@13420000 {
- 		compatible = "ingenic,jz4780-dma";
--		reg = <0x13420000 0x10000>;
-+		reg = <0x13420000 0x400
-+		       0x13421000 0x40>;
- 		#dma-cells = <2>;
- 
- 		interrupt-parent = <&intc>;
++	dmac0: jz4770-dma@13420000 {
++		compatible = "ingenic,jz4770-dma";
++		reg = <0x13420000 0xC0
++		       0x13420300 0x20>;
++
++		#dma-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_DMA>;
++		interrupt-parent = <&intc>;
++		interrupts = <24>;
++
++		/* Disable dmac0 until we have something that uses it */
++		status = "disabled";
++	};
++
++	dmac1: jz4770-dma@13420100 {
++		compatible = "ingenic,jz4770-dma";
++		reg = <0x13420100 0xC0
++		       0x13420400 0x20>;
++
++		#dma-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_DMA>;
++		interrupt-parent = <&intc>;
++		interrupts = <23>;
++
++		/* Disable dmac1 until we have something that uses it */
++		status = "disabled";
++	};
++
+ 	uhc: uhc@13430000 {
+ 		compatible = "generic-ohci";
+ 		reg = <0x13430000 0x1000>;
 -- 
 2.11.0
 
