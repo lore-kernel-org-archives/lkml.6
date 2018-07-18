@@ -2,161 +2,251 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78539ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449CDECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 236DB20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:19:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GAKH4Fbt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236DB20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E93A620856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:21:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93A620856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731161AbeGRP6O (ORCPT
+        id S1731221AbeGRP7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:58:14 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:53923 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730436AbeGRP6O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:58:14 -0400
-Received: by mail-it0-f65.google.com with SMTP id 72-v6so4663568itw.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/hpJlyPTehmK42a6kJZbM8fWZcm6EoyU4opSxq9Gk/g=;
-        b=GAKH4FbtM9YE5JjGPSszydmNkXGV+DZ9vVB17/+p3C7KqMCey+mseQd/xKNQ2gg8y0
-         Lmpn+WEWbezPqrgXImJlmjdpyhabVqgsrf3cs6AhoB6/YdsbbmIEv/IuGi84H3s5rPYU
-         Qt07FhuFRphFevlXuXSuy5rzs3I6mvLzjbzQA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/hpJlyPTehmK42a6kJZbM8fWZcm6EoyU4opSxq9Gk/g=;
-        b=h9toe+4dM0AP0Ja+vB5dWPgVIw4XDiXxw1onTkBZzIYfC73ERaKmvwoFfbh68+3Pei
-         TelwuJ624j6LruudqXI9dQPcTnwPlA1meZ5BB5Ie6+wK0ZKypEnYth01ESPCXAgN9xpW
-         tRbsTiXtEyjRoow9kta837tyDX5jK2tv8yULyAw37BMApdeuM3a+Og7IqH7dUiYxDR6K
-         KM6+CKjlBSFB2izMjfn0X4nLaTcfGNxgZMvVeSAV7HMIogtxKS9/aEmkC+iXmsqnDocQ
-         6taGImB7G5cgQdHDE0jVDrBjjLzj63gCp7sNE2uGpRPVHN7hLMFfnkyRsJ6cLGwAEG7K
-         Ysjw==
-X-Gm-Message-State: AOUpUlG8Le0t15sKHzmzUCzrhHzjVznRhUj36NMkDtPRXguTDvCChGrr
-        y33VyB5aXdHXsgTTG597jwoWeADjlVqnjlk6rzfZlw==
-X-Google-Smtp-Source: AAOMgpehduyixesWI2rnFZkJUlUrGAAiEYg3fpjRd8PPqic5/LUjdhcaf0o7T2o8tz0H4LNuFDrUEYLBcNQG6p7YnHA=
-X-Received: by 2002:a02:35a:: with SMTP id y87-v6mr5922270jad.2.1531927190635;
- Wed, 18 Jul 2018 08:19:50 -0700 (PDT)
+        Wed, 18 Jul 2018 11:59:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56074 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730342AbeGRP7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:59:46 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A85D7C6CA;
+        Wed, 18 Jul 2018 15:21:21 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 71985111CA1A;
+        Wed, 18 Jul 2018 15:21:18 +0000 (UTC)
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+From:   Waiman Long <longman@redhat.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+ <1529825440-9574-8-git-send-email-longman@redhat.com>
+ <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
+ <4cf9924e-7b97-187f-a1f5-853a45165abb@redhat.com>
+ <151fc655-7e29-f060-789e-ee6c5c23d132@redhat.com>
+Organization: Red Hat
+Message-ID: <a1eb4971-ff23-6fd8-d75b-112d63f0aee9@redhat.com>
+Date:   Wed, 18 Jul 2018 11:21:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:19:49
- -0700 (PDT)
-In-Reply-To: <CAKv+Gu-cOV6uo6MpLxr9uQSTT-ku_wn9+D7CC4+3maJtvcaGoA@mail.gmail.com>
-References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
- <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
- <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
- <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au> <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
- <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com>
- <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
- <CAK8P3a3Dh+g=v++BMCtmmiOSnVu4CEUgss0U7BZS_K45aTddqg@mail.gmail.com> <CAKv+Gu-cOV6uo6MpLxr9uQSTT-ku_wn9+D7CC4+3maJtvcaGoA@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 19 Jul 2018 00:19:49 +0900
-Message-ID: <CAKv+Gu8e9sm42NKwQvQzD33JTHSaEY2q7sm0W0065dDz_rzSaA@mail.gmail.com>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <151fc655-7e29-f060-789e-ee6c5c23d132@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 15:21:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 15:21:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 July 2018 at 23:50, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> On 18 July 2018 at 05:59, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Sun, Jul 15, 2018 at 6:28 AM, Kees Cook <keescook@chromium.org> wrote:
+On 07/10/2018 11:23 AM, Waiman Long wrote:
+> On 07/06/2018 04:32 PM, Waiman Long wrote:
+>> On 07/03/2018 11:58 AM, Tejun Heo wrote:
+>>> Hello, Waiman.
 >>>
->>> After my ahash to shash conversions, only ccm is left as an ahash
->>> user, since it actually uses sg. But with the hard-coded value reduced
->>> to 376, this doesn't trip the frame warnings any more. :)
+>>> On Tue, Jul 03, 2018 at 08:41:31AM +0800, Waiman Long wrote:
+>>>>> So, effective changing when enabling partition on a child feels wrong
+>>>>> to me.  It's supposed to contain what's actually allowed to the cgroup
+>>>>> from its parent and that shouldn't change regardless of how those
+>>>>> resources are used.  It's still given to the cgroup from its parent.
+>>>> Another way to work around this issue is to expose the reserved_cpus in
+>>>> the parent for holding CPUs that can taken by a chid partition. That
+>>>> will require adding one more cpuset file for those cgroups that are
+>>>> partition roots.
+>>> Yeah, that should work.
 >>>
->>> I'll send an updated series soon.
+>> Thinking about it a bit more, that approach will make creating a
+>> partition a multi-step process:
 >>
->> Maybe we should get rid of that one as well then and remove
->> AHASH_REQUEST_ON_STACK()?
+>> 1) Reserve the CPUs in reserved_cpus.
+>> 2) enable sched.partition
+>> 3) Write the CPUs list into cpus.
 >>
->> I see that Ard (now on Cc) added this usage only recently. Looking
->> at the code some more, I also find that the descsize is probably
->> much smaller than 376 for all possible cases   of "cbcmac(*)",
->> either alg->cra_blocksize plus a few bytes or sizeof(mac_desc_ctx)
->> (i.e. 20) for arch/arm64/crypto/aes-glue.c.
+>> There are also more exception cases that need to be handled. The current
+>> approach, on the other hands, is much simpler and easier to understand
+>> and use.
 >>
->> Walking the sglist here means open-coding a shash_ahash_update()
->> implementation in crypto_ccm_auth(), that that doesn't seem to
->> add much complexity over what it already has to do to chain
->> the sglist today.
+>>>> I don't mind restricting that to the first level children for now. That
+>>>> does restrict where we can put the container root if we want a separate
+>>>> partition for a container. Let's hear if others have any objection about
+>>>> that.
+>>> As currently implemented, partioning locks away the cpus which should
+>>> be a system level decision, not container level, so it makes sense to
+>>> me that it is only available to system root.
+>> So my preference is to allow partition only on the first level children
+>> of the root for the time being. I think it should cover most of the use
+>> cases. I will update the patchset to reflect that.
 >>
+>> Cheers,
+>> Longman
+>>
+> Below is the incremental patch that allow partitioning only on the first
+> level children of the root. Please let me know your thourght on that.
 >
-> It would be better to add a variably sized ahash request member to
-> struct crypto_ccm_req_priv_ctx, the only problem is that the last
-> member of that struct (skreq) is variably sized already, so it would
-> involve having a struct ahash_request pointer pointing into the same
-> struct, after the skreq member.
+> Thanks,
+> Longman
+>
+> -------------[ Cut here ]-------------------------
+>
+> From 5a41209da94385efff87d79f6523265c710cbea5 Mon Sep 17 00:00:00 2001
+> From: Waiman Long <longman@redhat.com>
+> Date: Tue, 10 Jul 2018 10:23:16 -0400
+> Subject: [PATCH v11 10/10] cpuset: Restrict sched.partition to first level
+>  children of root only
+>
+> Enabling partition on a v2 cpuset has the side effect of affecting the
+> effective CPUs of its parent which is currently unique to partitioning.
+> As we are not sure about the repercussion of enabling that globally,
+> we are now restricting the enabling of sched.partition to the first
+> level children of the root cgroup in the default hierarchy.
+>
+> This is done by removing the "cpuset.sched.partition" control file
+> on cgroups that are not the first level children of the root. A new
+> show_cfile function pointer is added to the cftype structure. If it
+> is defined, it will be called to return a boolean value to determine
+> if the corresponding control file should show up in the cgroup. It
+> provides a more flexible mechanism to determine the visibility of the
+> control file than a simple CFTYPE_* flag can do.
+>
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  Documentation/admin-guide/cgroup-v2.rst | 10 +++++-----
+>  include/linux/cgroup-defs.h             |  9 +++++++++
+>  kernel/cgroup/cgroup.c                  |  4 ++++
+>  kernel/cgroup/cpuset.c                  | 10 ++++++++++
+>  4 files changed, 28 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/cgroup-v2.rst
+> b/Documentation/admin-guide/cgroup-v2.rst
+> index f7cde15..cf7cd88 100644
+> --- a/Documentation/admin-guide/cgroup-v2.rst
+> +++ b/Documentation/admin-guide/cgroup-v2.rst
+> @@ -1585,10 +1585,10 @@ Cpuset Interface Files
+>      Its value will be affected by memory nodes hotplug events.
+>  
+>    cpuset.sched.partition
+> -    A read-write single value file which exists on non-root
+> -    cpuset-enabled cgroups.  It is a binary value flag that accepts
+> -    either "0" (off) or "1" (on).  This flag is set and owned by the
+> -        parent cgroup.
+> +    A read-write single value file which exists on the first level
+> +    children of the root cgroup.  It is a binary value flag that
+> +    accepts either "0" (off) or "1" (on).  This flag is set and
+> +    owned by the parent cgroup.
+>  
+>      If set, it indicates that the current cgroup is the root of a
+>      new partition or scheduling domain that comprises itself and
+> @@ -1603,7 +1603,7 @@ Cpuset Interface Files
+>         exclusive, i.e. they are not shared by any of its siblings.
+>      2) The "cpuset.cpus" is also a proper subset of the parent's
+>         "cpuset.cpus.effective".
+> -    3) The parent cgroup is a partition root.
+> +    3) The parent cgroup is the root cgroup.
+>      4) There is no child cgroups with cpuset enabled.  This is for
+>         eliminating corner cases that have to be handled if such a
+>         condition is allowed.
+> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> index c0e68f9..be79487 100644
+> --- a/include/linux/cgroup-defs.h
+> +++ b/include/linux/cgroup-defs.h
+> @@ -565,6 +565,15 @@ struct cftype {
+>      ssize_t (*write)(struct kernfs_open_file *of,
+>               char *buf, size_t nbytes, loff_t off);
+>  
+> +    /*
+> +     * show_cfile(), if defined, will return a boolean value to
+> +     * determine if the control file should show up in the cgroup.
+> +     * It provides more flexibility in deciding where the control
+> +     * file should appear than simple criteria like on-root or
+> +     * not-on-root.
+> +     */
+> +    bool (*show_cfile)(struct cgroup_subsys_state *css);
+> +
+>  #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>      struct lock_class_key    lockdep_key;
+>  #endif
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index 077370b..0afdab8 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -3612,6 +3612,10 @@ static int cgroup_addrm_files(struct
+> cgroup_subsys_state *css,
+>          if ((cft->flags & CFTYPE_ONLY_ON_ROOT) && cgroup_parent(cgrp))
+>              continue;
+>  
+> +        /* Should the control file show up in the cgroup */
+> +        if (cft->show_cfile && !cft->show_cfile(css))
+> +            continue;
+> +
+>          if (is_add) {
+>              ret = cgroup_add_file(css, cgrp, cft);
+>              if (ret) {
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 62b7e61..2f85c1e 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -2106,6 +2106,15 @@ static s64 cpuset_read_s64(struct
+> cgroup_subsys_state *css, struct cftype *cft)
+>  }
+>  
+>  /*
+> + * The sched.partition control file should only show up in the first
+> + * level children of the root cgroup.
+> + */
+> +static bool cpuset_show_partition(struct cgroup_subsys_state *css)
+> +{
+> +    return parent_cs(css_cs(css)) == &top_cpuset;
+> +}
+> +
+> +/*
+>   * for the common functions, 'private' gives the type of file
+>   */
+>  
+> @@ -2250,6 +2259,7 @@ static s64 cpuset_read_s64(struct
+> cgroup_subsys_state *css, struct cftype *cft)
+>          .name = "sched.partition",
+>          .read_u64 = cpuset_read_u64,
+>          .write_u64 = cpuset_write_u64,
+> +        .show_cfile = cpuset_show_partition,
+>          .private = FILE_PARTITION_ROOT,
+>          .flags = CFTYPE_NOT_ON_ROOT,
+>      },
 
-Actually, I think the below should already do the trick: ahreq and
-skreq are not used at the same time, so we can stick them in a union,
-and take the max() of the reqsize to ensure there's enough empty space
-after it.
+Tejun,
 
---------8<----------
-diff --git a/crypto/ccm.c b/crypto/ccm.c
-index 0a083342ec8c..b242fd0d3262 100644
---- a/crypto/ccm.c
-+++ b/crypto/ccm.c
-@@ -50,7 +50,10 @@ struct crypto_ccm_req_priv_ctx {
-        u32 flags;
-        struct scatterlist src[3];
-        struct scatterlist dst[3];
--       struct skcipher_request skreq;
-+       union {
-+               struct ahash_request ahreq;
-+               struct skcipher_request skreq;
-+       };
- };
+What do you think about this patch?
 
- struct cbcmac_tfm_ctx {
-@@ -181,7 +184,7 @@
-        struct crypto_ccm_req_priv_ctx *pctx = crypto_ccm_reqctx(req);
-        struct crypto_aead *aead = crypto_aead_reqtfm(req);
-        struct crypto_ccm_ctx *ctx = crypto_aead_ctx(aead);
--       AHASH_REQUEST_ON_STACK(ahreq, ctx->mac);
-+       struct ahash_request *ahreq = &pctx->ahreq;
-        unsigned int assoclen = req->assoclen;
-        struct scatterlist sg[3];
-        u8 *odata = pctx->odata;
-@@ -427,7 +430,7 @@
-        crypto_aead_set_reqsize(
-                tfm,
-                align + sizeof(struct crypto_ccm_req_priv_ctx) +
--               crypto_skcipher_reqsize(ctr));
-+               max(crypto_ahash_reqsize(mac), crypto_skcipher_reqsize(ctr)));
+Are there any other issues you have with this patchset?
 
-        return 0;
+Thanks,
+Longman
+
