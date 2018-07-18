@@ -2,86 +2,77 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C15ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B10ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37AE2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:01:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aLVlaiOO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37AE2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6510D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:06:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6510D2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731314AbeGRAgV (ORCPT
+        id S1731344AbeGRAmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 20:36:21 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:38585 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730249AbeGRAgV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 20:36:21 -0400
-Received: by mail-it0-f65.google.com with SMTP id v71-v6so1660470itb.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 17:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=e+eckyoPBeejqLfOkZZIpuNCCNHBQgcPPoK0KJbCyes=;
-        b=aLVlaiOOJlrsXz9r4tJf/vPtGtl4RMaejWTMogOcMNBp1PDjPFgug9gdqmIR2Ss51+
-         U5IZBhPWIC+paYCoMbKZL6XczLt7Z1QmoJKu5scIvjVLEEIeAzcDmPcS0QpdqY38u1TC
-         3nq59OchskZQHZ0h7Zj6icp8MILBIFUVVhf0I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=e+eckyoPBeejqLfOkZZIpuNCCNHBQgcPPoK0KJbCyes=;
-        b=t9V014ZgORvh8PApWxofj09BJibIpJtYPHiVLkHUi/lqeSpRpmQi6rIyDcxkBYjiCO
-         KqkcXOm869yr4Hbk+Zhf/O+iTxDXHG4v+ZwjvX1/89l8EYSEUYeHd4DIV74wxN84XqwP
-         rSNzw3+tAPtd+SglEFRLSua7/m8WS6qaYZ9jT47TDg+V0Gq+RJDQEk4/ghGjpODyn4eA
-         BfN1zOIJFp6V3KlFadgir9TRhngS4K/S2u7p6CVcYe8/LKl01BHtnBVL7aKg6GZWOvpO
-         QrwnvsIBahDC/cakA81gzkyVoXPgIiV3gDFdjcZO+KpcxYZwXPvzr3vaXjfqIQtslESi
-         EViA==
-X-Gm-Message-State: AOUpUlH74PdHupX+NJehJMPxshlfs/TY34whZLpoeSUbZZONHGm4jcjm
-        /BFGOoJB1c300uUvc44+eyRT/Qm4WlmtAT9V+mo=
-X-Google-Smtp-Source: AAOMgpeJ0uNr+IuivTtI4/07tfBxO8TlwH/GAbgLxpwSy9zZVHEgTKvWjO+4d7/9kFQAg70iOdUN+WLY7dW/ZPuumtg=
-X-Received: by 2002:a24:5002:: with SMTP id m2-v6mr229498itb.16.1531872077861;
- Tue, 17 Jul 2018 17:01:17 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180717135307.3713325-1-arnd@arndb.de> <CA+55aFxjx+naf3vQ++kqxBNS=dvevPebcKOzA=OYWfMJZ2CrzA@mail.gmail.com>
- <20180717202635.GA3489@thunk.org>
-In-Reply-To: <20180717202635.GA3489@thunk.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Jul 2018 17:01:06 -0700
-Message-ID: <CA+55aFwzbWgxrwRcErmFfu+9gRcFvujNJM8e5KyDjbEBmYkiBg@mail.gmail.com>
-Subject: Re: [PATCH] random: fix rdrand mix-in
-To:     "Theodore Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>, tcharding <me@tobin.cc>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Eric Biggers <ebiggers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Jul 2018 20:42:00 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:43050 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730180AbeGRAl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 20:41:59 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 4FBB17E783B3F94649B2;
+        Wed, 18 Jul 2018 08:06:54 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6I06mMc095899;
+        Wed, 18 Jul 2018 08:06:48 +0800 (GMT-8)
+        (envelope-from jiang.biao2@zte.com.cn)
+Received: from localhost.localdomain ([10.75.10.200])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018071808065235-762580 ;
+          Wed, 18 Jul 2018 08:06:52 +0800 
+From:   Jiang Biao <jiang.biao2@zte.com.cn>
+To:     tglx@linutronix.de, mingo@redhat.com
+Cc:     x86@kernel.org, hpa@zytor.com, dwmw@amazon.co.uk,
+        konrad.wilk@oracle.com, bp@suse.de, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, jiang.biao2@zte.com.cn
+Subject: [PATCH] x86/speculation: remove SPECTRE_V2_IBRS in enum spectre_v2_mitigation
+Date:   Wed, 18 Jul 2018 08:03:14 +0800
+Message-Id: <1531872194-39207-1-git-send-email-jiang.biao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-18 08:06:52,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-18 08:06:40,
+        Serialize complete at 2018-07-18 08:06:40
+X-MAIL: mse01.zte.com.cn w6I06mMc095899
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 2:12 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
->
-> I wasn't sure how quickly the HW entropy would replenish itself; I
-> know that on first RDRAND platforms it would effectively never fail
-> (as in if six of the eight cores were calling RDRAND in a tight loop
-> _maybe_ you could exhaust the HW entropy).
+SPECTRE_V2_IBRS in enum spectre_v2_mitigation is never used, remove
+it to avoid confusing.
 
-I suspect you can't hit it in practice on Intel systems, but maybe you
-can on others. And maybe future other architectures might be different
-yet.
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
+---
+ arch/x86/include/asm/nospec-branch.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-But rdrand has the potential of being pretty slow, and it's almost
-certainly not worth continuing if it stopped giving us data.
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index f6f6c63..c99082e 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -214,7 +214,6 @@ enum spectre_v2_mitigation {
+ 	SPECTRE_V2_RETPOLINE_MINIMAL_AMD,
+ 	SPECTRE_V2_RETPOLINE_GENERIC,
+ 	SPECTRE_V2_RETPOLINE_AMD,
+-	SPECTRE_V2_IBRS,
+ };
+ 
+ /* The Speculative Store Bypass disable variants */
+-- 
+2.7.4
 
-                  Linus
