@@ -2,103 +2,148 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDC2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54899ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE9F2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07DD520852
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:14:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="DbzcOxha"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE9F2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="QrFLLWS5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DD520852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730755AbeGRJuu (ORCPT
+        id S1730816AbeGRJvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 05:50:50 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:60642 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729619AbeGRJut (ORCPT
+        Wed, 18 Jul 2018 05:51:50 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:49142 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729619AbeGRJvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:50:49 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id 76EE1B00768
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 11:13:53 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=content-transfer-encoding:content-language:content-type
-        :content-type:in-reply-to:mime-version:user-agent:date:date
-        :message-id:from:from:references:to:subject:subject; s=dkim; t=
-        1531905232; x=1532769233; bh=c+UurG2T0u1p5OxdgTE4hYgfxIlGe8eFwA9
-        bgG67lvk=; b=DbzcOxhaSWLsLP3LJNopST1ZBQEwxRHd0TrVS2frDzcfJdyyki9
-        ayJb37hddaN9AwmJ4fnOa+Oqw56jMeuZKgxtLxRBbslMAOFzqQBunTP3da/9Bqnl
-        8I21mXXQ7d1tXDjOCJ0O+fDad+vQPtTPXMqd6d7FGf186QCE+W73VmI0=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id vnqOZxZ0Kvxt for <linux-kernel@vger.kernel.org>;
-        Wed, 18 Jul 2018 11:13:52 +0200 (CEST)
-Received: from [192.168.2.133] (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 80C94B0018C;
-        Wed, 18 Jul 2018 11:13:52 +0200 (CEST)
-Subject: Re: [PATCH v7 3/4] rtc: ds1307: add offset sysfs for mt41txx chips.
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180718084916.79837-1-giulio.benetti@micronovasrl.com>
- <20180718084916.79837-2-giulio.benetti@micronovasrl.com>
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <09456f94-8f4d-875d-c87f-4dedfeeebadc@micronovasrl.com>
-Date:   Wed, 18 Jul 2018 11:13:52 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 18 Jul 2018 05:51:49 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 5F20D25BE0C;
+        Wed, 18 Jul 2018 19:14:51 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1531905291; bh=EmpRczOHPT+zYUNOn7qLIVM7xx2Y1K39KarvOzDsWgw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QrFLLWS59xLsY3XogPsnFirVDqr0Ec437cR/kOPMG73CtlippJMnxamJfbaafQ1pD
+         jzIoGJ/QCdiylh9Nm44jIh4nNDq5QxKJj74Ysg5YLiEC8VXzkyInQlXSqyWNajZYvw
+         dcAK8kCuyilaIN8KWke7uHOmClzDl6JSKXu8hS/M=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 56CB99402E7; Wed, 18 Jul 2018 11:14:49 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 11:14:49 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH 2/2] i2c: designware: Add support for a bus clock
+Message-ID: <20180718091448.fw2y7ea6sk2osi3g@verge.net.au>
+References: <1531731553-22979-1-git-send-email-phil.edworthy@renesas.com>
+ <1531731553-22979-3-git-send-email-phil.edworthy@renesas.com>
+ <20180717120737.bipotpki3yhn6klf@verge.net.au>
+ <c6b21734b729cb5f92a5686ae3fa8469692a1302.camel@linux.intel.com>
+ <TY1PR01MB1769BD3E271E217E0CFBAB46F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <40f2729f38bd565a829d60d9cc8f508e33b0dc65.camel@linux.intel.com>
+ <TY1PR01MB1769F130075F1635CC51532FF55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <c912248504a4cd534a90d263ab6005526a7e16ab.camel@linux.intel.com>
+ <TY1PR01MB1769473F18D646B7011C5803F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <20180718084916.79837-2-giulio.benetti@micronovasrl.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1769473F18D646B7011C5803F55C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
-
-Il 18/07/2018 10:49, Giulio Benetti ha scritto:
-> m41txx chips can hold a calibration value to get correct clock bias.
+On Tue, Jul 17, 2018 at 02:57:27PM +0000, Phil Edworthy wrote:
+> Hi Andy,
 > 
-> Add offset handling (ranging between -63ppm and 126ppm) via sysfs.
+> On 17 July 2018 15:47, Andy Shevchenko wrote:
+> > On Tue, 2018-07-17 at 14:40 +0000, Phil Edworthy wrote:
+> > > On 17 July 2018 15:19, Andy Shevchenko wrote:
+> > > > On Tue, 2018-07-17 at 12:42 +0000, Phil Edworthy wrote:
+> > > >
+> > > > > > While your point sounds valid (don't remember how clk_get() is
+> > > > > > implemented), NULL is also OK to have.
+> > > > >
+> > > > > Ok as in there is no bus clock, right?
+> > > > > So it should be:
+> > > > >  if (!IS_ERR_OR_NULL (dev->busclk))
+> > > >
+> > > > Nope, NULL is no error case for optional clock.
+> > >
+> > > I must be missing something here...
+> > 
+> > See how clk_prepare_enable() is implemented.
+> Ok, if busclk is NULL the code can safely call clk_prepare_enable()
+>
+> > > I agree that NULL for an optional clock is not an error. However, the
+> > > code above is now:
+> > > +	if (prepare) {
+> > > +		/* Optional bus clock */
+> > 
+> > > +		if (!IS_ERR_OR_NULL(dev->busclk)) {
+> > 
+> > Check for NULL is redundant.
+> > 
+> > > +			ret = clk_prepare_enable(dev->busclk);
+> > > +			if (ret)
+> > > +				return ret;
+> > > +		}
+> > > +
+> > >  		return clk_prepare_enable(dev->clk);
+> > > +	}
+> > >
+> > > So, if you have a valid busclk, it gets enabled, otherwise it is left
+> > > alone.
+> > 
+> So the code as sent in the original email is correct (aside from Geert's
+> comments about EPROBE_DEFER handling).
 > 
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
-> ---
-> V6 => V7:
-> * changed PPM to PPB as rtc sysfs offset handles PPB
->   drivers/rtc/rtc-ds1307.c | 77 ++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 77 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-> index 0162a600ff1b..b2ef9defc349 100644
-> --- a/drivers/rtc/rtc-ds1307.c
-> +++ b/drivers/rtc/rtc-ds1307.c
-> @@ -114,6 +114,20 @@ enum ds_type {
->   #	define RX8025_BIT_VDET		0x40
->   #	define RX8025_BIT_XST		0x20
->   
-> +#define M41TXX_REG_CONTROL	0x07
-> +#	define M41TXX_BIT_OUT		0x80
-> +#	define M41TXX_BIT_FT		0x40
-> +#	define M41TXX_BIT_CALIB_SIGN	0x20
-> +#	define M41TXX_M_CALIBRATION	0x1f
+> Maybe I need some coffee :\
+> Thanks
+> Phil
 
-Sorry, I've forgot to use BIT().
-I would also use GENMASK() for M41TXX_M_CALIBRATION.
-I correct and resend asap.
+My point is that errors should be treated as errors.
 
-Giulio
+In i2c_dw_prepare_clk() the following appears:
+
+        if (IS_ERR(dev->clk))
+                return PTR_ERR(dev->clk);
+
+So dev->clk being an error value is treated as an error that
+is passed up to the caller.
+
+But in your patch (and the snippet below) dev->busclk is treated
+as the optional clock not being present. Even if the error stored
+nothing to do with the clock not being present - f.e.  ENOMEM or
+as Geert mentioned elsewhere, EPROBE_DEFER.
+
+Assuming the absense of the optional clock is indicated by ENOENT,
+in my view correct code would include something like:
+
+	...
+
+	if (IS_ERR(dev->clk))
+		return PTR_ERR(dev->clk);
+
+	if (IS_ERR(dev->buslck) && PTR_ERR(dev->busclk) != -ENOENT)
+		return PTR_ERR(dev->busclk);
+
+	...
+
+
