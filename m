@@ -2,82 +2,161 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26618ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DFAECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BAB20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BAB20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 330522084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="HTLUJqc1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 330522084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbeGRJSA (ORCPT
+        id S1730502AbeGRJSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 05:18:00 -0400
-Received: from smtprelay0046.hostedemail.com ([216.40.44.46]:43251 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726180AbeGRJSA (ORCPT
+        Wed, 18 Jul 2018 05:18:15 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:58042 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729677AbeGRJSP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:18:00 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 6894218033786;
-        Wed, 18 Jul 2018 08:41:10 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: soup81_271360bbf9a47
-X-Filterd-Recvd-Size: 2194
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 18 Jul 2018 08:41:08 +0000 (UTC)
-Message-ID: <93d979554b031755fafc03ded90560d3aaec40a3.camel@perches.com>
-Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
-From:   Joe Perches <joe@perches.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@suse.de>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Date:   Wed, 18 Jul 2018 01:41:07 -0700
-In-Reply-To: <8e7a3e658dbb928477639e0da67a5a204456b065.camel@perches.com>
-References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-         <20180707111209.GA27768@gmail.com>
-         <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
-         <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
-         <f486debf-e824-0d0c-c0c9-cf1e278ee9eb@i-love.sakura.ne.jp>
-         <218baff7-9473-ac1e-2449-13de98fa6dc9@rasmusvillemoes.dk>
-         <2c8fe03e-36f5-5126-283c-cabc358a7d52@i-love.sakura.ne.jp>
-         <8e7a3e658dbb928477639e0da67a5a204456b065.camel@perches.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 05:18:15 -0400
+Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
+        by mail.micronovasrl.com (Postfix) with ESMTP id 1F68FB00787
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:41:26 +0200 (CEST)
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
+         h=references:in-reply-to:x-mailer:message-id:date:date:subject
+        :subject:to:from:from; s=dkim; t=1531903285; x=1532767286; bh=WS
+        d/9wvzx+t7T41QY3yKInolV8cyC+RL5+TKQjyvhRo=; b=HTLUJqc176cPY7XTZe
+        F5zL707q+7s9LZXpRILH9Y2qSjPNldPfVjNpWKFwlAMNFkAUeuMi2ZRMOpfWex6A
+        hiGwkCHGIu6z874w5qaq+Wm6KyjSgX6MASArL9Xw+L09mRiosd7YVTu44eYGlywU
+        tfHMgeP9W0Teeb4vSKlqdgC7k=
+X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
+Received: from mail.micronovasrl.com ([127.0.0.1])
+        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id R7ny6cnLF9_0 for <linux-kernel@vger.kernel.org>;
+        Wed, 18 Jul 2018 10:41:25 +0200 (CEST)
+Received: from localhost.localdomain (62-11-51-166.dialup.tiscali.it [62.11.51.166])
+        by mail.micronovasrl.com (Postfix) with ESMTPSA id F3E84B006E8;
+        Wed, 18 Jul 2018 10:41:23 +0200 (CEST)
+From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/4] rtc: ds1307: support m41t11 variant
+Date:   Wed, 18 Jul 2018 10:41:15 +0200
+Message-Id: <20180718084118.79540-1-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180716213302.GA2751@piout.net>
+References: <20180716213302.GA2751@piout.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 14:19 -0700, Joe Perches wrote:
-> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-> []
-> > @@ -93,26 +93,15 @@ static void printk_stack_address(unsigned long address, int reliable,
-> >   */
-> >  void show_opcodes(u8 *rip, const char *loglvl)
-> >  {
-> > -	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
-> > +	const unsigned int prologue = OPCODE_BUFSIZE * 2 / 3;
-> 
-> And this might be better as a #define to avoid
-> a few more bytes of stack consumption.
+The m41t11 variant is very similar to the already supported m41t00 and
+m41t0, but it has also 56 bytes of NVRAM.
 
-Apologies for this silly suggestion.
+Add it to driver taking into account NVRAM section.
 
-automatics are not structs and gcc will eliminate
-this declaration at all compiler optimization levels.
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+ .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
+ drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+index d28d6e7f6ae8..ce6469c1a516 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
+@@ -13,6 +13,7 @@ Required properties:
+ 	"maxim,ds3231",
+ 	"st,m41t0",
+ 	"st,m41t00",
++	"st,m41t11",
+ 	"microchip,mcp7940x",
+ 	"microchip,mcp7941x",
+ 	"pericom,pt7c4338",
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index aa4a161bae98..0162a600ff1b 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -44,6 +44,7 @@ enum ds_type {
+ 	ds_3231,
+ 	m41t0,
+ 	m41t00,
++	m41t11,
+ 	mcp794xx,
+ 	rx_8025,
+ 	rx_8130,
+@@ -227,6 +228,11 @@ static const struct chip_desc chips[last_ds_type] = {
+ 		.irq_handler = rx8130_irq,
+ 		.rtc_ops = &rx8130_rtc_ops,
+ 	},
++	[m41t11] = {
++		/* this is battery backed SRAM */
++		.nvram_offset	= 8,
++		.nvram_size	= 56,
++	},
+ 	[mcp794xx] = {
+ 		.alarm		= 1,
+ 		/* this is battery backed SRAM */
+@@ -249,6 +255,7 @@ static const struct i2c_device_id ds1307_id[] = {
+ 	{ "ds3231", ds_3231 },
+ 	{ "m41t0", m41t0 },
+ 	{ "m41t00", m41t00 },
++	{ "m41t11", m41t11 },
+ 	{ "mcp7940x", mcp794xx },
+ 	{ "mcp7941x", mcp794xx },
+ 	{ "pt7c4338", ds_1307 },
+@@ -305,6 +312,10 @@ static const struct of_device_id ds1307_of_match[] = {
+ 		.compatible = "st,m41t00",
+ 		.data = (void *)m41t00
+ 	},
++	{
++		.compatible = "st,m41t11",
++		.data = (void *)m41t11
++	},
+ 	{
+ 		.compatible = "microchip,mcp7940x",
+ 		.data = (void *)mcp794xx
+@@ -347,6 +358,7 @@ static const struct acpi_device_id ds1307_acpi_ids[] = {
+ 	{ .id = "DS3231", .driver_data = ds_3231 },
+ 	{ .id = "M41T0", .driver_data = m41t0 },
+ 	{ .id = "M41T00", .driver_data = m41t00 },
++	{ .id = "M41T11", .driver_data = m41t11 },
+ 	{ .id = "MCP7940X", .driver_data = mcp794xx },
+ 	{ .id = "MCP7941X", .driver_data = mcp794xx },
+ 	{ .id = "PT7C4338", .driver_data = ds_1307 },
+@@ -1576,6 +1588,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1307:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/* clock halted?  turn it on, so clock can tick. */
+ 		if (tmp & DS1307_BIT_CH) {
+ 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
+@@ -1641,6 +1654,7 @@ static int ds1307_probe(struct i2c_client *client,
+ 	case ds_1340:
+ 	case m41t0:
+ 	case m41t00:
++	case m41t11:
+ 		/*
+ 		 * NOTE: ignores century bits; fix before deploying
+ 		 * systems that will run through year 2100.
+-- 
+2.17.1
+
