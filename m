@@ -3,40 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157D8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAF5ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1CDB20857
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADC4F2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tELiULtI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CDB20857
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0SWrPjvf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC4F2084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbeGRUXm (ORCPT
+        id S1730512AbeGRUXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:23:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33486 "EHLO mail.kernel.org"
+        Wed, 18 Jul 2018 16:23:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729642AbeGRUXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:23:42 -0400
+        id S1729642AbeGRUXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:23:49 -0400
 Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 930D32084E;
-        Wed, 18 Jul 2018 19:44:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 387DC20850;
+        Wed, 18 Jul 2018 19:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531943059;
-        bh=DH2tZQcJ7vcpfGHoGwolCIws8HK/QeMUcAANbUvg1mE=;
-        h=Subject:From:To:Cc:Date:From;
-        b=tELiULtIZMa47hW1gwxDrVoXX1N2uclc56IDsMg0C2JDCNLb8BgrE470JrHsgwYYV
-         TJFLGfAAwp7djwXKKrIOsFW+OuflyXVv47pdGpQ5Yyqog0VL9ivnD7R1eh5+K1KNRR
-         HvKGOA+tn4ie+Tbf/UB2yqybVkErpDbiargxduAs=
-Subject: [PATCH v3 0/7] Fix issues and cleanup for ERR_FATAL and ERR_NONFATAL
+        s=default; t=1531943066;
+        bh=rIkp0pxv7nNLpouOglKJUSpimXMsVW3fBEXh5OF7oBU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=0SWrPjvf1kmwGvCkVS++kGiZSovV3y/r7hH0idCHUmhTaj9N8S3FxRLarSWlqubBh
+         NWoWmJBlDbGkcjEg9xwSmqw97mwBmFdyZQ2VKSV1w9jGsKHNT/CjXEdPDoaF7EIHVB
+         CvVWYdz2eEugDSgKhQ6k1/EycP84JUN3G4MIky0k=
+Subject: [PATCH v3 1/7] PCI/AER: Clear only ERR_FATAL status bits during
+ fatal recovery
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Oza Pawandeep <poza@codeaurora.org>
 Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
@@ -48,8 +49,10 @@ Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
         Sinan Kaya <okaya@kernel.org>,
         Timur Tabi <timur@codeaurora.org>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 18 Jul 2018 14:44:18 -0500
-Message-ID: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date:   Wed, 18 Jul 2018 14:44:25 -0500
+Message-ID: <153194306515.191586.15135574361122079715.stgit@bhelgaas-glaptop.roam.corp.google.com>
+In-Reply-To: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
+References: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -59,43 +62,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a v3 of Oza's patches [1].  It's available at [2] if you prefer
-git.
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-v3 changes:
-  - Add pci_aer_clear_fatal_status() to clear ERR_FATAL bits, only called
-    from pcie_do_fatal_recovery().  Moved to first in series to avoid a
-    window where ERR_FATAL recovery only clears ERR_NONFATAL bits.  Visible
-    only inside the PCI core.
-  - Instead of having pci_cleanup_aer_uncorrect_error_status() do different
-    things based on dev->error_state, use this only for ERR_NONFATAL bits.
-    I didn't change the name because it's used by many drivers.
-  - Rename pci_cleanup_aer_error_device_status() to
-    pci_aer_clear_device_status(), make it void, and make it visible only
-    inside the PCI core.
-  - Remove pcie_portdrv_err_handler.slot_reset altogether instead of making
-    it a stub function.  Possibly pcie_portdrv_err_handler could be removed
-    completely?
+During recovery from fatal errors, we previously called
+pci_cleanup_aer_uncorrect_error_status(), which cleared *all* uncorrectable
+error status bits (both ERR_FATAL and ERR_NONFATAL).
 
-[1] https://lkml.kernel.org/r/1529661494-20936-1-git-send-email-poza@codeaurora.org
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/?h=pci/06-22-oza-aer
+Instead, call a new pci_aer_clear_fatal_status() that clears only the
+ERR_FATAL bits (as indicated by the PCI_ERR_UNCOR_SEVER register).
 
+Based-on-patch-by: Oza Pawandeep <poza@codeaurora.org>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
+ drivers/pci/pci.h      |    4 ++++
+ drivers/pci/pcie/aer.c |   17 +++++++++++++++++
+ drivers/pci/pcie/err.c |    2 +-
+ 3 files changed, 22 insertions(+), 1 deletion(-)
 
-Bjorn Helgaas (1):
-      PCI/AER: Clear only ERR_FATAL status bits during fatal recovery
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index c358e7a07f3f..12fd2ac95843 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -452,4 +452,8 @@ static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
+ }
+ #endif
+ 
++#ifdef CONFIG_PCIEAER
++void pci_aer_clear_fatal_status(struct pci_dev *dev);
++#endif
++
+ #endif /* DRIVERS_PCI_H */
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index a2e88386af28..5b4a84e3d360 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -374,6 +374,23 @@ int pci_cleanup_aer_uncorrect_error_status(struct pci_dev *dev)
+ }
+ EXPORT_SYMBOL_GPL(pci_cleanup_aer_uncorrect_error_status);
+ 
++void pci_aer_clear_fatal_status(struct pci_dev *dev)
++{
++	int pos;
++	u32 status, sev;
++
++	pos = dev->aer_cap;
++	if (!pos)
++		return;
++
++	/* Clear status bits for ERR_FATAL errors only */
++	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, &status);
++	pci_read_config_dword(dev, pos + PCI_ERR_UNCOR_SEVER, &sev);
++	status &= sev;
++	if (status)
++		pci_write_config_dword(dev, pos + PCI_ERR_UNCOR_STATUS, status);
++}
++
+ int pci_cleanup_aer_error_status_regs(struct pci_dev *dev)
+ {
+ 	int pos;
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index f7ce0cb0b0b7..0539518f9861 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -316,7 +316,7 @@ void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service)
+ 		 * do error recovery on all subordinates of the bridge instead
+ 		 * of the bridge and clear the error status of the bridge.
+ 		 */
+-		pci_cleanup_aer_uncorrect_error_status(dev);
++		pci_aer_clear_fatal_status(dev);
+ 	}
+ 
+ 	if (result == PCI_ERS_RESULT_RECOVERED) {
 
-Oza Pawandeep (6):
-      PCI/AER: Clear only ERR_NONFATAL bits during non-fatal recovery
-      PCI/AER: Factor out ERR_NONFATAL status bit clearing
-      PCI/AER: Remove ERR_FATAL code from ERR_NONFATAL path
-      PCI/AER: Clear device status bits during ERR_FATAL and ERR_NONFATAL
-      PCI/AER: Clear device status bits during ERR_COR handling
-      PCI/portdrv: Remove pcie_portdrv_err_handler.slot_reset
-
-
- drivers/pci/pci.h              |    5 ++++
- drivers/pci/pcie/aer.c         |   47 +++++++++++++++++++++++++++-------------
- drivers/pci/pcie/err.c         |   15 +++++--------
- drivers/pci/pcie/portdrv_pci.c |   25 ---------------------
- 4 files changed, 43 insertions(+), 49 deletions(-)
