@@ -2,125 +2,122 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3828ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF81ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CBD2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:47:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CBD2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+	by mail.kernel.org (Postfix) with ESMTP id 6ADE52075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:47:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NpW6M8gC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ADE52075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbeGRIXt (ORCPT
+        id S1729250AbeGRIYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 04:23:49 -0400
-Received: from bmailout2.hostsharing.net ([83.223.90.240]:60805 "EHLO
-        bmailout2.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbeGRIXt (ORCPT
+        Wed, 18 Jul 2018 04:24:16 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38691 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726969AbeGRIYQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 04:23:49 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout2.hostsharing.net (Postfix) with ESMTPS id 5E2A82800A282;
-        Wed, 18 Jul 2018 09:47:11 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id EC41B6F3EF; Wed, 18 Jul 2018 09:47:10 +0200 (CEST)
-Date:   Wed, 18 Jul 2018 09:47:10 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Ben Skeggs <bskeggs@redhat.com>, linux-pm@vger.kernel.org
-Subject: Re: [Nouveau] [PATCH 1/5] drm/nouveau: Prevent RPM callback
- recursion in suspend/resume paths
-Message-ID: <20180718074710.GA16072@wunner.de>
-References: <20180716235936.11268-1-lyude@redhat.com>
- <20180716235936.11268-2-lyude@redhat.com>
- <20180717071641.GA5411@wunner.de>
- <d7c25a7f41df70685c0c4726315592d1d9b561ff.camel@redhat.com>
- <20180717182041.GA18363@wunner.de>
- <cb5af1611622a080fdcbcf3bb794d8ebc39cae2a.camel@redhat.com>
- <20180717183211.GB18363@wunner.de>
- <2dbe75b1a83c025b9cddc229dbca9af6fb30111e.camel@redhat.com>
+        Wed, 18 Jul 2018 04:24:16 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so1774098wmf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 00:47:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YPI/hke3zEDlv3yZT9zlJCv5cegavP3WR3cfP/KZHH8=;
+        b=NpW6M8gCywV1LQx3ddnvOGlPjZDCrzsPifWN6MVf9zSHv2PuZsqVU7ILUUZFGH8nM4
+         XZxyUDKFJxgBpC1RJdjnOc1FzC9LxmuLw1f7bFo0o6XYqQDyYzl5C/jQKo9JN7pvnLGX
+         vuh3BTBoAMxpZXY9PGQrJvev8nCvm/ByyA8vc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YPI/hke3zEDlv3yZT9zlJCv5cegavP3WR3cfP/KZHH8=;
+        b=bgKffqfgGjK2HB5305vPA6ooR/ngdh4Oo1FXQElF7rAtS5xxexuMTnNe4pPjr+HXyj
+         yndunidbfnnttwQBfeTVQxcmojr8t/9IJ+6EiaQYCXClhIe3YFv9MF3CwwkwN3XsLDrY
+         2bFwB1koTxRQDdVJYAzhBmI2MhbgEhTNznri2Hp5MRW9PKoE13W/sWhF4M/OsKUFTDOw
+         h7O5eaojA994xzyIlIp8u9vF1R6FU47tZNqBlaq7pW/kX4kT0TdAb36nn9zLVB9TFbDn
+         aYusEVaNe4X8VHhCB20pfKVZbH7bB7hmQXUIUhhigQiOuw8GSuNQHPQGCHSnpOy69wyl
+         ZP0g==
+X-Gm-Message-State: AOUpUlHvaSk/s7ymjPzU7fJRD9TPiisN0POLsOikllXJCdjzY0R/UacN
+        87MGidtN1/tknU+2vpEx9C3I1w==
+X-Google-Smtp-Source: AAOMgpcEvCxeKutzHCOtdRJStNIxuURB8zHJiQgc/8nm3K4jGcYG9y2dW84hbeCqxcciwvI7DnlWtA==
+X-Received: by 2002:a1c:2208:: with SMTP id i8-v6mr801556wmi.105.1531900059312;
+        Wed, 18 Jul 2018 00:47:39 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id v127-v6sm1494528wmv.9.2018.07.18.00.47.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 00:47:38 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 08:47:36 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 0/5] ti_am335x_tsc: Enable wakeup capability
+Message-ID: <20180718074736.GA4641@dell>
+References: <20180630103318.25355-1-vigneshr@ti.com>
+ <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2dbe75b1a83c025b9cddc229dbca9af6fb30111e.camel@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dcb4a63b-9ecb-a72e-bfb8-ebb62017b4f7@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 02:34:47PM -0400, Lyude Paul wrote:
-> On Tue, 2018-07-17 at 20:32 +0200, Lukas Wunner wrote:
-> > On Tue, Jul 17, 2018 at 02:24:31PM -0400, Lyude Paul wrote:
-> > > On Tue, 2018-07-17 at 20:20 +0200, Lukas Wunner wrote:
-> > > > Okay, the PCI device is suspending and the nvkm_i2c_aux_acquire()
-> > > > wants it in resumed state, so is waiting forever for the device to
-> > > > runtime suspend in order to resume it again immediately afterwards.
-> > > > 
-> > > > The deadlock in the stack trace you've posted could be resolved using
-> > > > the technique I used in d61a5c106351 by adding the following to
-> > > > include/linux/pm_runtime.h:
-> > > > 
-> > > > static inline bool pm_runtime_status_suspending(struct device *dev)
-> > > > {
-> > > > 	return dev->power.runtime_status == RPM_SUSPENDING;
-> > > > }
-> > > > 
-> > > > static inline bool is_pm_work(struct device *dev)
-> > > > {
-> > > > 	struct work_struct *work = current_work();
-> > > > 
-> > > > 	return work && work->func == dev->power.work;
-> > > > }
-> > > > 
-> > > > Then adding this to nvkm_i2c_aux_acquire():
-> > > > 
-> > > > 	struct device *dev = pad->i2c->subdev.device->dev;
-> > > > 
-> > > > 	if (!(is_pm_work(dev) && pm_runtime_status_suspending(dev))) {
-> > > > 		ret = pm_runtime_get_sync(dev);
-> > > > 		if (ret < 0 && ret != -EACCES)
-> > > > 			return ret;
-> > > > 	}
-> > > > 
-> > > > But here's the catch:  This only works for an *async* runtime suspend.
-> > > > It doesn't work for pm_runtime_put_sync(), pm_runtime_suspend() etc,
-> > > > because then the runtime suspend is executed in the context of the caller,
-> > > > not in the context of dev->power.work.
-[snip]
+On Tue, 17 Jul 2018, Vignesh R wrote:
+
+> Hi Dmitry,
 > 
-> Something I'm curious about. This isn't the first time I've hit a
-> situation like this (see: the improper disable_depth fix I added into
-> amdgpu I now need to go and fix), which makes me wonder: is there
-> actually any reason Linux's runtime PM core doesn't just turn get/puts()
-> in the context of s/r callbacks into no-ops by default? 
+> On Saturday 30 June 2018 04:03 PM, Vignesh R wrote:
+> > On AM335x, resistive TSC can wakeup the system from low power state.
+> > Currently, parent MFD device is marked as wakeup source, which is
+> > inaccurate as its the touch event generated by TSC thats the wakeup
+> > source. This series moves all wakeup related calls to operate on TSC
+> > device instead of MFD. It also marks TSC IRQ as wakeup capable, so that
+> > its not disabled during system suspend.
+> > 
+> > This series is based on Dmitry's comments here:
+> > https://lkml.org/lkml/2018/4/24/65
+> > 
+> > There are many new patches in this series, hence did not mark this as v4.
+> > 
+> > Vignesh R (5):
+> >   mfd: ti_am335x_tscadc: Don't mark TSCADC MFD as wakeup capable
+> >   Input: ti_am335x_tsc: Mark TSC device as wakeup source
+> >   mfd: ti_am335x_tscadc: Keep ADC interface on if child is wakeup
+> >     capable
+> >   iio: adc: ti_am335x_adc: Disable ADC during suspend unconditionally
+> >   Input: ti_am335x_tsc: Mark IRQ as wakeup capable
+> > 
+> >  drivers/iio/adc/ti_am335x_adc.c           | 12 ++++--------
+> >  drivers/input/touchscreen/ti_am335x_tsc.c | 22 +++++++++++++++++-----
+> >  drivers/mfd/ti_am335x_tscadc.c            | 14 +++++++++++++-
+> >  3 files changed, 34 insertions(+), 14 deletions(-)
+> > 
+> 
+> Gentle ping... Could you review/pick this series? MFD amd IIO bits are
+> already ACKed
 
-So the PM core could save a pointer to the "current" task_struct
-in struct device before invoking the ->runtime_suspend or
-->runtime_resume callback, and all subsequent rpm_resume() and
-rpm_suspend() calls could then become no-ops if "current" is
-equivalent to the saved pointer.  (This is also how you could
-solve the deadlock you're dealing with for sync suspend.)
+MFD patches are reviewed "for my own reference" meaning that we
+haven't yet agreed on a merge plan yet.
 
-For a recursive resume during a resume or a recursive suspend
-during a suspend, this might actually be fine.
-
-For a recursive suspend during a resume or a recursive resume
-during a suspend, things become murkier:  How should the PM core
-know if the particular part of the device is still accessible
-when hitting a recursive resume during a suspend?  Let's say a
-clock is needed for i2c.  Then the recursive resume during a
-suspend may only become a no-op before that clock has been
-turned off.  That's something only the device driver itself
-has knowledge about, because it implements the order in which
-subdevices of the GPU are turned off.
-
-Lukas
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
