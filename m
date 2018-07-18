@@ -2,135 +2,231 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16934ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CA3ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAB55205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:59:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="oW31NVLy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAB55205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	by mail.kernel.org (Postfix) with ESMTP id AE8CE20858
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE8CE20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728283AbeGRGf3 (ORCPT
+        id S1726402AbeGRGjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 02:35:29 -0400
-Received: from mail-by2nam01on0071.outbound.protection.outlook.com ([104.47.34.71]:20288
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726180AbeGRGf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 02:35:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E20IyzLT9JJlxtjc3JHmsny8QyS2NkhNPpiLz9eJ7wI=;
- b=oW31NVLyr9v0tDL3nPlvGGVSIX8NLV0CM3rVrg2AMnch5WZ13zQlyUTWDCE3OkKJYdZd6qCZKI6Myb4ejokAr+Rv4I/JMoS1knacgxO41sR0q+NlB1U6ZYqNd4Ba9EYM/a9Mwgbbib9EK6QLDTSgX1IGssDiKZwf5epkt4EM7OI=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- DM5PR03MB2636.namprd03.prod.outlook.com (2603:10b6:3:43::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.19; Wed, 18 Jul 2018 05:59:14 +0000
-Date:   Wed, 18 Jul 2018 13:57:09 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH v2 1/2] dt-binding: pinctrl: berlin: document AS370 SoC
- pinctrl
-Message-ID: <20180718135709.35128a54@xhacker.debian>
-In-Reply-To: <20180718135613.1c559b9c@xhacker.debian>
-References: <20180718135613.1c559b9c@xhacker.debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 18 Jul 2018 02:39:14 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:56503 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725975AbeGRGjO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 02:39:14 -0400
+X-UUID: 98ea0ea218734344a85327ead7dfd4d9-20180718
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 525608885; Wed, 18 Jul 2018 14:02:43 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
+ (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 18 Jul
+ 2018 14:02:42 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 18 Jul 2018 14:02:41 +0800
+Message-ID: <1531893761.31406.15.camel@mhfsdcap03>
+Subject: Re: [PATCH v3 3/4] PCI: mediatek: Add system pm support for MT2712
+ and MT7622
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     <marc.zyngier@arm.com>, <bhelgaas@google.com>,
+        <matthias.bgg@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <ryder.lee@mediatek.com>, <hongkun.cao@mediatek.com>,
+        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
+        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>,
+        <rjw@rjwysocki.net>, <khilman@kernel.org>, <ulf.hansson@linaro.org>
+Date:   Wed, 18 Jul 2018 14:02:41 +0800
+In-Reply-To: <20180717171543.GA20991@red-moon>
+References: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
+         <1530518264-6125-4-git-send-email-honghui.zhang@mediatek.com>
+         <20180717171543.GA20991@red-moon>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TY2PR06CA0038.apcprd06.prod.outlook.com
- (2603:1096:404:2e::26) To DM5PR03MB2636.namprd03.prod.outlook.com
- (2603:10b6:3:43::10)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: d5e524ec-5d38-40df-da2d-08d5ec739838
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:DM5PR03MB2636;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;3:dc+kNui1/OCZiSpiUovJmB0kCQaMM808wU+SwpyxPOVQfaYdrRYsrH6NPgfySD59tqGY8w5TGJZYsZRtB+5gDjuPSmRvyNvfSVzLmU9DbjjwcnEaMqGuGvGZSJkur39nCP2wuDXt90NRZWBIcvGvMOKqYYinz+tPKRP66xVXw451YbnFNgx+IkA/W1SOTw9LFyfDYPZQEstOTtNaWu5WNKGJzHOIukPs1ReUC4SNn9seD1c9ymzROFijjo2WS3Es;25:8jcMRi0otwOlfdXYZJrEKhAYANpgAixyK3RSlUnb6GqtQ6erEsc39ukw66muoYc1pcrx8nQPfCAgVMGHbmaGngV5hGfn8qwDH3Tl6EEgG7vmcLMvcsN+B61WfnmHKJjQWJ6RmShqdjyfg9wgpT9j5f9j63/w7t9ym3q/PWJhCuwq0qmYhPu+7fa5Lvz58cFP2jah6lp1ncJ6svaPewNXHfkIKkfumhCxkA1PHhUZxRumKwgt+6rZRDDTFv1FWC70MCJY2++SkQqf7Oei1yM6cIYaDfqUHbFPk/xVB1jf4BRLLOx3ApHL6NjGTHDCDlxVZfQDGP5TCbB+SdVY3PxTeA==;31:96R7V9yAWW0dCWQBhS+1LFsXHB39D9N8Y9pV8hPHhttc+pFiygykPbFYD0JyLyJBcU/46YNCy+l7MD1rvTJTaoBPWOAB2daO9Y4IX2LUoB7NCCf6mETIWfTrrMLoeZbeozKrehoGsX5s6Y88N3Zy2Aw07BC4JlMa5pP/WG8Jo3lyCDbEsz86FhxKvk0sXRuUp1Fdhm+TKp8rmYyjFq0Iif3TLNSaYM4IFJLBQUPrzF8=
-X-MS-TrafficTypeDiagnostic: DM5PR03MB2636:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;20:Mu2EuKtB9Mc9aIL1OLwmua2dwZT9cvYkqPupS3u3eJkqXc24yqPYy6GlgAz5+Stgw3IgDNEE+KdQZix2jpWsA0h7SjfRM5TdRRVtOlLL/+wD6tpCrkLiKKQqZMd7t0rDTBS0cTF6Kznwgds0Hz9rqi3u6RTpnNdbsBEvayFtcniKJRaw/LsCTOsy8CTQ+8NhU61nroD/+lZCUtG0H+EtSGcCR5Dct9eScuSFTFS6n2XY3F83uCDl7Om4XheV5q0KTilLdfBUR+sooUzXNqMA2TTm/1YqUzyGARdA6uD1SUcsEqihadAuKrlb/t87+m+hNNjYkl5Um2AW6mR0DMQOzWr9DHjZ7a8GBQsYsf5GTCYVWKPUGY3zI5qiw2y0dZ8x/lDH0ko645pFVDWoRHRmUklTPJLLZylHBjM1FxCAOaApydkqUFpMl6mVEh0kCgSYRAgpNF/wNCcQY10K0FwvFQBftDLKSVHrtVkdbYzVQOpD/F9YT92DGa7+FZLcuu6n;4:37YlDdA18ImioCKIhRtj/HJIr/ep6cHS141+jCMbmW/2eMYv53Ndb+X+SylVq4gLBy9BOxd//D1PG99nwelZr70FaGCVo6ikIdxAG/GMT6gAC9orBpK31yjKLTw5BjHAv8WDfIcI6h+58S2mK9UF/rcm9G4ZhVat2Fyw6xJbLc3Z7myy9yV5cTo2iC7WCX1Lxs3yk7JuXYXadHcClCLR75ktod/Ue5459hdfQzyU1zzHf8ErX3mzJEeinWy1Z2dXIKG66F/N8U3vpehEtM4uUg==
-X-Microsoft-Antispam-PRVS: <DM5PR03MB26367A26E628733F4AC9D63DED530@DM5PR03MB2636.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DM5PR03MB2636;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB2636;
-X-Forefront-PRVS: 0737B96801
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(346002)(366004)(189003)(199004)(14444005)(66066001)(50466002)(47776003)(16526019)(110136005)(11346002)(316002)(446003)(186003)(68736007)(50226002)(476003)(86362001)(81166006)(97736004)(8676002)(956004)(8936002)(4326008)(72206003)(81156014)(478600001)(486006)(26005)(25786009)(55016002)(52116002)(39060400002)(105586002)(230700001)(23726003)(7696005)(2906002)(3846002)(5660300001)(1076002)(53936002)(9686003)(386003)(6116002)(6506007)(6666003)(106356001)(76176011)(305945005)(7736002)(33896004)(129583001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2636;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB2636;23:Tcc4OLhWvmpV5CIiMCaSZpFKKb+Ke1vLHGT9xemUe?=
- =?us-ascii?Q?yxVz3R2+ERSkPeLBS5k5XWxgJ5uKty1KcCZRjtJi3AnZFfzfpyyjTYCiupHV?=
- =?us-ascii?Q?6HO5LhdeTjmRPvBEQhSLq/HItbMXlXKXlabO5K8V7cPOdUcYT+8+DOAXKKQV?=
- =?us-ascii?Q?BdONl5nNwm+uFKm10IpFBYobprdCb0Ap0/O7/TQmXEFP7l3pmpt3fcfdDGNn?=
- =?us-ascii?Q?buUJUdNIcSs8u6p/ShTvj5n1JJy6DMHW9+/+EY/uhrAc+BXs9I8VjbV96n0b?=
- =?us-ascii?Q?YJpHYG9ERvN9CtvkU4ueTYzWcn21KXHBzo8iBzfJsy3osZjQfZn66NYwbcNt?=
- =?us-ascii?Q?1SxDBOcXX8S5CsK29lAtdEw8Tl/PJcWWG+h/TvgMWkpOeLOYvtpMmJHh37tN?=
- =?us-ascii?Q?lROyPwoe0Zc62K6SmZvQULT7Y/PuEKPsIlO2NZF+naxmn71W7nIWI50k3Bh1?=
- =?us-ascii?Q?pIHymUzuBeh8rlTyVJTCBvP9kqMNXgOYjU16hhFlfMysaQGtsUMmyFkhRO0p?=
- =?us-ascii?Q?VzuQ3e1tnleIqb861rPJgX+t97UCC2u5jkDretEi/pGOJRMG4ho6cLj7iK3A?=
- =?us-ascii?Q?U/fCpUqR3U79tbRJw7J9mATI39sWaZj5hQlCLudmQPySKeY4cLzYjcQg+X4r?=
- =?us-ascii?Q?80LWgdn/q0lPUbCFOXQDWNPZV7TXhEa63Pov3+L4JxAehwFOt2H7xSFgAmhw?=
- =?us-ascii?Q?6cK1POFekwYcf5dFAHfc/lJYdnw0PolaRNevJ38r3v0owBKdT+sLushI2kZK?=
- =?us-ascii?Q?MnOnLXaMaHS/4udSlSofzvoyvFOnITByviPdkC4XxsroPVc0m2OuX2gOnNIB?=
- =?us-ascii?Q?rDC2VfkBUIEveaZYAuBu4zq9PH4aEIWT2JqflE+ACYznXAdjEKdnnMmW/5Vn?=
- =?us-ascii?Q?GQp5kds0xdfDLZ99/AVTFzvs+m8nwuQ/ZUz8o6MMi5hvA2RJF65pfsPJkV+f?=
- =?us-ascii?Q?YW/+/AAMhkkc78awRi/rcyvBPo2qOJdpzYt3nEy2ySm1du46eqxJuiEeOZ0f?=
- =?us-ascii?Q?GHQCVwvL99oFVznvyN+WMqjPrRzGar4QYrKTsHyUbbmsNYv4DMjysb4JOQKf?=
- =?us-ascii?Q?CF4gYjoaUtXXhOQ2cFXe2YrxYb883m0hSncQ5M97BWFRt0Pmr+RQafNr/xRu?=
- =?us-ascii?Q?fWh6HgDq/aYFwf/RRuN1LnI9gpzrRBxBrt4uWNWTso6MJGO1kULAlQ4q9I80?=
- =?us-ascii?Q?HqSKabDt6F0e4nuy3HfWldyU1Kzrj9w1W5dKToJZL9QYclRfWGkg50BarJd5?=
- =?us-ascii?Q?eWZ9DFq5wDm1JvdNFqWN1aJVcze3gOe6awG3Va3sj9IDYAek2gRawKoRcOvZ?=
- =?us-ascii?B?QT09?=
-X-Microsoft-Antispam-Message-Info: QIA0UTslxsQftCqJp1MyaU9ymWBf0G3xxBnoBtDY+YqeYyu0NcvlOYWTKG+Bi8i8ZdwRTM5VIX896D3iZr6l6kaQrnNUIKIzOd+05kbYORVERXYwz9715VEaZ5xqexVex6b/ea7YRzjQxunKZ3TlRaRuG25yNgefpLvK6EJFoD9QeX0IrXHjcEy74L1iLidvW53TdGdwdh9a+vSv2lanp+aVBRdmHaLx60SkXfV4W7jD+2FGEs2CAfkVFk9t1NysOTKnVn1WTn9wqLIpUq872s86jlCB6eZ5a3SfmnaI0pl7zrz+OLeiuLuiNxnoNxAyI3vwb/7Q5FMo87C/PAPn/d4KDMdmklUp82mFZva/tYE=
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;6:67P/Il058GqZDR0dL/iiHs2ep8ez8TmcOQbK3m6rQzETD9CI3gkwDy0uMUmmDQB/9zG1znDCIK+Gc5ll5hhnNUtD4i2rJYJ06TBDp7eF9fkS+BGkKEv2SdQVwQUMX1pKp61vp7AYmSkARx7yfDhpNpZ8IjdaV6cBhx/At1dhw0g8PCXYVUi64xTECcx6XvGOTAf568dbQnWsA+ghCubew6QH8sVv10N2sWASXVElzacPU1XDZyGwCBNlXHWLgG7HV+I8tXSFq1dd5ejYiqj5dNgs6shko7dTlrGkkYRLXGza55wmQGbk7mH434PD+k37LE2cqGBik4//zcMoJkGZ4jBucGhJlJ+fIEM2mZdimTDn38fcYQDrzZX2zxSSQoDG+cJdWNzuR2E46xK9BFgJtO7cJveCvMYUTEUUOQ8AYOBSXUbGKT6rtaRhBwaEjFPV5A5M229/N3kHJnqscl53RA==;5:+psfL9i1fb2UrjQBS2WLFhRaQxSIjeL6miH8aROt3Jl+pBsJMopbVRE/vP9e9scKBXWui/hB2Pt68aWhyfVhg/KYUMnGby2XsmAb9BfhLa/oTFLYztOuOj45JPqnqkdq52r10CJ9qYv5B/qrxAvpWPMHRdibanMAKrIJZHw9d+M=;24:25Qo9wSZ1n8ZSPQnKHfzCBKDtdacNoKPBmxDbvAGZmpfCy+C5v1BvLBbScJmup2KkMROmYTsFMFbPr44PE+6+M2NOcE8rQM9UrOd4rVcHOE=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB2636;7:maEQDAX77jxq+dn956TMTNIx7O/8C8zxs0GZWeedRMyrJAmbJ5ZXvMj2jBE0zH4zEdlOnzGN1pnMVSzD86X9LgZj+FfzWOaUOT4wpVwow0MkHtvA6iTxlj3ysQ70Y9l5s5Ob7uYPudBTUH2muNlYKnbICWHBPYd0IlInefNUApqcnr97WPOO691f4Q9UGgMM4GacjbsIo0uv1IaS/0k2NbIJgZB8UENBi/gXo6gNMpRhhm/0lhq17F2Qrs4a3ksZ
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2018 05:59:14.2093 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5e524ec-5d38-40df-da2d-08d5ec739838
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2636
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add as370 to existing berlin pinctrl device tree binding.
+On Tue, 2018-07-17 at 18:15 +0100, Lorenzo Pieralisi wrote:
+> [+Rafael, Kevin, Ulf]
+> 
+> On Mon, Jul 02, 2018 at 03:57:43PM +0800, honghui.zhang@mediatek.com wrote:
+> > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > 
+> > The MTCMOS of PCIe Host for MT2712 and MT7622 will be off when system
+> > suspend, and all the internal control register will be reset after system
+> > resume. The PCIe link should be re-established and the related control
+> > register values should be re-set after system resume.
+> > 
+> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > Acked-by: Ryder Lee <ryder.lee@mediatek.com>
+> > ---
+> >  drivers/pci/controller/pcie-mediatek.c | 67 ++++++++++++++++++++++++++++++++++
+> >  1 file changed, 67 insertions(+)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > index 86918d4..175d7b6 100644
+> > --- a/drivers/pci/controller/pcie-mediatek.c
+> > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > @@ -134,12 +134,14 @@ struct mtk_pcie_port;
+> >  /**
+> >   * struct mtk_pcie_soc - differentiate between host generations
+> >   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
+> > + * @pm_support: whether the host's MTCMOS will be off when suspend
+> >   * @ops: pointer to configuration access functions
+> >   * @startup: pointer to controller setting functions
+> >   * @setup_irq: pointer to initialize IRQ functions
+> >   */
+> >  struct mtk_pcie_soc {
+> >  	bool need_fix_class_id;
+> > +	bool pm_support;
+> >  	struct pci_ops *ops;
+> >  	int (*startup)(struct mtk_pcie_port *port);
+> >  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
+> > @@ -1197,12 +1199,75 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+> >  	return err;
+> >  }
+> >  
+> > +static int __maybe_unused mtk_pcie_suspend_noirq(struct device *dev)
+> > +{
+> > +	struct mtk_pcie *pcie = dev_get_drvdata(dev);
+> > +	const struct mtk_pcie_soc *soc = pcie->soc;
+> > +	struct mtk_pcie_port *port;
+> > +
+> > +	if (!soc->pm_support)
+> > +		return 0;
+> > +
+> > +	if (list_empty(&pcie->ports))
+> > +		return 0;
+> > +
+> > +	list_for_each_entry(port, &pcie->ports, list) {
+> > +		clk_disable_unprepare(port->pipe_ck);
+> > +		clk_disable_unprepare(port->obff_ck);
+> > +		clk_disable_unprepare(port->axi_ck);
+> > +		clk_disable_unprepare(port->aux_ck);
+> > +		clk_disable_unprepare(port->ahb_ck);
+> > +		clk_disable_unprepare(port->sys_ck);
+> > +		phy_power_off(port->phy);
+> > +		phy_exit(port->phy);
+> > +	}
+> > +
+> > +	mtk_pcie_subsys_powerdown(pcie);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
+> > +{
+> > +	struct mtk_pcie *pcie = dev_get_drvdata(dev);
+> > +	const struct mtk_pcie_soc *soc = pcie->soc;
+> > +	struct mtk_pcie_port *port, *tmp;
+> > +
+> > +	if (!soc->pm_support)
+> > +		return 0;
+> > +
+> > +	if (list_empty(&pcie->ports))
+> > +		return 0;
+> > +
+> > +	if (dev->pm_domain) {
+> > +		pm_runtime_enable(dev);
+> > +		pm_runtime_get_sync(dev);
+> > +	}
+> 
+> Are these runtime PM calls needed/abused here ?
+> 
+> Mind explaining the logic ?
+> 
+> There is certainly an asymmetry with the suspend callback which made me
+> suspicious, I am pretty certain Rafael/Kevin/Ulf can help me clarify so
+> that we can make progress with this patch.
+> 
+> Lorenzo
+> 
+Hi Lorenzo, thanks for your comments.
+Sorry I don't get you.
+I believe that in suspend callbacks the pm_runtime_put_sync and
+pm_runtime_disable should be called to gated the CMOS for this module,
+while the pm_rumtime_enable and pm_rumtime_get_sync should be called in
+resume callback.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
----
- Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+That's exactly this patch doing.
+But the pm_rumtime_put_sync and pm_runtime_disable functions was wrapped
+in the mtk_pcie_subsys_powerdown.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-index f8fa28ce163e..0a2d5516e1f3 100644
---- a/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/berlin,pinctrl.txt
-@@ -23,7 +23,8 @@ Required properties:
- 	"marvell,berlin2q-system-pinctrl",
- 	"marvell,berlin4ct-avio-pinctrl",
- 	"marvell,berlin4ct-soc-pinctrl",
--	"marvell,berlin4ct-system-pinctrl"
-+	"marvell,berlin4ct-system-pinctrl",
-+	"syna,as370-soc-pinctrl"
- 
- Required subnode-properties:
- - groups: a list of strings describing the group names.
--- 
-2.18.0
+I did not call mtk_pcie_subsys_powerup since it does not just wrapped
+pm_rumtime related functions but also do the platform_resource_get,
+devm_ioremap, and free_ck clock get which I do not needed in resume
+callback.
+
+Do you think it will be much clear if I abstract the
+platform_resource_get, devm_ioremap functions from
+mtk_pcie_subsys_powerup and put it to a new functions like
+mtk_pcie_subsys_resource_get, and then we may call the
+mtk_pcie_subsys_powerup in the resume function?
+
+thanks
+> > +
+> > +	clk_prepare_enable(pcie->free_ck);
+> > +
+> > +	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
+> > +		mtk_pcie_enable_port(port);
+> > +
+> > +	/* In case of EP was removed while system suspend. */
+> > +	if (list_empty(&pcie->ports))
+> > +		mtk_pcie_subsys_powerdown(pcie);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct dev_pm_ops mtk_pcie_pm_ops = {
+> > +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_pcie_suspend_noirq,
+> > +				      mtk_pcie_resume_noirq)
+> > +};
+> > +
+> >  static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
+> >  	.ops = &mtk_pcie_ops,
+> >  	.startup = mtk_pcie_startup_port,
+> >  };
+> >  
+> >  static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
+> > +	.pm_support = true,
+> >  	.ops = &mtk_pcie_ops_v2,
+> >  	.startup = mtk_pcie_startup_port_v2,
+> >  	.setup_irq = mtk_pcie_setup_irq,
+> > @@ -1210,6 +1275,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
+> >  
+> >  static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
+> >  	.need_fix_class_id = true,
+> > +	.pm_support = true,
+> >  	.ops = &mtk_pcie_ops_v2,
+> >  	.startup = mtk_pcie_startup_port_v2,
+> >  	.setup_irq = mtk_pcie_setup_irq,
+> > @@ -1229,6 +1295,7 @@ static struct platform_driver mtk_pcie_driver = {
+> >  		.name = "mtk-pcie",
+> >  		.of_match_table = mtk_pcie_ids,
+> >  		.suppress_bind_attrs = true,
+> > +		.pm = &mtk_pcie_pm_ops,
+> >  	},
+> >  };
+> >  builtin_platform_driver(mtk_pcie_driver);
+> > -- 
+> > 2.6.4
+> > 
+
 
