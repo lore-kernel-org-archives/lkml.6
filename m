@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A83ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178B4ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3893420850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C41B020850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OwR+NDh7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3893420850
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="VgK1g/PU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41B020850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731164AbeGRLdy (ORCPT
+        id S1731195AbeGRLeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:33:54 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:38074 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728668AbeGRLdy (ORCPT
+        Wed, 18 Jul 2018 07:34:00 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43262 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbeGRLeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:33:54 -0400
-Received: by mail-pf0-f195.google.com with SMTP id v15-v6so2026468pff.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:56:34 -0700 (PDT)
+        Wed, 18 Jul 2018 07:34:00 -0400
+Received: by mail-pg1-f196.google.com with SMTP id v13-v6so1830854pgr.10
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HLGFoCEVFpCiOifepTECYua1kc50772Y5AMmI/8VfNc=;
-        b=OwR+NDh70coDxywzKUMgucs60JQ+hHjM7k5sP4OzlRfyKq84rzqg787gTzqMI8mxOQ
-         yTPy/KlK+OVj3ThEUEjdjp71E4SYDUKPjhVUc8zQclj7LWPHjaqAiF087GX/+WtlDp/S
-         6cXF0egfXP2cYGLBUp58ToxiuBCeZsbOvDP/k=
+        bh=yvkcdyq+XH9acvZSAOuqu6Z0+SAMtHko9BM9Dtyh8Ho=;
+        b=VgK1g/PUhAtlM3nfEyoj1ENZvKJAhPYclCnv4QrjdEi26kCa5acsZ/FI23SBtnY+Mw
+         edsNRha7Ow4Y1+pWEnNx7yPzEMwNRaqOCgaoalzpUqkLyBr+DqYYaKA1QXjBSZrooKw0
+         iKnk1SckB1UNcrE1r/zRHalQnaCOLESUb4HD4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=HLGFoCEVFpCiOifepTECYua1kc50772Y5AMmI/8VfNc=;
-        b=Q+theu/UTjD2CG8VXWgSHorFoIt325dLNMMna6UU124Hu2jeFKBGPvJmwr1KRY6dq5
-         3UI6WFBGfWutA4xRv2IraN6rN7OtPsBnNL9yz8Rwwna1PXyeq+jgCfSmeQIUCFVDzeTr
-         IH2sZirOhlZG9pqmHAYSDlsxur+X0xrQ4v85VPBZI9sgLCXFsXFAa7AQzIa9KRJwuF8j
-         S9YIHJ/Z3f6kg+AcmaKxr3jCEb/Tn6fa2VTHrqcEPkxhquO5FY9XXLR2nK0o6efBNVqR
-         QgI39mn3R6L0Tn8fxdv/MEM1nKI2yOvkhto8fp7xk50BR0QsBp2N9CVxoHl/Zbu308wG
-         z55g==
-X-Gm-Message-State: AOUpUlGC0eRNJJnmVQ73woAf0NyfyG4mkz6yZ8oTg5SHwg3AcGLVl/Oc
-        9Dz3/+Mk5JX7yPtvJKdQiE8zdw==
-X-Google-Smtp-Source: AAOMgpfhMw8A5MWWtIRh+lDOgejwk+iu1XGqxRgJOejZ1DM8UkZNZxKzQ5qJ23kcrz9va7xTc61DcQ==
-X-Received: by 2002:a62:4147:: with SMTP id o68-v6mr4659201pfa.111.1531911394379;
-        Wed, 18 Jul 2018 03:56:34 -0700 (PDT)
+        bh=yvkcdyq+XH9acvZSAOuqu6Z0+SAMtHko9BM9Dtyh8Ho=;
+        b=Kho4taD/eA+6dkyNIdHjEGkeIIb7GjyVVFoHfDSEIbUKISnYasvWXhRtbxw13HdAkR
+         Lbd2+9tdTW7ohtHqXz5qow3qwx9NM0JkqtlFg3qL3Exyd/F2evFk7upDHqsTftDzdmYi
+         ENnTE6jKPNoVzxquiqs8S8Kmk2ELRw+LTCGh5QpUS2N6w6GWA0C2V+Q7ASQeIpIIAU7e
+         y1e5i73wYEc6Z8Aeel2gn3A0XMo3BxE26vu3x/9/CQj2A4/e7EU+GUprFHLi096pZmqf
+         uIjFqLMXxizlNTqKrNnrCUzhtnJHcJgkEOfGeRGJI7a2xP3h8SEL9Ts4vno9ugQW8p8R
+         JnYA==
+X-Gm-Message-State: AOUpUlEx47sD6EpYfwayVRC/x1f0ynkfK76G61Qj14hYi0HNJyyEqunL
+        KMGfwGdigh9llshNctfqmyrpKg==
+X-Google-Smtp-Source: AAOMgpeJid+L+kbkjCf9l3tbW3BSS/3z5F3/osPfw0sIXap/IYj2q/6XKPsHht6CcSTVz+RhCM3Hpg==
+X-Received: by 2002:a62:34c4:: with SMTP id b187-v6mr4656608pfa.15.1531911399855;
+        Wed, 18 Jul 2018 03:56:39 -0700 (PDT)
 Received: from localhost.localdomain ([183.82.229.107])
-        by smtp.gmail.com with ESMTPSA id x25-v6sm4644452pgv.63.2018.07.18.03.56.11
+        by smtp.gmail.com with ESMTPSA id x25-v6sm4644452pgv.63.2018.07.18.03.56.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 03:56:33 -0700 (PDT)
+        Wed, 18 Jul 2018 03:56:39 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -70,9 +70,9 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 11/18] drm/sun4i: Enable DesignWare HDMI for SUN50I
-Date:   Wed, 18 Jul 2018 16:24:51 +0530
-Message-Id: <20180718105458.22304-12-jagan@amarulasolutions.com>
+Subject: [PATCH v3 12/18] drm: sun4i: add support for HVCC regulator for DWC HDMI glue
+Date:   Wed, 18 Jul 2018 16:24:52 +0530
+Message-Id: <20180718105458.22304-13-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
 References: <20180718105458.22304-1-jagan@amarulasolutions.com>
@@ -81,35 +81,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner SUN50I are now using DesignWare HDMI so enable
-them as default. This can build DRM_SUN8I_DW_HDMI as module
-since DRM in arm64 has module.
+From: Icenowy Zheng <icenowy@aosc.io>
 
-Making this as defult to SUN8I, may cause an issue while
-loading since arm32 DRM built as static.
+Allwinner SoCs with DWC HDMI controller have a "HVCC" power pin for the
+HDMI part, and on some boards it's connected to a dedicated regulator
+rather than the main 3.3v.
 
+Add support for optional HVCC regulator. For boards that doesn't use a
+dedicated regulator to power it, the default dummy regulator is used.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-Changes for v3:
-- skip SUN8I enablement, since it built statically for arm32
-Changes for v2:
-- Enable for SUN8I
+Changes for v3, v2:
+- none
 
- drivers/gpu/drm/sun4i/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 14 ++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/Kconfig b/drivers/gpu/drm/sun4i/Kconfig
-index cfa8b96273fb..5d0c450db148 100644
---- a/drivers/gpu/drm/sun4i/Kconfig
-+++ b/drivers/gpu/drm/sun4i/Kconfig
-@@ -52,6 +52,7 @@ config DRM_SUN6I_DSI
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 31875b636434..68623a6ac44e 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -113,6 +113,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	if (encoder->possible_crtcs == 0)
+ 		return -EPROBE_DEFER;
  
- config DRM_SUN8I_DW_HDMI
- 	tristate "Support for Allwinner version of DesignWare HDMI"
-+	default ARM64 && ARCH_SUNXI
- 	depends on DRM_SUN4I
- 	select DRM_DW_HDMI
- 	help
++	hdmi->vcc_hdmi = devm_regulator_get(dev, "hvcc");
++	if (IS_ERR(hdmi->vcc_hdmi)) {
++		dev_err(dev, "Could not get HDMI power supply\n");
++		return PTR_ERR(hdmi->vcc_hdmi);
++	}
++
+ 	hdmi->rst_ctrl = devm_reset_control_get(dev, "ctrl");
+ 	if (IS_ERR(hdmi->rst_ctrl)) {
+ 		dev_err(dev, "Could not get ctrl reset control\n");
+@@ -131,6 +137,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 		return ret;
+ 	}
+ 
++	ret = regulator_enable(hdmi->vcc_hdmi);
++	if (ret) {
++		dev_err(dev, "Cannot enable HDMI power supply\n");
++		goto err_disable_vcc;
++	}
++
+ 	ret = clk_prepare_enable(hdmi->clk_tmds);
+ 	if (ret) {
+ 		dev_err(dev, "Could not enable tmds clock\n");
+@@ -183,6 +195,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
+ 	clk_disable_unprepare(hdmi->clk_tmds);
+ err_assert_ctrl_reset:
+ 	reset_control_assert(hdmi->rst_ctrl);
++err_disable_vcc:
++	regulator_disable(hdmi->vcc_hdmi);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index aadbe0a10b0c..af34c498295e 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -10,6 +10,7 @@
+ #include <drm/drm_encoder.h>
+ #include <linux/clk.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/reset.h>
+ 
+ #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
+@@ -176,6 +177,7 @@ struct sun8i_dw_hdmi {
+ 	struct drm_encoder		encoder;
+ 	struct sun8i_hdmi_phy		*phy;
+ 	struct dw_hdmi_plat_data	plat_data;
++	struct regulator		*vcc_hdmi;
+ 	struct reset_control		*rst_ctrl;
+ };
+ 
 -- 
 2.17.1
 
