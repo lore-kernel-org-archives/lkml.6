@@ -2,149 +2,107 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BCDECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C778ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 667662075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C77662075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kn0JYq82"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 667662075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=pdx-edu.20150623.gappssmtp.com header.i=@pdx-edu.20150623.gappssmtp.com header.b="nQ5Y+l7J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77662075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pdx.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbeGRUB2 (ORCPT
+        id S1730203AbeGRUEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:01:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40365 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729251AbeGRUB1 (ORCPT
+        Wed, 18 Jul 2018 16:04:47 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45726 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbeGRUEr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:01:27 -0400
-Received: by mail-wr1-f65.google.com with SMTP id t6-v6so5735740wrn.7;
-        Wed, 18 Jul 2018 12:22:08 -0700 (PDT)
+        Wed, 18 Jul 2018 16:04:47 -0400
+Received: by mail-pg1-f195.google.com with SMTP id f1-v6so2428669pgq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 12:25:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8cokHvNP0jb+NIY+vzAU2wN0O2jTMyC1jgw+B1F9rF0=;
-        b=kn0JYq82CrS3rVkmhLZ01U9JDCLf2dJbGUiu3USaMwwUx+x/LLaFilts7gfhAok6LM
-         CAc920m0CavyDJ8jS+b9Ygaku/kJv5+QaIfWRfcRct+k0Lbch0CXdAvf79Dv0AozZwJP
-         SYRXk483YfceR8nKFkGAtotp3zkcIUnUIcjuDMh3/CTGAFpYxijqt7eF0Kwl+cUJgxfR
-         0CByaoEbWZhuwheIQhjDWT+9aqz7P+1VnQkjmKpT5PirH0J0HP7hCiBy2aqYUS8eEfIA
-         IAUWXzQDoFHL4CXD0f3nN8gNMyge6sxRGz/2k9mn/Kla+V0gPcQ7dJJljmdypb60p3eL
-         3+XQ==
+        d=pdx-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=dzhomk6TZnWzWgwY/DjZ6dQhKCCaZiyF9AxmD7XZVUw=;
+        b=nQ5Y+l7JJ6tnarDls2Xiqdf0d3+Z8rI35nMbc3zGAOwSBzuRiQB4KxD4AqdT3UQwwL
+         0uVySEC49wVQOKKFN1XAhFesHvvc5s33ZNPoSi7n+lJw4BtrrpMRjkDBXPtcVdrGWbv7
+         X7643OsUPQilPZwOUCIkxoLdh3PqYloNjfJhp/sb3e1yP2mZHxsqIxsSulWfTUjWWvJr
+         H8eglcFeohWTs5aDyLx7UoyzI4qwsKj7XgrY/b0Cn0U1fIo8BrEtQc0p91nlunQwdNx5
+         g342Z0ohDHoH8dGELIKjdjwSzTL2ORFA2WkgtMKs3FzTkFHogCqvI0KKd5I+cW4WOzD/
+         QiwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8cokHvNP0jb+NIY+vzAU2wN0O2jTMyC1jgw+B1F9rF0=;
-        b=WhoYPyWlDpzyNGx/t4ACvpgYXhx56LBCidCjGEZEpY15T8IGNt6g2nSyWQmfn+nEl5
-         A5538Mzt2gSyH9THXqf0sIymRSWy3ucY6LFbt6EkuiecHasHMLFB823h0l9LHoZxmUTv
-         ao+dXK3TW68ygEe9QLM/TVkRjN50VBnn4GJORlaQ7AAa1sq+uNvU/oKd16XeBxswlmjm
-         yqvdQae3zEVwW21lPX7HnM33fGUZoNnbCfSlLlpf9S5WY383pKKtwnEtozw+n3JouvUE
-         rX7F8Ltydhy3KSuWMHXJwHs+O5Y4iMTyg/G/goDWolQA9n+o1iKFtToAVhQsrqa+SfIR
-         h6Ig==
-X-Gm-Message-State: AOUpUlEUdGFWy67aLAvBe3HEXYOwPo9p58QWS58BnORg28nTrL0gM+KA
-        CwLc1az8nIbuDMbgN/8yZ4/dRwoF
-X-Google-Smtp-Source: AAOMgpeBFuRTtG7RFNKwRGJuaOL5w9vja5XOd9SCGBynsZgvABRXs+UaUF2LKof9ZKI1cLhW94DyJg==
-X-Received: by 2002:adf:df07:: with SMTP id y7-v6mr5033345wrl.117.1531941728161;
-        Wed, 18 Jul 2018 12:22:08 -0700 (PDT)
-Received: from [192.168.1.18] (ckg128.neoplus.adsl.tpnet.pl. [83.31.82.128])
-        by smtp.gmail.com with ESMTPSA id d102-v6sm6006570wma.10.2018.07.18.12.22.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 12:22:07 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     David Lechner <david@lechnology.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
- <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
- <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd> <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd> <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com> <20180718075637.GA10279@amd>
- <913151e4-c19f-9a22-697c-52a9fb48cb32@gmail.com>
-Message-ID: <0e0cd8f7-dc73-6733-65f2-9a14506b0f0e@gmail.com>
-Date:   Wed, 18 Jul 2018 21:22:05 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <913151e4-c19f-9a22-697c-52a9fb48cb32@gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dzhomk6TZnWzWgwY/DjZ6dQhKCCaZiyF9AxmD7XZVUw=;
+        b=ZAYyH4HLQLuQxWUiEOEp9u/UcGXA+jdS59kL5u6/n9F4xYz3P9tCDq7Anb7bflcA0o
+         DXpa5K1JyPFFCOOOXMYzeGZEoYw76HNRyCWDIlGLamQZx4QdWHkeLI9L32avL2cPwjI2
+         Ovsq1pKYy6/N15aBuhR6VBmWMoxAILmmg2keDnfVYASQJSDhpHnjurbKzQ+H3WwlXK+6
+         AQtyEDQxytywjLNw0LURgXkffeCosWzRJXb86xthVkJOBSajZjWHEkLXSjsURl6Bmzip
+         XZrqN9ZG4vFYCjtdMs/xnbhzaWHTd2/Ybqw7eF2bZXR9M/QOyZZ7GbFzdiGbg0DnAeCp
+         13uQ==
+X-Gm-Message-State: AOUpUlHPkjK15IRlYiXDtmOweVvYucDrc6ttUjnTxhLaPSoJnzYtXHSL
+        M75Hovpn9TR7aNjNKHpvWaI3OQ==
+X-Google-Smtp-Source: AAOMgpfp8Ncit5lTqz3y6IcpE6NVlqX6ozSLftUV3xuMYxV4SSqBgyR6z4z+I6ebCXhORshX2DCEQA==
+X-Received: by 2002:a63:41c6:: with SMTP id o189-v6mr7110032pga.323.1531941928614;
+        Wed, 18 Jul 2018 12:25:28 -0700 (PDT)
+Received: from svl13.cs.pdx.edu (svl13.cs.pdx.edu. [131.252.209.5])
+        by smtp.gmail.com with ESMTPSA id n80-v6sm7997550pfb.95.2018.07.18.12.25.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 18 Jul 2018 12:25:28 -0700 (PDT)
+From:   Bo Chen <chenbo@pdx.edu>
+To:     jeffrey.t.kirsher@intel.com
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Bo Chen <chenbo@pdx.edu>
+Subject: [PATCH] e1000: ethtool: ensure to free old tx/rx rings in set_ringparam()
+Date:   Wed, 18 Jul 2018 12:24:26 -0700
+Message-Id: <20180718192426.18853-1-chenbo@pdx.edu>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/18/2018 08:54 PM, Jacek Anaszewski wrote:
-> On 07/18/2018 09:56 AM, Pavel Machek wrote:
->> Hi!
->>
->>>>>>> I believe I meant "changing patterns from kernel in response to 
->>>>>>> events
->>>>>>> is probably overkill"... or something like that.
->>>>>>
->>>>>> Anyway -- to clean up the confusion -- I'd like to see
->>>>>>
->>>>>> echo pattern > trigger
->>>>>> echo "1 2 3 4 5 6 7 8" > somewhere
->>>>>
->>>>> s/somewhere/pattern/
->>>>>
->>>>> pattern trigger should create "pattern" file similarly how 
->>>>> ledtrig-timer
->>>>> creates delay_{on|off} files.
->>
->> Yes, that sounds reasonable. v5 still says
->>
->> +               Writing non-empty string to this file will activate 
->> the pattern,
->> +               and empty string will disable the pattern.
->>
->> I'd deactivate the pattern by simply writing something else to the
->> trigger file.
-> 
-> Please keep in mind that this is ABI documentation for the pattern file
-> to be exposed by LED core, and not by the pattern trigger, that, as we
-> agreed, will be implemented later. In this case, I'd go for
+In 'e1000_set_ringparam()', the tx_ring and rx_ring are updated with new value
+and the old tx/rx rings are freed only when the device is up. There are resource
+leaks on old tx/rx rings when the device is not up. This bug is reported by COD,
+a tool for testing kernel module binaries I am building.
 
-Gosh, I got completely distracted by the recent discussion about
-pattern synchronization.
+This patch fixes the bug by always calling 'kfree()' on old tx/rx rings in
+'e1000_set_ringparam()'.
 
-So, to recap, we need to decide if we are taking Baolin's solution
-or we're opting for implementing pattern trigger.
+Signed-off-by: Bo Chen <chenbo@pdx.edu>
+---
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-If we choose the latter, then we will also need some software
-pattern engine in the trigger, to be applied as a software pattern
-fallback for the devices without hardware pattern support.
-It will certainly delay the contribution process, provided that Baolin
-would find time for this work at all.
-
-I'd just take v5 based solution for now (with improved semantics
-of disabling pattern - in this case my reasoning from the message
-I'm replying to is still valid),
-
-> "echo 0 > brightness" as a command disabling pattern. The same operation
-> disables triggers, so later transition to using pattern trigger will be
-> seamless for userspace.
-> 
-
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+index bdb3f8e65ed4..27b006b60f8b 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -624,14 +624,14 @@ static int e1000_set_ringparam(struct net_device *netdev,
+ 		adapter->tx_ring = tx_old;
+ 		e1000_free_all_rx_resources(adapter);
+ 		e1000_free_all_tx_resources(adapter);
+-		kfree(tx_old);
+-		kfree(rx_old);
+ 		adapter->rx_ring = rxdr;
+ 		adapter->tx_ring = txdr;
+ 		err = e1000_up(adapter);
+ 		if (err)
+ 			goto err_setup;
+ 	}
++	kfree(tx_old);
++	kfree(rx_old);
+ 
+ 	clear_bit(__E1000_RESETTING, &adapter->flags);
+ 	return 0;
 -- 
-Best regards,
-Jacek Anaszewski
+2.17.0
+
