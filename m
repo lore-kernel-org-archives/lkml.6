@@ -2,148 +2,526 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A09ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1D7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A862075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:45:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A862075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D71E92075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:46:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D71E92075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730245AbeGRNWq (ORCPT
+        id S1730673AbeGRNXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:22:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51814 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbeGRNWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:22:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4DFC7207E8; Wed, 18 Jul 2018 14:44:58 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1B41F206FF;
-        Wed, 18 Jul 2018 14:44:48 +0200 (CEST)
-Date:   Wed, 18 Jul 2018 14:44:48 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/18] arm64: allwinner: Add A64 DE2 HDMI support
-Message-ID: <20180718124448.2s2b3jxbsqt46cgu@flea>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com>
+        Wed, 18 Jul 2018 09:23:49 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:59267 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbeGRNXt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 09:23:49 -0400
+Received: by mail-it0-f69.google.com with SMTP id y13-v6so2359723ita.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 05:46:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=S04vMhWZJplmXHxgZLG0UBMl/96/KpGL5zLggkE22/I=;
+        b=AHUom0TqkhPi6iIx9sNOU9EeK/huRvZdgXuJaawDnCND8v4Jc9UufSWZBfEVN5IGOf
+         Z4mV+jM96+FTST40Lve+JON6wNecYw7T9rAVv4z1ilSfxuYyC9IFfZypP9umwhhKOStf
+         2ff4s4Xniel1M0iUCexVoVf+1BkIQqa6CU3gJhWREQXaSZwGKzm283H7wIpKyMPrZTBc
+         /eutgq2QAn21hZ6/pZgi0AaeRejN9PtL238bvphge5fFhsD5G3gAAMn9CEOcMfeLmw5h
+         TpXDP/sAoB5qK6t3fG00onMXcR34z4XBiEotfSIMvjB0QL/1kOcjwhjidHkjbSBVgT9J
+         aXsQ==
+X-Gm-Message-State: AOUpUlFCqK56BM6vKTQrgdrd9mc5GukV6DvcmQXUQcBGd7tY6I10McMI
+        GvKiBKI1fJvVEiMEeLhnzltvDw94VAWNfgmTgse8dgB4G+6L
+X-Google-Smtp-Source: AAOMgpcCXIoTJJcgRe54K+zcH7RyW0QVq0n8K4l+W5qGOKSK/H/czyZGcWz3pN9A2v6vruRP6A+72LiibvlIMjXwjyYe0Vx5g0ea
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cuxlnvygzpxlrpwv"
-Content-Disposition: inline
-In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180622
+X-Received: by 2002:a24:4643:: with SMTP id j64-v6mr904964itb.18.1531917962397;
+ Wed, 18 Jul 2018 05:46:02 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 05:46:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f961390571457196@google.com>
+Subject: INFO: task hung in lo_release
+From:   syzbot <syzbot+a4e4a2663a21c3c3c2b1@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---cuxlnvygzpxlrpwv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot found the following crash on:
 
-On Wed, Jul 18, 2018 at 04:24:40PM +0530, Jagan Teki wrote:
-> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T=
-/H3/H5.
->=20
-> A64 behaviour similar to Allwinner A83T where
-> Mixer0 =3D> TCON0 =3D> LVDS/RGB/MIPI-DSI
-> Mixer1 =3D> TCON1 =3D> HDMI
-> as per Display System Block Diagram from Allwinner_A64_User_Manual_V1.1.p=
-df
->=20
-> This is third patch-set followed with previous RFC[1], first and second
-> series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
-> rest will add eventually.
->=20
-> This series fixed previous version comments
-> - Rebasing on linux-next
-> - sqash all pipeline components in one patch
-> - Enable all pipeline components in board dts
-> - about documenting fallback compatibles
-> - adding new compatible for mixer1
+HEAD commit:    3c53776e29f8 Mark HI and TASKLET softirq synchronous
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11bcc252400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d0ccc9273f0e539
+dashboard link: https://syzkaller.appspot.com/bug?extid=a4e4a2663a21c3c3c2b1
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-You still haven't figured out the SRAM parts. We asked you to fix this
-in the v1 and the v2 already, and we're not going to merge this
-without those bits figured out properly.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> Log:
-> [    1.450984] Jagan: sun8i_mixer_probe
-> [    1.464981] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_m=
-ixer_ops)
-> [    1.472572] sun4i-drm display-engine: bound 1c0d000.lcd-controller (op=
-s sun4i_tcon_ops)
-> [    1.480676] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer to regula=
-tor.10
-> [    1.488738] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1=
-=2E32a with HDCP (sun8i_dw_hdmi_phy)
-> [    1.498879] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C=
- bus driver
-> [    1.507372] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw=
-_hdmi_ops)
-> [    1.514778] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
-> [    1.521398] [drm] No driver support for vblank timestamp query.
-> [    1.684611] random: fast init done
-> [    2.011575] Console: switching to colour frame buffer device 180x56
-> [    2.049858] sun4i-drm display-engine: fb0: DRM emulated frame buffer d=
-evice
-> [    2.057268] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-eng=
-ine on minor 0
->=20
-> Note:
-> Pine64 boards are unable to get edid by default like other A64 boards,
-> but forcing 'video=3DHDMI-A-1:1920x1080@60D' kernel command line can
-> create edid with display on penel
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a4e4a2663a21c3c3c2b1@syzkaller.appspotmail.com
 
-Then that needs to be figured out before it's enabled, instead of
-having a hack that barely works.
+INFO: task syz-executor6:4597 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor6   D21208  4597      1 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  lo_release+0x1f/0x1f0 drivers/block/loop.c:1675
+  __blkdev_put+0x4f6/0x830 fs/block_dev.c:1793
+  blkdev_put+0x98/0x540 fs/block_dev.c:1855
+  blkdev_close+0x8b/0xb0 fs/block_dev.c:1862
+  __fput+0x355/0x8b0 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
+  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x40fb70
+Code: 00 00 00 00 e8 a1 46 02 00 0f b6 44 24 1f 88 44 24 40 48 8b 6c 24 20  
+48 83 c4 28 c3 48 8d 05 a9 97 4a 00 48 89 04 24 48 c7 44 <24> 08 11 00 00  
+00 e8 55 bd 01 00 0f 0b e8 ce a3 04 00 e9 59 ff ff
+RSP: 002b:00007fff1227ac48 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000013 RCX: 000000000040fb70
+RDX: 0000000000000000 RSI: 0000000000004c01 RDI: 0000000000000013
+RBP: 0000000000000013 R08: 0000000000000000 R09: 000000000000000a
+R10: 0000000000000075 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000001380 R14: 00007fff1227b2f0 R15: 00000000007034c0
+INFO: task blkid:18494 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+blkid           D23544 18494   7500 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  lo_open+0x1b/0xb0 drivers/block/loop.c:1632
+  __blkdev_get+0x360/0x13c0 fs/block_dev.c:1479
+  blkdev_get+0xc1/0xb50 fs/block_dev.c:1614
+  blkdev_open+0x1fb/0x280 fs/block_dev.c:1772
+  do_dentry_open+0x818/0xe40 fs/open.c:794
+  vfs_open+0x139/0x230 fs/open.c:908
+  do_last fs/namei.c:3399 [inline]
+  path_openat+0x174a/0x4e10 fs/namei.c:3540
+  do_filp_open+0x255/0x380 fs/namei.c:3574
+  do_sys_open+0x584/0x760 fs/open.c:1101
+  __do_sys_open fs/open.c:1119 [inline]
+  __se_sys_open fs/open.c:1114 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1114
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f59afda6120
+Code: Bad RIP value.
+RSP: 002b:00007fff6d16cf88 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f59afda6120
+RDX: 00007fff6d16df33 RSI: 0000000000000000 RDI: 00007fff6d16df33
+RBP: 0000000000000000 R08: 0000000000000078 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000f9d030
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000005
+INFO: task syz-executor5:18515 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor5   D24192 18515   4596 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ab9
+Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
+05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
+0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
+RSP: 002b:00007f34f5370c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f34f53716d4 RCX: 0000000000455ab9
+RDX: 0000000000000000 RSI: 0000000000004c81 RDI: 0000000000000016
+RBP: 000000000072bf48 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004be01c R14: 00000000004ccb20 R15: 0000000000000001
+INFO: task syz-executor1:18498 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor1   D22440 18498   4593 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ab9
+Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
+05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
+0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
+RSP: 002b:00007f6d63ca6c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f6d63ca76d4 RCX: 0000000000455ab9
+RDX: 0000000000000000 RSI: 0000000000004c80 RDI: 000000000000001a
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004bdff1 R14: 00000000004ccaf0 R15: 0000000000000000
+INFO: task syz-executor3:18521 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor3   D25408 18521   4592 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ab9
+Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
+05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
+0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
+RSP: 002b:00007fa34c3a2c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fa34c3a36d4 RCX: 0000000000455ab9
+RDX: 0000000000000000 RSI: 0000000000004c80 RDI: 0000000000000017
+RBP: 000000000072bf48 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004bdff1 R14: 00000000004ccaf0 R15: 0000000000000001
+INFO: task syz-executor3:18522 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor3   D24152 18522   4592 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  lo_open+0x1b/0xb0 drivers/block/loop.c:1632
+  __blkdev_get+0x360/0x13c0 fs/block_dev.c:1479
+  blkdev_get+0xc1/0xb50 fs/block_dev.c:1614
+  blkdev_open+0x1fb/0x280 fs/block_dev.c:1772
+  do_dentry_open+0x818/0xe40 fs/open.c:794
+  vfs_open+0x139/0x230 fs/open.c:908
+  do_last fs/namei.c:3399 [inline]
+  path_openat+0x174a/0x4e10 fs/namei.c:3540
+  do_filp_open+0x255/0x380 fs/namei.c:3574
+  do_sys_open+0x584/0x760 fs/open.c:1101
+  __do_sys_open fs/open.c:1119 [inline]
+  __se_sys_open fs/open.c:1114 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1114
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x40fd11
+Code: 48 89 1d ea cf 00 02 0f b6 4c 24 27 88 0d ef cf 00 02 48 8b 0d c8 cf  
+00 02 48 f7 c1 ff 1f 00 00 0f 85 80 01 00 00 48 8d 05 8c <bc> 00 02 48 89  
+04 24 48 89 74 24 08 48 c7 44 24 10 00 00 00 20 e8
+RSP: 002b:00007fa34c381a80 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00000000200038a8 RCX: 000000000040fd11
+RDX: 00007fa34c381afa RSI: 0000000000000002 RDI: 00007fa34c381af0
+RBP: 0000000000000009 R08: 0000000000000000 R09: 000000000000000a
+R10: 0000000000000075 R11: 0000000000000293 R12: 0000000000000003
+R13: 0000000000000009 R14: 00000000004d3d08 R15: 0000000000000002
+INFO: task syz-executor4:18506 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor4   D24192 18506   4595 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ab9
+Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
+05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
+0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
+RSP: 002b:00007f1b8f363c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f1b8f3646d4 RCX: 0000000000455ab9
+RDX: 0000000000000000 RSI: 0000000000004c80 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004bdff1 R14: 00000000004ccaf0 R15: 0000000000000000
+INFO: task syz-executor7:18507 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor7   D23864 18507   8786 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ab9
+Code: e0 1f 48 89 04 24 e8 b6 6f fd ff e8 81 6a fd ff e8 5c 68 fd ff 48 8d  
+05 23 cd 48 00 48 89 04 24 48 c7 44 24 08 1d 00 00 00 e8 <13> 5e fd ff 0f  
+0b e8 8c 44 00 00 e9 07 f0 ff ff cc cc cc cc cc cc
+RSP: 002b:00007fcbe4dd6c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fcbe4dd76d4 RCX: 0000000000455ab9
+RDX: 0000000000000000 RSI: 0000000000004c80 RDI: 0000000000000017
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004bdff1 R14: 00000000004ccaf0 R15: 0000000000000000
+INFO: task syz-executor2:18514 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor2   D21960 18514   4590 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+  blkdev_get+0xc1/0xb50 fs/block_dev.c:1614
+  blkdev_open+0x1fb/0x280 fs/block_dev.c:1772
+  do_dentry_open+0x818/0xe40 fs/open.c:794
+  vfs_open+0x139/0x230 fs/open.c:908
+  do_last fs/namei.c:3399 [inline]
+  path_openat+0x174a/0x4e10 fs/namei.c:3540
+  do_filp_open+0x255/0x380 fs/namei.c:3574
+  do_sys_open+0x584/0x760 fs/open.c:1101
+  __do_sys_open fs/open.c:1119 [inline]
+  __se_sys_open fs/open.c:1114 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1114
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x40fd11
+Code: 48 89 1d ea cf 00 02 0f b6 4c 24 27 88 0d ef cf 00 02 48 8b 0d c8 cf  
+00 02 48 f7 c1 ff 1f 00 00 0f 85 80 01 00 00 48 8d 05 8c <bc> 00 02 48 89  
+04 24 48 89 74 24 08 48 c7 44 24 10 00 00 00 20 e8
+RSP: 002b:00007fe34706ca80 EFLAGS: 00000293 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00000000200002c8 RCX: 000000000040fd11
+RDX: 00007fe34706cafa RSI: 0000000000000002 RDI: 00007fe34706caf0
+RBP: 0000000000000005 R08: 0000000000000000 R09: 000000000000000a
+R10: 0000000000000075 R11: 0000000000000293 R12: 0000000000000017
+R13: 0000000000000005 R14: 00000000004d3d08 R15: 0000000000000000
+INFO: task blkid:18513 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc5+ #152
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+blkid           D23984 18513   9176 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  schedule_preempt_disabled+0x10/0x20 kernel/sched/core.c:3603
+  __mutex_lock_common kernel/locking/mutex.c:834 [inline]
+  __mutex_lock+0xede/0x1820 kernel/locking/mutex.c:894
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:909
+  __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+  blkdev_get+0xc1/0xb50 fs/block_dev.c:1614
+  blkdev_open+0x1fb/0x280 fs/block_dev.c:1772
+  do_dentry_open+0x818/0xe40 fs/open.c:794
+  vfs_open+0x139/0x230 fs/open.c:908
+  do_last fs/namei.c:3399 [inline]
+  path_openat+0x174a/0x4e10 fs/namei.c:3540
+  do_filp_open+0x255/0x380 fs/namei.c:3574
+  do_sys_open+0x584/0x760 fs/open.c:1101
+  __do_sys_open fs/open.c:1119 [inline]
+  __se_sys_open fs/open.c:1114 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1114
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f4bc31c9120
+Code: Bad RIP value.
+RSP: 002b:00007fff8c7b7858 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4bc31c9120
+RDX: 00007fff8c7b8f33 RSI: 0000000000000000 RDI: 00007fff8c7b8f33
+RBP: 0000000000000000 R08: 0000000000000078 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000db8030
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000005
 
-Maxime
+Showing all locks held in the system:
+1 lock held by khungtaskd/902:
+  #0: 000000004f60bbd2 (rcu_read_lock){....}, at:  
+debug_show_all_locks+0xd0/0x428 kernel/locking/lockdep.c:4461
+1 lock held by rsyslogd/4455:
+  #0: 0000000086a2d206 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200  
+fs/file.c:766
+2 locks held by getty/4545:
+  #0: 00000000ece833eb (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 00000000536bed00 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4546:
+  #0: 00000000180e8f60 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000008efac671 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4547:
+  #0: 00000000ca308631 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000007c05fef3 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4548:
+  #0: 000000009d93809c (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000004c489ffa (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4549:
+  #0: 00000000ec3b322c (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 00000000107aeb96 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4550:
+  #0: 000000006d1a7b96 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 00000000564c003d (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by getty/4551:
+  #0: 000000003cba543a (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 00000000149a289b (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+2 locks held by syz-executor6/4597:
+  #0: 0000000033676c6d (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0xc2/0x830  
+fs/block_dev.c:1780
+  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_release+0x1f/0x1f0  
+drivers/block/loop.c:1675
+2 locks held by blkid/18494:
+  #0: 000000000efc6462 (&bdev->bd_mutex){+.+.}, at:  
+__blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_open+0x1b/0xb0  
+drivers/block/loop.c:1632
+1 lock held by syz-executor5/18515:
+  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at:  
+loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+1 lock held by syz-executor1/18498:
+  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at:  
+loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+1 lock held by syz-executor3/18521:
+  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at:  
+loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+2 locks held by syz-executor3/18522:
+  #0: 00000000399ff791 (&bdev->bd_mutex){+.+.}, at:  
+__blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_open+0x1b/0xb0  
+drivers/block/loop.c:1632
+1 lock held by syz-executor4/18506:
+  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at:  
+loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+1 lock held by syz-executor0/18508:
+1 lock held by syz-executor7/18507:
+  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at:  
+loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+1 lock held by syz-executor2/18514:
+  #0: 000000000efc6462 (&bdev->bd_mutex){+.+.}, at:  
+__blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+1 lock held by blkid/18513:
+  #0: 0000000033676c6d (&bdev->bd_mutex){+.+.}, at:  
+__blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+1 lock held by blkid/18520:
+  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_probe+0x82/0x1d0  
+drivers/block/loop.c:1979
+1 lock held by blkid/18524:
+  #0: 00000000399ff791 (&bdev->bd_mutex){+.+.}, at:  
+__blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+=============================================
 
---cuxlnvygzpxlrpwv
-Content-Type: application/pgp-signature; name="signature.asc"
+NMI backtrace for cpu 0
+CPU: 0 PID: 902 Comm: khungtaskd Not tainted 4.18.0-rc5+ #152
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:196 [inline]
+  watchdog+0x9c4/0xf80 kernel/hung_task.c:252
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x6/0x10  
+arch/x86/include/asm/irqflags.h:54
 
------BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltPNj8ACgkQ0rTAlCFN
-r3RKag/9GRWd8FN+lvkjnLkv2Rs9BFsF0lp3dP5nR6BOCePpl4MZ5XsvhQ1HOqMz
-wr5kfno4sy6gPNEyTcNvEk1Qf5sIav7y69D2Z912TghkLhz0gH4ODeMOy6RGBN7w
-W/dyOMx0X1kCzchBkohMyQzfiawgU6/xhgQwdkvEeshJGG7u51+Uf2tdKeD3f8sf
-gxqXDMxZn/b6h330tB9fbiGlxkpmuy6yCwjiaJcjCeXj44ZFCasOY7givMotxiSO
-YgS+Q0GfDaLgA2Pc1A3xnukQrK8xuoIfNPA2g2K50prAtk8A4sI8UCUzMS+QVtVM
-ESy6TQ54LcYWvC/40eMINv1VDXgERot9MmhJLfgXIDGP5NHlYUHQaej3MpdyhJQ/
-Em/ywvjeSKrOyBHvB+3Jd/ddDLRTnr9/Uar808ASstHEUzg3IAsR3hHnXzzXE6n/
-xVB+O+ozw17eSiVU4setiszpzvdJaJiQZARWFsKgcTzZwU2GA+xDqf0BPZyL87qp
-+Pe1z+QacfukDHJyqS86ICQ6LGGHcGdcpB2zjJE9sIfkQkuElzcODXyCj5lwqtYa
-BTaJhCcfqm2OsA2ilNjuVouFUd54Miat3ELd52KfUgZalI3Sn4afs0GpXPU2QD5v
-4HUylHYA6GyttYED9SSBlDfj6F5gtMNG6FIhcTnHQoV8ri2xhtY=
-=1N4F
------END PGP SIGNATURE-----
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---cuxlnvygzpxlrpwv--
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
