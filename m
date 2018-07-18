@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5838ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11009ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C31A2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:59:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C31A2075A
+	by mail.kernel.org (Postfix) with ESMTP id 9EA5A2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:02:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA5A2075A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbeGROhV (ORCPT
+        id S1730382AbeGROka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:37:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42466 "EHLO mx1.suse.de"
+        Wed, 18 Jul 2018 10:40:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42916 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729309AbeGROhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:37:20 -0400
+        id S1728311AbeGROk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 10:40:29 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 47F03AE7E;
-        Wed, 18 Jul 2018 13:59:14 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 68E74AE9A;
+        Wed, 18 Jul 2018 14:02:19 +0000 (UTC)
 Subject: Re: [PATCH v3 1/3] lib: add crc64 calculation routines
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Eric Biggers <ebiggers3@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
         linux-block@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Michael Lyle <mlyle@lyle.org>,
         Kent Overstreet <kent.overstreet@gmail.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Kate Stewart <kstewart@linuxfoundation.org>,
-        Eric Biggers <ebiggers3@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>
 References: <20180717145525.50852-1-colyli@suse.de>
- <20180717145525.50852-2-colyli@suse.de>
- <8f62965ad89f82b0f4bd73d6e5acf352dc2b767e.camel@linux.intel.com>
+ <20180717145525.50852-2-colyli@suse.de> <20180717163116.GA75957@gmail.com>
 From:   Coly Li <colyli@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
@@ -85,12 +84,12 @@ Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
  UmCNKa43mNFktMrwU21J5lVXEwBuTY6JlHOAl0Fgo28X+eTa8fx2Uiz9OVgWe03ebJGIGowe
  XTgqVWJMsKM1tmW+QFmgtczDGRYCZ6OQYpqt0SoTg1yx5MN4RzUtlLka2qLfPiOGUUN3qNJ5
  nP+spvF+s+dHtLjjhy7AL86N01a6S0rwaClVVv0XTucvIntwccIx0CZfUKlfn5BWnB64Ig==
-Message-ID: <cd71e845-2046-d723-2d57-09acd52f933d@suse.de>
-Date:   Wed, 18 Jul 2018 21:58:59 +0800
+Message-ID: <e760af24-5607-3bf7-1ed9-fdf81049ec3c@suse.de>
+Date:   Wed, 18 Jul 2018 22:02:09 +0800
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
  Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <8f62965ad89f82b0f4bd73d6e5acf352dc2b767e.camel@linux.intel.com>
+In-Reply-To: <20180717163116.GA75957@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -99,20 +98,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/17 11:43 PM, Andy Shevchenko wrote:
-> On Tue, 2018-07-17 at 22:55 +0800, Coly Li wrote:
->> This patch adds the re-write crc64 calculation routines for Linux
->> kernel.
->> The CRC64 polynomical arithmetic follows ECMA-182 specification,
->> inspired
+On 2018/7/18 12:31 AM, Eric Biggers wrote:
+> Hi Coly,
+> 
+> On Tue, Jul 17, 2018 at 10:55:23PM +0800, Coly Li wrote:
+>> This patch adds the re-write crc64 calculation routines for Linux kernel.
+>> The CRC64 polynomical arithmetic follows ECMA-182 specification, inspired
 >> by CRC paper of Dr. Ross N. Williams
->> (see http://www.ross.net/crc/download/crc_v3.txt) and other public
->> domain
+>> (see http://www.ross.net/crc/download/crc_v3.txt) and other public domain
 >> implementations.
+> 
+> Please also mention who is planned to use this CRC-64 code.  Again, if it's just
+> one user then there's no need for this patchset yet.  If bcachefs is planned to
+> be another user (separate from bcache) then you need to say so.
+> 
 >>
 >> All the changes work in this way,
->> - When Linux kernel is built, host program lib/gen_crc64table.c will
->> be
+>> - When Linux kernel is built, host program lib/gen_crc64table.c will be
 >>   compiled to lib/gen_crc64table and executed.
 >> - The output of gen_crc64table execution is an array called as lookup
 >>   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64bits-long
@@ -121,92 +123,86 @@ On 2018/7/17 11:43 PM, Andy Shevchenko wrote:
 >>   calculation.
 >> - Function declaration of the crc64 calculation routines is placed in
 >>   include/linux/crc64.h
-> 
-> Thanks for an update! My comments below.
-> 
+>>
+>> Changelog:
+>> v3: More fixes for review comments of v2
+>>     By review comments from Eric Biggers, current functions naming with
+>>     'le' is misleading. Remove 'le' from the crc function names, and use
+>>     u64 to replace __le64 in parameters and return values. 
+>> v2: Fix reivew comments of v1
+>> v1: Initial version.
+>>
+>> Signed-off-by: Coly Li <colyli@suse.de>
 >> Co-developed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> As required by coding style this tag should be accompanied with SoB of
-> co-developer(s).
-> 
-
-Now I change the lines as following in commit log,
-Co-developed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
+>> Reviewed-by: Hannes Reinecke <hare@suse.de>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> Cc: Michael Lyle <mlyle@lyle.org>
+>> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+>> Cc: Eric Biggers <ebiggers3@gmail.com>
+>> ---
+>>  include/linux/crc64.h | 13 ++++++++
+>>  lib/.gitignore        |  2 ++
+>>  lib/Kconfig           |  8 +++++
+>>  lib/Makefile          | 11 +++++++
+>>  lib/crc64.c           | 71 +++++++++++++++++++++++++++++++++++++++++++
+>>  lib/gen_crc64table.c  | 69 +++++++++++++++++++++++++++++++++++++++++
+>>  6 files changed, 174 insertions(+)
+>>  create mode 100644 include/linux/crc64.h
+>>  create mode 100644 lib/crc64.c
+>>  create mode 100644 lib/gen_crc64table.c
+>>
+>> diff --git a/include/linux/crc64.h b/include/linux/crc64.h
+>> new file mode 100644
+>> index 000000000000..3e87b61cd54f
+>> --- /dev/null
+>> +++ b/include/linux/crc64.h
+>> @@ -0,0 +1,13 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * See lib/crc64.c for the related specification and polynomical arithmetic.
+>> + */
+>> +#ifndef _LINUX_CRC64_H
+>> +#define _LINUX_CRC64_H
+>> +
+>> +#include <linux/types.h>
+>> +
 >> +u64 __pure crc64_update(u64 crc, const void *_p, size_t len);
+>> +u64 __pure crc64(const void *p, size_t len);
+>> +u64 __pure crc64_bch(const void *p, size_t len);
+>> +#endif /* _LINUX_CRC64_H */
 > 
-> For sake of consistency I would name _len as well.
+> I still think you should make the API consistent with lib/crc32.c by replacing
+> the three functions with just:
 > 
+> 	u64 __pure crc64_be(u64 crc, const void *p, size_t len);
+> 
+> Your API maps to it as follows:
+> 
+> 	crc64_update(crc, p, len) == crc64_be(crc, p, len)
+> 	crc64(p, len)             == crc64_be(0, p, len)
+> 	crc64_bch(p, len)         == ~crc64_be(~0, p, len)
+> 
+> The "_be" suffix clarifies that it's not using the bit-reversed convention.  We
+> don't want to have to rename everything when someone needs to do CRC-64 using
+> the other convention.  The CRC-64 in the .xz file format, for example, uses the
+> bit-reversed convention.
+> 
+> The other problem with your API (besides it being inconsistent with lib/crc32.c)
+> is that as soon as the caller needs to do something nontrivial, like passing the
+> data in multiple chunks or using different conventions for the initial and final
+> values, then they actually have to use only "crc64_update()" anyway, which is
+> confusing as it makes it sound like there should be a "crc64_init()" and
+> "crc64_final()" to go along with "crc64_update()".
+> 
+> Also, naming CRC conventions after a specific user ("bch") isn't appropriate.
 
-Hmm, I will use 'p', and use '_p' for internal argument.
+Agree. I will only keep crc64_be() in lib/crc64.c, and move the rested
+back to bcache code with proper names. The change will be in v4 series.
 
->> + * Normal 64bit CRC calculation.
-> 
-> I think 64-bit form is slightly better and more often
-> 
-> $ git grep -n -w 64bit | wc -l
-> 809
-> 
-> $ git grep -n -w 64-bit | wc -l
-> 2957
-> 
->> + * crc64table[256] is the lookup table of a table-driver 64bit CRC
-> 
-> Ditto.
-> 
-
-Sure, I will change them to 64-bit.
-
->> + * Copyright 2018 SUSE Linux.
->> + *   Author: Coly Li <colyli@suse.de>
-> 
->> + *
-> 
-> This (blank comment) line is not needed.
-> 
->> +u64 __pure crc64_update(u64 crc, const void *_p, size_t len)
-> 
-> _len ?
-> 
-
-I will rename '_p' to 'p' here too.
-
->> + * Copyright 2018 SUSE Linux.
->> + *   Author: Coly Li <colyli@suse.de>
-> 
->> + *
-> 
-> Not needed line.
-> 
-
-Fixed in v4.
-
->> +#include <inttypes.h>
->> +#include <stdio.h>
-> 
-> + blank line? Would separate groups of headers logically.
-> 
->> +#include <linux/swab.h>
-> 
->> +static int64_t crc64_table[256] = {0,};
-> 
-> I guess {0} would work as well (no comma).
-
-Fixed them in v4.
-
-> 
->> +	printf("#include <uapi/linux/types.h>\n");
->> +	printf("#include <linux/cache.h>\n\n");
-> 
-> Do wee need these? CRC32 case seems fine without.
-> 
-
-I renamed uapi/linux/types.h to linux/types.h, this header is for 'u64'.
-Another header linux/cache.h is for '____cacheline_aligned'. They should
-be necessary if these two headers are not included before
-lib/crc64table.h is included.
-
-Thanks for your review :-)
+Thanks.
 
 Coly Li
