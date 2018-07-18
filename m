@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A0DECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6535ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDAB620854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A176220850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0YpQBTGj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDAB620854
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kE9HkCU2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A176220850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731567AbeGRQtV (ORCPT
+        id S1731824AbeGRQvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:49:21 -0400
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:40599 "EHLO
-        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731452AbeGRQtU (ORCPT
+        Wed, 18 Jul 2018 12:51:10 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54615 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731535AbeGRQtV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:49:20 -0400
-Received: by mail-wm0-f48.google.com with SMTP id z13-v6so3447667wma.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:10:44 -0700 (PDT)
+        Wed, 18 Jul 2018 12:49:21 -0400
+Received: by mail-wm0-f67.google.com with SMTP id c14-v6so3350375wmb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:10:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AZzCltgnNdPyeZzXiMFjWCg4GFVgDog5WHEdONSaQYA=;
-        b=0YpQBTGjX84ndXw1Qum4CiP3P2WxZurvYZThnuNXWR08RnwbPI4e2GjvoVhUdyEBth
-         GxlkSsth9vK6cOICNeN9DdEtvnvF74ZfP3/vuLuJArkElGJV1YNsYRqHCgERqCOVHQ34
-         SXrgeL6dBhbLeWlU8Z4JNeI7RB6s/eLqa5j0O8lkGcKo1fiwwLM83cgkxhwz4wrhhNVD
-         RnVS5Emrddpb289sl2cJYb1sfT2soXpIJtm9c/RgLXQ7nwb7a6BfGQBCBO4F2wXAPiuK
-         MYGpqbtrLZDXIke2bNcTOC1WtgoXZsWF8a0yEQWSQyaY0AHTRjHGwPKg8wJzrA55WbPG
-         FDdA==
+        bh=5nw1HQAmv4GwhqMuUaC5yDqQkngaK0CYak4ZYQ4kb7k=;
+        b=kE9HkCU2i2Zo9sm8D1hIwFs780xiRBBKt598nH9OeB0bbn1rSrfPXgsJ0zJkH/dVt0
+         pUsHG4sMy3Ye0vsLsKrhF6/z+kqqxIFhUpqIBkHqlEQQzJA6X7uilonoR2mQXqSBz4OO
+         bdCbXliMU46bbir8A86dc/zMLupcV8EoCnmhXOQXKb4rGtC+2lml7B01mbwxMbQpyFTZ
+         Gd+b3hu7Xht5SsmACFJHQ7kPkwTwrwSCAAev0SUNV357vD+faWt0c+TCzsjr38WlKqfP
+         AdrBFOBxc2w/8q6PCT64q+tY/b/u3TLv34TFxLR75jXfeuEXPeXjNNA8koLu59Xn02oo
+         bY2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AZzCltgnNdPyeZzXiMFjWCg4GFVgDog5WHEdONSaQYA=;
-        b=XtXPc6s/gh8zEQzk0HFXMX13pIqchJB5BOCi4owGW6Yf+EMH4y15YBEaPtBzU7U+uI
-         xvzXyzOZgzcpFgLnlxch96sPi6Hw+2V97/S398wFRxK8wTaALZQvhu0YYS5z6jBflnBB
-         fEgUsZaaPGzzxOBI+M1nxxBihx22TLdjcfNLXHvIRTvMAr4LgNHQWeur3c0R4L7LDU9x
-         E5Eal/GRDX7DiHs3Ocx1Wuon5MXQVPmwbd6ILQFfqTGxn2W4fAoQQ2nDf+iwNHdqWHNN
-         OjQhbt++fu6MJo/hJFzs9/jWwzWIU5JsZ7KbQBLVlTGcdOf6aRRRdMzGmWBzwkguJYmr
-         RgPA==
-X-Gm-Message-State: AOUpUlGVH53w8yNZGL2K181EBawoiGkpDT3zLdAQgWGvNZwtlyCy1+U1
-        0xwTLTnepa8PCOT/+g+n3Jg5PQ==
-X-Google-Smtp-Source: AAOMgpe57NW0DQDrONhZjG8SlJwhk7i/pp3Ii9AltAolWcQJMvLYWVi8kJi6JCEEY5x61NvhhAjheA==
-X-Received: by 2002:a1c:888e:: with SMTP id k136-v6mr2069766wmd.6.1531930243447;
-        Wed, 18 Jul 2018 09:10:43 -0700 (PDT)
+        bh=5nw1HQAmv4GwhqMuUaC5yDqQkngaK0CYak4ZYQ4kb7k=;
+        b=HxCXOp0Jr/Rt1ln8iZRFBv/dE11k7VcvvEp0DkoqcyAYqR58Bh1K1V/74ryCG1tx3l
+         WF5kOtcUppS/F+s7ZvNawilERO/bLX9VUFfZ2NJqbU36i3SWJoTJWoLRMiFUcJidgwQt
+         L/1n1GfZ3Ut4EhPzi6jFFHiFYPJwZ5sePv/bLxXJLdJ49aO6yH4qIeAowXO4O7024L+Z
+         jCe0UULrD6wzpjfdvCqlebwWRd3HsHAF8cFRAQgWvZOgng6AUJfFk/l9gbQjJUlD6Xzt
+         DLw+/7XjHuOHZ5oG6I3ZuKQJSMpFgJzfIUjCVjDmWIr6xWuhHPbHtIOUraRQ9NK/B38+
+         xHdQ==
+X-Gm-Message-State: AOUpUlFkFO4HZ/vCjSbLtT6B2wqSFuuuRdOm1MtKUBxxKCbiFvQ5ca3M
+        5DVguaiQZjn/osRt+BNmKjsdvQ==
+X-Google-Smtp-Source: AAOMgpcqx/s4hF9Qf7YbLyIV28plr/vySEY4KZ3blOpbVwFRzDm/VgvAxsktM83/X59ApovtSEcXcQ==
+X-Received: by 2002:a1c:1802:: with SMTP id 2-v6mr1928894wmy.81.1531930244957;
+        Wed, 18 Jul 2018 09:10:44 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id v185-v6sm2847803wme.30.2018.07.18.09.10.42
+        by smtp.gmail.com with ESMTPSA id v185-v6sm2847803wme.30.2018.07.18.09.10.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 09:10:42 -0700 (PDT)
+        Wed, 18 Jul 2018 09:10:44 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -73,9 +73,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, netdev@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 1/5] net: visually shrink eth_platform_get_mac_address()
-Date:   Wed, 18 Jul 2018 18:10:31 +0200
-Message-Id: <20180718161035.7005-2-brgl@bgdev.pl>
+Subject: [PATCH 2/5] net: add an info message to eth_platform_get_mac_address()
+Date:   Wed, 18 Jul 2018 18:10:32 +0200
+Message-Id: <20180718161035.7005-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180718161035.7005-1-brgl@bgdev.pl>
 References: <20180718161035.7005-1-brgl@bgdev.pl>
@@ -86,37 +86,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Initialize the variables with proper values so that we save a few
-lines of code before we extend this function in the follow-up patches.
+Many drivers that read the MAC address from EEPROM or MTD emit a log
+message when they succeed. Since this function is meant to be reused
+in those drivers instead of reimplementing the same operation
+everywhere, add an info message when we successfully read the MAC
+address.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- net/ethernet/eth.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ net/ethernet/eth.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
-index ee28440f57c5..da8530879e1e 100644
+index da8530879e1e..2a2173324d9e 100644
 --- a/net/ethernet/eth.c
 +++ b/net/ethernet/eth.c
-@@ -527,15 +527,10 @@ unsigned char * __weak arch_get_platform_mac_address(void)
+@@ -530,15 +530,24 @@ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+ 	struct device_node *dp = dev_is_pci(dev) ?
+ 			pci_device_to_OF_node(to_pci_dev(dev)) : dev->of_node;
+ 	const unsigned char *addr = NULL;
++	const char *from = NULL;
  
- int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
- {
--	const unsigned char *addr;
--	struct device_node *dp;
-+	struct device_node *dp = dev_is_pci(dev) ?
-+			pci_device_to_OF_node(to_pci_dev(dev)) : dev->of_node;
-+	const unsigned char *addr = NULL;
- 
--	if (dev_is_pci(dev))
--		dp = pci_device_to_OF_node(to_pci_dev(dev));
--	else
--		dp = dev->of_node;
--
--	addr = NULL;
- 	if (dp)
+-	if (dp)
++	if (dp) {
  		addr = of_get_mac_address(dp);
+-	if (!addr)
++		if (addr)
++			from = "device tree";
++	}
++
++	if (!addr) {
+ 		addr = arch_get_platform_mac_address();
++		if (addr)
++			from = "arch callback";
++	}
+ 
  	if (!addr)
+ 		return -ENODEV;
+ 
++	dev_info(dev, "read MAC address from %s\n", from);
+ 	ether_addr_copy(mac_addr, addr);
+ 	return 0;
+ }
 -- 
 2.17.1
 
