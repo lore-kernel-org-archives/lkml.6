@@ -2,150 +2,259 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59FE6ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAAABECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 106562075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BDCB2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nqdj9fFC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 106562075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="14Ec3yYA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BDCB2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731012AbeGROuG (ORCPT
+        id S1731043AbeGROuS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:50:06 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37522 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730521AbeGROuF (ORCPT
+        Wed, 18 Jul 2018 10:50:18 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:38890 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730464AbeGROuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:50:05 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 31-v6so2109264plc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 07:11:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=hm0GfILnPdVZ55zrW5t1PKask/NBpNc3HziUVobAoO4=;
-        b=Nqdj9fFC+kcqPSq8h9q/j6cEEm7qgnrSO9p57iquFiuQLjDdcEPjS6c2n3uTDz8o8T
-         KxYfHXcghsM+wPmMShmCqf89OsBjl7sv4WHMxqxXBQzPpdjhNI3TQrSeZnDrn4DqJXjX
-         mWz6TCk0cGNOvjV9amxbNROB0tGjTq3IKQfXJ4HS3BOt3M6fczSPDkD+hwveYdSeDJ6w
-         OxJX/F4Pn6lh0WZNDvFaULL2LghHlJui7Jv7mG7o5H82Kx5KrldmOVXWRbkkOu49liSB
-         SJjtB8i7zqZa9Eqyy3vRZcZotnneDN2qHQ+JafmUFlMZI+M5ajWsQuBuNhQ3FG7/GA3Q
-         7N4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=hm0GfILnPdVZ55zrW5t1PKask/NBpNc3HziUVobAoO4=;
-        b=IDxYhv01xCi8nzpu2TmZhVxZK0uPmcoTn889M62AcLl4+2vw7NjItvmSLavHK2HoqA
-         zRNxpULZvircJsd/QrzY36EGH3J/VdQxe6nHML2W2RgPifW7FTF1VPz2jDHi3WXqHQqQ
-         pTE0IvMnLaQKJfwpmUrirv4gIyPhFsnzOAps7/HxLSOh6oFqarOL7QExCyRuY2BmlkcM
-         55SouSC2FVDPeJn7EIDRmJ7bAHBGj6eR99fjhtaw/bKzn2HuBQ22C1sSh/Qmd0hHXVC+
-         jJptkSIOHIfdlBTBuwbQVnfhi+6X+QRe+KGkZ/HMuDrB+DorwfQlWniTLiFPav7qgZEW
-         IYiA==
-X-Gm-Message-State: AOUpUlFdUh5Nj9lOIgQSYd2fQBeEKOzcGdbYdoC9QF84l5/B+sPsxV4r
-        AL9WnLSYTIWQrMs1yj3dhCeh7ABwlFZImFqdvG4pQA==
-X-Google-Smtp-Source: AAOMgpcZK7HEsNLrj745eTzXFTUu2mYx+EjCgy/JKaOEhmhGTDOOY9XJ8Aw5/5J2kHSCeqqN2Ly4R3D4ZIxp1sk6/hU=
-X-Received: by 2002:a17:902:8c88:: with SMTP id t8-v6mr6062203plo.117.1531923118965;
- Wed, 18 Jul 2018 07:11:58 -0700 (PDT)
+        Wed, 18 Jul 2018 10:50:18 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6IEAj7R118604;
+        Wed, 18 Jul 2018 14:11:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=E10dlyzN3c8L62uGT39zhpeX3tJHBqrfWmR5zomHnWU=;
+ b=14Ec3yYAG+rsPnqff6RzunI4ewuip5rdzffXgp4CgJyTa4tAJxvyFKclrEfKQ/pdOs/l
+ GvBkHCsXa8aOD6esOH4S9uebTJjtdvq/v/vJwazl4sjfNZjA813PTQaDiOGjBQrkNPJ9
+ KLaebBDSBlB9MM3e3+9a+MQnqbB3GMIJYYd5mGP/1SKCSf+4BKOIIcIEz62LGX0MPnWn
+ TVkS1k9lM3bXsSifxmkQnZDAZO7WPXlwv/793Ppd5MS4MiQ/96qpdBoxiDvExVqJhjsG
+ 335CrN+oPYPHDt6KD4DyxQopv18/hHaW85ffMPrVFBCmw6rJXIlWTvG0NrGwNzVPwCQj lg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2k7a3t59b3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 14:11:58 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6IEBvmt009285
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 14:11:57 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6IEBtqP014128;
+        Wed, 18 Jul 2018 14:11:55 GMT
+Received: from xakep.localdomain (/73.69.118.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Jul 2018 07:11:52 -0700
+Date:   Wed, 18 Jul 2018 10:11:50 -0400
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+To:     osalvador@techadventures.net
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        iamjoonsoo.kim@lge.com, aaron.lu@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 1/3] mm/page_alloc: Move ifdefery out of
+ free_area_init_core
+Message-ID: <20180718141150.imiyuust5txfmfvw@xakep.localdomain>
+References: <20180718124722.9872-1-osalvador@techadventures.net>
+ <20180718124722.9872-2-osalvador@techadventures.net>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 18 Jul 2018 07:11:38
- -0700 (PDT)
-In-Reply-To: <fe20c22a-028b-b2a3-7714-c90b7fe51cbf@i-love.sakura.ne.jp>
-References: <0000000000002f5541057143a85e@google.com> <eb295f49-78b3-62f5-84a8-221671c84634@I-love.SAKURA.ne.jp>
- <CACT4Y+bWR8s4_Chd33cjZ_qbTDyiciAQfmYP8fDv+r3Ar7X8iw@mail.gmail.com>
- <CACT4Y+bM1tfisT+7=ZChHRZKZkddbWp0kNi5q46EqOYBSptXtg@mail.gmail.com>
- <0adc592b-d4a3-f6da-3c5c-22490f641eb9@i-love.sakura.ne.jp>
- <CACT4Y+YqDFNrdtk+aet9UVBxyvxs+O85YLnMYL3FvoPckBx-Mg@mail.gmail.com> <fe20c22a-028b-b2a3-7714-c90b7fe51cbf@i-love.sakura.ne.jp>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 18 Jul 2018 16:11:38 +0200
-Message-ID: <CACT4Y+YShmryp_RJErUrjP=9GJ3YcRPLXyQP8XKoA9AW114Ygg@mail.gmail.com>
-Subject: Re: INFO: task hung in grab_super
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net,
-        syzbot <syzbot+f425456ea8aa16b40d20@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718124722.9872-2-osalvador@techadventures.net>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8958 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807180159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 3:35 PM, Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>> This seems to be related to 9p. After rerunning the log I got:
->>>>
->>>> root@syzkaller:~# ps afxu | grep syz
->>>> root     18253  0.0  0.0      0     0 ttyS0    Zl   10:16   0:00  \_
->>>> [syz-executor] <defunct>
->>>> root@syzkaller:~# cat /proc/18253/task/*/stack
->>>> [<0>] p9_client_rpc+0x3a2/0x1400
->>>> [<0>] p9_client_flush+0x134/0x2a0
->>>> [<0>] p9_client_rpc+0x122c/0x1400
->>>> [<0>] p9_client_create+0xc56/0x16af
->>>> [<0>] v9fs_session_init+0x21a/0x1a80
->>>> [<0>] v9fs_mount+0x7c/0x900
->>>> [<0>] mount_fs+0xae/0x328
->>>> [<0>] vfs_kern_mount.part.34+0xdc/0x4e0
->>>> [<0>] do_mount+0x581/0x30e0
->>>> [<0>] ksys_mount+0x12d/0x140
->>>> [<0>] __x64_sys_mount+0xbe/0x150
->>>> [<0>] do_syscall_64+0x1b9/0x820
->>>> [<0>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>>> [<0>] 0xffffffffffffffff
->>>>
->>>> There is a bunch of hangs in 9p, so let's do:
->>>>
->>>> #syz dup: INFO: task hung in flush_work
->>>>
->>> Then, is dumping all threads when khungtaskd fires a candidate
->>> for CONFIG_DEBUG_AID_FOR_SYZBOT=y path?
->>
->> Perhaps would be useful. But maybe only tasks that are blocked for
->> more than timeout/2? and/or unkillable tasks? killable tasks are not a
->> problem.
->
-> TASK_KILLABLE waiters are not reported by khungtaskd, are they?
->
->   /* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
->   if (t->state == TASK_UNINTERRUPTIBLE)
->     check_hung_task(t, timeout);
->
-> And TASK_KILLABLE waiters can become a problem because
->
->>
->> Btw, I see that p9_client_rpc uses wait_event_killable, why wasn't it
->> killed along with the whole process?
->>
->
-> wait_event_killable() would return -ERESTARTSYS if got SIGKILL.
-> But if (c->status == Connected) && (type == P9_TFLUSH) is also true,
-> it ignores SIGKILL by retrying the loop...
->
->   again:
->     err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
->     if ((err == -ERESTARTSYS) && (c->status == Connected) && (type == P9_TFLUSH)) {
->       sigpending = 1;
->       clear_thread_flag(TIF_SIGPENDING);
->       goto again;
->     }
->
-> I wish they don't ignore SIGKILL (by e.g. offloading operations to a kernel thread).
+On 18-07-18 14:47:20, osalvador@techadventures.net wrote:
+> From: Oscar Salvador <osalvador@suse.de>
+> 
+> Moving the #ifdefs out of the function makes it easier to follow.
+> 
+> Signed-off-by: Oscar Salvador <osalvador@suse.de>
+
+Hi Oscar,
+
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+
+Please include the following patch in your series, to get rid of the last
+ifdef in this function.
+
+From f841184e141b21e79c4d017d3b7678c697016d2a Mon Sep 17 00:00:00 2001
+From: Pavel Tatashin <pasha.tatashin@oracle.com>
+Date: Wed, 18 Jul 2018 09:56:52 -0400
+Subject: [PATCH] mm: access zone->node via zone_to_nid() and zone_set_nid()
+
+zone->node is configured only when CONFIG_NUMA=y, so it is a good idea to
+have inline functions to access this field in order to avoid ifdef's in
+c files.
+
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+---
+ include/linux/mm.h     |  9 ---------
+ include/linux/mmzone.h | 26 ++++++++++++++++++++------
+ mm/mempolicy.c         |  4 ++--
+ mm/mm_init.c           |  9 ++-------
+ mm/page_alloc.c        | 10 ++++------
+ 5 files changed, 28 insertions(+), 30 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 3982c83fdcbf..8634eeafad0b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -940,15 +940,6 @@ static inline int page_zone_id(struct page *page)
+ 	return (page->flags >> ZONEID_PGSHIFT) & ZONEID_MASK;
+ }
+ 
+-static inline int zone_to_nid(struct zone *zone)
+-{
+-#ifdef CONFIG_NUMA
+-	return zone->node;
+-#else
+-	return 0;
+-#endif
+-}
+-
+ #ifdef NODE_NOT_IN_PAGE_FLAGS
+ extern int page_to_nid(const struct page *page);
+ #else
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 32699b2dc52a..aeb6c1499da5 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -841,6 +841,25 @@ static inline bool populated_zone(struct zone *zone)
+ 	return zone->present_pages;
+ }
+ 
++#ifdef CONFIG_NUMA
++static inline int zone_to_nid(struct zone *zone)
++{
++	return zone->node;
++}
++
++static inline void zone_set_nid(struct zone *zone, int nid)
++{
++	zone->node = nid;
++}
++#else
++static inline int zone_to_nid(struct zone *zone)
++{
++	return 0;
++}
++
++static inline void zone_set_nid(struct zone *zone, int nid) {}
++#endif
++
+ extern int movable_zone;
+ 
+ #ifdef CONFIG_HIGHMEM
+@@ -956,12 +975,7 @@ static inline int zonelist_zone_idx(struct zoneref *zoneref)
+ 
+ static inline int zonelist_node_idx(struct zoneref *zoneref)
+ {
+-#ifdef CONFIG_NUMA
+-	/* zone_to_nid not available in this context */
+-	return zoneref->zone->node;
+-#else
+-	return 0;
+-#endif /* CONFIG_NUMA */
++	return zone_to_nid(zoneref->zone);
+ }
+ 
+ struct zoneref *__next_zones_zonelist(struct zoneref *z,
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 9ac49ef17b4e..9cfccb54d207 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1784,7 +1784,7 @@ unsigned int mempolicy_slab_node(void)
+ 		zonelist = &NODE_DATA(node)->node_zonelists[ZONELIST_FALLBACK];
+ 		z = first_zones_zonelist(zonelist, highest_zoneidx,
+ 							&policy->v.nodes);
+-		return z->zone ? z->zone->node : node;
++		return z->zone ? zone_to_nid(z->zone) : node;
+ 	}
+ 
+ 	default:
+@@ -2326,7 +2326,7 @@ int mpol_misplaced(struct page *page, struct vm_area_struct *vma, unsigned long
+ 				node_zonelist(numa_node_id(), GFP_HIGHUSER),
+ 				gfp_zone(GFP_HIGHUSER),
+ 				&pol->v.nodes);
+-		polnid = z->zone->node;
++		polnid = zone_to_nid(z->zone);
+ 		break;
+ 
+ 	default:
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 5b72266b4b03..6838a530789b 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -53,13 +53,8 @@ void __init mminit_verify_zonelist(void)
+ 				zone->name);
+ 
+ 			/* Iterate the zonelist */
+-			for_each_zone_zonelist(zone, z, zonelist, zoneid) {
+-#ifdef CONFIG_NUMA
+-				pr_cont("%d:%s ", zone->node, zone->name);
+-#else
+-				pr_cont("0:%s ", zone->name);
+-#endif /* CONFIG_NUMA */
+-			}
++			for_each_zone_zonelist(zone, z, zonelist, zoneid)
++				pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
+ 			pr_cont("\n");
+ 		}
+ 	}
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 790722afa7cf..dbce6c0ced74 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2908,10 +2908,10 @@ static inline void zone_statistics(struct zone *preferred_zone, struct zone *z)
+ 	if (!static_branch_likely(&vm_numa_stat_key))
+ 		return;
+ 
+-	if (z->node != numa_node_id())
++	if (zone_to_nid(z) != numa_node_id())
+ 		local_stat = NUMA_OTHER;
+ 
+-	if (z->node == preferred_zone->node)
++	if (zone_to_nid(z) == zone_to_nid(preferred_zone))
+ 		__inc_numa_state(z, NUMA_HIT);
+ 	else {
+ 		__inc_numa_state(z, NUMA_MISS);
+@@ -5280,7 +5280,7 @@ int local_memory_node(int node)
+ 	z = first_zones_zonelist(node_zonelist(node, GFP_KERNEL),
+ 				   gfp_zone(GFP_KERNEL),
+ 				   NULL);
+-	return z->zone->node;
++	return zone_to_nid(z->zone);
+ }
+ #endif
+ 
+@@ -6302,9 +6302,7 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
+ 		 * And all highmem pages will be managed by the buddy system.
+ 		 */
+ 		zone->managed_pages = freesize;
+-#ifdef CONFIG_NUMA
+-		zone->node = nid;
+-#endif
++		zone_set_nid(nid);
+ 		zone->name = zone_names[j];
+ 		zone->zone_pgdat = pgdat;
+ 		spin_lock_init(&zone->lock);
+-- 
+2.18.0
 
 
-I guess that's the problem, right? SIGKILL-ed task must not ignore
-SIGKILL and hang in infinite loop. This would explain a bunch of hangs
-in 9p.
