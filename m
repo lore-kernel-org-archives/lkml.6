@@ -2,90 +2,118 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F96ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A141CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BE8A20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="mOoiE35u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE8A20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 5C22920856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:28:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C22920856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731068AbeGRPEn (ORCPT
+        id S1730678AbeGRPG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:04:43 -0400
-Received: from imap.thunk.org ([74.207.234.97]:57080 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730123AbeGRPEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:04:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=PCBwdRZ1mcUvHLqdmdrQtlawWulAYCxtHc+C8zCeC9Y=; b=mOoiE35uSNXdjpyLqyDnO6La/6
-        FeCPYM7PsBEbSRedjRj0WQuiPSc4QOlO3eExK1HIURJ/fbLhWywkCE9aa0Jc3jaTE/uadSzYL3gHx
-        gwmcaPou/RIT0CCFfSdJO+AbgmSd+jo2mslqQTLbcJpNheMUQUAb034Dp/rYKHsEIii8=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1ffnPP-0003Jy-Nh; Wed, 18 Jul 2018 14:26:27 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 52BC77A6404; Wed, 18 Jul 2018 10:26:25 -0400 (EDT)
-Date:   Wed, 18 Jul 2018 10:26:25 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Yann Droneaud <ydroneaud@opteya.com>
-Cc:     linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        labbott@redhat.com
-Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
-Message-ID: <20180718142625.GA5942@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Yann Droneaud <ydroneaud@opteya.com>, linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        labbott@redhat.com
-References: <20180718014344.1309-1-tytso@mit.edu>
- <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
+        Wed, 18 Jul 2018 11:06:28 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:45227 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729698AbeGRPG2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:06:28 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6IES6cV066100;
+        Wed, 18 Jul 2018 23:28:07 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
+ Wed, 18 Jul 2018 23:28:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6IES6m4066093
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 18 Jul 2018 23:28:06 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: INFO: task hung in lo_release
+To:     axboe@kernel.dk, Dmitry Vyukov <dvyukov@google.com>
+References: <000000000000f961390571457196@google.com>
+Cc:     syzbot <syzbot+a4e4a2663a21c3c3c2b1@syzkaller.appspotmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <4871d3cc-769e-b65a-8c05-bfaf6e6fdc69@I-love.SAKURA.ne.jp>
+Date:   Wed, 18 Jul 2018 23:28:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <000000000000f961390571457196@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 09:22:13AM +0200, Yann Droneaud wrote:
-> 
-> The text message should explain this is only relevant during
-> initialization / early boot.
-> 
-> The config option name should state this.
+On 2018/07/18 21:46, syzbot wrote:
+> Showing all locks held in the system:
+> 1 lock held by khungtaskd/902:
+>  #0: 000000004f60bbd2 (rcu_read_lock){....}, at: debug_show_all_locks+0xd0/0x428 kernel/locking/lockdep.c:4461
+> 1 lock held by rsyslogd/4455:
+>  #0: 0000000086a2d206 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200 fs/file.c:766
+> 2 locks held by getty/4545:
+>  #0: 00000000ece833eb (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>  #1: 00000000536bed00 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+> 2 locks held by getty/4546:
+>  #0: 00000000180e8f60 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>  #1: 000000008efac671 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+> 2 locks held by getty/4547:
+>  #0: 00000000ca308631 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>  #1: 000000007c05fef3 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+> 2 locks held by getty/4548:
+>  #0: 000000009d93809c (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>  #1: 000000004c489ffa (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+> 2 locks held by getty/4549:
+>  #0: 00000000ec3b322c (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>  #1: 00000000107aeb96 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+> 2 locks held by getty/4550:
+>  #0: 000000006d1a7b96 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>  #1: 00000000564c003d (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+> 2 locks held by getty/4551:
+>  #0: 000000003cba543a (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+>  #1: 00000000149a289b (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
+> 2 locks held by syz-executor6/4597:
+>  #0: 0000000033676c6d (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0xc2/0x830 fs/block_dev.c:1780
+>  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_release+0x1f/0x1f0 drivers/block/loop.c:1675
+> 2 locks held by blkid/18494:
+>  #0: 000000000efc6462 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+>  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_open+0x1b/0xb0 drivers/block/loop.c:1632
+> 1 lock held by syz-executor5/18515:
+>  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+> 1 lock held by syz-executor1/18498:
+>  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+> 1 lock held by syz-executor3/18521:
+>  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+> 2 locks held by syz-executor3/18522:
+>  #0: 00000000399ff791 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+>  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_open+0x1b/0xb0 drivers/block/loop.c:1632
+> 1 lock held by syz-executor4/18506:
+>  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+> 1 lock held by syz-executor0/18508:
+> 1 lock held by syz-executor7/18507:
+>  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
+> 1 lock held by syz-executor2/18514:
+>  #0: 000000000efc6462 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+> 1 lock held by blkid/18513:
+>  #0: 0000000033676c6d (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+> 1 lock held by blkid/18520:
+>  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_probe+0x82/0x1d0 drivers/block/loop.c:1979
+> 1 lock held by blkid/18524:
+>  #0: 00000000399ff791 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
 
-There are other workarounds for hangs that happen after initialization
-/ early boot, yes.  They are of varying levels of quality / safely,
-but that's neither here nor there.
+Dmitry, it is impossible to check what these lock holders are doing without dump of these threads
+(they are not always TASK_UNINTERRUPTIBLE waiters; e.g. PID=18508 is TASK_RUNNING with a lock held).
 
-However, enabling config option means that the CRNG will be
-initialized with potentially information available to the CPU
-manufacturer and/or Nation States, and this persists *after*
-initialization / early boot.  So to say, "we're perfectly safe after
-we leave initialization / early boot" is not true.
-
-So I'd much rather make it clear that we are trusting the CPU
-manufacturer far more than just during early boot.
-
-Cheers,
-
-					- Ted
+Jens, when can we start testing "[PATCH v3] block/loop: Serialize ioctl operations." ?
