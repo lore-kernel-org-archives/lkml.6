@@ -2,176 +2,116 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B49ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4829ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF13E20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 504CD20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:56:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="xnh0Z6yz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF13E20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ekzgw0SR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504CD20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731699AbeGRC1V (ORCPT
+        id S1731305AbeGRCb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:27:21 -0400
-Received: from imap.thunk.org ([74.207.234.97]:54488 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730930AbeGRC1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:27:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=EOhbypMt3/ftVyBQMvRAGuBahD8qRFCm170B/yz2oRc=; b=xnh0Z6yzRi6QPlZzce6XyeAHHf
-        TiF2MW0apzkBWWD21mFBdgAskXjXRMqAXErWEOZljqMxretKRLultg1Ys9hZ776y/Ih6kasZpfMPS
-        HYpalr2Gsv+RVywIjXNVyecUSpPHN7UaRjRHGMeEG2+hL2Tyt6dZ9DEdF1kagyTDb+QE=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1ffbdE-0000nn-BN; Wed, 18 Jul 2018 01:51:56 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 2ECE67A63F0; Tue, 17 Jul 2018 21:51:54 -0400 (EDT)
-Date:   Tue, 17 Jul 2018 21:51:54 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
-Cc:     labbott@redhat.com
-Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
-Message-ID: <20180718015154.GE3489@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        labbott@redhat.com
-References: <20180718014344.1309-1-tytso@mit.edu>
+        Tue, 17 Jul 2018 22:31:57 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36394 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730652AbeGRCb5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 22:31:57 -0400
+Received: by mail-wr1-f68.google.com with SMTP id h9-v6so2989416wro.3;
+        Tue, 17 Jul 2018 18:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=PnDw31A9Hbg5t8Jo45hF4qWH7MyD8W52/QQSX4gzbdo=;
+        b=Ekzgw0SREg2LhRbn/cPNA/6Z/2m+G2ANbxfA4a5E4N/tmI86l1NgWciixd/DFCFEdA
+         8/YHgyrD/ODaj4EVqJU6x4E05UFDob7phjNMkneRLNMdGv0/H87t2aZ7eUGFPd3gYErl
+         z0+HcQ7pP4HlUYcpR/0Iq23gVlgKf1DRbJGXKf06Fi/KV5oKZ30QPz6l4JiSL8OHJ8yN
+         0cWGQi2C3DliddZyk+zGu2EqJEu46ogBvNmSNlVs/0atdK73uGGzx2w6psj4Rcnyg0g5
+         oFOh254l9QZuS1ySjgLwCNGZj4cfZXHUHqvlj0NfaTTjVR53ozjOenIa1JDL5Y7SK1ZK
+         +8lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=PnDw31A9Hbg5t8Jo45hF4qWH7MyD8W52/QQSX4gzbdo=;
+        b=hlN9SjSeVDK9FdzNKtA4Td2RXVHndU7ivJZTGE8T2mADUFGQNjJvxKYkoNLLZgzHSx
+         ducKDUTi4KQfNj+I4mhO3RhBP/+Vqjc9p2NT9cAAz/8x6d+Rw3679qulibBiAxdg+fg9
+         90frxNyjniCpak5pl2Ew6+w7oo8sme4gwuL337piNEbx1amJ9KX5aGJ4ZMYSJ6uHTkL8
+         neoEmk9t5W7synfSwLTrumYMj3VLfuCYF0ArI2C7dSRhAOADiemnCR176VjoYxDxfWSR
+         Sw6aOtFMUAu4Rw6AGu1H30n47BkPn0DcuPuCoq9lqiKEaiEfPxZun+a6YehlfYAuMaRc
+         bJJQ==
+X-Gm-Message-State: AOUpUlEe5l8/sZBEZ77JUj5fiPQFS9XJEMBUP+kNGRwmhgGz8zblaeUB
+        6e1+F1EoJ7iO+jchA2YDWkpHQtpkcIYJz1hZvXs=
+X-Google-Smtp-Source: AAOMgpe8jnKVNY0QkZpDlZnCpcNZonPmxq4SrxeQ5IMygwJFZcAVtJJKSG0c4w0RiijjfyUxc7lS67+BzdmTV0Ic6HI=
+X-Received: by 2002:adf:8004:: with SMTP id 4-v6mr3011098wrk.130.1531878991774;
+ Tue, 17 Jul 2018 18:56:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718014344.1309-1-tytso@mit.edu>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Received: by 2002:a1c:8a8a:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 18:55:51
+ -0700 (PDT)
+In-Reply-To: <5aafc511-15a1-da3c-19f8-cc8b658f9c3d@gmail.com>
+References: <20180718004639.30154-1-jmaxwell37@gmail.com> <5aafc511-15a1-da3c-19f8-cc8b658f9c3d@gmail.com>
+From:   Jonathan Maxwell <jmaxwell37@gmail.com>
+Date:   Wed, 18 Jul 2018 11:55:51 +1000
+Message-ID: <CAGHK07D_XCpU6V6oJ2rhR1=rX5P6t8ZhTMT7GEAyrBXoc=hbcQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 0/3] tcp: improve setsockopt() TCP_USER_TIMEOUT accuracy
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        David Laight <David.Laight@aculab.com>,
+        kuznet <kuznet@ms2.inr.ac.ru>,
+        yoshfuji <yoshfuji@linux-ipv6.org>,
+        Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jon Maxwell <jmaxwell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 09:43:44PM -0400, Theodore Ts'o wrote:
-> This gives the user building their own kernel (or a Linux
-> distribution) the option of deciding whether or not to trust the CPU's
-> hardware random number generator (e.g., RDRAND for x86 CPU's) as being
-> correctly implemented and not having a back door introduced (perhaps
-> courtesy of a Nation State's law enforcement or intelligence
-> agencies).
-> 
-> This will prevent getrandom(2) from blocking, if there is a
-> willingness to trust the CPU manufacturer.
-> 
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+After committing the patches in my net-next git branch I used git send-mail:
 
-Note, I had meant to tag this with an RFC.  I'm not sure I really want
-to push this to Linus yet.  If you have an opinion, let me know.
+git send-email --identity=XXX --cover-letter --annotate origin
+--compose --signoff
 
-Thanks!
+and manually updated it based on an example of yours:
 
-	   	     	      	    - Ted
+https://lwn.net/Articles/706491/
 
+I can see the 3 patches that I just submitted on:
 
+https://patchwork.ozlabs.org/project/netdev/list/
 
-> ---
-> 
->  I'm not sure Linux distro's will thank us for this.  The problem is
->  trusting the CPU manfuacturer can be an emotional / political issue.
-> 
->  For example, assume that China has decided that as a result of the
->  "death sentence" that the US government threatened to impose on ZTE
->  after they were caught introducing privacy violating malware on US
->  comsumers, that they needed to be self-sufficient in their technology
->  sector, and so they decided the needed to produce their own CPU.
-> 
->  Even if I were convinced that Intel hadn't backdoored RDRAND (or an
->  NSA agent backdoored RDRAND for them) such that the NSA had a NOBUS
->  (nobody but us) capability to crack RDRAND generated numbers, if we
->  made a change to unconditionally trust RDRAND, then I didn't want the
->  upstream kernel developers to have to answer the question, "why are
->  you willing to trust Intel, but you aren't willing to trust a company
->  owned and controlled by a PLA general?"  (Or a company owned and
->  controlled by one of Putin's Oligarchs, if that makes you feel
->  better.)
-> 
->  With this patch, we don't put ourselves in this position --- but we
->  do put the Linux distro's in this position intead.  The upside is it
->  gives the choice to each person building their own Linux kernel to
->  decide whether trusting RDRAND is worth it to avoid hangs due to
->  userspace trying to get cryptographic-grade entropy early in the boot
->  process.  (Note: I trust RDRAND more than I do Jitter Entropy.)
-> 
->  drivers/char/Kconfig  | 14 ++++++++++++++
->  drivers/char/random.c | 11 ++++++++++-
->  2 files changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-> index 212f447938ae..fe2930c4ecf0 100644
-> --- a/drivers/char/Kconfig
-> +++ b/drivers/char/Kconfig
-> @@ -554,3 +554,17 @@ config ADI
->  
->  endmenu
->  
-> +config RANDOM_TRUST_CPU
-> +       bool "Trust the CPU manufacturer to initialize Linux's CRNG"
-> +       depends on (X86 || X86_64 || X86_32 || S390 || PPC)
-> +       default n
-> +       help
-> +	Assume that CPU manufacurer (e.g., Intel or AMD for RDSEED or
-> +	RDRAND, IBM for the S390 and Power PC architectures) is trustworthy
-> +	for the purposes of initializing Linux's CRNG.  Since this is not
-> +	something that can be indepedently audited, this amounts to trusting
-> +	that CPU manufacturer (perhaps with the insistance or requirement
-> +	of a Nation State's intelligence or law enforcement agencies)
-> +	has not installed a hidden back door to compromise the CPU's
-> +	random number generation facilities.
-> +
-> diff --git a/drivers/char/random.c b/drivers/char/random.c
-> index 34ddfd57419b..f4013b8a711b 100644
-> --- a/drivers/char/random.c
-> +++ b/drivers/char/random.c
-> @@ -782,6 +782,7 @@ static void invalidate_batched_entropy(void);
->  static void crng_initialize(struct crng_state *crng)
->  {
->  	int		i;
-> +	int		arch_init = 1;
->  	unsigned long	rv;
->  
->  	memcpy(&crng->state[0], "expand 32-byte k", 16);
-> @@ -792,10 +793,18 @@ static void crng_initialize(struct crng_state *crng)
->  		_get_random_bytes(&crng->state[4], sizeof(__u32) * 12);
->  	for (i = 4; i < 16; i++) {
->  		if (!arch_get_random_seed_long(&rv) &&
-> -		    !arch_get_random_long(&rv))
-> +		    !arch_get_random_long(&rv)) {
->  			rv = random_get_entropy();
-> +			arch_init = 0;
-> +		}
->  		crng->state[i] ^= rv;
->  	}
-> +#ifdef CONFIG_RANDOM_TRUST_CPU
-> +	if (arch_init) {
-> +		crng_init = 2;
-> +		pr_notice("random: crng done (trusting CPU's manufacturer)\n");
-> +	}
-> +#endif
->  	crng->init_time = jiffies - CRNG_RESEED_INTERVAL - 1;
->  }
->  
-> -- 
-> 2.18.0.rc0
-> 
+Flagged as under review by DaveM.
+
+On Wed, Jul 18, 2018 at 11:20 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+> On 07/17/2018 05:46 PM, Jon Maxwell wrote:
+>> Based on:
+>>
+>> https://patchwork.kernel.org/patch/10516195/
+>>
+>
+> I must confess I am lost with your submissions.
+>
+> Patchwork is also lost ( https://patchwork.ozlabs.org/project/netdev/list/ )
+>
+> Are you really using git format-patch ?
+>
+> Normally all the patches should have a common [PATCH Vx net-next] string
+>
+> git format-patch -o ../output --cover-letter --subject-prefix "PATCH V3 net-next" HEAD~3
+>
+>
