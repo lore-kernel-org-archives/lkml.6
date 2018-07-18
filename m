@@ -2,186 +2,122 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD51ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E114ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023D920850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:36:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 023D920850
+	by mail.kernel.org (Postfix) with ESMTP id 01F9F20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:37:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F9F20850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbeGRWQa (ORCPT
+        id S1730469AbeGRWRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:16:30 -0400
-Received: from mail-qt0-f175.google.com ([209.85.216.175]:43183 "EHLO
-        mail-qt0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbeGRWQ2 (ORCPT
+        Wed, 18 Jul 2018 18:17:11 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:35382 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbeGRWRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:16:28 -0400
-Received: by mail-qt0-f175.google.com with SMTP id f18-v6so5434650qtp.10
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:36:40 -0700 (PDT)
+        Wed, 18 Jul 2018 18:17:10 -0400
+Received: by mail-qk0-f194.google.com with SMTP id u21-v6so3228759qku.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:37:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WnQEd0ZhVezFb2KO/X5flI43ziSJjnemW3TeHBZ8x+Q=;
-        b=Ik5rx0jhzHEWT9pIlDWySwl9H3pXEGU4NsRWH+C1TALd+ymkY0g5bUSijXDkMyC7T5
-         j5glBlnBUm6ZFUnMDtEwIJhA9U9vzrkY04043tDDMnT60Uwb28XdDqxolcWKRNT0fmPY
-         Rd7qYqHdnrvKWkpdnNd5lPKdhisIXCieZqg8yYsR6mo1AD4lJl0/ptZ/PCUZnyWtF+d5
-         5sXbXdNg8wzjcYgV+TyFVWiKqZC99oQFhkCp4uBSKmk8b3RH65y0aG/A5Z59rap18/zx
-         IP88pP4cQaUxGytUYDWuMDNDEJu6Vk+elBBJxXyarVJ3Z2KSsHRWn2IPqaiU/tgDG2h3
-         o2bg==
-X-Gm-Message-State: AOUpUlFMzKboZ2+mILqRtE6i44iIRQBJjKikEnyr2I6TUjHXqHEDNkCI
-        OQbZ0ld5jJmdljhnanLNupr3/g==
-X-Google-Smtp-Source: AAOMgpeTweAiiC/uRXEa3oV5KC6hRlHPmZxxNL+a0xVr1egEGztMJU+oHF4mQK4zgULG3JOWlM4Uyw==
-X-Received: by 2002:a0c:c963:: with SMTP id v32-v6mr8227245qvj.215.1531949799993;
-        Wed, 18 Jul 2018 14:36:39 -0700 (PDT)
-Received: from laptop.jcline.org.com (cpe-2606-A000-1127-D1-82A4-FE7D-5832-CB87.dyn6.twc.com. [2606:a000:1127:d1:82a4:fe7d:5832:cb87])
-        by smtp.gmail.com with ESMTPSA id f70-v6sm2692540qke.77.2018.07.18.14.36.38
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=7v4bgK8BckOJjU8PQx8kGdd6qOsRjoEbBC55T6JZl+I=;
+        b=bGPEyGQNzF/lfma0TXDyh4ZFlb7UomO09UnWPNtIM8m7pIIPZbRaG0oynWeUktufYR
+         CxNZC48ca1R0u//0KTW05dal/BzUXUTlY/38aN6eCjYkEleHjUfv212bLa0PU+dmlOx8
+         gfZQeQicTYepggaSxlwjPi1P+5Kkrz8RaxPFPkyEezJTlC2mtqljZ79WJKgRXsxcmuDF
+         uSVJdofNMR3UnzivOdeXykXGp0h0DE9h6InNIbAjg2LVzQizG0MINwxxlu/d5dxLyrNE
+         wAiGfa14P6/aGXUmztw+wcBeYBciEfIILjhVQfViy2R5oXAJeQ2plmSO+fIaX2z0OsP3
+         YuVQ==
+X-Gm-Message-State: AOUpUlEwid1VIM9XElxUzLi/71eY1AayUFIty03wIBIGvP4zo+Ne9TOf
+        nxvbEhM4nFPrees4GCMfCW5Psw==
+X-Google-Smtp-Source: AAOMgpf3ZzfKRXOXhycGLcMwWZ6ajxNuJfB/FfNAJwHPqMIyheK/s7lSwyf+RJLlUbsEJSXe9K08bg==
+X-Received: by 2002:a37:ab14:: with SMTP id u20-v6mr6828756qke.120.1531949841943;
+        Wed, 18 Jul 2018 14:37:21 -0700 (PDT)
+Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id 25-v6sm4376520qtx.91.2018.07.18.14.37.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 14:36:39 -0700 (PDT)
-From:   Jeremy Cline <jcline@redhat.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Shuah Khan <shuah@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, Jeremy Cline <jcline@redhat.com>
-Subject: [PATCH] bpf: Add Python 3 support to selftests scripts for bpf
-Date:   Wed, 18 Jul 2018 17:36:10 -0400
-Message-Id: <20180718213610.19618-1-jcline@redhat.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 18 Jul 2018 14:37:21 -0700 (PDT)
+Message-ID: <da9a928ea3bd4ff2134bfc28447ef757232eabaa.camel@redhat.com>
+Subject: Re: [Nouveau] [PATCH] drm/nouveau: Fix bogus indenting in
+ nouveau_hwmon.c
+From:   Lyude Paul <lyude@redhat.com>
+To:     Karol Herbst <kherbst@redhat.com>
+Cc:     nouveau <nouveau@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 18 Jul 2018 17:37:20 -0400
+In-Reply-To: <CACO55tt5e6PrvbfZUzQNb0T1o8twRfaFewt6tnjUW0DQYYXK-Q@mail.gmail.com>
+References: <20180717000758.8770-1-lyude@redhat.com>
+         <CACO55tt5e6PrvbfZUzQNb0T1o8twRfaFewt6tnjUW0DQYYXK-Q@mail.gmail.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adjust tcp_client.py and tcp_server.py to work with Python 3 by using
-the print function, marking string literals as bytes, and using the
-newer exception syntax. This should be functionally equivalent and
-support Python 2.6 through Python 3.7.
+I think that is an issue with your client? It seems to come up fine if I apply
+it locally and look at it with gvim
 
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
----
- tools/testing/selftests/bpf/tcp_client.py | 12 ++++++------
- tools/testing/selftests/bpf/tcp_server.py | 17 +++++++++--------
- 2 files changed, 15 insertions(+), 14 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/tcp_client.py b/tools/testing/selftests/bpf/tcp_client.py
-index 481dccdf140c..9fe5f1b5c020 100755
---- a/tools/testing/selftests/bpf/tcp_client.py
-+++ b/tools/testing/selftests/bpf/tcp_client.py
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python2
-+#!/usr/bin/env python
- #
- # SPDX-License-Identifier: GPL-2.0
- #
-@@ -9,11 +9,11 @@ import subprocess
- import select
- 
- def read(sock, n):
--    buf = ''
-+    buf = b''
-     while len(buf) < n:
-         rem = n - len(buf)
-         try: s = sock.recv(rem)
--        except (socket.error), e: return ''
-+        except (socket.error) as e: return b''
-         buf += s
-     return buf
- 
-@@ -22,7 +22,7 @@ def send(sock, s):
-     count = 0
-     while count < total:
-         try: n = sock.send(s)
--        except (socket.error), e: n = 0
-+        except (socket.error) as e: n = 0
-         if n == 0:
-             return count;
-         count += n
-@@ -39,10 +39,10 @@ try:
- except socket.error as e:
-     sys.exit(1)
- 
--buf = ''
-+buf = b''
- n = 0
- while n < 1000:
--    buf += '+'
-+    buf += b'+'
-     n += 1
- 
- sock.settimeout(1);
-diff --git a/tools/testing/selftests/bpf/tcp_server.py b/tools/testing/selftests/bpf/tcp_server.py
-index bc454d7d0be2..1d4a40a6584b 100755
---- a/tools/testing/selftests/bpf/tcp_server.py
-+++ b/tools/testing/selftests/bpf/tcp_server.py
-@@ -1,7 +1,8 @@
--#!/usr/bin/env python2
-+#!/usr/bin/env python
- #
- # SPDX-License-Identifier: GPL-2.0
- #
-+from __future__ import print_function
- 
- import sys, os, os.path, getopt
- import socket, time
-@@ -9,11 +10,11 @@ import subprocess
- import select
- 
- def read(sock, n):
--    buf = ''
-+    buf = b''
-     while len(buf) < n:
-         rem = n - len(buf)
-         try: s = sock.recv(rem)
--        except (socket.error), e: return ''
-+        except (socket.error) as e: return b''
-         buf += s
-     return buf
- 
-@@ -22,7 +23,7 @@ def send(sock, s):
-     count = 0
-     while count < total:
-         try: n = sock.send(s)
--        except (socket.error), e: n = 0
-+        except (socket.error) as e: n = 0
-         if n == 0:
-             return count;
-         count += n
-@@ -43,7 +44,7 @@ host = socket.gethostname()
- 
- try: serverSocket.bind((host, 0))
- except socket.error as msg:
--    print 'bind fails: ', msg
-+    print('bind fails: ' + str(msg))
- 
- sn = serverSocket.getsockname()
- serverPort = sn[1]
-@@ -51,10 +52,10 @@ serverPort = sn[1]
- cmdStr = ("./tcp_client.py %d &") % (serverPort)
- os.system(cmdStr)
- 
--buf = ''
-+buf = b''
- n = 0
- while n < 500:
--    buf += '.'
-+    buf += b'.'
-     n += 1
- 
- serverSocket.listen(MAX_PORTS)
-@@ -79,5 +80,5 @@ while True:
-                 serverSocket.close()
-                 sys.exit(0)
-     else:
--        print 'Select timeout!'
-+        print('Select timeout!')
-         sys.exit(1)
+On Tue, 2018-07-17 at 12:25 +0200, Karol Herbst wrote:
+> isn't there like 1 space missing for each change? Or maybe my client
+> is messed up, but please align it with the first letter of the
+> parameters not the "(".
+> 
+> With that fixed: Reviewed-by: Karol Herbst <karolherbst@gmail.com>
+> 
+> On Tue, Jul 17, 2018 at 2:07 AM, Lyude Paul <lyude@redhat.com> wrote:
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > ---
+> >  drivers/gpu/drm/nouveau/nouveau_hwmon.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_hwmon.c
+> > b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
+> > index 44178b4c3599..d556f24c6c48 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_hwmon.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_hwmon.c
+> > @@ -655,7 +655,7 @@ nouveau_read_string(struct device *dev, enum
+> > hwmon_sensor_types type, u32 attr,
+> > 
+> >  static int
+> >  nouveau_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
+> > -                                                       int channel, long
+> > *val)
+> > +            int channel, long *val)
+> >  {
+> >         switch (type) {
+> >         case hwmon_chip:
+> > @@ -677,7 +677,7 @@ nouveau_read(struct device *dev, enum
+> > hwmon_sensor_types type, u32 attr,
+> > 
+> >  static int
+> >  nouveau_write(struct device *dev, enum hwmon_sensor_types type, u32 attr,
+> > -                                                       int channel, long
+> > val)
+> > +             int channel, long val)
+> >  {
+> >         switch (type) {
+> >         case hwmon_temp:
+> > --
+> > 2.17.1
+> > 
+> > _______________________________________________
+> > Nouveau mailing list
+> > Nouveau@lists.freedesktop.org
+> > https://lists.freedesktop.org/mailman/listinfo/nouveau
 -- 
-2.17.1
-
+Cheers,
+	Lyude Paul
