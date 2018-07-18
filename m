@@ -4,59 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B224ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6C5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D2B2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:59:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C30742075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="bJTzg4wN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D2B2075E
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="Z7SF3rPQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30742075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730912AbeGRXj6 (ORCPT
+        id S1729832AbeGRXjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 19:39:58 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34073 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730382AbeGRXj0 (ORCPT
+        Wed, 18 Jul 2018 19:39:20 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44224 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728467AbeGRXjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:39:26 -0400
-Received: by mail-pg1-f193.google.com with SMTP id y5-v6so2671823pgv.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:59:19 -0700 (PDT)
+        Wed, 18 Jul 2018 19:39:20 -0400
+Received: by mail-pl0-f68.google.com with SMTP id m16-v6so2683596pls.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:59:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pZjRvZxPQspBLpfeaPSiIUV9ZEirc8l71XrDkFv8j6M=;
-        b=bJTzg4wNOorGyL7+qi9C5rAmoFuUTvCyWVvOEm2x4lgXNH/XtGZ8UNyPyVrAPkIOJN
-         nBZ/JH5SRJp3F/4acrWKWr6YphpXHHBP54dxjc8CXfkX/nRXxHW+/i4UqpM4BXIU80Rz
-         gyONi92GoFaRVWIEofvbegEVRApOdX87xxAmiOhXOjT4xItWoiTmUUv77+VBN9aaO3um
-         hL3AgddScjj6kUCLqw6192mxdoj1o9qxlG9xB/64+QUCvNDbPJPE7/+NqZeHYhcADpNz
-         wFzY/Mit/dKnUXYc7C4pyEhcZSKodt9GDSGGaUNX180jGeKPuzuqCAJgL+x3W3w56Dea
-         ZVWQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=puGNKRsOXkoHQ9ds45nPp7QSAjYJXFwGCuaji0Ojm3E=;
+        b=Z7SF3rPQ4If5dZMRhFiLeelm43qr3VGM+/nRQ66BVea2XMGeyFKdAD7fxrm+kS3mJ/
+         g+mGzXgZH9isnyIStt+MMdrnJSjwrRne1jNl4TSQPACNwkR+Cxfg2GjsPTpGNr9W+sc5
+         2EfOAoGAKf366nZZGZp+7PJkm10TFH05sG21IIugaKezL4vSMgIq4mOfo8wKDY6X/O4O
+         cNG/aGtid8DjiMot3T7SS+xr9iJSmcVx/4gz0RUknexAwljslIPIoAmLsAiAVf/4AyMA
+         YKzZeVDExNqiWhzJVhzx6xwk9Uz5Jo/SX5r3rXaUSPbH6lUcYGSvC8jWcogGhinFNCZ3
+         x1VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=pZjRvZxPQspBLpfeaPSiIUV9ZEirc8l71XrDkFv8j6M=;
-        b=rMJB4Hv0kUC2WgXv/Z+KLfc9m96y4BIgyI9GsYVS4/w+gMIGbf/qCeGBrYEDprPu/s
-         itUi2gqv5H8Un1DTCeYvlTYrYPBo3D7Y1joSfzttEpL59HcJq0ZegYhK/9fXBC1xarDX
-         kxoPay6Eg6Oi/TGZCMQxrUJ6pQ3+OW9+AjQAeaOOjNd1Zfabe6Guhfp/Q4oyMebTgRCp
-         kRqetRmv0w1Szw+8Npop1FEj7XHAI3ZTEfYw6r/G/nkCADS9L29fnOet9qPn+kENBS3h
-         CRSOKuPxjayPmJpW4lqjraequ6+ByOpui02zqxBJYuOs75lS7Idw3TrEHVEr15ol+DOS
-         JPmg==
-X-Gm-Message-State: AOUpUlFCpVAdjG6IhpLz3LOW4N2iwiMBSQvsEf4ngqu99tnhFVcW6X7S
-        Ezddqvk7ZTl8tcxnYwIJJs7aC8LhPMw=
-X-Google-Smtp-Source: AAOMgpcL1W+nYEj7ocz6OxSpwIqk8lcHy1VgSscDKHNTa60kSyvf/Hah6JUXCbrL7s17HyrcdA8tYw==
-X-Received: by 2002:a63:ff21:: with SMTP id k33-v6mr7381054pgi.38.1531954758650;
-        Wed, 18 Jul 2018 15:59:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=puGNKRsOXkoHQ9ds45nPp7QSAjYJXFwGCuaji0Ojm3E=;
+        b=VgGj5OORi7t2e1SUzslEk53ooDLWvpPKTvn8nwVSU0+FPhJdRGgrvyal1ugpzKpBO0
+         uLstDAhrA16h+VYppr61zJUG/O72N+rcf393W43e8nxxhCcR+sOk5eUIwbXRJNhY7XJA
+         ROS2GiMwxlXvRgr69Mrohh1orgIWDFSjdI3hmKT/3vwdDXSlBQiiKvbduZKWEfsQP9fz
+         1jSdNLIKUHRI5KgGHmJDKnW/f4O0eIArrOxY9eqfgv/jZcKgyFLOcBgiqa/rVCMK1jyC
+         IxsBLQ11jo/NxYmMzgGfD2GZc3re3qKhDX/1hbr9HdRM55lLJUVMO7QobO781QzLVuqS
+         ++1Q==
+X-Gm-Message-State: AOUpUlFTTu4Us+hN0PV6Q5oqa1I085XKmW1vWjXUuRldEs4hMJ7XAqCn
+        m81rWuV4PwDi4TSsMZoqbGkmH6Yhhg0=
+X-Google-Smtp-Source: AAOMgpfAINobzfZj7i34F5XCRF5IkOwVCVUvMkjrlq8drquIWCCPBwAjHD3Vxmza+slL0rv+3sdqEg==
+X-Received: by 2002:a17:902:48c8:: with SMTP id u8-v6mr7737779plh.152.1531954753354;
+        Wed, 18 Jul 2018 15:59:13 -0700 (PDT)
 Received: from vader.hsd1.wa.comcast.net ([2601:602:8800:a9a9:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id s16-v6sm6377946pfm.114.2018.07.18.15.59.17
+        by smtp.gmail.com with ESMTPSA id s16-v6sm6377946pfm.114.2018.07.18.15.59.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 15:59:18 -0700 (PDT)
+        Wed, 18 Jul 2018 15:59:12 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
@@ -64,12 +63,10 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Eric Biederman <ebiederm@xmission.com>,
         James Morse <james.morse@arm.com>,
         Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: [PATCH v3 5/8] proc/kcore: hold lock during read
-Date:   Wed, 18 Jul 2018 15:58:45 -0700
-Message-Id: <d7cfbc1e8a76616f3b699eaff9df0a2730380534.1531953780.git.osandov@fb.com>
+Subject: [PATCH v3 0/8] /proc/kcore improvements
+Date:   Wed, 18 Jul 2018 15:58:40 -0700
+Message-Id: <cover.1531953780.git.osandov@fb.com>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <cover.1531953780.git.osandov@fb.com>
-References: <cover.1531953780.git.osandov@fb.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,161 +74,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-Now that we're using an rwsem, we can hold it during the entirety of
-read_kcore() and have a common return path. This is preparation for the
-next change.
+Hi,
 
-Signed-off-by: Omar Sandoval <osandov@fb.com>
----
- fs/proc/kcore.c | 70 ++++++++++++++++++++++++++++---------------------
- 1 file changed, 40 insertions(+), 30 deletions(-)
+This series makes a few improvements to /proc/kcore. Patches 1, 2, and 3
+are prep patches. Patch 4 is a fix/cleanup. Patch 5 is another prep
+patch. Patches 6 and 7 are optimizations to ->read(). Patch 8 adds
+vmcoreinfo to /proc/kcore.
 
-diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index 95aa988c5b5d..e317ac890871 100644
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -440,19 +440,18 @@ static ssize_t
- read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- {
- 	char *buf = file->private_data;
--	ssize_t acc = 0;
- 	size_t size, tsz;
- 	size_t elf_buflen;
- 	int nphdr;
- 	unsigned long start;
-+	size_t orig_buflen = buflen;
-+	int ret = 0;
- 
- 	down_read(&kclist_lock);
- 	size = get_kcore_size(&nphdr, &elf_buflen);
- 
--	if (buflen == 0 || *fpos >= size) {
--		up_read(&kclist_lock);
--		return 0;
--	}
-+	if (buflen == 0 || *fpos >= size)
-+		goto out;
- 
- 	/* trim buflen to not go beyond EOF */
- 	if (buflen > size - *fpos)
-@@ -465,28 +464,26 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 		tsz = elf_buflen - *fpos;
- 		if (buflen < tsz)
- 			tsz = buflen;
--		elf_buf = kzalloc(elf_buflen, GFP_ATOMIC);
-+		elf_buf = kzalloc(elf_buflen, GFP_KERNEL);
- 		if (!elf_buf) {
--			up_read(&kclist_lock);
--			return -ENOMEM;
-+			ret = -ENOMEM;
-+			goto out;
- 		}
- 		elf_kcore_store_hdr(elf_buf, nphdr, elf_buflen);
--		up_read(&kclist_lock);
- 		if (copy_to_user(buffer, elf_buf + *fpos, tsz)) {
- 			kfree(elf_buf);
--			return -EFAULT;
-+			ret = -EFAULT;
-+			goto out;
- 		}
- 		kfree(elf_buf);
- 		buflen -= tsz;
- 		*fpos += tsz;
- 		buffer += tsz;
--		acc += tsz;
- 
- 		/* leave now if filled buffer already */
- 		if (buflen == 0)
--			return acc;
--	} else
--		up_read(&kclist_lock);
-+			goto out;
-+	}
- 
- 	/*
- 	 * Check to see if our file offset matches with any of
-@@ -499,25 +496,29 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 	while (buflen) {
- 		struct kcore_list *m;
- 
--		down_read(&kclist_lock);
- 		list_for_each_entry(m, &kclist_head, list) {
- 			if (start >= m->addr && start < (m->addr+m->size))
- 				break;
- 		}
--		up_read(&kclist_lock);
- 
- 		if (&m->list == &kclist_head) {
--			if (clear_user(buffer, tsz))
--				return -EFAULT;
-+			if (clear_user(buffer, tsz)) {
-+				ret = -EFAULT;
-+				goto out;
-+			}
- 		} else if (m->type == KCORE_VMALLOC) {
- 			vread(buf, (char *)start, tsz);
- 			/* we have to zero-fill user buffer even if no read */
--			if (copy_to_user(buffer, buf, tsz))
--				return -EFAULT;
-+			if (copy_to_user(buffer, buf, tsz)) {
-+				ret = -EFAULT;
-+				goto out;
-+			}
- 		} else if (m->type == KCORE_USER) {
- 			/* User page is handled prior to normal kernel page: */
--			if (copy_to_user(buffer, (char *)start, tsz))
--				return -EFAULT;
-+			if (copy_to_user(buffer, (char *)start, tsz)) {
-+				ret = -EFAULT;
-+				goto out;
-+			}
- 		} else {
- 			if (kern_addr_valid(start)) {
- 				/*
-@@ -525,26 +526,35 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 				 * hardened user copy kernel text checks.
- 				 */
- 				if (probe_kernel_read(buf, (void *) start, tsz)) {
--					if (clear_user(buffer, tsz))
--						return -EFAULT;
-+					if (clear_user(buffer, tsz)) {
-+						ret = -EFAULT;
-+						goto out;
-+					}
- 				} else {
--					if (copy_to_user(buffer, buf, tsz))
--						return -EFAULT;
-+					if (copy_to_user(buffer, buf, tsz)) {
-+						ret = -EFAULT;
-+						goto out;
-+					}
- 				}
- 			} else {
--				if (clear_user(buffer, tsz))
--					return -EFAULT;
-+				if (clear_user(buffer, tsz)) {
-+					ret = -EFAULT;
-+					goto out;
-+				}
- 			}
- 		}
- 		buflen -= tsz;
- 		*fpos += tsz;
- 		buffer += tsz;
--		acc += tsz;
- 		start += tsz;
- 		tsz = (buflen > PAGE_SIZE ? PAGE_SIZE : buflen);
- 	}
- 
--	return acc;
-+out:
-+	up_write(&kclist_lock);
-+	if (ret)
-+		return ret;
-+	return orig_buflen - buflen;
- }
- 
- 
+Again, based on v4.18-rc4 + James' patch in the mm tree, and tested with
+crash and readelf.
+
+Thanks!
+
+Changes from v2:
+
+- Add __init to kclist_add() as per Andrew
+- Got rid of conversion of kcore_need_update from int to atomic_t and
+  just used xchg() instead of atomic_cmpxchg() (split out into a new
+  patch instead of combining it with the rwlock -> rwsem conversion)
+- Add comment about the increase in file size to patch 8
+
+Changes from v1:
+
+- Rebased onto v4.18-rc4 + James' patch
+  (https://patchwork.kernel.org/patch/10519739/) in the mm tree
+- Fix spurious sparse warning (see the report and response in
+  https://patchwork.kernel.org/patch/10512431/)
+
+Omar Sandoval (8):
+  proc/kcore: don't grab lock for kclist_add()
+  proc/kcore: don't grab lock for memory hotplug notifier
+  proc/kcore: replace kclist_lock rwlock with rwsem
+  proc/kcore: fix memory hotplug vs multiple opens race
+  proc/kcore: hold lock during read
+  proc/kcore: clean up ELF header generation
+  proc/kcore: optimize multiple page reads
+  proc/kcore: add vmcoreinfo note to /proc/kcore
+
+ fs/proc/Kconfig            |   1 +
+ fs/proc/kcore.c            | 534 +++++++++++++++++--------------------
+ include/linux/crash_core.h |   2 +
+ include/linux/kcore.h      |   2 +-
+ kernel/crash_core.c        |   4 +-
+ 5 files changed, 251 insertions(+), 292 deletions(-)
+
 -- 
 2.18.0
 
