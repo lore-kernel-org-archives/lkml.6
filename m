@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2F6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FD5ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F64C2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 405702075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:24:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kA0dLL0h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F64C2075E
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fIMcmMXu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 405702075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731937AbeGRC7o (ORCPT
+        id S1731913AbeGRC7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:59:44 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42494 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731890AbeGRC7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Jul 2018 22:59:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:42484 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731733AbeGRC7m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 22:59:42 -0400
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6I2JTdc006883;
-        Wed, 18 Jul 2018 02:22:38 GMT
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6I2JJ82006858;
+        Wed, 18 Jul 2018 02:22:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=1TJznKwIRZRdLcntlc6MRyMD2KfY+SyM2ljSYnlJLBM=;
- b=kA0dLL0hDuvEt4r6+siPo0ffekVjzl8kh5J8CpDOxXUA1h2s0OHD7m4iUflG6era/Kwd
- 1QZJ8NMFDcO1gg/1xOKlzVkDqnEbNnUwATIa7381BG7nIZWczp/2u8oDvicmdWIstkGG
- MCh5hDI7y/ondY625vC6BYTKrq4Nw3bTXZYJswT/ccjQp6q8IuB6L6JLA9lFWMBeqXde
- J+fRerbJiESF4+f0P8Mnh4vZdNQrfbSHIWMLNiwbwDTJE8P18FPzm6uihZe7iYKvW82l
- F2vDuARHQhtD6MlDVLocxIxqCsZiuu1azbMRtBuKR7joEBx5QG4YrvUS2wR/UHpRkIZq Yw== 
+ bh=uAuMWI2Ms5FAflkGTyvXqXMrpyGjdu4sicwkzYvF4DY=;
+ b=fIMcmMXufVFXNU6p6BQlxvepEHDFN8fbuoke3FWwoe4eyoyqvod+N/c8v+CpbpI2ogw2
+ QZfRcJyXvrNWPlVIhhdD261l2uNvnPX5xL6aUxLHSjp2LbP7v1JKf/g70NT9hpLMjTAb
+ itWo5ljqARFMVoSyNfCZK8OFvQk90sw62ftnq6qB4j8FypKmQ8+us8nCSZIKnyENDFzD
+ WMleOKpD4FlESY74cHHDR+qUMQn07qcb5Z8ffbMQZaoLpX64taGR1AFiqfEHxlbV+/XO
+ bpeKO3HTPnBCgOTn2KJ5Phe290vizWVNIX7l3czCrG2+V1CiMqlSQy/BKClqo0Nu1FIw UQ== 
 Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2k7a3432s9-1
+        by aserp2120.oracle.com with ESMTP id 2k7a3432se-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Jul 2018 02:22:38 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6I2MbGO023559
+        Wed, 18 Jul 2018 02:22:43 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6I2MgFR023694
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Jul 2018 02:22:38 GMT
+        Wed, 18 Jul 2018 02:22:43 GMT
 Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6I2MaCK013505;
-        Wed, 18 Jul 2018 02:22:36 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6I2Mfu7020585;
+        Wed, 18 Jul 2018 02:22:41 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 19:22:36 -0700
+        with ESMTP ; Tue, 17 Jul 2018 19:22:41 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,9 +61,9 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-Subject: [PATCH v14 07/25] x86/kvmclock: Switch kvmclock data to a PER_CPU variable
-Date:   Tue, 17 Jul 2018 22:21:53 -0400
-Message-Id: <20180718022211.6259-8-pasha.tatashin@oracle.com>
+Subject: [PATCH v14 09/25] x86: text_poke() may access uninitialized struct pages
+Date:   Tue, 17 Jul 2018 22:21:55 -0400
+Message-Id: <20180718022211.6259-10-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180718022211.6259-1-pasha.tatashin@oracle.com>
 References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
@@ -77,236 +77,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+It supposed to be safe to modify static branches after jump_label_init().
+But, because static key modifying code eventually calls text_poke() we
+may end up with accessing struct page that have not been initialized.
 
-The previous removal of the memblock dependency from kvmclock introduced a
-static data array sized 64bytes * CONFIG_NR_CPUS. That's wasteful on large
-systems when kvmclock is not used.
+Here is how to quickly reproduce the problem. Insert code like this
+into init/main.c:
 
-Replace it with:
+| +static DEFINE_STATIC_KEY_FALSE(__test);
+| asmlinkage __visible void __init start_kernel(void)
+| {
+|        char *command_line;
+|@@ -587,6 +609,10 @@ asmlinkage __visible void __init start_kernel(void)
+|        vfs_caches_init_early();
+|        sort_main_extable();
+|        trap_init();
+|+       {
+|+       static_branch_enable(&__test);
+|+       WARN_ON(!static_branch_likely(&__test));
+|+       }
+|        mm_init();
 
- - A static page sized array of pvclock data. It's page sized because the
-   pvclock data of the boot cpu is mapped into the VDSO so otherwise random
-   other data would be exposed to the vDSO
+The following warnings show-up:
+WARNING: CPU: 0 PID: 0 at arch/x86/kernel/alternative.c:701 text_poke+0x20d/0x230
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.18.0-rc1_pt_t1 #30
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+1.11.0-20171110_100015-anatol 04/01/2014
+RIP: 0010:text_poke+0x20d/0x230
+Code: 0f 0b 4c 89 e2 4c 89 ee 4c 89 f7 e8 7d 4b 9b 00 31 d2 31 f6 bf 86 02
+00 00 48 8b 05 95 8e 24 01 e8 78 18 d8 00 e9 55 ff ff ff <0f> 0b e9 54 fe
+ff ff 48 8b 05 75 a8 38 01 e9 64 fe ff ff 48 8b 1d
+RSP: 0000:ffffffff94e03e30 EFLAGS: 00010046
+RAX: 0100000000000000 RBX: fffff7b2c011f300 RCX: ffffffff94fcccf4
+RDX: 0000000000000001 RSI: ffffffff94e03e77 RDI: ffffffff94fcccef
+RBP: ffffffff94fcccef R08: 00000000fffffe00 R09: 00000000000000a0
+R10: 0000000000000000 R11: 0000000000000040 R12: 0000000000000001
+R13: ffffffff94e03e77 R14: ffffffff94fcdcef R15: fffff7b2c0000000
+FS:  0000000000000000(0000) GS:ffff9adc87c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff9adc8499d000 CR3: 000000000460a001 CR4: 00000000000606b0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ ? start_kernel+0x23e/0x4c8
+ ? start_kernel+0x23f/0x4c8
+ ? text_poke_bp+0x50/0xda
+ ? arch_jump_label_transform+0x89/0xe0
+ ? __jump_label_update+0x78/0xb0
+ ? static_key_enable_cpuslocked+0x4d/0x80
+ ? static_key_enable+0x11/0x20
+ ? start_kernel+0x23e/0x4c8
+ ? secondary_startup_64+0xa5/0xb0
+---[ end trace abdc99c031b8a90a ]---
 
- - A PER_CPU variable of pvclock data pointers. This is used to access the
-   pcvlock data storage on each CPU.
+If the code above is moved after mm_init(), no warning is shown, as struct
+pages are initialized during handover from memblock.
 
-The setup is done in two stages:
+Use text_poke_early() in static branching until early boot IRQs are
+enabled, at which time switch to text_poke. Also, ensure text_poke() is
+never invoked when unitialized memory access may happen by using:
+BUG_ON(!after_bootmem); assertion.
 
- - Early boot stores the pointer to the static page for the boot CPU in
-   the per cpu data.
-
- - In the preparatory stage of CPU hotplug assign either an element of
-   the static array (when the CPU number is in that range) or allocate
-   memory and initialize the per cpu pointer.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/kernel/kvmclock.c | 99 ++++++++++++++++++++++++--------------
- 1 file changed, 62 insertions(+), 37 deletions(-)
+ arch/x86/include/asm/text-patching.h |  1 +
+ arch/x86/kernel/alternative.c        |  7 +++++++
+ arch/x86/kernel/jump_label.c         | 11 +++++++----
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index 08e7726a5e62..ed170171fe49 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -23,6 +23,7 @@
- #include <asm/apic.h>
- #include <linux/percpu.h>
- #include <linux/hardirq.h>
-+#include <linux/cpuhotplug.h>
- #include <linux/sched.h>
- #include <linux/sched/clock.h>
- #include <linux/mm.h>
-@@ -55,12 +56,23 @@ early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
+diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
+index 2ecd34e2d46c..e85ff65c43c3 100644
+--- a/arch/x86/include/asm/text-patching.h
++++ b/arch/x86/include/asm/text-patching.h
+@@ -37,5 +37,6 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
+ extern void *text_poke(void *addr, const void *opcode, size_t len);
+ extern int poke_int3_handler(struct pt_regs *regs);
+ extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
++extern int after_bootmem;
  
- /* Aligned to page sizes to match whats mapped via vsyscalls to userspace */
- #define HV_CLOCK_SIZE	(sizeof(struct pvclock_vsyscall_time_info) * NR_CPUS)
-+#define HVC_BOOT_ARRAY_SIZE \
-+	(PAGE_SIZE / sizeof(struct pvclock_vsyscall_time_info))
+ #endif /* _ASM_X86_TEXT_PATCHING_H */
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index a481763a3776..014f214da581 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -668,6 +668,7 @@ void *__init_or_module text_poke_early(void *addr, const void *opcode,
+ 	local_irq_save(flags);
+ 	memcpy(addr, opcode, len);
+ 	local_irq_restore(flags);
++	sync_core();
+ 	/* Could also do a CLFLUSH here to speed up CPU recovery; but
+ 	   that causes hangs on some VIA CPUs. */
+ 	return addr;
+@@ -693,6 +694,12 @@ void *text_poke(void *addr, const void *opcode, size_t len)
+ 	struct page *pages[2];
+ 	int i;
  
--static u8 hv_clock_mem[PAGE_ALIGN(HV_CLOCK_SIZE)] __aligned(PAGE_SIZE);
--
--/* The hypervisor will put information about time periodically here */
--static struct pvclock_vsyscall_time_info *hv_clock __ro_after_init;
-+static struct pvclock_vsyscall_time_info
-+			hv_clock_boot[HVC_BOOT_ARRAY_SIZE] __aligned(PAGE_SIZE);
- static struct pvclock_wall_clock wall_clock;
-+static DEFINE_PER_CPU(struct pvclock_vsyscall_time_info *, hv_clock_per_cpu);
-+
-+static inline struct pvclock_vcpu_time_info *this_cpu_pvti(void)
-+{
-+	return &this_cpu_read(hv_clock_per_cpu)->pvti;
-+}
-+
-+static inline struct pvclock_vsyscall_time_info *this_cpu_hvclock(void)
-+{
-+	return this_cpu_read(hv_clock_per_cpu);
-+}
- 
- /*
-  * The wallclock is the time of day when we booted. Since then, some time may
-@@ -69,17 +81,10 @@ static struct pvclock_wall_clock wall_clock;
-  */
- static void kvm_get_wallclock(struct timespec64 *now)
- {
--	struct pvclock_vcpu_time_info *vcpu_time;
--	int cpu;
--
- 	wrmsrl(msr_kvm_wall_clock, slow_virt_to_phys(&wall_clock));
--
--	cpu = get_cpu();
--
--	vcpu_time = &hv_clock[cpu].pvti;
--	pvclock_read_wallclock(&wall_clock, vcpu_time, now);
--
--	put_cpu();
-+	preempt_disable();
-+	pvclock_read_wallclock(&wall_clock, this_cpu_pvti(), now);
-+	preempt_enable();
- }
- 
- static int kvm_set_wallclock(const struct timespec64 *now)
-@@ -89,14 +94,10 @@ static int kvm_set_wallclock(const struct timespec64 *now)
- 
- static u64 kvm_clock_read(void)
- {
--	struct pvclock_vcpu_time_info *src;
- 	u64 ret;
--	int cpu;
- 
- 	preempt_disable_notrace();
--	cpu = smp_processor_id();
--	src = &hv_clock[cpu].pvti;
--	ret = pvclock_clocksource_read(src);
-+	ret = pvclock_clocksource_read(this_cpu_pvti());
- 	preempt_enable_notrace();
- 	return ret;
- }
-@@ -140,7 +141,7 @@ static inline void kvm_sched_clock_init(bool stable)
-  */
- static unsigned long kvm_get_tsc_khz(void)
- {
--	return pvclock_tsc_khz(&hv_clock[0].pvti);
-+	return pvclock_tsc_khz(this_cpu_pvti());
- }
- 
- static void kvm_get_preset_lpj(void)
-@@ -157,15 +158,14 @@ static void kvm_get_preset_lpj(void)
- 
- bool kvm_check_and_clear_guest_paused(void)
- {
--	struct pvclock_vcpu_time_info *src;
-+	struct pvclock_vsyscall_time_info *src = this_cpu_hvclock();
- 	bool ret = false;
- 
--	if (!hv_clock)
-+	if (!src)
- 		return ret;
- 
--	src = &hv_clock[smp_processor_id()].pvti;
--	if ((src->flags & PVCLOCK_GUEST_STOPPED) != 0) {
--		src->flags &= ~PVCLOCK_GUEST_STOPPED;
-+	if ((src->pvti.flags & PVCLOCK_GUEST_STOPPED) != 0) {
-+		src->pvti.flags &= ~PVCLOCK_GUEST_STOPPED;
- 		pvclock_touch_watchdogs();
- 		ret = true;
- 	}
-@@ -183,17 +183,15 @@ EXPORT_SYMBOL_GPL(kvm_clock);
- 
- static void kvm_register_clock(char *txt)
- {
--	struct pvclock_vcpu_time_info *src;
--	int cpu = smp_processor_id();
-+	struct pvclock_vsyscall_time_info *src = this_cpu_hvclock();
- 	u64 pa;
- 
--	if (!hv_clock)
-+	if (!src)
- 		return;
- 
--	src = &hv_clock[cpu].pvti;
--	pa = slow_virt_to_phys(src) | 0x01ULL;
-+	pa = slow_virt_to_phys(&src->pvti) | 0x01ULL;
- 	wrmsrl(msr_kvm_system_time, pa);
--	pr_info("kvm-clock: cpu %d, msr %llx, %s", cpu, pa, txt);
-+	pr_info("kvm-clock: cpu %d, msr %llx, %s", smp_processor_id(), pa, txt);
- }
- 
- static void kvm_save_sched_clock_state(void)
-@@ -241,20 +239,42 @@ static int __init kvm_setup_vsyscall_timeinfo(void)
- #ifdef CONFIG_X86_64
- 	u8 flags;
- 
--	if (!hv_clock || !kvmclock_vsyscall)
-+	if (!per_cpu(hv_clock_per_cpu, 0) || !kvmclock_vsyscall)
- 		return 0;
- 
--	flags = pvclock_read_flags(&hv_clock[0].pvti);
-+	flags = pvclock_read_flags(&hv_clock_boot[0].pvti);
- 	if (!(flags & PVCLOCK_TSC_STABLE_BIT))
--		return 1;
-+		return 0;
- 
--	pvclock_set_pvti_cpu0_va(hv_clock);
-+	pvclock_set_pvti_cpu0_va(hv_clock_boot);
- 	kvm_clock.archdata.vclock_mode = VCLOCK_PVCLOCK;
- #endif
- 	return 0;
- }
- early_initcall(kvm_setup_vsyscall_timeinfo);
- 
-+static int kvmclock_setup_percpu(unsigned int cpu)
-+{
-+	struct pvclock_vsyscall_time_info *p = per_cpu(hv_clock_per_cpu, cpu);
-+
 +	/*
-+	 * The per cpu area setup replicates CPU0 data to all cpu
-+	 * pointers. So carefully check. CPU0 has been set up in init
-+	 * already.
++	 * While boot memory allocator is runnig we cannot use struct
++	 * pages as they are not yet initialized.
 +	 */
-+	if (!cpu || (p && p != per_cpu(hv_clock_per_cpu, 0)))
-+		return 0;
++	BUG_ON(!after_bootmem);
 +
-+	/* Use the static page for the first CPUs, allocate otherwise */
-+	if (cpu < HVC_BOOT_ARRAY_SIZE)
-+		p = &hv_clock_boot[cpu];
-+	else
-+		p = kzalloc(sizeof(*p), GFP_KERNEL);
-+
-+	per_cpu(hv_clock_per_cpu, cpu) = p;
-+	return p ? 0 : -ENOMEM;
-+}
-+
- void __init kvmclock_init(void)
+ 	if (!core_kernel_text((unsigned long)addr)) {
+ 		pages[0] = vmalloc_to_page(addr);
+ 		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index e56c95be2808..eeea935e9bb5 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -37,15 +37,18 @@ static void bug_at(unsigned char *ip, int line)
+ 	BUG();
+ }
+ 
+-static void __jump_label_transform(struct jump_entry *entry,
+-				   enum jump_label_type type,
+-				   void *(*poker)(void *, const void *, size_t),
+-				   int init)
++static void __ref __jump_label_transform(struct jump_entry *entry,
++					 enum jump_label_type type,
++					 void *(*poker)(void *, const void *, size_t),
++					 int init)
  {
- 	u8 flags;
-@@ -269,16 +289,21 @@ void __init kvmclock_init(void)
- 		return;
- 	}
+ 	union jump_code_union code;
+ 	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
+ 	const unsigned char *ideal_nop = ideal_nops[NOP_ATOMIC5];
  
-+	if (cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "kvmclock:setup_percpu",
-+			      kvmclock_setup_percpu, NULL) < 0) {
-+		return;
-+	}
++	if (early_boot_irqs_disabled)
++		poker = text_poke_early;
 +
- 	pr_info("kvm-clock: Using msrs %x and %x",
- 		msr_kvm_system_time, msr_kvm_wall_clock);
- 
--	hv_clock = (struct pvclock_vsyscall_time_info *)hv_clock_mem;
-+	this_cpu_write(hv_clock_per_cpu, &hv_clock_boot[0]);
- 	kvm_register_clock("primary cpu clock");
- 
- 	if (kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE_STABLE_BIT))
- 		pvclock_set_flags(PVCLOCK_TSC_STABLE_BIT);
- 
--	flags = pvclock_read_flags(&hv_clock[0].pvti);
-+	flags = pvclock_read_flags(&hv_clock_boot[0].pvti);
- 	kvm_sched_clock_init(flags & PVCLOCK_TSC_STABLE_BIT);
- 
- 	x86_platform.calibrate_tsc = kvm_get_tsc_khz;
+ 	if (type == JUMP_LABEL_JMP) {
+ 		if (init) {
+ 			/*
 -- 
 2.18.0
 
