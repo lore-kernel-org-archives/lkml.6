@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C8EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952B4ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D87E2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4609F2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="G91khPKc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D87E2075C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="l0VXA5zc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4609F2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbeGRKUo (ORCPT
+        id S1731974AbeGRKUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:20:44 -0400
-Received: from 8bytes.org ([81.169.241.247]:54196 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:20:43 -0400
+Received: from 8bytes.org ([81.169.241.247]:53890 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731581AbeGRKSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731583AbeGRKSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Jul 2018 06:18:35 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 868AA561; Wed, 18 Jul 2018 11:41:20 +0200 (CEST)
+        id BF03B32E; Wed, 18 Jul 2018 11:41:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906881; bh=vCQiJBAHo9odqKL67p3tHtdnNwklCpEkJ6suW4Lg8AA=;
+        t=1531906881; bh=iEPn9yhr8K3WkTxVGik81NaWC4cuH7/tnosk3392xlQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G91khPKcwY8cPO4eb2bwCs0BW484UQFn3DEAKLsbwXfhuk1q2vbbry+exMa9aiyTM
-         +76f2ebu0x2o+i1Q8AQ2knFKyUTK/VrmSkq21ocMjSVzpqRT/IyHUYxqV94QpEpq7R
-         xKD7DZ4nwCX3hGbEqg7K9dm9TFlyUKsy6U7gH195ePVHEFdYKhK6bS8w1CACjr4Ch3
-         CVEIAeY0vWDElRl+QyCpt1kD22LbBkSopif5HjFTpujp2zPMPQeO3xtgGN/8e5jjSR
-         F1fKn+5B78ZUvgPM4pgszxn2hqaAgwBKOi7W8P0WMIHBdI9TgMnCr5FD2CkRDmuj1L
-         PDywMxIf7u8cA==
+        b=l0VXA5zczlqz0kuUJ2v+cNLP4RGH65IzpXn0rDLEwwJv549Z9TSKbfEP3dN1qINbR
+         8xZ/uoGUG6pvi5aDwyqe3gmxzvrYrhOXTYXxMx0QXXLLfb+0jkeAr4jEvXa6Ag9V37
+         frLIm9mEKa0vI47YXQGz/IhpZgMCSLyQOIR8Uts8D80YLZAyRaozzjqPPoYAg+TXNy
+         sIpVQkB7dYByLs3hu072jgAW/cdx+dFBLHG+gwv05l329M7kzoNNyymZykY/7HGNGW
+         3FMWeSAGu7IKy79CCH93KrL+VsYGNOZC51jlP4Prm7csZQM6o/yokh5XTVznn4WbKt
+         7T9J1hR1qV1MA==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 11/39] x86/entry/32: Simplify debug entry point
-Date:   Wed, 18 Jul 2018 11:40:48 +0200
-Message-Id: <1531906876-13451-12-git-send-email-joro@8bytes.org>
+Subject: [PATCH 18/39] x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
+Date:   Wed, 18 Jul 2018 11:40:55 +0200
+Message-Id: <1531906876-13451-19-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,67 +72,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The common exception entry code now handles the
-entry-from-sysenter stack situation and makes sure to leave
-with the same stack as it entered the kernel.
-
-So there is no need anymore for the special handling in the
-debug entry code.
+Make them available on 32 bit and clone_pgd_range() happy.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 35 +++--------------------------------
- 1 file changed, 3 insertions(+), 32 deletions(-)
+ arch/x86/include/asm/pgtable.h    | 49 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/pgtable_64.h | 49 ---------------------------------------
+ 2 files changed, 49 insertions(+), 49 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 9d6eceb..dbf7d61 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -1226,41 +1226,12 @@ END(common_exception)
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 5715647..eb47432 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1155,6 +1155,55 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ }
+ #endif
  
- ENTRY(debug)
- 	/*
--	 * #DB can happen at the first instruction of
--	 * entry_SYSENTER_32 or in Xen's SYSENTER prologue.  If this
--	 * happens, then we will be running on a very small stack.  We
--	 * need to detect this condition and switch to the thread
--	 * stack before calling any C code at all.
--	 *
--	 * If you edit this code, keep in mind that NMIs can happen in here.
-+	 * Entry from sysenter is now handled in common_exception
- 	 */
- 	ASM_CLAC
- 	pushl	$-1				# mark this as an int
--
--	SAVE_ALL
--	ENCODE_FRAME_POINTER
--	xorl	%edx, %edx			# error code 0
--	movl	%esp, %eax			# pt_regs pointer
--
--	/* Are we currently on the SYSENTER stack? */
--	movl	PER_CPU_VAR(cpu_entry_area), %ecx
--	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
--	subl	%eax, %ecx	/* ecx = (end of entry_stack) - esp */
--	cmpl	$SIZEOF_entry_stack, %ecx
--	jb	.Ldebug_from_sysenter_stack
--
--	TRACE_IRQS_OFF
--	call	do_debug
--	jmp	ret_from_exception
--
--.Ldebug_from_sysenter_stack:
--	/* We're on the SYSENTER stack.  Switch off. */
--	movl	%esp, %ebx
--	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
--	TRACE_IRQS_OFF
--	call	do_debug
--	movl	%ebx, %esp
--	jmp	ret_from_exception
-+	pushl	$do_debug
-+	jmp	common_exception
- END(debug)
- 
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++/*
++ * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
++ * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
++ * the user one is in the last 4k.  To switch between them, you
++ * just need to flip the 12th bit in their addresses.
++ */
++#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
++
++/*
++ * This generates better code than the inline assembly in
++ * __set_bit().
++ */
++static inline void *ptr_set_bit(void *ptr, int bit)
++{
++	unsigned long __ptr = (unsigned long)ptr;
++
++	__ptr |= BIT(bit);
++	return (void *)__ptr;
++}
++static inline void *ptr_clear_bit(void *ptr, int bit)
++{
++	unsigned long __ptr = (unsigned long)ptr;
++
++	__ptr &= ~BIT(bit);
++	return (void *)__ptr;
++}
++
++static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
++{
++	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
++{
++	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
++{
++	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
++}
++
++static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
++{
++	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
++}
++#endif /* CONFIG_PAGE_TABLE_ISOLATION */
++
  /*
+  * clone_pgd_range(pgd_t *dst, pgd_t *src, int count);
+  *
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 9406c4f..4adba19 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -132,55 +132,6 @@ static inline pud_t native_pudp_get_and_clear(pud_t *xp)
+ #endif
+ }
+ 
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-/*
+- * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
+- * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
+- * the user one is in the last 4k.  To switch between them, you
+- * just need to flip the 12th bit in their addresses.
+- */
+-#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
+-
+-/*
+- * This generates better code than the inline assembly in
+- * __set_bit().
+- */
+-static inline void *ptr_set_bit(void *ptr, int bit)
+-{
+-	unsigned long __ptr = (unsigned long)ptr;
+-
+-	__ptr |= BIT(bit);
+-	return (void *)__ptr;
+-}
+-static inline void *ptr_clear_bit(void *ptr, int bit)
+-{
+-	unsigned long __ptr = (unsigned long)ptr;
+-
+-	__ptr &= ~BIT(bit);
+-	return (void *)__ptr;
+-}
+-
+-static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
+-{
+-	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
+-{
+-	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
+-{
+-	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-
+-static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
+-{
+-	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
+-}
+-#endif /* CONFIG_PAGE_TABLE_ISOLATION */
+-
+ /*
+  * Page table pages are page-aligned.  The lower half of the top
+  * level is used for userspace and the top half for the kernel.
 -- 
 2.7.4
 
