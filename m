@@ -6,55 +6,54 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F70ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06AFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE2FE20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 895272075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:28:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="iKJIY0nW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE2FE20850
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DbzdEK9d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 895272075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731186AbeGRNFE (ORCPT
+        id S1731204AbeGRNFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:05:04 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46550 "EHLO
+        Wed, 18 Jul 2018 09:05:40 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47542 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbeGRNFE (ORCPT
+        with ESMTP id S1726747AbeGRNFj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:05:04 -0400
+        Wed, 18 Jul 2018 09:05:39 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=EkFqJYFKmGUmHC+chBNeENndJ2TbWzrY3qsFqhVwk0E=; b=iKJIY0nWlyZX
-        o8Jfo+2WjOdIJo0yu9md6wq0EWW/nMuoGbqZilitkrpl9B5iwiGLpq0TgCX4aUdp2ir+DjFVMRFip
-        VPoz4OHBf1A6b/Mv4XRx1a/lkNB2tokvFcGw/nJNeSYPHj7+EukbCh0+hdOA6Y6WCM1E05Kkdd5Uc
-        P9bAc=;
+        List-Archive; bh=zppDgBKqlClnCkQMZk6ngSfqmpx68yrd4Z6oSU7tnao=; b=DbzdEK9d6L3a
+        uXb2vsRQxdBMIKSlF3vaMiaMtNwqmz436jx3NWd5XYiJ/WhnBn7h39xFJS8oZJfKIuZfNir0BPdr/
+        ygV9IMRKIkbaydStNNkqn2AaaPDcmhW440CE23Or8xKVJXT67ZizwI6i9zt/95JBLjB6sV1f0SV+P
+        gEcjk=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fflXv-0003VG-19; Wed, 18 Jul 2018 12:27:07 +0000
+        id 1fflYf-0003Vb-6R; Wed, 18 Jul 2018 12:27:53 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fflXu-0007H0-JJ; Wed, 18 Jul 2018 13:27:06 +0100
+        id 1fflYe-0007Kl-OZ; Wed, 18 Jul 2018 13:27:52 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: add axg fifos DT binding documentation" to the asoc tree
-In-Reply-To:  <20180717153643.8806-2-jbrunet@baylibre.com>
-Message-Id: <E1fflXu-0007H0-JJ@debutante>
-Date:   Wed, 18 Jul 2018 13:27:06 +0100
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        lgirdwood@gmail.com, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.com, vkoul@kernel.org, rohitkr@codeaurora.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6routing: remove component framework related code" to the asoc tree
+In-Reply-To:  <20180713153632.32511-5-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fflYe-0007Kl-OZ@debutante>
+Date:   Wed, 18 Jul 2018 13:27:52 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: add axg fifos DT binding documentation
+   ASoC: qdsp6: q6routing: remove component framework related code
 
 has been applied to the asoc tree at
 
@@ -87,49 +86,86 @@ to this mail.
 Thanks,
 Mark
 
-From e32d99af6830c9a8f37b4f2637ef0cdc60fa79fb Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 17 Jul 2018 17:42:50 +0200
-Subject: [PATCH] ASoC: meson: add axg fifos DT binding documentation
+From 791940779d651c2219e97702d2245b5420b0c8ae Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Fri, 13 Jul 2018 16:36:31 +0100
+Subject: [PATCH] ASoC: qdsp6: q6routing: remove component framework related
+ code
 
-Add the DT bindings documentation for axg's FIFOs: TODDR and FRDDR.
+Now that the component framework is integrated into the ASoC core,
+remove any redundant code in this driver.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/sound/amlogic,axg-fifo.txt       | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
+ sound/soc/qcom/qdsp6/q6routing.c | 32 ++++++--------------------------
+ 1 file changed, 6 insertions(+), 26 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
-new file mode 100644
-index 000000000000..3dfc2515e5c6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
-@@ -0,0 +1,23 @@
-+* Amlogic Audio FIFO controllers
+diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
+index 35269b492761..1d33b00e5b44 100644
+--- a/sound/soc/qcom/qdsp6/q6routing.c
++++ b/sound/soc/qcom/qdsp6/q6routing.c
+@@ -8,7 +8,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/of_platform.h>
+ #include <linux/bitops.h>
+-#include <linux/component.h>
+ #include <linux/mutex.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+@@ -977,9 +976,10 @@ static const struct snd_soc_component_driver msm_soc_routing_component = {
+ 	.num_dapm_routes = ARRAY_SIZE(intercon),
+ };
+ 
+-static int q6routing_dai_bind(struct device *dev, struct device *master,
+-			      void *data)
++static int q6pcm_routing_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
 +
-+Required properties:
-+- compatible: 'amlogic,axg-toddr' or
-+	      'amlogic,axg-frddr'
-+- reg: physical base address of the controller and length of memory
-+       mapped region.
-+- interrupts: interrupt specifier for the fifo.
-+- clocks: phandle to the fifo peripheral clock provided by the audio
-+	  clock controller.
-+- resets: phandle to memory ARB line provided by the arb reset controller.
-+- #sound-dai-cells: must be 0.
-+
-+Example of FRDDR A on the A113 SoC:
-+
-+frddr_a: audio-controller@1c0 {
-+	compatible = "amlogic,axg-frddr";
-+	reg = <0x0 0x1c0 0x0 0x1c>;
-+	#sound-dai-cells = <0>;
-+	interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
-+	clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
-+	resets = <&arb AXG_ARB_FRDDR_A>;
-+};
+ 	routing_data = kzalloc(sizeof(*routing_data), GFP_KERNEL);
+ 	if (!routing_data)
+ 		return -ENOMEM;
+@@ -989,35 +989,15 @@ static int q6routing_dai_bind(struct device *dev, struct device *master,
+ 	mutex_init(&routing_data->lock);
+ 	dev_set_drvdata(dev, routing_data);
+ 
+-	return snd_soc_register_component(dev, &msm_soc_routing_component,
++	return devm_snd_soc_register_component(dev, &msm_soc_routing_component,
+ 					  NULL, 0);
+ }
+ 
+-static void q6routing_dai_unbind(struct device *dev, struct device *master,
+-				 void *d)
++static int q6pcm_routing_remove(struct platform_device *pdev)
+ {
+-	struct msm_routing_data *data = dev_get_drvdata(dev);
+-
+-	snd_soc_unregister_component(dev);
+-
+-	kfree(data);
+-
++	kfree(routing_data);
+ 	routing_data = NULL;
+-}
+ 
+-static const struct component_ops q6routing_dai_comp_ops = {
+-	.bind   = q6routing_dai_bind,
+-	.unbind = q6routing_dai_unbind,
+-};
+-
+-static int q6pcm_routing_probe(struct platform_device *pdev)
+-{
+-	return component_add(&pdev->dev, &q6routing_dai_comp_ops);
+-}
+-
+-static int q6pcm_routing_remove(struct platform_device *pdev)
+-{
+-	component_del(&pdev->dev, &q6routing_dai_comp_ops);
+ 	return 0;
+ }
+ 
 -- 
 2.18.0
 
