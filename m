@@ -2,126 +2,201 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF684ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE7DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B743205C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:49:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27BEA2064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:50:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tlGoW6iS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B743205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ex3VoY2G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27BEA2064D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731292AbeGRQ1x (ORCPT
+        id S1731351AbeGRQ2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:27:53 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45288 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730862AbeGRQ1x (ORCPT
+        Wed, 18 Jul 2018 12:28:46 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:39959 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731295AbeGRQ2p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:27:53 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c4-v6so5159218wrs.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:49:22 -0700 (PDT)
+        Wed, 18 Jul 2018 12:28:45 -0400
+Received: by mail-pf0-f196.google.com with SMTP id e13-v6so2400398pff.7
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:50:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RxpyeO8/BSUIFgP/KCcixj+ymfGj0DJsdHu/MWej2fY=;
-        b=tlGoW6iSlZqdToBvGCCrH7fLfpJUj/7dr6Sdpb/mXPLwHYh5h6bCV0VlbQUB2HoWFB
-         ixF8j6BVDjza0Jrx/R04d2CDzfygNsj37K6GUcN4fYLChowcQ+1bF00PdjXiAWQaJyMp
-         qFdSE7SAuAoCwchfNjdVdfTh9PrLdx9MQEK9gRcb/f5ZShUc2MisEVGGiCTwNKXwwy4/
-         ZkEKHE19ZhVKVS2IqjY3/G2pr0bmmZ8VnLA3tnt6DykeeG1QX/j6yoje3I3ytBhkqLhy
-         TIgtiQ5XoSN1Z9k3C7sHFQDukMeSPfYTqXn8d09otr8Q5KUIffu3RKvgQtlywipehq7S
-         KoGg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MI7D64/uxpc0ZvBqziwFaaddyp0sVIV++b20+qIL0dY=;
+        b=ex3VoY2GfC2Q2r7ZFUWCLaLghzu3vrOqHhrUkcOgtojGO0HMrgBlfyFOlD23X8Wy+v
+         urt/lXqrLev+9PHOvUw6yO4C7ltjUHTUUa9gtYLFWki6NYNWgPjUc2Hpv1P09zjgHMF6
+         jfg5Wcv1O7uqT3SSF+vO/aQM218IlbZ5R01z4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RxpyeO8/BSUIFgP/KCcixj+ymfGj0DJsdHu/MWej2fY=;
-        b=CDku0uKUFdueJ+akAvrga8aRVP4QApCbogEFtWOfef2yjVLYwXE69Zg0e+FEEilsen
-         DBNkrzeAZoRaxw6hj5xNhLAU98cTeFjUUpSULiAkcp9KJJkDjaz8zqdKmIVv7losbS15
-         eNRTdJKvKMDTG03nhMdU0KZ2irvamS59PrH8BBoY3vSdYPkzYNMXNY1cQoIMb2EdI1Vx
-         RkMY1wTCdom8ezZ25WVRii/h11sP/D6HCYgI7cuOIuc5QZVPI4GbKO6hiaaCUh7yLT+j
-         MWVes/0bdZVPa5v7YBOmvWGIjAzeuNtJnzowY0aOOvLdG7MvPaKzN3PvoUp7JD+sYCxq
-         7Biw==
-X-Gm-Message-State: AOUpUlFaoxMUhxgbOZsNJVnJXu4Pw7AvNvDh3N8y8yFt5AxFjFN/UwD1
-        CrmRoc2yab8EZWvTMvJmE8CESR05Al6p+n+8muKqDQ==
-X-Google-Smtp-Source: AAOMgpfK+uHQZgJZZt/utoDDTFWtquLgMljrS/qCpBpYh8Zz6+WDm+ZU/Hdz6xok/7Zi0/aN/e1YswdfvE0u/iIl0vQ=
-X-Received: by 2002:adf:b112:: with SMTP id l18-v6mr5127093wra.101.1531928961077;
- Wed, 18 Jul 2018 08:49:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MI7D64/uxpc0ZvBqziwFaaddyp0sVIV++b20+qIL0dY=;
+        b=SlTieB0Tv8+gyPXEhU0euZc0zaICzohbS1ifCI9cRZTq3tKeAL0xSq4891rUjhiEhc
+         o0NYZeiybXlU/RQAblpGZq0jAKbttK3+qg8oAxzj1H3uj9p00Kv6sAx3FrHzor1yhfAj
+         FJ51yht0YBk2CVrxbAtVqs5cCukWeXWwhn53YppQ+uRg+iL4YWdv8J4pi+Q9SjSuLpeK
+         wYEks/8iE+NKn41QW7dEQqH/aNkql+Mm/y7xN9Ngstk2BzVuldpNlPXyzSTtNOA3WIG/
+         oQbEXGlorYKwfEJCwdpVRv0jJwyAEg/V6wF7L7P/E5QMyF7wEI+FpB6AHLnByvKjEjfX
+         +gXQ==
+X-Gm-Message-State: AOUpUlHq8iVywue9yLIzMXGyLvUtAE7yFFDG0fkB3ECF6lUBPcIljuEE
+        CbXA3s8a1mlS41/oCO2tSUgX
+X-Google-Smtp-Source: AAOMgpeXVuX9CsGiPuu53iP4SgDEoL6ZhI1MniP3fZGM8MZ1yyQRq8GBBh+WP1mT5b0kas0phT3XOA==
+X-Received: by 2002:a62:a018:: with SMTP id r24-v6mr5755498pfe.144.1531929014199;
+        Wed, 18 Jul 2018 08:50:14 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:628d:5c0b:c41c:3ac6:8e56:5127])
+        by smtp.gmail.com with ESMTPSA id u11-v6sm10661684pfd.117.2018.07.18.08.50.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 08:50:13 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 21:20:00 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     wsa@the-dreams.de, andy.shevchenko@gmail.com, peda@axentia.se
+Cc:     linus.walleij@linaro.org, linux-i2c@vger.kernel.org,
+        liuwei@actions-semi.com, mp-cs@actions-semi.com,
+        96boards@ucrobotics.com, devicetree@vger.kernel.org,
+        daniel.thompson@linaro.org, amit.kucheria@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hzhang@ucrobotics.com,
+        bdong@ucrobotics.com, manivannanece23@gmail.com,
+        thomas.liau@actions-semi.com, jeff.chen@actions-semi.com,
+        afaerber@suse.de
+Subject: Re: [PATCH v4 0/6] Add Actions Semiconductor Owl S900 I2C support
+Message-ID: <20180718155000.GA3061@Mani-XPS-13-9360>
+References: <20180701172305.15663-1-manivannan.sadhasivam@linaro.org>
+ <20180711024502.GA4739@Mani-XPS-13-9360>
 MIME-Version: 1.0
-References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
- <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
- <20180718104230.GC1431@dhcp22.suse.cz> <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
- <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com> <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
-In-Reply-To: <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 18 Jul 2018 08:49:09 -0700
-Message-ID: <CALvZod4ag02N6QPwRQCYv663hj05Z6vtrK8=XEE6uWHQCL4yRw@mail.gmail.com>
-Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some machines
-To:     bmerry@ska.ac.za
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711024502.GA4739@Mani-XPS-13-9360>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 8:37 AM Bruce Merry <bmerry@ska.ac.za> wrote:
+On Wed, Jul 11, 2018 at 08:15:02AM +0530, Manivannan Sadhasivam wrote:
+> On Sun, Jul 01, 2018 at 10:52:59PM +0530, Manivannan Sadhasivam wrote:
+> > This patchset adds I2C controller support for Actions Semiconductor S900 SoC.
+> > This driver has been structured in a way such that there will be only
+> > one controller driver for the whole Owl family series (S500, S700 and
+> > S900 SoCs).
+> > 
+> > There are 6 I2C controllers with separate memory mapped register space.
+> > The I2C controller can handle atmost two messages concatenated by a
+> > repeated start via its internal address feature. Hence the driver
+> > uses this feature for messages of length greater than 1. In those cases,
+> > the first message of the combined message should be a `write` with maximum
+> > message length 6 and the second message's maximum length should be 240 bytes.
+> > 
+> > As far as the bus speed is concerned, this driver only supports
+> > Standard (100KHz) and High speed (400KHz) for now.
+> > 
+> > The pinctrl definitions are only available for I2C0, I2C1 and I2C2.
+> > With the mux option available only for I2C0.
+> > 
+> > For Bubblegum-96 board utilizing the S900 SoC, only I2C1 and I2C2 which
+> > are exposed on the Low speed expansion connector are enabled.
+> > 
+> > This series depends on the pinctrl patch [1] is still not merged by the
+> > platform maintainer Andreas but it has been reviewed by the pinctrl maintainer
+> > Linus Walleij. For the reference, I have queued up all reviewed dts patches
+> > in my tree [2] from which Andreas is picking them for 4.19.
+> > 
+> > For this series, since the dts patches will go through the ARM SoC tree,
+> > Andreas will pick it up once it is reviewed.
+> > 
+> > Thanks,
+> > Mani
+> > 
+> > [1] https://patchwork.kernel.org/patch/10322937/
+> > [2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
+> > 
+> 
+> Hi Andy, Peter,
+> 
+> Just a gentle ping on this v4!
+> 
+> Thanks,
+> Mani
 >
-> On 18 July 2018 at 17:26, Shakeel Butt <shakeelb@google.com> wrote:
-> > On Wed, Jul 18, 2018 at 7:29 AM Bruce Merry <bmerry@ska.ac.za> wrote:
-> > It seems like you are using cgroup-v1. How many nodes are there in
-> > your memcg tree and also how many cpus does the system have?
->
-> From my original email: "there are 106 memory.stat files in
-> /sys/fs/cgroup/memory." - is that what you mean by the number of
-> nodes?
 
-Yes but it seems like your system might be suffering with zombies.
+Hi,
 
->
-> The affected systems all have 8 CPU cores (hyperthreading is disabled).
->
-> > Please note that memcg_stat_show or reading memory.stat in cgroup-v1
-> > is not optimized as cgroup-v2. The function memcg_stat_show() in 4.13
-> > does ~17 tree walks and then for ~12 of those tree walks, it goes
-> > through all cpus for each node in the memcg tree. In 4.16,
-> > a983b5ebee57 ("mm: memcontrol: fix excessive complexity in memory.stat
-> > reporting") optimizes aways the cpu traversal at the expense of some
-> > accuracy. Next optimization would be to do just one memcg tree
-> > traversal similar to cgroup-v2's memory_stat_show().
->
-> On most machines it is still fast (1-2ms), and there is no difference
-> in the number of CPUs and only very small differences in the number of
-> live memory cgroups, so presumably something else is going on.
->
-> > The memcg tree does include all zombie memcgs and these zombies does
-> > contribute to the memcg_stat_show cost.
->
-> That sounds promising. Is there any way to tell how many zombies there
-> are, and is there any way to deliberately create zombies? If I can
-> produce zombies that might give me a reliable way to reproduce the
-> problem, which could then sensibly be tested against newer kernel
-> versions.
->
+Any update on this patchset?
 
-Yes, very easy to produce zombies, though I don't think kernel
-provides any way to tell how many zombies exist on the system.
+Thanks,
+Mani
 
-To create a zombie, first create a memcg node, enter that memcg,
-create a tmpfs file of few KiBs, exit the memcg and rmdir the memcg.
-That memcg will be a zombie until you delete that tmpfs file.
-
-Shakeel
+> > Changes in v4:
+> > 
+> > As per Andy and Peter review:
+> > 
+> > * Used spinlock for accessing most of the register access (only parts
+> >   involved sleep/long-busy-wait has been excluded)
+> > * Removed returning 0 and added -ENXIO if the msg_ptr not equals to
+> >   message length
+> > * Added DIV_ROUND_UP for setting clock frequency
+> > * Changed one non-atomic mdelay instance to usleep_range
+> > * Moved pinctrl definition patch before dts patch
+> > * Fixed the driver to support only 100KHz and 400KHz frequencies
+> > 
+> > Changes in v3:
+> > 
+> > As per Peter, Andy and Andreas review:
+> > 
+> > * Removed owl_i2c_reset function from interrupt handler since it
+> >   involves the use of delays.
+> > * Fixed the return path in owl_i2c_master_xfer and added a note
+> > * Changed "base" parameter to "reg" in owl_i2c_update_reg for better
+> >   understandability
+> > * Ordered the includes in alphabetical order
+> > * Small changes to defines and added comma at the end of struct members
+> > * Removed rendundant 0 assignment in owl_i2c_master_xfer
+> > * Changed all OWL naming convention to Owl and also changed Actions Semi
+> >   naming to Actions Semiconductor
+> > 
+> > Changes in v2:
+> > 
+> > As per Andy's review:
+> > * Modified infinite loops to fixed number of retries
+> > * Used i2c_8bit_addr_from_msg for constructing the slave address
+> > * Removed unnecessary parenthesis around defines
+> > * Modified certain dev_warn to dev_dbg
+> > * Modified the error handling to more generic pattern
+> > 
+> > * Fixed the return value in owl_i2c_master_xfer
+> > * Added MAINTAINERS patch for I2C driver and its binding
+> > 
+> > Manivannan Sadhasivam (6):
+> >   dt-bindings: i2c: Add binding for Actions Semiconductor Owl I2C
+> >     controller
+> >   arm64: dts: actions: Add pinctrl definition for S900 I2C controller
+> >   arm64: dts: actions: Add Actions Semiconductor S900 I2C controller
+> >     nodes
+> >   arm64: dts: actions: Enable I2C1 and I2C2 in Bubblegum-96 board
+> >   i2c: Add Actions Semiconductor Owl family S900 I2C driver
+> >   MAINTAINERS: Add entry for Actions Semiconductor Owl I2C driver
+> > 
+> >  .../devicetree/bindings/i2c/i2c-owl.txt       |  27 +
+> >  MAINTAINERS                                   |   2 +
+> >  .../dts/actions/s900-bubblegum-96-pins.dtsi   |  29 +
+> >  .../boot/dts/actions/s900-bubblegum-96.dts    |  11 +
+> >  arch/arm64/boot/dts/actions/s900.dtsi         |  60 +++
+> >  drivers/i2c/busses/Kconfig                    |   7 +
+> >  drivers/i2c/busses/Makefile                   |   1 +
+> >  drivers/i2c/busses/i2c-owl.c                  | 504 ++++++++++++++++++
+> >  8 files changed, 641 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-owl.txt
+> >  create mode 100644 arch/arm64/boot/dts/actions/s900-bubblegum-96-pins.dtsi
+> >  create mode 100644 drivers/i2c/busses/i2c-owl.c
+> > 
+> > -- 
+> > 2.17.1
+> > 
