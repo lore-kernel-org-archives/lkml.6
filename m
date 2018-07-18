@@ -2,114 +2,125 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F2FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5ACFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7FA32075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:16:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcbNOuDJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FA32075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 657E42075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657E42075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731722AbeGRQz1 (ORCPT
+        id S1731752AbeGRQzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:55:27 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:41843 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730987AbeGRQz0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:55:26 -0400
-Received: by mail-oi0-f66.google.com with SMTP id k12-v6so9847700oiw.8;
-        Wed, 18 Jul 2018 09:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=D5h25BpQ2r5RraSD1h9W3sz5Up+nTg6iZLKs581y3/o=;
-        b=DcbNOuDJ5UCulnS+R0QnNXah0y9ftX1lGKOMT8wpExNDyiWdDMkOJ90P1FPUV/oLhM
-         5RUlfjEOyglGNjTUOFZ9RVSaNNauL4IWpW1rSLMs5NCrA07pPGpnQNzX8FJUCUUOYoj4
-         ziuJyk+qxte9WYBTEDwK2eF5xwEAzuL3dx3CB2cpk8+UAlBLmztb2lnWYlnJPUnAuaAZ
-         3ljr+03dvIASPddO8X/6Mf++Xk6nbbmApE4M5kUKLPaKjJnvUQqj56uqp5G+vazYKZYz
-         PGdy2s4zo12UKTmgyFsLnm4eAFmzoOuykjRXoV34PO2sGxHwXR1Eb/q5TPPjXOon10mk
-         p3Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=D5h25BpQ2r5RraSD1h9W3sz5Up+nTg6iZLKs581y3/o=;
-        b=ujnooJo9u6DWUbojq9WULbBMjLxojNxa3UZDSV58ag3mS+kKe6Td5Pm4Y8E2JNrcTe
-         LaLNsEne3w9brTj0e/95m5T10Is/KIPDLri8eOpRfC3Lr54ZhoXkxMh9xgwtvDO0opqY
-         47lvR3gV0SR0eBxOL6ItuC24kj+vXUAjOjchH6jDzk3YmufxsSo5zlsBJv2pW+YfCMa5
-         aTMY3F6Dl7J+1CgT4jrly3Pp6fSchx7xKJefkGnZt7S791FBXdTE5CaFvL3tXcKiWYPO
-         VYK55mp0tfP6cc2z12mmu/jn2znJGAFG4AhRDIXwJLzQpNl1VCelbIft/QbidASFAzmy
-         LlGw==
-X-Gm-Message-State: AOUpUlGuDJss1+/6wU40rKov8fO0TY8cQsI2SbySfeSCXotsYwhUPFgZ
-        d/OMRFpM6z8m9PSSyhOsOec=
-X-Google-Smtp-Source: AAOMgpe2HU2zR/21/5idn98y/XfTGSuGz0WfA1zqwOBByJ4f9Igk2SIuEbzGkw4DdVJyNfN7rlpxnA==
-X-Received: by 2002:aca:3c02:: with SMTP id j2-v6mr7415409oia.50.1531930608810;
-        Wed, 18 Jul 2018 09:16:48 -0700 (PDT)
-Received: from localhost ([12.130.117.108])
-        by smtp.gmail.com with ESMTPSA id r133-v6sm2999085oia.33.2018.07.18.09.16.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 09:16:41 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 16:13:55 +0000
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Christian Thoms <christian.thoms93@gmail.com>
-Cc:     rydberg@bitmath.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        Sebastian Hillert <sebastian.hillert1@gmail.com>
-Subject: Re: [PATCH] drivers: input: Add SPDX-License-Identifier
-Message-ID: <20180718161355.o7nct5jcxh4xqmgz@penguin>
-References: <1530879112-3388-1-git-send-email-christian.thoms93@gmail.com>
+        Wed, 18 Jul 2018 12:55:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:52005 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730987AbeGRQzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:55:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 09:16:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,370,1526367600"; 
+   d="scan'208";a="67947088"
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by orsmga003.jf.intel.com with ESMTP; 18 Jul 2018 09:16:41 -0700
+From:   richard.gong@linux.intel.com
+To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, atull@kernel.org, mdf@kernel.org,
+        arnd@arndb.de, corbet@lwn.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
+        richard.gong@intel.com
+Subject: [PATCHv7 8/9] Documentation: driver-api: add stratix10 service layer
+Date:   Wed, 18 Jul 2018 11:18:43 -0500
+Message-Id: <1531930724-22061-9-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531930724-22061-1-git-send-email-richard.gong@linux.intel.com>
+References: <1531930724-22061-1-git-send-email-richard.gong@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1530879112-3388-1-git-send-email-christian.thoms93@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian,
+From: Richard Gong <richard.gong@intel.com>
 
-On Fri, Jul 06, 2018 at 02:11:52PM +0200, Christian Thoms wrote:
-> diff --git a/drivers/input/ff-core.c b/drivers/input/ff-core.c
-> index 66a46c8..3086166 100644
-> --- a/drivers/input/ff-core.c
-> +++ b/drivers/input/ff-core.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   *  Force feedback support for Linux input subsystem
->   *
-> @@ -6,11 +7,6 @@
->   */
->  
->  /*
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
->   * This program is distributed in the hope that it will be useful,
->   * but WITHOUT ANY WARRANTY; without even the implied warranty of
->   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+Add new file stratix10-svc.rst
+Add stratix10-svc.rst to driver-api/index.rst
 
-Why did you keep this block here? Also, below, there is another
-paragraph about obtaining a copy of GPL from an old FSF address. If we
-are cleaning it I believe it all needs to go.
+Signed-off-by: Richard Gong <richard.gong@intel.com>
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+v5: this patch is added in patch set version 5
+v6: no change
+v7: no change
+---
+ Documentation/driver-api/index.rst         |  1 +
+ Documentation/driver-api/stratix10-svc.rst | 32 ++++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+ create mode 100644 Documentation/driver-api/stratix10-svc.rst
 
-I see the similar issue in several other files in this patch.
-
-Thanks.
-
+diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+index 6d9f2f9..d4d2671 100644
+--- a/Documentation/driver-api/index.rst
++++ b/Documentation/driver-api/index.rst
+@@ -53,6 +53,7 @@ available subsections can be seen below.
+    slimbus
+    soundwire/index
+    fpga/index
++   stratix10-svc
+ 
+ .. only::  subproject and html
+ 
+diff --git a/Documentation/driver-api/stratix10-svc.rst b/Documentation/driver-api/stratix10-svc.rst
+new file mode 100644
+index 0000000..ed361d8
+--- /dev/null
++++ b/Documentation/driver-api/stratix10-svc.rst
+@@ -0,0 +1,32 @@
++
++Intel Stratix10 SoC Service Layer
++=================================
++
++Some features of the Intel Stratix10 SoC require a level of privilege
++higher than the kernel is granted. Such secure features include
++FPGA programming. In terms of the ARMv8 architecture, the kernel runs
++at Exception Level 1 (EL1), access to the features requires
++Exception Level 3 (EL3).
++
++The Intel Stratix10 SoC service layer provides an in kernel API for
++drivers to request access to the secure features. The requests are queued
++and processed one by one. ARM’s SMCCC is used to pass the execution
++of the requests on to a secure monitor (EL3).
++
++.. kernel-doc:: include/linux/stratix10-svc-client.h
++   :functions: stratix10_svc_command_code
++
++.. kernel-doc:: include/linux/stratix10-svc-client.h
++   :functions: stratix10_svc_client_msg
++
++.. kernel-doc:: include/linux/stratix10-svc-client.h
++   :functions: stratix10_svc_command_reconfig_payload
++
++.. kernel-doc:: include/linux/stratix10-svc-client.h
++   :functions: stratix10_svc_cb_data
++
++.. kernel-doc:: include/linux/stratix10-svc-client.h
++   :functions: stratix10_svc_client
++
++.. kernel-doc:: drivers/misc/stratix10-svc.c
++   :export:
 -- 
-Dmitry
+2.7.4
+
