@@ -2,99 +2,101 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B42ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38001ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE6C20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:18:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE6C20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E51A12084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51A12084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbeGRIzj convert rfc822-to-8bit (ORCPT
+        id S1729972AbeGRIzw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 04:55:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40487 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbeGRIzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 04:55:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5EE3B207AC; Wed, 18 Jul 2018 10:18:54 +0200 (CEST)
-Received: from dell-desktop.home (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2008D20720;
-        Wed, 18 Jul 2018 10:18:54 +0200 (CEST)
-Date:   Wed, 18 Jul 2018 10:18:53 +0200
-From:   =?UTF-8?B?TXlsw6huZQ==?= Josserand <mylene.josserand@bootlin.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        mylene.josserand@free-electrons.com,
-        thomas.petazzoni@free-electrons.com,
-        maxime.ripard@free-electrons.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 0/2] Input: Add Cypress Gen5 Touchscreen driver
-Message-ID: <20180718101854.31006b81@dell-desktop.home>
-In-Reply-To: <20180704162158.euiw2v3hyv3hzofn@penguin>
-References: <20180703094309.18514-1-mylene.josserand@bootlin.com>
-        <20180704162158.euiw2v3hyv3hzofn@penguin>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Wed, 18 Jul 2018 04:55:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36946 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726514AbeGRIzw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 04:55:52 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 01E0340214E2;
+        Wed, 18 Jul 2018 08:19:08 +0000 (UTC)
+Received: from krava (unknown [10.43.17.196])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5A5152026D69;
+        Wed, 18 Jul 2018 08:19:06 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 10:19:05 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Cong Wang <xiyou.wangcong@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] perf/core: fix a possible deadlock scenario
+Message-ID: <20180718081905.GA13520@krava>
+References: <20180716215101.4713-1-xiyou.wangcong@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180716215101.4713-1-xiyou.wangcong@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 08:19:08 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 08:19:08 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dmitry,
-
-On Wed, 4 Jul 2018 16:21:58 +0000
-Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-
-> Hi Mylène,
+On Mon, Jul 16, 2018 at 02:51:01PM -0700, Cong Wang wrote:
+> hrtimer_cancel() busy-waits for the hrtimer callback to stop,
+> pretty much like del_timer_sync(). This creates a possible deadlock
+> scenario where we hold a spinlock before calling hrtimer_cancel()
+> while in trying to acquire the same spinlock in the callback.
 > 
-> On Tue, Jul 03, 2018 at 11:43:07AM +0200, Mylène Josserand wrote:
-> > Hello,
-> > 
-> > Here is a V6 series to add the driver of the touchscreen Cypress,
-> > TrueTouch Generation 5.
-> > Based on v4.18-rc3.
-> > 
-> > This patch series has already been posted in several iterations:
-> >     - v1: Sent on 2017/05/29
-> >     - v2: Sent on 2017/08/18
-> >     - v3: Sent on 2017/09/27
-> >     - v4: Sent on 2017/12/01
-> >     - v5: Sent on 2017/12/20
-> > 
-> > I did not have any comments the last 4 versions.
-> > And no reviews on my v5 during 6 months. Could I have any updates
-> > or feedback on my series to know why it is not merged (to be able to
-> > correct what is wrong)?  
+> This kind of deadlock is already known and is catchable by lockdep,
+> like for del_timer_sync(), we can add lockdep annotations. However,
+> it is still missing for hrtimer_cancel(). (I have a WIP patch to make
+> it complete for hrtimer_cancel() but it breaks booting.)
 > 
-> Sorry, I must have missed the v5, sorry about that.
-
-No problem.
-
+> And there is such a deadlock scenario in kernel/events/core.c too,
+> well actually, it is a simpler version: the hrtimer callback waits
+> for itself to finish on the same CPU! It sounds stupid but it is
+> not obvious at all, it hides very deeply in the perf event code:
 > 
-> I probably asked this question before, but just to make sure - I see
-> references to HID in the patch - the device is really not HID
-> compatible? Is there any hope it could be made work with i2c-hid +
-> hid-multitouch?
+> cpu_clock_event_init():
+>   perf_swevent_init_hrtimer():
+>     hwc->hrtimer.function = perf_swevent_hrtimer;
+> 
+> perf_swevent_hrtimer():
+>   __perf_event_overflow():
+>     __perf_event_account_interrupt():
+>       perf_adjust_period():
+>         pmu->stop():
+>         cpu_clock_event_stop():
+>           perf_swevent_cancel():
+>             hrtimer_cancel()
+> 
+> Getting stuck in a timer doesn't sound very scary, however, in this
 
-I do not think it is HID compatible but let me check the i2c-hid and
-hid-multitouch drivers to confirm that (or not).
+sound scary enough for me ;-) were you able to hit it?
 
-I will let you know in next few days.
+> case, its consequences are a disaster:
+> 
+> perf_event_overflow() which calls __perf_event_overflow() is called
+> in NMI handler too, so it is racy with hrtimer callback as disabling
+> IRQ can't possibly disable NMI. This means this hrtimer callback
+> once interrupted by an NMI handler could deadlock within NMI!
 
-Thank you,
-Best regards,
+hum, the swevent pmu does not triger NMI, so that timer
+will never be touched in NMI context
 
--- 
-Mylène Josserand, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+jirka
