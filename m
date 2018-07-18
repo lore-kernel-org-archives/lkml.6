@@ -2,156 +2,155 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A96ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4C7ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 538AE20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:33:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z3pyKlOg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538AE20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 98A5D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98A5D2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbeGRQMW (ORCPT
+        id S1731617AbeGRQMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:12:22 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:43244 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731588AbeGRQMW (ORCPT
+        Wed, 18 Jul 2018 12:12:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731068AbeGRQMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:12:22 -0400
-Received: by mail-io0-f193.google.com with SMTP id y10-v6so4440215ioa.10
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ItGYnOyuplg5zeX7jLigHkp90Z2TlK+7g801IPBHHMA=;
-        b=Z3pyKlOgFBHdPdB55YUZdQICDgplLeYdraOa113wD9ezTNOH0ZAVPypj6mlNoMsGEH
-         B8RnHaOfpqe5LEftSKNAlZhpXWXul5POwBJFjX4ICSXN5XsnYXDK6IzLjIQZpBJIHrro
-         +Zu7y2JEy+bP2IFfSQI+gQa9B/YY+IrIRCuT8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ItGYnOyuplg5zeX7jLigHkp90Z2TlK+7g801IPBHHMA=;
-        b=OkaFdyzf79BmGpezcF1RxsXIhqYyKE2mNmTO26XLxcZ3BQGvKYFDKBkYictycG8+Rk
-         rn6MaOP6WPzwPDTReK1IbD4Z1l6T5m8foazbljdLejinGQoJrUJ/yxyxXnszamt5lhAo
-         YQctUBXX02Dc38FF28wrzdrMkQFuTDidGku4aZizF549dOMeiVjjLXvK46wYsI4aWc4S
-         B312RuEXxHrdiCCOHyziuSAoizWxSVLDLIC9YbESuh1dnf3uiNBvpadSB697uAYec8nT
-         44GVv7d+UYu1aWMmYUpeQdZa2WmZZSLoG+Gr2ASfLaEobYeTc37+3Fcrl94yj/l3AcXk
-         yaRg==
-X-Gm-Message-State: AOUpUlF2leISRAEMuYBiZdQxwihGC7SZIpZZaXu0mnQacpL7tqLFTmVL
-        7Ym57Pr5lkzevwr9NvLXQik1mRZ6y4L6gP/MYyLvFw==
-X-Google-Smtp-Source: AAOMgpdgZl8CdkkN4Tfuk23O6bgmU/s9zFlJHpHlafG0qrbZU4x7B/gANXiLb9YvGlqv3ucrWo+wla/qF7XXewu//hY=
-X-Received: by 2002:a6b:be83:: with SMTP id o125-v6mr5367001iof.173.1531928034941;
- Wed, 18 Jul 2018 08:33:54 -0700 (PDT)
+        Wed, 18 Jul 2018 12:12:36 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6IFT11V078069
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 11:34:09 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ka79dk2by-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 11:34:08 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 18 Jul 2018 11:34:07 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 11:34:04 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6IFY3gp9437444
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 15:34:03 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 21FD7B2067;
+        Wed, 18 Jul 2018 11:33:54 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E81A5B205F;
+        Wed, 18 Jul 2018 11:33:53 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jul 2018 11:33:53 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 797BA16C194E; Wed, 18 Jul 2018 08:36:28 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 08:36:28 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <9ee4d6fd-02e2-2c73-36a7-36ef4f6413b0@de.ibm.com>
+ <20180711201759.GB3593@linux.vnet.ibm.com>
+ <1531340384.8759.86.camel@infradead.org>
+ <20180711210828.GD3593@linux.vnet.ibm.com>
+ <1531396842.8759.125.camel@infradead.org>
+ <20180712125351.GP3593@linux.vnet.ibm.com>
+ <20180712161704.GA20726@linux.vnet.ibm.com>
+ <20180716154015.GA21419@linux.vnet.ibm.com>
+ <1531815548.19223.23.camel@infradead.org>
+ <20180717125653.GH12945@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:33:54
- -0700 (PDT)
-In-Reply-To: <CAK8P3a3C1ihC=X=kZ0S836xeMJSGSy6OLNAcBEkdZ35N04bAMw@mail.gmail.com>
-References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
- <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
- <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
- <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au> <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
- <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com>
- <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
- <CAK8P3a3Dh+g=v++BMCtmmiOSnVu4CEUgss0U7BZS_K45aTddqg@mail.gmail.com>
- <CAKv+Gu-cOV6uo6MpLxr9uQSTT-ku_wn9+D7CC4+3maJtvcaGoA@mail.gmail.com>
- <CAKv+Gu8e9sm42NKwQvQzD33JTHSaEY2q7sm0W0065dDz_rzSaA@mail.gmail.com> <CAK8P3a3C1ihC=X=kZ0S836xeMJSGSy6OLNAcBEkdZ35N04bAMw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 19 Jul 2018 00:33:54 +0900
-Message-ID: <CAKv+Gu-NBKxzV5PYAuzeP5xXfsk=Kw41677ASzRkD6=xO23zeQ@mail.gmail.com>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180717125653.GH12945@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071815-0060-0000-0000-0000028E2414
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009387; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062625; UDB=6.00545606; IPR=6.00840480;
+ MB=3.00022187; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-18 15:34:05
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071815-0061-0000-0000-000045D7DBD3
+Message-Id: <20180718153628.GA24359@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807180172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19 July 2018 at 00:33, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Jul 18, 2018 at 5:19 PM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> On 18 July 2018 at 23:50, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->>> On 18 July 2018 at 05:59, Arnd Bergmann <arnd@arndb.de> wrote:
->>>> On Sun, Jul 15, 2018 at 6:28 AM, Kees Cook <keescook@chromium.org> wrote:
->>>>>
->>>>> After my ahash to shash conversions, only ccm is left as an ahash
->>>>> user, since it actually uses sg. But with the hard-coded value reduced
->>>>> to 376, this doesn't trip the frame warnings any more. :)
->>>>>
->>>>> I'll send an updated series soon.
->>>>
->>>> Maybe we should get rid of that one as well then and remove
->>>> AHASH_REQUEST_ON_STACK()?
->>>>
->>>> I see that Ard (now on Cc) added this usage only recently. Looking
->>>> at the code some more, I also find that the descsize is probably
->>>> much smaller than 376 for all possible cases   of "cbcmac(*)",
->>>> either alg->cra_blocksize plus a few bytes or sizeof(mac_desc_ctx)
->>>> (i.e. 20) for arch/arm64/crypto/aes-glue.c.
->>>>
->>>> Walking the sglist here means open-coding a shash_ahash_update()
->>>> implementation in crypto_ccm_auth(), that that doesn't seem to
->>>> add much complexity over what it already has to do to chain
->>>> the sglist today.
->>>>
->>>
->>> It would be better to add a variably sized ahash request member to
->>> struct crypto_ccm_req_priv_ctx, the only problem is that the last
->>> member of that struct (skreq) is variably sized already, so it would
->>> involve having a struct ahash_request pointer pointing into the same
->>> struct, after the skreq member.
->>
->> Actually, I think the below should already do the trick: ahreq and
->> skreq are not used at the same time, so we can stick them in a union,
->> and take the max() of the reqsize to ensure there's enough empty space
->> after it.
->
-> This looks very nice indeed.
->
->> --------8<----------
->> diff --git a/crypto/ccm.c b/crypto/ccm.c
->> index 0a083342ec8c..b242fd0d3262 100644
->> --- a/crypto/ccm.c
->> +++ b/crypto/ccm.c
->> @@ -50,7 +50,10 @@ struct crypto_ccm_req_priv_ctx {
->>         u32 flags;
->>         struct scatterlist src[3];
->>         struct scatterlist dst[3];
->> -       struct skcipher_request skreq;
->> +       union {
->> +               struct ahash_request ahreq;
->> +               struct skcipher_request skreq;
->> +       };
->>  };
->>
->
-> And this structure is never put on the stack anywhere but
-> always dynamically allocated anyway, right?
->
+On Tue, Jul 17, 2018 at 05:56:53AM -0700, Paul E. McKenney wrote:
+> On Tue, Jul 17, 2018 at 10:19:08AM +0200, David Woodhouse wrote:
+> > On Mon, 2018-07-16 at 08:40 -0700, Paul E. McKenney wrote:
+> > > Most of the weekend was devoted to testing today's upcoming pull request,
+> > > but I did get a bit more testing done on this.
+> > > 
+> > > I was able to make this happen more often by tweaking rcutorture a
+> > > bit, but I still do not yet have statistically significant results.
+> > > Nevertheless, I have thus far only seen failures with David's patch or
+> > > with both David's and my patch.  And I actually got a full-up rcutorture
+> > > failure (a too-short grace period) in addition to the aforementioned
+> > > close calls.
+> > > 
+> > > Over this coming week I expect to devote significant testing time to
+> > > the commit just prior to David's in my stack.  If I don't see failures
+> > > on that commit, we will need to spent some quality time with the KVM
+> > > folks on whether or not kvm_x86_ops->run() and friends have the option of
+> > > failing to return, but instead causing control to pop up somewhere else.
+> > > Or someone could tell me how I am being blind to some obvious bug in
+> > > the two commits that allow RCU to treat KVM guest-OS execution as an
+> > > extended quiescent state.  ;-)
+> > 
+> > One thing we can try, if my patch is implicated, is moving the calls to
+> > rcu_kvm_en{ter,xit} closer to the actual VM entry. Let's try putting
+> > them around the large asm block in arch/x86/kvm/vmx.c::vmx_vcpu_run()
+> > for example. If that fixes it, then we know we've missed something else
+> > interesting that's happening in the middle.
+> 
+> I don't have enough data to say anything with too much certainty, but
+> my patch has rcu_kvm_en{ter,xit}() quite a bit farther apart than yours
+> does, and I am not seeing massive increases in error rate in my patch
+> compared to yours.  Which again might or might not mean anything.
+> 
+> Plus I haven't proven that your patch isn't an innocent bystander yet.
+> If it isn't just an innocent bystander, that will take most of this
+> week do demonstrate given current failure rates.
 
-Yes.
+And I finally did get some near misses from an earlier commit, so we
+should consider your patch to be officially off the hook.
+
+							Thanx, Paul
+
+> I am also working on improving rcutorture diagnostics which should help
+> me work out how to change rcutorture so as to find this more quickly.
+> 
+> > Testing on Skylake shows a guest CPUID goes from ~3000 cycles to ~3500
+> > with this patch, so in the next iteration it definitely needs to be
+> > ifdef CONFIG_NO_HZ_FULL anyway, because it's actually required there
+> > (AFAICT) and it's too expensive otherwise as Christian pointed out.
+> 
+> Makes sense!
+> 
+> 							Thanx, Paul
+
