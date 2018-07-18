@@ -2,196 +2,90 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4D5ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F96ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 893C720850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893C720850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BE8A20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="mOoiE35u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE8A20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731031AbeGRPEg (ORCPT
+        id S1731068AbeGRPEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:04:36 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:53939 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730926AbeGRPEg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:04:36 -0400
-X-UUID: 86eeda05c1f34f9498b610be9664c3f3-20180718
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1984020149; Wed, 18 Jul 2018 22:26:09 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 18 Jul 2018 22:26:08 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 18 Jul 2018 22:26:08 +0800
-Message-ID: <1531923968.8953.197.camel@mtkswgap22>
-Subject: Re: [PATCH v5 5/7] Bluetooth: Extend btuart driver for join more
- vendor devices
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 18 Jul 2018 22:26:08 +0800
-In-Reply-To: <BB53539F-C053-4DCD-A748-B75B995E1179@holtmann.org>
-References: <cover.1531150733.git.sean.wang@mediatek.com>
-         <85d449cdd34bf47d72935a821915e825c64a2145.1531150733.git.sean.wang@mediatek.com>
-         <70616B99-5A2D-417A-8815-246700EEF4E2@holtmann.org>
-         <1531641134.3955.19.camel@mtkswgap22>
-         <6476BE78-3FE5-465F-8060-2215387323AA@holtmann.org>
-         <1531754965.8953.3.camel@mtkswgap22>
-         <BB53539F-C053-4DCD-A748-B75B995E1179@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 11:04:43 -0400
+Received: from imap.thunk.org ([74.207.234.97]:57080 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730123AbeGRPEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:04:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=PCBwdRZ1mcUvHLqdmdrQtlawWulAYCxtHc+C8zCeC9Y=; b=mOoiE35uSNXdjpyLqyDnO6La/6
+        FeCPYM7PsBEbSRedjRj0WQuiPSc4QOlO3eExK1HIURJ/fbLhWywkCE9aa0Jc3jaTE/uadSzYL3gHx
+        gwmcaPou/RIT0CCFfSdJO+AbgmSd+jo2mslqQTLbcJpNheMUQUAb034Dp/rYKHsEIii8=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1ffnPP-0003Jy-Nh; Wed, 18 Jul 2018 14:26:27 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 52BC77A6404; Wed, 18 Jul 2018 10:26:25 -0400 (EDT)
+Date:   Wed, 18 Jul 2018 10:26:25 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Yann Droneaud <ydroneaud@opteya.com>
+Cc:     linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        labbott@redhat.com
+Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
+Message-ID: <20180718142625.GA5942@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Yann Droneaud <ydroneaud@opteya.com>, linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        labbott@redhat.com
+References: <20180718014344.1309-1-tytso@mit.edu>
+ <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 14:23 +0200, Marcel Holtmann wrote:
-> Hi Sean,
+On Wed, Jul 18, 2018 at 09:22:13AM +0200, Yann Droneaud wrote:
 > 
-> >>>>> Adding an independent btuart.h header allows these essential definitions
-> >>>>> can be reused in vendor driver. Also, struct btuart_vnd is extended with
-> >>>>> additional callbacks such as .init initializing vendor data, .shtudown,
-> >>>>> .recv and .send supporting SoC specific framing for that btuart can
-> >>>>> simply adapt to various Bluetooth uart-based devices.
-> >>>>> 
-> >>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> >>>>> ---
-> >>>>> drivers/bluetooth/btuart.c | 73 ++++++++++++++++++++++++----------------------
-> >>>>> drivers/bluetooth/btuart.h | 30 +++++++++++++++++++
-> >>>>> 2 files changed, 68 insertions(+), 35 deletions(-)
-> >>>>> create mode 100644 drivers/bluetooth/btuart.h
-> >>>>> 
-> >>>>> diff --git a/drivers/bluetooth/btuart.c b/drivers/bluetooth/btuart.c
-> >>>>> index a900aac..65d0086 100644
-> >>>>> --- a/drivers/bluetooth/btuart.c
-> >>>>> +++ b/drivers/bluetooth/btuart.c
-> >>>>> @@ -33,35 +33,11 @@
-> >>>>> #include <net/bluetooth/hci_core.h>
-> >>>>> 
-> >>>>> #include "h4_recv.h"
-> >>>>> +#include "btuart.h"
-> >>>>> #include "btbcm.h"
-> >>>>> 
-> >>>>> #define VERSION "1.0"
-> >>>>> 
-> >>>>> -struct btuart_vnd {
-> >>>>> -	const struct h4_recv_pkt *recv_pkts;
-> >>>>> -	int recv_pkts_cnt;
-> >>>>> -	unsigned int manufacturer;
-> >>>>> -	int (*open)(struct hci_dev *hdev);
-> >>>>> -	int (*close)(struct hci_dev *hdev);
-> >>>>> -	int (*setup)(struct hci_dev *hdev);
-> >>>>> -};
-> >>>>> -
-> >>>>> -struct btuart_dev {
-> >>>>> -	struct hci_dev *hdev;
-> >>>>> -	struct serdev_device *serdev;
-> >>>>> -
-> >>>>> -	struct work_struct tx_work;
-> >>>>> -	unsigned long tx_state;
-> >>>>> -	struct sk_buff_head txq;
-> >>>>> -
-> >>>>> -	struct sk_buff *rx_skb;
-> >>>>> -
-> >>>>> -	const struct btuart_vnd *vnd;
-> >>>>> -};
-> >>>> 
-> >>>> I really like to avoid this since it is not clean. Frankly I prefer to keep the btuart.c driver for drivers that really just use H:4 as transport protocol. If the protocol is only H:4 alike and has extra headers, then it should be a separate driver.
-> >>>> 
-> >>> 
-> >>> thanks for letting me know your concern. I think I'm a little over in reusing these existing methods and break something generic and its beauty.
-> >>> 
-> >>> I'll make the driver be a separate one based on btuart in the next version.
-> >>> 
-> >>> 
-> >>>> The common H:4 handling is abstracted in h4_recv.h already anyway and we can add more pieces if needed. However I also wonder since you have extra framing that the complex H:4 state keeping might be not needed at all. So it could be simplified.
-> >>>> 
-> >>> 
-> >>> okay, I will get rid of h4_recv.h and consider to use more simplified logic to handle the extra framing and its payload.
-> >> 
-> >> only if it is already framed by your extra header, but I seem to recall that it will frame it. For example the bfusb.c old driver does frame H:4 as well and then no extra state keeping for H:4 is needed. Just pass the frames up into the core via hci_recv_frame (or hci_recv_diag for vendor diagnostic) and move on with it.
-> >> 
-> >> You can of course use h4_recv.h if you need to, but only do that if you are true H:4 stream and have no idea where a frame ends and starts.
-> >> 
-> >> Regards
-> >> 
-> >> Marcel
-> >> 
-> > 
-> > Thanks for the explanation, I didn't show what the extra header is, that causes some misunderstanding.
-> > 
-> > The mtk extra header doesn't provide any idea where a frame ends and starts in the bluetooth stream. 
-> > 
-> > It is just totally a legacy stuff used by mtk combo devices sharing a serial transport, such as BT/GPS/FM running via a shared UART, to
-> > let the host know what type of radio the following bytes is for and how long it's. 
+> The text message should explain this is only relevant during
+> initialization / early boot.
 > 
-> but that means it is framed. You know ahead of time how long the H:4 packet will be. That is the important part. Unless you tell me that it can fragment a H:4 frame over multiple MTK specific frames.
-> 
-> > The extra header is really useful for a combo device, splitting flow and fitting in a single serial transport, but for a single device such as
-> > mt7622 Bluetooth I made here, it seems to be useless.
-> 
-> Useless or not depends on what you are going to do with the device. In theory you could write a serdev driver that just handles the multiplexing (since that is what you have) and then hands down the frames to individual drivers. Frankly something like btqcomsmd.c seems to be what you really want here. However first you would needed this multiplex driver that takes the serial stream and breaks it up.
-> 
-> > Because the extra header doesn't provide any details about this stream and each radio stack still needs to be in charge of their stream
-> > parsing. That is why I still want to use recv_h4.h instead of coding my own parser.
-> 
-> As I said above, if the header + length always indicates a full H:4 frame, then you do not need h4_recv.h since you know the packet size. If it doesn't (and it means things can fragment), then you do.
-> 
+> The config option name should state this.
 
-My case is the extra header + length doesn't indicate a full H:4 frame,
-things can fragment
+There are other workarounds for hangs that happen after initialization
+/ early boot, yes.  They are of varying levels of quality / safely,
+but that's neither here nor there.
 
-> However I have to note that a serial stream from your multiplexer protocol also needs some state handling since it can be interrupted at any point. If you want this clean, then you actually do that anyway. Essentially you have two protocols layered and want to process the independently.
+However, enabling config option means that the CRNG will be
+initialized with potentially information available to the CPU
+manufacturer and/or Nation States, and this persists *after*
+initialization / early boot.  So to say, "we're perfectly safe after
+we leave initialization / early boot" is not true.
 
-Yes, I also agree that it makes better and cleaner if there is another
-driver in charge of the multiplexer protocol and the framing.
+So I'd much rather make it clear that we are trusting the CPU
+manufacturer far more than just during early boot.
 
-But, could you accept that I postpone the target into the next stage,
-I just like to consider BT single device, not for multiplexer protocol
-case, in the current stage.
+Cheers,
 
-To be honest, my next step is to add mt7688 btusb and then want to have
-an integration with btmtkuart. mt7688 btusb doesn't have extra framing
-for multiplexer protocol, so it can allow me to make the concentration
-more on pure bt protocol and pushing the latest mtk bluetooth devices
-being supported on the bluez driver.
-
-> If you post details about the multiplexing protocol for your serial stream, then I can help you design a driver for it. With serdev that is actually simple. And then you could hook up GPS etc. at some point once you want to run this on hardware that has the combo chip.
-> 
-
-okay, really thanks for your help. I also have an interest on this part.
-now how does bluez receive and sent packet from/to a virtual device ( a
-serdev handling multiplexer protocol)? It seems current bluez device all
-handling packet from/to physical bus device. or I was missing something?
-
-> Having a Linux Bluetooth driver is useful for Android as well btw. We have HCI_CHANNEL_USER and a generic Android driver for using it. So enabling the chip in Linux upstream will enable it for Android as well.
-> 
-it really save more time as I knew many vendors do two driver separately
-for bluez and bluedroid. where could I find the resource for
-HCI_CHANNEL_USER and generic android driver ? Is it still the part of
-bluez or run by another project ?
-
-> Regards
-> 
-> Marcel
-> 
-
-
+					- Ted
