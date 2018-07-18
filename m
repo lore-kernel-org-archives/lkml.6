@@ -2,121 +2,157 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38901ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41527ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19E62075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:53:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F19E62075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id ECE9D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:53:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="emCvHQCr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE9D2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731164AbeGRPb1 (ORCPT
+        id S1731228AbeGRPbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:31:27 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:13776 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730288AbeGRPb1 (ORCPT
+        Wed, 18 Jul 2018 11:31:39 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44806 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731190AbeGRPbj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:31:27 -0400
-X-IronPort-AV: E=Sophos;i="5.51,370,1526335200"; 
-   d="scan'208";a="339416353"
-Received: from unknown (HELO [132.227.125.40]) ([132.227.125.40])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 16:53:08 +0200
-Date:   Wed, 18 Jul 2018 16:53:08 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     matthias.bgg@kernel.org
-cc:     ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-        ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-        robh+dt@kernel.org, mark.rutland@arm.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, lee.jones@linaro.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, mchehab@kernel.org,
-        rdunlap@infradead.org, pi-cheng.chen@linaro.org,
-        sean.wang@mediatek.com, linux-clk@vger.kernel.org,
-        linux@armlinux.org.uk, matthias.bgg@gmail.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Matthias Brugger <mbrugger@suse.com>, kbuild-all@01.org
-Subject: Re: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to
- platform device probing (fwd)
-Message-ID: <alpine.DEB.2.20.1807181651360.3113@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 18 Jul 2018 11:31:39 -0400
+Received: by mail-lj1-f194.google.com with SMTP id q127-v6so4352224ljq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 07:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=YNwEiPeQenBIgkIJAPqjnPKnLqfn+L84QfxxEQxGdBQ=;
+        b=emCvHQCrL0Pm664V0uex/LWhlfr/oYtpu09VsEAb9erTLcZf7OKsrb3ThNpHvOC0Ei
+         ZajWEpLw9VyVsjvBRmSW1nE0kw3XrYUJs3CMb86pfVN3+Z5oKEu427Id+if0TtefILKn
+         jvdbL40Gi1MWsQkFY5Ht2i0RdRxAeh+sO8A9M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YNwEiPeQenBIgkIJAPqjnPKnLqfn+L84QfxxEQxGdBQ=;
+        b=tuselX9CT2UBsKtgjV+8TpQ2lLjdGkEn5nlNsstGUnJbUXD0IDqomfoELWWoOxFDcF
+         h8qIkFB+ODhrlRSseryzoxMSkoKibuiPeuFs4XtWrZWuMpiOj8SsZvFCtRgxz+n58EQ0
+         2loJ6LyLekPL2v6LGAyd6xHOOz5OA39J1PvL7fJzG8sUBleNuX9Kc4vgljvjJAIPIarB
+         1tk+WRb2k8lfEM5bEFXJlQ6kTygHnW8cJtnNyYT42Wk/Zbr4KLW/D3dPykVzf9oDEn58
+         74wcMYAlKCGz3ITYDA59x0WpDKAfLfpdaTFHe6y0bq2Ldxi992kdzPC+ZPREd+pzrSMs
+         eLJw==
+X-Gm-Message-State: AOUpUlEscNrOZcCEZGCAdCJGOM1qaEtfNeSwKQSPusbaSxJimsltOSUu
+        8IlfOp3aNdvpW99U4J1kDf9EkQ==
+X-Google-Smtp-Source: AAOMgpeiuLnk5Wl8zhUgkOndvUVkO98uh69wRRZkU3HPUoFeow41DqBAN3Hj+ZV6U7jmoO26WuevUQ==
+X-Received: by 2002:a2e:97c8:: with SMTP id m8-v6mr5233947ljj.52.1531925600639;
+        Wed, 18 Jul 2018 07:53:20 -0700 (PDT)
+Received: from localhost.localdomain ([90.228.168.81])
+        by smtp.gmail.com with ESMTPSA id l141-v6sm575727lfg.55.2018.07.18.07.53.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 07:53:20 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: msm8916: drop legacy suffix for clocks used by MSM DRM driver
+Date:   Wed, 18 Jul 2018 16:52:57 +0200
+Message-Id: <20180718145258.15254-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Drop legacy suffix for clocks used by MSM DRM driver.
+Fixes the following warnings:
 
-Please check on whether the kfree in the remove function is still needed.
-Also the platform_driver structure has two probe fields.
+msm_dsi_phy 1a98300.dsi-phy: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
+msm 1a00000.mdss: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
+msm 1a00000.mdss: Using legacy clk name binding.  Use "bus" instead of "bus_clk"
+msm 1a00000.mdss: Using legacy clk name binding.  Use "vsync" instead of "vsync_clk"
+msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "bus" instead of "bus_clk"
+msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
+msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "core" instead of "core_clk"
+msm_mdp 1a01000.mdp: Using legacy clk name binding.  Use "vsync" instead of "vsync_clk"
+msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "mdp_core" instead of "mdp_core_clk"
+msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "iface" instead of "iface_clk"
+msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "bus" instead of "bus_clk"
+msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "byte" instead of "byte_clk"
+msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "pixel" instead of "pixel_clk"
+msm_dsi 1a98000.dsi: Using legacy clk name binding.  Use "core" instead of "core_clk"
 
-julia
-
----------- Forwarded message ----------
-Date: Wed, 18 Jul 2018 22:31:13 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [resend PATCH v4 3/5] clk: mediatek: mt8173: switch mmsys to
-    platform device probing
-
-In-Reply-To: <20180717220328.792-4-matthias.bgg@kernel.org>
-References: <20180717220328.792-4-matthias.bgg@kernel.org>
-TO: matthias.bgg@kernel.org
-
-Hi Matthias,
-
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on sof-driver-fuweitax/master]
-[also build test WARNING on v4.18-rc5 next-20180718]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/matthias-bgg-kernel-org/arm-arm64-mediatek-Fix-mmsys-device-probing/20180718-191916
-base:   https://github.com/fuweitax/linux master
-:::::: branch date: 3 hours ago
-:::::: commit date: 3 hours ago
-
->> drivers/clk/mediatek/clk-mt8173.c:1195:1-6: WARNING: invalid free of devm_ allocated data
---
->> drivers/clk/mediatek/clk-mt8173.c:1200:48-49: probe: first occurrence line 1201, second occurrence line 1202
-
-# https://github.com/0day-ci/linux/commit/112857d0f58413a87875dfc9e1b43fdfde3b55eb
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 112857d0f58413a87875dfc9e1b43fdfde3b55eb
-vim +1195 drivers/clk/mediatek/clk-mt8173.c
-
-112857d0 Matthias Brugger 2018-07-18  1189
-112857d0 Matthias Brugger 2018-07-18  1190  static int mtk_mmsys_remove(struct platform_device *pdev)
-112857d0 Matthias Brugger 2018-07-18  1191  {
-112857d0 Matthias Brugger 2018-07-18  1192  	struct mtk_mmsys_priv *private = platform_get_drvdata(pdev);
-112857d0 Matthias Brugger 2018-07-18  1193
-112857d0 Matthias Brugger 2018-07-18  1194  	kfree(private->clk_data);
-112857d0 Matthias Brugger 2018-07-18 @1195  	kfree(private);
-112857d0 Matthias Brugger 2018-07-18  1196
-112857d0 Matthias Brugger 2018-07-18  1197  	return 0;
-29859d93 James Liao       2015-05-20  1198  }
-112857d0 Matthias Brugger 2018-07-18  1199
-112857d0 Matthias Brugger 2018-07-18 @1200  static struct platform_driver clk_mt8173_mm_drv = {
-112857d0 Matthias Brugger 2018-07-18 @1201  	.probe = mtk_mmsys_probe,
-112857d0 Matthias Brugger 2018-07-18 @1202  	.probe = mtk_mmsys_remove,
-112857d0 Matthias Brugger 2018-07-18  1203  	.driver = {
-112857d0 Matthias Brugger 2018-07-18  1204  		.name = "clk-mt8173-mm",
-112857d0 Matthias Brugger 2018-07-18  1205  	},
-112857d0 Matthias Brugger 2018-07-18  1206  };
-112857d0 Matthias Brugger 2018-07-18  1207  module_platform_driver(clk_mt8173_mm_drv);
-29859d93 James Liao       2015-05-20  1208
-
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ arch/arm64/boot/dts/qcom/msm8916.dtsi | 28 +++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+index c2625d15a8c0..7b32b8990d62 100644
+--- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
+@@ -858,9 +858,9 @@
+ 			clocks = <&gcc GCC_MDSS_AHB_CLK>,
+ 				 <&gcc GCC_MDSS_AXI_CLK>,
+ 				 <&gcc GCC_MDSS_VSYNC_CLK>;
+-			clock-names = "iface_clk",
+-				      "bus_clk",
+-				      "vsync_clk";
++			clock-names = "iface",
++				      "bus",
++				      "vsync";
+ 
+ 			interrupts = <0 72 IRQ_TYPE_LEVEL_HIGH>;
+ 
+@@ -883,10 +883,10 @@
+ 					 <&gcc GCC_MDSS_AXI_CLK>,
+ 					 <&gcc GCC_MDSS_MDP_CLK>,
+ 					 <&gcc GCC_MDSS_VSYNC_CLK>;
+-				clock-names = "iface_clk",
+-					      "bus_clk",
+-					      "core_clk",
+-					      "vsync_clk";
++				clock-names = "iface",
++					      "bus",
++					      "core",
++					      "vsync";
+ 
+ 				iommus = <&apps_iommu 4>;
+ 
+@@ -922,12 +922,12 @@
+ 					 <&gcc GCC_MDSS_BYTE0_CLK>,
+ 					 <&gcc GCC_MDSS_PCLK0_CLK>,
+ 					 <&gcc GCC_MDSS_ESC0_CLK>;
+-				clock-names = "mdp_core_clk",
+-					      "iface_clk",
+-					      "bus_clk",
+-					      "byte_clk",
+-					      "pixel_clk",
+-					      "core_clk";
++				clock-names = "mdp_core",
++					      "iface",
++					      "bus",
++					      "byte",
++					      "pixel",
++					      "core";
+ 				phys = <&dsi_phy0>;
+ 				phy-names = "dsi-phy";
+ 
+@@ -963,7 +963,7 @@
+ 				#phy-cells = <0>;
+ 
+ 				clocks = <&gcc GCC_MDSS_AHB_CLK>;
+-				clock-names = "iface_clk";
++				clock-names = "iface";
+ 			};
+ 		};
+ 
+-- 
+2.17.1
+
