@@ -7,111 +7,184 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE5A1ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D045AECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 988982075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:49:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75FAD2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:56:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/RJSbBM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 988982075E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfC8vaIW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FAD2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbeGRV3U (ORCPT
+        id S1729215AbeGRVfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:29:20 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35813 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeGRV3T (ORCPT
+        Wed, 18 Jul 2018 17:35:42 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:38163 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbeGRVfl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:29:19 -0400
-Received: by mail-oi0-f65.google.com with SMTP id i12-v6so11409078oik.2;
-        Wed, 18 Jul 2018 13:49:41 -0700 (PDT)
+        Wed, 18 Jul 2018 17:35:41 -0400
+Received: by mail-qk0-f196.google.com with SMTP id 126-v6so1535239qke.5;
+        Wed, 18 Jul 2018 13:56:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Ny84xO/06cSbFK7l6R+eoIzgDdn8Cb9Wrouf+SlR/lo=;
-        b=E/RJSbBM1e4Jmm2ipG684IErFmdhDg3Q66tyAMfc47ymi+/pje0JJ5CN5kCD0ihbfQ
-         E0l9ewvBUbY0AV3FilP/OiDfO+CnpjJGlqz/e9B+QvRoKDiAt+hIG2Yvxp3anDPSPPsS
-         EAvwj3r57KpVKWN9PDswo9iBNlqOR9jdM5jYZ8yQ/OeOUM9So8zPAfBMTufhVemlfpp5
-         /8UA7opU99+/T7+axze0R3ZK/m3PRnx1kenCslPXWTXF6/MwxA88KfaxVx7gxFnjz0w/
-         UQpMIkEPrXgeOTu+alTuWuPHVtOE+oABlfog47tQ0zn4qCIlGQ6ElBnrDYlWNPTt5CGp
-         OnIw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ik3/lfGnAk+Q47RyrEVdoD84t0WmGxzBjEMSD0QQbhw=;
+        b=bfC8vaIW83HSMy8gjVJ7qYHqevVHAMyqpeN7wrSY0GVvpVZWdKXEs7DHAOwrvuuk19
+         zNv3gVsT1H9RhY0y3ODiDt2aWVgWyGlL+EPP4IxylhMZA/+2Oi/NmdWek7e0SwFEveiL
+         fE+rTosauDy4YTWAAoCGVmLoD5MPBJaVlQURDD4EsNTSCJO9wdVp7fOYSlit5a4bZYUv
+         kajzfClYoI3vFYTrU9FIzdPOPQmHzd4QxYU5OyQ4CBe0Eup7a+5Vt/NOGXt8oviinhL2
+         kfgNJuoNr+X9rCBVpqUjV9AHnac3KSkC9zZjNJvRDY8YMqlV7VHdwiL3RewAfUo2XiZg
+         UrlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Ny84xO/06cSbFK7l6R+eoIzgDdn8Cb9Wrouf+SlR/lo=;
-        b=ErVutYK5aWMc06bxnwGlNRU32T2sVKsV0kZZ73+BSxM/KXMkXIduFFuQFkoE/ebYqh
-         LulrqIwdjQl9S0Kmh5T2NkxPLbz3ZB73msRdyZfONY+sPXfoMPPJy1UARmWKnrtRqQMC
-         dXByL0dSpbldRsXhubjySk7Uvnovq4203RXunNxHxhE3BHHPPNtF0mpF6jUfV7YeZdXN
-         frxJQkn0zvwxpPX5861WucInJhQZ/MhEBGU3csB8HlTl5vAnS6fdvQea9ralwuuClWbe
-         ONZv/YgbkvZnB2j51atszq+7bphGAtaVCEZFIrHbQ3DfmMRZ55GnBX6dDvmpeN7+MxiI
-         lJsw==
-X-Gm-Message-State: AOUpUlHvjU8A7doqWU2TajbjC3HI+N+Gkz3ru57cSEv+emlvUTwcw02B
-        /eZmQY38IYygH1XVE6p5XM9u6bICDnUfpgDA1sU=
-X-Google-Smtp-Source: AAOMgpdNktyylvaedkY9FGwOCkFYm5c/kr249qRhlE1UbOX633KdYJ3wIUQvLUcYH+5YLlepQCvXKjHSuUuwiyLyJLQ=
-X-Received: by 2002:aca:400b:: with SMTP id n11-v6mr7614224oia.150.1531946980841;
- Wed, 18 Jul 2018 13:49:40 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ik3/lfGnAk+Q47RyrEVdoD84t0WmGxzBjEMSD0QQbhw=;
+        b=gMKtXjOtmNst8qw5bBvENoc+J6SQXBRnLNXH0mtzgvZU8f8PmMUwedJhpzaWYMkP9F
+         eqKuBIQqJhPrWw13DbHHLji+AoZdFXJTOL9s60DJGl8xaFu6i5CQls18fOIOdj18YAGg
+         FcsWxenQ8eaKrh7PEMT0NZvn34Z/rSTvuDbLQyQcL9ss3A6yvdT2oCyVJ2+4DD4Mme0R
+         IugRvImTOePzppsvb5wBjPgllSyvTfvMUki66P8Wl4B3cIxO3ypoy/vLANbEAblSlrqJ
+         zy8v62jqqhIEmss+3zeuHSLLk9G99yfF+HqLN+q8EI95Bb24MAM7rkpVDxyqclWVrXyB
+         KULw==
+X-Gm-Message-State: AOUpUlHPt6HA077eAFnvcvxpTm1D16s++Xl07G0FC1NuIuHvzjgBIMbN
+        rzkCLeX0l98eDegCA3rV9bMJM1n8k5wY7ZpuVcYbdw==
+X-Google-Smtp-Source: AAOMgpcjEN7G+TuOLbiib7seq5PUiYbdfjIvbjzOygCmV/MO3SrX9kKVwzpfm3gDwRdO5CcrKZ7As0l4Opo+tYav3K0=
+X-Received: by 2002:a37:c40d:: with SMTP id d13-v6mr6708808qki.190.1531947362050;
+ Wed, 18 Jul 2018 13:56:02 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac9:42c1:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 13:49:40
- -0700 (PDT)
-In-Reply-To: <20180718191851.31984-1-chenbo@pdx.edu>
-References: <20180718191851.31984-1-chenbo@pdx.edu>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Wed, 18 Jul 2018 13:49:40 -0700
-Message-ID: <CAKgT0UceBCgtae2NMpu236fYvJOU+0uzQDk5c6rgRXqB+7CcMQ@mail.gmail.com>
-Subject: Re: [PATCH] e1000: ethtool: check on netif_running() before calling e1000_up()
-To:     Bo Chen <chenbo@pdx.edu>
-Cc:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        David Miller <davem@davemloft.net>,
-        Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, phenix1108@gmail.com,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>
+References: <20180713161841.11202-1-gregory.clement@bootlin.com>
+ <20180713161841.11202-4-gregory.clement@bootlin.com> <20180713191720.GA17271@n2100.armlinux.org.uk>
+ <87tvow8sho.fsf@bootlin.com>
+In-Reply-To: <87tvow8sho.fsf@bootlin.com>
+From:   Dave Taht <dave.taht@gmail.com>
+Date:   Wed, 18 Jul 2018 13:55:50 -0700
+Message-ID: <CAA93jw4ygBN9dLVL_rRr23+ZEFabEHiHBpDExQLj9V4E2LtekA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 3/7] net: mvneta: increase number of buffers
+ in RX and TX queue
+To:     gregory.clement@bootlin.com
+Cc:     linux@armlinux.org.uk, "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        andrew@lunn.ch, jason@lakedaemon.net, antoine.tenart@bootlin.com,
+        maxime.chevallier@bootlin.com, nadavh@marvell.com,
+        yelena@marvell.com, thomas.petazzoni@bootlin.com,
+        miquel.raynal@bootlin.com, Marcin Wojtas <mw@semihalf.com>,
+        dima@marvell.com, linux-arm-kernel@lists.infradead.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 12:18 PM, Bo Chen <chenbo@pdx.edu> wrote:
-> When the device is not up, the call to 'e1000_up()' from the error handling path
-> of 'e1000_set_ringparam()' causes a kernel oops with a null-pointer
-> dereference. The null-pointer dereference is triggered in function
-> 'e1000_alloc_rx_buffers()' at line 'buffer_info = &rx_ring->buffer_info[i]'.
+On Wed, Jul 18, 2018 at 8:39 AM Gregory CLEMENT
+<gregory.clement@bootlin.com> wrote:
 >
-> This bug was reported by COD, a tool for testing kernel module binaries I am
-> building. This bug was also detected by KFI from Dr. Kai Cong.
+> Hi Russell King,
 >
-> This patch fixes the bug by checking on 'netif_running()' before calling
-> 'e1000_up()' in 'e1000_set_ringparam()'.
+>  On ven., juil. 13 2018, Russell King - ARM Linux <linux@armlinux.org.uk>=
+ wrote:
 >
-> Signed-off-by: Bo Chen <chenbo@pdx.edu>
+> > On Fri, Jul 13, 2018 at 06:18:37PM +0200, Gregory CLEMENT wrote:
+> >> From: Yelena Krivosheev <yelena@marvell.com>
+> >>
+> >> The initial values were too small leading to poor performance when usi=
+ng
+> >> the software buffer management.
+> >
+> > What does this do to latency when a large transfer is also ongoing
+> > (iow, the classic bufferbloat issue) ?
+>
+> IXIA latency test had been done without seeing any differences for long
+> traffic (routing).
 
-The change below looks good to me.
+IXIA's tests in the latency under load area are pure rubbish. try
+irtt, netperf, + flent (which wraps those)
 
-Acked-by: Alexander Duyck <alexander.h.duyck@intel.com>
+https://github.com/heistp/irtt - with good one way delay measurements,
+has been coming along nicely of late.
 
-> ---
->  drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> These new values offer better performance for the main usage of this SoC
+> (NAS applications), however both Rx and TX queues size can be change by
+> ethtool.
+
+BQL was added to this driver as of commit
+a29b6235560a1ed10c8e1a73bfc616a66b802b90, with typical latencies below
+2ms range. Is that not still the case? at a gbit, 1500 byte packets,
+non-gso, that's a ring buffer size of ~155. So I can imagine that your
+proposed larger ring buffer size for smaller packets might help, (was
+your test using smaller packets?) and the usage of BQL should obscure
+any change of latency seen by increasing the limit.
+
+(in other words, assuming bql is working, go right ahead, increase tx
+descriptors)
+
+bqlmon can be used to monitor the state of bql.
+
+as for rx, are you seeing drops under load due to overflowing it? When
+I last looked at this
+driver (in the pre-bql era), it did a lot of bulky processing in rx.
+
 >
-> diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> index bdb3f8e65ed4..c1e4e94f100f 100644
-> --- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> +++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
-> @@ -644,7 +644,8 @@ static int e1000_set_ringparam(struct net_device *netdev,
->  err_alloc_rx:
->         kfree(txdr);
->  err_alloc_tx:
-> -       e1000_up(adapter);
-> +       if (netif_running(adapter->netdev))
-> +               e1000_up(adapter);
->  err_setup:
->         clear_bit(__E1000_RESETTING, &adapter->flags);
->         return err;
+> Gregory
+>
+> >
+> >>
+> >> Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
+> >> [gregory: extract from a larger patch]
+> >> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> >> ---
+> >>  drivers/net/ethernet/marvell/mvneta.c | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ether=
+net/marvell/mvneta.c
+> >> index f4e3943a745d..c22df28b07c8 100644
+> >> --- a/drivers/net/ethernet/marvell/mvneta.c
+> >> +++ b/drivers/net/ethernet/marvell/mvneta.c
+> >> @@ -295,10 +295,10 @@
+> >>  #define MVNETA_RSS_LU_TABLE_SIZE    1
+> >>
+> >>  /* Max number of Rx descriptors */
+> >> -#define MVNETA_MAX_RXD 128
+> >> +#define MVNETA_MAX_RXD 512
+> >>
+> >>  /* Max number of Tx descriptors */
+> >> -#define MVNETA_MAX_TXD 532
+> >> +#define MVNETA_MAX_TXD 1024
+> >>
+> >>  /* Max number of allowed TCP segments for software TSO */
+> >>  #define MVNETA_MAX_TSO_SEGS 100
+> >> --
+> >> 2.18.0
+> >>
+> >>
+> >> _______________________________________________
+> >> linux-arm-kernel mailing list
+> >> linux-arm-kernel@lists.infradead.org
+> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
+> > --
+> > RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+> > FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630k=
+bps up
+> > According to speedtest.net: 13Mbps down 490kbps up
+>
 > --
-> 2.17.0
->
+> Gregory Clement, Bootlin (formerly Free Electrons)
+> Embedded Linux and Kernel engineering
+> http://bootlin.com
+
+
+
+--=20
+
+Dave T=C3=A4ht
+CEO, TekLibre, LLC
+http://www.teklibre.com
+Tel: 1-669-226-2619
