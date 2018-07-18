@@ -2,124 +2,206 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D14ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5CDECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0068205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:44:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0/20GA0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0068205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 338E9205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:45:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 338E9205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730255AbeGRHUs (ORCPT
+        id S1727131AbeGRHVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 03:20:48 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38590 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730203AbeGRHUr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 03:20:47 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k3-v6so1556185pgq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 23:44:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=983ENG+uR6T3i+yZoQw2w119/pBf9+bpzs9vYk5rarE=;
-        b=F0/20GA0BuCtCFnXTUAf9mmSlKh30DiHD3lYza665pIBMLkxHlgQxFC5dpB8HBTsPM
-         WhLKrYWfVCFZ9NDZvRdBB9Hchbvg2y2+pyV0BU7MrEWW7CfAZ9T902gET4U/dkwXowXz
-         lNUu6D9p3hUTtYY2zbqOm0D0BGEJ26FtkqDLM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=983ENG+uR6T3i+yZoQw2w119/pBf9+bpzs9vYk5rarE=;
-        b=CYyxta1ZWlza9kjhTujg/rb7/u8ZwpInKbmHz2bDZ7F40IhWDBwevGAl+3tSC/giiC
-         Xn38LA6dglXUvciEXdLBzOnlVrg8RFfQzpdsWJCFwdCzmwzI3xyvnv/oHHywERwQuWUn
-         EKSV/WGEXtoldIPQCieyH8m++fva+KHbsPkvbVAI9mi2/gGPyKr7n770QcO18oOHHmkD
-         qNHwz/dbt5oOEzdgMSFv4eZkBiz5m0V4jHDmKD81IVQmW9pwoyPy5GagrG5gTvkkZxEC
-         AbNUR2mfrMxWAdewWceAjjOYbIS7PiVuKOk3euPDkGZ4TcxbEuV7KNxdC3u7GX2YUH9C
-         t6lQ==
-X-Gm-Message-State: AOUpUlEQ7Ul51omN+2q6xQ19JIlZGd23831lu7q+APS04uVo65de2KvP
-        EAzP/NvE00XHyma8X4NUO3TtQZ+8Kzo=
-X-Google-Smtp-Source: AAOMgpfZKgNfmlb9HiniAnzUmmWJ00RHR2CLVkgEE3JdcIy8xB4zK1JDHo2ABujNrdAdnGxGWtSYLw==
-X-Received: by 2002:a62:9f16:: with SMTP id g22-v6mr3853543pfe.207.1531896268411;
-        Tue, 17 Jul 2018 23:44:28 -0700 (PDT)
-Received: from localhost ([103.249.91.115])
-        by smtp.gmail.com with ESMTPSA id d132-v6sm4905676pgc.93.2018.07.17.23.44.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 23:44:27 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
-        andy.gross@linaro.org, dianders@chromium.org, mka@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v8 7/7] arm64: dts: sdm845: Add tsens nodes
-Date:   Wed, 18 Jul 2018 12:13:13 +0530
-Message-Id: <d263ed254f53a7e79c19ff471b5873a6f5eafd4d.1531895128.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531895128.git.amit.kucheria@linaro.org>
-References: <cover.1531895128.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1531895128.git.amit.kucheria@linaro.org>
-References: <cover.1531895128.git.amit.kucheria@linaro.org>
+        Wed, 18 Jul 2018 03:21:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50400 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725909AbeGRHVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 03:21:51 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7ED3540200A7;
+        Wed, 18 Jul 2018 06:45:31 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-41.pek2.redhat.com [10.72.12.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A06C72026D74;
+        Wed, 18 Jul 2018 06:45:23 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 14:45:19 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH v11 03/15] powerpc, kexec_file: factor out memblock-based
+ arch_kexec_walk_mem()
+Message-ID: <20180718064519.GB5324@dhcp-128-65.nay.redhat.com>
+References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
+ <20180711074203.3019-4-takahiro.akashi@linaro.org>
+ <20180714015223.GA2745@dhcp-128-65.nay.redhat.com>
+ <2a4ec965-5258-5835-3022-8f403a2f6bdd@arm.com>
+ <20180716122412.GA7160@dhcp-128-65.nay.redhat.com>
+ <20180717053104.GB11258@linaro.org>
+ <20180717074923.GA8591@dhcp-128-65.nay.redhat.com>
+ <20180718053818.GF11258@linaro.org>
+ <20180718061350.GA5086@dhcp-128-65.nay.redhat.com>
+ <20180718064041.GI11258@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718064041.GI11258@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 18 Jul 2018 06:45:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 18 Jul 2018 06:45:31 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SDM845 has two tsens blocks, one with 13 sensors and the other with 8
-sensors. It uses version 2 of the TSENS IP, so use the fallback property to
-allow more common code.
+On 07/18/18 at 03:40pm, AKASHI Takahiro wrote:
+> On Wed, Jul 18, 2018 at 02:13:50PM +0800, Dave Young wrote:
+> > Hi AKASHI,
+> > 
+> > On 07/18/18 at 02:38pm, AKASHI Takahiro wrote:
+> > > Dave,
+> > > 
+> > > On Tue, Jul 17, 2018 at 03:49:23PM +0800, Dave Young wrote:
+> > > > Hi AKASHI,
+> > > > On 07/17/18 at 02:31pm, AKASHI Takahiro wrote:
+> > > > > Hi Dave,
+> > > > > 
+> > > > > On Mon, Jul 16, 2018 at 08:24:12PM +0800, Dave Young wrote:
+> > > > > > On 07/16/18 at 12:04pm, James Morse wrote:
+> > > > > > > Hi Dave,
+> > > > > > > 
+> > > > > > > On 14/07/18 02:52, Dave Young wrote:
+> > > > > > > > On 07/11/18 at 04:41pm, AKASHI Takahiro wrote:
+> > > > > > > >> Memblock list is another source for usable system memory layout.
+> > > > > > > >> So powerpc's arch_kexec_walk_mem() is moved to kexec_file.c so that
+> > > > > > > >> other memblock-based architectures, particularly arm64, can also utilise
+> > > > > > > >> it. A moved function is now renamed to kexec_walk_memblock() and merged
+> > > > > > > >> into the existing arch_kexec_walk_mem() for general use, either resource
+> > > > > > > >> list or memblock list.
+> > > > > > > >>
+> > > > > > > >> A consequent function will not work for kdump with memblock list, but
+> > > > > > > >> this will be fixed in the next patch.
+> > > > > > > 
+> > > > > > > >> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > > > > > 
+> > > > > > > >> @@ -513,6 +563,10 @@ static int locate_mem_hole_callback(struct resource *res, void *arg)
+> > > > > > > >>  int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > > > > > >>  			       int (*func)(struct resource *, void *))
+> > > > > > > >>  {
+> > > > > > > >> +	if (IS_ENABLED(CONFIG_HAVE_MEMBLOCK) &&
+> > > > > > > >> +			!IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK))
+> > > > > > > >> +		return kexec_walk_memblock(kbuf, func);
+> > > > > > > > 
+> > > > > > > > AKASHI, I'm not sure if this works on all arches, for example I chekced
+> > > > > > > > the .config on my Nokia N900 kernel tree, there is HAVE_MEMBLOCK=y and
+> > > > > > > > no CONFIG_ARCH_DISCARD_MEMBLOCK, in 32bit arm code no arch_kexec_walk_mem()
+> > > > > > > By doesn't work you mean it's a change in behaviour?
+> > > > > > > I think this is fine because 32bit arm doesn't support KEXEC_FILE, (this file is
+> > > > > > > kexec_file specific right?).
+> > > > > > 
+> > > > > > Ah, replied on a train, I forgot this is only for kexec_file, sorry
+> > > > > > about that.  Please ignore the comment.
+> > > > > > 
+> > > > > > But since we have a weak function arch_kexec_walk_mem, adding another
+> > > > > > condition branch within this weak function looks not good.
+> > > > > > Something like below would be better:
+> > > > > 
+> > > > > I see your concern here, but
+> > > > > 
+> > > > > 
+> > > > > > int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+> > > > > > {
+> > > > > >         int ret;
+> > > > > > 
+> > > > > > 	+ if use memblock
+> > > > > > 	+	ret = kexec_walk_memblock()
+> > > > > > 	+ else
+> > > > > >         	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+> > > > > > 
+> > > > > >         return ret == 1 ? 0 : -EADDRNOTAVAIL;
+> > > > > > }
+> > > > > 
+> > > > > what if yet another architecture comes to kexec_file and wanna
+> > > > > take a third approach? How can it override those functions?
+> > > > > Depending on kernel configuration, it might re-define either
+> > > > > kexec_walk_memblock() or arch_kexec_walk_mem(). It sounds weird to me.
+> > > > 
+> > > > I also feel this weird, but it is slightly better because currently no
+> > > > user need another overriding requirement, and I feel it is not expected to have in
+> > > > the future for the memblock use.
+> > > > 
+> > > > Rethinking about this issue, we can just remove the weak function and
+> > > > just use general function.
+> > > 
+> > > Do you really want to remove "weak" attribute?
+> > > 
+> > > > Currently with your patch applied only s390 use arch_kexec_walk_mem like
+> > > > below:
+> > > > /*
+> > > >  * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
+> > > >  * and provide kbuf->mem by hand.
+> > > >  */
+> > > > int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > >                         int (*func)(struct resource *, void *))
+> > > > {
+> > > >         return 1;
+> > > > }
+> > > > 
+> > > > AFAIK, all other users initialize kbuf->mem as NULL, so we can check
+> > > 
+> > > As a matter of fact, nobody initializes kbuf->mem before calling
+> > > kexec_add_buffer (in turn, kexec_locate_mem_hole()).
+> > 
+> > Not sure we understand each other..
+> > Let's take an example in arch/x86/kernel/kexec-bzimage64.c:
+> > bzImage64_load() :
+> > 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+> > 				.top_down = true };
+> > 
+> > Except the three fields above other members will be initialized as zero
+> > when compiling including the kbuf->mem
+> 
+> Ah, you're right.
+> (My armr64 patch doesn't use struct initializer, though.)
+> 
+> > > 
+> > > > kbuf->mem in int kexec_locate_mem_hole:
+> > > > 
+> > > > if (kbuf->mem)
+> > > > 	return 0;
+> > > > 
+> > > > if use memblock
+> > > > 	kexec_walk_memblock
+> > > > else
+> > > > 	kexec_walk_mem
+> > 
+> > kexec_walk_resource will be better than kexec_walk_mem
+> > 
+> > > 
+> > > I think that your solution will work for existing architectures
+> > > with appropriate patches, but to take your approach, as I said above,
+> > > we will have to modify every call site on all kexec_file-capable architectures.
+> > > 
+> > > If this is what you expect, I will work on it, but I don't think
+> > > that it would be a better idea.
+> 
+> So you would expect me to modify my own arm64 code as well as s390.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Yes :)  But I had not get time to read all your patches so I was not
+aware the struct initialization in arm64 code so I assumed only s390
+need a change..
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index cdaabeb..01ff146 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -221,6 +221,22 @@
- 			#interrupt-cells = <2>;
- 		};
- 
-+		tsens0: thermal-sensor@c263000 {
-+			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-+			reg = <0xc263000 0x1ff>, /* TM */
-+			      <0xc222000 0x1ff>; /* SROT */
-+			#qcom,sensors = <13>;
-+			#thermal-sensor-cells = <1>;
-+		};
-+
-+		tsens1: thermal-sensor@c265000 {
-+			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-+			reg = <0xc265000 0x1ff>, /* TM */
-+			      <0xc223000 0x1ff>; /* SROT */
-+			#qcom,sensors = <8>;
-+			#thermal-sensor-cells = <1>;
-+		};
-+
- 		spmi_bus: spmi@c440000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg = <0xc440000 0x1100>,
--- 
-2.7.4
-
+Thanks
+Dave
