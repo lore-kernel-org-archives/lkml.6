@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A375ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E602ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D605B20868
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A6D02086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="OWPCGoxk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D605B20868
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="MGN+OMdI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6D02086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731356AbeGRKS2 (ORCPT
+        id S1731422AbeGRKS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:18:28 -0400
+        Wed, 18 Jul 2018 06:18:29 -0400
 Received: from 8bytes.org ([81.169.241.247]:53544 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731270AbeGRKS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:27 -0400
+        id S1731270AbeGRKS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:29 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 3417B1D3; Wed, 18 Jul 2018 11:41:18 +0200 (CEST)
+        id 56AC81EE; Wed, 18 Jul 2018 11:41:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906879; bh=A4ZQi0DSL1gF1Xdjf/O6RlUKBa98rFH/5ngDgFaQgf0=;
+        t=1531906879; bh=xRg8Na2aVjarlNI9kV1i+LRcfsMCnQB4qVv2e721/1g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OWPCGoxkyV63Cz1JYkqeO9epA90FYq0ck8LqSJqk6xwZqLN2GwgBFiziNRoOtlOny
-         Zvkx8q/hc4nXJuVQyp+CYLQurH1IfgTfLbqBUbRHSG+PVyQDvQNS+JcvN8UQtir1Nf
-         cflNSbuZ1SWgusK/nApkWDe8V/mWlWcNFCDblt6ciqXKPltEtx5bCnJMzpLsPFJvrn
-         6qlcKW5AyY7Tnyc8x/zIXlUXdYcFdoivfu6H9HvatKMES1knZ0S36aIPVioZvvDw8d
-         QyLOKVbATUtbtcDeEJtjf80V2xgb0yHFKp59wdjk/sQlrHpNmL8b5HYKnIRQm02Al+
-         IZl6qTSMhmgpg==
+        b=MGN+OMdIKihyFtgBerHO4Drxt6luJGCV/DV1kaKGvv17UkbMEuNT+/L+dojXr0Yqn
+         TM6C0Ke4zfcIvxn4uBZAJjV0DRZPkerAADk1Jz+eV8dxLrC1SduCcwu2pAIPXnpZy7
+         v+vUp4lQ81wvIOyihFsj3YHuObKBV1wvv0suFYw/1R0CLFga8vorRegr6uNtox7xGt
+         ASCsYSSAlLXNHwN2JhnQVFM/JmZ3lygECAdS6LpKVdEeUCtO5G6UnAN3HZPZJ4Ozpv
+         8oGv0+vosbk2w5vn2KfutcAyLyCw6G89IGwotKwWe1wlZTDg9dhDXkW+4zKTR8MEq/
+         0XycE8R0HAOEA==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 05/39] x86/entry/32: Unshare NMI return path
-Date:   Wed, 18 Jul 2018 11:40:42 +0200
-Message-Id: <1531906876-13451-6-git-send-email-joro@8bytes.org>
+Subject: [PATCH 06/39] x86/entry/32: Split off return-to-kernel path
+Date:   Wed, 18 Jul 2018 11:40:43 +0200
+Message-Id: <1531906876-13451-7-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,41 +72,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-NMI will no longer use most of the shared return path,
-because NMI needs special handling when the CR3 switches for
-PTI are added. This patch prepares for that.
+Use a separate return path when we know we are returning to
+the kernel. This allows us to put the PTI cr3-switch and the
+switch to the entry-stack into the return-to-user path
+without further checking.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/entry/entry_32.S | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index ef7d653..4364131 100644
+index 4364131..7251c4f 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -1017,7 +1017,7 @@ ENTRY(nmi)
+@@ -65,7 +65,7 @@
+ # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
+ #else
+ # define preempt_stop(clobbers)
+-# define resume_kernel		restore_all
++# define resume_kernel		restore_all_kernel
+ #endif
  
- 	/* Not on SYSENTER stack. */
- 	call	do_nmi
--	jmp	.Lrestore_all_notrace
-+	jmp	.Lnmi_return
+ .macro TRACE_IRQS_IRET
+@@ -399,9 +399,9 @@ ENTRY(resume_kernel)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ .Lneed_resched:
+ 	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	restore_all
++	jnz	restore_all_kernel
+ 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+-	jz	restore_all
++	jz	restore_all_kernel
+ 	call	preempt_schedule_irq
+ 	jmp	.Lneed_resched
+ END(resume_kernel)
+@@ -606,6 +606,11 @@ restore_all:
+ 	 */
+ 	INTERRUPT_RETURN
  
- .Lnmi_from_sysenter_stack:
- 	/*
-@@ -1028,7 +1028,11 @@ ENTRY(nmi)
- 	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
- 	call	do_nmi
- 	movl	%ebx, %esp
--	jmp	.Lrestore_all_notrace
-+
-+.Lnmi_return:
-+	CHECK_AND_APPLY_ESPFIX
++restore_all_kernel:
++	TRACE_IRQS_IRET
 +	RESTORE_REGS 4
 +	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
- .Lnmi_espfix_stack:
++
+ .section .fixup, "ax"
+ ENTRY(iret_exc	)
+ 	pushl	$0				# no error code
 -- 
 2.7.4
 
