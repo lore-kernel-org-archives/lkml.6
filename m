@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEC4ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06C5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EACC82075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:27:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EACC82075E
+	by mail.kernel.org (Postfix) with ESMTP id 9980020850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:27:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9980020850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbeGRTGr (ORCPT
+        id S1730079AbeGRTGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:06:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36602 "EHLO mail.bootlin.com"
+        Wed, 18 Jul 2018 15:06:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36608 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726992AbeGRTGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:06:46 -0400
+        id S1729324AbeGRTGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 15:06:48 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7072B20876; Wed, 18 Jul 2018 20:27:37 +0200 (CEST)
+        id E91C5207A8; Wed, 18 Jul 2018 20:27:38 +0200 (CEST)
 Received: from dell-desktop.home (176-137-37-244.abo.bbox.fr [176.137.37.244])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C6718206A6;
-        Wed, 18 Jul 2018 20:27:36 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 48277206A6;
+        Wed, 18 Jul 2018 20:27:38 +0200 (CEST)
 From:   =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
         mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org
 Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         mylene.josserand@bootlin.com, thomas.petazzoni@bootlin.com
-Subject: [PATCH v3 2/3] Input: edt-ft5x06 - Set wake/reset values on resume/suspend
-Date:   Wed, 18 Jul 2018 20:27:18 +0200
-Message-Id: <20180718182719.29663-3-mylene.josserand@bootlin.com>
+Subject: [PATCH v3 3/3] arm: dts: sun8i: a83t: a711: Add touchscreen node
+Date:   Wed, 18 Jul 2018 20:27:19 +0200
+Message-Id: <20180718182719.29663-4-mylene.josserand@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180718182719.29663-1-mylene.josserand@bootlin.com>
 References: <20180718182719.29663-1-mylene.josserand@bootlin.com>
@@ -47,44 +47,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On resume and suspend, set the value of wake and reset gpios
-to be sure that we are in a know state after suspending/resuming.
+Tha A711 tablet has a FocalTech EDT-FT5x06 Polytouch touchscreen.
+It is connected via I2C0. The reset line is PD5, the interrupt
+line is PL7 and the VCC supply is the ldo_io0 regulator.
 
 Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
 ---
- drivers/input/touchscreen/edt-ft5x06.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-index aa94494b06b5..b013d97006e6 100644
---- a/drivers/input/touchscreen/edt-ft5x06.c
-+++ b/drivers/input/touchscreen/edt-ft5x06.c
-@@ -1143,6 +1143,12 @@ static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
- 	if (device_may_wakeup(dev))
- 		enable_irq_wake(client->irq);
+diff --git a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+index 1537ce148cc1..dc7b94a6c068 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-tbs-a711.dts
+@@ -156,6 +156,22 @@
+ 	status = "okay";
+ };
  
-+	if (tsdata->wake_gpio)
-+		gpiod_set_value(tsdata->wake_gpio, 0);
++&i2c0 {
++	clock-frequency = <400000>;
++	status = "okay";
 +
-+	if (tsdata->reset_gpio)
-+		gpiod_set_value(tsdata->reset_gpio, 1);
++	touchscreen@38 {
++		compatible = "edt,edt-ft5x06";
++		reg = <0x38>;
++		interrupt-parent = <&r_pio>;
++		interrupts = <0 7 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&pio 3 5 GPIO_ACTIVE_LOW>;
++		vcc-supply = <&reg_ldo_io0>;
++		touchscreen-size-x = <1024>;
++		touchscreen-size-y = <600>;
++	};
++};
 +
- 	regulator_disable(tsdata->vcc);
- 
- 	return 0;
-@@ -1157,6 +1163,12 @@ static int __maybe_unused edt_ft5x06_ts_resume(struct device *dev)
- 	if (device_may_wakeup(dev))
- 		disable_irq_wake(client->irq);
- 
-+	if (tsdata->wake_gpio)
-+		gpiod_set_value(tsdata->wake_gpio, 1);
-+
-+	if (tsdata->reset_gpio)
-+		gpiod_set_value(tsdata->reset_gpio, 0);
-+
- 	ret = regulator_enable(tsdata->vcc);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to enable vcc: %d\n", ret);
+ &mmc0 {
+ 	vmmc-supply = <&reg_dcdc1>;
+ 	pinctrl-names = "default";
 -- 
 2.11.0
 
