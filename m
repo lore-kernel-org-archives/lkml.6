@@ -2,119 +2,145 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B253ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFA4ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CA042075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:07:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CA042075A
+	by mail.kernel.org (Postfix) with ESMTP id 0E8672075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+le/n6b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8672075A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbeGRVqu (ORCPT
+        id S1729973AbeGRVt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:46:50 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726633AbeGRVqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:46:50 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 664807262F;
-        Wed, 18 Jul 2018 21:07:07 +0000 (UTC)
-Received: from [172.31.27.48] (dhcp-17-185.bos.redhat.com [10.18.17.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7D1712156893;
-        Wed, 18 Jul 2018 21:07:06 +0000 (UTC)
-Subject: Re: [PATCH net] bonding: set default miimon value for non-arp modes
- if not set
-To:     =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS1?=
-         =?UTF-8?B?4KS+4KSwKQ==?= <maheshb@google.com>
-Cc:     linux-kernel@vger.kernel.org, Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-netdev <netdev@vger.kernel.org>, stable@vger.kernel.org
-References: <20180718184936.16037-1-jarod@redhat.com>
- <CAF2d9jgCxvXaGo3E0hSc7i78vXStXM=BuhHFDjs817b19yT0WA@mail.gmail.com>
-From:   Jarod Wilson <jarod@redhat.com>
-Message-ID: <83c0327d-8e93-6036-c34b-f8d59223b974@redhat.com>
-Date:   Wed, 18 Jul 2018 17:07:07 -0400
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Wed, 18 Jul 2018 17:49:58 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40913 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbeGRVt6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 17:49:58 -0400
+Received: by mail-wm0-f68.google.com with SMTP id z13-v6so4207179wma.5;
+        Wed, 18 Jul 2018 14:10:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2m6PcbCBII0gfP0WfVMQlfKrHwq3IqseGAR3Fiwiaq8=;
+        b=S+le/n6bUgYuwzP36ffn57WUdXlH3xrNTN4l8xfDXuz8239cQPfudNosrFQKXFDL6l
+         Vyb5SRCuzWz4WTKQ+QUVsYO8BRT9Sy5Zam4sgcmLbtCIHsM9oyNPdXHiwPEh/BxDlvox
+         /YgGuanz6TtuzBNSM//FpSsvHfudC6vKuXiTDjZsmxto+1TfYz/pkok9RI8wD5/I1w81
+         kt6qpsvgnnR7jR9tEac8/NB+ad3Zwt51hkr4V19IjxcqEUgtVqi3/idkwZTMB/CXhzcZ
+         dVqKkdTGDk3O82RCnZm+AoV3AmXPeBZAwnaCSSOLEOKSdfZ1z5kYXm4jDR45nPgyd3RH
+         IMQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2m6PcbCBII0gfP0WfVMQlfKrHwq3IqseGAR3Fiwiaq8=;
+        b=pMCuTF0PXrO+BEtd6rGi23TJpZ1FfaNrd2Ib5QhYM2smuqvymy7W8RsbZyHI/Ku2Yl
+         64mBdOtRW71sGajGTWmtkK5zW+y9TcWpZnikd7CBEO52ij23O+UgZ6G1nwT+cHgih0r5
+         URtDKpkHwHi+ztkmvnXTvvdgXyfBq/PLOUBwqoId8ekc/O9qlz6tOWrzBHQa+SewVGfz
+         E8SlhqXKnDReepbAq0QEpAmA+EsViAe6V22IGDayw7i1qLPqTIyNn1CbZ/RzlBl+f0WU
+         my9l6gYFzp1/3ZMFpZGdvrx9GzYNlkWxsYg2lW5lTUfFTsYaPWqtlklsBMmRXYamgi51
+         z8ew==
+X-Gm-Message-State: AOUpUlGi0ffocFLRvk98y3VWWS//KiNZeLSEJTf6vvgkNvp0qieqXuik
+        gcOjXfigmyDU953xCDFfrQE=
+X-Google-Smtp-Source: AAOMgpdFXGseMpESBODgRLEhBwUGbR6ygadVWyS3R0bBpOtbWcKVBcf3zVnuuAPWWcYWMxPEurJHhg==
+X-Received: by 2002:a1c:e708:: with SMTP id e8-v6mr2613611wmh.134.1531948213491;
+        Wed, 18 Jul 2018 14:10:13 -0700 (PDT)
+Received: from [192.168.10.150] (dynamic-adsl-78-12-156-57.clienti.tiscali.it. [78.12.156.57])
+        by smtp.googlemail.com with ESMTPSA id l16-v6sm2247446wme.36.2018.07.18.14.10.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Jul 2018 14:10:12 -0700 (PDT)
+Subject: Re: [PATCH v5 2/2] kvm: nVMX: Introduce KVM_CAP_NESTED_STATE
+To:     Jim Mattson <jmattson@google.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <1531214840-24686-1-git-send-email-karahmed@amazon.de>
+ <1531214840-24686-2-git-send-email-karahmed@amazon.de>
+ <20180718175545.GA11749@flask>
+ <CALMp9eSv0ax6owRV78Xo9gw1T=_29_wg4LqbhNJP6+Hd_EU1Og@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+Message-ID: <8653119f-0ac4-7937-225b-16ef0977528b@redhat.com>
+Date:   Wed, 18 Jul 2018 23:10:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAF2d9jgCxvXaGo3E0hSc7i78vXStXM=BuhHFDjs817b19yT0WA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <CALMp9eSv0ax6owRV78Xo9gw1T=_29_wg4LqbhNJP6+Hd_EU1Og@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 21:07:07 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 21:07:07 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jarod@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-18 3:51 PM, Mahesh Bandewar (महेश बंडेवार) wrote:
-> On Wed, Jul 18, 2018 at 11:49 AM, Jarod Wilson <jarod@redhat.com> wrote:
->> For some time now, if you load the bonding driver and configure bond
->> parameters via sysfs using minimal config options, such as specifying
->> nothing but the mode, relying on defaults for everything else, modes
->> that cannot use arp monitoring (802.3ad, balance-tlb, balance-alb) all
->> wind up with both arp_interval=0 (as it should be) and miimon=0, which
->> means the miimon monitor thread never actually runs. This is particularly
->> problematic for 802.3ad.
->>
->> For example, from an LNST recipe I've set up:
->>
->> $ modprobe bonding max_bonds=0"
->> $ echo "+t_bond0" > /sys/class/net/bonding_masters"
->> $ ip link set t_bond0 down"
->> $ echo "802.3ad" > /sys/class/net/t_bond0/bonding/mode"
->> $ ip link set ens1f1 down"
->> $ echo "+ens1f1" > /sys/class/net/t_bond0/bonding/slaves"
->> $ ip link set ens1f0 down"
->> $ echo "+ens1f0" > /sys/class/net/t_bond0/bonding/slaves"
->> $ ethtool -i t_bond0"
->> $ ip link set ens1f1 up"
->> $ ip link set ens1f0 up"
->> $ ip link set t_bond0 up"
->> $ ip addr add 192.168.9.1/24 dev t_bond0"
->> $ ip addr add 2002::1/64 dev t_bond0"
->>
->> This bond comes up okay, but things look slightly suspect in
->> /proc/net/bonding/t_bond0 output:
->>
->> $ grep -i mii /proc/net/bonding/t_bond0
->> MII Status: up
->> MII Polling Interval (ms): 0
->> MII Status: up
->> MII Status: up
->>
-> This doesn't seem correct since the MII interval set is 0. It should
-> set to 100 by default for this mode. This may be the side effect of
-> brining up the bond with default more (balance-rr) and then bringing
-> bond-down before configuring it. You can probably get away by just not
-> bringing down the bond (step 'set ip link bond0 down) in your recipe
-> above. But irrespective of that step, this mode  needs miimon and
-> should have been set correctly.
+On 18/07/2018 20:03, Jim Mattson wrote:
+> On Wed, Jul 18, 2018 at 10:55 AM, Radim Krčmář <rkrcmar@redhat.com> wrote:
+> 
+>>> +     vmx->nested.nested_run_pending = 1;
+>> This is not necessary.  We're only copying state and do not add anything
+>> that would be lost on a nested VM exit without prior VM entry.
+> If nested_run_pending is blindly set on restore, then prepare_vmcs02
+> will do the wrong thing. For example, if there was an injected event
+> in the vmcs12, it will get injected again, even if the vCPU has been
+> in L2 for some time.
+> 
+> The value of nested_run_pending should always come from the saved VMX
+> state (a few lines above).
+> 
 
-I don't think bringing the bond down matters. We run bond_check_params() 
-at module load time, and above, it's loaded via 'modprobe bonding 
-max_bonds=0', with no mode= set, so bond_check_params() sets bond_mode 
-to BOND_MODE_ROUNDROBIN. When we get down to the miimon checks, we check 
-for !bond_mode_uses_arp(BOND_MODE_ROUNDROBIN), which ends up false, so 
-we never drop into the code block that sets miimon to 100, meaning it's 
-still 0. Then we set up a new bond via sysfs as mode 802.3ad, which goes 
-through bond_option_mode_set(), which then also does a 
-bond_mode_uses_arp() check, but doesn't currently DO anything if you 
-also (correctly) have arp_interval=0, so the bit there that would have 
-set miimon to 100 also gets skipped. This just makes sure this setup 
-path does get a reasonable default value if none was set.
+Yep, and there are a couple other things that need adjustment.  Stay
+tuned...
 
--- 
-Jarod Wilson
-jarod@redhat.com
+Paolo
