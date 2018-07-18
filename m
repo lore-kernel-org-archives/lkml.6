@@ -2,114 +2,112 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE73EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3C7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1562075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6EBC2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgidKwAy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1562075E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cqdunkSr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EBC2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbeGRMIl (ORCPT
+        id S1730982AbeGRMJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:08:41 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37702 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728626AbeGRMIl (ORCPT
+        Wed, 18 Jul 2018 08:09:31 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33496 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726433AbeGRMJa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:08:41 -0400
-Received: by mail-wm0-f65.google.com with SMTP id a19-v6so2498402wmb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 04:31:12 -0700 (PDT)
+        Wed, 18 Jul 2018 08:09:30 -0400
+Received: by mail-oi0-f65.google.com with SMTP id l10-v6so8125497oii.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 04:32:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MX5g16XKofHSlXrsXIl3prxm5Y6ASxP2sUInxHB4+Eg=;
-        b=KgidKwAyEnkcwRyVRdhwR8QDn3Xqysu3q6+wxtkoZWNAEpLyfN8iP6GqtSfciZUeQw
-         HznG9e3VdROOaUY74UWJHP38g+lTg/Vzk3ARFLbmTfrxRfNsaugvHXZR70eKb/UiMUdq
-         7dBlhadvLBZsl8CXhvAcplENigcaxWg9xYbL0=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=G0UibmH5yuy24RRniXHxdqQ5+sTId6u5eAWXnlNnOtk=;
+        b=cqdunkSr0Av7hLsRa3uJIXgLUpcUHKv8KQpm/6/NCPkAS3iaBdfWYmvr9pM9wuAK6f
+         vbFqs0UqTLDdvQgEVtUOEyNLHsgsF+qeAVGMc17x6IwR/p/oMkmu2O3mea+iaaqxbRZv
+         EHmuw3o2S0dVcdm2rbQ1JNl5rL3mD1RePjtjc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MX5g16XKofHSlXrsXIl3prxm5Y6ASxP2sUInxHB4+Eg=;
-        b=a7cKsxulK38+dDi1AS+XdWrPd1BHzXWX0wZK2WVVvrvIXOcjUjDQHrG9bQTyzbKMuW
-         Oo5sytlPeUHermiBGHu+tLKGX7x10RgJd76a6R2dWVxb6UAUqQaYi3DxyhPBX2GK6N0R
-         UYVjE9t+xEYcxH1o2unP81Na/wiJ5Cw+ktGcJvQNCQSgs6OJ4jbsO8/sST22FjD9uVtB
-         0bGQl1qYRVcoDFUWJQERwJCpQzs24WwXUEX8Esh8SmT1ybyd2lP02G8RL2hlXZt1RUNR
-         k10lTrsp9XEh5Ttt74+AjtnAmyiZKKfrlu2vEdA2YhiiZo1U7Wc1uNYgSEdBSYN9FLhW
-         ntyg==
-X-Gm-Message-State: AOUpUlEd4mt+M/unFp0jUzmQ/jrDTcRs1He+VR5feE5qtaXm/AoAubBD
-        T1CIeH2+b0cQUIR+py1pfvL9DQ==
-X-Google-Smtp-Source: AAOMgpcIbvUjatrd9cV8YwQUaFwEMDcYdRxys6phPgyHLeH+AbN6y7aCQrNEPQGohUoxF1IZozGuJA==
-X-Received: by 2002:a1c:2352:: with SMTP id j79-v6mr1385009wmj.124.1531913472254;
-        Wed, 18 Jul 2018 04:31:12 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id w9-v6sm4703225wrr.77.2018.07.18.04.31.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 04:31:11 -0700 (PDT)
-Subject: Re: [PATCH] venus: vdec: fix decoded data size
-To:     Vikash Garodia <vgarodia@codeaurora.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, acourbot@chromium.org
-References: <1530517447-29296-1-git-send-email-vgarodia@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <01451f8e-aea3-b276-cb01-b0666a837d62@linaro.org>
-Date:   Wed, 18 Jul 2018 14:31:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=G0UibmH5yuy24RRniXHxdqQ5+sTId6u5eAWXnlNnOtk=;
+        b=JZVZ8J7ByfpD+qPCd+GiHenkvSjHAOpc9nfLezuGGAhHPgPhCMWCIX3Ml7E5lTqEeu
+         Xiv9JkSkreNFNpN7cWu8CrRbfRfw4XzOZUre1cexllGpZinM37cZm5ciS32uc4t552Ke
+         hyQWRfgx3vHLsvK0l4vdfUDDuEZcj6r+AckEwUbj81gvc67iHHPfpEi9isXnZLSM0QCV
+         XQNstOWl1wzGiTer59YALFz04qUa/O/XBU5PqLotCLHoSIzVruiZrjSkxZYZNnEeX3uC
+         wOvCUqEiP1izxpXmaK+T7YXIQRvhYM/aC8rETaPe3umMph6XsOD+hiAxQBVKAeNbfGwi
+         RNzg==
+X-Gm-Message-State: AOUpUlEz+BdIWyCHtnsSDw7CMSnvFmui8uQxr8F/8xJsADaMNEqsppil
+        drbZe1O5ACZZxWAoI2F6znPiOMWcHDYti7pBK3n7vQ==
+X-Google-Smtp-Source: AAOMgpd+6LjcL3buB5ZSwe3+/q225fLCYFHw0eh8trc2vdKTgF6cektJ+AlKC4Bwk+nJMxQrWBRjZ8C6IfXY4APwhrc=
+X-Received: by 2002:aca:e142:: with SMTP id y63-v6mr5393403oig.128.1531913522299;
+ Wed, 18 Jul 2018 04:32:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1530517447-29296-1-git-send-email-vgarodia@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 04:32:01
+ -0700 (PDT)
+In-Reply-To: <20180718075637.GA10279@amd>
+References: <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
+ <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com> <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
+ <20180714212033.GA31950@amd> <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
+ <20180714222924.GA2776@amd> <20180714223907.GB2776@amd> <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
+ <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com> <68996338-a902-2b57-0bb9-df274a496b06@gmail.com>
+ <20180718075637.GA10279@amd>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 18 Jul 2018 19:32:01 +0800
+Message-ID: <CAMz4kuJa=s19q7wQFQT1giUe0AN4hpux4PG2koUcnE7q_x7LCQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        David Lechner <david@lechnology.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vikash,
+On 18 July 2018 at 15:56, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
+>
+>> >>>>I believe I meant "changing patterns from kernel in response to events
+>> >>>>is probably overkill"... or something like that.
+>> >>>
+>> >>>Anyway -- to clean up the confusion -- I'd like to see
+>> >>>
+>> >>>echo pattern > trigger
+>> >>>echo "1 2 3 4 5 6 7 8" > somewhere
+>> >>
+>> >>s/somewhere/pattern/
+>> >>
+>> >>pattern trigger should create "pattern" file similarly how ledtrig-timer
+>> >>creates delay_{on|off} files.
+>
+> Yes, that sounds reasonable. v5 still says
+>
+> +               Writing non-empty string to this file will activate the pattern,
+> +               and empty string will disable the pattern.
+>
+> I'd deactivate the pattern by simply writing something else to the
+> trigger file.
 
-On 07/02/2018 10:44 AM, Vikash Garodia wrote:
-> Exisiting code returns the max of the decoded
-> size and buffer size. It turns out that buffer
-> size is always greater due to hardware alignment
-> requirement. As a result, payload size given to
-> client is incorrect. This change ensures that
-> the bytesused is assigned to actual payload size.
-> 
-> Change-Id: Ie6f3429c0cb23f682544748d181fa4fa63ca2e28
-> Signed-off-by: Vikash Garodia <vgarodia@codeaurora.org>
-> ---
->  drivers/media/platform/qcom/venus/vdec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index d079aeb..ada1d2f 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -890,7 +890,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
->  
->  		vb = &vbuf->vb2_buf;
->  		vb->planes[0].bytesused =
-> -			max_t(unsigned int, opb_sz, bytesused);
-> +			min_t(unsigned int, opb_sz, bytesused);
-
-Most probably my intension was to avoid bytesused == 0, but that is
-allowed from v4l2 driver -> userspace direction
-
-Could you drop min/max_t macros at all and use bytesused directly i.e.
-
-vb2_set_plane_payload(vb, 0, bytesused)
+For the case we met in patch 2, it is not related with trigger things.
+We just set some series of tuples including brightness and duration
+(ms) to the hardware to enable the breath mode of the LED, we did not
+trigger anything. So it is weird to write something to trigger file to
+deactive the pattern.
 
 -- 
-regards,
-Stan
+Baolin Wang
+Best Regards
