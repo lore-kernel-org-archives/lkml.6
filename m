@@ -2,125 +2,185 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB60ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F058DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A08620684
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:18:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A08620684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
+	by mail.kernel.org (Postfix) with ESMTP id 930732075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:23:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930732075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730673AbeGRL4I (ORCPT
+        id S1730057AbeGRMAj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:56:08 -0400
-Received: from www381.your-server.de ([78.46.137.84]:60722 "EHLO
-        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729374AbeGRL4I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:56:08 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <lars@metafoo.de>)
-        id 1ffkTc-00071s-Ct; Wed, 18 Jul 2018 13:18:36 +0200
-Received: from [2003:8b:4817:700:8200:bff:fe9b:6612]
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <lars@metafoo.de>)
-        id 1ffkTc-0007Up-6U; Wed, 18 Jul 2018 13:18:36 +0200
-Subject: Re: [PATCH 1/4] iio: adc: xilinx: Rename 'channels' variable name to
- 'iio_xadc_channels'
-To:     Manish Narani <manish.narani@xilinx.com>, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, michal.simek@xilinx.com,
-        linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     anirudh@xilinx.com, sgoud@xilinx.com, Joe Perches <joe@perches.com>
-References: <1531912331-26431-1-git-send-email-manish.narani@xilinx.com>
- <1531912331-26431-2-git-send-email-manish.narani@xilinx.com>
-From:   Lars-Peter Clausen <lars@metafoo.de>
-Message-ID: <d2c3ddfd-91da-e500-7b58-917d2da1d540@metafoo.de>
-Date:   Wed, 18 Jul 2018 13:18:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 18 Jul 2018 08:00:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39690 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726942AbeGRMAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 08:00:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 430F2AD9C;
+        Wed, 18 Jul 2018 11:23:07 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 13:23:03 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Young <dyoung@redhat.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jaewon Kim <jaewon31.kim@samsung.com>, Jan Kara <jack@suse.cz>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Reza Arbab <arbab@linux.vnet.ibm.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH v1 00/10] mm: online/offline 4MB chunks controlled by
+ device driver
+Message-ID: <20180718112303.GW7193@dhcp22.suse.cz>
+References: <20180524120341.GF20441@dhcp22.suse.cz>
+ <1a03ac4e-9185-ce8e-a672-c747c3e40ff2@redhat.com>
+ <20180524142241.GJ20441@dhcp22.suse.cz>
+ <819e45c5-6ae3-1dff-3f1d-c0411b6e2e1d@redhat.com>
+ <3748f033-f349-6d88-d189-d77c76565981@redhat.com>
+ <20180611115641.GL13364@dhcp22.suse.cz>
+ <71bd1b65-2a88-5de7-9789-bf4fac26507d@redhat.com>
+ <e9697e6f-e562-a96c-7080-9271dbfbbea9@redhat.com>
+ <20180716200517.GA16803@dhcp22.suse.cz>
+ <a701af3a-4aa0-c3ae-3e17-a6c7f14f5f96@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1531912331-26431-2-git-send-email-manish.narani@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24760/Tue Jul 17 06:40:15 2018)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a701af3a-4aa0-c3ae-3e17-a6c7f14f5f96@redhat.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/18/2018 01:12 PM, Manish Narani wrote:
-> This patch fix the following checkpatch warning in xadc driver.
-> - Reusing the krealloc arg is almost always a bug.
+On Wed 18-07-18 11:56:29, David Hildenbrand wrote:
+> On 16.07.2018 22:05, Michal Hocko wrote:
+> > On Mon 16-07-18 21:48:59, David Hildenbrand wrote:
+> >> On 11.06.2018 14:33, David Hildenbrand wrote:
+> >>> On 11.06.2018 13:56, Michal Hocko wrote:
+> >>>> On Mon 11-06-18 13:53:49, David Hildenbrand wrote:
+> >>>>> On 24.05.2018 23:07, David Hildenbrand wrote:
+> >>>>>> On 24.05.2018 16:22, Michal Hocko wrote:
+> >>>>>>> I will go over the rest of the email later I just wanted to make this
+> >>>>>>> point clear because I suspect we are talking past each other.
+> >>>>>>
+> >>>>>> It sounds like we are now talking about how to solve the problem. I like
+> >>>>>> that :)
+> >>>>>>
+> >>>>>
+> >>>>> Hi Michal,
+> >>>>>
+> >>>>> did you have time to think about the details of your proposed idea?
+> >>>>
+> >>>> Not really. Sorry about that. It's been busy time. I am planning to
+> >>>> revisit after merge window closes.
+> >>>>
+> >>>
+> >>> Sure no worries, I still have a bunch of other things to work on. But it
+> >>> would be nice to clarify soon in which direction I have to head to get
+> >>> this implemented and upstream (e.g. what I proposed, what you proposed
+> >>> or maybe something different).
+> >>>
+> >> I would really like to make progress here.
+> >>
+> >> I pointed out basic problems/questions with the proposed alternative. I
+> >> think I answered all your questions. But you also said that you are not
+> >> going to accept the current approach. So some decision has to be made.
+> >>
+> >> Although it's very demotivating and frustrating (I hope not all work in
+> >> the MM area will be like this), if there is no guidance on how to
+> >> proceed, I'll have to switch to adding/removing/onlining/offlining whole
+> >> segments. This is not what I want, but maybe this has a higher chance of
+> >> getting reviews/acks.
+> >>
+> >> Understanding that you are busy, please if you make suggestions, follow
+> >> up on responses.
+> > 
+> > I plan to get back to this. It's busy time with too many things
+> > happening both upstream and on my work table as well. Sorry about that.
+> > I do understand your frustration but there is only that much time I
+> > have. There are not that many people to review this code unfortunately.
+> > 
+> > In principle though, I still maintain my position that the memory
+> > hotplug code is way too subtle to add more on top. Maybe the code can be
+> > reworked to be less section oriented but that will be a lot of work.
+> > If you _really_ need a smaller granularity I do not have a better
+> > suggestion than to emulate that on top of sections. I still have to go
+> > back to your last emails though.
+> > 
 > 
-> Renamed the 'channels' variable as 'iio_xadc_channels' to fix the above
-> warning.
+> The only way I see doing the stuff on top will be using a new bit for
+> marking pages as offline (PageOffline - Patch 1).
 > 
+> When a section is added, all pages are initialized to PageOffline.
+> 
+> online_pages() can be then hindered to online specific pages using the
+> well known hook set_online_page_callback().
 
-This is a bug in checkpatch and should be fixed in checkpatch. The code is
-not actually re-using the parameter. channels and xadc_channels are
-independent variables, just checkpatch somehow does not realize this.
+Not really. You just make those pages unavailable from the page
+allocator and mark them reserved. You can keep them linked at your
+convenience. If you need to put them back to the allocator, just do so
+and drop the reserved bit.
+Once you gather a section worth of pages then you can simply offline and
+remove the whole section.
 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  drivers/iio/adc/xilinx-xadc-core.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
+> In my driver, I can manually "soft offline" parts, setting them to
+> PageOffline or "soft online" them again (including clearing PageOffline).
 > 
-> diff --git a/drivers/iio/adc/xilinx-xadc-core.c b/drivers/iio/adc/xilinx-xadc-core.c
-> index d4f21d1..27b45df 100644
-> --- a/drivers/iio/adc/xilinx-xadc-core.c
-> +++ b/drivers/iio/adc/xilinx-xadc-core.c
-> @@ -1040,7 +1040,7 @@ static int xadc_parse_dt(struct iio_dev *indio_dev, struct device_node *np,
->  	unsigned int *conf)
->  {
->  	struct xadc *xadc = iio_priv(indio_dev);
-> -	struct iio_chan_spec *channels, *chan;
-> +	struct iio_chan_spec *iio_xadc_channels, *chan;
->  	struct device_node *chan_node, *child;
->  	unsigned int num_channels;
->  	const char *external_mux;
-> @@ -1083,12 +1083,13 @@ static int xadc_parse_dt(struct iio_dev *indio_dev, struct device_node *np,
->  		*conf |= XADC_CONF0_MUX | XADC_CONF0_CHAN(ext_mux_chan);
->  	}
->  
-> -	channels = kmemdup(xadc_channels, sizeof(xadc_channels), GFP_KERNEL);
-> -	if (!channels)
-> +	iio_xadc_channels = kmemdup(xadc_channels, sizeof(xadc_channels),
-> +				    GFP_KERNEL);
-> +	if (!iio_xadc_channels)
->  		return -ENOMEM;
->  
->  	num_channels = 9;
-> -	chan = &channels[9];
-> +	chan = &iio_xadc_channels[9];
->  
->  	chan_node = of_get_child_by_name(np, "xlnx,channels");
->  	if (chan_node) {
-> @@ -1119,11 +1120,12 @@ static int xadc_parse_dt(struct iio_dev *indio_dev, struct device_node *np,
->  	of_node_put(chan_node);
->  
->  	indio_dev->num_channels = num_channels;
-> -	indio_dev->channels = krealloc(channels, sizeof(*channels) *
-> -					num_channels, GFP_KERNEL);
-> +	indio_dev->channels = krealloc(iio_xadc_channels,
-> +				       sizeof(*iio_xadc_channels) *
-> +				       num_channels, GFP_KERNEL);
->  	/* If we can't resize the channels array, just use the original */
->  	if (!indio_dev->channels)
-> -		indio_dev->channels = channels;
-> +		indio_dev->channels = iio_xadc_channels;
->  
->  	return 0;
->  }
+> offline_pages() can then skip all pages that are already "soft offline"
+> - PageOffline set - and effectively set the section offline.
 > 
+> 
+> Without this new bit offline_pages() cannot know if a page is actually
+> offline or simply reserved by some other part of the system. Imagine
+> that all parts of a section are "soft offline". Now I want to offline
+> the section and remove the memory. I would have to temporarily online
+> all pages again, adding them to the buddy in order to properly offline
+> them using offline_pages(). Prone to races as these pages must not be
+> touched.
 
+Not really. Once the page is reserved it is yours. You can reuse any
+parts of the struct page as you wish. You can call the state PageOffline
+and teach the offlining code to skip them (with some protocol to ensure
+they will not become online all of the sudden of course). I have no
+problem to integrate that part into the generic hotplug code. It should
+be a trivial check at a single place. But I do not think you really need
+a new page flag for that.
+
+-- 
+Michal Hocko
+SUSE Labs
