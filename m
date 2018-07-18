@@ -2,110 +2,162 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 516ECECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4D5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015E82084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E92D12086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:46:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="FiH4dq9f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015E82084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RGo5ePis"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E92D12086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeGRGVv (ORCPT
+        id S1727083AbeGRGW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 02:21:51 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:51281 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbeGRGVv (ORCPT
+        Wed, 18 Jul 2018 02:22:58 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33878 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725958AbeGRGW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 02:21:51 -0400
-Received: from mail-ua0-f176.google.com (mail-ua0-f176.google.com [209.85.217.176]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w6I5jWRD009185
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:45:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w6I5jWRD009185
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1531892732;
-        bh=CCPx7ULXruYllI3AGhlE49a6V+54D0cm+aCoQsBhgtQ=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=FiH4dq9fTF1CLLZtLf55KbP2NLfWh0LWWlxcrTUefJh7FmQ42YQVlG5IrthTkf6ik
-         vZgq3kZ3/MSA0Qnk0+1USCCgYzMbiGFSyH1zFpwzr1sQgOToXjXz8GeFVwNQGjIvte
-         hxehUDNcWPGZA2jIk9I5V6xQm4hirT6M4HYnhR1TIvglS56odMXbAU5+rY9MRHnkpy
-         sLTYSA0pWwtIuaVx3qYhwBRWhn7osUQv7WeBK8SRGB/hjMaTCteIXoItTqyBKg1OYU
-         uqjC21Cwoy4BCjVs4EJWtsscpZuXVk+o0aCJhNnl97966ykAThjFd7t1B3y1P185PQ
-         IWecux9jZJA3g==
-X-Nifty-SrcIP: [209.85.217.176]
-Received: by mail-ua0-f176.google.com with SMTP id i4-v6so2194767uak.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 22:45:32 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHdkUNR2jAgDPi15b5WuXcuiC2ZHVj92byVbPEJ464cAvoIxb8A
-        fafuKQheF6r2m9UneFJMkAyIujnHs0p3PY5wZ5g=
-X-Google-Smtp-Source: AAOMgpf3gOAD8j9L9bwq8+hY9r6p1pqNx3mDXHtsLnoR7JjVfzm7tyhbeOnQRM5Z+k8fZ+LSWSZ9X6Hh25T1o29YWxg=
-X-Received: by 2002:a9f:3d6e:: with SMTP id m46-v6mr2978483uai.17.1531892731609;
- Tue, 17 Jul 2018 22:45:31 -0700 (PDT)
+        Wed, 18 Jul 2018 02:22:57 -0400
+Received: by mail-pf0-f195.google.com with SMTP id k19-v6so1664432pfi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 22:46:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lJSWeSe5/uZ21LHlgl/bkpSWtEe0H3Tsjj9hXdn8+8k=;
+        b=RGo5ePisWQG7LkVFyYZcICq8eRtMXFarrddIb+z5/JqEMSu1K2KNpmSYjSxCVStJuU
+         7DZF5HWmqdacmEajRKc3/YLsJVTh4Hz+cHMc8b/pftwqPHgAOf7l/gtMCGvuiUOPpEW/
+         2GyEQHiWpxD9/wxQR6LX/guY/9oGoetOpRd2g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lJSWeSe5/uZ21LHlgl/bkpSWtEe0H3Tsjj9hXdn8+8k=;
+        b=nvkqHiP264liSY1Ecm3djSk84NSAyTHcEb/9gvwctrODmOPMxJKjCSoY6Z92LL01kE
+         D9qhy1m5+Y5BLipxnzEK3TBxBkio+SYra8d5OGg6Qk/V5kLLRiI7wsKUNrQhF25HHYWI
+         T5L462Fl7ScgFu+ofCSWOzjBe0r756TEMcUYTzGw7h6MYUNqFg+kdg6L7pkdplx4paVz
+         PQab2s6THT27RXm7vLf5b8an9ZVfhzXSUueskP7KUab5erjEyPCxTExi2ZabV00JbqOG
+         piS2qP7iaAubHig/Gn6HfqqBsJL03eRDYgvoN7SCTnA4cY5o8686sx361SaxoPyK281u
+         QSMg==
+X-Gm-Message-State: AOUpUlGlAjPpTT+dUVsEIP+i0l8W27QaJSLO5HFK0k2YX3/2WF2sp0+J
+        7V6cRkcmPTdhXJHO4OJKBtmt8g==
+X-Google-Smtp-Source: AAOMgpeHch4jlKydkjBSuWw4bbAUmUznM6L/Qa7yae8tfRafBYc/cyYWiD1IZz9YxNdb7WsE+JwxbQ==
+X-Received: by 2002:a63:1015:: with SMTP id f21-v6mr4490766pgl.354.1531892810132;
+        Tue, 17 Jul 2018 22:46:50 -0700 (PDT)
+Received: from localhost ([122.171.235.75])
+        by smtp.gmail.com with ESMTPSA id k128-v6sm3834545pgk.4.2018.07.17.22.46.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 22:46:49 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 11:16:47 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, amit.kucheria@linaro.org,
+        evgreen@google.com
+Subject: Re: [PATCH v6 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+Message-ID: <20180718054647.ysomgxiwzbuuptoc@vireshk-i7>
+References: <1531892220-2046-1-git-send-email-tdas@codeaurora.org>
+ <1531892220-2046-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 22:44:51
- -0700 (PDT)
-In-Reply-To: <20180715225849.GB30102@gmail.com>
-References: <20180715025626.GA48623@beast> <20180715225849.GB30102@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 18 Jul 2018 14:44:51 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQwEqzbYidax605HD+jQp7Fg45CY72pC2tgKZp3eOf-dA@mail.gmail.com>
-Message-ID: <CAK7LNAQwEqzbYidax605HD+jQp7Fg45CY72pC2tgKZp3eOf-dA@mail.gmail.com>
-Subject: Re: [PATCH] x86/boot: Fix if_changed build flip/flop
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@redhat.com>,
-        Dirk Gouders <dirk@gouders.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531892220-2046-3-git-send-email-tdas@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-16 7:58 GMT+09:00 Ingo Molnar <mingo@kernel.org>:
->
-> * Kees Cook <keescook@chromium.org> wrote:
->
->> The if_changed kbuild function can only be used once per target. If not
->> it will effectively always trigger, flipping back and forth between the
->> two commands getting recorded. Instead, merge the two commands into a
->> single function to get stable build artifacts (i.e. .vmlinux.cmd).
->>
->> Reported-by: Dirk Gouders <dirk@gouders.net>
->
-> What actual symptoms does this bug have?
->
-> I.e. it would be nice if the changelog started with such an explanation:
->
->   Dirk Gouders reported that .... <bad stuff happens during kernel build> ...
->   and bisected it back to:
->
->     98f78525371b ("x86/boot: Refuse to build with data relocations")
->
->   The root cause of the bug is that the if_changed kbuild function ...
->
-> Or something like that.
->
-> Thanks,
->
->         Ingo
+On 18-07-18, 11:07, Taniya Das wrote:
+> +static int qcom_cpu_resources_init(struct platform_device *pdev,
+> +				   struct device_node *np, unsigned int cpu,
+> +				   unsigned long xo_rate)
+> +{
+> +	struct cpufreq_qcom *c;
+> +	struct resource res;
+> +	struct device *dev = &pdev->dev;
+> +	const u16 *offsets;
+> +	cpumask_t cpus_related;
+> +	int ret, i, cpu_r;
+> +	void __iomem *base;
+> +
+> +	cpumask_clear(&cpus_related);
+> +
+> +	ret = qcom_get_related_cpus(np, &cpus_related);
+> +	if (ret) {
+> +		dev_err(dev, "%s failed to get related CPUs\n", np->name);
+> +		return ret;
+> +	}
+> +
+> +	/* Related CPUs */
+> +	cpu_r = cpumask_first(&cpus_related);
+> +	if (cpu != cpu_r) {
+> +		qcom_freq_domain_map[cpu] = qcom_freq_domain_map[cpu_r];
+> +		return 0;
+> +	}
+> +
+> +	c = devm_kzalloc(dev, sizeof(*c), GFP_KERNEL);
+> +	if (!c)
+> +		return -ENOMEM;
+> +
+> +	offsets = of_device_get_match_data(&pdev->dev);
+> +	if (!offsets)
+> +		return -EINVAL;
+> +
+> +	if (of_address_to_resource(np, 0, &res))
+> +		return -ENOMEM;
+> +
+> +	base = devm_ioremap_resource(dev, &res);
+> +	if (!base)
+> +		return -ENOMEM;
+> +
+> +	for (i = REG_ENABLE; i < REG_ARRAY_SIZE; i++)
+> +		c->reg_bases[i] = base + offsets[i];
+> +
+> +	/* HW should be in enabled state to proceed */
+> +	if (!(readl_relaxed(c->reg_bases[REG_ENABLE]) & 0x1)) {
+> +		dev_err(dev, "%s cpufreq hardware not enabled\n", np->name);
+> +		return -ENODEV;
+> +	}
+> +
+> +	cpumask_copy(&c->related_cpus, &cpus_related);
+> +
+> +	c->max_cores = cpumask_weight(&c->related_cpus);
+> +	if (!c->max_cores)
+> +		return -ENOENT;
+> +
+> +	c->xo_rate = xo_rate;
+> +
+> +	ret = qcom_cpufreq_hw_read_lut(pdev, c);
+> +	if (ret) {
+> +		dev_err(dev, "%s failed to read LUT\n", np->name);
+> +		return ret;
+> +	}
+> +
+> +	qcom_freq_domain_map[cpu] = c;
 
+Set this for all related CPUs here and then the check at the top of
+this routine will be simply:
 
+if (qcom_freq_domain_map[cpu])
+        return 0;
 
-
-Anyway, the code diff looks good to me.
-
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
+> +
+> +	return 0;
+> +}
+> +
 -- 
-Best Regards
-Masahiro Yamada
+viresh
