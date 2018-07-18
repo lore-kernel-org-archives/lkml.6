@@ -6,72 +6,66 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 784B5ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BE8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 100DA206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C961720850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:48:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oyPJz1l0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 100DA206B7
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJ0egi3f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C961720850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731645AbeGRMZb (ORCPT
+        id S1731678AbeGRMZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:25:31 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:33574 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729972AbeGRMZa (ORCPT
+        Wed, 18 Jul 2018 08:25:34 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:36169 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729972AbeGRMZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:25:30 -0400
-Received: by mail-yb0-f194.google.com with SMTP id e84-v6so1700780ybb.0;
-        Wed, 18 Jul 2018 04:47:56 -0700 (PDT)
+        Wed, 18 Jul 2018 08:25:34 -0400
+Received: by mail-yb0-f193.google.com with SMTP id s1-v6so1703674ybk.3;
+        Wed, 18 Jul 2018 04:48:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=bJbFrR6T7Ko6m5egPTsJJ8vDc+PnUn8joLqOpZIgsLw=;
-        b=oyPJz1l0d7L9qFbIMnck79ZShrUR7T/iMho9E2+WlQ1fLp0jp0lmVimADrGGlVbekL
-         sH+3aIzk139bypViMYtnJCvS3QpXY+GJXTxfWmoUgCImPNDpQZUosKHFClJukVu+8Fim
-         rECu26gliz8oN5x6vVbwUnbfW6AeeAAQE4WXlSV80uSJ2N9JfUEaUDqN2gXjItmGwVu4
-         YR6KaHWSibJaVaHtNA992wzV6R17zS2aOz1CtsDzeXk5mieA5yBMlx9XTGT+pWrm09QZ
-         gCws78EgyNOEgHpKvVR6zi3EscE+03rPpQqm/eQpDV0Mar1+umL6acwKUIZ3Q57ML2se
-         DjZg==
+        bh=LYSjvzLNEsrPUz7M/wxT2GmCatf6lvBfkF1VEvp/2X0=;
+        b=CJ0egi3f9i0HrI5eu3luAEv292WeMGaw/69dVs8m9a/DLga1GMS4Lsc3qcJvEiJX/v
+         yRTHAaOmUPkUghjBzL0lNWH/pgyqYba9XDkpULi/ZtaR3uXRenzJb+kTuBWvVPOkeC6t
+         HUFL5lFsEgj+8WfE363GTaaplQthvoG422Rro2Wumh1HNCDcc7xfYTfNjHsHTwHjREbF
+         rZbfb7WQ1pUr59ruESm49MR74vxCDc/DT4u95wKgZhri5tO0xU0zISs3N66BmwakSOiH
+         MB8DPzaWkM+W7d4jEMYaAP2E2Khe4P+Y2zEPfvA8Z95HfbR3U6487mDj6V2VhKivEQW3
+         l/JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=bJbFrR6T7Ko6m5egPTsJJ8vDc+PnUn8joLqOpZIgsLw=;
-        b=pRFcas2D7RGM8/s2YVfd5WMMxI40zd4s/b5QH5lCDiD0Ym2V+paGI3GTIMLwwUgLtl
-         FThkERHjB/lL/gXcNFVMXu+ypFmXnkchWNnO4i0ihK/7HlfNsntSy/OipIhKMLEOfSQV
-         Zrnps0gGBaUVWbKiFKcM7fXfUYH2FpOpURFeGZLUPAQv8bNddfd5uTqpF9BKmHxJ48ZZ
-         XP2JEZpEnj+YCpju9UeDU4KeEfGgxjjRhphQW+B/CNXhnWJJpdZ4QhXyXVsLhkxHm8fj
-         FxjekKlsqYfAFP516BlLADUaFnYjLFdYPv12024KnsZYxiahpkwB3zFDUGfG34oa5qMS
-         d0ig==
-X-Gm-Message-State: AOUpUlGSKs2J60861YwOoqU9qr4Tod0tyPJ3OgUIS8610/1pd/slimZ8
-        fqBzwFjl1+b/NrfBI6+EH/A=
-X-Google-Smtp-Source: AAOMgpd3NXMURmvf3zlZ/NGF7X2P1q6sKw0BplSI8tB5qF14Z7g61kfml3k1p/qSjpI7l4y4x3OIIA==
-X-Received: by 2002:a25:ae83:: with SMTP id b3-v6mr2984618ybj.458.1531914476371;
-        Wed, 18 Jul 2018 04:47:56 -0700 (PDT)
+        bh=LYSjvzLNEsrPUz7M/wxT2GmCatf6lvBfkF1VEvp/2X0=;
+        b=X8RZbahAijgo3QT9TYtWnQhDn28JCF/NUyToXsP+0qNVCwAyrBJBl93uZSc1j45MO3
+         QDJcn3YE9ucruMPTfNRz68BYhBFybCODG79kqqWn7X927iUmJiSJt7UD/mTV40gjWeSQ
+         +7Ux/QEmcspJZSVZezjNguSBQ9v8F7z1T1TAR35Yr3NFkJyUqvu06i4wq3CokkKHJ1S0
+         pkrVMM950VwvDL36GEqBH8+d6utf93X4/SocbVfmw+2W0JnTvhbNgIf5rxcIbnyN/iHd
+         U8DoCgiara/dCERxj+HDCJmXbvJgb/8xtf85JXQE/r83gW7rw07zkQm+OQq5zvv+CVqs
+         9r0w==
+X-Gm-Message-State: AOUpUlFlGyLfgJz2InJhBjFiv4wtIF3KFVE0RRMk+naCJpOZwGVtV5kd
+        lLjD3olwrYCfdGs/v6PQxqo=
+X-Google-Smtp-Source: AAOMgpfHJFvpCYcph/HJZT8MQtdbD+bSLYCRMMCLaAMGvSnLWzgUO9C6zJmGst2gZLB/QEMGMrVl1Q==
+X-Received: by 2002:a25:27c7:: with SMTP id n190-v6mr3010145ybn.520.1531914481523;
+        Wed, 18 Jul 2018 04:48:01 -0700 (PDT)
 Received: from localhost ([2620:10d:c091:180::1:c229])
-        by smtp.gmail.com with ESMTPSA id f64-v6sm1491778ywd.58.2018.07.18.04.47.55
+        by smtp.gmail.com with ESMTPSA id s206-v6sm1443221ywc.55.2018.07.18.04.48.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 04:47:55 -0700 (PDT)
+        Wed, 18 Jul 2018 04:48:00 -0700 (PDT)
 From:   Tejun Heo <tj@kernel.org>
 To:     axboe@kernel.dk
 Cc:     michaelcallahan@fb.com, newella@fb.com,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com, linux-api@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, Minchan Kim <minchan@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Joshua Morris <josh.h.morris@us.ibm.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Matias Bjorling <mb@lightnvm.io>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Alasdair Kergon <agk@redhat.com>
-Subject: [PATCH 4/6] block: Add and use op_stat_group() for indexing disk_stat fields.
-Date:   Wed, 18 Jul 2018 04:47:39 -0700
-Message-Id: <20180718114741.2580313-5-tj@kernel.org>
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 6/6] blkcg: Track DISCARD statistics and output them in cgroup io.stat
+Date:   Wed, 18 Jul 2018 04:47:41 -0700
+Message-Id: <20180718114741.2580313-7-tj@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180718114741.2580313-1-tj@kernel.org>
 References: <20180718114741.2580313-1-tj@kernel.org>
@@ -80,416 +74,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Callahan <michaelcallahan@fb.com>
+Add tracking of REQ_OP_DISCARD ios to the per-cgroup io.stat.  Two
+fields, dbytes and dios, to respectively count the total bytes and
+number of discards are added.
 
-Add and use a new op_stat_group() function for indexing partition stat
-fields rather than indexing them by rq_data_dir() or bio_data_dir().
-This function works similarly to op_is_sync() in that it takes the
-request::cmd_flags or bio::bi_opf flags and determines which stats
-should et updated.
-
-In addition, the second parameter to generic_start_io_acct() and
-generic_end_io_acct() is now a REQ_OP rather than simply a read or
-write bit and it uses op_stat_group() on the parameter to determine
-the stat group.
-
-Note that the partition in_flight counts are not part of the per-cpu
-statistics and as such are not indexed via this function.  It's now
-indexed by op_is_write().
-
-tj: Refreshed on top of v4.17.  Updated to pass around REQ_OP.
-
-Signed-off-by: Michael Callahan <michaelcallahan@fb.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Joshua Morris <josh.h.morris@us.ibm.com>
-Cc: Philipp Reisner <philipp.reisner@linbit.com>
-Cc: Matias Bjorling <mb@lightnvm.io>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Andy Newell <newella@fb.com>
+Cc: Michael Callahan <michaelcallahan@fb.com>
 ---
- block/bio.c                   | 16 +++++++++-------
- block/blk-core.c              | 12 ++++++------
- drivers/block/drbd/drbd_req.c |  4 ++--
- drivers/block/rsxx/dev.c      |  6 +++---
- drivers/block/zram/zram_drv.c |  5 ++---
- drivers/lightnvm/pblk-cache.c |  5 +++--
- drivers/lightnvm/pblk-read.c  |  5 +++--
- drivers/md/bcache/request.c   | 13 +++++--------
- drivers/md/dm.c               |  6 ++++--
- drivers/md/md.c               |  5 +++--
- drivers/nvdimm/nd.h           |  7 +++----
- include/linux/bio.h           |  4 ++--
- include/linux/blk_types.h     |  5 +++++
- 13 files changed, 50 insertions(+), 43 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst | 10 ++++++----
+ block/blk-cgroup.c                      | 13 +++++++++----
+ include/linux/blk-cgroup.h              |  5 ++++-
+ 3 files changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index f3536bfc8298..8ecc95615941 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1728,29 +1728,31 @@ void bio_check_pages_dirty(struct bio *bio)
- }
- EXPORT_SYMBOL_GPL(bio_check_pages_dirty);
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 569ce27b85e5..3afe10fa82bc 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1317,17 +1317,19 @@ IO Interface Files
+ 	Lines are keyed by $MAJ:$MIN device numbers and not ordered.
+ 	The following nested keys are defined.
  
--void generic_start_io_acct(struct request_queue *q, int rw,
-+void generic_start_io_acct(struct request_queue *q, int op,
- 			   unsigned long sectors, struct hd_struct *part)
+-	  ======	===================
++	  ======	=====================
+ 	  rbytes	Bytes read
+ 	  wbytes	Bytes written
+ 	  rios		Number of read IOs
+ 	  wios		Number of write IOs
+-	  ======	===================
++	  dbytes	Bytes discarded
++	  dios		Number of discard IOs
++	  ======	=====================
+ 
+ 	An example read output follows:
+ 
+-	  8:16 rbytes=1459200 wbytes=314773504 rios=192 wios=353
+-	  8:0 rbytes=90430464 wbytes=299008000 rios=8950 wios=1252
++	  8:16 rbytes=1459200 wbytes=314773504 rios=192 wios=353 dbytes=0 dios=0
++	  8:0 rbytes=90430464 wbytes=299008000 rios=8950 wios=1252 dbytes=50331648 dios=3021
+ 
+   io.weight
+ 	A read-write flat-keyed file which exists on non-root cgroups.
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 7e2c19ce1a08..1942357d7165 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -567,6 +567,7 @@ u64 __blkg_prfill_rwstat(struct seq_file *sf, struct blkg_policy_data *pd,
+ 		[BLKG_RWSTAT_WRITE]	= "Write",
+ 		[BLKG_RWSTAT_SYNC]	= "Sync",
+ 		[BLKG_RWSTAT_ASYNC]	= "Async",
++		[BLKG_RWSTAT_DISCARD]	= "Discard",
+ 	};
+ 	const char *dname = blkg_dev_name(pd->blkg);
+ 	u64 v;
+@@ -580,7 +581,8 @@ u64 __blkg_prfill_rwstat(struct seq_file *sf, struct blkg_policy_data *pd,
+ 			   (unsigned long long)atomic64_read(&rwstat->aux_cnt[i]));
+ 
+ 	v = atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_READ]) +
+-		atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_WRITE]);
++		atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_WRITE]) +
++		atomic64_read(&rwstat->aux_cnt[BLKG_RWSTAT_DISCARD]);
+ 	seq_printf(sf, "%s Total %llu\n", dname, (unsigned long long)v);
+ 	return v;
+ }
+@@ -959,7 +961,7 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 		const char *dname;
+ 		char *buf;
+ 		struct blkg_rwstat rwstat;
+-		u64 rbytes, wbytes, rios, wios;
++		u64 rbytes, wbytes, rios, wios, dbytes, dios;
+ 		size_t size = seq_get_buf(sf, &buf), off = 0;
+ 		int i;
+ 		bool has_stats = false;
+@@ -982,19 +984,22 @@ static int blkcg_print_stat(struct seq_file *sf, void *v)
+ 					offsetof(struct blkcg_gq, stat_bytes));
+ 		rbytes = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_READ]);
+ 		wbytes = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_WRITE]);
++		dbytes = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_DISCARD]);
+ 
+ 		rwstat = blkg_rwstat_recursive_sum(blkg, NULL,
+ 					offsetof(struct blkcg_gq, stat_ios));
+ 		rios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_READ]);
+ 		wios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_WRITE]);
++		dios = atomic64_read(&rwstat.aux_cnt[BLKG_RWSTAT_DISCARD]);
+ 
+ 		spin_unlock_irq(blkg->q->queue_lock);
+ 
+ 		if (rbytes || wbytes || rios || wios) {
+ 			has_stats = true;
+ 			off += scnprintf(buf+off, size-off,
+-					 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu",
+-					 rbytes, wbytes, rios, wios);
++					 "rbytes=%llu wbytes=%llu rios=%llu wios=%llu dbytes=%llu dios=%llu",
++					 rbytes, wbytes, rios, wios,
++					 dbytes, dios);
+ 		}
+ 
+ 		if (!blkcg_debug_stats)
+diff --git a/include/linux/blk-cgroup.h b/include/linux/blk-cgroup.h
+index de57de4831d5..3bed5e02a873 100644
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -35,6 +35,7 @@ enum blkg_rwstat_type {
+ 	BLKG_RWSTAT_WRITE,
+ 	BLKG_RWSTAT_SYNC,
+ 	BLKG_RWSTAT_ASYNC,
++	BLKG_RWSTAT_DISCARD,
+ 
+ 	BLKG_RWSTAT_NR,
+ 	BLKG_RWSTAT_TOTAL = BLKG_RWSTAT_NR,
+@@ -649,7 +650,9 @@ static inline void blkg_rwstat_add(struct blkg_rwstat *rwstat,
  {
-+	const int sgrp = op_stat_group(op);
- 	int cpu = part_stat_lock();
+ 	struct percpu_counter *cnt;
  
- 	part_round_stats(q, cpu, part);
--	part_stat_inc(cpu, part, ios[rw]);
--	part_stat_add(cpu, part, sectors[rw], sectors);
--	part_inc_in_flight(q, part, rw);
-+	part_stat_inc(cpu, part, ios[sgrp]);
-+	part_stat_add(cpu, part, sectors[sgrp], sectors);
-+	part_inc_in_flight(q, part, op_is_write(op));
- 
- 	part_stat_unlock();
- }
- EXPORT_SYMBOL(generic_start_io_acct);
- 
--void generic_end_io_acct(struct request_queue *q, int rw,
-+void generic_end_io_acct(struct request_queue *q, int req_op,
- 			 struct hd_struct *part, unsigned long start_time)
- {
- 	unsigned long duration = jiffies - start_time;
-+	const int sgrp = op_stat_group(req_op);
- 	int cpu = part_stat_lock();
- 
--	part_stat_add(cpu, part, ticks[rw], duration);
-+	part_stat_add(cpu, part, ticks[sgrp], duration);
- 	part_round_stats(q, cpu, part);
--	part_dec_in_flight(q, part, rw);
-+	part_dec_in_flight(q, part, op_is_write(req_op));
- 
- 	part_stat_unlock();
- }
-diff --git a/block/blk-core.c b/block/blk-core.c
-index c4b57d8806fe..03a4ea93a5f3 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2702,13 +2702,13 @@ EXPORT_SYMBOL_GPL(blk_rq_err_bytes);
- void blk_account_io_completion(struct request *req, unsigned int bytes)
- {
- 	if (blk_do_io_stat(req)) {
--		const int rw = rq_data_dir(req);
-+		const int sgrp = op_stat_group(req_op(req));
- 		struct hd_struct *part;
- 		int cpu;
- 
- 		cpu = part_stat_lock();
- 		part = req->part;
--		part_stat_add(cpu, part, sectors[rw], bytes >> 9);
-+		part_stat_add(cpu, part, sectors[sgrp], bytes >> 9);
- 		part_stat_unlock();
- 	}
- }
-@@ -2722,7 +2722,7 @@ void blk_account_io_done(struct request *req, u64 now)
- 	 */
- 	if (blk_do_io_stat(req) && !(req->rq_flags & RQF_FLUSH_SEQ)) {
- 		unsigned long duration;
--		const int rw = rq_data_dir(req);
-+		const int sgrp = op_stat_group(req_op(req));
- 		struct hd_struct *part;
- 		int cpu;
- 
-@@ -2730,10 +2730,10 @@ void blk_account_io_done(struct request *req, u64 now)
- 		cpu = part_stat_lock();
- 		part = req->part;
- 
--		part_stat_inc(cpu, part, ios[rw]);
--		part_stat_add(cpu, part, ticks[rw], duration);
-+		part_stat_inc(cpu, part, ios[sgrp]);
-+		part_stat_add(cpu, part, ticks[sgrp], duration);
- 		part_round_stats(req->q, cpu, part);
--		part_dec_in_flight(req->q, part, rw);
-+		part_dec_in_flight(req->q, part, rq_data_dir(req));
- 
- 		hd_struct_put(part);
- 		part_stat_unlock();
-diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
-index d146fedc38bb..19cac36e9737 100644
---- a/drivers/block/drbd/drbd_req.c
-+++ b/drivers/block/drbd/drbd_req.c
-@@ -38,7 +38,7 @@ static void _drbd_start_io_acct(struct drbd_device *device, struct drbd_request
- {
- 	struct request_queue *q = device->rq_queue;
- 
--	generic_start_io_acct(q, bio_data_dir(req->master_bio),
-+	generic_start_io_acct(q, bio_op(req->master_bio),
- 				req->i.size >> 9, &device->vdisk->part0);
- }
- 
-@@ -47,7 +47,7 @@ static void _drbd_end_io_acct(struct drbd_device *device, struct drbd_request *r
- {
- 	struct request_queue *q = device->rq_queue;
- 
--	generic_end_io_acct(q, bio_data_dir(req->master_bio),
-+	generic_end_io_acct(q, bio_op(req->master_bio),
- 			    &device->vdisk->part0, req->start_jif);
- }
- 
-diff --git a/drivers/block/rsxx/dev.c b/drivers/block/rsxx/dev.c
-index dddb3f2490b6..1a92f9e65937 100644
---- a/drivers/block/rsxx/dev.c
-+++ b/drivers/block/rsxx/dev.c
-@@ -112,7 +112,7 @@ static const struct block_device_operations rsxx_fops = {
- 
- static void disk_stats_start(struct rsxx_cardinfo *card, struct bio *bio)
- {
--	generic_start_io_acct(card->queue, bio_data_dir(bio), bio_sectors(bio),
-+	generic_start_io_acct(card->queue, bio_op(bio), bio_sectors(bio),
- 			     &card->gendisk->part0);
- }
- 
-@@ -120,8 +120,8 @@ static void disk_stats_complete(struct rsxx_cardinfo *card,
- 				struct bio *bio,
- 				unsigned long start_time)
- {
--	generic_end_io_acct(card->queue, bio_data_dir(bio),
--				&card->gendisk->part0, start_time);
-+	generic_end_io_acct(card->queue, bio_op(bio),
-+			    &card->gendisk->part0, start_time);
- }
- 
- static void bio_dma_done_cb(struct rsxx_cardinfo *card,
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 78c29044684a..2907a8156aaf 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1277,11 +1277,10 @@ static int zram_bvec_rw(struct zram *zram, struct bio_vec *bvec, u32 index,
- 			int offset, unsigned int op, struct bio *bio)
- {
- 	unsigned long start_time = jiffies;
--	int rw_acct = op_is_write(op) ? REQ_OP_WRITE : REQ_OP_READ;
- 	struct request_queue *q = zram->disk->queue;
- 	int ret;
- 
--	generic_start_io_acct(q, rw_acct, bvec->bv_len >> SECTOR_SHIFT,
-+	generic_start_io_acct(q, op, bvec->bv_len >> SECTOR_SHIFT,
- 			&zram->disk->part0);
- 
- 	if (!op_is_write(op)) {
-@@ -1293,7 +1292,7 @@ static int zram_bvec_rw(struct zram *zram, struct bio_vec *bvec, u32 index,
- 		ret = zram_bvec_write(zram, bvec, index, offset, bio);
- 	}
- 
--	generic_end_io_acct(q, rw_acct, &zram->disk->part0, start_time);
-+	generic_end_io_acct(q, op, &zram->disk->part0, start_time);
- 
- 	zram_slot_lock(zram, index);
- 	zram_accessed(zram, index);
-diff --git a/drivers/lightnvm/pblk-cache.c b/drivers/lightnvm/pblk-cache.c
-index 77d811962818..f565a56b898a 100644
---- a/drivers/lightnvm/pblk-cache.c
-+++ b/drivers/lightnvm/pblk-cache.c
-@@ -27,7 +27,8 @@ int pblk_write_to_cache(struct pblk *pblk, struct bio *bio, unsigned long flags)
- 	int nr_entries = pblk_get_secs(bio);
- 	int i, ret;
- 
--	generic_start_io_acct(q, WRITE, bio_sectors(bio), &pblk->disk->part0);
-+	generic_start_io_acct(q, REQ_OP_WRITE, bio_sectors(bio),
-+			      &pblk->disk->part0);
- 
- 	/* Update the write buffer head (mem) with the entries that we can
- 	 * write. The write in itself cannot fail, so there is no need to
-@@ -75,7 +76,7 @@ int pblk_write_to_cache(struct pblk *pblk, struct bio *bio, unsigned long flags)
- 	pblk_rl_inserted(&pblk->rl, nr_entries);
- 
- out:
--	generic_end_io_acct(q, WRITE, &pblk->disk->part0, start_time);
-+	generic_end_io_acct(q, REQ_OP_WRITE, &pblk->disk->part0, start_time);
- 	pblk_write_should_kick(pblk);
- 	return ret;
- }
-diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
-index 26d414ae25b6..5a46d7f9302f 100644
---- a/drivers/lightnvm/pblk-read.c
-+++ b/drivers/lightnvm/pblk-read.c
-@@ -199,7 +199,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
- 	struct bio *int_bio = rqd->bio;
- 	unsigned long start_time = r_ctx->start_time;
- 
--	generic_end_io_acct(dev->q, READ, &pblk->disk->part0, start_time);
-+	generic_end_io_acct(dev->q, REQ_OP_READ, &pblk->disk->part0, start_time);
- 
- 	if (rqd->error)
- 		pblk_log_read_err(pblk, rqd);
-@@ -461,7 +461,8 @@ int pblk_submit_read(struct pblk *pblk, struct bio *bio)
- 		return NVM_IO_ERR;
- 	}
- 
--	generic_start_io_acct(q, READ, bio_sectors(bio), &pblk->disk->part0);
-+	generic_start_io_acct(q, REQ_OP_READ, bio_sectors(bio),
-+			      &pblk->disk->part0);
- 
- 	bitmap_zero(read_bitmap, nr_secs);
- 
-diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
-index ae67f5fa8047..97707b0c54ce 100644
---- a/drivers/md/bcache/request.c
-+++ b/drivers/md/bcache/request.c
-@@ -667,8 +667,7 @@ static void backing_request_endio(struct bio *bio)
- static void bio_complete(struct search *s)
- {
- 	if (s->orig_bio) {
--		generic_end_io_acct(s->d->disk->queue,
--				    bio_data_dir(s->orig_bio),
-+		generic_end_io_acct(s->d->disk->queue, bio_op(s->orig_bio),
- 				    &s->d->disk->part0, s->start_time);
- 
- 		trace_bcache_request_end(s->d, s->orig_bio);
-@@ -1062,8 +1061,7 @@ static void detached_dev_end_io(struct bio *bio)
- 	bio->bi_end_io = ddip->bi_end_io;
- 	bio->bi_private = ddip->bi_private;
- 
--	generic_end_io_acct(ddip->d->disk->queue,
--			    bio_data_dir(bio),
-+	generic_end_io_acct(ddip->d->disk->queue, bio_op(bio),
- 			    &ddip->d->disk->part0, ddip->start_time);
- 
- 	if (bio->bi_status) {
-@@ -1120,7 +1118,7 @@ static blk_qc_t cached_dev_make_request(struct request_queue *q,
- 	}
- 
- 	atomic_set(&dc->backing_idle, 0);
--	generic_start_io_acct(q, rw, bio_sectors(bio), &d->disk->part0);
-+	generic_start_io_acct(q, bio_op(bio), bio_sectors(bio), &d->disk->part0);
- 
- 	bio_set_dev(bio, dc->bdev);
- 	bio->bi_iter.bi_sector += dc->sb.data_offset;
-@@ -1229,7 +1227,6 @@ static blk_qc_t flash_dev_make_request(struct request_queue *q,
- 	struct search *s;
- 	struct closure *cl;
- 	struct bcache_device *d = bio->bi_disk->private_data;
--	int rw = bio_data_dir(bio);
- 
- 	if (unlikely(d->c && test_bit(CACHE_SET_IO_DISABLE, &d->c->flags))) {
- 		bio->bi_status = BLK_STS_IOERR;
-@@ -1237,7 +1234,7 @@ static blk_qc_t flash_dev_make_request(struct request_queue *q,
- 		return BLK_QC_T_NONE;
- 	}
- 
--	generic_start_io_acct(q, rw, bio_sectors(bio), &d->disk->part0);
-+	generic_start_io_acct(q, bio_op(bio), bio_sectors(bio), &d->disk->part0);
- 
- 	s = search_alloc(bio, d);
- 	cl = &s->cl;
-@@ -1254,7 +1251,7 @@ static blk_qc_t flash_dev_make_request(struct request_queue *q,
- 				      flash_dev_nodata,
- 				      bcache_wq);
- 		return BLK_QC_T_NONE;
--	} else if (rw) {
-+	} else if (bio_data_dir(bio)) {
- 		bch_keybuf_check_overlapping(&s->iop.c->moving_gc_keys,
- 					&KEY(d->id, bio->bi_iter.bi_sector, 0),
- 					&KEY(d->id, bio_end_sector(bio), 0));
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index b0dd7027848b..20f7e4ef5342 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -609,7 +609,8 @@ static void start_io_acct(struct dm_io *io)
- 
- 	io->start_time = jiffies;
- 
--	generic_start_io_acct(md->queue, rw, bio_sectors(bio), &dm_disk(md)->part0);
-+	generic_start_io_acct(md->queue, bio_op(bio), bio_sectors(bio),
-+			      &dm_disk(md)->part0);
- 
- 	atomic_set(&dm_disk(md)->part0.in_flight[rw],
- 		   atomic_inc_return(&md->pending[rw]));
-@@ -628,7 +629,8 @@ static void end_io_acct(struct dm_io *io)
- 	int pending;
- 	int rw = bio_data_dir(bio);
- 
--	generic_end_io_acct(md->queue, rw, &dm_disk(md)->part0, io->start_time);
-+	generic_end_io_acct(md->queue, bio_op(bio), &dm_disk(md)->part0,
-+			    io->start_time);
- 
- 	if (unlikely(dm_stats_used(&md->stats)))
- 		dm_stats_account_io(&md->stats, bio_data_dir(bio),
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index dabe36723d60..f6e58dbca0d4 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -335,6 +335,7 @@ EXPORT_SYMBOL(md_handle_request);
- static blk_qc_t md_make_request(struct request_queue *q, struct bio *bio)
- {
- 	const int rw = bio_data_dir(bio);
-+	const int sgrp = op_stat_group(bio_op(bio));
- 	struct mddev *mddev = q->queuedata;
- 	unsigned int sectors;
- 	int cpu;
-@@ -363,8 +364,8 @@ static blk_qc_t md_make_request(struct request_queue *q, struct bio *bio)
- 	md_handle_request(mddev, bio);
- 
- 	cpu = part_stat_lock();
--	part_stat_inc(cpu, &mddev->gendisk->part0, ios[rw]);
--	part_stat_add(cpu, &mddev->gendisk->part0, sectors[rw], sectors);
-+	part_stat_inc(cpu, &mddev->gendisk->part0, ios[sgrp]);
-+	part_stat_add(cpu, &mddev->gendisk->part0, sectors[sgrp], sectors);
- 	part_stat_unlock();
- 
- 	return BLK_QC_T_NONE;
-diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-index 32e0364b48b9..6ee7fd7e4bbd 100644
---- a/drivers/nvdimm/nd.h
-+++ b/drivers/nvdimm/nd.h
-@@ -396,16 +396,15 @@ static inline bool nd_iostat_start(struct bio *bio, unsigned long *start)
- 		return false;
- 
- 	*start = jiffies;
--	generic_start_io_acct(disk->queue, bio_data_dir(bio),
--			      bio_sectors(bio), &disk->part0);
-+	generic_start_io_acct(disk->queue, bio_op(bio), bio_sectors(bio),
-+			      &disk->part0);
- 	return true;
- }
- static inline void nd_iostat_end(struct bio *bio, unsigned long start)
- {
- 	struct gendisk *disk = bio->bi_disk;
- 
--	generic_end_io_acct(disk->queue, bio_data_dir(bio), &disk->part0,
--				start);
-+	generic_end_io_acct(disk->queue, bio_op(bio), &disk->part0, start);
- }
- static inline bool is_bad_pmem(struct badblocks *bb, sector_t sector,
- 		unsigned int len)
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index a00dfff51aa5..ab221c517f4e 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -496,9 +496,9 @@ extern struct bio *bio_copy_kern(struct request_queue *, void *, unsigned int,
- extern void bio_set_pages_dirty(struct bio *bio);
- extern void bio_check_pages_dirty(struct bio *bio);
- 
--void generic_start_io_acct(struct request_queue *q, int rw,
-+void generic_start_io_acct(struct request_queue *q, int op,
- 				unsigned long sectors, struct hd_struct *part);
--void generic_end_io_acct(struct request_queue *q, int rw,
-+void generic_end_io_acct(struct request_queue *q, int op,
- 				struct hd_struct *part,
- 				unsigned long start_time);
- 
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index d2b44de56bc1..2960a96d833c 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -401,6 +401,11 @@ static inline bool op_is_sync(unsigned int op)
- 		(op & (REQ_SYNC | REQ_FUA | REQ_PREFLUSH));
- }
- 
-+static inline int op_stat_group(unsigned int op)
-+{
-+	return op_is_write(op);
-+}
-+
- typedef unsigned int blk_qc_t;
- #define BLK_QC_T_NONE		-1U
- #define BLK_QC_T_SHIFT		16
+-	if (op_is_write(op))
++	if (op_is_discard(op))
++		cnt = &rwstat->cpu_cnt[BLKG_RWSTAT_DISCARD];
++	else if (op_is_write(op))
+ 		cnt = &rwstat->cpu_cnt[BLKG_RWSTAT_WRITE];
+ 	else
+ 		cnt = &rwstat->cpu_cnt[BLKG_RWSTAT_READ];
 -- 
 2.17.1
 
