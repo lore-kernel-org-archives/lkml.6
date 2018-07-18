@@ -2,171 +2,104 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE5EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFA06ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D59DD20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:57:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59DD20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B25A2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:59:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TI4aVZDc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B25A2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731191AbeGRNfe (ORCPT
+        id S1731012AbeGRNhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:35:34 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:46209 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726258AbeGRNfe (ORCPT
+        Wed, 18 Jul 2018 09:37:25 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39500 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730245AbeGRNhZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:35:34 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie3.idc.renesas.com with ESMTP; 18 Jul 2018 21:57:43 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id AC42D6D359;
-        Wed, 18 Jul 2018 21:57:43 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.51,370,1526310000"; 
-   d="scan'208";a="287219760"
-Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii2.idc.renesas.com with ESMTP; 18 Jul 2018 21:57:40 +0900
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Simon Horman <horms@verge.net.au>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] clk: Add functions to get optional clocks
-Date:   Wed, 18 Jul 2018 13:57:38 +0100
-Message-Id: <1531918658-32278-1-git-send-email-phil.edworthy@renesas.com>
+        Wed, 18 Jul 2018 09:37:25 -0400
+Received: by mail-pl0-f67.google.com with SMTP id p23-v6so2013456plo.6;
+        Wed, 18 Jul 2018 05:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GU6MOQ0tS6vswTEuh9z760UOZZ2jllZroLz8D5yDImU=;
+        b=TI4aVZDcgpaif3uHITqGnEzHqBZeVSq8y+kjgTGiAdtpRtKFEuXg289rrM42yjnhRt
+         O+yuqYlVDNHs+VwklPdpcqPNBinmwAS5AzIJi/GDS9cqq8/j4Ek6QNr41yA86I4w7a9R
+         6CfM6uNBUfQqNVMU28+c09GwnnXqK6sxFZAs0WZ+vyfqWoSeCKUONgyu5C3/FUWS1X2M
+         0agOKmXchBKM9WFeLq+bP2Gc6zpMAweNeP/95pTM9WtYF5MkPiyxCv8e+7AcroOHBYJX
+         Qfv1HPkBG8O1nFlabFQNKmjnPvG6AO/6RfJp2ru1BJ7t/YoQygyZqyuHAprEFvHzL9Xp
+         bzCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GU6MOQ0tS6vswTEuh9z760UOZZ2jllZroLz8D5yDImU=;
+        b=HqjpHkNNSMKx1tcdTeha1PMIFYF/QhN3yfQ4GCp8abrxs390ijw9chMPAb6nMbi96b
+         IdjYcPURBZzxF49tzvCzlkOCAtHk4gFSvgnxSWnIvUhdFvDbtpTrUpiJO2qjifbl8/1j
+         wh4d0itjbK66Glq1GZz06Ncveya8LcXM3J0SDEUktPpWhlua2zTxplmpRLRcWO20Cffg
+         poUF6qYCBAG9AReQHvKIDzRUqpdyXCKpHINXIQUuoRtMBl0uXb6IGtqOSlq4KPDH2BWr
+         S4F0D347xma9wIK3lO1CrBFXvdhm7+w/cuxnCSD4Fl+SWovCA1m5lIM8BCoVMANRRyU9
+         Gq9Q==
+X-Gm-Message-State: AOUpUlHLGuP1NRXTUhdTsatGZ349afuf8HjXYTDl11NY9X9DSS2Rk2jW
+        xnLvfEktKcvAv6/okVooM1o=
+X-Google-Smtp-Source: AAOMgpdowLsatI8QLAUnd8tBod7jz4RkxGjHngrpe6EaRQfdOhpmRh2LoMAxwl4qs1jXb2zTNqET+Q==
+X-Received: by 2002:a17:902:b7c6:: with SMTP id v6-v6mr5678830plz.49.1531918775742;
+        Wed, 18 Jul 2018 05:59:35 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.135])
+        by smtp.gmail.com with ESMTPSA id m15-v6sm10671439pfj.171.2018.07.18.05.59.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 18 Jul 2018 05:59:35 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCHv2] ARM: dts: exynos5: add missing interrupts for pwm node
+Date:   Wed, 18 Jul 2018 12:59:27 +0000
+Message-Id: <1531918767-7177-1-git-send-email-linux.amoon@gmail.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Behaves the same as (devm_)clk_get except where there is no clock
-producer. In this case, instead of returning -ENOENT, the function
-returns NULL. This makes error checking simpler and allows
-clk_prepare_enable, etc to be called on the returned reference
-without additional checks.
+Add missing GIC interrupts property for pwm nodes.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 ---
- drivers/clk/clk-devres.c | 11 +++++++++++
- drivers/clk/clkdev.c     | 11 +++++++++++
- include/linux/clk.h      | 27 +++++++++++++++++++++++++++
- 3 files changed, 49 insertions(+)
+Fixed the patch indentation issue with all tabs.
+sorry checkpatch could not figure out the error.
+---
+ arch/arm/boot/dts/exynos5.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index d854e26..63295d9 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -34,6 +34,17 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
- }
- EXPORT_SYMBOL(devm_clk_get);
- 
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id)
-+{
-+	struct clk *c = devm_clk_get(dev, id);
-+
-+	if (PTR_ERR(c) == -ENOENT)
-+		return NULL;
-+
-+	return c;
-+}
-+EXPORT_SYMBOL(devm_clk_get_optional);
-+
- struct clk_bulk_devres {
- 	struct clk_bulk_data *clks;
- 	int num_clks;
-diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-index 7513411..7f2cd1e 100644
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -209,6 +209,17 @@ struct clk *clk_get(struct device *dev, const char *con_id)
- }
- EXPORT_SYMBOL(clk_get);
- 
-+struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	struct clk *c = clk_get(dev, id);
-+
-+	if (PTR_ERR(c) == -ENOENT)
-+		return NULL;
-+
-+	return c;
-+}
-+EXPORT_SYMBOL(clk_get_optional);
-+
- void clk_put(struct clk *clk)
- {
- 	__clk_put(clk);
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 0dbd088..907202b 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -258,6 +258,14 @@ static inline void clk_bulk_unprepare(int num_clks, struct clk_bulk_data *clks)
- struct clk *clk_get(struct device *dev, const char *id);
- 
- /**
-+ * clk_get_optional - lookup and obtain a reference to optional clock producer.
-+ *
-+ * Behaves the same as clk_get except where there is no clock producer. In this
-+ * case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * clk_bulk_get - lookup and obtain a number of references to clock producer.
-  * @dev: device for clock "consumer"
-  * @num_clks: the number of clk_bulk_data
-@@ -316,6 +324,14 @@ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- struct clk *devm_clk_get(struct device *dev, const char *id);
- 
- /**
-+ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
-+ *			   clock producer.
-+ * Behaves the same as devm_clk_get except where there is no clock producer. In
-+ * this case, instead of returning -ENOENT, the function returns NULL.
-+ */
-+struct clk *devm_clk_get_optional(struct device *dev, const char *id);
-+
-+/**
-  * devm_get_clk_from_child - lookup and obtain a managed reference to a
-  *			     clock producer from child node.
-  * @dev: device for clock "consumer"
-@@ -603,6 +619,11 @@ static inline struct clk *clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *clk_get_optional(struct device *dev, const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check clk_bulk_get(struct device *dev, int num_clks,
- 					    struct clk_bulk_data *clks)
- {
-@@ -614,6 +635,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
- 	return NULL;
- }
- 
-+static inline struct clk *devm_clk_get_optional(struct device *dev,
-+						const char *id)
-+{
-+	return NULL;
-+}
-+
- static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
- 						 struct clk_bulk_data *clks)
- {
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index 5d2f0a0..f48fb9b 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -169,6 +169,11 @@
+ 		pwm: pwm@12dd0000 {
+ 			compatible = "samsung,exynos4210-pwm";
+ 			reg = <0x12DD0000 0x100>;
++			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
++					<GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
++					<GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
++					<GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++					<GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+ 			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
+ 			#pwm-cells = <3>;
+ 		};
 -- 
 2.7.4
 
