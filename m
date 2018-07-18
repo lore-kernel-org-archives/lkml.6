@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E96ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6D1ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A230A20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1408820850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UQogW0FG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A230A20854
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="m3q3jpIK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1408820850
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731234AbeGRLeG (ORCPT
+        id S1731254AbeGRLeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:34:06 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45522 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728304AbeGRLeF (ORCPT
+        Wed, 18 Jul 2018 07:34:12 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36072 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729122AbeGRLeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:34:05 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 94-v6so1870703ple.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:56:45 -0700 (PDT)
+        Wed, 18 Jul 2018 07:34:11 -0400
+Received: by mail-pg1-f194.google.com with SMTP id m19-v6so1842605pgv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:56:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FOBLZ5urAy7VMR+hHZBZ94mTkwzsEEdpb+K9j45RtB0=;
-        b=UQogW0FGUN9VLDvgbuPtBIWdxT/3r28TBvAWS6Iv0K3ZGACyEdKlBZQUpWbDaLIkym
-         DqnDr5GTq8h4GKrRdm/YqHBkuOHCPpHPVs0p6jDLmOwehh12lyrgPMMAK8ZdbfeIrwMm
-         V9+SmDTJfku+Hz2zoHE7WYbda6xewo0qdeRcg=
+        bh=R7mOrEE8dnJwOAlOXTRlyNWV30JGa7nESTHQrR41ghU=;
+        b=m3q3jpIK+a8Z7B4/7icjrmKyXQZcoOoso141KqqKiOs/jszPxDghZa8Z4DzpyBeSy9
+         QeNUs1itt10ziQqc3tCOqsfl3FkwSMA89SPyYf47wpzYOlXToCsNCr2vKtKMdounD1sp
+         9hk40DBw4vpjL9PrIE8WhqA/j/I+wxglyb1W8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FOBLZ5urAy7VMR+hHZBZ94mTkwzsEEdpb+K9j45RtB0=;
-        b=fvdKkA9Z0FM/u3pGhocZlVEeiOLnHAinHO7REARxS4GSwDdVxaTEl/W96oEpu8c/UZ
-         8R4DFwVKyN2a2RcYWLFa8zpB8Dp2QCqvgYjoGo6BVYhcj66UZLEXDq45RiZjdA3T7td8
-         mhA+dv/7BY5hmPmxBZq7IT9B+RCUU0FQwYw6mQFvwEUlbby0nFcjVT/jxOwy/RKcrKDV
-         SU4Fu++J8fOUMtr97LIFWiaI7SYmVNSP6sf4ZR58/aT8lJvY/nWseF+i8URpGNTpVL83
-         CHzfV/6AbLC4oEFcFlDwKUQpiGXKFFlMNkc8tb9IQeASoxR+oGLn/7tHLoHuxMtT53tU
-         MxTA==
-X-Gm-Message-State: AOUpUlFdDzSgVz6ROvmnqiJKSZ0u3tK/lSDUFZukFY3EMSkpqOTuttM1
-        rGJZKLOp5a4WsV/RlWWQH/ReiA==
-X-Google-Smtp-Source: AAOMgpemKyhMG7KQQuTstxAHmtYpZ98sj5UqGNOdVEo7KAhZt23LAJVIbBmoJEIw625WESZTvfbFtQ==
-X-Received: by 2002:a17:902:aa07:: with SMTP id be7-v6mr5383514plb.109.1531911405200;
-        Wed, 18 Jul 2018 03:56:45 -0700 (PDT)
+        bh=R7mOrEE8dnJwOAlOXTRlyNWV30JGa7nESTHQrR41ghU=;
+        b=odZfy26DYU7KQwGi9cPFIlpuNLHm9Vf4tSDkeYflZUKcFPR1mfXiFsUeSLZ9FicsBT
+         5UnkT9kJUHsiobvUV8vlsP9IWUZr/lepMfeu4V85Xzpo6ktPsj8Bmx2q9RW3f71Ywq6t
+         jpO90Kj6LCKWG/3dM61jJ99HAvnRHMycwd3TA7JkfO+QAP1GhF/fylIZumtE0ANFUfbN
+         M199q/eHbwDqOIVotlq8mxKK3DtsePRTuCU4jSzl+VtZmDpEXMCE/gwSnQjfKMDT//wp
+         TrHDljd1cR8j15HzUZOLtFJRj4ebq0EmrGjMv33GM2lOxoJCog9PgR/Jl2BR4u5IBmda
+         RysA==
+X-Gm-Message-State: AOUpUlG9StUvcJwGFocXe6nZkpLYQZS4M/4MzOlOi1Fg+zb5a4yKKmkT
+        6wY17J74P9iWhF8mw911f45M/g==
+X-Google-Smtp-Source: AAOMgpcn+x4H0IxiMrZUnjgw2KfPQB1WCEl35G1lMTsVtPcWoglSVYK0GJg3Cad7RQnvuq+B0+YjNQ==
+X-Received: by 2002:a63:e60c:: with SMTP id g12-v6mr5395326pgh.308.1531911411158;
+        Wed, 18 Jul 2018 03:56:51 -0700 (PDT)
 Received: from localhost.localdomain ([183.82.229.107])
-        by smtp.gmail.com with ESMTPSA id x25-v6sm4644452pgv.63.2018.07.18.03.56.40
+        by smtp.gmail.com with ESMTPSA id x25-v6sm4644452pgv.63.2018.07.18.03.56.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 03:56:44 -0700 (PDT)
+        Wed, 18 Jul 2018 03:56:50 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -70,9 +70,9 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 13/18] arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
-Date:   Wed, 18 Jul 2018 16:24:53 +0530
-Message-Id: <20180718105458.22304-14-jagan@amarulasolutions.com>
+Subject: [PATCH v3 14/18] arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
+Date:   Wed, 18 Jul 2018 16:24:54 +0530
+Message-Id: <20180718105458.22304-15-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
 References: <20180718105458.22304-1-jagan@amarulasolutions.com>
@@ -82,7 +82,7 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Enable all necessary HDMI pipeline nodes with HDMI out
-connector on Bananpi-m64 board.
+connector on nanopi-a64 board.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
@@ -91,17 +91,18 @@ Changes for v3:
 Changes for v2:
 - none
 
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+ .../dts/allwinner/sun50i-a64-nanopi-a64.dts   | 34 +++++++++++++++++++
  1 file changed, 34 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 094cfed13df9..7adba2c8f6e5 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,17 @@
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+index 98dbff19f5cc..5395069bf541 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-nanopi-a64.dts
+@@ -57,6 +57,21 @@
+ 	chosen {
  		stdout-path = "serial0:115200n8";
  	};
- 
++
 +	connector {
 +		compatible = "hdmi-connector";
 +		type = "a";
@@ -112,22 +113,14 @@ index 094cfed13df9..7adba2c8f6e5 100644
 +			};
 +		};
 +	};
-+
- 	leds {
- 		compatible = "gpio-leds";
- 
-@@ -86,6 +97,10 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
 +};
 +
- &ehci0 {
- 	status = "okay";
++&de {
++	status = "okay";
  };
-@@ -103,6 +118,17 @@
+ 
+ &ehci0 {
+@@ -67,6 +82,17 @@
  	status = "okay";
  };
  
@@ -142,11 +135,11 @@ index 094cfed13df9..7adba2c8f6e5 100644
 +	};
 +};
 +
+ /* i2c1 connected with gpio headers like pine64, bananapi */
  &i2c1 {
  	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c1_pins>;
-@@ -120,6 +146,10 @@
- 	};
+@@ -78,6 +104,10 @@
+ 	bias-pull-up;
  };
  
 +&mixer1 {
@@ -156,7 +149,7 @@ index 094cfed13df9..7adba2c8f6e5 100644
  &mmc0 {
  	pinctrl-names = "default";
  	pinctrl-0 = <&mmc0_pins>;
-@@ -300,6 +330,10 @@
+@@ -199,6 +229,10 @@
  	vcc-hdmi-supply = <&reg_dldo1>;
  };
  
