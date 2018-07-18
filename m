@@ -2,105 +2,138 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CBFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4B3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:47:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3BC2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:45:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3BC2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id 589A12075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:47:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwwQgEiz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589A12075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731471AbeGRBVH convert rfc822-to-8bit (ORCPT
+        id S1731556AbeGRBWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 21:21:07 -0400
-Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:34907
-        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731205AbeGRBVH (ORCPT
+        Tue, 17 Jul 2018 21:22:11 -0400
+Received: from mail-pl0-f54.google.com ([209.85.160.54]:38816 "EHLO
+        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730731AbeGRBWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 21:21:07 -0400
-X-ASG-Debug-ID: 1531874720-093b7e2c7ceb7a0001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id 76j2rpCd6dPCBz4N (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO); Wed, 18 Jul 2018 08:45:34 +0800 (CST)
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.847.32; Wed, 18 Jul 2018 08:45:24 +0800
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1]) by
- HXTBJIDCEMVIW01.hxtcorp.net ([fe80::f451:a443:c0b5:87d1%12]) with mapi id
- 15.00.0847.030; Wed, 18 Jul 2018 08:45:24 +0800
-From:   "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To:     "hch@infradead.org" <hch@infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-Subject: Re: [PATCH] PCI: Unify pci and normal dma direction definition
-Thread-Topic: [PATCH] PCI: Unify pci and normal dma direction definition
-X-ASG-Orig-Subj: Re: [PATCH] PCI: Unify pci and normal dma direction definition
-Thread-Index: AQHUGnQj5uJVOoRz/US93mQBH05aAKSS8uKAgACzTYA=
-Date:   Wed, 18 Jul 2018 00:45:24 +0000
-Message-ID: <1531874719.3330.2.camel@hxt-semitech.com>
-References: <1531463840-34651-1-git-send-email-shunyong.yang@hxt-semitech.com>
-         <20180717140335.GA23500@infradead.org>
-In-Reply-To: <20180717140335.GA23500@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.64.6.36]
-Content-Type: text/plain; charset="iso-8859-15"
-Content-ID: <5D273CFF8F94D242A7ABD8978D1167F2@hxt-semitech.com>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1531874734
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.4394 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.53877
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+        Tue, 17 Jul 2018 21:22:11 -0400
+Received: by mail-pl0-f54.google.com with SMTP id b1-v6so1197120pls.5;
+        Tue, 17 Jul 2018 17:47:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JrzGtihrXg9m/GzAN6ahdCyeBGwkiYP0OXywZlaL17Q=;
+        b=iwwQgEizYpCcVurCfg70lWlmjtrF2EkOg/wQK96AVkO5tQ42IIJCcYq75xww5H3iGH
+         LlC7nIIbAo7D9BX8ijWplsy8nJR92fSihkHlnDjnt0eGFD1Am9NjO6oRHaD/H9zNy/Mg
+         5rqYukKB5K6IIB1k7H4UC/fSVE7lmjV5nqEtPR97AveYxs4gXV+0t+HGaasuNnmLirth
+         H277SjTsKQowdwlcbVacEwkogVzw6sQwA8/C9R1x419qPltcTmD95CmwdSJthGMgvgKZ
+         m7P4nonJw19a5oBqZ+vhEVxhSn9BM/7r/uS7nU0OW09aUSSF5DBv1HI/ZKqZTBICiaUD
+         Z5UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JrzGtihrXg9m/GzAN6ahdCyeBGwkiYP0OXywZlaL17Q=;
+        b=NPDtLk/FNxmVvsCrdPiO2tTIQ64VOmMw+pH3dGNPNFVvdnHAPp0RExcQRhBx/qZCtE
+         hUiEVTiGvJhT8PVlGhiA1GfEDP0DWBEhr/B1RC1gRxLpOwfMzWfXDWHTQWtSBrE3efJK
+         SDXVuqicqg2jUzeOoQcutLwmJmFg6+Be96r6ccjCG7KhcWzf22jRJ4w5zCMmrCUlz2Yp
+         /uXVwCJjV4VId/Gmj+90jd8Vp/0vUrmdSlNCTI24Q37wWL4zc9VYZ2b/Dv72ZouGT4Ry
+         gQN7XBF/FCIuq8IaU4fgbFafk0XKU09tJB94BJ/I39Mo1UzBEOH44nTOHnL4rO4AxP7n
+         R44w==
+X-Gm-Message-State: AOUpUlG6NMB81uEauKtNu4rql6BmIG3O1544OoCI5wr2AZcNvMsX+Auf
+        I9/jbwmWPXItmNWxrcOvL+g=
+X-Google-Smtp-Source: AAOMgpcZoIpz6hAUHXPNSzeX+QJz6GPRzMoc1DEZy/ITwfPdt6CCH+muXHk+OwvQq3Hih2OlfadR+w==
+X-Received: by 2002:a17:902:bb05:: with SMTP id l5-v6mr3710374pls.246.1531874820447;
+        Tue, 17 Jul 2018 17:47:00 -0700 (PDT)
+Received: from 192-168-1-101.tpgi.com.com ([61.68.123.183])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm9190775pfm.97.2018.07.17.17.46.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 17:46:59 -0700 (PDT)
+From:   Jon Maxwell <jmaxwell37@gmail.com>
+To:     davem@davemloft.net
+Cc:     edumazet@google.com, eric.dumazet@gmail.com, ncardwell@google.com,
+        David.Laight@aculab.com, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmaxwell@redhat.com
+Subject: [PATCH net-next 0/3] tcp: improve setsockopt() TCP_USER_TIMEOUT accuracy
+Date:   Wed, 18 Jul 2018 10:46:36 +1000
+Message-Id: <20180718004639.30154-1-jmaxwell37@gmail.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Christoph,
+Based on:
 
-  I will send a v2 according to your comments.
+https://patchwork.kernel.org/patch/10516195/
 
-Thanks.
-Shunyong.
+Every time the TCP retransmission timer fires. It checks to see if 
+there is a timeout before scheduling the next retransmit timer. The 
+retransmit interval between each retransmission increases 
+exponentially. The issue is that in order for the timeout to occur the
+retransmit timer needs to fire again. If the user timeout check happens 
+after the 9th retransmit for example. It needs to wait for the 10th 
+retransmit timer to fire in order to evaluate whether a timeout has 
+occurred or not. If the interval is large enough then the timeout will 
+be inaccurate.
 
-On Tue, 2018-07-17 at 07:03 -0700, Christoph Hellwig wrote:
-> > 
-> > diff --git a/include/linux/dma-direction.h b/include/linux/dma-
-> > direction.h
-> > index 3649a031893a..9d52716e9218 100644
-> > --- a/include/linux/dma-direction.h
-> > +++ b/include/linux/dma-direction.h
-> > @@ -2,7 +2,7 @@
-> >  #ifndef _LINUX_DMA_DIRECTION_H
-> >  #define _LINUX_DMA_DIRECTION_H
-> >  /*
-> > - * These definitions mirror those in pci.h, so they can be used
-> > + * These definitions mirror those in pci-dma-compat.h, so they can
-> > be used
-> >   * interchangeably with their PCI_ counterparts.
-> >   */
-> I think we can just drop this comment anymore.
-> 
-> > 
-> > +#define PCI_DMA_BIDIRECTIONAL	(DMA_BIDIRECTIONAL)
-> > +#define PCI_DMA_TODEVICE	(DMA_TO_DEVICE)
-> > +#define PCI_DMA_FROMDEVICE	(DMA_FROM_DEVICE)
-> > +#define PCI_DMA_NONE		(DMA_NONE)
-> No need for the braces.
+For example with a TCP_USER_TIMEOUT of 10 seconds without patch:
+
+1st retransmit:
+
+22:25:18.973488 IP host1.49310 > host2.search-agent: Flags [.]
+
+Last retransmit:
+
+22:25:26.205499 IP host1.49310 > host2.search-agent: Flags [.]
+
+Timeout:
+
+send: Connection timed out
+Sun Jul  1 22:25:34 EDT 2018
+
+We can see that last retransmit took ~7 seconds. Which pushed the total 
+timeout to ~15 seconds instead of the expected 10 seconds. This gets 
+more inaccurate the larger the TCP_USER_TIMEOUT value. As the interval 
+increases.
+
+Add tcp_clamp_rto_to_user_timeout() to determine if the user rto has 
+expired. Or whether the rto interval needs to be recalculated. Use the 
+original interval if user rto is not set. 
+
+Test results with the patch is the expected 10 second timeout:
+
+1st retransmit:
+
+01:37:59.022555 IP host1.49310 > host2.search-agent: Flags [.]
+
+Last retransmit:
+
+01:38:06.486558 IP host1.49310 > host2.search-agent: Flags [.]
+
+Timeout:
+
+send: Connection timed out
+Mon Jul  2 01:38:09 EDT 2018
+
+Jon Maxwell (3):
+  tcp: convert icsk_user_timeout from jiffies to msecs
+  tcp: Add tcp_retransmit_time() helper routine
+  tcp: Add tcp_clamp_rto_to_user_timeout() helper to improve accuracy
+
+ net/ipv4/tcp.c       |  4 ++--
+ net/ipv4/tcp_timer.c | 51 ++++++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 40 insertions(+), 15 deletions(-)
+
+-- 
+2.13.6
+
