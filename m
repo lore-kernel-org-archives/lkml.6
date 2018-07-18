@@ -2,110 +2,104 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141B2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73A5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C02052075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:42:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02052075E
+	by mail.kernel.org (Postfix) with ESMTP id 9B8AE2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:42:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="vJdUZvVd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B8AE2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730735AbeGRLTu (ORCPT
+        id S1727078AbeGRLUO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:19:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60880 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726264AbeGRLTt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:19:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 640C6ADDD;
-        Wed, 18 Jul 2018 10:42:31 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 12:42:30 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Bruce Merry <bmerry@ska.ac.za>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some
- machines
-Message-ID: <20180718104230.GC1431@dhcp22.suse.cz>
-References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
- <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
+        Wed, 18 Jul 2018 07:20:14 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40646 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbeGRLUO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 07:20:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SvArZ9DRC++M3nz2kexMQFJFSRrI2jgTICTRvmiUVF8=; b=vJdUZvVdTFqd7jpLrgW1dfiGZ
+        sQo0kbYN5n9Xm92gNgWglk68WM+9MqsIYctB4U7RdMppo4J4U+8WreuT6JkRyjBISrlYjH40/K9Hb
+        KKbfUoFloQwGHnQAx07PyT4WnA+v0HPXn1ExkLMqRVFT+uHrBHFZUyXp0dKVI0A5Rcl04=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ffjv4-0003RS-SV; Wed, 18 Jul 2018 10:42:54 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ffjv3-00033T-Cc; Wed, 18 Jul 2018 11:42:53 +0100
+Date:   Wed, 18 Jul 2018 11:42:53 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Daniel Kurtz <djkurtz@chromium.org>
+Cc:     Dylan Reid <dgreid@chromium.org>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "open list:VOLTAGE AND CURRENT REGULATOR FRAMEWORK" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] regulator: allow drivers in modules to register
+ fixed regulators
+Message-ID: <20180718104253.GB5700@sirena.org.uk>
+References: <20180718004909.213735-1-djkurtz@chromium.org>
+ <20180718004909.213735-2-djkurtz@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
 Content-Disposition: inline
-In-Reply-To: <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
+In-Reply-To: <20180718004909.213735-2-djkurtz@chromium.org>
+X-Cookie: Remember the... the... uhh.....
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[CC some more people]
 
-On Tue 17-07-18 21:23:07, Andrew Morton wrote:
-> (cc linux-mm)
-> 
-> On Tue, 3 Jul 2018 08:43:23 +0200 Bruce Merry <bmerry@ska.ac.za> wrote:
-> 
-> > Hi
-> > 
-> > I've run into an odd performance issue in the kernel, and not being a
-> > kernel dev or knowing terribly much about cgroups, am looking for
-> > advice on diagnosing the problem further (I discovered this while
-> > trying to pin down high CPU load in cadvisor).
-> > 
-> > On some machines in our production system, cat
-> > /sys/fs/cgroup/memory/memory.stat is extremely slow (500ms on one
-> > machine), while on other nominally identical machines it is fast
-> > (2ms).
+--LpQ9ahxlCli8rRTG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Could you try to use ftrace to see where the time is spent?
-memory_stat_show should only scale with the depth of the cgroup
-hierarchy for memory.stat to get cumulative numbers. All the rest should
-be simply reads of gathered counters. There is no locking involved in
-the current kernel. What is the kernel version you are using, btw?
+On Tue, Jul 17, 2018 at 06:49:08PM -0600, Daniel Kurtz wrote:
+> Sound machine drivers tend to live in modules. Sometimes such a machine
+> driver needs to register a fixed regulator to provide to a codec.
+>=20
+> Export regulator_register_always_on() such that this is possible.
 
-Keeping the reset of the email for new people on the CC
+Given that your driver is for a device you shouldn't be using this
+function, anything you're creating should be parented off that device
+and so you should be registering normally.
 
-> > 
-> > One other thing I've noticed is that the affected machines generally
-> > have much larger values for SUnreclaim in /proc/memstat (up to several
-> > GB), and slabtop reports >1GB of dentry.
-> > 
-> > Before I tracked the original problem (high CPU usage in cadvisor)
-> > down to this, I rebooted one of the machines and the original problem
-> > went away, so it seems to be cleared by a reboot; I'm reluctant to
-> > reboot more machines to confirm since I don't have a sure-fire way to
-> > reproduce the problem again to debug it.
-> > 
-> > The machines are running Ubuntu 16.04 with kernel 4.13.0-41-generic.
-> > They're running Docker, which creates a bunch of cgroups, but not an
-> > excessive number: there are 106 memory.stat files in
-> > /sys/fs/cgroup/memory.
-> > 
-> > Digging a bit further, cat
-> > /sys/fs/cgroup/memory/system.slice/memory.stat also takes ~500ms, but
-> > "find /sys/fs/cgroup/memory/system.slice -mindepth 2 -name memory.stat
-> > | xargs cat" takes only 8ms.
-> > 
-> > Any thoughts, particularly on what I should compare between the good
-> > and bad machines to narrow down the cause, or even better, how to
-> > prevent it happening?
-> > 
-> > Thanks
-> > Bruce
-> > -- 
-> > Bruce Merry
-> > Senior Science Processing Developer
-> > SKA South Africa
+> Change-Id: I2906f96df278b5fa65d40d3a777bf6d3d91841d2
 
--- 
-Michal Hocko
-SUSE Labs
+Please don't include noise like this in upstream submissions.
+
+--LpQ9ahxlCli8rRTG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltPGawACgkQJNaLcl1U
+h9Bd/Qf8DXopyA3B47MsgcJvfQAHHxTutvbv+vLun4GuNqX97m3IbxUqeyBssEG5
+VcABeBgRpTX/8UOW/SRwgX+7DFp2dDAH+NE0DDVoC84pe9RAsBPi1PLpKP0N/XG+
+OwrJcM33ZNHL1cI27di7XpHt1QeunClZE4omd5wFr8mTQDLQnKgf2+dlTOkwCT5Z
+8dG7i/mYaJO5Jeb3VUg/Ts9xMJ7AQktBpl3QXp7w3+9oDUp/goHfHSzjK8RcZXQt
+JJ5FNqzx92onv6d82nFazCEk43bP+L/FCFO9+K/xjbeLxLZiLQt1MReXiTexsDu/
+72a1jJJuR1TyN5ZHKVrVuppYeCF5tQ==
+=v9oj
+-----END PGP SIGNATURE-----
+
+--LpQ9ahxlCli8rRTG--
