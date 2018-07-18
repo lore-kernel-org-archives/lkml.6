@@ -2,131 +2,67 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C28ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8970ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 344A12084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:58:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hPShQutX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 344A12084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 64A9B2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:00:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A9B2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbeGRThW (ORCPT
+        id S1729776AbeGRTjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:37:22 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37528 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729221AbeGRThW (ORCPT
+        Wed, 18 Jul 2018 15:39:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:59254 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbeGRTjr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:37:22 -0400
-Received: by mail-wm0-f67.google.com with SMTP id a19-v6so3898077wmb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 11:58:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=xWUFkZ48aG/mxRnSo2WwwDnIW+wkkxqz1UbKj+U103Q=;
-        b=hPShQutXapYfgHEFi8gMLQ6PbnLGnJqItYXMQXidGpHMAjFW7PN/UVewIzOVjVhokc
-         NL7+CbRfOEXWwXfaUYlPZ2iiBvB8AkXhqYyleUVnMUKwUHGrVbbVwV924XmCvZtvjyaY
-         DCAwIypjvcVGxeE8DzIQt3xIbTapcbGgf+wPI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=xWUFkZ48aG/mxRnSo2WwwDnIW+wkkxqz1UbKj+U103Q=;
-        b=AvwVppOfftySO6TFtbpl++VLlNY5zfLHi8tS79IxsCWLtaSW2ie5zt1H68RX0pCbCX
-         LFCb0sUFaVyE7C+ob+iuacqFY/ujdrrim20ogtOteWq3nOBNz1hLeOfw01kVNwvs5TGj
-         Nkxe6223U7ZJXTnU9zMGJRkU1fy8rLrGLDHb1izyii4j9k/YcOa02ruyFoUkDkjvNQGp
-         oT9YWjYRG1qSk0d3pYZhZgyLTToE4QaR606o/33tkJDghPhN3Y4lbBQGiDlpFDVc15iZ
-         J6UU30ZolKkHF31d4LsPeZ4mnnOgHNz4ArZ9QE4KeutTEavPhTOZmZGb0Qv0Wx/V4aSw
-         8vDg==
-X-Gm-Message-State: AOUpUlEvExDotHszOCbd4zsLsAtRK7EnYg51x9/I5/KfYAx0rAEw/DUr
-        IohMYZs0d7fL6fjnJ2E8HuHIazakVipuDsf/3FbtNA==
-X-Google-Smtp-Source: AAOMgpfgrSuzPKOQakBhnn1iyTqldXMYPdf5rKtpYMkW5gVDh5G22aZn7Z7ya0Luzpf6X5pDsmUNFH937ubps5ogTik=
-X-Received: by 2002:a1c:4182:: with SMTP id o124-v6mr2254147wma.101.1531940287220;
- Wed, 18 Jul 2018 11:58:07 -0700 (PDT)
+        Wed, 18 Jul 2018 15:39:47 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1ffrga-0003ba-RD; Wed, 18 Jul 2018 21:00:28 +0200
+Date:   Wed, 18 Jul 2018 21:00:25 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: NULL pointer dereference in msi_set_mask_bit
+In-Reply-To: <178bb701-56af-06cf-4836-1a26e74f2b07@molgen.mpg.de>
+Message-ID: <alpine.DEB.2.21.1807182058110.1689@nanos.tec.linutronix.de>
+References: <b9bd8405-64b6-2bea-f5ce-d3ab4d82452a@molgen.mpg.de> <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com> <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de> <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
+ <alpine.DEB.2.21.1807181722020.1568@nanos.tec.linutronix.de> <178bb701-56af-06cf-4836-1a26e74f2b07@molgen.mpg.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a1c:c243:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 11:58:06
- -0700 (PDT)
-In-Reply-To: <20180717093659.103263-1-liwei213@huawei.com>
-References: <20180717093659.103263-1-liwei213@huawei.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Wed, 18 Jul 2018 11:58:06 -0700
-Message-ID: <CALAqxLVgRCCPJhjdpqG9TejtdNzHbyasxBytObgrS5_LrQnTtw@mail.gmail.com>
-Subject: Re: [PATCH v11 0/4] [RESEND] scsi: ufs: add ufs driver code for
- Hisilicon Hi3660 SoC
-To:     Li Wei <liwei213@huawei.com>, martin.petersen@oracle.com,
-        Vinayak Holikatti <vinholikatti@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, jejb@linux.vnet.ibm.com,
-        Kevin Hilman <khilman@baylibre.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Gregory CLEMENT <gregory.clement@free-electrons.com>,
-        Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        yamada.masahiro@socionext.com,
-        Riku Voipio <riku.voipio@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-scsi@vger.kernel.org, zangleigang@hisilicon.com,
-        gengjianfeng@hisilicon.com,
-        "Sunzhaosheng Sun(Zhaosheng)" <sunzhaosheng@hisilicon.com>,
-        Ian Rickards <ian.rickards@arm.com>,
-        Guodong Xu <guodong.xu@linaro.org>,
-        Feng Chen <puck.chen@hisilicon.com>,
-        "Fengbaopeng (kevin, Kirin Solution Dept)" 
-        <fengbaopeng@hisilicon.com>, Wei Xu <xuwei5@hisilicon.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; CHARSET=US-ASCII
+Content-ID: <alpine.DEB.2.21.1807182058431.1689@nanos.tec.linutronix.de>
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 2:36 AM, Li Wei <liwei213@huawei.com> wrote:
-> This patchset adds driver support for UFS for Hi3660 SoC. It is verified on HiKey960 board.
->
-> Li Wei (4):
->   scsi: ufs: add Hisilicon ufs driver code
->   dt-bindings: scsi: ufs: add document for hisi-ufs
->   arm64: dts: add ufs dts node
->   arm64: defconfig: enable configs for Hisilicon ufs
->
->  Documentation/devicetree/bindings/ufs/ufs-hisi.txt |  41 ++
->  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  10 +-
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi          |  18 +
->  arch/arm64/configs/defconfig                       |   1 +
->  drivers/scsi/ufs/Kconfig                           |   9 +
->  drivers/scsi/ufs/Makefile                          |   1 +
->  drivers/scsi/ufs/ufs-hisi.c                        | 619 +++++++++++++++++++++
->  drivers/scsi/ufs/ufs-hisi.h                        | 115 ++++
->  8 files changed, 811 insertions(+), 3 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/ufs/ufs-hisi.txt
->  create mode 100644 drivers/scsi/ufs/ufs-hisi.c
->  create mode 100644 drivers/scsi/ufs/ufs-hisi.h
+Paul,
 
+On Wed, 18 Jul 2018, Paul Menzel wrote:
+> On 07/18/18 17:39, Thomas Gleixner wrote:
+> > Bah. Could you please enable GENERIC_IRQ_DEBUGFS and after a successful
+> > boot up provide me the content of all files in /sys/kernel/debug/irq/ and
+> > its subfolders?
+> 
+> Sure, please find them attached. `7zr x sys-kernel-debug-irq.7z` should
+> extract it.
 
-Martin/Vinayak: Wanted to nudge either of you to see if you had any
-further feedback or objections on this patchset? Its been a long slow
-slog for this patch-set and getting it upstream will make the HiKey960
-board much more useful for testing mainline kernels.
+It generates the files, but they are all size '1' and contain nothing.
 
-If you don't have objections, would you consider merging the scsi
-driver and Acked dt-bindings via the scsi tree?   Including the dts
-changes too if Wei Xu (now cc'ed) acks it, would be helpful as well
-(but that can go separately later if necessary).
+Thanks,
 
-The defconfig change isn't as important, so I suspect can be re-pushed
-through the ARM maintainers later.
-
-thanks
--john
+	tglx
