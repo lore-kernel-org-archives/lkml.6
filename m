@@ -2,166 +2,124 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD68ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB765ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A223620850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A223620850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id AB65420850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:18:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB65420850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbeGROzE (ORCPT
+        id S1730659AbeGRO4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:55:04 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9691 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731037AbeGROy1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:54:27 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D19062DA4D696;
-        Wed, 18 Jul 2018 22:16:03 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.382.0; Wed, 18 Jul 2018 22:15:56 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 5/9] scsi: hisi_sas: relocate some common code for v3 hw
-Date:   Wed, 18 Jul 2018 22:14:29 +0800
-Message-ID: <1531923273-193768-6-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1531923273-193768-1-git-send-email-john.garry@huawei.com>
-References: <1531923273-193768-1-git-send-email-john.garry@huawei.com>
+        Wed, 18 Jul 2018 10:56:24 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55371 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729185AbeGRO4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 10:56:24 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5CA7820904; Wed, 18 Jul 2018 16:18:14 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2EE38203EC;
+        Wed, 18 Jul 2018 16:18:04 +0200 (CEST)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v2 0/3] ARM: OMAP1: ams-delta: Complete driver gpiod migration
+References: <20180518210954.29044-1-jmkrzyszt@gmail.com>
+        <20180717231448.14958-1-jmkrzyszt@gmail.com>
+Date:   Wed, 18 Jul 2018 16:18:04 +0200
+In-Reply-To: <20180717231448.14958-1-jmkrzyszt@gmail.com> (Janusz
+        Krzysztofik's message of "Wed, 18 Jul 2018 01:14:45 +0200")
+Message-ID: <87a7qoaaqr.fsf@bootlin.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+Hi Janusz,
+ 
+ On mer., juil. 18 2018, Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
 
-Much code of PM suspend function also exists in soft reset function. This
-is not concise. So, this patch relocates the common code of these two
-functions to a separate function.
+> This is a follow up of initial submission of a series consisted of 
+> 6 changes, 3 of which have been already applied or reworkeed.
+>
+> V2 changelog:
+> [PATCH 1/6] ARM: OMAP1: ams-delta: add GPIO lookup tables
+> 	- already in mainline, commit 68e62a15a914
+> [PATCH 2/6] Input: ams_delta_serio: use GPIO lookup table
+> 	- reworked and submitted as a series, already in linux-omap,
+> 	  commit 68e62a15a914 ("ARM: OMAP1: ams-delta: drop GPIO lookup
+> 	  table for serio device") followed by 9 more
+> [PATCH 3/6] ASoC: ams_delta: use GPIO lookup table
+> 	- already in mainline, commit d65777d1a2cd
+> [PATCH 4/6] fbdev: omapfb: lcd_ams_delta: use GPIO lookup table
+> 	- resubmitting as [PATCH v2 1/3 v2]
+> 	v2: Remove problematic error code conversion no longer
+> 	    needed if used on top of commit d08605a64e67 ("ARM: OMAP1:
+> 	    ams-delta: move late devices back to init_machine")
+> 	    and commit 8853daf3b4ac ("gpiolib: Defer on non-DT
+> 	    find_chip_by_name() failure") already in linux-next
+> [PATCH 5/6] mtd: rawnand: ams-delta: use GPIO lookup table
+> 	- resubmitting as [PATCH v2 2/3 v4]
+> 	v2: Fix handling of devm_gpiod_get_optional() return values -
+> 	    thanks to Andy Shevchenko.
+> 	v3: Remove problematic error code conversion no longer needed
+> 	    if used on top of commit d08605a64e67 ("ARM: OMAP1:
+> 	    ams-delta: move late devices back to init_machine") and
+> 	    commit 8853daf3b4ac ("gpiolib: Defer on non-DT
+> 	    find_chip_by_name() failure") already in linux-next - thanks
+> 	    to Boris Brezillon
+> 	v4: fix style issue - thanks to Boris Brezillon
+> [PATCH 6/6] ARM: OMAP1: ams-delta: make board header file local to
+> 	mach-omap1
+> 	- resending as [PATCH v2 3/3]
+>
+> Dependency on commit 8853daf3b4ac ("gpiolib: Defer on non-DT
+> find_chip_by_name() failure") is not critical - it is not needed for
+> clean build or run, it only prevents from potential future changes to
+> driver initializaton order during device_initcall.
+>
+> I'm submitting the three patches in series because the last one depends
+> on the other two.
 
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 50 ++++++++++++++++++----------------
- 1 file changed, 27 insertions(+), 23 deletions(-)
+I think that being in CC in this series is a mistake as I don't see
+anything related what I have done in this series.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 70a6aa2..3577843 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -210,6 +210,8 @@
- 
- #define AXI_MASTER_CFG_BASE		(0x5000)
- #define AM_CTRL_GLOBAL			(0x0)
-+#define AM_CTRL_SHUTDOWN_REQ_OFF	0
-+#define AM_CTRL_SHUTDOWN_REQ_MSK	(0x1 << AM_CTRL_SHUTDOWN_REQ_OFF)
- #define AM_CURR_TRANS_RETURN	(0x150)
- 
- #define AM_CFG_MAX_TRANS		(0x5010)
-@@ -1976,11 +1978,11 @@ static void phy_get_events_v3_hw(struct hisi_hba *hisi_hba, int phy_no)
- 
- }
- 
--static int soft_reset_v3_hw(struct hisi_hba *hisi_hba)
-+static int disable_host_v3_hw(struct hisi_hba *hisi_hba)
- {
- 	struct device *dev = hisi_hba->dev;
-+	u32 status, reg_val;
- 	int rc;
--	u32 status;
- 
- 	interrupt_disable_v3_hw(hisi_hba);
- 	hisi_sas_write32(hisi_hba, DLVRY_QUEUE_ENABLE, 0x0);
-@@ -1990,14 +1992,32 @@ static int soft_reset_v3_hw(struct hisi_hba *hisi_hba)
- 
- 	mdelay(10);
- 
--	hisi_sas_write32(hisi_hba, AXI_MASTER_CFG_BASE + AM_CTRL_GLOBAL, 0x1);
-+	reg_val = hisi_sas_read32(hisi_hba, AXI_MASTER_CFG_BASE +
-+				  AM_CTRL_GLOBAL);
-+	reg_val |= AM_CTRL_SHUTDOWN_REQ_MSK;
-+	hisi_sas_write32(hisi_hba, AXI_MASTER_CFG_BASE +
-+			 AM_CTRL_GLOBAL, reg_val);
- 
- 	/* wait until bus idle */
- 	rc = hisi_sas_read32_poll_timeout(AXI_MASTER_CFG_BASE +
- 					  AM_CURR_TRANS_RETURN, status,
- 					  status == 0x3, 10, 100);
- 	if (rc) {
--		dev_err(dev, "axi bus is not idle, rc = %d\n", rc);
-+		dev_err(dev, "axi bus is not idle, rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static int soft_reset_v3_hw(struct hisi_hba *hisi_hba)
-+{
-+	struct device *dev = hisi_hba->dev;
-+	int rc;
-+
-+	rc = disable_host_v3_hw(hisi_hba);
-+	if (rc) {
-+		dev_err(dev, "soft reset: disable host failed rc=%d\n", rc);
- 		return rc;
- 	}
- 
-@@ -2456,9 +2476,8 @@ static int hisi_sas_v3_suspend(struct pci_dev *pdev, pm_message_t state)
- 	struct hisi_hba *hisi_hba = sha->lldd_ha;
- 	struct device *dev = hisi_hba->dev;
- 	struct Scsi_Host *shost = hisi_hba->shost;
--	u32 device_state, status;
-+	u32 device_state;
- 	int rc;
--	u32 reg_val;
- 
- 	if (!pdev->pm_cap) {
- 		dev_err(dev, "PCI PM not supported\n");
-@@ -2471,25 +2490,10 @@ static int hisi_sas_v3_suspend(struct pci_dev *pdev, pm_message_t state)
- 	scsi_block_requests(shost);
- 	set_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
- 	flush_workqueue(hisi_hba->wq);
--	/* disable DQ/PHY/bus */
--	interrupt_disable_v3_hw(hisi_hba);
--	hisi_sas_write32(hisi_hba, DLVRY_QUEUE_ENABLE, 0x0);
--	hisi_sas_kill_tasklets(hisi_hba);
- 
--	hisi_sas_stop_phys(hisi_hba);
--
--	reg_val = hisi_sas_read32(hisi_hba, AXI_MASTER_CFG_BASE +
--		AM_CTRL_GLOBAL);
--	reg_val |= 0x1;
--	hisi_sas_write32(hisi_hba, AXI_MASTER_CFG_BASE +
--		AM_CTRL_GLOBAL, reg_val);
--
--	/* wait until bus idle */
--	rc = hisi_sas_read32_poll_timeout(AXI_MASTER_CFG_BASE +
--					  AM_CURR_TRANS_RETURN, status,
--					  status == 0x3, 10, 100);
-+	rc = disable_host_v3_hw(hisi_hba);
- 	if (rc) {
--		dev_err(dev, "axi bus is not idle, rc = %d\n", rc);
-+		dev_err(dev, "PM suspend: disable host failed rc=%d\n", rc);
- 		clear_bit(HISI_SAS_REJECT_CMD_BIT, &hisi_hba->flags);
- 		clear_bit(HISI_SAS_RESET_BIT, &hisi_hba->flags);
- 		scsi_unblock_requests(shost);
+Gregory
+
+>
+> Thanks,
+> Janusz
+>
+
 -- 
-1.9.1
-
+Gregory Clement, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
