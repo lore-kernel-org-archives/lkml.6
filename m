@@ -2,121 +2,181 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C939ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32FEECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 291E22075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 291E22075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C4F62075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:43:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4F62075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=opteya.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbeGRITQ (ORCPT
+        id S1730331AbeGRIUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 04:19:16 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9641 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728861AbeGRITP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 04:19:15 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 45CBA3593EA92;
-        Wed, 18 Jul 2018 15:42:28 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.382.0; Wed, 18 Jul 2018 15:42:21 +0800
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To:     <agk@redhat.com>, <snitzer@redhat.com>,
-        <herbert@gondor.apana.org.au>
-CC:     <dm-devel@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <wangxiongfeng2@huawei.com>, <broonie@kernel.org>, <arnd@arndb.de>,
-        <jonathan.cameron@huawei.com>
-Subject: [PATCH 1/5] crypto: api - introduce API to (un)register a array of templates
-Date:   Wed, 18 Jul 2018 15:30:51 +0800
-Message-ID: <1531899055-29362-2-git-send-email-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
-References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+        Wed, 18 Jul 2018 04:20:06 -0400
+Received: from ou.quest-ce.net ([195.154.187.82]:33504 "EHLO ou.quest-ce.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726699AbeGRIUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 04:20:05 -0400
+X-Greylist: delayed 1284 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Jul 2018 04:20:04 EDT
+Received: from [2a01:e35:2e9f:6cb0:857c:11e6:3194:d53d] (helo=test.quest-ce.net)
+        by ou.quest-ce.net with esmtpsa (TLS1.1:RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <ydroneaud@opteya.com>)
+        id 1ffgms-0001AS-Cs; Wed, 18 Jul 2018 09:22:14 +0200
+Message-ID: <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
+From:   Yann Droneaud <ydroneaud@opteya.com>
+To:     Theodore Ts'o <tytso@mit.edu>, linux-crypto@vger.kernel.org,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
+Cc:     labbott@redhat.com
+Date:   Wed, 18 Jul 2018 09:22:13 +0200
+In-Reply-To: <20180718014344.1309-1-tytso@mit.edu>
+References: <20180718014344.1309-1-tytso@mit.edu>
+Organization: OPTEYA
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a01:e35:2e9f:6cb0:857c:11e6:3194:d53d
+X-SA-Exim-Mail-From: ydroneaud@opteya.com
+Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+X-SA-Exim-Scanned: Yes (on ou.quest-ce.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following patch introduce several crypto templates. To simplify the
-code, this patch add two APIs to (un)register a array of templates.
+Hi,
 
-Signed-off-by: Xiongfeng Wang <xiongfeng.wang@linaro.org>
----
- crypto/algapi.c         | 27 +++++++++++++++++++++++++++
- include/crypto/algapi.h |  2 ++
- 2 files changed, 29 insertions(+)
+Le mardi 17 juillet 2018 à 21:43 -0400, Theodore Ts'o a écrit :
+> This gives the user building their own kernel (or a Linux
+> distribution) the option of deciding whether or not to trust the CPU's
+> hardware random number generator (e.g., RDRAND for x86 CPU's) as being
+> correctly implemented and not having a back door introduced (perhaps
+> courtesy of a Nation State's law enforcement or intelligence
+> agencies).
+> 
 
-diff --git a/crypto/algapi.c b/crypto/algapi.c
-index c0755cf..08c29e6 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -485,6 +485,24 @@ int crypto_register_template(struct crypto_template *tmpl)
- }
- EXPORT_SYMBOL_GPL(crypto_register_template);
- 
-+int crypto_register_template_array(struct crypto_template *tmpl, int num)
-+{
-+	int i, err;
-+
-+	for (i = 0; i < num; i++) {
-+		err = crypto_register_template(&tmpl[i]);
-+		if (err)
-+			goto out;
-+	}
-+	return 0;
-+
-+out:
-+	for (i -= 1; i >= 0; i--)
-+		crypto_unregister_template(&tmpl[i]);
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(crypto_register_template_array);
-+
- void crypto_unregister_template(struct crypto_template *tmpl)
- {
- 	struct crypto_instance *inst;
-@@ -514,6 +532,15 @@ void crypto_unregister_template(struct crypto_template *tmpl)
- }
- EXPORT_SYMBOL_GPL(crypto_unregister_template);
- 
-+void crypto_unregister_template_array(struct crypto_template *tmpl, int num)
-+{
-+	int i;
-+
-+	for (i = 0; i < num; i++)
-+		crypto_unregister_template(&tmpl[i]);
-+}
-+EXPORT_SYMBOL_GPL(crypto_unregister_template_array);
-+
- static struct crypto_template *__crypto_lookup_template(const char *name)
- {
- 	struct crypto_template *q, *tmpl = NULL;
-diff --git a/include/crypto/algapi.h b/include/crypto/algapi.h
-index bd5e8cc..14bfbe31 100644
---- a/include/crypto/algapi.h
-+++ b/include/crypto/algapi.h
-@@ -141,7 +141,9 @@ struct ablkcipher_walk {
- void crypto_mod_put(struct crypto_alg *alg);
- 
- int crypto_register_template(struct crypto_template *tmpl);
-+int crypto_register_template_array(struct crypto_template *tmpl, int num);
- void crypto_unregister_template(struct crypto_template *tmpl);
-+void crypto_unregister_template_array(struct crypto_template *tmpl, int num);
- struct crypto_template *crypto_lookup_template(const char *name);
- 
- int crypto_register_instance(struct crypto_template *tmpl,
+A build time option (RANDOM_TRUST_CPU) is good, but I would also see a
+kernel command line boot option for the user to disable the behavior
+whenever its distro kernel was built with RANDOM_TRUST_CPU.
+
+It would allow the end-user to make its own decision regarding CPU
+based hwrng.
+
+In particular, during distro installation, end-user doesn't have a
+chance to rebuild the kernel beforehand, but he can tweak kernel
+command line during distro installation boot.
+
+
+> This will prevent getrandom(2) from blocking, if there is a
+> willingness to trust the CPU manufacturer.
+
+It would block during initialization / early boot.
+
+> 
+> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+> ---
+> 
+>  I'm not sure Linux distro's will thank us for this.  The problem is
+>  trusting the CPU manfuacturer can be an emotional / political issue.
+> 
+>  For example, assume that China has decided that as a result of the
+>  "death sentence" that the US government threatened to impose on ZTE
+>  after they were caught introducing privacy violating malware on US
+>  comsumers, that they needed to be self-sufficient in their technology
+>  sector, and so they decided the needed to produce their own CPU.
+> 
+>  Even if I were convinced that Intel hadn't backdoored RDRAND (or an
+>  NSA agent backdoored RDRAND for them) such that the NSA had a NOBUS
+>  (nobody but us) capability to crack RDRAND generated numbers, if we
+>  made a change to unconditionally trust RDRAND, then I didn't want the
+>  upstream kernel developers to have to answer the question, "why are
+>  you willing to trust Intel, but you aren't willing to trust a company
+>  owned and controlled by a PLA general?"  (Or a company owned and
+>  controlled by one of Putin's Oligarchs, if that makes you feel
+>  better.)
+> 
+>  With this patch, we don't put ourselves in this position --- but we
+>  do put the Linux distro's in this position intead.  The upside is it
+>  gives the choice to each person building their own Linux kernel to
+>  decide whether trusting RDRAND is worth it to avoid hangs due to
+>  userspace trying to get cryptographic-grade entropy early in the boot
+>  process.  (Note: I trust RDRAND more than I do Jitter Entropy.)
+> 
+>  drivers/char/Kconfig  | 14 ++++++++++++++
+>  drivers/char/random.c | 11 ++++++++++-
+>  2 files changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+> index 212f447938ae..fe2930c4ecf0 100644
+> --- a/drivers/char/Kconfig
+> +++ b/drivers/char/Kconfig
+> @@ -554,3 +554,17 @@ config ADI
+>  
+>  endmenu
+>  
+> +config RANDOM_TRUST_CPU
+> +       bool "Trust the CPU manufacturer to initialize Linux's CRNG"
+> +       depends on (X86 || X86_64 || X86_32 || S390 || PPC)
+> +       default n
+> +       help
+> +	Assume that CPU manufacurer (e.g., Intel or AMD for RDSEED or
+> +	RDRAND, IBM for the S390 and Power PC architectures) is trustworthy
+> +	for the purposes of initializing Linux's CRNG.  Since this is not
+> +	something that can be indepedently audited, this amounts to trusting
+> +	that CPU manufacturer (perhaps with the insistance or requirement
+> +	of a Nation State's intelligence or law enforcement agencies)
+> +	has not installed a hidden back door to compromise the CPU's
+> +	random number generation facilities.
+> +
+
+The text message should explain this is only relevant during
+initialization / early boot.
+
+The config option name should state this.
+
+> diff --git a/drivers/char/random.c b/drivers/char/random.c
+> index 34ddfd57419b..f4013b8a711b 100644
+> --- a/drivers/char/random.c
+> +++ b/drivers/char/random.c
+> @@ -782,6 +782,7 @@ static void invalidate_batched_entropy(void);
+>  static void crng_initialize(struct crng_state *crng)
+>  {
+>  	int		i;
+> +	int		arch_init = 1;
+>  	unsigned long	rv;
+>  
+>  	memcpy(&crng->state[0], "expand 32-byte k", 16);
+> @@ -792,10 +793,18 @@ static void crng_initialize(struct crng_state *crng)
+>  		_get_random_bytes(&crng->state[4], sizeof(__u32) * 12);
+>  	for (i = 4; i < 16; i++) {
+>  		if (!arch_get_random_seed_long(&rv) &&
+> -		    !arch_get_random_long(&rv))
+> +		    !arch_get_random_long(&rv)) {
+>  			rv = random_get_entropy();
+> +			arch_init = 0;
+> +		}
+>  		crng->state[i] ^= rv;
+>  	}
+> +#ifdef CONFIG_RANDOM_TRUST_CPU
+> +	if (arch_init) {
+> +		crng_init = 2;
+> +		pr_notice("random: crng done (trusting CPU's manufacturer)\n");
+> +	}
+> +#endif
+>  	crng->init_time = jiffies - CRNG_RESEED_INTERVAL - 1;
+>  }
+>  
+
+Regards.
+
 -- 
-1.7.12.4
+Yann Droneaud
+OPTEYA
+
 
