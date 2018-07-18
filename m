@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 178B4ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E96ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C41B020850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A230A20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:56:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="VgK1g/PU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41B020850
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UQogW0FG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A230A20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731195AbeGRLeA (ORCPT
+        id S1731234AbeGRLeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:34:00 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43262 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728304AbeGRLeA (ORCPT
+        Wed, 18 Jul 2018 07:34:06 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:45522 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728304AbeGRLeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:34:00 -0400
-Received: by mail-pg1-f196.google.com with SMTP id v13-v6so1830854pgr.10
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:56:40 -0700 (PDT)
+        Wed, 18 Jul 2018 07:34:05 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 94-v6so1870703ple.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yvkcdyq+XH9acvZSAOuqu6Z0+SAMtHko9BM9Dtyh8Ho=;
-        b=VgK1g/PUhAtlM3nfEyoj1ENZvKJAhPYclCnv4QrjdEi26kCa5acsZ/FI23SBtnY+Mw
-         edsNRha7Ow4Y1+pWEnNx7yPzEMwNRaqOCgaoalzpUqkLyBr+DqYYaKA1QXjBSZrooKw0
-         iKnk1SckB1UNcrE1r/zRHalQnaCOLESUb4HD4=
+        bh=FOBLZ5urAy7VMR+hHZBZ94mTkwzsEEdpb+K9j45RtB0=;
+        b=UQogW0FGUN9VLDvgbuPtBIWdxT/3r28TBvAWS6Iv0K3ZGACyEdKlBZQUpWbDaLIkym
+         DqnDr5GTq8h4GKrRdm/YqHBkuOHCPpHPVs0p6jDLmOwehh12lyrgPMMAK8ZdbfeIrwMm
+         V9+SmDTJfku+Hz2zoHE7WYbda6xewo0qdeRcg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yvkcdyq+XH9acvZSAOuqu6Z0+SAMtHko9BM9Dtyh8Ho=;
-        b=Kho4taD/eA+6dkyNIdHjEGkeIIb7GjyVVFoHfDSEIbUKISnYasvWXhRtbxw13HdAkR
-         Lbd2+9tdTW7ohtHqXz5qow3qwx9NM0JkqtlFg3qL3Exyd/F2evFk7upDHqsTftDzdmYi
-         ENnTE6jKPNoVzxquiqs8S8Kmk2ELRw+LTCGh5QpUS2N6w6GWA0C2V+Q7ASQeIpIIAU7e
-         y1e5i73wYEc6Z8Aeel2gn3A0XMo3BxE26vu3x/9/CQj2A4/e7EU+GUprFHLi096pZmqf
-         uIjFqLMXxizlNTqKrNnrCUzhtnJHcJgkEOfGeRGJI7a2xP3h8SEL9Ts4vno9ugQW8p8R
-         JnYA==
-X-Gm-Message-State: AOUpUlEx47sD6EpYfwayVRC/x1f0ynkfK76G61Qj14hYi0HNJyyEqunL
-        KMGfwGdigh9llshNctfqmyrpKg==
-X-Google-Smtp-Source: AAOMgpeJid+L+kbkjCf9l3tbW3BSS/3z5F3/osPfw0sIXap/IYj2q/6XKPsHht6CcSTVz+RhCM3Hpg==
-X-Received: by 2002:a62:34c4:: with SMTP id b187-v6mr4656608pfa.15.1531911399855;
-        Wed, 18 Jul 2018 03:56:39 -0700 (PDT)
+        bh=FOBLZ5urAy7VMR+hHZBZ94mTkwzsEEdpb+K9j45RtB0=;
+        b=fvdKkA9Z0FM/u3pGhocZlVEeiOLnHAinHO7REARxS4GSwDdVxaTEl/W96oEpu8c/UZ
+         8R4DFwVKyN2a2RcYWLFa8zpB8Dp2QCqvgYjoGo6BVYhcj66UZLEXDq45RiZjdA3T7td8
+         mhA+dv/7BY5hmPmxBZq7IT9B+RCUU0FQwYw6mQFvwEUlbby0nFcjVT/jxOwy/RKcrKDV
+         SU4Fu++J8fOUMtr97LIFWiaI7SYmVNSP6sf4ZR58/aT8lJvY/nWseF+i8URpGNTpVL83
+         CHzfV/6AbLC4oEFcFlDwKUQpiGXKFFlMNkc8tb9IQeASoxR+oGLn/7tHLoHuxMtT53tU
+         MxTA==
+X-Gm-Message-State: AOUpUlFdDzSgVz6ROvmnqiJKSZ0u3tK/lSDUFZukFY3EMSkpqOTuttM1
+        rGJZKLOp5a4WsV/RlWWQH/ReiA==
+X-Google-Smtp-Source: AAOMgpemKyhMG7KQQuTstxAHmtYpZ98sj5UqGNOdVEo7KAhZt23LAJVIbBmoJEIw625WESZTvfbFtQ==
+X-Received: by 2002:a17:902:aa07:: with SMTP id be7-v6mr5383514plb.109.1531911405200;
+        Wed, 18 Jul 2018 03:56:45 -0700 (PDT)
 Received: from localhost.localdomain ([183.82.229.107])
-        by smtp.gmail.com with ESMTPSA id x25-v6sm4644452pgv.63.2018.07.18.03.56.34
+        by smtp.gmail.com with ESMTPSA id x25-v6sm4644452pgv.63.2018.07.18.03.56.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 03:56:39 -0700 (PDT)
+        Wed, 18 Jul 2018 03:56:44 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -70,9 +70,9 @@ To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 12/18] drm: sun4i: add support for HVCC regulator for DWC HDMI glue
-Date:   Wed, 18 Jul 2018 16:24:52 +0530
-Message-Id: <20180718105458.22304-13-jagan@amarulasolutions.com>
+Subject: [PATCH v3 13/18] arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
+Date:   Wed, 18 Jul 2018 16:24:53 +0530
+Message-Id: <20180718105458.22304-14-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180718105458.22304-1-jagan@amarulasolutions.com>
 References: <20180718105458.22304-1-jagan@amarulasolutions.com>
@@ -81,84 +81,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+Enable all necessary HDMI pipeline nodes with HDMI out
+connector on Bananpi-m64 board.
 
-Allwinner SoCs with DWC HDMI controller have a "HVCC" power pin for the
-HDMI part, and on some boards it's connected to a dedicated regulator
-rather than the main 3.3v.
-
-Add support for optional HVCC regulator. For boards that doesn't use a
-dedicated regulator to power it, the default dummy regulator is used.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-Changes for v3, v2:
+Changes for v3:
+- Enable all pipeline components
+Changes for v2:
 - none
 
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 14 ++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
- 2 files changed, 16 insertions(+)
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-index 31875b636434..68623a6ac44e 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
-@@ -113,6 +113,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	if (encoder->possible_crtcs == 0)
- 		return -EPROBE_DEFER;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 094cfed13df9..7adba2c8f6e5 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -60,6 +60,17 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
  
-+	hdmi->vcc_hdmi = devm_regulator_get(dev, "hvcc");
-+	if (IS_ERR(hdmi->vcc_hdmi)) {
-+		dev_err(dev, "Could not get HDMI power supply\n");
-+		return PTR_ERR(hdmi->vcc_hdmi);
-+	}
++	connector {
++		compatible = "hdmi-connector";
++		type = "a";
 +
- 	hdmi->rst_ctrl = devm_reset_control_get(dev, "ctrl");
- 	if (IS_ERR(hdmi->rst_ctrl)) {
- 		dev_err(dev, "Could not get ctrl reset control\n");
-@@ -131,6 +137,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
- 
-+	ret = regulator_enable(hdmi->vcc_hdmi);
-+	if (ret) {
-+		dev_err(dev, "Cannot enable HDMI power supply\n");
-+		goto err_disable_vcc;
-+	}
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi_out_con>;
++			};
++		};
++	};
 +
- 	ret = clk_prepare_enable(hdmi->clk_tmds);
- 	if (ret) {
- 		dev_err(dev, "Could not enable tmds clock\n");
-@@ -183,6 +195,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev, struct device *master,
- 	clk_disable_unprepare(hdmi->clk_tmds);
- err_assert_ctrl_reset:
- 	reset_control_assert(hdmi->rst_ctrl);
-+err_disable_vcc:
-+	regulator_disable(hdmi->vcc_hdmi);
+ 	leds {
+ 		compatible = "gpio-leds";
  
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-index aadbe0a10b0c..af34c498295e 100644
---- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
-@@ -10,6 +10,7 @@
- #include <drm/drm_encoder.h>
- #include <linux/clk.h>
- #include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- 
- #define SUN8I_HDMI_PHY_DBG_CTRL_REG	0x0000
-@@ -176,6 +177,7 @@ struct sun8i_dw_hdmi {
- 	struct drm_encoder		encoder;
- 	struct sun8i_hdmi_phy		*phy;
- 	struct dw_hdmi_plat_data	plat_data;
-+	struct regulator		*vcc_hdmi;
- 	struct reset_control		*rst_ctrl;
+@@ -86,6 +97,10 @@
+ 	};
  };
  
++&de {
++	status = "okay";
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -103,6 +118,17 @@
+ 	status = "okay";
+ };
+ 
++&hdmi {
++	hvcc-supply = <&reg_dldo1>;
++	status = "okay";
++};
++
++&hdmi_out {
++	hdmi_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
+ &i2c1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c1_pins>;
+@@ -120,6 +146,10 @@
+ 	};
+ };
+ 
++&mixer1 {
++	status = "okay";
++};
++
+ &mmc0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&mmc0_pins>;
+@@ -300,6 +330,10 @@
+ 	vcc-hdmi-supply = <&reg_dldo1>;
+ };
+ 
++&tcon1 {
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0_pins_a>;
 -- 
 2.17.1
 
