@@ -2,101 +2,92 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB77ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2372ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D2020852
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:57:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwLzXsID"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55D2020852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9B7A02075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:00:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7A02075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbeGRKfC (ORCPT
+        id S1726805AbeGRKhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:35:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48046 "EHLO mail.kernel.org"
+        Wed, 18 Jul 2018 06:37:21 -0400
+Received: from ozlabs.org ([203.11.71.1]:40805 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726064AbeGRKfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:35:02 -0400
-Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726064AbeGRKhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:37:21 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE1F520852;
-        Wed, 18 Jul 2018 09:57:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531907875;
-        bh=kaJySW2f9PAsYomx4x6VS1j/1yAJ0l+Ji/GC/do1Ruw=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=WwLzXsIDqkKmC7mgm/ZO0PJwWtkMgqpuWurxIB3jPeTOsE7eT70CdCOm7H4pfigNU
-         iX/XMSf1jfo9VbcY5BA49UVR9KyHKWvZeT9kQBf9vfX8Q3YypT3AKaEmdnK477Qj/t
-         sQ/YpkV5Xj1fcSDdhq6+PwcnXNehlftm4ROx4q+k=
-Received: by mail-wm0-f51.google.com with SMTP id f21-v6so2147997wmc.5;
-        Wed, 18 Jul 2018 02:57:54 -0700 (PDT)
-X-Gm-Message-State: AOUpUlG+wF9rT4p9UY31I4UpnaDtEB10Om11ynyOm2ScNGOzLqFViBrv
-        j+ec/ZhkFnmhtLSBVGSb3cPANVvyEwB4OsMK/Zk=
-X-Google-Smtp-Source: AAOMgpeANRvtBTF6vgdYc63xTT3wiBPajjTzq9jFmOfaN5uWl9V0tPXuMjzDMis4yNuNVrtIZukFms6jE6pTDa/z2EY=
-X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr1218055wmm.117.1531907873286;
- Wed, 18 Jul 2018 02:57:53 -0700 (PDT)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Vt1S187Jz9s0w;
+        Wed, 18 Jul 2018 20:00:10 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Michael Hanselmann <linux-kernel@hansmi.ch>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Michael Hanselmann <linux-kernel@hansmi.ch>
+Subject: Re: [PATCH] Mark ams driver as orphaned in MAINTAINERS
+In-Reply-To: <8fe08e4d44c56ee0b70517fc8609ab5a116bc407.1517265227.git.linux-kernel@hansmi.ch>
+References: <8fe08e4d44c56ee0b70517fc8609ab5a116bc407.1517265227.git.linux-kernel@hansmi.ch>
+Date:   Wed, 18 Jul 2018 20:00:10 +1000
+Message-ID: <877elsq2xh.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Received: by 2002:adf:9141:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 02:57:52
- -0700 (PDT)
-In-Reply-To: <1531906490-1739-1-git-send-email-linux.amoon@gmail.com>
-References: <1531906490-1739-1-git-send-email-linux.amoon@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 18 Jul 2018 11:57:52 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdeRvt4YG9Doziq-_oQ9DeUffvTB53OOaq-q2UpkBGpgQ@mail.gmail.com>
-Message-ID: <CAJKOXPdeRvt4YG9Doziq-_oQ9DeUffvTB53OOaq-q2UpkBGpgQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos5: add missing interrupts for pwm node
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 July 2018 at 11:34, Anand Moon <linux.amoon@gmail.com> wrote:
-> Add missing GIC interrupts property for pwm nodes.
->
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  arch/arm/boot/dts/exynos5.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-> index 5d2f0a0..9406108 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -169,6 +169,11 @@
->                 pwm: pwm@12dd0000 {
->                         compatible = "samsung,exynos4210-pwm";
->                         reg = <0x12DD0000 0x100>;
-> +                       interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-> +                                  <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
+Michael Hanselmann <linux-kernel@hansmi.ch> writes:
 
-Indentation here looks weird - spaces used after tabs but not aligned
-with first entry. Please indent it properly and align it.
+> I no longer have any hardware with the Apple motion sensor and thus
+> relinquish maintainership of the driver.
 
-Best regards,
-Krzysztof
+Thanks. I think I'll just remove the whole entry, meaning it will be
+caught under the "LINUX FOR POWER MACINTOSH" entry.
 
-> +                                  <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-> +                                  <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-> +                                  <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
->                         samsung,pwm-outputs = <0>, <1>, <2>, <3>;
->                         #pwm-cells = <3>;
->                 };
-> --
-> 2.7.4
->
+Unless you object. Full patch below.
+
+cheers
+
+commit 19fe15338d6935c1a61a24b83dd315970b1ba162
+Author:     Michael Hanselmann <linux-kernel@hansmi.ch>
+AuthorDate: Mon Jan 29 22:40:09 2018 +0000
+Commit:     Michael Ellerman <mpe@ellerman.id.au>
+CommitDate: Wed Jul 18 19:57:42 2018 +1000
+
+    MAINTAINERS: Remove the entry for the orphaned ams driver
+    
+    I no longer have any hardware with the Apple motion sensor and thus
+    relinquish maintainership of the driver.
+    
+    Remove the maintainers entry entirely, meaning the code will now fall
+    under "LINUX FOR POWER MACINTOSH".
+    
+    Signed-off-by: Michael Hanselmann <linux-kernel@hansmi.ch>
+    [mpe: Drop the entry entirely, munge change log]
+    Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 07d1576fc766..50e398a463f9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -791,11 +791,6 @@ S:	Supported
+ F:	drivers/net/ethernet/amd/xgbe/
+ F:	arch/arm64/boot/dts/amd/amd-seattle-xgbe*.dtsi
+ 
+-AMS (Apple Motion Sensor) DRIVER
+-M:	Michael Hanselmann <linux-kernel@hansmi.ch>
+-S:	Supported
+-F:	drivers/macintosh/ams/
+-
+ ANALOG DEVICES INC AD5686 DRIVER
+ M:	Stefan Popa <stefan.popa@analog.com>
+ L:	linux-pm@vger.kernel.org
+
