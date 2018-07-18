@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 993A2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5497ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FA8420652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:11:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FA8420652
+	by mail.kernel.org (Postfix) with ESMTP id 77F3620652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:11:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F3620652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731718AbeGRQtr (ORCPT
+        id S1731784AbeGRQuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:49:47 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60419 "EHLO mail.bootlin.com"
+        Wed, 18 Jul 2018 12:50:15 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60442 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731675AbeGRQtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731679AbeGRQtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Jul 2018 12:49:47 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 24EE520922; Wed, 18 Jul 2018 18:11:10 +0200 (CEST)
+        id BBEF42091A; Wed, 18 Jul 2018 18:11:10 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id EEB0B20741;
-        Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8956820741;
+        Wed, 18 Jul 2018 18:11:10 +0200 (CEST)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org
@@ -43,9 +43,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v3 4/8] net: mvneta: increase number of buffers in RX and TX queue
-Date:   Wed, 18 Jul 2018 18:10:53 +0200
-Message-Id: <20180718161057.28704-5-gregory.clement@bootlin.com>
+Subject: [PATCH net-next v3 6/8] net: mvneta: Allocate page for the descriptor
+Date:   Wed, 18 Jul 2018 18:10:55 +0200
+Message-Id: <20180718161057.28704-7-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180718161057.28704-1-gregory.clement@bootlin.com>
 References: <20180718161057.28704-1-gregory.clement@bootlin.com>
@@ -54,35 +54,166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yelena Krivosheev <yelena@marvell.com>
+Instead of trying to allocate the exact amount of memory for each
+descriptor use a page for each of them, it allows to simplify the
+allocation management and increase the performance of the driver.
 
-The initial values were too small leading to poor performance when using
-the software buffer management.
-
-Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
-[gregory: extract from a larger patch]
+Based on the work of Yelena Krivosheev <yelena@marvell.com>
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c    | 62 +++++++++---------------
+ drivers/net/ethernet/marvell/mvneta_bm.h |  3 --
+ 2 files changed, 24 insertions(+), 41 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 011794148ec8..e519439bac97 100644
+index da2d56826295..6af583ef2af2 100644
 --- a/drivers/net/ethernet/marvell/mvneta.c
 +++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -295,10 +295,10 @@
- #define MVNETA_RSS_LU_TABLE_SIZE	1
+@@ -1795,47 +1795,30 @@ static void mvneta_txq_done(struct mvneta_port *pp,
+ 	}
+ }
  
- /* Max number of Rx descriptors */
--#define MVNETA_MAX_RXD 128
-+#define MVNETA_MAX_RXD 512
+-void *mvneta_frag_alloc(unsigned int frag_size)
+-{
+-	if (likely(frag_size <= PAGE_SIZE))
+-		return netdev_alloc_frag(frag_size);
+-	else
+-		return kmalloc(frag_size, GFP_ATOMIC);
+-}
+-EXPORT_SYMBOL_GPL(mvneta_frag_alloc);
+-
+-void mvneta_frag_free(unsigned int frag_size, void *data)
+-{
+-	if (likely(frag_size <= PAGE_SIZE))
+-		skb_free_frag(data);
+-	else
+-		kfree(data);
+-}
+-EXPORT_SYMBOL_GPL(mvneta_frag_free);
+-
+ /* Refill processing for SW buffer management */
++/* Allocate page per descriptor */
+ static int mvneta_rx_refill(struct mvneta_port *pp,
+ 			    struct mvneta_rx_desc *rx_desc,
+-			    struct mvneta_rx_queue *rxq)
+-
++			    struct mvneta_rx_queue *rxq,
++			    gfp_t gfp_mask)
+ {
+ 	dma_addr_t phys_addr;
+-	void *data;
++	struct page *page;
  
- /* Max number of Tx descriptors */
--#define MVNETA_MAX_TXD 532
-+#define MVNETA_MAX_TXD 1024
+-	data = mvneta_frag_alloc(pp->frag_size);
+-	if (!data)
++	page = __dev_alloc_page(gfp_mask);
++	if (!page)
+ 		return -ENOMEM;
  
- /* Max number of allowed TCP segments for software TSO */
- #define MVNETA_MAX_TSO_SEGS 100
+-	phys_addr = dma_map_single(pp->dev->dev.parent, data,
+-				   MVNETA_RX_BUF_SIZE(pp->pkt_size),
+-				   DMA_FROM_DEVICE);
++	/* map page for use */
++	phys_addr = dma_map_page(pp->dev->dev.parent, page, 0, PAGE_SIZE,
++				 DMA_FROM_DEVICE);
+ 	if (unlikely(dma_mapping_error(pp->dev->dev.parent, phys_addr))) {
+-		mvneta_frag_free(pp->frag_size, data);
++		__free_page(page);
+ 		return -ENOMEM;
+ 	}
+ 
+ 	phys_addr += pp->rx_offset_correction;
+-	mvneta_rx_desc_fill(rx_desc, phys_addr, data, rxq);
++	mvneta_rx_desc_fill(rx_desc, phys_addr, page, rxq);
+ 	return 0;
+ }
+ 
+@@ -1901,7 +1884,7 @@ static void mvneta_rxq_drop_pkts(struct mvneta_port *pp,
+ 
+ 		dma_unmap_single(pp->dev->dev.parent, rx_desc->buf_phys_addr,
+ 				 MVNETA_RX_BUF_SIZE(pp->pkt_size), DMA_FROM_DEVICE);
+-		mvneta_frag_free(pp->frag_size, data);
++		__free_page(data);
+ 	}
+ }
+ 
+@@ -1928,6 +1911,7 @@ static int mvneta_rx_swbm(struct napi_struct *napi,
+ 		struct mvneta_rx_desc *rx_desc = mvneta_rxq_next_desc_get(rxq);
+ 		struct sk_buff *skb;
+ 		unsigned char *data;
++		struct page *page;
+ 		dma_addr_t phys_addr;
+ 		u32 rx_status, frag_size;
+ 		int rx_bytes, err, index;
+@@ -1936,7 +1920,10 @@ static int mvneta_rx_swbm(struct napi_struct *napi,
+ 		rx_status = rx_desc->status;
+ 		rx_bytes = rx_desc->data_size - (ETH_FCS_LEN + MVNETA_MH_SIZE);
+ 		index = rx_desc - rxq->descs;
+-		data = rxq->buf_virt_addr[index];
++		page = (struct page *)rxq->buf_virt_addr[index];
++		data = page_address(page);
++		/* Prefetch header */
++		prefetch(data);
+ 		phys_addr = rx_desc->buf_phys_addr - pp->rx_offset_correction;
+ 
+ 		if (!mvneta_rxq_desc_is_first_last(rx_status) ||
+@@ -1979,7 +1966,7 @@ static int mvneta_rx_swbm(struct napi_struct *napi,
+ 		}
+ 
+ 		/* Refill processing */
+-		err = mvneta_rx_refill(pp, rx_desc, rxq);
++		err = mvneta_rx_refill(pp, rx_desc, rxq, GFP_KERNEL);
+ 		if (err) {
+ 			netdev_err(dev, "Linux processing - Can't refill\n");
+ 			rxq->refill_err++;
+@@ -2773,9 +2760,11 @@ static int mvneta_rxq_fill(struct mvneta_port *pp, struct mvneta_rx_queue *rxq,
+ 
+ 	for (i = 0; i < num; i++) {
+ 		memset(rxq->descs + i, 0, sizeof(struct mvneta_rx_desc));
+-		if (mvneta_rx_refill(pp, rxq->descs + i, rxq) != 0) {
+-			netdev_err(pp->dev, "%s:rxq %d, %d of %d buffs  filled\n",
+-				__func__, rxq->id, i, num);
++		if (mvneta_rx_refill(pp, rxq->descs + i, rxq,
++				     GFP_KERNEL) != 0) {
++			netdev_err(pp->dev,
++				   "%s:rxq %d, %d of %d buffs  filled\n",
++				   __func__, rxq->id, i, num);
+ 			break;
+ 		}
+ 	}
+@@ -3189,8 +3178,6 @@ static int mvneta_change_mtu(struct net_device *dev, int mtu)
+ 		mvneta_bm_update_mtu(pp, mtu);
+ 
+ 	pp->pkt_size = MVNETA_RX_PKT_SIZE(dev->mtu);
+-	pp->frag_size = SKB_DATA_ALIGN(MVNETA_RX_BUF_SIZE(pp->pkt_size)) +
+-	                SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+ 
+ 	ret = mvneta_setup_rxqs(pp);
+ 	if (ret) {
+@@ -3677,8 +3664,7 @@ static int mvneta_open(struct net_device *dev)
+ 	int ret;
+ 
+ 	pp->pkt_size = MVNETA_RX_PKT_SIZE(pp->dev->mtu);
+-	pp->frag_size = SKB_DATA_ALIGN(MVNETA_RX_BUF_SIZE(pp->pkt_size)) +
+-	                SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
++	pp->frag_size = PAGE_SIZE;
+ 
+ 	ret = mvneta_setup_rxqs(pp);
+ 	if (ret)
+diff --git a/drivers/net/ethernet/marvell/mvneta_bm.h b/drivers/net/ethernet/marvell/mvneta_bm.h
+index 9358626e51ec..c8425d35c049 100644
+--- a/drivers/net/ethernet/marvell/mvneta_bm.h
++++ b/drivers/net/ethernet/marvell/mvneta_bm.h
+@@ -130,9 +130,6 @@ struct mvneta_bm_pool {
+ };
+ 
+ /* Declarations and definitions */
+-void *mvneta_frag_alloc(unsigned int frag_size);
+-void mvneta_frag_free(unsigned int frag_size, void *data);
+-
+ #if IS_ENABLED(CONFIG_MVNETA_BM)
+ struct mvneta_bm *mvneta_bm_get(struct device_node *node);
+ void mvneta_bm_put(struct mvneta_bm *priv);
 -- 
 2.18.0
 
