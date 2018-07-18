@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDEAECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEB9ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A00D20862
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F7B20856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="c4Y76sO3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A00D20862
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="efTZHSAc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F7B20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731925AbeGRKTX (ORCPT
+        id S1731810AbeGRKSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:19:23 -0400
-Received: from 8bytes.org ([81.169.241.247]:54196 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:18:42 -0400
+Received: from 8bytes.org ([81.169.241.247]:54154 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731735AbeGRKSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:43 -0400
+        id S1731692AbeGRKSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:41 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 5C0B330B6; Wed, 18 Jul 2018 11:41:24 +0200 (CEST)
+        id 65BF63C8F; Wed, 18 Jul 2018 11:41:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906886; bh=I9Q73gZnfm6UrdNLFwZi1LUuugpS4MvdTAw5t1OmAUA=;
+        t=1531906885; bh=yLmhHW0HJjSKO5FWNE0Mj6MD7/zIRvh/dOclstvAtpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c4Y76sO3BsNh/iOHvGSQfJDAEN8E8w2sGixDu8LYv0NE0mrRmbgSmQD1Qmy882Rnj
-         lfprMK5imUa8Jrjg2zPKR0c2X5JIwULFP750EQsgzJtoeLVFhS6g9q3ZE0lO9rNh3+
-         +nnSo1HbjefKyznOoHRKr3tBGIwbkA2AbDPkd2bfV9Pn0Ok1NaIbOZMiBM5n5bZkVW
-         S0sNNNAQsP2n1oEXJx/M6yRC+IvznWw7bhZaQl2U6B1DiJHQN1ZzVz9g/QsEWUOfff
-         20STCbBQgoRp1kthQXtQYn8PF3j7mgkKRoy+dXCIiiQDTUfN6UrbviQrSKesa+XwX/
-         nPp/tn6K0f4dg==
+        b=efTZHSAcIJxliJWJsIykoPT3ort+AtnsZwLyfs2rQjkH4aB36PJKFpYjt/F50omQ3
+         T49QDFqcQKzMXw9r+QWftEqNfuzlzBCkujzAuvCt686AeI5Cu5aLVZUdmXtsZ9J2WX
+         lZcBpEtroAeQA3RPT6oPIEomUBPnwBN6+g0D/m11ZX+KlEqtf02pElHT+kDFCQG07G
+         dJ89e7BcMh6oQ5olwBfRASFrmEiu2UssBNNnNkZMI0siEcl1tOf4jkrQR0Smd3XSBG
+         e9S29VMMjjOtMgJDPFkDqq5hrhvsNAiQIrZ3f4Zd0pEaspn1tLnHqBrM1deDYInojH
+         IKAOB+mMWAbnw==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 35/39] x86/ldt: Split out sanity check in map_ldt_struct()
-Date:   Wed, 18 Jul 2018 11:41:12 +0200
-Message-Id: <1531906876-13451-36-git-send-email-joro@8bytes.org>
+Subject: [PATCH 27/39] x86/mm/pti: Make pti_clone_kernel_text() compile on 32 bit
+Date:   Wed, 18 Jul 2018 11:41:04 +0200
+Message-Id: <1531906876-13451-28-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,144 +72,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This splits out the mapping sanity check and the actual
-mapping of the LDT to user-space from the map_ldt_struct()
-function in a way so that it is re-usable for PAE paging.
+The pti_clone_kernel_text() function references
+__end_rodata_hpage_align, which is only present on x86-64.
+This makes sense as the end of the rodata section is not
+huge-page aligned on 32 bit.
+
+Nevertheless we need a symbol for the function that points
+at the right address for both 32 and 64 bit. Introduce
+__end_rodata_aligned for that purpose and use it in
+pti_clone_kernel_text().
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/kernel/ldt.c | 82 ++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 58 insertions(+), 24 deletions(-)
+ arch/x86/include/asm/sections.h |  1 +
+ arch/x86/kernel/vmlinux.lds.S   | 17 ++++++++++-------
+ arch/x86/mm/pti.c               |  2 +-
+ 3 files changed, 12 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index e921b3d..69af9a0 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -100,6 +100,49 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
- 	return new_ldt;
- }
+diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
+index 5c019d2..4a911a3 100644
+--- a/arch/x86/include/asm/sections.h
++++ b/arch/x86/include/asm/sections.h
+@@ -7,6 +7,7 @@
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+
-+static void do_sanity_check(struct mm_struct *mm,
-+			    bool had_kernel_mapping,
-+			    bool had_user_mapping)
-+{
-+	if (mm->context.ldt) {
-+		/*
-+		 * We already had an LDT.  The top-level entry should already
-+		 * have been allocated and synchronized with the usermode
-+		 * tables.
-+		 */
-+		WARN_ON(!had_kernel_mapping);
-+		if (static_cpu_has(X86_FEATURE_PTI))
-+			WARN_ON(!had_user_mapping);
-+	} else {
-+		/*
-+		 * This is the first time we're mapping an LDT for this process.
-+		 * Sync the pgd to the usermode tables.
-+		 */
-+		WARN_ON(had_kernel_mapping);
-+		if (static_cpu_has(X86_FEATURE_PTI))
-+			WARN_ON(had_user_mapping);
-+	}
-+}
-+
-+static void map_ldt_struct_to_user(struct mm_struct *mm)
-+{
-+	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
-+
-+	if (static_cpu_has(X86_FEATURE_PTI) && !mm->context.ldt)
-+		set_pgd(kernel_to_user_pgdp(pgd), *pgd);
-+}
-+
-+static void sanity_check_ldt_mapping(struct mm_struct *mm)
-+{
-+	pgd_t *pgd = pgd_offset(mm, LDT_BASE_ADDR);
-+	bool had_kernel = (pgd->pgd != 0);
-+	bool had_user   = (kernel_to_user_pgdp(pgd)->pgd != 0);
-+
-+	do_sanity_check(mm, had_kernel, had_user);
-+}
-+
- /*
-  * If PTI is enabled, this maps the LDT into the kernelmode and
-  * usermode tables for the given mm.
-@@ -115,9 +158,8 @@ static struct ldt_struct *alloc_ldt_struct(unsigned int num_entries)
- static int
- map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- {
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--	bool is_vmalloc, had_top_level_entry;
- 	unsigned long va;
-+	bool is_vmalloc;
- 	spinlock_t *ptl;
- 	pgd_t *pgd;
- 	int i;
-@@ -131,13 +173,15 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
+ extern char __brk_base[], __brk_limit[];
+ extern struct exception_table_entry __stop___ex_table[];
++extern char __end_rodata_aligned[];
+ 
+ #if defined(CONFIG_X86_64)
+ extern char __end_rodata_hpage_align[];
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 5e1458f..8bde0a4 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -55,19 +55,22 @@ jiffies_64 = jiffies;
+  * so we can enable protection checks as well as retain 2MB large page
+  * mappings for kernel text.
+  */
+-#define X64_ALIGN_RODATA_BEGIN	. = ALIGN(HPAGE_SIZE);
++#define X86_ALIGN_RODATA_BEGIN	. = ALIGN(HPAGE_SIZE);
+ 
+-#define X64_ALIGN_RODATA_END					\
++#define X86_ALIGN_RODATA_END					\
+ 		. = ALIGN(HPAGE_SIZE);				\
+-		__end_rodata_hpage_align = .;
++		__end_rodata_hpage_align = .;			\
++		__end_rodata_aligned = .;
+ 
+ #define ALIGN_ENTRY_TEXT_BEGIN	. = ALIGN(PMD_SIZE);
+ #define ALIGN_ENTRY_TEXT_END	. = ALIGN(PMD_SIZE);
+ 
+ #else
+ 
+-#define X64_ALIGN_RODATA_BEGIN
+-#define X64_ALIGN_RODATA_END
++#define X86_ALIGN_RODATA_BEGIN
++#define X86_ALIGN_RODATA_END					\
++		. = ALIGN(PAGE_SIZE);				\
++		__end_rodata_aligned = .;
+ 
+ #define ALIGN_ENTRY_TEXT_BEGIN
+ #define ALIGN_ENTRY_TEXT_END
+@@ -141,9 +144,9 @@ SECTIONS
+ 
+ 	/* .text should occupy whole number of pages */
+ 	. = ALIGN(PAGE_SIZE);
+-	X64_ALIGN_RODATA_BEGIN
++	X86_ALIGN_RODATA_BEGIN
+ 	RO_DATA(PAGE_SIZE)
+-	X64_ALIGN_RODATA_END
++	X86_ALIGN_RODATA_END
+ 
+ 	/* Data */
+ 	.data : AT(ADDR(.data) - LOAD_OFFSET) {
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 2eadab0..4f6e933 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -470,7 +470,7 @@ void pti_clone_kernel_text(void)
+ 	 * clone the areas past rodata, they might contain secrets.
  	 */
- 	WARN_ON(ldt->slot != -1);
+ 	unsigned long start = PFN_ALIGN(_text);
+-	unsigned long end = (unsigned long)__end_rodata_hpage_align;
++	unsigned long end = (unsigned long)__end_rodata_aligned;
  
-+	/* Check if the current mappings are sane */
-+	sanity_check_ldt_mapping(mm);
-+
- 	/*
- 	 * Did we already have the top level entry allocated?  We can't
- 	 * use pgd_none() for this because it doens't do anything on
- 	 * 4-level page table kernels.
- 	 */
- 	pgd = pgd_offset(mm, LDT_BASE_ADDR);
--	had_top_level_entry = (pgd->pgd != 0);
- 
- 	is_vmalloc = is_vmalloc_addr(ldt->entries);
- 
-@@ -172,35 +216,25 @@ map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
- 		pte_unmap_unlock(ptep, ptl);
- 	}
- 
--	if (mm->context.ldt) {
--		/*
--		 * We already had an LDT.  The top-level entry should already
--		 * have been allocated and synchronized with the usermode
--		 * tables.
--		 */
--		WARN_ON(!had_top_level_entry);
--		if (static_cpu_has(X86_FEATURE_PTI))
--			WARN_ON(!kernel_to_user_pgdp(pgd)->pgd);
--	} else {
--		/*
--		 * This is the first time we're mapping an LDT for this process.
--		 * Sync the pgd to the usermode tables.
--		 */
--		WARN_ON(had_top_level_entry);
--		if (static_cpu_has(X86_FEATURE_PTI)) {
--			WARN_ON(kernel_to_user_pgdp(pgd)->pgd);
--			set_pgd(kernel_to_user_pgdp(pgd), *pgd);
--		}
--	}
-+	/* Propagate LDT mapping to the user page-table */
-+	map_ldt_struct_to_user(mm);
- 
- 	va = (unsigned long)ldt_slot_va(slot);
- 	flush_tlb_mm_range(mm, va, va + LDT_SLOT_STRIDE, 0);
- 
- 	ldt->slot = slot;
--#endif
- 	return 0;
- }
- 
-+#else /* !CONFIG_PAGE_TABLE_ISOLATION */
-+
-+static int
-+map_ldt_struct(struct mm_struct *mm, struct ldt_struct *ldt, int slot)
-+{
-+	return 0;
-+}
-+#endif /* CONFIG_PAGE_TABLE_ISOLATION */
-+
- static void free_ldt_pgtables(struct mm_struct *mm)
- {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	if (!pti_kernel_image_global_ok())
+ 		return;
 -- 
 2.7.4
 
