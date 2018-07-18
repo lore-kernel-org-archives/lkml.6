@@ -2,102 +2,139 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B64E6ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06352ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7097220850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:59:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="VDiCTZc0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7097220850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id C0E442075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:59:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E442075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730369AbeGRMgp (ORCPT
+        id S1730622AbeGRMgs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:36:45 -0400
-Received: from 8bytes.org ([81.169.241.247]:57470 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbeGRMgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:36:43 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id B10ED1CF; Wed, 18 Jul 2018 13:59:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531915145; bh=BhXgtHAWgNGvieIGowV1lasZA1Ej+YMKVlv5jSG/O28=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VDiCTZc0KjybrsmpLWYhA3fv67e3pCkKfbS7jftAQ7YVaP4ftuloG3gn/5ycYFxwj
-         W4BaW1ri/GeJ+VXNT74djyuiPHcGsRFE9Ret0mOvCeBiqVufT/UbTLnZlPWNKLv3Pw
-         Rf+4WMCJlIj8WtjB4LJ2bw6UV3DV2pMyZ17KEEsz/2VTCiL+cNnqxpXA1/43RThNja
-         ftuIrY9yojEFxnH0XZoHGPth8NwdkDjvcg+YpNaYsxY4Kuzcx/fTZAyyB2feb656+W
-         VnYoT3NVD+o8wEAsczlufpOKMENyyrEuJwmmlS0tGvQ/YnhzSWzY167yJHeG1UU084
-         FJ/OMSn/Z5mPw==
-Date:   Wed, 18 Jul 2018 13:59:05 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Joerg Roedel <jroedel@suse.de>, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>
-Subject: Re: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on
- Entry-Stack
-Message-ID: <20180718115905.GA18541@8bytes.org>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <1531308586-29340-11-git-send-email-joro@8bytes.org>
- <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
- <20180714052110.cobtew6rms23ih37@suse.de>
- <7AB4F269-E0E8-4290-A764-69D8605467E8@amacapital.net>
- <20180714080159.hqp36q7fxzb2ktlq@suse.de>
- <75BDF04F-9585-438C-AE04-918FBE00A174@amacapital.net>
- <20180717071545.ojdall7tatbjtfai@suse.de>
- <CALCETrXAF6+mkDL4+uQdHQdJ=G70YVu_k55P_x6Mgi4hXe3oYw@mail.gmail.com>
+        Wed, 18 Jul 2018 08:36:48 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728626AbeGRMgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 08:36:48 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DFF6D8315E;
+        Wed, 18 Jul 2018 11:59:12 +0000 (UTC)
+Received: from [10.36.116.221] (ovpn-116-221.ams2.redhat.com [10.36.116.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0D3832026D69;
+        Wed, 18 Jul 2018 11:59:09 +0000 (UTC)
+Subject: Re: [PATCH V2 3/5] KVM/VMX: Add identical ept table pointer check
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>
+References: <20180709090218.15342-1-Tianyu.Lan@microsoft.com>
+ <20180709090218.15342-4-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8326ebac-ea35-3e26-ae6a-e57b73e07783@redhat.com>
+Date:   Wed, 18 Jul 2018 13:59:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXAF6+mkDL4+uQdHQdJ=G70YVu_k55P_x6Mgi4hXe3oYw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180709090218.15342-4-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 18 Jul 2018 11:59:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 18 Jul 2018 11:59:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 01:06:11PM -0700, Andy Lutomirski wrote:
-> Yes, we obviously need to restore the correct cr3.  But I really don't
-> like the code that rewrites the stack frame that we're about to IRET
-> to, especially when it doesn't seem to serve a purpose.  I'd much
-> rather the code just get its CR3 right and do the IRET and trust that
-> the frame it's returning to is still there.
+On 09/07/2018 11:02, Tianyu Lan wrote:
+> +static void check_ept_pointer(struct kvm_vcpu *vcpu, u64 eptp)
+> +{
+> +	struct kvm *kvm = vcpu->kvm;
+> +	u64 tmp_eptp = INVALID_PAGE;
+> +	int i;
+> +
+> +	if (!kvm_x86_ops->tlb_remote_flush)
+> +		return;
+> +
+> +	spin_lock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +	to_vmx(vcpu)->ept_pointer = eptp;
+> +
+> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+> +		if (!VALID_PAGE(tmp_eptp)) {
+> +			tmp_eptp = to_vmx(vcpu)->ept_pointer;
+> +		} else if (tmp_eptp != to_vmx(vcpu)->ept_pointer) {
+> +			to_kvm_vmx(kvm)->ept_pointers_match = false;
+> +			spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +			return;
+> +		}
+> +	}
+> +
+> +	to_kvm_vmx(kvm)->ept_pointers_match = true;
+> +	spin_unlock(&to_kvm_vmx(kvm)->ept_pointer_lock);
+> +}
+> +
 
-Okay, I'll give it a try and if it works without the copying we can put
-that on-top of this patch-set. This also has the benefit that we can
-revert it later if it causes problems down the road.
+Is there any reason to do the check here, rather than the first time the
+TLB flush is invoked?  You could:
 
+- have a tristate (true, false, check) value for ept_pointers_match
 
-Regards,
+- reset it to "check" in vmx_set_cr3
 
-	Joerg
+- set it to either true or false in tlb_remote_flush if it is check, and
+do the hypercall if it is true.
+
+Paolo
