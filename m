@@ -2,130 +2,196 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBC2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4D5ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62F4820850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdZ8+fch"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62F4820850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 893C720850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:26:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 893C720850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730922AbeGRPE3 (ORCPT
+        id S1731031AbeGRPEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:04:29 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:35890 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730382AbeGRPE3 (ORCPT
+        Wed, 18 Jul 2018 11:04:36 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:53939 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730926AbeGRPEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:04:29 -0400
-Received: by mail-lj1-f194.google.com with SMTP id u7-v6so4278008lji.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 07:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=uAPBffkEP6hzJQhAgZpqROpzhoxqEnmHBZuEr7Cl3wY=;
-        b=WdZ8+fchC6Z113PVUHm8Z9naJ1nCiwKfseZFDQUAi3Run0qD/RTJApljpR/kg5abfA
-         uHBy4CwzP9VHHqmkbWRk9yd9mUJkxRQR2zKnjs06c5dKpXlia51XuZ+0OeBcoFl1C04z
-         ekfiymTKpCdzJISClUqCc3Kpsuzn6knmcL+0nzphQYB7ByuhCJsFgHMQpCRdSe25/FW3
-         hV7d3fzf7/IsEyZxVH0RA1UPUBcYIbmfgZWxcqqWoOn7BEcnIcMclFB5OxYGxT9z8hXL
-         ES6T3ujMpcBvL3JmOqJ0PTiEmgKi0VLFP6AdXftm7seimoo88PMXO5G/ae8M3f+60XFO
-         vdkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=uAPBffkEP6hzJQhAgZpqROpzhoxqEnmHBZuEr7Cl3wY=;
-        b=UAtO8jbA2+cpKj3GHa49tNhXADcVQ+23aN+aecnD8gSmnxrSBMrTzpKtFOUO6YHaY0
-         Dgp02gBAOKitTM8DLXY/1RL72BwKnA1OBAY+2LmbOorPoWNu0+cypzPI4Wrf6XTA2+sL
-         9LJ8zHx8TKjG6L5pBJqO4Qev/J/IbIf1umjw82XT60CkESZbo00smISw49vLF/PbGIQ+
-         kP5NBpcPA0dvH91jP/spM3418NiLZEePPDUS+K3+omwXvS29HFg2JWSJmasVg1ik4sWL
-         pgVFBXMBeLTapwEJo0BJBffsc6Nc56a1+vUjDf6GwMB4j0VyA6MDMGApDyiCd+ghexZB
-         8QCg==
-X-Gm-Message-State: AOUpUlEm3XmHIcBNlNDx4NQZWai4bLkKlqNVNKUJsiYAWFhaq8NKVUFb
-        fmFToF3uo5K0CpzjOVOumPUtpitxtxzLYHzuV2o=
-X-Google-Smtp-Source: AAOMgpdkukUAXWv07c10bMFmRwDD1yD3JESRzyN5ZxZ+NlJRCBL6VXrKiy//UnNUi4fyqsF+dui8Pi7gxcTobWrTA24=
-X-Received: by 2002:a2e:9f4d:: with SMTP id v13-v6mr4717212ljk.42.1531923977174;
- Wed, 18 Jul 2018 07:26:17 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 07:26:16
- -0700 (PDT)
-In-Reply-To: <alpine.LNX.2.21.1807182333150.41@nippy.intranet>
-References: <20180619140229.3615110-1-arnd@arndb.de> <20180619140229.3615110-2-arnd@arndb.de>
- <CAMuHMdXHUwbD4ZBuQz-xYQO=QdYdPS=j=oLWBet6B7PrGEkT9Q@mail.gmail.com>
- <alpine.LNX.2.21.1807182201560.41@nippy.intranet> <CAK8P3a0OBVu-o6kFCS=gV83EcH9ba9QYGZBBhB9D8cJrf=8akA@mail.gmail.com>
- <alpine.LNX.2.21.1807182333150.41@nippy.intranet>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 18 Jul 2018 16:26:16 +0200
-X-Google-Sender-Auth: lPXZCupQPtFyc6aeOJ_BBq5zMR0
-Message-ID: <CAK8P3a3azDB5WsQWTKOSmXNqycTxz0qXtowS61_=zUsnMo+EXg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] [v2] m68k: mac: use time64_t in RTC handling
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joshua Thompson <funaho@jurai.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Meelis Roos <mroos@linux.ee>,
-        Andreas Schwab <schwab@linux-m68k.org>
+        Wed, 18 Jul 2018 11:04:36 -0400
+X-UUID: 86eeda05c1f34f9498b610be9664c3f3-20180718
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1984020149; Wed, 18 Jul 2018 22:26:09 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 18 Jul 2018 22:26:08 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 18 Jul 2018 22:26:08 +0800
+Message-ID: <1531923968.8953.197.camel@mtkswgap22>
+Subject: Re: [PATCH v5 5/7] Bluetooth: Extend btuart driver for join more
+ vendor devices
+From:   Sean Wang <sean.wang@mediatek.com>
+To:     Marcel Holtmann <marcel@holtmann.org>
+CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Wed, 18 Jul 2018 22:26:08 +0800
+In-Reply-To: <BB53539F-C053-4DCD-A748-B75B995E1179@holtmann.org>
+References: <cover.1531150733.git.sean.wang@mediatek.com>
+         <85d449cdd34bf47d72935a821915e825c64a2145.1531150733.git.sean.wang@mediatek.com>
+         <70616B99-5A2D-417A-8815-246700EEF4E2@holtmann.org>
+         <1531641134.3955.19.camel@mtkswgap22>
+         <6476BE78-3FE5-465F-8060-2215387323AA@holtmann.org>
+         <1531754965.8953.3.camel@mtkswgap22>
+         <BB53539F-C053-4DCD-A748-B75B995E1179@holtmann.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 3:49 PM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> On Wed, 18 Jul 2018, Arnd Bergmann wrote:
+On Wed, 2018-07-18 at 14:23 +0200, Marcel Holtmann wrote:
+> Hi Sean,
+> 
+> >>>>> Adding an independent btuart.h header allows these essential definitions
+> >>>>> can be reused in vendor driver. Also, struct btuart_vnd is extended with
+> >>>>> additional callbacks such as .init initializing vendor data, .shtudown,
+> >>>>> .recv and .send supporting SoC specific framing for that btuart can
+> >>>>> simply adapt to various Bluetooth uart-based devices.
+> >>>>> 
+> >>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+> >>>>> ---
+> >>>>> drivers/bluetooth/btuart.c | 73 ++++++++++++++++++++++++----------------------
+> >>>>> drivers/bluetooth/btuart.h | 30 +++++++++++++++++++
+> >>>>> 2 files changed, 68 insertions(+), 35 deletions(-)
+> >>>>> create mode 100644 drivers/bluetooth/btuart.h
+> >>>>> 
+> >>>>> diff --git a/drivers/bluetooth/btuart.c b/drivers/bluetooth/btuart.c
+> >>>>> index a900aac..65d0086 100644
+> >>>>> --- a/drivers/bluetooth/btuart.c
+> >>>>> +++ b/drivers/bluetooth/btuart.c
+> >>>>> @@ -33,35 +33,11 @@
+> >>>>> #include <net/bluetooth/hci_core.h>
+> >>>>> 
+> >>>>> #include "h4_recv.h"
+> >>>>> +#include "btuart.h"
+> >>>>> #include "btbcm.h"
+> >>>>> 
+> >>>>> #define VERSION "1.0"
+> >>>>> 
+> >>>>> -struct btuart_vnd {
+> >>>>> -	const struct h4_recv_pkt *recv_pkts;
+> >>>>> -	int recv_pkts_cnt;
+> >>>>> -	unsigned int manufacturer;
+> >>>>> -	int (*open)(struct hci_dev *hdev);
+> >>>>> -	int (*close)(struct hci_dev *hdev);
+> >>>>> -	int (*setup)(struct hci_dev *hdev);
+> >>>>> -};
+> >>>>> -
+> >>>>> -struct btuart_dev {
+> >>>>> -	struct hci_dev *hdev;
+> >>>>> -	struct serdev_device *serdev;
+> >>>>> -
+> >>>>> -	struct work_struct tx_work;
+> >>>>> -	unsigned long tx_state;
+> >>>>> -	struct sk_buff_head txq;
+> >>>>> -
+> >>>>> -	struct sk_buff *rx_skb;
+> >>>>> -
+> >>>>> -	const struct btuart_vnd *vnd;
+> >>>>> -};
+> >>>> 
+> >>>> I really like to avoid this since it is not clean. Frankly I prefer to keep the btuart.c driver for drivers that really just use H:4 as transport protocol. If the protocol is only H:4 alike and has extra headers, then it should be a separate driver.
+> >>>> 
+> >>> 
+> >>> thanks for letting me know your concern. I think I'm a little over in reusing these existing methods and break something generic and its beauty.
+> >>> 
+> >>> I'll make the driver be a separate one based on btuart in the next version.
+> >>> 
+> >>> 
+> >>>> The common H:4 handling is abstracted in h4_recv.h already anyway and we can add more pieces if needed. However I also wonder since you have extra framing that the complex H:4 state keeping might be not needed at all. So it could be simplified.
+> >>>> 
+> >>> 
+> >>> okay, I will get rid of h4_recv.h and consider to use more simplified logic to handle the extra framing and its payload.
+> >> 
+> >> only if it is already framed by your extra header, but I seem to recall that it will frame it. For example the bfusb.c old driver does frame H:4 as well and then no extra state keeping for H:4 is needed. Just pass the frames up into the core via hci_recv_frame (or hci_recv_diag for vendor diagnostic) and move on with it.
+> >> 
+> >> You can of course use h4_recv.h if you need to, but only do that if you are true H:4 stream and have no idea where a frame ends and starts.
+> >> 
+> >> Regards
+> >> 
+> >> Marcel
+> >> 
+> > 
+> > Thanks for the explanation, I didn't show what the extra header is, that causes some misunderstanding.
+> > 
+> > The mtk extra header doesn't provide any idea where a frame ends and starts in the bluetooth stream. 
+> > 
+> > It is just totally a legacy stuff used by mtk combo devices sharing a serial transport, such as BT/GPS/FM running via a shared UART, to
+> > let the host know what type of radio the following bytes is for and how long it's. 
+> 
+> but that means it is framed. You know ahead of time how long the H:4 packet will be. That is the important part. Unless you tell me that it can fragment a H:4 frame over multiple MTK specific frames.
+> 
+> > The extra header is really useful for a combo device, splitting flow and fitting in a single serial transport, but for a single device such as
+> > mt7622 Bluetooth I made here, it seems to be useless.
+> 
+> Useless or not depends on what you are going to do with the device. In theory you could write a serdev driver that just handles the multiplexing (since that is what you have) and then hands down the frames to individual drivers. Frankly something like btqcomsmd.c seems to be what you really want here. However first you would needed this multiplex driver that takes the serial stream and breaks it up.
+> 
+> > Because the extra header doesn't provide any details about this stream and each radio stack still needs to be in charge of their stream
+> > parsing. That is why I still want to use recv_h4.h instead of coding my own parser.
+> 
+> As I said above, if the header + length always indicates a full H:4 frame, then you do not need h4_recv.h since you know the packet size. If it doesn't (and it means things can fragment), then you do.
+> 
 
->>
->> -static long via_read_time(void)
->> +static time64_t via_read_time(void)
->>  {
->>         union {
->>                 __u8 cdata[4];
->> -               long idata;
->> +               __u32 idata;
->>         } result, last_result;
->> +       time64_t ret;
->
-> ret isn't used.
->
->>         int count = 1;
->>
->>         via_pram_command(0x81, &last_result.cdata[3]);
->> @@ -279,12 +280,8 @@ static long via_read_time(void)
->>                 via_pram_command(0x89, &result.cdata[1]);
->>                 via_pram_command(0x8D, &result.cdata[0]);
->>
->> -               if (result.idata == last_result.idata) {
->> -                       if (result.idata < RTC_OFFSET)
->> -                               result.idata += 0x100000000ull;
->> -
->> -                       return result.idata - RTC_OFFSET;
->> -               }
->> +               if (result.idata == last_result.idata)
->> +                       return (time64_t(result.idata) - RTC_OFFSET);
->>
->
-> Did you mean to write,
->
->                         return (time64_t)result.idata - RTC_OFFSET;
->
-> ?
+My case is the extra header + length doesn't indicate a full H:4 frame,
+things can fragment
 
-Right, I should have at least tried to build it again.
+> However I have to note that a serial stream from your multiplexer protocol also needs some state handling since it can be interrupted at any point. If you want this clean, then you actually do that anyway. Essentially you have two protocols layered and want to process the independently.
 
-      Arnd
+Yes, I also agree that it makes better and cleaner if there is another
+driver in charge of the multiplexer protocol and the framing.
+
+But, could you accept that I postpone the target into the next stage,
+I just like to consider BT single device, not for multiplexer protocol
+case, in the current stage.
+
+To be honest, my next step is to add mt7688 btusb and then want to have
+an integration with btmtkuart. mt7688 btusb doesn't have extra framing
+for multiplexer protocol, so it can allow me to make the concentration
+more on pure bt protocol and pushing the latest mtk bluetooth devices
+being supported on the bluez driver.
+
+> If you post details about the multiplexing protocol for your serial stream, then I can help you design a driver for it. With serdev that is actually simple. And then you could hook up GPS etc. at some point once you want to run this on hardware that has the combo chip.
+> 
+
+okay, really thanks for your help. I also have an interest on this part.
+now how does bluez receive and sent packet from/to a virtual device ( a
+serdev handling multiplexer protocol)? It seems current bluez device all
+handling packet from/to physical bus device. or I was missing something?
+
+> Having a Linux Bluetooth driver is useful for Android as well btw. We have HCI_CHANNEL_USER and a generic Android driver for using it. So enabling the chip in Linux upstream will enable it for Android as well.
+> 
+it really save more time as I knew many vendors do two driver separately
+for bluez and bluedroid. where could I find the resource for
+HCI_CHANNEL_USER and generic android driver ? Is it still the part of
+bluez or run by another project ?
+
+> Regards
+> 
+> Marcel
+> 
+
+
