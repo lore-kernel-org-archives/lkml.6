@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7525ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 169ADECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59AA62075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59AA62075A
+	by mail.kernel.org (Postfix) with ESMTP id BA1B32075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1B32075A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730512AbeGRVuJ (ORCPT
+        id S1730659AbeGRVuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:50:09 -0400
-Received: from mail-qt0-f172.google.com ([209.85.216.172]:45598 "EHLO
-        mail-qt0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeGRVuI (ORCPT
+        Wed, 18 Jul 2018 17:50:11 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:35688 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730451AbeGRVuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:50:08 -0400
-Received: by mail-qt0-f172.google.com with SMTP id y5-v6so5380351qti.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:10:25 -0700 (PDT)
+        Wed, 18 Jul 2018 17:50:11 -0400
+Received: by mail-qt0-f193.google.com with SMTP id a5-v6so5399028qtp.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:10:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=g/OX3VgJjdgzO7seeCrbMw7ezGcq5eUy3GHwluEcB5c=;
-        b=P2yo6EZ6D33XojjIkesu0jirRnzTGteJRZKLr0ZIuyjmsVsy41fWfuLJOW7E5XKQz8
-         7lCeKOJEObn9VXp7KyH+1XaNtusl2xpt6Q6GhXVNqL6G5e22fKAkylH7WajsRICKFWi8
-         +Nvv/pRcKTOI2mAh+RmV1zQK2V34RLNTpC4H+tyRYrvl0IDn++Ui33qFlTkXsm5B3OaD
-         Ck+RFyZQIsty/KlAg+XgBVHloAeXqUuWQukPYIyB/XqcLWudEi0EnYRfM/H/zCizciBO
-         e/Xmno2JBC1Bs0dwMW/xK0XoyftTbZ8msNiVFv+8l6wnmPD7GpvGusQJWgLX8dhKNRuo
-         fIMQ==
-X-Gm-Message-State: AOUpUlF7Hi4jtyyG1TJ5l856QaTmu4FMRPO0OOE/zyENSEARgJ3mkjAC
-        6+96fqLnruZU4c2ccZ+9DUTUkQ==
-X-Google-Smtp-Source: AAOMgpdIv0PZhCXXELQUtUh0J1jgiVgnoxQ/gLwR7BU6QL06DkD8U6X4M2+n+cTqTqDApdoqs9xezg==
-X-Received: by 2002:ac8:2cd1:: with SMTP id 17-v6mr7269393qtx.360.1531948225423;
-        Wed, 18 Jul 2018 14:10:25 -0700 (PDT)
+        bh=JYOf584Ydg8gijpMp6qHyZQQNvlyScAA4CitiUdr5Zo=;
+        b=Dp+2Cumq9vo96QMge3iGeUCJjBD3LNsDw5ZD1CtNJEMMjKN84V+PemcpdELy/lbAqd
+         4yh8oMMoWm1H3ioLkqr8BYttK6A0GHoLQZOh18oUS3j6P6TUxl6gibBmUAipzIloDQ9w
+         pnlURN3Y024U6ccxNaFgabLLjwFYQ/SYTDOW8PIwObxm/EQIofb5OrngLQnuLsiKPOX1
+         EpLErUHMxnM4t/IelZRyYSOc6/oMQMH6rg7XXA/+ov2LUghROvyBOJyWxRYNqx7oQdRB
+         eBFCDVxud2xvZa21vdpEXx8HrpRmwUmocBjmFt7N470015clPuUsXw6XpIY3vG0/2s4F
+         1Nig==
+X-Gm-Message-State: AOUpUlHDbCjRNfl+a1j8BZUaMpU7BYABu5dlUKzBw7sf0qIbl/XLw0ca
+        bfJ/kjYbqZ086rhsBVuJqteMuQ==
+X-Google-Smtp-Source: AAOMgpf/xAuzyFz6H0tuX4cNMeoZhOEuFZ0ESMy9azzLtFVumP/bsWIcoyyw+wQgKXpUepXhZPvJuw==
+X-Received: by 2002:aed:3534:: with SMTP id a49-v6mr6960492qte.244.1531948227972;
+        Wed, 18 Jul 2018 14:10:27 -0700 (PDT)
 Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0])
-        by smtp.gmail.com with ESMTPSA id k3-v6sm4143463qta.37.2018.07.18.14.10.22
+        by smtp.gmail.com with ESMTPSA id k3-v6sm4143463qta.37.2018.07.18.14.10.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 14:10:24 -0700 (PDT)
+        Wed, 18 Jul 2018 14:10:26 -0700 (PDT)
 From:   Laura Abbott <labbott@redhat.com>
 To:     Alexander Popov <alex.popov@linux.com>,
         Kees Cook <keescook@chromium.org>,
@@ -55,9 +55,9 @@ Cc:     Laura Abbott <labbott@redhat.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 1/2] arm64: Introduce current_stack_type
-Date:   Wed, 18 Jul 2018 14:10:12 -0700
-Message-Id: <20180718211013.14512-2-labbott@redhat.com>
+Subject: [PATCH 2/2] arm64: Clear the stack
+Date:   Wed, 18 Jul 2018 14:10:13 -0700
+Message-Id: <20180718211013.14512-3-labbott@redhat.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180718211013.14512-1-labbott@redhat.com>
 References: <20180718211013.14512-1-labbott@redhat.com>
@@ -67,245 +67,174 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-In preparation for enabling the stackleak plugin on arm64,
-we need a way to get the bounds of the current stack.
-Introduce a new primitive current_stack_type which is similar
-to x86's get_stack_info. Utilize that to rework
-on_accessible_stack slightly as well.
+Implementation of stackleak based heavily on the x86 version
 
 Signed-off-by: Laura Abbott <labbott@redhat.com>
 ---
-So this did end up looking quite a bit like get_stack_info but I didn't
-really see the need to integrate this more than this. I do think
-actually enumerating the types makes things a bit cleaner.
+Since last time: Minor style cleanups. Re-wrote check_alloca to
+correctly handle all stack types. While doing that, I also realized
+current_top_of_stack was incorrect so I fixed that as well.
 ---
- arch/arm64/include/asm/sdei.h       |  8 ++-
- arch/arm64/include/asm/stacktrace.h | 94 ++++++++++++++++++++++++-----
- arch/arm64/kernel/ptrace.c          |  2 +-
- arch/arm64/kernel/sdei.c            | 21 ++++++-
- 4 files changed, 103 insertions(+), 22 deletions(-)
+ arch/arm64/Kconfig                    |  1 +
+ arch/arm64/include/asm/processor.h    | 17 ++++++++++++++
+ arch/arm64/kernel/entry.S             |  7 ++++++
+ arch/arm64/kernel/process.c           | 32 +++++++++++++++++++++++++++
+ arch/arm64/kvm/hyp/Makefile           |  3 ++-
+ drivers/firmware/efi/libstub/Makefile |  3 ++-
+ include/linux/stackleak.h             |  1 +
+ 7 files changed, 62 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/include/asm/sdei.h b/arch/arm64/include/asm/sdei.h
-index e073e6886685..34f7b203845b 100644
---- a/arch/arm64/include/asm/sdei.h
-+++ b/arch/arm64/include/asm/sdei.h
-@@ -40,15 +40,17 @@ asmlinkage unsigned long __sdei_handler(struct pt_regs *regs,
- unsigned long sdei_arch_get_entry_point(int conduit);
- #define sdei_arch_get_entry_point(x)	sdei_arch_get_entry_point(x)
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 42c090cf0292..216d36a49ab5 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -96,6 +96,7 @@ config ARM64
+ 	select HAVE_ARCH_MMAP_RND_BITS
+ 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+ 	select HAVE_ARCH_SECCOMP_FILTER
++	select HAVE_ARCH_STACKLEAK
+ 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+ 	select HAVE_ARCH_TRACEHOOK
+ 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index a73ae1e49200..4f3062ee22c6 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -266,5 +266,22 @@ extern void __init minsigstksz_setup(void);
+ #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
+ #define SVE_GET_VL()	sve_get_current_vl()
  
--bool _on_sdei_stack(unsigned long sp);
--static inline bool on_sdei_stack(unsigned long sp)
-+bool _on_sdei_stack(unsigned long sp, unsigned long *, unsigned long *);
-+static inline bool on_sdei_stack(unsigned long sp,
-+				unsigned long *stack_low,
-+				unsigned long *stack_high)
- {
- 	if (!IS_ENABLED(CONFIG_VMAP_STACK))
- 		return false;
- 	if (!IS_ENABLED(CONFIG_ARM_SDE_INTERFACE))
- 		return false;
- 	if (in_nmi())
--		return _on_sdei_stack(sp);
-+		return _on_sdei_stack(sp, stack_low, stack_high);
- 
- 	return false;
- }
-diff --git a/arch/arm64/include/asm/stacktrace.h b/arch/arm64/include/asm/stacktrace.h
-index 902f9edacbea..9855a0425e64 100644
---- a/arch/arm64/include/asm/stacktrace.h
-+++ b/arch/arm64/include/asm/stacktrace.h
-@@ -39,7 +39,9 @@ extern void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk);
- 
- DECLARE_PER_CPU(unsigned long *, irq_stack_ptr);
- 
--static inline bool on_irq_stack(unsigned long sp)
-+static inline bool on_irq_stack(unsigned long sp,
-+				unsigned long *stack_low,
-+				unsigned long *stack_high)
- {
- 	unsigned long low = (unsigned long)raw_cpu_read(irq_stack_ptr);
- 	unsigned long high = low + IRQ_STACK_SIZE;
-@@ -47,47 +49,109 @@ static inline bool on_irq_stack(unsigned long sp)
- 	if (!low)
- 		return false;
- 
--	return (low <= sp && sp < high);
-+	if (sp < low || sp >= high)
-+		return false;
++/*
++ * For CONFIG_STACKLEAK
++ *
++ * These need to be macros because otherwise we get stuck in a nightmare
++ * of header definitions for the use of task_stack_page.
++ */
 +
-+	if (stack_low && stack_high) {
-+		*stack_low = low;
-+		*stack_high = high;
-+	}
++#define current_top_of_stack()		\
++({					\
++	unsigned long _low = 0;		\
++	unsigned long _high = 0;	\
++					\
++	current_stack_type(current, current_stack_pointer, &_low, &_high); \
++	_high;	\
++})
++#define on_thread_stack()	(on_task_stack(current, current_stack_pointer, NULL, NULL))
 +
-+	return true;
- }
+ #endif /* __ASSEMBLY__ */
+ #endif /* __ASM_PROCESSOR_H */
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 28ad8799406f..67d12016063d 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -431,6 +431,11 @@ tsk	.req	x28		// current thread_info
  
--static inline bool on_task_stack(struct task_struct *tsk, unsigned long sp)
-+static inline bool on_task_stack(struct task_struct *tsk, unsigned long sp,
-+				unsigned long *stack_low,
-+				unsigned long *stack_high)
- {
- 	unsigned long low = (unsigned long)task_stack_page(tsk);
- 	unsigned long high = low + THREAD_SIZE;
+ 	.text
  
--	return (low <= sp && sp < high);
-+	if (sp < low || sp >= high)
-+		return false;
-+
-+	if (stack_low && stack_high) {
-+		*stack_low = low;
-+		*stack_high = high;
-+	}
-+
-+	return true;
- }
- 
- #ifdef CONFIG_VMAP_STACK
- DECLARE_PER_CPU(unsigned long [OVERFLOW_STACK_SIZE/sizeof(long)], overflow_stack);
- 
--static inline bool on_overflow_stack(unsigned long sp)
-+static inline bool on_overflow_stack(unsigned long sp,
-+				unsigned long *stack_low,
-+				unsigned long *stack_high)
- {
- 	unsigned long low = (unsigned long)raw_cpu_ptr(overflow_stack);
- 	unsigned long high = low + OVERFLOW_STACK_SIZE;
- 
--	return (low <= sp && sp < high);
-+	if (sp < low || sp >= high)
-+		return false;
-+
-+	if (stack_low && stack_high) {
-+		*stack_low = low;
-+		*stack_high = high;
-+	}
-+
-+	return true;
- }
- #else
--static inline bool on_overflow_stack(unsigned long sp) { return false; }
-+static inline bool on_overflow_stack(unsigned long sp,
-+			unsigned long *stack_low,
-+			unsigned long *stack_high) { return false; }
- #endif
- 
-+enum stack_type {
-+	STACK_TYPE_UNKNOWN,
-+	STACK_TYPE_TASK,
-+	STACK_TYPE_IRQ,
-+	STACK_TYPE_OVERFLOW,
-+	STACK_TYPE_SDEI,
-+};
-+
-+static inline enum stack_type current_stack_type(struct task_struct *tsk,
-+						unsigned long sp,
-+						unsigned long *stack_low,
-+						unsigned long *stack_high)
-+{
-+	if (on_task_stack(tsk, sp, stack_low, stack_high))
-+		return STACK_TYPE_TASK;
-+	if (on_irq_stack(sp, stack_low, stack_high))
-+		return STACK_TYPE_IRQ;
-+	if (on_overflow_stack(sp, stack_low, stack_high))
-+		return STACK_TYPE_OVERFLOW;
-+	if (on_sdei_stack(sp, stack_low, stack_high))
-+		return STACK_TYPE_SDEI;
-+	return STACK_TYPE_UNKNOWN;
-+}
-+
++	.macro	stackleak_erase
++#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
++	bl	stackleak_erase
++#endif
++	.endm
  /*
-  * We can only safely access per-cpu stacks from current in a non-preemptible
-  * context.
+  * Exception vectors.
   */
- static inline bool on_accessible_stack(struct task_struct *tsk, unsigned long sp)
+@@ -910,6 +915,7 @@ ret_fast_syscall:
+ 	and	x2, x1, #_TIF_WORK_MASK
+ 	cbnz	x2, work_pending
+ 	enable_step_tsk x1, x2
++	stackleak_erase
+ 	kernel_exit 0
+ ret_fast_syscall_trace:
+ 	enable_daif
+@@ -936,6 +942,7 @@ ret_to_user:
+ 	cbnz	x2, work_pending
+ finish_ret_to_user:
+ 	enable_step_tsk x1, x2
++	stackleak_erase
+ 	kernel_exit 0
+ ENDPROC(ret_to_user)
+ 
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index e10bc363f533..904defa36689 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -493,3 +493,35 @@ void arch_setup_new_exec(void)
  {
--	if (on_task_stack(tsk, sp))
+ 	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
+ }
++
++#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
++void __used stackleak_check_alloca(unsigned long size)
++{
++	unsigned long stack_left;
 +	enum stack_type type;
++	unsigned long current_sp = current_stack_pointer;
 +	unsigned long low, high;
 +
-+	type = current_stack_type(tsk, sp, &low, &high);
++	type = current_stack_type(current, current_sp, &low, &high);
++	BUG_ON(type == STACK_TYPE_UNKNOWN);
 +
-+	switch (type) {
-+	case STACK_TYPE_TASK:
- 		return true;
--	if (tsk != current || preemptible())
-+	case STACK_TYPE_IRQ:
-+	case STACK_TYPE_OVERFLOW:
-+	case STACK_TYPE_SDEI:
-+		if (tsk != current || preemptible())
-+			return false;
-+		else
-+			return true;
-+	case STACK_TYPE_UNKNOWN:
- 		return false;
--	if (on_irq_stack(sp))
--		return true;
--	if (on_overflow_stack(sp))
--		return true;
--	if (on_sdei_stack(sp))
--		return true;
-+	}
- 
- 	return false;
- }
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 5c338ce5a7fa..a6b3a2be7561 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -132,7 +132,7 @@ static bool regs_within_kernel_stack(struct pt_regs *regs, unsigned long addr)
- {
- 	return ((addr & ~(THREAD_SIZE - 1))  ==
- 		(kernel_stack_pointer(regs) & ~(THREAD_SIZE - 1))) ||
--		on_irq_stack(addr);
-+		on_irq_stack(addr, NULL, NULL);
- }
- 
- /**
-diff --git a/arch/arm64/kernel/sdei.c b/arch/arm64/kernel/sdei.c
-index 6b8d90d5ceae..8e18913a53fd 100644
---- a/arch/arm64/kernel/sdei.c
-+++ b/arch/arm64/kernel/sdei.c
-@@ -88,7 +88,9 @@ static int init_sdei_stacks(void)
- 	return err;
- }
- 
--bool _on_sdei_stack(unsigned long sp)
-+bool _on_sdei_stack(unsigned long sp,
-+		unsigned long *stack_low,
-+		unsigned long *stack_high)
- {
- 	unsigned long low, high;
- 
-@@ -98,13 +100,26 @@ bool _on_sdei_stack(unsigned long sp)
- 	low = (unsigned long)raw_cpu_read(sdei_stack_critical_ptr);
- 	high = low + SDEI_STACK_SIZE;
- 
--	if (low <= sp && sp < high)
-+	if (low <= sp && sp < high) {
-+		if (stack_low && stack_high) {
-+			*stack_low = low;
-+			*stack_high = high;
-+		}
- 		return true;
-+	}
- 
- 	low = (unsigned long)raw_cpu_read(sdei_stack_normal_ptr);
- 	high = low + SDEI_STACK_SIZE;
- 
--	return (low <= sp && sp < high);
-+	if (low <= sp && sp < high) {
-+		if (stack_low && stack_high) {
-+			*stack_low = low;
-+			*stack_high = high;
-+		}
-+		return true;
-+	}
++	stack_left = current_sp - low;
 +
-+	return false;
- }
++	if (size >= stack_left) {
++		/*
++		 * Kernel stack depth overflow is detected, let's report that.
++		 * If CONFIG_VMAP_STACK is enabled, we can safely use BUG().
++		 * If CONFIG_VMAP_STACK is disabled, BUG() handling can corrupt
++		 * the neighbour memory. CONFIG_SCHED_STACK_END_CHECK calls
++		 * panic() in a similar situation, so let's do the same if that
++		 * option is on. Otherwise just use BUG() and hope for the best.
++		 */
++#if !defined(CONFIG_VMAP_STACK) && defined(CONFIG_SCHED_STACK_END_CHECK)
++		panic("alloca() over the kernel stack boundary\n");
++#else
++		BUG();
++#endif
++	}
++}
++EXPORT_SYMBOL(stackleak_check_alloca);
++#endif
+diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
+index 4313f7475333..2fabc2dc1966 100644
+--- a/arch/arm64/kvm/hyp/Makefile
++++ b/arch/arm64/kvm/hyp/Makefile
+@@ -3,7 +3,8 @@
+ # Makefile for Kernel-based Virtual Machine module, HYP part
+ #
  
- unsigned long sdei_arch_get_entry_point(int conduit)
+-ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
++ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
++		$(DISABLE_STACKLEAK_PLUGIN)
+ 
+ KVM=../../../../virt/kvm
+ 
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index a34e9290a699..25dd2a14560d 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+ 				   -D__NO_FORTIFY \
+ 				   $(call cc-option,-ffreestanding) \
+-				   $(call cc-option,-fno-stack-protector)
++				   $(call cc-option,-fno-stack-protector) \
++				   $(DISABLE_STACKLEAK_PLUGIN)
+ 
+ GCOV_PROFILE			:= n
+ KASAN_SANITIZE			:= n
+diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
+index b911b973d328..08420ec6b7c3 100644
+--- a/include/linux/stackleak.h
++++ b/include/linux/stackleak.h
+@@ -5,6 +5,7 @@
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+ 
++#include <asm/stacktrace.h>
+ /*
+  * Check that the poison value points to the unused hole in the
+  * virtual memory map for your platform.
 -- 
 2.17.1
 
