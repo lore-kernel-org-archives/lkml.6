@@ -2,112 +2,96 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC23ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87B4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A2D206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:01:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A2D206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D89120858
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:01:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RLrlVLVk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D89120858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731191AbeGRQjk convert rfc822-to-8bit (ORCPT
+        id S1731351AbeGRQjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 18 Jul 2018 12:39:41 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:41086 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbeGRQjk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Jul 2018 12:39:40 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40120 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726181AbeGRQjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:39:39 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A3FB879C4;
-        Wed, 18 Jul 2018 16:01:05 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DF2251C581;
-        Wed, 18 Jul 2018 16:01:03 +0000 (UTC)
-Subject: Re: [PATCH v5 0/6] fs/dcache: Track & limit # of negative dentries
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pavel Machek <pavel@ucw.cz>, Jan Kara <jack@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin,C)" <wangkai86@huawei.com>,
-        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>
-References: <1530510723-24814-1-git-send-email-longman@redhat.com>
- <CA+55aFyH6dHw-7R3364dn32J4p7kxT=TqmnuozCn9_Bz-MHhxQ@mail.gmail.com>
- <20180702141811.ef027fd7d8087b7fb2ba0cce@linux-foundation.org>
- <1530570880.3179.9.camel@HansenPartnership.com>
- <20180702161925.1c717283dd2bd4a221bc987c@linux-foundation.org>
- <20180703091821.oiywpdxd6rhtxl4p@quack2.suse.cz>
- <20180714173516.uumlhs4wgfgrlc32@devuan>
- <CA+55aFw1vrsTjJyoq4Q3jBwv1nXaTkkmSbHO6vozWZuTc7_6Kg@mail.gmail.com>
- <20180714183445.GJ30522@ZenIV.linux.org.uk>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <990ac8fd-69a6-7d6b-6608-cda012ac22a4@redhat.com>
-Date:   Wed, 18 Jul 2018 12:01:03 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180714183445.GJ30522@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 18 Jul 2018 16:01:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 18 Jul 2018 16:01:05 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Received: by mail-pl0-f67.google.com with SMTP id w8-v6so2236651ply.8;
+        Wed, 18 Jul 2018 09:01:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=1Yoek57KSFJtVkxJxOeciB/rQgVNF892Bwm1MkYCpn8=;
+        b=RLrlVLVkG4bGOCoVoUILcq21pCGbuZzX/2sL0bZ/eG52S12rga/0UvRSKdNOaFnVbk
+         P92sBOEIsJnYZcK87HjLdywExw18qTesxS48zAryl93FxvRiWLZUvzp1wLzYyJmFiWu1
+         AK7odWxMKI89agsOVLDegACf9NiJYjCuNmcQAH2LdS49JaM/pIUy4FXlx3qXv3syLVax
+         44Pdfk0Sm+ZJzJBpMXTRMsAXdUyent0SDl5MuXWafNNnM8bKdNNTEX7V/x9tyQQDMdDN
+         lu3q/bOtKiCWcEUGHeZx5VcEaSLOhgBYPx4Bj3JvRYfdBma4eBY58R1eWGY1yFGd3xQf
+         E9Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1Yoek57KSFJtVkxJxOeciB/rQgVNF892Bwm1MkYCpn8=;
+        b=RO1tSuE/umiLEtbuhRiCvtZ+XSMKPx+wyauLMhfw8XNC//ONrjhE9tNUynTplhyQfZ
+         wmO9288wRJRI65RKdzCjOKUU7344seFd5EzZtbY52yIuzNt/MhSy8uNxX7wfdMGHfM6e
+         t35jWYg1fNf1Etv66KAKkWaiiyheO8LUEf173BbUSUvJfw9smKWxAe+9/Qfwh1tiwx6y
+         lPkvewF8fUnHTDURHAGp+9o3cDy06oOBol9ApP4w7MX1E7w+e1hke8XQGBgfXAA/vdLA
+         lbyixVoicA1uRmVZzroziHdp4BmT2ZYYww+qfqKjg0qsmXW0bnE4uIgjukrlsvYu/CAA
+         Nspg==
+X-Gm-Message-State: AOUpUlGBDLKLre2EDTX504FU+c/GHTE64j5lmkqtFWqRll5cUYne3xwS
+        aZoHg629P+NY/ZgBOqozvhc27GUX
+X-Google-Smtp-Source: AAOMgpdTEWBDQcikWeuoDGw/GX3FE2CrJ0lL6cMpLsoZxqVheOaIuaRN0SniafKuh8l/3P5V085DdA==
+X-Received: by 2002:a17:902:bd44:: with SMTP id b4-v6mr6534470plx.144.1531929666952;
+        Wed, 18 Jul 2018 09:01:06 -0700 (PDT)
+Received: from raghu-VirtualBox ([116.197.184.14])
+        by smtp.gmail.com with ESMTPSA id t21-v6sm5533977pfh.45.2018.07.18.09.01.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 09:01:05 -0700 (PDT)
+From:   RAGHU Halharvi <raghuhack78@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     RAGHU Halharvi <raghuhack78@gmail.com>, axboe@kernel.dk
+Subject: [PATCH] pktcdvd:checkpatch:remove static initialise null
+Date:   Wed, 18 Jul 2018 20:25:50 +0530
+Message-Id: <20180718145550.3894-1-raghuhack78@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/14/2018 02:34 PM, Al Viro wrote:
-> On Sat, Jul 14, 2018 at 11:00:32AM -0700, Linus Torvalds wrote:
->> On Sat, Jul 14, 2018 at 10:35 AM Pavel Machek <pavel@ucw.cz> wrote:
->>> Could we allocate -ve entries from separate slab?
->> No, because negative dentrires don't stay negative.
->>
->> Every single positive dentry starts out as a negative dentry that is
->> passed in to "lookup()" to maybe be made positive.
->>
->> And most of the time they <i>do</i> turn positive, because most of the
->> time people actually open files that exist.
->>
->> But then occasionally you don't, because you're just blindly opening a
->> filename whether it exists or not (to _check_ whether it's there).
-> BTW, one point that might not be realized by everyone: negative dentries
-> are *not* the hard case.
-> mount -t tmpfs none /mnt
-> touch /mnt/a
-> for i in `seq 100000`; do ln /mnt/a /mnt/$i; done
->
-> and you've got 100000 *unevictable* dentries, with the time per iteration
-> being not all that high (especially if you just call link(2) in a loop).
-> They are all positive and all pinned.  And you've got only one inode
-> there and no persistently opened files, so rlimit and quota won't help
-> any.
+*  Remove checkpatch error due to initialization of static variables to
+NULL
 
-Normally you need to be root or have privileges to mount a filesystem.
-Right?
+Signed-off-by: RAGHU Halharvi <raghuhack78@gmail.com>
+---
+ drivers/block/pktcdvd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I am aware there is effort going on to allow non-privilege user mount in
-container. That can open a can of worms if it is not done properly.
-
-With privileges, there is a lot of ways one can screw up the system. So
-I am not less concern about this particular issue.
-
-Cheers,
-Longman
-
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index a4b4d524c3af..a7dbb7157115 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -100,8 +100,8 @@ static struct mutex ctl_mutex;	/* Serialize open/close/setup/teardown */
+ static mempool_t psd_pool;
+ static struct bio_set pkt_bio_set;
+ 
+-static struct class	*class_pktcdvd = NULL;    /* /sys/class/pktcdvd */
+-static struct dentry	*pkt_debugfs_root = NULL; /* /sys/kernel/debug/pktcdvd */
++static struct class	*class_pktcdvd;    /* /sys/class/pktcdvd */
++static struct dentry	*pkt_debugfs_root; /* /sys/kernel/debug/pktcdvd */
+ 
+ /* forward declaration */
+ static int pkt_setup_dev(dev_t dev, dev_t* pkt_dev);
+-- 
+2.17.1
 
