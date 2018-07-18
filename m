@@ -2,92 +2,106 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6757ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E8CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 927812084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 066152084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:08:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lQjzx3dn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 927812084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="QKc+oagR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 066152084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbeGRWn6 (ORCPT
+        id S1729832AbeGRWst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:43:58 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:43718 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729654AbeGRWn5 (ORCPT
+        Wed, 18 Jul 2018 18:48:49 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:43005 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729221AbeGRWss (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:43:57 -0400
-Received: by mail-yw0-f196.google.com with SMTP id l189-v6so2315738ywb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:04:03 -0700 (PDT)
+        Wed, 18 Jul 2018 18:48:48 -0400
+Received: by mail-yb0-f195.google.com with SMTP id c10-v6so2478816ybf.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:08:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lsF+qf8kRVG9v7coCvG402E6jft6QBl8PzFCg2w+LzI=;
-        b=lQjzx3dnjBT8GqUqzM4p+ssAOi3hJlObEkrieCnYp18Tb7fl3L7ndTwbZfF6IknqHn
-         zdx8vHN0PUuZoXgNAb/13wIHfs7gztNsrDkElCqIs2NLSnTN+yR1vpyMSLRxmcp1kq4K
-         uJTw8PDEvuNoznhy5zWJeMsleDXl/92wNoybvkiFJKEVFcfRoF/CNeta4SUJvPj2T8jp
-         A0FU9+jU26QBZuVg+iftL4/hFD2UMDUmlbz/apiHACu/fY5qu+RmMoLi7nNrpWFI9Afb
-         HquGSwnSJxQtDn2jOwLZ9mRoUt0UC/+0Mi+I2rgV8FfYzB7WrbFF6W/FFHndKOBbeoL6
-         3ZGw==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8FZn5tD2SDlpbmPv1h30BRNTXCLS4iiwX2enbFu/UTs=;
+        b=QKc+oagRIRFxaoHWLeUiQvvuHMgci7IB6E2rZmik09n+2ysSUM7loPzfx3v+K3bb4S
+         OzutDeSQtn+Ut+kp9nwPScKZUhrU9x6coXmcMU7SnxDDcdQzFNGXGHgSLHzAXWdc/2tl
+         SaMWFgNf95alHxpuIW/f6lY8czF3HhaXGxiZm+Yewy2HF8RjCp/7HRAtycS31gl1I4Uk
+         ZeYMWDUAdcwJhcO1rcr+jzCAOSVIMthgYN+8DrNhelW+L1tmZdxIwVFMyKXnx3Un9aAK
+         BU1BDX3ZRVfPcZluxJFRq6fKZmOmNCtGe5ILgwOb5gL/6Z/E94qEiGlR9ejdFXncnOYx
+         wKqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lsF+qf8kRVG9v7coCvG402E6jft6QBl8PzFCg2w+LzI=;
-        b=G5tYOYzOxJ3W/1GZuQ/57yblPPVw9CAQCbSoKOSXwMG22MCaPcEuUX96La/4pSDYUQ
-         F/lmMTGmQdJQQ4geydke8wpLHPLJJyuQ5B78ISCR/b8VmYgEgGAJMCf3CR4SkBb34ccF
-         SBmUwN+62qEuWp6SkbyjoRDGrIvdqb/gMG2+OIEGB+yUJrjYLnIlALCOLJUtTdyflhRm
-         PVlvplf4/I3X6G/w92vODRm/gcj6vYc44AoCI2YCeXo4fdZxnGWtv3E9BpMDcQudXU0B
-         0slwXF5JPL1x5UAWYkqAx+kjujQhSAHXQRUvNb1i6AHiTwUeb+1BpN2pCLuU3VCberUc
-         LMog==
-X-Gm-Message-State: AOUpUlFTyGXQ0GsfwMngQWMXD1PgRp62FHQruC1EWlRfh7KtVFhwyPym
-        mgo+Da46rpiuwkQTemmeZUUKl/c6TwtCvU6xSjyK8EQ=
-X-Google-Smtp-Source: AAOMgpewEKlodDQ4/hKNHilMBCY2/9WKKJ0e8avoOYmUgBdeKynYX8TJeO+nkIpNuJxc0hn4hUCM+DcTMOvfx8VS7V0=
-X-Received: by 2002:a81:1e51:: with SMTP id e78-v6mr3995527ywe.20.1531951442349;
- Wed, 18 Jul 2018 15:04:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8FZn5tD2SDlpbmPv1h30BRNTXCLS4iiwX2enbFu/UTs=;
+        b=O7jd/l8UcwQNYxejnI003itxbifm2T8++j6rOebJv+7TIMqKfJ+hFVEPMOfqUZe7Il
+         RDvRobsXGVSs5LKgTZRF7MIN9EN+8hjb7J5KY97GXsabyOgT9of2ItiNLDUpN4T4Nv69
+         FeVN54wT/MTOYoU0TJMGLlUfR3rpvYdY8Y+Y6Lu2SphvB/XEP23pX6GX0sdgLlmBXDaR
+         65cw4ATIaqyVUf9o1hhkOalc23vbB/WE/GNWTPmqIbnLB8ICNN+po9y/q/27AUKvShNK
+         ywqiRk+XZAiPkSVyvlwCRbUczzTXy8oSXCyDpLGG/K6O3F+NTcLk5a/aKqLWFfST2fsh
+         KFHw==
+X-Gm-Message-State: AOUpUlHNUxDr5fzmz0qrzzFK3zbIj6qkKz2djJAzPaXDeBZ858EOgkZL
+        f4w2udLkmKYRtdMlQQMygpycEg==
+X-Google-Smtp-Source: AAOMgpc5IyHcvhGxrJqxLVC9SbfyMq2Yb/PkZ6XVd4HUZcX1hy9VrT9H0GjFH4k8dYG2fTNnJdYn6g==
+X-Received: by 2002:a5b:34e:: with SMTP id q14-v6mr4182866ybp.133.1531951733254;
+        Wed, 18 Jul 2018 15:08:53 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:200::2:7eca])
+        by smtp.gmail.com with ESMTPSA id r3-v6sm5676079ywr.80.2018.07.18.15.08.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 15:08:52 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 18:11:39 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
+ and IO
+Message-ID: <20180718221139.GF2838@cmpxchg.org>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180712172942.10094-9-hannes@cmpxchg.org>
+ <20180717151705.GH2494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <20180719074927.68da9f86@canb.auug.org.au>
-In-Reply-To: <20180719074927.68da9f86@canb.auug.org.au>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Wed, 18 Jul 2018 17:03:51 -0500
-Message-ID: <CAErSpo5nbS5oUpkEQGfG3VFEaR_JDjFRCOior33zms_NL7qZrQ@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the pci-current tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-next list <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717151705.GH2494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 4:49 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Bjorn,
->
-> Commits
->
->   27a6c9ebf29b ("PCI: v3-semi: Fix I/O space page leak")
->   db2aff16ea70 ("PCI: mediatek: Fix I/O space page leak")
->   52022fc6f6ad ("PCI: faraday: Fix I/O space page leak")
->   a9c0419ec92f ("PCI: aardvark: Fix I/O space page leak")
->   45cb32b4e8ea ("PCI: designware: Fix I/O space page leak")
->   89c0f3551827 ("PCI: versatile: Fix I/O space page leak")
->   596c66bf9663 ("PCI: xgene: Fix I/O space page leak")
->   ede26a1e8c35 ("PCI: OF: Fix I/O space page leak")
->
-> are missing a Signed-off-by from their committer.  Presumably they were
-> all rebased?
+On Tue, Jul 17, 2018 at 05:17:05PM +0200, Peter Zijlstra wrote:
+> On Thu, Jul 12, 2018 at 01:29:40PM -0400, Johannes Weiner wrote:
+> > @@ -457,6 +457,22 @@ config TASK_IO_ACCOUNTING
+> >  
+> >  	  Say N if unsure.
+> >  
+> > +config PSI
+> > +	bool "Pressure stall information tracking"
+> > +	select SCHED_INFO
+> 
+> What's the deal here? AFAICT it does not in fact use SCHED_INFO for
+> _anything_. You just hooked into the sched_info_{en,de}queue() hooks,
+> but you don't use any of the sched_info data.
+> 
+> So the dependency is an artificial one that should not exist.
 
-Yep, sorry, I picked those from Lorenzo's fixes branch.  I added
-signoffs and updated my for-linus branch.
+You're right, it doesn't strictly depend on it. I'll split that out.
