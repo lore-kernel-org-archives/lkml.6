@@ -6,93 +6,190 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3941ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB9EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A432075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:09:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A432075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AE542075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:11:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE542075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731087AbeGRNr0 (ORCPT
+        id S1730521AbeGRNtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:47:26 -0400
-Received: from gateway34.websitewelcome.com ([192.185.149.101]:49353 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727087AbeGRNr0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:47:26 -0400
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 8B7FEA9D70
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:08:48 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fmCGfgbTYaSeyfmCGfIVwV; Wed, 18 Jul 2018 08:08:48 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=42378 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ffmCG-000K8A-1R; Wed, 18 Jul 2018 08:08:48 -0500
-Date:   Wed, 18 Jul 2018 08:08:46 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] net: mvpp2: debugfs: fix incorrect bitwise operator
-Message-ID: <20180718130846.GA5380@embeddedor.com>
+        Wed, 18 Jul 2018 09:49:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46048 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726258AbeGRNtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 09:49:46 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C0DBC400E9BA;
+        Wed, 18 Jul 2018 13:11:52 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 864B92026D69;
+        Wed, 18 Jul 2018 13:11:52 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 09:11:52 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
+        Milan Broz <gmazyland@gmail.com>
+Cc:     agk@redhat.com, herbert@gondor.apana.org.au, dm-devel@redhat.com,
+        broonie@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        jonathan.cameron@huawei.com
+Subject: Re: [PATCH 4/5] crypto: Add IV generation templates
+Message-ID: <20180718131152.GA25685@redhat.com>
+References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
+ <1531899055-29362-5-git-send-email-wangxiongfeng2@huawei.com>
+ <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1ffmCG-000K8A-1R
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:42378
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 13:11:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 13:11:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The use of the | operator always leads to true, which looks rather
-suspect in this case.
+On Wed, Jul 18 2018 at  4:16am -0400,
+Milan Broz <gmazyland@gmail.com> wrote:
 
-Fix this by using & instead.
+> On 18/07/18 09:30, Xiongfeng Wang wrote:
+> > Currently, the IV generation algorithms are implemented in dm-crypt.c.
+> > This patch implement these algorithms as template ciphers, so that
+> > dm-crypt layer can be simplified, and also these algorithms can be
+> > implemented in hardware for performance.
+> > 
+> > Synchronous crypto requests to encrypt/decrypt a sector are processed
+> > sequentially. Asynchronous requests if processed in paralled, are freed
+> > in the async callback.
+> 
+> So we are here again and moving INTERNAL dm-crypt functionality into
+> cryptoapi.
+> 
+> The TCW,LMK  IVs generator make sense only for dm-crypt 
+> for compatible old disk encryption mappings.
+> 
+> I strongly disagree to move this outside of dm-crypt.
+> 
+> Sorry, the last discussion was that it remains inside dm-crypt
+> and it will be only registered through crypto API.
+> 
+> And this for all files:
+> 
+> > + * Copyright (C) 2018, Linaro
+> 
+> It is NOT YOUR code! Please keep copyright and authors as in dm-crypt.
+> 
+> Milan
+> 
+> > 
+> > Interface to the crypto layer - include/crypto/geniv.h
+> > 
+> > This patch is based on the patchset originally started by
+> > Binoy Jayan <binoy.jayan@linaro.org>
+> > ( crypto: Add IV generation algorithms
+> > https://patchwork.kernel.org/patch/9803469/ )
+> > 
+> > Signed-off-by: Binoy Jayan <binoy.jayan@linaro.org>
+> > Signed-off-by: Xiongfeng Wang <wangxiongfeng2@linaro.org>
+> > ---
+> >  crypto/Kconfig         |    7 +
+> >  crypto/Makefile        |    1 +
+> >  crypto/geniv.c         | 2240 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  include/crypto/geniv.h |   47 +
+> >  4 files changed, 2295 insertions(+)
+> >  create mode 100644 crypto/geniv.c
+> >  create mode 100644 include/crypto/geniv.h
+> > 
+> > diff --git a/crypto/Kconfig b/crypto/Kconfig
+> > index f3e40ac..98f025a 100644
+> > --- a/crypto/Kconfig
+> > +++ b/crypto/Kconfig
+> > @@ -257,6 +257,13 @@ config CRYPTO_GLUE_HELPER_X86
+> >  config CRYPTO_ENGINE
+> >  	tristate
+> >  
+> > +config CRYPTO_GENIV
+> > +	tristate "IV Generator Template"
+> > +	select CRYPTO_AEAD
+> > +	select CRYPTO_BLKCIPHER
+> > +	help
+> > +	  Support for IV generator template, so that dm-crypt can rely on it.
+> > +
+> >  comment "Authenticated Encryption with Associated Data"
+> >  
+> >  config CRYPTO_CCM
+> > diff --git a/crypto/Makefile b/crypto/Makefile
+> > index 6d1d40e..1077d2f 100644
+> > --- a/crypto/Makefile
+> > +++ b/crypto/Makefile
+> > @@ -23,6 +23,7 @@ crypto_blkcipher-y += skcipher.o
+> >  obj-$(CONFIG_CRYPTO_BLKCIPHER2) += crypto_blkcipher.o
+> >  obj-$(CONFIG_CRYPTO_SEQIV) += seqiv.o
+> >  obj-$(CONFIG_CRYPTO_ECHAINIV) += echainiv.o
+> > +obj-$(CONFIG_CRYPTO_GENIV) += geniv.o
+> >  
+> >  crypto_hash-y += ahash.o
+> >  crypto_hash-y += shash.o
+> > diff --git a/crypto/geniv.c b/crypto/geniv.c
+> > new file mode 100644
+> > index 0000000..55d1212
+> > --- /dev/null
+> > +++ b/crypto/geniv.c
+> > @@ -0,0 +1,2240 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * geniv.c - crypto template for generating IV
+> > + *
+> > + * Copyright (C) 2018, Linaro
+> > + *
+> > + * This file adds a crypto template to generate IV, so the dm-crypt can rely
+> > + * on it and remove the existing generating IV code.
+> > + */
+> > +
+> > +#include <linux/completion.h>
+> > +#include <linux/err.h>
+> > +#include <linux/module.h>
+> > +#include <linux/init.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/key.h>
+> > +#include <linux/bio.h>
+> > +#include <linux/blkdev.h>
+> > +#include <linux/mempool.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/crypto.h>
+> > +#include <linux/atomic.h>
+> > +#include <linux/scatterlist.h>
+> > +#include <linux/ctype.h>
+> > +#include <asm/page.h>
+> > +#include <asm/unaligned.h>
+> > +#include <crypto/hash.h>
+> > +#include <crypto/md5.h>
+> > +#include <crypto/algapi.h>
+> > +#include <crypto/skcipher.h>
+> > +#include <crypto/aead.h>
+> > +#include <crypto/authenc.h>
+> > +#include <crypto/geniv.h>
+> > +#include <crypto/internal/aead.h>
+> > +#include <crypto/internal/skcipher.h>
+> > +#include <linux/rtnetlink.h> /* for struct rtattr and RTA macros only */
+> > +#include <keys/user-type.h>
+> > +#include <linux/backing-dev.h>
+> > +#include <linux/device-mapper.h>
+> > +#include <linux/log2.h>
+> > +
+> > +#define DM_MSG_PREFIX		"crypt"
 
-Addresses-Coverity-ID: 1471903 ("Wrong operator used")
-Fixes: dba1d918da02 ("net: mvpp2: debugfs: add entries for classifier flows")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I agree with Milan, the code should remain where it currently is.  If
+you want to plumb in generic access to it fine.  But crypto/geniv.c has
+_no_ business defining DM_MSG_PREFIX.
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c
-index 02dfef1..f9744a6 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_debugfs.c
-@@ -245,7 +245,7 @@ static int mvpp2_dbgfs_flow_c2_enable_show(struct seq_file *s, void *unused)
- 
- 	mvpp2_cls_c2_read(port->priv, MVPP22_CLS_C2_RSS_ENTRY(port->id), &c2);
- 
--	enabled = !!(c2.attr[2] | MVPP22_CLS_C2_ATTR2_RSS_EN);
-+	enabled = !!(c2.attr[2] & MVPP22_CLS_C2_ATTR2_RSS_EN);
- 
- 	seq_printf(s, "%d\n", enabled);
- 
--- 
-2.7.4
+And I'm sure there are other things that have no place in generic crypto
+code.
 
+Mike
