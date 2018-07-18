@@ -2,123 +2,101 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0557ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:15:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 350D6ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6426320850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:15:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6426320850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id ED18520850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:15:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED18520850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731236AbeGRPyF (ORCPT
+        id S1731325AbeGRPyP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:54:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52276 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730998AbeGRPyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:54:05 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C045401EF07;
-        Wed, 18 Jul 2018 15:15:42 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 273A9111E402;
-        Wed, 18 Jul 2018 15:15:41 +0000 (UTC)
-Subject: Re: [PATCH v2] locking/rwsem: Take read lock immediate if queue empty
- with no writer
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-kernel@vger.kernel.org, Mark Ray <mark.ray@hpe.com>,
-        Joe Mario <jmario@redhat.com>,
-        Scott Norton <scott.norton@hpe.com>
-References: <1531506653-5244-1-git-send-email-longman@redhat.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <cba9a488-76bd-6aa4-a9cf-2fe9f6da8e00@redhat.com>
-Date:   Wed, 18 Jul 2018 11:15:40 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 18 Jul 2018 11:54:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38842 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731251AbeGRPyO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:54:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v14-v6so5073846wro.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:15:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qlYBls4QPCyb6ui+qsuEPi2v7Wk3AlrjAATQOhJwVz4=;
+        b=Yfssq3BAONQkLoST+hNhGTwq2lmY14eFHB7OvV3FZVa6fOPY6G0sce3UUX2hY50fxE
+         gSd9t+a0T9rl77cQewV6bciIiF3Afbt7WQOBeOvtrSGIjHZujjvQIi06KiOIaCDzbcq+
+         YEAvsUKzX+p+HntgAeaXy1uTqfXcCUBinz2NTonDpPLyVeNYSgr1RAZIGGPt7yMqz7TE
+         xbvLWyqHo0K3TdvMzaNh+6KUebkVnAxEvp5bgMtB2+qykw4c/xOORrlItfr6PZsgzYOD
+         0qhyJnMU9kvd+3vzKxhRbTfgD7nBTUGmhp9uoPiTkpGQv5e8NPqIdzxRFtjY79OhwQw7
+         ILmg==
+X-Gm-Message-State: AOUpUlE7fytF2xNTlNKh9p1W1IC1r2TATkY0jovyjnegoi8EP2b41by7
+        zosxhsNz6VsK1JJqMiq+JiM=
+X-Google-Smtp-Source: AAOMgpfAt7ONuxWQAoRxDA2YZ9USdtW79+6hkMO4gdEeDyodei1rpDQxQjcNLAxFD0q1+Z2/poTiGA==
+X-Received: by 2002:adf:ff49:: with SMTP id u9-v6mr5156517wrs.15.1531926952136;
+        Wed, 18 Jul 2018 08:15:52 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id r1-v6sm4611499wrs.39.2018.07.18.08.15.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Jul 2018 08:15:51 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id EE66B1240EE; Wed, 18 Jul 2018 17:15:50 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 17:15:50 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, vbabka@suse.cz,
+        iamjoonsoo.kim@lge.com, aaron.lu@intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH 1/3] mm/page_alloc: Move ifdefery out of
+ free_area_init_core
+Message-ID: <20180718151550.GA2985@techadventures.net>
+References: <20180718124722.9872-1-osalvador@techadventures.net>
+ <20180718124722.9872-2-osalvador@techadventures.net>
+ <20180718141150.imiyuust5txfmfvw@xakep.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <1531506653-5244-1-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 15:15:42 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 15:15:42 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718141150.imiyuust5txfmfvw@xakep.localdomain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/13/2018 02:30 PM, Waiman Long wrote:
-> It was discovered that a constant stream of readers might cause the
-> count to go negative most of the time after an initial trigger by a
-> writer even if no writer was present afterward. As a result, most of the
-> readers would have to go through the slowpath reducing their performance.
->
-> To avoid that from happening, an additional check is added to detect
-> the special case that the reader in the critical section is the only
-> one in the wait queue and no writer is present. When that happens, it
-> can just have the lock and return immediately without further action.
-> Other incoming readers won't see a waiter is present and be forced
-> into the slowpath.
->
-> The additional code is in the slowpath and so should not have an impact
-> on rwsem performance. However, in the special case listed above, it may
-> greatly improve performance.
->
-> The issue was found in a customer site where they had an application
-> that pounded on the pread64 syscalls heavily on an XFS filesystem. The
-> application was run in a recent 4-socket boxes with a lot of CPUs. They
-> saw significant spinlock contention in the rwsem_down_read_failed() call.
-> With this patch applied, the system CPU usage went from 85% to 57%,
-> and the spinlock contention in the pread64 syscalls was gone.
->
-> v2: Add customer testing results and remove wording that may cause
->     confusion.
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/locking/rwsem-xadd.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-> index 3064c50..bf0570e 100644
-> --- a/kernel/locking/rwsem-xadd.c
-> +++ b/kernel/locking/rwsem-xadd.c
-> @@ -233,8 +233,19 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
->  	waiter.type = RWSEM_WAITING_FOR_READ;
->  
->  	raw_spin_lock_irq(&sem->wait_lock);
-> -	if (list_empty(&sem->wait_list))
-> +	if (list_empty(&sem->wait_list)) {
-> +		/*
-> +		 * In the unlikely event that the task is the only one in
-> +		 * the wait queue and a writer isn't present, it can have
-> +		 * the lock and return immediately without going through
-> +		 * the remaining slowpath code.
-> +		 */
-> +		if (unlikely(atomic_long_read(&sem->count) >= 0)) {
-> +			raw_spin_unlock_irq(&sem->wait_lock);
-> +			return sem;
-> +		}
->  		adjustment += RWSEM_WAITING_BIAS;
-> +	}
->  	list_add_tail(&waiter.list, &sem->wait_list);
->  
->  	/* we're now waiting on the lock, but no longer actively locking */
+On Wed, Jul 18, 2018 at 10:11:50AM -0400, Pavel Tatashin wrote:
+> On 18-07-18 14:47:20, osalvador@techadventures.net wrote:
+> > From: Oscar Salvador <osalvador@suse.de>
+> > 
+> > Moving the #ifdefs out of the function makes it easier to follow.
+> > 
+> > Signed-off-by: Oscar Salvador <osalvador@suse.de>
+> 
+> Hi Oscar,
+> 
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> 
+> Please include the following patch in your series, to get rid of the last
+> ifdef in this function.
+> 
+> From f841184e141b21e79c4d017d3b7678c697016d2a Mon Sep 17 00:00:00 2001
+> From: Pavel Tatashin <pasha.tatashin@oracle.com>
+> Date: Wed, 18 Jul 2018 09:56:52 -0400
+> Subject: [PATCH] mm: access zone->node via zone_to_nid() and zone_set_nid()
+> 
+> zone->node is configured only when CONFIG_NUMA=y, so it is a good idea to
+> have inline functions to access this field in order to avoid ifdef's in
+> c files.
 
-Ping!
+Hi Pavel
 
-Any comment on this one?
-
-Cheers,
-Longman
-
+I will! Thanks for the patch ;-)
+-- 
+Oscar Salvador
+SUSE L3
