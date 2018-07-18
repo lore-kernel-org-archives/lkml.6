@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA26ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5CDECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A217920850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE71C2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:18:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DXYyUfYV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A217920850
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGq+kwnN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE71C2084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731023AbeGRKzN (ORCPT
+        id S1731139AbeGRKzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:55:13 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38508 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbeGRKzM (ORCPT
+        Wed, 18 Jul 2018 06:55:17 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42216 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731035AbeGRKzQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:55:12 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k3-v6so1801668pgq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:18:01 -0700 (PDT)
+        Wed, 18 Jul 2018 06:55:16 -0400
+Received: by mail-pf0-f195.google.com with SMTP id l9-v6so1983586pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:18:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=C3VVPsCbTKnmEUV87ccS35kChskysrdX0+gD/3x+tZs=;
-        b=DXYyUfYVhvSbX+0tDFqP5Qk2Z3IFN/x+e7L3x/326A8AhVJgryima1lW80yNTePYcZ
-         TAdOk/qNGI4iQNajdcoTazwdPi3QPBcFsz0uPi84zvYTYgdPceDzwV2mTcK1logQYqr1
-         lxqZGBbz4NGLWOyZq1AG+fkw9qPt7pqXK+k1tsqW6pHQekzN6lhdsnYAtxep+zd6OVdD
-         yhy0g1YVJhsFlg1ljFVwean2iLSbslVjZIopF43nBuFB+NyXJOgd8/qQkdTVPf8YuyPD
-         eD9t56t5c9Hp/SOVlOtFHBxk+PyYqBxhSy3FHB9r48KSy3PeMf5n/Hw5MabrnPqCwEEx
-         PcYQ==
+        bh=eRDwASIsY8b+RX050eLm0VBB26pLnnPViHoepUqi2Po=;
+        b=ZGq+kwnN0E9i9dy3JvIzgqeCn45XvfDGq/IB4MUI8GiIwX1hAgQx2uAemjCOPGwrTY
+         gwPR4KnTXmBL4BmC8ez/yT+Zp9wfF6Xl8mdE9kLnQ4oGillqRiQ8P2YcHWwK+/N7OH7C
+         tYTdwin4v657p0SDtnVMAzizOTOxPrFNdME4O1GSIGhP6T3dDypSyY6HqQDSZv3grxto
+         rm4K/puEKpdA8Lq49kE1sMlyH/Yh2okr70ll2G05Z4Meye7kIC0igNKVbWFShm+B8WnK
+         didWlKywzkfqGuunRfXPPGgazIdqz0RKoGK1ai10Z319G1Cl+adg/uCGC97PB30HenX1
+         IIkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=C3VVPsCbTKnmEUV87ccS35kChskysrdX0+gD/3x+tZs=;
-        b=VWJUOv1JoNoj5+MLR6xi6yDgIoqKlwuDKM1sud/KBmIsiVbD4cFzhgE0r19M4MvseY
-         JmZuPv24NH0Rq6qxjF52LJkOzADE9wBZxI5QIy5ZDl/lFL7N84ORcdXmIq+d2WspGZN9
-         eDQY0bKzPLpntvj90pKMdTpgHYgNtpOVDshOkNbsFdbB2k8kNPitHkS1cAUuUMA6yXpz
-         cffCFgvBpOGL0QpwBtnMIZNyKioTD0O5Z7rcMygZI8JMqN3dooMqtMBMXyzqgrgE1nXa
-         MFE1KwRjCdVPiykH4wKv5sg/IySKk+ME+cP7pFNv86B1smlTzz7kT+oFpa0Mi2qArho3
-         ou5A==
-X-Gm-Message-State: AOUpUlHEHk0D7YS3KvCps4yJhDuU/eNm2VPtg7dB1o2Athsv+o3Ww79T
-        hP19CQY71G/OwVFI173f4f0BLw==
-X-Google-Smtp-Source: AAOMgpfMtEqNH2OZhtMeT7RXbmGX02AJfNB500GFJ45jHj3qF92bBGnpVu5aztN1eIe6xLJ7X0G4tw==
-X-Received: by 2002:a63:3686:: with SMTP id d128-v6mr5067173pga.18.1531909081012;
-        Wed, 18 Jul 2018 03:18:01 -0700 (PDT)
+        bh=eRDwASIsY8b+RX050eLm0VBB26pLnnPViHoepUqi2Po=;
+        b=Ixecnn5KigWQuiSvvewQvdntBRD1UDUqGw+k8OF9jVNo1mreiDimlvx2FKchwYEA+4
+         QFuqMgz42tmAjCi9kiR9Lh+ISzaf1HdTkzZAkwVFtvCbIR1i4U1/LoAVpTRIsCtq2H89
+         Oaqe6l6meiwtJQnq8f94qrRCfO/tay9EEM+/UZwji/wxnPtC5CazHBxF91qwZXdlIiw2
+         r1xEdxN/RjjbccxXBy5T/jqBJqVaREoxoyt/pQQDQFQ0X5Y/ZnEG0e586FrRwvQIoZk2
+         UW3gkl7irqu9kxC0XTa950UuAxIYrQa9xR64WlzUX2br6WAaNfAoGr4D7aB0cvhn4UDs
+         fhfw==
+X-Gm-Message-State: AOUpUlFx91wbn3gyR42Ho8PnMUZphAVqcJ8DNP/wSJ7n7IODJ/nMYgbm
+        n2rKfBx46bdLlGwx4TTqgjs=
+X-Google-Smtp-Source: AAOMgpfeiz3tXLB5ESsZXCWZlRF3NLqq6tikDmEZ/vaCylCaT9KQ6FfLldeRHr2VGJcawFqIrjydZg==
+X-Received: by 2002:a63:5106:: with SMTP id f6-v6mr5078111pgb.95.1531909085434;
+        Wed, 18 Jul 2018 03:18:05 -0700 (PDT)
 Received: from toy.corp.qihoo.net ([104.192.108.10])
-        by smtp.gmail.com with ESMTPSA id x2-v6sm6899518pgq.33.2018.07.18.03.17.58
+        by smtp.gmail.com with ESMTPSA id x2-v6sm6899518pgq.33.2018.07.18.03.18.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 03:18:00 -0700 (PDT)
+        Wed, 18 Jul 2018 03:18:05 -0700 (PDT)
 From:   Jun Yao <yaojun8558363@gmail.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
         linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v4 2/6] arm64/mm: Make __enable_mmu() take the
-Date:   Wed, 18 Jul 2018 18:17:23 +0800
-Message-Id: <20180718101727.10787-3-yaojun8558363@gmail.com>
+Subject: [RESEND PATCH v4 4/6] arm64/mm: Make swapper_pg_dir smaller
+Date:   Wed, 18 Jul 2018 18:17:25 +0800
+Message-Id: <20180718101727.10787-5-yaojun8558363@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180718101727.10787-1-yaojun8558363@gmail.com>
 References: <20180718101727.10787-1-yaojun8558363@gmail.com>
@@ -73,88 +73,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make __enable_mmu() take the physical address of the ttbr1 page as
-an argument.
+We setup final page tables in swapper_pg_dir, which just contains
+PGD. And the PUD/PMD are allocated dynamically. So we can make it
+smaller.
 
 Signed-off-by: Jun Yao <yaojun8558363@gmail.com>
 ---
- arch/arm64/kernel/head.S  | 21 ++++++++++++---------
- arch/arm64/kernel/sleep.S |  1 +
- 2 files changed, 13 insertions(+), 9 deletions(-)
+ arch/arm64/kernel/vmlinux.lds.S | 2 +-
+ arch/arm64/mm/mmu.c             | 8 --------
+ 2 files changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index 2c83a8c47e3f..c3e4b1886cde 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -714,6 +714,7 @@ secondary_startup:
- 	 * Common entry point for secondary CPUs.
- 	 */
- 	bl	__cpu_setup			// initialise processor
-+	adrp	x1, swapper_pg_dir
- 	bl	__enable_mmu
- 	ldr	x8, =__secondary_switched
- 	br	x8
-@@ -756,6 +757,7 @@ ENDPROC(__secondary_switched)
-  * Enable the MMU.
-  *
-  *  x0  = SCTLR_EL1 value for turning on the MMU.
-+ *  x1  = TTBR1_EL1 value for turning on the MMU.
-  *
-  * Returns to the caller via x30/lr. This requires the caller to be covered
-  * by the .idmap.text section.
-@@ -764,15 +766,15 @@ ENDPROC(__secondary_switched)
-  * If it isn't, park the CPU
-  */
- ENTRY(__enable_mmu)
--	mrs	x1, ID_AA64MMFR0_EL1
--	ubfx	x2, x1, #ID_AA64MMFR0_TGRAN_SHIFT, 4
--	cmp	x2, #ID_AA64MMFR0_TGRAN_SUPPORTED
-+	mrs	x5, ID_AA64MMFR0_EL1
-+	ubfx	x6, x5, #ID_AA64MMFR0_TGRAN_SHIFT, 4
-+	cmp	x6, #ID_AA64MMFR0_TGRAN_SUPPORTED
- 	b.ne	__no_granule_support
--	update_early_cpu_boot_status 0, x1, x2
--	adrp	x1, idmap_pg_dir
--	adrp	x2, swapper_pg_dir
--	phys_to_ttbr x3, x1
--	phys_to_ttbr x4, x2
-+	update_early_cpu_boot_status 0, x5, x6
-+	adrp	x5, idmap_pg_dir
-+	mov	x6, x1
-+	phys_to_ttbr x3, x5
-+	phys_to_ttbr x4, x6
- 	msr	ttbr0_el1, x3			// load TTBR0
- 	msr	ttbr1_el1, x4			// load TTBR1
- 	isb
-@@ -791,7 +793,7 @@ ENDPROC(__enable_mmu)
- 
- __no_granule_support:
- 	/* Indicate that this CPU can't boot and is stuck in the kernel */
--	update_early_cpu_boot_status CPU_STUCK_IN_KERNEL, x1, x2
-+	update_early_cpu_boot_status CPU_STUCK_IN_KERNEL, x5, x6
- 1:
- 	wfe
- 	wfi
-@@ -831,6 +833,7 @@ __primary_switch:
- 	mrs	x20, sctlr_el1			// preserve old SCTLR_EL1 value
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 61d7cee3eaa6..2446911f4262 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -237,7 +237,7 @@ SECTIONS
+ 	. += RESERVED_TTBR0_SIZE;
  #endif
+ 	swapper_pg_dir = .;
+-	. += SWAPPER_DIR_SIZE;
++	. += PAGE_SIZE;
+ 	swapper_pg_end = .;
  
-+	adrp	x1, swapper_pg_dir
- 	bl	__enable_mmu
- #ifdef CONFIG_RELOCATABLE
- 	bl	__relocate_kernel
-diff --git a/arch/arm64/kernel/sleep.S b/arch/arm64/kernel/sleep.S
-index bebec8ef9372..3e53ffa07994 100644
---- a/arch/arm64/kernel/sleep.S
-+++ b/arch/arm64/kernel/sleep.S
-@@ -101,6 +101,7 @@ ENTRY(cpu_resume)
- 	bl	el2_setup		// if in EL2 drop to EL1 cleanly
- 	bl	__cpu_setup
- 	/* enable the MMU early - so we can access sleep_save_stash by va */
-+	adrp	x1, swapper_pg_dir
- 	bl	__enable_mmu
- 	ldr	x8, =_cpu_resume
- 	br	x8
+ 	__pecoff_data_size = ABSOLUTE(. - __initdata_begin);
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index 088a591e4ea4..1d16104aa0b9 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -633,14 +633,6 @@ void __init paging_init(void)
+ 	map_mem(swapper_pg_dir);
+ 	cpu_replace_ttbr1(lm_alias(swapper_pg_dir));
+ 	init_mm.pgd = swapper_pg_dir;
+-
+-	/*
+-	 * We only reuse the PGD from the swapper_pg_dir, not the pud + pmd
+-	 * allocated with it.
+-	 */
+-	memblock_free(__pa_symbol(swapper_pg_dir) + PAGE_SIZE,
+-		      __pa_symbol(swapper_pg_end) - __pa_symbol(swapper_pg_dir)
+-		      - PAGE_SIZE);
+ }
+ 
+ void __init set_init_mm_pgd(pgd_t *pgd)
 -- 
 2.17.1
 
