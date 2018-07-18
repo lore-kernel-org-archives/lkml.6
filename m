@@ -2,161 +2,144 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3ADCECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8AFEECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96EA82075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96EA82075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D3FC2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:44:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D3FC2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbeGRLUw (ORCPT
+        id S1729306AbeGRLVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:20:52 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:41301 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbeGRLUw (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 18 Jul 2018 07:20:52 -0400
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 18 Jul 2018 12:43:33 +0200
-Received: from suselix (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Wed, 18 Jul 2018 11:43:02 +0100
-Date:   Wed, 18 Jul 2018 12:43:00 +0200
-From:   Andreas Herrmann <aherrmann@suse.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq: intel_pstate: Register when ACPI PCCH is present
-Message-ID: <20180718104300.dwgbqbnllvhwzrea@suselix>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix>
- <20180717140336.ayovaz4ksdlak6bb@suselix>
- <8115130.Fhkpr82c7G@aspire.rjw.lan>
- <2386802.jRaeHeNqoJ@aspire.rjw.lan>
+        Wed, 18 Jul 2018 07:21:30 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42532 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728711AbeGRLVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 07:21:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1F518401EF0B;
+        Wed, 18 Jul 2018 10:44:12 +0000 (UTC)
+Received: from krava (unknown [10.43.17.196])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3B512178B8;
+        Wed, 18 Jul 2018 10:44:09 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 12:44:08 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Lukasz Odzioba <lukasz.odzioba@intel.com>,
+        Wang Nan <wangnan0@huawei.com>, kernel-team@lge.com
+Subject: Re: [PATCH 1/4] perf tools: Fix struct comm_str removal crash
+Message-ID: <20180718104408.GA15068@krava>
+References: <20180712142023.16915-1-jolsa@kernel.org>
+ <20180712142023.16915-2-jolsa@kernel.org>
+ <20180715130827.GA5071@danjae.aot.lge.com>
+ <20180716102934.GA14153@krava>
+ <20180717014940.GA9295@sejong>
+ <20180717090245.GB8631@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2386802.jRaeHeNqoJ@aspire.rjw.lan>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180717090245.GB8631@krava>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 10:44:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 10:44:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 08:06:54PM +0200, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Currently, intel_pstate doesn't load if _PSS is not present on
-> HP Proliant systems, because it expects the firmware to take over
-> CPU performance scaling in that case.  However, if ACPI PCCH is
-> present, the firmware expects the kernel to use it for CPU
-> performance scaling and the pcc-cpufreq driver is loaded for that.
-> 
-> Unfortunately, the firmware interface used by that driver is not
-> scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
-> on systems with more than just a few CPUs.  In fact, it is better to
-> avoid using it at all.
-> 
-> For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
-> is not present and register if it is there.  Also prevent the
-> pcc-cpufreq driver from trying to initialize if intel_pstate has
-> been registered already.
-> 
-> Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power mgmt option)
-> Reported-by: Andreas Herrmann <aherrmann@suse.com>
-> Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
-> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This is a replacement for https://patchwork.kernel.org/patch/10530091/
-> 
-> In addition to the intel_pstate changes in the above, it also
-> prevents pcc-cpufreq from trying to initialize (which will fail
-> ultimately, but may confuse the firmware in the meantime).
-> 
-> Andreas, please test this one and let me know if it still works for you.
+On Tue, Jul 17, 2018 at 11:02:45AM +0200, Jiri Olsa wrote:
 
-Done that (with system in "Dynamic Power Savings Mode"). It still
-works and system was stable.
+SNIP
 
-FYI, as a sniff test I've run a kernbench test. I now repeat the test
-with system switched to "OS control mode". Just in case -- if there
-was interference with platform code while system was in "Dynamic Power
-Savings Mode" (significantly affecting performance) I might spot it
-this way.
-
-
-Andreas
-
-
-> Thanks,
-> Rafael
-> 
-> ---
->  drivers/cpufreq/intel_pstate.c |   17 ++++++++++++++++-
->  drivers/cpufreq/pcc-cpufreq.c  |    4 ++++
->  2 files changed, 20 insertions(+), 1 deletion(-)
-> 
-> Index: linux-pm/drivers/cpufreq/intel_pstate.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-> +++ linux-pm/drivers/cpufreq/intel_pstate.c
-> @@ -2391,6 +2391,18 @@ static bool __init intel_pstate_no_acpi_
->  	return true;
->  }
->  
-> +static bool __init intel_pstate_no_acpi_pcch(void)
+> +/*
+> + * Pure refs increase without any chec/warn.
+> + */
+> +static inline void refcount_inc_no_warn(refcount_t *r)
 > +{
-> +	acpi_status status;
-> +	acpi_handle handle;
-> +
-> +	status = acpi_get_handle(NULL, "\\_SB", &handle);
-> +	if (ACPI_FAILURE(status))
-> +		return true;
-> +
-> +	return !acpi_has_method(handle, "PCCH");
+> +	atomic_inc(&r->refs);
 > +}
 > +
->  static bool __init intel_pstate_has_acpi_ppc(void)
+>  /*
+>   * Similar to atomic_dec_and_test(), it will WARN on underflow and fail to
+>   * decrement when saturated at UINT_MAX.
+> diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+> index 7798a2cc8a86..a2e338cf29d7 100644
+> --- a/tools/perf/util/comm.c
+> +++ b/tools/perf/util/comm.c
+> @@ -21,7 +21,7 @@ static struct rw_semaphore comm_str_lock = {.lock = PTHREAD_RWLOCK_INITIALIZER,}
+>  static struct comm_str *comm_str__get(struct comm_str *cs)
 >  {
->  	int i;
-> @@ -2450,7 +2462,10 @@ static bool __init intel_pstate_platform
+>  	if (cs)
+> -		refcount_inc(&cs->refcnt);
+> +		refcount_inc_no_warn(&cs->refcnt);
+>  	return cs;
+>  }
 >  
->  	switch (plat_info[idx].data) {
->  	case PSS:
-> -		return intel_pstate_no_acpi_pss();
-> +		if (!intel_pstate_no_acpi_pss())
-> +			return false;
-> +
-> +		return intel_pstate_no_acpi_pcch();
->  	case PPC:
->  		return intel_pstate_has_acpi_ppc() && !force_load;
+> @@ -29,10 +29,12 @@ static void comm_str__put(struct comm_str *cs)
+>  {
+>  	if (cs && refcount_dec_and_test(&cs->refcnt)) {
+>  		down_write(&comm_str_lock);
+> -		rb_erase(&cs->rb_node, &comm_str_root);
+> +		if (refcount_read(&cs->refcnt) == 0) {
+> +			rb_erase(&cs->rb_node, &comm_str_root);
+> +			zfree(&cs->str);
+> +			free(cs);
+> +		}
+>  		up_write(&comm_str_lock);
+> -		zfree(&cs->str);
+> -		free(cs);
 >  	}
-> Index: linux-pm/drivers/cpufreq/pcc-cpufreq.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpufreq/pcc-cpufreq.c
-> +++ linux-pm/drivers/cpufreq/pcc-cpufreq.c
-> @@ -580,6 +580,10 @@ static int __init pcc_cpufreq_init(void)
->  {
->  	int ret;
+>  }
 >  
-> +	/* Skip initialization if another cpufreq driver is there. */
-> +	if (cpufreq_get_current_driver())
-> +		return 0;
-> +
->  	if (acpi_disabled)
->  		return 0;
->  
-> 
-> 
+
+I'm still getting crashes with this code, there's another race
+in comm_str__put, consider following paths (with 'cs' struct comm_str data):
+
+thread 0:
+  ...
+  comm_str__put
+    refcount_dec_and_test(&cs->refcnt) == true
+    down_write(&comm_str_lock);
+--> cs->refcnt == 0, but we are blocked and waiting for the lock to remove cs, and meanwhile:
+
+	thread 1:
+	  ...
+	  __comm_str__findnew(...
+	    comm_str__get(cs)
+----------> cs->refcnt == 1
+
+	thread 2:
+	  ...
+	  comm_str__put
+	    refcount_dec_and_test(&cs->refcnt) == true
+----------> cs->refcnt == 0, thread 2 gets the lock and removes cs
+	  ...
+
+
+thread 0:
+  ...
+--> comm_str__put gets the lock and removes 'cs' which aborts with double free
+
+
+we don't have this problem if we ignore objects that dropped to
+refcnt == 0, which was what my previous change was doing
+
+jirka
