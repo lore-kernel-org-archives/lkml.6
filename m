@@ -2,136 +2,124 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6ACECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:00:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFA7ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9172075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:00:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="dceWzxFt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9172075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+	by mail.kernel.org (Postfix) with ESMTP id 8135F20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:00:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8135F20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731524AbeGRRjU (ORCPT
+        id S1731529AbeGRRjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 13:39:20 -0400
-Received: from vern.gendns.com ([206.190.152.46]:33190 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731025AbeGRRjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 13:39:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YHjDNlsVbe6JNpYaQiJe/WFVun4CxzUUcKZ1SgFh42I=; b=dceWzxFtUWq+w40fUr6JS0T815
-        gmbcUuxhzCp0I1wqi5T8aaVXSJza5MyXtZdxs0rby1OwUg7xtoaNZPoACed5JlaGqeryakDIWoQBM
-        n6FhclrUSctU3NIw4mF7MCk9SvI98ZSbeKXQupv32YmTJNmDOyE1SLblW4Pr2/XWDBTb+hetAF7Sr
-        pyU1xkNyX5or2lATd2J/MzAxyZ0NKrssCLsht0+R9J4ZehXrgE5NXAVMKR0fj1oUXO1Oaf73b3kjS
-        nupxwNNct/A5XLunBuuoNYSJhztIs10ls8vxuU2QkS0uf05wT6DWhqNUhKvbxXOkpFj8+x+Fx0uMD
-        bUAN289Q==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:56336 helo=gerda.lechnology.com)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1ffpoU-000Az7-Fd; Wed, 18 Jul 2018 13:00:30 -0400
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-To:     Pavel Machek <pavel@ucw.cz>, Baolin Wang <baolin.wang@linaro.org>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
- <20180714212033.GA31950@amd> <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
- <20180714222924.GA2776@amd> <20180714223907.GB2776@amd>
- <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
- <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
- <68996338-a902-2b57-0bb9-df274a496b06@gmail.com> <20180718075637.GA10279@amd>
- <CAMz4kuJa=s19q7wQFQT1giUe0AN4hpux4PG2koUcnE7q_x7LCQ@mail.gmail.com>
- <20180718120836.GB23157@amd>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <47b1b143-48dd-a265-c2af-254dda53a2cc@lechnology.com>
-Date:   Wed, 18 Jul 2018 12:00:29 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        Wed, 18 Jul 2018 13:39:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39454 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727635AbeGRRjn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 13:39:43 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6IGsWwe046212
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 13:00:54 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ka84qukhy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 13:00:53 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 18 Jul 2018 18:00:50 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 18:00:47 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6IH0kjx31195240
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 17:00:46 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9903E42054;
+        Wed, 18 Jul 2018 20:01:04 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF71842047;
+        Wed, 18 Jul 2018 20:01:03 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.204.179])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 18 Jul 2018 20:01:03 +0100 (BST)
+Date:   Wed, 18 Jul 2018 20:00:43 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 00/11] docs/mm: add boot time memory management docs
+References: <1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180702113255.1f7504e2@lwn.net>
+ <20180718114730.GD4302@rapoport-lnx>
+ <20180718060249.6b45605d@lwn.net>
 MIME-Version: 1.0
-In-Reply-To: <20180718120836.GB23157@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718060249.6b45605d@lwn.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18071817-4275-0000-0000-0000029A9775
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071817-4276-0000-0000-000037A2B637
+Message-Id: <20180718170043.GA23770@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807180187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+(added Andrew)
 
-
-On 7/18/18 7:08 AM, Pavel Machek wrote:
-> On Wed 2018-07-18 19:32:01, Baolin Wang wrote:
->> On 18 July 2018 at 15:56, Pavel Machek <pavel@ucw.cz> wrote:
->>> Hi!
->>>
->>>>>>>> I believe I meant "changing patterns from kernel in response to events
->>>>>>>> is probably overkill"... or something like that.
->>>>>>>
->>>>>>> Anyway -- to clean up the confusion -- I'd like to see
->>>>>>>
->>>>>>> echo pattern > trigger
->>>>>>> echo "1 2 3 4 5 6 7 8" > somewhere
->>>>>>
->>>>>> s/somewhere/pattern/
->>>>>>
->>>>>> pattern trigger should create "pattern" file similarly how ledtrig-timer
->>>>>> creates delay_{on|off} files.
->>>
->>> Yes, that sounds reasonable. v5 still says
->>>
->>> +               Writing non-empty string to this file will activate the pattern,
->>> +               and empty string will disable the pattern.
->>>
->>> I'd deactivate the pattern by simply writing something else to the
->>> trigger file.
->>
->> For the case we met in patch 2, it is not related with trigger things.
->> We just set some series of tuples including brightness and duration
->> (ms) to the hardware to enable the breath mode of the LED, we did not
->> trigger anything. So it is weird to write something to trigger file to
->> deactive the pattern.
+On Wed, Jul 18, 2018 at 06:02:49AM -0600, Jonathan Corbet wrote:
+> On Wed, 18 Jul 2018 14:47:30 +0300
+> Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
 > 
-> Confused. I thought that "breathing mode" would be handled similar way
-> to hardware blinking: userland selects pattern trigger, pattern file
-> appears (similar way to delay_on/delay_off files with blinking), he
-> configures it, hardware brightness follows the pattern ("breathing
-> mode"). If pattern is no longer required, echo none > trigger stops
-> it.
-> 									Pavel
+> > > So this seems like good stuff overall.  It digs pretty deeply into the mm
+> > > code, though, so I'm a little reluctant to apply it without an ack from an
+> > > mm developer.  Alternatively, I'm happy to step back if Andrew wants to
+> > > pick the set up.  
+> > 
+> > Jon, does Michal's reply [1] address your concerns?
+> > Or should I respin and ask Andrew to pick it up? 
+> > 
+> > [1] https://lore.kernel.org/lkml/20180712080006.GA328@dhcp22.suse.cz/
+> 
+> Michal acked #11 (the docs patch) in particular but not the series as a
+> whole.  But it's the rest of the series that I was most worried about :)
+> I'm happy for the patches to take either path, but I'd really like an
+> explicit ack before I apply that many changes directly to the MM code...
+
+Andrew,
+
+Can you please take a look at this series? The thread starts at [1] and if
+it'd be more convenient to you I can respin the whole set.
+ 
+[1] https://lore.kernel.org/lkml/1530370506-21751-1-git-send-email-rppt@linux.vnet.ibm.com/
+
+> Thanks,
+> 
+> jon
 > 
 
-I was confused too when I first read this thread. But after reviewing 
-v5, it is clear that this is _not_ a trigger (and it should not be a 
-trigger). This is basically the equivalent the brightness attribute - 
-except that now the brightness changes over time instead of being a 
-constant value. This way, the pattern can be used in conjunction with 
-triggers.
+-- 
+Sincerely yours,
+Mike.
 
-For example, one might want to set the _pattern_ to something like a 
-"breathe" pattern and set the _trigger_ to the power supply charging 
-full trigger. This way, the LED will be off until the battery is full 
-and then the LED will "breath" when the battery is full.
