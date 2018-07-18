@@ -2,93 +2,88 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8335ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C991DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36F112084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:04:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36F112084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 86FF62084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:04:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEMeOzXy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86FF62084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbeGRUnn (ORCPT
+        id S1730749AbeGRUnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:43:43 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39708 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbeGRUnn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:43:43 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1ffsgF-0004Ga-O3; Wed, 18 Jul 2018 20:04:11 +0000
-Date:   Wed, 18 Jul 2018 21:04:11 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] call_with_creds()
-Message-ID: <20180718200411.GW30522@ZenIV.linux.org.uk>
-References: <20180718025636.GA26175@ZenIV.linux.org.uk>
- <20180718132955.2bf185b7@canb.auug.org.au>
- <CAOssrKf60FHqgG6pB5zOP7iV-qdHdDUODdG7SVpoNh3Pipo=6w@mail.gmail.com>
- <CAOssrKdqnsPSipweUCers6d2AgJX2aVGQUs1pd7cB79GoSJH1Q@mail.gmail.com>
- <20180718124340.GS30522@ZenIV.linux.org.uk>
- <CAOssrKcS+kwK+S1aojhbW_4p8FJLPaafBDqDu89d=F14wT-0rw@mail.gmail.com>
- <20180718181252.GU30522@ZenIV.linux.org.uk>
- <CA+55aFxh62Yttq-W2Cr_YQQ5tAL1xjijjnaz1-zdZNqZPQFM0g@mail.gmail.com>
- <20180718194637.GV30522@ZenIV.linux.org.uk>
- <CA+55aFydd9ji2eJSNVK7Fjpziehvm6fO3b1eTeUAn0L1tk3GmQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFydd9ji2eJSNVK7Fjpziehvm6fO3b1eTeUAn0L1tk3GmQ@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Wed, 18 Jul 2018 16:43:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726909AbeGRUno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:43:44 -0400
+Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 902712075E;
+        Wed, 18 Jul 2018 20:04:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531944256;
+        bh=SKlJaWiYwUfeYbgghHEnv8Fn2XO0QS6nN0hHt69niOU=;
+        h=From:To:Subject:Date:From;
+        b=JEMeOzXyQ9FfSTEQdce7xFhTTSmeY5KS7JcLOEQPvNqzdXw2jKgxxK1hR7YGKQ/j2
+         PhuRTG1RecDs32Lz/nJ6WBcp5f3z5j0E8aAdHRdsFCjsEyBlJischD0Bj6tqcbbsdH
+         TCXG9dFXAeoXsNNGrw2npgCXa6kFv6HQ3jFKvzWY=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: samsung: Add SPDX license identifier
+Date:   Wed, 18 Jul 2018 22:03:50 +0200
+Message-Id: <20180718200350.6590-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 12:53:48PM -0700, Linus Torvalds wrote:
-> On Wed, Jul 18, 2018 at 12:46 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > Huh?  Nevermind ->write(), what about open()?
-> 
-> What about open?
-> 
-> At open time, file->f_cred is the same as current_cred().
+Replace GPL license statement with SPDX license identifier (GPL-2.0).
 
-int cachefiles_write_page(struct fscache_storage *op, struct page *page)
-{
-...
-        file = dentry_open(&path, O_RDWR | O_LARGEFILE, cache->cache_cred);
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ include/dt-bindings/pinctrl/samsung.h | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-
-int ecryptfs_privileged_open(struct file **lower_file,
-                             struct dentry *lower_dentry,
-                             struct vfsmount *lower_mnt,
-                             const struct cred *cred)
-...
-        (*lower_file) = dentry_open(&req.path, flags, cred);
-
-
-/* Derived from fs/exec.c:flush_old_files. */
-static inline void flush_unauthorized_files(const struct cred *cred,
-                                            struct files_struct *files)
-...
-        devnull = dentry_open(&selinux_null, O_RDWR, cred);
-
-(granted, here we don't care much, /dev/null being what it is)
-
-In mainline:
-struct file *filp_clone_open(struct file *oldfile)
-{
-...
-        retval = vfs_open(&oldfile->f_path, file, oldfile->f_cred);
-
+diff --git a/include/dt-bindings/pinctrl/samsung.h b/include/dt-bindings/pinctrl/samsung.h
+index ceb672305f59..b1832506b923 100644
+--- a/include/dt-bindings/pinctrl/samsung.h
++++ b/include/dt-bindings/pinctrl/samsung.h
+@@ -1,14 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Samsung's Exynos pinctrl bindings
+  *
+  * Copyright (c) 2016 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  * Author: Krzysztof Kozlowski <krzk@kernel.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
++ */
+ 
+ #ifndef __DT_BINDINGS_PINCTRL_SAMSUNG_H__
+ #define __DT_BINDINGS_PINCTRL_SAMSUNG_H__
+-- 
+2.14.1
 
