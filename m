@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574E5ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1ADAECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB37A20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB37A20652
+	by mail.kernel.org (Postfix) with ESMTP id 9BB3320652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB3320652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731794AbeGRQue (ORCPT
+        id S1731806AbeGRQum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:50:34 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60386 "EHLO mail.bootlin.com"
+        Wed, 18 Jul 2018 12:50:42 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:60408 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731600AbeGRQtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731673AbeGRQtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Jul 2018 12:49:46 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3DD9620799; Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
+        id D897720908; Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
 Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 16D1120740;
+        by mail.bootlin.com (Postfix) with ESMTPSA id AA2E820741;
         Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
 From:   Gregory CLEMENT <gregory.clement@bootlin.com>
 To:     "David S. Miller" <davem@davemloft.net>,
@@ -43,9 +43,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Antoine Tenart <antoine.tenart@bootlin.com>,
         =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v3 1/8] net: ethernet: mvneta: Fix napi structure mixup on armada 3700
-Date:   Wed, 18 Jul 2018 18:10:50 +0200
-Message-Id: <20180718161057.28704-2-gregory.clement@bootlin.com>
+Subject: [PATCH net-next v3 3/8] net: mvneta: remove data pointer usage from device_node structure
+Date:   Wed, 18 Jul 2018 18:10:52 +0200
+Message-Id: <20180718161057.28704-4-gregory.clement@bootlin.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180718161057.28704-1-gregory.clement@bootlin.com>
 References: <20180718161057.28704-1-gregory.clement@bootlin.com>
@@ -54,106 +54,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
+On year ago Rob Herring wanted to remove the data pointer from the
+device_node structure[1]. The mvneta driver seemed to be the only one
+which used (abused ?) it. However, the proposal of Rob to remove this
+pointer from the driver introduced a regression, and I tested and fixed an
+alternative way, but it was never submitted as a proper patch.
 
-The mvneta Ethernet driver is used on a few different Marvell SoCs.
-Some SoCs have per cpu interrupts for Ethernet events. Some SoCs have
-a single interrupt, independent of the CPU. The driver handles this by
-having a per CPU napi structure when there are per CPU interrupts, and
-a global napi structure when there is a single interrupt.
+Now here it is: Instead of using the device_node structure ->data
+pointer, we store the BM private data as the driver data of the BM
+platform_device. The core mvneta code can retrieve it by doing a lookup
+on which platform_device corresponds to the BM device tree node using
+of_find_device_by_node(), and get its driver data
 
-When the napi core calls mvneta_poll(), it passes the napi
-instance. This was not being propagated through the call chain, and
-instead the per-cpu napi instance was passed to napi_gro_receive()
-call. This breaks when there is a single global napi instance.
+[1]https://www.spinics.net/lists/netdev/msg445197.html
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
-Fixes: 2636ac3cc2b4 ("net: mvneta: Add network support for Armada 3700 SoC")
 Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/marvell/mvneta.c    | 18 ++++++++++++------
+ drivers/net/ethernet/marvell/mvneta_bm.c | 15 +++++++++++++++
+ drivers/net/ethernet/marvell/mvneta_bm.h |  5 +++++
+ 3 files changed, 32 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 0ad2f3f7da85..ec84db47d82d 100644
+index 3d1f4335b0d3..011794148ec8 100644
 --- a/drivers/net/ethernet/marvell/mvneta.c
 +++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -1901,10 +1901,10 @@ static void mvneta_rxq_drop_pkts(struct mvneta_port *pp,
+@@ -4461,12 +4461,16 @@ static int mvneta_probe(struct platform_device *pdev)
+ 
+ 	/* Obtain access to BM resources if enabled and already initialized */
+ 	bm_node = of_parse_phandle(dn, "buffer-manager", 0);
+-	if (bm_node && bm_node->data) {
+-		pp->bm_priv = bm_node->data;
+-		err = mvneta_bm_port_init(pdev, pp);
+-		if (err < 0) {
+-			dev_info(&pdev->dev, "use SW buffer management\n");
+-			pp->bm_priv = NULL;
++	if (bm_node) {
++		pp->bm_priv = mvneta_bm_get(bm_node);
++		if (pp->bm_priv) {
++			err = mvneta_bm_port_init(pdev, pp);
++			if (err < 0) {
++				dev_info(&pdev->dev,
++					 "use SW buffer management\n");
++				mvneta_bm_put(pp->bm_priv);
++				pp->bm_priv = NULL;
++			}
+ 		}
+ 	}
+ 	of_node_put(bm_node);
+@@ -4527,6 +4531,7 @@ static int mvneta_probe(struct platform_device *pdev)
+ 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_long, 1 << pp->id);
+ 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_short,
+ 				       1 << pp->id);
++		mvneta_bm_put(pp->bm_priv);
+ 	}
+ err_free_stats:
+ 	free_percpu(pp->stats);
+@@ -4564,6 +4569,7 @@ static int mvneta_remove(struct platform_device *pdev)
+ 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_long, 1 << pp->id);
+ 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_short,
+ 				       1 << pp->id);
++		mvneta_bm_put(pp->bm_priv);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/net/ethernet/marvell/mvneta_bm.c b/drivers/net/ethernet/marvell/mvneta_bm.c
+index 466939f8f0cf..de468e1bdba9 100644
+--- a/drivers/net/ethernet/marvell/mvneta_bm.c
++++ b/drivers/net/ethernet/marvell/mvneta_bm.c
+@@ -18,6 +18,7 @@
+ #include <linux/module.h>
+ #include <linux/netdevice.h>
+ #include <linux/of.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/skbuff.h>
+ #include <net/hwbm.h>
+@@ -392,6 +393,20 @@ static void mvneta_bm_put_sram(struct mvneta_bm *priv)
+ 		      MVNETA_BM_BPPI_SIZE);
  }
  
- /* Main rx processing when using software buffer management */
--static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
-+static int mvneta_rx_swbm(struct napi_struct *napi,
-+			  struct mvneta_port *pp, int rx_todo,
- 			  struct mvneta_rx_queue *rxq)
++struct mvneta_bm *mvneta_bm_get(struct device_node *node)
++{
++	struct platform_device *pdev = of_find_device_by_node(node);
++
++	return pdev ? platform_get_drvdata(pdev) : NULL;
++}
++EXPORT_SYMBOL_GPL(mvneta_bm_get);
++
++void mvneta_bm_put(struct mvneta_bm *priv)
++{
++	platform_device_put(priv->pdev);
++}
++EXPORT_SYMBOL_GPL(mvneta_bm_put);
++
+ static int mvneta_bm_probe(struct platform_device *pdev)
  {
--	struct mvneta_pcpu_port *port = this_cpu_ptr(pp->ports);
- 	struct net_device *dev = pp->dev;
- 	int rx_done;
- 	u32 rcvd_pkts = 0;
-@@ -1959,7 +1959,7 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
+ 	struct device_node *dn = pdev->dev.of_node;
+diff --git a/drivers/net/ethernet/marvell/mvneta_bm.h b/drivers/net/ethernet/marvell/mvneta_bm.h
+index a32de432800c..9358626e51ec 100644
+--- a/drivers/net/ethernet/marvell/mvneta_bm.h
++++ b/drivers/net/ethernet/marvell/mvneta_bm.h
+@@ -134,6 +134,9 @@ void *mvneta_frag_alloc(unsigned int frag_size);
+ void mvneta_frag_free(unsigned int frag_size, void *data);
  
- 			skb->protocol = eth_type_trans(skb, dev);
- 			mvneta_rx_csum(pp, rx_status, skb);
--			napi_gro_receive(&port->napi, skb);
-+			napi_gro_receive(napi, skb);
- 
- 			rcvd_pkts++;
- 			rcvd_bytes += rx_bytes;
-@@ -2001,7 +2001,7 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
- 
- 		mvneta_rx_csum(pp, rx_status, skb);
- 
--		napi_gro_receive(&port->napi, skb);
-+		napi_gro_receive(napi, skb);
- 	}
- 
- 	if (rcvd_pkts) {
-@@ -2020,10 +2020,10 @@ static int mvneta_rx_swbm(struct mvneta_port *pp, int rx_todo,
- }
- 
- /* Main rx processing when using hardware buffer management */
--static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
-+static int mvneta_rx_hwbm(struct napi_struct *napi,
-+			  struct mvneta_port *pp, int rx_todo,
- 			  struct mvneta_rx_queue *rxq)
- {
--	struct mvneta_pcpu_port *port = this_cpu_ptr(pp->ports);
- 	struct net_device *dev = pp->dev;
- 	int rx_done;
- 	u32 rcvd_pkts = 0;
-@@ -2085,7 +2085,7 @@ static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
- 
- 			skb->protocol = eth_type_trans(skb, dev);
- 			mvneta_rx_csum(pp, rx_status, skb);
--			napi_gro_receive(&port->napi, skb);
-+			napi_gro_receive(napi, skb);
- 
- 			rcvd_pkts++;
- 			rcvd_bytes += rx_bytes;
-@@ -2129,7 +2129,7 @@ static int mvneta_rx_hwbm(struct mvneta_port *pp, int rx_todo,
- 
- 		mvneta_rx_csum(pp, rx_status, skb);
- 
--		napi_gro_receive(&port->napi, skb);
-+		napi_gro_receive(napi, skb);
- 	}
- 
- 	if (rcvd_pkts) {
-@@ -2722,9 +2722,11 @@ static int mvneta_poll(struct napi_struct *napi, int budget)
- 	if (rx_queue) {
- 		rx_queue = rx_queue - 1;
- 		if (pp->bm_priv)
--			rx_done = mvneta_rx_hwbm(pp, budget, &pp->rxqs[rx_queue]);
-+			rx_done = mvneta_rx_hwbm(napi, pp, budget,
-+						 &pp->rxqs[rx_queue]);
- 		else
--			rx_done = mvneta_rx_swbm(pp, budget, &pp->rxqs[rx_queue]);
-+			rx_done = mvneta_rx_swbm(napi, pp, budget,
-+						 &pp->rxqs[rx_queue]);
- 	}
- 
- 	if (rx_done < budget) {
+ #if IS_ENABLED(CONFIG_MVNETA_BM)
++struct mvneta_bm *mvneta_bm_get(struct device_node *node);
++void mvneta_bm_put(struct mvneta_bm *priv);
++
+ void mvneta_bm_pool_destroy(struct mvneta_bm *priv,
+ 			    struct mvneta_bm_pool *bm_pool, u8 port_map);
+ void mvneta_bm_bufs_free(struct mvneta_bm *priv, struct mvneta_bm_pool *bm_pool,
+@@ -178,5 +181,7 @@ static inline void mvneta_bm_pool_put_bp(struct mvneta_bm *priv,
+ static inline u32 mvneta_bm_pool_get_bp(struct mvneta_bm *priv,
+ 					struct mvneta_bm_pool *bm_pool)
+ { return 0; }
++struct mvneta_bm *mvneta_bm_get(struct device_node *node) { return NULL; }
++void mvneta_bm_put(struct mvneta_bm *priv) {}
+ #endif /* CONFIG_MVNETA_BM */
+ #endif
 -- 
 2.18.0
 
