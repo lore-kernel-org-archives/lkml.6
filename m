@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06AFECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D563BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 895272075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F87620858
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:28:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DbzdEK9d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 895272075E
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="UfITK1+w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F87620858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbeGRNFk (ORCPT
+        id S1731423AbeGRNFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 18 Jul 2018 09:05:40 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47542 "EHLO
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47546 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726747AbeGRNFj (ORCPT
+        with ESMTP id S1726909AbeGRNFk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:05:39 -0400
+        Wed, 18 Jul 2018 09:05:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=zppDgBKqlClnCkQMZk6ngSfqmpx68yrd4Z6oSU7tnao=; b=DbzdEK9d6L3a
-        uXb2vsRQxdBMIKSlF3vaMiaMtNwqmz436jx3NWd5XYiJ/WhnBn7h39xFJS8oZJfKIuZfNir0BPdr/
-        ygV9IMRKIkbaydStNNkqn2AaaPDcmhW440CE23Or8xKVJXT67ZizwI6i9zt/95JBLjB6sV1f0SV+P
-        gEcjk=;
+        List-Archive; bh=+8DMONg4rahyyemOjCd5m9hA7xNA/i+/H15GhfhMxBg=; b=UfITK1+wHABo
+        yOeOZlncHVIBTAQqRUDVwwFtBleDTvlLMT3OK9yyB/SWQufNfY9mDc0RNLG34vcJJfaw8TGBUJQ2P
+        Xh7qg81zKeHa8NgtETLbcRfApg/+SWR9vll4/T5kF8CUndjhdGVBV/2xEkof21Y/MPQdeWjCP1shX
+        CMVLg=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fflYf-0003Vb-6R; Wed, 18 Jul 2018 12:27:53 +0000
+        id 1fflYd-0003VY-1p; Wed, 18 Jul 2018 12:27:51 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fflYe-0007Kl-OZ; Wed, 18 Jul 2018 13:27:52 +0100
+        id 1fflYc-0007Je-JJ; Wed, 18 Jul 2018 13:27:50 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
@@ -50,10 +50,10 @@ Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
         bgoswami@codeaurora.org, linux-kernel@vger.kernel.org,
         tiwai@suse.com, vkoul@kernel.org, rohitkr@codeaurora.org,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6routing: remove component framework related code" to the asoc tree
-In-Reply-To:  <20180713153632.32511-5-srinivas.kandagatla@linaro.org>
-Message-Id: <E1fflYe-0007Kl-OZ@debutante>
-Date:   Wed, 18 Jul 2018 13:27:52 +0100
+Subject: Applied "ASoC: qcom: apq8096: remove component framework related code" to the asoc tree
+In-Reply-To:  <20180713153632.32511-6-srinivas.kandagatla@linaro.org>
+Message-Id: <E1fflYc-0007Je-JJ@debutante>
+Date:   Wed, 18 Jul 2018 13:27:50 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: q6routing: remove component framework related code
+   ASoC: qcom: apq8096: remove component framework related code
 
 has been applied to the asoc tree at
 
@@ -86,11 +86,10 @@ to this mail.
 Thanks,
 Mark
 
-From 791940779d651c2219e97702d2245b5420b0c8ae Mon Sep 17 00:00:00 2001
+From 90ae7105eaf19342bb11e554059d62b84e01da12 Mon Sep 17 00:00:00 2001
 From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Fri, 13 Jul 2018 16:36:31 +0100
-Subject: [PATCH] ASoC: qdsp6: q6routing: remove component framework related
- code
+Date: Fri, 13 Jul 2018 16:36:32 +0100
+Subject: [PATCH] ASoC: qcom: apq8096: remove component framework related code
 
 Now that the component framework is integrated into the ASoC core,
 remove any redundant code in this driver.
@@ -99,73 +98,120 @@ Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6routing.c | 32 ++++++--------------------------
- 1 file changed, 6 insertions(+), 26 deletions(-)
+ sound/soc/qcom/apq8096.c | 75 ++++------------------------------------
+ 1 file changed, 6 insertions(+), 69 deletions(-)
 
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
-index 35269b492761..1d33b00e5b44 100644
---- a/sound/soc/qcom/qdsp6/q6routing.c
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -8,7 +8,6 @@
- #include <linux/platform_device.h>
- #include <linux/of_platform.h>
- #include <linux/bitops.h>
--#include <linux/component.h>
- #include <linux/mutex.h>
- #include <linux/of_device.h>
- #include <linux/slab.h>
-@@ -977,9 +976,10 @@ static const struct snd_soc_component_driver msm_soc_routing_component = {
- 	.num_dapm_routes = ARRAY_SIZE(intercon),
- };
- 
--static int q6routing_dai_bind(struct device *dev, struct device *master,
--			      void *data)
-+static int q6pcm_routing_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
-+
- 	routing_data = kzalloc(sizeof(*routing_data), GFP_KERNEL);
- 	if (!routing_data)
- 		return -ENOMEM;
-@@ -989,35 +989,15 @@ static int q6routing_dai_bind(struct device *dev, struct device *master,
- 	mutex_init(&routing_data->lock);
- 	dev_set_drvdata(dev, routing_data);
- 
--	return snd_soc_register_component(dev, &msm_soc_routing_component,
-+	return devm_snd_soc_register_component(dev, &msm_soc_routing_component,
- 					  NULL, 0);
+diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
+index cab8c4ff7c00..a56156281c8d 100644
+--- a/sound/soc/qcom/apq8096.c
++++ b/sound/soc/qcom/apq8096.c
+@@ -129,17 +129,18 @@ static int apq8096_sbc_parse_of(struct snd_soc_card *card)
+ 	return ret;
  }
  
--static void q6routing_dai_unbind(struct device *dev, struct device *master,
--				 void *d)
-+static int q6pcm_routing_remove(struct platform_device *pdev)
+-static int apq8096_bind(struct device *dev)
++static int apq8096_platform_probe(struct platform_device *pdev)
  {
--	struct msm_routing_data *data = dev_get_drvdata(dev);
--
--	snd_soc_unregister_component(dev);
--
--	kfree(data);
--
-+	kfree(routing_data);
- 	routing_data = NULL;
--}
+ 	struct snd_soc_card *card;
++	struct device *dev = &pdev->dev;
+ 	int ret;
  
--static const struct component_ops q6routing_dai_comp_ops = {
--	.bind   = q6routing_dai_bind,
--	.unbind = q6routing_dai_unbind,
+ 	card = kzalloc(sizeof(*card), GFP_KERNEL);
+ 	if (!card)
+ 		return -ENOMEM;
+ 
+-	component_bind_all(dev, card);
+ 	card->dev = dev;
++	card->auto_bind = true;
+ 	dev_set_drvdata(dev, card);
+ 	ret = apq8096_sbc_parse_of(card);
+ 	if (ret) {
+@@ -154,82 +155,18 @@ static int apq8096_bind(struct device *dev)
+ 	return 0;
+ 
+ err:
+-	component_unbind_all(dev, card);
+ 	kfree(card);
+ 	return ret;
+ }
+ 
+-static void apq8096_unbind(struct device *dev)
++static int apq8096_platform_remove(struct platform_device *pdev)
+ {
+-	struct snd_soc_card *card = dev_get_drvdata(dev);
++	struct snd_soc_card *card = dev_get_drvdata(&pdev->dev);
+ 
++	card->auto_bind = false;
+ 	snd_soc_unregister_card(card);
+-	component_unbind_all(dev, card);
+ 	kfree(card->dai_link);
+ 	kfree(card);
+-}
+-
+-static const struct component_master_ops apq8096_ops = {
+-	.bind = apq8096_bind,
+-	.unbind = apq8096_unbind,
 -};
 -
--static int q6pcm_routing_probe(struct platform_device *pdev)
+-static int apq8016_compare_of(struct device *dev, void *data)
 -{
--	return component_add(&pdev->dev, &q6routing_dai_comp_ops);
+-	return dev->of_node == data;
 -}
 -
--static int q6pcm_routing_remove(struct platform_device *pdev)
+-static void apq8016_release_of(struct device *dev, void *data)
 -{
--	component_del(&pdev->dev, &q6routing_dai_comp_ops);
+-	of_node_put(data);
+-}
+-
+-static int add_audio_components(struct device *dev,
+-				struct component_match **matchptr)
+-{
+-	struct device_node *np, *platform, *cpu, *node, *dai_node;
+-
+-	node = dev->of_node;
+-
+-	for_each_child_of_node(node, np) {
+-		cpu = of_get_child_by_name(np, "cpu");
+-		if (cpu) {
+-			dai_node = of_parse_phandle(cpu, "sound-dai", 0);
+-			of_node_get(dai_node);
+-			component_match_add_release(dev, matchptr,
+-						    apq8016_release_of,
+-						    apq8016_compare_of,
+-						    dai_node);
+-		}
+-
+-		platform = of_get_child_by_name(np, "platform");
+-		if (platform) {
+-			dai_node = of_parse_phandle(platform, "sound-dai", 0);
+-			component_match_add_release(dev, matchptr,
+-						    apq8016_release_of,
+-						    apq8016_compare_of,
+-						    dai_node);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int apq8096_platform_probe(struct platform_device *pdev)
+-{
+-	struct component_match *match = NULL;
+-	int ret;
+-
+-	ret = add_audio_components(&pdev->dev, &match);
+-	if (ret)
+-		return ret;
+-
+-	return component_master_add_with_match(&pdev->dev, &apq8096_ops, match);
+-}
+-
+-static int apq8096_platform_remove(struct platform_device *pdev)
+-{
+-	component_master_del(&pdev->dev, &apq8096_ops);
+ 
  	return 0;
  }
- 
 -- 
 2.18.0
 
