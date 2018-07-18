@@ -2,949 +2,137 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FB2ECDFBC
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC041ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C55920652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C55920652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 63B7820652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lt0CQyrV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B7820652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731347AbeGRQsp (ORCPT
+        id S1731431AbeGRQtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:48:45 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:32786 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730110AbeGRQsp (ORCPT
+        Wed, 18 Jul 2018 12:49:07 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46362 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731361AbeGRQtH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:48:45 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 8416927DCCE
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     groeck@chromium.org, bleung@chromium.org, kernel@collabora.com,
-        lee.jones@linaro.org
-Subject: [PATCH 2/2] mfd: cros_ec: Fix and improve kerneldoc comments.
-Date:   Wed, 18 Jul 2018 18:09:56 +0200
-Message-Id: <20180718160956.19864-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180718160956.19864-1-enric.balletbo@collabora.com>
-References: <20180718160956.19864-1-enric.balletbo@collabora.com>
+        Wed, 18 Jul 2018 12:49:07 -0400
+Received: by mail-lj1-f195.google.com with SMTP id 203-v6so4566838ljj.13;
+        Wed, 18 Jul 2018 09:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=IF9bR0+4/6n4RL0exynGUupnYhn/Qsfmu1qFrjhvzrU=;
+        b=Lt0CQyrVhnePEzOMXZbY1/GgUPKTepGeyn/KIHHpCZbC1whS+0u5o4FKND+k+YyxMv
+         UqyOSK+5xOnhdkqJqbI7C4q2/2JF2BZnYsQHuPqv+LMtsNvsULv2B3TTV2d91PatbaFc
+         tmpYURkKwPJTaygBdbdPdjhQuEIUSEW1PPKOSn6umlRSuOBDdG8pxTf8qLQHcXr9YZCc
+         nVHmw46Wgzz1UaZ4Sp73dtZXDxqsvTrWOjqWWwdp8HgDh/IbScwJAsbzPpu4qRPZAddU
+         /pZlzLnzVfon0pgVfoWJc5gliIT/51hp1UFu+rjpmf+vD/OSvZdQZNKbdkG5NSie+nHO
+         ChkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=IF9bR0+4/6n4RL0exynGUupnYhn/Qsfmu1qFrjhvzrU=;
+        b=hLpmUBjD/8B3lxx2HoNbwA0Y6GnCkdxRAnqVI3ddHcNzxY8guJ8rIzNR5SB5u9GXW5
+         35RxKO5+vIsKkiV/aSVoxUewYQ+xUnQMCCfLun/HFz0cSvNL+IXu22jA1zzPisAnd2Y/
+         T9CPo+d0ZgbHSUfdSdCRPqz+U67F8BL+l2SEI1HxNfFB2qfmP96hcn7JeQdZBEAfE0oR
+         Ai110lex6+3OoMUnu6L+aJAjVmRB3o7Anm3YJiyO4IDVC64DNP0erPRzSkPWLm/q9Za/
+         L3eba7DRR7zawwr1+wPnANq4KhWTi+2ZiOqASCGJC25TqlN+dDRb+9WbS0z7ag1oK+8G
+         BnFw==
+X-Gm-Message-State: AOUpUlEXBiIfRpNk/jMUURwVeGAjMuS7Bl+/qCnZeU22akF7afMEbbyw
+        0766IRXUnuzAIfbrCALoP0HOpRemRTwRva6I63s=
+X-Google-Smtp-Source: AAOMgpctPg6cMlPjPVlPAQF9jHVDQt8YlW1nShLv1+DrkcLtbnL+T87Rj3LzXv+Wze4ej0QiXFW4B4inU9oHE6THU/4=
+X-Received: by 2002:a2e:998e:: with SMTP id w14-v6mr3800658lji.7.1531930230033;
+ Wed, 18 Jul 2018 09:10:30 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 09:10:29
+ -0700 (PDT)
+In-Reply-To: <20180718155006.lkoktldllafrfqbf@cs.cmu.edu>
+References: <20180718114645.591551-1-arnd@arndb.de> <20180718155006.lkoktldllafrfqbf@cs.cmu.edu>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 18 Jul 2018 18:10:29 +0200
+X-Google-Sender-Auth: t3SjPtl-EgfxMOvnScb4k_2eP1A
+Message-ID: <CAK8P3a3HYBar1yVCEjxR2VNpPOOx23qM5fCyO-TMmeF780rBiQ@mail.gmail.com>
+Subject: Re: [PATCH] [RESEND] coda: stop using 'struct timespec' in user API
+To:     Jan Harkes <jaharkes@cs.cmu.edu>
+Cc:     "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Deepa Dinamani <deepa.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cros-ec includes inside the MFD subsystem, specially the file
-cros_ec_commands.h, has been modified several times and it has grown a
-lot, unfortunately, we didn't have care too much about the documentation.
-This patch tries to improve the documentation and also fixes all the
-issues reported by kerneldoc script.
+On Wed, Jul 18, 2018 at 5:50 PM, Jan Harkes <jaharkes@cs.cmu.edu> wrote:
+> On Wed, Jul 18, 2018 at 01:46:25PM +0200, Arnd Bergmann wrote:
+>> Unfortunately, this breaks the layout of the coda_vattr structure, so
+>> we need to redefine that in terms of something that does not change.
+>> I'm introducing a new 'struct vtimespec' structure here that keeps
+>> the existing layout, and the same change has to be done in the coda
+>> user space copy of linux/coda.h before anyone can use that on a 32-bit
+>> architecture with 64-bit time_t.
+>
+> I think the userbase is small enough that we can handle a much simpler
+> transition to 64-bit timespecs everywhere. In that case the
+> CODA_KERNEL_VERSION should be updated, which is currently defined in
+> include/uapi/linux/coda.h as 3. As moving to 64-bit timespecs only
+> breaks 32-bit systems this allows userspace to catch that case and
+> refuse to run userspace with a mismatched layout (or handle
+> translation).
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
----
+Ok, so to make sure I get this right, you say we can do an
+incompatible ABI change for coda without causing any problems
+for existing users?
 
- drivers/mfd/cros_ec_dev.h            |  13 +-
- include/linux/mfd/cros_ec.h          | 214 ++++++++++---------
- include/linux/mfd/cros_ec_commands.h | 295 +++++++++++++++++----------
- 3 files changed, 310 insertions(+), 212 deletions(-)
+That would definitely be the easiest approach here. I guess
+we also just have to be incompatible for 32-bit user space,
+since it would make 32-bit users have the same ABI as 64-bit
+ones, right?
 
-diff --git a/drivers/mfd/cros_ec_dev.h b/drivers/mfd/cros_ec_dev.h
-index 45e9453608c5..978d836a0248 100644
---- a/drivers/mfd/cros_ec_dev.h
-+++ b/drivers/mfd/cros_ec_dev.h
-@@ -26,12 +26,13 @@
- 
- #define CROS_EC_DEV_VERSION "1.0.0"
- 
--/*
-- * @offset: within EC_LPC_ADDR_MEMMAP region
-- * @bytes: number of bytes to read. zero means "read a string" (including '\0')
-- *         (at most only EC_MEMMAP_SIZE bytes can be read)
-- * @buffer: where to store the result
-- * ioctl returns the number of bytes read, negative on error
-+/**
-+ * struct cros_ec_readmem - Struct used to read mapped memory.
-+ * @offset: Within EC_LPC_ADDR_MEMMAP region.
-+ * @bytes: Number of bytes to read. Zero means "read a string" (including '\0')
-+ *         At most only EC_MEMMAP_SIZE bytes can be read.
-+ * @buffer: Where to store the result. The ioctl returns the number of bytes
-+ *         read or negative on error.
-  */
- struct cros_ec_readmem {
- 	uint32_t offset;
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index 20949dde35cd..e44e3ec8a9c7 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -36,7 +36,7 @@
-  * I2C requires 1 additional byte for requests.
-  * I2C requires 2 additional bytes for responses.
-  * SPI requires up to 32 additional bytes for responses.
-- * */
-+ */
- #define EC_PROTO_VERSION_UNKNOWN	0
- #define EC_MAX_REQUEST_OVERHEAD		1
- #define EC_MAX_RESPONSE_OVERHEAD	32
-@@ -58,13 +58,14 @@ enum {
- 	EC_MAX_MSG_BYTES		= 64 * 1024,
- };
- 
--/*
-- * @version: Command version number (often 0)
-- * @command: Command to send (EC_CMD_...)
-- * @outsize: Outgoing length in bytes
-- * @insize: Max number of bytes to accept from EC
-- * @result: EC's response to the command (separate from communication failure)
-- * @data: Where to put the incoming data from EC and outgoing data to EC
-+/**
-+ * struct cros_ec_command - Information about a ChromeOS EC command.
-+ * @version: Command version number (often 0).
-+ * @command: Command to send (EC_CMD_...).
-+ * @outsize: Outgoing length in bytes.
-+ * @insize: Max number of bytes to accept from the EC.
-+ * @result: EC's response to the command (separate from communication failure).
-+ * @data: Where to put the incoming data from EC and outgoing data to EC.
-  */
- struct cros_ec_command {
- 	uint32_t version;
-@@ -76,48 +77,55 @@ struct cros_ec_command {
- };
- 
- /**
-- * struct cros_ec_device - Information about a ChromeOS EC device
-- *
-- * @phys_name: name of physical comms layer (e.g. 'i2c-4')
-+ * struct cros_ec_device - Information about a ChromeOS EC device.
-+ * @phys_name: Name of physical comms layer (e.g. 'i2c-4').
-  * @dev: Device pointer for physical comms device
-- * @was_wake_device: true if this device was set to wake the system from
-- * sleep at the last suspend
-- * @cmd_readmem: direct read of the EC memory-mapped region, if supported
-- *     @offset is within EC_LPC_ADDR_MEMMAP region.
-- *     @bytes: number of bytes to read. zero means "read a string" (including
-- *     the trailing '\0'). At most only EC_MEMMAP_SIZE bytes can be read.
-- *     Caller must ensure that the buffer is large enough for the result when
-- *     reading a string.
-- *
-- * @priv: Private data
-- * @irq: Interrupt to use
-- * @id: Device id
-- * @din: input buffer (for data from EC)
-- * @dout: output buffer (for data to EC)
-- * \note
-- * These two buffers will always be dword-aligned and include enough
-- * space for up to 7 word-alignment bytes also, so we can ensure that
-- * the body of the message is always dword-aligned (64-bit).
-- * We use this alignment to keep ARM and x86 happy. Probably word
-- * alignment would be OK, there might be a small performance advantage
-- * to using dword.
-- * @din_size: size of din buffer to allocate (zero to use static din)
-- * @dout_size: size of dout buffer to allocate (zero to use static dout)
-- * @wake_enabled: true if this device can wake the system from sleep
-- * @suspended: true if this device had been suspended
-- * @cmd_xfer: send command to EC and get response
-- *     Returns the number of bytes received if the communication succeeded, but
-- *     that doesn't mean the EC was happy with the command. The caller
-- *     should check msg.result for the EC's result code.
-- * @pkt_xfer: send packet to EC and get response
-- * @lock: one transaction at a time
-- * @mkbp_event_supported: true if this EC supports the MKBP event protocol.
-- * @event_notifier: interrupt event notifier for transport devices.
-- * @event_data: raw payload transferred with the MKBP event.
-- * @event_size: size in bytes of the event data.
-+ * @was_wake_device: True if this device was set to wake the system from
-+ *                   sleep at the last suspend.
-+ * @cros_class: The class structure for this device.
-+ * @cmd_readmem: Direct read of the EC memory-mapped region, if supported.
-+ *     @offset: Is within EC_LPC_ADDR_MEMMAP region.
-+ *     @bytes: Number of bytes to read. zero means "read a string" (including
-+ *             the trailing '\0'). At most only EC_MEMMAP_SIZE bytes can be
-+ *             read. Caller must ensure that the buffer is large enough for the
-+ *             result when reading a string.
-+ * @max_request: Max size of message requested.
-+ * @max_response: Max size of message response.
-+ * @max_passthru: Max sice of passthru message.
-+ * @proto_version: The protocol version used for this device.
-+ * @priv: Private data.
-+ * @irq: Interrupt to use.
-+ * @id: Device id.
-+ * @din: Input buffer (for data from EC). This buffer will always be
-+ *       dword-aligned and include enough space for up to 7 word-alignment
-+ *       bytes also, so we can ensure that the body of the message is always
-+ *       dword-aligned (64-bit). We use this alignment to keep ARM and x86
-+ *       happy. Probably word alignment would be OK, there might be a small
-+ *       performance advantage to using dword.
-+ * @dout: Output buffer (for data to EC). This buffer will always be
-+ *        dword-aligned and include enough space for up to 7 word-alignment
-+ *        bytes also, so we can ensure that the body of the message is always
-+ *        dword-aligned (64-bit). We use this alignment to keep ARM and x86
-+ *        happy. Probably word alignment would be OK, there might be a small
-+ *        performance advantage to using dword.
-+ * @din_size: Size of din buffer to allocate (zero to use static din).
-+ * @dout_size: Size of dout buffer to allocate (zero to use static dout).
-+ * @wake_enabled: True if this device can wake the system from sleep.
-+ * @suspended: True if this device had been suspended.
-+ * @cmd_xfer: Send command to EC and get response.
-+ *            Returns the number of bytes received if the communication
-+ *            succeeded, but that doesn't mean the EC was happy with the
-+ *            command. The caller should check msg.result for the EC's result
-+ *            code.
-+ * @pkt_xfer: Send packet to EC and get response.
-+ * @lock: One transaction at a time.
-+ * @mkbp_event_supported: True if this EC supports the MKBP event protocol.
-+ * @event_notifier: Interrupt event notifier for transport devices.
-+ * @event_data: Raw payload transferred with the MKBP event.
-+ * @event_size: Size in bytes of the event data.
-+ * @host_event_wake_mask: Mask of host events that cause wake from suspend.
-  */
- struct cros_ec_device {
--
- 	/* These are used by other drivers that want to talk to the EC */
- 	const char *phys_name;
- 	struct device *dev;
-@@ -153,20 +161,19 @@ struct cros_ec_device {
- };
- 
- /**
-- * struct cros_ec_sensor_platform - ChromeOS EC sensor platform information
-- *
-+ * struct cros_ec_sensor_platform - ChromeOS EC sensor platform information.
-  * @sensor_num: Id of the sensor, as reported by the EC.
-  */
- struct cros_ec_sensor_platform {
- 	u8 sensor_num;
- };
- 
--/* struct cros_ec_platform - ChromeOS EC platform information
-- *
-- * @ec_name: name of EC device (e.g. 'cros-ec', 'cros-pd', ...)
-- * used in /dev/ and sysfs.
-- * @cmd_offset: offset to apply for each command. Set when
-- * registering a devicde behind another one.
-+/**
-+ * struct cros_ec_platform - ChromeOS EC platform information.
-+ * @ec_name: Name of EC device (e.g. 'cros-ec', 'cros-pd', ...)
-+ *           used in /dev/ and sysfs.
-+ * @cmd_offset: Offset to apply for each command. Set when
-+ *              registering a device behind another one.
-  */
- struct cros_ec_platform {
- 	const char *ec_name;
-@@ -175,16 +182,16 @@ struct cros_ec_platform {
- 
- struct cros_ec_debugfs;
- 
--/*
-- * struct cros_ec_dev - ChromeOS EC device entry point
-- *
-- * @class_dev: Device structure used in sysfs
-- * @cdev: Character device structure in /dev
-- * @ec_dev: cros_ec_device structure to talk to the physical device
-- * @dev: pointer to the platform device
-- * @debug_info: cros_ec_debugfs structure for debugging information
-- * @has_kb_wake_angle: true if at least 2 accelerometer are connected to the EC.
-- * @cmd_offset: offset to apply for each command.
-+/**
-+ * struct cros_ec_dev - ChromeOS EC device entry point.
-+ * @class_dev: Device structure used in sysfs.
-+ * @cdev: Character device structure in /dev.
-+ * @ec_dev: cros_ec_device structure to talk to the physical device.
-+ * @dev: Pointer to the platform device.
-+ * @debug_info: cros_ec_debugfs structure for debugging information.
-+ * @has_kb_wake_angle: True if at least 2 accelerometer are connected to the EC.
-+ * @cmd_offset: Offset to apply for each command.
-+ * @features: Features supported by the EC.
-  */
- struct cros_ec_dev {
- 	struct device class_dev;
-@@ -200,124 +207,129 @@ struct cros_ec_dev {
- #define to_cros_ec_dev(dev)  container_of(dev, struct cros_ec_dev, class_dev)
- 
- /**
-- * cros_ec_suspend - Handle a suspend operation for the ChromeOS EC device
-+ * cros_ec_suspend() - Handle a suspend operation for the ChromeOS EC device.
-+ * @ec_dev: Device to suspend.
-  *
-  * This can be called by drivers to handle a suspend event.
-  *
-- * ec_dev: Device to suspend
-- * @return 0 if ok, -ve on error
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_suspend(struct cros_ec_device *ec_dev);
- 
- /**
-- * cros_ec_resume - Handle a resume operation for the ChromeOS EC device
-+ * cros_ec_resume() - Handle a resume operation for the ChromeOS EC device.
-+ * @ec_dev: Device to resume.
-  *
-  * This can be called by drivers to handle a resume event.
-  *
-- * @ec_dev: Device to resume
-- * @return 0 if ok, -ve on error
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_resume(struct cros_ec_device *ec_dev);
- 
- /**
-- * cros_ec_prepare_tx - Prepare an outgoing message in the output buffer
-+ * cros_ec_prepare_tx() - Prepare an outgoing message in the output buffer.
-+ * @ec_dev: Device to register.
-+ * @msg: Message to write.
-  *
-  * This is intended to be used by all ChromeOS EC drivers, but at present
-  * only SPI uses it. Once LPC uses the same protocol it can start using it.
-  * I2C could use it now, with a refactor of the existing code.
-  *
-- * @ec_dev: Device to register
-- * @msg: Message to write
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
- 		       struct cros_ec_command *msg);
- 
- /**
-- * cros_ec_check_result - Check ec_msg->result
-+ * cros_ec_check_result() - Check ec_msg->result.
-+ * @ec_dev: EC device.
-+ * @msg: Message to check.
-  *
-  * This is used by ChromeOS EC drivers to check the ec_msg->result for
-  * errors and to warn about them.
-  *
-- * @ec_dev: EC device
-- * @msg: Message to check
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_check_result(struct cros_ec_device *ec_dev,
- 			 struct cros_ec_command *msg);
- 
- /**
-- * cros_ec_cmd_xfer - Send a command to the ChromeOS EC
-+ * cros_ec_cmd_xfer() - Send a command to the ChromeOS EC.
-+ * @ec_dev: EC device.
-+ * @msg: Message to write.
-  *
-  * Call this to send a command to the ChromeOS EC.  This should be used
-  * instead of calling the EC's cmd_xfer() callback directly.
-  *
-- * @ec_dev: EC device
-- * @msg: Message to write
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
- 		     struct cros_ec_command *msg);
- 
- /**
-- * cros_ec_cmd_xfer_status - Send a command to the ChromeOS EC
-+ * cros_ec_cmd_xfer_status() - Send a command to the ChromeOS EC.
-+ * @ec_dev: EC device.
-+ * @msg: Message to write.
-  *
-  * This function is identical to cros_ec_cmd_xfer, except it returns success
-  * status only if both the command was transmitted successfully and the EC
-  * replied with success status. It's not necessary to check msg->result when
-  * using this function.
-  *
-- * @ec_dev: EC device
-- * @msg: Message to write
-- * @return: Num. of bytes transferred on success, <0 on failure
-+ * Return: The number of bytes transferred on success or negative error code.
-  */
- int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
- 			    struct cros_ec_command *msg);
- 
- /**
-- * cros_ec_remove - Remove a ChromeOS EC
-+ * cros_ec_remove() - Remove a ChromeOS EC.
-+ * @ec_dev: Device to register.
-  *
-  * Call this to deregister a ChromeOS EC, then clean up any private data.
-  *
-- * @ec_dev: Device to register
-- * @return 0 if ok, -ve on error
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_remove(struct cros_ec_device *ec_dev);
- 
- /**
-- * cros_ec_register - Register a new ChromeOS EC, using the provided info
-+ * cros_ec_register() - Register a new ChromeOS EC, using the provided info.
-+ * @ec_dev: Device to register.
-  *
-  * Before calling this, allocate a pointer to a new device and then fill
-  * in all the fields up to the --private-- marker.
-  *
-- * @ec_dev: Device to register
-- * @return 0 if ok, -ve on error
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_register(struct cros_ec_device *ec_dev);
- 
- /**
-- * cros_ec_query_all -  Query the protocol version supported by the ChromeOS EC
-+ * cros_ec_query_all() -  Query the protocol version supported by the
-+ *         ChromeOS EC.
-+ * @ec_dev: Device to register.
-  *
-- * @ec_dev: Device to register
-- * @return 0 if ok, -ve on error
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_query_all(struct cros_ec_device *ec_dev);
- 
- /**
-- * cros_ec_get_next_event -  Fetch next event from the ChromeOS EC
-- *
-- * @ec_dev: Device to fetch event from
-+ * cros_ec_get_next_event() - Fetch next event from the ChromeOS EC.
-+ * @ec_dev: Device to fetch event from.
-  * @wake_event: Pointer to a bool set to true upon return if the event might be
-  *              treated as a wake event. Ignored if null.
-  *
-- * Returns: 0 on success, Linux error number on failure
-+ * Return: 0 on success or negative error code.
-  */
- int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event);
- 
- /**
-- * cros_ec_get_host_event - Return a mask of event set by the EC.
-+ * cros_ec_get_host_event() - Return a mask of event set by the ChromeOS EC.
-+ * @ec_dev: Device to fetch event from.
-  *
-- * When MKBP is supported, when the EC raises an interrupt,
-- * We collect the events raised and call the functions in the ec notifier.
-+ * When MKBP is supported, when the EC raises an interrupt, we collect the
-+ * events raised and call the functions in the ec notifier. This function
-+ * is a helper to know which events are raised.
-  *
-- * This function is a helper to know which events are raised.
-+ * Return: 0 on success or negative error code.
-  */
- u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
- 
-diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
-index 6e1ab9bead28..88100bddf1ab 100644
---- a/include/linux/mfd/cros_ec_commands.h
-+++ b/include/linux/mfd/cros_ec_commands.h
-@@ -306,15 +306,18 @@ enum host_event_code {
- /* Host event mask */
- #define EC_HOST_EVENT_MASK(event_code) (1UL << ((event_code) - 1))
- 
--/* Arguments at EC_LPC_ADDR_HOST_ARGS */
-+/**
-+ * struct ec_lpc_host_args - Arguments at EC_LPC_ADDR_HOST_ARGS
-+ * @flags: The host argument flags.
-+ * @command_version: Command version.
-+ * @data_size: The length of data.
-+ * @checksum: Checksum; sum of command + flags + command_version + data_size +
-+ *            all params/response data bytes.
-+ */
- struct ec_lpc_host_args {
- 	uint8_t flags;
- 	uint8_t command_version;
- 	uint8_t data_size;
--	/*
--	 * Checksum; sum of command + flags + command_version + data_size +
--	 * all params/response data bytes.
--	 */
- 	uint8_t checksum;
- } __packed;
- 
-@@ -468,54 +471,43 @@ struct ec_lpc_host_args {
- 
- #define EC_HOST_REQUEST_VERSION 3
- 
--/* Version 3 request from host */
-+/**
-+ * struct ec_host_request - Version 3 request from host.
-+ * @struct_version: Should be 3. The EC will return EC_RES_INVALID_HEADER if it
-+ *                  receives a header with a version it doesn't know how to
-+ *                  parse.
-+ * @checksum: Checksum of request and data; sum of all bytes including checksum
-+ *            should total to 0.
-+ * @command: Command to send (EC_CMD_...)
-+ * @command_version: Command version.
-+ * @reserved: Unused byte in current protocol version; set to 0.
-+ * @data_len: Length of data which follows this header.
-+ */
- struct ec_host_request {
--	/* Struct version (=3)
--	 *
--	 * EC will return EC_RES_INVALID_HEADER if it receives a header with a
--	 * version it doesn't know how to parse.
--	 */
- 	uint8_t struct_version;
--
--	/*
--	 * Checksum of request and data; sum of all bytes including checksum
--	 * should total to 0.
--	 */
- 	uint8_t checksum;
--
--	/* Command code */
- 	uint16_t command;
--
--	/* Command version */
- 	uint8_t command_version;
--
--	/* Unused byte in current protocol version; set to 0 */
- 	uint8_t reserved;
--
--	/* Length of data which follows this header */
- 	uint16_t data_len;
- } __packed;
- 
- #define EC_HOST_RESPONSE_VERSION 3
- 
--/* Version 3 response from EC */
-+/**
-+ * struct ec_host_response - Version 3 response from EC.
-+ * @struct_version: Struct version (=3).
-+ * @checksum: Checksum of response and data; sum of all bytes including
-+ *            checksum should total to 0.
-+ * @result: EC's response to the command (separate from communication failure)
-+ * @data_len: Length of data which follows this header.
-+ * @reserved: Unused bytes in current protocol version; set to 0.
-+ */
- struct ec_host_response {
--	/* Struct version (=3) */
- 	uint8_t struct_version;
--
--	/*
--	 * Checksum of response and data; sum of all bytes including checksum
--	 * should total to 0.
--	 */
- 	uint8_t checksum;
--
--	/* Result code (EC_RES_*) */
- 	uint16_t result;
--
--	/* Length of data which follows this header */
- 	uint16_t data_len;
--
--	/* Unused bytes in current protocol version; set to 0 */
- 	uint16_t reserved;
- } __packed;
- 
-@@ -540,6 +532,10 @@ struct ec_host_response {
-  */
- #define EC_CMD_PROTO_VERSION 0x00
- 
-+/**
-+ * struct ec_response_proto_version - Response to the proto version command.
-+ * @version: The protocol version.
-+ */
- struct ec_response_proto_version {
- 	uint32_t version;
- } __packed;
-@@ -550,12 +546,20 @@ struct ec_response_proto_version {
-  */
- #define EC_CMD_HELLO 0x01
- 
-+/**
-+ * struct ec_params_hello - Parameters to the hello command.
-+ * @in_data: Pass anything here.
-+ */
- struct ec_params_hello {
--	uint32_t in_data;  /* Pass anything here */
-+	uint32_t in_data;
- } __packed;
- 
-+/**
-+ * struct ec_response_hello - Response to the hello command.
-+ * @out_data: Output will be in_data + 0x01020304.
-+ */
- struct ec_response_hello {
--	uint32_t out_data;  /* Output will be in_data + 0x01020304 */
-+	uint32_t out_data;
- } __packed;
- 
- /* Get version number */
-@@ -567,22 +571,37 @@ enum ec_current_image {
- 	EC_IMAGE_RW
- };
- 
-+/**
-+ * struct ec_response_get_version - Response to the get version command.
-+ * @version_string_ro: Null-terminated RO firmware version string.
-+ * @version_string_rw: Null-terminated RW firmware version string.
-+ * @reserved: Unused bytes; was previously RW-B firmware version string.
-+ * @current_image: One of ec_current_image.
-+ */
- struct ec_response_get_version {
--	/* Null-terminated version strings for RO, RW */
- 	char version_string_ro[32];
- 	char version_string_rw[32];
--	char reserved[32];       /* Was previously RW-B string */
--	uint32_t current_image;  /* One of ec_current_image */
-+	char reserved[32];
-+	uint32_t current_image;
- } __packed;
- 
- /* Read test */
- #define EC_CMD_READ_TEST 0x03
- 
-+/**
-+ * struct ec_params_read_test - Parameters for the read test command.
-+ * @offset: Starting value for read buffer.
-+ * @size: Size to read in bytes.
-+ */
- struct ec_params_read_test {
--	uint32_t offset;   /* Starting value for read buffer */
--	uint32_t size;     /* Size to read in bytes */
-+	uint32_t offset;
-+	uint32_t size;
- } __packed;
- 
-+/**
-+ * struct ec_response_read_test - Response to the read test command.
-+ * @data: Data returned by the read test command.
-+ */
- struct ec_response_read_test {
- 	uint32_t data[32];
- } __packed;
-@@ -597,18 +616,27 @@ struct ec_response_read_test {
- /* Get chip info */
- #define EC_CMD_GET_CHIP_INFO 0x05
- 
-+/**
-+ * struct ec_response_get_chip_info - Response to the get chip info command.
-+ * @vendor: Null-terminated string for chip vendor.
-+ * @name: Null-terminated string for chip name.
-+ * @revision: Null-terminated string for chip mask version.
-+ */
- struct ec_response_get_chip_info {
--	/* Null-terminated strings */
- 	char vendor[32];
- 	char name[32];
--	char revision[32];  /* Mask version */
-+	char revision[32];
- } __packed;
- 
- /* Get board HW version */
- #define EC_CMD_GET_BOARD_VERSION 0x06
- 
-+/**
-+ * struct ec_response_board_version - Response to the board version command.
-+ * @board_version: A monotonously incrementing number.
-+ */
- struct ec_response_board_version {
--	uint16_t board_version;  /* A monotonously incrementing number. */
-+	uint16_t board_version;
- } __packed;
- 
- /*
-@@ -621,27 +649,42 @@ struct ec_response_board_version {
-  */
- #define EC_CMD_READ_MEMMAP 0x07
- 
-+/**
-+ * struct ec_params_read_memmap - Parameters for the read memory map command.
-+ * @offset: Offset in memmap (EC_MEMMAP_*).
-+ * @size: Size to read in bytes.
-+ */
- struct ec_params_read_memmap {
--	uint8_t offset;   /* Offset in memmap (EC_MEMMAP_*) */
--	uint8_t size;     /* Size to read in bytes */
-+	uint8_t offset;
-+	uint8_t size;
- } __packed;
- 
- /* Read versions supported for a command */
- #define EC_CMD_GET_CMD_VERSIONS 0x08
- 
-+/**
-+ * struct ec_params_get_cmd_versions - Parameters for the get command versions.
-+ * @cmd: Command to check.
-+ */
- struct ec_params_get_cmd_versions {
--	uint8_t cmd;      /* Command to check */
-+	uint8_t cmd;
- } __packed;
- 
-+/**
-+ * struct ec_params_get_cmd_versions_v1 - Parameters for the get command
-+ *         versions (v1)
-+ * @cmd: Command to check.
-+ */
- struct ec_params_get_cmd_versions_v1 {
--	uint16_t cmd;     /* Command to check */
-+	uint16_t cmd;
- } __packed;
- 
-+/**
-+ * struct ec_response_get_cmd_version - Response to the get command versions.
-+ * @version_mask: Mask of supported versions; use EC_VER_MASK() to compare with
-+ *                a desired version.
-+ */
- struct ec_response_get_cmd_versions {
--	/*
--	 * Mask of supported versions; use EC_VER_MASK() to compare with a
--	 * desired version.
--	 */
- 	uint32_t version_mask;
- } __packed;
- 
-@@ -659,6 +702,11 @@ enum ec_comms_status {
- 	EC_COMMS_STATUS_PROCESSING	= 1 << 0,	/* Processing cmd */
- };
- 
-+/**
-+ * struct ec_response_get_comms_status - Response to the get comms status
-+ *         command.
-+ * @flags: Mask of enum ec_comms_status.
-+ */
- struct ec_response_get_comms_status {
- 	uint32_t flags;		/* Mask of enum ec_comms_status */
- } __packed;
-@@ -685,19 +733,19 @@ struct ec_response_test_protocol {
- /* EC_RES_IN_PROGRESS may be returned if a command is slow */
- #define EC_PROTOCOL_INFO_IN_PROGRESS_SUPPORTED (1 << 0)
- 
-+/**
-+ * struct ec_response_get_protocol_info - Response to the get protocol info.
-+ * @protocol_versions: Bitmask of protocol versions supported (1 << n means
-+ *                     version n).
-+ * @max_request_packet_size: Maximum request packet size in bytes.
-+ * @max_response_packet_size: Maximum response packet size in bytes.
-+ * @flags: see EC_PROTOCOL_INFO_*
-+ */
- struct ec_response_get_protocol_info {
- 	/* Fields which exist if at least protocol version 3 supported */
--
--	/* Bitmask of protocol versions supported (1 << n means version n)*/
- 	uint32_t protocol_versions;
--
--	/* Maximum request packet size, in bytes */
- 	uint16_t max_request_packet_size;
--
--	/* Maximum response packet size, in bytes */
- 	uint16_t max_response_packet_size;
--
--	/* Flags; see EC_PROTOCOL_INFO_* */
- 	uint32_t flags;
- } __packed;
- 
-@@ -708,8 +756,10 @@ struct ec_response_get_protocol_info {
- /* The upper byte of .flags tells what to do (nothing means "get") */
- #define EC_GSV_SET        0x80000000
- 
--/* The lower three bytes of .flags identifies the parameter, if that has
--   meaning for an individual command. */
-+/*
-+ * The lower three bytes of .flags identifies the parameter, if that has
-+ * meaning for an individual command.
-+ */
- #define EC_GSV_PARAM_MASK 0x00ffffff
- 
- struct ec_params_get_set_value {
-@@ -810,6 +860,7 @@ enum ec_feature_code {
- 
- #define EC_FEATURE_MASK_0(event_code) (1UL << (event_code % 32))
- #define EC_FEATURE_MASK_1(event_code) (1UL << (event_code - 32))
-+
- struct ec_response_get_features {
- 	uint32_t flags[2];
- } __packed;
-@@ -820,24 +871,22 @@ struct ec_response_get_features {
- /* Get flash info */
- #define EC_CMD_FLASH_INFO 0x10
- 
--/* Version 0 returns these fields */
-+/**
-+ * struct ec_response_flash_info - Response to the flash info command.
-+ * @flash_size: Usable flash size in bytes.
-+ * @write_block_size: Write block size. Write offset and size must be a
-+ *                    multiple of this.
-+ * @erase_block_size: Erase block size. Erase offset and size must be a
-+ *                    multiple of this.
-+ * @protect_block_size: Protection block size. Protection offset and size
-+ *                      must be a multiple of this.
-+ *
-+ * Version 0 returns these fields.
-+ */
- struct ec_response_flash_info {
--	/* Usable flash size, in bytes */
- 	uint32_t flash_size;
--	/*
--	 * Write block size.  Write offset and size must be a multiple
--	 * of this.
--	 */
- 	uint32_t write_block_size;
--	/*
--	 * Erase block size.  Erase offset and size must be a multiple
--	 * of this.
--	 */
- 	uint32_t erase_block_size;
--	/*
--	 * Protection block size.  Protection offset and size must be a
--	 * multiple of this.
--	 */
- 	uint32_t protect_block_size;
- } __packed;
- 
-@@ -845,7 +894,22 @@ struct ec_response_flash_info {
- /* EC flash erases bits to 0 instead of 1 */
- #define EC_FLASH_INFO_ERASE_TO_0 (1 << 0)
- 
--/*
-+/**
-+ * struct ec_response_flash_info_1 - Response to the flash info v1 command.
-+ * @flash_size: Usable flash size in bytes.
-+ * @write_block_size: Write block size. Write offset and size must be a
-+ *                    multiple of this.
-+ * @erase_block_size: Erase block size. Erase offset and size must be a
-+ *                    multiple of this.
-+ * @protect_block_size: Protection block size. Protection offset and size
-+ *                      must be a multiple of this.
-+ * @write_ideal_size: Ideal write size in bytes.  Writes will be fastest if
-+ *                    size is exactly this and offset is a multiple of this.
-+ *                    For example, an EC may have a write buffer which can do
-+ *                    half-page operations if data is aligned, and a slower
-+ *                    word-at-a-time write mode.
-+ * @flags: Flags; see EC_FLASH_INFO_*
-+ *
-  * Version 1 returns the same initial fields as version 0, with additional
-  * fields following.
-  *
-@@ -860,15 +924,7 @@ struct ec_response_flash_info_1 {
- 	uint32_t protect_block_size;
- 
- 	/* Version 1 adds these fields: */
--	/*
--	 * Ideal write size in bytes.  Writes will be fastest if size is
--	 * exactly this and offset is a multiple of this.  For example, an EC
--	 * may have a write buffer which can do half-page operations if data is
--	 * aligned, and a slower word-at-a-time write mode.
--	 */
- 	uint32_t write_ideal_size;
--
--	/* Flags; see EC_FLASH_INFO_* */
- 	uint32_t flags;
- } __packed;
- 
-@@ -879,9 +935,14 @@ struct ec_response_flash_info_1 {
-  */
- #define EC_CMD_FLASH_READ 0x11
- 
-+/**
-+ * struct ec_params_flash_read - Parameters for the flash read command.
-+ * @offset: Byte offset to read.
-+ * @size: Size to read in bytes.
-+ */
- struct ec_params_flash_read {
--	uint32_t offset;   /* Byte offset to read */
--	uint32_t size;     /* Size to read in bytes */
-+	uint32_t offset;
-+	uint32_t size;
- } __packed;
- 
- /* Write flash */
-@@ -891,18 +952,28 @@ struct ec_params_flash_read {
- /* Version 0 of the flash command supported only 64 bytes of data */
- #define EC_FLASH_WRITE_VER0_SIZE 64
- 
-+/**
-+ * struct ec_params_flash_write - Parameters for the flash write command.
-+ * @offset: Byte offset to write.
-+ * @size: Size to write in bytes.
-+ */
- struct ec_params_flash_write {
--	uint32_t offset;   /* Byte offset to write */
--	uint32_t size;     /* Size to write in bytes */
-+	uint32_t offset;
-+	uint32_t size;
- 	/* Followed by data to write */
- } __packed;
- 
- /* Erase flash */
- #define EC_CMD_FLASH_ERASE 0x13
- 
-+/**
-+ * struct ec_params_flash_erase - Parameters for the flash erase command.
-+ * @offset: Byte offset to erase.
-+ * @size: Size to erase in bytes.
-+ */
- struct ec_params_flash_erase {
--	uint32_t offset;   /* Byte offset to erase */
--	uint32_t size;     /* Size to erase in bytes */
-+	uint32_t offset;
-+	uint32_t size;
- } __packed;
- 
- /*
-@@ -941,21 +1012,28 @@ struct ec_params_flash_erase {
- /* Entile flash code protected when the EC boots */
- #define EC_FLASH_PROTECT_ALL_AT_BOOT        (1 << 6)
- 
-+/**
-+ * struct ec_params_flash_protect - Parameters for the flash protect command.
-+ * @mask: Bits in flags to apply.
-+ * @flags: New flags to apply.
-+ */
- struct ec_params_flash_protect {
--	uint32_t mask;   /* Bits in flags to apply */
--	uint32_t flags;  /* New flags to apply */
-+	uint32_t mask;
-+	uint32_t flags;
- } __packed;
- 
-+/**
-+ * struct ec_response_flash_protect - Response to the flash protect command.
-+ * @flags: Current value of flash protect flags.
-+ * @valid_flags: Flags which are valid on this platform. This allows the
-+ *               caller to distinguish between flags which aren't set vs. flags
-+ *               which can't be set on this platform.
-+ * @writable_flags: Flags which can be changed given the current protection
-+ *                  state.
-+ */
- struct ec_response_flash_protect {
--	/* Current value of flash protect flags */
- 	uint32_t flags;
--	/*
--	 * Flags which are valid on this platform.  This allows the caller
--	 * to distinguish between flags which aren't set vs. flags which can't
--	 * be set on this platform.
--	 */
- 	uint32_t valid_flags;
--	/* Flags which can be changed given the current protection state */
- 	uint32_t writable_flags;
- } __packed;
- 
-@@ -982,8 +1060,13 @@ enum ec_flash_region {
- 	EC_FLASH_REGION_COUNT,
- };
- 
-+/**
-+ * struct ec_params_flash_region_info - Parameters for the flash region info
-+ *         command.
-+ * @region: Flash region; see EC_FLASH_REGION_*
-+ */
- struct ec_params_flash_region_info {
--	uint32_t region;  /* enum ec_flash_region */
-+	uint32_t region;
- } __packed;
- 
- struct ec_response_flash_region_info {
-@@ -1094,7 +1177,9 @@ struct rgb_s {
- };
- 
- #define LB_BATTERY_LEVELS 4
--/* List of tweakable parameters. NOTE: It's __packed so it can be sent in a
-+
-+/*
-+ * List of tweakable parameters. NOTE: It's __packed so it can be sent in a
-  * host command, but the alignment is the same regardless. Keep it that way.
-  */
- struct lightbar_params_v0 {
--- 
-2.18.0
+I'll have another look at the ABI side then, to see how it can
+be transitioned.
 
+> It also would make how to handle questions about truncation moot, or at
+> least moves the problem out of the kernel into userspace.  We actually
+> were already using unsigned integers for timestamps in the client <->
+> server protocol, so as you noted, that does give us a little breather
+> until 2106.
+
+ok.
+
+>> Originally sent on June 19, which lead to a short discussion
+>> and an Ack, but the patch did not get picked up for 4.19 yet.
+>
+> I'm sorry, somehow I missed the follow up questions in that discussion.
+>
+>> > If we only have one code base, it should be fairly straightforward to
+>> > make it deal with 'unsigned' timestamps consistently, which would
+>> > let the code work fine until 2106 rather than wrapping around from
+>> > 2038 to 1902.
+>
+> At some point there was a webdav filesystem that used the Coda kernel
+> apis, but I think they may have moved to FUSE since then so I would not
+> be surprised if there is only a single code base at this point.
+
+Ok, I found davfs2 at http://dav.sourceforge.net/index.shtml
+
+Ah, so the coda kernel implementation is similar to both fuse and 9pfs
+in that it can connect to arbitrary user space implementations, but with
+no known users other than your coda user space and some versions of
+davfs2?
+
+      Arnd
