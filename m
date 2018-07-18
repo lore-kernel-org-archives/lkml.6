@@ -2,108 +2,112 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4902FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC32FECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 073132075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:04:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 073132075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTP id 6020E20657
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:09:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6020E20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731741AbeGRDjq (ORCPT
+        id S1731324AbeGRDpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:39:46 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:37772 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731178AbeGRDjY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:39:24 -0400
-Received: from 89-71-158-145.dynamic.chello.pl ([89.71.158.145] helo=umbar.angband.pl)
-        by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1ffckX-0007zH-GG; Wed, 18 Jul 2018 05:03:36 +0200
-Received: from kilobyte by umbar.angband.pl with local (Exim 4.91)
-        (envelope-from <kilobyte@umbar.angband.pl>)
-        id 1ffckX-0000AK-4l; Wed, 18 Jul 2018 05:03:33 +0200
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-console@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Adam Borowski <kilobyte@angband.pl>
-Date:   Wed, 18 Jul 2018 05:03:23 +0200
-Message-Id: <20180718030327.579-2-kilobyte@angband.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180718030327.579-1-kilobyte@angband.pl>
-References: <20180718030152.kdq53mwpdfusvwl5@angband.pl>
- <20180718030327.579-1-kilobyte@angband.pl>
-X-SA-Exim-Connect-IP: 89.71.158.145
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: [PATCH 2/6] vt: add console flag "unblinking"
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
+        Tue, 17 Jul 2018 23:45:11 -0400
+Received: from mga18.intel.com ([134.134.136.126]:37826 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731193AbeGRDpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 23:45:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 20:09:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,368,1526367600"; 
+   d="scan'208";a="73248859"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 20:09:26 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v2 1/7] swap: Add comments to lock_cluster_or_swap_info()
+References: <20180717005556.29758-1-ying.huang@intel.com>
+        <20180717005556.29758-2-ying.huang@intel.com>
+        <0b478120-1af2-1251-361a-58c30b258ca3@linux.intel.com>
+Date:   Wed, 18 Jul 2018 11:09:25 +0800
+In-Reply-To: <0b478120-1af2-1251-361a-58c30b258ca3@linux.intel.com> (Dave
+        Hansen's message of "Tue, 17 Jul 2018 11:27:27 -0700")
+Message-ID: <87bmb5gryy.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marks consoles that interpret the blink bit by showing bright background
-instead.  Doesn't matter if the console can't do either.
+Dave Hansen <dave.hansen@linux.intel.com> writes:
 
-For now, turn it on for fbcon when in color mode.  Vgacon can also do so
-but requires setting appropriate VGA register (bit 3 of AMCR).  I don't
-know other consoles: newport looks like it shows bright bg, sti can't do
-either, mda appears to blink, etc -- but confirmation would be needed.
+> On 07/16/2018 05:55 PM, Huang, Ying wrote:
+>> +/*
+>> + * For non-HDD swap devices, the fine grained cluster lock is used to
+>> + * protect si->swap_map.  But cluster and cluster locks isn't
+>> + * available for HDD, so coarse grained si->lock will be used instead
+>> + * for that.
+>> + */
+>>  static inline struct swap_cluster_info *lock_cluster_or_swap_info(
+>>  	struct swap_info_struct *si,
+>>  	unsigned long offset)
+>
+> This nomenclature is not consistent with the rest of the file.  We call
+> a "non-HDD" device an "ssd" absolutely everywhere else in the file.  Why
+> are you calling it a non-HDD here?  (fwiw, HDD _barely_ hits my acronym
+> cache anyway).
+>
+> How about this?
+>
+> /*
+>  * Determine the locking method in use for this device.  Return
+>  * swap_cluster_info if SSD-style cluster-based locking is in place.
+>  */
+> static inline struct swap_cluster_info *lock_cluster_or_swap_info(
+>         struct swap_info_struct *si,
+>         unsigned long offset)
+> {
+>         struct swap_cluster_info *ci;
+>
+> 	/* Try to use fine-grained SSD-style locking if available: */
+>         ci = lock_cluster(si, offset);
+>
+> 	/* Otherwise, fall back to traditional, coarse locking: */
+>         if (!ci)
+>                 spin_lock(&si->lock);
+>
+>         return ci;
+> }
 
-Signed-off-by: Adam Borowski <kilobyte@angband.pl>
----
- drivers/tty/vt/vt.c              | 1 +
- drivers/video/fbdev/core/fbcon.c | 1 +
- include/linux/console_struct.h   | 1 +
- 3 files changed, 3 insertions(+)
+This is better than my one, will use this.  Thanks!
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 846dfedb657d..45057bbf6f74 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -998,6 +998,7 @@ static void visual_init(struct vc_data *vc, int num, int init)
- 	vc->vc_hi_font_mask = 0;
- 	vc->vc_complement_mask = 0;
- 	vc->vc_can_do_color = 0;
-+	vc->vc_unblinking = 0;
- 	vc->vc_panic_force_write = false;
- 	vc->vc_cur_blink_ms = DEFAULT_CURSOR_BLINK_MS;
- 	vc->vc_sw->con_init(vc, init);
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index c910e74d46ff..4c67254f1ec4 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -1092,6 +1092,7 @@ static void fbcon_init(struct vc_data *vc, int init)
- 
- 	vc->vc_panic_force_write = !!(info->flags & FBINFO_CAN_FORCE_OUTPUT);
- 	vc->vc_can_do_color = (fb_get_color_depth(&info->var, &info->fix)!=1);
-+	vc->vc_unblinking = vc->vc_can_do_color;
- 	vc->vc_complement_mask = vc->vc_can_do_color ? 0x7700 : 0x0800;
- 	if (charcnt == 256) {
- 		vc->vc_hi_font_mask = 0;
-diff --git a/include/linux/console_struct.h b/include/linux/console_struct.h
-index fea64f2692a0..f94b28a6bd2d 100644
---- a/include/linux/console_struct.h
-+++ b/include/linux/console_struct.h
-@@ -122,6 +122,7 @@ struct vc_data {
- 	unsigned int	vc_ques		: 1;
- 	unsigned int	vc_need_wrap	: 1;
- 	unsigned int	vc_can_do_color	: 1;
-+	unsigned int	vc_unblinking   : 1;	/* shows bright bg for blink */
- 	unsigned int	vc_report_mouse : 2;
- 	unsigned char	vc_utf		: 1;	/* Unicode UTF-8 encoding */
- 	unsigned char	vc_utf_count;
--- 
-2.18.0
+> Which reminds me?  Why do we even bother having two locking models?
 
+Because si->cluster_info is NULL for non-SSD, so we cannot use cluster
+lock.
+
+About why not use struct swap_cluster_info for non-SSD?  Per my
+understanding, struct swap_cluster_info is optimized for SSD.
+Especially it assumes seeking is cheap.  So different free swap slot
+scanning policy is used for SSD and non-SSD.
+
+Best Regards,
+Huang, Ying
