@@ -5,142 +5,188 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35DCECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59799ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FB972075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:27:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB972075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jp.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F45B2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:29:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F45B2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbeGRCBo (ORCPT
+        id S1731613AbeGRCEK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:01:44 -0400
-Received: from mgwym02.jp.fujitsu.com ([211.128.242.41]:16332 "EHLO
-        mgwym02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730055AbeGRCBo (ORCPT
+        Tue, 17 Jul 2018 22:04:10 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:55901 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730731AbeGRCEK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:01:44 -0400
-X-Greylist: delayed 669 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Jul 2018 22:01:43 EDT
-Received: from yt-mxoi1.gw.nic.fujitsu.com (unknown [192.168.229.67]) by mgwym02.jp.fujitsu.com with smtp
-         id 0a8b_396e_c9a42b14_808a_4635_af4f_14fec827da07;
-        Wed, 18 Jul 2018 10:15:13 +0900
-Received: from g01jpfmpwkw01.exch.g01.fujitsu.local (g01jpfmpwkw01.exch.g01.fujitsu.local [10.0.193.38])
-        by yt-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id A3930AC0192
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:15:12 +0900 (JST)
-Received: from G01JPEXCHKW16.g01.fujitsu.local (G01JPEXCHKW16.g01.fujitsu.local [10.0.194.55])
-        by g01jpfmpwkw01.exch.g01.fujitsu.local (Postfix) with ESMTP id BA6C9692408;
-        Wed, 18 Jul 2018 10:15:11 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw16 ([10.0.194.55]) with mapi id 14.03.0352.000; Wed, 18 Jul 2018
- 10:15:11 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'Marc Zyngier' <marc.zyngier@arm.com>,
+        Tue, 17 Jul 2018 22:04:10 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w6I1Scg6018671
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 18 Jul 2018 10:28:38 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6I1Scmp030165;
+        Wed, 18 Jul 2018 10:28:38 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6I1QbLD006221;
+        Wed, 18 Jul 2018 10:28:38 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-2012317; Wed, 18 Jul 2018 10:28:18 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0319.002; Wed,
+ 18 Jul 2018 10:28:17 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Mike Kravetz <mike.kravetz@oracle.com>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "Zhang, Lei" <zhang.lei@jp.fujitsu.com>,
-        "Matsuyama, Yoshihiro" <y.matsu@jp.fujitsu.com>
-Subject: RE: [PATCH 0/7] irqchip/gic-v3: LPI allocation refactoring
-Thread-Topic: [PATCH 0/7] irqchip/gic-v3: LPI allocation refactoring
-Thread-Index: AQHUCJ4ENtiIMXLHnEarHLrWvySVcKSUT7ug
-Date:   Wed, 18 Jul 2018 01:15:10 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A69F690AF@G01JPEXMBKW03>
-References: <20180620135234.32101-1-marc.zyngier@arm.com>
-In-Reply-To: <20180620135234.32101-1-marc.zyngier@arm.com>
-Accept-Language: ja-JP, en-US
+Subject: Re: [PATCH v2 1/2] mm: fix race on soft-offlining free huge pages
+Thread-Topic: [PATCH v2 1/2] mm: fix race on soft-offlining free huge pages
+Thread-Index: AQHUHY+ZfA+YF2+Ff02zwneBkDT4a6SS4qaAgABf0YCAAFi/gA==
+Date:   Wed, 18 Jul 2018 01:28:17 +0000
+Message-ID: <20180718012817.GB12184@hori1.linux.bs1.fc.nec.co.jp>
+References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <1531805552-19547-2-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180717142743.GJ7193@dhcp22.suse.cz>
+ <773a2f4e-c420-e973-cadd-4144730d28e8@oracle.com>
+In-Reply-To: <773a2f4e-c420-e973-cadd-4144730d28e8@oracle.com>
+Accept-Language: en-US, ja-JP
 Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
+x-originating-ip: [10.51.8.80]
 Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <FD920B7331243C4CBAFDBF37FFBCA01A@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
 X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc
+On Tue, Jul 17, 2018 at 01:10:39PM -0700, Mike Kravetz wrote:
+> On 07/17/2018 07:27 AM, Michal Hocko wrote:
+> > On Tue 17-07-18 14:32:31, Naoya Horiguchi wrote:
+> >> There's a race condition between soft offline and hugetlb_fault which
+> >> causes unexpected process killing and/or hugetlb allocation failure.
+> >>
+> >> The process killing is caused by the following flow:
+> >>
+> >>   CPU 0               CPU 1              CPU 2
+> >>
+> >>   soft offline
+> >>     get_any_page
+> >>     // find the hugetlb is free
+> >>                       mmap a hugetlb file
+> >>                       page fault
+> >>                         ...
+> >>                           hugetlb_fault
+> >>                             hugetlb_no_page
+> >>                               alloc_huge_page
+> >>                               // succeed
+> >>       soft_offline_free_page
+> >>       // set hwpoison flag
+> >>                                          mmap the hugetlb file
+> >>                                          page fault
+> >>                                            ...
+> >>                                              hugetlb_fault
+> >>                                                hugetlb_no_page
+> >>                                                  find_lock_page
+> >>                                                    return VM_FAULT_HWPOISON
+> >>                                            mm_fault_error
+> >>                                              do_sigbus
+> >>                                              // kill the process
+> >>
+> >>
+> >> The hugetlb allocation failure comes from the following flow:
+> >>
+> >>   CPU 0                          CPU 1
+> >>
+> >>                                  mmap a hugetlb file
+> >>                                  // reserve all free page but don't fault-in
+> >>   soft offline
+> >>     get_any_page
+> >>     // find the hugetlb is free
+> >>       soft_offline_free_page
+> >>       // set hwpoison flag
+> >>         dissolve_free_huge_page
+> >>         // fail because all free hugepages are reserved
+> >>                                  page fault
+> >>                                    ...
+> >>                                      hugetlb_fault
+> >>                                        hugetlb_no_page
+> >>                                          alloc_huge_page
+> >>                                            ...
+> >>                                              dequeue_huge_page_node_exact
+> >>                                              // ignore hwpoisoned hugepage
+> >>                                              // and finally fail due to no-mem
+> >>
+> >> The root cause of this is that current soft-offline code is written
+> >> based on an assumption that PageHWPoison flag should beset at first to
+> >> avoid accessing the corrupted data.  This makes sense for memory_failure()
+> >> or hard offline, but does not for soft offline because soft offline is
+> >> about corrected (not uncorrected) error and is safe from data lost.
+> >> This patch changes soft offline semantics where it sets PageHWPoison flag
+> >> only after containment of the error page completes successfully.
+> > 
+> > Could you please expand on the worklow here please? The code is really
+> > hard to grasp. I must be missing something because the thing shouldn't
+> > be really complicated. Either the page is in the free pool and you just
+> > remove it from the allocator (with hugetlb asking for a new hugeltb page
+> > to guaratee reserves) or it is used and you just migrate the content to
+> > a new page (again with the hugetlb reserves consideration). Why should
+> > PageHWPoison flag ordering make any relevance?
+> 
+> My understanding may not be corect, but just looking at the current code
+> for soft_offline_free_page helps me understand:
+> 
+> static void soft_offline_free_page(struct page *page)
+> {
+> 	struct page *head = compound_head(page);
+> 
+> 	if (!TestSetPageHWPoison(head)) {
+> 		num_poisoned_pages_inc();
+> 		if (PageHuge(head))
+> 			dissolve_free_huge_page(page);
+> 	}
+> }
+> 
+> The HWPoison flag is set before even checking to determine if the huge
+> page can be dissolved.  So, someone could could attempt to pull the page
+> off the free list (if free) or fault/map it (if already associated with
+> a file) which leads to the  failures described above.  The patches ensure
+> that we only set HWPoison after successfully dissolving the page. At least
+> that is how I understand it.
 
-This patches is necessary for our device, thanks a lot for your patches.
-We have done the tests for your patches on our prototype CPU chip.
-All of tests's results are PASSED.
+Thanks for elaborating, this is correct.
 
-Below is the detail of our tests.
-We did tests for 2 points.
-point 1: No level down for existing device such as nvme, network interface card.
-what we did: iozone benchmark on nvme, ssh command.
-point 2: Our original device can work well.
-what we did: Test set for our original device.
+> 
+> It seems that soft_offline_free_page can be called for in use pages.
+> Certainly, that is the case in the first workflow above.  With the
+> suggested changes, I think this is OK for huge pages.  However, it seems
+> that setting HWPoison on a in use non-huge page could cause issues?
 
-And we have done the review, we think the patches is no problem.
-But we found a spelling mistake in you comments.
-> + * The consequence of the above is that allocation is cost is low, but
-I propose the following is correct.
+Just after dissolve_free_huge_page() returns, the target page is just a
+free buddy page without PageHWPoison set. If this page is allocated
+immediately, that's "migration succeeded, but soft offline failed" case,
+so no problem.
+Certainly, there also is a race between cheking TestSetPageHWPoison and
+page allocation, so this issue is handled in patch 2/2.
 
-+ * The consequence of the above is that allocation cost is low, but
+> While looking at the code, I noticed this comment in __get_any_page()
+>         /*
+>          * When the target page is a free hugepage, just remove it
+>          * from free hugepage list.
+>          */
+> Did that apply to some code that was removed?  It does not seem to make
+> any sense in that routine.
 
-Best Regards,
-Lei Zhang
+This comment is completely obsolete, I'll remove this one.
 
-> -----Original Message-----
-> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
-> Sent: Wednesday, June 20, 2018 10:52 PM
-> To: linux-kernel@vger.kernel.org
-> Cc: Thomas Gleixner; Ard Biesheuvel; Shanker Donthineni; Shameer
-> Kolothum; MaJun; Laurentiu Tudor; Zhang, Lei/張 雷
-> Subject: [PATCH 0/7] irqchip/gic-v3: LPI allocation refactoring
-> 
-> The GICv3 LPI allocator has served us well so far, but a number of new
-> use cases have recently showed up:
-> 
-> - A new extension to the GICv3 architecture allows a hypervisor to
->   dramatically restrict the range of available LPIs. This means that
->   our current policy of allocating LPIs in blocks of 32 may quickly
->   deplete the number of devices that get LPIs
-> 
-> - New and currently undisclosed busses seem to come with thousands of
->   devices, each requiring a single LPI. Again, our current allocation
->   policy means they quickly run out of LPIs.
-> 
-> Simply expanding the bitmap doesn't seem to be a great idea, so let's
-> change the LPI allocator altogether. This means we can move individual
-> busses to a more minimal allocation scheme, though we only do it for
-> PCI at the moment (Platform MSI looks like the Far West, and I'm
-> clueless about the FSL MC thing).
-> 
-> This is a pretty invasive change, and I'm thus cc'ing the usual
-> suspects that have access to weird and wonderful HW to verify
-> everything still works as expected, and let me know if we can relax
-> the allocation for their own pet bus implementation.
-> 
-> Only lightly tested in a KVM guest (PCI).
-> 
-> 
-> Marc Zyngier (7):
->   irqchip/gic-v3-its: Refactor LPI allocator
->   irqchip/gic-v3-its: Use full range of LPIs
->   irqchip/gic-v3-its: Move minimum LPI requirements to individual busses
->   irqchip/gic-v3-its: Drop chunk allocation compatibility
->   irqchip/gic-v3: Expose GICD_TYPER in the rdist structure
->   irqchip/gic-v3-its: Honor hypervisor enforced LPI range
->   irqchip/gic-v3-its: Reduce minimum LPI allocation to 1 for PCI devices
-> 
->  drivers/irqchip/irq-gic-v3-its-fsl-mc-msi.c   |   3 +
->  drivers/irqchip/irq-gic-v3-its-pci-msi.c      |  16 +-
->  drivers/irqchip/irq-gic-v3-its-platform-msi.c |   2 +
->  drivers/irqchip/irq-gic-v3-its.c              | 225
-> ++++++++++++------
->  drivers/irqchip/irq-gic-v3.c                  |   4 +-
->  include/linux/irqchip/arm-gic-v3.h            |   3 +-
->  6 files changed, 169 insertions(+), 84 deletions(-)
-> 
-> --
-> 2.17.1
-> 
-> 
-
-
+Thanks,
+Naoya Horiguchi
