@@ -2,95 +2,124 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F608ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAC5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 978E4206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:51:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="vByV2Z8f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 978E4206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 61694206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:51:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61694206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730919AbeGRM2d (ORCPT
+        id S1730693AbeGRM2z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:28:33 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41894 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbeGRM2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:28:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=leV5L3NuGYVDpmxm5a7WRqFRVlZj2MiCPyw8QvXM2So=; b=vByV2Z8f9oFK+Hs2HrrsKZ5rl
-        pMoDRMBzJnb3XGvwV+NYt9X7+onLzDY0KxSK6nTkITcU/o7J5R6BdXeydkWkjcSp8sBQ5S5bTStN0
-        9+si55jWzBPe+XkgsfHmD9lmBBrr85gSNKumNdIeKw05AGhOhRtV113SJqT+0c381E+Z8=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffkyt-0003TO-2N; Wed, 18 Jul 2018 11:50:55 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffkys-0005Oi-Fg; Wed, 18 Jul 2018 12:50:54 +0100
-Date:   Wed, 18 Jul 2018 12:50:54 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH RESEND 02/15] ASoC: meson: add axg fifo base driver
-Message-ID: <20180718115054.GI5700@sirena.org.uk>
-References: <20180717154304.9973-1-jbrunet@baylibre.com>
- <20180717154304.9973-3-jbrunet@baylibre.com>
+        Wed, 18 Jul 2018 08:28:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729970AbeGRM2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 08:28:55 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 61D8A40AC6DE;
+        Wed, 18 Jul 2018 11:51:21 +0000 (UTC)
+Received: from [10.36.116.221] (ovpn-116-221.ams2.redhat.com [10.36.116.221])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D6A02156893;
+        Wed, 18 Jul 2018 11:51:19 +0000 (UTC)
+Subject: Re: [PATCH] x86/kvm: Don't use pvqspinlock code if only 1 vCPU
+To:     Waiman Long <longman@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Joe Mario <jmario@redhat.com>
+References: <1531864767-30648-1-git-send-email-longman@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <10b8511b-5488-1ea7-da45-3643e9e0a0b7@redhat.com>
+Date:   Wed, 18 Jul 2018 13:51:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CNK/L7dwKXQ4Ub8J"
-Content-Disposition: inline
-In-Reply-To: <20180717154304.9973-3-jbrunet@baylibre.com>
-X-Cookie: Remember the... the... uhh.....
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1531864767-30648-1-git-send-email-longman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 11:51:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 11:51:21 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 17/07/2018 23:59, Waiman Long wrote:
+> On a VM with only 1 vCPU, the locking fast path will always be
+> successful. In this case, there is no need to use the the PV qspinlock
+> code which has higher overhead on the unlock side than the native
+> qspinlock code.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  arch/x86/kernel/kvm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 5b2300b..575c9a5 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -748,6 +748,10 @@ void __init kvm_spinlock_init(void)
+>  	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
+>  		return;
+>  
+> +	/* Don't use the pvqspinlock code if there is only 1 vCPU. */
+> +	if (num_possible_cpus() == 1)
+> +		return;
+> +
+>  	__pv_init_lock_hash();
+>  	pv_lock_ops.queued_spin_lock_slowpath = __pv_queued_spin_lock_slowpath;
+>  	pv_lock_ops.queued_spin_unlock = PV_CALLEE_SAVE(__pv_queued_spin_unlock);
+> 
 
---CNK/L7dwKXQ4Ub8J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Queued, thanks.
 
-On Tue, Jul 17, 2018 at 05:42:51PM +0200, Jerome Brunet wrote:
-
-> +	return !status ? IRQ_NONE : IRQ_HANDLED;
-
-Please just write normal conditional statements, it makes things a lot
-easier to read (the ! isn't helping either here).
-
---CNK/L7dwKXQ4Ub8J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltPKZ0ACgkQJNaLcl1U
-h9A0+gf/VsQEQ3Eh3LFVvVOE4q/C6dHPik7B1mL+EauJ5ivAVTQbE/MpoHy/rAF0
-sVXGt+XVVsef/OLGmglJ3QM+k3z4QagK7r0eH4S4DjiDsBTW2h8OO1kR/Yrdnwee
-BULhCJqV5IBuTRIIlxAMvSYPe07SEs3KNzPbFjVbfTH6w44XdCDEnR+rKBkAcCOA
-c/NWQke0nlQe5LZC4GVQEPtXD3m4SlHyXyYc6Hiuf9f6+9GWEXMvh6lJU9mvo3VY
-ZUNXZjkzBc20K9ekCWVtOZwPC59rbsgoGYhhkXQhIGi0buyv+EjoYqn4QM/lDcOV
-WfA/uW/+EQukr9SjnXLNlMKcVCeexA==
-=WYYV
------END PGP SIGNATURE-----
-
---CNK/L7dwKXQ4Ub8J--
+Paolo
