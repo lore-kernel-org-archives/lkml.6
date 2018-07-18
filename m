@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B16D7ECDFB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B674ECDFBB
 	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E41620850
+	by mail.kernel.org (Postfix) with ESMTP id 23B9E2075E
 	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:59:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="WguY/AZ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E41620850
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="u919IaPM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23B9E2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730628AbeGRXj2 (ORCPT
+        id S1730745AbeGRXj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 18 Jul 2018 19:39:28 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46774 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729974AbeGRXjY (ORCPT
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:42616 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730521AbeGRXj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:39:24 -0400
-Received: by mail-pl0-f68.google.com with SMTP id t17-v6so133181ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:59:17 -0700 (PDT)
+        Wed, 18 Jul 2018 19:39:28 -0400
+Received: by mail-pf0-f196.google.com with SMTP id l9-v6so2885476pff.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OyWywDrz0yNlctIEZKfvqcYdJMHey6G7QhHf0bJ4Juc=;
-        b=WguY/AZ84m4D8XPoyVlUMQMTq3NNwODswZZM74PzEWFGMhoYexh4LTJtvuBLfVvdoa
-         t+flGWQe/fIJgGXDL9wC9tQrz3VXmKI+xozKNnvupLhGMUSIXXARvkw5dnz9Ebo9OZZs
-         o3WmfMbSyBe3yWM4puk+frRnpluMaXVDgwKNsijokAJEpg9+2j3lM8oMVQnEXAXXGsIn
-         BXopdo9HIXH9+Dxr60GZ1H5zBS2/4C38dhiWUPRVGGipuMrYrdVx+3MhpYHK+Pv7g+3B
-         ilO6aXl7+YjjwEe81c0NBzMa65U0IbdJyLYFXpTabj9HY7raQkyH/tArkm85hixFdr0s
-         BYQA==
+        bh=m1/hDZna1k9kEadKgQvnzi8gv4717mSyGgIlzsk+u7g=;
+        b=u919IaPMgov9aSaeendZxG49ChQnWO8WYKxWfz/D6k1ZSKsT1lxJALQF7r8C6Pj/wS
+         FWkjJowJ8INwb7BmXjcfftqAV7IDklZFTKXTVUPCdoaaBvx6F56kIS2HoE9sDNodx9ET
+         o6acHtl3rJZHad174AW7f4DY5x+Db3K+mEWSUVki+t28TyHgtV5VKWOt5BL/9fcAb/8A
+         MROB8Dcx92EaFcV7FU58roSSYkkBJ+JqVcMCGweTFFTS/7Bs+rKGoNZgdqAKcw1hSFF/
+         rEsNXjbe08IUiwixTESBZLQkrJvKfg7xwnAk1GZF83/ZitHPJsBWxHycQmKQWoer89Ph
+         HdXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OyWywDrz0yNlctIEZKfvqcYdJMHey6G7QhHf0bJ4Juc=;
-        b=j9JvnA+8A/19nKIxqC3S2V7SsFZVtmuKjhDOn5hoT7aitqwMhFHnpQNoE6JuEagB+4
-         BOEkaDBKXlEHBYKiawwgPygN8K5dJO1BSNQMYuV6cJu4hgTdziYbJjjFCLzul2qYh5zE
-         PM+P8ajTFIIWb2hpKWDG1oixqnWGPmVTE5dzpEdf25O+rjI0BhVRKLx7TKBBGRfHqvrd
-         85Gu5mLVXqEtddmNcMH+rKt1C6aglJLVnv1mPW1gwKb+J+uDFRZ7bbkFUXHulSKz3MzT
-         sjM7v7sttNjrqFuKbetqtW8qv06eZkmGFYRSB116XgOkn3qZveFR1EXREi0ntXvzJJwT
-         mRDg==
-X-Gm-Message-State: AOUpUlGBjbhefRfHR4YFf0PW5NBB4vqMOqLU47Jfv60d+wqDB7okWcLg
-        MKt0ZuLpa6PFw1PFHQUO+NwRm/XKtxk=
-X-Google-Smtp-Source: AAOMgpeWrMiw/LFYovwyQROAg0UslI0bFua7LPcQ1chSvyRS+oXsoOwOJ7E3kiz34S7nkOKYcjVFVA==
-X-Received: by 2002:a17:902:a702:: with SMTP id w2-v6mr7763319plq.41.1531954756864;
-        Wed, 18 Jul 2018 15:59:16 -0700 (PDT)
+        bh=m1/hDZna1k9kEadKgQvnzi8gv4717mSyGgIlzsk+u7g=;
+        b=Urr6V2WIkn/bXwE7KjHFZ7iQTHxRsMklODB3lZl3F2bYMh0rH1AmAvSRYOI1ti2whW
+         /mky8fMOW/KQxl/3rCVqalC3S/NRlEzT4ABW3bCU6lOq7PyNTGV1vwzN/qM0U2tmS4kJ
+         gUUmA7uokU+vaYZzsEroJ6Tq5H+p28EkX2COArSQ86zV2J7BPULQkrM+FBHy+SXLrzTQ
+         2aUI/gN1OcTx8qaSAO4N+Ds8+W0ZgfOlLwX/YNlfWGM/By+6lK9+QNQd6mJxK1AAif+H
+         hHJEcaUdyd5csBK/wcbbY7hM6d3rVZ597qw2TLtdeu0yDZ7dycstokcT9NCaRbr85h7P
+         Kang==
+X-Gm-Message-State: AOUpUlGqNflaNLBhXvup7Dv0OX51Mg2ev2NvmymZCDIv12+r6u9mQZrt
+        OweIXm892tVcR3ksARaBmMRivq/vscc=
+X-Google-Smtp-Source: AAOMgpccKFMvRyZ8s06QRau9vUfPWuihv9MIiFo/t3wA4ZJx95VmHM5ziTQ8Q3yIhU2sQnG1QrjjRQ==
+X-Received: by 2002:a63:5964:: with SMTP id j36-v6mr7637540pgm.222.1531954761700;
+        Wed, 18 Jul 2018 15:59:21 -0700 (PDT)
 Received: from vader.hsd1.wa.comcast.net ([2601:602:8800:a9a9:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id s16-v6sm6377946pfm.114.2018.07.18.15.59.15
+        by smtp.gmail.com with ESMTPSA id s16-v6sm6377946pfm.114.2018.07.18.15.59.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 15:59:16 -0700 (PDT)
+        Wed, 18 Jul 2018 15:59:21 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
@@ -64,9 +64,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Eric Biederman <ebiederm@xmission.com>,
         James Morse <james.morse@arm.com>,
         Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: [PATCH v3 3/8] proc/kcore: replace kclist_lock rwlock with rwsem
-Date:   Wed, 18 Jul 2018 15:58:43 -0700
-Message-Id: <521ba449ebe921d905177410fee9222d07882f0d.1531953780.git.osandov@fb.com>
+Subject: [PATCH v3 8/8] proc/kcore: add vmcoreinfo note to /proc/kcore
+Date:   Wed, 18 Jul 2018 15:58:48 -0700
+Message-Id: <fddbcd08eed76344863303878b12de1c1e2a04b6.1531953780.git.osandov@fb.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1531953780.git.osandov@fb.com>
 References: <cover.1531953780.git.osandov@fb.com>
@@ -77,97 +77,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-Now we only need kclist_lock from user context and at fs init time, and
-the following changes need to sleep while holding the kclist_lock.
+The vmcoreinfo information is useful for runtime debugging tools, not
+just for crash dumps. A lot of this information can be determined by
+other means, but this is much more convenient, and it only adds a page
+at most to the file.
 
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- fs/proc/kcore.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ fs/proc/Kconfig            |  1 +
+ fs/proc/kcore.c            | 18 ++++++++++++++++--
+ include/linux/crash_core.h |  2 ++
+ kernel/crash_core.c        |  4 ++--
+ 4 files changed, 21 insertions(+), 4 deletions(-)
 
+diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
+index 0eaeb41453f5..817c02b13b1d 100644
+--- a/fs/proc/Kconfig
++++ b/fs/proc/Kconfig
+@@ -31,6 +31,7 @@ config PROC_FS
+ config PROC_KCORE
+ 	bool "/proc/kcore support" if !ARM
+ 	depends on PROC_FS && MMU
++	select CRASH_CORE
+ 	help
+ 	  Provides a virtual ELF core file of the live kernel.  This can
+ 	  be read with gdb and other ELF tools.  No modifications can be
 diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index e83f15a4f66d..ae43a97d511d 100644
+index 25fefdd05ee5..ab7c1a1dad50 100644
 --- a/fs/proc/kcore.c
 +++ b/fs/proc/kcore.c
-@@ -59,7 +59,7 @@ struct memelfnote
- };
+@@ -10,6 +10,7 @@
+  *	Safe accesses to vmalloc/direct-mapped discontiguous areas, Kanoj Sarcar <kanoj@sgi.com>
+  */
  
- static LIST_HEAD(kclist_head);
--static DEFINE_RWLOCK(kclist_lock);
-+static DECLARE_RWSEM(kclist_lock);
- static int kcore_need_update = 1;
- 
- /* This doesn't grab kclist_lock, so it should only be used at init time. */
-@@ -117,7 +117,7 @@ static void __kcore_update_ram(struct list_head *list)
- 	struct kcore_list *tmp, *pos;
- 	LIST_HEAD(garbage);
- 
--	write_lock(&kclist_lock);
-+	down_write(&kclist_lock);
- 	if (xchg(&kcore_need_update, 0)) {
- 		list_for_each_entry_safe(pos, tmp, &kclist_head, list) {
- 			if (pos->type == KCORE_RAM
-@@ -128,7 +128,7 @@ static void __kcore_update_ram(struct list_head *list)
- 	} else
- 		list_splice(list, &garbage);
- 	proc_root_kcore->size = get_kcore_size(&nphdr, &size);
--	write_unlock(&kclist_lock);
-+	up_write(&kclist_lock);
- 
- 	free_kclist_ents(&garbage);
- }
-@@ -451,11 +451,11 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 	int nphdr;
- 	unsigned long start;
- 
--	read_lock(&kclist_lock);
-+	down_read(&kclist_lock);
- 	size = get_kcore_size(&nphdr, &elf_buflen);
- 
- 	if (buflen == 0 || *fpos >= size) {
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
- 		return 0;
++#include <linux/crash_core.h>
+ #include <linux/mm.h>
+ #include <linux/proc_fs.h>
+ #include <linux/kcore.h>
+@@ -81,10 +82,13 @@ static size_t get_kcore_size(int *nphdr, size_t *phdrs_len, size_t *notes_len,
  	}
  
-@@ -472,11 +472,11 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 			tsz = buflen;
- 		elf_buf = kzalloc(elf_buflen, GFP_ATOMIC);
- 		if (!elf_buf) {
--			read_unlock(&kclist_lock);
-+			up_read(&kclist_lock);
- 			return -ENOMEM;
- 		}
- 		elf_kcore_store_hdr(elf_buf, nphdr, elf_buflen);
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
- 		if (copy_to_user(buffer, elf_buf + *fpos, tsz)) {
- 			kfree(elf_buf);
- 			return -EFAULT;
-@@ -491,7 +491,7 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 		if (buflen == 0)
- 			return acc;
- 	} else
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
+ 	*phdrs_len = *nphdr * sizeof(struct elf_phdr);
+-	*notes_len = (3 * (sizeof(struct elf_note) + ALIGN(sizeof(CORE_STR), 4)) +
++	*notes_len = (4 * sizeof(struct elf_note) +
++		      3 * ALIGN(sizeof(CORE_STR), 4) +
++		      VMCOREINFO_NOTE_NAME_BYTES +
+ 		      ALIGN(sizeof(struct elf_prstatus), 4) +
+ 		      ALIGN(sizeof(struct elf_prpsinfo), 4) +
+-		      ALIGN(arch_task_struct_size, 4));
++		      ALIGN(arch_task_struct_size, 4) +
++		      ALIGN(vmcoreinfo_size, 4));
+ 	*data_offset = PAGE_ALIGN(sizeof(struct elfhdr) + *phdrs_len +
+ 				  *notes_len);
+ 	return *data_offset + size;
+@@ -406,6 +410,16 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 				  sizeof(prpsinfo));
+ 		append_kcore_note(notes, &i, CORE_STR, NT_TASKSTRUCT, current,
+ 				  arch_task_struct_size);
++		/*
++		 * vmcoreinfo_size is mostly constant after init time, but it
++		 * can be changed by crash_save_vmcoreinfo(). Racing here with a
++		 * panic on another CPU before the machine goes down is insanely
++		 * unlikely, but it's better to not leave potential buffer
++		 * overflows lying around, regardless.
++		 */
++		append_kcore_note(notes, &i, VMCOREINFO_NOTE_NAME, 0,
++				  vmcoreinfo_data,
++				  min(vmcoreinfo_size, notes_len - i));
  
- 	/*
- 	 * Check to see if our file offset matches with any of
-@@ -504,12 +504,12 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
- 	while (buflen) {
- 		struct kcore_list *m;
+ 		tsz = min_t(size_t, buflen, notes_offset + notes_len - *fpos);
+ 		if (copy_to_user(buffer, notes + *fpos - notes_offset, tsz)) {
+diff --git a/include/linux/crash_core.h b/include/linux/crash_core.h
+index b511f6d24b42..525510a9f965 100644
+--- a/include/linux/crash_core.h
++++ b/include/linux/crash_core.h
+@@ -60,6 +60,8 @@ phys_addr_t paddr_vmcoreinfo_note(void);
+ #define VMCOREINFO_CONFIG(name) \
+ 	vmcoreinfo_append_str("CONFIG_%s=y\n", #name)
  
--		read_lock(&kclist_lock);
-+		down_read(&kclist_lock);
- 		list_for_each_entry(m, &kclist_head, list) {
- 			if (start >= m->addr && start < (m->addr+m->size))
- 				break;
- 		}
--		read_unlock(&kclist_lock);
-+		up_read(&kclist_lock);
++extern unsigned char *vmcoreinfo_data;
++extern size_t vmcoreinfo_size;
+ extern u32 *vmcoreinfo_note;
  
- 		if (&m->list == &kclist_head) {
- 			if (clear_user(buffer, tsz))
+ Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index b66aced5e8c2..d02c58b94460 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -14,8 +14,8 @@
+ #include <asm/sections.h>
+ 
+ /* vmcoreinfo stuff */
+-static unsigned char *vmcoreinfo_data;
+-static size_t vmcoreinfo_size;
++unsigned char *vmcoreinfo_data;
++size_t vmcoreinfo_size;
+ u32 *vmcoreinfo_note;
+ 
+ /* trusted vmcoreinfo, e.g. we can make a copy in the crash memory */
 -- 
 2.18.0
 
