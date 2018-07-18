@@ -6,118 +6,127 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F4FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 176CCECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 001F12084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:24:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 001F12084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CA57E2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:25:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA57E2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbeGRWE2 (ORCPT
+        id S1730403AbeGRWFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:04:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:42452 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729702AbeGRWE2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:04:28 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 642B0D37;
-        Wed, 18 Jul 2018 21:24:15 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 14:24:14 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Coly Li <colyli@suse.de>
-Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Noah Massey <noah.massey@gmail.com>
-Subject: Re: [PATCH v4 3/3] lib/test_crc: Add test cases for crc calculation
-Message-Id: <20180718142414.1cab5d98b1f4b01102cd429a@linux-foundation.org>
-In-Reply-To: <20180718165545.1622-4-colyli@suse.de>
-References: <20180718165545.1622-1-colyli@suse.de>
-        <20180718165545.1622-4-colyli@suse.de>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Wed, 18 Jul 2018 18:05:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57958 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726680AbeGRWFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 18:05:21 -0400
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.phx2.redhat.com [10.5.11.25])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCBB030DECEC;
+        Wed, 18 Jul 2018 21:25:33 +0000 (UTC)
+Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 40A732010CBA;
+        Wed, 18 Jul 2018 21:25:32 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 15:25:31 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Srinath Mannam <srinath.mannam@broadcom.com>
+Cc:     Ray Jui <ray.jui@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        kvm@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        aik@ozlabs.ru, David Gibson <david@gibson.dropbear.id.au>,
+        benh@kernel.crashing.org
+Subject: Re: [RFC PATCH] vfio/pci: map prefetchble bars as writecombine
+Message-ID: <20180718152531.60f7df6b@t450s.home>
+In-Reply-To: <CABe79T7eVS5Z5+CkNRfWik=jFeejq54xheUOS=Jc9oU6qX8=kA@mail.gmail.com>
+References: <1531457777-11825-1-git-send-email-srinath.mannam@broadcom.com>
+        <20180717092207.775e381c@t450s.home>
+        <CABe79T7eVS5Z5+CkNRfWik=jFeejq54xheUOS=Jc9oU6qX8=kA@mail.gmail.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.25
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 18 Jul 2018 21:25:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Jul 2018 00:55:45 +0800 Coly Li <colyli@suse.de> wrote:
+On Thu, 19 Jul 2018 00:05:18 +0530
+Srinath Mannam <srinath.mannam@broadcom.com> wrote:
 
-> This patch adds a kernel module to test the consistency of multiple crc
-> calculation in Linux kernel. It is enabled with CONFIG_TEST_CRC enabled.
+> Hi Alex,
 > 
-> The test results are printed into kernel message, which look like,
-> 
-> test_crc: crc64_be: FAILED (0x03d4d0d85685d9a1, expected 0x3d4d0d85685d9a1f)
-> 
-> kernel 0day system has framework to check kernel message, then the above
-> result can be handled by 0day system. If crc calculation inconsistency
-> happens, it can be detected quite soon.
-> 
-> lib/test_crc.c is a testing frame work for many crc consistency
-> testings. For now, there is only one test caes for crc64_be().
+> On Tue, Jul 17, 2018 at 8:52 PM, Alex Williamson
+> <alex.williamson@redhat.com> wrote:
+> > On Fri, 13 Jul 2018 10:26:17 +0530
+> > Srinath Mannam <srinath.mannam@broadcom.com> wrote:
+> >  
+> >> By default all BARs map with VMA access permissions
+> >> as pgprot_noncached.
+> >>
+> >> In ARM64 pgprot_noncached is MT_DEVICE_nGnRnE which
+> >> is strongly ordered and allows aligned access.
+> >> This type of mapping works for NON-PREFETCHABLE bars
+> >> containing EP controller registers.
+> >> But it restricts PREFETCHABLE bars from doing
+> >> unaligned access.
+> >>
+> >> In CMB NVMe drives PREFETCHABLE bars are required to
+> >> map as MT_NORMAL_NC to do unaligned access.
+> >>
+> >> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> >> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> >> Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+> >> ---  
+> >
+> > This has been discussed before:
+> >
+> > https://www.spinics.net/lists/kvm/msg156548.html  
+> Thank you for inputs.. I have gone through the long list of mail chain
+> discussion.
+> >
+> > CC'ing the usual suspects from the previous thread.  I'm not convinced
+> > that the patch here has considered anything other than the ARM64
+> > implications and it's not clear that it considers compatibility with
+> > existing users or devices at all.  Can we guarantee for all devices and
+> > use cases that WC is semantically equivalent and preferable to UC?  If
+> > not then we need to device an extension to the interface that allows
+> > the user to specify WC.  Thanks,
+> >  
+> To implement with user specified WC flags, many changes need to be done.
+> Suppose In DPDK, prefetcable BARs map using WC flag, then also same
+> question comes
+> that WC may be different for different CPUs.
+> As per functionality, both WC and PREFETCHABLE are same, like merging writes and
+> typically WC is uncached.
+> So, based on prefetchable BARs behavior and usage we need to map bar memory.
+> Is it right to map prefetchable BARs as strongly ordered, aligned
+> access and uncached?
 
-Some tweaks.
+Is it possible to answer that question generically?  Whether to map a
+BAR as UC or WC is generally a question for the driver.  Does the
+device handle unaligned accesses?  Does the device need strong memory
+ordering?  If this is a driver level question then the driver that
+needs to make that decision is the userspace driver.  VFIO is just a
+pass-through here and since we don't offer the user a choice of
+mappings, we take the safer and more conservative mapping, ie. UC.
 
+You're suggesting that there are many changes to be done if we modify
+the vfio interface to expose WC under the user's control rather than
+simply transparently impose WC for all mappings, but is that really the
+case?  Most devices on most platforms seem to work fine now.  Perhaps WC
+is a performance optimization, but this is the first instance I've seen
+of it as a functional issue.  Does that suggest that the imposed
+alignment on your platform is perhaps unique and the relaxed alignment
+should be implemented at the architecture specific memory flags for UC
+mappings?  For instance, does x86 require this change for the same
+device?  The chance for regressions of other devices on other platforms
+seems rather high as proposed. Thanks,
 
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: lib-test_crc-add-test-cases-for-crc-calculation-fix
-
-make two globals static, regularize code layout, remove unneeded initialization
-
-Cc: Coly Li <colyli@suse.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- lib/test_crc.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff -puN lib/test_crc.c~lib-test_crc-add-test-cases-for-crc-calculation-fix lib/test_crc.c
---- a/lib/test_crc.c~lib-test_crc-add-test-cases-for-crc-calculation-fix
-+++ a/lib/test_crc.c
-@@ -25,8 +25,8 @@ struct crc_test_record {
- 	void	(*handler)(struct crc_test_record *rec);
- };
- 
--int failed_tests;
--int total_tests;
-+static int failed_tests;
-+static int total_tests;
- 
- static void chk_and_msg(const char *name, u64 crc, u64 expval)
- {
-@@ -68,9 +68,6 @@ static int __init test_crc_init(void)
- {
- 	int i;
- 
--	failed_tests = 0;
--	total_tests = 0;
--
- 	pr_info("Kernel CRC consistency testing:\n");
- 	for (i = 0; test_data[i].name; i++)
- 		test_data[i].handler(&test_data[i]);
-@@ -85,7 +82,9 @@ static int __init test_crc_init(void)
- }
- late_initcall(test_crc_init);
- 
--static void __exit test_crc_exit(void) { }
-+static void __exit test_crc_exit(void)
-+{
-+}
- module_exit(test_crc_exit);
- 
- MODULE_DESCRIPTION("CRC consistency testing driver");
-_
-
+Alex
