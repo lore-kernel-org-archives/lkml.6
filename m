@@ -2,159 +2,149 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0C6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E1EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617672075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:10:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617672075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id DD32C2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:12:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD32C2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbeGRHq3 (ORCPT
+        id S1726953AbeGRHtG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 03:46:29 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:40429 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbeGRHq3 (ORCPT
+        Wed, 18 Jul 2018 03:49:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53106 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726276AbeGRHtF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 03:46:29 -0400
-Received: by mail-ua0-f193.google.com with SMTP id p22-v6so2292820uao.7;
-        Wed, 18 Jul 2018 00:10:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wXfBVwFV9aSbZ23i9yBp0XjN1/fAHHnAXoLSg9V3DVI=;
-        b=WCkWd4bgdxPNCIghOwjH9z2kY1lrV+MqTonysiHfPXimNS/N1q8+ycZV2UxtQpVBvh
-         k857P8YblLDqNIc5ou2S5nbAgI0cl5VDstzVvD1ub3DZVB4pxwBV0S7DL5gZTaQZqYr7
-         Jw9iqHycXI1r+09mVyCQDIzbJnEUes+b7RTMdPDX7fyH/pQFkh3dPYkqkMam/tJsv2qi
-         oxB3V28AuWh2EwMoO95IyfDSlz9cDjFR6cj+QL53luDAKww6K5cqNQoqQxho4bb1NbR3
-         kSoTxPbjEl+oeI60Lpy7SB5uCsVQfYeAJGPmGRbLi0fT6o9Xv8JyBiPSU07v4m/Q7Fs4
-         N1Kg==
-X-Gm-Message-State: AOUpUlErtQJtmHEvhN45124ZDYrCwryzuTEYA6/8kq/y/2FJLatEjhmT
-        OrU7NS+KQ7lfSJ0ik5CPV45ymj3MEQ3gXr+yNYg=
-X-Google-Smtp-Source: AAOMgpefJs9PX3PY11lUkQYvHvOL1Vk03NG2hfIx9AyKM3NDuC/DQTScGx4M/U1yPHwNcC49+4NYEWgKYcZOMMKfroQ=
-X-Received: by 2002:ab0:72d1:: with SMTP id g17-v6mr3309480uap.33.1531897804746;
- Wed, 18 Jul 2018 00:10:04 -0700 (PDT)
+        Wed, 18 Jul 2018 03:49:05 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6I78eEL073478
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:12:41 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ka0hxh0vv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:12:41 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Wed, 18 Jul 2018 08:12:38 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 08:12:34 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6I7CXLj27590852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 07:12:33 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE18842045;
+        Wed, 18 Jul 2018 10:12:51 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 253884204D;
+        Wed, 18 Jul 2018 10:12:51 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.216])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 18 Jul 2018 10:12:51 +0100 (BST)
+Date:   Wed, 18 Jul 2018 10:12:31 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        syzbot <syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: kernel BUG at fs/userfaultfd.c:LINE! (2)
+References: <000000000000dcb1a1057112c66a@google.com>
+ <20180717192806.GI75957@gmail.com>
 MIME-Version: 1.0
-References: <cover.1454992186.git.viresh.kumar@linaro.org> <ad55cd1a03e712e2c0c49701e87a37199cb8376e.1454992187.git.viresh.kumar@linaro.org>
- <CAMuHMdXgE3oOVdYFy3kzmOv4FXvjU4rC39gUDUtMNJCdB__2AA@mail.gmail.com> <20180718055029.rdo427kozpwqm2bc@vireshk-i7>
-In-Reply-To: <20180718055029.rdo427kozpwqm2bc@vireshk-i7>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 18 Jul 2018 09:09:53 +0200
-Message-ID: <CAMuHMdU=FNhWh_oroBZb8NkUr_fsvUvYxBHH6=KErqU9_Xi4ZQ@mail.gmail.com>
-Subject: Re: [PATCH V3 11/16] cpufreq: dt: Pass regulator name to the OPP core
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linaro-kernel <linaro-kernel@lists.linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Nishanth Menon <nm@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717192806.GI75957@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18071807-0008-0000-0000-000002547029
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071807-0009-0000-0000-000021BAC50C
+Message-Id: <20180718071230.GA4302@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-18_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=869 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807180084
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Viresh,
+On Tue, Jul 17, 2018 at 12:28:06PM -0700, Eric Biggers wrote:
+> [+Cc userfaultfd developers and linux-mm]
+> 
+> The reproducer hits the BUG_ON() in userfaultfd_release():
+> 
+> 	BUG_ON(!!vma->vm_userfaultfd_ctx.ctx ^
+> 	       !!(vma->vm_flags & (VM_UFFD_MISSING | VM_UFFD_WP)));
 
-On Wed, Jul 18, 2018 at 7:50 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 17-07-18, 09:46, Geert Uytterhoeven wrote:
-> > CC device-tree folks
-> >
-> > Replying to an old email, because that's the most accurate reference I
-> > could find.
-> >
-> > On Tue, Feb 9, 2016 at 6:06 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > > OPP core can handle the regulators by itself, and but it needs to know
-> > > the name of the regulator to fetch. Add support for that.
-> > >
-> > > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > > ---
-> > >  drivers/cpufreq/cpufreq-dt.c | 46 ++++++++++++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 46 insertions(+)
-> > >
-> > > diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-> > > index 4c9f8a828f6f..2af75f8088bb 100644
-> > > --- a/drivers/cpufreq/cpufreq-dt.c
-> > > +++ b/drivers/cpufreq/cpufreq-dt.c
-> >
-> > > @@ -119,6 +120,30 @@ static int set_target(struct cpufreq_policy *policy, unsigned int index)
-> > >         return ret;
-> > >  }
-> > >
-> > > +/*
-> > > + * An earlier version of opp-v1 bindings used to name the regulator
-> > > + * "cpu0-supply", we still need to handle that for backwards compatibility.
-> > > + */
-> > > +static const char *find_supply_name(struct device *dev, struct device_node *np)
-> > > +{
-> > > +       struct property *pp;
-> > > +       int cpu = dev->id;
-> > > +
-> > > +       /* Try "cpu0" for older DTs */
-> > > +       if (!cpu) {
-> > > +               pp = of_find_property(np, "cpu0-supply", NULL);
-> > > +               if (pp)
-> > > +                       return "cpu0";
-> > > +       }
-> > > +
-> > > +       pp = of_find_property(np, "cpu-supply", NULL);
-> > > +       if (pp)
-> > > +               return "cpu";
-> >
-> > Despite the existence of lots of users of these properties, I couldn't find
-> > both the "earlier version" and the "current version" of the opp-v1 bindings
-> > documenting the "cpu0-supply" and "cpu-supply" properties?
->
-> They are part of the device nodes and don't fall under the
-> jurisdiction of OPP tables and so aren't defined there. We rely on the
-> "<name>-supply" property from the regulator bindings for the devices.
->
-> > Even for opp-v2, they are not documented in
-> > Documentation/devicetree/bindings/opp/opp.txt, but cpu-supply is used in
-> > the examples?
->
-> Same reasoning here as well.
+Thanks for the CC.
 
-Right, they are part of the cpu nodes, not of the operating-points properties
-(which are part of the cpu nodes) or the opp_table nodes (for v2).
+The fix is below.
 
-> > Can you please document these properties?
->
-> I don't think we need to, do we ?
+--
+Sincerely yours,
+Mike.
 
-IMHO they should be documented somewhere, with a link to
-Documentation/devicetree/bindings/regulator/regulator.txt.
-How else can a DTS writer know he/she needs them?
-Without cpu-supply (and clock!) properties, cpufreq can't work.
+From 3711b6a72abe3796b2b97fdba8eadd995b29f195 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Date: Wed, 18 Jul 2018 09:45:54 +0300
+Subject: [PATCH] userfaultfd: remove uffd flags from vma->vm_flags if
+ UFFD_EVENT_FORK fails
 
-Candidates:
-  - Documentation/devicetree/bindings/cpufreq/cpufreq-dt.txt
-    This has operating points without clocks nor cpu-supply, but with
-    clock-latency (for which clock? ;-)
-  - Documentation/devicetree/bindings/cpufreq/arm_big_little_dt.txt
-    Again, operating points without clocks nor cpu-supply, but with
-    clock-latency.
+The fix in commit 0cbb4b4f4c44 ("userfaultfd: clear the
+vma->vm_userfaultfd_ctx if UFFD_EVENT_FORK fails") cleared the
+vma->vm_userfaultfd_ctx but kept userfaultfd flags in vma->vm_flags that
+were copied from the parent process VMA.
 
-Thanks!
+As the result, there is an inconsistency between the values of
+vma->vm_userfaultfd_ctx.ctx and vma->vm_flags which triggers BUG_ON in
+userfaultfd_release().
 
-Gr{oetje,eeting}s,
+Clearing the uffd flags from vma->vm_flags in case of UFFD_EVENT_FORK
+failure resolves the issue.
 
-                        Geert
+Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Reported-by: syzbot+121be635a7a35ddb7dcb@syzkaller.appspotmail.com
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Eric Biggers <ebiggers3@gmail.com>
+Cc: stable@vger.kernel.org
+---
+ fs/userfaultfd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 594d192b2331..bad9cea37f12 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -633,8 +633,10 @@ static void userfaultfd_event_wait_completion(struct userfaultfd_ctx *ctx,
+ 		/* the various vma->vm_userfaultfd_ctx still points to it */
+ 		down_write(&mm->mmap_sem);
+ 		for (vma = mm->mmap; vma; vma = vma->vm_next)
+-			if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx)
++			if (vma->vm_userfaultfd_ctx.ctx == release_new_ctx) {
+ 				vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
++				vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
++			}
+ 		up_write(&mm->mmap_sem);
+ 
+ 		userfaultfd_ctx_put(release_new_ctx);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ 
+
