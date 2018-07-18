@@ -2,146 +2,124 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84CFECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07776ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75FF920673
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:38:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CIXpKmxk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FF920673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id B19062075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:41:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B19062075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731645AbeGRCOE (ORCPT
+        id S1731647AbeGRCQv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:14:04 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:51510 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730652AbeGRCOE (ORCPT
+        Tue, 17 Jul 2018 22:16:51 -0400
+Received: from mx01.hxt-semitech.com.96.203.223.in-addr.arpa ([223.203.96.7]:35838
+        "EHLO barracuda.hxt-semitech.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731368AbeGRCQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:14:04 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6I1YKif168897;
-        Wed, 18 Jul 2018 01:38:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=DOv1mAkL1aMLDz8MX2V5SYhP+2MHPCPDfqA1pl9otyg=;
- b=CIXpKmxkmgCbXHVff+EAD/aHozWj1/3QBgHm/L3zXKK8gtFR2QLTcQq1Iy2TOGzr8/yL
- 9zd4+qVsomAgan6+v3juyPD8ryTPXBsug8cMvGFssZqxCg0scHCllO9lFJ0h2MQzhBWn
- QTQKUdEf55iesPTrcSeKEk1AXCHe8Q71FH3YHP7TbLwuqp4CY0GjiPGaPmawvT2uYlVU
- nzlLHlzEobcTkO+lzdPn3maX1yU+EyfukL+TWjsrBDxDEpMs57iAGQpOearPV09lOlwN
- 1wS29M9kKwYZvSANShRPqgfaRgVtSDEVjUuYu4UmxoCRK6p2h1i3NTi8QqOmHSueDykK qA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2k7a3t329j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Jul 2018 01:38:42 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6I1cdNo001864
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Jul 2018 01:38:40 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6I1cdqL026575;
-        Wed, 18 Jul 2018 01:38:39 GMT
-Received: from mail-oi0-f44.google.com (/209.85.218.44)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 18:38:39 -0700
-Received: by mail-oi0-f44.google.com with SMTP id q11-v6so5690945oic.12;
-        Tue, 17 Jul 2018 18:38:39 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGJk+J6cVqx/gFlc14AO9pKaMFh28al3R97V/piFNcKITKqlenB
-        cxBy3cHbkvZUpuTxBfXejWTTaKoqVkdzQIHRvzw=
-X-Google-Smtp-Source: AAOMgpd1pidf8C1z58MBtrj211IxGRk3Uz45WMmdRPnWJx4wznwdr8QX/ktsZC6VCBtQHskDUANQdM9chrAaXEgxWfE=
-X-Received: by 2002:aca:b541:: with SMTP id e62-v6mr3757618oif.136.1531877918775;
- Tue, 17 Jul 2018 18:38:38 -0700 (PDT)
+        Tue, 17 Jul 2018 22:16:51 -0400
+X-ASG-Debug-ID: 1531878081-093b7e2c7ced810001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id XhA8BpWbYVwAsHfM (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO); Wed, 18 Jul 2018 09:41:21 +0800 (CST)
+X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
+Received: from y.localdomain (10.5.21.109) by HXTBJIDCEMVIW01.hxtcorp.net
+ (10.128.0.14) with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 18 Jul
+ 2018 09:41:26 +0800
+From:   Shunyong Yang <shunyong.yang@hxt-semitech.com>
+To:     <bhelgaas@google.com>
+CC:     <hch@infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>,
+        Shunyong Yang <shunyong.yang@hxt-semitech.com>,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: [PATCH v2] PCI: Unify pci and normal dma direction definition
+Date:   Wed, 18 Jul 2018 09:40:35 +0800
+X-ASG-Orig-Subj: [PATCH v2] PCI: Unify pci and normal dma direction definition
+Message-ID: <1531878035-33147-1-git-send-email-shunyong.yang@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
- <20180712000419.5165-7-pasha.tatashin@oracle.com> <cf7ef6d0-8650-3e8a-0e15-5150b58d1b50@oracle.com>
-In-Reply-To: <cf7ef6d0-8650-3e8a-0e15-5150b58d1b50@oracle.com>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Tue, 17 Jul 2018 21:38:02 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZTfuMhKZLApidBcenbeJTYt6n_56htaK5YkDPseb_Bqw@mail.gmail.com>
-Message-ID: <CAGM2reZTfuMhKZLApidBcenbeJTYt6n_56htaK5YkDPseb_Bqw@mail.gmail.com>
-Subject: Re: [PATCH v13 06/18] x86/xen/time: initialize pv xen time in init_hypervisor_platform
-To:     boris.ostrovsky@oracle.com
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
-        feng.tang@intel.com, Petr Mladek <pmladek@suse.com>,
-        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
-        jgross@suse.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8957 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=899
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807180016
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.109]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14)
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1531878081
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.6578 1.0000 1.0712
+X-Barracuda-Spam-Score: 1.07
+X-Barracuda-Spam-Status: No, SCORE=1.07 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.53880
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +     set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
-> > +     HYPERVISOR_shared_info = (void *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
-> > +
-> > +     /* xen clock uses per-cpu vcpu_info, need to init it for boot cpu */
-> > +     xen_vcpu_info_reset(0);
->
->
-> I don't believe this is necessary, it has been done in
-> xen_start_kernel() for PV guests.
+Current DMA direction definitions in pci-dma-compat.h and dma-direction.h
+are mirrored in value. Unifying them to enhance readability and avoid
+possible inconsistency.
 
-We need it, because HYPERVISOR_shared_info has changed from dummy.
-And, to output timestamps we must have access to the actual shared
-page.
+Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+---
 
-> > +
-> > +     /* pvclock is in shared info area */
-> > +     xen_init_time_ops();
-> > +}
-> > +
->
->
->
-> >  }
-> >
-> > -void __ref xen_init_time_ops(void)
-> > +void __init xen_init_time_ops(void)
-> >  {
-> >       pv_time_ops = xen_time_ops;
-> >
-> > @@ -542,17 +542,11 @@ void __init xen_hvm_init_time_ops(void)
-> >               return;
-> >
-> >       if (!xen_feature(XENFEAT_hvm_safe_pvclock)) {
-> > -             printk(KERN_INFO "Xen doesn't support pvclock on HVM,"
-> > -                             "disable pv timer\n");
-> > +             pr_info("Xen doesn't support pvclock on HVM, disable pv timer");
-> >               return;
-> >       }
-> > -
-> > -     pv_time_ops = xen_time_ops;
-> > +     xen_init_time_ops();
->
->
-> As we discussed elsewhere, now that HVM guests call this routine as well
-> we need to make sure that x86_init.timers.timer_init is not updated
-> there for HVM since those guests expect a "real" timer to be connected
-> to IO-APIC.
+v2:
+  Remove unnecessary comments and  braces according to Christoph's
+  comments.
 
-Yes, I decided to keep xen_init_time_ops() and xen_hvm_init_time_ops()
-separate. The unification does not save that many LOC, but increase
-the complexity.
+---
+ include/linux/dma-direction.h  | 6 ++----
+ include/linux/pci-dma-compat.h | 8 ++++----
+ 2 files changed, 6 insertions(+), 8 deletions(-)
 
-Thank you,
-Pavel
+diff --git a/include/linux/dma-direction.h b/include/linux/dma-direction.h
+index 3649a031893a..9c96e30e6a0b 100644
+--- a/include/linux/dma-direction.h
++++ b/include/linux/dma-direction.h
+@@ -1,14 +1,12 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef _LINUX_DMA_DIRECTION_H
+ #define _LINUX_DMA_DIRECTION_H
+-/*
+- * These definitions mirror those in pci.h, so they can be used
+- * interchangeably with their PCI_ counterparts.
+- */
++
+ enum dma_data_direction {
+ 	DMA_BIDIRECTIONAL = 0,
+ 	DMA_TO_DEVICE = 1,
+ 	DMA_FROM_DEVICE = 2,
+ 	DMA_NONE = 3,
+ };
++
+ #endif
+diff --git a/include/linux/pci-dma-compat.h b/include/linux/pci-dma-compat.h
+index 0dd1a3f7b309..c3f1b44ade29 100644
+--- a/include/linux/pci-dma-compat.h
++++ b/include/linux/pci-dma-compat.h
+@@ -8,10 +8,10 @@
+ #include <linux/dma-mapping.h>
+ 
+ /* This defines the direction arg to the DMA mapping routines. */
+-#define PCI_DMA_BIDIRECTIONAL	0
+-#define PCI_DMA_TODEVICE	1
+-#define PCI_DMA_FROMDEVICE	2
+-#define PCI_DMA_NONE		3
++#define PCI_DMA_BIDIRECTIONAL	DMA_BIDIRECTIONAL
++#define PCI_DMA_TODEVICE	DMA_TO_DEVICE
++#define PCI_DMA_FROMDEVICE	DMA_FROM_DEVICE
++#define PCI_DMA_NONE		DMA_NONE
+ 
+ static inline void *
+ pci_alloc_consistent(struct pci_dev *hwdev, size_t size,
+-- 
+1.8.3.1
+
