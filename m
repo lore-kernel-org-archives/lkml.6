@@ -2,108 +2,697 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC15FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6AEECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB2E2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40F4E2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:32:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oK8fAx1y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BB2E2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=lsitec-org-br.20150623.gappssmtp.com header.i=@lsitec-org-br.20150623.gappssmtp.com header.b="kFtyYv7F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40F4E2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lsitec.org.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731314AbeGRQKL (ORCPT
+        id S1731362AbeGRQLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:10:11 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45446 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729776AbeGRQKL (ORCPT
+        Wed, 18 Jul 2018 12:11:05 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40716 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730982AbeGRQLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:10:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EGWPG/X8t+7T87KaLGsK9KHlTPYkLU73knm4fICMtg0=; b=oK8fAx1ytNTPYzENm/U0EFzFf
-        zTyBiahHedowmR01Ko5aQjgID2FGH5LWma/HF8xOfFYRCVs+kKDL2mM+4wNaJtcM3OV0WcoVy5v9s
-        cSuPRNn2fs2sYuipOzbQrjX0lrBD5mVYN2VSnmifj2LjQ6s8UjrIGySCjyosNyV/tmlFA=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffoQW-0003gN-Vo; Wed, 18 Jul 2018 15:31:41 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffoQW-0005BW-Cn; Wed, 18 Jul 2018 16:31:40 +0100
-Date:   Wed, 18 Jul 2018 16:31:40 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>, linux-media@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Subject: Re: [PATCH -next v4 1/3] regmap: add SCCB support
-Message-ID: <20180718153140.GP5700@sirena.org.uk>
-References: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
- <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com>
- <20180718152832.ylu6rlcsaom2q4xm@ninjato>
+        Wed, 18 Jul 2018 12:11:04 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e19-v6so4611287edq.7
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:32:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lsitec-org-br.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=/RF7FzELi5B6UMmAkZre10kO4HF/vvfJtuLdQABDWPk=;
+        b=kFtyYv7FoHeMYZ+w6rrzkfTufqxzxYu+9GCf6/wZVz0Yj2Eia9Id7sQ5dNZUZ0so59
+         U9C2XTOMd557ntCasd+qP/dzzAwrXd8hBEDMhCCzV2PI1dXBiVVjzgKLbYE2lipRv2qW
+         Dsg+HWgfzW8kEgfvoA9EV5w/zzwatrR4RveEs/7N1DwOso6uSUTHeoOPOHWCJagmVf2w
+         To8whkYLi2BsnNhfSgUiTX+H5fld7mKqV/O9u+IIE0nRvamwtCMVdJeSfIUYIeD/D85i
+         v6AQEKkwM9ron61pmM0Wp1qE8zacP9s1nUKsczIEqRVq4VBS5XyOGOfPOMrC7piEvMD3
+         I18w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=/RF7FzELi5B6UMmAkZre10kO4HF/vvfJtuLdQABDWPk=;
+        b=FqlgpCZzXj7Tz+TVaOdQwZxqJhP9q4H2VUHm89O6JoqJQc+Tjhe5PPSpUSHpLMMs2m
+         R9GgvICSUHKCXlJlMITVltDmySSZ84NhE9qxNVDh06VCFA1/npJz6WSUI4PI9smyTTR1
+         mpZx0oaHaLE23cLTejrUD+kJBKIbrstUVg3E7Ndi6MHKKNJnOVd0LHRoSaJs9XHLscCx
+         4n30S7klzHCSszENm/ReB2es1iORoeb64RDoaH4vwuLbEAjMdyp44FnF/WMtkKUOUhp3
+         NRbF2bXFAo9UKMhgmg8qEahp2dLrHjoF9I6ip99cctZPNPIf37JNeFezbuGnuXt4BiaQ
+         9GOA==
+X-Gm-Message-State: AOUpUlGL/D3BMtxqeo52Dl/IyRfAXByTWMhD5v7IPkF0wWhq7j4gtBBs
+        7OxJ1sRqkZ7kC+SGclGQfEaTBgXo87DSqN7Hj3G9ew==
+X-Google-Smtp-Source: AAOMgpf4Czkf9r9kQklrwu37pjqsrW/4yPdSYpueloprhwbrF+tQErC9dZrofJWoCPkV362Hbi5HN8KIye3FRTU0b/o=
+X-Received: by 2002:a50:a666:: with SMTP id d93-v6mr7723041edc.244.1531927955332;
+ Wed, 18 Jul 2018 08:32:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GIP5y49pbaVPin6k"
-Content-Disposition: inline
-In-Reply-To: <20180718152832.ylu6rlcsaom2q4xm@ninjato>
-X-Cookie: Remember the... the... uhh.....
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a17:906:d1cd:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:32:34
+ -0700 (PDT)
+From:   Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
+Date:   Wed, 18 Jul 2018 12:32:34 -0300
+Message-ID: <CADHB5bAns1PmTvq=fG8Rc2S6orEh7wf5XYAGQONTKMsoYv-UTg@mail.gmail.com>
+Subject: [PATCH v1 01/04] clk: actions: Add Actions Semi S500 SoC clock support
+To:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, linux@armlinux.org.uk,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?Q?Guilherme_G=2E_Sim=C3=B5es?= 
+        <guilherme.simoes@lsitec.org.br>,
+        Jon maddog Hall <jon.maddog.hall@gmail.com>,
+        mkzuffo@lsi.usp.br,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        sboyd@kernel.org, mark.rutland@arm.com, linux@cubietech.com,
+        support@cubietech.com, catalin.marinas@arm.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        will.deacon@arm.com, thomas liau <thomas.liau@actions-semi.com>,
+        darren@cubietech.com, robh+dt@kernel.org,
+        jeff.chen@actions-semi.com, pn@denx.de, mp-cs@actions-semi.com,
+        Laisa Costa - LSI-TEC <laisa.costa@lsitec.org.br>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add Actions Semi S500 SoC clock support.
+Basic clock support for S500 SoC was implemented using the Actions
+Semi Owl clock driver.
+Tested on a Lemaker Guitar board.
 
---GIP5y49pbaVPin6k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch depends on patch "[PATCH v6 1/5] clk: actions: Add missing
+REGMAP_MMIO dependency" by Saravanan Sekar.
+This patch depends on patch "[PATCH] clk: actions: Add custom delay
+option to Actions Semi OWL pll clock driver" by Edgar Bernardi Righi.
 
-On Wed, Jul 18, 2018 at 05:28:32PM +0200, Wolfram Sang wrote:
-> On Tue, Jul 17, 2018 at 12:47:48AM +0900, Akinobu Mita wrote:
+File(s) created: "/drivers/clk/actions/owl-s500.c"
+File(s) updated: "/drivers/clk/actions/Makefile", "/drivers/clk/actions/Kconfig"
 
-> > +	ret = __i2c_smbus_xfer(i2c->adapter, i2c->addr, i2c->flags,
-> > +			       I2C_SMBUS_WRITE, reg, I2C_SMBUS_BYTE, NULL);
+Signed-off-by: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
 
-> Mark: __i2c_smbus_xfer is a dependency on i2c/for-next. Do you want an
-> immutable branch for that?
+diff -uprN -X vanilla/Documentation/dontdiff
+vanilla/drivers/clk/actions/Kconfig linux/drivers/clk/actions/Kconfig
+--- vanilla/drivers/clk/actions/Kconfig    2018-07-17 13:07:16.667704000 -0300
++++ linux/drivers/clk/actions/Kconfig    2018-07-13 15:04:36.586539000 -0300
+@@ -1,6 +1,7 @@
+ config CLK_ACTIONS
+     bool "Clock driver for Actions Semi SoCs"
+     depends on ARCH_ACTIONS || COMPILE_TEST
++    select REGMAP_MMIO
+     default ARCH_ACTIONS
 
-Oh dear, that dependency wasn't mentioned anywhere I can see in the
-submissions and I already applied this and created a signed tag :( .
-I'll need a branch to pull in if I'm going to apply this (which I'd
-prefer, it tends to make life easier).
+ if CLK_ACTIONS
+@@ -11,4 +12,10 @@ config CLK_OWL_S900
+     bool "Support for the Actions Semi OWL S900 clocks"
+     depends on (ARM64 && ARCH_ACTIONS) || COMPILE_TEST
+     default ARM64 && ARCH_ACTIONS
++
++config CLK_OWL_S500
++    bool "Support for the Actions Semi OWL S500 clocks"
++    depends on ARCH_ACTIONS || COMPILE_TEST
++    default ARCH_ACTIONS
++
+ endif
+diff -uprN -X vanilla/Documentation/dontdiff
+vanilla/drivers/clk/actions/Makefile
+linux/drivers/clk/actions/Makefile
+--- vanilla/drivers/clk/actions/Makefile    2018-07-17 13:07:16.667704000 -0300
++++ linux/drivers/clk/actions/Makefile    2018-07-13 15:04:58.002702000 -0300
+@@ -10,3 +10,4 @@ clk-owl-y            += owl-pll.o
 
---GIP5y49pbaVPin6k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltPXVsACgkQJNaLcl1U
-h9DjXgf/axsR8NQUNk9IvtOlgTc/b9f/inR7NzaGZITDNx/h9Xt59O+lR7c/7k9x
-8FrzAFuWll0JMhJhDtFHEV9IeraaxByMbIiVffaP0fVh1JWOeoG4jur/aQOvGiov
-cEBrpudcsjyqlKvQHor2SqQz+GrCGuuK0zuFcv5Jpe0UV8C02zwGTiy7fAzJSvTC
-pPAu/YnExqNOk/p8dj9xlWhBk77OrAS7d4PRDHoMIb0OSOazg0UJc6i/CiJfR2Go
-EVRFNCIG+9hBOWEyXS0IBMmFI6tObVUztAmmlGQm5LrYPhNJQPw73O71MRcOy2vs
-M5G4s54lbQ8B4D/gipZGKWI6QddT2Q==
-=iQ+9
------END PGP SIGNATURE-----
-
---GIP5y49pbaVPin6k--
+ # SoC support
+ obj-$(CONFIG_CLK_OWL_S900)    += owl-s900.o
++obj-$(CONFIG_CLK_OWL_S500)    += owl-s500.o
+diff -uprN -X vanilla/Documentation/dontdiff
+vanilla/drivers/clk/actions/owl-s500.c
+linux/drivers/clk/actions/owl-s500.c
+--- vanilla/drivers/clk/actions/owl-s500.c    1969-12-31
+21:00:00.000000000 -0300
++++ linux/drivers/clk/actions/owl-s500.c    2018-07-18 12:30:38.263193069 -0300
+@@ -0,0 +1,524 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// OWL S500 SoC clock driver
++//
++// Copyright (c) 2014 Actions Semi Inc.
++// Author: David Liu <liuwei@actions-semi.com>
++//
++// Copyright (c) 2018 Linaro Ltd.
++// Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
++//
++// Copyright (c) 2018 LSI-TEC - Caninos Loucos
++// Author: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++
++#include "owl-common.h"
++#include "owl-composite.h"
++#include "owl-divider.h"
++#include "owl-factor.h"
++#include "owl-fixed-factor.h"
++#include "owl-gate.h"
++#include "owl-mux.h"
++#include "owl-pll.h"
++
++#include <dt-bindings/clock/actions,s500-cmu.h>
++
++#define CMU_COREPLL                    (0x0000)
++#define CMU_DEVPLL                     (0x0004)
++#define CMU_DDRPLL                     (0x0008)
++#define CMU_NANDPLL                 (0x000C)
++#define CMU_DISPLAYPLL                 (0x0010)
++#define CMU_AUDIOPLL                 (0x0014)
++#define CMU_TVOUTPLL                 (0x0018)
++#define CMU_BUSCLK                     (0x001C)
++#define CMU_SENSORCLK                 (0x0020)
++#define CMU_LCDCLK                     (0x0024)
++#define CMU_DSICLK                     (0x0028)
++#define CMU_CSICLK                     (0x002C)
++#define CMU_DECLK                     (0x0030)
++#define CMU_BISPCLK                 (0x0034)
++#define CMU_BUSCLK1                 (0x0038)
++#define CMU_VDECLK                     (0x0040)
++#define CMU_VCECLK                     (0x0044)
++#define CMU_NANDCCLK                 (0x004C)
++#define CMU_SD0CLK                     (0x0050)
++#define CMU_SD1CLK                     (0x0054)
++#define CMU_SD2CLK                     (0x0058)
++#define CMU_UART0CLK                 (0x005C)
++#define CMU_UART1CLK                 (0x0060)
++#define CMU_UART2CLK                 (0x0064)
++#define CMU_PWM4CLK                  (0x0068)
++#define CMU_PWM5CLK                 (0x006C)
++#define CMU_PWM0CLK                 (0x0070)
++#define CMU_PWM1CLK                 (0x0074)
++#define CMU_PWM2CLK                 (0x0078)
++#define CMU_PWM3CLK                 (0x007C)
++#define CMU_USBPLL                     (0x0080)
++#define CMU_ETHERNETPLL             (0x0084)
++#define CMU_CVBSPLL                 (0x0088)
++#define CMU_LENSCLK                 (0x008C)
++#define CMU_GPU3DCLK                 (0x0090)
++#define CMU_CORECTL                 (0x009C)
++#define CMU_DEVCLKEN0                 (0x00A0)
++#define CMU_DEVCLKEN1                 (0x00A4)
++#define CMU_DEVRST0                 (0x00A8)
++#define CMU_DEVRST1                 (0x00AC)
++#define CMU_UART3CLK                 (0x00B0)
++#define CMU_UART4CLK                 (0x00B4)
++#define CMU_UART5CLK                 (0x00B8)
++#define CMU_UART6CLK                 (0x00BC)
++#define CMU_SSCLK                     (0x00C0)
++#define CMU_DIGITALDEBUG             (0x00D0)
++#define CMU_ANALOGDEBUG             (0x00D4)
++#define CMU_COREPLLDEBUG             (0x00D8)
++#define CMU_DEVPLLDEBUG             (0x00DC)
++#define CMU_DDRPLLDEBUG             (0x00E0)
++#define CMU_NANDPLLDEBUG             (0x00E4)
++#define CMU_DISPLAYPLLDEBUG         (0x00E8)
++#define CMU_TVOUTPLLDEBUG             (0x00EC)
++#define CMU_DEEPCOLORPLLDEBUG         (0x00F4)
++#define CMU_AUDIOPLL_ETHPLLDEBUG     (0x00F8)
++#define CMU_CVBSPLLDEBUG             (0x00FC)
++
++#define OWL_S500_COREPLL_DELAY        (150)
++#define OWL_S500_DDRPLL_DELAY        (63)
++#define OWL_S500_DEVPLL_DELAY        (28)
++#define OWL_S500_NANDPLL_DELAY        (44)
++#define OWL_S500_DISPLAYPLL_DELAY    (57)
++#define OWL_S500_ETHERNETPLL_DELAY    (25)
++#define OWL_S500_AUDIOPLL_DELAY        (100)
++
++static struct clk_pll_table clk_audio_pll_table[] = {
++    { 0, 45158400 }, { 1, 49152000 },
++    { 0, 0 },
++};
++
++static OWL_PLL_NO_PARENT_DELAY(ethernet_pll_clk, "ethernet_pll_clk",
+CMU_ETHERNETPLL, 500000000, 0, 0, 0, 0, 0, NULL, CLK_IGNORE_UNUSED,
+OWL_S500_ETHERNETPLL_DELAY);
++static OWL_PLL_NO_PARENT_DELAY(core_pll_clk, "core_pll_clk",
+CMU_COREPLL, 12000000, 9, 0, 8, 4, 134, NULL, CLK_IGNORE_UNUSED,
+OWL_S500_COREPLL_DELAY);
++static OWL_PLL_NO_PARENT_DELAY(ddr_pll_clk, "ddr_pll_clk",
+CMU_DDRPLL, 12000000, 8, 0, 8, 1, 67, NULL, CLK_IGNORE_UNUSED,
+OWL_S500_DDRPLL_DELAY);
++static OWL_PLL_NO_PARENT_DELAY(nand_pll_clk, "nand_pll_clk",
+CMU_NANDPLL, 6000000, 8, 0, 7, 2, 86, NULL, CLK_IGNORE_UNUSED,
+OWL_S500_NANDPLL_DELAY);
++static OWL_PLL_NO_PARENT_DELAY(display_pll_clk, "display_pll_clk",
+CMU_DISPLAYPLL, 6000000, 8, 0, 8, 2, 126, NULL, CLK_IGNORE_UNUSED,
+OWL_S500_DISPLAYPLL_DELAY);
++static OWL_PLL_NO_PARENT_DELAY(dev_pll_clk, "dev_pll_clk",
+CMU_DEVPLL, 6000000, 8, 0, 7, 8, 126, NULL, CLK_IGNORE_UNUSED,
+OWL_S500_DEVPLL_DELAY);
++static OWL_PLL_NO_PARENT_DELAY(audio_pll_clk, "audio_pll_clk",
+CMU_AUDIOPLL, 0, 4, 0, 1, 0, 0, clk_audio_pll_table,
+CLK_IGNORE_UNUSED, OWL_S500_AUDIOPLL_DELAY);
++
++static const char *dev_clk_mux_p[] = { "hosc", "dev_pll_clk" };
++static const char *bisp_clk_mux_p[] = { "display_pll_clk", "dev_clk" };
++static const char *sensor_clk_mux_p[] = { "hosc", "bisp_clk" };
++static const char *sd_clk_mux_p[] = { "dev_clk", "nand_pll_clk" };
++static const char *pwm_clk_mux_p[] = { "losc", "hosc" };
++static const char *ahbprediv_clk_mux_p[] = { "dev_clk",
+"display_pll_clk", "nand_pll_clk", "ddr_pll_clk" };
++static const char *uart_clk_mux_p[] = { "hosc", "dev_pll_clk" };
++static const char *de_clk_mux_p[] = { "display_pll_clk", "dev_clk" };
++static const char *i2s_clk_mux_p[] = { "audio_pll_clk" };
++static const char *hde_clk_mux_p[] = { "dev_clk", "display_pll_clk",
+"nand_pll_clk", "ddr_pll_clk" };
++static const char *nand_clk_mux_p[] = { "nand_pll_clk",
+"display_pll_clk", "dev_clk", "ddr_pll_clk" };
++
++static struct clk_factor_table sd_factor_table[] = {
++    /* bit0 ~ 4 */
++    { 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
++    { 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
++    { 8, 1, 9 }, { 9, 1, 10 }, { 10, 1, 11 }, { 11, 1, 12 },
++    { 12, 1, 13 }, { 13, 1, 14 }, { 14, 1, 15 }, { 15, 1, 16 },
++    { 16, 1, 17 }, { 17, 1, 18 }, { 18, 1, 19 }, { 19, 1, 20 },
++    { 20, 1, 21 }, { 21, 1, 22 }, { 22, 1, 23 }, { 23, 1, 24 },
++    { 24, 1, 25 }, { 25, 1, 26 }, { 26, 1, 27 }, { 27, 1, 28 },
++    { 28, 1, 29 }, { 29, 1, 30 }, { 30, 1, 31 }, { 31, 1, 32 },
++
++    /* bit8: /128 */
++    { 256, 1, 1 * 128 }, { 257, 1, 2 * 128 }, { 258, 1, 3 * 128 }, {
+259, 1, 4 * 128 },
++    { 260, 1, 5 * 128 }, { 261, 1, 6 * 128 }, { 262, 1, 7 * 128 }, {
+263, 1, 8 * 128 },
++    { 264, 1, 9 * 128 }, { 265, 1, 10 * 128 }, { 266, 1, 11 * 128 },
+{ 267, 1, 12 * 128 },
++    { 268, 1, 13 * 128 }, { 269, 1, 14 * 128 }, { 270, 1, 15 * 128 },
+{ 271, 1, 16 * 128 },
++    { 272, 1, 17 * 128 }, { 273, 1, 18 * 128 }, { 274, 1, 19 * 128 },
+{ 275, 1, 20 * 128 },
++    { 276, 1, 21 * 128 }, { 277, 1, 22 * 128 }, { 278, 1, 23 * 128 },
+{ 279, 1, 24 * 128 },
++    { 280, 1, 25 * 128 }, { 281, 1, 26 * 128 }, { 282, 1, 27 * 128 },
+{ 283, 1, 28 * 128 },
++    { 284, 1, 29 * 128 }, { 285, 1, 30 * 128 }, { 286, 1, 31 * 128 },
+{ 287, 1, 32 * 128 },
++
++    { 0, 0, 0 },
++};
++
++static struct clk_factor_table bisp_factor_table[] = {
++    { 0, 1, 1 }, { 1, 1, 2 }, { 2, 1, 3 }, { 3, 1, 4 },
++    { 4, 1, 5 }, { 5, 1, 6 }, { 6, 1, 7 }, { 7, 1, 8 },
++    { 0, 0, 0 },
++};
++
++static struct clk_factor_table ahb_factor_table[] = {
++    { 1, 1, 2 }, { 2, 1, 3 },
++    { 0, 0, 0 },
++};
++
++static struct clk_div_table rmii_ref_div_table[] = {
++    { 0, 4 }, { 1, 10 },
++    { 0, 0 },
++};
++
++static struct clk_div_table i2s_div_table[] = {
++    { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },
++    { 4, 6 }, { 5, 8 }, { 6, 12 }, { 7, 16 },
++    { 8, 24 },
++    { 0, 0 },
++};
++
++static struct clk_div_table nand_div_table[] = {
++    { 0, 1 }, { 1, 2 }, { 2, 4 }, { 3, 6 },
++    { 4, 8 }, { 5, 10 }, { 6, 12 }, { 7, 14 },
++    { 8, 16 }, { 9, 18 }, { 10, 20 }, { 11, 22 },
++    { 0, 0 },
++};
++
++static OWL_MUX(dev_clk, "dev_clk", dev_clk_mux_p, CMU_DEVPLL, 12, 1,
+CLK_SET_RATE_PARENT);
++
++static OWL_COMP_FACTOR(vce_clk, "vce_clk", hde_clk_mux_p,
++        OWL_MUX_HW(CMU_VCECLK, 4, 2),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 26, 0),
++        OWL_FACTOR_HW(CMU_VCECLK, 0, 3, 0, bisp_factor_table),
++        0);
++
++static OWL_COMP_FACTOR(vde_clk, "vde_clk", hde_clk_mux_p,
++        OWL_MUX_HW(CMU_VDECLK, 4, 2),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 25, 0),
++        OWL_FACTOR_HW(CMU_VDECLK, 0, 3, 0, bisp_factor_table),
++        0);
++
++static OWL_COMP_FACTOR(bisp_clk, "bisp_clk", bisp_clk_mux_p,
++        OWL_MUX_HW(CMU_BISPCLK, 4, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
++        OWL_FACTOR_HW(CMU_BISPCLK, 0, 3, 0, bisp_factor_table),
++        0);
++
++static OWL_COMP_FACTOR(sensor0_clk, "sensor0_clk", sensor_clk_mux_p,
++        OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
++        OWL_FACTOR_HW(CMU_SENSORCLK, 0, 3, 0, bisp_factor_table),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_FACTOR(sensor1_clk, "sensor1_clk", sensor_clk_mux_p,
++        OWL_MUX_HW(CMU_SENSORCLK, 4, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 14, 0),
++        OWL_FACTOR_HW(CMU_SENSORCLK, 8, 3, 0, bisp_factor_table),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_FACTOR(sd0_clk, "sd0_clk", sd_clk_mux_p,
++        OWL_MUX_HW(CMU_SD0CLK, 9, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 5, 0),
++        OWL_FACTOR_HW(CMU_SD0CLK, 0, 9, 0, sd_factor_table),
++        0);
++
++static OWL_COMP_FACTOR(sd1_clk, "sd1_clk", sd_clk_mux_p,
++        OWL_MUX_HW(CMU_SD1CLK, 9, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 6, 0),
++        OWL_FACTOR_HW(CMU_SD1CLK, 0, 9, 0, sd_factor_table),
++        0);
++
++static OWL_COMP_FACTOR(sd2_clk, "sd2_clk", sd_clk_mux_p,
++        OWL_MUX_HW(CMU_SD2CLK, 9, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 7, 0),
++        OWL_FACTOR_HW(CMU_SD2CLK, 0, 9, 0, sd_factor_table),
++        0);
++
++static OWL_COMP_DIV(pwm0_clk, "pwm0_clk", pwm_clk_mux_p,
++        OWL_MUX_HW(CMU_PWM0CLK, 12, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 23, 0),
++        OWL_DIVIDER_HW(CMU_PWM0CLK, 0, 10, 0, NULL),
++        0);
++
++static OWL_COMP_DIV(pwm1_clk, "pwm1_clk", pwm_clk_mux_p,
++        OWL_MUX_HW(CMU_PWM1CLK, 12, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 24, 0),
++        OWL_DIVIDER_HW(CMU_PWM1CLK, 0, 10, 0, NULL),
++        0);
++
++static OWL_COMP_DIV(pwm2_clk, "pwm2_clk", pwm_clk_mux_p,
++        OWL_MUX_HW(CMU_PWM2CLK, 12, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 25, 0),
++        OWL_DIVIDER_HW(CMU_PWM2CLK, 0, 10, 0, NULL),
++        0);
++
++static OWL_COMP_DIV(pwm3_clk, "pwm3_clk", pwm_clk_mux_p,
++        OWL_MUX_HW(CMU_PWM3CLK, 12, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 26, 0),
++        OWL_DIVIDER_HW(CMU_PWM3CLK, 0, 10, 0, NULL),
++        0);
++
++static OWL_COMP_DIV(pwm4_clk, "pwm4_clk", pwm_clk_mux_p,
++        OWL_MUX_HW(CMU_PWM4CLK, 12, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 11, 0),
++        OWL_DIVIDER_HW(CMU_PWM4CLK, 0, 10, 0, NULL),
++        0);
++
++static OWL_COMP_DIV(pwm5_clk, "pwm5_clk", pwm_clk_mux_p,
++        OWL_MUX_HW(CMU_PWM5CLK, 12, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 0, 0),
++        OWL_DIVIDER_HW(CMU_PWM5CLK, 0, 10, 0, NULL),
++        0);
++
++static OWL_COMP_PASS(de_clk, "de_clk", de_clk_mux_p,
++        OWL_MUX_HW(CMU_DECLK, 12, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 8, 0),
++        0);
++
++static OWL_MUX(ahbprediv_clk, "ahbprediv_clk", ahbprediv_clk_mux_p,
+CMU_BUSCLK1, 8, 3, CLK_SET_RATE_PARENT);
++
++static OWL_DIVIDER(h_clk, "h_clk", "ahbprevdiv_clk", CMU_BUSCLK1, 12,
+2, NULL, 0, 0);
++
++static OWL_DIVIDER(rmii_ref_clk, "rmii_ref_clk", "ethernet_pll_clk",
+CMU_ETHERNETPLL, 1, 1, rmii_ref_div_table, 0, 0);
++
++static OWL_FACTOR(ahb_clk, "ahb_clk", "h_clk", CMU_BUSCLK1, 2, 2,
+ahb_factor_table, 0, 0);
++
++static OWL_FACTOR(de1_clk, "de_clk1", "de_clk", CMU_DECLK, 0, 3,
+bisp_factor_table, 0, 0);
++static OWL_FACTOR(de2_clk, "de_clk2", "de_clk", CMU_DECLK, 4, 3,
+bisp_factor_table, 0, 0);
++
++static OWL_COMP_FIXED_FACTOR(i2c0_clk, "i2c0_clk", "ethernet_pll_clk",
++        OWL_GATE_HW(CMU_DEVCLKEN1, 14, 0),
++        1, 5, 0);
++
++static OWL_COMP_FIXED_FACTOR(i2c1_clk, "i2c1_clk", "ethernet_pll_clk",
++        OWL_GATE_HW(CMU_DEVCLKEN1, 15, 0),
++        1, 5, 0);
++
++static OWL_COMP_FIXED_FACTOR(i2c2_clk, "i2c2_clk", "ethernet_pll_clk",
++        OWL_GATE_HW(CMU_DEVCLKEN1, 30, 0),
++        1, 5, 0);
++
++static OWL_COMP_FIXED_FACTOR(i2c3_clk, "i2c3_clk", "ethernet_pll_clk",
++        OWL_GATE_HW(CMU_DEVCLKEN1, 31, 0),
++        1, 5, 0);
++
++static OWL_GATE(spi0_clk, "spi0_clk", "ahb_clk", CMU_DEVCLKEN1, 10,
+0, CLK_IGNORE_UNUSED);
++static OWL_GATE(spi1_clk, "spi1_clk", "ahb_clk", CMU_DEVCLKEN1, 11,
+0, CLK_IGNORE_UNUSED);
++static OWL_GATE(spi2_clk, "spi2_clk", "ahb_clk", CMU_DEVCLKEN1, 12,
+0, CLK_IGNORE_UNUSED);
++static OWL_GATE(spi3_clk, "spi3_clk", "ahb_clk", CMU_DEVCLKEN1, 13,
+0, CLK_IGNORE_UNUSED);
++static OWL_GATE(timer_clk, "timer_clk", "hosc", CMU_DEVCLKEN1, 27, 0, 0);
++static OWL_GATE(hdmi_clk, "hdmi_clk", "hosc", CMU_DEVCLKEN1, 3, 0, 0);
++
++static OWL_COMP_DIV(uart0_clk, "uart0_clk", uart_clk_mux_p,
++        OWL_MUX_HW(CMU_UART0CLK, 16, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 6, 0),
++        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_DIV(uart1_clk, "uart1_clk", uart_clk_mux_p,
++        OWL_MUX_HW(CMU_UART1CLK, 16, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 7, 0),
++        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_DIV(uart2_clk, "uart2_clk", uart_clk_mux_p,
++        OWL_MUX_HW(CMU_UART2CLK, 16, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 8, 0),
++        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_DIV(uart3_clk, "uart3_clk", uart_clk_mux_p,
++        OWL_MUX_HW(CMU_UART3CLK, 16, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 19, 0),
++        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_DIV(uart4_clk, "uart4_clk", uart_clk_mux_p,
++        OWL_MUX_HW(CMU_UART4CLK, 16, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 20, 0),
++        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_DIV(uart5_clk, "uart5_clk", uart_clk_mux_p,
++        OWL_MUX_HW(CMU_UART5CLK, 16, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 21, 0),
++        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_DIV(uart6_clk, "uart6_clk", uart_clk_mux_p,
++        OWL_MUX_HW(CMU_UART6CLK, 16, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN1, 18, 0),
++        OWL_DIVIDER_HW(CMU_UART1CLK, 0, 8, CLK_DIVIDER_ROUND_CLOSEST, NULL),
++        CLK_IGNORE_UNUSED);
++
++static OWL_COMP_DIV(i2srx_clk, "i2srx_clk", i2s_clk_mux_p,
++        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 21, 0),
++        OWL_DIVIDER_HW(CMU_AUDIOPLL, 20, 4, 0, i2s_div_table),
++        0);
++
++static OWL_COMP_DIV(i2stx_clk, "i2stx_clk", i2s_clk_mux_p,
++        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 20, 0),
++        OWL_DIVIDER_HW(CMU_AUDIOPLL, 16, 4, 0, i2s_div_table),
++        0);
++
++static OWL_COMP_DIV(hdmia_clk, "hdmia_clk", i2s_clk_mux_p,
++        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 22, 0),
++        OWL_DIVIDER_HW(CMU_AUDIOPLL, 24, 4, 0, i2s_div_table),
++        0);
++
++static OWL_COMP_DIV(spdif_clk, "spdif_clk", i2s_clk_mux_p,
++        OWL_MUX_HW(CMU_AUDIOPLL, 24, 1),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 23, 0),
++        OWL_DIVIDER_HW(CMU_AUDIOPLL, 28, 4, 0, i2s_div_table),
++        0);
++
++static OWL_COMP_DIV(nand_clk, "nand_clk", nand_clk_mux_p,
++        OWL_MUX_HW(CMU_NANDCCLK, 8, 2),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 4, 0),
++        OWL_DIVIDER_HW(CMU_NANDCCLK, 0, 3, 0, nand_div_table),
++        CLK_SET_RATE_PARENT);
++
++static OWL_COMP_DIV(ecc_clk, "ecc_clk", nand_clk_mux_p,
++        OWL_MUX_HW(CMU_NANDCCLK, 8, 2),
++        OWL_GATE_HW(CMU_DEVCLKEN0, 4, 0),
++        OWL_DIVIDER_HW(CMU_NANDCCLK, 4, 3, 0, nand_div_table),
++        CLK_SET_RATE_PARENT);
++
++static struct owl_clk_common *s500_clks[] =
++{
++    &ethernet_pll_clk.common,
++    &core_pll_clk.common,
++    &ddr_pll_clk.common,
++    &dev_pll_clk.common,
++    &nand_pll_clk.common,
++    &audio_pll_clk.common,
++    &display_pll_clk.common,
++    &dev_clk.common,
++    &timer_clk.common,
++    &i2c0_clk.common,
++    &i2c1_clk.common,
++    &i2c2_clk.common,
++    &i2c3_clk.common,
++    &uart0_clk.common,
++    &uart1_clk.common,
++    &uart2_clk.common,
++    &uart3_clk.common,
++    &uart4_clk.common,
++    &uart5_clk.common,
++    &uart6_clk.common,
++    &pwm0_clk.common,
++    &pwm1_clk.common,
++    &pwm2_clk.common,
++    &pwm3_clk.common,
++    &pwm4_clk.common,
++    &pwm5_clk.common,
++    &sensor0_clk.common,
++    &sensor1_clk.common,
++    &sd0_clk.common,
++    &sd1_clk.common,
++    &sd2_clk.common,
++    &bisp_clk.common,
++    &ahb_clk.common,
++    &ahbprediv_clk.common,
++    &h_clk.common,
++    &spi0_clk.common,
++    &spi1_clk.common,
++    &spi2_clk.common,
++    &spi3_clk.common,
++    &rmii_ref_clk.common,
++    &de_clk.common,
++    &de1_clk.common,
++    &de2_clk.common,
++    &i2srx_clk.common,
++    &i2stx_clk.common,
++    &hdmia_clk.common,
++    &hdmi_clk.common,
++    &vce_clk.common,
++    &vde_clk.common,
++    &spdif_clk.common,
++    &nand_clk.common,
++    &ecc_clk.common,
++};
++
++static struct clk_hw_onecell_data s500_hw_clks = {
++    .hws =
++    {
++        [CLK_ETHERNET_PLL]    = &ethernet_pll_clk.common.hw,
++        [CLK_CORE_PLL]        = &core_pll_clk.common.hw,
++        [CLK_DDR_PLL]        = &ddr_pll_clk.common.hw,
++        [CLK_NAND_PLL]        = &nand_pll_clk.common.hw,
++        [CLK_DISPLAY_PLL]    = &display_pll_clk.common.hw,
++        [CLK_DEV_PLL]        = &dev_pll_clk.common.hw,
++        [CLK_AUDIO_PLL]        = &audio_pll_clk.common.hw,
++        [CLK_TIMER]            = &timer_clk.common.hw,
++        [CLK_DEV]            = &dev_clk.common.hw,
++        [CLK_DE]            = &de_clk.common.hw,
++        [CLK_DE1]            = &de1_clk.common.hw,
++        [CLK_DE2]            = &de2_clk.common.hw,
++        [CLK_I2C0]            = &i2c0_clk.common.hw,
++        [CLK_I2C1]            = &i2c1_clk.common.hw,
++        [CLK_I2C2]            = &i2c2_clk.common.hw,
++        [CLK_I2C3]            = &i2c3_clk.common.hw,
++        [CLK_I2SRX]            = &i2srx_clk.common.hw,
++        [CLK_I2STX]            = &i2stx_clk.common.hw,
++        [CLK_UART0]            = &uart0_clk.common.hw,
++        [CLK_UART1]            = &uart1_clk.common.hw,
++        [CLK_UART2]            = &uart2_clk.common.hw,
++        [CLK_UART3]            = &uart3_clk.common.hw,
++        [CLK_UART4]            = &uart4_clk.common.hw,
++        [CLK_UART5]            = &uart5_clk.common.hw,
++        [CLK_UART6]            = &uart6_clk.common.hw,
++        [CLK_PWM0]            = &pwm0_clk.common.hw,
++        [CLK_PWM1]            = &pwm1_clk.common.hw,
++        [CLK_PWM2]            = &pwm2_clk.common.hw,
++        [CLK_PWM3]            = &pwm3_clk.common.hw,
++        [CLK_PWM4]            = &pwm4_clk.common.hw,
++        [CLK_PWM5]            = &pwm5_clk.common.hw,
++        [CLK_SENSOR0]        = &sensor0_clk.common.hw,
++        [CLK_SENSOR1]        = &sensor1_clk.common.hw,
++        [CLK_SD0]            = &sd0_clk.common.hw,
++        [CLK_SD1]            = &sd1_clk.common.hw,
++        [CLK_SD2]            = &sd2_clk.common.hw,
++        [CLK_BISP]            = &bisp_clk.common.hw,
++        [CLK_SPI0]            = &spi0_clk.common.hw,
++        [CLK_SPI1]            = &spi1_clk.common.hw,
++        [CLK_SPI2]            = &spi2_clk.common.hw,
++        [CLK_SPI3]            = &spi3_clk.common.hw,
++        [CLK_AHB]            = &ahb_clk.common.hw,
++        [CLK_H]                = &h_clk.common.hw,
++        [CLK_AHBPREDIV]        = &ahbprediv_clk.common.hw,
++        [CLK_RMII_REF]        = &rmii_ref_clk.common.hw,
++        [CLK_HDMI_AUDIO]    = &hdmia_clk.common.hw,
++        [CLK_HDMI]            = &hdmi_clk.common.hw,
++        [CLK_VDE]            = &vde_clk.common.hw,
++        [CLK_VCE]            = &vce_clk.common.hw,
++        [CLK_SPDIF]            = &spdif_clk.common.hw,
++        [CLK_NAND]            = &nand_clk.common.hw,
++        [CLK_ECC]            = &ecc_clk.common.hw,
++    },
++    .num = CLK_NR_CLKS,
++};
++
++static const struct owl_clk_desc s500_clk_desc =
++{
++    .clks        = s500_clks,
++    .num_clks   = ARRAY_SIZE(s500_clks),
++    .hw_clks    = &s500_hw_clks,
++};
++
++static int s500_clk_probe(struct platform_device *pdev)
++{
++    const struct owl_clk_desc *desc;
++
++    desc = &s500_clk_desc;
++    owl_clk_regmap_init(pdev, desc);
++
++    return owl_clk_probe(&pdev->dev, desc->hw_clks);
++}
++
++static const struct of_device_id s500_clk_of_match[] = {
++    { .compatible = "actions,s500-cmu", },
++    { /* sentinel */ }
++};
++
++static struct platform_driver s500_clk_driver = {
++    .probe = s500_clk_probe,
++    .driver = {
++        .name = "s500-cmu",
++        .of_match_table = s500_clk_of_match,
++    },
++};
++
++static int __init s500_clk_init(void)
++{
++    return platform_driver_register(&s500_clk_driver);
++}
++core_initcall(s500_clk_init);
