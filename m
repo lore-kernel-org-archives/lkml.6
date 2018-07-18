@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D48ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BF8ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 645C92075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 655BE2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:25:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zS9vN5LB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645C92075E
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pquaBNdH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 655BE2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732044AbeGRDA3 (ORCPT
+        id S1731865AbeGRC7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:00:29 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:45084 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731893AbeGRC7n (ORCPT
+        Tue, 17 Jul 2018 22:59:40 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:47796 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731209AbeGRC7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:59:43 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6I2Jtr8001052;
-        Wed, 18 Jul 2018 02:22:36 GMT
+        Tue, 17 Jul 2018 22:59:39 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6I2JVX6169033;
+        Wed, 18 Jul 2018 02:23:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=HrI13El2AtYGFL9hjq2GqC4989/C5RtLOAFVm8r8nOY=;
- b=zS9vN5LBz62xGmbTscYLBJHMgVize0LCLOxNxBbTF4WEG0kcbYuvTbf4UdkHghMu7pae
- gO4em74tgPsJeG7/80rtyotw1/qyhtP9d35yNg9e5rTEWgz9t9P2Vbgc72CVzPyDwuCW
- jLUZd/Ec5UQNoaeqcuxPeNP475jT4KRJbrjSC1wzd4ofclPLE2hjK8g/JMtms5/AUizQ
- JbOkxi+eGHAtGjaYkEVMUAbofT3BP41fEYY3VlLNujJXNv1FuDBEAAelKY2Wv+azHZFe
- +G470FTqlSsh1xsXkmTJmWTddlXTCoWy+kE9CEqTLrlUZPHkVkKSaT9R56J9aKFSCbAi Mg== 
+ bh=1OKYBYbjpBzdL78BrlqCdhIvSCqx7ycLk3y3b/PE7ic=;
+ b=pquaBNdHAypzAlFFwoEC6Rih3uDZgioYR4h7TeW2g9jRr5b53+WgII+uqBo3JHr9hVHk
+ gEsagKq3PBaDVN5AGS5fcBCFYCABZ0hP2z9MaG5FOVeMfqzKSOppW2NUhreAp8ewZyJZ
+ qhs/9M93Rhv2+Mhi8oKDtY9SX09WptSTnKJgTxstAbooFDyFPoBWwmRcN71pSwlPpE2n
+ SdGXne/gbIKV1+1HpSjsMmoh2LFJFSfCiBxbA92SXaox9sKDFyhmrzWYZ5VjeZ/BXX5j
+ GdvE3jkF07LwVcKO+U+FYvgT5UYBMauN1DpIvClionJsnQ0NU72ZPK8C2IkA46G7fHkg 6w== 
 Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2k7a3t34cy-1
+        by userp2130.oracle.com with ESMTP id 2k7a3tb44c-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Jul 2018 02:22:36 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6I2MZjt027614
+        Wed, 18 Jul 2018 02:23:11 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6I2NAXw028297
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Jul 2018 02:22:35 GMT
+        Wed, 18 Jul 2018 02:23:10 GMT
 Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6I2MYNc013474;
-        Wed, 18 Jul 2018 02:22:34 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6I2N96c020835;
+        Wed, 18 Jul 2018 02:23:09 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Jul 2018 19:22:33 -0700
+        with ESMTP ; Tue, 17 Jul 2018 19:23:09 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,9 +61,9 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-Subject: [PATCH v14 06/25] x86/kvmclock: Move kvmclock vsyscall param and init to kvmclock
-Date:   Tue, 17 Jul 2018 22:21:52 -0400
-Message-Id: <20180718022211.6259-7-pasha.tatashin@oracle.com>
+Subject: [PATCH v14 20/25] x86/tsc: calibrate tsc only once
+Date:   Tue, 17 Jul 2018 22:22:06 -0400
+Message-Id: <20180718022211.6259-21-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180718022211.6259-1-pasha.tatashin@oracle.com>
 References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
@@ -77,154 +77,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+During boot tsc is calibrated twice: once in tsc_early_delay_calibrate(),
+and the second time in tsc_init().
 
-There is no point to have this in the kvm code itself and call it from
-there. This can be called from an initcall and the parameter is cleared
-when the hypervisor is not KVM.
+Rename tsc_early_delay_calibrate() to tsc_early_init(), and rework it so
+the calibration is done only early, and make tsc_init() to use the values
+already determined in tsc_early_init().
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Sometimes it is not possible to determine tsc early, as the subsystem that
+is required is not yet initialized, in such case try again later in
+tsc_init().
+
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- arch/x86/include/asm/kvm_guest.h |  7 -----
- arch/x86/kernel/kvm.c            | 13 ---------
- arch/x86/kernel/kvmclock.c       | 46 +++++++++++++++++++-------------
- 3 files changed, 28 insertions(+), 38 deletions(-)
- delete mode 100644 arch/x86/include/asm/kvm_guest.h
+ arch/x86/include/asm/tsc.h |  2 +-
+ arch/x86/kernel/setup.c    |  2 +-
+ arch/x86/kernel/tsc.c      | 86 ++++++++++++++++++++------------------
+ 3 files changed, 48 insertions(+), 42 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_guest.h b/arch/x86/include/asm/kvm_guest.h
-deleted file mode 100644
-index 46185263d9c2..000000000000
---- a/arch/x86/include/asm/kvm_guest.h
-+++ /dev/null
-@@ -1,7 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _ASM_X86_KVM_GUEST_H
--#define _ASM_X86_KVM_GUEST_H
--
--int kvm_setup_vsyscall_timeinfo(void);
--
--#endif /* _ASM_X86_KVM_GUEST_H */
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index c65c232d3ddd..a560750cc76f 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -45,7 +45,6 @@
- #include <asm/apic.h>
- #include <asm/apicdef.h>
- #include <asm/hypervisor.h>
--#include <asm/kvm_guest.h>
+diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
+index 2701d221583a..c4368ff73652 100644
+--- a/arch/x86/include/asm/tsc.h
++++ b/arch/x86/include/asm/tsc.h
+@@ -33,7 +33,7 @@ static inline cycles_t get_cycles(void)
+ extern struct system_counterval_t convert_art_to_tsc(u64 art);
+ extern struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns);
  
- static int kvmapf = 1;
+-extern void tsc_early_delay_calibrate(void);
++extern void tsc_early_init(void);
+ extern void tsc_init(void);
+ extern void mark_tsc_unstable(char *reason);
+ extern int unsynchronized_tsc(void);
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 7490de925a81..5d32c55aeb8b 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1014,6 +1014,7 @@ void __init setup_arch(char **cmdline_p)
+ 	 */
+ 	init_hypervisor_platform();
  
-@@ -66,15 +65,6 @@ static int __init parse_no_stealacc(char *arg)
++	tsc_early_init();
+ 	x86_init.resources.probe_roms();
  
- early_param("no-steal-acc", parse_no_stealacc);
+ 	/* after parse_early_param, so could debug it */
+@@ -1199,7 +1200,6 @@ void __init setup_arch(char **cmdline_p)
  
--static int kvmclock_vsyscall = 1;
--static int __init parse_no_kvmclock_vsyscall(char *arg)
+ 	memblock_find_dma_reserve();
+ 
+-	tsc_early_delay_calibrate();
+ 	if (!early_xdbc_setup_hardware())
+ 		early_xdbc_register_console();
+ 
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 186395041725..bc8eb82050a3 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -33,6 +33,8 @@ EXPORT_SYMBOL(cpu_khz);
+ unsigned int __read_mostly tsc_khz;
+ EXPORT_SYMBOL(tsc_khz);
+ 
++#define KHZ	1000
++
+ /*
+  * TSC can be unstable due to cpufreq or due to unsynced TSCs
+  */
+@@ -1335,34 +1337,10 @@ static int __init init_tsc_clocksource(void)
+  */
+ device_initcall(init_tsc_clocksource);
+ 
+-void __init tsc_early_delay_calibrate(void)
 -{
--        kvmclock_vsyscall = 0;
--        return 0;
+-	unsigned long lpj;
+-
+-	if (!boot_cpu_has(X86_FEATURE_TSC))
+-		return;
+-
+-	cpu_khz = x86_platform.calibrate_cpu();
+-	tsc_khz = x86_platform.calibrate_tsc();
+-
+-	tsc_khz = tsc_khz ? : cpu_khz;
+-	if (!tsc_khz)
+-		return;
+-
+-	lpj = tsc_khz * 1000;
+-	do_div(lpj, HZ);
+-	loops_per_jiffy = lpj;
 -}
 -
--early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
--
- static DEFINE_PER_CPU_DECRYPTED(struct kvm_vcpu_pv_apf_data, apf_reason) __aligned(64);
- static DEFINE_PER_CPU_DECRYPTED(struct kvm_steal_time, steal_time) __aligned(64);
- static int has_steal_clock = 0;
-@@ -560,9 +550,6 @@ static void __init kvm_guest_init(void)
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
- 		apic_set_eoi_write(kvm_guest_apic_eoi_write);
- 
--	if (kvmclock_vsyscall)
--		kvm_setup_vsyscall_timeinfo();
--
- #ifdef CONFIG_SMP
- 	smp_ops.smp_prepare_cpus = kvm_smp_prepare_cpus;
- 	smp_ops.smp_prepare_boot_cpu = kvm_smp_prepare_boot_cpu;
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index f312d7f6de57..08e7726a5e62 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -27,12 +27,14 @@
- #include <linux/sched/clock.h>
- #include <linux/mm.h>
- 
-+#include <asm/hypervisor.h>
- #include <asm/mem_encrypt.h>
- #include <asm/x86_init.h>
- #include <asm/reboot.h>
- #include <asm/kvmclock.h>
- 
- static int kvmclock __initdata = 1;
-+static int kvmclock_vsyscall __initdata = 1;
- static int msr_kvm_system_time __ro_after_init = MSR_KVM_SYSTEM_TIME;
- static int msr_kvm_wall_clock __ro_after_init = MSR_KVM_WALL_CLOCK;
- static u64 kvm_sched_clock_offset __ro_after_init;
-@@ -44,6 +46,13 @@ static int __init parse_no_kvmclock(char *arg)
- }
- early_param("no-kvmclock", parse_no_kvmclock);
- 
-+static int __init parse_no_kvmclock_vsyscall(char *arg)
-+{
-+	kvmclock_vsyscall = 0;
-+	return 0;
-+}
-+early_param("no-kvmclock-vsyscall", parse_no_kvmclock_vsyscall);
-+
- /* Aligned to page sizes to match whats mapped via vsyscalls to userspace */
- #define HV_CLOCK_SIZE	(sizeof(struct pvclock_vsyscall_time_info) * NR_CPUS)
- 
-@@ -227,6 +236,25 @@ static void kvm_shutdown(void)
- 	native_machine_shutdown();
- }
- 
-+static int __init kvm_setup_vsyscall_timeinfo(void)
-+{
-+#ifdef CONFIG_X86_64
-+	u8 flags;
-+
-+	if (!hv_clock || !kvmclock_vsyscall)
-+		return 0;
-+
-+	flags = pvclock_read_flags(&hv_clock[0].pvti);
-+	if (!(flags & PVCLOCK_TSC_STABLE_BIT))
-+		return 1;
-+
-+	pvclock_set_pvti_cpu0_va(hv_clock);
-+	kvm_clock.archdata.vclock_mode = VCLOCK_PVCLOCK;
-+#endif
-+	return 0;
-+}
-+early_initcall(kvm_setup_vsyscall_timeinfo);
-+
- void __init kvmclock_init(void)
+-void __init tsc_init(void)
++static bool determine_cpu_tsc_frequncies(void)
  {
- 	u8 flags;
-@@ -270,21 +298,3 @@ void __init kvmclock_init(void)
- 	clocksource_register_hz(&kvm_clock, NSEC_PER_SEC);
- 	pv_info.name = "KVM";
- }
+-	u64 lpj, cyc;
+-	int cpu;
 -
--int __init kvm_setup_vsyscall_timeinfo(void)
--{
--#ifdef CONFIG_X86_64
--	u8 flags;
+-	if (!boot_cpu_has(X86_FEATURE_TSC)) {
+-		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+-		return;
+-	}
++	/* Make sure that cpu and tsc are not already calibrated */
++	WARN_ON(cpu_khz || tsc_khz);
+ 
+ 	cpu_khz = x86_platform.calibrate_cpu();
+ 	tsc_khz = x86_platform.calibrate_tsc();
+@@ -1377,20 +1355,51 @@ void __init tsc_init(void)
+ 	else if (abs(cpu_khz - tsc_khz) * 10 > tsc_khz)
+ 		cpu_khz = tsc_khz;
+ 
+-	if (!tsc_khz) {
+-		mark_tsc_unstable("could not calculate TSC khz");
+-		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+-		return;
+-	}
++	if (tsc_khz == 0)
++		return false;
+ 
+ 	pr_info("Detected %lu.%03lu MHz processor\n",
+-		(unsigned long)cpu_khz / 1000,
+-		(unsigned long)cpu_khz % 1000);
++		(unsigned long)cpu_khz / KHZ,
++		(unsigned long)cpu_khz % KHZ);
+ 
+ 	if (cpu_khz != tsc_khz) {
+ 		pr_info("Detected %lu.%03lu MHz TSC",
+-			(unsigned long)tsc_khz / 1000,
+-			(unsigned long)tsc_khz % 1000);
++			(unsigned long)tsc_khz / KHZ,
++			(unsigned long)tsc_khz % KHZ);
++	}
++	return true;
++}
++
++static unsigned long get_loops_per_jiffy(void)
++{
++	unsigned long lpj = tsc_khz * KHZ;
++
++	do_div(lpj, HZ);
++	return lpj;
++}
++
++void __init tsc_early_init(void)
++{
++	if (!boot_cpu_has(X86_FEATURE_TSC))
++		return;
++	if (!determine_cpu_tsc_frequncies())
++		return;
++	loops_per_jiffy = get_loops_per_jiffy();
++}
++
++void __init tsc_init(void)
++{
++	if (!boot_cpu_has(X86_FEATURE_TSC)) {
++		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
++		return;
++	}
++
++	if (!tsc_khz) {
++		/* We failed to determine frequencies earlier, try again */
++		if (!determine_cpu_tsc_frequncies()) {
++			mark_tsc_unstable("could not calculate TSC khz");
++			return;
++		}
+ 	}
+ 
+ 	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
+@@ -1413,10 +1422,7 @@ void __init tsc_init(void)
+ 	if (!no_sched_irq_time)
+ 		enable_sched_clock_irqtime();
+ 
+-	lpj = ((u64)tsc_khz * 1000);
+-	do_div(lpj, HZ);
+-	lpj_fine = lpj;
 -
--	if (!hv_clock)
--		return 0;
--
--	flags = pvclock_read_flags(&hv_clock[0].pvti);
--	if (!(flags & PVCLOCK_TSC_STABLE_BIT))
--		return 1;
--
--	pvclock_set_pvti_cpu0_va(hv_clock);
--	kvm_clock.archdata.vclock_mode = VCLOCK_PVCLOCK;
--#endif
--	return 0;
--}
++	lpj_fine = get_loops_per_jiffy();
+ 	use_tsc_delay();
+ 
+ 	check_system_tsc_reliable();
 -- 
 2.18.0
 
