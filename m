@@ -2,92 +2,98 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F243CECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF546ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A302720850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:49:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="O48kktg1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A302720850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	by mail.kernel.org (Postfix) with ESMTP id 831ED2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:49:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831ED2075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbeGRJ00 (ORCPT
+        id S1730876AbeGRJ0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 05:26:26 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:58942 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730567AbeGRJ0U (ORCPT
+        Wed, 18 Jul 2018 05:26:47 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:46641 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729262AbeGRJ0r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:26:20 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id ADD94B007E1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:49:28 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:to:from:from; s=dkim; t=1531903768; x=1532767769; bh=oU
-        3L+VhjcUz66mqNO+xA5rhv6b+QFYZw6ErY1r86THw=; b=O48kktg1DgPdcgKVu6
-        QDjG/8HjpWETQ5imkyTW5op+QURZKQrMs6jhYghbCVrj+d9S2ioS6kkWOCCFQ0UA
-        pjexymLCkvNpjlCL2TpFQP+gI5wMOPH/tkGMj6/Ryf0DOM4zPfNFkUzBvFc6g71V
-        MJWRcIbOkSUjgFSXxS9VuYmZg=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id MIkUena8PpDj for <linux-kernel@vger.kernel.org>;
-        Wed, 18 Jul 2018 10:49:28 +0200 (CEST)
-Received: from localhost.localdomain (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 23D93B007EC;
-        Wed, 18 Jul 2018 10:49:27 +0200 (CEST)
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v7 1/4] rtc: ds1307: fix data pointer to m41t0
-Date:   Wed, 18 Jul 2018 10:49:16 +0200
-Message-Id: <20180718084916.79837-4-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180718084916.79837-1-giulio.benetti@micronovasrl.com>
-References: <20180718084916.79837-1-giulio.benetti@micronovasrl.com>
+        Wed, 18 Jul 2018 05:26:47 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MJl7U-1febgU2loy-001DCG; Wed, 18 Jul 2018 10:49:14 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Tom Herbert <tom@herbertland.com>,
+        David Lebrun <david.lebrun@uclouvain.be>,
+        Mathieu Xhonneux <m.xhonneux@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Yuval Mintz <yuvalm@mellanox.com>,
+        Georg Hofmann <georg@hofmannsweb.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ipv6: ila: select CONFIG_DST_CACHE
+Date:   Wed, 18 Jul 2018 10:48:56 +0200
+Message-Id: <20180718084909.1902331-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:OTL9UuTnHqQdWRZou5xbCTtkCCInNXxVoDadf1bp8uMh6AntXBw
+ +H0hC+yxD55v/ViA78IiIhcePujWwd24rYG0q/8/VUlWtxdO2uJmo7e46Biegy98r4h681F
+ 8R/OsIqIGTrPlTyAEdL6SZ4THseKr34fmqWgwCZeBBnX/N3xJK7QsskNHtSmndSyrOxRmZp
+ ZHreHQsEwv552R9e0GiMw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:K3RHufBueGQ=:GCtkWj9DntB4RXRx1etbz4
+ Y3ZLB1BobAqXwdf4GpoGXczEKstbD0xD5qWKipnO72Q5XymHcHa4k9IpkjyzXFnOWho7Xnnzi
+ wqtiZTgiBG8/Jte15YN2WW+frtDswVvFZJmcWJx/fB6Qk+jWJjEh3b8SSE+5OE+UG1NyXhgjZ
+ DPsEdav3B5buK9rl4pFtCPPhcLidFt8OUmmyndNT0YbcdfX1XQZR2xAeVCwxfhgZcfp+I5XuV
+ keGdY12gLOt+SQJAOZ862O7agXZkGYwZ7oUE+L7Wv/NFtkTNAfMCJQIIEv5swRtnzEsM8sDWB
+ 8d7FTIDAgcc8YjFZKqSLOohf2vK49BONCqFrECwSAWiE7XNOyBYkbfTElorONwf2mkK2V1cuh
+ N1mi4ErGyeap2xYJLI3ANTRHDyQdr8B0z0XYJpeLcjRFLovsZi32Nw34xVuDIT+Q71yO7I6bc
+ 4mXP75pZy6pqekDXt7HXY8lqGrMiOaVxbEfe8NGBLt3P1xW9FGDaId0qfwqt5OYB/GGQsCmKV
+ K1UDB8pXTj4kp5s2nZfuVuCpxX4hqHdqPlbAIQVaf37HIDuv++ndBHH9RiCLLXlNh4BxYpZNi
+ pV09CWdjTUNVrHcyswbkdaNiwts7YaPxZ9ylDv451O0IQFkUs3Rey1IQQVASMj02SaVBzsnM2
+ K7+AMgxnhRbCmNZQiciSq4aCT5Ooj8/1Zg2VyxZiJEV756pNKGHUnTL8+C/EtcjG+uQg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-data field points to m41t00, instead it should point to m41t0.
-Driver works correctly because on both cases(m41t0 and m41t00) chip_desc
-are equal.
+My randconfig builds came across an old missing dependency for ILA:
 
-Point to right enum m41t0 instead of m41t00.
+ERROR: "dst_cache_set_ip6" [net/ipv6/ila/ila.ko] undefined!
+ERROR: "dst_cache_get" [net/ipv6/ila/ila.ko] undefined!
+ERROR: "dst_cache_init" [net/ipv6/ila/ila.ko] undefined!
+ERROR: "dst_cache_destroy" [net/ipv6/ila/ila.ko] undefined!
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+We almost never run into this by accident because randconfig builds
+end up selecting DST_CACHE from some other tunnel protocol, and this
+one appears to be the only one missing the explicit 'select'.
+
+From all I can tell, this problem first appeared in linux-4.9
+when dst_cache support got added to ILA.
+
+Fixes: 79ff2fc31e0f ("ila: Cache a route to translated address")
+Cc: Tom Herbert <tom@herbertland.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-V6 => V7:
-* already applied
- drivers/rtc/rtc-ds1307.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index e9ec4160d7f6..aa4a161bae98 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -299,7 +299,7 @@ static const struct of_device_id ds1307_of_match[] = {
- 	},
- 	{
- 		.compatible = "st,m41t0",
--		.data = (void *)m41t00
-+		.data = (void *)m41t0
- 	},
- 	{
- 		.compatible = "st,m41t00",
+diff --git a/net/ipv6/Kconfig b/net/ipv6/Kconfig
+index 0eff75525da1..b3885ca22d6f 100644
+--- a/net/ipv6/Kconfig
++++ b/net/ipv6/Kconfig
+@@ -108,6 +108,7 @@ config IPV6_MIP6
+ config IPV6_ILA
+ 	tristate "IPv6: Identifier Locator Addressing (ILA)"
+ 	depends on NETFILTER
++	select DST_CACHE
+ 	select LWTUNNEL
+ 	---help---
+ 	  Support for IPv6 Identifier Locator Addressing (ILA).
 -- 
-2.17.1
+2.9.0
 
