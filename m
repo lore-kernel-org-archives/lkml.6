@@ -2,115 +2,113 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26614ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBA5ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE7A20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:03:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="OzW4KCOd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE7A20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 27A5C20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A5C20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731465AbeGRBiD (ORCPT
+        id S1731642AbeGRBjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 21:38:03 -0400
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:60165 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730652AbeGRBiD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 21:38:03 -0400
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id E16F6EDF44;
-        Tue, 17 Jul 2018 21:02:45 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
-        :subject:date:message-id:in-reply-to:references; s=sasl; bh=9hsx
-        isrz4BLrEl8XObgHlrjSsws=; b=OzW4KCOdmo8spVgkr75GOZKgdUx6eIiYKmH3
-        zTfQOCQjHPvlrAynzpeqMU76Bj31mXV6xXZQ8dx6CvlVBTZnfsQX57WH6dFlZLKA
-        Z9lBv9FuVIQwhWDTes27bk8dcG0wbYnZnDIFb01+OfLSWBQGMUpZymdYl7fC8/fG
-        XBp/uds=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id CAD06EDF40;
-        Tue, 17 Jul 2018 21:02:45 -0400 (EDT)
-Received: from yoda.home (unknown [70.82.104.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 3ACD4EDF3B;
-        Tue, 17 Jul 2018 21:02:45 -0400 (EDT)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTP id 629022DA0492;
-        Tue, 17 Jul 2018 21:02:44 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Dave Mielke <Dave@mielke.cc>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        linux-kernel@vger.kernel.org, linux-console@vger.kernel.org
-Subject: [PATCH 1/3] vt: avoid a VLA in the unicode screen scroll function
-Date:   Tue, 17 Jul 2018 21:02:40 -0400
-Message-Id: <20180718010242.5254-2-nicolas.pitre@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180718010242.5254-1-nicolas.pitre@linaro.org>
-References: <20180718010242.5254-1-nicolas.pitre@linaro.org>
-X-Pobox-Relay-ID: 47C947BC-8A26-11E8-A67C-063AD72159A7-78420484!pb-smtp1.pobox.com
+        Tue, 17 Jul 2018 21:39:37 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:18860 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731096AbeGRBjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 21:39:36 -0400
+X-Greylist: delayed 969 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Jul 2018 21:39:36 EDT
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 397D620B8D3E534455A1;
+        Wed, 18 Jul 2018 08:48:15 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w6I0mAt0020984;
+        Wed, 18 Jul 2018 08:48:10 +0800 (GMT-8)
+        (envelope-from liu.hailong6@zte.com.cn)
+Received: from localhost.localdomain ([10.75.10.200])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018071808481435-765318 ;
+          Wed, 18 Jul 2018 08:48:14 +0800 
+From:   Hailong Liu <liu.hailong6@zte.com.cn>
+To:     mingo@redhat.com, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, jiang.biao2@zte.com.cn,
+        zhong.weidong@zte.com.cn, Hailong Liu <liu.hailong6@zte.com.cn>
+Subject: [PATCH] sched/rt: restore rt_runtime after disabling RT_RUNTIME_SHARE
+Date:   Wed, 18 Jul 2018 08:46:55 +0800
+Message-Id: <1531874815-39357-1-git-send-email-liu.hailong6@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-07-18 08:48:14,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-07-18 08:48:02,
+        Serialize complete at 2018-07-18 08:48:02
+X-MAIL: mse01.zte.com.cn w6I0mAt0020984
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The nr argument is typically small: most often nr == 1. However this
-could be abused with a very large explicit scroll in a resized screen.
-Make the code scroll lines one at a time in all cases to avoid the VLA.
-Anything smarter is most likely not warranted here.
+NO_RT_RUNTIME_SHARE feature is used to prevent a CPU borrow enough
+runtime with a spin-rt-task.
 
-Requested-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
+However, if RT_RUNTIME_SHARE feature is enabled and rt_rq has borrowd
+enough rt_runtime at the beginning, rt_runtime can't be restored to
+its initial bandwidth rt_runtime after we disable RT_RUNTIME_SHARE.
+
+E.g. on my PC with 4 cores, procedure to reproduce:
+1) Make sure  RT_RUNTIME_SHARE is enabled
+ cat /sys/kernel/debug/sched_features
+  GENTLE_FAIR_SLEEPERS START_DEBIT NO_NEXT_BUDDY LAST_BUDDY
+  CACHE_HOT_BUDDY WAKEUP_PREEMPTION NO_HRTICK NO_DOUBLE_TICK
+  LB_BIAS NONTASK_CAPACITY TTWU_QUEUE NO_SIS_AVG_CPU SIS_PROP
+  NO_WARN_DOUBLE_CLOCK RT_PUSH_IPI RT_RUNTIME_SHARE NO_LB_MIN
+  ATTACH_AGE_LOAD WA_IDLE WA_WEIGHT WA_BIAS
+2) Start a spin-rt-task
+ ./loop_rr &
+3) set affinity to the last cpu
+ taskset -p 8 $pid_of_loop_rr
+4) Observe that last cpu have borrowed enough runtime.
+ cat /proc/sched_debug | grep rt_runtime
+  .rt_runtime                    : 950.000000
+  .rt_runtime                    : 900.000000
+  .rt_runtime                    : 950.000000
+  .rt_runtime                    : 1000.000000
+5) Disable RT_RUNTIME_SHARE
+ echo NO_RT_RUNTIME_SHARE > /sys/kernel/debug/sched_features
+6) Observe that rt_runtime can not been restored
+ cat /proc/sched_debug | grep rt_runtime
+  .rt_runtime                    : 950.000000
+  .rt_runtime                    : 900.000000
+  .rt_runtime                    : 950.000000
+  .rt_runtime                    : 1000.000000
+
+This patch help to restore rt_runtime after we disable 
+RT_RUNTIME_SHARE.
+ 
+Signed-off-by: Hailong Liu <liu.hailong6@zte.com.cn>
+Signed-off-by: Jiang Biao <jiang.biao2@zte.com.cn>
 ---
- drivers/tty/vt/vt.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ kernel/sched/rt.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-index 2d14bb195d..03e79f7787 100644
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -433,20 +433,22 @@ static void vc_uniscr_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
- 
- 	if (uniscr) {
- 		unsigned int s, d, rescue, clear;
--		char32_t *save[nr];
- 
- 		s = clear = t;
--		d = t + nr;
--		rescue = b - nr;
-+		d = t + 1;
-+		rescue = b - 1;
- 		if (dir == SM_UP) {
- 			swap(s, d);
- 			swap(clear, rescue);
- 		}
--		memcpy(save, uniscr->lines + rescue, nr * sizeof(*save));
--		memmove(uniscr->lines + d, uniscr->lines + s,
--			(b - t - nr) * sizeof(*uniscr->lines));
--		memcpy(uniscr->lines + clear, save, nr * sizeof(*save));
--		vc_uniscr_clear_lines(vc, clear, nr);
-+		while (nr--) {
-+			char32_t *tmp;
-+			tmp = uniscr->lines[rescue];
-+			memmove(uniscr->lines + d, uniscr->lines + s,
-+				(b - t - 1) * sizeof(*uniscr->lines));
-+			uniscr->lines[clear] = tmp;
-+			vc_uniscr_clear_lines(vc, clear, 1);
-+		}
- 	}
- }
- 
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 5725670..eaaec83 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -836,6 +836,8 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
+ 		 * can be time-consuming. Try to avoid it when possible.
+ 		 */
+ 		raw_spin_lock(&rt_rq->rt_runtime_lock);
++		if (!sched_feat(RT_RUNTIME_SHARE) && rt_rq->rt_runtime != RUNTIME_INF)
++			rt_rq->rt_runtime = rt_b->rt_runtime;
+ 		skip = !rt_rq->rt_time && !rt_rq->rt_nr_running;
+ 		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+ 		if (skip)
 -- 
-2.17.1
+2.7.4
 
