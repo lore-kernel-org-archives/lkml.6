@@ -2,92 +2,104 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A64ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89796ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:42:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7979A2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="jQqpOgY1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7979A2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F5432084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:42:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5432084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbeGRJSY (ORCPT
+        id S1730814AbeGRJTM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 05:18:24 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:58098 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730512AbeGRJSS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:18:18 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id 2E95AB00789
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:41:29 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:to:from:from; s=dkim; t=1531903288; x=1532767289; bh=BL
-        qxhPVu4LtyC6/jHt4trzmmoH+QJ4BdUT17yDY9lg8=; b=jQqpOgY1EhIvERSNJz
-        nrJHzfLb4/4ttwcasxdN6TBnuwuYQblye/jqs2BNg2X69bRe/Z740SjxGMnYg9fD
-        V+OEXt/MLfpMlPi5p17g0eu89FwMVwlU/CMsje8+ij6pi6WBd/dMw2ERRS3OaDq4
-        ENBZ79KekkSlT/ifO5yj++f+8=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id HqiuinTZWMgU for <linux-kernel@vger.kernel.org>;
-        Wed, 18 Jul 2018 10:41:28 +0200 (CEST)
-Received: from localhost.localdomain (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id C9A02B007D4;
-        Wed, 18 Jul 2018 10:41:26 +0200 (CEST)
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 1/4] rtc: ds1307: fix data pointer to m41t0
-Date:   Wed, 18 Jul 2018 10:41:18 +0200
-Message-Id: <20180718084118.79540-4-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180718084118.79540-1-giulio.benetti@micronovasrl.com>
-References: <20180716213302.GA2751@piout.net>
- <20180718084118.79540-1-giulio.benetti@micronovasrl.com>
+        Wed, 18 Jul 2018 05:19:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57434 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726708AbeGRJTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 05:19:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A214D7A9;
+        Wed, 18 Jul 2018 01:42:23 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.210.68])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4E0F3F589;
+        Wed, 18 Jul 2018 01:42:20 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 09:42:18 +0100
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v2 01/12] sched/core: uclamp: extend sched_setattr to
+ support utilization clamping
+Message-ID: <20180718084218.GI32302@e110439-lin>
+References: <20180716082906.6061-1-patrick.bellasi@arm.com>
+ <20180716082906.6061-2-patrick.bellasi@arm.com>
+ <20180717175025.GA150378@joelaf.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180717175025.GA150378@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-data field points to m41t00, instead it should point to m41t0.
-Driver works correctly because on both cases(m41t0 and m41t00) chip_desc
-are equal.
+On 17-Jul 10:50, Joel Fernandes wrote:
+> On Mon, Jul 16, 2018 at 09:28:55AM +0100, Patrick Bellasi wrote:
 
-Point to right enum m41t0 instead of m41t00.
+[...]
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
----
- drivers/rtc/rtc-ds1307.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index 041f3a022122..1d45a6877d6f 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -583,6 +583,25 @@ config HAVE_UNSTABLE_SCHED_CLOCK
+> >  config GENERIC_SCHED_CLOCK
+> >  	bool
+> >  
+> > +menu "Scheduler features"
+> > +
+> > +config UCLAMP_TASK
+> > +	bool "Enable utilization clamping for RT/FAIR tasks"
+> > +	depends on CPU_FREQ_GOV_SCHEDUTIL
+> 
+> Does it make sense to depend on this? One could turn off schedutil and then
+> uclamp can't be used for any other purpose (big.LITTLE task placement etc)?
 
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index e9ec4160d7f6..aa4a161bae98 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -299,7 +299,7 @@ static const struct of_device_id ds1307_of_match[] = {
- 	},
- 	{
- 		.compatible = "st,m41t0",
--		.data = (void *)m41t00
-+		.data = (void *)m41t0
- 	},
- 	{
- 		.compatible = "st,m41t00",
+You right, utilization clamping is _going_ to target tasks placement.
+But, the support currently posted in this series is just for OPP
+biasing. Thus, it would not make sense to enabled it when schedutil
+is not available.
+
+My idea was to keep this dependency while we finalize these bits.
+Once we move on to the tasks placement biasing, we will remove this
+dependency too.
+
+Does that makes sense?
+
+> thanks,
+> 
+> - Joel
+
 -- 
-2.17.1
+#include <best/regards.h>
 
+Patrick Bellasi
