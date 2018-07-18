@@ -2,217 +2,169 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38766ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF05ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E582075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 651E82075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:47:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="ZzzYk9BK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E582075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BkXze/se"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651E82075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbeGRJWW (ORCPT
+        id S1730256AbeGRJY1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 05:22:22 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:58496 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbeGRJWW (ORCPT
+        Wed, 18 Jul 2018 05:24:27 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:36118 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbeGRJY1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:22:22 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id EC637B007D4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:45:31 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=content-transfer-encoding:content-language:content-type
-        :content-type:in-reply-to:mime-version:user-agent:date:date
-        :message-id:from:from:references:to:subject:subject; s=dkim; t=
-        1531903526; x=1532767527; bh=HRo5eBHk99TLufa++rXJawckAe5js8rYTKP
-        Jf3SOR/8=; b=ZzzYk9BKT47nGFYSnaHL23b4W/oodBfHOpM+KEq2UCuT2WbG54+
-        kePNe7//SmuP0+T+o9j52AVAq2rw9HGA2atCndxqMfqEMMnK64gBzER8Yqu7nSZ3
-        Xg8JQ8LkGWN5B4GCNu9u/PGBnQw25IjERpL8zQdH5jsd+98RPnx9w8KE=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 9Dy_m-gllOsd for <linux-kernel@vger.kernel.org>;
-        Wed, 18 Jul 2018 10:45:26 +0200 (CEST)
-Received: from [192.168.2.133] (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 0510AB002CE;
-        Wed, 18 Jul 2018 10:45:25 +0200 (CEST)
-Subject: Re: [PATCH 3/4] rtc: ds1307: add offset sysfs for mt41txx chips.
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180716213302.GA2751@piout.net>
- <20180718084118.79540-1-giulio.benetti@micronovasrl.com>
- <20180718084118.79540-2-giulio.benetti@micronovasrl.com>
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <9bc8a049-8f43-b9b1-8926-5521ff26077a@micronovasrl.com>
-Date:   Wed, 18 Jul 2018 10:45:25 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 18 Jul 2018 05:24:27 -0400
+Received: by mail-pf0-f193.google.com with SMTP id d14-v6so1894399pfo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 01:47:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ia3IltJWQoTS35mHp2lysfxzogWLVuSdyunbxS6GDo4=;
+        b=BkXze/sebItRjfiFTjGdWFLa53TDVp409EYYGsW2MWsBC1BTBdjrDQuzgpW9qOdrA8
+         XKfCpydGKeM5cVIsOrebmeWheJclMQtRb0EB6SfYeiDD/xj/RrsiK1Opje6iCbxVWOv/
+         IgJEKHsj5nvKgfMzX+73Tp9de63u2TNIPIhW/uiEnAhjeEHrMK89fBCo3QufLHmGG9dl
+         3SfW2/F5YzsTkCbgK6YAUH2IzRlS4chUmCvIqvRqL4xU1jZU1gTs4hg54L3gJ7b75Btm
+         aqEnXBzMhmMpIVyWKBm9UJkafArIzNUtV/EScVYBsxerLndOHOj6YzOTiqIw4dMEsOVs
+         R2ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ia3IltJWQoTS35mHp2lysfxzogWLVuSdyunbxS6GDo4=;
+        b=tPZ97s7M63MEvwqJshus9qljFkBFVS7MrmK9xUW3rU82g0j7xeDrpliBdgWDQheVCo
+         GMFv+DTwkybLc6yhLsT/1n/3gqEe4ZPzTtNcAyJo1NETUSl9sawTIGxrNbYToccK8e/O
+         oHMPOs6QkbLe3xVvjr52tXnAWBH9YLkemoLVnVMP81+YpRGNEfXoyiSf+tYKUER1Ndgy
+         nKxdpwmUksullab4PBWrUB/0qVLfAA3x8ZO5xoqcsTbTBRNhzEtPPdH2C9b1VREe5BYc
+         unpm8O/LKjUF3U8ywoJ89Aj5DVSRLNe+r15blxmmvUVTq89qZ5kVFSKygTIJhL7zTNHY
+         sGUg==
+X-Gm-Message-State: AOUpUlE3/L8rw71gLvt6Kks12R4/e81vKUGUTna27cP6uf5lZf7RumFf
+        CuROxuvaQ0SM176nidIGqG7iMhzIDYqCF6kCzu9Lug==
+X-Google-Smtp-Source: AAOMgpcFASSjHeJgHtiRt0Gab5/awguxGtnSs5xb+la3Ba0e9YBlZUF+eykXpRLKU+QuwP3BHvGYpn79ztcBhuiC0Ls=
+X-Received: by 2002:a63:743:: with SMTP id 64-v6mr5097700pgh.216.1531903656830;
+ Wed, 18 Jul 2018 01:47:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180718084118.79540-2-giulio.benetti@micronovasrl.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 18 Jul 2018 01:47:16
+ -0700 (PDT)
+In-Reply-To: <00000000000091198305713e80fd@google.com>
+References: <00000000000091198305713e80fd@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 18 Jul 2018 10:47:16 +0200
+Message-ID: <CACT4Y+bhFCvNA9hyykLVq+oUc+n4+Adtn3hbJ9Bw2tXGC0=3Jw@mail.gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in corrupted
+To:     syzbot <syzbot+a7429c9ff268823af453@syzkaller.appspotmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jul 18, 2018 at 6:29 AM, syzbot
+<syzbot+a7429c9ff268823af453@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    dc989d2ce2c2 tools: bpftool: don't pass FEATURES_DUMP to l..
+> git tree:       bpf-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14289578400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=89129667b46496c3
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a7429c9ff268823af453
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=106314c8400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1495b4c8400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a7429c9ff268823af453@syzkaller.appspotmail.com
 
-please discard this patchset as I didn't add v7 to series.
-Sorry.
+#syz fix: bpf: sockhash, disallow bpf_tcp_close and update in parallel
 
-Giulio
-
-Il 18/07/2018 10:41, Giulio Benetti ha scritto:
-> m41txx chips can hold a calibration value to get correct clock bias.
-> 
-> Add offset handling (ranging between -63ppm and 126ppm) via sysfs.
-> 
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in do_error_trap+0x3b6/0x4d0
+> arch/x86/kernel/traps.c:296
+> Read of size 8 at addr ffff8801c0ce3cb0 by task syz-executor113/9480
+>
+> CPU: 1 PID: 9480 Comm: syz-executor113 Not tainted 4.18.0-rc3+ #57
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>
+> Allocated by task 2164292896:
+> BUG: unable to handle kernel paging request at ffffffff8c433958
+> PGD 8e6d067 P4D 8e6d067 PUD 8e6e063 PMD 0
+> Thread overran stack, or stack corrupted
+> Oops: 0000 [#1] SMP KASAN
+> CPU: 1 PID: 9480 Comm: syz-executor113 Not tainted 4.18.0-rc3+ #57
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:201
+> Code: e8 c5 2e 47 fe e9 b3 fd ff ff e8 bb 2e 47 fe e9 55 fd ff ff 90 90 90
+> 90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 60 39
+> 43 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+> RSP: 0018:ffff8801c0ce3a08 EFLAGS: 00010006
+> RAX: 00000000001fffff RBX: ffff8801c0ce3bc4 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffff8801c0ce3a10 RDI: 0000000000003ff0
+> RBP: ffff8801c0ce3a38 R08: ffff8801b2632440 R09: ffffed003b5e3ec2
+> R10: ffffed003b5e3ec2 R11: ffff8801daf1f617 R12: ffff8801c0ce2bc0
+> R13: ffff8801c0ce3cb0 R14: ffff8801da987dc0 R15: ffff8801c0ce3bc0
+> FS:  0000000000b43940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffffff8c433958 CR3: 00000001ae01a000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> Modules linked in:
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> CR2: ffffffff8c433958
+> ---[ end trace 3b9527e7dfd4d0bc ]---
+> RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:201
+> Code: e8 c5 2e 47 fe e9 b3 fd ff ff e8 bb 2e 47 fe e9 55 fd ff ff 90 90 90
+> 90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 60 39
+> 43 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+> RSP: 0018:ffff8801c0ce3a08 EFLAGS: 00010006
+> RAX: 00000000001fffff RBX: ffff8801c0ce3bc4 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffff8801c0ce3a10 RDI: 0000000000003ff0
+> RBP: ffff8801c0ce3a38 R08: ffff8801b2632440 R09: ffffed003b5e3ec2
+> R10: ffffed003b5e3ec2 R11: ffff8801daf1f617 R12: ffff8801c0ce2bc0
+> R13: ffff8801c0ce3cb0 R14: ffff8801da987dc0 R15: ffff8801c0ce3bc0
+> FS:  0000000000b43940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffffffff8c433958 CR3: 00000001ae01a000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
+>
 > ---
->   drivers/rtc/rtc-ds1307.c | 77 ++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 77 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-> index 0162a600ff1b..b2ef9defc349 100644
-> --- a/drivers/rtc/rtc-ds1307.c
-> +++ b/drivers/rtc/rtc-ds1307.c
-> @@ -114,6 +114,20 @@ enum ds_type {
->   #	define RX8025_BIT_VDET		0x40
->   #	define RX8025_BIT_XST		0x20
->   
-> +#define M41TXX_REG_CONTROL	0x07
-> +#	define M41TXX_BIT_OUT		0x80
-> +#	define M41TXX_BIT_FT		0x40
-> +#	define M41TXX_BIT_CALIB_SIGN	0x20
-> +#	define M41TXX_M_CALIBRATION	0x1f
-> +
-> +/* negative offset step is -2.034ppm */
-> +#define M41TXX_NEG_OFFSET_STEP_PPB	2034
-> +/* positive offset step is +4.068ppm */
-> +#define M41TXX_POS_OFFSET_STEP_PPB	4068
-> +/* Min and max values supported with 'offset' interface by M41TXX */
-> +#define M41TXX_MIN_OFFSET	((-31) * M41TXX_NEG_OFFSET_STEP_PPB)
-> +#define M41TXX_MAX_OFFSET	((31) * M41TXX_POS_OFFSET_STEP_PPB)
-> +
->   struct ds1307 {
->   	enum ds_type		type;
->   	unsigned long		flags;
-> @@ -146,6 +160,9 @@ struct chip_desc {
->   
->   static int ds1307_get_time(struct device *dev, struct rtc_time *t);
->   static int ds1307_set_time(struct device *dev, struct rtc_time *t);
-> +static int ds1337_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-> +static int ds1337_set_alarm(struct device *dev, struct rtc_wkalrm *t);
-> +static int ds1307_alarm_irq_enable(struct device *dev, unsigned int enabled);
->   static u8 do_trickle_setup_ds1339(struct ds1307 *, u32 ohms, bool diode);
->   static irqreturn_t rx8130_irq(int irq, void *dev_id);
->   static int rx8130_read_alarm(struct device *dev, struct rtc_wkalrm *t);
-> @@ -155,6 +172,8 @@ static irqreturn_t mcp794xx_irq(int irq, void *dev_id);
->   static int mcp794xx_read_alarm(struct device *dev, struct rtc_wkalrm *t);
->   static int mcp794xx_set_alarm(struct device *dev, struct rtc_wkalrm *t);
->   static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled);
-> +static int m41txx_rtc_read_offset(struct device *dev, long *offset);
-> +static int m41txx_rtc_set_offset(struct device *dev, long offset);
->   
->   static const struct rtc_class_ops rx8130_rtc_ops = {
->   	.read_time      = ds1307_get_time,
-> @@ -172,6 +191,16 @@ static const struct rtc_class_ops mcp794xx_rtc_ops = {
->   	.alarm_irq_enable = mcp794xx_alarm_irq_enable,
->   };
->   
-> +static const struct rtc_class_ops m41txx_rtc_ops = {
-> +	.read_time      = ds1307_get_time,
-> +	.set_time       = ds1307_set_time,
-> +	.read_alarm	= ds1337_read_alarm,
-> +	.set_alarm	= ds1337_set_alarm,
-> +	.alarm_irq_enable = ds1307_alarm_irq_enable,
-> +	.read_offset	= m41txx_rtc_read_offset,
-> +	.set_offset	= m41txx_rtc_set_offset,
-> +};
-> +
->   static const struct chip_desc chips[last_ds_type] = {
->   	[ds_1307] = {
->   		.nvram_offset	= 8,
-> @@ -228,10 +257,17 @@ static const struct chip_desc chips[last_ds_type] = {
->   		.irq_handler = rx8130_irq,
->   		.rtc_ops = &rx8130_rtc_ops,
->   	},
-> +	[m41t0] = {
-> +		.rtc_ops	= &m41txx_rtc_ops,
-> +	},
-> +	[m41t00] = {
-> +		.rtc_ops	= &m41txx_rtc_ops,
-> +	},
->   	[m41t11] = {
->   		/* this is battery backed SRAM */
->   		.nvram_offset	= 8,
->   		.nvram_size	= 56,
-> +		.rtc_ops	= &m41txx_rtc_ops,
->   	},
->   	[mcp794xx] = {
->   		.alarm		= 1,
-> @@ -973,6 +1009,47 @@ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled)
->   				  enabled ? MCP794XX_BIT_ALM0_EN : 0);
->   }
->   
-> +static int m41txx_rtc_read_offset(struct device *dev, long *offset)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	unsigned int ctrl_reg;
-> +	u8 val;
-> +
-> +	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
-> +
-> +	val = ctrl_reg & M41TXX_M_CALIBRATION;
-> +
-> +	/* check if positive */
-> +	if (ctrl_reg & M41TXX_BIT_CALIB_SIGN)
-> +		*offset = (val * M41TXX_POS_OFFSET_STEP_PPB);
-> +	else
-> +		*offset = -(val * M41TXX_NEG_OFFSET_STEP_PPB);
-> +
-> +	return 0;
-> +}
-> +
-> +static int m41txx_rtc_set_offset(struct device *dev, long offset)
-> +{
-> +	struct ds1307 *ds1307 = dev_get_drvdata(dev);
-> +	unsigned int ctrl_reg;
-> +
-> +	if ((offset < M41TXX_MIN_OFFSET) || (offset > M41TXX_MAX_OFFSET))
-> +		return -ERANGE;
-> +
-> +	if (offset >= 0) {
-> +		ctrl_reg = DIV_ROUND_CLOSEST(offset,
-> +					     M41TXX_POS_OFFSET_STEP_PPB);
-> +		ctrl_reg |= M41TXX_BIT_CALIB_SIGN;
-> +	} else {
-> +		ctrl_reg = DIV_ROUND_CLOSEST(abs(offset),
-> +					     M41TXX_NEG_OFFSET_STEP_PPB);
-> +	}
-> +
-> +	return regmap_update_bits(ds1307->regmap, M41TXX_REG_CONTROL,
-> +				  M41TXX_M_CALIBRATION | M41TXX_BIT_CALIB_SIGN,
-> +				  ctrl_reg);
-> +}
-> +
->   /*----------------------------------------------------------------------*/
->   
->   static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
-> 
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/00000000000091198305713e80fd%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
