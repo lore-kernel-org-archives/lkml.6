@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C2EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389E4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97AE62075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8FFA20856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="KaFKIWyu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97AE62075C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="iofPAXrp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FFA20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731687AbeGRKSi (ORCPT
+        id S1731969AbeGRKUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:18:38 -0400
-Received: from 8bytes.org ([81.169.241.247]:54462 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:20:17 -0400
+Received: from 8bytes.org ([81.169.241.247]:53936 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731629AbeGRKSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:37 -0400
+        id S1731658AbeGRKSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:38 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id E5FC6774; Wed, 18 Jul 2018 11:41:22 +0200 (CEST)
+        id 7F37CA58; Wed, 18 Jul 2018 11:41:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906882; bh=ziU7MFEY35NOxqlMR4QOaylELpaocSSa3SwWrA7oOzI=;
+        t=1531906883; bh=/Ih1ouATHKIWwXvRWuZbzp4GcZEjnBzBwjH19GfP9H8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KaFKIWyu/3NDDLunZrvhDpnFwXPVYMz9AqTrEssqURl1Tk52lmCOSuXntQ8qbhzYv
-         iZ/b2yVZlcdNjisTgYjXEkywZhXE54qLZeZTnLUTrPNFmpQJV+VBQk3su7kexRGax1
-         xKywZEst2UWH/87WEVm72cbwnt1Nxxmlpp3HTDcP1zAbEFAbtcydr/kYzLZ885RDa9
-         J4VSbsiXLvekYuKjcNYLn4QLeY3zQo6yQcIM8zS6zSjNKI+TvEszv+kyuNdHRahqHm
-         0B3+wj/qKzVpUOnotxK099lSNqROHJUbLCVOU3juGR3ccbeASNik6Pw5dvQZ3I5zT6
-         vNtPXNitRTgKQ==
+        b=iofPAXrphrKsFvlQOfwmUK8tNTPw9GSJHCwLAoxi6nR60sAlNV6aGO1SZOjO7po6a
+         xF2jdFtTLz9Zj0lN8YECRQQ06Rs42MaKLOLjxgfYoFdsC6XlJvDaNnR32ZskANX8k0
+         7GLb599fQSa3aWnnXvEj1DgU+o4l0Mr+Rz9gNk79su2fiu0pwYlMnFI2aIujezEJVv
+         YIFXeYplulZ3RhcmlF1LKYTIG2QEDxu+b+N4q15j8EnFu9gpY3nfqROGFJpW7qLn8U
+         M0DiDjj3Q95S3sMJv3PlUnlsFrsyJe39CyR11GBLLIk09xxDT6GkbBfBC0InrGEhNE
+         3Njr/vzX6ng7A==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 23/39] x86/mm/legacy: Populate the user page-table with user pgd's
-Date:   Wed, 18 Jul 2018 11:41:00 +0200
-Message-Id: <1531906876-13451-24-git-send-email-joro@8bytes.org>
+Subject: [PATCH 25/39] x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
+Date:   Wed, 18 Jul 2018 11:41:02 +0200
+Message-Id: <1531906876-13451-26-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,47 +72,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Also populate the user-spage pgd's in the user page-table.
+Move it out of the X86_64 specific processor defines so
+that its visible for 32bit too.
 
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable-2level.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/x86/include/asm/processor-flags.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable-2level.h b/arch/x86/include/asm/pgtable-2level.h
-index 685ffe8..c399ea5 100644
---- a/arch/x86/include/asm/pgtable-2level.h
-+++ b/arch/x86/include/asm/pgtable-2level.h
-@@ -19,6 +19,9 @@ static inline void native_set_pte(pte_t *ptep , pte_t pte)
+diff --git a/arch/x86/include/asm/processor-flags.h b/arch/x86/include/asm/processor-flags.h
+index 625a52a..02c2cbd 100644
+--- a/arch/x86/include/asm/processor-flags.h
++++ b/arch/x86/include/asm/processor-flags.h
+@@ -39,10 +39,6 @@
+ #define CR3_PCID_MASK	0xFFFull
+ #define CR3_NOFLUSH	BIT_ULL(63)
  
- static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
- {
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pmd.pud.p4d.pgd = pti_set_user_pgtbl(&pmdp->pud.p4d.pgd, pmd.pud.p4d.pgd);
-+#endif
- 	*pmdp = pmd;
- }
+-#ifdef CONFIG_PAGE_TABLE_ISOLATION
+-# define X86_CR3_PTI_PCID_USER_BIT	11
+-#endif
+-
+ #else
+ /*
+  * CR3_ADDR_MASK needs at least bits 31:5 set on PAE systems, and we save
+@@ -53,4 +49,8 @@
+ #define CR3_NOFLUSH	0
+ #endif
  
-@@ -58,6 +61,9 @@ static inline pte_t native_ptep_get_and_clear(pte_t *xp)
- #ifdef CONFIG_SMP
- static inline pmd_t native_pmdp_get_and_clear(pmd_t *xp)
- {
 +#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pti_set_user_pgtbl(&xp->pud.p4d.pgd, __pgd(0));
++# define X86_CR3_PTI_PCID_USER_BIT	11
 +#endif
- 	return __pmd(xchg((pmdval_t *)xp, 0));
- }
- #else
-@@ -67,6 +73,9 @@ static inline pmd_t native_pmdp_get_and_clear(pmd_t *xp)
- #ifdef CONFIG_SMP
- static inline pud_t native_pudp_get_and_clear(pud_t *xp)
- {
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+	pti_set_user_pgtbl(&xp->p4d.pgd, __pgd(0));
-+#endif
- 	return __pud(xchg((pudval_t *)xp, 0));
- }
- #else
++
+ #endif /* _ASM_X86_PROCESSOR_FLAGS_H */
 -- 
 2.7.4
 
