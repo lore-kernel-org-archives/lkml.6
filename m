@@ -2,177 +2,121 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1ADAECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A0DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB3320652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB3320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CDAB620854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0YpQBTGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDAB620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbeGRQum (ORCPT
+        id S1731567AbeGRQtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:50:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:60408 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731673AbeGRQtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:49:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D897720908; Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AA2E820741;
-        Wed, 18 Jul 2018 18:11:09 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Yelena Krivosheev <yelena@marvell.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Dmitri Epshtein <dima@marvell.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v3 3/8] net: mvneta: remove data pointer usage from device_node structure
-Date:   Wed, 18 Jul 2018 18:10:52 +0200
-Message-Id: <20180718161057.28704-4-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180718161057.28704-1-gregory.clement@bootlin.com>
-References: <20180718161057.28704-1-gregory.clement@bootlin.com>
+        Wed, 18 Jul 2018 12:49:21 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:40599 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731452AbeGRQtU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:49:20 -0400
+Received: by mail-wm0-f48.google.com with SMTP id z13-v6so3447667wma.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=AZzCltgnNdPyeZzXiMFjWCg4GFVgDog5WHEdONSaQYA=;
+        b=0YpQBTGjX84ndXw1Qum4CiP3P2WxZurvYZThnuNXWR08RnwbPI4e2GjvoVhUdyEBth
+         GxlkSsth9vK6cOICNeN9DdEtvnvF74ZfP3/vuLuJArkElGJV1YNsYRqHCgERqCOVHQ34
+         SXrgeL6dBhbLeWlU8Z4JNeI7RB6s/eLqa5j0O8lkGcKo1fiwwLM83cgkxhwz4wrhhNVD
+         RnVS5Emrddpb289sl2cJYb1sfT2soXpIJtm9c/RgLXQ7nwb7a6BfGQBCBO4F2wXAPiuK
+         MYGpqbtrLZDXIke2bNcTOC1WtgoXZsWF8a0yEQWSQyaY0AHTRjHGwPKg8wJzrA55WbPG
+         FDdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=AZzCltgnNdPyeZzXiMFjWCg4GFVgDog5WHEdONSaQYA=;
+        b=XtXPc6s/gh8zEQzk0HFXMX13pIqchJB5BOCi4owGW6Yf+EMH4y15YBEaPtBzU7U+uI
+         xvzXyzOZgzcpFgLnlxch96sPi6Hw+2V97/S398wFRxK8wTaALZQvhu0YYS5z6jBflnBB
+         fEgUsZaaPGzzxOBI+M1nxxBihx22TLdjcfNLXHvIRTvMAr4LgNHQWeur3c0R4L7LDU9x
+         E5Eal/GRDX7DiHs3Ocx1Wuon5MXQVPmwbd6ILQFfqTGxn2W4fAoQQ2nDf+iwNHdqWHNN
+         OjQhbt++fu6MJo/hJFzs9/jWwzWIU5JsZ7KbQBLVlTGcdOf6aRRRdMzGmWBzwkguJYmr
+         RgPA==
+X-Gm-Message-State: AOUpUlGVH53w8yNZGL2K181EBawoiGkpDT3zLdAQgWGvNZwtlyCy1+U1
+        0xwTLTnepa8PCOT/+g+n3Jg5PQ==
+X-Google-Smtp-Source: AAOMgpe57NW0DQDrONhZjG8SlJwhk7i/pp3Ii9AltAolWcQJMvLYWVi8kJi6JCEEY5x61NvhhAjheA==
+X-Received: by 2002:a1c:888e:: with SMTP id k136-v6mr2069766wmd.6.1531930243447;
+        Wed, 18 Jul 2018 09:10:43 -0700 (PDT)
+Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
+        by smtp.gmail.com with ESMTPSA id v185-v6sm2847803wme.30.2018.07.18.09.10.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Jul 2018 09:10:42 -0700 (PDT)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 1/5] net: visually shrink eth_platform_get_mac_address()
+Date:   Wed, 18 Jul 2018 18:10:31 +0200
+Message-Id: <20180718161035.7005-2-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180718161035.7005-1-brgl@bgdev.pl>
+References: <20180718161035.7005-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On year ago Rob Herring wanted to remove the data pointer from the
-device_node structure[1]. The mvneta driver seemed to be the only one
-which used (abused ?) it. However, the proposal of Rob to remove this
-pointer from the driver introduced a regression, and I tested and fixed an
-alternative way, but it was never submitted as a proper patch.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Now here it is: Instead of using the device_node structure ->data
-pointer, we store the BM private data as the driver data of the BM
-platform_device. The core mvneta code can retrieve it by doing a lookup
-on which platform_device corresponds to the BM device tree node using
-of_find_device_by_node(), and get its driver data
+Initialize the variables with proper values so that we save a few
+lines of code before we extend this function in the follow-up patches.
 
-[1]https://www.spinics.net/lists/netdev/msg445197.html
-
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/net/ethernet/marvell/mvneta.c    | 18 ++++++++++++------
- drivers/net/ethernet/marvell/mvneta_bm.c | 15 +++++++++++++++
- drivers/net/ethernet/marvell/mvneta_bm.h |  5 +++++
- 3 files changed, 32 insertions(+), 6 deletions(-)
+ net/ethernet/eth.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index 3d1f4335b0d3..011794148ec8 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4461,12 +4461,16 @@ static int mvneta_probe(struct platform_device *pdev)
+diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+index ee28440f57c5..da8530879e1e 100644
+--- a/net/ethernet/eth.c
++++ b/net/ethernet/eth.c
+@@ -527,15 +527,10 @@ unsigned char * __weak arch_get_platform_mac_address(void)
  
- 	/* Obtain access to BM resources if enabled and already initialized */
- 	bm_node = of_parse_phandle(dn, "buffer-manager", 0);
--	if (bm_node && bm_node->data) {
--		pp->bm_priv = bm_node->data;
--		err = mvneta_bm_port_init(pdev, pp);
--		if (err < 0) {
--			dev_info(&pdev->dev, "use SW buffer management\n");
--			pp->bm_priv = NULL;
-+	if (bm_node) {
-+		pp->bm_priv = mvneta_bm_get(bm_node);
-+		if (pp->bm_priv) {
-+			err = mvneta_bm_port_init(pdev, pp);
-+			if (err < 0) {
-+				dev_info(&pdev->dev,
-+					 "use SW buffer management\n");
-+				mvneta_bm_put(pp->bm_priv);
-+				pp->bm_priv = NULL;
-+			}
- 		}
- 	}
- 	of_node_put(bm_node);
-@@ -4527,6 +4531,7 @@ static int mvneta_probe(struct platform_device *pdev)
- 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_long, 1 << pp->id);
- 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_short,
- 				       1 << pp->id);
-+		mvneta_bm_put(pp->bm_priv);
- 	}
- err_free_stats:
- 	free_percpu(pp->stats);
-@@ -4564,6 +4569,7 @@ static int mvneta_remove(struct platform_device *pdev)
- 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_long, 1 << pp->id);
- 		mvneta_bm_pool_destroy(pp->bm_priv, pp->pool_short,
- 				       1 << pp->id);
-+		mvneta_bm_put(pp->bm_priv);
- 	}
- 
- 	return 0;
-diff --git a/drivers/net/ethernet/marvell/mvneta_bm.c b/drivers/net/ethernet/marvell/mvneta_bm.c
-index 466939f8f0cf..de468e1bdba9 100644
---- a/drivers/net/ethernet/marvell/mvneta_bm.c
-+++ b/drivers/net/ethernet/marvell/mvneta_bm.c
-@@ -18,6 +18,7 @@
- #include <linux/module.h>
- #include <linux/netdevice.h>
- #include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/skbuff.h>
- #include <net/hwbm.h>
-@@ -392,6 +393,20 @@ static void mvneta_bm_put_sram(struct mvneta_bm *priv)
- 		      MVNETA_BM_BPPI_SIZE);
- }
- 
-+struct mvneta_bm *mvneta_bm_get(struct device_node *node)
-+{
-+	struct platform_device *pdev = of_find_device_by_node(node);
-+
-+	return pdev ? platform_get_drvdata(pdev) : NULL;
-+}
-+EXPORT_SYMBOL_GPL(mvneta_bm_get);
-+
-+void mvneta_bm_put(struct mvneta_bm *priv)
-+{
-+	platform_device_put(priv->pdev);
-+}
-+EXPORT_SYMBOL_GPL(mvneta_bm_put);
-+
- static int mvneta_bm_probe(struct platform_device *pdev)
+ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
  {
- 	struct device_node *dn = pdev->dev.of_node;
-diff --git a/drivers/net/ethernet/marvell/mvneta_bm.h b/drivers/net/ethernet/marvell/mvneta_bm.h
-index a32de432800c..9358626e51ec 100644
---- a/drivers/net/ethernet/marvell/mvneta_bm.h
-+++ b/drivers/net/ethernet/marvell/mvneta_bm.h
-@@ -134,6 +134,9 @@ void *mvneta_frag_alloc(unsigned int frag_size);
- void mvneta_frag_free(unsigned int frag_size, void *data);
+-	const unsigned char *addr;
+-	struct device_node *dp;
++	struct device_node *dp = dev_is_pci(dev) ?
++			pci_device_to_OF_node(to_pci_dev(dev)) : dev->of_node;
++	const unsigned char *addr = NULL;
  
- #if IS_ENABLED(CONFIG_MVNETA_BM)
-+struct mvneta_bm *mvneta_bm_get(struct device_node *node);
-+void mvneta_bm_put(struct mvneta_bm *priv);
-+
- void mvneta_bm_pool_destroy(struct mvneta_bm *priv,
- 			    struct mvneta_bm_pool *bm_pool, u8 port_map);
- void mvneta_bm_bufs_free(struct mvneta_bm *priv, struct mvneta_bm_pool *bm_pool,
-@@ -178,5 +181,7 @@ static inline void mvneta_bm_pool_put_bp(struct mvneta_bm *priv,
- static inline u32 mvneta_bm_pool_get_bp(struct mvneta_bm *priv,
- 					struct mvneta_bm_pool *bm_pool)
- { return 0; }
-+struct mvneta_bm *mvneta_bm_get(struct device_node *node) { return NULL; }
-+void mvneta_bm_put(struct mvneta_bm *priv) {}
- #endif /* CONFIG_MVNETA_BM */
- #endif
+-	if (dev_is_pci(dev))
+-		dp = pci_device_to_OF_node(to_pci_dev(dev));
+-	else
+-		dp = dev->of_node;
+-
+-	addr = NULL;
+ 	if (dp)
+ 		addr = of_get_mac_address(dp);
+ 	if (!addr)
 -- 
-2.18.0
+2.17.1
 
