@@ -2,102 +2,130 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CC0ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 614CDECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6DDD2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:45:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6DDD2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1FD622075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD622075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731518AbeGRSYc (ORCPT
+        id S1731485AbeGRS0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 14:24:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54496 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731144AbeGRSYc (ORCPT
+        Wed, 18 Jul 2018 14:26:00 -0400
+Received: from smtprelay0200.hostedemail.com ([216.40.44.200]:34281 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731186AbeGRS0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 14:24:32 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 759F6CFD;
-        Wed, 18 Jul 2018 17:45:33 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 19:45:31 +0200
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc:     "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "sayalil@codeaurora.org" <sayalil@codeaurora.org>,
-        "riteshh@codeaurora.org" <riteshh@codeaurora.org>,
-        "evgreen@chromium.org" <evgreen@chromium.org>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>
-Subject: Re: [PATCH V5 2/2] scsi: ufs: Add configfs support for ufs
- provisioning
-Message-ID: <20180718174531.GA2008@kroah.com>
-References: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
- <1530858040-13971-3-git-send-email-sayalil@codeaurora.org>
- <CAE=gft5U1-Jo-GvTF7sNAV3Q565AmuUrHpmBdxUL+UwkKxesqA@mail.gmail.com>
- <0dce9e9c-4f93-9857-72ee-f65ff195c41a@codeaurora.org>
- <CAE=gft6_=SQjgv7_kHXKJKa8_45NKKFwwE7UaXsijPpMd35LOg@mail.gmail.com>
- <4cb931e199599314829f5ff750797c88fc123f1f.camel@wdc.com>
- <CAE=gft6zm2mw3rnNuktDe0NWs-NM1CFQw1BUeGhaBi3eoEDXBg@mail.gmail.com>
- <aa697186c00937c18519fe5eb1355d3fc458cfb6.camel@wdc.com>
- <20180718085651.GA23599@kroah.com>
- <16c8acaec092ef989ec20d0b006a434bc0de250c.camel@wdc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <16c8acaec092ef989ec20d0b006a434bc0de250c.camel@wdc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 18 Jul 2018 14:26:00 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 67C13100E86C0;
+        Wed, 18 Jul 2018 17:47:01 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: elbow19_2ea816c5a74c
+X-Filterd-Recvd-Size: 3504
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 18 Jul 2018 17:46:59 +0000 (UTC)
+Message-ID: <8601ab3e058b92aca02081c1210e0b5db6d5700c.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Resolve improper warning for krealloc arg
+ reuse
+From:   Joe Perches <joe@perches.com>
+To:     Manish Narani <manish.narani@xilinx.com>, apw@canonical.com,
+        linux-kernel@vger.kernel.org
+Cc:     anirudh@xilinx.com, sgoud@xilinx.com, svemula@xilinx.com
+Date:   Wed, 18 Jul 2018 10:46:58 -0700
+In-Reply-To: <1531922148-7423-1-git-send-email-manish.narani@xilinx.com>
+References: <1531922148-7423-1-git-send-email-manish.narani@xilinx.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 05:30:07PM +0000, Bart Van Assche wrote:
-> On Wed, 2018-07-18 at 10:56 +0200, gregkh@linuxfoundation.org wrote:
-> > On Tue, Jul 17, 2018 at 09:06:35PM +0000, Bart Van Assche wrote:
-> > > On Tue, 2018-07-17 at 13:23 -0700, Evan Green wrote:
-> > > > I'm not dead set on binary, since as above I could do it either way,
-> > > > but it seemed worth at least talking through. Let me know what you
-> > > > think.
-> > > 
-> > > The configfs documentation (Documentation/filesystems/configfs/configfs.txt)
-> > > is clear about this: "Preferably only one value per file should be used." So
-> > > I would like to hear the opinion of someone who has more authority than I
-> > > with regard to configfs.
-> > 
-> > Don't we have "binary" files for configfs?  We have them for sysfs, they
-> > are for files that are not touched by the kernel and just "pass-through"
-> > to the hardware.  Would that work here as well?
+On Wed, 2018-07-18 at 19:25 +0530, Manish Narani wrote:
+> Correct the check for reuse of krealloc. It gives false warning when a
+> structure member variable name and krealloc argument name is same.
 > 
-> If a new version of the UFS spec would be introduced and that new version of the
-> spec introduces a new layout for the binary descriptor, will it be possible for
-> user space software to figure out which version of the binary descriptor format
-> that has to be used?
+> For Example:
+> {
+> 	...
+> 	abc.def_var = krealloc(def_var, sizeof(*def_var),
+> 				    GFP_KERNEL);
+> 	...
+> }
+> 
+> $ ./scripts/checkpatch.pl -f file.c
+> 
+> WARNING: Reusing the krealloc arg is almost always a bug
+> +	abc.def_var = krealloc(def_var, sizeof(*def_var),
+> 
+> This patch resolves the above false warning.
+> 
+> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
+> ---
+>  scripts/checkpatch.pl | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 447857f..db9b666 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -6119,7 +6119,7 @@ sub process {
+>  
+>  # check for krealloc arg reuse
+>  		if ($^V && $^V ge 5.10.0 &&
+> -		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*\1\s*,/) {
+> +		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*\1\s*,/ && $line !~ m/[\.|\-\>].*\s*\=\s*.*/) {
+>  			WARN("KREALLOC_ARG_REUSE",
+>  			     "Reusing the krealloc arg is almost always a bug\n" . $herecurr);
+>  		}
 
-If a new UFS spec was crazy enough to keep the same field name but
-change the layout of the field, well, the UFS spec authors deserve all
-of the pain and suffering that would cause to be heaped on them.
+This works, though I'm not completely sure why.
 
-Seriously, it's not hard to do this right, go fix the spec before they
-do something stupid.
+Andy or anyone else:  Does your perl-foo understand why?
 
-And you are reporting the version of the UFS spec that your device
-supports to userspace, right?  So is this really a problem even if the
-spec authors are that foolish?
+$ cat test_krealloc.c
+static int xadc_parse_dt(struct iio_dev *indio_dev, struct device_node *np,
+	unsigned int *conf)
+{
+	indio_dev->channels = krealloc(channels, sizeof(*channels) *
+					num_channels, GFP_KERNEL);
+	indio_dev->channels = krealloc(indio_dev->channels, sizeof(*channels) *
+					num_channels, GFP_KERNEL);
+}
 
-thanks,
+For the patch below, the old case matches the first
+$Lval above as "channels" skipping the "indio_dev->"
+bit and as not "indio_dev->channels"
 
-greg k-h
+The modified patch below matches the first $Lval as the
+expected "indio_dev->channels"
+---
+ scripts/checkpatch.pl | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index ed4fa986e8da..59eaaede757a 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6149,7 +6149,8 @@ sub process {
+ 
+ # check for krealloc arg reuse
+ 		if ($perl_version_ok &&
+-		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*\1\s*,/) {
++		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*($Lval)\s*,/ &&
++		    $1 eq $3) {
+ 			WARN("KREALLOC_ARG_REUSE",
+ 			     "Reusing the krealloc arg is almost always a bug\n" . $herecurr);
+ 		}
+
