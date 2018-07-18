@@ -2,157 +2,195 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA22CECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB601ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932192075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:42:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="mRrWoN3w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932192075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CDDE2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:43:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CDDE2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730910AbeGRPUm (ORCPT
+        id S1731000AbeGRPVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:20:42 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:45282 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbeGRPUm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:20:42 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id 3BC20B0076D
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 16:42:27 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=content-transfer-encoding:content-language:content-type
-        :content-type:in-reply-to:mime-version:user-agent:date:date
-        :message-id:from:from:references:to:subject:subject; s=dkim; t=
-        1531924946; x=1532788947; bh=xiXxOJrNZqzbAYUT06Tiit1Cm5kvYYXOKkE
-        dU/Wk7Hs=; b=mRrWoN3wQdhmQeQ09HJt6LyG4oK1KxVZdAHPqpd4tSkZbP09fHZ
-        i70emaDLIbfrUKy8GyarDOVaW9+2cwrBO932C5JzhNXh8nmLO9Sn9QhWSzGGCVQK
-        8tauqsU45UTSbV4tSDovzRPAkDThR+b2/ipFKcQeyT+2lG/8a4jqoplI=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 07Hjuq-3MuHC for <linux-kernel@vger.kernel.org>;
-        Wed, 18 Jul 2018 16:42:26 +0200 (CEST)
-Received: from [192.168.2.133] (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 19DFBB00049;
-        Wed, 18 Jul 2018 16:42:26 +0200 (CEST)
-Subject: Re: [PATCH] drm/sun4i: Handle DRM_BUS_FLAG_PIXDATA_*EDGE checking if
- panel is used.
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        "open list:DRM DRIVERS FOR ALLWINNER A10" 
-        <dri-devel@lists.freedesktop.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180613081647.31183-1-paul.kocialkowski@bootlin.com>
- <20180718142357.120998-1-giulio.benetti@micronovasrl.com>
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <e1fcedb1-64d5-24fb-ffc1-d418620ec795@micronovasrl.com>
-Date:   Wed, 18 Jul 2018 16:42:25 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 18 Jul 2018 11:21:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730627AbeGRPVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:21:31 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2CE29401EF07;
+        Wed, 18 Jul 2018 14:43:16 +0000 (UTC)
+Received: from flask (unknown [10.43.2.80])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 63A172026D69;
+        Wed, 18 Jul 2018 14:43:12 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Wed, 18 Jul 2018 16:43:11 +0200
+Date:   Wed, 18 Jul 2018 16:43:11 +0200
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: Re: [PATCH v2] KVM: Add coalesced PIO support
+Message-ID: <20180718144311.GB6348@flask>
+References: <1531360773-32304-1-git-send-email-wanpengli@tencent.com>
 MIME-Version: 1.0
-In-Reply-To: <20180718142357.120998-1-giulio.benetti@micronovasrl.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531360773-32304-1-git-send-email-wanpengli@tencent.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 14:43:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 14:43:16 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-
-can you give a try to this patch on A13 with VGA DAC?
-Unfortunately I don't have an A13 board to test it.
-
-Thanks in advance.
-
-Giulio
-
-Il 18/07/2018 16:23, Giulio Benetti ha scritto:
-> Handle both positive and negative dclk polarity,
-> according to bus_flags, taking care of this:
+2018-07-12 09:59+0800, Wanpeng Li:
+> From: Peng Hao <peng.hao2@zte.com.cn>
 > 
-> On A20 and similar SoCs, the only way to achieve Positive Edge
-> (Rising Edge), is setting dclk clock phase to 2/3(240°).
-> By default TCON works in Negative Edge(Falling Edge), this is why phase
-> is set to 0 in that case.
-> Unfortunately there's no way to logically invert dclk through IO_POL
-> register.
-> The only acceptable way to work, triple checked with scope,
-> is using clock phase set to 0° for Negative Edge and set to 240° for
-> Positive Edge.
-> On A33 and similar SoCs there would be a 90° phase option, but it divides
-> also dclk by 2.
-> This patch is a way to avoid quirks all around TCON and DOTCLOCK drivers
-> for using A33 90° phase divided by 2 and consequently increase code
-> complexity.
+> Windows I/O, such as the real-time clock. The address register (port
+> 0x70 in the RTC case) can use coalesced I/O, cutting the number of
+> userspace exits by half when reading or writing the RTC.
 > 
-> Check if panel is used. TCON can also handle VGA DAC, then panel could
-> be empty.
+> Guest access rtc like this: write register index to 0x70, then write or 
+> read data from 0x71. writing 0x70 port is just as index and do nothing 
+> else. So we can use coalesced mmio to handle this scene to reduce VM-EXIT 
+> time.
 > 
-> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+> In our environment, 12 windows guests running on a Skylake server:
+> 
+> Before patch:
+> 
+> IO Port Access  Samples  Samples%   Time%    Avg time
+> 
+> 0x70:POUT        20675    46.04%    92.72%   67.15us ( +-   7.93% )
+> 
+> After patch:
+> 
+> IO Port Access  Samples  Samples%   Time%    Avg time
+> 
+> 0x70:POUT        17509    45.42%    42.08%   6.37us ( +-  20.37% )
+> 
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: Eduardo Habkost <ehabkost@redhat.com>
+> Cc: Peng Hao <peng.hao2@zte.com.cn>
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
 > ---
->   drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++++
->   1 file changed, 28 insertions(+)
+> v1 -> v2:
+>  * add the original author
 > 
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> index 8232b39e16ca..5c7d6ae53111 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -17,6 +17,7 @@
->   #include <drm/drm_encoder.h>
->   #include <drm/drm_modes.h>
->   #include <drm/drm_of.h>
-> +#include <drm/drm_panel.h>
->   
->   #include <uapi/drm/drm_mode.h>
->   
-> @@ -474,6 +475,33 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
->   	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
->   		val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
->   
-> +	/*
-> +	 * On A20 and similar SoCs, the only way to achieve Positive Edge
-> +	 * (Rising Edge), is setting dclk clock phase to 2/3(240°).
-> +	 * By default TCON works in Negative Edge(Falling Edge),
-> +	 * this is why phase is set to 0 in that case.
-> +	 * Unfortunately there's no way to logically invert dclk through
-> +	 * IO_POL register.
-> +	 * The only acceptable way to work, triple checked with scope,
-> +	 * is using clock phase set to 0° for Negative Edge and set to 240°
-> +	 * for Positive Edge.
-> +	 * On A33 and similar SoCs there would be a 90° phase option,
-> +	 * but it divides also dclk by 2.
-> +	 * Following code is a way to avoid quirks all around TCON
-> +	 * and DOTCLOCK drivers.
-> +	 */
-> +	if (!IS_ERR(tcon->panel)) {
-> +		struct drm_panel *panel = tcon->panel;
-> +		struct drm_connector *connector = panel->connector;
-> +		struct drm_display_info display_info = connector->display_info;
-> +
-> +		if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE)
-> +			clk_set_phase(tcon->dclk, 240);
-> +
-> +		if (display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_NEGEDGE)
-> +			clk_set_phase(tcon->dclk, 0);
-> +	}
-> +
->   	regmap_update_bits(tcon->regs, SUN4I_TCON0_IO_POL_REG,
->   			   SUN4I_TCON0_IO_POL_HSYNC_POSITIVE | SUN4I_TCON0_IO_POL_VSYNC_POSITIVE,
->   			   val);
+>  Documentation/virtual/kvm/00-INDEX         |  2 ++
+>  Documentation/virtual/kvm/api.txt          |  7 +++++++
+>  Documentation/virtual/kvm/coalesced-io.txt | 17 +++++++++++++++++
+>  include/uapi/linux/kvm.h                   |  5 +++--
+>  virt/kvm/coalesced_mmio.c                  | 16 +++++++++++++---
+>  virt/kvm/kvm_main.c                        |  2 ++
+>  6 files changed, 44 insertions(+), 5 deletions(-)
+>  create mode 100644 Documentation/virtual/kvm/coalesced-io.txt
 > 
+> diff --git a/Documentation/virtual/kvm/00-INDEX b/Documentation/virtual/kvm/00-INDEX
+> index 3492458..4160620 100644
+> --- a/Documentation/virtual/kvm/00-INDEX
+> +++ b/Documentation/virtual/kvm/00-INDEX
+> @@ -9,6 +9,8 @@ arm
+>  	- internal ABI between the kernel and HYP (for arm/arm64)
+>  cpuid.txt
+>  	- KVM-specific cpuid leaves (x86).
+> +coalesced-io.txt
+> +	- Coalesced MMIO and coalesced PIO.
+>  devices/
+>  	- KVM_CAP_DEVICE_CTRL userspace API.
+>  halt-polling.txt
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index d10944e..4190796 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -4618,3 +4618,10 @@ This capability indicates that KVM supports paravirtualized Hyper-V TLB Flush
+>  hypercalls:
+>  HvFlushVirtualAddressSpace, HvFlushVirtualAddressSpaceEx,
+>  HvFlushVirtualAddressList, HvFlushVirtualAddressListEx.
+> +
+> +8.19 KVM_CAP_COALESCED_PIO
+> +
+> +Architectures: x86, s390, ppc, arm64
+> +
+> +This Capability indicates that kvm supports writing to a coalesced-pio region
+> +is not reported to userspace until the next non-coalesced pio is issued.
+> diff --git a/Documentation/virtual/kvm/coalesced-io.txt b/Documentation/virtual/kvm/coalesced-io.txt
+> new file mode 100644
+> index 0000000..4a96eaf
+> --- /dev/null
+> +++ b/Documentation/virtual/kvm/coalesced-io.txt
+> @@ -0,0 +1,17 @@
+> +----
+> +Coalesced MMIO and coalesced PIO can be used to optimize writes to
+> +simple device registers. Writes to a coalesced-I/O region are not
+> +reported to userspace until the next non-coalesced I/O is issued,
+> +in a similar fashion to write combining hardware.  In KVM, coalesced
+> +writes are handled in the kernel without exits to userspace, and
+> +are thus several times faster.
+> +
+> +Examples of devices that can benefit from coalesced I/O include:
+> +
+> +- devices whose memory is accessed with many consecutive writes, for
+> +  example the EGA/VGA video RAM.
+> +
+> +- windows I/O, such as the real-time clock. The address register (port
+> +  0x70 in the RTC case) can use coalesced I/O, cutting the number of
+> +  userspace exits by half when reading or writing the RTC.
+> +----
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index b6270a3..9cc56d3 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -420,13 +420,13 @@ struct kvm_run {
+>  struct kvm_coalesced_mmio_zone {
+>  	__u64 addr;
+>  	__u32 size;
+> -	__u32 pad;
+> +	__u32 pio;
+
+Paolo, do you think we can rename the field without breaking userspace
+builds?
+
+>  };
+>  
+>  struct kvm_coalesced_mmio {
+>  	__u64 phys_addr;
+>  	__u32 len;
+> -	__u32 pad;
+> +	__u32 pio;
+>  	__u8  data[8];
+>  };
+>  
+> diff --git a/virt/kvm/coalesced_mmio.c b/virt/kvm/coalesced_mmio.c
+> @@ -149,8 +150,12 @@ int kvm_vm_ioctl_register_coalesced_mmio(struct kvm *kvm,
+>  	dev->zone = *zone;
+>  
+>  	mutex_lock(&kvm->slots_lock);
+> -	ret = kvm_io_bus_register_dev(kvm, KVM_MMIO_BUS, zone->addr,
+> -				      zone->size, &dev->dev);
+> +	if (zone->pio)
+> +		ret = kvm_io_bus_register_dev(kvm, KVM_PIO_BUS, zone->addr,
+> +						zone->size, &dev->dev);
+> +	else
+> +		ret = kvm_io_bus_register_dev(kvm, KVM_MMIO_BUS, zone->addr,
+> +						zone->size, &dev->dev);
+
+This would be better readable as
+
+	ret = kvm_io_bus_register_dev(kvm, zone->pio ? KVM_PIO_BUS : KVM_MMIO_BUS,
+	                              zone->addr, zone->size, &dev->dev);
+
+thanks.
