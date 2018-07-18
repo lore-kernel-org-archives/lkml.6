@@ -4,138 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0F9ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A47ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FC3C20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77EC420854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:22:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9UtoHoH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC3C20854
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqxmGABr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77EC420854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbeGRVAz (ORCPT
+        id S1730684AbeGRVCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:00:55 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42374 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729776AbeGRVAz (ORCPT
+        Wed, 18 Jul 2018 17:02:09 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34502 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729742AbeGRVCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:00:55 -0400
-Received: by mail-pf0-f196.google.com with SMTP id l9-v6so2717791pff.9;
-        Wed, 18 Jul 2018 13:21:23 -0700 (PDT)
+        Wed, 18 Jul 2018 17:02:09 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c13-v6so5902234wrt.1;
+        Wed, 18 Jul 2018 13:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2IGiSTg4sisXhemFX7mnlqH/H4JwXpYPnaegAY6cNAU=;
-        b=b9UtoHoHi7Adh/Jp2bcPSyAnGhaHwDWarv6gJV1buRM7tPgBRWgsnIY3UrEPzkzQTR
-         qsuU5jfwOzRpJnlqm5eO2TBJ5Q3enn9aHE8ZN97GARebx9McK3sKtT0iT9z1nKgRRdcr
-         Ix21LOZfCrg5OL9ZhcOz6e+LYYmdmKfi8Z5D+hbwIfs0l1wmPT8+LVXDlnKEXWP974U9
-         kqlKeqUwRCnljkTNTmXVFOavAWLepgKXNuDHb1Pui61ECFs917qih2KQjdwTiGZxKSfC
-         7mPUBSlpLILsqMrw9YmSMT3r2Wh3vOwutfhpO4BVld/URx9zoAJWB8MrjoihGgcz1de/
-         AHjw==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
+        bh=gQt6XCMG+saLSmoFZPV5sQiwJFTqff0BNTC7bL0hgZ0=;
+        b=SqxmGABrANXnVqdb9QAB+mVkFYf6c/UIJI50hGE+Rvb0VzlzYXK27DBKfBUNWmKZbW
+         /O+2QYGa941FXVoyzEntoUCdfFh5pT4KyqeBW04jaADdl/PTTiFVmLzaALXJ6OBv7Fd8
+         /LYn6wvWFNQ1tzNMwNPViKVL6BBintiBWV01Mxmuv2JB1UOJKK/1YrL5gUq/aAo7PKcg
+         fxznMFPiKFn3cK0TtqvrCIasw1QRzFWZQXDaPCzL+IYOjxle45HW6+gDQEuAIjZnNedy
+         2Sh9agWVvssb99BmR2WiuZ1HO4JLQH4KOzZkgomgV7FFEUm02JmhN171B2ofDZiYATcB
+         kooQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2IGiSTg4sisXhemFX7mnlqH/H4JwXpYPnaegAY6cNAU=;
-        b=VcpdakizCKhDYYnyK0MJx57dP+Jc3wH5KiPJJEeDnLAb5xVqUlk+7/E1vlNYviIx+h
-         aVdruC12QcAQfaC/kxC8TRHA80laUfrx7TSG1KdN/YYHK9VVqDE/HIpi2fiijD/HGW1F
-         Go6Az6bAeJMZMHKUhrW732yUMWFUwtgqXgSRyPITZVuoSnwRwmUKeUUTfZksY/IaPTU2
-         gj6vPdGnO4xiJE27Ne8eyy6XTwjgEvYFPUwTUVnnyA/RNO8MGArzwQLrhm67FgFmayfu
-         xFTqctndLgLZVtWNwyHjYC0XD89gVa04LuwolZk6QwiJfd2gqloigkR9IBOblm/xLTRu
-         /XJg==
-X-Gm-Message-State: AOUpUlFjc1vZUb5XpgGgxog2dpgIWGUpdR0WW41ltcQpUTpSE/6M3+Cy
-        eZaqknvJ47OoIEW1/dutMGvB8v34qUyKWmLJpo4=
-X-Google-Smtp-Source: AAOMgpdBccCBrVT3+fgOPYnEy/EllLvgnRyQcvxnd3EEApBI5YrTAbS0HpbUkhJIgtlVPTjQvLI1Olu1GK9GpTGff80=
-X-Received: by 2002:a65:5a01:: with SMTP id y1-v6mr7131217pgs.125.1531945283429;
- Wed, 18 Jul 2018 13:21:23 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to;
+        bh=gQt6XCMG+saLSmoFZPV5sQiwJFTqff0BNTC7bL0hgZ0=;
+        b=mTlectL3YnT8sjhbRc34VUVhcJL/qpDmneYAQduIN67fHCPCiVd6nXs7z19gtSp+Z9
+         iAayOpcLyjHbf9A2NuQJvvAIwUbwN+4yhH4XJ5kbyzU2Q7pl3cMU39CMJSfyKJ9mdtPX
+         t7SlocZWyJzmltdl18SfOf0sUEzj+8gCx3WktTVJTrkw9k1bP53qsgDeZ6uqvJv772Zs
+         ddpBCgIM6oD5gxPA6ND4J/Pr5Nlab4vHZdM0+1e+ocUmQesHOggEdAIZfsSWaOWJ9n14
+         Lc5K19znzyjj2PLdsgdGW24I/0LFqCI5FwwmQ0/TCDIzqGhT5JYFbk31Te1c6iKe+D7O
+         79Iw==
+X-Gm-Message-State: AOUpUlGUCrvIWJo3oZEpzoCyRr2gP1R4sMf/RG908WNb/ok53aiUME2Z
+        UIpLcG2HCVFcR1CtPkxOmumnFwAFfHpLub8Nfbk=
+X-Google-Smtp-Source: AAOMgpeuUxQkvAJEQCAv4pwSwxXBD+oVlXhN0qJib3L+HovvtJKylkZ5B/D/z2iZK/B5yIZ7GWlNBUv/U6oegWGiiXg=
+X-Received: by 2002:adf:9b11:: with SMTP id b17-v6mr5422889wrc.119.1531945356135;
+ Wed, 18 Jul 2018 13:22:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180716215101.4713-1-xiyou.wangcong@gmail.com> <20180718081905.GA13520@krava>
-In-Reply-To: <20180718081905.GA13520@krava>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Wed, 18 Jul 2018 13:21:11 -0700
-Message-ID: <CAM_iQpVX_9C42Wh+ydti=droRz_Xs_Cv4ovVcg4nqu+n1OScKg@mail.gmail.com>
-Subject: Re: [PATCH] perf/core: fix a possible deadlock scenario
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        stable <stable@vger.kernel.org>
+Received: by 2002:adf:9784:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 13:22:35
+ -0700 (PDT)
+In-Reply-To: <20180718173621.GC30706@thunk.org>
+References: <20180718014344.1309-1-tytso@mit.edu> <20180718015154.GE3489@thunk.org>
+ <CACXcFmk7D5t9yg9VxhKZgMvqK-LmFF0d7Dh9A3hsoGTfzzeM8A@mail.gmail.com> <20180718173621.GC30706@thunk.org>
+From:   Sandy Harris <sandyinchina@gmail.com>
+Date:   Wed, 18 Jul 2018 16:22:35 -0400
+Message-ID: <CACXcFm=URq_UnqdeEUAV0i6DSkvhE8VZW0KYcgQ=7601q_5NnQ@mail.gmail.com>
+Subject: Re: [PATCH] random: addu a config option to trust the CPU's hwrng
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Sandy Harris <sandyinchina@gmail.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        labbott@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 1:19 AM Jiri Olsa <jolsa@redhat.com> wrote:
+Theodore Y. Ts'o <tytso@mit.edu> wrote:
+
+>  For those people who are super paranoid and want a "true
+> random number generator" (and the meaning of that is hazy) because a
+> CRNG is Not Enough, my recommendation these days is that they get
+> something like an open hardware RNG solution, such as ChaosKey from
+> Altus Metrum[1].
 >
-> On Mon, Jul 16, 2018 at 02:51:01PM -0700, Cong Wang wrote:
-> > hrtimer_cancel() busy-waits for the hrtimer callback to stop,
-> > pretty much like del_timer_sync(). This creates a possible deadlock
-> > scenario where we hold a spinlock before calling hrtimer_cancel()
-> > while in trying to acquire the same spinlock in the callback.
-> >
-> > This kind of deadlock is already known and is catchable by lockdep,
-> > like for del_timer_sync(), we can add lockdep annotations. However,
-> > it is still missing for hrtimer_cancel(). (I have a WIP patch to make
-> > it complete for hrtimer_cancel() but it breaks booting.)
-> >
-> > And there is such a deadlock scenario in kernel/events/core.c too,
-> > well actually, it is a simpler version: the hrtimer callback waits
-> > for itself to finish on the same CPU! It sounds stupid but it is
-> > not obvious at all, it hides very deeply in the perf event code:
-> >
-> > cpu_clock_event_init():
-> >   perf_swevent_init_hrtimer():
-> >     hwc->hrtimer.function = perf_swevent_hrtimer;
-> >
-> > perf_swevent_hrtimer():
-> >   __perf_event_overflow():
-> >     __perf_event_account_interrupt():
-> >       perf_adjust_period():
-> >         pmu->stop():
-> >         cpu_clock_event_stop():
-> >           perf_swevent_cancel():
-> >             hrtimer_cancel()
-> >
-> > Getting stuck in a timer doesn't sound very scary, however, in this
->
-> sound scary enough for me ;-) were you able to hit it?
+> [1] https://altusmetrum.org/ChaosKey/
 
-Yeah, we have seen hundreds of soft lockup's in smp function call
-which is probably caused by this bug. It dates back to 3.10 kernel,
-seriously. :) Unfortunately we don't have a reproducer, so we can't
-verify if this patch really fixes those soft lockup's until we deploy
-the fix to probably thousands of machines in data center.
-
-
->
-> > case, its consequences are a disaster:
-> >
-> > perf_event_overflow() which calls __perf_event_overflow() is called
-> > in NMI handler too, so it is racy with hrtimer callback as disabling
-> > IRQ can't possibly disable NMI. This means this hrtimer callback
-> > once interrupted by an NMI handler could deadlock within NMI!
->
-> hum, the swevent pmu does not triger NMI, so that timer
-> will never be touched in NMI context
-
-Good to know! So I worry too much here.
-
-But still, given hrtimer interrupt is called with IRQ disabled, getting
-stuck in a hrtimer callback could also block IPI handler, therefore
-causing soft lockups.
-
-Let me know if you want me to adjust the changelog for this.
-
-Thanks!
+Yes & one of those can also solve any difficulty with random(4) at
+startup. Another alternative, perhaps easier on some systems, is
+Denker's Turbid trng:
+https://www.av8n.com/turbid/paper/turbid.htm
