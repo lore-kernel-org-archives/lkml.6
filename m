@@ -1,112 +1,107 @@
 Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16852ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8AEECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BECDE206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:57:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BECDE206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DCABF206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:57:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qDKnY8Ug"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCABF206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729970AbeGRMfU (ORCPT
+        id S1730248AbeGRMfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:35:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45400 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726362AbeGRMfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:35:20 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0C93740122B9;
-        Wed, 18 Jul 2018 11:57:45 +0000 (UTC)
-Received: from [10.36.116.221] (ovpn-116-221.ams2.redhat.com [10.36.116.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A15702156893;
-        Wed, 18 Jul 2018 11:57:42 +0000 (UTC)
-Subject: Re: [PATCH V2 2/5] KVM: Add tlb remote flush callback in kvm_x86_ops.
-To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
-Cc:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>
-References: <20180709090218.15342-1-Tianyu.Lan@microsoft.com>
- <20180709090218.15342-3-Tianyu.Lan@microsoft.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c2fb5459-12e6-27c3-7837-3db76b21511a@redhat.com>
-Date:   Wed, 18 Jul 2018 13:57:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 18 Jul 2018 08:35:32 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45335 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbeGRMfb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 08:35:31 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c4-v6so4381584wrs.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 04:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JnE32RBNUnCE9UrQz26ScvX1CN4woIRF9ldrRnArX0Q=;
+        b=qDKnY8Ug6hPdMZN7oTRfG3gmA3+hiySufkmmAYv4HMgdTQWybdLtbNxYXvbgjpm8QG
+         PjIIx7hCIS77+x3CSyQQyBwjdKbWSyd0FW9n3GNUIb+x5TqN3DNHNHmhZyGg9xPpqEAY
+         jgeJtd2kI3W0fF8t5evP3Y89V7sdUru1vwIlUWov8F2qSfcx72Yqvl0ir+7vVb4wIiGa
+         MPrS9bXpB0kJUGlm2FTgWUnOsMJv5q4XYVZaSe+9dQlYRuQeSL+IUy/VdYTrMx/aK6oo
+         IGbTl3N/zku1O8BHfTgZIVGUTvWIS5PFY7wlb4lpnVaTX15WVxkX9JULitKI5q2HSpQ/
+         msEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JnE32RBNUnCE9UrQz26ScvX1CN4woIRF9ldrRnArX0Q=;
+        b=hBGMJ9rdBpnpEQ5HO2VZOmoYmHTA0l3QQkGqK1cYU1aixMMYF1Ya3NWWwjsTTp4iS0
+         hY6eR6E2sa45kfka/m6EvI2r0WsJ4Jeyx5ZVclec4Umc8hkAPkBzNf4/gYaDV2LWCcM9
+         JPM5/X/zxptdT7noYxB74dwmOhKiPdrlxrDUWkGUFCW0BId+nrhaVkaOlPPM85hST0bA
+         fwzryG/pfUNk0Vofah39pvlUJn9I1p/zd9oidd1ZYYJCmpnzKOQUUn8Qic5tkHWzwmDr
+         FBR5ubAxO+ByKkDz6EeCeHbxr74j8IQWd393QNO89xhcb6Kdh6bNcyU4ZhurWjpczgkY
+         L/Pw==
+X-Gm-Message-State: AOUpUlF7HbG8CiyJbU42R16KgB0FebOF8h2Vg3fpfAbtcfyyCTZhdk9S
+        4wlsmdDgqDXOa5ZnMV7AeZM=
+X-Google-Smtp-Source: AAOMgpcON7QCLIzc7OVs963b8/WTOX4FnQy3vJVV/Buu12VCvOAORRKD+5qCTIIdfMNLndAQUvq4Cw==
+X-Received: by 2002:adf:bbd4:: with SMTP id z20-v6mr4352554wrg.183.1531915076760;
+        Wed, 18 Jul 2018 04:57:56 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id b198-v6sm2022389wme.11.2018.07.18.04.57.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 04:57:56 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 13:57:53 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, joe@perches.com,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v5] x86: Avoid pr_cont() in show_opcodes().
+Message-ID: <20180718115753.GA25388@gmail.com>
+References: <1531907643-3367-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20180709090218.15342-3-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 11:57:45 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 11:57:45 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531907643-3367-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/2018 11:02, Tianyu Lan wrote:
-> +
-> +	/*
-> +	 * Call kvm_arch_hv_tlb_remote first and go back old way when
-> +	 * return failure.
-> +	 */
 
-Please call it "kvm_arch_flush_remote_tlbs", since Hyper-V should not be
-mentioned in the generic code.
+* Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 
-Paolo
+> Since syzbot is confused by concurrent printk() messages [1],
+> this patch changes show_opcodes() to use %ph format string.
+> 
+> When we start adding prefix to each line of printk() output,
+> we will be able to handle concurrent printk() messages.
+> 
+> [1] https://syzkaller.appspot.com/text?tag=CrashReport&x=139d342c400000
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+
+Wasn't that variant of the patch written by Rasmus?
+
+If so then the changelog should start with:
+
+ From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+
+Thanks,
+
+	Ingo
