@@ -2,182 +2,145 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8C9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B15ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 882182075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:54:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bA6TluEr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 882182075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 19C0B2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C0B2075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731358AbeGRDaC (ORCPT
+        id S1731327AbeGRDcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:30:02 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:43314 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730731AbeGRDaC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:30:02 -0400
-Received: by mail-qk0-f194.google.com with SMTP id z74-v6so1661970qkb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 19:54:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=JUE43aCGdIvBQ3zJiGYOJqLCeUH9k/YrYqqRjecWfSQ=;
-        b=bA6TluEr/cBsKQJg7YwhKngt98XnMDB0ed2pPyUGzDJm4Tpzwuoq3WYegklvJmZ3+5
-         HrTGSHKT9+P00gtbUDB8/eaQVsd64vmTSEF22a0iG1EmG4jheimux9n0Gz9j1VGHniSA
-         nw44IHZ1emDVZ69YrbDATdHvGRoybz1SrTw8o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=JUE43aCGdIvBQ3zJiGYOJqLCeUH9k/YrYqqRjecWfSQ=;
-        b=kuj9CYm6OgyDUC+eF4XHsV3QZ2xI4WJK8FnPqDsgk3uOnELEhTMcHCjNrBFCehlHF6
-         LKnqoAG4OI3Rdhs0eT0IunB+aGTr1+55v3HmKtgoH6osbioD/zcokW4Kmg5DvBWV63Qp
-         jAkZXCBj+QV0K2k6GU5UbQzqetm0HY8GGMudrD0t710O7C1PY5eHh36Cd6AGWh/d0+hP
-         g8FDXoKtMrrV9jhmWJI6uElfbFDzO9PPpyKDTbAqK+xs71VBaIBfhcJSQXobDNkigtR+
-         esChreEEtrQAPOZ+HGcUnm2JzoitwZWeZHStZEbtRdMkad8h7xFh0et7d1baaTFE0bQO
-         Ik7A==
-X-Gm-Message-State: AOUpUlFRKVgPew29o/OUoB+gg/aTZ+JB+BHMdifL8kfzMlaSH/dRfXIG
-        3tNepUD4mIwcpxGH77pLhNYBWA==
-X-Google-Smtp-Source: AAOMgpfZnblOeqO5JmOG6A8O0HOQcWdp6egY/Z4mgaTx095cklNnve6MyP6X2i+lLc0NZimdFsjZ0g==
-X-Received: by 2002:a37:16c3:: with SMTP id 64-v6mr3876513qkw.381.1531882465181;
-        Tue, 17 Jul 2018 19:54:25 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id e21-v6sm1450716qtc.67.2018.07.17.19.54.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 19:54:24 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 22:54:23 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Adam Borowski <kilobyte@angband.pl>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Dave Mielke <Dave@mielke.cc>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        linux-kernel@vger.kernel.org, linux-console@vger.kernel.org
-Subject: Re: [PATCH 1/3] vt: avoid a VLA in the unicode screen scroll
- function
-In-Reply-To: <20180718014813.ygcbgqxk4yo3ydbl@angband.pl>
-Message-ID: <nycvar.YSQ.7.76.1807172155070.11681@knanqh.ubzr>
-References: <20180718010242.5254-1-nicolas.pitre@linaro.org> <20180718010242.5254-2-nicolas.pitre@linaro.org> <20180718014813.ygcbgqxk4yo3ydbl@angband.pl>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Tue, 17 Jul 2018 23:32:11 -0400
+Received: from mga04.intel.com ([192.55.52.120]:38651 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731109AbeGRDcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 23:32:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 19:56:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,368,1526367600"; 
+   d="scan'208";a="73246061"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 19:56:33 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v2 7/7] swap, put_swap_page: Share more between huge/normal code path
+References: <20180717005556.29758-1-ying.huang@intel.com>
+        <20180717005556.29758-8-ying.huang@intel.com>
+        <98288fec-1199-1b25-8c8c-18d60c33e596@linux.intel.com>
+Date:   Wed, 18 Jul 2018 10:56:32 +0800
+In-Reply-To: <98288fec-1199-1b25-8c8c-18d60c33e596@linux.intel.com> (Dave
+        Hansen's message of "Tue, 17 Jul 2018 11:36:54 -0700")
+Message-ID: <87k1ptgskf.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1964054974-1531882464=:11681"
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+Dave Hansen <dave.hansen@linux.intel.com> writes:
 
---8323328-1964054974-1531882464=:11681
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+> On 07/16/2018 05:55 PM, Huang, Ying wrote:
+>> 		text	   data	    bss	    dec	    hex	filename
+>> base:	       24215	   2028	    340	  26583	   67d7	mm/swapfile.o
+>> unified:       24577	   2028	    340	  26945	   6941	mm/swapfile.o
+>
+> That's a bit more than I'd expect looking at the rest of the diff.  Make
+> me wonder if we missed an #ifdef somewhere or the compiler is getting
+> otherwise confused.
+>
+> Might be worth a 10-minute look at the disassembly.
 
-On Wed, 18 Jul 2018, Adam Borowski wrote:
+Dig one step deeper via 'size -A mm/swapfile.o' and diff between base
+and unified,
 
-> On Tue, Jul 17, 2018 at 09:02:40PM -0400, Nicolas Pitre wrote:
-> > The nr argument is typically small: most often nr == 1. However this
-> > could be abused with a very large explicit scroll in a resized screen.
-> > Make the code scroll lines one at a time in all cases to avoid the VLA.
-> > Anything smarter is most likely not warranted here.
-> 
-> Even though nr can be 32767 at most, your new version is O(nr*nr) for no
-> reason.  Instead of O(n) memory or O(n²) time, a variant of the original
-> that copies values one at a time would be shorter and faster.
+--- b.s	2018-07-18 09:42:07.872501680 +0800
++++ h.s	2018-07-18 09:50:37.984499168 +0800
+@@ -1,6 +1,6 @@
+ mm/swapfile.o  :
+ section                               size   addr
+-.text                                17815      0
++.text                                17927      0
+ .data                                 1288      0
+ .bss                                   340      0
+ ___ksymtab_gpl+nr_swap_pages             8      0
+@@ -26,8 +26,8 @@
+ .data.once                               1      0
+ .comment                                35      0
+ .note.GNU-stack                          0      0
+-.orc_unwind_ip                        1380      0
+-.orc_unwind                           2070      0
+-Total                                26810
++.orc_unwind_ip                        1480      0
++.orc_unwind                           2220      0
++Total                                27172
 
-Well... even though nr _can_ be up to 32766 to be precise, it is most 
-likely to be just 1 in 99.9% of the cases. So in that case, you'll 
-execute the loop only once and the code is currently optimal with O(n).
+The total difference is same: 27172 - 26810 = 362 = 24577 - 24215.
 
-If nr > 1 then the current cost is O(n*nr) where n is the height of the 
-scroll window i.e. relatively small in practice (typically between 25 
-and 60). There is no point optimizing for 32767 rows as that is rather 
-silly. If we had then the best solution would be a linked list rather 
-than an array.
+The text section difference is small: 17927 - 17815 = 112.  The
+additional size change comes from unwinder information: (1480 + 2220) -
+(1380 + 2070) = 250.  If the frame pointer unwinder is chosen, this cost
+nothing, but if the ORC unwinder is chosen, this is the real difference.
 
-But still, if nr > 2 that means you need a temporary storage because the 
-destination memory has to be preserved before the source memory can be 
-moved there, and that destination memory content cannot be stored in the 
-vacated source memory until the source content is moved. Copying values 
-one at a time cannot work because the destination memory, the source 
-memory, and the area where the previous content from the destination 
-memory will end up don't overlap most of the time.
+For 112 text section difference, use 'objdump -t' to get symbol size and
+compare,
 
-That temporary storage was that VLA. We don't want VLAs. So how do we 
-efficiently allocate and deallocate memory for, say, 25 words? Maybe 
-that doesn't have to be efficient because that doesn't happen very often 
-as we said, at which point we can just do it in a loop with a one-line 
-increment instead, as this patch does.
+--- b.od	2018-07-18 10:45:05.768483075 +0800
++++ h.od	2018-07-18 10:44:39.556483204 +0800
+@@ -30,9 +30,9 @@
+ 00000000000000a3 cluster_list_add_tail
+ 000000000000001e __kunmap_atomic.isra.34
+ 000000000000018c swap_count_continued
+-00000000000000ac __swap_entry_free
+ 000000000000000f put_swap_device.isra.35
+ 00000000000000b4 inc_cluster_info_page
++000000000000006f __swap_entry_free_locked
+ 000000000000004a _enable_swap_info
+ 0000000000000046 wait_on_page_writeback
+ 000000000000002e inode_to_bdi
+@@ -53,8 +53,8 @@
+ 0000000000000012 __x64_sys_swapon
+ 0000000000000011 __ia32_sys_swapon
+ 000000000000007a get_swap_device
+-0000000000000032 swap_free
+-0000000000000035 put_swap_page
++000000000000006e swap_free
++0000000000000078 put_swap_page
+ 0000000000000267 swapcache_free_entries
+ 0000000000000058 page_swapcount
+ 000000000000003a __swap_count
+@@ -64,7 +64,7 @@
+ 000000000000011a try_to_free_swap
+ 00000000000001fb get_swap_pages
+ 0000000000000098 get_swap_page_of_type
+-00000000000001b8 free_swap_and_cache
++00000000000001e6 free_swap_and_cache
+ 0000000000000543 try_to_unuse
+ 000000000000000e __x64_sys_swapoff
+ 000000000000000d __ia32_sys_swapoff
 
-If you still have a more clever way of doing this then please propose it 
-in code form (I'm genuinely curious of what you have in mind). But let's 
-get the baseline working in an obvious "correct" way first.
+The size of put_swap_page() change is small: 0x78 - 0x35 = 67.  But
+__swap_entry_free() is inlined by compiler, which cause some code
+dilating.
 
-> > Requested-by: Kees Cook <keescook@chromium.org>
-> > Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> > ---
-> >  drivers/tty/vt/vt.c | 18 ++++++++++--------
-> >  1 file changed, 10 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-> > index 2d14bb195d..03e79f7787 100644
-> > --- a/drivers/tty/vt/vt.c
-> > +++ b/drivers/tty/vt/vt.c
-> > @@ -433,20 +433,22 @@ static void vc_uniscr_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
-> >  
-> >  	if (uniscr) {
-> >  		unsigned int s, d, rescue, clear;
-> > -		char32_t *save[nr];
-> >  
-> >  		s = clear = t;
-> > -		d = t + nr;
-> > -		rescue = b - nr;
-> > +		d = t + 1;
-> > +		rescue = b - 1;
-> >  		if (dir == SM_UP) {
-> >  			swap(s, d);
-> >  			swap(clear, rescue);
-> >  		}
-> > -		memcpy(save, uniscr->lines + rescue, nr * sizeof(*save));
-> > -		memmove(uniscr->lines + d, uniscr->lines + s,
-> > -			(b - t - nr) * sizeof(*uniscr->lines));
-> > -		memcpy(uniscr->lines + clear, save, nr * sizeof(*save));
-> > -		vc_uniscr_clear_lines(vc, clear, nr);
-> > +		while (nr--) {
-> > +			char32_t *tmp;
-> > +			tmp = uniscr->lines[rescue];
-> > +			memmove(uniscr->lines + d, uniscr->lines + s,
-> > +				(b - t - 1) * sizeof(*uniscr->lines));
-> > +			uniscr->lines[clear] = tmp;
-> > +			vc_uniscr_clear_lines(vc, clear, 1);
-> > +		}
-> >  	}
-> >  }
-> 
-> What the function does is rotating an array (slice [t..b) here), by nr if
-> SM_DOWN or by -nr ie (b - t - nr) if SM_UP.  A nice problem that almost every
-> "code interview questions" book includes :)
-> 
-> Please say if you don't have time for such games, I've just refreshed what's
-> a good answer. :þ
-> 
-> 
-> Meow.
-> -- 
-> // If you believe in so-called "intellectual property", please immediately
-> // cease using counterfeit alphabets.  Instead, contact the nearest temple
-> // of Amon, whose priests will provide you with scribal services for all
-> // your writing needs, for Reasonable And Non-Discriminatory prices.
-> 
---8323328-1964054974-1531882464=:11681--
+Best Regards,
+Huang, Ying
