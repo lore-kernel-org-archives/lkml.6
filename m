@@ -6,53 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EE8ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAC8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F2E2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF9BC2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:08:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOjR1Lve"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F2E2075E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SxwL5nwu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF9BC2075E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730505AbeGRUsQ (ORCPT
+        id S1730678AbeGRUs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:48:16 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35860 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729776AbeGRUsQ (ORCPT
+        Wed, 18 Jul 2018 16:48:26 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45620 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbeGRUs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:48:16 -0400
-Received: by mail-pl0-f68.google.com with SMTP id e11-v6so2517695plb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 13:08:47 -0700 (PDT)
+        Wed, 18 Jul 2018 16:48:26 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 94-v6so2515517ple.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 13:08:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=wIr4kNwoFEqSdaZpIdHL68f83dzsEGLYfaM+xhxAnLM=;
-        b=cOjR1Lve5uMr1pui3luHzDatDM6q21SWmV79THswBwr0wP+wir60+JJ7pOL+pgJBPm
-         Hcqu1HQpEufPKDNMVG3eIjUEjSDKY6uZmrpwwUG2rhuYgEPpiWqqAbagV3RYdHQ+qGic
-         Ks0qvE1HRvhRpP8zPYnwKrHEPe2h1ezR2nyN8=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=C4QDxfwbcSCB7qVJ4ISeVsB/ZWDUU3UoPGKz3WkRL2U=;
+        b=SxwL5nwuLJAU6wglAbFMjHAzucuB8O0I8yWtC37TapucrKD7KZ2DnKCH2gT5KhzYpI
+         oFCgkAFQwIV3SOXZlnnN5SE/hlHAvArQEnxCFPyOYkVcCc5Hv3OcOKnbl0C4lNfc4L6l
+         +jnhsyPNOoqdHZ8bB7Fqz2ehdX0UIqE1WQWog=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wIr4kNwoFEqSdaZpIdHL68f83dzsEGLYfaM+xhxAnLM=;
-        b=pMyH/06iS7JlB3ZrkWenfi6/QBFrPy5v+hIvJLzitqo9ei70PloUaKaCDxGXvkHX6E
-         puJT8cPdAX5u9Ewmhr7qn7p495PrCFG5DKsFvWAD1oiKI/H7uVX4Ba4nHnKL0y0cfDT2
-         IlevgeR2ycdSTNc13ZsK75wJ1owyompLXPOwa7hizLRjbZsL8koPPHHYAQzsOJX9zXX1
-         5hgOJSv0WgignAn+pS+7zJMC7vOKXjAOgUysjfFv5SCoUIz1T7JlP4AFmx62gXAEVvFB
-         fIIl6YBU5cdVICnt+q63hZIRL5VU2SPakEc5SR051TOR6UTkU6LK0AgDRus6nOFawyaj
-         axwQ==
-X-Gm-Message-State: AOUpUlGOVE/zPoTjFSwX2ham/f7Z8Z16BbWUArg1z6QtUYMxclOAKGWK
-        DKNTd3eIq0g98xvwO8aoRrtq
-X-Google-Smtp-Source: AAOMgpcb6QLqpdWgV7WT6PzDbXrn7Ho1Ipzp4C7CPg6g1sl4p6aKnBrNLsX8eTFJo3CDSi1PVXhuJQ==
-X-Received: by 2002:a17:902:74c2:: with SMTP id f2-v6mr7156345plt.260.1531944527157;
-        Wed, 18 Jul 2018 13:08:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=C4QDxfwbcSCB7qVJ4ISeVsB/ZWDUU3UoPGKz3WkRL2U=;
+        b=fy1B4uykTMAJivek2e6AcWrtpsmj/NnQxfqbeewDP+yxVLIh5Qc6nwNXwUknIBQmO5
+         UA7MZWQZe7ptHzas7kGhjjfqgEaXvT8/BclLOCIcuh0xGz/TuYHxJHgmYK4t1WphxCNh
+         Ng4NH70tGGG+/thrkioKERGhtvzvxmoGfzvJGI2jZ55ufeg/uJ3sDmvvQhBJqmuCtVCt
+         A7nkRCwNsbwqElDmHwU+qYeFqyvXlSJbEPMhd6b0mFZQwcyb08pf8165xhHMQPUHwtTH
+         8XbytzE+UkS/t78Wgf1VisVN7PD5K6P2D/mNTnkjVnA6CwcWpBmYsal/1hUw4kfutSue
+         GduA==
+X-Gm-Message-State: AOUpUlEmAz3Nxw7V7azSwOdExyUc4LTCK/tXiexfyqT79mcvKQ9J7kNe
+        y/vPzMix6oBiOhv2lZRnlKw7
+X-Google-Smtp-Source: AAOMgpezqNB4R0jDfGt4HZGZfHh3I1D3AKW/Am+lQ+5ESWbj3I7uF/RSJ/BWz6xRl0ZIonYlF4JNrA==
+X-Received: by 2002:a17:902:201:: with SMTP id 1-v6mr7330898plc.310.1531944537193;
+        Wed, 18 Jul 2018 13:08:57 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:628d:5c0b:b467:58cc:4c91:39b3])
-        by smtp.gmail.com with ESMTPSA id c7-v6sm6924697pfh.25.2018.07.18.13.08.36
+        by smtp.gmail.com with ESMTPSA id c7-v6sm6924697pfh.25.2018.07.18.13.08.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 13:08:46 -0700 (PDT)
+        Wed, 18 Jul 2018 13:08:56 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     vkoul@kernel.org, dan.j.williams@intel.com, afaerber@suse.de,
         robh+dt@kernel.org
@@ -64,63 +65,77 @@ Cc:     dmaengine@vger.kernel.org, liuwei@actions-semi.com,
         manivannanece23@gmail.com, thomas.liau@actions-semi.com,
         jeff.chen@actions-semi.com, pn@denx.de, edgar.righi@lsitec.org.br,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 0/4] Add Actions Semi Owl family S900 DMA Controller support
-Date:   Thu, 19 Jul 2018 01:37:05 +0530
-Message-Id: <20180718200709.27102-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 1/4] dt-bindings: dma: Add binding for Actions Semi Owl SoCs
+Date:   Thu, 19 Jul 2018 01:37:06 +0530
+Message-Id: <20180718200709.27102-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180718200709.27102-1-manivannan.sadhasivam@linaro.org>
+References: <20180718200709.27102-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds DMA controller support for Actions Semi Owl family
-S900 SoC. This driver has been structured in a way such that there will be only
-one controller driver for the whole Owl family series (S500, S700 and
-S900 SoCs).
+Add devicetree binding for Actions Semi Owl SoCs DMA controller.
 
-There are 12 physical channels and 46 logical channels supported by the
-DMA controller.
-
-The DMA controller also supports 4 software configurable interrupt lines for
-the priority based DMA usecase. But the DMA driver supports only 1 interrupt
-for simplification. By default, the driver uses Linked list mode for all
-transfers. Right now only MEMCPY support has been added and the rest
-(SLAVE, CYCLIC) will be added in upcoming patches.
-
-The driver has been tested using dmatest utility on the Bubblegum-96
-board.
-
-The DTS patches in this series depends on the pinctrl DTS patches
-submitted [1], which is yet to be merged by the platform maintainer
-Andreas. Since the DMA driver goes through DMA tree and the relevant
-DTS patches goes through ARM-SoC tree, Andreas will pick it up once
-it has been reviewed.
-
-For the reference, I have queued up all reviewed dts patches so far
-in my repo [2] from which Andreas is picking them for 4.19.
-
-Thanks,
-Mani
-
-[1] https://patchwork.kernel.org/patch/10322937/
-[2] https://git.linaro.org/people/manivannan.sadhasivam/linux.git/log/?h=s900-for-next
-
-Manivannan Sadhasivam (4):
-  dt-bindings: dma: Add binding for Actions Semi Owl SoCs
-  arm64: dts: actions: Add Actions Semi S900 DMA Controller
-  dma: Add Actions Semi Owl family S900 DMA driver
-  MAINTAINERS: Add entry for Actions Semi Owl SoCs DMA driver
-
- .../devicetree/bindings/dma/owl-dma.txt       |   46 +
- MAINTAINERS                                   |    2 +
- arch/arm64/boot/dts/actions/s900.dtsi         |   13 +
- drivers/dma/Kconfig                           |    8 +
- drivers/dma/Makefile                          |    1 +
- drivers/dma/owl-dma.c                         | 1021 +++++++++++++++++
- 6 files changed, 1091 insertions(+)
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ .../devicetree/bindings/dma/owl-dma.txt       | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/dma/owl-dma.txt
- create mode 100644 drivers/dma/owl-dma.c
 
+diff --git a/Documentation/devicetree/bindings/dma/owl-dma.txt b/Documentation/devicetree/bindings/dma/owl-dma.txt
+new file mode 100644
+index 000000000000..dd6ce237b216
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/owl-dma.txt
+@@ -0,0 +1,46 @@
++* Actions Semi Owl SoCs DMA controller
++
++This binding follows the generic DMA bindings defined in dma.txt.
++
++Required properties:
++- compatible: Should be "actions,s900-dma".
++- reg: Should contain DMA registers location and length.
++- interrupts: Should contain 4 interrupts shared by all channel.
++- #dma-cells: Must be <1>. Used to represent the number of integer
++              cells in the dmas property of client device.
++- dma-channels: Physical channels supported.
++- dma-requests: Virtual channels supported.
++- clocks: Phandle and Specifier of the clock feeding the DMA controller.
++
++Example:
++
++Controller:
++                dma: dma-controller@e0260000 {
++                        compatible = "actions,s900-dma";
++                        reg = <0x0 0xe0260000 0x0 0x1000>;
++                        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++                                     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++                                     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++                                     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
++                        #dma-cells = <1>;
++                        dma-channels = <12>;
++                        dma-requests = <46>;
++                        clocks = <&clock CLK_DMAC>;
++                };
++
++Client:
++
++DMA clients connected to the Actions Semi Owl SoCs DMA controller must
++use the format described in the dma.txt file, using a two-cell specifier
++for each channel.
++
++The two cells in order are:
++1. A phandle pointing to the DMA controller.
++2. The channel id.
++
++uart5: serial@e012a000 {
++        ...
++        dma-names = "tx", "rx";
++        dmas = <&dma 26>, <&dma 27>;
++        ...
++};
 -- 
 2.17.1
 
