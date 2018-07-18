@@ -2,103 +2,169 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B51ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 04:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45421ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AEBB2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 04:57:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AEBB2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E96002084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 05:06:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ka7UOZzk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E96002084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbeGRFdM (ORCPT
+        id S1726261AbeGRFlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 01:33:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52712 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725728AbeGRFdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 01:33:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8CD89ACB4;
-        Wed, 18 Jul 2018 04:57:12 +0000 (UTC)
-Subject: Re: [PATCH 1/4] xen: move pv irq related functions under
- CONFIG_XEN_PV umbrella
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com
-References: <20180717120113.12756-1-jgross@suse.com>
- <20180717120113.12756-2-jgross@suse.com>
- <f2907905-fddd-8397-e460-09e9070fdd16@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <f9b5fb9a-0092-bcab-93c2-20e36d53c3f2@suse.com>
-Date:   Wed, 18 Jul 2018 06:57:11 +0200
+        Wed, 18 Jul 2018 01:41:47 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49716 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbeGRFlr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 01:41:47 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6I55ZPn130340;
+        Wed, 18 Jul 2018 00:05:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531890335;
+        bh=3p6gPd2wuwk7Go+9J4flmz3vH0gnvdcNi+sHWkGdR7g=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Ka7UOZzk3p5XoTCyRs3B7cG3tTvWJ3ZEw2+h1HKINW4UncCmIRH4s9XizAe6Rjw5E
+         bqcSb62jAZmTMGsraIXx9BgrDU9Vu7NWIONE47miMO2LtjAWlK9x1iXsCv+l7R5teJ
+         8F3JmEUZ03SV3mGMYWOFoZPrf08QF2FK3lLtvQyk=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6I55ZCw025420;
+        Wed, 18 Jul 2018 00:05:35 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 18
+ Jul 2018 00:05:35 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 18 Jul 2018 00:05:35 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6I55UKY019676;
+        Wed, 18 Jul 2018 00:05:31 -0500
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+To:     Tony Lindgren <tony@atomide.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Tejun Heo <tj@kernel.org>, Roger Quadros <rogerq@ti.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        <linux-omap@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, <ssantosh@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Samuel Morris <samorris@lexmark.com>
+References: <20180620102904.GC112168@atomide.com>
+ <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+ <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+ <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
+ <CAFY_6qq3=+hMLKr0VtCe-witPtV2LTeBSQb3pwqdzysbyiYtMQ@mail.gmail.com>
+ <5206d66d-56d0-2edc-8dd0-00eedbaac3db@ti.com>
+ <20180702093243.GO112168@atomide.com>
+ <CAFY_6qo83Ui6_xRkuTYZUduUJSK2dLKhzd+B_nQ-XW5ciDH-7A@mail.gmail.com>
+ <20180717060808.GW99251@atomide.com>
+ <20180717180028.0ba098f6@canb.auug.org.au>
+ <20180717080335.GD99251@atomide.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <e89cd39c-766c-c8e0-29fb-94c9428102a9@ti.com>
+Date:   Wed, 18 Jul 2018 10:35:30 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-In-Reply-To: <f2907905-fddd-8397-e460-09e9070fdd16@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
+In-Reply-To: <20180717080335.GD99251@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/18 21:19, Boris Ostrovsky wrote:
-> On 07/17/2018 08:01 AM, Juergen Gross wrote:
->> diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
->> index d83cb5478f54..f723b5aa8f74 100644
->> --- a/arch/x86/xen/Makefile
->> +++ b/arch/x86/xen/Makefile
->> @@ -12,25 +12,46 @@ endif
-> 
-> 
->>  
->>  obj-$(CONFIG_SMP)		+= smp.o
->>  obj-$(CONFIG_XEN_PV_SMP)  	+= smp_pv.o
->>  obj-$(CONFIG_XEN_PVHVM_SMP)  	+= smp_hvm.o
-> 
-> 
-> Is there a reason you did not add space here but did add them below?
-
-I felt like the SMP related stuff should be in one group.
 
 
-Juergen
+On Tuesday 17 July 2018 01:33 PM, Tony Lindgren wrote:
+> * Stephen Rothwell <sfr@canb.auug.org.au> [180717 08:03]:
+>> Hi Tony,
+>>
+>> On Mon, 16 Jul 2018 23:08:08 -0700 Tony Lindgren <tony@atomide.com> wrote:
+>>>
+>>> The following regression is still pending in next, see below.
+>>>
+>>> * Samuel Morris <samorris@lexmark.com> [180702 13:35]:
+>>>> On Mon, Jul 2, 2018 at 5:32 AM, Tony Lindgren <tony@atomide.com> wrote:  
+>>>>> Hi,
+>>>>>
+>>>>> * Roger Quadros <rogerq@ti.com> [180621 14:56]:  
+>>>>>> On 21/06/18 17:31, Samuel Morris wrote:  
+>>>>>>> On Thu, Jun 21, 2018 at 3:58 AM, Roger Quadros <rogerq@ti.com> wrote:  
+>>>>>>>> +Rafael
+>>>>>>>>
+>>>>>>>> On 20/06/18 18:30, Samuel Morris wrote:  
+>>>>>>>>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:  
+>>>>>>>>>> Tony,
+>>>>>>>>>>
+>>>>>>>>>> On 20/06/18 13:29, Tony Lindgren wrote:  
+>>>>>>>>>>> Hi,
+>>>>>>>>>>>
+>>>>>>>>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:  
+>>>>>>>>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.  
+>>>>>>>>>>>
+>>>>>>>>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
+>>>>>>>>>>> hotplug to save power").
+>>>>>>>>>>>
+>>>>>>>>>>> Reverting the patch makes things work again. Any ideas what
+>>>>>>>>>>> might be going wrong here? Things clearly idle but then there
+>>>>>>>>>>> seems to be some register access with clocks disabled.  
+>>>>>
+>>>>> So this issue is still happening as of next-20180702. Can you guys
+>>>>> please revert the commit above while working on a better solution?  
+>>>>
+>>>> That's fine with me. I'm not very familiar with the process here, does
+>>>> this require anything on my end? And would that require the
+>>>> accompanying patch to be reverted: "ata: ahci: rpm_put port on
+>>>> port_stop to match rpm_get in port_start"? There shouldn't be any
+>>>> problem leaving that one in, but I just want to know before submitting
+>>>> my next patch set.  
+>>>
+>>> Well usually the maintainer just reverts the regression causing
+>>> patch in the related branch and that's it.
+>>>
+>>> Stephen, can you please revert in next until we hear back from
+>>> Tejun?
+>>
+>> OK, I have reverted that commit from today.  Please let me know when the
+>> problem is fixed in the libata tree ...
+
+Hi Stephen,
+
+Thanks for the revert.
+
+commit 1dcbe5f2c615337cb7d4e13fab198ab716180733
+Author: Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Tue Jul 17 19:02:59 2018 +1000
+
+With the above top commit i confirm that BEAGLE-X15, AM572X-IDK,
+AM574X-IDK, DRA7, DRA72 TI platforms booted to prompt.
+
+Regards,
+Keerthy
+
+> 
+> Thanks!
+> 
+> Tony
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
