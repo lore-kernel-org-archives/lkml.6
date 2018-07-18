@@ -2,172 +2,140 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5A5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E9DBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F4832075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E38A02084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:43:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RZEl1589"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F4832075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r7tIsCJH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38A02084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbeGRXWG (ORCPT
+        id S1730331AbeGRXX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 19:22:06 -0400
-Received: from mail-it0-f73.google.com ([209.85.214.73]:41761 "EHLO
-        mail-it0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729235AbeGRXWG (ORCPT
+        Wed, 18 Jul 2018 19:23:59 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:34752 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729654AbeGRXX7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:22:06 -0400
-Received: by mail-it0-f73.google.com with SMTP id h26-v6so3968265itj.6
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:42:02 -0700 (PDT)
+        Wed, 18 Jul 2018 19:23:59 -0400
+Received: by mail-io0-f194.google.com with SMTP id l7-v6so5485998ioj.1;
+        Wed, 18 Jul 2018 15:43:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=/SXidF8hAXshqkiFbGoLk/sQ+aaGc8icFptsQuMCA0M=;
-        b=RZEl1589f3jm9MF2c55+cO06KecxJbXsgUBYOrJJvwzZe86uXsDri3nu5F0jIGcJtj
-         bRpwH0LgJaj+L9D4kzrDELKzojKi/z1xSWOK/abERUtktG/vudlekDhF8koqjbcOjrOG
-         RupHib+v5XQHT2aihzCTF8QzkRi/bUvb57uRyuwrpkY7liKJaQSPORtVVnvbfaZAMwCx
-         oL9AjQHyv3oWUC4Ho6JUAsWKpbSVGmvGR6wT5V34V0LTMh1VMQSUjRNWxbaUGBOxBovU
-         tZO+TZ4hJME/EdH3D4i+PFN4eCbvMe2MxDVGhpBns/VP7bqjbb9a9iKBIhR34JG6qcBU
-         NIwA==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=jgrciYf0+HkQoL428os9NtXOLbosVRLmgOa7wWgTA64=;
+        b=r7tIsCJHt6bnu6SN9moZqiu3lAvx5VqfOdoXZ0utXc3GIf9Q/VILMcwVVXE3wmtaGz
+         jFdjojfye4u0sGjUqc2P1MUzjOVoF1XcmxaJcCdrtthtrWUzimDhq5PG//gaO2WHNZnK
+         uWpW544spXb1HE8LiYab0u2FhKtK87sfNXEbNKn4pKfBcdAjcchkcqSdZvXvfY08TNmm
+         vPRTHyLmXL7OK4T2E/upyhiBGsG8M4QCBUUeiR5ivdtbFpw96yjHmSMgK+W974fm4smN
+         4gC0H1tBkGu3FCsJcbCDnEdwyYSCmQ1tw2ASvuRFjihWI9W7DlHVpzEkbzAgfwhfrpQp
+         mw5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=/SXidF8hAXshqkiFbGoLk/sQ+aaGc8icFptsQuMCA0M=;
-        b=Tc/rtL7tVquACrpAoqJi4JQ39Rd6Kue+1JpW/yUYik9GA8YrX6G8RTxHmgpIe4BVlm
-         YaON1Jkx5eXmkR7j+Fme507DTGRGx+i55xgnJqacLMcjbIdmLW2GPJPKrsixHC+5YJWg
-         GdGOBAIpO6YQDGHaZtRPJtvIAL4OEXk00vnKqyWpaJ5yzZxe+lYy0c9HkVFm0BD/aMF0
-         eX0kpQ/EBr/y/8/gMpnG83CYnEkZcWOk4bL6uIMpitqZNlfegbWiZQOSH6LptmVZpdfw
-         802+3WYSyJzweh0MeCe4yPUOa9dtS3W/dA9KKQ+c6q5C98gFg7QHBPbX0Kw11sOyaC+o
-         AGHg==
-X-Gm-Message-State: AOUpUlFRJJH9nKW027dc1Wph5e97J4+17dOvXQJgqgnJ6Lqu+OClj7jC
-        AORxAkCONhtUyZh8G6bxgiaZfzFvmVlS9KLVqhSMrNfwfX1fAigXD3xjUGImk+Bk1jCVgKd8bN+
-        ungvRkG2yLmAWLdY7IBtM/GJsQF3KFRWGl9wAAJmVrtAFZyMa5XooA6vJISC9l7aMvgu779gCya
-        MBrw==
-X-Google-Smtp-Source: AAOMgpdIADJI/bybvx3upZiku+PoLAJaquzlQVNK2mOTZqwEPAmces+hnc01ZfqlwVx2ufbSI63tAAexDZ/5t+M=
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=jgrciYf0+HkQoL428os9NtXOLbosVRLmgOa7wWgTA64=;
+        b=GNoow6LEnff8+uRri9upNz4mqSJ3kMnsxhFbLyJ+c/6jw921qCFgYQSdO0JQpr9QJo
+         dKEqTCO7TAYuhOt72WqR2zkqjG6IZgSHh4qKRzi3p9dca0EnI/mAP8h2amquQaVZtQTk
+         PD8whIrWQu+0P1V8cmGw4Z9SpYGEfAjkEqO+4WXmE4Or+/7ol1ZwrncLoguh277vnWNA
+         nPWj08cZ362PfnmiYPg5yiYoDKJXnJOW2/V6zjIS8GHD0GcxiXGo/K1/Z/d4bP59HlbQ
+         815m/6aA51cR7e/JxOgZN8Cv9lP0nS/J3jdBzfLKD0hxTGEiNBQ6BkEv5FJlZleWOFLp
+         0jkA==
+X-Gm-Message-State: AOUpUlEhAXSHny0QkVLEUO0xlC0CdxkCTYfAmm6NYcrOkTdh6IWDM88h
+        EUjnqA2NMkIshgt8t70iiCk3HhfDOxDi7ZG10g==
+X-Google-Smtp-Source: AA+uWPyIU/rV9+BTk+HdyBlnyAY3KPeMxVksgL9sUOwVDzljbVd6F4vq2z7vaAYlY0iDMmo1awzQRZb8L5V7LR+EE98=
+X-Received: by 2002:a6b:c693:: with SMTP id w141-v6mr6532495iof.79.1531953834927;
+ Wed, 18 Jul 2018 15:43:54 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:1f46:: with SMTP id d67-v6mr1906148itd.49.1531953722265;
- Wed, 18 Jul 2018 15:42:02 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 15:41:59 -0700
-Message-Id: <20180718224159.18236-1-astrachan@google.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-Subject: [PATCH] x86: vdso: Use $LD instead of $CC to link
-From:   Alistair Strachan <astrachan@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
+From:   Rob Herring <robherring2@gmail.com>
+Date:   Wed, 18 Jul 2018 16:43:43 -0600
+Message-ID: <CAL_JsqLCA0QLD-_EUS+bZPpa61y9+7Ym=eO3aSC7x_VerJZ+bQ@mail.gmail.com>
+Subject: [GIT PULL] DeviceTree fixes for 4.18
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vdso{32,64}.so can fail to link with CC=clang when clang tries to
-find a suitable GCC toolchain to link these libraries with.
+Linus,
 
-/usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
-  access beyond end of merged section (782)
+Please pull a couple of DT fixes. Details below.
 
-This happens because the host environment leaked into the cross
-compiler environment due to the way clang searches for suitable GCC
-toolchains.
+Rob
 
-Clang is a retargetable compiler, and each invocation of it must
-provide --target=<something> --gcc-toolchain=<something> to allow it
-to find the correct binutils for cross compilation. These flags had
-been added to KBUILD_CFLAGS, but the vdso code uses CC and not
-KBUILD_CFLAGS (for various reasons) which breaks clang's ability to
-find the correct linker when cross compiling.
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40=
+:
 
-Most of the time this goes unnoticed because the host linker is new
-enough to work anyway, or is incompatible and skipped, but this cannot
-be reliably assumed.
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
-This change alters the vdso makefile to just use LD directly, which
-bypasses clang and thus the searching problem. The makefile will just
-use ${CROSS_COMPILE}ld instead, which is always what we want. This
-matches the method used to link vmlinux.
+are available in the Git repository at:
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: x86@kernel.org
-Cc: kernel-team@android.com
-Cc: joel@joelfernandes.com
-Signed-off-by: Alistair Strachan <astrachan@google.com>
----
-Supersedes "x86: vdso: Fix leaky vdso link with CC=clang"
- arch/x86/entry/vdso/Makefile | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
+tags/devicetree-fixes-for-4.18
 
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 1943aebadede..896a55204386 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -48,10 +48,8 @@ targets += $(vdso_img_sodbg)
- 
- export CPPFLAGS_vdso.lds += -P -C
- 
--VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
--			-Wl,--no-undefined \
--			-Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096 \
--			$(DISABLE_LTO)
-+VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 --no-undefined \
-+			-z max-page-size=4096 -z common-page-size=4096
- 
- $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
- 	$(call if_changed,vdso)
-@@ -97,10 +95,8 @@ CFLAGS_REMOVE_vvar.o = -pg
- #
- 
- CPPFLAGS_vdsox32.lds = $(CPPFLAGS_vdso.lds)
--VDSO_LDFLAGS_vdsox32.lds = -Wl,-m,elf32_x86_64 \
--			   -Wl,-soname=linux-vdso.so.1 \
--			   -Wl,-z,max-page-size=4096 \
--			   -Wl,-z,common-page-size=4096
-+VDSO_LDFLAGS_vdsox32.lds = -m elf32_x86_64 -soname linux-vdso.so.1 \
-+			   -z max-page-size=4096 -z common-page-size=4096
- 
- # 64-bit objects to re-brand as x32
- vobjs64-for-x32 := $(filter-out $(vobjs-nox32),$(vobjs-y))
-@@ -128,7 +124,7 @@ $(obj)/vdsox32.so.dbg: $(src)/vdsox32.lds $(vobjx32s) FORCE
- 	$(call if_changed,vdso)
- 
- CPPFLAGS_vdso32.lds = $(CPPFLAGS_vdso.lds)
--VDSO_LDFLAGS_vdso32.lds = -m32 -Wl,-m,elf_i386 -Wl,-soname=linux-gate.so.1
-+VDSO_LDFLAGS_vdso32.lds = -m elf_i386 -soname linux-gate.so.1
- 
- targets += vdso32/vdso32.lds
- targets += vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
-@@ -162,13 +158,13 @@ $(obj)/vdso32.so.dbg: FORCE \
- # The DSO images are built using a special linker script.
- #
- quiet_cmd_vdso = VDSO    $@
--      cmd_vdso = $(CC) -nostdlib -o $@ \
-+      cmd_vdso = $(LD) -nostdlib -o $@ \
- 		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
--		       -Wl,-T,$(filter %.lds,$^) $(filter %.o,$^) && \
-+		       -T $(filter %.lds,$^) $(filter %.o,$^) && \
- 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
- 
--VDSO_LDFLAGS = -fPIC -shared $(call cc-ldoption, -Wl$(comma)--hash-style=both) \
--	$(call cc-ldoption, -Wl$(comma)--build-id) -Wl,-Bsymbolic $(LTO_CFLAGS)
-+VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
-+	$(call ld-option, --build-id) -Bsymbolic
- GCOV_PROFILE := n
- 
- #
+for you to fetch changes up to b9952b5218added5577e4a3443969bc20884cea9:
+
+  of: overlay: update phandle cache on overlay apply and remove
+(2018-07-16 08:41:32 -0600)
+
+----------------------------------------------------------------
+DeviceTree fixes for 4.18:
+
+- Fix phandle cache to work with overlays
+
+- Correct the default clock-frequency for QCom geni-i2c
+
+- Binding doc quote and spelling fixes
+
+----------------------------------------------------------------
+Douglas Anderson (1):
+      dt-bindings: soc: qcom: Fix default clock-freq for qcom,geni-i2c
+
+Enric Balletbo i Serra (1):
+      Documentation: devicetree: tilcdc: fix spelling mistake
+"suppors" -> "supports"
+
+Fabio Estevam (1):
+      dt-bindings: w1-gpio: Remove unneeded unit address
+
+Frank Rowand (1):
+      of: overlay: update phandle cache on overlay apply and remove
+
+Jonathan Neusch=C3=A4fer (1):
+      dt-bindings: Fix unbalanced quotation marks
+
+ .../devicetree/bindings/arm/samsung/samsung-boards.txt        |  2 +-
+ Documentation/devicetree/bindings/display/tilcdc/tilcdc.txt   |  2 +-
+ .../devicetree/bindings/gpio/nintendo,hollywood-gpio.txt      |  2 +-
+ .../devicetree/bindings/input/touchscreen/hideep.txt          |  2 +-
+ .../bindings/interrupt-controller/nvidia,tegra20-ictlr.txt    |  2 +-
+ .../bindings/interrupt-controller/st,stm32-exti.txt           |  2 +-
+ Documentation/devicetree/bindings/mips/brcm/soc.txt           |  2 +-
+ Documentation/devicetree/bindings/net/fsl-fman.txt            |  2 +-
+ Documentation/devicetree/bindings/power/power_domain.txt      |  2 +-
+ Documentation/devicetree/bindings/regulator/tps65090.txt      |  2 +-
+ Documentation/devicetree/bindings/reset/st,sti-softreset.txt  |  2 +-
+ Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt   |  2 +-
+ Documentation/devicetree/bindings/sound/qcom,apq8016-sbc.txt  |  2 +-
+ Documentation/devicetree/bindings/sound/qcom,apq8096.txt      |  2 +-
+ Documentation/devicetree/bindings/w1/w1-gpio.txt              |  2 +-
+ drivers/of/base.c                                             |  6 +++---
+ drivers/of/of_private.h                                       |  2 ++
+ drivers/of/overlay.c                                          | 11 +++++++=
+++++
+ 18 files changed, 31 insertions(+), 18 deletions(-)
