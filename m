@@ -2,145 +2,86 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B15ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 960E7ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C0B2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C0B2075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 315642075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315642075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731327AbeGRDcL (ORCPT
+        id S1731481AbeGRDcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:32:11 -0400
-Received: from mga04.intel.com ([192.55.52.120]:38651 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731109AbeGRDcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:32:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 19:56:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,368,1526367600"; 
-   d="scan'208";a="73246061"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 19:56:33 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v2 7/7] swap, put_swap_page: Share more between huge/normal code path
-References: <20180717005556.29758-1-ying.huang@intel.com>
-        <20180717005556.29758-8-ying.huang@intel.com>
-        <98288fec-1199-1b25-8c8c-18d60c33e596@linux.intel.com>
-Date:   Wed, 18 Jul 2018 10:56:32 +0800
-In-Reply-To: <98288fec-1199-1b25-8c8c-18d60c33e596@linux.intel.com> (Dave
-        Hansen's message of "Tue, 17 Jul 2018 11:36:54 -0700")
-Message-ID: <87k1ptgskf.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 17 Jul 2018 23:32:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43660 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731109AbeGRDcP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 23:32:15 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1ffcdp-0006wB-23; Wed, 18 Jul 2018 02:56:37 +0000
+Date:   Wed, 18 Jul 2018 03:56:37 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: vfs / overlayfs conflict resolution for linux-next
+Message-ID: <20180718025636.GA26175@ZenIV.linux.org.uk>
+References: <20180711021136.GN30522@ZenIV.linux.org.uk>
+ <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
+ <CA+55aFxc7M9g+jqVnMHAsK350Ty1tQ9AghuJhBug+FPA6=XQrw@mail.gmail.com>
+ <20180711152555.GR30522@ZenIV.linux.org.uk>
+ <20180711161540.GS30522@ZenIV.linux.org.uk>
+ <20180712124326.GA19272@ZenIV.linux.org.uk>
+ <CA+55aFwyOHvwV4qkmM1kRYQ+4brWbLSHaXE8GPV41u5Sj-AG4Q@mail.gmail.com>
+ <20180712155337.GU30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712155337.GU30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave Hansen <dave.hansen@linux.intel.com> writes:
+On Thu, Jul 12, 2018 at 04:53:37PM +0100, Al Viro wrote:
+> On Thu, Jul 12, 2018 at 08:05:26AM -0700, Linus Torvalds wrote:
+> > On Thu, Jul 12, 2018 at 5:43 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > > A question regarding the customs in such situations - are previous
+> > > Reviewed-by/Acked-by normally kept across rebases like that?
+> > 
+> > Yeah, unless there were big changes, keep the reviewed/acked-by lines.
+> > 
+> > Otherwise you'd never be able to handle different people giving
+> > slightly different feedback about separate issues.
+> 
+> OK...  Miklos, I've pushed #ovl-candidate, with equivalent of the beginning
+> of your branch.  I'm *not* saying that I've no remaining issues
+> with your series - this is just how I'd prefer to resolve that group
+> of conflicts.
+> 
+> Everything past "vfs: simplify dentry_open()" could live on top of that
+> one, or its equivalent.
+> 
+> I'm going to put #work-open3 into -next, let's figure out what to do with
+> the conflicts; what I can promise is never-rebased status for #for-ovl
+> (the beginning of #work-open3 merged into #ovl-candidate).
 
-> On 07/16/2018 05:55 PM, Huang, Ying wrote:
->> 		text	   data	    bss	    dec	    hex	filename
->> base:	       24215	   2028	    340	  26583	   67d7	mm/swapfile.o
->> unified:       24577	   2028	    340	  26945	   6941	mm/swapfile.o
->
-> That's a bit more than I'd expect looking at the rest of the diff.  Make
-> me wonder if we missed an #ifdef somewhere or the compiler is getting
-> otherwise confused.
->
-> Might be worth a 10-minute look at the disassembly.
+... and now it even builds.  Said that, I would really like to hear something
+from you - I can duplicate the entire overlayfs-next and merge it into
+my #for-next and ask Steven to use that instead of your tree, but I very
+much dislike going over your head like that.
 
-Dig one step deeper via 'size -A mm/swapfile.o' and diff between base
-and unified,
-
---- b.s	2018-07-18 09:42:07.872501680 +0800
-+++ h.s	2018-07-18 09:50:37.984499168 +0800
-@@ -1,6 +1,6 @@
- mm/swapfile.o  :
- section                               size   addr
--.text                                17815      0
-+.text                                17927      0
- .data                                 1288      0
- .bss                                   340      0
- ___ksymtab_gpl+nr_swap_pages             8      0
-@@ -26,8 +26,8 @@
- .data.once                               1      0
- .comment                                35      0
- .note.GNU-stack                          0      0
--.orc_unwind_ip                        1380      0
--.orc_unwind                           2070      0
--Total                                26810
-+.orc_unwind_ip                        1480      0
-+.orc_unwind                           2220      0
-+Total                                27172
-
-The total difference is same: 27172 - 26810 = 362 = 24577 - 24215.
-
-The text section difference is small: 17927 - 17815 = 112.  The
-additional size change comes from unwinder information: (1480 + 2220) -
-(1380 + 2070) = 250.  If the frame pointer unwinder is chosen, this cost
-nothing, but if the ORC unwinder is chosen, this is the real difference.
-
-For 112 text section difference, use 'objdump -t' to get symbol size and
-compare,
-
---- b.od	2018-07-18 10:45:05.768483075 +0800
-+++ h.od	2018-07-18 10:44:39.556483204 +0800
-@@ -30,9 +30,9 @@
- 00000000000000a3 cluster_list_add_tail
- 000000000000001e __kunmap_atomic.isra.34
- 000000000000018c swap_count_continued
--00000000000000ac __swap_entry_free
- 000000000000000f put_swap_device.isra.35
- 00000000000000b4 inc_cluster_info_page
-+000000000000006f __swap_entry_free_locked
- 000000000000004a _enable_swap_info
- 0000000000000046 wait_on_page_writeback
- 000000000000002e inode_to_bdi
-@@ -53,8 +53,8 @@
- 0000000000000012 __x64_sys_swapon
- 0000000000000011 __ia32_sys_swapon
- 000000000000007a get_swap_device
--0000000000000032 swap_free
--0000000000000035 put_swap_page
-+000000000000006e swap_free
-+0000000000000078 put_swap_page
- 0000000000000267 swapcache_free_entries
- 0000000000000058 page_swapcount
- 000000000000003a __swap_count
-@@ -64,7 +64,7 @@
- 000000000000011a try_to_free_swap
- 00000000000001fb get_swap_pages
- 0000000000000098 get_swap_page_of_type
--00000000000001b8 free_swap_and_cache
-+00000000000001e6 free_swap_and_cache
- 0000000000000543 try_to_unuse
- 000000000000000e __x64_sys_swapoff
- 000000000000000d __ia32_sys_swapoff
-
-The size of put_swap_page() change is small: 0x78 - 0x35 = 67.  But
-__swap_entry_free() is inlined by compiler, which cause some code
-dilating.
-
-Best Regards,
-Huang, Ying
+I realize that you'd been away for a while and probably are digging yourself
+from under the piles of mail, but it's getting late in the cycle and I want
+to get #for-next into reasonably sane shape.  Please, look through that
+thing and respond.
