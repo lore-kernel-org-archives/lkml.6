@@ -6,227 +6,118 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1C2ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F4FECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A3FC2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A3FC2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 001F12084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 001F12084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729309AbeGRWDs convert rfc822-to-8bit (ORCPT
+        id S1730301AbeGRWE2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:03:48 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41030 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbeGRWDs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:03:48 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 83E9920731; Wed, 18 Jul 2018 23:24:01 +0200 (CEST)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DF9CC206ED;
-        Wed, 18 Jul 2018 23:23:50 +0200 (CEST)
-Date:   Wed, 18 Jul 2018 23:23:50 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Abhishek Sahu <absahu@codeaurora.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH 2/5] mtd: rawnand: qcom: remove driver specific
- block_markbad function
-Message-ID: <20180718232350.3eaade9a@xps13>
-In-Reply-To: <1530863519-5564-3-git-send-email-absahu@codeaurora.org>
-References: <1530863519-5564-1-git-send-email-absahu@codeaurora.org>
-        <1530863519-5564-3-git-send-email-absahu@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Wed, 18 Jul 2018 18:04:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:42452 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729702AbeGRWE2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 18:04:28 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 642B0D37;
+        Wed, 18 Jul 2018 21:24:15 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 14:24:14 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Coly Li <colyli@suse.de>
+Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
+        linux-block@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Noah Massey <noah.massey@gmail.com>
+Subject: Re: [PATCH v4 3/3] lib/test_crc: Add test cases for crc calculation
+Message-Id: <20180718142414.1cab5d98b1f4b01102cd429a@linux-foundation.org>
+In-Reply-To: <20180718165545.1622-4-colyli@suse.de>
+References: <20180718165545.1622-1-colyli@suse.de>
+        <20180718165545.1622-4-colyli@suse.de>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Boris,
+On Thu, 19 Jul 2018 00:55:45 +0800 Coly Li <colyli@suse.de> wrote:
 
-Can you please check the change in qcom_nandc_write_oob() is
-valid? I think it is but as this is a bit of a hack I prefer double checking.
-
-Thanks,
-Miquèl
-
-
-Abhishek Sahu <absahu@codeaurora.org> wrote on Fri,  6 Jul 2018
-13:21:56 +0530:
-
-> The NAND base layer calls write_oob() by setting bytes at
-> chip->badblockpos with value non 0xFF for updating bad block status.
-> The QCOM NAND controller skips the bad block bytes while doing normal
-> write with ECC enabled. When initial support for this driver was
-> added, the driver specific function was added temporarily for
-> block_markbad() with assumption to change for raw read in NAND base
-> layer. Moving to raw read for block_markbad() seems to take more time
-> so this patch removes driver specific block_markbad() function by
-> using following HACK in write_oob() function.
+> This patch adds a kernel module to test the consistency of multiple crc
+> calculation in Linux kernel. It is enabled with CONFIG_TEST_CRC enabled.
 > 
-> Check for BBM bytes in OOB and accordingly do raw write for updating
-> BBM bytes in NAND flash or normal write for updating available OOB
-> bytes.
+> The test results are printed into kernel message, which look like,
 > 
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> ---
->  drivers/mtd/nand/raw/qcom_nandc.c | 103 +++++++++++++++-----------------------
->  1 file changed, 40 insertions(+), 63 deletions(-)
+> test_crc: crc64_be: FAILED (0x03d4d0d85685d9a1, expected 0x3d4d0d85685d9a1f)
 > 
-> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-> index ea253ac..df12cf3 100644
-> --- a/drivers/mtd/nand/raw/qcom_nandc.c
-> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-> @@ -2138,28 +2138,57 @@ static int qcom_nandc_write_oob(struct mtd_info *mtd, struct nand_chip *chip,
->  	struct qcom_nand_host *host = to_qcom_nand_host(chip);
->  	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
->  	struct nand_ecc_ctrl *ecc = &chip->ecc;
-> -	u8 *oob = chip->oob_poi;
-> -	int data_size, oob_size;
-> +	u8 *oob = chip->oob_poi, bbm_byte;
-> +	int data_size, oob_size, bbm_offset, write_size;
->  	int ret;
->  
-> -	host->use_ecc = true;
->  	clear_bam_transaction(nandc);
->  
-> -	/* calculate the data and oob size for the last codeword/step */
-> -	data_size = ecc->size - ((ecc->steps - 1) << 2);
-> -	oob_size = mtd->oobavail;
-> +	/*
-> +	 * The NAND base layer calls ecc->write_oob() by setting bytes at
-> +	 * chip->badblockpos (chip->badblockpos will be 0 for QCOM NAND
-> +	 * controller layout) in OOB buffer with value other that 0xFF
-> +	 * for updating bad block status. QCOM NAND controller skips
-> +	 * BBM bytes while writing with ECC, so following HACK has been
-> +	 * added in this function for using generic block_markbad() function.
-> +	 *
-> +	 * Check for BBM bytes in OOB and accordingly do raw write for
-> +	 * updating BBM bytes in NAND flash or normal write with ECC for
-> +	 * updating available OOB bytes.
-> +	 */
-> +	bbm_byte = oob[0];
-> +	if (chip->options & NAND_BUSWIDTH_16)
-> +		bbm_byte &= oob[1];
->  
-> -	memset(nandc->data_buffer, 0xff, host->cw_data);
-> -	/* override new oob content to last codeword */
-> -	mtd_ooblayout_get_databytes(mtd, nandc->data_buffer + data_size, oob,
-> -				    0, mtd->oobavail);
-> +	/* Write BBM bytes by doing raw write. */
-> +	if (bbm_byte != 0xff) {
-> +		host->use_ecc = false;
-> +		memset(nandc->data_buffer, 0xff, host->cw_size);
-> +		/* Determine the BBM bytes position and update the same */
-> +		bbm_offset = mtd->writesize - host->cw_size * (ecc->steps - 1);
-> +		memcpy(nandc->data_buffer + bbm_offset, oob, host->bbm_size);
-> +		write_size = host->cw_size;
-> +	/* Write OOB bytes by doing normal write with ECC */
-> +	} else {
-> +		host->use_ecc = true;
-> +		/* calculate the data and oob size for the last codeword/step */
-> +		data_size = ecc->size - ((ecc->steps - 1) << 2);
-> +		oob_size = mtd->oobavail;
-> +
-> +		memset(nandc->data_buffer, 0xff, host->cw_data);
-> +		/* override new oob content to last codeword */
-> +		mtd_ooblayout_get_databytes(mtd, nandc->data_buffer + data_size,
-> +					    oob, 0, mtd->oobavail);
-> +
-> +		write_size = data_size + oob_size;
-> +	}
->  
->  	set_address(host, host->cw_size * (ecc->steps - 1), page);
->  	update_rw_regs(host, 1, false);
->  
->  	config_nand_page_write(nandc);
->  	write_data_dma(nandc, FLASH_BUF_ACC,
-> -		       nandc->data_buffer, data_size + oob_size, 0);
-> +		       nandc->data_buffer, write_size, 0);
->  	config_nand_cw_write(nandc);
->  
->  	ret = submit_descs(nandc);
-> @@ -2174,48 +2203,6 @@ static int qcom_nandc_write_oob(struct mtd_info *mtd, struct nand_chip *chip,
->  	return nand_prog_page_end_op(chip);
->  }
->  
-> -static int qcom_nandc_block_markbad(struct mtd_info *mtd, loff_t ofs)
-> -{
-> -	struct nand_chip *chip = mtd_to_nand(mtd);
-> -	struct qcom_nand_host *host = to_qcom_nand_host(chip);
-> -	struct qcom_nand_controller *nandc = get_qcom_nand_controller(chip);
-> -	struct nand_ecc_ctrl *ecc = &chip->ecc;
-> -	int page, ret;
-> -
-> -	clear_read_regs(nandc);
-> -	clear_bam_transaction(nandc);
-> -
-> -	/*
-> -	 * to mark the BBM as bad, we flash the entire last codeword with 0s.
-> -	 * we don't care about the rest of the content in the codeword since
-> -	 * we aren't going to use this block again
-> -	 */
-> -	memset(nandc->data_buffer, 0x00, host->cw_size);
-> -
-> -	page = (int)(ofs >> chip->page_shift) & chip->pagemask;
-> -
-> -	/* prepare write */
-> -	host->use_ecc = false;
-> -	set_address(host, host->cw_size * (ecc->steps - 1), page);
-> -	update_rw_regs(host, 1, false);
-> -
-> -	config_nand_page_write(nandc);
-> -	write_data_dma(nandc, FLASH_BUF_ACC,
-> -		       nandc->data_buffer, host->cw_size, 0);
-> -	config_nand_cw_write(nandc);
-> -
-> -	ret = submit_descs(nandc);
-> -
-> -	free_descs(nandc);
-> -
-> -	if (ret) {
-> -		dev_err(nandc->dev, "failure to update BBM\n");
-> -		return -EIO;
-> -	}
-> -
-> -	return nand_prog_page_end_op(chip);
-> -}
-> -
->  /*
->   * the three functions below implement chip->read_byte(), chip->read_buf()
->   * and chip->write_buf() respectively. these aren't used for
-> @@ -2757,16 +2744,6 @@ static int qcom_nand_host_init(struct qcom_nand_controller *nandc,
->  	chip->set_features	= nand_get_set_features_notsupp;
->  	chip->get_features	= nand_get_set_features_notsupp;
->  
-> -	/*
-> -	 * the bad block marker is writable only when we write the last codeword
-> -	 * of a page with ECC disabled. currently, the nand_base and nand_bbt
-> -	 * helpers don't allow us to write BB from a nand chip with ECC
-> -	 * disabled (MTD_OPS_PLACE_OOB is set by default). use the block_markbad
-> -	 * helpers until we permanently switch to using
-> -	 * MTD_OPS_RAW for all drivers (with the help of badblockbits)
-> -	 */
-> -	chip->block_markbad	= qcom_nandc_block_markbad;
-> -
->  	chip->controller = &nandc->controller;
->  	chip->options |= NAND_NO_SUBPAGE_WRITE | NAND_USE_BOUNCE_BUFFER |
->  			 NAND_SKIP_BBTSCAN;
+> kernel 0day system has framework to check kernel message, then the above
+> result can be handled by 0day system. If crc calculation inconsistency
+> happens, it can be detected quite soon.
+> 
+> lib/test_crc.c is a testing frame work for many crc consistency
+> testings. For now, there is only one test caes for crc64_be().
+
+Some tweaks.
 
 
 
--- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: lib-test_crc-add-test-cases-for-crc-calculation-fix
+
+make two globals static, regularize code layout, remove unneeded initialization
+
+Cc: Coly Li <colyli@suse.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ lib/test_crc.c |   11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff -puN lib/test_crc.c~lib-test_crc-add-test-cases-for-crc-calculation-fix lib/test_crc.c
+--- a/lib/test_crc.c~lib-test_crc-add-test-cases-for-crc-calculation-fix
++++ a/lib/test_crc.c
+@@ -25,8 +25,8 @@ struct crc_test_record {
+ 	void	(*handler)(struct crc_test_record *rec);
+ };
+ 
+-int failed_tests;
+-int total_tests;
++static int failed_tests;
++static int total_tests;
+ 
+ static void chk_and_msg(const char *name, u64 crc, u64 expval)
+ {
+@@ -68,9 +68,6 @@ static int __init test_crc_init(void)
+ {
+ 	int i;
+ 
+-	failed_tests = 0;
+-	total_tests = 0;
+-
+ 	pr_info("Kernel CRC consistency testing:\n");
+ 	for (i = 0; test_data[i].name; i++)
+ 		test_data[i].handler(&test_data[i]);
+@@ -85,7 +82,9 @@ static int __init test_crc_init(void)
+ }
+ late_initcall(test_crc_init);
+ 
+-static void __exit test_crc_exit(void) { }
++static void __exit test_crc_exit(void)
++{
++}
+ module_exit(test_crc_exit);
+ 
+ MODULE_DESCRIPTION("CRC consistency testing driver");
+_
+
