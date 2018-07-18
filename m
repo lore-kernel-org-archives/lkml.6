@@ -2,134 +2,60 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D246ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D27ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B9B206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:39:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B9B206B7
+	by mail.kernel.org (Postfix) with ESMTP id 4114220854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:42:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4114220854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731498AbeGRQRu (ORCPT
+        id S1731043AbeGRQUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:17:50 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58807 "EHLO
+        Wed, 18 Jul 2018 12:20:43 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58819 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726409AbeGRQRt (ORCPT
+        with ESMTP id S1730663AbeGRQUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:17:49 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1ffoXp-0000po-NH; Wed, 18 Jul 2018 17:39:13 +0200
-Date:   Wed, 18 Jul 2018 17:39:13 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Zou Cao <cao.zou@windriver.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: NULL pointer dereference in msi_set_mask_bit
-In-Reply-To: <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
-Message-ID: <alpine.DEB.2.21.1807181722020.1568@nanos.tec.linutronix.de>
-References: <b9bd8405-64b6-2bea-f5ce-d3ab4d82452a@molgen.mpg.de> <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com> <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de> <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 18 Jul 2018 12:20:42 -0400
+Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1ffoah-0000sh-On; Wed, 18 Jul 2018 17:42:12 +0200
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH 0/2] irqchip/gic-v3-its: a raw_spinlock_t + early ->pend_page allocateion
+Date:   Wed, 18 Jul 2018 17:42:03 +0200
+Message-Id: <20180718154205.13704-1-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paul,
+The errors popped up in -RT. One is the spinlock_t usage in IRQ-off
+region which should be a raw_spinlock_t. I don't see this to be used
+during run-time or for long period of time so I don't thing this is an
+issue.
 
-On Wed, 18 Jul 2018, Paul Menzel wrote:
-> On 07/18/18 17:02, Thomas Gleixner wrote:
-> >>> 93.885: [   23.020572] BUG: unable to handle kernel NULL pointer dereference at 000000000000003c
-> >>> 93.885: [   23.029011] PGD 0 P4D 0 
-> >>> 93.885: [   23.031670] Oops: 0000 [#1] SMP NOPTI
-> >>> 93.885: [   23.035455] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.18.0-rc5+ #1
-> >>> 93.885: [   23.042079] Hardware name: MSI MS-7A37/B350M MORTAR (MS-7A37), BIOS 1.G1 05/17/2018
-> >>> 93.886: [   23.049868] RIP: 0010:msi_set_mask_bit+0xe/0x70
-> > 
-> >>> 93.913: [   23.049868] Code: 00 53 48 89 fb e8 12 f8 ff ff 48 89 df 5b e9 c9 fe ff ff 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 8b 47 10 48 8b 58 10 <f6> 43 3c 01 74 3c 8b 15 2e 85 21 01 31 c0 85 d2 75 25 8b 43 38 48
-> > 
-> >   f6 43 3c 01          	testb  $0x1,0x3c(%rbx)
-> > 
-> > That's:
-> > 
-> > 	if (desc->msi_attrib.is_msix)
-> 
-> Is there a tool to translate that?
+The second problem is the ->pend_page allocation on the target_cpu early
+during CPU bring up. It would be simpler to allocate the memory once on
+the boot CPU instead the hotplug callback since the memory is never
+free()ed. I *think* this is avoided because the number of possible CPUs
+might be higher than what will actually come up (on x86 the BIOS
+sometimes reports more possible_cpus than what is *really* possible, not
+sure if ARM64 is there yet). Therefore I moved the allocation to an
+earlier callback.
 
-That tool is called brain :)
-
-Seriously, what you can do is run the 'Code: ...' line through
-scripts/decodecode and that will show you the disassembly. Now staring at
-msi_set_mask_bit() makes it pretty obvious which part it is and the offset of
-msi_attrib in msi_desc is 0x3c, which matches the BUG: line above. You can
-figure that out by counting or by using pahole.
-
-Of course if you have the vmlinux around then scripts/faddr2line is what
-you want to use.
-
-> >>> 93.957: [   23.049880] RSP: 0018:ffff9e8e5e803f78 EFLAGS: 00010046
-> >>> 93.957: [   23.049881] RAX: ffff9e8e45919000 RBX: 0000000000000000 RCX: 0000000000000000
-> >>> 93.958: [   23.049882] RDX: ffff9e8e45919000 RSI: 0000000000000001 RDI: ffff9e8e45919098
-> >>> 93.958: [   23.049882] RBP: ffff9e8e45919098 R08: 0000000000000000 R09: 0000000000000000
-> >>> 93.958: [   23.049882] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9e8e45919000
-> >>> 93.958: [   23.049883] R13: 0000000000000027 R14: 0000000000000000 R15: 0000000000000000
-> >>> 93.959: [   23.049884] FS:  0000000000000000(0000) GS:ffff9e8e5e800000(0000) knlGS:0000000000000000
-> >>> 93.959: [   23.049884] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >>> 93.959: [   23.049885] CR2: 000000000000003c CR3: 00000003fc5a4000 CR4: 00000000003406f0
-> >>> 93.959: [   23.049885] Call Trace:
-> >>> 93.959: [   23.049887]  <IRQ>
-> >>> 93.960: [   23.049889]  __irq_move_irq+0x3c/0x70
-> >>> 93.960: [   23.049892]  apic_ack_irq+0x2b/0x30
-> >>> 93.960: [   23.049893]  handle_edge_irq+0x7d/0x1d0
-> >>> 93.960: [   23.049895]  handle_irq+0x1f/0x30
-> >>> 93.960: [   23.049898]  do_IRQ+0x41/0xc0
-> >>> 93.960: [   23.049899]  common_interrupt+0xf/0xf
-> >>> 93.961: [   23.049900]  </IRQ>
-> > 
-> > and desc comes from irq_data->common->msi_desc
-> > 
-> > I have no idea how that can happen for an MSI interrupt.
-> > 
-> > Paul, is this reproducible?
-> 
-> No, unfortunately not. I only hit this once, since I attached the serial
-> console.
-
-Bah. Could you please enable GENERIC_IRQ_DEBUGFS and after a successful
-boot up provide me the content of all files in /sys/kernel/debug/irq/ and
-its subfolders?
-
-I assume you have irqbalanced running, right?
-
-> But I found others having the same(?) problem [1][2].
-> 
-> [1]: https://lkml.org/lkml/2018/1/16/122
->      "[PATCH 0/1] PCI/MSI: add NULL check before use of msi_desc"
-
-> [2]: https://marc.info/?l=linux-kernel&m=151321815226439&w=2
->      "[PATCH] PCI: designware: add a check of msi_desc in irqchip"
-
-That's a different story as they allocate 32 interrupt descriptors in their
-host driver for whatever reason. That 'fix' papers over a design issue...
-
-Thanks,
-
-	tglx
-
-
-
+Sebastian
 
