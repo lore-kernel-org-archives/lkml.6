@@ -2,68 +2,89 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10B0ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BB2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677222084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CB212084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:24:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="ZxI+Vrv1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 677222084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nAMKFq9c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CB212084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729914AbeGRS7v (ORCPT
+        id S1729296AbeGRTDZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 14:59:51 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:38800 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbeGRS7v (ORCPT
+        Wed, 18 Jul 2018 15:03:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47984 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726556AbeGRTDZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 14:59:51 -0400
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Subject: [PATCH v2 00/17] JZ4780 DMA patchset v2
-Date:   Wed, 18 Jul 2018 20:20:06 +0200
-Message-Id: <20180718182023.8182-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938042; bh=mPdINxxdHVMuf+vePSdZ2HjJ+KrzVlCN6oTxHng266g=; h=From:To:Cc:Subject:Date:Message-Id; b=ZxI+Vrv1ieM/xM81BRKnQ9wXQfrN07UAhc6ZGM05A91ETJJX9kGSSINBHEzMLoqZL9O8QeGVqpPPpCy+12IyAfDXyiATRUcVkr+2tGQyI2JRi6e8ns/NcEjtfGukE/+J/GBaL3TJJw6yM1y7LP49Oo5m8p2Lqet5Z40RcAQXuLE=
+        Wed, 18 Jul 2018 15:03:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ovTgJXDjiV/784XGqPdj5kGszXVFWaKKl2FdlmdTUR4=; b=nAMKFq9cS6lpnFA1VqKW++gLX
+        T91k+QCnvYJRnZTW0g2n++rWP2fVoL9LioOEteSqtsd2fwEfzOLzyaUiX5lQT0l2tcKkJs1PPf03v
+        5s6TiHy4esdCi78qqCgVBtM2KquRJ45XJcFirFD5WqI6koGpqU/+b7sbhtOwIg6tGb0WDSb5Ub8y0
+        IFN7vGtRTejSeyewvCxUCGoSKZ2xNCvAIhox2bFKvIBIt3whVqBCoI90a/lCJyAuB4qSbiQT9Gbq5
+        INp4z5SLOZ65hKAwlJqnQ8fRcFcCH6suoItLT68tbdMyziWvShOoJhxXOhF1PclYBhZB+5WhiCFZg
+        8mosVapEA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ffr7K-000171-Jt; Wed, 18 Jul 2018 18:24:02 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BE85520275F38; Wed, 18 Jul 2018 20:23:59 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 20:23:59 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     songliubraving@fb.com, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, hpa@zytor.com, tglx@linutronix.de,
+        mingo@kernel.org, torvalds@linux-foundation.org,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/mm] x86/mm/tlb: Make lazy TLB mode lazier
+Message-ID: <20180718182359.GW2494@hirez.programming.kicks-ass.net>
+References: <20180716190337.26133-5-riel@surriel.com>
+ <tip-ac0315896970d8589291e9d8a1569fc65967b7f1@git.kernel.org>
+ <20180717113330.GU2476@hirez.programming.kicks-ass.net>
+ <08AC2AF2-17DE-4416-BBBD-B6B950D20906@surriel.com>
+ <20180718160007.GS2494@hirez.programming.kicks-ass.net>
+ <081E558D-DB34-4A18-A35C-896BC47F6EBA@surriel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <081E558D-DB34-4A18-A35C-896BC47F6EBA@surriel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jul 18, 2018 at 01:22:19PM -0400, Rik van Riel wrote:
+> > On Jul 18, 2018, at 12:00 PM, Peter Zijlstra <peterz@infradead.org> wrote:
 
-This is the version 2 of my jz4780-dma driver update patchset.
+> > Also, I don't suppose you've looked at the paravirt instances of
+> > flush_tlb_other() ? They don't elide the flushes because of lazy.
+> 
+> Let me look at those now :)
 
-Changelog:
+<snip xen>
 
-- All documentation changes have been moved to one single patch [01/17].
+> kvm_flush_tlb_other takes out preempted VCPUs from the flush mask, 
+> before calling native_flush_tlb_others, so it should get the optimization 
+> automatically.
 
-- The new patch [02/17] enforces that we're probed from devicetree.
+Ah, ok. I wasn't entirely sure the new lazy was purely for the idle
+case. But yes, the KVM paravirt thing should get the idle case right.
 
-- The driver will not fail if only one memory resource has been supplied
-  in the devicetree, to keep compatibility with old devicetree files.
+> Hyperv does ... sad magic.
 
-- A new patch [17/17] adds a devicetree node for the DMA driver in the
-  JZ4740 DTS file.
-
-- Some other small changes; see per-file changelog.
-
-Regards,
--Paul
-
+Yeah,.. it got us to switch to 'rcu' freeing of page-tables and enabled
+the kvm thing though, so that all is good :-)
