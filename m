@@ -2,197 +2,157 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05658ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F21ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66FE2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:12:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IEPSyd9y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A66FE2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 884A52075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:12:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 884A52075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbeGRKtl (ORCPT
+        id S1728276AbeGRKuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:49:41 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:38387 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbeGRKtl (ORCPT
+        Wed, 18 Jul 2018 06:50:00 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61241 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbeGRKuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:49:41 -0400
-Received: by mail-wm0-f65.google.com with SMTP id 69-v6so2243993wmf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:12:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=imUCsgRDqHoDd4+CkueS+QavmBqEWNumZNHqCcUy4ow=;
-        b=IEPSyd9yX7grDssxetECIbydKk/egxkabtNzxGHryfIz3e5qu2Top+1LpzEL5SwSLG
-         4R1GuD7LNQo4XQZ4g+oDeU1otYAWV8lqP7o291Wf6pZsIXYN1MfZCdkZtMgAYd4Y/htD
-         OSj+r2gwMFx/AWpfYKYTzSd70eMrYZigU9yjI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=imUCsgRDqHoDd4+CkueS+QavmBqEWNumZNHqCcUy4ow=;
-        b=U4FUNK+ZzC1rs1v9azJ1LMYYzVDAJo/aI5UbcqxuzbR9hbn6jZEDT4kk2gjGDrFVAi
-         MiqBWD+AHXZ0nQy7yEdQtvwD+dfA4dbx/YdOof4XFQvIMyrWAJlDEUR5lwL88qJ+Lr0f
-         29FUhAhIVRutv32yMSpsHc0BYpNTY0LulDVVEW6lF3SJqCRgC7zy/S432Ij2k/mGKbuR
-         Z83+N93vEqCxzxfg3RVSzYBUV4jsjMRAX+lRUb7K1bfxhJ8kur/57TIjurJstQGWT4xl
-         TNFC85OMIgzKLxXwGJGyto6nyUI/Iy9pVTZMpK6jm+GdlWdkO2ZGS5lv6LUDzkn/ueF5
-         6yVQ==
-X-Gm-Message-State: AOUpUlF8lpd0GG3cWt0zLH9FTTdg+7IaWbKlpInoNYFff+kDEewZq1QR
-        gDISBBXnYZi1qJwIInSGmb9vaQ==
-X-Google-Smtp-Source: AAOMgpd2lkcQbxX07JyCrgSeuYJ5y6FF9y+OJV/orK1JHorqXZI6+Nr3+aO+N+OBEpI3arZiL0q8HA==
-X-Received: by 2002:a1c:9a16:: with SMTP id c22-v6mr1252816wme.114.1531908749982;
-        Wed, 18 Jul 2018 03:12:29 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id f23-v6sm1450600wmc.42.2018.07.18.03.12.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 03:12:29 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 11:12:27 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "patches@linaro.org" <patches@linaro.org>
-Subject: Re: [PATCH] backlight: pwm_bl: Fix uninitialized variable
-Message-ID: <20180718101227.shqf54wpt4kdrsj2@holly.lan>
-References: <20180716210241.9457-1-daniel.thompson@linaro.org>
- <20180718080913.GB4641@dell>
- <1531902119.16896.13.camel@toradex.com>
- <20180718095335.GD4641@dell>
+        Wed, 18 Jul 2018 06:50:00 -0400
+Received: from 89-70-153-66.dynamic.chello.pl (89.70.153.66) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id a8b765b13d4eb60e; Wed, 18 Jul 2018 12:12:46 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        Kevin Hilman <khilman@kernel.org>,
+        Lina Iyer <ilina@codeaurora.org>,
+        Lina Iyer <lina.iyer@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Juri Lelli <juri.lelli@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 09/26] kernel/cpu_pm: Manage runtime PM in the idle path for CPUs
+Date:   Wed, 18 Jul 2018 12:11:06 +0200
+Message-ID: <2056372.NMt4aPaF4h@aspire.rjw.lan>
+In-Reply-To: <20180620172226.15012-10-ulf.hansson@linaro.org>
+References: <20180620172226.15012-1-ulf.hansson@linaro.org> <20180620172226.15012-10-ulf.hansson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180718095335.GD4641@dell>
-User-Agent: NeoMutt/20180622
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:53:35AM +0100, Lee Jones wrote:
-> On Wed, 18 Jul 2018, Marcel Ziswiler wrote:
+On Wednesday, June 20, 2018 7:22:09 PM CEST Ulf Hansson wrote:
+> To allow CPUs being power managed by PM domains, let's deploy support for
+> runtime PM for the CPU's corresponding struct device.
 > 
-> > On Wed, 2018-07-18 at 09:09 +0100, Lee Jones wrote:
-> > > On Mon, 16 Jul 2018, Daniel Thompson wrote:
-> > > 
-> > > > Currently, if the DT does not define num-interpolated-steps then
-> > > > num_steps is undefined and the interpolation code will deploy
-> > > > randomly.
-> > > > Fix this.
-> > > > 
-> > > > Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation
-> > > > between
-> > > > brightness-levels")
-> > > > Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > > > Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > > > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > > 
-> > > This line is confusing.  Did you guys author this patch together?
-> > 
-> > Yes, I reported it and we came to a conclusion together.
+> More precisely, at the point when the CPU is about to enter an idle state,
+> decrease the runtime PM usage count for its corresponding struct device,
+> via calling pm_runtime_put_sync_suspend(). Then, at the point when the CPU
+> resumes from idle, let's increase the runtime PM usage count, via calling
+> pm_runtime_get_sync().
 > 
-> It sounds like you need to have all of the tags (except this one). :)
-> 
->  Reported-by:  for reporting the issue
->  Suggested-by: for suggesting a resolution
->  Acked-by:     for reviewing it
->  Tested-by:    for testing it
-> 
-> Signed-off-by usually means you either wrote a significant amount of
-> the diffstat or you were part of the submission path.
+> Cc: Lina Iyer <ilina@codeaurora.org>
+> Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-He did [I don't object to but wouldn't have used the extra brackets you
-brought up ;-) ].
+I finally got to this one, sorry for the huge delay.
 
+Let me confirm that I understand the code flow correctly.
+
+> ---
+>  kernel/cpu_pm.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> > > My guess is that this line should be dropped and the RB and TB tags
-> > > should remain?  If it was reviewed too, perhaps an AB too?
-> > 
-> > I'm OK either way and do not need any explicit authorship to be
-> > expressed for me.
+> diff --git a/kernel/cpu_pm.c b/kernel/cpu_pm.c
+> index 67b02e138a47..492d4a83dca0 100644
+> --- a/kernel/cpu_pm.c
+> +++ b/kernel/cpu_pm.c
+> @@ -16,9 +16,11 @@
+>   */
+>  
+>  #include <linux/kernel.h>
+> +#include <linux/cpu.h>
+>  #include <linux/cpu_pm.h>
+>  #include <linux/module.h>
+>  #include <linux/notifier.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/syscore_ops.h>
+>  
+> @@ -91,6 +93,7 @@ int cpu_pm_enter(void)
+
+This is called from a cpuidle driver's ->enter callback for the target state
+selected by the idle governor ->
+
+>  {
+>  	int nr_calls;
+>  	int ret = 0;
+> +	struct device *dev = get_cpu_device(smp_processor_id());
+>  
+>  	ret = cpu_pm_notify(CPU_PM_ENTER, -1, &nr_calls);
+>  	if (ret)
+> @@ -100,6 +103,9 @@ int cpu_pm_enter(void)
+>  		 */
+>  		cpu_pm_notify(CPU_PM_ENTER_FAILED, nr_calls - 1, NULL);
+>  
+> +	if (!ret && dev && dev->pm_domain)
+> +		pm_runtime_put_sync_suspend(dev);
+
+-> so this is going to invoke genpd_runtime_suspend() if the usage
+counter of dev is 0.
+
+That will cause cpu_power_down_ok() to be called (because this is
+a CPU domain) and that will walk the domain cpumask and compute the
+estimated idle duration as the minimum of tick_nohz_get_next_wakeup()
+values over the CPUs in that cpumask.  [Note that the weight of the
+cpumask must be seriously limited for that to actually work, as this
+happens in the idle path.]  Next, it will return "true" if it can
+find a domain state with residency within the estimated idle
+duration.  [Note that this sort of overlaps with the idle governor's
+job.]
+
+Next, __genpd_runtime_suspend() will be invoked to run the device-specific
+callback if any [Note that this has to be suitable for the idle path if
+present.] and genpd_stop_dev() runs (which, again, may invoke a callback)
+and genpd_power_off() runs under the domain lock (which must be a spinlock
+then).
+
+> +
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(cpu_pm_enter);
+> @@ -118,6 +124,11 @@ EXPORT_SYMBOL_GPL(cpu_pm_enter);
+>   */
+>  int cpu_pm_exit(void)
+>  {
+> +	struct device *dev = get_cpu_device(smp_processor_id());
+> +
+> +	if (dev && dev->pm_domain)
+> +		pm_runtime_get_sync(dev);
+> +
+>  	return cpu_pm_notify(CPU_PM_EXIT, -1, NULL);
+>  }
+>  EXPORT_SYMBOL_GPL(cpu_pm_exit);
 > 
-> In this instance I suggest keeping Reported-by and Tested-by.
-> 
-> > > > Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > > > ---
-> > > >  drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
-> > > >  1 file changed, 8 insertions(+), 9 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/video/backlight/pwm_bl.c
-> > > > b/drivers/video/backlight/pwm_bl.c
-> > > > index 9ee4c1b735b2..e3c22b79fbcd 100644
-> > > > --- a/drivers/video/backlight/pwm_bl.c
-> > > > +++ b/drivers/video/backlight/pwm_bl.c
-> > > > @@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct
-> > > > device *dev,
-> > > >  		 * interpolation between each of the values of
-> > > > brightness levels
-> > > >  		 * and creates a new pre-computed table.
-> > > >  		 */
-> > > > -		of_property_read_u32(node, "num-interpolated-
-> > > > steps",
-> > > > -				     &num_steps);
-> > > > -
-> > > > -		/*
-> > > > -		 * Make sure that there is at least two entries in
-> > > > the
-> > > > -		 * brightness-levels table, otherwise we can't
-> > > > interpolate
-> > > > -		 * between two points.
-> > > > -		 */
-> > > > -		if (num_steps) {
-> > > > +		if ((of_property_read_u32(node, "num-interpolated-
-> > > > steps",
-> > > > +					  &num_steps) == 0) &&
-> > > > num_steps) {
-> > > 
-> > > This is pretty ugly, and isn't it suffering from over-bracketing?  My
-> > > suggestion would be to break out the invocation of
-> > > of_property_read_u32() from the if and test only the result.
-> > > 
-> > > 		of_property_read_u32(node, "num-interpolated-steps", 
-> > > &num_steps);
-> > 
-> > you mean:
-> > 
-> > 		ret = of_property_read_u32(node, "num-interpolated-
-> > steps", &num_steps);
-> > 
-> > > 		if (!ret && num_steps) {
-> > > 
-> > > I haven't checked the underling code, but is it even feasible for
-> > > of_property_read_u32() to not succeed AND for num_steps to be set?
-> > > 
-> > > If not, the check for !ret if superfluous and you can drop it.
-> > 
-> > No, then we are back to the initial issue of num_steps potentially not
-> > being initialised. We really want both of_property_read_u32() to
-> > succeed AND num_steps to actually be set.
-> 
-> I also think num_steps should be pre-initialised.
-> 
-> Then it will only be set if of_property_read_u32() succeeds.
-> 
-> -- 
-> Lee Jones [李琼斯]
-> Linaro Services Technical Lead
-> Linaro.org │ Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+
+And this is called on wakeup when the cpuidle driver's ->enter callback
+is about to return and it reverses the suspend flow (except that the
+governor doesn't need to be called now).
+
+Have I got that right?
+
