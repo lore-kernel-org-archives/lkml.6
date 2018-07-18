@@ -2,124 +2,321 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EAC5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 508F3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61694206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:51:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61694206B7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E3EB2206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:52:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R+BmD5qn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3EB2206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730693AbeGRM2z (ORCPT
+        id S1729324AbeGRM35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:28:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43246 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729970AbeGRM2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:28:55 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 61D8A40AC6DE;
-        Wed, 18 Jul 2018 11:51:21 +0000 (UTC)
-Received: from [10.36.116.221] (ovpn-116-221.ams2.redhat.com [10.36.116.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D6A02156893;
-        Wed, 18 Jul 2018 11:51:19 +0000 (UTC)
-Subject: Re: [PATCH] x86/kvm: Don't use pvqspinlock code if only 1 vCPU
-To:     Waiman Long <longman@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Joe Mario <jmario@redhat.com>
-References: <1531864767-30648-1-git-send-email-longman@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <10b8511b-5488-1ea7-da45-3643e9e0a0b7@redhat.com>
-Date:   Wed, 18 Jul 2018 13:51:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 18 Jul 2018 08:29:57 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46903 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbeGRM34 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 08:29:56 -0400
+Received: by mail-pg1-f193.google.com with SMTP id p23-v6so1882293pgv.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 04:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XPrpLoeChzszVYZovyBAG/DIji2HnLosplpwj/dP29M=;
+        b=R+BmD5qn0+8OL5fA6l6C1D9iLTGYsvTJ7n6rAktjDiWewCryl1cnOKB8npLfhoP5Pe
+         ho9bgrXdm04u9DMpXjZaU6u2Htu4gVkme9FKNIpASzQWcbs42+tEV3NxUkguBmDGRKLL
+         OFagCBcm5IipKmMCREa3EzhFTOV9ded392nPtFC1wbmKGMu73+7sbPhxhEFgi+izQZo4
+         p8u5LlX0f53S+8/MYQnq+1n5GeCQfpUU7U2pGtmFCaksq72eZZDQU1YGSCcByMyYlgZu
+         N6iPQS1OlsXSBXtSV4waZs/Xa1morDyXbQRUlkVvpB90SpNQysRMwwjccwo+b0c2sboS
+         nmxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XPrpLoeChzszVYZovyBAG/DIji2HnLosplpwj/dP29M=;
+        b=Jac59v33xz27aARRkpVMzFX4Bj2d0uv/qatKv7anLCU+XscDmg3A4o5kKj//VxgipY
+         Am/COUVcfkKqsrsFlof6Pg7aW51qGUThGQmkQxwrSY+IrQ8i8r/IEdFLzL8UguGZhJ7E
+         RUi/ZHe3Q4WCmavEfh4otNMNYuB67Tmc1yvjWn9K6APgRv0EoKnVw9s8uBfz44Yf3p22
+         8kS8Ts7xuQI/DczZuajOojHAeNwT1glBBbumttxxJMkiVYr3/NSEjNomI3r+DXVdNFmR
+         FHSkDEOhwN3mZUrTHfpheuPXWtsWGmxMq3a51eSWLsIVsExbTBjcAvgCDejVNsuCeGhc
+         KhcQ==
+X-Gm-Message-State: AOUpUlG5RG5csNO5LZqg16DPB8Lh91wVs2+DEn8Z50Q4JET3OgLx/mtC
+        IBUs9+HjF+SLs4QhpiKDCNRUh6zX3kfPZP+UaKhB0Q==
+X-Google-Smtp-Source: AAOMgpecIr8QbfS8w6rVvjX5ogUhfrGzmc359hpU+tLW6oHzqJ/QVUZQbNj6wd6T/V26quIwMIJsEceLWRMy4k6ac3c=
+X-Received: by 2002:a63:743:: with SMTP id 64-v6mr5679519pgh.216.1531914743165;
+ Wed, 18 Jul 2018 04:52:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1531864767-30648-1-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 11:51:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 11:51:21 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Received: by 2002:a17:90a:ac14:0:0:0:0 with HTTP; Wed, 18 Jul 2018 04:52:02
+ -0700 (PDT)
+In-Reply-To: <000000000000dde753056c9995b3@google.com>
+References: <00000000000042f064056b8d004d@google.com> <000000000000dde753056c9995b3@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 18 Jul 2018 13:52:02 +0200
+Message-ID: <CACT4Y+ams-zr7H-DYFJNy2sg09uMsMhrueu0MGnngAFLPmAgnQ@mail.gmail.com>
+Subject: Re: INFO: task hung in tls_push_record
+To:     syzbot <syzbot+4006516aae0b06e7050f@syzkaller.appspotmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, Jaegeuk Kim <jaegeuk@google.com>
+Cc:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/07/2018 23:59, Waiman Long wrote:
-> On a VM with only 1 vCPU, the locking fast path will always be
-> successful. In this case, there is no need to use the the PV qspinlock
-> code which has higher overhead on the unlock side than the native
-> qspinlock code.
-> 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  arch/x86/kernel/kvm.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 5b2300b..575c9a5 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
-> @@ -748,6 +748,10 @@ void __init kvm_spinlock_init(void)
->  	if (kvm_para_has_hint(KVM_HINTS_REALTIME))
->  		return;
->  
-> +	/* Don't use the pvqspinlock code if there is only 1 vCPU. */
-> +	if (num_possible_cpus() == 1)
-> +		return;
-> +
->  	__pv_init_lock_hash();
->  	pv_lock_ops.queued_spin_lock_slowpath = __pv_queued_spin_lock_slowpath;
->  	pv_lock_ops.queued_spin_unlock = PV_CALLEE_SAVE(__pv_queued_spin_unlock);
-> 
+On Sun, May 20, 2018 at 4:03 AM, syzbot
+<syzbot+4006516aae0b06e7050f@syzkaller.appspotmail.com> wrote:
+> syzbot has found a reproducer for the following crash on:
+>
+> HEAD commit:    eb38401c779d net: stmmac: Populate missing callbacks in HW..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16d0820f800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=b632d8e2c2ab2c1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4006516aae0b06e7050f
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10f6927b800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b7a20f800000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+4006516aae0b06e7050f@syzkaller.appspotmail.com
 
-Queued, thanks.
+Still happens.
+Perhaps this is crypto-related, not net-related? That's why net
+maintainers are not looking at this? +crypto maintainers
 
-Paolo
+
+> INFO: task syz-executor793:4489 blocked for more than 120 seconds.
+>       Not tainted 4.17.0-rc4+ #52
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> syz-executor793 D23464  4489   4486 0x00000000
+> Call Trace:
+>  context_switch kernel/sched/core.c:2848 [inline]
+>  __schedule+0x801/0x1e30 kernel/sched/core.c:3490
+>  schedule+0xef/0x430 kernel/sched/core.c:3549
+>  schedule_timeout+0x1b5/0x240 kernel/time/timer.c:1777
+>  do_wait_for_common kernel/sched/completion.c:83 [inline]
+>  __wait_for_common kernel/sched/completion.c:104 [inline]
+>  wait_for_common kernel/sched/completion.c:115 [inline]
+>  wait_for_completion+0x3e7/0x870 kernel/sched/completion.c:136
+>  crypto_wait_req include/linux/crypto.h:512 [inline]
+>  tls_do_encryption net/tls/tls_sw.c:217 [inline]
+>  tls_push_record+0xedc/0x13e0 net/tls/tls_sw.c:248
+>  tls_sw_sendmsg+0x8d7/0x12b0 net/tls/tls_sw.c:440
+>  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
+>  sock_sendmsg_nosec net/socket.c:629 [inline]
+>  sock_sendmsg+0xd5/0x120 net/socket.c:639
+>  __sys_sendto+0x3d7/0x670 net/socket.c:1789
+>  __do_sys_sendto net/socket.c:1801 [inline]
+>  __se_sys_sendto net/socket.c:1797 [inline]
+>  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1797
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4457d9
+> RSP: 002b:00007fa388d06da8 EFLAGS: 00000216 ORIG_RAX: 000000000000002c
+> RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 00000000004457d9
+> RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000022
+> RBP: 00000000006dac20 R08: 0000000020000000 R09: 000000000000001c
+> R10: 0000000000000000 R11: 0000000000000216 R12: 0000000000000000
+> R13: 00007ffd5148ecaf R14: 00007fa388d079c0 R15: 0000000000000001
+>
+> Showing all locks held in the system:
+> 2 locks held by khungtaskd/892:
+>  #0: 000000009dfaae0c (rcu_read_lock){....}, at:
+> check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+>  #0: 000000009dfaae0c (rcu_read_lock){....}, at: watchdog+0x1ff/0xf60
+> kernel/hung_task.c:249
+>  #1: 0000000058f79a8d (tasklist_lock){.+.+}, at:
+> debug_show_all_locks+0xde/0x34a kernel/locking/lockdep.c:4470
+> 1 lock held by rsyslogd/4370:
+>  #0: 0000000059c3c7ae (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1a9/0x1e0
+> fs/file.c:766
+> 2 locks held by getty/4460:
+>  #0: 00000000e25a52c3 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1: 000000002caea50f (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4461:
+>  #0: 00000000d38c9806 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1: 00000000eaffe99d (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4462:
+>  #0: 00000000cec6abe7 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1: 0000000000afd91c (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4463:
+>  #0: 000000003456fca5 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1: 0000000038a65d91 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4464:
+>  #0: 0000000001e783b1 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1: 000000003ecd2e34 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4465:
+>  #0: 000000007ef8b451 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1: 000000006996c3ed (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 2 locks held by getty/4466:
+>  #0: 00000000d15d9a92 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40
+> drivers/tty/tty_ldsem.c:365
+>  #1: 00000000ee44bcf4 (&ldata->atomic_read_lock){+.+.}, at:
+> n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+> 1 lock held by syz-executor793/4489:
+>  #0: 0000000008c84b0d (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 0000000008c84b0d (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4494:
+>  #0: 00000000f2de7555 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000f2de7555 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4499:
+>  #0: 0000000058a54751 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 0000000058a54751 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4504:
+>  #0: 0000000045694cb9 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 0000000045694cb9 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4509:
+>  #0: 00000000b663e61f (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000b663e61f (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4514:
+>  #0: 00000000603baf06 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000603baf06 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4519:
+>  #0: 00000000344afb7e (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000344afb7e (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4524:
+>  #0: 000000004aa3e1ce (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 000000004aa3e1ce (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4529:
+>  #0: 00000000b6c4b2ea (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000b6c4b2ea (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4534:
+>  #0: 000000005bae881e (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 000000005bae881e (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4539:
+>  #0: 000000004b04f235 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 000000004b04f235 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4544:
+>  #0: 00000000b5888be7 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000b5888be7 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4549:
+>  #0: 00000000e902c819 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000e902c819 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4554:
+>  #0: 000000009cd1d95e (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 000000009cd1d95e (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4559:
+>  #0: 000000001f3edf17 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 000000001f3edf17 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+> 1 lock held by syz-executor793/4563:
+>  #0: 00000000802085f8 (sk_lock-AF_INET6){+.+.}, at: lock_sock
+> include/net/sock.h:1474 [inline]
+>  #0: 00000000802085f8 (sk_lock-AF_INET6){+.+.}, at:
+> tls_sw_sendmsg+0x1b9/0x12b0 net/tls/tls_sw.c:384
+>
+> =============================================
+>
+> NMI backtrace for cpu 0
+> CPU: 0 PID: 892 Comm: khungtaskd Not tainted 4.17.0-rc4+ #52
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+>  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+>  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+>  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+>  check_hung_task kernel/hung_task.c:132 [inline]
+>  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
+>  watchdog+0xc10/0xf60 kernel/hung_task.c:249
+>  kthread+0x345/0x410 kernel/kthread.c:238
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+> Sending NMI from CPU 0 to CPUs 1:
+> NMI backtrace for cpu 1
+> CPU: 1 PID: 4486 Comm: sshd Not tainted 4.17.0-rc4+ #52
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:__debug_object_init+0x25/0x12c0 lib/debugobjects.c:371
+> RSP: 0018:ffff8801b30f73d0 EFLAGS: 00000a02
+> RAX: 1ffff1003661ee3d RBX: ffff8801b30f7440 RCX: ffffffff877175fb
+> RDX: 0000000000000001 RSI: ffffffff88d9a5e0 RDI: ffff8801b30f7440
+> RBP: ffff8801b30f73f0 R08: ffff8801b0a10740 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffff8801b30f73c8
+> R13: dffffc0000000000 R14: ffff8801b30f74c0 R15: 0000000000000001
+> FS:  00007f15863b87c0(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f38c25af9ce CR3: 00000001d0b17000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  debug_object_init_on_stack+0x19/0x20 lib/debugobjects.c:444
+>  hrtimer_init_on_stack kernel/time/hrtimer.c:435 [inline]
+>  schedule_hrtimeout_range_clock+0xcc/0x470 kernel/time/hrtimer.c:1936
+>  schedule_hrtimeout_range+0x2a/0x40 kernel/time/hrtimer.c:1989
+>  poll_schedule_timeout+0x11a/0x200 fs/select.c:243
+>  do_select+0x1606/0x1ae0 fs/select.c:581
+>  core_sys_select+0x768/0xb60 fs/select.c:655
+>  kern_select+0x1b7/0x250 fs/select.c:696
+>  __do_sys_select fs/select.c:705 [inline]
+>  __se_sys_select fs/select.c:702 [inline]
+>  __x64_sys_select+0xbe/0x150 fs/select.c:702
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x7f1584758dd3
+> RSP: 002b:00007ffe596ca1f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000017
+> RAX: ffffffffffffffda RBX: 00007ffe596ca280 RCX: 00007f1584758dd3
+> RDX: 000055a15612aab0 RSI: 000055a15612aad0 RDI: 000000000000000c
+> RBP: 000055a1559bf8dc R08: 00007ffe596ca220 R09: 0101010101010101
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe596ca288
+> R13: 0000000000000000 R14: 00007ffe596ca278 R15: 00007ffe596ca27c
+> Code: 84 00 00 00 00 00 55 48 89 e5 41 57 41 56 48 8d 85 f8 fd ff ff 41 55
+> 48 c1 e8 03 49 bd 00 00 00 00 00 fc ff df 41 54 4c 8d 65 d8 <53> 48 89 fb 48
+> 81 ec 30 02 00 00 48 89 85 d8 fd ff ff 4c 01 e8
