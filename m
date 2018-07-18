@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670EAECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F330EECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1432C20862
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A45A420856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:42:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="b2lpY+3e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1432C20862
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="gtRHiGt0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45A420856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731920AbeGRKTL (ORCPT
+        id S1731841AbeGRKSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:19:11 -0400
-Received: from 8bytes.org ([81.169.241.247]:54196 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:18:44 -0400
+Received: from 8bytes.org ([81.169.241.247]:54792 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731794AbeGRKSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:45 -0400
+        id S1731794AbeGRKSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:43 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 5F23C3C8D; Wed, 18 Jul 2018 11:41:25 +0200 (CEST)
+        id 0717BAA4; Wed, 18 Jul 2018 11:41:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906887; bh=tLiAcI2qwMEnqd4vo5oDTMRTlAL0Hs4aB8R7khMPaks=;
+        t=1531906886; bh=mDYOiNc4qhumS/zaIILgLYcqAgOrdsgG0V0cjiaHnEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b2lpY+3e5534kA09OFfGmi+ZXpHoCMgEc/+axL4ev+yncVtABPW32sT9KncfUL5JG
-         DtoJIduHdHHRNq4t0zMmr84zPZskwulKUGSW6XnQP6hK4njQw53CmkPT6avSr2A9yU
-         wFCX62mU0sVwB5ocIVRhb4RRJpcSZmTrBOjp22X/hhMdYDN1wyGMHkDY+ho9SR+xF1
-         mKEkg+EGfGo/peer7QDjxr1ZPpNJbQ9Iw09s3sVZ6C/swi70V2Ln3grzRneRSM5NjO
-         o7fTDH/5Obe6eBwZRm8z8h7QgNz9yPdB30jeI9sG1RByL+rsBedeMNgr5pBREPnoHf
-         sE6wtxaKMURNQ==
+        b=gtRHiGt0vX2hk4ury3lN6AxLYHHRGMHqomly2Ik+enYPJa7H3I63e3fxtTxKJ6QPh
+         WaygQsLvJgkapDRjLe2UhDKeQx2BkKEChQc/NlNvbT1TiGELXtGlyZMFOUIcn9NYCU
+         xiU5SX04LmEHFBIPc0XsBzi1AAGkRLMsddq+0jO5ebLG8yNSLDIgBlVnaL27GDZHb5
+         Oy12vTwNQXXETfPwg4fvptR8sn3Pe3a9D3gX3rpMtBk2PxdtubaZrAkJJJDa+Y9mH3
+         9TOe60nOw55qw6Zqi1Bvk74TbmQSZIoEkFyW8zviJrHaZlcwRC25i+WQjq5VMOu0x1
+         /EGTMXIDAOOCQ==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 38/39] x86/mm/pti: Add Warning when booting on a PCID capable CPU
-Date:   Wed, 18 Jul 2018 11:41:15 +0200
-Message-Id: <1531906876-13451-39-git-send-email-joro@8bytes.org>
+Subject: [PATCH 34/39] x86/ldt: Define LDT_END_ADDR
+Date:   Wed, 18 Jul 2018 11:41:11 +0200
+Message-Id: <1531906876-13451-35-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,48 +72,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Warn the user in case the performance can be significantly
-improved by switching to a 64-bit kernel.
+It marks the end of the address-space range reserved for the
+LDT. The LDT-code will use it when unmapping the LDT for
+user-space.
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/mm/pti.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/x86/include/asm/pgtable_32_types.h | 2 ++
+ arch/x86/include/asm/pgtable_64_types.h | 1 +
+ arch/x86/kernel/ldt.c                   | 2 +-
+ 3 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index b879ccd..be8d2cd 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -517,6 +517,28 @@ void __init pti_init(void)
+diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
+index 7297810..b0bc0ff 100644
+--- a/arch/x86/include/asm/pgtable_32_types.h
++++ b/arch/x86/include/asm/pgtable_32_types.h
+@@ -53,6 +53,8 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+ #define LDT_BASE_ADDR		\
+ 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
  
- 	pr_info("enabled\n");
- 
-+#ifdef CONFIG_X86_32
-+	/*
-+	 * We check for X86_FEATURE_PCID here. But the init-code will
-+	 * clear the feature flag on 32 bit because the feature is not
-+	 * supported on 32 bit anyway. To print the warning we need to
-+	 * check with cpuid directly again.
-+	 */
-+	if (cpuid_ecx(0x1) && BIT(17)) {
-+		/* Use printk to work around pr_fmt() */
-+		printk(KERN_WARNING "\n");
-+		printk(KERN_WARNING "************************************************************\n");
-+		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
-+		printk(KERN_WARNING "**                                                        **\n");
-+		printk(KERN_WARNING "** You are using 32-bit PTI on a 64-bit PCID-capable CPU. **\n");
-+		printk(KERN_WARNING "** Your performance will increase dramatically if you     **\n");
-+		printk(KERN_WARNING "** switch to a 64-bit kernel!                             **\n");
-+		printk(KERN_WARNING "**                                                        **\n");
-+		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
-+		printk(KERN_WARNING "************************************************************\n");
-+	}
-+#endif
++#define LDT_END_ADDR		(LDT_BASE_ADDR + PMD_SIZE)
 +
- 	pti_clone_user_shared();
+ #define PKMAP_BASE		\
+ 	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
  
- 	/* Undo all global bits from the init pagetables in head_64.S: */
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 066e0ab..04edd2d 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -115,6 +115,7 @@ extern unsigned int ptrs_per_p4d;
+ #define LDT_PGD_ENTRY_L5	-112UL
+ #define LDT_PGD_ENTRY		(pgtable_l5_enabled() ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
+ #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
++#define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+ 
+ #define __VMALLOC_BASE_L4	0xffffc90000000000UL
+ #define __VMALLOC_BASE_L5 	0xffa0000000000000UL
+diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
+index c9b1402..e921b3d 100644
+--- a/arch/x86/kernel/ldt.c
++++ b/arch/x86/kernel/ldt.c
+@@ -206,7 +206,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+ 	struct mmu_gather tlb;
+ 	unsigned long start = LDT_BASE_ADDR;
+-	unsigned long end = start + (1UL << PGDIR_SHIFT);
++	unsigned long end = LDT_END_ADDR;
+ 
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return;
 -- 
 2.7.4
 
