@@ -1,156 +1,117 @@
 Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F40ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C79CECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA4020693
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE92C20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:15:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuNOI8kX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA4020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PtICQxvP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE92C20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731442AbeGRAsG (ORCPT
+        id S1731445AbeGRAuw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 20:48:06 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42947 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730043AbeGRAsG (ORCPT
+        Tue, 17 Jul 2018 20:50:52 -0400
+Received: from mail-yw0-f202.google.com ([209.85.161.202]:54317 "EHLO
+        mail-yw0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730063AbeGRAuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 20:48:06 -0400
-Received: by mail-pf0-f195.google.com with SMTP id l9-v6so1278499pff.9;
-        Tue, 17 Jul 2018 17:13:01 -0700 (PDT)
+        Tue, 17 Jul 2018 20:50:52 -0400
+Received: by mail-yw0-f202.google.com with SMTP id c67-v6so1553551ywc.21
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 17:15:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6j+JJWCgwt0YY+WGidLSFwkh1MdLiA0MRoHIB/PcXgQ=;
-        b=TuNOI8kX74StgmO9yL9hJiqcTDhaVoFOhOhsLcucbBFaiKz3J8/bbX+Vio/RY9f8kZ
-         /uvSwbqvnTeThU5Ilr0+95Wr50EfmHpgtoBdxHCrfFJz125aNHcuiySnA63TkyYk8iHH
-         QXk1XgjfOKOt5KEdVD1wuXfPn1YxIO0mLpWZYs/yavMt7A3fGlu6VE0wq9OXSIwrwKjI
-         Hu/3gUFH3C5lQjDiCIXrN/HGBYTOLqJIRyGY997/KguXq08FhMzBZYtnSh/WwKpR6Hfz
-         8ABCb58meeQ7KeX5X/WyXmb4rd73bfqf2cKsI3LBB4C/CWbwt5amKRs0WpQtX0iWmrjq
-         ijkA==
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=JghNQHeW5xr/NbQnvbPN+t1UI1NfcYUpukHrR5J4tV4=;
+        b=PtICQxvPN1iAlcxcklMN2xkG7pWxFkWTgW9gLCe/r61++fUJeV0cN+6oBfmXZVvs7G
+         qCU8TsNqpu2Qg91KcpMv/Sku3u63awJ8qLZvLreJ/VHvOuHgZnA6wcfYY2f/IXe9Bcxh
+         iP0Z0xYt7m+j+a0lfwrWlUNn8sWScPnGCT+gWpKSlf70UBe+9xNw4DJFNZLBIxiC/vzq
+         pIjJDNRRG9uGqQfuCYyDX30Lf7Gm6DhxMtbIoOAyTnbNo+GqUmRcSdWuY62qzWG7hHck
+         hRIc9Boy3AyzVz2yINHnxnSL7Gz2VKunSFoOU7FLhXo4X4jOeFK206U9i+CXkZ02yel+
+         +twA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6j+JJWCgwt0YY+WGidLSFwkh1MdLiA0MRoHIB/PcXgQ=;
-        b=Rt4qqxijJXOqydJaAvuYzRwBSm+YikgR4PUoQ0fPPz+QSvL6eIF5pSckJLO3yeDEqH
-         rduNSbCcgp713K6p7Sym1iNWes9N9MGmzynO2LI0DwprNwJj+HQmSbH0x174jwX03XpW
-         I0tb21QNyDot0y34/fyW44s9hgyWpDkZ7xIJCAouk/SATUSH4jw+LHpbukpbSqMbuktw
-         Wye8XzQwnK5/X3/3GHvBwYbZTeYuF4aaV9Qzkz5Eq0pxho4SPoLb87g0YXsCfgdeHgRI
-         Vz8LRjThp9DvEjKOd7L0107LgRmIuG1xytZYdWkbwuOb+EYJcGGPFaXZR/Zzkabm96jT
-         Z3OQ==
-X-Gm-Message-State: AOUpUlGi7pTzjUtkGjD4trlqVV9YwzT+UjBBaxLwU5o3HeAwfKaKGyDQ
-        rQAMKSkXJa6nMsZZgmiHHmc=
-X-Google-Smtp-Source: AAOMgpfYRLupfcVureeYtHMEB7DSLzlP9gzlg+uvbYRGT4z0UNlOfYQ3lrP9yzrMcnzMaEd/iDFT5w==
-X-Received: by 2002:a63:8648:: with SMTP id x69-v6mr3586610pgd.172.1531872781203;
-        Tue, 17 Jul 2018 17:13:01 -0700 (PDT)
-Received: from gmail.com ([2620:15c:17:3:dc28:5c82:b905:e8a8])
-        by smtp.gmail.com with ESMTPSA id 10-v6sm3447576pfs.111.2018.07.17.17.13.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 17:13:00 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 17:12:58 -0700
-From:   Eric Biggers <ebiggers3@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Prashant Sreedharan <prashant@broadcom.com>,
-        Michael Chan <mchan@broadcom.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Vitaly Bordug <vbordug@ru.mvista.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, devel@driverdev.osuosl.org
-Subject: Re: [PATCH 0/6] lib/crc32: treewide: Use existing define with
- polynomial
-Message-ID: <20180718001258.GA210746@gmail.com>
-References: <20180717160541.3843-1-krzk@kernel.org>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=JghNQHeW5xr/NbQnvbPN+t1UI1NfcYUpukHrR5J4tV4=;
+        b=RlcpPGo7g/RxODzlmKwnKfyQCzO2qFFX6WMGvMhyay7tzYUhFMCxI9IQ4S2WvllIZE
+         kL1h/3GQG0N6RfaYRQ6/gflcLvzErh8/cZY3wKFhAiRZ+pV3sAo42XbURPGdRagW5nlf
+         F//nZK6+SVq9NI+kbhQ43g8qQn668f+npBo86hov8mDrKJl5ESK5Zq9HEgN9bJoyJjk9
+         fC9gpTEji4EkhjyMNaXuIefV7TwNgZwaBAMa7jMBs2mCeOa9ZBIGW4Tqu8yEVT/FJ3CW
+         U6zVO+LO4/vyHks5Cc5dCDT4gQ+ZHR1cmEOrq3WEholGGnatP9UplTdN0Y7mn9RyB5U9
+         9/zA==
+X-Gm-Message-State: AOUpUlEYtM0J4i1stX6lBhhQJVJbFj84csEHPS4O7gZusUnkVN+m29Ix
+        19Cl+joAiqbg2pDI9DN1z5IhuGBO
+X-Google-Smtp-Source: AAOMgpc/upH3MJfAODolwM3Ep+TmORDPOkIBIgZRP1S9JCxHdsEM9fKBNVV4/EgHZBau9L0zRoO5702O
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180717160541.3843-1-krzk@kernel.org>
-User-Agent: Mutt/1.10+35 (c786a508) (2018-06-22)
+X-Received: by 2002:a25:918e:: with SMTP id w14-v6mr1141009ybl.71.1531872946870;
+ Tue, 17 Jul 2018 17:15:46 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 17:14:53 -0700
+Message-Id: <20180718001455.140575-1-rkir@google.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+Subject: [PATCH 1/3] tty: Address checkpatch warnings in goldfish.c
+From:   rkir@google.com
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, tkjos@google.com,
+        Roman Kiryanov <rkir@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Krzysztof,
+From: Roman Kiryanov <rkir@google.com>
 
-On Tue, Jul 17, 2018 at 06:05:35PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Kernel defines same polynomial for CRC-32 in few places.
-> This is unnecessary duplication of the same value. Also this might
-> be error-prone for future code - every driver will define the
-> polynomial again.
-> 
-> This is an attempt to unify definition of polynomial.  Few obvious
-> hard-coded locations are fixed with define.
-> 
-> All series depend on each 1/6 and 2/6.
-> 
-> This could be merged in two different merge windows (1st lib/crc and then
-> the rest) or taken through one tree.
-> 
-> It would be nice to get some testing. Only generic lib/crc, bunzip, xz_crc32
-> and Freescale's Ethernet driver were tested on HW.  Rest got just different
-> builds.
-> 
-> Best regards,
-> Krzysztof
-> 
-> Krzysztof Kozlowski (6):
->   lib/crc: Move polynomial definition to separate header
->   lib/crc: Use consistent naming for CRC-32 polynomials
->   crypto: stm32_crc32 - Use existing define with polynomial
->   net: ethernet: Use existing define with polynomial
->   staging: rtl: Use existing define with polynomial
->   lib: Use existing define with polynomial
-> 
->  drivers/crypto/stm32/stm32_crc32.c               | 11 ++++-------
->  drivers/net/ethernet/amd/xgbe/xgbe-dev.c         |  4 ++--
->  drivers/net/ethernet/apple/bmac.c                |  8 ++------
->  drivers/net/ethernet/broadcom/tg3.c              |  3 ++-
->  drivers/net/ethernet/freescale/fec_main.c        |  4 ++--
->  drivers/net/ethernet/freescale/fs_enet/fec.h     |  3 ---
->  drivers/net/ethernet/freescale/fs_enet/mac-fec.c |  3 ++-
->  drivers/net/ethernet/micrel/ks8851_mll.c         |  3 ++-
->  drivers/net/ethernet/synopsys/dwc-xlgmac-hw.c    |  4 ++--
->  drivers/staging/rtl8712/rtl871x_security.c       |  5 ++---
->  drivers/staging/rtl8723bs/core/rtw_security.c    |  5 ++---
->  include/linux/crc32poly.h                        | 20 ++++++++++++++++++++
->  lib/crc32.c                                      | 11 ++++++-----
->  lib/crc32defs.h                                  | 14 --------------
->  lib/decompress_bunzip2.c                         |  3 ++-
->  lib/gen_crc32table.c                             |  5 +++--
->  lib/xz/xz_crc32.c                                |  3 ++-
->  17 files changed, 55 insertions(+), 54 deletions(-)
->  create mode 100644 include/linux/crc32poly.h
-> 
+To make further maintenance easier.
 
-Did you check whether any of these users can be converted to use the CRC
-implementations in lib/, so they wouldn't need the polynomial definition
-themselves?
+Signed-off-by: Roman Kiryanov <rkir@google.com>
+---
+ drivers/tty/goldfish.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-- Eric
+diff --git a/drivers/tty/goldfish.c b/drivers/tty/goldfish.c
+index 37caba7c3aff..a92fcb2b0002 100644
+--- a/drivers/tty/goldfish.c
++++ b/drivers/tty/goldfish.c
+@@ -172,6 +172,7 @@ static void goldfish_tty_shutdown(struct tty_port *port)
+ static int goldfish_tty_open(struct tty_struct *tty, struct file *filp)
+ {
+ 	struct goldfish_tty *qtty = &goldfish_ttys[tty->index];
++
+ 	return tty_port_open(&qtty->port, tty, filp);
+ }
+ 
+@@ -201,11 +202,12 @@ static int goldfish_tty_chars_in_buffer(struct tty_struct *tty)
+ {
+ 	struct goldfish_tty *qtty = &goldfish_ttys[tty->index];
+ 	void __iomem *base = qtty->base;
++
+ 	return readl(base + GOLDFISH_TTY_REG_BYTES_READY);
+ }
+ 
+ static void goldfish_tty_console_write(struct console *co, const char *b,
+-								unsigned count)
++				       unsigned int count)
+ {
+ 	goldfish_tty_do_write(co->index, b, count);
+ }
+@@ -219,7 +221,7 @@ static struct tty_driver *goldfish_tty_console_device(struct console *c,
+ 
+ static int goldfish_tty_console_setup(struct console *co, char *options)
+ {
+-	if ((unsigned)co->index >= goldfish_tty_line_count)
++	if ((unsigned int)co->index >= goldfish_tty_line_count)
+ 		return -ENODEV;
+ 	if (!goldfish_ttys[co->index].base)
+ 		return -ENODEV;
+-- 
+2.18.0.203.gfac676dfb9-goog
+
