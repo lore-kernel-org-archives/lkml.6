@@ -2,205 +2,121 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6E9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BBBDECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6A9D2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="LPtAA5p7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A9D2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id D9D0D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:47:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D0D2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbeGRKV4 (ORCPT
+        id S1731098AbeGRKYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:21:56 -0400
-Received: from 8bytes.org ([81.169.241.247]:53544 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:24:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:59284 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731270AbeGRKSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:31 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id CB0941EA; Wed, 18 Jul 2018 11:41:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906879; bh=SS6SYyEciXuD1olgi8ibNK5P0rrptUTEqVkwTJMIQ1I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LPtAA5p78LKf2HX20ZyqelQxzR/yZHEHw75RkKm2EmUJy7WOpTVztbMq9aEhB6zpz
-         HrmEAHrgcITlk4c5402QyWRD+E0gO8weDum7JD0pV6p3ZGxueVJJlBmCkkiCgNwoMy
-         7vzTqICfka8XGzv8Jg/BDL0CQWQzY7m3OGiZInTnKcXlFu7+SJ4YOqKI+khXcTYb0v
-         21LIgHBgt2pXemskQuY0pNSNufnYZeTpqxzmQZjCE/wB9kmAjChQfY07+q928Fi9XH
-         naCeub7E4ZLXTsLyEdbsN+BQcFb1m/vWIKrhZXIQC3rlTOGmn1CXfykfb5zcU4dOsq
-         pPyJZJlMuEUlw==
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 04/39] x86/entry/32: Put ESPFIX code into a macro
-Date:   Wed, 18 Jul 2018 11:40:41 +0200
-Message-Id: <1531906876-13451-5-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
+        id S1729126AbeGRKYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:24:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDE8780D;
+        Wed, 18 Jul 2018 02:47:30 -0700 (PDT)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5E103F318;
+        Wed, 18 Jul 2018 02:47:27 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 10:49:24 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Honghui Zhang <honghui.zhang@mediatek.com>
+Cc:     marc.zyngier@arm.com, bhelgaas@google.com, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
+        youlin.pei@mediatek.com, yong.wu@mediatek.com,
+        yt.shen@mediatek.com, sean.wang@mediatek.com, rjw@rjwysocki.net,
+        khilman@kernel.org, ulf.hansson@linaro.org
+Subject: Re: [PATCH v3 3/4] PCI: mediatek: Add system pm support for MT2712
+ and MT7622
+Message-ID: <20180718094924.GA21463@red-moon>
+References: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
+ <1530518264-6125-4-git-send-email-honghui.zhang@mediatek.com>
+ <20180717171543.GA20991@red-moon>
+ <1531893761.31406.15.camel@mhfsdcap03>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531893761.31406.15.camel@mhfsdcap03>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Wed, Jul 18, 2018 at 02:02:41PM +0800, Honghui Zhang wrote:
 
-This makes it easier to split up the shared iret code path.
+<snip>
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/entry/entry_32.S | 97 ++++++++++++++++++++++++-----------------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+> > > +static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
+> > > +{
+> > > +	struct mtk_pcie *pcie = dev_get_drvdata(dev);
+> > > +	const struct mtk_pcie_soc *soc = pcie->soc;
+> > > +	struct mtk_pcie_port *port, *tmp;
+> > > +
+> > > +	if (!soc->pm_support)
+> > > +		return 0;
+> > > +
+> > > +	if (list_empty(&pcie->ports))
+> > > +		return 0;
+> > > +
+> > > +	if (dev->pm_domain) {
+> > > +		pm_runtime_enable(dev);
+> > > +		pm_runtime_get_sync(dev);
+> > > +	}
+> > 
+> > Are these runtime PM calls needed/abused here ?
+> > 
+> > Mind explaining the logic ?
+> > 
+> > There is certainly an asymmetry with the suspend callback which made me
+> > suspicious, I am pretty certain Rafael/Kevin/Ulf can help me clarify so
+> > that we can make progress with this patch.
+> > 
+> > Lorenzo
+> > 
+> Hi Lorenzo, thanks for your comments.
+> Sorry I don't get you.
+> I believe that in suspend callbacks the pm_runtime_put_sync and
+> pm_runtime_disable should be called to gated the CMOS for this module,
+> while the pm_rumtime_enable and pm_rumtime_get_sync should be called
+> in resume callback.
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 39f711a..ef7d653 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -221,6 +221,54 @@
- 	POP_GS_EX
- .endm
- 
-+.macro CHECK_AND_APPLY_ESPFIX
-+#ifdef CONFIG_X86_ESPFIX32
-+#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
-+
-+	ALTERNATIVE	"jmp .Lend_\@", "", X86_BUG_ESPFIX
-+
-+	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
-+	/*
-+	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
-+	 * are returning to the kernel.
-+	 * See comments in process.c:copy_thread() for details.
-+	 */
-+	movb	PT_OLDSS(%esp), %ah
-+	movb	PT_CS(%esp), %al
-+	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
-+	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
-+	jne	.Lend_\@	# returning to user-space with LDT SS
-+
-+	/*
-+	 * Setup and switch to ESPFIX stack
-+	 *
-+	 * We're returning to userspace with a 16 bit stack. The CPU will not
-+	 * restore the high word of ESP for us on executing iret... This is an
-+	 * "official" bug of all the x86-compatible CPUs, which we can work
-+	 * around to make dosemu and wine happy. We do this by preloading the
-+	 * high word of ESP with the high word of the userspace ESP while
-+	 * compensating for the offset by changing to the ESPFIX segment with
-+	 * a base address that matches for the difference.
-+	 */
-+	mov	%esp, %edx			/* load kernel esp */
-+	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
-+	mov	%dx, %ax			/* eax: new kernel esp */
-+	sub	%eax, %edx			/* offset (low word is 0) */
-+	shr	$16, %edx
-+	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
-+	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
-+	pushl	$__ESPFIX_SS
-+	pushl	%eax				/* new kernel esp */
-+	/*
-+	 * Disable interrupts, but do not irqtrace this section: we
-+	 * will soon execute iret and the tracer was already set to
-+	 * the irqstate after the IRET:
-+	 */
-+	DISABLE_INTERRUPTS(CLBR_ANY)
-+	lss	(%esp), %esp			/* switch to espfix segment */
-+.Lend_\@:
-+#endif /* CONFIG_X86_ESPFIX32 */
-+.endm
- /*
-  * %eax: prev task
-  * %edx: next task
-@@ -547,21 +595,7 @@ ENTRY(entry_INT80_32)
- restore_all:
- 	TRACE_IRQS_IRET
- .Lrestore_all_notrace:
--#ifdef CONFIG_X86_ESPFIX32
--	ALTERNATIVE	"jmp .Lrestore_nocheck", "", X86_BUG_ESPFIX
--
--	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
--	/*
--	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
--	 * are returning to the kernel.
--	 * See comments in process.c:copy_thread() for details.
--	 */
--	movb	PT_OLDSS(%esp), %ah
--	movb	PT_CS(%esp), %al
--	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
--	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
--	je .Lldt_ss				# returning to user-space with LDT SS
--#endif
-+	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
- 	RESTORE_REGS 4				# skip orig_eax/error_code
- .Lirq_return:
-@@ -579,39 +613,6 @@ ENTRY(iret_exc	)
- 	jmp	common_exception
- .previous
- 	_ASM_EXTABLE(.Lirq_return, iret_exc)
--
--#ifdef CONFIG_X86_ESPFIX32
--.Lldt_ss:
--/*
-- * Setup and switch to ESPFIX stack
-- *
-- * We're returning to userspace with a 16 bit stack. The CPU will not
-- * restore the high word of ESP for us on executing iret... This is an
-- * "official" bug of all the x86-compatible CPUs, which we can work
-- * around to make dosemu and wine happy. We do this by preloading the
-- * high word of ESP with the high word of the userspace ESP while
-- * compensating for the offset by changing to the ESPFIX segment with
-- * a base address that matches for the difference.
-- */
--#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
--	mov	%esp, %edx			/* load kernel esp */
--	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
--	mov	%dx, %ax			/* eax: new kernel esp */
--	sub	%eax, %edx			/* offset (low word is 0) */
--	shr	$16, %edx
--	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
--	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
--	pushl	$__ESPFIX_SS
--	pushl	%eax				/* new kernel esp */
--	/*
--	 * Disable interrupts, but do not irqtrace this section: we
--	 * will soon execute iret and the tracer was already set to
--	 * the irqstate after the IRET:
--	 */
--	DISABLE_INTERRUPTS(CLBR_ANY)
--	lss	(%esp), %esp			/* switch to espfix segment */
--	jmp	.Lrestore_nocheck
--#endif
- ENDPROC(entry_INT80_32)
- 
- .macro FIXUP_ESPFIX_STACK
--- 
-2.7.4
+That's why I CC'ed Rafael, Kevin and Ulf, to answer this question
+thoroughly, I am not sure it is needed and that's the right way
+of doing it in system suspend callbacks.
 
+> That's exactly this patch doing.
+> But the pm_rumtime_put_sync and pm_runtime_disable functions was wrapped
+> in the mtk_pcie_subsys_powerdown.
+
+Ah, sorry, I missed that.
+
+> I did not call mtk_pcie_subsys_powerup since it does not just wrapped
+> pm_rumtime related functions but also do the platform_resource_get,
+> devm_ioremap, and free_ck clock get which I do not needed in resume
+> callback.
+> 
+> Do you think it will be much clear if I abstract the
+> platform_resource_get, devm_ioremap functions from
+> mtk_pcie_subsys_powerup and put it to a new functions like
+> mtk_pcie_subsys_resource_get, and then we may call the
+> mtk_pcie_subsys_powerup in the resume function?
+
+I think so but let's wait first for feedback on whether those
+runtime PM calls are needed in the first place.
+
+Lorenzo
