@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5304DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C6BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC532075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF0E22075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="Qu51K4O8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC532075A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="BnprfT3p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF0E22075A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731764AbeGRKSk (ORCPT
+        id S1731825AbeGRKSn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:18:40 -0400
-Received: from 8bytes.org ([81.169.241.247]:54196 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:18:43 -0400
+Received: from 8bytes.org ([81.169.241.247]:54462 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731692AbeGRKSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:39 -0400
+        id S1731770AbeGRKSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:41 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id B5B3FAA3; Wed, 18 Jul 2018 11:41:21 +0200 (CEST)
+        id AFFC7C98; Wed, 18 Jul 2018 11:41:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906883; bh=PFTcFHATf/euI89FyiCX6ghifaBmqhDD9QfrXtzXoJY=;
+        t=1531906885; bh=48FBcw49wasOWCwH8N3EK5w1EL7mm104AhYjmxHQeP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qu51K4O8Sborqb/86q2MTFZgWs+I5VF/mXWK++dxnkR5qpKzY/fvzzAf8DNRrZVK6
-         0dN+xmEPB9LoEmY1LDW2ObjWiP946aAtBaWMZhvWbyO9rAU3RWrR2HIRoECGlTZ/UU
-         Dn4uagMlAwO5mb1I7ccHS9IQBPw908aP5mnZy0WXFdWdlea4xRs/QdGY7gGuBR5jGU
-         okFBYff/sNSkBycZr4XIlNjndO5I1W8/xQqONbGmjKSJiaV983dmNOkAbkdrbZpPFt
-         KzhboHhWcdiOL+H1YkVTedIwND4WAoY01yT6S3tOMeglOdGX2JM4qG85s1v6pWTmaI
-         MZoIfOyMc5Zhw==
+        b=BnprfT3po/XG5LQkuR6EeRLOLHrWtwuxvsbtkdWqOj4VJuc/I7dnjGn6cPNpDS9In
+         guejVb/XWr3HGHUsrkLwPa4jBvWOloV1B2TdfIlx+3Y9dCGFtkVYZWegk+3r2Xe0ZJ
+         NBZH8VamnQGJuzZGSB7rua+pqbE+dVBz5g5Qz6tKYgstEI5eRaq8x4U8oTXwOpAwHW
+         /OIbCQBsDMC9dUdNRClrynvxmTNe+ubtruTDAZp9CcjPyGgt/C5PTpcEg4IvdSsjFc
+         uuXcFzEoirJEFLYhxw/NKJJ0382aQvglHyv0oHpvNs/cd1nEBJGpEsk3MN7NDS4zJY
+         TddYHr8JjVKSg==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 21/39] x86/mm/pae: Populate valid user PGD entries
-Date:   Wed, 18 Jul 2018 11:40:58 +0200
-Message-Id: <1531906876-13451-22-git-send-email-joro@8bytes.org>
+Subject: [PATCH 26/39] x86/mm/pti: Clone CPU_ENTRY_AREA on PMD level on x86_32
+Date:   Wed, 18 Jul 2018 11:41:03 +0200
+Message-Id: <1531906876-13451-27-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,71 +72,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Generic page-table code populates all non-leaf entries with
-_KERNPG_TABLE bits set. This is fine for all paging modes
-except PAE.
-
-In PAE mode only a subset of the bits is allowed to be set.
-Make sure we only set allowed bits by masking out the
-reserved bits.
+Cloning on the P4D level would clone the complete kernel
+address space into the user-space page-tables for PAE
+kernels. Cloning on PMD level is fine for PAE and legacy
+paging.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_types.h | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ arch/x86/mm/pti.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-index 99fff85..b64acb0 100644
---- a/arch/x86/include/asm/pgtable_types.h
-+++ b/arch/x86/include/asm/pgtable_types.h
-@@ -50,6 +50,7 @@
- #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
- #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
- #define _PAGE_SOFTW2	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW2)
-+#define _PAGE_SOFTW3	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW3)
- #define _PAGE_PAT	(_AT(pteval_t, 1) << _PAGE_BIT_PAT)
- #define _PAGE_PAT_LARGE (_AT(pteval_t, 1) << _PAGE_BIT_PAT_LARGE)
- #define _PAGE_SPECIAL	(_AT(pteval_t, 1) << _PAGE_BIT_SPECIAL)
-@@ -266,14 +267,37 @@ typedef struct pgprot { pgprotval_t pgprot; } pgprot_t;
- 
- typedef struct { pgdval_t pgd; } pgd_t;
- 
-+#ifdef CONFIG_X86_PAE
-+
-+/*
-+ * PHYSICAL_PAGE_MASK might be non-constant when SME is compiled in, so we can't
-+ * use it here.
-+ */
-+
-+#define PGD_PAE_PAGE_MASK	((signed long)PAGE_MASK)
-+#define PGD_PAE_PHYS_MASK	(((1ULL << __PHYSICAL_MASK_SHIFT)-1) & PGD_PAE_PAGE_MASK)
-+
-+/*
-+ * PAE allows Base Address, P, PWT, PCD and AVL bits to be set in PGD entries.
-+ * All other bits are Reserved MBZ
-+ */
-+#define PGD_ALLOWED_BITS	(PGD_PAE_PHYS_MASK | _PAGE_PRESENT | \
-+				 _PAGE_PWT | _PAGE_PCD | \
-+				 _PAGE_SOFTW1 | _PAGE_SOFTW2 | _PAGE_SOFTW3)
-+
-+#else
-+/* No need to mask any bits for !PAE */
-+#define PGD_ALLOWED_BITS	(~0ULL)
-+#endif
-+
- static inline pgd_t native_make_pgd(pgdval_t val)
- {
--	return (pgd_t) { val };
-+	return (pgd_t) { val & PGD_ALLOWED_BITS };
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index dc02fd4..2eadab0 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -348,6 +348,7 @@ pti_clone_pmds(unsigned long start, unsigned long end, pmdval_t clear)
+ 	}
  }
  
- static inline pgdval_t native_pgd_val(pgd_t pgd)
- {
--	return pgd.pgd;
-+	return pgd.pgd & PGD_ALLOWED_BITS;
++#ifdef CONFIG_X86_64
+ /*
+  * Clone a single p4d (i.e. a top-level entry on 4-level systems and a
+  * next-level entry on 5-level systems.
+@@ -371,6 +372,25 @@ static void __init pti_clone_user_shared(void)
+ 	pti_clone_p4d(CPU_ENTRY_AREA_BASE);
  }
  
- static inline pgdval_t pgd_flags(pgd_t pgd)
++#else /* CONFIG_X86_64 */
++
++/*
++ * On 32 bit PAE systems with 1GB of Kernel address space there is only
++ * one pgd/p4d for the whole kernel. Cloning that would map the whole
++ * address space into the user page-tables, making PTI useless. So clone
++ * the page-table on the PMD level to prevent that.
++ */
++static void __init pti_clone_user_shared(void)
++{
++	unsigned long start, end;
++
++	start = CPU_ENTRY_AREA_BASE;
++	end   = start + (PAGE_SIZE * CPU_ENTRY_AREA_PAGES);
++
++	pti_clone_pmds(start, end, 0);
++}
++#endif /* CONFIG_X86_64 */
++
+ /*
+  * Clone the ESPFIX P4D into the user space visible page table
+  */
 -- 
 2.7.4
 
