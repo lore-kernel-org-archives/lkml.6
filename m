@@ -2,496 +2,121 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BC2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11FC4ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED0992075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:39:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED0992075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id A5B472075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:42:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=dev-mellanox-co-il.20150623.gappssmtp.com header.i=@dev-mellanox-co-il.20150623.gappssmtp.com header.b="QFQnRzPk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B472075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dev.mellanox.co.il
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbeGRBOd convert rfc822-to-8bit (ORCPT
+        id S1731477AbeGRBR6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 21:14:33 -0400
-Received: from mx.socionext.com ([202.248.49.38]:15872 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729934AbeGRBOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 21:14:33 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 18 Jul 2018 09:39:21 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id E30E8180B7D;
-        Wed, 18 Jul 2018 09:39:21 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 18 Jul 2018 09:39:21 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id B716A4039E;
-        Wed, 18 Jul 2018 09:39:21 +0900 (JST)
-Received: from DESKTOPFLNNJ4T (unknown [10.213.132.95])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 8AD0F120424;
-        Wed, 18 Jul 2018 09:39:21 +0900 (JST)
-From:   "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com>
-To:     "'Mauro Carvalho Chehab'" <mchehab+samsung@kernel.org>,
-        =?utf-8?B?U3V6dWtpLCBLYXRzdWhpcm8v6Yi05pyoIOWLneWNmg==?= 
-        <suzuki.katsuhiro@socionext.com>
-Cc:     <linux-media@vger.kernel.org>,
-        "Masami Hiramatsu" <masami.hiramatsu@linaro.org>,
-        "Jassi Brar" <jaswinder.singh@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, "Abylay Ospan" <aospan@netup.ru>
-References: <20180621031748.21703-1-suzuki.katsuhiro@socionext.com>     <20180704135657.3fd607cb@coco.lan>      <000401d41403$b33db490$19b91db0$@socionext.com> <20180704234244.32d20f6b@coco.lan>      <000501d41423$265013a0$72f03ae0$@socionext.com> <20180705212723.2856f064@coco.lan>      <001f01d414ef$27145450$753cfcf0$@socionext.com> <20180706081603.2d8451c9@coco.lan>      <002c01d41729$2ff6fa00$8fe4ee00$@socionext.com> <20180709105938.3d2f8391@coco.lan>      <004501d417f8$c83a01c0$58ae0540$@socionext.com> <001201d41d94$7370e1d0$5a52a570$@socionext.com> <20180717195853.07b2b42b@vela.lan>
-In-Reply-To: <20180717195853.07b2b42b@vela.lan>
-Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T demodulator driver
-Date:   Wed, 18 Jul 2018 09:39:18 +0900
-Message-ID: <001301d41e2f$c3169400$4943bc00$@socionext.com>
+        Tue, 17 Jul 2018 21:17:58 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40854 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730043AbeGRBR5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 21:17:57 -0400
+Received: by mail-lj1-f193.google.com with SMTP id j19-v6so2524174ljc.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 17:42:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dev-mellanox-co-il.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2dNx3H0Dmuw0LcIKouvWIijgzoiHgrH8+LOP6sk+AZo=;
+        b=QFQnRzPk/QTYzxi+UJM32OhyliyDMr9nOh8xO57o4/H9AXtfxZnbNAa2pUGwnZsaWL
+         fFlshTyyCEwPdeuYPhI2e+8iQxuLMjetWu/SQ+M2eVPbMg6xAJEqzi6NOl6LCeIOMIz5
+         RViYFOtFst98LQdpe1t2E39nxUxQAtPWJlUESK+YSb4brl9u4nerI++l9DJlzRRIcUqW
+         9iWO1vdD0yLIhQ0ms3CEEjtRefj6LnODaJMNwcV/e8CsUuLGAHXMFuybSvkjx5nT/Bmh
+         9H1hvZ9rK+nyAYSbUpNLouzuDsp+Ns8m2x3iNLVtlbsFuXl3YV2zf6l5S1xDA233aa1A
+         VTDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2dNx3H0Dmuw0LcIKouvWIijgzoiHgrH8+LOP6sk+AZo=;
+        b=mCabWncyd2oGB84QNo0Ht0MYcXJbm0KZxTMCrPGgG3TO3z8FgHpoocsLwuJcKAxkK2
+         TlaGx4148HHqDF8+XWAFmE/G3YAzX9RV8LMriBfwWs55e+vMDpnZoJCuZA54KUz9fvoZ
+         SuZgFVZJya+YP2p/3Ll4MZ7VY8lhqAyNBzyt0nzE+JZiCwMV2xu0N6qPOtUT4nDWzD2V
+         xeR5eslBs6cs41YqV/wGmlMp9Z6wGJzcX6Tg5hWMUCAyjxm3bpBfWTVLLBkBRQ8+g7G2
+         Jni4x8HSGWIgzjgkgQ0z788+v9ftRvSLb6AaXAZSKAC1S31ESy3uJ2d6GPYTe25F5Wa7
+         1ctg==
+X-Gm-Message-State: AOUpUlFC962EBCO9oPXFLovbrbeWg8CIjr8BdVhKuGbF5DsxPiNfwxEy
+        +AgD1dFm50tbdeGsJ+QjZptue0OvCQOzsaFH5+b16A==
+X-Google-Smtp-Source: AAOMgpeJYBzY5hvpfBxPK2fEn+VCiJH2AkqIQ54Vy6g85cuzraKKxqjfiByr7ojr39JGukmtlpXpPA+0SkWfCIh+AGQ=
+X-Received: by 2002:a2e:2114:: with SMTP id h20-v6mr3052961ljh.135.1531874566371;
+ Tue, 17 Jul 2018 17:42:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHUCQ54MjjlTBc86EWbqPvQU8s0kqR+x14AgAEazrD//4iKAIAAt4VggAC0/4CAAOtEYP//yfiAgASmiHCAAD4rAIABTszAgAtQ3LD//8B+gAAvczHw
-Content-Language: ja
-x-securitypolicycheck: OK by SHieldMailChecker v2.5.2
-x-shieldmailcheckerpolicyversion: POLICY180220
+Received: by 2002:a19:29d3:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 17:42:25
+ -0700 (PDT)
+In-Reply-To: <20180717135009.3584984-1-arnd@arndb.de>
+References: <20180717135009.3584984-1-arnd@arndb.de>
+From:   Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Date:   Tue, 17 Jul 2018 17:42:25 -0700
+Message-ID: <CALzJLG_r5pkBWGvyE+e7PVtPOnLnXS8oee_ka+=UEAkbqDP-Kg@mail.gmail.com>
+Subject: Re: [PATCH net-next] net/mlx5: fix an unused-function warning
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ilya Lesokhin <ilyal@mellanox.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mauro,
+On Tue, Jul 17, 2018 at 6:49 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> These dummy helpers are all intended to be inline functions,
+> but one of them by accident came without the 'inline' keyword,
+> causing a harmless warning:
+>
+> In file included from drivers/net/ethernet/mellanox/mlx5/core/main.c:63:
+> drivers/net/ethernet/mellanox/mlx5/core/accel/tls.h:79:1: error: 'mlx5_accel_tls_add_flow' defined but not used [-Werror=unused-function]
+>  mlx5_accel_tls_add_flow(struct mlx5_core_dev *mdev, void *flow,
+>
+> Fixes: ab412e1dd7db ("net/mlx5: Accel, add TLS rx offload routines")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-> -----Original Message-----
-> From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> Sent: Tuesday, July 17, 2018 7:59 PM
-> To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> Cc: linux-media@vger.kernel.org; Masami Hiramatsu <masami.hiramatsu@linaro.org>;
-> Jassi Brar <jaswinder.singh@linaro.org>; linux-arm-kernel@lists.infradead.org;
-> linux-kernel@vger.kernel.org; Abylay Ospan <aospan@netup.ru>
-> Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
-> demodulator driver
-> 
-> Em Tue, 17 Jul 2018 15:07:32 +0900
-> "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com> escreveu:
-> 
-> > Hello Mauro,
-> >
-> > I want to send next version (v4) of this patch (just fix wrong max/min range of
-> > frequency, fix symbol rate). But it depends your patches for DVB cores.
-> >
-> > Which way is better?
-> >
-> >   - Send next version now
-> >   - Send next version after your DVB cores patches applied
-> >
-> > I want to try to solve LNB problem after current codes applied. I think LNB IC
-> > will be defined as regulator device. Please tell me if you have comments about
-> > it.
-> 
-> I'm out of the town this week, but you can send it. No need to wait for
-> my patches. Just add a notice that the patch depends on them. I'll
-> handle after returning back from my trip.
-> 
+Acked-by: Saeed Mahameed <saeedm@mellanox.com>
 
-Thank you, I see. Have a nice trip!
+Dave, you can take this one to net-next.
 
+Thanks!
 
-Regards,
---
-Katsuhiro Suzuki
-
-
-> >
-> >
-> > Regards,
-> > --
-> > Katsuhiro Suzuki
-> >
-> >
-> > > -----Original Message-----
-> > > From: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
-> > > Sent: Tuesday, July 10, 2018 11:51 AM
-> > > To: 'Mauro Carvalho Chehab' <mchehab+samsung@kernel.org>; Suzuki, Katsuhiro/
-> 鈴木
-> > > 勝博 <suzuki.katsuhiro@socionext.com>
-> > > Cc: linux-media@vger.kernel.org; Masami Hiramatsu
-> <masami.hiramatsu@linaro.org>;
-> > > Jassi Brar <jaswinder.singh@linaro.org>;
-> linux-arm-kernel@lists.infradead.org;
-> > > linux-kernel@vger.kernel.org; Abylay Ospan <aospan@netup.ru>
-> > > Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
-> > > demodulator driver
-> > >
-> > > Hello Mauro,
-> > >
-> > > > -----Original Message-----
-> > > > From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> > > > Sent: Monday, July 9, 2018 11:00 PM
-> > > > To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> > > > Cc: linux-media@vger.kernel.org; Masami Hiramatsu
-> > > <masami.hiramatsu@linaro.org>;
-> > > > Jassi Brar <jaswinder.singh@linaro.org>;
-> linux-arm-kernel@lists.infradead.org;
-> > > > linux-kernel@vger.kernel.org; Abylay Ospan <aospan@netup.ru>
-> > > > Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
-> > > > demodulator driver
-> > > >
-> > > > Em Mon, 9 Jul 2018 11:04:36 +0900
-> > > > "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com> escreveu:
-> > > >
-> > > > > Hello Mauro,
-> > > > >
-> > > > > > -----Original Message-----
-> > > > > > From: linux-media-owner@vger.kernel.org
-> <linux-media-owner@vger.kernel.org>
-> > > > On
-> > > > > > Behalf Of Mauro Carvalho Chehab
-> > > > > > Sent: Friday, July 6, 2018 8:16 PM
-> > > > > > To: Suzuki, Katsuhiro/鈴木 勝博 <suzuki.katsuhiro@socionext.com>
-> > > > > > Cc: linux-media@vger.kernel.org; Masami Hiramatsu
-> > > > > <masami.hiramatsu@linaro.org>;
-> > > > > > Jassi Brar <jaswinder.singh@linaro.org>;
-> > > > linux-arm-kernel@lists.infradead.org;
-> > > > > > linux-kernel@vger.kernel.org; Abylay Ospan <aospan@netup.ru>
-> > > > > > Subject: Re: [PATCH v3] media: dvb-frontends: add Socionext SC1501A ISDB-S/T
-> > > > > > demodulator driver
-> > > > > >
-> > > > > > Em Fri, 6 Jul 2018 15:04:08 +0900
-> > > > > > "Katsuhiro Suzuki" <suzuki.katsuhiro@socionext.com> escreveu:
-> > > > > >
-> > > > > > > Here is the log of dvb-fe-tool on my environment.
-> > > > > > >
-> > > > > > > --------------------
-> > > > > > > # ./utils/dvb/.libs/dvb-fe-tool -d isdbs
-> > > > > > > Changing delivery system to: ISDBS
-> > > > > > > ERROR    FE_SET_VOLTAGE: Unknown error 524
-> > > > > >
-> > > > > > Hmm... ENOTSUPP. Doesn't the device supposed to be able to power on the
-> > > > > > LNBf?
-> > > > >
-> > > > > Ah, maybe it's not implemented yet in Helene driver.
-> > > >
-> > > > That depends on how the hardware works. On some hardware, the
-> > > > LNBf power supply and control is at the demod; on others, it is
-> > > > supported by a separate chipset. See, for example, isl642.c for
-> > > > an example of such external hardware.
-> > > >
-> > > > I don't know much about ISDB-S, but, as far as what was
-> > > > implemented on v4l-utils dvb-sat.c for Japan 110BS/CS LNBf,
-> > > > the LNBf voltage is not used to switch the polarity.
-> > > >
-> > > > So, the control here is simpler than on DVB-S/S2, as the only
-> > > > control is either to send 18V to power on the LNBf/Dish, or
-> > > > zero in order to save power.
-> > > >
-> > >
-> > > Thank you, I misunderstood about LNB. I checked circuit of evaluation
-> > > board, the board has discrete LNB IC (ST micro LNBH29) for supplying
-> > > voltage to Helene. This IC is controlled by I2C.
-> > >
-> > > The standard (ARIB STD-B21) says DC 15V power is needed to drive the
-> > > converter (BS freq -> BS-IF freq) of BS dish antenna. This power
-> > > can be supplied via antenna line.
-> > >
-> > > It seems,
-> > >   LNBH29 --(LNB_PWR)--> Helene --> BS antenna
-> > >
-> > > I don't know enough about Helene, but it maybe supply 15V power to
-> > > converter of BS dish via antenna line if it receive 15V LNB_PWR...
-> > >
-> > >
-> > > I don't have idea about controlling this IC. Should I write some
-> > > driver for LNBH29, and pass the phandle to demodulator via device
-> > > tree??
-> > >
-> > >
-> > > > >
-> > > > >
-> > > > > >
-> > > > > > Anyway, I changed the error print message to be clearer, displaying
-> > > > > > instead:
-> > > > > >
-> > > > > >   ERROR    FE_SET_VOLTAGE: driver doesn't support it!
-> > > > > >
-> > > > >
-> > > > > It's nice for users. Thanks!
-> > > > >
-> > > > >
-> > > > > > >
-> > > > > > > # ./utils/dvb/.libs/dvb-fe-tool
-> > > > > > > Device Socionext SC1501A (/dev/dvb/adapter0/frontend0) capabilities:
-> > > > > > >      CAN_FEC_AUTO
-> > > > > > >      CAN_GUARD_INTERVAL_AUTO
-> > > > > > >      CAN_HIERARCHY_AUTO
-> > > > > > >      CAN_INVERSION_AUTO
-> > > > > > >      CAN_QAM_AUTO
-> > > > > > >      CAN_TRANSMISSION_MODE_AUTO
-> > > > > > > DVB API Version 5.11, Current v5 delivery system: ISDBS
-> > > > > > > Supported delivery systems:
-> > > > > > >     [ISDBS]
-> > > > > > >      ISDBT
-> > > > > > > Frequency range for the current standard:
-> > > > > > > From:             470 MHz
-> > > > > > > To:              2.07 GHz
-> > > > > > > Step:            25.0 kHz
-> > > > > > > Symbol rate ranges for the current standard:
-> > > > > > > From:                 0Bauds
-> > > > > > > To:                   0Bauds
-> > > > > >
-> > > > > > That seems a driver issue. The ISDB-S ops.info should be
-> > > > > > filling both symbol_rate_min and symbol_rate_max.
-> > > > > >
-> > > > > > I suspect that both should be filled with 28860000.
-> > > > > >
-> > > > > > The dvb_frontend.c core might hardcode it, but, IMHO,
-> > > > > > it is better to keep those information inside the
-> > > > > > tuner/frontend ops.info.
-> > > > > >
-> > > > >
-> > > > > Indeed, thank you for reviewing. I fixed my driver. It seems works fine.
-> > > > >
-> > > > > ----
-> > > > > # utils/dvb/.libs/dvb-fe-tool -a 0
-> > > > > Device Socionext SC1501A (/dev/dvb/adapter0/frontend0) capabilities:
-> > > > >      CAN_FEC_AUTO
-> > > > >      CAN_GUARD_INTERVAL_AUTO
-> > > > >      CAN_HIERARCHY_AUTO
-> > > > >      CAN_INVERSION_AUTO
-> > > > >      CAN_QAM_AUTO
-> > > > >      CAN_TRANSMISSION_MODE_AUTO
-> > > > > DVB API Version 5.11, Current v5 delivery system: ISDBS
-> > > > > Supported delivery systems:
-> > > > >     [ISDBS]
-> > > > >      ISDBT
-> > > > > Frequency range for the current standard:
-> > > > > From:             470 MHz
-> > > > > To:              2.07 GHz
-> > > > > Step:            25.0 kHz
-> > > > > Symbol rate ranges for the current standard:
-> > > > > From:            28.9 MBauds
-> > > > > To:              28.9 MBauds
-> > > > > SEC: set voltage to OFF
-> > > > > ERROR    FE_SET_VOLTAGE: Operation not permitted
-> > > > > ----
-> > > >
-> > > > That sounds ok.
-> > > >
-> > > > >
-> > > > >
-> > > > > > > SEC: set voltage to OFF
-> > > > > > > ERROR    FE_SET_VOLTAGE: Operation not permitted
-> > > > > > >
-> > > > > > >
-> > > > > > > # ./utils/dvb/.libs/dvb-fe-tool -d isdbt
-> > > > > > > Changing delivery system to: ISDBT
-> > > > > > > ERROR    FE_SET_VOLTAGE: Unknown error 524
-> > > > > > >
-> > > > > > > # ./utils/dvb/.libs/dvb-fe-tool
-> > > > > > > Device Socionext SC1501A (/dev/dvb/adapter0/frontend0) capabilities:
-> > > > > > >      CAN_FEC_AUTO
-> > > > > > >      CAN_GUARD_INTERVAL_AUTO
-> > > > > > >      CAN_HIERARCHY_AUTO
-> > > > > > >      CAN_INVERSION_AUTO
-> > > > > > >      CAN_QAM_AUTO
-> > > > > > >      CAN_TRANSMISSION_MODE_AUTO
-> > > > > > > DVB API Version 5.11, Current v5 delivery system: ISDBT
-> > > > > > > Supported delivery systems:
-> > > > > > >      ISDBS
-> > > > > > >     [ISDBT]
-> > > > > > > Frequency range for the current standard:
-> > > > > > > From:             470 MHz
-> > > > > > > To:              2.07 GHz
-> > > > > > > Step:            25.0 kHz
-> > > > > >
-> > > > > > The rest looks OK for me.
-> > > > > >
-> > > > > > > > > For example, Helene uses these info for only Ter or Sat freq ranges:
-> > > > > > > > >
-> > > > > > > > > 		.name = "Sony HELENE Ter tuner",
-> > > > > > > > > 		.frequency_min_hz  =    1 * MHz,
-> > > > > > > > > 		.frequency_max_hz  = 1200 * MHz,
-> > > > > > > > > 		.frequency_step_hz =   25 * kHz,
-> > > > > > > > >
-> > > > > > > > > 		.name = "Sony HELENE Sat tuner",
-> > > > > > > > > 		.frequency_min_hz  =  500 * MHz,
-> > > > > > > > > 		.frequency_max_hz  = 2500 * MHz,
-> > > > > > > > > 		.frequency_step_hz =    1 * MHz,
-> > > > > > > > >
-> > > > > > > > > Is this better to add new info for both system?
-> > > > > > > > >
-> > > > > > > > > 		.name = "Sony HELENE Sat/Ter tuner",
-> > > > > > > > > 		.frequency_min_hz  =    1 * MHz,
-> > > > > > > > > 		.frequency_max_hz  = 2500 * MHz,
-> > > > > > > > > 		.frequency_step_hz =   25 * kHz, // Is this
-> correct...?
-> > > > > > > >
-> > > > > > > > That is indeed a very good question, and maybe a reason why we
-> > > > > > > > may need other approaches.
-> > > > > > > >
-> > > > > > > > See, if the tuner is capable of tuning from 1 MHz to 2500 MHz,
-> > > > > > > > the frequency range should be ok. It would aget_frontend_algoctually
-> be
-> > > > > pretty
-> > > > > > cool
-> > > > > > > > to use a tuner with such wide range for SDR, if the hardware supports
-> > > > > > > > raw I/Q collect :-D
-> > > > > > > >
-> > > > > > > > The frequency step is a different issue. If the tuner driver uses
-> > > > > > > > DVBFE_ALGO_SW (e. g. if ops.get_frontend_algo() returns it, or if
-> > > > > > > > this function is not defined), then the step will be used to adjust
-> > > > > > > > the zigzag interactions. If it is too small, the tuning will lose
-> > > > > > > > channels if the signal is not strong.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Thank you for describing. It's difficult problem...
-> > > > > >
-> > > > > > I double-checked the implementation. We don't need to worry about
-> > > > > > zigzag, provided that the ISDB-S implementation at the core is correct.
-> > > > > >
-> > > > > > For satellite/cable standards, the zigzag logic takes the symbol
-> > > > > > rate into account, and not the stepsize:
-> > > > > >
-> > > > > >                 case SYS_DVBS:
-> > > > > >                 case SYS_DVBS2:
-> > > > > >                 case SYS_ISDBS:
-> > > > > >                 case SYS_TURBO:
-> > > > > >                 case SYS_DVBC_ANNEX_A:
-> > > > > >                 case SYS_DVBC_ANNEX_C:
-> > > > > >                         fepriv->min_delay = HZ / 20;
-> > > > > >                         fepriv->step_size = c->symbol_rate / 16000;
-> > > > > >                         fepriv->max_drift = c->symbol_rate / 2000;
-> > > > > >                         break;
-> > > > > >
-> > > > > > For terrestrial standards, it uses the stepsize:
-> > > > > >
-> > > > > >                 case SYS_DVBT:
-> > > > > >                 case SYS_DVBT2:
-> > > > > >                 case SYS_ISDBT:
-> > > > > >                 case SYS_DTMB:
-> > > > > >                         fepriv->min_delay = HZ / 20;
-> > > > > >                         fepriv->step_size =
-> dvb_frontend_get_stepsize(fe) *
-> > > > 2;
-> > > > > >                         fepriv->max_drift =
-> (dvb_frontend_get_stepsize(fe)
-> > > *
-> > > > 2)
-> > > > > +
-> > > > > > 1;
-> > > > > >                         break;
-> > > > > >
-> > > > > > So, having a value of 25 kHz there won't affect the zigzag algorithm
-> > > > > > for ISDB-S, as it will be used only for ISDB-T.
-> > > > > >
-> > > > >
-> > > > > Thank you for checking and describing. I checked it too.
-> > > > >
-> > > > > Default value is fine as you said, and we can use get_tune_settings()
-> > > > > callback if we face the problem or need different settings for each
-> > > > > delivery systems in the future.
-> > > > >
-> > > > >         /* get frontend-specific tuning settings */
-> > > > >         memset(&fetunesettings, 0, sizeof(struct
-> > > dvb_frontend_tune_settings));
-> > > > >         if (fe->ops.get_tune_settings && (fe->ops.get_tune_settings(fe,
-> > > > > &fetunesettings) == 0)) {
-> > > > >                 fepriv->min_delay = (fetunesettings.min_delay_ms * HZ) /
-> 1000;
-> > > > >                 fepriv->max_drift = fetunesettings.max_drift;
-> > > > >                 fepriv->step_size = fetunesettings.step_size;
-> > > > >         } else {
-> > > > >                 /* default values */
-> > > > >                 ...
-> > > >
-> > > > Sure.
-> > > >
-> > > > >
-> > > > >
-> > > > > > > > In the specific case of helene, it doesn't have a get_frontend_algo,
-> > > > > > > > so it will use the step frequency.
-> > > > > > > >
-> > > > > > > > I'm not sure how to solve this issue. Maybe Abylay may shed a light
-> > > > > > > > here, if helene does sigzag in hardware or not.
-> > > > > > > >
-> > > > > > >
-> > > > > > > As far as I know, Helene does not have automatic scan mechanism in
-> > > > > > > hardware.
-> > > > > >
-> > > > > > Ok, so the driver is doing the right thing here.
-> > > > > >
-> > > > > > > > If it does in hardware, you could add a get_frontend_algo() routine
-> > > > > > > > at helene driver and return DVBFE_ALGO_HW. The tuning zigzag software
-> > > > > > > > algorithm in the Kernel will stop, as it will rely at the hardware.
-> > > > > > > >
-> > > > > > > > Please notice that, if the hardware doesn't do zigzag itself, this
-> > > > > > > > will make it lose channels. On the other hand, if the hardware does
-> > > > > > > > have sigzag, changing to DVBFE_ALGO_HW will speedup tuning, as the
-> > > > > > > > Kernel won't try to do sigzag itself.
-> > > > > > > >
-> > > > > > >
-> > > > > > > ISDB-T uses 6MHz bandwidth per channel (in Japan), ISDB-S for
-> > > > > > > BS/CS110 uses 38.36MHz bandwidth. Maybe 1MHz zigzag step is large for
-> > > > > > > ISDB-T system and 25kHz is small for ISDB-S system.
-> > > > > >
-> > > > > > Yeah, but, after double-checking the logic, for ISDB-S, it will
-> > > > > > use:
-> > > > > >
-> > > > > > 	c->symbol_rate = 28860000;
-> > > > > > 	c->rolloff = ROLLOFF_35;
-> > > > > > 	c->bandwidth_hz = c->symbol_rate / 100 * 135;
-> > > > > >
-> > > > > > That would actually set the ISDB-S channel separation to 38.961 MHz.
-> > > > > >
-> > > > > > By setting symbol_rate like that, the zigzag for ISDB-S will
-> > > > > > be defined by:
-> > > > > >
-> > > > > >        fepriv->step_size = c->symbol_rate / 16000; /* 38.961MHz / 16000
-> =
-> > > > > .002435
-> > > > > > - e. g. steps of ~25 kHz */
-> > > > > >        fepriv->max_drift = c->symbol_rate / 2000;  /* 38.961MHz / 2000
-> =
-> > > > > .0194805
-> > > > > > - e. g. max drift of ~195 kHz */
-> > > > > >
-> > > > > > Funny enough, it will be using about 25 kHz as step size for ISDB-S.
-> > > > > >
-> > > > > > I have no idea if the ISDB-S standard defines the zigzag logic,
-> > > > > > but I would be expecting a higher value for it. So, perhaps
-> > > > > > the ISDB-S zigzag could be optimized.
-> > > > > >
-> > > > > > Thanks,
-> > > > > > Mauro
-> > > > >
-> > > > > Hmm, interesting. I don't know zigzag for ISDB-S too, sorry...
-> > > > >
-> > > > > Anyway, I don't worry about that. I said in above, we can use
-> > > > > get_tune_settings() for fine tuning.
-> > > > >
-> > > > >
-> > > > > Regards,
-> > > > > --
-> > > > > Katsuhiro Suzuki
-> > > > >
-> > > > >
-> > > > >
-> > > >
-> > > >
-> > > >
-> > > > Thanks,
-> > > > Mauro
-> > >
-> >
-> >
-> >
-> 
-> 
-> 
-> 
-> Cheers,
-> Mauro
-
-
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/accel/tls.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/accel/tls.h b/drivers/net/ethernet/mellanox/mlx5/core/accel/tls.h
+> index 2228c1083528..def4093ebfae 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/accel/tls.h
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/accel/tls.h
+> @@ -75,7 +75,7 @@ void mlx5_accel_tls_cleanup(struct mlx5_core_dev *mdev);
+>
+>  #else
+>
+> -static int
+> +static inline int
+>  mlx5_accel_tls_add_flow(struct mlx5_core_dev *mdev, void *flow,
+>                         struct tls_crypto_info *crypto_info,
+>                         u32 start_offload_tcp_sn, u32 *p_swid,
+> --
+> 2.9.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
