@@ -2,146 +2,185 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBB1ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93676ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB2B2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F0492075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:54:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="cOQbwKhN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB2B2075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLCmhILM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F0492075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729654AbeGRWdw (ORCPT
+        id S1730053AbeGRWdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:33:52 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:37717 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729134AbeGRWdw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:33:52 -0400
-Received: by mail-yb0-f195.google.com with SMTP id r3-v6so2468265ybo.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=97AZiZvtK6lsL3fru/ZpGGEtAAQ5rvikpgO5M2WEQLY=;
-        b=cOQbwKhNq/HEGZyKB8wNjyAhCcmvzk5lptyZTs2+HOjnhPunJDnykUjHRybl84kZJf
-         FiNt+HZo8pLQp+T2T/LGoQkZ94ro5XbE5k3XUKok3W15mYDDI/JCmtM9c1Czav/GdMy9
-         +3lEI2n5ywsU6ItSZLybGe9aEylVoyBRy1hMIKaYvvGDHiCCI/i5gCEU4Aawzbv3S9K0
-         mWGpJplcJGmix3S+7FC8lrBcNZsL2Uo3gJtDW7Gf+adIGwFb+R2K6zgZWAcL13SnvhQT
-         bxgaJsaoMnRUOUXV1kb5/Qe7aMrVbVMXwIpV+hZ5NnAEoGulNidM++07Mm5UPXgsv1Fx
-         a+YQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=97AZiZvtK6lsL3fru/ZpGGEtAAQ5rvikpgO5M2WEQLY=;
-        b=KUXU43lDcyiyYXUOMTPp/lBlqlvljULcP/2576MTTwcPh/smmaR4USx7Yy8Ca9uoaW
-         CgnqIAbQWNMFvXvnt+aHlFXiOF2rqSsJPjEtVsJkgq+jyYdl0r4MaLFEzMvYU5MyT3lr
-         6Bkl2zsJcaYxDt1Ok0xg2c3RUS0T2X/+M50fWDqmLK1tIF4C2iLkXVrcNNN3XKHh2wYb
-         mv9rLhXQa+dn4oZnPW4dtAZVYWvbyEgQXEgLYCO7Us1YeK/ykcaoUpwta9awdGsRnUTU
-         scF9Hf4BA3ujL22wA0pS8VyKf8u39Na7rAOkfsULkC4mXy39VW3cC1obpuLi8ZlbNdG4
-         BTIQ==
-X-Gm-Message-State: AOUpUlHEOB1QqD4hXuHTdkY+Ph5MsKoFtYa+TBdqCiW3FvFK0zpukNrm
-        X3Ha3R2VpqiP7VzHR/w0KpTEqQ==
-X-Google-Smtp-Source: AAOMgpezJ5hbGUWw7qhCYA2Zi93f2PHds9hd0pSBS+C+ffVTLdT5lse9W4lVp01+26kHM6+Cfnx5YA==
-X-Received: by 2002:a25:5a03:: with SMTP id o3-v6mr2862468ybb.196.1531950839166;
-        Wed, 18 Jul 2018 14:53:59 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:7eca])
-        by smtp.gmail.com with ESMTPSA id 198-v6sm3474501ywh.59.2018.07.18.14.53.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 14:53:58 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 17:56:44 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
- and IO
-Message-ID: <20180718215644.GB2838@cmpxchg.org>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-9-hannes@cmpxchg.org>
- <20180717100347.GD2494@hirez.programming.kicks-ass.net>
+        Wed, 18 Jul 2018 18:33:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729134AbeGRWdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 18:33:53 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8185B2075E;
+        Wed, 18 Jul 2018 21:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531950840;
+        bh=W1zDvrQV4btpL8IG4FjNejB6OFQCzNV1ehkct/kRNVA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tLCmhILMWOabblApf6Ml0FS9pJKWGtAuO6tZrUh4bm8W7647XAEaM1el3a4jZLRZp
+         Q4xc3AU68TVPfIlprp2mf7tT8FH7gTSzT7bACTa71h0dpts8DK1b+dPqjnPcPT6Ngr
+         lpG+CeQK88ztdNncTgdfexDxKZ1i4xMmTmlLVI/c=
+Date:   Wed, 18 Jul 2018 16:53:59 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alex_Gagniuc@Dellteam.com
+Cc:     mr.nuke.me@gmail.com, bhelgaas@google.com, Austin.Bolen@dell.com,
+        Shyam.Iyer@dell.com, keith.busch@intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jeffrey.t.kirsher@intel.com, ariel.elior@cavium.com,
+        michael.chan@broadcom.com, ganeshgr@chelsio.com,
+        tariqt@mellanox.com, jakub.kicinski@netronome.com,
+        talgi@mellanox.com, airlied@gmail.com, alexander.deucher@amd.com,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>
+Subject: Re: [PATCH v3] PCI: Check for PCIe downtraining conditions
+Message-ID: <20180718215359.GG128988@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180604155523.14906-1-mr.nuke.me@gmail.com>
+ <20180716211706.GB12391@bhelgaas-glaptop.roam.corp.google.com>
+ <97a70a71e1034bafbcabc6c4e23577c0@ausx13mps321.AMER.DELL.COM>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180717100347.GD2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <97a70a71e1034bafbcabc6c4e23577c0@ausx13mps321.AMER.DELL.COM>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 12:03:47PM +0200, Peter Zijlstra wrote:
-> This is still a scary amount of accounting; not to mention you'll be
-> adding O(cgroup-depth) to this in a later patch.
+[+cc Mike (hfi1)]
+
+On Mon, Jul 16, 2018 at 10:28:35PM +0000, Alex_Gagniuc@Dellteam.com wrote:
+> On 7/16/2018 4:17 PM, Bjorn Helgaas wrote:
+> >> ...
+> >> The easiest way to detect this is with pcie_print_link_status(),
+> >> since the bottleneck is usually the link that is downtrained. It's not
+> >> a perfect solution, but it works extremely well in most cases.
+> > 
+> > This is an interesting idea.  I have two concerns:
+> > 
+> > Some drivers already do this on their own, and we probably don't want
+> > duplicate output for those devices.  In most cases (ixgbe and mlx* are
+> > exceptions), the drivers do this unconditionally so we *could* remove
+> > it from the driver if we add it to the core.  The dmesg order would
+> > change, and the message wouldn't be associated with the driver as it
+> > now is.
 > 
-> Where are the performance numbers for all this?
+> Oh, there are only 8 users of that. Even I could patch up the drivers to 
+> remove the call, assuming we reach agreement about this change.
+> 
+> > Also, I think some of the GPU devices might come up at a lower speed,
+> > then download firmware, then reset the device so it comes up at a
+> > higher speed.  I think this patch will make us complain about about
+> > the low initial speed, which might confuse users.
+> 
+> I spoke to one of the PCIe spec writers. It's allowable for a device to 
+> downtrain speed or width. It would also be extremely dumb to downtrain 
+> with the intent to re-train at a higher speed later, but it's possible 
+> devices do dumb stuff like that. That's why it's an informational 
+> message, instead of a warning.
 
-I benchmarked it using our two most scheduling sensitive workloads:
-memcache and webserver. They handle a ton of small requests - lots of
-wakeups and sleeps with little actual work in between - so they tend
-to be canaries for scheduler regressions.
+FWIW, here's some of the discussion related to hfi1 from [1]:
 
-In the tests, the boxes were handling live traffic over the course of
-several hours. Half the machines, the control, ran with CONFIG_PSI=n.
+  > Btw, why is the driver configuring the PCIe link speed?  Isn't
+  > this something we should be handling in the PCI core?
 
-For memcache I used eight machines total. They're 2-socket, 14 core,
-56 thread boxes. The test runs for half the test period, flips the
-test and control kernels on the hardware to rule out HW factors, DC
-location etc., then runs the other half of the test.
+  The device comes out of reset at the 5GT/s speed. The driver
+  downloads device firmware, programs PCIe registers, and co-ordinates
+  the transition to 8GT/s.
 
-For the webservers, I used 32 machines total. They're single socket,
-16 core, 32 thread machines.
+  This recipe is device specific and is therefore implemented in the
+  hfi1 driver built on top of PCI core functions and macros.
 
-During the memcache test, CPU load was nopsi=78.05% psi=78.98% in the
-first half and nopsi=77.52% psi=78.25%, so psi added between 0.7 and
-0.9 percentage points to the CPU load, a difference of about 1%.
+Also several DRM drivers seem to do this (see cik_pcie_gen3_enable(),
+si_pcie_gen3_enable()); from [2]:
 
-As far as end-to-end request latency from the client perspective goes,
-we don't sample those finely enough to capture the requests going to
-those particular machines during the test, but we know the p50
-turnaround time in this workload is 54us, and perf bench sched pipe on
-those machines show nopsi=5.232666 us/op and psi=5.587347 us/op, so
-this doesn't add much here either.
+  My understanding was that some platfoms only bring up the link in gen 1
+  mode for compatibility reasons. 
 
-The profile for the pipe benchmark shows:
+[1] https://lkml.kernel.org/r/32E1700B9017364D9B60AED9960492BC627FF54C@fmsmsx120.amr.corp.intel.com
+[2] https://lkml.kernel.org/r/BN6PR12MB1809BD30AA5B890C054F9832F7B50@BN6PR12MB1809.namprd12.prod.outlook.com
 
-     0.87%  sched-pipe  [kernel.vmlinux]    [k] psi_group_change
-     0.83%  perf.real   [kernel.vmlinux]    [k] psi_group_change
-     0.82%  perf.real   [kernel.vmlinux]    [k] psi_task_change
-     0.58%  sched-pipe  [kernel.vmlinux]    [k] psi_task_change
+> Another case: Some devices (lower-end GPUs) use silicon (and marketing) 
+> that advertises x16, but they're only routed for x8. I'm okay with 
+> seeing an informational message in this case. In fact, I didn't know 
+> that my Quadro card for three years is only wired for x8 until I was 
+> testing this patch.
 
+Yeah, it's probably OK.  I don't want bug reports from people who
+think something's broken when it's really just a hardware limitation
+of their system.  But hopefully the message is not alarming.
 
-The webserver load is running inside 4 nested cgroup levels. The CPU
-load with both nopsi and psi kernels was indistinguishable at 81%.
+> > So I'm not sure whether it's better to do this in the core for all
+> > devices, or if we should just add it to the high-performance drivers
+> > that really care.
+> 
+> You're thinking "do I really need that bandwidth" because I'm using a 
+> function called "_bandwidth_". The point of the change is very far from 
+> that: it is to help in system troubleshooting by detecting downtraining 
+> conditions.
 
-For comparison, we had to disable the cgroup cpu controller on the
-webservers because it added 4 percentage points to the CPU% during
-this same exact test.
+I'm not sure what you think I'm thinking :)  My question is whether
+it's worthwhile to print this extra information for *every* PCIe
+device, given that your use case is the tiny percentage of broken
+systems.
 
-Versions of this accounting code now run on 80% of our fleet. None of
-our workloads have reported regressions during the rollout.
+If we only printed the info in the "bw_avail < bw_cap" case, i.e.,
+when the device is capable of more than it's getting, that would make
+a lot of sense to me.  The normal case line is more questionable.  I
+think the reason that's there is because the network drivers are very
+performance sensitive and like to see that info all the time.
 
-[ Also note that the webservers that tested the nopsi kernel were
-  during that time susceptible to swap storms, memory livelocks, and
-  eventual hardresets because without psi they couldn't run our full
-  resource isolation stack that would prevent that ;) ]
+Maybe we need something like this:
 
-Let me know if there are other tests I could run.
+  pcie_print_link_status(struct pci_dev *dev, int verbose)
+  {
+    ...
+    if (bw_avail >= bw_cap) {
+      if (verbose)
+        pci_info(dev, "... available PCIe bandwidth ...");
+    } else
+      pci_info(dev, "... available PCIe bandwidth, limited by ...");
+  }
+
+So the core could print only the potential problems with:
+
+  pcie_print_link_status(dev, 0);
+
+and drivers that really care even if there's no problem could do:
+
+  pcie_print_link_status(dev, 1);
+
+> >> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> [snip]
+> >> +	/* Look from the device up to avoid downstream ports with no devices. */
+> >> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
+> >> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
+> >> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
+> >> +		return;
+> > 
+> > Do we care about Upstream Ports here?  
+> 
+> YES! Switches. e.g. an x16 switch with 4x downstream ports could 
+> downtrain at 8x and 4x, and we'd never catch it.
+
+OK, I think I see your point: if the upstream port *could* do 16x but
+only trains to 4x, and two endpoints below it are both capable of 4x,
+the endpoints *think* they're happy but in fact they have to share 4x
+when they could use more.
+
+Bjorn
