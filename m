@@ -6,31 +6,32 @@ X-Spam-Status: No, score=1.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC831ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDE3ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903AD2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:33:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903AD2075C
+	by mail.kernel.org (Postfix) with ESMTP id B071B20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B071B20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731541AbeGRQMA (ORCPT
+        id S1731566AbeGRQMJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:12:00 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9647 "EHLO huawei.com"
+        Wed, 18 Jul 2018 12:12:09 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47291 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730926AbeGRQMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:12:00 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 88F65CDAA4687;
-        Wed, 18 Jul 2018 23:33:15 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.42) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 18 Jul 2018
- 23:33:12 +0800
-Subject: Re: [PATCH] arm64: dts: hikey: Remove keep-power-in-suspend property
+        id S1730383AbeGRQMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:12:09 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 0627B8F04E51C;
+        Wed, 18 Jul 2018 23:33:36 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.42) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Wed, 18 Jul 2018
+ 23:33:30 +0800
+Subject: Re: [PATCH] arm64: dts: hikey960: Remove keep-power-in-suspend
+ property
 To:     Ryan Grachek <ryan@edited.us>
-References: <20180713160231.25165-1-ryan@edited.us>
+References: <20180713155348.24343-1-ryan@edited.us>
 CC:     <john.stultz@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -38,12 +39,12 @@ CC:     <john.stultz@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5B4F5DB2.30505@hisilicon.com>
-Date:   Wed, 18 Jul 2018 16:33:06 +0100
+Message-ID: <5B4F5DC4.5010500@hisilicon.com>
+Date:   Wed, 18 Jul 2018 16:33:25 +0100
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
  Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20180713160231.25165-1-ryan@edited.us>
+In-Reply-To: <20180713155348.24343-1-ryan@edited.us>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.202.226.42]
@@ -55,10 +56,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Ryan,
 
-On 2018/7/13 17:02, Ryan Grachek wrote:
+On 2018/7/13 16:53, Ryan Grachek wrote:
 > Remove the keep-power-in-suspend property because it keeps wifi power
 > on during suspend. This property is only required when enabling WoWLAN
-> and should only be enabled based on need.
+> and should only be enabled based on need. Also remove dupplicate property
 > 
 > Signed-off-by: Ryan Grachek <ryan@edited.us>
 
@@ -69,20 +70,33 @@ Best Regards,
 Wei
 
 > ---
->  arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 1 -
->  1 file changed, 1 deletion(-)
+>  arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 1 -
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi         | 1 -
+>  2 files changed, 2 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> index 7f12624f6c8e..f4964bee6a1a 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> +++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-> @@ -323,7 +323,6 @@
->  			bus-width = <0x4>;
->  			non-removable;
->  			cap-power-off-card;
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> index 68c5a6c819ae..a927ce4ec40b 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> @@ -586,7 +586,6 @@
+>  	ti,non-removable;
+>  	non-removable;
+>  	cap-power-off-card;
+> -	keep-power-in-suspend;
+>  	#address-cells = <0x1>;
+>  	#size-cells = <0x0>;
+>  	status = "ok";
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> index 8d477dcbfa58..4588fe4e00a8 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> @@ -1050,7 +1050,6 @@
+>  			reset-names = "reset";
+>  			card-detect-delay = <200>;
+>  			supports-highspeed;
 > -			keep-power-in-suspend;
->  			vmmc-supply = <&reg_vdd_3v3>;
->  			mmc-pwrseq = <&wl1835_pwrseq>;
->  
+>  			pinctrl-names = "default";
+>  			pinctrl-0 = <&sdio_pmx_func
+>  				     &sdio_clk_cfg_func
 > 
 
