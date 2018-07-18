@@ -2,578 +2,142 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639D7ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0E4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3918C20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:55:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3918C20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D3F1020652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:56:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTb3nAHd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F1020652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbeGRNdb (ORCPT
+        id S1731088AbeGRNed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:33:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47290 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726909AbeGRNda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:33:30 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0C196401EF07;
-        Wed, 18 Jul 2018 12:55:41 +0000 (UTC)
-Received: from doriath (ovpn-116-205.phx2.redhat.com [10.3.116.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E03C1111C481;
-        Wed, 18 Jul 2018 12:55:30 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 08:55:29 -0400
-From:   Luiz Capitulino <lcapitulino@redhat.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org, jack@suse.cz,
-        stefanha@redhat.com, dan.j.williams@intel.com, riel@surriel.com,
-        haozhong.zhang@intel.com, nilal@redhat.com, kwolf@redhat.com,
-        pbonzini@redhat.com, ross.zwisler@intel.com, david@redhat.com,
-        xiaoguangrong.eric@gmail.com, hch@infradead.org, mst@redhat.com,
-        niteshnarayanlal@hotmail.com, imammedo@redhat.com,
-        eblake@redhat.com
-Subject: Re: [RFC v3] qemu: Add virtio pmem device
-Message-ID: <20180718085529.133a0a22@doriath>
-In-Reply-To: <20180713075232.9575-4-pagupta@redhat.com>
-References: <20180713075232.9575-1-pagupta@redhat.com>
-        <20180713075232.9575-4-pagupta@redhat.com>
+        Wed, 18 Jul 2018 09:34:33 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33787 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726909AbeGRNed (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 09:34:33 -0400
+Received: by mail-qt0-f196.google.com with SMTP id c15-v6so3867550qtp.0;
+        Wed, 18 Jul 2018 05:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zhZPCrE3V6ereZd3mN+n2gDPruxVjBDDiTXKFLxXsOw=;
+        b=DTb3nAHdlnYGtI3UT834veO2mZ25ii+GEyzhy1MELSjRDAhDpL72BOfMm3jLfpq534
+         vpsvQIgDYn1iyZd+60NsimjQuAPuG1GGSTWsU0aOuW5nobusqTXPyM5jcc/91g30s8UH
+         vnGG8Q+pZ4f80IT3BXeL1FTumLiDqIqXMLvCnFHAHu3jLXAAu7NJO44mZrQgAky6sfhd
+         scOZru3BMKuKDl9fTUpeloVSZ4cdR/SUkZ8MWrsiMsDdtDQX26mnd82YIO67r57327Vd
+         1bIyzWE0nAOPh74NERlYZnkBvru9stATWcJuLvr1ECQFzGpQl4FztJklF5vYnxgAToNR
+         jyhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zhZPCrE3V6ereZd3mN+n2gDPruxVjBDDiTXKFLxXsOw=;
+        b=OlnrqGhhS/CsOYW3mrz7EhR8Iq6rJZE2a81uAnKLjZQtBcPz8IBwEce6ZxAAC7eQ7O
+         G2piCkfhrbNZtI9lSD648TeG98IOP/dk+ESrPQYO+/3scxD3J9CVIxgn38OOqvQD5Tav
+         WpyZqoPTIfRLzGyJjATCSD7cM+Et/sxW0b/NBIxkZKsv13fhPG7+VXbwDWh0rMWoYF5b
+         rJ5wBIOllWl/nd8s1ElUS33PBM6HilWb7nyrOU+T2hBZ39QXdCGu7WEj7ja+3CHCkt6c
+         rVhfgLMV74p4S6hqOphYJmHhzotJLTuk1uX9pbTr4f9u5/nrXZiwcqeRq2oX7qIKFVX6
+         qnmw==
+X-Gm-Message-State: AOUpUlEGAhzpPu8K9aqxMjhzHnx6NjUDjjivkgDBX2nA3Ln+K7Q6O7u9
+        FAMGTEYgOBOcZvwYyYJFT5ORwuUAGZPko1UShZ0=
+X-Google-Smtp-Source: AAOMgpfW7ENTO7J2TOoLoGLqkv33N9wPe3BZ8GN6NkvFsRRPS+Itj7oZsilE9sAzgjTcm2EEedI9/u9vd2WitcuHoJo=
+X-Received: by 2002:ac8:26ee:: with SMTP id 43-v6mr5615865qtp.274.1531918603596;
+ Wed, 18 Jul 2018 05:56:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 12:55:41 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 12:55:41 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
+Received: by 2002:a37:298b:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 05:56:43
+ -0700 (PDT)
+In-Reply-To: <20180718124448.2s2b3jxbsqt46cgu@flea>
+References: <20180718105458.22304-1-jagan@amarulasolutions.com> <20180718124448.2s2b3jxbsqt46cgu@flea>
+From:   Jagan Teki <jagannadh.teki@gmail.com>
+Date:   Wed, 18 Jul 2018 18:26:43 +0530
+Message-ID: <CAD6G_RQQyS=zeqvhBP8vVf5sHZgLwqX1SP0SKLHea_L4Od3woQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/18] arm64: allwinner: Add A64 DE2 HDMI support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Jul 2018 13:22:32 +0530
-Pankaj Gupta <pagupta@redhat.com> wrote:
+On Wed, Jul 18, 2018 at 6:14 PM, Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
+> On Wed, Jul 18, 2018 at 04:24:40PM +0530, Jagan Teki wrote:
+>> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
+>>
+>> A64 behaviour similar to Allwinner A83T where
+>> Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
+>> Mixer1 => TCON1 => HDMI
+>> as per Display System Block Diagram from Allwinner_A64_User_Manual_V1.1.pdf
+>>
+>> This is third patch-set followed with previous RFC[1], first and second
+>> series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
+>> rest will add eventually.
+>>
+>> This series fixed previous version comments
+>> - Rebasing on linux-next
+>> - sqash all pipeline components in one patch
+>> - Enable all pipeline components in board dts
+>> - about documenting fallback compatibles
+>> - adding new compatible for mixer1
+>
+> You still haven't figured out the SRAM parts. We asked you to fix this
+> in the v1 and the v2 already, and we're not going to merge this
+> without those bits figured out properly.
 
->  This patch adds virtio-pmem Qemu device.
-> 
->  This device presents memory address range information to guest
->  which is backed by file backend type. It acts like persistent
->  memory device for KVM guest. Guest can perform read and persistent
->  write operations on this memory range with the help of DAX capable
->  filesystem.
-> 
->  Persistent guest writes are assured with the help of virtio based
->  flushing interface. When guest userspace space performs fsync on
->  file fd on pmem device, a flush command is send to Qemu over VIRTIO
->  and host side flush/sync is done on backing image file.
-> 
-> Changes from RFC v2:
-> - Use aio_worker() to avoid Qemu from hanging with blocking fsync
->   call - Stefan
-> - Use virtio_st*_p() for endianess - Stefan
-> - Correct indentation in qapi/misc.json - Eric
-> 
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> ---
->  hw/virtio/Makefile.objs                     |   3 +
->  hw/virtio/virtio-pci.c                      |  44 +++++
->  hw/virtio/virtio-pci.h                      |  14 ++
->  hw/virtio/virtio-pmem.c                     | 241 ++++++++++++++++++++++++++++
->  include/hw/pci/pci.h                        |   1 +
->  include/hw/virtio/virtio-pmem.h             |  42 +++++
->  include/standard-headers/linux/virtio_ids.h |   1 +
->  qapi/misc.json                              |  26 ++-
->  8 files changed, 371 insertions(+), 1 deletion(-)
->  create mode 100644 hw/virtio/virtio-pmem.c
->  create mode 100644 include/hw/virtio/virtio-pmem.h
-> 
-> diff --git a/hw/virtio/Makefile.objs b/hw/virtio/Makefile.objs
-> index 1b2799cfd8..7f914d45d0 100644
-> --- a/hw/virtio/Makefile.objs
-> +++ b/hw/virtio/Makefile.objs
-> @@ -10,6 +10,9 @@ obj-$(CONFIG_VIRTIO_CRYPTO) += virtio-crypto.o
->  obj-$(call land,$(CONFIG_VIRTIO_CRYPTO),$(CONFIG_VIRTIO_PCI)) += virtio-crypto-pci.o
->  
->  obj-$(CONFIG_LINUX) += vhost.o vhost-backend.o vhost-user.o
-> +ifeq ($(CONFIG_MEM_HOTPLUG),y)
-> +obj-$(CONFIG_LINUX) += virtio-pmem.o
-> +endif
->  obj-$(CONFIG_VHOST_VSOCK) += vhost-vsock.o
->  endif
->  
-> diff --git a/hw/virtio/virtio-pci.c b/hw/virtio/virtio-pci.c
-> index 3a01fe90f0..93d3fc05c7 100644
-> --- a/hw/virtio/virtio-pci.c
-> +++ b/hw/virtio/virtio-pci.c
-> @@ -2521,6 +2521,49 @@ static const TypeInfo virtio_rng_pci_info = {
->      .class_init    = virtio_rng_pci_class_init,
->  };
->  
-> +/* virtio-pmem-pci */
-> +
-> +static void virtio_pmem_pci_realize(VirtIOPCIProxy *vpci_dev, Error **errp)
-> +{
-> +    VirtIOPMEMPCI *vpmem = VIRTIO_PMEM_PCI(vpci_dev);
-> +    DeviceState *vdev = DEVICE(&vpmem->vdev);
-> +
-> +    qdev_set_parent_bus(vdev, BUS(&vpci_dev->bus));
-> +    object_property_set_bool(OBJECT(vdev), true, "realized", errp);
-> +}
-> +
-> +static void virtio_pmem_pci_class_init(ObjectClass *klass, void *data)
-> +{
-> +    DeviceClass *dc = DEVICE_CLASS(klass);
-> +    VirtioPCIClass *k = VIRTIO_PCI_CLASS(klass);
-> +    PCIDeviceClass *pcidev_k = PCI_DEVICE_CLASS(klass);
-> +    k->realize = virtio_pmem_pci_realize;
-> +    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
-> +    pcidev_k->vendor_id = PCI_VENDOR_ID_REDHAT_QUMRANET;
-> +    pcidev_k->device_id = PCI_DEVICE_ID_VIRTIO_PMEM;
-> +    pcidev_k->revision = VIRTIO_PCI_ABI_VERSION;
-> +    pcidev_k->class_id = PCI_CLASS_OTHERS;
-> +}
-> +
-> +static void virtio_pmem_pci_instance_init(Object *obj)
-> +{
-> +    VirtIOPMEMPCI *dev = VIRTIO_PMEM_PCI(obj);
-> +
-> +    virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
-> +                                TYPE_VIRTIO_PMEM);
-> +    object_property_add_alias(obj, "memdev", OBJECT(&dev->vdev), "memdev",
-> +                              &error_abort);
-> +}
-> +
-> +static const TypeInfo virtio_pmem_pci_info = {
-> +    .name          = TYPE_VIRTIO_PMEM_PCI,
-> +    .parent        = TYPE_VIRTIO_PCI,
-> +    .instance_size = sizeof(VirtIOPMEMPCI),
-> +    .instance_init = virtio_pmem_pci_instance_init,
-> +    .class_init    = virtio_pmem_pci_class_init,
-> +};
-> +
-> +
->  /* virtio-input-pci */
->  
->  static Property virtio_input_pci_properties[] = {
-> @@ -2714,6 +2757,7 @@ static void virtio_pci_register_types(void)
->      type_register_static(&virtio_balloon_pci_info);
->      type_register_static(&virtio_serial_pci_info);
->      type_register_static(&virtio_net_pci_info);
-> +    type_register_static(&virtio_pmem_pci_info);
->  #ifdef CONFIG_VHOST_SCSI
->      type_register_static(&vhost_scsi_pci_info);
->  #endif
-> diff --git a/hw/virtio/virtio-pci.h b/hw/virtio/virtio-pci.h
-> index 813082b0d7..fe74fcad3f 100644
-> --- a/hw/virtio/virtio-pci.h
-> +++ b/hw/virtio/virtio-pci.h
-> @@ -19,6 +19,7 @@
->  #include "hw/virtio/virtio-blk.h"
->  #include "hw/virtio/virtio-net.h"
->  #include "hw/virtio/virtio-rng.h"
-> +#include "hw/virtio/virtio-pmem.h"
->  #include "hw/virtio/virtio-serial.h"
->  #include "hw/virtio/virtio-scsi.h"
->  #include "hw/virtio/virtio-balloon.h"
-> @@ -57,6 +58,7 @@ typedef struct VirtIOInputHostPCI VirtIOInputHostPCI;
->  typedef struct VirtIOGPUPCI VirtIOGPUPCI;
->  typedef struct VHostVSockPCI VHostVSockPCI;
->  typedef struct VirtIOCryptoPCI VirtIOCryptoPCI;
-> +typedef struct VirtIOPMEMPCI VirtIOPMEMPCI;
->  
->  /* virtio-pci-bus */
->  
-> @@ -274,6 +276,18 @@ struct VirtIOBlkPCI {
->      VirtIOBlock vdev;
->  };
->  
-> +/*
-> + * virtio-pmem-pci: This extends VirtioPCIProxy.
-> + */
-> +#define TYPE_VIRTIO_PMEM_PCI "virtio-pmem-pci"
-> +#define VIRTIO_PMEM_PCI(obj) \
-> +        OBJECT_CHECK(VirtIOPMEMPCI, (obj), TYPE_VIRTIO_PMEM_PCI)
-> +
-> +struct VirtIOPMEMPCI {
-> +    VirtIOPCIProxy parent_obj;
-> +    VirtIOPMEM vdev;
-> +};
-> +
->  /*
->   * virtio-balloon-pci: This extends VirtioPCIProxy.
->   */
-> diff --git a/hw/virtio/virtio-pmem.c b/hw/virtio/virtio-pmem.c
-> new file mode 100644
-> index 0000000000..08c96d7e80
-> --- /dev/null
-> +++ b/hw/virtio/virtio-pmem.c
-> @@ -0,0 +1,241 @@
-> +/*
-> + * Virtio pmem device
-> + *
-> + * Copyright (C) 2018 Red Hat, Inc.
-> + * Copyright (C) 2018 Pankaj Gupta <pagupta@redhat.com>
-> + *
-> + * This work is licensed under the terms of the GNU GPL, version 2.
-> + * See the COPYING file in the top-level directory.
-> + *
-> + */
-> +
-> +#include "qemu/osdep.h"
-> +#include "qapi/error.h"
-> +#include "qemu-common.h"
-> +#include "qemu/error-report.h"
-> +#include "hw/virtio/virtio-access.h"
-> +#include "hw/virtio/virtio-pmem.h"
-> +#include "hw/mem/memory-device.h"
-> +#include "block/aio.h"
-> +#include "block/thread-pool.h"
-> +
-> +typedef struct VirtIOPMEMresp {
-> +    int ret;
-> +} VirtIOPMEMResp;
-> +
-> +typedef struct VirtIODeviceRequest {
-> +    VirtQueueElement elem;
-> +    int fd;
-> +    VirtIOPMEM *pmem;
-> +    VirtIOPMEMResp resp;
-> +} VirtIODeviceRequest;
-> +
-> +static int worker_cb(void *opaque)
-> +{
-> +    VirtIODeviceRequest *req = opaque;
-> +    int err = 0;
-> +
-> +    /* flush raw backing image */
-> +    err = fsync(req->fd);
-> +    if (err != 0) {
-> +        err = errno;
-> +    }
-> +    req->resp.ret = err;
+Sorry I'm not sure what I'm trying to do on SRAM here because the last
+mail, I have waited for Icenowy changes about simple_fb with sram_c on
+ccu node and those are merged. can you elaborate please.
 
-Host question: are you returning the guest errno code to the host?
+>
+>> Log:
+>> [    1.450984] Jagan: sun8i_mixer_probe
+>> [    1.464981] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops)
+>> [    1.472572] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops)
+>> [    1.480676] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer to regulator.10
+>> [    1.488738] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_phy)
+>> [    1.498879] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
+>> [    1.507372] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops)
+>> [    1.514778] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+>> [    1.521398] [drm] No driver support for vblank timestamp query.
+>> [    1.684611] random: fast init done
+>> [    2.011575] Console: switching to colour frame buffer device 180x56
+>> [    2.049858] sun4i-drm display-engine: fb0: DRM emulated frame buffer device
+>> [    2.057268] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
+>>
+>> Note:
+>> Pine64 boards are unable to get edid by default like other A64 boards,
+>> but forcing 'video=HDMI-A-1:1920x1080@60D' kernel command line can
+>> create edid with display on penel
+>
+> Then that needs to be figured out before it's enabled, instead of
+> having a hack that barely works.
 
-If yes, I don't think this is right. I think you probably want to
-define a constant for error and let the host decide on the errno
-code to return to the application.
-
-> +
-> +    return 0;
-> +}
-> +
-> +static void done_cb(void *opaque, int ret)
-> +{
-> +    VirtIODeviceRequest *req = opaque;
-> +    int len = iov_from_buf(req->elem.in_sg, req->elem.in_num, 0,
-> +                              &req->resp, sizeof(VirtIOPMEMResp));
-> +
-> +    /* Callbacks are serialized, so no need to use atomic ops.  */
-> +    virtqueue_push(req->pmem->rq_vq, &req->elem, len);
-> +    virtio_notify((VirtIODevice *)req->pmem, req->pmem->rq_vq);
-> +    g_free(req);
-> +}
-> +
-> +static void virtio_pmem_flush(VirtIODevice *vdev, VirtQueue *vq)
-> +{
-> +    VirtIODeviceRequest *req;
-> +    VirtIOPMEM *pmem = VIRTIO_PMEM(vdev);
-> +    HostMemoryBackend *backend = MEMORY_BACKEND(pmem->memdev);
-> +    ThreadPool *pool = aio_get_thread_pool(qemu_get_aio_context());
-> +
-> +    req = virtqueue_pop(vq, sizeof(VirtIODeviceRequest));
-> +    if (!req) {
-> +        virtio_error(vdev, "virtio-pmem missing request data");
-> +        return;
-> +    }
-> +
-> +    if (req->elem.out_num < 1 || req->elem.in_num < 1) {
-> +        virtio_error(vdev, "virtio-pmem request not proper");
-> +        g_free(req);
-> +        return;
-> +    }
-> +    req->fd = memory_region_get_fd(&backend->mr);
-> +    req->pmem = pmem;
-> +    thread_pool_submit_aio(pool, worker_cb, req, done_cb, req);
-> +}
-> +
-> +static void virtio_pmem_get_config(VirtIODevice *vdev, uint8_t *config)
-> +{
-> +    VirtIOPMEM *pmem = VIRTIO_PMEM(vdev);
-> +    struct virtio_pmem_config *pmemcfg = (struct virtio_pmem_config *) config;
-> +
-> +    virtio_stq_p(vdev, &pmemcfg->start, pmem->start);
-> +    virtio_stq_p(vdev, &pmemcfg->size, pmem->size);
-> +}
-> +
-> +static uint64_t virtio_pmem_get_features(VirtIODevice *vdev, uint64_t features,
-> +                                        Error **errp)
-> +{
-> +    return features;
-> +}
-> +
-> +static void virtio_pmem_realize(DeviceState *dev, Error **errp)
-> +{
-> +    VirtIODevice   *vdev   = VIRTIO_DEVICE(dev);
-> +    VirtIOPMEM     *pmem   = VIRTIO_PMEM(dev);
-> +    MachineState   *ms     = MACHINE(qdev_get_machine());
-> +    uint64_t align;
-> +    Error *local_err = NULL;
-> +    MemoryRegion *mr;
-> +
-> +    if (!pmem->memdev) {
-> +        error_setg(errp, "virtio-pmem memdev not set");
-> +        return;
-> +    }
-> +
-> +    mr  = host_memory_backend_get_memory(pmem->memdev);
-> +    align = memory_region_get_alignment(mr);
-> +    pmem->size = QEMU_ALIGN_DOWN(memory_region_size(mr), align);
-> +    pmem->start = memory_device_get_free_addr(ms, NULL, align, pmem->size,
-> +                                                               &local_err);
-> +    if (local_err) {
-> +        error_setg(errp, "Can't get free address in mem device");
-> +        return;
-> +    }
-> +    memory_region_init_alias(&pmem->mr, OBJECT(pmem),
-> +                             "virtio_pmem-memory", mr, 0, pmem->size);
-> +    memory_device_plug_region(ms, &pmem->mr, pmem->start);
-> +
-> +    host_memory_backend_set_mapped(pmem->memdev, true);
-> +    virtio_init(vdev, TYPE_VIRTIO_PMEM, VIRTIO_ID_PMEM,
-> +                                          sizeof(struct virtio_pmem_config));
-> +    pmem->rq_vq = virtio_add_queue(vdev, 128, virtio_pmem_flush);
-> +}
-> +
-> +static void virtio_mem_check_memdev(Object *obj, const char *name, Object *val,
-> +                                    Error **errp)
-> +{
-> +    if (host_memory_backend_is_mapped(MEMORY_BACKEND(val))) {
-> +        char *path = object_get_canonical_path_component(val);
-> +        error_setg(errp, "Can't use already busy memdev: %s", path);
-> +        g_free(path);
-> +        return;
-> +    }
-> +
-> +    qdev_prop_allow_set_link_before_realize(obj, name, val, errp);
-> +}
-> +
-> +static const char *virtio_pmem_get_device_id(VirtIOPMEM *vm)
-> +{
-> +    Object *obj = OBJECT(vm);
-> +    DeviceState *parent_dev;
-> +
-> +    /* always use the ID of the proxy device */
-> +    if (obj->parent && object_dynamic_cast(obj->parent, TYPE_DEVICE)) {
-> +        parent_dev = DEVICE(obj->parent);
-> +        return parent_dev->id;
-> +    }
-> +    return NULL;
-> +}
-> +
-> +static void virtio_pmem_md_fill_device_info(const MemoryDeviceState *md,
-> +                                           MemoryDeviceInfo *info)
-> +{
-> +    VirtioPMemDeviceInfo *vi = g_new0(VirtioPMemDeviceInfo, 1);
-> +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> +    const char *id = virtio_pmem_get_device_id(vm);
-> +
-> +    if (id) {
-> +        vi->has_id = true;
-> +        vi->id = g_strdup(id);
-> +    }
-> +
-> +    vi->start = vm->start;
-> +    vi->size = vm->size;
-> +    vi->memdev = object_get_canonical_path(OBJECT(vm->memdev));
-> +
-> +    info->u.virtio_pmem.data = vi;
-> +    info->type = MEMORY_DEVICE_INFO_KIND_VIRTIO_PMEM;
-> +}
-> +
-> +static uint64_t virtio_pmem_md_get_addr(const MemoryDeviceState *md)
-> +{
-> +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> +
-> +    return vm->start;
-> +}
-> +
-> +static uint64_t virtio_pmem_md_get_plugged_size(const MemoryDeviceState *md)
-> +{
-> +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> +
-> +    return vm->size;
-> +}
-> +
-> +static uint64_t virtio_pmem_md_get_region_size(const MemoryDeviceState *md)
-> +{
-> +    VirtIOPMEM *vm = VIRTIO_PMEM(md);
-> +
-> +    return vm->size;
-> +}
-> +
-> +static void virtio_pmem_instance_init(Object *obj)
-> +{
-> +    VirtIOPMEM *vm = VIRTIO_PMEM(obj);
-> +    object_property_add_link(obj, "memdev", TYPE_MEMORY_BACKEND,
-> +                                (Object **)&vm->memdev,
-> +                                (void *) virtio_mem_check_memdev,
-> +                                OBJ_PROP_LINK_STRONG,
-> +                                &error_abort);
-> +}
-> +
-> +
-> +static void virtio_pmem_class_init(ObjectClass *klass, void *data)
-> +{
-> +    VirtioDeviceClass *vdc = VIRTIO_DEVICE_CLASS(klass);
-> +    MemoryDeviceClass *mdc = MEMORY_DEVICE_CLASS(klass);
-> +
-> +    vdc->realize      =  virtio_pmem_realize;
-> +    vdc->get_config   =  virtio_pmem_get_config;
-> +    vdc->get_features =  virtio_pmem_get_features;
-> +
-> +    mdc->get_addr         = virtio_pmem_md_get_addr;
-> +    mdc->get_plugged_size = virtio_pmem_md_get_plugged_size;
-> +    mdc->get_region_size  = virtio_pmem_md_get_region_size;
-> +    mdc->fill_device_info = virtio_pmem_md_fill_device_info;
-> +}
-> +
-> +static TypeInfo virtio_pmem_info = {
-> +    .name          = TYPE_VIRTIO_PMEM,
-> +    .parent        = TYPE_VIRTIO_DEVICE,
-> +    .class_init    = virtio_pmem_class_init,
-> +    .instance_size = sizeof(VirtIOPMEM),
-> +    .instance_init = virtio_pmem_instance_init,
-> +    .interfaces = (InterfaceInfo[]) {
-> +        { TYPE_MEMORY_DEVICE },
-> +        { }
-> +  },
-> +};
-> +
-> +static void virtio_register_types(void)
-> +{
-> +    type_register_static(&virtio_pmem_info);
-> +}
-> +
-> +type_init(virtio_register_types)
-> diff --git a/include/hw/pci/pci.h b/include/hw/pci/pci.h
-> index 990d6fcbde..28829b6437 100644
-> --- a/include/hw/pci/pci.h
-> +++ b/include/hw/pci/pci.h
-> @@ -85,6 +85,7 @@ extern bool pci_available;
->  #define PCI_DEVICE_ID_VIRTIO_RNG         0x1005
->  #define PCI_DEVICE_ID_VIRTIO_9P          0x1009
->  #define PCI_DEVICE_ID_VIRTIO_VSOCK       0x1012
-> +#define PCI_DEVICE_ID_VIRTIO_PMEM        0x1013
->  
->  #define PCI_VENDOR_ID_REDHAT             0x1b36
->  #define PCI_DEVICE_ID_REDHAT_BRIDGE      0x0001
-> diff --git a/include/hw/virtio/virtio-pmem.h b/include/hw/virtio/virtio-pmem.h
-> new file mode 100644
-> index 0000000000..fda3ee691c
-> --- /dev/null
-> +++ b/include/hw/virtio/virtio-pmem.h
-> @@ -0,0 +1,42 @@
-> +/*
-> + * Virtio pmem Device
-> + *
-> + * Copyright Red Hat, Inc. 2018
-> + * Copyright Pankaj Gupta <pagupta@redhat.com>
-> + *
-> + * This work is licensed under the terms of the GNU GPL, version 2 or
-> + * (at your option) any later version.  See the COPYING file in the
-> + * top-level directory.
-> + */
-> +
-> +#ifndef QEMU_VIRTIO_PMEM_H
-> +#define QEMU_VIRTIO_PMEM_H
-> +
-> +#include "hw/virtio/virtio.h"
-> +#include "exec/memory.h"
-> +#include "sysemu/hostmem.h"
-> +#include "standard-headers/linux/virtio_ids.h"
-> +#include "hw/boards.h"
-> +#include "hw/i386/pc.h"
-> +
-> +#define TYPE_VIRTIO_PMEM "virtio-pmem"
-> +
-> +#define VIRTIO_PMEM(obj) \
-> +        OBJECT_CHECK(VirtIOPMEM, (obj), TYPE_VIRTIO_PMEM)
-> +
-> +/* VirtIOPMEM device structure */
-> +typedef struct VirtIOPMEM {
-> +    VirtIODevice parent_obj;
-> +
-> +    VirtQueue *rq_vq;
-> +    uint64_t start;
-> +    uint64_t size;
-> +    MemoryRegion mr;
-> +    HostMemoryBackend *memdev;
-> +} VirtIOPMEM;
-> +
-> +struct virtio_pmem_config {
-> +    uint64_t start;
-> +    uint64_t size;
-> +};
-> +#endif
-> diff --git a/include/standard-headers/linux/virtio_ids.h b/include/standard-headers/linux/virtio_ids.h
-> index 6d5c3b2d4f..346389565a 100644
-> --- a/include/standard-headers/linux/virtio_ids.h
-> +++ b/include/standard-headers/linux/virtio_ids.h
-> @@ -43,5 +43,6 @@
->  #define VIRTIO_ID_INPUT        18 /* virtio input */
->  #define VIRTIO_ID_VSOCK        19 /* virtio vsock transport */
->  #define VIRTIO_ID_CRYPTO       20 /* virtio crypto */
-> +#define VIRTIO_ID_PMEM         25 /* virtio pmem */
->  
->  #endif /* _LINUX_VIRTIO_IDS_H */
-> diff --git a/qapi/misc.json b/qapi/misc.json
-> index 29da7856e3..fb85dd6f6c 100644
-> --- a/qapi/misc.json
-> +++ b/qapi/misc.json
-> @@ -2907,6 +2907,29 @@
->            }
->  }
->  
-> +##
-> +# @VirtioPMemDeviceInfo:
-> +#
-> +# VirtioPMem state information
-> +#
-> +# @id: device's ID
-> +#
-> +# @start: physical address, where device is mapped
-> +#
-> +# @size: size of memory that the device provides
-> +#
-> +# @memdev: memory backend linked with device
-> +#
-> +# Since: 2.13
-> +##
-> +{ 'struct': 'VirtioPMemDeviceInfo',
-> +  'data': { '*id': 'str',
-> +            'start': 'size',
-> +            'size': 'size',
-> +            'memdev': 'str'
-> +          }
-> +}
-> +
->  ##
->  # @MemoryDeviceInfo:
->  #
-> @@ -2916,7 +2939,8 @@
->  ##
->  { 'union': 'MemoryDeviceInfo',
->    'data': { 'dimm': 'PCDIMMDeviceInfo',
-> -            'nvdimm': 'PCDIMMDeviceInfo'
-> +            'nvdimm': 'PCDIMMDeviceInfo',
-> +	    'virtio-pmem': 'VirtioPMemDeviceInfo'
->            }
->  }
->  
-
+Any suggestion to work.
