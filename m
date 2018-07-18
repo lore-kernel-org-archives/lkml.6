@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCB6ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346E9C468C6
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4EF20854
+	by mail.kernel.org (Postfix) with ESMTP id E428320858
 	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="QY0PK5Me"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA4EF20854
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="UhySdUdQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E428320858
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731890AbeGRKSq (ORCPT
+        id S1731902AbeGRKSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:18:46 -0400
+        Wed, 18 Jul 2018 06:18:47 -0400
 Received: from 8bytes.org ([81.169.241.247]:54462 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731692AbeGRKSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:44 -0400
+        id S1731770AbeGRKSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:47 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 996463C8C; Wed, 18 Jul 2018 11:41:24 +0200 (CEST)
+        id DFB7C3C8E; Wed, 18 Jul 2018 11:41:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906886; bh=Jfm7mY27FLX9BG6L/38y95AXYhceF3pCU1GA56dJNi8=;
+        t=1531906887; bh=MhPUX6wbhHnJzTrKEUtYXPXwMU2vHuBPvNMwNILcEDA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QY0PK5MeNc9LqpYAJqrZs7TjC8bi4nUTPSERvumJM1P5h3hInggYkzGpzmssddjpT
-         jhoSOS7ZXEPV1/voyMoWHf0eaIZtJpwjKf7bzybhfmDgNgSiTwatUBAxIwNGJ5VwFF
-         ugW9FTeF9MVnqPO75B5i9CBjKWWsBj+EULC6Li5LQ6J6gu/d2QlFaXOsHAtFCCGyo6
-         B76UlnebLzRNteuiP1Ke0o+/MHIwEp1IKdBwx0WnYvuVmIl1DXvyN5uaZZAbBKrhIY
-         Dx5FHlk41MNa5CvFsehQK5G/El6FyzZVysNZ+6/VxAfEbamtGjRb/xUWf7SDRwiW26
-         MTU3lW6q++zWw==
+        b=UhySdUdQ2DChsDZW8vGhmCTg4ARPdWi49apEk0GbA/5LLVe/RFKEyBlYQ/KjvE1YV
+         wkUZ2minFAJXTYIKeUL5gxHF7H2bTvP/CCT8kaENLLNfe1t9sZdq12yvQoNTYz4lud
+         v1lshAG5es1GOc1iFEnUzLvUodFKjg9RfdJHwklTwVT9LxDUNTlag3yuYBBtrsSj8r
+         ZulJQCoVM5HikyLRSglAAXjEg1ECJGiUSQha3BzO69VrzJESTXnwB3Gh7JDfyMnqqI
+         9FNJJj/Z6Tftf3yX8O4uSQAie47ZT3E33+Ib2Rs9WlF95RtZ2s9a/ufyBo0TUvXkZl
+         PavcP+yNyRP4g==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 33/39] x86/ldt: Reserve address-space range on 32 bit for the LDT
-Date:   Wed, 18 Jul 2018 11:41:10 +0200
-Message-Id: <1531906876-13451-34-git-send-email-joro@8bytes.org>
+Subject: [PATCH 39/39] x86/entry/32: Add debug code to check entry/exit cr3
+Date:   Wed, 18 Jul 2018 11:41:16 +0200
+Message-Id: <1531906876-13451-40-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,72 +72,134 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Reserve 2MB/4MB of address-space for mapping the LDT to
-user-space on 32 bit PTI kernels.
+Add code to check whether we enter and leave the kernel with
+the correct cr3 and make it depend on CONFIG_DEBUG_ENTRY.
+This is needed because we have no NX protection of
+user-addresses in the kernel-cr3 on x86-32 and wouldn't
+notice that type of bug otherwise.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_32_types.h | 7 +++++--
- arch/x86/mm/dump_pagetables.c           | 9 +++++++++
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ arch/x86/entry/entry_32.S | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
-index d9a001a..7297810 100644
---- a/arch/x86/include/asm/pgtable_32_types.h
-+++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -50,13 +50,16 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
- 	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
- 	 & PMD_MASK)
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index b1541c7..010cdb4 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -166,6 +166,24 @@
+ .Lend_\@:
+ .endm
  
--#define PKMAP_BASE		\
-+#define LDT_BASE_ADDR		\
- 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
- 
-+#define PKMAP_BASE		\
-+	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
++.macro BUG_IF_WRONG_CR3 no_user_check=0
++#ifdef CONFIG_DEBUG_ENTRY
++	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
++	.if \no_user_check == 0
++	/* coming from usermode? */
++	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
++	jz	.Lend_\@
++	.endif
++	/* On user-cr3? */
++	movl	%cr3, %eax
++	testl	$PTI_SWITCH_MASK, %eax
++	jnz	.Lend_\@
++	/* From userspace with kernel cr3 - BUG */
++	ud2
++.Lend_\@:
++#endif
++.endm
 +
- #ifdef CONFIG_HIGHMEM
- # define VMALLOC_END	(PKMAP_BASE - 2 * PAGE_SIZE)
- #else
--# define VMALLOC_END	(CPU_ENTRY_AREA_BASE - 2 * PAGE_SIZE)
-+# define VMALLOC_END	(LDT_BASE_ADDR - 2 * PAGE_SIZE)
- #endif
+ /*
+  * Switch to kernel cr3 if not already loaded and return current cr3 in
+  * \scratch_reg
+@@ -213,6 +231,8 @@
+ .macro SAVE_ALL_NMI cr3_reg:req
+ 	SAVE_ALL
  
- #define MODULES_VADDR	VMALLOC_START
-diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index e6fd0cd..ccd92c4 100644
---- a/arch/x86/mm/dump_pagetables.c
-+++ b/arch/x86/mm/dump_pagetables.c
-@@ -123,6 +123,9 @@ enum address_markers_idx {
- #ifdef CONFIG_HIGHMEM
- 	PKMAP_BASE_NR,
- #endif
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	LDT_NR,
++	BUG_IF_WRONG_CR3
++
+ 	/*
+ 	 * Now switch the CR3 when PTI is enabled.
+ 	 *
+@@ -224,6 +244,7 @@
+ 
+ .Lend_\@:
+ .endm
++
+ /*
+  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
+  * frame pointer is replaced with an encoded pointer to pt_regs.  The encoding
+@@ -287,6 +308,8 @@
+ 
+ .Lswitched_\@:
+ 
++	BUG_IF_WRONG_CR3
++
+ 	RESTORE_REGS pop=\pop
+ .endm
+ 
+@@ -357,6 +380,8 @@
+ 
+ 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+ 
++	BUG_IF_WRONG_CR3
++
+ 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
+ 
+ 	/*
+@@ -799,6 +824,7 @@ ENTRY(entry_SYSENTER_32)
+ 	 */
+ 	pushfl
+ 	pushl	%eax
++	BUG_IF_WRONG_CR3 no_user_check=1
+ 	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
+ 	popl	%eax
+ 	popfl
+@@ -893,6 +919,7 @@ ENTRY(entry_SYSENTER_32)
+ 	 * whereas POPF does not.)
+ 	 */
+ 	btrl	$X86_EFLAGS_IF_BIT, (%esp)
++	BUG_IF_WRONG_CR3 no_user_check=1
+ 	popfl
+ 	popl	%eax
+ 
+@@ -970,6 +997,8 @@ restore_all:
+ 	/* Switch back to user CR3 */
+ 	SWITCH_TO_USER_CR3 scratch_reg=%eax
+ 
++	BUG_IF_WRONG_CR3
++
+ 	/* Restore user state */
+ 	RESTORE_REGS pop=4			# skip orig_eax/error_code
+ .Lirq_return:
+@@ -983,6 +1012,7 @@ restore_all:
+ restore_all_kernel:
+ 	TRACE_IRQS_IRET
+ 	PARANOID_EXIT_TO_KERNEL_MODE
++	BUG_IF_WRONG_CR3
+ 	RESTORE_REGS 4
+ 	jmp	.Lirq_return
+ 
+@@ -990,6 +1020,19 @@ restore_all_kernel:
+ ENTRY(iret_exc	)
+ 	pushl	$0				# no error code
+ 	pushl	$do_iret_error
++
++#ifdef CONFIG_DEBUG_ENTRY
++	/*
++	 * The stack-frame here is the one that iret faulted on, so its a
++	 * return-to-user frame. We are on kernel-cr3 because we come here from
++	 * the fixup code. This confuses the CR3 checker, so switch to user-cr3
++	 * as the checker expects it.
++	 */
++	pushl	%eax
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++	popl	%eax
 +#endif
- 	CPU_ENTRY_AREA_NR,
- 	FIXADDR_START_NR,
- 	END_OF_SPACE_NR,
-@@ -136,6 +139,9 @@ static struct addr_marker address_markers[] = {
- #ifdef CONFIG_HIGHMEM
- 	[PKMAP_BASE_NR]		= { 0UL,		"Persistent kmap() Area" },
- #endif
-+#ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	[LDT_NR]		= { 0UL,		"LDT remap" },
-+#endif
- 	[CPU_ENTRY_AREA_NR]	= { 0UL,		"CPU entry area" },
- 	[FIXADDR_START_NR]	= { 0UL,		"Fixmap area" },
- 	[END_OF_SPACE_NR]	= { -1,			NULL }
-@@ -609,6 +615,9 @@ static int __init pt_dump_init(void)
- # endif
- 	address_markers[FIXADDR_START_NR].start_address = FIXADDR_START;
- 	address_markers[CPU_ENTRY_AREA_NR].start_address = CPU_ENTRY_AREA_BASE;
-+# ifdef CONFIG_MODIFY_LDT_SYSCALL
-+	address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
-+# endif
- #endif
- 	return 0;
- }
++
+ 	jmp	common_exception
+ .previous
+ 	_ASM_EXTABLE(.Lirq_return, iret_exc)
 -- 
 2.7.4
 
