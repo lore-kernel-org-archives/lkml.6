@@ -3,136 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2174ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F80ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5367E2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5367E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id EDCBE2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:15:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCBE2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730234AbeGRMwb convert rfc822-to-8bit (ORCPT
+        id S1730663AbeGRMwh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:52:31 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:43788 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbeGRMwb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:52:31 -0400
-Received: from [192.168.0.117] (188.146.100.122.nat.umts.dynamic.t-mobile.pl [188.146.100.122])
-        by mail.holtmann.org (Postfix) with ESMTPSA id E36D3CF2B8;
-        Wed, 18 Jul 2018 14:21:44 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH v5 4/7] Bluetooth: Add new quirk for non-persistent setup
- settings
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <1531757114.8953.12.camel@mtkswgap22>
-Date:   Wed, 18 Jul 2018 14:14:49 +0200
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        robh+dt@kernel.org, linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <E05CD0A8-B820-4900-970D-57F71E8E5583@holtmann.org>
-References: <cover.1531150733.git.sean.wang@mediatek.com>
- <4b188c8a508340598dda233f6d49a16c9ac8784e.1531150733.git.sean.wang@mediatek.com>
- <2825B722-E75C-4A3C-8110-879205E46C0E@holtmann.org>
- <1531638169.3955.5.camel@mtkswgap22>
- <6571C864-B2EC-4806-BC5D-F531792737F6@holtmann.org>
- <1531757114.8953.12.camel@mtkswgap22>
-To:     Sean Wang <sean.wang@mediatek.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Wed, 18 Jul 2018 08:52:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51002 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726953AbeGRMwh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 08:52:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3C442AD1A;
+        Wed, 18 Jul 2018 12:14:56 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 14:14:55 +0200
+Message-ID: <s5hr2k0bv0g.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     srikanth.h@samsung.com
+CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "ben.hutchings@codethink.co.uk" <ben.hutchings@codethink.co.uk>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "elfring@users.sourceforge.net" <elfring@users.sourceforge.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        CPGS <cpgs@samsung.com>
+Subject: Re: [PATCH 1/1] Preventive fix in sound module
+In-Reply-To: <20180718105820epcms5p173879897edd4cc93b381f8125c11b91b@epcms5p1>
+References: <s5hfu0gzw5e.wl-tiwai@suse.de>
+        <1531908468-1352-1-git-send-email-srikanth.h@samsung.com>
+        <CGME20180718100741epcas1p393bea852d102e903ab6a48ff952761db@epcms5p1>
+        <20180718105820epcms5p173879897edd4cc93b381f8125c11b91b@epcms5p1>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
-
->>>>> Add a new quirk HCI_QUIRK_NON_PERSISTENT_SETUP allowing that a quirk that
->>>>> runs setup() after every open() and not just after the first open().
->>>>> 
->>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
->>>>> ---
->>>>> include/net/bluetooth/hci.h | 9 +++++++++
->>>>> net/bluetooth/hci_core.c    | 3 ++-
->>>>> 2 files changed, 11 insertions(+), 1 deletion(-)
->>>>> 
->>>>> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
->>>>> index 73e48be..d3ec5b2a8 100644
->>>>> --- a/include/net/bluetooth/hci.h
->>>>> +++ b/include/net/bluetooth/hci.h
->>>>> @@ -183,6 +183,15 @@ enum {
->>>>> 	 * during the hdev->setup vendor callback.
->>>>> 	 */
->>>>> 	HCI_QUIRK_NON_PERSISTENT_DIAG,
->>>>> +
->>>>> +	/* When this quirk is set, setup() would be run after every
->>>>> +	 * open() and not just after the first open().
->>>>> +	 *
->>>>> +	 * This quirk can be set before hci_register_dev is called or
->>>>> +	 * during the hdev->setup vendor callback.
->>>>> +	 *
->>>>> +	 */
->>>>> +	HCI_QUIRK_NON_PERSISTENT_SETUP,
->>>>> };
->>>>> 
->>>>> /* HCI device flags */
->>>>> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
->>>>> index f5c21004..0111280 100644
->>>>> --- a/net/bluetooth/hci_core.c
->>>>> +++ b/net/bluetooth/hci_core.c
->>>>> @@ -1396,7 +1396,8 @@ static int hci_dev_do_open(struct hci_dev *hdev)
->>>>> 	atomic_set(&hdev->cmd_cnt, 1);
->>>>> 	set_bit(HCI_INIT, &hdev->flags);
->>>>> 
->>>>> -	if (hci_dev_test_flag(hdev, HCI_SETUP)) {
->>>>> +	if (hci_dev_test_flag(hdev, HCI_SETUP) ||
->>>>> +	    test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
->>>>> 		hci_sock_dev_event(hdev, HCI_DEV_SETUP);
->>>> 
->>>> can you include the extract of btmon on how the HCI_DEV_SETUP event shows up in the traces? I remember that I asked about something like that.
->>>> 
->>>> Regards
->>>> 
->>>> Marcel
->>>> 
->>> 
->>> No, I cannot see any event about HCI_DEV_SETUP in btmon trace, the trace I posted as below is doing some rounds of power off and then on
->> 
->> it will result in this:
->> 
->>        case HCI_DEV_SETUP:
->>                if (hdev->manufacturer == 0xffff)
->>                        return NULL;
->> 
->>        case HCI_DEV_UP:
->>                skb = bt_skb_alloc(HCI_MON_INDEX_INFO_SIZE, GFP_ATOMIC);
->> 
->> So we will see extra index info events, but I assume that is just fine this we also see them on DEV_UP. They also do not hurt as long as not magically the manufacturer information changes.
->> 
->> I do wonder though if this quirk is set, then hdev->manufacturer needs to be reset and allow hdev->setup() to reset it. This goes with a log of other information as well. Maybe just a look if there are no races here.
->> 
->> Regards
->> 
->> Marcel
->> 
+On Wed, 18 Jul 2018 12:58:20 +0200,
+Srikanth Korangala Hari wrote:
 > 
-> I didn't set a value to hdev->manufacture.
 > 
-> Should I set it in hdev->setup() ? MediaTek is 0x46 according to [1].
+> >> 
+> >> Signed-off-by: Srikanth K H <srikanth.h@samsung.com>
+>  
+> >What does this fix, and above all, why is this needed?
+> 
+> Hi,
+> 
+> When the sound driver creates the timer without sound card object, then while reading the sound info entry the timer object’s card information is dereferenced without checking for NULL pointer which will result for kernel panic. I tried to simulate this scenario and got below call stack,
+> [   36.668] E/DEVKMSG (P    0, T    0): Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> [   36.668] E/DEVKMSG (P    0, T    0): pgd = e52f0000
+> [   36.668] E/DEVKMSG (P    0, T    0): [00000000] *pgd=00000000
+> [   36.668] E/DEVKMSG (P    0, T    0): Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+> [   36.668] E/DEVKMSG (P    0, T    0): Modules linked in:
+> [   36.668] E/DEVKMSG (P    0, T    0): CPU: 1 PID: 1258 Comm: cat Tainted: G        W    3.10.65-00121-g83e9b9b-dirty #54-Tizen
+> [   36.668] E/DEVKMSG (P    0, T    0): task: e653aec0 ti: e52ec000 task.ti: e52ec000
+> [   36.668] E/DEVKMSG (P    0, T    0): PC is at snd_timer_proc_read+0x104/0x278
+> [   36.668] E/DEVKMSG (P    0, T    0): LR is at snd_timer_proc_read+0xec/0x278
+> [   36.668] E/DEVKMSG (P    0, T    0): pc : [<c0527cfc>]    lr : [<c0527ce4>]    psr: 60040013\x0asp : e52eded0  ip : 00000000  fp : 10624dd3
+> [   36.668] E/DEVKMSG (P    0, T    0): r10: c08ded6c  r9 : e49e3bd8  r8 : c074f518
+> [   36.668] E/DEVKMSG (P    0, T    0): r7 : c0afbae4  r6 : eb95a000  r5 : e49e3240  r4 : eb257e00
+> [   36.668] E/DEVKMSG (P    0, T    0): r3 : 00000000  r2 : 00000000  r1 : c0987cd7  r0 : e49e3240
+> [   36.668] E/DEVKMSG (P    0, T    0): Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
+> [   36.668] E/DEVKMSG (P    0, T    0): Control: 10c53c7d  Table: a52f006a  DAC: 00000015
+> 
+> Hence this is a preventive patch to avoid kernel panic in case if the card object passed to timer function is NULL. This would not happen in normal case, but in case of buggy scenario this would results in kernel panic rather than graceful exit.
 
-it is generally useful so that it gets reported out in btmon and thus it can assign the correct vendor specific decoder. However you better set hdev->manufacturer = 70 in the probe() routine before calling hci_register_dev. You have a dedicated driver and thus will always know it.
+The timer->card must be associated with both entries of
+SNDRV_TIMER_CLASS_CARD and SNDRV_TIMER_CLASS_PCM.
 
-The core tries to figure this out at some point, but then you are missing btmon decoding for the earlier messages. See btusb.c and how other drivers set it early on.
+IOW, if a timer object is created without the card but for these
+classes, it's already a bug.  Papering over it doesn't give any
+benefits.  At most it should be with WARN_ON(), but I guess here is a
+wrong place to add the check.  The check should be done at the object
+creation time instead.
 
-Regards
 
-Marcel
+thanks,
 
+Takashi
