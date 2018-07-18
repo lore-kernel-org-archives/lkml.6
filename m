@@ -2,118 +2,137 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A141CECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE86ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C22920856
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:28:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C22920856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 2F73B20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:29:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ska-ac-za.20150623.gappssmtp.com header.i=@ska-ac-za.20150623.gappssmtp.com header.b="pzCmRl9+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F73B20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ska.ac.za
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730678AbeGRPG2 (ORCPT
+        id S1730763AbeGRPHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:06:28 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:45227 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729698AbeGRPG2 (ORCPT
+        Wed, 18 Jul 2018 11:07:33 -0400
+Received: from mail-ua0-f169.google.com ([209.85.217.169]:43047 "EHLO
+        mail-ua0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729667AbeGRPHd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:06:28 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6IES6cV066100;
-        Wed, 18 Jul 2018 23:28:07 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Wed, 18 Jul 2018 23:28:06 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6IES6m4066093
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 18 Jul 2018 23:28:06 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: INFO: task hung in lo_release
-To:     axboe@kernel.dk, Dmitry Vyukov <dvyukov@google.com>
-References: <000000000000f961390571457196@google.com>
-Cc:     syzbot <syzbot+a4e4a2663a21c3c3c2b1@syzkaller.appspotmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <4871d3cc-769e-b65a-8c05-bfaf6e6fdc69@I-love.SAKURA.ne.jp>
-Date:   Wed, 18 Jul 2018 23:28:03 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 18 Jul 2018 11:07:33 -0400
+Received: by mail-ua0-f169.google.com with SMTP id x24-v6so3047616ual.10
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 07:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ska-ac-za.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xaZeO0/nXuMr+aH/Wydv4gzxFs8NElauDU8ije0PCTM=;
+        b=pzCmRl9+cdS4GL5SvIQ2VOHPviwR9knVvikGmtMN87gYVzICnTvBw3OWtwnWRMSnDy
+         XBdKqBhS0fFKyHdmxYuQDIEvH2jHz8QUxGXSdaZtU7e5KaIR7ObvpDt77WNRwzXbGr+y
+         qR2QyRZmAn1zhdOmykYmCUv/cYx3NPggXT1gQEt4/FGT1SdsHGPynyxIQDexJw8lL1Ma
+         UYzHp0qc1cP/+7uHHUtpFACM3toCYO3IpjQEcI+SWbaWtSmn7A0qqiuo53Sba9PVSHI1
+         /c85eZj7MUrt/clpLWwOGXx2yuiFJrtuaGx+YNbrWcQFs+Ytx69VPiFpD8QecBpNDoWX
+         I0FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xaZeO0/nXuMr+aH/Wydv4gzxFs8NElauDU8ije0PCTM=;
+        b=m1ABSXUbkeO3sx/XRVAXsKBnxbgvYWo+dPzF7uBXmMrupU+1q2thjccuZ0q5oRAkxt
+         D7weqiLa51Vj87bsfVNXCaUnSGuIAxXa9kPvbggQk3dNIUADEkQxXOa5a2ZqxS4pHMin
+         gDosZLKlTe8TBMEPQm8HQQnxxLXVRCfbRMlmi7wV373+PFMLg5d3jKWainVjUyXi8SNG
+         /9NivjNJl/zwZ03Q+c2pXszitFfP45c3JgpHyEn2+icl7VlKPw2MDodjm3bYe2VjOriO
+         2WAPJf2R1JITwoJcGLL9xuhj6J7Boa5E7/QptmOCaEO4/5oK12izJNBXE3CwL4ah4zuj
+         kKgw==
+X-Gm-Message-State: AOUpUlFBRnzDUh5LbwbBqdCYNlHo/N+BG/itW5OS3qTeMOgRfyyhmsoc
+        mftxnGzn+yA433Mzo2ZH/UAPM5wEHPd9Lak/8ael9w==
+X-Google-Smtp-Source: AAOMgpcaN7DK/3nAA4NOhrwDwaEmueFMgGLJD2cVaXD4XWUNEwQmZxqdhpVGiMAClle/3e71IGmzJD0M3gQLVE01JSM=
+X-Received: by 2002:ab0:210b:: with SMTP id d11-v6mr4044601ual.108.1531924160963;
+ Wed, 18 Jul 2018 07:29:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <000000000000f961390571457196@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ab0:d97:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 07:29:20 -0700 (PDT)
+In-Reply-To: <20180718104230.GC1431@dhcp22.suse.cz>
+References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
+ <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org> <20180718104230.GC1431@dhcp22.suse.cz>
+From:   Bruce Merry <bmerry@ska.ac.za>
+Date:   Wed, 18 Jul 2018 16:29:20 +0200
+Message-ID: <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
+Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some machines
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/18 21:46, syzbot wrote:
-> Showing all locks held in the system:
-> 1 lock held by khungtaskd/902:
->  #0: 000000004f60bbd2 (rcu_read_lock){....}, at: debug_show_all_locks+0xd0/0x428 kernel/locking/lockdep.c:4461
-> 1 lock held by rsyslogd/4455:
->  #0: 0000000086a2d206 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200 fs/file.c:766
-> 2 locks held by getty/4545:
->  #0: 00000000ece833eb (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1: 00000000536bed00 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/4546:
->  #0: 00000000180e8f60 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1: 000000008efac671 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/4547:
->  #0: 00000000ca308631 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1: 000000007c05fef3 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/4548:
->  #0: 000000009d93809c (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1: 000000004c489ffa (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/4549:
->  #0: 00000000ec3b322c (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1: 00000000107aeb96 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/4550:
->  #0: 000000006d1a7b96 (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1: 00000000564c003d (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by getty/4551:
->  #0: 000000003cba543a (&tty->ldisc_sem){++++}, at: ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
->  #1: 00000000149a289b (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-> 2 locks held by syz-executor6/4597:
->  #0: 0000000033676c6d (&bdev->bd_mutex){+.+.}, at: __blkdev_put+0xc2/0x830 fs/block_dev.c:1780
->  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_release+0x1f/0x1f0 drivers/block/loop.c:1675
-> 2 locks held by blkid/18494:
->  #0: 000000000efc6462 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
->  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_open+0x1b/0xb0 drivers/block/loop.c:1632
-> 1 lock held by syz-executor5/18515:
->  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
-> 1 lock held by syz-executor1/18498:
->  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
-> 1 lock held by syz-executor3/18521:
->  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
-> 2 locks held by syz-executor3/18522:
->  #0: 00000000399ff791 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
->  #1: 00000000127b5bfb (loop_index_mutex){+.+.}, at: lo_open+0x1b/0xb0 drivers/block/loop.c:1632
-> 1 lock held by syz-executor4/18506:
->  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
-> 1 lock held by syz-executor0/18508:
-> 1 lock held by syz-executor7/18507:
->  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_control_ioctl+0x91/0x540 drivers/block/loop.c:1999
-> 1 lock held by syz-executor2/18514:
->  #0: 000000000efc6462 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
-> 1 lock held by blkid/18513:
->  #0: 0000000033676c6d (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
-> 1 lock held by blkid/18520:
->  #0: 00000000127b5bfb (loop_index_mutex){+.+.}, at: loop_probe+0x82/0x1d0 drivers/block/loop.c:1979
-> 1 lock held by blkid/18524:
->  #0: 00000000399ff791 (&bdev->bd_mutex){+.+.}, at: __blkdev_get+0x19b/0x13c0 fs/block_dev.c:1463
+On 18 July 2018 at 12:42, Michal Hocko <mhocko@kernel.org> wrote:
+> [CC some more people]
+>
+> On Tue 17-07-18 21:23:07, Andrew Morton wrote:
+>> (cc linux-mm)
+>>
+>> On Tue, 3 Jul 2018 08:43:23 +0200 Bruce Merry <bmerry@ska.ac.za> wrote:
+>>
+>> > Hi
+>> >
+>> > I've run into an odd performance issue in the kernel, and not being a
+>> > kernel dev or knowing terribly much about cgroups, am looking for
+>> > advice on diagnosing the problem further (I discovered this while
+>> > trying to pin down high CPU load in cadvisor).
+>> >
+>> > On some machines in our production system, cat
+>> > /sys/fs/cgroup/memory/memory.stat is extremely slow (500ms on one
+>> > machine), while on other nominally identical machines it is fast
+>> > (2ms).
+>
+> Could you try to use ftrace to see where the time is spent?
 
-Dmitry, it is impossible to check what these lock holders are doing without dump of these threads
-(they are not always TASK_UNINTERRUPTIBLE waiters; e.g. PID=18508 is TASK_RUNNING with a lock held).
+Thanks for looking into this. I'm not familiar with ftrace. Can you
+give me a specific command line to run? Based on "perf record cat
+/sys/fs/cgroup/memory/memory.stat"/"perf report", I see the following:
 
-Jens, when can we start testing "[PATCH v3] block/loop: Serialize ioctl operations." ?
+  42.09%  cat      [kernel.kallsyms]  [k] memcg_stat_show
+  29.19%  cat      [kernel.kallsyms]  [k] memcg_sum_events.isra.22
+  12.41%  cat      [kernel.kallsyms]  [k] mem_cgroup_iter
+   5.42%  cat      [kernel.kallsyms]  [k] _find_next_bit
+   4.14%  cat      [kernel.kallsyms]  [k] css_next_descendant_pre
+   3.44%  cat      [kernel.kallsyms]  [k] find_next_bit
+   2.84%  cat      [kernel.kallsyms]  [k] mem_cgroup_node_nr_lru_pages
+
+> memory_stat_show should only scale with the depth of the cgroup
+> hierarchy for memory.stat to get cumulative numbers. All the rest should
+> be simply reads of gathered counters. There is no locking involved in
+> the current kernel. What is the kernel version you are using, btw?
+
+Ubuntu 16.04 with kernel 4.13.0-41-generic (so presumably includes
+some Ubuntu special sauce).
+
+Some new information: when this occurred on another machine I ran
+"echo 2 > /proc/sys/vm/drop_caches" to drop the dentry cache, and
+performance immediately improved. Unfortunately, I've not been able to
+deliberately reproduce the issue. I've tried doing the following 10^7
+times in a loop and while it inflates the dentry cache, it doesn't
+cause any significant slowdown:
+1. Create a temporary cgroup: mkdir /sys/fs/cgroup/memory/<name>.
+2. stat /sys/fs/cgroup/memory/<name>/memory.stat
+3. rmdir /sys/fs/cgroup/memory/<name>
+
+I've also tried inflating the dentry cache just by stat-ing millions
+of non-existent files, and again, no slowdown. So I'm not sure exactly
+how dentry cache is related.
+
+Regards
+Bruce
+-- 
+Bruce Merry
+Senior Science Processing Developer
+SKA South Africa
