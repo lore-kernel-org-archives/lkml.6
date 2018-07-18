@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 265D3ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411DAECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3CC020652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF1120856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:10:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="WHc7en4H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3CC020652
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="EHtJuWoO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECF1120856
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbeGRQtT (ORCPT
+        id S1731596AbeGRQtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:49:19 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50626 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731361AbeGRQtT (ORCPT
+        Wed, 18 Jul 2018 12:49:23 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53394 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731541AbeGRQtW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:49:19 -0400
-Received: by mail-wm0-f68.google.com with SMTP id v25-v6so3371252wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:10:42 -0700 (PDT)
+        Wed, 18 Jul 2018 12:49:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s9-v6so3349541wmh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:10:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=QP2WPmDtY6wTfmL4nBDJ1iHeMuOKJmvPoI3id9/o7tA=;
-        b=WHc7en4HQHiC5xT4H2BfLn39yEsVeZq8SIO2Fgq+i9TzytJdLWfRFSlhsSvWkE0BkY
-         zAryg4VAidW13C8fv9eDfnSQL13zbcDnDTHiERobfh98zKpUES/PJuSIKQ7j4UXtSdGE
-         IHf9DptI7Wf2oVMdPqAKarp6sYK2th4B7jTYgwgY6qYxH0RVeC4Flht0JjmqV4Vh+gG+
-         FOOUuiA1mXpGhrIgqQBEAjG7EoLcSgpec/L+FjFpvIk2ghyNv9fu1jogqxzzPYn1WuV/
-         lAC9KMMsOOTTwXBJ2tPvXyn9cjslWEypxh27BX+hNQe3QBtHii4Q2aLSZB6fajkpGqHO
-         r+ew==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=EirWCWel/w1jaSio88cM+pYKnpg1qeQaHBKU4yixNfc=;
+        b=EHtJuWoO8ddLvvPcVimKtHq6H8FCzhnH+7pzF5jw6GaqcXYVULCbQvQoyIn5ASUyEm
+         f7zDWC1QrVN92CcoQW57/gEo0uIRrlNSgjl6n0hRexuov7WOocKC1Fsi4g+s+ZOL5n9T
+         x1FeKQIU2dJuVrK86D0Gf+TK6S3Kpq2bWh4NpwmZDQV5+5d1FzUiLYZo83fVWqi1Oaf0
+         zqmmGgn7yTu/xMdApC0AIDaBQn8k+pSar5skAgB4lzqTgdlFxQLdNLfldfINYhgp/ZWZ
+         WhuqQUdLp5TRmP+6JAOU/I6o2o+NfvgObBZVHLDVsc4URiyW8BtTsdT7rfDrKzcsKdj4
+         NTJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=QP2WPmDtY6wTfmL4nBDJ1iHeMuOKJmvPoI3id9/o7tA=;
-        b=EzgdVPQJ7LiE5Sa5FGm1MRHb0j7N95oUEOX1C4WeScO5P/5R5gLJpQvbFzNNkCiGoM
-         SaWfG6j0qHvPSw1AAi0/yEc4uXI7BovHq8hDl4ylq+QQdbtPma16DUEmhw6hgq54wU0F
-         w1fnjI+V0pr+kCDNrzQ5Rm5DNjgJuYOV8H9RgVCd+QJxCuk0nn2zpqYUk/1DUeXY05nW
-         CA6Oq7jttarqq9+d+RgM90td24/vawh+tkP7ZJQxQS8v/xsXY8H+TULOYxLZadzIgjk/
-         LOMH1vkGlnYilg5CMoptNDkjQ6UJSBbqH7ElzdEtCHPDcxcNtd3uw6v4zpc2OwtpGrO1
-         9Mlg==
-X-Gm-Message-State: AOUpUlFzgrvuDH6WyUurK91O8L6CLNUByu0W3jro/BkNpFQ0dU/iBI9j
-        No9V0QrjxRBAEfPvEsStpztGqQ==
-X-Google-Smtp-Source: AAOMgpfiV9Xny1ZAfOOolJuDgF3rZr+jl4VpeE5e5Xet03R+sQ0oHPtZs9/eaZqTrun8BlGkNVIhKA==
-X-Received: by 2002:a1c:3a8f:: with SMTP id h137-v6mr2039020wma.72.1531930241965;
-        Wed, 18 Jul 2018 09:10:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=EirWCWel/w1jaSio88cM+pYKnpg1qeQaHBKU4yixNfc=;
+        b=CbgQqG5E8JJWhev1tc/dgpWYs+Jl8mUEJTgWNIvIW6z0GaFVMpHmqwnrCQ7M9NqF4i
+         c1oEpOGjCN4arkZ7wsPieQ0zu+1PgzebIOyrfp8rMuqI+EULlRYcOnw2t6NQBT24goCW
+         V5hczlkkhNG8Z86TARG18ga5+/501d/5+stHBJ1wDBD+IOFxJON/zZqYFDLgJn0hk7TR
+         U4klzVlR6d81jEzC0o8+05sjyn1Qgmk6pmsqywQeWTor86SgzZ9FXxCsgVQkZ6k8bAZI
+         aFk3brZ5Pl3aTgZ0LXko8UoXlF7RMbiCp5lxho5H5Pj1V6SkyL4eAI6siBPpLj46DaxQ
+         BZJQ==
+X-Gm-Message-State: AOUpUlHizdjujv1vDmboqRxQqh37Z2X0xAQKBTAObC0NqYJzn6fURrU+
+        pe9aIaDVdNSC1bYbdkFlSGB8gA==
+X-Google-Smtp-Source: AAOMgpewbp5hFl5y/IcWNm7naKQjwy1bkB0Rq1kdgYVfhvYPX6gC55U0SsVOv5KPlyS0WjNzpFYBDQ==
+X-Received: by 2002:a1c:369c:: with SMTP id y28-v6mr1923561wmh.34.1531930246398;
+        Wed, 18 Jul 2018 09:10:46 -0700 (PDT)
 Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id v185-v6sm2847803wme.30.2018.07.18.09.10.40
+        by smtp.gmail.com with ESMTPSA id v185-v6sm2847803wme.30.2018.07.18.09.10.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 09:10:41 -0700 (PDT)
+        Wed, 18 Jul 2018 09:10:45 -0700 (PDT)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -71,55 +72,41 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Andrew Lunn <andrew@lunn.ch>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH 0/5] net: extend eth_platform_get_mac_address()
-Date:   Wed, 18 Jul 2018 18:10:30 +0200
-Message-Id: <20180718161035.7005-1-brgl@bgdev.pl>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 3/5] net: fortify eth_platform_get_mac_address()
+Date:   Wed, 18 Jul 2018 18:10:33 +0200
+Message-Id: <20180718161035.7005-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180718161035.7005-1-brgl@bgdev.pl>
+References: <20180718161035.7005-1-brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a follow-up to a series I posted a while ago the goal of which
-was to replace the at24 platform data with device properties. To do so
-we need to somehow remove reading the MAC address from relevant board
-files.
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-In my patches I used nvmem and MTD to read the MAC address from within
-the davinci emac driver. It was suggested that we generalize it further
-but since MTD doesn't support nvmem yet, the best we can do is to move
-this code over to net core code.
+We'll soon have more sources from which to read the MAC address in this
+routine. Make sure the address is correct before returning it.
 
-The following patches modify the eth_platform_get_mac_address()
-function which seems to be the best candidate for this code.
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+---
+ net/ethernet/eth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The first patch only visually shrinks the code because this routine
-will grow significantly in the next patches.
-
-The second patch adds an info message on success so that we keep
-getting notifications from users who already are verbose.
-
-The third patch calls is_valid_ether_addr() on the read address so
-that we're sure it's correct.
-
-The last two patches add nvmem and MTD support to the function. In
-order to stay compatible with existing users, nvmem and MTD will be
-tried last - after device tree and arch-specific callback.
-
-If this series gets accepted I will modify my previous patches to
-use it instead of handcoding the same operations in davinci_emac.
-
-Bartosz Golaszewski (5):
-  net: visually shrink eth_platform_get_mac_address()
-  net: add an info message to eth_platform_get_mac_address()
-  net: fortify eth_platform_get_mac_address()
-  net: add support for nvmem to eth_platform_get_mac_address()
-  net: add MTD support to eth_platform_get_mac_address()
-
- net/ethernet/eth.c | 77 ++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 65 insertions(+), 12 deletions(-)
-
+diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+index 2a2173324d9e..6b64586fd2af 100644
+--- a/net/ethernet/eth.c
++++ b/net/ethernet/eth.c
+@@ -544,7 +544,7 @@ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+ 			from = "arch callback";
+ 	}
+ 
+-	if (!addr)
++	if (!addr || !is_valid_ether_addr(addr))
+ 		return -ENODEV;
+ 
+ 	dev_info(dev, "read MAC address from %s\n", from);
 -- 
 2.17.1
 
