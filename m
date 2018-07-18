@@ -2,130 +2,123 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614CDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB863ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD622075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FD622075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 963272075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oxdh+Soe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963272075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731485AbeGRS0A (ORCPT
+        id S1731569AbeGRS0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 14:26:00 -0400
-Received: from smtprelay0200.hostedemail.com ([216.40.44.200]:34281 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731186AbeGRS0A (ORCPT
+        Wed, 18 Jul 2018 14:26:50 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48154 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730487AbeGRS0u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 14:26:00 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 67C13100E86C0;
-        Wed, 18 Jul 2018 17:47:01 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: elbow19_2ea816c5a74c
-X-Filterd-Recvd-Size: 3504
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf11.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 18 Jul 2018 17:46:59 +0000 (UTC)
-Message-ID: <8601ab3e058b92aca02081c1210e0b5db6d5700c.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: Resolve improper warning for krealloc arg
- reuse
-From:   Joe Perches <joe@perches.com>
-To:     Manish Narani <manish.narani@xilinx.com>, apw@canonical.com,
-        linux-kernel@vger.kernel.org
-Cc:     anirudh@xilinx.com, sgoud@xilinx.com, svemula@xilinx.com
-Date:   Wed, 18 Jul 2018 10:46:58 -0700
-In-Reply-To: <1531922148-7423-1-git-send-email-manish.narani@xilinx.com>
-References: <1531922148-7423-1-git-send-email-manish.narani@xilinx.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 14:26:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7TbVlsQamTYkxHMvYsMyk13grD9wAqAb0kNgvbFkptE=; b=oxdh+SoeT+o5rkYVno0zGOsLt
+        5dZP0q+hXdFDoZdpgTVf7F3CuGPn2AY6ihiRy3oodDteEzfsEriB+Qac8685t2a7ynbzKzXw+aYBY
+        cY+n5E21V4afl+7NIzU55wBYJPOxReFM6qKSYz0smSMk62JNJXl2QV9CBRxnFwqtq7D9A=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ffqYE-00041B-4S; Wed, 18 Jul 2018 17:47:46 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ffqYD-00010i-HG; Wed, 18 Jul 2018 18:47:45 +0100
+Date:   Wed, 18 Jul 2018 18:47:45 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Milan Broz <gmazyland@gmail.com>
+Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>, agk@redhat.com,
+        snitzer@redhat.com, herbert@gondor.apana.org.au,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        jonathan.cameron@huawei.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH 4/5] crypto: Add IV generation templates
+Message-ID: <20180718174745.GC20360@sirena.org.uk>
+References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
+ <1531899055-29362-5-git-send-email-wangxiongfeng2@huawei.com>
+ <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
+ <20180718164625.GA20360@sirena.org.uk>
+ <82248c13-42fe-b598-0cd7-68e5db0b51be@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
+Content-Disposition: inline
+In-Reply-To: <82248c13-42fe-b598-0cd7-68e5db0b51be@gmail.com>
+X-Cookie: Marriage, n.:
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 19:25 +0530, Manish Narani wrote:
-> Correct the check for reuse of krealloc. It gives false warning when a
-> structure member variable name and krealloc argument name is same.
-> 
-> For Example:
-> {
-> 	...
-> 	abc.def_var = krealloc(def_var, sizeof(*def_var),
-> 				    GFP_KERNEL);
-> 	...
-> }
-> 
-> $ ./scripts/checkpatch.pl -f file.c
-> 
-> WARNING: Reusing the krealloc arg is almost always a bug
-> +	abc.def_var = krealloc(def_var, sizeof(*def_var),
-> 
-> This patch resolves the above false warning.
-> 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  scripts/checkpatch.pl | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 447857f..db9b666 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -6119,7 +6119,7 @@ sub process {
->  
->  # check for krealloc arg reuse
->  		if ($^V && $^V ge 5.10.0 &&
-> -		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*\1\s*,/) {
-> +		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*\1\s*,/ && $line !~ m/[\.|\-\>].*\s*\=\s*.*/) {
->  			WARN("KREALLOC_ARG_REUSE",
->  			     "Reusing the krealloc arg is almost always a bug\n" . $herecurr);
->  		}
 
-This works, though I'm not completely sure why.
+--da4uJneut+ArUgXk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Andy or anyone else:  Does your perl-foo understand why?
+On Wed, Jul 18, 2018 at 07:17:45PM +0200, Milan Broz wrote:
 
-$ cat test_krealloc.c
-static int xadc_parse_dt(struct iio_dev *indio_dev, struct device_node *np,
-	unsigned int *conf)
-{
-	indio_dev->channels = krealloc(channels, sizeof(*channels) *
-					num_channels, GFP_KERNEL);
-	indio_dev->channels = krealloc(indio_dev->channels, sizeof(*channels) *
-					num_channels, GFP_KERNEL);
-}
+> I think the last iteration was this patch
+> https://lore.kernel.org/lkml/1498106510-19793-2-git-send-email-binoy.jayan@linaro.org/
 
-For the patch below, the old case matches the first
-$Lval above as "channels" skipping the "indio_dev->"
-bit and as not "indio_dev->channels"
+Thanks!  I'd got v5 but v6 went AWOL for some reason :(
 
-The modified patch below matches the first $Lval as the
-expected "indio_dev->channels"
----
- scripts/checkpatch.pl | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> 2) If the reason is performance, please provide numbers with the patch.
+> What I see now is that the performance is almost the same. So why you are doing it?
+> Any real hw that benefits from it?
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index ed4fa986e8da..59eaaede757a 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6149,7 +6149,8 @@ sub process {
- 
- # check for krealloc arg reuse
- 		if ($perl_version_ok &&
--		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*\1\s*,/) {
-+		    $line =~ /\b($Lval)\s*\=\s*(?:$balanced_parens)?\s*krealloc\s*\(\s*($Lval)\s*,/ &&
-+		    $1 eq $3) {
- 			WARN("KREALLOC_ARG_REUSE",
- 			     "Reusing the krealloc arg is almost always a bug\n" . $herecurr);
- 		}
+The main focus was performance with accelerators, currently we can't use
+ESSIV acceleration which is implemented by some hardware.  Xiongfeng, we
+probably need to discuss offline before sharing any actual numbers for
+the hardware accelerated case since people can be sensitive about how
+those are shared.  Software only benchmarks are only really relevant in
+showing that this won't harm existing users.
 
+Some of the relevant systems are somewhat CPU constrained so even if the
+I/O performance remains fairly consistent with the accelerators in play
+it can still be a win if it frees up a useful amount of CPU for other
+purposes.  That'd mean CPU usage is probably interesting to benchmark
+also though I don't know that the systems Xiongfeng has access to are
+particularly good models there.
+
+> I added 4k sector support in dmcrypt and IMO this helps much more than
+> some hw IV accelerations (AFAIK is is already used in some mainframe
+> accelerators this way because of performance).
+
+Right, that does help too (and an out of tree variation of this was one
+of the original sources of this work).
+
+--da4uJneut+ArUgXk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltPfUAACgkQJNaLcl1U
+h9B8qgf+LfQM8Qe1bjGgClEG98e6vLvtPzUtMpCCpORZ79FiFTdVXzv+Bw0lhg2F
+OrNDPjeY0tFbjUqr4LcwVFMFgt/wdfiiwqDB9Kho5SinTHSjS+fagqEA5hgFCLOF
+7gKLxNbfK029N9sjcxq991bE58pLbXsV1GZrhO/KE3laja5uvY+lyb9EoNCU3/L0
+d2L1GdJ9dm3Kue8uFNuAfnWEekBrUa2oyxV1JCFAD9AhDADXeXkpxtWH3RZMru8P
+mU+hHoYtOZ/AZOfWMn1sM2N6mjuGfWJWBNuWpc21PxAj7IyJJ7hEEeoXEshhC/OE
+hFdYPmNkjcsBO8tcM7IS1Yr788xbXg==
+=z8lU
+-----END PGP SIGNATURE-----
+
+--da4uJneut+ArUgXk--
