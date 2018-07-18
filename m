@@ -2,432 +2,146 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77F9ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84CFECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EA2C2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75FF920673
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:38:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kepstin.ca header.i=@kepstin.ca header.b="g9QEqUbL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EA2C2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kepstin.ca
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CIXpKmxk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FF920673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731681AbeGRCMR (ORCPT
+        id S1731645AbeGRCOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:12:17 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:38705 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730652AbeGRCMQ (ORCPT
+        Tue, 17 Jul 2018 22:14:04 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:51510 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730652AbeGRCOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:12:16 -0400
-Received: by mail-io0-f194.google.com with SMTP id v26-v6so2693723iog.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 18:36:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kepstin.ca; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PvZInUtL/CxScBeX4bZNJZaySH8aYXMZL++Vd2c88JM=;
-        b=g9QEqUbLzFuuMDRRIAPDmFQr+9BFnIdxLFdTGPY5XaqN91LmPPcvr3+kcFMKm4HFo8
-         PDPYAdcxd7CAuN/VGmAK+6zlEEqTn0XJ5VEgRJCdsQqVT9++kepvNVZ/rRJiWg2i7/eY
-         FDgWlNCldi4ekIkk3yf8q/DW7rgwDuERVIw/Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PvZInUtL/CxScBeX4bZNJZaySH8aYXMZL++Vd2c88JM=;
-        b=MoPAhqzweWnGUR4DukS6CIrr0ipb8hN1ZDpXkV6Bz4ngdF++m+I2ijbCewpXHgSVxL
-         3305iRmaEJcF2os7dcTRYHgNP9rvHcifI6+DPzW2DhwHlPYLLGBkJwfjqjtartuK1K5d
-         0RGPEWyx2zeUcoEKbq0YoMRuWiO/CWHEZy55rV6l7FNSjQdrq1tUuwyuGOtxqdVe+u9U
-         Zv1XkplZ4W9eKTkS7l9GIPYQ5D9nao+xax3UZBFcNka75gaDPZIFBoNCFIIj7UZymdYd
-         Hz7tB+zEOnvwXXDy7QH+qrMjh8Pm0p7cnGh7b2CpJOGDKc7tx4mrg3gsDR3AnatJ+8Za
-         9fFw==
-X-Gm-Message-State: AOUpUlFYKYEvRtdvQ4ctvXhZlXtxVmgK0PBOR2CZwZtxslM3d/NJzG65
-        8h9DHfg2LfIj3gZyWUE/0ZM+KX0VH4I=
-X-Google-Smtp-Source: AA+uWPxlZdo68dlfckjYqbSYNMEMeuydTpas7BhvS8sjhoD4qydW0UUF15WTFU4RcVLxa3BrGCq9ng==
-X-Received: by 2002:a6b:90d4:: with SMTP id s203-v6mr3413856iod.249.1531877814929;
-        Tue, 17 Jul 2018 18:36:54 -0700 (PDT)
-Received: from fuko.kepstin.ca ([2001:470:b3f4::561])
-        by smtp.gmail.com with ESMTPSA id p21-v6sm1124251iog.70.2018.07.17.18.36.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Jul 2018 18:36:54 -0700 (PDT)
-From:   Calvin Walton <calvin.walton@kepstin.ca>
-To:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>
-Cc:     Calvin Walton <calvin.walton@kepstin.ca>
-Subject: [PATCH 2/2] turbostat: Add support for AMD Fam 17h (Zen) RAPL
-Date:   Tue, 17 Jul 2018 21:36:42 -0400
-Message-Id: <20180718013642.10344-3-calvin.walton@kepstin.ca>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180718013642.10344-1-calvin.walton@kepstin.ca>
-References: <20180718013642.10344-1-calvin.walton@kepstin.ca>
+        Tue, 17 Jul 2018 22:14:04 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6I1YKif168897;
+        Wed, 18 Jul 2018 01:38:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=DOv1mAkL1aMLDz8MX2V5SYhP+2MHPCPDfqA1pl9otyg=;
+ b=CIXpKmxkmgCbXHVff+EAD/aHozWj1/3QBgHm/L3zXKK8gtFR2QLTcQq1Iy2TOGzr8/yL
+ 9zd4+qVsomAgan6+v3juyPD8ryTPXBsug8cMvGFssZqxCg0scHCllO9lFJ0h2MQzhBWn
+ QTQKUdEf55iesPTrcSeKEk1AXCHe8Q71FH3YHP7TbLwuqp4CY0GjiPGaPmawvT2uYlVU
+ nzlLHlzEobcTkO+lzdPn3maX1yU+EyfukL+TWjsrBDxDEpMs57iAGQpOearPV09lOlwN
+ 1wS29M9kKwYZvSANShRPqgfaRgVtSDEVjUuYu4UmxoCRK6p2h1i3NTi8QqOmHSueDykK qA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2k7a3t329j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 01:38:42 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6I1cdNo001864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 01:38:40 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6I1cdqL026575;
+        Wed, 18 Jul 2018 01:38:39 GMT
+Received: from mail-oi0-f44.google.com (/209.85.218.44)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Jul 2018 18:38:39 -0700
+Received: by mail-oi0-f44.google.com with SMTP id q11-v6so5690945oic.12;
+        Tue, 17 Jul 2018 18:38:39 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGJk+J6cVqx/gFlc14AO9pKaMFh28al3R97V/piFNcKITKqlenB
+        cxBy3cHbkvZUpuTxBfXejWTTaKoqVkdzQIHRvzw=
+X-Google-Smtp-Source: AAOMgpd1pidf8C1z58MBtrj211IxGRk3Uz45WMmdRPnWJx4wznwdr8QX/ktsZC6VCBtQHskDUANQdM9chrAaXEgxWfE=
+X-Received: by 2002:aca:b541:: with SMTP id e62-v6mr3757618oif.136.1531877918775;
+ Tue, 17 Jul 2018 18:38:38 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
+ <20180712000419.5165-7-pasha.tatashin@oracle.com> <cf7ef6d0-8650-3e8a-0e15-5150b58d1b50@oracle.com>
+In-Reply-To: <cf7ef6d0-8650-3e8a-0e15-5150b58d1b50@oracle.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Tue, 17 Jul 2018 21:38:02 -0400
+X-Gmail-Original-Message-ID: <CAGM2reZTfuMhKZLApidBcenbeJTYt6n_56htaK5YkDPseb_Bqw@mail.gmail.com>
+Message-ID: <CAGM2reZTfuMhKZLApidBcenbeJTYt6n_56htaK5YkDPseb_Bqw@mail.gmail.com>
+Subject: Re: [PATCH v13 06/18] x86/xen/time: initialize pv xen time in init_hypervisor_platform
+To:     boris.ostrovsky@oracle.com
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
+        feng.tang@intel.com, Petr Mladek <pmladek@suse.com>,
+        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
+        jgross@suse.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8957 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=899
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807180016
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on the Open-Source Register Reference for AMD Family 17h
-Processors Models 00h-2Fh:
-https://support.amd.com/TechDocs/56255_OSRR.pdf
+> > +     set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
+> > +     HYPERVISOR_shared_info = (void *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
+> > +
+> > +     /* xen clock uses per-cpu vcpu_info, need to init it for boot cpu */
+> > +     xen_vcpu_info_reset(0);
+>
+>
+> I don't believe this is necessary, it has been done in
+> xen_start_kernel() for PV guests.
 
-These processors report RAPL support in bit 14 of CPUID 0x80000007 EDX,
-and the following MSRs are present:
-0xc0010299 (RAPL_PWR_UNIT), like Intel's RAPL_POWER_UNIT
-0xc001029a (CORE_ENERGY_STAT), kind of like Intel's PP0_ENERGY_STATUS
-0xc001029b (PKG_ENERGY_STAT), like Intel's PKG_ENERGY_STATUS
+We need it, because HYPERVISOR_shared_info has changed from dummy.
+And, to output timestamps we must have access to the actual shared
+page.
 
-A notable difference from the Intel implementation is that AMD reports
-the "Cores" energy usage separately for each core, rather than a
-per-package total. The code has been adjusted to handle either case in a
-generic way.
----
- tools/power/x86/turbostat/turbostat.c | 171 ++++++++++++++++++++++----
- 1 file changed, 145 insertions(+), 26 deletions(-)
+> > +
+> > +     /* pvclock is in shared info area */
+> > +     xen_init_time_ops();
+> > +}
+> > +
+>
+>
+>
+> >  }
+> >
+> > -void __ref xen_init_time_ops(void)
+> > +void __init xen_init_time_ops(void)
+> >  {
+> >       pv_time_ops = xen_time_ops;
+> >
+> > @@ -542,17 +542,11 @@ void __init xen_hvm_init_time_ops(void)
+> >               return;
+> >
+> >       if (!xen_feature(XENFEAT_hvm_safe_pvclock)) {
+> > -             printk(KERN_INFO "Xen doesn't support pvclock on HVM,"
+> > -                             "disable pv timer\n");
+> > +             pr_info("Xen doesn't support pvclock on HVM, disable pv timer");
+> >               return;
+> >       }
+> > -
+> > -     pv_time_ops = xen_time_ops;
+> > +     xen_init_time_ops();
+>
+>
+> As we discussed elsewhere, now that HVM guests call this routine as well
+> we need to make sure that x86_init.timers.timer_init is not updated
+> there for HVM since those guests expect a "real" timer to be connected
+> to IO-APIC.
 
-diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
-index f404d67fda92..1ab351512044 100644
---- a/tools/power/x86/turbostat/turbostat.c
-+++ b/tools/power/x86/turbostat/turbostat.c
-@@ -43,6 +43,7 @@
- #include <cpuid.h>
- #include <linux/capability.h>
- #include <errno.h>
-+#include <math.h>
- 
- char *proc_stat = "/proc/stat";
- FILE *outf;
-@@ -64,6 +65,7 @@ unsigned int has_epb;
- unsigned int do_irtl_snb;
- unsigned int do_irtl_hsw;
- unsigned int units = 1000000;	/* MHz etc */
-+unsigned int authentic_amd;
- unsigned int genuine_intel;
- unsigned int has_invariant_tsc;
- unsigned int do_nhm_platform_info;
-@@ -129,9 +131,21 @@ unsigned int has_misc_feature_control;
- 
- #define RAPL_CORES_ENERGY_STATUS	(1 << 9)
- 					/* 0x639 MSR_PP0_ENERGY_STATUS */
-+#define RAPL_PER_CORE_ENERGY	(1 << 10)
-+					/* Indicates cores energy collection is per-core,
-+					 * not per-package. */
-+#define RAPL_AMD_F17H		(1 << 11)
-+					/* 0xc0010299 MSR_RAPL_PWR_UNIT */
-+					/* 0xc001029a MSR_CORE_ENERGY_STAT */
-+					/* 0xc001029b MSR_PKG_ENERGY_STAT */
- #define RAPL_CORES (RAPL_CORES_ENERGY_STATUS | RAPL_CORES_POWER_LIMIT)
- #define	TJMAX_DEFAULT	100
- 
-+/* MSRs that are not yet in the kernel-provided header. */
-+#define MSR_RAPL_PWR_UNIT	0xc0010299
-+#define MSR_CORE_ENERGY_STAT	0xc001029a
-+#define MSR_PKG_ENERGY_STAT	0xc001029b
-+
- #define MAX(a, b) ((a) > (b) ? (a) : (b))
- 
- /*
-@@ -171,6 +185,7 @@ struct core_data {
- 	unsigned long long c7;
- 	unsigned long long mc6_us;	/* duplicate as per-core for now, even though per module */
- 	unsigned int core_temp_c;
-+	unsigned int core_energy;	/* MSR_CORE_ENERGY_STAT */
- 	unsigned int core_id;
- 	unsigned long long counter[MAX_ADDED_COUNTERS];
- } *core_even, *core_odd;
-@@ -589,6 +604,14 @@ void print_header(char *delim)
- 	if (DO_BIC(BIC_CoreTmp))
- 		outp += sprintf(outp, "%sCoreTmp", (printed++ ? delim : ""));
- 
-+	if (do_rapl && !rapl_joules) {
-+		if (DO_BIC(BIC_CorWatt) && (do_rapl & RAPL_PER_CORE_ENERGY))
-+			outp += sprintf(outp, "%sCorWatt", (printed++ ? delim : ""));
-+	} else if (do_rapl && rapl_joules) {
-+		if (DO_BIC(BIC_Cor_J) && (do_rapl & RAPL_PER_CORE_ENERGY))
-+			outp += sprintf(outp, "%sCor_J", (printed++ ? delim : ""));
-+	}
-+
- 	for (mp = sys.cp; mp; mp = mp->next) {
- 		if (mp->format == FORMAT_RAW) {
- 			if (mp->width == 64)
-@@ -639,7 +662,7 @@ void print_header(char *delim)
- 	if (do_rapl && !rapl_joules) {
- 		if (DO_BIC(BIC_PkgWatt))
- 			outp += sprintf(outp, "%sPkgWatt", (printed++ ? delim : ""));
--		if (DO_BIC(BIC_CorWatt))
-+		if (DO_BIC(BIC_CorWatt) && !(do_rapl & RAPL_PER_CORE_ENERGY))
- 			outp += sprintf(outp, "%sCorWatt", (printed++ ? delim : ""));
- 		if (DO_BIC(BIC_GFXWatt))
- 			outp += sprintf(outp, "%sGFXWatt", (printed++ ? delim : ""));
-@@ -652,7 +675,7 @@ void print_header(char *delim)
- 	} else if (do_rapl && rapl_joules) {
- 		if (DO_BIC(BIC_Pkg_J))
- 			outp += sprintf(outp, "%sPkg_J", (printed++ ? delim : ""));
--		if (DO_BIC(BIC_Cor_J))
-+		if (DO_BIC(BIC_Cor_J) && !(do_rapl & RAPL_PER_CORE_ENERGY))
- 			outp += sprintf(outp, "%sCor_J", (printed++ ? delim : ""));
- 		if (DO_BIC(BIC_GFX_J))
- 			outp += sprintf(outp, "%sGFX_J", (printed++ ? delim : ""));
-@@ -713,6 +736,7 @@ int dump_counters(struct thread_data *t, struct core_data *c,
- 		outp += sprintf(outp, "c6: %016llX\n", c->c6);
- 		outp += sprintf(outp, "c7: %016llX\n", c->c7);
- 		outp += sprintf(outp, "DTS: %dC\n", c->core_temp_c);
-+		outp += sprintf(outp, "Joules: %0X\n", c->core_energy);
- 
- 		for (i = 0, mp = sys.cp; mp; i++, mp = mp->next) {
- 			outp += sprintf(outp, "cADDED [%d] msr0x%x: %08llX\n",
-@@ -912,6 +936,20 @@ int format_counters(struct thread_data *t, struct core_data *c,
- 		}
- 	}
- 
-+	/*
-+	 * If measurement interval exceeds minimum RAPL Joule Counter range,
-+	 * indicate that results are suspect by printing "**" in fraction place.
-+	 */
-+	if (interval_float < rapl_joule_counter_range)
-+		fmt8 = "%s%.2f";
-+	else
-+		fmt8 = "%6.0f**";
-+
-+	if (DO_BIC(BIC_CorWatt) && (do_rapl & RAPL_PER_CORE_ENERGY))
-+		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), c->core_energy * rapl_energy_units / interval_float);
-+	if (DO_BIC(BIC_Cor_J) && (do_rapl & RAPL_PER_CORE_ENERGY))
-+		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), c->core_energy * rapl_energy_units);
-+
- 	/* print per-package data only for 1st core in package */
- 	if (!(t->flags & CPU_IS_FIRST_CORE_IN_PACKAGE))
- 		goto done;
-@@ -959,18 +997,9 @@ int format_counters(struct thread_data *t, struct core_data *c,
- 	if (DO_BIC(BIC_Pkgpc10))
- 		outp += sprintf(outp, "%s%.2f", (printed++ ? delim : ""), 100.0 * p->pc10/tsc);
- 
--	/*
-- 	 * If measurement interval exceeds minimum RAPL Joule Counter range,
-- 	 * indicate that results are suspect by printing "**" in fraction place.
-- 	 */
--	if (interval_float < rapl_joule_counter_range)
--		fmt8 = "%s%.2f";
--	else
--		fmt8 = "%6.0f**";
--
- 	if (DO_BIC(BIC_PkgWatt))
- 		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), p->energy_pkg * rapl_energy_units / interval_float);
--	if (DO_BIC(BIC_CorWatt))
-+	if (DO_BIC(BIC_CorWatt) && !(do_rapl & RAPL_PER_CORE_ENERGY))
- 		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), p->energy_cores * rapl_energy_units / interval_float);
- 	if (DO_BIC(BIC_GFXWatt))
- 		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), p->energy_gfx * rapl_energy_units / interval_float);
-@@ -978,7 +1007,7 @@ int format_counters(struct thread_data *t, struct core_data *c,
- 		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), p->energy_dram * rapl_dram_energy_units / interval_float);
- 	if (DO_BIC(BIC_Pkg_J))
- 		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), p->energy_pkg * rapl_energy_units);
--	if (DO_BIC(BIC_Cor_J))
-+	if (DO_BIC(BIC_Cor_J) && !(do_rapl & RAPL_PER_CORE_ENERGY))
- 		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), p->energy_cores * rapl_energy_units);
- 	if (DO_BIC(BIC_GFX_J))
- 		outp += sprintf(outp, fmt8, (printed++ ? delim : ""), p->energy_gfx * rapl_energy_units);
-@@ -1122,6 +1151,8 @@ delta_core(struct core_data *new, struct core_data *old)
- 	old->core_temp_c = new->core_temp_c;
- 	old->mc6_us = new->mc6_us - old->mc6_us;
- 
-+	DELTA_WRAP32(new->core_energy, old->core_energy);
-+
- 	for (i = 0, mp = sys.cp; mp; i++, mp = mp->next) {
- 		if (mp->format == FORMAT_RAW)
- 			old->counter[i] = new->counter[i];
-@@ -1244,6 +1275,7 @@ void clear_counters(struct thread_data *t, struct core_data *c, struct pkg_data
- 	c->c7 = 0;
- 	c->mc6_us = 0;
- 	c->core_temp_c = 0;
-+	c->core_energy = 0;
- 
- 	p->pkg_wtd_core_c0 = 0;
- 	p->pkg_any_core_c0 = 0;
-@@ -1311,6 +1343,8 @@ int sum_counters(struct thread_data *t, struct core_data *c,
- 
- 	average.cores.core_temp_c = MAX(average.cores.core_temp_c, c->core_temp_c);
- 
-+	average.cores.core_energy += c->core_energy;
-+
- 	for (i = 0, mp = sys.cp; mp; i++, mp = mp->next) {
- 		if (mp->format == FORMAT_RAW)
- 			continue;
-@@ -1630,6 +1664,12 @@ int get_counters(struct thread_data *t, struct core_data *c, struct pkg_data *p)
- 		c->core_temp_c = tcc_activation_temp - ((msr >> 16) & 0x7F);
- 	}
- 
-+	if (do_rapl & RAPL_AMD_F17H) {
-+		if (get_msr(cpu, MSR_CORE_ENERGY_STAT, &msr))
-+			return -14;
-+		c->core_energy = msr & 0xFFFFFFFF;
-+	}
-+
- 	for (i = 0, mp = sys.cp; mp; i++, mp = mp->next) {
- 		if (get_mp(cpu, mp, &c->counter[i]))
- 			return -10;
-@@ -1714,6 +1754,11 @@ int get_counters(struct thread_data *t, struct core_data *c, struct pkg_data *p)
- 			return -16;
- 		p->rapl_dram_perf_status = msr & 0xFFFFFFFF;
- 	}
-+	if (do_rapl & RAPL_AMD_F17H) {
-+		if (get_msr(cpu, MSR_PKG_ENERGY_STAT, &msr))
-+			return -13;
-+		p->energy_pkg = msr & 0xFFFFFFFF;
-+	}
- 	if (DO_BIC(BIC_PkgTmp)) {
- 		if (get_msr(cpu, MSR_IA32_PACKAGE_THERM_STATUS, &msr))
- 			return -17;
-@@ -3329,6 +3374,16 @@ double get_tdp(unsigned int model)
- 	}
- }
- 
-+double get_tdp_amd(unsigned int family)
-+{
-+	switch (family) {
-+	case 0x17:
-+	default:
-+		/* This is the max stock TDP of HEDT/Server Fam17h chips */
-+		return 180.0;
-+	}
-+}
-+
- /*
-  * rapl_dram_energy_units_probe()
-  * Energy units are either hard-coded, or come from RAPL Energy Unit MSR.
-@@ -3350,21 +3405,12 @@ rapl_dram_energy_units_probe(int  model, double rapl_energy_units)
- 	}
- }
- 
--
--/*
-- * rapl_probe()
-- *
-- * sets do_rapl, rapl_power_units, rapl_energy_units, rapl_time_units
-- */
--void rapl_probe(unsigned int family, unsigned int model)
-+void rapl_probe_intel(unsigned int family, unsigned int model)
- {
- 	unsigned long long msr;
- 	unsigned int time_unit;
- 	double tdp;
- 
--	if (!genuine_intel)
--		return;
--
- 	if (family != 6)
- 		return;
- 
-@@ -3502,6 +3548,69 @@ void rapl_probe(unsigned int family, unsigned int model)
- 	return;
- }
- 
-+void rapl_probe_amd(unsigned int family, unsigned int model)
-+{
-+	unsigned long long msr;
-+	unsigned int max_extended_level, eax, ebx, ecx, edx;
-+	unsigned int has_rapl = 0;
-+	double tdp;
-+
-+	max_extended_level = ebx = ecx = edx = 0;
-+	__cpuid(0x80000000, max_extended_level, ebx, ecx, edx);
-+
-+	if (max_extended_level >= 0x80000007) {
-+		__cpuid(0x80000007, eax, ebx, ecx, edx);
-+		/* RAPL (Fam 17h) */
-+		has_rapl = edx & (1 << 14);
-+	}
-+
-+	if (!has_rapl)
-+		return;
-+
-+	switch (family) {
-+	case 0x17: /* Zen, Zen+ */
-+		do_rapl = RAPL_AMD_F17H | RAPL_PER_CORE_ENERGY;
-+		if (rapl_joules) {
-+			BIC_PRESENT(BIC_Pkg_J);
-+			BIC_PRESENT(BIC_Cor_J);
-+		} else {
-+			BIC_PRESENT(BIC_PkgWatt);
-+			BIC_PRESENT(BIC_CorWatt);
-+		}
-+		break;
-+	default:
-+		return;
-+	}
-+
-+	if (get_msr(base_cpu, MSR_RAPL_PWR_UNIT, &msr))
-+		return;
-+
-+	rapl_time_units = ldexp(1.0, -(msr >> 16 & 0xf));
-+	rapl_energy_units = ldexp(1.0, -(msr >> 8 & 0x1f));
-+	rapl_power_units = ldexp(1.0, -(msr & 0xf));
-+
-+	tdp = get_tdp_amd(model);
-+
-+	rapl_joule_counter_range = 0xFFFFFFFF * rapl_energy_units / tdp;
-+	if (!quiet)
-+		fprintf(outf, "RAPL: %.0f sec. Joule Counter Range, at %.0f Watts\n", rapl_joule_counter_range, tdp);
-+
-+	return;
-+}
-+
-+/*
-+ * rapl_probe()
-+ *
-+ * sets do_rapl, rapl_power_units, rapl_energy_units, rapl_time_units
-+ */
-+void rapl_probe(unsigned int family, unsigned int model)
-+{
-+	if (genuine_intel)
-+		rapl_probe_intel(family, model);
-+	if (authentic_amd)
-+		rapl_probe_amd(family, model);
-+}
-+
- void perf_limit_reasons_probe(unsigned int family, unsigned int model)
- {
- 	if (!genuine_intel)
-@@ -3599,6 +3708,7 @@ void print_power_limit_msr(int cpu, unsigned long long msr, char *label)
- int print_rapl(struct thread_data *t, struct core_data *c, struct pkg_data *p)
- {
- 	unsigned long long msr;
-+	const char *msr_name;
- 	int cpu;
- 
- 	if (!do_rapl)
-@@ -3614,10 +3724,17 @@ int print_rapl(struct thread_data *t, struct core_data *c, struct pkg_data *p)
- 		return -1;
- 	}
- 
--	if (get_msr(cpu, MSR_RAPL_POWER_UNIT, &msr))
--		return -1;
-+	if (do_rapl & RAPL_AMD_F17H) {
-+		msr_name = "MSR_RAPL_PWR_UNIT";
-+		if (get_msr(cpu, MSR_RAPL_PWR_UNIT, &msr))
-+			return -1;
-+	} else {
-+		msr_name = "MSR_RAPL_POWER_UNIT";
-+		if (get_msr(cpu, MSR_RAPL_POWER_UNIT, &msr))
-+			return -1;
-+	}
- 
--	fprintf(outf, "cpu%d: MSR_RAPL_POWER_UNIT: 0x%08llx (%f Watts, %f Joules, %f sec.)\n", cpu, msr,
-+	fprintf(outf, "cpu%d: %s: 0x%08llx (%f Watts, %f Joules, %f sec.)\n", cpu, msr_name, msr,
- 		rapl_power_units, rapl_energy_units, rapl_time_units);
- 
- 	if (do_rapl & RAPL_PKG_POWER_INFO) {
-@@ -4022,6 +4139,8 @@ void process_cpuid()
- 
- 	if (ebx == 0x756e6547 && edx == 0x49656e69 && ecx == 0x6c65746e)
- 		genuine_intel = 1;
-+	if (ebx == 0x68747541 && edx == 0x69746e65 && ecx == 0x444d4163)
-+		authentic_amd = 1;
- 
- 	if (!quiet)
- 		fprintf(outf, "CPUID(0): %.4s%.4s%.4s ",
--- 
-2.18.0
+Yes, I decided to keep xen_init_time_ops() and xen_hvm_init_time_ops()
+separate. The unification does not save that many LOC, but increase
+the complexity.
 
+Thank you,
+Pavel
