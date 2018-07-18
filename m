@@ -3,60 +3,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5A4ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B4EECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8AA020850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:30:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFA38206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:30:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="AlCuFMEF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8AA020850
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="O4HTzlQH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFA38206B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731573AbeGRNHm (ORCPT
+        id S1731446AbeGRNHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:07:42 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51056 "EHLO
+        Wed, 18 Jul 2018 09:07:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50772 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731497AbeGRNHm (ORCPT
+        with ESMTP id S1730369AbeGRNHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:07:42 -0400
+        Wed, 18 Jul 2018 09:07:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=N2vL6pUs/MFDoeBhOS+LM7Lz+QtEx2+rbV0NB02L92k=; b=AlCuFMEFLx0m
-        Y7cel02cChIBzwQnEfG63GWxiGhtd28s3Ux5PsGrrlT9pi8KqPk1q2Z+wAH/SKsGOT1jfJDHrr/8m
-        n3sQBVG4WGC3J75LuJpgKWMG8M4zT83NRGlX1niHw4ojB+/LvKZOxc5JqEUuPrkR7NsjCKy7R5Off
-        77NFs=;
+        List-Archive; bh=HjYuyQ5m1tgAZ2ZY0IYLiVM+Ds7n0+8KgTnDF5RcgNs=; b=O4HTzlQHD3wm
+        qYJFOFA+N4jfaJ92nzYQ86OtEK8ctEo1k5wXGwC8TwKFrvtMjVwsQL+llWdlI7e5fpaREVXVJ45Da
+        IOMwVojifqmCUXAhywpKP2UBOs7d+0RsC5OA2WUXF7bT0E+nLAmqAE5xkKtanfpWRNu8TPZ/ngT9Q
+        i1z4s=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fflab-0003Ww-GR; Wed, 18 Jul 2018 12:29:53 +0000
+        id 1fflaP-0003WQ-P4; Wed, 18 Jul 2018 12:29:41 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fflab-0007Xk-2r; Wed, 18 Jul 2018 13:29:53 +0100
+        id 1fflaP-0007Tt-AZ; Wed, 18 Jul 2018 13:29:41 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Paul Burton <paul.burton@mips.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Allan Nielsen <allan.nielsen@microsemi.com>,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: dw: fix possible race condition" to the spi tree
-In-Reply-To:  <20180717142314.32337-2-alexandre.belloni@bootlin.com>
-Message-Id: <E1fflab-0007Xk-2r@debutante>
-Date:   Wed, 18 Jul 2018 13:29:53 +0100
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: bd9571mwv: Add support for toggle power switches" to the regulator tree
+In-Reply-To:  <20180716153052.1830-3-geert+renesas@glider.be>
+Message-Id: <E1fflaP-0007Tt-AZ@debutante>
+Date:   Wed, 18 Jul 2018 13:29:41 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,11 +64,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: dw: fix possible race condition
+   regulator: bd9571mwv: Add support for toggle power switches
 
-has been applied to the spi tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -89,55 +89,78 @@ to this mail.
 Thanks,
 Mark
 
-From 66b19d762378785d1568b5650935205edfeb0503 Mon Sep 17 00:00:00 2001
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Tue, 17 Jul 2018 16:23:10 +0200
-Subject: [PATCH] spi: dw: fix possible race condition
+From e436875f6f97708613976da75a92974f18998af9 Mon Sep 17 00:00:00 2001
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+Date: Mon, 16 Jul 2018 17:30:51 +0200
+Subject: [PATCH] regulator: bd9571mwv: Add support for toggle power switches
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-It is possible to get an interrupt as soon as it is requested.  dw_spi_irq
-does spi_controller_get_devdata(master) and expects it to be different than
-NULL. However, spi_controller_set_devdata() is called after request_irq(),
-resulting in the following crash:
+Extend the existing support for backup mode to toggle power switches.
+With a toggle power switch (or level signal), the following steps must
+be followed exactly:
+   1. Configure PMIC for backup mode, to change the role of the
+      accessory power switch from a power switch to a wake-up switch,
+   2. Switch accessory power switch off, to prepare for system suspend,
+      which is a manual step not controlled by software,
+   3. Suspend system,
+   4. Switch accessory power switch on, to resume the system.
 
-CPU 0 Unable to handle kernel paging request at virtual address 00000030, epc == 8058e09c, ra == 8018ff90
-[...]
-Call Trace:
-[<8058e09c>] dw_spi_irq+0x8/0x64
-[<8018ff90>] __handle_irq_event_percpu+0x70/0x1d4
-[<80190128>] handle_irq_event_percpu+0x34/0x8c
-[<801901c4>] handle_irq_event+0x44/0x80
-[<801951a8>] handle_level_irq+0xdc/0x194
-[<8018f580>] generic_handle_irq+0x38/0x50
-[<804c6924>] ocelot_irq_handler+0x104/0x1c0
+Hence the PMIC is configured for backup mode when "on" or "1" is written
+to the PMIC's "backup_mode" virtual file in sysfs.  Conversely, writing
+"off" or "0" reverts the role of the accessory switch to a power
+switch.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Unlike with momentary switches, backup mode is not enabled by default,
+as enabling it prevents the board from being powered off using the power
+switch, which may confuse the user.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-dw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/regulator/bd9571mwv-regulator.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index f693bfe95ab9..a087464efdd7 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -485,6 +485,8 @@ int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
- 	dws->dma_inited = 0;
- 	dws->dma_addr = (dma_addr_t)(dws->paddr + DW_SPI_DR);
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index 1da36a6590c8..c44613b9423b 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -185,6 +185,7 @@ static ssize_t backup_mode_store(struct device *dev,
+ 				 const char *buf, size_t count)
+ {
+ 	struct bd9571mwv_reg *bdreg = dev_get_drvdata(dev);
++	unsigned int mode;
+ 	int ret;
  
-+	spi_controller_set_devdata(master, dws);
+ 	if (!count)
+@@ -194,6 +195,25 @@ static ssize_t backup_mode_store(struct device *dev,
+ 	if (ret)
+ 		return ret;
+ 
++	if (!bdreg->rstbmode_level)
++		return count;
 +
- 	ret = request_irq(dws->irq, dw_spi_irq, IRQF_SHARED, dev_name(dev),
- 			  master);
- 	if (ret < 0) {
-@@ -518,7 +520,6 @@ int dw_spi_add_host(struct device *dev, struct dw_spi *dws)
- 		}
- 	}
++	/*
++	 * Configure DDR Backup Mode, to change the role of the accessory power
++	 * switch from a power switch to a wake-up switch, or vice versa
++	 */
++	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
++	if (ret)
++		return ret;
++
++	mode &= ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK;
++	if (bdreg->bkup_mode_enabled)
++		mode |= bdreg->bkup_mode_cnt_keepon;
++
++	ret = bd9571mwv_bkup_mode_write(bdreg->bd, mode);
++	if (ret)
++		return ret;
++
+ 	return count;
+ }
  
--	spi_controller_set_devdata(master, dws);
- 	ret = devm_spi_register_controller(dev, master);
- 	if (ret) {
- 		dev_err(&master->dev, "problem registering spi master\n");
 -- 
 2.18.0
 
