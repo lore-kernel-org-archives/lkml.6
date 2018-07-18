@@ -2,62 +2,72 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCC0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD3CECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:07:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB04E2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53A5D2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:07:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="HCdtkBMv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB04E2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dSEjnFTq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A5D2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730058AbeGRXqD (ORCPT
+        id S1730302AbeGRXrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 19:46:03 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:43115 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728929AbeGRXqD (ORCPT
+        Wed, 18 Jul 2018 19:47:08 -0400
+Received: from mail-io0-f179.google.com ([209.85.223.179]:44554 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbeGRXrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:46:03 -0400
-Received: from mail-vk0-f46.google.com (mail-vk0-f46.google.com [209.85.213.46]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w6IN5iAl002867
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:05:45 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w6IN5iAl002867
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1531955145;
-        bh=4vhNDWIIehXvK/P5mBK5aILl9jeoai+AKPlT7OJtfzE=;
-        h=From:Date:Subject:To:Cc:From;
-        b=HCdtkBMvZleEV7/YfSs+WOx40fgLQwXtQEEa09qvbXv787cmviJC8uxQs4L78duPz
-         BzDtf4AUXDUPXq4kESrKz/+Jl6ixfrIylGyhwq1HABA0MzxQ2EFwgEURlnYOe+JbIJ
-         euNgwGM1l2AFvLXbwdyr4nU93mMCwtfvEf4ETKWbTiQdC9t4/FbVZ0bytkXbrMW27R
-         sRa5FtzsdSetXwp2tUfrwI7MefwYciso4MYd6nyQzoJzSbjNkrVVf0rZDCqQ6KRowH
-         rtPMLcsNtzaXTaH0wsWDIeDqAVbz9D8VhS7UNYC97OHvKulpkB3D6ovXUqav64I540
-         +80nYs3H5jmSw==
-X-Nifty-SrcIP: [209.85.213.46]
-Received: by mail-vk0-f46.google.com with SMTP id o82-v6so1580991vko.8
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 16:05:45 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHFHAJp+idJ8KJNF/+MTdYHjINM6BpaNu0NuFfvOv5RSmGtC7Bt
-        osrqTX79SJrVE6h6zQ37AvJoNoQ/i3+exi/Zykc=
-X-Google-Smtp-Source: AAOMgpfnuIjzInOVJ47t2jOnISf4p8l2gUOaMMqq0I3ZhAdrl4Z/xY+In7peid5Vg2ISEzoR66JmYwv8nGR3ajqJBps=
-X-Received: by 2002:a1f:9807:: with SMTP id a7-v6mr4525230vke.65.1531955144344;
- Wed, 18 Jul 2018 16:05:44 -0700 (PDT)
+        Wed, 18 Jul 2018 19:47:08 -0400
+Received: by mail-io0-f179.google.com with SMTP id q19-v6so5513692ioh.11;
+        Wed, 18 Jul 2018 16:06:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9w1WJpYXI4VAmyxO6WdugBnxuEJ4RE/RdYB+2vcoc3I=;
+        b=dSEjnFTqYsmf5eDN0FHK+JQzZm7Dfw0SpkCQDcJzVwq4ZIE2Ch+HMVJFG0xhvs4hj8
+         PC8Ah7UbKE+XK71QBq3RmxAEYWwzYCOFD2NbtObRWsPCI16YI8lNZOecWk3bpGkU+AxY
+         WWu2Gazml0VIYYPlpubSbvuV5U+jwgUiZRHgs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9w1WJpYXI4VAmyxO6WdugBnxuEJ4RE/RdYB+2vcoc3I=;
+        b=au+H+M9h1PUTeQyJDjcdQTrBZEDsZGCM4PxP7iu7CK1fJFy9upqfgzWwltQlrtVgU0
+         DsrpI94qiMdDH/P5adhOn+koiM9UcHM90gBa5FoJZfKsbfbDUIpATWec2N6gBfPjFdRu
+         ROlyg6HIN2PFyxMi4wPFitQben/JWUoLgZIXRosdijezHK5aHITRisDnnFeJ2xzmLPhI
+         CV9Zet/GEdID5G7ounWJ0X3A/2EO9RijoEJMIJnooEtbgdVsqbti5tRn98TtLg7XziJH
+         QVR94CRgG0cBNZ0jM1Rdqth8lm1DS9fWyLFtPLT30Md3ZRD8TN0xUaqaCkTovr7MpR3v
+         Fc1Q==
+X-Gm-Message-State: AOUpUlEh3KqDLrrstQVcTAhnLIdJfBKLGJV15vnm/MhgQYmH2G6yh9+Y
+        h7H3kHlc1EufC1bscF/TgKDR38/KbVW0J7qBTgaKlw==
+X-Google-Smtp-Source: AAOMgpfUpCk0zouLBvLr11GVCMGjMu/7Qbrdj7giQyJ1RnW4O43obwXuy/4sTtSou8JW415gyR+Yd6fEdzpZzExAn60=
+X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr7057830iov.203.1531955219221;
+ Wed, 18 Jul 2018 16:06:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 16:05:03
- -0700 (PDT)
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 19 Jul 2018 08:05:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAShLhWqCRR8RfuJ0xBJAFoj-S6WLcSdh9QShg8dGfq9RA@mail.gmail.com>
-Message-ID: <CAK7LNAShLhWqCRR8RfuJ0xBJAFoj-S6WLcSdh9QShg8dGfq9RA@mail.gmail.com>
-Subject: [GIT PULL 3/3] ARM: uniphier: UniPhier SoC updates for v4.19
-To:     arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Olof Johansson <olof@lixom.net>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+References: <CAOssrKf60FHqgG6pB5zOP7iV-qdHdDUODdG7SVpoNh3Pipo=6w@mail.gmail.com>
+ <CAOssrKdqnsPSipweUCers6d2AgJX2aVGQUs1pd7cB79GoSJH1Q@mail.gmail.com>
+ <20180718124340.GS30522@ZenIV.linux.org.uk> <CAOssrKcS+kwK+S1aojhbW_4p8FJLPaafBDqDu89d=F14wT-0rw@mail.gmail.com>
+ <20180718181252.GU30522@ZenIV.linux.org.uk> <CA+55aFxh62Yttq-W2Cr_YQQ5tAL1xjijjnaz1-zdZNqZPQFM0g@mail.gmail.com>
+ <20180718194637.GV30522@ZenIV.linux.org.uk> <CA+55aFydd9ji2eJSNVK7Fjpziehvm6fO3b1eTeUAn0L1tk3GmQ@mail.gmail.com>
+ <20180718200411.GW30522@ZenIV.linux.org.uk> <CA+55aFwhnOPO26ubjJ9WhK6YT8JqD5_UTGmNLFWbPdv-On99=w@mail.gmail.com>
+ <20180718212205.GY30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180718212205.GY30522@ZenIV.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 18 Jul 2018 16:06:48 -0700
+Message-ID: <CA+55aFyJJSf0M8ij+Mzea7sFWOuDNcC4eA5KyVYeiKv8HY6LvA@mail.gmail.com>
+Subject: Re: [RFC] call_with_creds()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,53 +75,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd, Olof,
+On Wed, Jul 18, 2018 at 2:22 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Why is counter any better than LSB of a pointer?
 
-Please pull UniPhier SoC changes for the v4.19 MW.
+Easier nesting, but if you do it with the "surround by a macro" model
+I guess you can just save/restore instead (like you did in
+call_with_creds).
 
-Thanks!
-
-
-The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-
-  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
-tags/uniphier-soc-v4.19
-
-for you to fetch changes up to ae93e694440a454609fa40725e16619c5a781768:
-
-  ARM: uniphier: remove empty Makefile (2018-07-19 06:53:16 +0900)
-
-----------------------------------------------------------------
-UniPhier ARM SoC updates for v4.19
-
-- enable ethernet and thermal drivers from multi_v7_defconfig
-
-- select RESET_CONTROLLER
-
-- remove empty arch/arm/mach-uniphier/Makefile
-
-----------------------------------------------------------------
-Kunihiko Hayashi (1):
-      ARM: multi_v7_defconfig: add CONFIG_UNIPHIER_THERMAL and CONFIG_SNI_AVE
-
-Masahiro Yamada (3):
-      ARM: uniphier: select RESET_CONTROLLER
-      arm64: uniphier: select RESET_CONTROLLER
-      ARM: uniphier: remove empty Makefile
-
- arch/arm/Makefile                   | 1 -
- arch/arm/configs/multi_v7_defconfig | 2 ++
- arch/arm/mach-uniphier/Kconfig      | 1 +
- arch/arm/mach-uniphier/Makefile     | 0
- arch/arm64/Kconfig.platforms        | 1 +
- 5 files changed, 4 insertions(+), 1 deletion(-)
- delete mode 100644 arch/arm/mach-uniphier/Makefile
-
-
--- 
-Best Regards
-Masahiro Yamada
+           Linus
