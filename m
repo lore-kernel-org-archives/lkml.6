@@ -2,126 +2,118 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47310ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEDFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4DE82075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:37:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4DE82075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 58E6A2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:37:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ska-ac-za.20150623.gappssmtp.com header.i=@ska-ac-za.20150623.gappssmtp.com header.b="YUDJIxse"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E6A2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ska.ac.za
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbeGRQQJ (ORCPT
+        id S1731571AbeGRQQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:16:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:59217 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730436AbeGRQQJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:16:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 86857207E8; Wed, 18 Jul 2018 17:37:39 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 52F9520766;
-        Wed, 18 Jul 2018 17:37:39 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Andrew Lunn <andrew@lunn.ch>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Yelena Krivosheev <yelena@marvell.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Dmitri Epshtein <dima@marvell.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH net-next v2 3/7] net: mvneta: increase number of buffers in RX and TX queue
-References: <20180713161841.11202-1-gregory.clement@bootlin.com>
-        <20180713161841.11202-4-gregory.clement@bootlin.com>
-        <20180713191720.GA17271@n2100.armlinux.org.uk>
-Date:   Wed, 18 Jul 2018 17:37:39 +0200
-In-Reply-To: <20180713191720.GA17271@n2100.armlinux.org.uk> (Russell King's
-        message of "Fri, 13 Jul 2018 20:17:20 +0100")
-Message-ID: <87tvow8sho.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 18 Jul 2018 12:16:13 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:44716 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730436AbeGRQQM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:16:12 -0400
+Received: by mail-ua0-f194.google.com with SMTP id k25-v6so3194429uao.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ska-ac-za.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=GLOsjN8uNrpfP+QBEl9HZf+rMY9k/d825pLbIvoBw9g=;
+        b=YUDJIxse7kGOHryqt7PsBHeGGr+iKtjenk2Ifl7Fe+2kY4YLQMiT/tJnnxbsdn903v
+         qA1+0y6H40Kq7Rtrhig5tz7lpu/2ZfJL/ojzdItPAnZtpstJSG+lkH4hm1flMDtmqqYY
+         JoaeXfhgIk6pvd6OOr1/9SIHx6OkK/cj3JmzX76q0OEs94sA3wNWjjkHMgCLDjpN2Pgo
+         wVxqD0n7R5YsPJs7TpgHaXBMnuWTlEst3Y4IcHP/mfqp6vQX2kt0OHwnmpzVzrlOIVM9
+         oB5t5VYTy2dxOSXlW3Cw1ktMKlQsLHFYzjvijcyll1Y4ITwv6P60qldoL6ltCvYzQmCB
+         Ub2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=GLOsjN8uNrpfP+QBEl9HZf+rMY9k/d825pLbIvoBw9g=;
+        b=YVKk1ntV78Hnr8mohbr9+dL5zwxvOX6XZzBlYgf4z8rqPhIwkuqU0ZeFas9mcb/Y94
+         TMbbOukJY3VqJbF6edKFtdiJDZuYBDsLQfKyJDLh8Z8Kc8a9z706RrgBYN1BUm9x+Z+W
+         O3quj+W28mihLwkhp7jAAlukqujQxtuJJU0WPzDnx+R97wfG7xyQ4vwEUzIiOwJjO4bQ
+         z6A4YkXaHFSZLdUbBd4v1s+bAhA3wgiYPdwl1OqooLE0EutLRVG2KFM+/fPYgvZ/Wh2F
+         6uD/nM3XxZ86U9vTvMvDtYDBrizPk8jhXvHeD9qSYa/qMxE8UAGAcK33apklVjnp3bcq
+         aNDw==
+X-Gm-Message-State: AOUpUlH98G7tEJmQxcp861ZXkCwirbf52S1Gh5iHn5dT3oYoQ8LQiHoo
+        dudYMqhrE7MaBIH1EopqrwIcyy+mVgkjpoUKoy9lKA==
+X-Google-Smtp-Source: AAOMgpeqEKCDXjMLyvzaJzXBcEdhUaBpe31UHbMg22IlhCTRAJ9BohoxaDF5ScNf0+Zuj9mbxpqPLdWKly+HlDJBVdU=
+X-Received: by 2002:a9f:3861:: with SMTP id q30-v6mr4165956uad.170.1531928263933;
+ Wed, 18 Jul 2018 08:37:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+Received: by 2002:ab0:d97:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:37:43 -0700 (PDT)
+In-Reply-To: <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
+References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
+ <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
+ <20180718104230.GC1431@dhcp22.suse.cz> <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
+ <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
+From:   Bruce Merry <bmerry@ska.ac.za>
+Date:   Wed, 18 Jul 2018 17:37:43 +0200
+Message-ID: <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
+Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some machines
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell King,
- 
- On ven., juil. 13 2018, Russell King - ARM Linux <linux@armlinux.org.uk> wrote:
+On 18 July 2018 at 17:26, Shakeel Butt <shakeelb@google.com> wrote:
+> On Wed, Jul 18, 2018 at 7:29 AM Bruce Merry <bmerry@ska.ac.za> wrote:
+> It seems like you are using cgroup-v1. How many nodes are there in
+> your memcg tree and also how many cpus does the system have?
 
-> On Fri, Jul 13, 2018 at 06:18:37PM +0200, Gregory CLEMENT wrote:
->> From: Yelena Krivosheev <yelena@marvell.com>
->> 
->> The initial values were too small leading to poor performance when using
->> the software buffer management.
->
-> What does this do to latency when a large transfer is also ongoing
-> (iow, the classic bufferbloat issue) ?
+From my original email: "there are 106 memory.stat files in
+/sys/fs/cgroup/memory." - is that what you mean by the number of
+nodes?
 
-IXIA latency test had been done without seeing any differences for long
-traffic (routing).
+The affected systems all have 8 CPU cores (hyperthreading is disabled).
 
-These new values offer better performance for the main usage of this SoC
-(NAS applications), however both Rx and TX queues size can be change by
-ethtool.
+> Please note that memcg_stat_show or reading memory.stat in cgroup-v1
+> is not optimized as cgroup-v2. The function memcg_stat_show() in 4.13
+> does ~17 tree walks and then for ~12 of those tree walks, it goes
+> through all cpus for each node in the memcg tree. In 4.16,
+> a983b5ebee57 ("mm: memcontrol: fix excessive complexity in memory.stat
+> reporting") optimizes aways the cpu traversal at the expense of some
+> accuracy. Next optimization would be to do just one memcg tree
+> traversal similar to cgroup-v2's memory_stat_show().
 
-Gregory
+On most machines it is still fast (1-2ms), and there is no difference
+in the number of CPUs and only very small differences in the number of
+live memory cgroups, so presumably something else is going on.
 
->
->> 
->> Signed-off-by: Yelena Krivosheev <yelena@marvell.com>
->> [gregory: extract from a larger patch]
->> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> ---
->>  drivers/net/ethernet/marvell/mvneta.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
->> index f4e3943a745d..c22df28b07c8 100644
->> --- a/drivers/net/ethernet/marvell/mvneta.c
->> +++ b/drivers/net/ethernet/marvell/mvneta.c
->> @@ -295,10 +295,10 @@
->>  #define MVNETA_RSS_LU_TABLE_SIZE	1
->>  
->>  /* Max number of Rx descriptors */
->> -#define MVNETA_MAX_RXD 128
->> +#define MVNETA_MAX_RXD 512
->>  
->>  /* Max number of Tx descriptors */
->> -#define MVNETA_MAX_TXD 532
->> +#define MVNETA_MAX_TXD 1024
->>  
->>  /* Max number of allowed TCP segments for software TSO */
->>  #define MVNETA_MAX_TSO_SEGS 100
->> -- 
->> 2.18.0
->> 
->> 
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
-> -- 
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-> According to speedtest.net: 13Mbps down 490kbps up
+> The memcg tree does include all zombie memcgs and these zombies does
+> contribute to the memcg_stat_show cost.
 
+That sounds promising. Is there any way to tell how many zombies there
+are, and is there any way to deliberately create zombies? If I can
+produce zombies that might give me a reliable way to reproduce the
+problem, which could then sensibly be tested against newer kernel
+versions.
+
+Thanks
+Bruce
 -- 
-Gregory Clement, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Bruce Merry
+Senior Science Processing Developer
+SKA South Africa
