@@ -2,142 +2,184 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0E4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA406ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F1020652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7546F20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:57:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTb3nAHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F1020652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=toradex.com header.i=@toradex.com header.b="XgU0qsGB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7546F20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=toradex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbeGRNed (ORCPT
+        id S1731151AbeGRNfD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:34:33 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33787 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbeGRNed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:34:33 -0400
-Received: by mail-qt0-f196.google.com with SMTP id c15-v6so3867550qtp.0;
-        Wed, 18 Jul 2018 05:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=zhZPCrE3V6ereZd3mN+n2gDPruxVjBDDiTXKFLxXsOw=;
-        b=DTb3nAHdlnYGtI3UT834veO2mZ25ii+GEyzhy1MELSjRDAhDpL72BOfMm3jLfpq534
-         vpsvQIgDYn1iyZd+60NsimjQuAPuG1GGSTWsU0aOuW5nobusqTXPyM5jcc/91g30s8UH
-         vnGG8Q+pZ4f80IT3BXeL1FTumLiDqIqXMLvCnFHAHu3jLXAAu7NJO44mZrQgAky6sfhd
-         scOZru3BMKuKDl9fTUpeloVSZ4cdR/SUkZ8MWrsiMsDdtDQX26mnd82YIO67r57327Vd
-         1bIyzWE0nAOPh74NERlYZnkBvru9stATWcJuLvr1ECQFzGpQl4FztJklF5vYnxgAToNR
-         jyhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=zhZPCrE3V6ereZd3mN+n2gDPruxVjBDDiTXKFLxXsOw=;
-        b=OlnrqGhhS/CsOYW3mrz7EhR8Iq6rJZE2a81uAnKLjZQtBcPz8IBwEce6ZxAAC7eQ7O
-         G2piCkfhrbNZtI9lSD648TeG98IOP/dk+ESrPQYO+/3scxD3J9CVIxgn38OOqvQD5Tav
-         WpyZqoPTIfRLzGyJjATCSD7cM+Et/sxW0b/NBIxkZKsv13fhPG7+VXbwDWh0rMWoYF5b
-         rJ5wBIOllWl/nd8s1ElUS33PBM6HilWb7nyrOU+T2hBZ39QXdCGu7WEj7ja+3CHCkt6c
-         rVhfgLMV74p4S6hqOphYJmHhzotJLTuk1uX9pbTr4f9u5/nrXZiwcqeRq2oX7qIKFVX6
-         qnmw==
-X-Gm-Message-State: AOUpUlEGAhzpPu8K9aqxMjhzHnx6NjUDjjivkgDBX2nA3Ln+K7Q6O7u9
-        FAMGTEYgOBOcZvwYyYJFT5ORwuUAGZPko1UShZ0=
-X-Google-Smtp-Source: AAOMgpfW7ENTO7J2TOoLoGLqkv33N9wPe3BZ8GN6NkvFsRRPS+Itj7oZsilE9sAzgjTcm2EEedI9/u9vd2WitcuHoJo=
-X-Received: by 2002:ac8:26ee:: with SMTP id 43-v6mr5615865qtp.274.1531918603596;
- Wed, 18 Jul 2018 05:56:43 -0700 (PDT)
+        Wed, 18 Jul 2018 09:35:03 -0400
+Received: from mail-eopbgr30094.outbound.protection.outlook.com ([40.107.3.94]:57520
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726258AbeGRNfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 09:35:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Tm4YtI3jJ8OJuPGCQCa3DXTTAr5YCmQPjk0g/ULkENk=;
+ b=XgU0qsGB1ddN+i1Q4S9t0MtLA95Q0G8l1K3CU2AuFYeWO/SSFnX914lM0x0mqPceoLlNYsJahWWglrqSDZB7rMgu4B1rJgB8qHBq0q6Uk3lFFtHpsfDMO5an+VdO/azhYDapjrJa3i6GQdL+M4kh56NsBcvVYlAdfQu5pk6bczE=
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com (10.168.137.14) by
+ VI1PR0501MB2351.eurprd05.prod.outlook.com (10.169.135.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.17; Wed, 18 Jul 2018 12:57:08 +0000
+Received: from VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::dc61:4a61:b84:357e]) by VI1PR0501MB2590.eurprd05.prod.outlook.com
+ ([fe80::dc61:4a61:b84:357e%8]) with mapi id 15.20.0973.016; Wed, 18 Jul 2018
+ 12:57:08 +0000
+From:   Marcel Ziswiler <marcel.ziswiler@toradex.com>
+To:     "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "patches@linaro.org" <patches@linaro.org>
+Subject: Re: [PATCH] backlight: pwm_bl: Fix uninitialized variable
+Thread-Topic: [PATCH] backlight: pwm_bl: Fix uninitialized variable
+Thread-Index: AQHUHUhtmsif0KNc40KlPUM2WKHIC6SUoqmAgAADkYCAABmYgIAABUWAgAAuAQA=
+Date:   Wed, 18 Jul 2018 12:57:08 +0000
+Message-ID: <1531918626.16896.22.camel@toradex.com>
+References: <20180716210241.9457-1-daniel.thompson@linaro.org>
+         <20180718080913.GB4641@dell> <1531902119.16896.13.camel@toradex.com>
+         <20180718095335.GD4641@dell> <20180718101227.shqf54wpt4kdrsj2@holly.lan>
+In-Reply-To: <20180718101227.shqf54wpt4kdrsj2@holly.lan>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=marcel.ziswiler@toradex.com; 
+x-originating-ip: [46.140.72.82]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0501MB2351;7:1AfEPlJytASAG2yM1mVEyl+9Tb/XwthXdmAlDFNwOIxU3Y0EUKV8jbvacrYEAZN79gZqZTr2pGyiHVDezPmbNXg9V1sT31ABHkMX+PV4J5JWEcL7PeVnmh9Anq/bnzskRGP2cGL+yjzB8xWWng3X6svYVWi2j12plvE75qXQuGaGFmYCx66Xkm+XDp71JA31ueoEz1oaOsBCXsa3c2KXLOVhdVK/t5MsUsGRazwMz8fRGG6Vp/QTwdlR3EkiAybw
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 47aea903-5e86-46b1-a519-08d5ecadf8ad
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0501MB2351;
+x-ms-traffictypediagnostic: VI1PR0501MB2351:
+x-microsoft-antispam-prvs: <VI1PR0501MB2351C7681CC9CF4B17A18E2BFB530@VI1PR0501MB2351.eurprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(148322886591682)(81227570615382)(211171220733660);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:VI1PR0501MB2351;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0501MB2351;
+x-forefront-prvs: 0737B96801
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(39840400004)(376002)(346002)(366004)(199004)(189003)(476003)(68736007)(11346002)(186003)(102836004)(6512007)(446003)(26005)(2616005)(2501003)(6246003)(39060400002)(6116002)(3846002)(97736004)(305945005)(53936002)(2900100001)(256004)(5250100002)(76176011)(7736002)(2906002)(486006)(99286004)(66066001)(6506007)(103116003)(81156014)(316002)(106356001)(93886005)(81166006)(105586002)(86362001)(25786009)(7416002)(54906003)(8676002)(36756003)(44832011)(229853002)(4326008)(110136005)(478600001)(5660300001)(8936002)(14454004)(6486002)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0501MB2351;H:VI1PR0501MB2590.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: toradex.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: OfFocd8Y9Hsj3BeIK2Mk51KXddSGG8PvyBlQX7vW3j6hhtXPlLvsEyoDOvlsWMYb3moGKmz6fTZT8mlqJ0f/vHTdgNe6A+ptH+GZ+YMukaLFxEgykPYTHbPjHjP8TwzZwiemx4W//oP7q3wsSY4usYl0aSQ3QqP6K7g15oHKMhk0p77GIrAwxP11QEAqxgtKaF6UmUiUIPDi1th2MM7B93rv8VJpOaF9V92NhSlyY0DZvyRijsonBy5V/LjyqUcg9gVdqP9SpGfJPb9vTMzlpkPLOtXS8kG8vJGNI0IIbQQkjPOZmdSNGhNri3GMRiq/Fi/H8SwCzI0O+5Kt9v1KpneECF9UK3oNSLEooQLNgrI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <86CFB1BC0835954B8309CFE36E11BA92@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a37:298b:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 05:56:43
- -0700 (PDT)
-In-Reply-To: <20180718124448.2s2b3jxbsqt46cgu@flea>
-References: <20180718105458.22304-1-jagan@amarulasolutions.com> <20180718124448.2s2b3jxbsqt46cgu@flea>
-From:   Jagan Teki <jagannadh.teki@gmail.com>
-Date:   Wed, 18 Jul 2018 18:26:43 +0530
-Message-ID: <CAD6G_RQQyS=zeqvhBP8vVf5sHZgLwqX1SP0SKLHea_L4Od3woQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/18] arm64: allwinner: Add A64 DE2 HDMI support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: toradex.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47aea903-5e86-46b1-a519-08d5ecadf8ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2018 12:57:08.7249
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2351
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 6:14 PM, Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
-> On Wed, Jul 18, 2018 at 04:24:40PM +0530, Jagan Teki wrote:
->> Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
->>
->> A64 behaviour similar to Allwinner A83T where
->> Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
->> Mixer1 => TCON1 => HDMI
->> as per Display System Block Diagram from Allwinner_A64_User_Manual_V1.1.pdf
->>
->> This is third patch-set followed with previous RFC[1], first and second
->> series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
->> rest will add eventually.
->>
->> This series fixed previous version comments
->> - Rebasing on linux-next
->> - sqash all pipeline components in one patch
->> - Enable all pipeline components in board dts
->> - about documenting fallback compatibles
->> - adding new compatible for mixer1
->
-> You still haven't figured out the SRAM parts. We asked you to fix this
-> in the v1 and the v2 already, and we're not going to merge this
-> without those bits figured out properly.
-
-Sorry I'm not sure what I'm trying to do on SRAM here because the last
-mail, I have waited for Icenowy changes about simple_fb with sram_c on
-ccu node and those are merged. can you elaborate please.
-
->
->> Log:
->> [    1.450984] Jagan: sun8i_mixer_probe
->> [    1.464981] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops)
->> [    1.472572] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops)
->> [    1.480676] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer to regulator.10
->> [    1.488738] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_phy)
->> [    1.498879] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
->> [    1.507372] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops)
->> [    1.514778] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
->> [    1.521398] [drm] No driver support for vblank timestamp query.
->> [    1.684611] random: fast init done
->> [    2.011575] Console: switching to colour frame buffer device 180x56
->> [    2.049858] sun4i-drm display-engine: fb0: DRM emulated frame buffer device
->> [    2.057268] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
->>
->> Note:
->> Pine64 boards are unable to get edid by default like other A64 boards,
->> but forcing 'video=HDMI-A-1:1920x1080@60D' kernel command line can
->> create edid with display on penel
->
-> Then that needs to be figured out before it's enabled, instead of
-> having a hack that barely works.
-
-Any suggestion to work.
+T24gV2VkLCAyMDE4LTA3LTE4IGF0IDExOjEyICswMTAwLCBEYW5pZWwgVGhvbXBzb24gd3JvdGU6
+DQo+IE9uIFdlZCwgSnVsIDE4LCAyMDE4IGF0IDEwOjUzOjM1QU0gKzAxMDAsIExlZSBKb25lcyB3
+cm90ZToNCj4gPiBPbiBXZWQsIDE4IEp1bCAyMDE4LCBNYXJjZWwgWmlzd2lsZXIgd3JvdGU6DQo+
+ID4gDQo+ID4gPiBPbiBXZWQsIDIwMTgtMDctMTggYXQgMDk6MDkgKzAxMDAsIExlZSBKb25lcyB3
+cm90ZToNCj4gPiA+ID4gT24gTW9uLCAxNiBKdWwgMjAxOCwgRGFuaWVsIFRob21wc29uIHdyb3Rl
+Og0KPiA+ID4gPiANCj4gPiA+ID4gPiBDdXJyZW50bHksIGlmIHRoZSBEVCBkb2VzIG5vdCBkZWZp
+bmUgbnVtLWludGVycG9sYXRlZC1zdGVwcw0KPiA+ID4gPiA+IHRoZW4NCj4gPiA+ID4gPiBudW1f
+c3RlcHMgaXMgdW5kZWZpbmVkIGFuZCB0aGUgaW50ZXJwb2xhdGlvbiBjb2RlIHdpbGwgZGVwbG95
+DQo+ID4gPiA+ID4gcmFuZG9tbHkuDQo+ID4gPiA+ID4gRml4IHRoaXMuDQo+ID4gPiA+ID4gDQo+
+ID4gPiA+ID4gRml4ZXM6IDU3M2ZlNmQxYzI1YyAoImJhY2tsaWdodDogcHdtX2JsOiBMaW5lYXIg
+aW50ZXJwb2xhdGlvbg0KPiA+ID4gPiA+IGJldHdlZW4NCj4gPiA+ID4gPiBicmlnaHRuZXNzLWxl
+dmVscyIpDQo+ID4gPiA+ID4gUmVwb3J0ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnpp
+c3dpbGVyQHRvcmFkZXguY29tPg0KPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IERhbmllbCBUaG9t
+cHNvbiA8ZGFuaWVsLnRob21wc29uQGxpbmFyby5vcmc+DQo+ID4gPiA+ID4gU2lnbmVkLW9mZi1i
+eTogTWFyY2VsIFppc3dpbGVyIDxtYXJjZWwuemlzd2lsZXJAdG9yYWRleC5jb20+DQo+ID4gPiA+
+IA0KPiA+ID4gPiBUaGlzIGxpbmUgaXMgY29uZnVzaW5nLiAgRGlkIHlvdSBndXlzIGF1dGhvciB0
+aGlzIHBhdGNoDQo+ID4gPiA+IHRvZ2V0aGVyPw0KPiA+ID4gDQo+ID4gPiBZZXMsIEkgcmVwb3J0
+ZWQgaXQgYW5kIHdlIGNhbWUgdG8gYSBjb25jbHVzaW9uIHRvZ2V0aGVyLg0KPiA+IA0KPiA+IEl0
+IHNvdW5kcyBsaWtlIHlvdSBuZWVkIHRvIGhhdmUgYWxsIG9mIHRoZSB0YWdzIChleGNlcHQgdGhp
+cyBvbmUpLg0KPiA+IDopDQo+ID4gDQo+ID4gIFJlcG9ydGVkLWJ5OiAgZm9yIHJlcG9ydGluZyB0
+aGUgaXNzdWUNCj4gPiAgU3VnZ2VzdGVkLWJ5OiBmb3Igc3VnZ2VzdGluZyBhIHJlc29sdXRpb24N
+Cj4gPiAgQWNrZWQtYnk6ICAgICBmb3IgcmV2aWV3aW5nIGl0DQo+ID4gIFRlc3RlZC1ieTogICAg
+Zm9yIHRlc3RpbmcgaXQNCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5IHVzdWFsbHkgbWVhbnMgeW91
+IGVpdGhlciB3cm90ZSBhIHNpZ25pZmljYW50IGFtb3VudA0KPiA+IG9mDQo+ID4gdGhlIGRpZmZz
+dGF0IG9yIHlvdSB3ZXJlIHBhcnQgb2YgdGhlIHN1Ym1pc3Npb24gcGF0aC4NCj4gDQo+IEhlIGRp
+ZCBbSSBkb24ndCBvYmplY3QgdG8gYnV0IHdvdWxkbid0IGhhdmUgdXNlZCB0aGUgZXh0cmEgYnJh
+Y2tldHMNCj4geW91DQo+IGJyb3VnaHQgdXAgOy0pIF0uDQoNClllcywgSSB0YWtlIGFsbCB0aGUg
+YmxhbWUgZm9yIHRoZSBleHRyYSBicmFja2V0cy4gUmVnYXJkbGVzcyBvZiBoYXZpbmcNCmEgbWFz
+dGVycyBpbiBDUyBvciBub3QgSSBzdGlsbCBwcmVmZXIgdG9vIG1hbnkgdGhlbiB0b28gZmV3IG9m
+IHRoZW0gKDstDQpwKS4NCg0KPiA+ID4gPiBNeSBndWVzcyBpcyB0aGF0IHRoaXMgbGluZSBzaG91
+bGQgYmUgZHJvcHBlZCBhbmQgdGhlIFJCIGFuZCBUQg0KPiA+ID4gPiB0YWdzDQo+ID4gPiA+IHNo
+b3VsZCByZW1haW4/ICBJZiBpdCB3YXMgcmV2aWV3ZWQgdG9vLCBwZXJoYXBzIGFuIEFCIHRvbz8N
+Cj4gPiA+IA0KPiA+ID4gSSdtIE9LIGVpdGhlciB3YXkgYW5kIGRvIG5vdCBuZWVkIGFueSBleHBs
+aWNpdCBhdXRob3JzaGlwIHRvIGJlDQo+ID4gPiBleHByZXNzZWQgZm9yIG1lLg0KPiA+IA0KPiA+
+IEluIHRoaXMgaW5zdGFuY2UgSSBzdWdnZXN0IGtlZXBpbmcgUmVwb3J0ZWQtYnkgYW5kIFRlc3Rl
+ZC1ieS4NCj4gPiANCj4gPiA+ID4gPiBUZXN0ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2Vs
+Lnppc3dpbGVyQHRvcmFkZXguY29tPg0KPiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+ICBkcml2ZXJz
+L3ZpZGVvL2JhY2tsaWdodC9wd21fYmwuYyB8IDE3ICsrKysrKysrLS0tLS0tLS0tDQo+ID4gPiA+
+ID4gIDEgZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pDQo+ID4g
+PiA+ID4gDQo+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3
+bV9ibC5jDQo+ID4gPiA+ID4gYi9kcml2ZXJzL3ZpZGVvL2JhY2tsaWdodC9wd21fYmwuYw0KPiA+
+ID4gPiA+IGluZGV4IDllZTRjMWI3MzViMi4uZTNjMjJiNzlmYmNkIDEwMDY0NA0KPiA+ID4gPiA+
+IC0tLSBhL2RyaXZlcnMvdmlkZW8vYmFja2xpZ2h0L3B3bV9ibC5jDQo+ID4gPiA+ID4gKysrIGIv
+ZHJpdmVycy92aWRlby9iYWNrbGlnaHQvcHdtX2JsLmMNCj4gPiA+ID4gPiBAQCAtMjk5LDE1ICsy
+OTksMTQgQEAgc3RhdGljIGludA0KPiA+ID4gPiA+IHB3bV9iYWNrbGlnaHRfcGFyc2VfZHQoc3Ry
+dWN0DQo+ID4gPiA+ID4gZGV2aWNlICpkZXYsDQo+ID4gPiA+ID4gIAkJICogaW50ZXJwb2xhdGlv
+biBiZXR3ZWVuIGVhY2ggb2YgdGhlIHZhbHVlcw0KPiA+ID4gPiA+IG9mDQo+ID4gPiA+ID4gYnJp
+Z2h0bmVzcyBsZXZlbHMNCj4gPiA+ID4gPiAgCQkgKiBhbmQgY3JlYXRlcyBhIG5ldyBwcmUtY29t
+cHV0ZWQgdGFibGUuDQo+ID4gPiA+ID4gIAkJICovDQo+ID4gPiA+ID4gLQkJb2ZfcHJvcGVydHlf
+cmVhZF91MzIobm9kZSwgIm51bS0NCj4gPiA+ID4gPiBpbnRlcnBvbGF0ZWQtDQo+ID4gPiA+ID4g
+c3RlcHMiLA0KPiA+ID4gPiA+IC0JCQkJICAgICAmbnVtX3N0ZXBzKTsNCj4gPiA+ID4gPiAtDQo+
+ID4gPiA+ID4gLQkJLyoNCj4gPiA+ID4gPiAtCQkgKiBNYWtlIHN1cmUgdGhhdCB0aGVyZSBpcyBh
+dCBsZWFzdCB0d28NCj4gPiA+ID4gPiBlbnRyaWVzIGluDQo+ID4gPiA+ID4gdGhlDQo+ID4gPiA+
+ID4gLQkJICogYnJpZ2h0bmVzcy1sZXZlbHMgdGFibGUsIG90aGVyd2lzZSB3ZQ0KPiA+ID4gPiA+
+IGNhbid0DQo+ID4gPiA+ID4gaW50ZXJwb2xhdGUNCj4gPiA+ID4gPiAtCQkgKiBiZXR3ZWVuIHR3
+byBwb2ludHMuDQo+ID4gPiA+ID4gLQkJICovDQo+ID4gPiA+ID4gLQkJaWYgKG51bV9zdGVwcykg
+ew0KPiA+ID4gPiA+ICsJCWlmICgob2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgIm51bS0NCj4g
+PiA+ID4gPiBpbnRlcnBvbGF0ZWQtDQo+ID4gPiA+ID4gc3RlcHMiLA0KPiA+ID4gPiA+ICsJCQkJ
+CSAgJm51bV9zdGVwcykgPT0gMCkNCj4gPiA+ID4gPiAmJg0KPiA+ID4gPiA+IG51bV9zdGVwcykg
+ew0KPiA+ID4gPiANCj4gPiA+ID4gVGhpcyBpcyBwcmV0dHkgdWdseSwgYW5kIGlzbid0IGl0IHN1
+ZmZlcmluZyBmcm9tIG92ZXItDQo+ID4gPiA+IGJyYWNrZXRpbmc/ICBNeQ0KPiA+ID4gPiBzdWdn
+ZXN0aW9uIHdvdWxkIGJlIHRvIGJyZWFrIG91dCB0aGUgaW52b2NhdGlvbiBvZg0KPiA+ID4gPiBv
+Zl9wcm9wZXJ0eV9yZWFkX3UzMigpIGZyb20gdGhlIGlmIGFuZCB0ZXN0IG9ubHkgdGhlIHJlc3Vs
+dC4NCj4gPiA+ID4gDQo+ID4gPiA+IAkJb2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgIm51bS1p
+bnRlcnBvbGF0ZWQtDQo+ID4gPiA+IHN0ZXBzIiwgDQo+ID4gPiA+ICZudW1fc3RlcHMpOw0KPiA+
+ID4gDQo+ID4gPiB5b3UgbWVhbjoNCj4gPiA+IA0KPiA+ID4gCQlyZXQgPSBvZl9wcm9wZXJ0eV9y
+ZWFkX3UzMihub2RlLCAibnVtLWludGVycG9sYXRlZC0NCj4gPiA+IHN0ZXBzIiwgJm51bV9zdGVw
+cyk7DQo+ID4gPiANCj4gPiA+ID4gCQlpZiAoIXJldCAmJiBudW1fc3RlcHMpIHsNCj4gPiA+ID4g
+DQo+ID4gPiA+IEkgaGF2ZW4ndCBjaGVja2VkIHRoZSB1bmRlcmxpbmcgY29kZSwgYnV0IGlzIGl0
+IGV2ZW4gZmVhc2libGUNCj4gPiA+ID4gZm9yDQo+ID4gPiA+IG9mX3Byb3BlcnR5X3JlYWRfdTMy
+KCkgdG8gbm90IHN1Y2NlZWQgQU5EIGZvciBudW1fc3RlcHMgdG8gYmUNCj4gPiA+ID4gc2V0Pw0K
+PiA+ID4gPiANCj4gPiA+ID4gSWYgbm90LCB0aGUgY2hlY2sgZm9yICFyZXQgaWYgc3VwZXJmbHVv
+dXMgYW5kIHlvdSBjYW4gZHJvcCBpdC4NCj4gPiA+IA0KPiA+ID4gTm8sIHRoZW4gd2UgYXJlIGJh
+Y2sgdG8gdGhlIGluaXRpYWwgaXNzdWUgb2YgbnVtX3N0ZXBzDQo+ID4gPiBwb3RlbnRpYWxseSBu
+b3QNCj4gPiA+IGJlaW5nIGluaXRpYWxpc2VkLiBXZSByZWFsbHkgd2FudCBib3RoIG9mX3Byb3Bl
+cnR5X3JlYWRfdTMyKCkgdG8NCj4gPiA+IHN1Y2NlZWQgQU5EIG51bV9zdGVwcyB0byBhY3R1YWxs
+eSBiZSBzZXQuDQo+ID4gDQo+ID4gSSBhbHNvIHRoaW5rIG51bV9zdGVwcyBzaG91bGQgYmUgcHJl
+LWluaXRpYWxpc2VkLg0KDQpZZXMsIEkgZ3Vlc3MgaXQgZGVmaW5pdGVseSBkb2VzIG5vdCBodXJ0
+Lg0KDQo+ID4gVGhlbiBpdCB3aWxsIG9ubHkgYmUgc2V0IGlmIG9mX3Byb3BlcnR5X3JlYWRfdTMy
+KCkgc3VjY2VlZHMuDQoNClllcywgYnV0IHdlIHN0aWxsIG5lZWQgdG8gY2hlY2sgZm9yIGJvdGgs
+IHRoZSBmdW5jdGlvbiBub3QgZmFpbGluZyBhbmQNCm51bV9zdGVwcyB0byBhY3R1YWxseSBiZSBu
+b24gemVyby4NCg0KPiA+IC0tIA0KPiA+IExlZSBKb25lcyBb5p2O55C85pavXQ0KPiA+IExpbmFy
+byBTZXJ2aWNlcyBUZWNobmljYWwgTGVhZA0KPiA+IExpbmFyby5vcmcg4pSCIE9wZW4gc291cmNl
+IHNvZnR3YXJlIGZvciBBUk0gU29Dcw0KPiA+IEZvbGxvdyBMaW5hcm86IEZhY2Vib29rIHwgVHdp
+dHRlciB8IEJsb2c=
