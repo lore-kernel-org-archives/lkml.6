@@ -2,155 +2,162 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E105EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC76ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95D1120693
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:26:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D1120693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com
+	by mail.kernel.org (Postfix) with ESMTP id F408720693
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:26:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bJlMZpNE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F408720693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730487AbeGRJCy (ORCPT
+        id S1730522AbeGRJDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 05:02:54 -0400
-Received: from 4.mo6.mail-out.ovh.net ([87.98.184.159]:58209 "EHLO
-        4.mo6.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbeGRJCy (ORCPT
+        Wed, 18 Jul 2018 05:03:13 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38175 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbeGRJDM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:02:54 -0400
-X-Greylist: delayed 1104 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Jul 2018 05:02:52 EDT
-Received: from player737.ha.ovh.net (unknown [10.109.159.159])
-        by mo6.mail-out.ovh.net (Postfix) with ESMTP id 2E179169E5E
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:07:47 +0200 (CEST)
-Received: from [192.168.0.230] (22.220.201.77.rev.sfr.net [77.201.220.22])
-        (Authenticated sender: sebastien.szymanski@armadeus.com)
-        by player737.ha.ovh.net (Postfix) with ESMTPSA id E40B8E009D;
-        Wed, 18 Jul 2018 10:07:31 +0200 (CEST)
-Subject: Re: [PATCH 1/2] drm/panel: Add support for Armadeus ST0700 Adapt
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20180717072318.18730-1-sebastien.szymanski@armadeus.com>
- <CAOMZO5Dr0zqy4Sf3s=L4qoqePRhZAXWpDk1oTOUidy4_TUQ=QA@mail.gmail.com>
-From:   =?UTF-8?Q?S=c3=a9bastien_Szymanski?= 
-        <sebastien.szymanski@armadeus.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=sebastien.szymanski@armadeus.com; prefer-encrypt=mutual;
- keydata=
- xsBNBFNfZLEBCACv1lqSePHJNpRgcnER+3emy+Arjz84zFax3XkogjY/e3ZneihIgWrVKe5M
- ql16pX4KTkzNgMUKz4bG/XwT3kjcrXshxFLlg7KrHMl287C+W+QOUjnjVeRi/su+SPmjz8VD
- yr11h+ZkVLAWhS+uQJ93jy1NwG8M4t1kBLAVHHD5Vw4FJ+3ouaVYIp1X1Cr8bVKQw33Q1aTd
- ro0kMBb96B9vNu7ciJZ3gvlaBzUEKOgNnq9KaywuLnqrqr4HUIn5JuxZjCjJzt9kTAKcTfp2
- cJM8qpp+2FF5qtbkse9fZ6M64qozgOPr9Tk4Amf9fZEUQ6UNw14mmBZuXSzoHe75gI7TABEB
- AAHNN1PDqWJhc3RpZW4gU1pZTUFOU0tJIDxzZWJhc3RpZW4uc3p5bWFuc2tpQGFybWFkZXVz
- LmNvbT7CwH8EEwECACkFAlNfZLECGyMFCQlmAYAHCwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIX
- gAAKCRCwminogTJk4ss0CACpxtvYO1rCYNtc/j/6fkDsuKKwGtijixHU+C3N+EAJVoHSCdRM
- /PMtyN1fa+94XbW4LHQpZthkXd4kBpcf0aNtrS51193/YZHK5jLpJlUMKLGgU5VHXguakOOF
- ZWptlUCEqZaQ4gR8CUxPZi4urNAg/ORxCiVW2oMO/8GRhoZ+r14QNDGFVphbdlk/4YyY3wr7
- scDKTrRdkGw7kJElAp61I/B2KSbhnvF7U6H646a12/7bm6IEOAWbntoPcBg1h6irlCiNqfxs
- Zfy3r6rVRy840Dl7ldoUzOs7Eon8lUQilr9UorOHBF4NaBTpyD75DtvjRQsF2qV+R1RGS/Em
- IvrjzsBNBFNfZLEBCAC6O44V3Xa1wU0buUgI3pVed48hwSU1/7zeJy/1W21v7GnGvjSYw0sc
- eQwZqLWW0HViMmYkiI1P8Z00RL7Q65emXkrClne2aoromOH0kc8LkKfa3dMqkbsXrK1nsiQd
- cwknRLy8igEhEbfp8ZDgPiMyeMtai7b51q/ki9QF4EzMPk5MsCiAwkVh0yGGrNdZXRo/NoDi
- KWHl52qXjSx30+BEMINDXlmB8pycQEFol+Wj5cNLkqQEErAV0BSHt36aL3jEp1yvjxtgQTs3
- sWL+6+Eu9GurBfbIE0z6XyqlGqqgvrtfm1F+mpUwCoRiicsGhelYqi5YGPD38KIUsgJapU0T
- ABEBAAHCwGUEGAECAA8FAlNfZLECGwwFCQlmAYAACgkQsJop6IEyZOKWTgf/RbOvtKW77EXW
- XBzh04rfkW6prOlbJaIMUjVKZZ1D2OOpAxJbq80whJqCoJ+oVh7uAteozgX3U5TnL7fRx6HP
- zhyidiwKCOXEeTsFrRHEpTOCJYbPz8MTsK14ogz/aUlImt0HbxTaVHz5m65wWM8doCqOj2J9
- Vf12NNpfTxkotmM0QJQAIcEg10RfT3DLG1a68sdghM5rlz/b8mr/wjtOVxYX1TWKMvilCdQy
- YT8NNFcBwMEy5Jt2SXpeASY0CIXGwqqCBLqmQMhh3VcmibIbBBB0hIg4f56Vfn7v8ouFmbYS
- G0Q3TMIWXxYn91KiMXeox+Wsic2Ocw/KpZ/tus0JXQ==
-Message-ID: <3bfd3bde-55e2-9b68-a8ab-c69dc98097da@armadeus.com>
-Date:   Wed, 18 Jul 2018 10:19:15 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 18 Jul 2018 05:03:12 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so1897937wmf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 01:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=m+SsIjLlRyDeR+kc2Wtn+ND/o6S0cPhCdjfLuzrh+T4=;
+        b=bJlMZpNEUoiIslqcpGD6h/y7oxGNTTZbTFrc77z19prZPCr5J2q5iAksdjYP+Ry3R6
+         Sal0+HAHs32aHAszBEtrGPRfo6aC1OYRrWYoeNwOGB6M0eHbLM5Wtahnci5SorSRAX4L
+         NMH0VvezQYIPSHeU1MylGL1La1H0zUSe0ZmfA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=m+SsIjLlRyDeR+kc2Wtn+ND/o6S0cPhCdjfLuzrh+T4=;
+        b=JF8SZLP/zA7y5YNzULnXVcRI1V+R9DRvFZ9NiJAq4GP7Q3PEvAOAVyk30jlOr5scOw
+         UHbsHIbWo1uVe1LXKbMKGHD0e2BTm4uNH3284prscdZnKuHy9h5pwhlIgEQt2w3BjC4E
+         bC0BdLNVAdoZ3Nb0hq6ujaWtRmkHelGcC4FeuSN7SRddYQJFpxf4JEfCc6yUzRofjnwX
+         hm6LY4WnS/ZgZYMSrAIcsUR1P3ZzU+7hYeUzOkQaEkP2eqoIXlPDZfFNUB547vaR/Nbo
+         QlzormUm9YoQj1papZmFkE28Lz9W2lwAQSTQf962+X8glmmhie9EbqA1uq0rTHyepaXR
+         SJfQ==
+X-Gm-Message-State: AOUpUlFlDhREsmSQbt2hJpZYqNUi0Ocfa0hxwD/4CmDYWtCMGeAxk3Ga
+        miviUW+nEe3FFxYvrjbhUhCNRA==
+X-Google-Smtp-Source: AAOMgpd08n3WuWyVQ9woQ8IXLdB6yNP1UTCjPR9UxQzyzigI8ya/JSzAbQhVZu6tXkBsyOqVMnIXyA==
+X-Received: by 2002:a1c:1d2:: with SMTP id 201-v6mr894175wmb.4.1531902385971;
+        Wed, 18 Jul 2018 01:26:25 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id h8-v6sm1268527wmb.32.2018.07.18.01.26.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 01:26:25 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 09:26:23 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Jingoo Han <jingoohan1@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@linaro.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH] backlight: pwm_bl: Fix uninitialized variable
+Message-ID: <20180718082623.nycf2vhlt6yj4bxp@holly.lan>
+References: <20180716210241.9457-1-daniel.thompson@linaro.org>
+ <20180718080913.GB4641@dell>
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5Dr0zqy4Sf3s=L4qoqePRhZAXWpDk1oTOUidy4_TUQ=QA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 17677191491120813079
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtiedrieduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
+In-Reply-To: <20180718080913.GB4641@dell>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabio,
-
-On 07/17/2018 02:28 PM, Fabio Estevam wrote:
-> Hi Sébastien,
+On Wed, Jul 18, 2018 at 09:09:13AM +0100, Lee Jones wrote:
+> On Mon, 16 Jul 2018, Daniel Thompson wrote:
 > 
-> On Tue, Jul 17, 2018 at 4:23 AM, Sébastien Szymanski
-> <sebastien.szymanski@armadeus.com> wrote:
->> This patch adds support for the Armadeus ST0700 Adapt. It comes with a
->> Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT and an adapter board so
->> that it can be connected on the TFT header of Armadeus Dev boards.
->>
->> Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
->> ---
->>  .../display/panel/armadeus,st0700-adapt.txt        |  9 +++++++
->>  drivers/gpu/drm/panel/panel-simple.c               | 29 ++++++++++++++++++++++
->>  2 files changed, 38 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
->>
->> diff --git a/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
->> new file mode 100644
->> index 000000000000..a30d63db3c8f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/panel/armadeus,st0700-adapt.txt
->> @@ -0,0 +1,9 @@
->> +Armadeus ST0700 Adapt. A Santek ST0700I5Y-RBSLW 7.0" WVGA (800x480) TFT with
->> +an adapter board.
->> +
->> +Required properties:
->> +- compatible: "armadeus,st0700-adapt"
+> > Currently, if the DT does not define num-interpolated-steps then
+> > num_steps is undefined and the interpolation code will deploy randomly.
+> > Fix this.
+> > 
+> > Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
+> > brightness-levels")
+> > Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 > 
-> Shouldn't this be named "santek,st0700i5y" instead?
-> 
-> Santek is the vendor of the panel and st0700i5y is the model.
+> This line is confusing.  Did you guys author this patch together?
 
-You're right but Armadeus doesn't provide the panel as-is. Armadeus adds
-an adapter board so it can be connected on the development boards. [1]
-Even though the panel supports MEDIA_BUS_FMT_RGB888_1X24, with the
-adapter board the bus format has to be MEDIA_BUS_FMT_RGB666_1X18.
-
-[1] http://www.opossom.com/english/products-peripherals-st0700_adapt.html
-
-Regards,
+Yes (although the manipulations were fairly mechanical).
 
 > 
-> Then you could add a "santek" entry in
-> Documentation/devicetree/bindings/vendor-prefixes.txt.
+> My guess is that this line should be dropped and the RB and TB tags
+> should remain?  If it was reviewed too, perhaps an AB too?
 > 
-> Regards,
+> > Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > ---
+> >  drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
+> >  1 file changed, 8 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> > index 9ee4c1b735b2..e3c22b79fbcd 100644
+> > --- a/drivers/video/backlight/pwm_bl.c
+> > +++ b/drivers/video/backlight/pwm_bl.c
+> > @@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct device *dev,
+> >  		 * interpolation between each of the values of brightness levels
+> >  		 * and creates a new pre-computed table.
+> >  		 */
+> > -		of_property_read_u32(node, "num-interpolated-steps",
+> > -				     &num_steps);
+> > -
+> > -		/*
+> > -		 * Make sure that there is at least two entries in the
+> > -		 * brightness-levels table, otherwise we can't interpolate
+> > -		 * between two points.
+> > -		 */
+> > -		if (num_steps) {
+> > +		if ((of_property_read_u32(node, "num-interpolated-steps",
+> > +					  &num_steps) == 0) && num_steps) {
 > 
-> Fabio Estevam
+> This is pretty ugly, and isn't it suffering from over-bracketing?  My
+> suggestion would be to break out the invocation of
+> of_property_read_u32() from the if and test only the result.
 > 
-
-
--- 
-Sébastien Szymanski
-Software engineer, Armadeus Systems
-Tel: +33 (0)9 72 29 41 44
-Fax: +33 (0)9 72 28 79 26
+> 		of_property_read_u32(node, "num-interpolated-steps", &num_steps);
+> 		if (!ret && num_steps) {
+> 
+> I haven't checked the underling code, but is it even feasible for
+> of_property_read_u32() to not succeed AND for num_steps to be set?
+> 
+> If not, the check for !ret if superfluous and you can drop it.
+> 
+> > +			/*
+> > +			 * Make sure that there is at least two entries in the
+> 
+> s/is/are/
+> 
+> > +			 * brightness-levels table, otherwise we can't
+> > +			 * interpolate
+> 
+> Why break the line here?
+> 
+> > +			 * between two points.
+> > +			 */
+> >  			if (data->max_brightness < 2) {
+> >  				dev_err(dev, "can't interpolate\n");
+> >  				return -EINVAL;
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
