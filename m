@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389E4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C64ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8FFA20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B451E2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:43:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="iofPAXrp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FFA20856
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="cv8kyqbB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B451E2075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeGRKUR (ORCPT
+        id S1731669AbeGRKSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:20:17 -0400
-Received: from 8bytes.org ([81.169.241.247]:53936 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:18:37 -0400
+Received: from 8bytes.org ([81.169.241.247]:54416 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731658AbeGRKSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:38 -0400
+        id S1731494AbeGRKSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:36 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 7F37CA58; Wed, 18 Jul 2018 11:41:22 +0200 (CEST)
+        id B7A0F96B; Wed, 18 Jul 2018 11:41:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906883; bh=/Ih1ouATHKIWwXvRWuZbzp4GcZEjnBzBwjH19GfP9H8=;
+        t=1531906882; bh=qYlJ2zsyHaAhXUQt0Hazi8E1heNgKD3G46Knr4YajHM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iofPAXrphrKsFvlQOfwmUK8tNTPw9GSJHCwLAoxi6nR60sAlNV6aGO1SZOjO7po6a
-         xF2jdFtTLz9Zj0lN8YECRQQ06Rs42MaKLOLjxgfYoFdsC6XlJvDaNnR32ZskANX8k0
-         7GLb599fQSa3aWnnXvEj1DgU+o4l0Mr+Rz9gNk79su2fiu0pwYlMnFI2aIujezEJVv
-         YIFXeYplulZ3RhcmlF1LKYTIG2QEDxu+b+N4q15j8EnFu9gpY3nfqROGFJpW7qLn8U
-         M0DiDjj3Q95S3sMJv3PlUnlsFrsyJe39CyR11GBLLIk09xxDT6GkbBfBC0InrGEhNE
-         3Njr/vzX6ng7A==
+        b=cv8kyqbBgaDh0zOP4/76qPPyF7Q9QO8igqD+hqdTXc/hD0jD6TXg64cOKDT6coXBs
+         zBj3C9FHKWfOc1MGAUmD8hSW9/LczAMTsjL7LqKx/BJ22ri6ZhrH6pDaQLvAEs2f/G
+         hWdxAL1fo7xdScigkTkquBd4VhsuSebMAvW2/kOtgIJxNdcENmrXLrM8axhiO4PMOO
+         WQxdKTxLAvnK3qHVEmrKYH+DmCiPX6/TpYLdUDjEW6U89nGas5wbdTEoAzTcNnHFt+
+         b5cx09p+X48syui5OEig59gdPQNzuVMCRJOi59cucT/A0MfjGB5wBI3nlZo7m6Me0h
+         BWuXUWRpu6Fiw==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 25/39] x86/mm/pti: Define X86_CR3_PTI_PCID_USER_BIT on x86_32
-Date:   Wed, 18 Jul 2018 11:41:02 +0200
-Message-Id: <1531906876-13451-26-git-send-email-joro@8bytes.org>
+Subject: [PATCH 16/39] x86/pgtable/pae: Unshare kernel PMDs when PTI is enabled
+Date:   Wed, 18 Jul 2018 11:40:53 +0200
+Message-Id: <1531906876-13451-17-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,39 +72,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Move it out of the X86_64 specific processor defines so
-that its visible for 32bit too.
+With PTI we need to map the per-process LDT into the kernel
+address-space for each process, so we need separate kernel
+PMDs per PGD.
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/processor-flags.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/pgtable-3level_types.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor-flags.h b/arch/x86/include/asm/processor-flags.h
-index 625a52a..02c2cbd 100644
---- a/arch/x86/include/asm/processor-flags.h
-+++ b/arch/x86/include/asm/processor-flags.h
-@@ -39,10 +39,6 @@
- #define CR3_PCID_MASK	0xFFFull
- #define CR3_NOFLUSH	BIT_ULL(63)
+diff --git a/arch/x86/include/asm/pgtable-3level_types.h b/arch/x86/include/asm/pgtable-3level_types.h
+index 6a59a6d..78038e0 100644
+--- a/arch/x86/include/asm/pgtable-3level_types.h
++++ b/arch/x86/include/asm/pgtable-3level_types.h
+@@ -21,9 +21,10 @@ typedef union {
+ #endif	/* !__ASSEMBLY__ */
  
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--# define X86_CR3_PTI_PCID_USER_BIT	11
--#endif
--
+ #ifdef CONFIG_PARAVIRT
+-#define SHARED_KERNEL_PMD	(pv_info.shared_kernel_pmd)
++#define SHARED_KERNEL_PMD	((!static_cpu_has(X86_FEATURE_PTI) &&	\
++				 (pv_info.shared_kernel_pmd)))
  #else
- /*
-  * CR3_ADDR_MASK needs at least bits 31:5 set on PAE systems, and we save
-@@ -53,4 +49,8 @@
- #define CR3_NOFLUSH	0
+-#define SHARED_KERNEL_PMD	1
++#define SHARED_KERNEL_PMD	(!static_cpu_has(X86_FEATURE_PTI))
  #endif
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+# define X86_CR3_PTI_PCID_USER_BIT	11
-+#endif
-+
- #endif /* _ASM_X86_PROCESSOR_FLAGS_H */
+ /*
 -- 
 2.7.4
 
