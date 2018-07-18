@@ -2,112 +2,238 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1F4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D56ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6565C2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:19:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="LJK26YYf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6565C2075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id BAF412075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:22:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF412075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbeGSAAB (ORCPT
+        id S1730691AbeGSACp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 20:00:01 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:59011 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730573AbeGSAAB (ORCPT
+        Wed, 18 Jul 2018 20:02:45 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:44778 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726985AbeGSACp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 20:00:01 -0400
-Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id w6INJiKe017474;
-        Thu, 19 Jul 2018 08:19:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w6INJiKe017474
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1531955985;
-        bh=TVuOblHdBPLgFZ+jZWnXvvI1L5ZkTEbEvuAoEAlFXhE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=LJK26YYfeD3qD6+8C6M0EoxRBR05rhs7dYYW1T94SFYY9bZhW3UrjA/md3YTQr2W6
-         C6pxCYf8ZWQVanxE/tOj0t8X0ibX/ZiDqhtHyOl/8tvIPBVKvaPvMQlByHNphhCizd
-         rZtNIFtxqjWSAmmhNDguHgnd7MzlUiMPQUWlC7oTBMIJoIGkUmXeTgHqo7nmzXPlfo
-         o+AHNMELliUP42R0lDf4jCiR0qUeWrNJEThD6MtPa3iLDQC4A2dzfgL8Awhf7IDEK2
-         IvotJsDloLneVEHxoaor6l3K14RWFr96/Pmgxv29j9VGeh92QWH0dbQlqKjGrVHuHf
-         xNTGe7c6j+Q6A==
-X-Nifty-SrcIP: [209.85.213.52]
-Received: by mail-vk0-f52.google.com with SMTP id b77-v6so3429576vkb.5;
-        Wed, 18 Jul 2018 16:19:44 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGxHOPXE1nveXqOeK3x6jfjXKFwRs4v9ikDk36QKuztuNJGRwoC
-        9yn7e6aajZrT81mY6Y9K5p2LygTrvbE5P2jV+Hs=
-X-Google-Smtp-Source: AAOMgpeTZ1u+4ukFzYxmoH0c73Qdq0EE4lVFa0bjDYIXIVFkbk//BCPxe9XdkDwODtx9/EHfH9pBXtxyidZcfb6cXc0=
-X-Received: by 2002:a1f:2348:: with SMTP id j69-v6mr4584402vkj.160.1531955983726;
- Wed, 18 Jul 2018 16:19:43 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 16:19:03
- -0700 (PDT)
-In-Reply-To: <20180718171507.4837-1-major@redhat.com>
-References: <20180718171507.4837-1-major@redhat.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 19 Jul 2018 08:19:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATTdQq4fT_jonzdkQ4rQQQC+zaE0c5gwmrfs3=PrUsNGA@mail.gmail.com>
-Message-ID: <CAK7LNATTdQq4fT_jonzdkQ4rQQQC+zaE0c5gwmrfs3=PrUsNGA@mail.gmail.com>
-Subject: Re: [PATCH] buildtar: Copy vmlinuz for arm64
-To:     Major Hayden <major@redhat.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 18 Jul 2018 20:02:45 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T4tyslE_1531956127;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T4tyslE_1531956127)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 19 Jul 2018 07:22:15 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC v5 PATCH 1/2] mm: refactor do_munmap() to extract the common part
+Date:   Thu, 19 Jul 2018 07:21:40 +0800
+Message-Id: <1531956101-8526-2-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1531956101-8526-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1531956101-8526-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-19 2:15 GMT+09:00 Major Hayden <major@redhat.com>:
-> Copy the architecture-specific compressed kernel image to the
-> directory used to make the tar package.
->
-> Signed-off-by: Major Hayden <major@redhat.com>
-> ---
+Introduces three new helper functions:
+  * munmap_addr_sanity()
+  * munmap_lookup_vma()
+  * munmap_mlock_vma()
 
+They will be used by do_munmap() and the new do_munmap with zapping
+large mapping early in the later patch.
 
-Thanks for the patch,
-but I applied Olof's one, which copy more files.
+There is no functional change, just code refactor.
 
-https://patchwork.kernel.org/patch/10523811/
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ mm/mmap.c | 120 ++++++++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 82 insertions(+), 38 deletions(-)
 
-
-
->  scripts/package/buildtar | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/scripts/package/buildtar b/scripts/package/buildtar
-> index e8cc72a51b32..a87c8cbc1ba3 100755
-> --- a/scripts/package/buildtar
-> +++ b/scripts/package/buildtar
-> @@ -80,6 +80,9 @@ case "${ARCH}" in
->         alpha)
->                 [ -f "${objtree}/arch/alpha/boot/vmlinux.gz" ] && cp -v -- "${objtree}/arch/alpha/boot/vmlinux.gz" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
->                 ;;
-> +       arm64)
-> +               [ -f "${objtree}/arch/arm64/boot/Image.gz" ] && cp -v -- "${objtree}/arch/arm64/boot/Image.gz" "${tmpdir}/boot/vmlinuz-${KERNELRELEASE}"
-> +               ;;
->         parisc*)
->                 [ -f "${KBUILD_IMAGE}" ] && cp -v -- "${KBUILD_IMAGE}" "${tmpdir}/boot/vmlinux-${KERNELRELEASE}"
->                 [ -f "${objtree}/lifimage" ] && cp -v -- "${objtree}/lifimage" "${tmpdir}/boot/lifimage-${KERNELRELEASE}"
-> --
-> 2.17.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d1eb87e..2504094 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2686,34 +2686,44 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	return __split_vma(mm, vma, addr, new_below);
+ }
+ 
+-/* Munmap is split into 2 main parts -- this part which finds
+- * what needs doing, and the areas themselves, which do the
+- * work.  This now handles partial unmappings.
+- * Jeremy Fitzhardinge <jeremy@goop.org>
+- */
+-int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+-	      struct list_head *uf)
++static inline bool munmap_addr_sanity(unsigned long start, size_t len)
+ {
+-	unsigned long end;
+-	struct vm_area_struct *vma, *prev, *last;
+-
+ 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
+-		return -EINVAL;
++		return false;
+ 
+-	len = PAGE_ALIGN(len);
+-	if (len == 0)
+-		return -EINVAL;
++	if (PAGE_ALIGN(len) == 0)
++		return false;
++
++	return true;
++}
++
++/*
++ * munmap_lookup_vma: find the first overlap vma and split overlap vmas.
++ * @mm: mm_struct
++ * @vma: the first overlapping vma
++ * @prev: vma's prev
++ * @start: start address
++ * @end: end address
++ *
++ * returns 1 if successful, 0 or errno otherwise
++ */
++static int munmap_lookup_vma(struct mm_struct *mm, struct vm_area_struct **vma,
++			     struct vm_area_struct **prev, unsigned long start,
++			     unsigned long end)
++{
++	struct vm_area_struct *tmp, *last;
+ 
+ 	/* Find the first overlapping VMA */
+-	vma = find_vma(mm, start);
+-	if (!vma)
++	tmp = find_vma(mm, start);
++	if (!tmp)
+ 		return 0;
+-	prev = vma->vm_prev;
+-	/* we have  start < vma->vm_end  */
++
++	*prev = tmp->vm_prev;
++
++	/* we have start < vma->vm_end  */
+ 
+ 	/* if it doesn't overlap, we have nothing.. */
+-	end = start + len;
+-	if (vma->vm_start >= end)
++	if (tmp->vm_start >= end)
+ 		return 0;
+ 
+ 	/*
+@@ -2723,7 +2733,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	 * unmapped vm_area_struct will remain in use: so lower split_vma
+ 	 * places tmp vma above, and higher split_vma places tmp vma below.
+ 	 */
+-	if (start > vma->vm_start) {
++	if (start > tmp->vm_start) {
+ 		int error;
+ 
+ 		/*
+@@ -2731,13 +2741,14 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 		 * not exceed its limit; but let map_count go just above
+ 		 * its limit temporarily, to help free resources as expected.
+ 		 */
+-		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
++		if (end < tmp->vm_end &&
++		    mm->map_count > sysctl_max_map_count)
+ 			return -ENOMEM;
+ 
+-		error = __split_vma(mm, vma, start, 0);
++		error = __split_vma(mm, tmp, start, 0);
+ 		if (error)
+ 			return error;
+-		prev = vma;
++		*prev = tmp;
+ 	}
+ 
+ 	/* Does it split the last one? */
+@@ -2747,7 +2758,48 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 		if (error)
+ 			return error;
+ 	}
+-	vma = prev ? prev->vm_next : mm->mmap;
++
++	*vma = *prev ? (*prev)->vm_next : mm->mmap;
++
++	return 1;
++}
++
++static inline void munmap_mlock_vma(struct vm_area_struct *vma,
++				    unsigned long end)
++{
++	struct vm_area_struct *tmp = vma;
++
++	while (tmp && tmp->vm_start < end) {
++		if (tmp->vm_flags & VM_LOCKED) {
++			vma->vm_mm->locked_vm -= vma_pages(tmp);
++			munlock_vma_pages_all(tmp);
++		}
++		tmp = tmp->vm_next;
++	}
++}
++
++/* Munmap is split into 2 main parts -- this part which finds
++ * what needs doing, and the areas themselves, which do the
++ * work.  This now handles partial unmappings.
++ * Jeremy Fitzhardinge <jeremy@goop.org>
++ */
++int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
++	      struct list_head *uf)
++{
++	unsigned long end;
++	struct vm_area_struct *vma = NULL, *prev;
++	int ret = 0;
++
++	if (!munmap_addr_sanity(start, len))
++		return -EINVAL;
++
++	len = PAGE_ALIGN(len);
++
++	end = start + len;
++
++	ret = munmap_lookup_vma(mm, &vma, &prev, start, end);
++	if (ret != 1)
++		return ret;
+ 
+ 	if (unlikely(uf)) {
+ 		/*
+@@ -2759,24 +2811,16 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 		 * split, despite we could. This is unlikely enough
+ 		 * failure that it's not worth optimizing it for.
+ 		 */
+-		int error = userfaultfd_unmap_prep(vma, start, end, uf);
+-		if (error)
+-			return error;
++		ret = userfaultfd_unmap_prep(vma, start, end, uf);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	/*
+ 	 * unlock any mlock()ed ranges before detaching vmas
+ 	 */
+-	if (mm->locked_vm) {
+-		struct vm_area_struct *tmp = vma;
+-		while (tmp && tmp->vm_start < end) {
+-			if (tmp->vm_flags & VM_LOCKED) {
+-				mm->locked_vm -= vma_pages(tmp);
+-				munlock_vma_pages_all(tmp);
+-			}
+-			tmp = tmp->vm_next;
+-		}
+-	}
++	if (mm->locked_vm)
++		munmap_mlock_vma(vma, end);
+ 
+ 	/*
+ 	 * Remove the vma's, and unmap the actual pages
 -- 
-Best Regards
-Masahiro Yamada
+1.8.3.1
+
