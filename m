@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39724ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC40ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F34B52075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:37:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F34B52075E
+	by mail.kernel.org (Postfix) with ESMTP id F37622075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:39:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37622075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731031AbeGRMPP (ORCPT
+        id S1730859AbeGRMRB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:15:15 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:42093 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeGRMPP (ORCPT
+        Wed, 18 Jul 2018 08:17:01 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:33567 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbeGRMRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:15:15 -0400
-Received: by mail-ua0-f194.google.com with SMTP id w7-v6so2693150uan.9;
-        Wed, 18 Jul 2018 04:37:46 -0700 (PDT)
+        Wed, 18 Jul 2018 08:17:01 -0400
+Received: by mail-vk0-f68.google.com with SMTP id y70-v6so2306731vkc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 04:39:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4hPulgwrdoC0YDznN5lpo6QhNvOqlUqEj1w+VeE9Dvc=;
-        b=Djx/QJLY7EX3K/oKV3OPOwE1L8i4VusdAaQrgSQQ+trdz/LsEY1V1iylVSSziKUU3Y
-         wmFVNU3NjOvN8rwZx14ZdjJ2k3vLQ29kONkSH7pGJp7mX9TGzMDgIgi8jW2wrWXjsecT
-         XNigT8t4eSG3SC+B1OlN/D5wyF8qRcBPoRnNMROM8t5+ImRnghNvb51cFPpnsbezdFTT
-         W3Rvytbc3Q79Cw5gjDc9IqFD/YCZ6U/d23qQIg1zgE05aPQ1C4z0Dwe5x42ERRKTetaY
-         zPTCK2jBpOMhptGpIuUr+rO6+UY7HYj5JKQ5wDMwizS/UtW7KeMtZDlAF6rahoknhrbh
-         WtKw==
-X-Gm-Message-State: AOUpUlEQNHtK6538SGxJy3MsLvF6/y1dnuFkbWDOTWjYW+vHdksP0vPi
-        3uMCar64j0zZ24pdGFiZ070q1Tqd1g43GTxu4KA=
-X-Google-Smtp-Source: AAOMgpdAlT6vzIYTXwcYrRkMfn50nB0BwrmhQJpVvxYEu0Uqigp2pSDiUcsTeUrLL70IC6lwAfsiVVJXdwkbEpwCGQc=
-X-Received: by 2002:ab0:1b6c:: with SMTP id n44-v6mr3565606uai.4.1531913865871;
- Wed, 18 Jul 2018 04:37:45 -0700 (PDT)
+        bh=7Dl+XpLKrC1bvHpx03JRwDMDee2Ag2FbzSgLDZgcrig=;
+        b=bLM+omxw+H50oUrcuDfSDYDPG+6PkvKlkP4RJV4iD3vIaVy41OL2AzXH21uSwXW7uo
+         xEMfgJLZ//KX6G7WoIT803zt2k0EQj0tz9WMdbl51Hq541Jg3PbdlhIazomBKJHhN/VO
+         xQV9fvNHWGZCy9uKg7gwpQoXwrPIhhkKDk+ouLTHGr0JJLjNStutbQF/tR74fFNBqh2P
+         pUsGKgsFJKsLXYEBA7E72RmDQaF9KQ9c/H3PdLBtYqXvDz/ZuAfwbwIXTQ+r/Dg7xUkA
+         6wlIGl7CmkxYsuM6WJhTzY2DSkCG5X6Z8zXOXC/48DJ37QvhpL+vNTBEM0X1ub7d3Vrp
+         4yPg==
+X-Gm-Message-State: AOUpUlHRmppG+/eEpQDGUisdenhq817roNCTEzsZgB1vwxMu2sNEiKzf
+        cu0bRwl85Ruq/w225A0EtwJNdUVBr5IULFm7TT6nT2re
+X-Google-Smtp-Source: AAOMgpcHDpUB8ttycp7MzQvCkxLjlhfJkfF5Cq0j4CLJVf6j/Bh6+h9WT3gq7ks++BAK21IZFSDXMVptey9i3Q2BYyI=
+X-Received: by 2002:a1f:3701:: with SMTP id e1-v6mr3098698vka.50.1531913971643;
+ Wed, 18 Jul 2018 04:39:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180709093040.23597-1-geert@linux-m68k.org> <0f38c6fd-82f1-7211-3b2e-425bbd44b157@linux-m68k.org>
-In-Reply-To: <0f38c6fd-82f1-7211-3b2e-425bbd44b157@linux-m68k.org>
+References: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
+In-Reply-To: <1530685696-14672-1-git-send-email-rppt@linux.vnet.ibm.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 18 Jul 2018 13:37:34 +0200
-Message-ID: <CAMuHMdVCA4C4TYfeM+McL2EhHzUrPDEfP14oinYVp10KdOoiBA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] m68k: IO Fixes and Cleanups
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Helge Deller <deller@gmx.de>,
+Date:   Wed, 18 Jul 2018 13:39:19 +0200
+Message-ID: <CAMuHMdWOCtrYN4t4y5eucy1juE3L8fkb1PaZ9gJ9a=jMXV+FGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] m68k: switch to MEMBLOCK + NO_BOOTMEM
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc:     Greg Ungerer <gerg@linux-m68k.org>, Sam Creasey <sammy@sammy.net>,
+        Michal Hocko <mhocko@kernel.org>,
         linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        netdev <netdev@vger.kernel.org>, linux-input@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,31 +60,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 3:48 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
-> On 09/07/18 19:30, Geert Uytterhoeven wrote:
-> > This patch series contains fixes and cleanups for I/O accessors on m68k
-> > platforms (with MMU).
-> >
-> > The first patch contains small fixes without any dependencies.
-> > Patches 2 and 3 make small adjustments to drivers that are dependencies
-> > for further cleanup.
-> > Patch 4 and 5 complete the cleanup.
-> >
-> > Changes compared to v1:
-> >    - Move ARCH_HAS_IOREMAP_WT to fix "ioremap_wt redefined" warnings with
-> >      m5475evb defconfig,
-> >    - Add Acked-by.
-> >
-> > Given the dependencies, I think it's easiest if the respective
-> > maintainers would provide their Acked-by, so all patches can go in
-> > through the m68k tree.
->
-> Retested on ColdFire 5475, looks good.
-> For the whole series:
->
-> Acked-by: Greg Ungerer <gerg@linux-m68k.org>
+Hi Mike,
 
-Thanks, applied and queued for v4.19.
+On Wed, Jul 4, 2018 at 8:28 AM Mike Rapoport <rppt@linux.vnet.ibm.com> wrote:
+> These patches switch m68k boot time memory allocators from bootmem to
+> memblock + no_bootmem.
+>
+> The first two patches update __ffs() and __va() definitions to be inline
+> with other arches and asm-generic. This is required to avoid compilation
+> warnings in mm/memblock.c and mm/nobootmem.c.
+>
+> The third patch performs the actual switch of the boot time mm. Its
+> changelog has detailed description of the changes.
+>
+> I've tested the !MMU version with qemu-system-m68k -M mcf5208evb
+> and the MMU version with q800 using qemu from [1].
+>
+> I've also build tested allyesconfig and *_defconfig.
+>
+> [1] https://github.com/vivier/qemu-m68k.git
+>
+> v2:
+> * fix reservation of the kernel text/data/bss for ColdFire MMU
+
+Boots fine on the real Amiga, too. Let's assume it works on Sun 3 too.
+Thanks a lot, applied and queued for v4.19.
 
 Gr{oetje,eeting}s,
 
