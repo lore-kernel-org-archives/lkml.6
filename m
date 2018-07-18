@@ -2,139 +2,108 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1DFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23730ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BDE20858
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C212220871
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:46:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="GHKwgm6D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35BDE20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="glT18quv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C212220871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731553AbeGRRWz (ORCPT
+        id S1731518AbeGRRZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 13:22:55 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:40461 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731059AbeGRRWy (ORCPT
+        Wed, 18 Jul 2018 13:25:19 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58096 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731293AbeGRRZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 13:22:54 -0400
-Received: by mail-yb0-f193.google.com with SMTP id y11-v6so2091831ybm.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:44:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hn8PNeEVeBiPcjbyroz+adMVtPsNaYaDnRKKaOIrY5E=;
-        b=GHKwgm6DdSmOCkFrFrv42QUK9fk3virG1dzvW1E0Vvo+r6PE5no+K+qKo4JPp9vcuH
-         i657zfRdZ5fOXA2Y4EUZu1+7/5nfBwcl+qYfJ6xBcFDmRB0tNUiN4dCNubEo6owXF9FB
-         HRR2DlNCF4yYaaV4NE+SKFemGf8af0346shmAk+YrT0t+n/Vvg+ZxcJqCJxnOA10a/pQ
-         b+ktdoLgIv6lp4FAsq/B7yJyoJ5JiHVNraYZDivJTaJzosmYeik3Q3T6qUl0qdRar73b
-         28WCVoSExhX6o9VrIC4FYAkJqT3rhzUarHbsG6KtuHsBBJ8bi+oXHMELe+wVlgfv+6I0
-         nTtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hn8PNeEVeBiPcjbyroz+adMVtPsNaYaDnRKKaOIrY5E=;
-        b=sBmkm48RW20b+hnAg2DGDRvrYw7RMBJ2QDeRBUIIz/YfhsRV0VzmsAAzf/vQR5iKmy
-         6zosk2vwiy6u/Qblpm+QxiOUGX772+DINQmCp7WkUNBA/f1/8UOLt39XKatZWMqMX/rZ
-         FWl4GneRiZkJlfWx50XCkD8EkiFYwmYUUdItaMXHJJZ4u4P7cmZ2zYL5pPxIAwAHo7pf
-         7/e5eh7y5c+FAA0Q5mYHXUNXa2vzzSWAHdkSnaIfoXFnaeYw4BVXwgie1zAbvGlM7J+v
-         fUKgnpyLhCE1uJizanBc4r0DjKSuPuqRQBiF/D4gXuMz6c2eoWMErmNnWcvVR/WND4DW
-         xldQ==
-X-Gm-Message-State: AOUpUlHzgk2BGXuDllsyaVUNv7xDZSIRmCpYR23fhHoB1NFRIEsji6xq
-        D8hBevt5J4knfdSM+iSfqwItAg==
-X-Google-Smtp-Source: AAOMgpdWTP0Oqonmq74etKjrA9Wd+lG+jsvyYo0O9Gw759K5XDaQ1Ck5K8Y/twPjpPpgNDhTWuyPnw==
-X-Received: by 2002:a25:588a:: with SMTP id m132-v6mr3582201ybb.464.1531932249992;
-        Wed, 18 Jul 2018 09:44:09 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:200::2:7eca])
-        by smtp.gmail.com with ESMTPSA id f137-v6sm4276121ywb.52.2018.07.18.09.44.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 09:44:08 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 12:46:56 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
- and IO
-Message-ID: <20180718164656.GA2838@cmpxchg.org>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-9-hannes@cmpxchg.org>
- <20180718124627.GD2476@hirez.programming.kicks-ass.net>
- <20180718135633.GA5161@cmpxchg.org>
- <20180718163115.GV2494@hirez.programming.kicks-ass.net>
+        Wed, 18 Jul 2018 13:25:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WNy4uxF+gpWjNJGHndaUSr7pFLb3V6jPVZoK7hr/nbI=; b=glT18quvoYBGXJ8p1+dijiQn9
+        8WOD8nmIsQlb4sGl91dyMuRnZdJkrcYLrj/3EE1df4eVzTdEr18h36EK0+AN9ZYzJnILppLEb6TWF
+        MBZeEn9EqjjC4cP/3ZSQ97YxbCQlEJ9Yq2WsJ1X8nihqGngD6QCtt5OAyHNZiNBc5BoAU=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ffpas-0003n3-A6; Wed, 18 Jul 2018 16:46:26 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ffpar-0007TC-G8; Wed, 18 Jul 2018 17:46:25 +0100
+Date:   Wed, 18 Jul 2018 17:46:25 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Milan Broz <gmazyland@gmail.com>
+Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>, agk@redhat.com,
+        snitzer@redhat.com, herbert@gondor.apana.org.au,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        jonathan.cameron@huawei.com
+Subject: Re: [PATCH 4/5] crypto: Add IV generation templates
+Message-ID: <20180718164625.GA20360@sirena.org.uk>
+References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
+ <1531899055-29362-5-git-send-email-wangxiongfeng2@huawei.com>
+ <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
 Content-Disposition: inline
-In-Reply-To: <20180718163115.GV2494@hirez.programming.kicks-ass.net>
+In-Reply-To: <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
+X-Cookie: Marriage, n.:
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 06:31:15PM +0200, Peter Zijlstra wrote:
-> On Wed, Jul 18, 2018 at 09:56:33AM -0400, Johannes Weiner wrote:
-> > On Wed, Jul 18, 2018 at 02:46:27PM +0200, Peter Zijlstra wrote:
-> 
-> > > I'm confused by this whole MEMSTALL thing... I thought the idea was to
-> > > account the time we were _blocked_ because of memstall, but you seem to
-> > > count the time we're _running_ with PF_MEMSTALL.
-> > 
-> > Under heavy memory pressure, a lot of active CPU time is spent
-> > scanning and rotating through the LRU lists, which we do want to
-> > capture in the pressure metric. What we really want to know is the
-> > time in which CPU potential goes to waste due to a lack of
-> > resources. That's the CPU going idle due to a memstall, but it's also
-> > a CPU doing *work* which only occurs due to a lack of memory. We want
-> > to know about both to judge how productive system and workload are.
-> 
-> Then maybe memstall (esp. the 'stall' part of it) is a bit of a
-> misnomer.
 
-I'm not tied to that name, but I can't really think of a better
-one. It was called PF_MEMDELAY in the past, but "delay" also has
-busy-spinning connotations in the kernel. "wait" also implies that
-it's a passive state.
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > And esp. the wait_on_page_bit_common caller seems performance sensitive,
-> > > and the above function is quite expensive.
-> > 
-> > Right, but we don't call it on every invocation, only when waiting for
-> > the IO to read back a page that was recently deactivated and evicted:
-> > 
-> > 	if (bit_nr == PG_locked &&
-> > 	    !PageUptodate(page) && PageWorkingset(page)) {
-> > 		if (!PageSwapBacked(page))
-> > 			delayacct_thrashing_start();
-> > 		psi_memstall_enter(&pflags);
-> > 		thrashing = true;
-> > 	}
-> > 
-> > That means the page cache workingset/file active list is thrashing, in
-> > which case the IO itself is our biggest concern, not necessarily a few
-> > additional cycles before going to sleep to wait on its completion.
-> 
-> Ah, right. PageWorkingset() is only true if we (recently) evicted that
-> page before, right?
+On Wed, Jul 18, 2018 at 10:16:05AM +0200, Milan Broz wrote:
 
-Yep, but not all of those, only the ones who were on the active list
-in their previous incarnation, aka refaulting *hot* pages, aka there
-is little chance this is healthy behavior.
+> So we are here again and moving INTERNAL dm-crypt functionality into
+> cryptoapi.
+
+> The TCW,LMK  IVs generator make sense only for dm-crypt=20
+> for compatible old disk encryption mappings.
+
+> I strongly disagree to move this outside of dm-crypt.
+
+> Sorry, the last discussion was that it remains inside dm-crypt
+> and it will be only registered through crypto API.
+
+Sorry, I'm partly to blame for this in that I asked Xiongfeng to pick up
+Binoy Jayan's old patch set.  I seem to have missed that particular part
+of the discussion and so haven't forwarded it on to him - do you have a
+link, I can't seem to see it in my local archives of the prior
+discussions but they might not be complete?
+
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltPbuAACgkQJNaLcl1U
+h9BELQf/ZVNZaHHO4wZB1eQXBBRGH3LDh1M1jHFuxM9lbL5fZmO6i9Pm0ANrcKSF
+rH0flmXeHkqCM5PNKkN4DH3PCPihEw/ZSt6zW09RhwqS65R12vQnCQbVMNz2lW0u
+WNhJmJcxUoZSwRMzC4mt17417CufbYXm9/rfXwDgfSDQlp71/L6yjEoHzLsVTaw4
+kJMvNzmM0uHqFU+r4ssPY68hvsd40mqcXcFRtf+TdDOf35EUvh2hZ8vF2NujlXxP
+xGpRYbyKEWzQREpgRkf0mdj2eTbUjkTPHvNYOOZM7J0mfQdxGBVn63ZmJlhVuPUK
+9CA5VXOfVnVs9Cs1DypKjj+mJFECMQ==
+=GqVU
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
