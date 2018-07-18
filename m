@@ -2,84 +2,110 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3DBCECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB875ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8067D20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:24:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="i5taOsfp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8067D20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 7229E20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:25:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7229E20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731195AbeGRQDO (ORCPT
+        id S1731297AbeGRQDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:03:14 -0400
-Received: from imap.thunk.org ([74.207.234.97]:57386 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730342AbeGRQDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:03:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Kbm6SiPKFoQE0bgWp6a/CkD7zw/w98IgbaL126dzdDA=; b=i5taOsfpHfkn4cjEKG7D0gwxoR
-        nGusXf3mrsyzo1nyGFrCYaCuURy0r767lZg/ESG63ae38MQreJ+mHfnW1jS6Jd4pqqRSibNorwauP
-        wbCdfaFQGUZoQ8sSVR52jahYuMMItQmQPCfizZ2/KmA3p+w0mxc6tpzQ0LRZnKXJ8SSw=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1ffoJr-0003oQ-2Q; Wed, 18 Jul 2018 15:24:47 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7816F7A6403; Wed, 18 Jul 2018 11:24:44 -0400 (EDT)
-Date:   Wed, 18 Jul 2018 11:24:44 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Constantine Shulyupin <const@MakeLinux.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drivers/char/random.c: fix uninitialized value warning
-Message-ID: <20180718152444.GB30706@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Constantine Shulyupin <const@MakeLinux.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20180718071152.13265-1-const@MakeLinux.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180718071152.13265-1-const@MakeLinux.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        Wed, 18 Jul 2018 12:03:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60016 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730902AbeGRQDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:03:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8A34AE9F;
+        Wed, 18 Jul 2018 15:24:57 +0000 (UTC)
+Date:   Wed, 18 Jul 2018 17:24:56 +0200
+Message-ID: <s5hd0vkbm7r.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Srikanth K H" <srikanth.h@samsung.com>
+Cc:     <alsa-devel@alsa-project.org>, <keescook@chromium.org>,
+        <ben.hutchings@codethink.co.uk>, <perex@perex.cz>,
+        <elfring@users.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <viro@zeniv.linux.org.uk>, <cpgs@samsung.com>
+Subject: Re: [PATCHv2 1/1] Preventive fix in sound module
+In-Reply-To: <1531926420-25488-1-git-send-email-srikanth.h@samsung.com>
+References: <1531908468-1352-1-git-send-email-srikanth.h@samsung.com>
+        <CGME20180718150653epcas2p3c2f0e36569529df72ce0b79a22867eac@epcas2p3.samsung.com>
+        <1531926420-25488-1-git-send-email-srikanth.h@samsung.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:11:52AM +0300, Constantine Shulyupin wrote:
-> Local variable t should be initialized by arch_get_random_int.
-> Actually on failure of arch_get_random_int, value is not used.
-> So, just keep the build clean with less warnings.
+On Wed, 18 Jul 2018 17:07:00 +0200,
+Srikanth K H wrote:
 > 
-> warning:
-> drivers/char/random.c: In function ‘write_pool.constprop’:
-> drivers/char/random.c:1912:11: warning: ‘t’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+> If the timer object is created without the card for entries
+> "SNDRV_TIMER_CLASS_CARD" and "SNDRV_TIMER_CLASS_PCM", then
+> while reading the sound info entry in function
+> "snd_timer_proc_read" the card information is directly
+> dereferenced without checking for NULL and hence kernel
+> panic occur. So as preventive measure while the creating
+> the sound timer object is created the card information
+> availability is checked for the mentioned entries and
+> returned error if its NULL.
 > 
-> Signed-off-by: Constantine Shulyupin <const@MakeLinux.com>
+> Signed-off-by: Srikanth K H <srikanth.h@samsung.com>
+> ---
+>  sound/core/timer.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/sound/core/timer.c b/sound/core/timer.c
+> index c7be4f1..06f734f 100644
+> --- a/sound/core/timer.c
+> +++ b/sound/core/timer.c
+> @@ -883,6 +883,11 @@ int snd_timer_new(struct snd_card *card, char *id, struct snd_timer_id *tid,
+>  
+>  	if (snd_BUG_ON(!tid))
+>  		return -EINVAL;
+> +	if (tid->dev_class == SNDRV_TIMER_CLASS_CARD ||
+> +			tid->dev_class == SNDRV_TIMER_CLASS_PCM) {
+> +		if (WARN_ON(!card))
+> +			return -EINVAL;
+> +	}
+>  	if (rtimer)
+>  		*rtimer = NULL;
+>  	timer = kzalloc(sizeof(*timer), GFP_KERNEL);
+> @@ -1192,12 +1197,10 @@ static void snd_timer_proc_read(struct snd_info_entry *entry,
+>  			break;
+>  		case SNDRV_TIMER_CLASS_CARD:
+>  			snd_iprintf(buffer, "C%i-%i: ",
+> -					timer->card ? timer->card->number : -1,
+> -					timer->tmr_device);
+> +				    timer->card->number, timer->tmr_device);
+>  			break;
+>  		case SNDRV_TIMER_CLASS_PCM:
+> -			snd_iprintf(buffer, "P%i-%i-%i: ",
+> -					timer->card ? timer->card->number : -1,
+> +			snd_iprintf(buffer, "P%i-%i-%i: ", timer->card->number,
+>  				    timer->tmr_device, timer->tmr_subdevice);
+>  			break;
 
-There was a more significant problem which Arnd pointed out, which is
-I had reversed the sense of the test in arch_get_random_int().  I've
-since fixed this, and the current random tree is clean of warnings.
+The checks in proc are moot if we guarantee the non-NULL card at
+snd_timer_new() in the above.
 
-						- Ted
+So it's not about fixing in sound module.  It serves right.  Your
+patch would add a sanity check to catch a buggy code in the caller
+side.
+
+
+thanks,
+
+Takashi
