@@ -2,134 +2,165 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A943ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121E9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 325C220852
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:51:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A011420854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:55:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHc5N6SA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 325C220852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="OrbmEFC9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A011420854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729750AbeGRL2y (ORCPT
+        id S1728711AbeGRLci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:28:54 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33422 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726968AbeGRL2y (ORCPT
+        Wed, 18 Jul 2018 07:32:38 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37942 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbeGRLci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:28:54 -0400
-Received: by mail-oi0-f65.google.com with SMTP id l10-v6so7928291oii.0;
-        Wed, 18 Jul 2018 03:51:35 -0700 (PDT)
+        Wed, 18 Jul 2018 07:32:38 -0400
+Received: by mail-pf0-f193.google.com with SMTP id v15-v6so2025012pff.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:55:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=GKQuPuTadR5YjT5DkpjNdD7WSwHDSVQy8MG0OdYR1b8=;
-        b=hHc5N6SArKO6LjL08xV40AVchvuUSiDXr5PcYSA9nQ+i7IXygHhdXpleULauA848Db
-         2vhPcK1J5kXn7xrTTaNb+dg7f5LbQ4qdG//qQMhoRJIj2pHAi8bg1qGiiuJaMYjKe30z
-         2DsjOm5zjkEQi8Pxs1++awx4GeHpoq+lU9dGT2iQwvzGq4uerFPp/cVHpQZqU/Hh3h0V
-         VoiyANNBhwxC5j075Vy7ggb47Wg6we8fcCNCG3EdK/Yo2wJlecy1gTlSVBLTw+byo+pA
-         9Xa8Kc9BoI8HrucrNi+hg5JqThoykA/3GvQjTzPURAC2BjywLVlifZ5UefW+QAgE9bsI
-         QNgQ==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8qyrEcnmpWDkswfN7k+NOB6p7yAz0IPNqALXbEKn5hI=;
+        b=OrbmEFC9hxlC3PSUdHjONg7SGHymTVltzFfcgOaGanl6kePRVq/XkcW7GyYInM6R7q
+         5NLMKLZSLlxw8VnmrBkcStPR3OzFwO+Jlwl+uCtPTmpnOOXZ5p0IEkbmfMcGnN0/4Ywa
+         z9n9HAcsL1AXDtDk3qQWZ/ivTlr8jC8eonFGw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=GKQuPuTadR5YjT5DkpjNdD7WSwHDSVQy8MG0OdYR1b8=;
-        b=ODqnaQkTTkIEsOnHej0XXxfNZAegIKUJib8qtpdFiqb5pfc/tEbLCdLPtnqe0V0hwl
-         Vw2EKAC4SzBC+61XSBMNCOec03oFcwT9qNd5H936s+LgfM3edBdU15jp/Z1zXiWZE/me
-         ZfUVOgmixImNb2X/1YpwpJOX8Pv0Ef/30H0rzALZ4kRBfWpLoe8m4cub54VNOeSVfQHz
-         75nGuJa48hZr0fAGvojrxAKYgGIxNdslxx9iAP3a6AjKo1vNoFqqV51rGFw/cwYQWCjs
-         n9JC7TRgXOGtYpRbZA8PKUnYDwZm/ZzX5GA/yZhBjHyzcqKh0gAM2pK/8O6JZG+UHjuB
-         NDdQ==
-X-Gm-Message-State: AOUpUlHNzMxSYAUSlSmEOXXpWH8EtcXuslxKxwVYw+nkU95xOEHrx1A6
-        FhTvEQG6y8ePRyHddi1C9TM2giAKZEEAG4yzkQI=
-X-Google-Smtp-Source: AAOMgpfOr1U80/TVsK9f2tZ423oJA6axTFXyu6zq0ktZNR1L8PwuUiUmEohEQbR+QmqAaS/O30n9K/duaGOQMg4Vo00=
-X-Received: by 2002:aca:5b0b:: with SMTP id p11-v6mr6284642oib.116.1531911095042;
- Wed, 18 Jul 2018 03:51:35 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 03:51:34
- -0700 (PDT)
-In-Reply-To: <20180718104300.dwgbqbnllvhwzrea@suselix>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix> <20180717140336.ayovaz4ksdlak6bb@suselix>
- <8115130.Fhkpr82c7G@aspire.rjw.lan> <2386802.jRaeHeNqoJ@aspire.rjw.lan> <20180718104300.dwgbqbnllvhwzrea@suselix>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 18 Jul 2018 12:51:34 +0200
-X-Google-Sender-Auth: 7N06t_PIqvmwo2Yxr7KrJvrL8qI
-Message-ID: <CAJZ5v0jqM+CRckgyyP63bin+30HhO+je+fWeS1+J1dz=p3ty1A@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: intel_pstate: Register when ACPI PCCH is present
-To:     Andreas Herrmann <aherrmann@suse.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8qyrEcnmpWDkswfN7k+NOB6p7yAz0IPNqALXbEKn5hI=;
+        b=AJInfh90Dd295t7mX5u4CwZ4eSZluK9zvVDGg+UuLkzB9ak6vn4yq53ZdeLNwOB4hk
+         yyzncJTHBj7a+PkQJE/IUcHlPM9KZZDY2a74sFqbn7xi+aqjxNBYAT+/wng+Ji4wygLf
+         4y7YzEx5z/739NNZVdo0VQbXcpT8O0CfRUvaMDtvWK34rEyG0kqlUgcOsG+8RuHPvEJc
+         nUoTA6SjTPys9OpEKwAKms8Ij9EZWEwwFdDloNv90uIxF8Vcey33w8gL3wxv+4mQcNOo
+         5ffLAjRCUVzIfOQI5ZiuVUhyAma5LBW4j74QyioXardqvw8HBmcdenFr+5urqI9g3f2W
+         D65Q==
+X-Gm-Message-State: AOUpUlFHUr0uUG0SXLgne0ouGealaWMdElINyjhvbRjpxgw0w4h5vCDJ
+        oi2q2ZxdbGl4oZZyvu1TKcsEGw==
+X-Google-Smtp-Source: AAOMgpcn/7IaXzyTKyKznEl3Grf+Ac6ffhgZOQnHPrTdlZ/SiUL2TVemjtjnRkKQR3mEXGfR8bxpMQ==
+X-Received: by 2002:a63:40c7:: with SMTP id n190-v6mr5322536pga.116.1531911317953;
+        Wed, 18 Jul 2018 03:55:17 -0700 (PDT)
+Received: from localhost.localdomain ([183.82.229.107])
+        by smtp.gmail.com with ESMTPSA id x25-v6sm4644452pgv.63.2018.07.18.03.55.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Jul 2018 03:55:17 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 00/18] arm64: allwinner: Add A64 DE2 HDMI support
+Date:   Wed, 18 Jul 2018 16:24:40 +0530
+Message-Id: <20180718105458.22304-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 12:43 PM, Andreas Herrmann <aherrmann@suse.com> wrote:
-> On Tue, Jul 17, 2018 at 08:06:54PM +0200, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> Currently, intel_pstate doesn't load if _PSS is not present on
->> HP Proliant systems, because it expects the firmware to take over
->> CPU performance scaling in that case.  However, if ACPI PCCH is
->> present, the firmware expects the kernel to use it for CPU
->> performance scaling and the pcc-cpufreq driver is loaded for that.
->>
->> Unfortunately, the firmware interface used by that driver is not
->> scalable for fundamental reasons, so pcc-cpufreq is way suboptimal
->> on systems with more than just a few CPUs.  In fact, it is better to
->> avoid using it at all.
->>
->> For this reason, modify intel_pstate to look for ACPI PCCH if _PSS
->> is not present and register if it is there.  Also prevent the
->> pcc-cpufreq driver from trying to initialize if intel_pstate has
->> been registered already.
->>
->> Fixes: fbbcdc0744da (intel_pstate: skip the driver if ACPI has power mgmt option)
->> Reported-by: Andreas Herrmann <aherrmann@suse.com>
->> Reviewed-by: Andreas Herrmann <aherrmann@suse.com>
->> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>
->> This is a replacement for https://patchwork.kernel.org/patch/10530091/
->>
->> In addition to the intel_pstate changes in the above, it also
->> prevents pcc-cpufreq from trying to initialize (which will fail
->> ultimately, but may confuse the firmware in the meantime).
->>
->> Andreas, please test this one and let me know if it still works for you.
->
-> Done that (with system in "Dynamic Power Savings Mode"). It still
-> works and system was stable.
+Allwinner A64 has display engine pipeline like other Allwinner SOC's A83T/H3/H5.
 
-Thanks!
+A64 behaviour similar to Allwinner A83T where
+Mixer0 => TCON0 => LVDS/RGB/MIPI-DSI
+Mixer1 => TCON1 => HDMI
+as per Display System Block Diagram from Allwinner_A64_User_Manual_V1.1.pdf
 
-> FYI, as a sniff test I've run a kernbench test. I now repeat the test
-> with system switched to "OS control mode". Just in case -- if there
-> was interference with platform code while system was in "Dynamic Power
-> Savings Mode" (significantly affecting performance) I might spot it
-> this way.
+This is third patch-set followed with previous RFC[1], first and second
+series[2][3] and merely concentrated on HDMI pipeline through TCON1 and
+rest will add eventually.
 
-I'd rather not expect performance to be affected by this, but power
-very well may be affected.
+This series fixed previous version comments
+- Rebasing on linux-next
+- sqash all pipeline components in one patch
+- Enable all pipeline components in board dts
+- about documenting fallback compatibles
+- adding new compatible for mixer1
 
-Anyway, good idea!
+Log:
+[    1.450984] Jagan: sun8i_mixer_probe
+[    1.464981] sun4i-drm display-engine: bound 1200000.mixer (ops sun8i_mixer_ops)
+[    1.472572] sun4i-drm display-engine: bound 1c0d000.lcd-controller (ops sun4i_tcon_ops)
+[    1.480676] sun8i-dw-hdmi 1ee0000.hdmi: Linked as a consumer to regulator.10
+[    1.488738] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller v1.32a with HDCP (sun8i_dw_hdmi_phy)
+[    1.498879] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI I2C bus driver
+[    1.507372] sun4i-drm display-engine: bound 1ee0000.hdmi (ops sun8i_dw_hdmi_ops)
+[    1.514778] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    1.521398] [drm] No driver support for vblank timestamp query.
+[    1.684611] random: fast init done
+[    2.011575] Console: switching to colour frame buffer device 180x56
+[    2.049858] sun4i-drm display-engine: fb0: DRM emulated frame buffer device
+[    2.057268] [drm] Initialized sun4i-drm 1.0.0 20150629 for display-engine on minor 0
 
-Cheers,
-Rafael
+Note:
+Pine64 boards are unable to get edid by default like other A64 boards,
+but forcing 'video=HDMI-A-1:1920x1080@60D' kernel command line can
+create edid with display on penel
+
+[3] https://lkml.org/lkml/2018/5/18/461
+[2] https://lkml.org/lkml/2018/4/30/288
+[1] https://lkml.org/lkml/2018/4/24/547
+
+Icenowy Zheng (1):
+  drm: sun4i: add support for HVCC regulator for DWC HDMI glue
+
+Jagan Teki (17):
+  clk: sunxi-ng: a64: Add minimal rate for video PLLs
+  drm/sun4i: Add support for A64 mixer1
+  dt-bindings: display: Add compatible for A64 DE2 tcon1 blocks
+  drm/sun4i: Add support for A64 display engine
+  dt-bindings: display: Add compatible for A64 HDMI
+  dt-bindings: clock: sun50i-a64-ccu: Add PLL_VIDEO[0-1] macros
+  arm64: dts: allwinner: a64: Add tcon1 HDMI pipeline
+  clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+  arm64: defconfig: Enable CONFIG_DRM_SUN4I
+  drm/sun4i: Enable DE2 Mixer for SUN8I and SUN50I
+  drm/sun4i: Enable DesignWare HDMI for SUN50I
+  arm64: dts: allwinner: a64: bananapi-m64: Enable HDMI output
+  arm64: dts: allwinner: a64: nanopi-a64: Enable HDMI output
+  arm64: dts: allwinner: a64: orangepi-win: Enable HDMI output
+  arm64: dts: allwinner: a64: a64-olinuxino: Enable HDMI output
+  arm64: dts: allwinner: a64: pine64: Enable HDMI output
+  arm64: dts: allwinner: a64: sopine: Enable HDMI output
+
+ .../bindings/display/sunxi/sun4i-drm.txt      |   4 +
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  34 ++++++
+ .../dts/allwinner/sun50i-a64-nanopi-a64.dts   |  34 ++++++
+ .../dts/allwinner/sun50i-a64-olinuxino.dts    |  34 ++++++
+ .../dts/allwinner/sun50i-a64-orangepi-win.dts |  34 ++++++
+ .../boot/dts/allwinner/sun50i-a64-pine64.dts  |  34 ++++++
+ .../allwinner/sun50i-a64-sopine-baseboard.dts |  34 ++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 110 ++++++++++++++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/sunxi-ng/Kconfig                  |   2 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |  46 ++++----
+ drivers/gpu/drm/sun4i/Kconfig                 |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_drv.c             |   1 +
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c         |  14 +++
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h         |   2 +
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           |  12 ++
+ include/dt-bindings/clock/sun50i-a64-ccu.h    |   2 +
+ 17 files changed, 378 insertions(+), 23 deletions(-)
+
+-- 
+2.17.1
+
