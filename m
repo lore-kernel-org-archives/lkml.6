@@ -2,161 +2,97 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3FE8ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31AE8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69AAD2064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:02:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69AAD2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id EBEB62086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:02:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBEB62086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbeGRPke (ORCPT
+        id S1731209AbeGRPku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:40:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38974 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbeGRPkd (ORCPT
+        Wed, 18 Jul 2018 11:40:50 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:58709 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726613AbeGRPku (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:40:33 -0400
-Received: from localhost (LFbn-1-12238-233.w90-92.abo.wanadoo.fr [90.92.53.233])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB14FC21;
-        Wed, 18 Jul 2018 15:02:13 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Subject: [PATCH 4.4 3/3] perf tools: Move syscall number fallbacks from perf-sys.h to tools/arch/x86/include/asm/
-Date:   Wed, 18 Jul 2018 17:02:00 +0200
-Message-Id: <20180718145156.279116001@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180718145156.152413234@linuxfoundation.org>
-References: <20180718145156.152413234@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Wed, 18 Jul 2018 11:40:50 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1ffnyD-0008WD-ID; Wed, 18 Jul 2018 17:02:25 +0200
+Date:   Wed, 18 Jul 2018 17:02:22 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+cc:     Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: NULL pointer dereference in msi_set_mask_bit
+In-Reply-To: <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com>
+Message-ID: <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de>
+References: <b9bd8405-64b6-2bea-f5ce-d3ab4d82452a@molgen.mpg.de> <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Wed, 18 Jul 2018, Bjorn Helgaas wrote:
+> [+cc Marc, Thomas]
 
-------------------
+Uurgh. That's definitely what I need right now ... :)
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> On Wed, Jul 18, 2018 at 03:28:15PM +0200, Paul Menzel wrote:
+> >
+> > 93.885: [   23.020572] BUG: unable to handle kernel NULL pointer dereference at 000000000000003c
+> > 93.885: [   23.029011] PGD 0 P4D 0 
+> > 93.885: [   23.031670] Oops: 0000 [#1] SMP NOPTI
+> > 93.885: [   23.035455] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.18.0-rc5+ #1
+> > 93.885: [   23.042079] Hardware name: MSI MS-7A37/B350M MORTAR (MS-7A37), BIOS 1.G1 05/17/2018
+> > 93.886: [   23.049868] RIP: 0010:msi_set_mask_bit+0xe/0x70
 
-commit cec07f53c398f22576df77052c4777dc13f14962 upstream.
+> > 93.913: [   23.049868] Code: 00 53 48 89 fb e8 12 f8 ff ff 48 89 df 5b e9 c9 fe ff ff 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 8b 47 10 48 8b 58 10 <f6> 43 3c 01 74 3c 8b 15 2e 85 21 01 31 c0 85 d2 75 25 8b 43 38 48
 
-And remove the empty tools/arch/x86/include/asm/unistd_{32,64}.h files
-introduced by eae7a755ee81 ("perf tools, x86: Build perf on older
-user-space as well").
+  f6 43 3c 01          	testb  $0x1,0x3c(%rbx)
 
-This way we get closer to mirroring the kernel for cases where __NR_
-can't be found for some include path/_GNU_SOURCE/whatever scenario.
+That's:
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: http://lkml.kernel.org/n/tip-kpj6m3mbjw82kg6krk2z529e@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	if (desc->msi_attrib.is_msix)
 
----
- tools/arch/x86/include/asm/unistd_32.h  |    9 +++++++++
- tools/arch/x86/include/asm/unistd_64.h  |    9 +++++++++
- tools/perf/config/Makefile              |    1 +
- tools/perf/perf-sys.h                   |   18 ------------------
- tools/perf/util/include/asm/unistd_32.h |    1 -
- tools/perf/util/include/asm/unistd_64.h |    1 -
- 6 files changed, 19 insertions(+), 20 deletions(-)
+> > 93.957: [   23.049880] RSP: 0018:ffff9e8e5e803f78 EFLAGS: 00010046
+> > 93.957: [   23.049881] RAX: ffff9e8e45919000 RBX: 0000000000000000 RCX: 0000000000000000
+> > 93.958: [   23.049882] RDX: ffff9e8e45919000 RSI: 0000000000000001 RDI: ffff9e8e45919098
+> > 93.958: [   23.049882] RBP: ffff9e8e45919098 R08: 0000000000000000 R09: 0000000000000000
+> > 93.958: [   23.049882] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9e8e45919000
+> > 93.958: [   23.049883] R13: 0000000000000027 R14: 0000000000000000 R15: 0000000000000000
+> > 93.959: [   23.049884] FS:  0000000000000000(0000) GS:ffff9e8e5e800000(0000) knlGS:0000000000000000
+> > 93.959: [   23.049884] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > 93.959: [   23.049885] CR2: 000000000000003c CR3: 00000003fc5a4000 CR4: 00000000003406f0
+> > 93.959: [   23.049885] Call Trace:
+> > 93.959: [   23.049887]  <IRQ>
+> > 93.960: [   23.049889]  __irq_move_irq+0x3c/0x70
+> > 93.960: [   23.049892]  apic_ack_irq+0x2b/0x30
+> > 93.960: [   23.049893]  handle_edge_irq+0x7d/0x1d0
+> > 93.960: [   23.049895]  handle_irq+0x1f/0x30
+> > 93.960: [   23.049898]  do_IRQ+0x41/0xc0
+> > 93.960: [   23.049899]  common_interrupt+0xf/0xf
+> > 93.961: [   23.049900]  </IRQ>
 
---- /dev/null
-+++ b/tools/arch/x86/include/asm/unistd_32.h
-@@ -0,0 +1,9 @@
-+#ifndef __NR_perf_event_open
-+# define __NR_perf_event_open 336
-+#endif
-+#ifndef __NR_futex
-+# define __NR_futex 240
-+#endif
-+#ifndef __NR_gettid
-+# define __NR_gettid 224
-+#endif
---- /dev/null
-+++ b/tools/arch/x86/include/asm/unistd_64.h
-@@ -0,0 +1,9 @@
-+#ifndef __NR_perf_event_open
-+# define __NR_perf_event_open 298
-+#endif
-+#ifndef __NR_futex
-+# define __NR_futex 202
-+#endif
-+#ifndef __NR_gettid
-+# define __NR_gettid 186
-+#endif
---- a/tools/perf/config/Makefile
-+++ b/tools/perf/config/Makefile
-@@ -200,6 +200,7 @@ CFLAGS += -I$(src-perf)/arch/$(ARCH)/inc
- CFLAGS += -I$(srctree)/tools/include/
- CFLAGS += -I$(srctree)/arch/$(ARCH)/include/uapi
- CFLAGS += -I$(srctree)/arch/$(ARCH)/include
-+CFLAGS += -I$(srctree)/tools/arch/$(ARCH)/include
- CFLAGS += -I$(srctree)/include/uapi
- CFLAGS += -I$(srctree)/include
- 
---- a/tools/perf/perf-sys.h
-+++ b/tools/perf/perf-sys.h
-@@ -11,29 +11,11 @@
- #if defined(__i386__)
- #define cpu_relax()	asm volatile("rep; nop" ::: "memory");
- #define CPUINFO_PROC	{"model name"}
--#ifndef __NR_perf_event_open
--# define __NR_perf_event_open 336
--#endif
--#ifndef __NR_futex
--# define __NR_futex 240
--#endif
--#ifndef __NR_gettid
--# define __NR_gettid 224
--#endif
- #endif
- 
- #if defined(__x86_64__)
- #define cpu_relax()	asm volatile("rep; nop" ::: "memory");
- #define CPUINFO_PROC	{"model name"}
--#ifndef __NR_perf_event_open
--# define __NR_perf_event_open 298
--#endif
--#ifndef __NR_futex
--# define __NR_futex 202
--#endif
--#ifndef __NR_gettid
--# define __NR_gettid 186
--#endif
- #endif
- 
- #ifdef __powerpc__
---- a/tools/perf/util/include/asm/unistd_32.h
-+++ /dev/null
-@@ -1 +0,0 @@
--
---- a/tools/perf/util/include/asm/unistd_64.h
-+++ /dev/null
-@@ -1 +0,0 @@
--
+and desc comes from irq_data->common->msi_desc
 
+I have no idea how that can happen for an MSI interrupt.
 
+Paul, is this reproducible?
+
+Thanks,
+
+	tglx
