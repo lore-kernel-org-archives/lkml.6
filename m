@@ -3,58 +3,179 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B026BECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9ABEECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 739512075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:44:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739512075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7577B2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:50:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7577B2075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731740AbeGRDT5 (ORCPT
+        id S1731632AbeGRDZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:19:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44020 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730180AbeGRDT5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:19:57 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6EAE3BD1;
-        Wed, 18 Jul 2018 02:44:22 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 19:44:21 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: Re: [PATCH v2 7/7] proc/kcore: add vmcoreinfo note to /proc/kcore
-Message-Id: <20180717194421.a5430cf03aad12a9e40e65f4@linux-foundation.org>
-In-Reply-To: <19c55add0fd15854798dde00d93350d76034896d.1531440458.git.osandov@fb.com>
-References: <cover.1531440458.git.osandov@fb.com>
-        <19c55add0fd15854798dde00d93350d76034896d.1531440458.git.osandov@fb.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 23:25:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51148 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730614AbeGRDZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 23:25:43 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AC4757C6CA;
+        Wed, 18 Jul 2018 02:50:06 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0DCDB2026D68;
+        Wed, 18 Jul 2018 02:49:47 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        robh+dt@kernel.org, dan.j.williams@intel.com,
+        nicolas.pitre@linaro.org, josh@joshtriplett.org,
+        fengguang.wu@intel.com, bp@suse.de, andy.shevchenko@gmail.com
+Cc:     patrik.r.jakobsson@gmail.com, airlied@linux.ie, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        dmitry.torokhov@gmail.com, frowand.list@gmail.com,
+        keith.busch@intel.com, jonathan.derrick@intel.com,
+        lorenzo.pieralisi@arm.com, bhelgaas@google.com, tglx@linutronix.de,
+        brijesh.singh@amd.com, jglisse@redhat.com, thomas.lendacky@amd.com,
+        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
+        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
+        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
+        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
+        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Baoquan He <bhe@redhat.com>
+Subject: [PATCH v7 0/4] resource: Use list_head to link sibling resource
+Date:   Wed, 18 Jul 2018 10:49:40 +0800
+Message-Id: <20180718024944.577-1-bhe@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 02:50:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 02:50:07 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jul 2018 17:09:39 -0700 Omar Sandoval <osandov@osandov.com> wrote:
+This patchset is doing:
+1) Move reparent_resources() to kernel/resource.c to clean up duplicated
+   code in arch/microblaze/pci/pci-common.c and
+   arch/powerpc/kernel/pci-common.c .
+2) Replace struct resource's sibling list from singly linked list to
+   list_head. Clearing out those pointer operation within singly linked
+   list for better code readability.
+2) Based on list_head replacement, add a new function
+   walk_system_ram_res_rev() which can does reversed iteration on
+   iomem_resource's siblings.
+3) Change kexec_file loading to search system RAM top down for kernel
+   loadin, using walk_system_ram_res_rev().
 
-> From: Omar Sandoval <osandov@fb.com>
-> 
-> The vmcoreinfo information is useful for runtime debugging tools, not
-> just for crash dumps. A lot of this information can be determined by
-> other means, but this is much more convenient.
-> 
+Note:
+This patchset only passed testing on  x86_64 arch with network
+enabling. The thing we need pay attetion to is that a root resource's
+child member need be initialized specifically with LIST_HEAD_INIT() if
+statically defined or INIT_LIST_HEAD() for dynamically definition. Here
+Just like we do for iomem_resource/ioport_resource, or the change in
+get_pci_domain_busn_res().
 
-What effect does this have upon the overall size of the dump file?
+v6:
+http://lkml.kernel.org/r/20180704041038.8190-1-bhe@redhat.com
+
+v5:
+http://lkml.kernel.org/r/20180612032831.29747-1-bhe@redhat.com
+
+v4:
+http://lkml.kernel.org/r/20180507063224.24229-1-bhe@redhat.com
+
+v3:
+http://lkml.kernel.org/r/20180419001848.3041-1-bhe@redhat.com
+
+v2:
+http://lkml.kernel.org/r/20180408024724.16812-1-bhe@redhat.com
+
+v1:
+http://lkml.kernel.org/r/20180322033722.9279-1-bhe@redhat.com
+
+Changelog:
+v6->v7:
+  Fix code bugs that test robot reported on mips and ia64.
+
+  Add error code description in reparent_resources() according to
+  Andy's comment, and fix minor log typo.
+v5->v6:
+  Fix code style problems in reparent_resources() and use existing
+  error codes, according to Andy's suggestion.
+
+  Fix bugs test robot reported.
+
+v4->v5:
+  Add new patch 0001 to move duplicated reparent_resources() to
+  kernel/resource.c to make it be shared by different ARCH-es.
+
+  Fix several code bugs reported by test robot on ARCH powerpc and
+  microblaze.
+v3->v4:
+  Fix several bugs test robot reported. Rewrite cover letter and patch
+  log according to reviewer's comment.
+
+v2->v3:
+  Rename resource functions first_child() and sibling() to
+  resource_first_chils() and resource_sibling(). Dan suggested this.
+
+  Move resource_first_chils() and resource_sibling() to linux/ioport.h
+  and make them as inline function. Rob suggested this. Accordingly add
+  linux/list.h including in linux/ioport.h, please help review if this
+  bring efficiency degradation or code redundancy.
+
+  The change on struct resource {} bring two pointers of size increase,
+  mention this in git log to make it more specifically, Rob suggested
+  this.
+
+v1->v2:
+  Use list_head instead to link resource siblings. This is suggested by
+  Andrew.
+
+  Rewrite walk_system_ram_res_rev() after list_head is taken to link
+  resouce siblings.
+
+Baoquan He (4):
+  resource: Move reparent_resources() to kernel/resource.c and make it
+    public
+  resource: Use list_head to link sibling resource
+  resource: add walk_system_ram_res_rev()
+  kexec_file: Load kernel at top of system RAM if required
+
+ arch/arm/plat-samsung/pm-check.c            |   6 +-
+ arch/ia64/sn/kernel/io_init.c               |   2 +-
+ arch/microblaze/pci/pci-common.c            |  41 +----
+ arch/mips/pci/pci-rc32434.c                 |  12 +-
+ arch/powerpc/kernel/pci-common.c            |  39 +---
+ arch/sparc/kernel/ioport.c                  |   2 +-
+ arch/xtensa/include/asm/pci-bridge.h        |   4 +-
+ drivers/eisa/eisa-bus.c                     |   2 +
+ drivers/gpu/drm/drm_memory.c                |   3 +-
+ drivers/gpu/drm/gma500/gtt.c                |   5 +-
+ drivers/hv/vmbus_drv.c                      |  52 +++---
+ drivers/input/joystick/iforce/iforce-main.c |   4 +-
+ drivers/nvdimm/namespace_devs.c             |   6 +-
+ drivers/nvdimm/nd.h                         |   5 +-
+ drivers/of/address.c                        |   4 +-
+ drivers/parisc/lba_pci.c                    |   4 +-
+ drivers/pci/controller/vmd.c                |   8 +-
+ drivers/pci/probe.c                         |   2 +
+ drivers/pci/setup-bus.c                     |   2 +-
+ include/linux/ioport.h                      |  21 ++-
+ kernel/kexec_file.c                         |   2 +
+ kernel/resource.c                           | 266 ++++++++++++++++++----------
+ 22 files changed, 260 insertions(+), 232 deletions(-)
+
+-- 
+2.13.6
+
