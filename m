@@ -2,167 +2,168 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B5EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56898ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D03020673
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:12:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pc9zKycN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D03020673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 17C9720673
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:13:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C9720673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728915AbeGRIti (ORCPT
+        id S1729251AbeGRItl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 04:49:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53695 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbeGRIti (ORCPT
+        Wed, 18 Jul 2018 04:49:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54152 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726514AbeGRItk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 04:49:38 -0400
-Received: by mail-wm0-f67.google.com with SMTP id s9-v6so1828970wmh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 01:12:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+DpQZJb4O8SMmBin3advwJj/mGc2r5CrsnYAYFNCHWs=;
-        b=Pc9zKycNkXoWfUghWb/EdsFFKpb/qP7MUP1t2jRVA456kpYJs/WQkBJ7O/XQb28tQ4
-         KLi9KQpULwUQC7WJZIe/xTfDyhN184mqyLUSDvvHxBciBoGFbOjBpg7aLc+Wobh14V/R
-         Z6xyQlfdPERZvG45bJDWg/ks8pPWCLDTimcpY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+DpQZJb4O8SMmBin3advwJj/mGc2r5CrsnYAYFNCHWs=;
-        b=EF1Y4RqbvqaTibB6srs0m8GgdIllQ6G2uvBQ7/blGWgnYHeKN30TLaGlKjhVwH/6WS
-         hKftSkcET4Bs8GoJW/oVq5P6wDGRXLHwhTpyxlXJOIpw+D18Q1qUXRjZjJpldBQNN+cq
-         +YxslsRASxhIHY7QDfgDOXXNs3VyM95vHOxsloGp4scHfP0n1MLBEkj6hGO/0K9Uiyph
-         pcFdqO/fODkQ5++O5cCSSz1yqQXp8FW/8bPgjnV6LMjDQ0I+q1s3sqEOFQce//CkNbwi
-         /13syv1XVC+xhe/DdjD8DKC16vKqlO4ldRfdCtY+afPxMx45i3FZXprEAN1C9PMiQAUN
-         EE8w==
-X-Gm-Message-State: AOUpUlHkXRSfgG4tRxzu0hyec2vTP0CB+hty/8j7fsvpEbrTniiQcbKc
-        S6liqJLqqE+sWFIxbFVdMc2txQ==
-X-Google-Smtp-Source: AAOMgpePpRddZ0LXA36h95meplcCHhpGbu9vZjw+DENRTk+pV9ehEXDe0nVM90Ll6cRyS+Firmw2xQ==
-X-Received: by 2002:a1c:f703:: with SMTP id v3-v6mr881800wmh.48.1531901574965;
-        Wed, 18 Jul 2018 01:12:54 -0700 (PDT)
-Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id t70-v6sm2273074wme.7.2018.07.18.01.12.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 01:12:54 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 09:12:52 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Jingoo Han <jingoohan1@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@linaro.org, Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: Re: [PATCH] backlight: pwm_bl: Fix uninitialized variable
-Message-ID: <20180718081252.GC4641@dell>
-References: <20180716210241.9457-1-daniel.thompson@linaro.org>
- <20180718080913.GB4641@dell>
+        Wed, 18 Jul 2018 04:49:40 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6I853Qk103145
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 04:12:58 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ka0hxkd4k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 04:12:58 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Wed, 18 Jul 2018 04:12:56 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 04:12:53 -0400
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6I8Cq0P10289578
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 08:12:52 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5EDF5112064;
+        Wed, 18 Jul 2018 04:12:40 -0400 (EDT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D378112062;
+        Wed, 18 Jul 2018 04:12:40 -0400 (EDT)
+Received: from sofia.ibm.com (unknown [9.124.35.39])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jul 2018 04:12:40 -0400 (EDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id A43402E2F57; Wed, 18 Jul 2018 13:42:49 +0530 (IST)
+Date:   Wed, 18 Jul 2018 13:42:49 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Michael Neuling <mikey@neuling.org>
+Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Florian Weimer <fweimer@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [RESEND][PATCH] powerpc/powernv : Save/Restore SPRG3 on
+ entry/exit from stop.
+Reply-To: ego@linux.vnet.ibm.com
+References: <1531826849-31838-1-git-send-email-ego@linux.vnet.ibm.com>
+ <1531843216-22209-1-git-send-email-ego@linux.vnet.ibm.com>
+ <80bbdf47081e3e302ab5f28b5ddc9e2faabba842.camel@neuling.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180718080913.GB4641@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <80bbdf47081e3e302ab5f28b5ddc9e2faabba842.camel@neuling.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18071808-2213-0000-0000-000002CC92CB
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009385; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062478; UDB=6.00545517; IPR=6.00840335;
+ MB=3.00022184; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-18 08:12:55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071808-2214-0000-0000-00005AE0F891
+Message-Id: <20180718081249.GA17700@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-18_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807180094
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018, Lee Jones wrote:
+Hello Mikey,
 
-> On Mon, 16 Jul 2018, Daniel Thompson wrote:
+On Wed, Jul 18, 2018 at 09:24:19AM +1000, Michael Neuling wrote:
 > 
-> > Currently, if the DT does not define num-interpolated-steps then
-> > num_steps is undefined and the interpolation code will deploy randomly.
-> > Fix this.
-> > 
-> > Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation between
-> > brightness-levels")
-> > Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> >  	DEFINE(PPC_DBELL_SERVER, PPC_DBELL_SERVER);
+> > diff --git a/arch/powerpc/kernel/idle_book3s.S
+> > b/arch/powerpc/kernel/idle_book3s.S
+> > index d85d551..5069d42 100644
+> > --- a/arch/powerpc/kernel/idle_book3s.S
+> > +++ b/arch/powerpc/kernel/idle_book3s.S
+> > @@ -120,6 +120,9 @@ power9_save_additional_sprs:
+> >  	mfspr	r4, SPRN_MMCR2
+> >  	std	r3, STOP_MMCR1(r13)
+> >  	std	r4, STOP_MMCR2(r13)
+> > +
+> > +	mfspr	r3, SPRN_SPRG3
+> > +	std	r3, STOP_SPRG3(r13)
 > 
-> This line is confusing.  Did you guys author this patch together?
-> 
-> My guess is that this line should be dropped and the RB and TB tags
-> should remain?  If it was reviewed too, perhaps an AB too?
-> 
-> > Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> > ---
-> >  drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
-> >  1 file changed, 8 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-> > index 9ee4c1b735b2..e3c22b79fbcd 100644
-> > --- a/drivers/video/backlight/pwm_bl.c
-> > +++ b/drivers/video/backlight/pwm_bl.c
-> > @@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct device *dev,
-> >  		 * interpolation between each of the values of brightness levels
-> >  		 * and creates a new pre-computed table.
-> >  		 */
-> > -		of_property_read_u32(node, "num-interpolated-steps",
-> > -				     &num_steps);
-> > -
-> > -		/*
-> > -		 * Make sure that there is at least two entries in the
-> > -		 * brightness-levels table, otherwise we can't interpolate
-> > -		 * between two points.
-> > -		 */
-> > -		if (num_steps) {
-> > +		if ((of_property_read_u32(node, "num-interpolated-steps",
-> > +					  &num_steps) == 0) && num_steps) {
-> 
-> This is pretty ugly, and isn't it suffering from over-bracketing?  My
-> suggestion would be to break out the invocation of
-> of_property_read_u32() from the if and test only the result.
-> 
-> 		of_property_read_u32(node, "num-interpolated-steps", &num_steps);
-> 		if (!ret && num_steps) {
+> We don't need to save it.  Just restore it from paca->sprg_vdso which should
+> never change.
 
-Whoops!  I was playing around with the 80-char limit and forgot to
-revert.  The lines should read:
+Ok. I will respin a patch to restore SPRG3 from paca->sprg_vdso.
 
- 		ret = of_property_read_u32(node, "num-interpolated-steps",
-					   &num_steps);
- 		if (!ret && num_steps) {
+> 
+> How can we do better at catching these missing SPRGs?
 
-> I haven't checked the underling code, but is it even feasible for
-> of_property_read_u32() to not succeed AND for num_steps to be set?
-> 
-> If not, the check for !ret if superfluous and you can drop it.
-> 
-> > +			/*
-> > +			 * Make sure that there is at least two entries in the
-> 
-> s/is/are/
-> 
-> > +			 * brightness-levels table, otherwise we can't
-> > +			 * interpolate
-> 
-> Why break the line here?
-> 
-> > +			 * between two points.
-> > +			 */
-> >  			if (data->max_brightness < 2) {
-> >  				dev_err(dev, "can't interpolate\n");
-> >  				return -EINVAL;
-> 
+We can go through the list of SPRs from the POWER9 User Manual and
+document explicitly why we don't have to save/restore certain SPRs
+during the execution of the stop instruction. Does this sound ok ?
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+(Ref: Table 4-8, Section 4.7.3.4 from the POWER9 User Manual
+accessible from
+https://openpowerfoundation.org/?resource_lib=power9-processor-users-manual)
+
+> 
+> We missed this one and looking at c1b25a17d249 we missed the AMOR a couple of
+> months back. I'd rather we had some systematic way of finding the ones we are
+> missing, rather than playing wake-a-mole.
+
+I agree, we need something more systematic than the try-catch method
+thing we have now.
+
+For deep stop states on POWER9, we looked at the list of SPRs that
+were being lost and restored during winkle on POWER8. The additional
+SPRs that we took care of were the ones related to the Radix and IMC.
+
+Now since winkle was used only in the context of CPU-Hotplug, the
+CPU-online code would reinit some of the SPRs such as SPRG3, which is
+why we didn't see this problem on POWER8. So, that is one obvious
+place to audit.
+
+AMOR was a bad miss. It was being restored in POWER8 as part of the
+subcore restore code, so like RPR, it should have been restored along
+with the other per-core SPRs.
+
+> 
+> Mikey 
+> 
+> >  	blr
+> >  
+> >  power9_restore_additional_sprs:
+> > @@ -144,7 +147,9 @@ power9_restore_additional_sprs:
+> >  	mtspr	SPRN_MMCR1, r4
+> >  
+> >  	ld	r3, STOP_MMCR2(r13)
+> > +	ld	r4, STOP_SPRG3(r13)
+> >  	mtspr	SPRN_MMCR2, r3
+> > +	mtspr	SPRN_SPRG3, r4
+> >  	blr
+> >  
+> >  /*
+
