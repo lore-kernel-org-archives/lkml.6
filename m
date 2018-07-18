@@ -2,145 +2,119 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F3EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DF5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B09F2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 917622084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qCXf2A0p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B09F2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="caONgYQv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 917622084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbeGRLfq (ORCPT
+        id S1730522AbeGRLgb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:35:46 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:49262 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbeGRLfq (ORCPT
+        Wed, 18 Jul 2018 07:36:31 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44746 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbeGRLga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:35:46 -0400
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20180718105823epoutp0189ef2fa9635f6fd01a8a90b15f1676c1~CcWVjVb8s0559705597epoutp01n
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:58:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180718105823epoutp0189ef2fa9635f6fd01a8a90b15f1676c1~CcWVjVb8s0559705597epoutp01n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1531911503;
-        bh=P0riJyq8+InZtyM/n9tMKUyI4cuoACFPQJbFNHqBg7g=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=qCXf2A0psSnTXklkl5OfLdKHkU8z/zMzytluGAllshq4exPB5hEvkYHbMZFbMIf95
-         Q0A0rVZE9Ujk0sLUrX5m22KdXraPbgvUNwj/2xGankFJSALZtl2/u/fmi1vUgR/cAL
-         aTTZxfku7TTfHtiWOp+pxopJTRyanCGjzyVxe3AU=
-Received: from epsmges5p1new.samsung.com (unknown [182.195.40.194]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20180718105821epcas5p36527f3577fd68442e753d58d1d9918e4~CcWTg2w380092300923epcas5p3m;
-        Wed, 18 Jul 2018 10:58:21 +0000 (GMT)
-X-AuditID: b6c32a49-aefff70000001142-be-5b4f1d4d9044
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2D.23.04418.D4D1F4B5; Wed, 18 Jul 2018 19:58:21 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH 1/1] Preventive fix in sound module
-Reply-To: srikanth.h@samsung.com
-From:   Srikanth Korangala Hari <srikanth.h@samsung.com>
-To:     Takashi Iwai <tiwai@suse.de>
-CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "ben.hutchings@codethink.co.uk" <ben.hutchings@codethink.co.uk>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "elfring@users.sourceforge.net" <elfring@users.sourceforge.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        CPGS <cpgs@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <s5hfu0gzw5e.wl-tiwai@suse.de>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20180718105820epcms5p173879897edd4cc93b381f8125c11b91b@epcms5p1>
-Date:   Wed, 18 Jul 2018 16:28:20 +0530
-X-CMS-MailID: 20180718105820epcms5p173879897edd4cc93b381f8125c11b91b
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-CPGSPASS: Y
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNJsWRmVeSWpSXmKPExsWy7bCmuq6vrH+0wZl3ghZXLh5isrix8x+r
-        xctDmhbnO5czW5zpzrW4vGsOm0Xnrn6g8OY3TBbn/x5ndeD02PC5ic1jdsNFFo9nLyczeex7
-        u4zNo2/LKkaPzaerPZpOtbN6fN4k57HpyVumAM6oVJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4
-        UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoAuVFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZK
-        0YaGRnqGBuZ6RkZA2jTWysgUqCQhNaPn/COWgvNSFU0Hr7I3MH6V7GLk5JAQMJF4e24KUxcj
-        F4eQwG5GiS8/7rN2MXJw8AoISvzdIQxSIyxgLfFv2gWwsJCAgsStVdEQYQuJSTM6mUFsNgEz
-        iZ7ve5hAbBGgkjev7jGCjGQWWMcs8X/TS2aIXbwSM9qfskDY0hLbl29lBLE5BbQlTq+bzgQR
-        F5W4ufotO4z9/th8RghbRKL13lmoOYISD37uZoSZ8/4YxP0SApMZJb7+3MkC4axmlNh/6AXU
-        NnOJxzc3g23gFfCVODfxDQvINywCqhLb+4UhSlwk5v+/yAZiMwMdtGzha2aQEmYBTYn1u/Rh
-        7m/Y+JsdooRPovf3EyaY+I55IDYHkK0i8WB/GYQpJdH7yQ6iwkNi5fZ+dkgor2OUWLVmMdME
-        RoVZiICehWTvLIS9CxiZVzFKphYU56anFpsWGOallusVJ+YWl+al6yXn525iBCdULc8djLPO
-        +RxiFOBgVOLhPfDfN1qINbGsuDL3EKMEB7OSCO/B937RQrwpiZVVqUX58UWlOanFhxhNgQEw
-        kVlKNDkfmOzzSuINTY3MzAwsDUyNLcwMlcR5z/F6RAsJpCeWpGanphakFsH0MXFwSjUwbuDR
-        M5ncov3/Q14Vy3xljl0GzGczN20o5/c63sM1bc9Ov6rumFxpFq9G3puPWlZNeSbNnGv00U7U
-        7hPTwiUcnxvlzrD93np+5rKGB/K2sabHZrsdu5/9X0VR+eyn0BwWm5yQU32L39S56ul8+HVg
-        OtP+eZ0iEo1P1FrKTCZ2Ri031gjavT5QiaU4I9FQi7moOBEA7P16Tb4DAAA=
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180718100741epcas1p393bea852d102e903ab6a48ff952761db
-References: <s5hfu0gzw5e.wl-tiwai@suse.de>
-        <1531908468-1352-1-git-send-email-srikanth.h@samsung.com>
-        <CGME20180718100741epcas1p393bea852d102e903ab6a48ff952761db@epcms5p1>
+        Wed, 18 Jul 2018 07:36:30 -0400
+Received: by mail-lj1-f196.google.com with SMTP id q127-v6so3695036ljq.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:59:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=0kLWQTfq5LAA1BnO2fp+afjjJWyP1LVL96/r5dLLiKk=;
+        b=caONgYQvLhoNbe6yrfKgqHJtN192/2iMChyZF+KVEhfBa/nD645yUDqWxIQ8p3io9J
+         lkuBuEMxOh1oS+y9ZSROhYyR1cH3oJFZyogBe9+NoKgFCbOQaNuy9p4WKdhbB/SLoI5b
+         eBRzz6wq5Jnv7tzfb1Ml3PIcizsC6M/yqIp9UcxNN7M4A8Ja9QqJdejlxqFCWbVp1XUy
+         rOdFZwR1cfQrVslMGOQAe/v9kxOAUYXtyDiHe5sfdQNitIX0QOWcbrpYmmEOb168KpfZ
+         oqvNj/sFypMjWWylmaFJbLPtqgoTanFgFswUvdkqGjYnMvaTNn6ZViDX5sesEOmPFzT2
+         qJqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=0kLWQTfq5LAA1BnO2fp+afjjJWyP1LVL96/r5dLLiKk=;
+        b=oxydUAaNRGve0FicctEL5XDZNpi6H1qKgGWaIMegHG/piIu7wpe99Ilfx4c6L8ImUr
+         cj/JUDi0nWmA/OTua0PxgRIYZJld9BqUD9DzL4kyxnjK0RQSjeHW8WM6I7+6A3DSTjgA
+         ODJN4ncM+XsnCFtZ99ThT1qZWrh05V3/NCCLhHrQmKt/qXGi1IM1qsMK9FscE8gcH2eW
+         UhYGDFokVsKJeVecEBR1MA/k6ToSfMMOQlnVpD5Yj04GUqLe5W5pNKphGMVD+Lu2ocY7
+         7SUqxGi/7h8mo2TGEzXxoLOM13qoYgNLvk130FEi0y/s9WbdNGuWcjcmpcbu/LhaslwS
+         7E5Q==
+X-Gm-Message-State: AOUpUlGAQ0Xt6Q4llywWbSk+KOBNGihWkLaKhIBKw9cY+75bC/Ofk8P+
+        Bii5A9IEMPm+VXwE20U9ZnZBhXAzWT1U+a5TmhQ=
+X-Google-Smtp-Source: AAOMgpeFP7VLQqFNJXTZlHnB0jyp03aL8VYk7VtpTIrqHnaZbH8nbkEDMbQW0wuk1sE3kDs8ZzbNaZoin1+juJVwfug=
+X-Received: by 2002:a2e:998e:: with SMTP id w14-v6mr2976202lji.7.1531911548067;
+ Wed, 18 Jul 2018 03:59:08 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 03:59:07
+ -0700 (PDT)
+In-Reply-To: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
+References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 18 Jul 2018 12:59:07 +0200
+X-Google-Sender-Auth: _4nrKyBKtowWESGC3X8p5Xcu4ck
+Message-ID: <CAK8P3a0T0Ku-2GOY8fT38LVy4GpvVSsx=szi0ZNEUq8Z_hZweQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] crypto: add IV generation templates
+To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>, dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 18, 2018 at 9:30 AM, Xiongfeng Wang
+<wangxiongfeng2@huawei.com> wrote:
+>
+> I tested the performance of software implemented ciphers before and after
+> applying this patchset. The performance didn't change much except for
+> slight regression when writting. The detail information is as follows.
+>
+> The command I used:
+> cryptsetup -y -c aes-xts-plain -s 256 --hash sha256 luksFormat /dev/sdd1
+> cryptsetup -y -c aes-cbc-essiv:sha256 -s 256 --hash sha256 luksFormat /dev/sdd1
+> cryptsetup -y -c aes-cbc-benbi -s 256 --hash sha256 luksFormat /dev/sdd1
+>
+> cryptsetup luksOpen /dev/sdd1 crypt_fun
+> time dd if=/dev/mapper/crypt_fun of=/dev/null bs=1M count=500 iflag=direct
+> time dd if=/dev/zero of=/dev/mapper/crypt_fun bs=1M count=500 oflag=direct
+>
+> Performance comparision:
+> --------------------------------------------------------
+> algorithms      | before applying   |   after applying
+> --------------------------------------------------------
+>                 |  read  | write    |  read  | write
+> --------------------------------------------------------
+> aes-xts-plain   | 145.34 | 145.09   | 145.89 | 144.2
+> --------------------------------------------------------
+> aes-cbc-essiv   | 146.87 | 144.62   | 146.74 | 143.41
+> --------------------------------------------------------
+> aes-cbc-benbi   | 146.03 | 144.74   | 146.77 | 144.46
+> --------------------------------------------------------
 
->>=C2=A0=0D=0A>>=C2=A0Signed-off-by:=C2=A0Srikanth=C2=A0K=C2=A0H=C2=A0<srik=
-anth.h=40samsung.com>=0D=0A=C2=A0=0D=0A>What=C2=A0does=C2=A0this=C2=A0fix,=
-=C2=A0and=C2=A0above=C2=A0all,=C2=A0why=C2=A0is=C2=A0this=C2=A0needed?=0D=
-=0A=0D=0AHi,=0D=0A=0D=0AWhen=20the=20sound=20driver=20creates=20the=20timer=
-=20without=20sound=20card=20object,=20then=20while=20reading=20the=20sound=
-=20info=20entry=20the=20timer=20object=E2=80=99s=20card=20information=20is=
-=20dereferenced=20without=20checking=20for=20NULL=20pointer=20which=20will=
-=20result=20for=20kernel=20panic.=20I=20tried=20to=20simulate=20this=20scen=
-ario=20and=20got=20below=20call=20stack,=0D=0A=5B=20=20=2036.668=5D=20E/DEV=
-KMSG=20(P=20=20=20=200,=20T=20=20=20=200):=20Unable=20to=20handle=20kernel=
-=20NULL=20pointer=20dereference=20at=20virtual=20address=2000000000=0D=0A=
-=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=200):=20p=
-gd=20=3D=20e52f0000=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=20=
-0,=20T=20=20=20=200):=20=5B00000000=5D=20*pgd=3D00000000=0D=0A=5B=20=20=203=
-6.668=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=200):=20Internal=20err=
-or:=20Oops:=205=20=5B=231=5D=20PREEMPT=20SMP=20ARM=0D=0A=5B=20=20=2036.668=
-=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=200):=20Modules=20linked=20=
-in:=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=
-=200):=20CPU:=201=20PID:=201258=20Comm:=20cat=20Tainted:=20G=20=20=20=20=20=
-=20=20=20W=20=20=20=203.10.65-00121-g83e9b9b-dirty=20=2354-Tizen=0D=0A=5B=
-=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=200):=20task=
-:=20e653aec0=20ti:=20e52ec000=20task.ti:=20e52ec000=0D=0A=5B=20=20=2036.668=
-=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=200):=20PC=20is=20at=20snd_=
-timer_proc_read+0x104/0x278=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=
-=20=20=200,=20T=20=20=20=200):=20LR=20is=20at=20snd_timer_proc_read+0xec/0x=
-278=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=
-=200):=20pc=20:=20=5B<c0527cfc>=5D=20=20=20=20lr=20:=20=5B<c0527ce4>=5D=20=
-=20=20=20psr:=2060040013=5Cx0asp=20:=20e52eded0=20=20ip=20:=2000000000=20=
-=20fp=20:=2010624dd3=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=
-=200,=20T=20=20=20=200):=20r10:=20c08ded6c=20=20r9=20:=20e49e3bd8=20=20r8=
-=20:=20c074f518=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=200,=
-=20T=20=20=20=200):=20r7=20:=20c0afbae4=20=20r6=20:=20eb95a000=20=20r5=20:=
-=20e49e3240=20=20r4=20:=20eb257e00=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=
-=20(P=20=20=20=200,=20T=20=20=20=200):=20r3=20:=2000000000=20=20r2=20:=2000=
-000000=20=20r1=20:=20c0987cd7=20=20r0=20:=20e49e3240=0D=0A=5B=20=20=2036.66=
-8=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=20=200):=20Flags:=20nZCv=20=
-=20IRQs=20on=20=20FIQs=20on=20=20Mode=20SVC_32=20=20ISA=20ARM=20=20Segment=
-=20user=0D=0A=5B=20=20=2036.668=5D=20E/DEVKMSG=20(P=20=20=20=200,=20T=20=20=
-=20=200):=20Control:=2010c53c7d=20=20Table:=20a52f006a=20=20DAC:=2000000015=
-=0D=0A=0D=0AHence=20this=20is=20a=20preventive=20patch=20to=20avoid=20kerne=
-l=20panic=20in=20case=20if=20the=20card=20object=20passed=20to=20timer=20fu=
-nction=20is=20NULL.=20This=20would=20not=20happen=20in=20normal=20case,=20b=
-ut=20in=20case=20of=20buggy=20scenario=20this=20would=20results=20in=20kern=
-el=20panic=20rather=20than=20graceful=20exit.=0D=0A=0D=0Athanks,=0D=0Asrika=
-nth
+Do you have any estimate of the expected gains for hardware
+implementations?
+
+Would it make sense to try out implementing aes-cbc-essiv
+on the ARMv8 crypto extensions? I see that Ard has done
+some prior work on aes-ccm in arch/arm64/crypto/aes-ce-ccm-*
+that (AFAICT) has a similar goal of avoiding overhead by
+combining the usual operations, so maybe the same can
+be done here.
+
+      Arnd
