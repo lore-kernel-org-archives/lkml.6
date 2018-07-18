@@ -6,309 +6,87 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B287BECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84971ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE2220854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FF6920854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:03:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELxbZcML"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE2220854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ogA0K0U8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF6920854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730315AbeGRUmL (ORCPT
+        id S1730451AbeGRUmn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:42:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38670 "EHLO mail.kernel.org"
+        Wed, 18 Jul 2018 16:42:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726909AbeGRUmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:42:11 -0400
+        id S1726909AbeGRUmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:42:43 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEE772075E;
-        Wed, 18 Jul 2018 20:02:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7192D2075E;
+        Wed, 18 Jul 2018 20:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531944163;
-        bh=RvHDvzW8P5V5erS526EQfcHHf4ufD7vKZNCKWBMvLxI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ELxbZcMLm4VYbS+aPb+//0GBbthu2eQhwcUMZII2VhQ4kr+nS5XYQXG9udCHiympr
-         0qwPJSV6vJsMb9aP0iUk/ew4asYrtTKE0t3bd4fNppnYZ/7q5ani+1FufqiO4bFlCR
-         6jz9nKuTsqKQtz4StAjp99n6qGk3Mpc/f4LWmpi0=
+        s=default; t=1531944195;
+        bh=MzUdkxXv22O4doZnCfNZhEeFMZqAzSjCk6T50Tmz25A=;
+        h=From:To:Subject:Date:From;
+        b=ogA0K0U8ve3A82Lpd/QUtb4M7oyS7/0CUHvlg3gg4DxPsUokOahUOhJuSrZ/lbiAI
+         zDrbzddTP4aHjKfbbLFowD8Kfpn8+R16W9L+6NF/UQqjulSAeyQdf14r1pPfB5qTnE
+         QriUJqsTqMGYHjA+dRPaCzcDCI8b/v4kY2Udflnk=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] dt-bindings: clock: samsung: Add SPDX license identifiers
-Date:   Wed, 18 Jul 2018 22:02:16 +0200
-Message-Id: <20180718200216.6389-1-krzk@kernel.org>
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] dt-bindings: thermal: samsung: Add SPDX license identifier
+Date:   Wed, 18 Jul 2018 22:02:50 +0200
+Message-Id: <20180718200250.6478-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace GPL license statements with SPDX license identifiers (GPL-2.0).
+Replace GPL license statement with SPDX license identifier (GPL-2.0+).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- include/dt-bindings/clock/exynos3250.h            | 5 +----
- include/dt-bindings/clock/exynos4.h               | 7 ++-----
- include/dt-bindings/clock/exynos5250.h            | 7 ++-----
- include/dt-bindings/clock/exynos5260-clk.h        | 7 ++-----
- include/dt-bindings/clock/exynos5410.h            | 7 ++-----
- include/dt-bindings/clock/exynos5420.h            | 7 ++-----
- include/dt-bindings/clock/exynos5433.h            | 5 +----
- include/dt-bindings/clock/exynos7-clk.h           | 7 ++-----
- include/dt-bindings/clock/s3c2410.h               | 5 +----
- include/dt-bindings/clock/s3c2412.h               | 5 +----
- include/dt-bindings/clock/s3c2443.h               | 5 +----
- include/dt-bindings/clock/samsung,s2mps11.h       | 5 +----
- include/dt-bindings/clock/samsung,s3c64xx-clock.h | 7 ++-----
- 13 files changed, 20 insertions(+), 59 deletions(-)
+ include/dt-bindings/thermal/thermal_exynos.h | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
-index c796ff02ceeb..fe8214017b46 100644
---- a/include/dt-bindings/clock/exynos3250.h
-+++ b/include/dt-bindings/clock/exynos3250.h
-@@ -1,11 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
+diff --git a/include/dt-bindings/thermal/thermal_exynos.h b/include/dt-bindings/thermal/thermal_exynos.h
+index 0646500bca69..642e4e7f4084 100644
+--- a/include/dt-bindings/thermal/thermal_exynos.h
++++ b/include/dt-bindings/thermal/thermal_exynos.h
+@@ -1,19 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
  /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-  * 	Author: Tomasz Figa <t.figa@samsung.com>
+  * thermal_exynos.h - Samsung EXYNOS TMU device tree definitions
   *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
+  *  Copyright (C) 2014 Samsung Electronics
+  *  Lukasz Majewski <l.majewski@samsung.com>
 - *
-  * Device Tree binding constants for Samsung Exynos3250 clock controllers.
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
   */
  
-diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
-index e9f9d400c322..5b1d68512360 100644
---- a/include/dt-bindings/clock/exynos4.h
-+++ b/include/dt-bindings/clock/exynos4.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-  * Author: Andrzej Hajda <a.hajda@samsung.com>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants for Exynos4 clock controller.
--*/
-+ */
- 
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_4_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_4_H
-diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-index 15508adcdfde..bc8a3c53a54b 100644
---- a/include/dt-bindings/clock/exynos5250.h
-+++ b/include/dt-bindings/clock/exynos5250.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-  * Author: Andrzej Hajda <a.hajda@samsung.com>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants for Exynos5250 clock controller.
--*/
-+ */
- 
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5250_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_5250_H
-diff --git a/include/dt-bindings/clock/exynos5260-clk.h b/include/dt-bindings/clock/exynos5260-clk.h
-index a4bac9a1764f..98a58cbd81b2 100644
---- a/include/dt-bindings/clock/exynos5260-clk.h
-+++ b/include/dt-bindings/clock/exynos5260-clk.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-  * Author: Rahul Sharma <rahul.sharma@samsung.com>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Provides Constants for Exynos5260 clocks.
--*/
-+ */
- 
- #ifndef _DT_BINDINGS_CLK_EXYNOS5260_H
- #define _DT_BINDINGS_CLK_EXYNOS5260_H
-diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-index 6cb4e90f81fc..f179eabbcdb7 100644
---- a/include/dt-bindings/clock/exynos5410.h
-+++ b/include/dt-bindings/clock/exynos5410.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-  * Copyright (c) 2016 Krzysztof Kozlowski
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants for Exynos5421 clock controller.
--*/
-+ */
- 
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
-diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-index 2740ae0424a9..355f469943f1 100644
---- a/include/dt-bindings/clock/exynos5420.h
-+++ b/include/dt-bindings/clock/exynos5420.h
-@@ -1,13 +1,10 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-  * Author: Andrzej Hajda <a.hajda@samsung.com>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants for Exynos5420 clock controller.
--*/
-+ */
- 
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5420_H
- #define _DT_BINDINGS_CLOCK_EXYNOS_5420_H
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index be39d23e6a32..98bd85ce1e45 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-  * Author: Chanwoo Choi <cw00.choi@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-  */
- 
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS5433_H
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index 10c558611085..fce33c7050c8 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -1,11 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-  * Author: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
-+ */
- 
- #ifndef _DT_BINDINGS_CLOCK_EXYNOS7_H
- #define _DT_BINDINGS_CLOCK_EXYNOS7_H
-diff --git a/include/dt-bindings/clock/s3c2410.h b/include/dt-bindings/clock/s3c2410.h
-index 352a7673fc69..0fb65c3f2f59 100644
---- a/include/dt-bindings/clock/s3c2410.h
-+++ b/include/dt-bindings/clock/s3c2410.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants clock controllers of Samsung S3C2410 and later.
-  */
- 
-diff --git a/include/dt-bindings/clock/s3c2412.h b/include/dt-bindings/clock/s3c2412.h
-index aac1dcfda81c..b4656156cc0f 100644
---- a/include/dt-bindings/clock/s3c2412.h
-+++ b/include/dt-bindings/clock/s3c2412.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants clock controllers of Samsung S3C2412.
-  */
- 
-diff --git a/include/dt-bindings/clock/s3c2443.h b/include/dt-bindings/clock/s3c2443.h
-index f3ba68a25ecb..a9d2f105d536 100644
---- a/include/dt-bindings/clock/s3c2443.h
-+++ b/include/dt-bindings/clock/s3c2443.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants clock controllers of Samsung S3C2443 and later.
-  */
- 
-diff --git a/include/dt-bindings/clock/samsung,s2mps11.h b/include/dt-bindings/clock/samsung,s2mps11.h
-index b903d7de27c9..5ece35d429ff 100644
---- a/include/dt-bindings/clock/samsung,s2mps11.h
-+++ b/include/dt-bindings/clock/samsung,s2mps11.h
-@@ -1,10 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (C) 2015 Markus Reichl
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants clocks for the Samsung S2MPS11 PMIC.
-  */
- 
-diff --git a/include/dt-bindings/clock/samsung,s3c64xx-clock.h b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
-index ad95c7f50090..19d233f37e2f 100644
---- a/include/dt-bindings/clock/samsung,s3c64xx-clock.h
-+++ b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
-@@ -1,12 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * Copyright (c) 2013 Tomasz Figa <tomasz.figa at gmail.com>
-  *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  * Device Tree binding constants for Samsung S3C64xx clock controller.
--*/
-+ */
- 
- #ifndef _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
- #define _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
+ #ifndef _EXYNOS_THERMAL_TMU_DT_H
 -- 
 2.14.1
 
