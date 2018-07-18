@@ -6,160 +6,190 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0911ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B433ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8121F206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8121F206B7
+	by mail.kernel.org (Postfix) with ESMTP id DDD1D206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDD1D206B7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbeGRM2I (ORCPT
+        id S1730053AbeGRM2X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:28:08 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:45381 "EHLO
+        Wed, 18 Jul 2018 08:28:23 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:40520 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeGRM2I (ORCPT
+        with ESMTP id S1726180AbeGRM2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:28:08 -0400
+        Wed, 18 Jul 2018 08:28:22 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
  (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MUjoe-1fY6V828xY-00YAUg; Wed, 18 Jul 2018 13:50:22 +0200
+ 0Lpijq-1gHrgd01yA-00fQYG; Wed, 18 Jul 2018 13:50:33 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     akpm@linux-foundation.org, Evgeniy Dushistov <dushistov@mail.ru>
+To:     akpm@linux-foundation.org, Anton Altaparmakov <anton@tuxera.com>
 Cc:     viro@zeniv.linux.org.uk, y2038@lists.linaro.org,
         linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
         Jeff Layton <jlayton@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        David Windsor <dave@nullcore.net>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] [RESEND] ufs: use ktime_get_real_seconds for sb and cg timestamps
-Date:   Wed, 18 Jul 2018 13:49:24 +0200
-Message-Id: <20180718115017.742609-1-arnd@arndb.de>
+        linux-ntfs-dev@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] [RESEND] ntfs: use timespec64 directly for timestamp conversion
+Date:   Wed, 18 Jul 2018 13:49:25 +0200
+Message-Id: <20180718115017.742609-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:uzKXm1YigPEMvmdjHlAyGCUK5yH9uK2elhy5sLfEGSW6oMXuGv7
- NED5zFxCWkbLOAbWUCE+4sIHOVuGY/y3Wr3lbvCzIKiX6Q1HBcQu94NcuYJjDu0fXPdgBg3
- hPC0dn/zyq7lMUGBQBsQxm3wFrUNcOR36iKycDn0KHVZasgQvN+F9hScsyJ6F8pHB/mFxso
- O74XPLbK/mx20+SlodhDw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:WE5naEZegOY=:aWCsXwLuHdd44LJvqwk7ml
- M34TTDLnmeed8ldeN1YEEUTAohHGG4K8LvA101QFKfxWr8p8qx/DhfYHWffrBM7eTZKPYlaHn
- mTWt3VI8uMC+hNci9JLKPd0cosQuk1au5ZizNE3SL3fLJB8fAsNBzZJZP7pdo5vma36Z9ZYsx
- JX3habK0fYs2bcSRFUPu+qqnCsUGv3VZX5VigXye4sQyMbzYSudgqCMwTuAyM0JauPJh7I2Vi
- VYSyxctxOJ+ZUj9ucgsPQhAGQuxJfRFDDAnSR8z6fXpSuT5Cz4hKFxJm9ImcJEDaypIl4ObYC
- ES6JXtbHRE9rYsKloD0Tf1oOAM1UtFK24kOeynSRdqIP9/a0Ezy00l2zghLPS4gafBaz2BhOZ
- 15t2D0Nr3Bhr0feA47U1qEEiP3jaStvoTfkSgrj80TE5PjmZ4i33NUUXfIVqbBymCQ47dISkn
- NwNcGDs3QPKEkh7KebfEQax+Oa51gNK7YHH+XH0u52qsx+CD9YuJMugh6DSGxnrjJ4xeEBnso
- Gjln/rdy/LIxw7UMtAEoNVc+SFlgrym0YTdzAz4GK5ryYexHymDVUw3GB1BjDxA1eu+jamuAh
- TieHrNdd+V3z4wh9ozMkE1Xru5O90OPEpUuyH4vcZes18hx7/HEzNoYI+3ypaBzgSDXMXk81Y
- h1l+m4M7e05bBUPtupahjzugTiGA5v2xiEbZ5dc5egPYK5RNTwClY+5kg3903wzqX4dY=
+In-Reply-To: <20180718115017.742609-1-arnd@arndb.de>
+References: <20180718115017.742609-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:48HS6bUrv82M+wTECIkvvM0e/wX0MoM1hFhZUZC8jtt8TrMTJbl
+ dMink4CvqSzJoNiGejrjXT8dKfW58V8yv3Ddmb3AM6sDs/JTSgY6AnMLnXfDh6s53znUy9b
+ OjhCItBi4pEtbKDvtXSAkucVGUBRc3nAHNKnepC1ucnwWLS63+rVNmtxFXIEpm0rvKNNG4D
+ Y6l62X8H/vIaSs8nQMExw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:LzqsGoFDgLk=:p4bHRCyay8txTcpFNq33No
+ zNJZSjywMEerCiTwNopQPrVbgzA/zdkxjS/P8jJ4bUfhCICcHXLW2bZg7UOLlbWMpKljKj53c
+ 3exTiSQZWwSeu/kmMiCVIHzKbk58kkNhHcNObHppykiIRWcg4cmd3Ta3Wf5/SRzl/wy/MRDoE
+ saW8FYeLylp08yMY71CqIPjOAzGr9rMfT4z0EV2Ex8BjfPFa4Ibcxit2dIepNDqJ8Yd9B0YJ+
+ x1xm6wSdmxlAUWvJkG6dmutHVVbN8Vb4SXQcYH69wHfc+ZSYTrZJ+e3UXG6ChZQk4KCMEJBG3
+ qEppI7mhV2yfe9ejFMGUgGlhKwp2zFfVR6ihGgysrPdK7exzgoq0NFhqdI8RS/2I80653HfH1
+ McG7ht8dN/V8TDXvasQU9xikYW5sv72ejwfSKdtYyf5EY/DfzSKKVP+C6hKRbVtWLybMNDIST
+ A1ozY38lcbnTR1RB5PvCo9ElThuwAvNfDpnvncoRehebn7/lldSVn5p3HiE+VqtpKQMtYZJam
+ XkN2s90sACKa4dRqpeiGvB10lVVsInFfCMr5HXy6O5X7P0pRXKuv5wTQvmlRdM0yaNLC5SwF+
+ AqpOl69oDjfeCmYY2fXdBZNjfy8byYN0zxL9fNVQQm2Jd6Zz8IofQsC9Fsv27om4SZBkYweMj
+ UOBF7hY5RmOxqM5RyyF04pbxWo24LAZ00u5yuBTCx6Xn8ZjO72CMLGY4lGnWkBU9Aw0I=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_seconds() is deprecated because of the 32-bit overflow and will
-be removed. All callers in ufs also truncate to a 32-bit number, so
-nothing changes during the conversion, but this should be harmless as the
-superblock and cylinder group timestamps are not visible to user space,
-except for checking the fs-dirty state, wich works fine across the
-overflow.
+Now that the VFS has been converted from timespec to timespec64
+timestamps, only the conversion to/from ntfs timestamps uses 32-bit
+seconds.
 
-This moves the call to get_seconds() into a new inline function, with
-a comment explaining the constraints, while converting it to
-ktime_get_real_seconds().
+This changes that last missing piece to get the ntfs implementation
+y2038 safe on 32-bit architectures.
 
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Originally sent on June 19, got an Ack but nobody picked up the
-patch.
+Originally sent on June 19, but got no reply
 ---
- fs/ufs/balloc.c |  4 ++--
- fs/ufs/ialloc.c |  2 +-
- fs/ufs/super.c  |  4 ++--
- fs/ufs/util.h   | 14 ++++++++++++++
- 4 files changed, 19 insertions(+), 5 deletions(-)
+ fs/ntfs/inode.c | 12 ++++++------
+ fs/ntfs/time.h  | 27 +++++++++++++++------------
+ 2 files changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/fs/ufs/balloc.c b/fs/ufs/balloc.c
-index e727ee07dbe4..075d3d9114c8 100644
---- a/fs/ufs/balloc.c
-+++ b/fs/ufs/balloc.c
-@@ -547,7 +547,7 @@ static u64 ufs_add_fragments(struct inode *inode, u64 fragment,
+diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
+index decaf75d1cd5..bd3221cbdd95 100644
+--- a/fs/ntfs/inode.c
++++ b/fs/ntfs/inode.c
+@@ -667,18 +667,18 @@ static int ntfs_read_locked_inode(struct inode *vi)
+ 	 * mtime is the last change of the data within the file. Not changed
+ 	 * when only metadata is changed, e.g. a rename doesn't affect mtime.
+ 	 */
+-	vi->i_mtime = timespec_to_timespec64(ntfs2utc(si->last_data_change_time));
++	vi->i_mtime = ntfs2utc(si->last_data_change_time);
  	/*
- 	 * Block can be extended
+ 	 * ctime is the last change of the metadata of the file. This obviously
+ 	 * always changes, when mtime is changed. ctime can be changed on its
+ 	 * own, mtime is then not changed, e.g. when a file is renamed.
  	 */
--	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
-+	ucg->cg_time = ufs_get_seconds(sb);
- 	for (i = newcount; i < (uspi->s_fpb - fragoff); i++)
- 		if (ubh_isclr (UCPI_UBH(ucpi), ucpi->c_freeoff, fragno + i))
- 			break;
-@@ -639,7 +639,7 @@ static u64 ufs_alloc_fragments(struct inode *inode, unsigned cgno,
- 	if (!ufs_cg_chkmagic(sb, ucg)) 
- 		ufs_panic (sb, "ufs_alloc_fragments",
- 			"internal error, bad magic number on cg %u", cgno);
--	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
-+	ucg->cg_time = ufs_get_seconds(sb);
- 
- 	if (count == uspi->s_fpb) {
- 		result = ufs_alloccg_block (inode, ucpi, goal, err);
-diff --git a/fs/ufs/ialloc.c b/fs/ufs/ialloc.c
-index e1ef0f0a1353..c678fff2a04d 100644
---- a/fs/ufs/ialloc.c
-+++ b/fs/ufs/ialloc.c
-@@ -89,7 +89,7 @@ void ufs_free_inode (struct inode * inode)
- 	if (!ufs_cg_chkmagic(sb, ucg))
- 		ufs_panic (sb, "ufs_free_fragments", "internal error, bad cg magic number");
- 
--	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
-+	ucg->cg_time = ufs_get_seconds(sb);
- 
- 	is_directory = S_ISDIR(inode->i_mode);
- 
-diff --git a/fs/ufs/super.c b/fs/ufs/super.c
-index 96a20a76e3c4..f48a5b802221 100644
---- a/fs/ufs/super.c
-+++ b/fs/ufs/super.c
-@@ -698,7 +698,7 @@ static int ufs_sync_fs(struct super_block *sb, int wait)
- 	usb1 = ubh_get_usb_first(uspi);
- 	usb3 = ubh_get_usb_third(uspi);
- 
--	usb1->fs_time = cpu_to_fs32(sb, get_seconds());
-+	usb1->fs_time = ufs_get_seconds(sb);
- 	if ((flags & UFS_ST_MASK) == UFS_ST_SUN  ||
- 	    (flags & UFS_ST_MASK) == UFS_ST_SUNOS ||
- 	    (flags & UFS_ST_MASK) == UFS_ST_SUNx86)
-@@ -1344,7 +1344,7 @@ static int ufs_remount (struct super_block *sb, int *mount_flags,
+-	vi->i_ctime = timespec_to_timespec64(ntfs2utc(si->last_mft_change_time));
++	vi->i_ctime = ntfs2utc(si->last_mft_change_time);
+ 	/*
+ 	 * Last access to the data within the file. Not changed during a rename
+ 	 * for example but changed whenever the file is written to.
  	 */
- 	if (*mount_flags & SB_RDONLY) {
- 		ufs_put_super_internal(sb);
--		usb1->fs_time = cpu_to_fs32(sb, get_seconds());
-+		usb1->fs_time = ufs_get_seconds(sb);
- 		if ((flags & UFS_ST_MASK) == UFS_ST_SUN
- 		  || (flags & UFS_ST_MASK) == UFS_ST_SUNOS
- 		  || (flags & UFS_ST_MASK) == UFS_ST_SUNx86) 
-diff --git a/fs/ufs/util.h b/fs/ufs/util.h
-index 1907be6d5808..1fd3011ea623 100644
---- a/fs/ufs/util.h
-+++ b/fs/ufs/util.h
-@@ -590,3 +590,17 @@ static inline int ufs_is_data_ptr_zero(struct ufs_sb_private_info *uspi,
- 	else
- 		return *(__fs32 *)p == 0;
+-	vi->i_atime = timespec_to_timespec64(ntfs2utc(si->last_access_time));
++	vi->i_atime = ntfs2utc(si->last_access_time);
+ 
+ 	/* Find the attribute list attribute if present. */
+ 	ntfs_attr_reinit_search_ctx(ctx);
+@@ -2997,7 +2997,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
+ 	si = (STANDARD_INFORMATION*)((u8*)ctx->attr +
+ 			le16_to_cpu(ctx->attr->data.resident.value_offset));
+ 	/* Update the access times if they have changed. */
+-	nt = utc2ntfs(timespec64_to_timespec(vi->i_mtime));
++	nt = utc2ntfs(vi->i_mtime);
+ 	if (si->last_data_change_time != nt) {
+ 		ntfs_debug("Updating mtime for inode 0x%lx: old = 0x%llx, "
+ 				"new = 0x%llx", vi->i_ino, (long long)
+@@ -3006,7 +3006,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
+ 		si->last_data_change_time = nt;
+ 		modified = true;
+ 	}
+-	nt = utc2ntfs(timespec64_to_timespec(vi->i_ctime));
++	nt = utc2ntfs(vi->i_ctime);
+ 	if (si->last_mft_change_time != nt) {
+ 		ntfs_debug("Updating ctime for inode 0x%lx: old = 0x%llx, "
+ 				"new = 0x%llx", vi->i_ino, (long long)
+@@ -3015,7 +3015,7 @@ int __ntfs_write_inode(struct inode *vi, int sync)
+ 		si->last_mft_change_time = nt;
+ 		modified = true;
+ 	}
+-	nt = utc2ntfs(timespec64_to_timespec(vi->i_atime));
++	nt = utc2ntfs(vi->i_atime);
+ 	if (si->last_access_time != nt) {
+ 		ntfs_debug("Updating atime for inode 0x%lx: old = 0x%llx, "
+ 				"new = 0x%llx", vi->i_ino,
+diff --git a/fs/ntfs/time.h b/fs/ntfs/time.h
+index 01233989d5d1..24cd719f1fd2 100644
+--- a/fs/ntfs/time.h
++++ b/fs/ntfs/time.h
+@@ -36,16 +36,16 @@
+  * Convert the Linux UTC time @ts to its corresponding NTFS time and return
+  * that in little endian format.
+  *
+- * Linux stores time in a struct timespec consisting of a time_t (long at
+- * present) tv_sec and a long tv_nsec where tv_sec is the number of 1-second
+- * intervals since 1st January 1970, 00:00:00 UTC and tv_nsec is the number of
+- * 1-nano-second intervals since the value of tv_sec.
++ * Linux stores time in a struct timespec64 consisting of a time64_t tv_sec
++ * and a long tv_nsec where tv_sec is the number of 1-second intervals since
++ * 1st January 1970, 00:00:00 UTC and tv_nsec is the number of 1-nano-second
++ * intervals since the value of tv_sec.
+  *
+  * NTFS uses Microsoft's standard time format which is stored in a s64 and is
+  * measured as the number of 100-nano-second intervals since 1st January 1601,
+  * 00:00:00 UTC.
+  */
+-static inline sle64 utc2ntfs(const struct timespec ts)
++static inline sle64 utc2ntfs(const struct timespec64 ts)
+ {
+ 	/*
+ 	 * Convert the seconds to 100ns intervals, add the nano-seconds
+@@ -63,7 +63,10 @@ static inline sle64 utc2ntfs(const struct timespec ts)
+  */
+ static inline sle64 get_current_ntfs_time(void)
+ {
+-	return utc2ntfs(current_kernel_time());
++	struct timespec64 ts;
++
++	ktime_get_coarse_real_ts64(&ts);
++	return utc2ntfs(ts);
  }
-+
-+static inline __fs32 ufs_get_seconds(struct super_block *sbp)
-+{
-+	time64_t now = ktime_get_real_seconds();
-+
-+	/* Signed 32-bit interpretation wraps around in 2038, which
-+	 * happens in ufs1 inode stamps but not ufs2 using 64-bits
-+	 * stamps. For superblock and blockgroup, let's assume
-+	 * unsigned 32-bit stamps, which are good until y2106.
-+	 * Wrap around rather than clamp here to make the dirty
-+	 * file system detection work in the superblock stamp.
-+	 */
-+	return cpu_to_fs32(sbp, lower_32_bits(now));
-+}
+ 
+ /**
+@@ -73,18 +76,18 @@ static inline sle64 get_current_ntfs_time(void)
+  * Convert the little endian NTFS time @time to its corresponding Linux UTC
+  * time and return that in cpu format.
+  *
+- * Linux stores time in a struct timespec consisting of a time_t (long at
+- * present) tv_sec and a long tv_nsec where tv_sec is the number of 1-second
+- * intervals since 1st January 1970, 00:00:00 UTC and tv_nsec is the number of
+- * 1-nano-second intervals since the value of tv_sec.
++ * Linux stores time in a struct timespec64 consisting of a time64_t tv_sec
++ * and a long tv_nsec where tv_sec is the number of 1-second intervals since
++ * 1st January 1970, 00:00:00 UTC and tv_nsec is the number of 1-nano-second
++ * intervals since the value of tv_sec.
+  *
+  * NTFS uses Microsoft's standard time format which is stored in a s64 and is
+  * measured as the number of 100 nano-second intervals since 1st January 1601,
+  * 00:00:00 UTC.
+  */
+-static inline struct timespec ntfs2utc(const sle64 time)
++static inline struct timespec64 ntfs2utc(const sle64 time)
+ {
+-	struct timespec ts;
++	struct timespec64 ts;
+ 
+ 	/* Subtract the NTFS time offset. */
+ 	u64 t = (u64)(sle64_to_cpu(time) - NTFS_TIME_OFFSET);
 -- 
 2.9.0
 
