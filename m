@@ -2,167 +2,82 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B08BECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:40:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26618ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAEB32084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:39:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMpfg6vU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAEB32084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D4BAB20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 08:41:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BAB20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730057AbeGRJQo (ORCPT
+        id S1730460AbeGRJSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 05:16:44 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37715 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbeGRJQo (ORCPT
+        Wed, 18 Jul 2018 05:18:00 -0400
+Received: from smtprelay0046.hostedemail.com ([216.40.44.46]:43251 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726180AbeGRJSA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 05:16:44 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v9-v6so3372650ljk.4;
-        Wed, 18 Jul 2018 01:39:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=QtijWDBTUU60iJzUDcmnGxDyMA0RCvBfhhHfDquH9A8=;
-        b=KMpfg6vU7jC8h+52A5Rynkxsmr7bNoDN2a5TWK/9xOT3C8NjhNlIxwZaQGU2v7toW6
-         0QFMVKqavbWbTYG/YxS6tEoRTKIH+3kmblxeGVjIngVPdjMOrkYQjlnMytd5fMMTPV+q
-         WEo+kR9Ho0PNZ8edI7NFqZ4pmDFpTUNyubO2Z477LsrPMLOq9m7ifWXGnumBqGsCjKTw
-         QzMD/zm3kK8fnET1ckaKg/gIbbIiJe1Ny1nGp6cOYhlYXbQxL8cMSKc7AXog9FzxxS4D
-         NpEdg1wpbaITs4qfu6IU3W+AAP5C4R/ilzLzJxVKj/JvC3poywhW0b3YZIXZYpagyhjM
-         Jj2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=QtijWDBTUU60iJzUDcmnGxDyMA0RCvBfhhHfDquH9A8=;
-        b=Y3VecQ13fZY2XNfrbbovmv+aroMXexooP+TsJ9kdEhfXeCSojWrlPrg78FDCBZv5f9
-         p/R2Yu+o3OW0K/yEOiU34Axx09xbkpIk/1SovKlgPc7vvffv5AcuowB4OS/Z9UwAALZj
-         efUV0alUGKuHKK2/AfnOCMXoQEnMsitr//Ny3WDd0V2XE6J/nk956vUe6lpWgpI58ioF
-         kYRoj5MgQ0D4JKGZNbr32Ya3xucrB11rht94FXpWtU8pZnm4fEyeHENnNmYOTFl4dXLB
-         Tb8ZFY9iO0+hEt355dMrO2bRyMFxXP3tZm2wMDKsTlVaMkUcZhOBtM0sK7wOPtsQqpPc
-         j0wQ==
-X-Gm-Message-State: AOUpUlGTAnI/8tadBvbqt5lSLLziDhHyyBirYqWqfa+RHELkl7flerJ8
-        ye3SZvs8T1vbWPwsLVZe5Ks=
-X-Google-Smtp-Source: AAOMgpdv7lZp8QFC0oDsiJscSGR3Sk1HOBWPih+1myhTzjHH8UI0XD2x9hVPrlm3DN7zSmrc/6gudw==
-X-Received: by 2002:a2e:1207:: with SMTP id t7-v6mr3696655lje.129.1531903193744;
-        Wed, 18 Jul 2018 01:39:53 -0700 (PDT)
-Received: from ?IPv6:2001:2012:22e:1b00:f2e2:9015:9262:3fde? ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm459828lfi.36.2018.07.18.01.39.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 01:39:52 -0700 (PDT)
-Subject: Re: [V9fs-developer] [PATCH] p9_parse_header() validate PDU length
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
-        viro@ZenIV.linux.org.uk, davem@davemloft.net,
-        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-References: <20180712110211.25535-1-tomasbortoli@gmail.com>
- <20180718051321.GB16605@nautica>
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <8c25c95f-a8cc-9530-b0e7-93bb5af8888d@gmail.com>
-Date:   Wed, 18 Jul 2018 10:39:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180718051321.GB16605@nautica>
-Content-Type: text/plain; charset=utf-8
+        Wed, 18 Jul 2018 05:18:00 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 6894218033786;
+        Wed, 18 Jul 2018 08:41:10 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: soup81_271360bbf9a47
+X-Filterd-Recvd-Size: 2194
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 18 Jul 2018 08:41:08 +0000 (UTC)
+Message-ID: <93d979554b031755fafc03ded90560d3aaec40a3.camel@perches.com>
+Subject: Re: [PATCH] x86: Avoid pr_cont() in show_opcodes()
+From:   Joe Perches <joe@perches.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@suse.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Date:   Wed, 18 Jul 2018 01:41:07 -0700
+In-Reply-To: <8e7a3e658dbb928477639e0da67a5a204456b065.camel@perches.com>
+References: <1530943625-3288-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+         <20180707111209.GA27768@gmail.com>
+         <da14a295-3bff-f4bb-7c3e-f4126cda8d08@i-love.sakura.ne.jp>
+         <12409dc4-c10a-d77a-f88d-165aa92b489e@rasmusvillemoes.dk>
+         <f486debf-e824-0d0c-c0c9-cf1e278ee9eb@i-love.sakura.ne.jp>
+         <218baff7-9473-ac1e-2449-13de98fa6dc9@rasmusvillemoes.dk>
+         <2c8fe03e-36f5-5126-283c-cabc358a7d52@i-love.sakura.ne.jp>
+         <8e7a3e658dbb928477639e0da67a5a204456b065.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/18/2018 07:13 AM, Dominique Martinet wrote:
-> Tomas Bortoli wrote on Thu, Jul 12, 2018:
->> This patch adds checks to the p9_parse_header() function to
->> verify that the length found within the header coincides with the actual
->> length of the PDU. Furthermore, it checks that the length stays within the
->> acceptable range. To do this the patch brings the actual length of the PDU
->> from the different transport layers (rdma and virtio). For TCP (trans_fd.c)
->> the length is not know before, so we get it from the header but we check it
->> anyway that it's within the valid range.
->>
->> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
->> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
->> ---
->> [..]
->> @@ -498,6 +489,21 @@ p9_parse_header(struct p9_fcall *pdu, int32_t *size, int8_t *type, int16_t *tag,
->>  	if (size)
->>  		*size = r_size;
->>  
->> +	if (pdu->size != r_size) {
->> +		err = -EINVAL;
->> +		goto rewind_and_exit;
->> +	}
->> +	if (pdu->size >= pdu->capacity || pdu->size < 7) {
->> +		p9_debug(P9_DEBUG_ERROR,
->> +			 "requested packet size too big or too small: %d\n",
->> +			 pdu->size);
->> +		return -EIO;
->> +	}
-> Actually, I've been bad advice - this breaks on virtio with zc packets -
-> a read or ls in a big directory fails with this in dmesg
-> [ 1006.853775] 9pnet: -- p9_parse_header (17123): requested packet size too big or too small: 4306
-> [ 1006.853780] 9pnet: -- p9_check_zc_errors (17123): couldn't parse header -5
->
-> I haven't given this any thought yet, but dropping the patch for now
->
-It seems that pdu->capacity is set to less than 4306 at that point, we
-can just increase it.
+On Tue, 2018-07-17 at 14:19 -0700, Joe Perches wrote:
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> []
+> > @@ -93,26 +93,15 @@ static void printk_stack_address(unsigned long address, int reliable,
+> >   */
+> >  void show_opcodes(u8 *rip, const char *loglvl)
+> >  {
+> > -	unsigned int code_prologue = OPCODE_BUFSIZE * 2 / 3;
+> > +	const unsigned int prologue = OPCODE_BUFSIZE * 2 / 3;
+> 
+> And this might be better as a #define to avoid
+> a few more bytes of stack consumption.
 
+Apologies for this silly suggestion.
+
+automatics are not structs and gcc will eliminate
+this declaration at all compiler optimization levels.
