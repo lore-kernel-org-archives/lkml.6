@@ -2,181 +2,135 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F22ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09927ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A04020856
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:22:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JdKzAwGr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A04020856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id BA55220856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:22:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA55220856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=math.uni-bielefeld.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730933AbeGRVCS (ORCPT
+        id S1731041AbeGRVCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:02:18 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33650 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729742AbeGRVCS (ORCPT
+        Wed, 18 Jul 2018 17:02:25 -0400
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:60061 "EHLO
+        smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730860AbeGRVCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:02:18 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 6-v6so2541090plb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 13:22:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=f5qdJwLTCi+4ek9OB51GMsKHPcAJziGy2JSdaeClDCQ=;
-        b=JdKzAwGrzJ4ESdnayxI9UYxAEIphlSbcf1p03nKSf6M/bDF5IbmRIQ/67qUGx18AmM
-         RfUkJPHxK6eUqeEKjMQX/xV6bKDVVW1yUwvoWcjgbTKv4QOg2V+M6TSDQCh0D64/QYPB
-         6KEnus7QJWY447jWKbdC1QmK5xEQIgZrob2opkAMhWl4bImL9ExNw8caBlcKzzLnw3fL
-         0dToQxrBpCDLjy69ykZCRbZxr2Ub52SUIh92OYT26L3IxvWh5wg+zFmpkaVyzA5Q1/AG
-         UZWWwnfnnOcrF61NgLBCZ+WaLQcHBhMQLHmSUvOzQXk9BxDdSzY5IAqS+weAW57/oqZ8
-         lgtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=f5qdJwLTCi+4ek9OB51GMsKHPcAJziGy2JSdaeClDCQ=;
-        b=pg1C91vOjyW/BOzVzDh+EPEAn/uWvDanvThlxctlgH9ii8xQqEGGl3XD1rLhuNKn/m
-         geVx0FhuYxfBo54/Ok0n1Nu7iar/1zbKDz5fsFzfw7GhWFdH3ArXcDdXPaVC+U+flQpf
-         ao++Cl4BH/1LN98QgHwOtbC2u5u05uW6b26KB3soXvNW56jZF3MOyNxW94+m23OLXKLz
-         AwByfQMgrIep8ICXRuA+hRbrhz5FWGOshqI0pT3gxvKnt99JWOQNAcd538iawXSMq0eS
-         Hp9cD/jJ/W7k2T95+vE7Mu6D1zTHit4olkYgHd2aamCgD0RAgNQgGu6q1Me3tTlb0dwo
-         zLiw==
-X-Gm-Message-State: AOUpUlH3rpVYY3KMVtNO3tYfb6HSZ8MaaOQrULws+V83gritx9JUKXEx
-        I4jx+XCx93W8eIpeSdRwdX4mlg==
-X-Google-Smtp-Source: AAOMgpckIQ37agrGY5fKErXibYU8pgcwbADIP9D+UucSc8tu8BplPcWodprQkjt5bU5Cf6a1rbI1SA==
-X-Received: by 2002:a17:902:9345:: with SMTP id g5-v6mr7322530plp.10.1531945365616;
-        Wed, 18 Jul 2018 13:22:45 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id t63-v6sm6363051pgt.57.2018.07.18.13.22.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 13:22:44 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 13:22:44 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [patch v3] mm, oom: fix unnecessary killing of additional
- processes
-In-Reply-To: <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp>
-Message-ID: <alpine.DEB.2.21.1807181317540.49359@chino.kir.corp.google.com>
-References: <alpine.DEB.2.21.1806211434420.51095@chino.kir.corp.google.com> <d19d44c3-c8cf-70a1-9b15-c98df233d5f0@i-love.sakura.ne.jp>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 18 Jul 2018 17:02:24 -0400
+X-Greylist: delayed 589 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Jul 2018 17:02:24 EDT
+Received: from [192.168.0.100] (pC19F5CC7.dip0.t-ipconnect.de [193.159.92.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client did not present a certificate)
+        by smtp.math.uni-bielefeld.de (Postfix) with ESMTPSA id 62F855F8F8;
+        Wed, 18 Jul 2018 22:13:04 +0200 (CEST)
+Subject: Re: [PATCH] drm/exynos/mixer: Remove unused local variable priv
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180718195520.5226-1-krzk@kernel.org>
+From:   Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tjakobi@math.uni-bielefeld.de; prefer-encrypt=mutual; keydata=
+ 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
+ 24xKzP1yWf7TCvc+DT6gUl4T65RXUQyTeJ0=
+Message-ID: <6b613193-a3f6-d824-194d-004f87afacd4@math.uni-bielefeld.de>
+Date:   Wed, 18 Jul 2018 22:13:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Firefox/52.0 SeaMonkey/2.49.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180718195520.5226-1-krzk@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018, Tetsuo Handa wrote:
+Hello Krzysztof,
 
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -3059,25 +3059,28 @@ void exit_mmap(struct mm_struct *mm)
-> >  	if (unlikely(mm_is_oom_victim(mm))) {
-> >  		/*
-> >  		 * Manually reap the mm to free as much memory as possible.
-> > -		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
-> > -		 * this mm from further consideration.  Taking mm->mmap_sem for
-> > -		 * write after setting MMF_OOM_SKIP will guarantee that the oom
-> > -		 * reaper will not run on this mm again after mmap_sem is
-> > -		 * dropped.
-> > -		 *
-> >  		 * Nothing can be holding mm->mmap_sem here and the above call
-> >  		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
-> >  		 * __oom_reap_task_mm() will not block.
-> > -		 *
-> > -		 * This needs to be done before calling munlock_vma_pages_all(),
-> > -		 * which clears VM_LOCKED, otherwise the oom reaper cannot
-> > -		 * reliably test it.
-> >  		 */
-> >  		mutex_lock(&oom_lock);
-> >  		__oom_reap_task_mm(mm);
-> >  		mutex_unlock(&oom_lock);
-> >  
-> > -		set_bit(MMF_OOM_SKIP, &mm->flags);
-> > +		/*
-> > +		 * Now, set MMF_UNSTABLE to avoid racing with the oom reaper.
-> > +		 * This needs to be done before calling munlock_vma_pages_all(),
-> > +		 * which clears VM_LOCKED, otherwise the oom reaper cannot
-> > +		 * reliably test for it.  If the oom reaper races with
-> > +		 * munlock_vma_pages_all(), this can result in a kernel oops if
-> > +		 * a pmd is zapped, for example, after follow_page_mask() has
-> > +		 * checked pmd_none().
-> > +		 *
-> > +		 * Taking mm->mmap_sem for write after setting MMF_UNSTABLE will
-> > +		 * guarantee that the oom reaper will not run on this mm again
-> > +		 * after mmap_sem is dropped.
-> > +		 */
-> > +		set_bit(MMF_UNSTABLE, &mm->flags);
+looks good to me!
+
+Reviewed-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+
+- Tobias
+
+
+Krzysztof Kozlowski wrote:
+> Remove local variable 'priv' to fix GCC warning:
 > 
-> Since MMF_UNSTABLE is set by __oom_reap_task_mm() from exit_mmap() before start reaping
-> (because the purpose of MMF_UNSTABLE is to "tell all users of get_user/copy_from_user
-> etc... that the content is no longer stable"), it cannot be used for a flag for indicating
-> that the OOM reaper can't work on the mm anymore.
+>     drivers/gpu/drm/exynos/exynos_mixer.c: In function 'mixer_initialize':
+>     drivers/gpu/drm/exynos/exynos_mixer.c:840:29: warning: variable 'priv' set but not used [-Wunused-but-set-variable]
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/gpu/drm/exynos/exynos_mixer.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index 272c79f5f5bf..b86ae2ab9590 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -837,8 +837,6 @@ static int mixer_initialize(struct mixer_context *mixer_ctx,
+>  			struct drm_device *drm_dev)
+>  {
+>  	int ret;
+> -	struct exynos_drm_private *priv;
+> -	priv = drm_dev->dev_private;
+>  
+>  	mixer_ctx->drm_dev = drm_dev;
+>  
 > 
 
-Why?  It should be able to be set by exit_mmap() since nothing else should 
-be accessing this mm in the first place.  There is no reason to wait for 
-the oom reaper and the following down_write();up_write(); cycle will 
-guarantee it is not operating on the mm before munlocking.
-
-> If the oom_lock serialization is removed, the OOM reaper will give up after (by default)
-> 1 second even if current thread is immediately after set_bit(MMF_UNSTABLE, &mm->flags) from
-> __oom_reap_task_mm() from exit_mmap(). Thus, this patch and the other patch which removes
-> oom_lock serialization should be dropped.
-> 
-
-No, it shouldn't, lol.  The oom reaper may give up because we have entered 
-__oom_reap_task_mm() by way of exit_mmap(), there's no other purpose for 
-it acting on the mm.  This is very different from giving up by setting 
-MMF_OOM_SKIP, which it will wait for oom_free_timeout_ms to do unless the 
-thread can make forward progress here in exit_mmap().
-
-> >  		down_write(&mm->mmap_sem);
-> >  		up_write(&mm->mmap_sem);
-> >  	}
-> 
-> > @@ -637,25 +649,57 @@ static int oom_reaper(void *unused)
-> >  	return 0;
-> >  }
-> >  
-> > +/*
-> > + * Millisecs to wait for an oom mm to free memory before selecting another
-> > + * victim.
-> > + */
-> > +static u64 oom_free_timeout_ms = 1000;
-> >  static void wake_oom_reaper(struct task_struct *tsk)
-> >  {
-> > -	/* tsk is already queued? */
-> > -	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
-> > +	/*
-> > +	 * Set the reap timeout; if it's already set, the mm is enqueued and
-> > +	 * this tsk can be ignored.
-> > +	 */
-> > +	if (cmpxchg(&tsk->signal->oom_mm->oom_free_expire, 0UL,
-> > +			jiffies + msecs_to_jiffies(oom_free_timeout_ms)))
-> >  		return;
-> 
-> "expire" must not be 0 in order to avoid double list_add(). See
-> https://lore.kernel.org/lkml/201807130620.w6D6KiAJ093010@www262.sakura.ne.jp/T/#u .
-> 
-
-We should not allow oom_free_timeout_ms to be 0 for sure, I assume 1000 is 
-the sane minimum since we need to allow time for some memory freeing and 
-this will not be radically different from what existed before the patch 
-for the various backoffs.  Or maybe you meant something else for "expire" 
-here?
