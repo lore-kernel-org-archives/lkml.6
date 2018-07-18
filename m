@@ -2,89 +2,271 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CFEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2B8ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 491DD2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491DD2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 5DB0820856
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="Q0JW7qs+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DB0820856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbeGRKVl (ORCPT
+        id S1731835AbeGRKV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:21:41 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47213 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731054AbeGRKVk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:21:40 -0400
-Received: from 89-70-153-66.dynamic.chello.pl (89.70.153.66) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 58330be86bcf8a4b; Wed, 18 Jul 2018 11:44:34 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Calvin Walton <calvin.walton@kepstin.ca>
-Cc:     linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Len Brown <len.brown@intel.com>
-Subject: Re: [PATCH 0/2] turbostat: Improve support for AMD Zen CPUs (RAPL, CPUID)
-Date:   Wed, 18 Jul 2018 11:42:55 +0200
-Message-ID: <3796314.T8TZf5QxF9@aspire.rjw.lan>
-In-Reply-To: <20180718013642.10344-1-calvin.walton@kepstin.ca>
-References: <20180718013642.10344-1-calvin.walton@kepstin.ca>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Wed, 18 Jul 2018 06:21:27 -0400
+Received: from 8bytes.org ([81.169.241.247]:53740 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731479AbeGRKSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:32 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 8A9F52A9; Wed, 18 Jul 2018 11:41:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1531906880; bh=dQROBCeZq0CXpVzO4r85JemVG1pWJE5GiUltpV6xkOc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Q0JW7qs+Tma+Xz5cfazeUxjDIyVI9L5nlovKGpdnMUMviC09+KoeY2hmoq3Zy3i3W
+         aLEkcU1QTGnZes1NDygyZCUGvJlOv3hxhka2OaMUbaVKdB+tINZx6Unq0Bsh/SgP8J
+         heth3RIXjGL6yzRnIKuWW8veK0a0xIhagETmZwU7EK5sfzjZl1UGOEFj6yekrRvGyl
+         HV9Y+1jmG2DOU/RsCKK6eHyJZvGkPLX+gv4Bwb+RDSBvnW7L41JBRgmZ91DX4vDz33
+         D4Zo0cQkXUvpNnNZ8VPuHs6QKBBpGZP/QIyGmMf80yhKYiGYcueLB2HnxnoZK4u8lf
+         ylOY4bMTh9D2w==
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        jroedel@suse.de, joro@8bytes.org
+Subject: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
+Date:   Wed, 18 Jul 2018 11:40:47 +0200
+Message-Id: <1531906876-13451-11-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, July 18, 2018 3:36:40 AM CEST Calvin Walton wrote:
-> Based on the documentation provided in AMD's Open-Source
-> Register Reference For AMD Family 17h Processors:
-> https://support.amd.com/TechDocs/56255_OSRR.pdf
-> 
-> I've added support for reading Cores and Package energy usage from AMD's
-> "RAPL" MSRs. In order to correctly detect the AMD processor generation,
-> I've also had to update the CPUID code to handle AMD's extended family
-> field.
-> 
-> Here's some example output from my (idle) Ryzen 3 2200G test system:
-> 
-> turbostat version 17.06.23 - Len Brown <lenb@kernel.org>
-> CPUID(0): AuthenticAMD 13 CPUID levels; family:model:stepping 0x17:11:0 (23:17:0)
-> CPUID(1): SSE3 MONITOR - - - TSC MSR - -
-> CPUID(6): APERF, No-TURBO, No-DTS, No-PTM, No-HWP, No-HWPnotify, No-HWPwindow, No-HWPepp, No-HWPpkg, No-EPB
-> CPUID(7): No-SGX
-> RAPL: 364 sec. Joule Counter Range, at 180 Watts
-> cpu2: POLL: CPUIDLE CORE POLL IDLE
-> cpu2: C1: ACPI FFH INTEL MWAIT 0x0
-> cpu2: C2: ACPI IOPORT 0x414
-> cpu2: cpufreq driver: acpi-cpufreq
-> cpu2: cpufreq governor: schedutil
-> cpu0: MSR_RAPL_PWR_UNIT: 0x000a1003 (0.125000 Watts, 0.000015 Joules, 0.000977 sec.)
-> Core	CPU	Avg_MHz	Busy%	Bzy_MHz	TSC_MHz	IRQ	C1	C2	C1%	C2%	CorWatt	PkgWatt
-> -	-	33	2.20	1485	3500	5073	1263	3694	2.75	95.12	0.03	3.29
-> 0	0	33	2.20	1483	3500	1213	354	886	2.96	94.89	0.01	3.29
-> 1	1	25	1.67	1474	3500	907	197	682	1.55	96.80	0.01
-> 2	2	33	2.24	1478	3500	1674	450	1175	4.16	93.70	0.01
-> 3	3	40	2.67	1501	3500	1279	262	951	2.33	95.07	0.01
-> 
-> 
-> Calvin Walton (2):
->   turbostat: Read extended processor family from CPUID
->   turbostat: Add support for AMD Fam 17h (Zen) RAPL
-> 
->  tools/power/x86/turbostat/turbostat.c | 184 ++++++++++++++++++++++----
->  1 file changed, 156 insertions(+), 28 deletions(-)
-> 
-> 
+From: Joerg Roedel <jroedel@suse.de>
 
-CC to linux-pm@vger.kernel.org pretty please!
+It can happen that we enter the kernel from kernel-mode and
+on the entry-stack. The most common way this happens is when
+we get an exception while loading the user-space segment
+registers on the kernel-to-userspace exit path.
 
+The segment loading needs to be done after the entry-stack
+switch, because the stack-switch needs kernel %fs for
+per_cpu access.
+
+When this happens, we need to make sure that we leave the
+kernel with the entry-stack again, so that the interrupted
+code-path runs on the right stack when switching to the
+user-cr3.
+
+We do this by detecting this condition on kernel-entry by
+checking CS.RPL and %esp, and if it happens, we copy over
+the complete content of the entry stack to the task-stack.
+This needs to be done because once we enter the exception
+handlers we might be scheduled out or even migrated to a
+different CPU, so that we can't rely on the entry-stack
+contents. We also leave a marker in the stack-frame to
+detect this condition on the exit path.
+
+On the exit path the copy is reversed, we copy all of the
+remaining task-stack back to the entry-stack and switch
+to it.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ arch/x86/entry/entry_32.S | 116 +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 115 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 7635925..9d6eceb 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -294,6 +294,9 @@
+  * copied there. So allocate the stack-frame on the task-stack and
+  * switch to it before we do any copying.
+  */
++
++#define CS_FROM_ENTRY_STACK	(1 << 31)
++
+ .macro SWITCH_TO_KERNEL_STACK
+ 
+ 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+@@ -316,6 +319,16 @@
+ 	/* Load top of task-stack into %edi */
+ 	movl	TSS_entry2task_stack(%edi), %edi
+ 
++	/*
++	 * Clear unused upper bits of the dword containing the word-sized CS
++	 * slot in pt_regs in case hardware didn't clear it for us.
++	 */
++	andl	$(0x0000ffff), PT_CS(%esp)
++
++	/* Special case - entry from kernel mode via entry stack */
++	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
++	jz	.Lentry_from_kernel_\@
++
+ 	/* Bytes to copy */
+ 	movl	$PTREGS_SIZE, %ecx
+ 
+@@ -329,8 +342,8 @@
+ 	 */
+ 	addl	$(4 * 4), %ecx
+ 
+-.Lcopy_pt_regs_\@:
+ #endif
++.Lcopy_pt_regs_\@:
+ 
+ 	/* Allocate frame on task-stack */
+ 	subl	%ecx, %edi
+@@ -346,6 +359,56 @@
+ 	cld
+ 	rep movsl
+ 
++	jmp .Lend_\@
++
++.Lentry_from_kernel_\@:
++
++	/*
++	 * This handles the case when we enter the kernel from
++	 * kernel-mode and %esp points to the entry-stack. When this
++	 * happens we need to switch to the task-stack to run C code,
++	 * but switch back to the entry-stack again when we approach
++	 * iret and return to the interrupted code-path. This usually
++	 * happens when we hit an exception while restoring user-space
++	 * segment registers on the way back to user-space.
++	 *
++	 * When we switch to the task-stack here, we can't trust the
++	 * contents of the entry-stack anymore, as the exception handler
++	 * might be scheduled out or moved to another CPU. Therefore we
++	 * copy the complete entry-stack to the task-stack and set a
++	 * marker in the iret-frame (bit 31 of the CS dword) to detect
++	 * what we've done on the iret path.
++	 *
++	 * On the iret path we copy everything back and switch to the
++	 * entry-stack, so that the interrupted kernel code-path
++	 * continues on the same stack it was interrupted with.
++	 *
++	 * Be aware that an NMI can happen anytime in this code.
++	 *
++	 * %esi: Entry-Stack pointer (same as %esp)
++	 * %edi: Top of the task stack
++	 */
++
++	/* Calculate number of bytes on the entry stack in %ecx */
++	movl	%esi, %ecx
++
++	/* %ecx to the top of entry-stack */
++	andl	$(MASK_entry_stack), %ecx
++	addl	$(SIZEOF_entry_stack), %ecx
++
++	/* Number of bytes on the entry stack to %ecx */
++	sub	%esi, %ecx
++
++	/* Mark stackframe as coming from entry stack */
++	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
++
++	/*
++	 * %esi and %edi are unchanged, %ecx contains the number of
++	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
++	 * the stack-frame on task-stack and copy everything over
++	 */
++	jmp .Lcopy_pt_regs_\@
++
+ .Lend_\@:
+ .endm
+ 
+@@ -404,6 +467,56 @@
+ .endm
+ 
+ /*
++ * This macro handles the case when we return to kernel-mode on the iret
++ * path and have to switch back to the entry stack.
++ *
++ * See the comments below the .Lentry_from_kernel_\@ label in the
++ * SWITCH_TO_KERNEL_STACK macro for more details.
++ */
++.macro PARANOID_EXIT_TO_KERNEL_MODE
++
++	/*
++	 * Test if we entered the kernel with the entry-stack. Most
++	 * likely we did not, because this code only runs on the
++	 * return-to-kernel path.
++	 */
++	testl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
++	jz	.Lend_\@
++
++	/* Unlikely slow-path */
++
++	/* Clear marker from stack-frame */
++	andl	$(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
++
++	/* Copy the remaining task-stack contents to entry-stack */
++	movl	%esp, %esi
++	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
++
++	/* Bytes on the task-stack to ecx */
++	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp1), %ecx
++	subl	%esi, %ecx
++
++	/* Allocate stack-frame on entry-stack */
++	subl	%ecx, %edi
++
++	/*
++	 * Save future stack-pointer, we must not switch until the
++	 * copy is done, otherwise the NMI handler could destroy the
++	 * contents of the task-stack we are about to copy.
++	 */
++	movl	%edi, %ebx
++
++	/* Do the copy */
++	shrl	$2, %ecx
++	cld
++	rep movsl
++
++	/* Safe to switch to entry-stack now */
++	movl	%ebx, %esp
++
++.Lend_\@:
++.endm
++/*
+  * %eax: prev task
+  * %edx: next task
+  */
+@@ -764,6 +877,7 @@ restore_all:
+ 
+ restore_all_kernel:
+ 	TRACE_IRQS_IRET
++	PARANOID_EXIT_TO_KERNEL_MODE
+ 	RESTORE_REGS 4
+ 	jmp	.Lirq_return
+ 
+-- 
+2.7.4
 
