@@ -2,146 +2,135 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FECECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42186ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2F92075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2F92075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 087852075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:28:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087852075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbeGRQG2 (ORCPT
+        id S1731323AbeGRQHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:06:28 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35874 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731193AbeGRQG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:06:27 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 430E5ED1;
-        Wed, 18 Jul 2018 08:28:02 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 086873FAA1;
-        Wed, 18 Jul 2018 08:27:58 -0700 (PDT)
-Subject: Re: NULL pointer dereference in msi_set_mask_bit
-To:     Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
-        Zou Cao <cao.zou@windriver.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <b9bd8405-64b6-2bea-f5ce-d3ab4d82452a@molgen.mpg.de>
- <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com>
- <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de>
- <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <fcc2d1b4-8a10-bc8c-9a9c-2b33e6745b04@arm.com>
-Date:   Wed, 18 Jul 2018 16:27:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 18 Jul 2018 12:07:00 -0400
+Received: from sauhun.de ([88.99.104.3]:43250 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730996AbeGRQHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:07:00 -0400
+Received: from localhost (p54B335A7.dip0.t-ipconnect.de [84.179.53.167])
+        by pokefinder.org (Postfix) with ESMTPSA id DA0F05E000F;
+        Wed, 18 Jul 2018 17:28:32 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 17:28:32 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Akinobu Mita <akinobu.mita@gmail.com>
+Cc:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Peter Rosin <peda@axentia.se>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: Re: [PATCH -next v4 1/3] regmap: add SCCB support
+Message-ID: <20180718152832.ylu6rlcsaom2q4xm@ninjato>
+References: <1531756070-8560-1-git-send-email-akinobu.mita@gmail.com>
+ <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vom6revifzdsh7p6"
+Content-Disposition: inline
+In-Reply-To: <1531756070-8560-2-git-send-email-akinobu.mita@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/07/18 16:12, Paul Menzel wrote:
-> Dear Thomas, dear Bjorn,
-> 
-> 
-> Thank you for your quick responses.
-> 
-> 
-> On 07/18/18 17:02, Thomas Gleixner wrote:
->> On Wed, 18 Jul 2018, Bjorn Helgaas wrote:
->>> [+cc Marc, Thomas]
->>
->> Uurgh. That's definitely what I need right now ... :)
->>
->>> On Wed, Jul 18, 2018 at 03:28:15PM +0200, Paul Menzel wrote:
->>>>
->>>> 93.885: [   23.020572] BUG: unable to handle kernel NULL pointer dereference at 000000000000003c
->>>> 93.885: [   23.029011] PGD 0 P4D 0 
->>>> 93.885: [   23.031670] Oops: 0000 [#1] SMP NOPTI
->>>> 93.885: [   23.035455] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.18.0-rc5+ #1
->>>> 93.885: [   23.042079] Hardware name: MSI MS-7A37/B350M MORTAR (MS-7A37), BIOS 1.G1 05/17/2018
->>>> 93.886: [   23.049868] RIP: 0010:msi_set_mask_bit+0xe/0x70
->>
->>>> 93.913: [   23.049868] Code: 00 53 48 89 fb e8 12 f8 ff ff 48 89 df 5b e9 c9 fe ff ff 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 8b 47 10 48 8b 58 10 <f6> 43 3c 01 74 3c 8b 15 2e 85 21 01 31 c0 85 d2 75 25 8b 43 38 48
->>
->>   f6 43 3c 01          	testb  $0x1,0x3c(%rbx)
->>
->> That's:
->>
->> 	if (desc->msi_attrib.is_msix)
-> 
-> Is there a tool to translate that?
-> 
->>>> 93.957: [   23.049880] RSP: 0018:ffff9e8e5e803f78 EFLAGS: 00010046
->>>> 93.957: [   23.049881] RAX: ffff9e8e45919000 RBX: 0000000000000000 RCX: 0000000000000000
->>>> 93.958: [   23.049882] RDX: ffff9e8e45919000 RSI: 0000000000000001 RDI: ffff9e8e45919098
->>>> 93.958: [   23.049882] RBP: ffff9e8e45919098 R08: 0000000000000000 R09: 0000000000000000
->>>> 93.958: [   23.049882] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9e8e45919000
->>>> 93.958: [   23.049883] R13: 0000000000000027 R14: 0000000000000000 R15: 0000000000000000
->>>> 93.959: [   23.049884] FS:  0000000000000000(0000) GS:ffff9e8e5e800000(0000) knlGS:0000000000000000
->>>> 93.959: [   23.049884] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>> 93.959: [   23.049885] CR2: 000000000000003c CR3: 00000003fc5a4000 CR4: 00000000003406f0
->>>> 93.959: [   23.049885] Call Trace:
->>>> 93.959: [   23.049887]  <IRQ>
->>>> 93.960: [   23.049889]  __irq_move_irq+0x3c/0x70
->>>> 93.960: [   23.049892]  apic_ack_irq+0x2b/0x30
->>>> 93.960: [   23.049893]  handle_edge_irq+0x7d/0x1d0
->>>> 93.960: [   23.049895]  handle_irq+0x1f/0x30
->>>> 93.960: [   23.049898]  do_IRQ+0x41/0xc0
->>>> 93.960: [   23.049899]  common_interrupt+0xf/0xf
->>>> 93.961: [   23.049900]  </IRQ>
->>
->> and desc comes from irq_data->common->msi_desc
->>
->> I have no idea how that can happen for an MSI interrupt.
->>
->> Paul, is this reproducible?
-> 
-> No, unfortunately not. I only hit this once, since I attached the serial
-> console.
-> 
-> But I found others having the same(?) problem [1][2].
-> 
-> 
-> Kind regards,
-> 
-> Paul
-> 
-> 
-> [1]: https://lkml.org/lkml/2018/1/16/122
->      "[PATCH 0/1] PCI/MSI: add NULL check before use of msi_desc"
-> [2]: https://marc.info/?l=linux-kernel&m=151321815226439&w=2
->      "[PATCH] PCI: designware: add a check of msi_desc in irqchip"
-> 
 
-This seems to be a very different issue.
+--vom6revifzdsh7p6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These PCI host controllers pre-allocate a bunch of irqdescs which are
-not bound to any MSI yet (this occurs much later, when the interrupt is
-actually allocated to a device). But the kexec code tries to mask all
-interrupts, including some of these half baked interrupts, and bad
-things happen. This is very much a case of "don't do that".
+On Tue, Jul 17, 2018 at 12:47:48AM +0900, Akinobu Mita wrote:
+> This adds Serial Camera Control Bus (SCCB) support for regmap API that
+> is intended to be used by some of Omnivision sensor drivers.
+>=20
+> The ov772x and ov9650 drivers are going to use this SCCB regmap API.
+>=20
+> The ov772x driver was previously only worked with the i2c controller
+> drivers that support I2C_FUNC_PROTOCOL_MANGLING, because the ov772x
+> device doesn't support repeated starts.  After commit 0b964d183cbf
+> ("media: ov772x: allow i2c controllers without
+> I2C_FUNC_PROTOCOL_MANGLING"), reading ov772x register is replaced with
+> issuing two separated i2c messages in order to avoid repeated start.
+> Using this SCCB regmap hides the implementation detail.
+>=20
+> The ov9650 driver also issues two separated i2c messages to read the
+> registers as the device doesn't support repeated start.  So it can
+> make use of this SCCB regmap.
 
-Unless I'm grossly mistaken, this isn't what happens in your case (the
-interrupt is very much active, but the msi_desc pointer has vanished).
+Cool, this series really gets better and better each time. Thank you for
+keeping at it! And thanks to everyone for their suggestions. I really
+like how we do not introduce a couple of i2c_sccb_* functions with a
+need to export them. And given the nature of regmap, I'd think it should
+be fairly easy to add support for ov2659 somewhen which has 16 bit
+registers? Only minor nits:
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+> +#include <linux/regmap.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+
+Sort these?
+
+> +/**
+> + * regmap_sccb_read - Read data from SCCB slave device
+> + * @context: Device that will be interacted wit
+
+"with"
+
+> +	ret =3D __i2c_smbus_xfer(i2c->adapter, i2c->addr, i2c->flags,
+> +			       I2C_SMBUS_WRITE, reg, I2C_SMBUS_BYTE, NULL);
+
+Mark: __i2c_smbus_xfer is a dependency on i2c/for-next. Do you want an
+immutable branch for that?
+
+> +/**
+> + * regmap_sccb_write - Write data to SCCB slave device
+> + * @context: Device that will be interacted wit
+
+"with"
+
+But in general (especially for the I2C parts):
+
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+
+--vom6revifzdsh7p6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltPXJwACgkQFA3kzBSg
+KbaMww/8CxZhHTEM02/4oJgatS4pz9I/9AqBgUxNgIYWF32BEPKBVMr3Td8Z3pI7
+L2B00WYTbgvqQ16zOFEHpPtkFGnPXPbdIpxnNeDM5IEw+rNe2igVUdcVRmN8Bdpi
+SKakv7pn4GyUUnrE5RslT4GoORbKG1lwood6GHUIMNd0dUt80AmjDYq35RSsSzpD
+4JKTeH+EwYsd+CxuZj9z5g/CMpUdO6ikyLaBLbB0BggY/yVWC3tRtOUE/lfkh1yv
+7SAn5zhbDseDZGd7WbYnRgNOU33OzPvjfNV4GWen+pqbJl9JfxiGOGz7PAzqJGNv
+201UD3D5bEYBf8XhVUim2hOfhXydE8BBW2AMVRcBx/4X1HC9aaP7rzqU0SqZNvKq
+F5K5Eix6yUwCTTU1kXMA+jc/HRqx/oS7jaM3hP1JcegXFVYeOTWPCbhwSekazHW2
+zGsKkUBxGuawTOCLQHfIQajUZt1wa8tnvvhwf3xzN82YxVcGW9hs46aecVy/3mFG
+FbL8dwf4vl8rRDU7Di5Qlx3M6FuVS8Q4XZ8ZiGoZCMDlhy3ls9AWs2+wH8fzoh66
+hFKMYmZsJJNvrjt8TNm3YbV3Q7KzpPzm5c/zZCXwZ4p3+y3F6WqY+r1Xl2bctHin
+hXyNsYL+JWaIhL/m5FeWY65Ku6tPL1568jHFdnyL50vImZCFAUw=
+=Ar7Y
+-----END PGP SIGNATURE-----
+
+--vom6revifzdsh7p6--
