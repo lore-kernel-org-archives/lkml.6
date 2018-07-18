@@ -2,181 +2,121 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F32FEECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C578ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4F62075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:43:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C4F62075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=opteya.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C6312075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 07:44:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaJFrnuo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C6312075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730331AbeGRIUG (ORCPT
+        id S1730096AbeGRIUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 04:20:06 -0400
-Received: from ou.quest-ce.net ([195.154.187.82]:33504 "EHLO ou.quest-ce.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbeGRIUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 04:20:05 -0400
-X-Greylist: delayed 1284 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Jul 2018 04:20:04 EDT
-Received: from [2a01:e35:2e9f:6cb0:857c:11e6:3194:d53d] (helo=test.quest-ce.net)
-        by ou.quest-ce.net with esmtpsa (TLS1.1:RSA_AES_256_CBC_SHA1:256)
-        (Exim 4.80)
-        (envelope-from <ydroneaud@opteya.com>)
-        id 1ffgms-0001AS-Cs; Wed, 18 Jul 2018 09:22:14 +0200
-Message-ID: <37046662f2b38f98854abfa1b5868a27c3fa0888.camel@opteya.com>
-From:   Yann Droneaud <ydroneaud@opteya.com>
-To:     Theodore Ts'o <tytso@mit.edu>, linux-crypto@vger.kernel.org,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>
-Cc:     labbott@redhat.com
-Date:   Wed, 18 Jul 2018 09:22:13 +0200
-In-Reply-To: <20180718014344.1309-1-tytso@mit.edu>
-References: <20180718014344.1309-1-tytso@mit.edu>
-Organization: OPTEYA
+        Wed, 18 Jul 2018 04:20:49 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38668 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726666AbeGRIUt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 04:20:49 -0400
+Received: by mail-oi0-f66.google.com with SMTP id v8-v6so7025933oie.5;
+        Wed, 18 Jul 2018 00:44:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=4OsDnmMykXw8+KX6M4qhILFyM7kyOGwz5shw573DZyE=;
+        b=EaJFrnuoEkUNKFHW3Civ7GB2xA5CDOEj6QtrpltD3E1uVkvH4MWKw3RdDreGHUTM5I
+         PzBgbunU8yN2VFHo/N2d+IDffX9BOXpCILX991aLJOBMAksVYdmcK/ogEePE6T0qE1Ba
+         kM7gVPOp3dzGAbEHm4RcW5X7zvwjN2qIdF9n+ia7T8OXlO1R3XXGsf3+mAfO56iB6ln6
+         QLKuJKWoNsnLUOWyzn1YKnVffuL27biIrbgEfREsknvD86z6Qs4eHx9cNvC1QSWzzB8s
+         UWXArpwFaXF2P3i2GQObF8lQVMclmpcLKTON/k3bh+W3pfJ2+TRsHXFFcXyr6awkOmad
+         /LOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=4OsDnmMykXw8+KX6M4qhILFyM7kyOGwz5shw573DZyE=;
+        b=T7V6TPDgoecVnwoY16Y6hNYAgylUoNRYGqBJZSD8eormAspyf++OeqYtn/i9hjZkzY
+         u9wZr48Us0cjY8O1A1vUaYpnOmaIvZew5c0K2X9SP9NBXtk2xOD4s5C6uoRq5sMMWF2B
+         BUgDEidd7bKeMno6dfNQQY+16V+ShDB7TQTgewevKFlv0BsCjumMpm1AL+NPaC56eRQA
+         j7wT0VBCHqEDbgkv/cElvRwN5sQ3+xwocykuYFpKoafz587UjG+f7nUyk62JJ5Rvt5WZ
+         yD8nuDjpTRWnHBBqEvQIa5kZKfWSCpOUk2mqTI/Tcu1zOvhp+QK6gxOuHDPcELg0XjNZ
+         0KGw==
+X-Gm-Message-State: AOUpUlGj2C7Y6cuYNQiiJix0PFuxC7r09rJl/En0BRvQtU6QsjWBfeo3
+        p/REznREzQGsF7r6EReaLfWs4NQX2C/B2C5wbr8ITA==
+X-Google-Smtp-Source: AAOMgpe3Z1JAyENpkpVHaqECSD1z/gj5NlPV3YuYkcFNt7Cw7XV6BrjwjSo6ucEqVIMnqZo2zHe5Ningz6I0WHENOsY=
+X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr5010886oig.282.1531899855037;
+ Wed, 18 Jul 2018 00:44:15 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 00:44:14
+ -0700 (PDT)
+In-Reply-To: <20180717201323.6rwb4yklq46cmtom@suselix>
+References: <20180717065048.74mmgk4t5utjaa6a@suselix> <306375154.NhdH6AhdAd@aspire.rjw.lan>
+ <5423012.ZZnfdYddaT@aspire.rjw.lan> <20180717201323.6rwb4yklq46cmtom@suselix>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 18 Jul 2018 09:44:14 +0200
+X-Google-Sender-Auth: T53LXHx4scQlqfULBctvPTIxLqI
+Message-ID: <CAJZ5v0i-zrKEVh+KsNOgTpCCBaC7jqibyuz1QhiKWPCV-H4srA@mail.gmail.com>
+Subject: Re: [PATCH v2] cpufreq: pcc-cpufreq: Disable dynamic scaling on
+ many-CPU systems
+To:     Andreas Herrmann <aherrmann@suse.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a01:e35:2e9f:6cb0:857c:11e6:3194:d53d
-X-SA-Exim-Mail-From: ydroneaud@opteya.com
-Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
-X-SA-Exim-Scanned: Yes (on ou.quest-ce.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jul 17, 2018 at 10:13 PM, Andreas Herrmann <aherrmann@suse.com> wrote:
+> On Tue, Jul 17, 2018 at 06:14:58PM +0200, Rafael J. Wysocki wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> The firmware interface used by the pcc-cpufreq driver is
+>> fundamentally not scalable and using it for dynamic CPU performance
+>> scaling on systems with many CPUs leads to degraded performance.
+>>
+>> For this reason, disable dynamic CPU performance scaling on systems
+>> with pcc-cpufreq where the number of CPUs present at the driver init
+>> time is greater than 4.  Also make the driver print corresponding
+>> complaints to the kernel log.
+>>
+>> Reported-by: Andreas Herrmann <aherrmann@suse.com>
+>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> ---
+>>
+>> -> v2: Rework the messages printed in the problematic case.
+>
+> I've tested this patch. Effect is as expected: driver loads but use of
+> ondemand governor is not allowed. Sample output:
+>
+> [   40.757519] pcc-cpufreq: (v1.10.00) driver loaded with frequency limits: 1200 MHz, 2800 MHz
+> [   40.831705] pcc_cpufreq_init: Too many CPUs, dynamic performance scaling disabled
+> [   40.898353] pcc_cpufreq_init: Try to enable a different scaling driver through BIOS settings
+> [   40.972327] pcc_cpufreq_init: and complain to the system vendor
+> [   41.025620] cpufreq: Can't use ondemand governor as dynamic switching is disallowed. Fallback to performance governor
+> ...
+> [   41.187928] cpufreq: Can't use ondemand governor as dynamic switching is disallowed. Fallback to performance governor
+>
+> Last message is shown for each online CPU in the system  (ie. 120x).
+>
+> Looks good to me.
 
-Le mardi 17 juillet 2018 à 21:43 -0400, Theodore Ts'o a écrit :
-> This gives the user building their own kernel (or a Linux
-> distribution) the option of deciding whether or not to trust the CPU's
-> hardware random number generator (e.g., RDRAND for x86 CPU's) as being
-> correctly implemented and not having a back door introduced (perhaps
-> courtesy of a Nation State's law enforcement or intelligence
-> agencies).
-> 
+Thanks a lot!
 
-A build time option (RANDOM_TRUST_CPU) is good, but I would also see a
-kernel command line boot option for the user to disable the behavior
-whenever its distro kernel was built with RANDOM_TRUST_CPU.
+Please also try https://patchwork.kernel.org/patch/10530321/
 
-It would allow the end-user to make its own decision regarding CPU
-based hwrng.
-
-In particular, during distro installation, end-user doesn't have a
-chance to rebuild the kernel beforehand, but he can tweak kernel
-command line during distro installation boot.
-
-
-> This will prevent getrandom(2) from blocking, if there is a
-> willingness to trust the CPU manufacturer.
-
-It would block during initialization / early boot.
-
-> 
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> ---
-> 
->  I'm not sure Linux distro's will thank us for this.  The problem is
->  trusting the CPU manfuacturer can be an emotional / political issue.
-> 
->  For example, assume that China has decided that as a result of the
->  "death sentence" that the US government threatened to impose on ZTE
->  after they were caught introducing privacy violating malware on US
->  comsumers, that they needed to be self-sufficient in their technology
->  sector, and so they decided the needed to produce their own CPU.
-> 
->  Even if I were convinced that Intel hadn't backdoored RDRAND (or an
->  NSA agent backdoored RDRAND for them) such that the NSA had a NOBUS
->  (nobody but us) capability to crack RDRAND generated numbers, if we
->  made a change to unconditionally trust RDRAND, then I didn't want the
->  upstream kernel developers to have to answer the question, "why are
->  you willing to trust Intel, but you aren't willing to trust a company
->  owned and controlled by a PLA general?"  (Or a company owned and
->  controlled by one of Putin's Oligarchs, if that makes you feel
->  better.)
-> 
->  With this patch, we don't put ourselves in this position --- but we
->  do put the Linux distro's in this position intead.  The upside is it
->  gives the choice to each person building their own Linux kernel to
->  decide whether trusting RDRAND is worth it to avoid hangs due to
->  userspace trying to get cryptographic-grade entropy early in the boot
->  process.  (Note: I trust RDRAND more than I do Jitter Entropy.)
-> 
->  drivers/char/Kconfig  | 14 ++++++++++++++
->  drivers/char/random.c | 11 ++++++++++-
->  2 files changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
-> index 212f447938ae..fe2930c4ecf0 100644
-> --- a/drivers/char/Kconfig
-> +++ b/drivers/char/Kconfig
-> @@ -554,3 +554,17 @@ config ADI
->  
->  endmenu
->  
-> +config RANDOM_TRUST_CPU
-> +       bool "Trust the CPU manufacturer to initialize Linux's CRNG"
-> +       depends on (X86 || X86_64 || X86_32 || S390 || PPC)
-> +       default n
-> +       help
-> +	Assume that CPU manufacurer (e.g., Intel or AMD for RDSEED or
-> +	RDRAND, IBM for the S390 and Power PC architectures) is trustworthy
-> +	for the purposes of initializing Linux's CRNG.  Since this is not
-> +	something that can be indepedently audited, this amounts to trusting
-> +	that CPU manufacturer (perhaps with the insistance or requirement
-> +	of a Nation State's intelligence or law enforcement agencies)
-> +	has not installed a hidden back door to compromise the CPU's
-> +	random number generation facilities.
-> +
-
-The text message should explain this is only relevant during
-initialization / early boot.
-
-The config option name should state this.
-
-> diff --git a/drivers/char/random.c b/drivers/char/random.c
-> index 34ddfd57419b..f4013b8a711b 100644
-> --- a/drivers/char/random.c
-> +++ b/drivers/char/random.c
-> @@ -782,6 +782,7 @@ static void invalidate_batched_entropy(void);
->  static void crng_initialize(struct crng_state *crng)
->  {
->  	int		i;
-> +	int		arch_init = 1;
->  	unsigned long	rv;
->  
->  	memcpy(&crng->state[0], "expand 32-byte k", 16);
-> @@ -792,10 +793,18 @@ static void crng_initialize(struct crng_state *crng)
->  		_get_random_bytes(&crng->state[4], sizeof(__u32) * 12);
->  	for (i = 4; i < 16; i++) {
->  		if (!arch_get_random_seed_long(&rv) &&
-> -		    !arch_get_random_long(&rv))
-> +		    !arch_get_random_long(&rv)) {
->  			rv = random_get_entropy();
-> +			arch_init = 0;
-> +		}
->  		crng->state[i] ^= rv;
->  	}
-> +#ifdef CONFIG_RANDOM_TRUST_CPU
-> +	if (arch_init) {
-> +		crng_init = 2;
-> +		pr_notice("random: crng done (trusting CPU's manufacturer)\n");
-> +	}
-> +#endif
->  	crng->init_time = jiffies - CRNG_RESEED_INTERVAL - 1;
->  }
->  
-
-Regards.
-
--- 
-Yann Droneaud
-OPTEYA
-
-
+Cheers,
+Rafael
