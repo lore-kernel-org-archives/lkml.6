@@ -2,101 +2,107 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A1CECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:09:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41852ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E68B20657
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:09:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E68B20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F38720657
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 03:10:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BsK67wG0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F38720657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731525AbeGRDpT (ORCPT
+        id S1731617AbeGRDqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:45:19 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:37402 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731225AbeGRDpT (ORCPT
+        Tue, 17 Jul 2018 23:46:09 -0400
+Received: from mail-qk0-f193.google.com ([209.85.220.193]:46166 "EHLO
+        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731535AbeGRDqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:45:19 -0400
-X-UUID: 9425e4b59815430d9393495179132829-20180718
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2037952199; Wed, 18 Jul 2018 11:04:20 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 18 Jul 2018 11:04:17 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 18 Jul 2018 11:04:17 +0800
-Message-ID: <1531883057.8953.87.camel@mtkswgap22>
-Subject: Re: [resend PATCH v4 5/5] drm: mediatek: Omit warning on probe
- defers
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     <matthias.bgg@kernel.org>
-CC:     <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>, <ck.hu@mediatek.com>,
-        <p.zabel@pengutronix.de>, <airlied@linux.ie>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <lee.jones@linaro.org>,
-        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
-        <mchehab@kernel.org>, <rdunlap@infradead.org>,
-        <pi-cheng.chen@linaro.org>, <linux-clk@vger.kernel.org>,
-        <linux@armlinux.org.uk>, <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <mbrugger@suse.com>
-Date:   Wed, 18 Jul 2018 11:04:17 +0800
-In-Reply-To: <20180717220328.792-6-matthias.bgg@kernel.org>
-References: <20180717220328.792-1-matthias.bgg@kernel.org>
-         <20180717220328.792-6-matthias.bgg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 23:46:08 -0400
+Received: by mail-qk0-f193.google.com with SMTP id o2-v6so1679549qkc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 20:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=0njeVzpI+WBn7bnpgyaDKXzdgTRSqbdTxvAoehO9lj4=;
+        b=BsK67wG0jrFg8wadTm2lBp+ETQRyTpd+gBuEMqnYkcFXTbyxWvk06lwqAmYTcmA8PW
+         Zw6nmmoPY0IMUM8W61b78hHai00nVyiZsifrlA+C7Y0IKcSary2NIrmBM4gHPT9fr1pL
+         5SOa/3YffRrNqzkf0VlkHHWK9wFyAcZZh9hnE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=0njeVzpI+WBn7bnpgyaDKXzdgTRSqbdTxvAoehO9lj4=;
+        b=IOUzsJfcfZA8S1NGYTjD3wtmJ+HfkD63xhLYxFyTY/pO9SWDm28StAHpKGQYJGz4oS
+         1Q6bNbkQq8NhI0g5rd4zFMRexpmim4BcpSYllmamnArwE/Y1lIIOlglAstxU11zrAtDj
+         3NTGhf03I2YDdTcoiOCYucGY48DH7M4o4Y7vsgK380OdZmzRTRBURxMvD0/R6AThRAmt
+         5vtnabJ3amEElrknJGNiASrLklqI+6UYVoSYnkCNoQUMYjylOfgE97BApjH8sX6RxkCy
+         HdKGusYTzY72Bi/VPXMrj9eOVxCS5PPYulKH94VTYWL8W82OLz0w/DBRO/9w7hPlqRUP
+         4bhA==
+X-Gm-Message-State: AOUpUlEgsgmcPHIMRApovT1RhHQq9EjUUJeHeiRAVh+9qOnWVk/c72+X
+        F8E2ly4sxsA3RfuRkHVDdREPLQ==
+X-Google-Smtp-Source: AAOMgpciv9fCb1TXhKLhGO2IICQiTXwAEiMddgBtbiwmCLXteaAnWIjfqONeOT/1oBPEEbRfHcgkhQ==
+X-Received: by 2002:a37:953:: with SMTP id 80-v6mr3947475qkj.331.1531883428887;
+        Tue, 17 Jul 2018 20:10:28 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id w13-v6sm2182023qtc.88.2018.07.17.20.10.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 20:10:28 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 23:10:27 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Adam Borowski <kilobyte@angband.pl>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        linux-console@vger.kernel.org
+Subject: Re: [PATCH 0/3] use unicode for vt mouse paste
+In-Reply-To: <20180718020604.3u25omf5fxqvsy3q@angband.pl>
+Message-ID: <nycvar.YSQ.7.76.1807172304250.11681@knanqh.ubzr>
+References: <20180718020604.3u25omf5fxqvsy3q@angband.pl>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 00:03 +0200, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
+On Wed, 18 Jul 2018, Adam Borowski wrote:
+
+> Hi!
+> Based on Nicolas' nice work (in tty-next), let's avoid corrupting characters
+> that have been copy+pasted via mouse selection.  The uniscr array holds
+> their original identity even if they got mangled by glyph conversion.
+> The glyph conversion lossily turns similar-looking characters into a
+> representation, and everyone else into a replacement character.
 > 
-> It can happen that the clock drivers wasn't probed before the
-> ddp driver gets invoked. The driver used to omit a warning
-> that the driver failed to get the clocks. Omit this error on
-> the defered probe path.
+> There's no proper handling for CJK (yet?) but anything of wcwidth()==1 will
+> work fine.
 > 
+> The whole thing doesn't get enabled until something reads from /dev/vcsu for
+> that console, but let's test this code first before enabling it widely.
 
-so if we list drm device as a child device of mmsys we don't need the
-patch, and that make more sense.
+Glad to see this. For the whole set you may add:
 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> Acked-by: CK Hu <ck.hu@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Acked-by: Nicolas Pitre <nico@linaro.org>
+
+
+> Diffstat:
+>  drivers/tty/vt/selection.c | 48 +++++++++++++++++++++++++++++-------------------
+>  drivers/tty/vt/vt.c        | 10 ++++++++++
+>  include/linux/selection.h  |  1 +
+>  3 files changed, 40 insertions(+), 19 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index bafc5c77c4fb..6b399348a2dc 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -374,7 +374,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
->  
->  	ddp->clk = devm_clk_get(dev, NULL);
->  	if (IS_ERR(ddp->clk)) {
-> -		dev_err(dev, "Failed to get clock\n");
-> +		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
-> +			dev_err(dev, "Failed to get clock\n");
->  		return PTR_ERR(ddp->clk);
->  	}
->  
-
-
+> 
+> -- 
+> // If you believe in so-called "intellectual property", please immediately
+> // cease using counterfeit alphabets.  Instead, contact the nearest temple
+> // of Amon, whose priests will provide you with scribal services for all
+> // your writing needs, for Reasonable And Non-Discriminatory prices.
+> 
