@@ -3,76 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E05ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC72ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCBDE20850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:42:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCBDE20850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2BAB42075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:43:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BAB42075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbeGRWWO (ORCPT
+        id S1730651AbeGRWWs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:22:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44862 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeGRWWO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:22:14 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 54A37C50;
-        Wed, 18 Jul 2018 21:42:24 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 14:42:22 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] checkpatch: Only encode UTF-8 quoted printable mail
- headers
-Message-Id: <20180718144222.fc567d972447348b419edcd9@linux-foundation.org>
-In-Reply-To: <20180718145254.4770-1-geert+renesas@glider.be>
-References: <20180718145254.4770-1-geert+renesas@glider.be>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 18:22:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41776 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730255AbeGRWWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 18:22:48 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F192020731; Wed, 18 Jul 2018 23:42:56 +0200 (CEST)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5C8DC206ED;
+        Wed, 18 Jul 2018 23:42:56 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 23:42:55 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Abhishek Sahu <absahu@codeaurora.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>
+Subject: Re: [PATCH 4/5] mtd: rawnand: qcom: update BBT related flags
+Message-ID: <20180718234255.4e51c188@xps13>
+In-Reply-To: <20180718234144.158217f2@xps13>
+References: <1530863519-5564-1-git-send-email-absahu@codeaurora.org>
+        <1530863519-5564-5-git-send-email-absahu@codeaurora.org>
+        <20180718231526.38046099@xps13>
+        <20180718233637.49a39751@bbrezillon>
+        <20180718234144.158217f2@xps13>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018 16:52:54 +0200 Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+Abhishek,
 
-> As PERL uses its own internal character encoding, always calling
-> encode("utf8", ...) on the author name may cause corruption, leading to
-> an author signoff mismatch.
+Miquel Raynal <miquel.raynal@bootlin.com> wrote on Wed, 18 Jul 2018
+23:41:44 +0200:
+
+> Hi Boris,
 > 
-> This happens in the following cases:
->   - If a patch is in ISO-8859, and contains a non-ASCII author name in
->     the From: line, it is converted to UTF-8, while the Signed-off-by
->     line will still be in ISO-8859.
->   - If a patch is in UTF-8, and contains a non-ASCII author name in the
->     body (not header) From: line, it is assumed to be encoded in PERL's
->     internal character encoding, and converted to UTF-8 incorrectly,
->     while the Signed-off-by line will be in real UTF-8.
+> Boris Brezillon <boris.brezillon@bootlin.com> wrote on Wed, 18 Jul 2018
+> 23:36:37 +0200:
 > 
-> Fix this by only doing the encode step if the From: line used UTF-8
-> quoted printable encoding.
+> > On Wed, 18 Jul 2018 23:15:26 +0200
+> > Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+> >   
+> > > Hi Abhishek,
+> > > 
+> > > Abhishek Sahu <absahu@codeaurora.org> wrote on Fri,  6 Jul 2018
+> > > 13:21:58 +0530:
+> > >     
+> > > > Remove the NAND_SKIP_BBTSCAN to use RAM based BBT.      
+> > > 
+> > > Unless I am understanding it the wrong way, NAND_SKIP_BBTSCAN will skip
+> > > the scan of the on-chip BBT and will scan every block to construct a
+> > > RAM, based BBT thanks to the BBM.
+> > > 
+> > > So flash based BBT is already unused and removing this flag is a
+> > > mistake, right?    
+> >   
+> > ->scan_bbt() is also taking care of building the in-RAM BBT based on    
+> > BBM when no on-flash BBT is provided, so I think it's the right thing
+> > to do.  
+> 
+> Oh right. Then doing so is harmless.
 
-Works for me, thanks.
+Could you please update the commit log to reflect this aspect?
 
-
-Relatedly, would it be worth adding a checkpatch warning if a patch
-contains anything other than ASCII or UTF-8?
-
-I added this to my little local patch-checking script.
-
-	if ! file $p | grep -q -P "ASCII text|Unicode text"
-	then
-		echo $p: weird charset
-	fi
+> 
+> Thanks for the clarification.
+> Miquèl
 
