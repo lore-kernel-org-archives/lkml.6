@@ -3,140 +3,312 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F14ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B287BECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FCE20854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DE2220854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:02:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q71qw1u+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71FCE20854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELxbZcML"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE2220854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbeGRUj3 (ORCPT
+        id S1730315AbeGRUmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:39:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38408 "EHLO mail.kernel.org"
+        Wed, 18 Jul 2018 16:42:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729309AbeGRUj3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:39:29 -0400
+        id S1726909AbeGRUmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:42:11 -0400
 Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8215C2075E;
-        Wed, 18 Jul 2018 19:59:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEE772075E;
+        Wed, 18 Jul 2018 20:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531944002;
-        bh=Ig8IrYTGzMScTYPsqPbbWdZ1SYiNc6j6Lg7O1nRmCzs=;
+        s=default; t=1531944163;
+        bh=RvHDvzW8P5V5erS526EQfcHHf4ufD7vKZNCKWBMvLxI=;
         h=From:To:Cc:Subject:Date:From;
-        b=Q71qw1u+oVoTujJAnH8FKc5ioIpUhOBl5Metv+0PYzFv1Iu8UKCgXXUD2a7Qst3hX
-         IpLeKxErcEm/LVRq7t+2ReHBUeyTv6VK5y8y2WkXlhW48EUW04DPw0r3y7JlCxC1Zu
-         1kGJkwx2NqDNoXK8wD0l6405sw7QtpdjVULEdQI0=
+        b=ELxbZcMLm4VYbS+aPb+//0GBbthu2eQhwcUMZII2VhQ4kr+nS5XYQXG9udCHiympr
+         0qwPJSV6vJsMb9aP0iUk/ew4asYrtTKE0t3bd4fNppnYZ/7q5ani+1FufqiO4bFlCR
+         6jz9nKuTsqKQtz4StAjp99n6qGk3Mpc/f4LWmpi0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [RFC] ARM: exynos: Fix imprecise abort during Exynos5422 suspend to RAM
-Date:   Wed, 18 Jul 2018 21:59:29 +0200
-Message-Id: <20180718195929.5852-1-krzk@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] dt-bindings: clock: samsung: Add SPDX license identifiers
+Date:   Wed, 18 Jul 2018 22:02:16 +0200
+Message-Id: <20180718200216.6389-1-krzk@kernel.org>
 X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suspend to RAM on Odroid XU3/XU4/HC1 family (Exynos5422) causes
-imprecise abort:
-
-	PM: Syncing filesystems ... done.
-	Freezing user space processes ... (elapsed 0.003 seconds) done.
-	OOM killer disabled.
-	Freezing remaining freezable tasks ... (elapsed 0.003 seconds) done.
-	wake enabled for irq 139
-	Disabling non-boot CPUs ...
-	IRQ51 no longer affine to CPU1
-	IRQ52 no longer affine to CPU2
-	IRQ53 no longer affine to CPU3
-	IRQ54 no longer affine to CPU4
-	IRQ55 no longer affine to CPU5
-	IRQ56 no longer affine to CPU6
-	cpu cpu4: Dropping the link to regulator.40
-	IRQ57 no longer affine to CPU7
-	Unhandled fault: external abort on non-linefetch (0x1008) at 0xf081a028
-	Internal error: : 1008 [#1] PREEMPT SMP ARM
-
-with last call trace in exynos_suspend_enter().
-
-The abort is caused by writing to register in secure part of sysram.
-All Exynos5422 devices, including Hardkernel Odroid boards, boot with
-TrustZone in non-secure mode therefore they should access non-secure
-sysram.
+Replace GPL license statements with SPDX license identifiers (GPL-2.0).
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-
 ---
+ include/dt-bindings/clock/exynos3250.h            | 5 +----
+ include/dt-bindings/clock/exynos4.h               | 7 ++-----
+ include/dt-bindings/clock/exynos5250.h            | 7 ++-----
+ include/dt-bindings/clock/exynos5260-clk.h        | 7 ++-----
+ include/dt-bindings/clock/exynos5410.h            | 7 ++-----
+ include/dt-bindings/clock/exynos5420.h            | 7 ++-----
+ include/dt-bindings/clock/exynos5433.h            | 5 +----
+ include/dt-bindings/clock/exynos7-clk.h           | 7 ++-----
+ include/dt-bindings/clock/s3c2410.h               | 5 +----
+ include/dt-bindings/clock/s3c2412.h               | 5 +----
+ include/dt-bindings/clock/s3c2443.h               | 5 +----
+ include/dt-bindings/clock/samsung,s2mps11.h       | 5 +----
+ include/dt-bindings/clock/samsung,s3c64xx-clock.h | 7 ++-----
+ 13 files changed, 20 insertions(+), 59 deletions(-)
 
-Comments, whether my understanding is correct, are welcomed!
----
- Documentation/arm/Samsung/Bootloader-interface.txt | 1 +
- arch/arm/mach-exynos/suspend.c                     | 6 +++---
- 2 files changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/arm/Samsung/Bootloader-interface.txt b/Documentation/arm/Samsung/Bootloader-interface.txt
-index ed494ac0beb2..d17ed518a7ea 100644
---- a/Documentation/arm/Samsung/Bootloader-interface.txt
-+++ b/Documentation/arm/Samsung/Bootloader-interface.txt
-@@ -26,6 +26,7 @@ Offset        Value                                        Purpose
- 0x20          0xfcba0d10 (Magic cookie)                    AFTR
- 0x24          exynos_cpu_resume_ns                         AFTR
- 0x28 + 4*cpu  0x8 (Magic cookie, Exynos3250)               AFTR
-+0x28          0x0 or last value during resume (Exynos542x) System suspend
+diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+index c796ff02ceeb..fe8214017b46 100644
+--- a/include/dt-bindings/clock/exynos3250.h
++++ b/include/dt-bindings/clock/exynos3250.h
+@@ -1,11 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * 	Author: Tomasz Figa <t.figa@samsung.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants for Samsung Exynos3250 clock controllers.
+  */
  
+diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
+index e9f9d400c322..5b1d68512360 100644
+--- a/include/dt-bindings/clock/exynos4.h
++++ b/include/dt-bindings/clock/exynos4.h
+@@ -1,13 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+  * Author: Andrzej Hajda <a.hajda@samsung.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants for Exynos4 clock controller.
+-*/
++ */
  
- 2. Secure mode
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index d3db306a5a70..0ec52f442b97 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -256,7 +256,7 @@ static int exynos5420_cpu_suspend(unsigned long arg)
- 	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
- 	unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS_4_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS_4_H
+diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
+index 15508adcdfde..bc8a3c53a54b 100644
+--- a/include/dt-bindings/clock/exynos5250.h
++++ b/include/dt-bindings/clock/exynos5250.h
+@@ -1,13 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+  * Author: Andrzej Hajda <a.hajda@samsung.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants for Exynos5250 clock controller.
+-*/
++ */
  
--	writel_relaxed(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
-+	writel_relaxed(0x0, sysram_ns_base_addr + EXYNOS5420_CPU_STATE);
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5250_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS_5250_H
+diff --git a/include/dt-bindings/clock/exynos5260-clk.h b/include/dt-bindings/clock/exynos5260-clk.h
+index a4bac9a1764f..98a58cbd81b2 100644
+--- a/include/dt-bindings/clock/exynos5260-clk.h
++++ b/include/dt-bindings/clock/exynos5260-clk.h
+@@ -1,13 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * Author: Rahul Sharma <rahul.sharma@samsung.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Provides Constants for Exynos5260 clocks.
+-*/
++ */
  
- 	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM)) {
- 		mcpm_set_entry_vector(cpu, cluster, exynos_cpu_resume);
-@@ -328,7 +328,7 @@ static void exynos5420_pm_prepare(void)
- 	 * needs to restore it back in case, the primary cpu fails to
- 	 * suspend for any reason.
- 	 */
--	exynos5420_cpu_state = readl_relaxed(sysram_base_addr +
-+	exynos5420_cpu_state = readl_relaxed(sysram_ns_base_addr +
- 					     EXYNOS5420_CPU_STATE);
+ #ifndef _DT_BINDINGS_CLK_EXYNOS5260_H
+ #define _DT_BINDINGS_CLK_EXYNOS5260_H
+diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
+index 6cb4e90f81fc..f179eabbcdb7 100644
+--- a/include/dt-bindings/clock/exynos5410.h
++++ b/include/dt-bindings/clock/exynos5410.h
+@@ -1,13 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * Copyright (c) 2016 Krzysztof Kozlowski
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants for Exynos5421 clock controller.
+-*/
++ */
  
- 	exynos_pm_enter_sleep_mode();
-@@ -448,7 +448,7 @@ static void exynos5420_pm_resume(void)
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
+diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
+index 2740ae0424a9..355f469943f1 100644
+--- a/include/dt-bindings/clock/exynos5420.h
++++ b/include/dt-bindings/clock/exynos5420.h
+@@ -1,13 +1,10 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+  * Author: Andrzej Hajda <a.hajda@samsung.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants for Exynos5420 clock controller.
+-*/
++ */
  
- 	/* Restore the sysram cpu state register */
- 	writel_relaxed(exynos5420_cpu_state,
--		       sysram_base_addr + EXYNOS5420_CPU_STATE);
-+		       sysram_ns_base_addr + EXYNOS5420_CPU_STATE);
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS_5420_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS_5420_H
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index be39d23e6a32..98bd85ce1e45 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * Author: Chanwoo Choi <cw00.choi@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+  */
  
- 	pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
- 			S5P_CENTRAL_SEQ_OPTION);
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS5433_H
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index 10c558611085..fce33c7050c8 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -1,11 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+  * Author: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
++ */
+ 
+ #ifndef _DT_BINDINGS_CLOCK_EXYNOS7_H
+ #define _DT_BINDINGS_CLOCK_EXYNOS7_H
+diff --git a/include/dt-bindings/clock/s3c2410.h b/include/dt-bindings/clock/s3c2410.h
+index 352a7673fc69..0fb65c3f2f59 100644
+--- a/include/dt-bindings/clock/s3c2410.h
++++ b/include/dt-bindings/clock/s3c2410.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants clock controllers of Samsung S3C2410 and later.
+  */
+ 
+diff --git a/include/dt-bindings/clock/s3c2412.h b/include/dt-bindings/clock/s3c2412.h
+index aac1dcfda81c..b4656156cc0f 100644
+--- a/include/dt-bindings/clock/s3c2412.h
++++ b/include/dt-bindings/clock/s3c2412.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants clock controllers of Samsung S3C2412.
+  */
+ 
+diff --git a/include/dt-bindings/clock/s3c2443.h b/include/dt-bindings/clock/s3c2443.h
+index f3ba68a25ecb..a9d2f105d536 100644
+--- a/include/dt-bindings/clock/s3c2443.h
++++ b/include/dt-bindings/clock/s3c2443.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Heiko Stuebner <heiko@sntech.de>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants clock controllers of Samsung S3C2443 and later.
+  */
+ 
+diff --git a/include/dt-bindings/clock/samsung,s2mps11.h b/include/dt-bindings/clock/samsung,s2mps11.h
+index b903d7de27c9..5ece35d429ff 100644
+--- a/include/dt-bindings/clock/samsung,s2mps11.h
++++ b/include/dt-bindings/clock/samsung,s2mps11.h
+@@ -1,10 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (C) 2015 Markus Reichl
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants clocks for the Samsung S2MPS11 PMIC.
+  */
+ 
+diff --git a/include/dt-bindings/clock/samsung,s3c64xx-clock.h b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
+index ad95c7f50090..19d233f37e2f 100644
+--- a/include/dt-bindings/clock/samsung,s3c64xx-clock.h
++++ b/include/dt-bindings/clock/samsung,s3c64xx-clock.h
+@@ -1,12 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * Copyright (c) 2013 Tomasz Figa <tomasz.figa at gmail.com>
+  *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+  * Device Tree binding constants for Samsung S3C64xx clock controller.
+-*/
++ */
+ 
+ #ifndef _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
+ #define _DT_BINDINGS_CLOCK_SAMSUNG_S3C64XX_CLOCK_H
 -- 
 2.14.1
 
