@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B006AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62A0AECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 677EE2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2156F2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Qa1eocEl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 677EE2084E
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="AJOhqC/M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2156F2084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbeGRTAx (ORCPT
+        id S1730567AbeGRTAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:00:53 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:39850 "EHLO
+        Wed, 18 Jul 2018 15:00:00 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:40576 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728304AbeGRTAB (ORCPT
+        with ESMTP id S1729096AbeGRS75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:00:01 -0400
+        Wed, 18 Jul 2018 14:59:57 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -37,52 +37,119 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         Paul Cercueil <paul@crapouillou.net>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org
-Subject: [PATCH v2 09/17] dmaengine: dma-jz4780: Enable Fast DMA to the AIC
-Date:   Wed, 18 Jul 2018 20:20:15 +0200
-Message-Id: <20180718182023.8182-10-paul@crapouillou.net>
+Subject: [PATCH v2 05/17] dmaengine: dma-jz4780: Use 4-word descriptors
+Date:   Wed, 18 Jul 2018 20:20:11 +0200
+Message-Id: <20180718182023.8182-6-paul@crapouillou.net>
 In-Reply-To: <20180718182023.8182-1-paul@crapouillou.net>
 References: <20180718182023.8182-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938054; bh=kIdWMomBIPcODZT6neRMuX+S7o636AwUvS/CedkHYO0=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Qa1eocEllFbuPAuBFsN9ZLEh6iqI7uDBU0f/p8ja4gDjs6gTuJegbQNRVn7zQuRDgnOSu2ci4O/XfTckUiWX+IJ4CBl9NdONqRyyjLlIzCR/lYdMwlTwVf8pqqJhxSZkc5R4NNP/FYOd3Y1BlCLL/LpsqG9BLwIRgvUY2t2sVt0=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938049; bh=oMPv75dg0RRuRCVw6hvY5KL37MIFiYeaYnay2oOsU3g=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=AJOhqC/Mdry1fkFZYIjIvoDoFmrPytDLr9KMekFWF9K6XkX3hq/n0qY4e/0/u8i0ELhRphzxZWxBdMtAe6CdG/V4LyRcesWGEEGCJ38JipY7Cv887DdMtdtzz7VTIKVtmM87CFwCj2821zzIR92gBNRfUZfanuyYtpq1xCIUIq0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the fast DMA bit set, the DMA will transfer twice as much data
-per clock period to the AIC, so there is little point not to set it.
+The only information we use in the 8-word version of the hardware DMA
+descriptor that is not present in the 4-word version is the transfer
+type, aka. the ID of the source or recipient device.
+
+Since the transfer type will never change for a DMA channel in use,
+we can just set it once for all in the corresponding DMA register
+before starting any transfer.
+
+This has several benefits:
+
+* the driver will handle twice as many hardware DMA descriptors;
+
+* the driver is closer to support the JZ4740, which only supports 4-word
+  hardware DMA descriptors;
+
+* the JZ4770 SoC needs the transfer type to be set in the corresponding
+  DMA register anyway, even if 8-word descriptors are in use.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 Reviewed-by: PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>
 ---
- drivers/dma/dma-jz4780.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/dma/dma-jz4780.c | 21 +++++++++------------
+ 1 file changed, 9 insertions(+), 12 deletions(-)
 
  v2: No change
 
 diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 88ce3f0157f6..3c9d3952e23a 100644
+index 2f17a0fb1e5c..23e92d153919 100644
 --- a/drivers/dma/dma-jz4780.c
 +++ b/drivers/dma/dma-jz4780.c
-@@ -52,6 +52,7 @@
- #define JZ_DMA_DMAC_DMAE	BIT(0)
- #define JZ_DMA_DMAC_AR		BIT(2)
- #define JZ_DMA_DMAC_HLT		BIT(3)
-+#define JZ_DMA_DMAC_FAIC	BIT(27)
- #define JZ_DMA_DMAC_FMSC	BIT(31)
+@@ -95,17 +95,12 @@
+  * @dtc: transfer count (number of blocks of the transfer size specified in DCM
+  * to transfer) in the low 24 bits, offset of the next descriptor from the
+  * descriptor base address in the upper 8 bits.
+- * @sd: target/source stride difference (in stride transfer mode).
+- * @drt: request type
+  */
+ struct jz4780_dma_hwdesc {
+ 	uint32_t dcm;
+ 	uint32_t dsa;
+ 	uint32_t dta;
+ 	uint32_t dtc;
+-	uint32_t sd;
+-	uint32_t drt;
+-	uint32_t reserved[2];
+ };
  
- #define JZ_DMA_DRT_AUTO		0x8
-@@ -941,8 +942,8 @@ static int jz4780_dma_probe(struct platform_device *pdev)
- 	 * Also set the FMSC bit - it increases MSC performance, so it makes
- 	 * little sense not to enable it.
- 	 */
--	jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMAC,
--			  JZ_DMA_DMAC_DMAE | JZ_DMA_DMAC_FMSC);
-+	jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMAC, JZ_DMA_DMAC_DMAE |
-+			       JZ_DMA_DMAC_FAIC | JZ_DMA_DMAC_FMSC);
+ /* Size of allocations for hardware descriptor blocks. */
+@@ -286,7 +281,6 @@ static int jz4780_dma_setup_hwdesc(struct jz4780_dma_chan *jzchan,
+ 		desc->dcm = JZ_DMA_DCM_SAI;
+ 		desc->dsa = addr;
+ 		desc->dta = config->dst_addr;
+-		desc->drt = jzchan->transfer_type;
  
- 	if (jzdma->version == ID_JZ4780)
- 		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DMACP, 0);
+ 		width = config->dst_addr_width;
+ 		maxburst = config->dst_maxburst;
+@@ -294,7 +288,6 @@ static int jz4780_dma_setup_hwdesc(struct jz4780_dma_chan *jzchan,
+ 		desc->dcm = JZ_DMA_DCM_DAI;
+ 		desc->dsa = config->src_addr;
+ 		desc->dta = addr;
+-		desc->drt = jzchan->transfer_type;
+ 
+ 		width = config->src_addr_width;
+ 		maxburst = config->src_maxburst;
+@@ -439,9 +432,10 @@ static struct dma_async_tx_descriptor *jz4780_dma_prep_dma_memcpy(
+ 	tsz = jz4780_dma_transfer_size(dest | src | len,
+ 				       &jzchan->transfer_shift);
+ 
++	jzchan->transfer_type = JZ_DMA_DRT_AUTO;
++
+ 	desc->desc[0].dsa = src;
+ 	desc->desc[0].dta = dest;
+-	desc->desc[0].drt = JZ_DMA_DRT_AUTO;
+ 	desc->desc[0].dcm = JZ_DMA_DCM_TIE | JZ_DMA_DCM_SAI | JZ_DMA_DCM_DAI |
+ 			    tsz << JZ_DMA_DCM_TSZ_SHIFT |
+ 			    JZ_DMA_WIDTH_32_BIT << JZ_DMA_DCM_SP_SHIFT |
+@@ -496,9 +490,12 @@ static void jz4780_dma_begin(struct jz4780_dma_chan *jzchan)
+ 			(jzchan->curr_hwdesc + 1) % jzchan->desc->count;
+ 	}
+ 
+-	/* Use 8-word descriptors. */
+-	jz4780_dma_chn_writel(jzdma, jzchan->id,
+-			      JZ_DMA_REG_DCS, JZ_DMA_DCS_DES8);
++	/* Use 4-word descriptors. */
++	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS, 0);
++
++	/* Set transfer type. */
++	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DRT,
++			      jzchan->transfer_type);
+ 
+ 	/* Write descriptor address and initiate descriptor fetch. */
+ 	desc_phys = jzchan->desc->desc_phys +
+@@ -508,7 +505,7 @@ static void jz4780_dma_begin(struct jz4780_dma_chan *jzchan)
+ 
+ 	/* Enable the channel. */
+ 	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DCS,
+-			      JZ_DMA_DCS_DES8 | JZ_DMA_DCS_CTE);
++			      JZ_DMA_DCS_CTE);
+ }
+ 
+ static void jz4780_dma_issue_pending(struct dma_chan *chan)
 -- 
 2.11.0
 
