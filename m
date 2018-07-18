@@ -2,231 +2,106 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CA3ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B141ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE8CE20858
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:03:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE8CE20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 196F420850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:08:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ry+FER4j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 196F420850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbeGRGjO (ORCPT
+        id S1726409AbeGRGo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 02:39:14 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:56503 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725975AbeGRGjO (ORCPT
+        Wed, 18 Jul 2018 02:44:26 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33746 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbeGRGo0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 02:39:14 -0400
-X-UUID: 98ea0ea218734344a85327ead7dfd4d9-20180718
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 525608885; Wed, 18 Jul 2018 14:02:43 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Wed, 18 Jul
- 2018 14:02:42 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 18 Jul 2018 14:02:41 +0800
-Message-ID: <1531893761.31406.15.camel@mhfsdcap03>
-Subject: Re: [PATCH v3 3/4] PCI: mediatek: Add system pm support for MT2712
- and MT7622
-From:   Honghui Zhang <honghui.zhang@mediatek.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     <marc.zyngier@arm.com>, <bhelgaas@google.com>,
-        <matthias.bgg@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <ryder.lee@mediatek.com>, <hongkun.cao@mediatek.com>,
-        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
-        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>,
-        <rjw@rjwysocki.net>, <khilman@kernel.org>, <ulf.hansson@linaro.org>
-Date:   Wed, 18 Jul 2018 14:02:41 +0800
-In-Reply-To: <20180717171543.GA20991@red-moon>
-References: <1530518264-6125-1-git-send-email-honghui.zhang@mediatek.com>
-         <1530518264-6125-4-git-send-email-honghui.zhang@mediatek.com>
-         <20180717171543.GA20991@red-moon>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 02:44:26 -0400
+Received: by mail-pf0-f195.google.com with SMTP id b17-v6so1695587pfi.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 23:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YbPU0MCZ80y+82Mxb9ofSrYqFEA+hlTaSeGHuhvsHCw=;
+        b=Ry+FER4j5mH1l0ojU/aZxdvbj4+QoirSxsQD9xg+697F1xy88kTvmbs6ecE82OANvL
+         LSHgYCN7FTo+Wk8SXhOMFwmiXgG8W0ppiyZ7DwpSOe/zlWw8D/uqWCFEVZ2XXCJMu6oS
+         eEvODDDOZS4e80Mhq5AUVGQzbQCAnAKIk0Q4g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YbPU0MCZ80y+82Mxb9ofSrYqFEA+hlTaSeGHuhvsHCw=;
+        b=dhFs4BIfyRAkCbYhH1XKGdEzjCHIANTdn4KsE1RNR3hLPRmJSbAQ/qCTCkB9a/UpqG
+         yCeTm0ce4lcWozBfYLXsPFpZzljwSuKjRWrBzYgsu/EcAZUN+d6kwcF7FcdWTi4qRT9J
+         793o1iwwfYmKu1RAZJ+teBTi1CAmIZu15jsVKGd+uc4o1+OAIdRYOcnuT/z5CpeqDUIA
+         a21Z0zYl49VS7rDgfEP6HzncToSD3lrXMShOwM9uOPAjfhhCEplKtuis3g4WdXgoA8i1
+         DbKojioADubTcdhaRf2ApDogTEk8c8bH8shbW3XaoKw/Y1j4tBlkPvEuVTUPtKalrq7j
+         kF2Q==
+X-Gm-Message-State: AOUpUlEw9DfNZHyhMVhHUE9ni9m27I9c5YEWubsk4yFqkS6hqbW+wCMj
+        AOTSTZA+FAgTMI491ipNHXnzXQ==
+X-Google-Smtp-Source: AAOMgpdbckrQ/Iu98D65+zDcEkGTFW6n10DgOD3yEVfMzmHnnu56TlcNJ+EV3VhsGpEBGoCDbHt+EQ==
+X-Received: by 2002:a62:1314:: with SMTP id b20-v6mr3861942pfj.230.1531894094785;
+        Tue, 17 Jul 2018 23:08:14 -0700 (PDT)
+Received: from localhost ([122.171.235.75])
+        by smtp.gmail.com with ESMTPSA id m15-v6sm8691612pfj.171.2018.07.17.23.08.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 23:08:13 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 11:38:12 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     arm@kernel.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        ionela.voinescu@arm.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        chris.redpath@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/15] arm: dts: qcom: Add missing OPP properties for CPUs
+Message-ID: <20180718060812.vgmb33zws5nbwjd6@vireshk-i7>
+References: <cover.1527244200.git.viresh.kumar@linaro.org>
+ <9f9cc23d1fd17503c9056d62f7757fb9c412d1f9.1527244201.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f9cc23d1fd17503c9056d62f7757fb9c412d1f9.1527244201.git.viresh.kumar@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-17 at 18:15 +0100, Lorenzo Pieralisi wrote:
-> [+Rafael, Kevin, Ulf]
+On 25-05-18, 16:02, Viresh Kumar wrote:
+> The OPP properties, like "operating-points", should either be present
+> for all the CPUs of a cluster or none. If these are present only for a
+> subset of CPUs of a cluster then things will start falling apart as soon
+> as the CPUs are brought online in a different order. For example, this
+> will happen because the operating system looks for such properties in
+> the CPU node it is trying to bring up, so that it can create an OPP
+> table.
 > 
-> On Mon, Jul 02, 2018 at 03:57:43PM +0800, honghui.zhang@mediatek.com wrote:
-> > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > 
-> > The MTCMOS of PCIe Host for MT2712 and MT7622 will be off when system
-> > suspend, and all the internal control register will be reset after system
-> > resume. The PCIe link should be re-established and the related control
-> > register values should be re-set after system resume.
-> > 
-> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > Acked-by: Ryder Lee <ryder.lee@mediatek.com>
-> > ---
-> >  drivers/pci/controller/pcie-mediatek.c | 67 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 67 insertions(+)
-> > 
-> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> > index 86918d4..175d7b6 100644
-> > --- a/drivers/pci/controller/pcie-mediatek.c
-> > +++ b/drivers/pci/controller/pcie-mediatek.c
-> > @@ -134,12 +134,14 @@ struct mtk_pcie_port;
-> >  /**
-> >   * struct mtk_pcie_soc - differentiate between host generations
-> >   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-> > + * @pm_support: whether the host's MTCMOS will be off when suspend
-> >   * @ops: pointer to configuration access functions
-> >   * @startup: pointer to controller setting functions
-> >   * @setup_irq: pointer to initialize IRQ functions
-> >   */
-> >  struct mtk_pcie_soc {
-> >  	bool need_fix_class_id;
-> > +	bool pm_support;
-> >  	struct pci_ops *ops;
-> >  	int (*startup)(struct mtk_pcie_port *port);
-> >  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-> > @@ -1197,12 +1199,75 @@ static int mtk_pcie_probe(struct platform_device *pdev)
-> >  	return err;
-> >  }
-> >  
-> > +static int __maybe_unused mtk_pcie_suspend_noirq(struct device *dev)
-> > +{
-> > +	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-> > +	const struct mtk_pcie_soc *soc = pcie->soc;
-> > +	struct mtk_pcie_port *port;
-> > +
-> > +	if (!soc->pm_support)
-> > +		return 0;
-> > +
-> > +	if (list_empty(&pcie->ports))
-> > +		return 0;
-> > +
-> > +	list_for_each_entry(port, &pcie->ports, list) {
-> > +		clk_disable_unprepare(port->pipe_ck);
-> > +		clk_disable_unprepare(port->obff_ck);
-> > +		clk_disable_unprepare(port->axi_ck);
-> > +		clk_disable_unprepare(port->aux_ck);
-> > +		clk_disable_unprepare(port->ahb_ck);
-> > +		clk_disable_unprepare(port->sys_ck);
-> > +		phy_power_off(port->phy);
-> > +		phy_exit(port->phy);
-> > +	}
-> > +
-> > +	mtk_pcie_subsys_powerdown(pcie);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int __maybe_unused mtk_pcie_resume_noirq(struct device *dev)
-> > +{
-> > +	struct mtk_pcie *pcie = dev_get_drvdata(dev);
-> > +	const struct mtk_pcie_soc *soc = pcie->soc;
-> > +	struct mtk_pcie_port *port, *tmp;
-> > +
-> > +	if (!soc->pm_support)
-> > +		return 0;
-> > +
-> > +	if (list_empty(&pcie->ports))
-> > +		return 0;
-> > +
-> > +	if (dev->pm_domain) {
-> > +		pm_runtime_enable(dev);
-> > +		pm_runtime_get_sync(dev);
-> > +	}
+> Add such missing properties.
 > 
-> Are these runtime PM calls needed/abused here ?
+> Fix other missing property (clock latency) as well to make it all
+> work.
 > 
-> Mind explaining the logic ?
-> 
-> There is certainly an asymmetry with the suspend callback which made me
-> suspicious, I am pretty certain Rafael/Kevin/Ulf can help me clarify so
-> that we can make progress with this patch.
-> 
-> Lorenzo
-> 
-Hi Lorenzo, thanks for your comments.
-Sorry I don't get you.
-I believe that in suspend callbacks the pm_runtime_put_sync and
-pm_runtime_disable should be called to gated the CMOS for this module,
-while the pm_rumtime_enable and pm_rumtime_get_sync should be called in
-resume callback.
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  arch/arm/boot/dts/qcom-ipq4019.dtsi | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 
-That's exactly this patch doing.
-But the pm_rumtime_put_sync and pm_runtime_disable functions was wrapped
-in the mtk_pcie_subsys_powerdown.
+Qcom maintainers, can you please apply this one ?
 
-I did not call mtk_pcie_subsys_powerup since it does not just wrapped
-pm_rumtime related functions but also do the platform_resource_get,
-devm_ioremap, and free_ck clock get which I do not needed in resume
-callback.
-
-Do you think it will be much clear if I abstract the
-platform_resource_get, devm_ioremap functions from
-mtk_pcie_subsys_powerup and put it to a new functions like
-mtk_pcie_subsys_resource_get, and then we may call the
-mtk_pcie_subsys_powerup in the resume function?
-
-thanks
-> > +
-> > +	clk_prepare_enable(pcie->free_ck);
-> > +
-> > +	list_for_each_entry_safe(port, tmp, &pcie->ports, list)
-> > +		mtk_pcie_enable_port(port);
-> > +
-> > +	/* In case of EP was removed while system suspend. */
-> > +	if (list_empty(&pcie->ports))
-> > +		mtk_pcie_subsys_powerdown(pcie);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct dev_pm_ops mtk_pcie_pm_ops = {
-> > +	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_pcie_suspend_noirq,
-> > +				      mtk_pcie_resume_noirq)
-> > +};
-> > +
-> >  static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
-> >  	.ops = &mtk_pcie_ops,
-> >  	.startup = mtk_pcie_startup_port,
-> >  };
-> >  
-> >  static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
-> > +	.pm_support = true,
-> >  	.ops = &mtk_pcie_ops_v2,
-> >  	.startup = mtk_pcie_startup_port_v2,
-> >  	.setup_irq = mtk_pcie_setup_irq,
-> > @@ -1210,6 +1275,7 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
-> >  
-> >  static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
-> >  	.need_fix_class_id = true,
-> > +	.pm_support = true,
-> >  	.ops = &mtk_pcie_ops_v2,
-> >  	.startup = mtk_pcie_startup_port_v2,
-> >  	.setup_irq = mtk_pcie_setup_irq,
-> > @@ -1229,6 +1295,7 @@ static struct platform_driver mtk_pcie_driver = {
-> >  		.name = "mtk-pcie",
-> >  		.of_match_table = mtk_pcie_ids,
-> >  		.suppress_bind_attrs = true,
-> > +		.pm = &mtk_pcie_pm_ops,
-> >  	},
-> >  };
-> >  builtin_platform_driver(mtk_pcie_driver);
-> > -- 
-> > 2.6.4
-> > 
-
-
+-- 
+viresh
