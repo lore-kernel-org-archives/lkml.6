@@ -2,95 +2,112 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F7FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B33ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E934020850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:29:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E10220673
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:31:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jb7ZlkD9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E934020850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gOd6CZZv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E10220673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731347AbeGRRID (ORCPT
+        id S1731356AbeGRRKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 13:08:03 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:38742 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731144AbeGRRID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 13:08:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=S2WGeck9CJvob22V0WW66HsQ1t/Ma+gKswxmVDcvHsQ=;
-        b=jb7ZlkD9K6wZ3jUgBkjzZ721+VIbAUQnQdJ973RWRsb4n7++VoNLTs//Hz1avqecyvePOTAxavPapRepgV5YIEI0CBXSBfqG75oa9iU1dihL4NzlOXXEGV7d+c8eDInAukyWPRmnssjb65guvH06FZUZSZbfel9mOS/2I84eIKk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1ffpJp-000410-Si; Wed, 18 Jul 2018 18:28:49 +0200
-Date:   Wed, 18 Jul 2018 18:28:49 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/5] net: visually shrink eth_platform_get_mac_address()
-Message-ID: <20180718162849.GA12477@lunn.ch>
-References: <20180718161035.7005-1-brgl@bgdev.pl>
- <20180718161035.7005-2-brgl@bgdev.pl>
+        Wed, 18 Jul 2018 13:10:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48216 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731144AbeGRRKE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 13:10:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hcOhW0AxgeVW8KlsPYSm+C8c2IhtRyda4fOPsxxcs8s=; b=gOd6CZZvAM+wz80XpZd9n8PUQ
+        e52fnLMGVEXlYwPUJuYsTQpdOzYQQi6OfIay0CdCp7BBwdFOpSreNtnpPC+cnJTE5EybJ6GhJAfdq
+        hFcBjLxBu3UWJgEZ6cEpfh+d6b8RnWdbaxxjiB89rkWBBs7tNuqEJD+8PNuAkTGKHyfj/U7zNhsWp
+        SrkrpYnn3soo8hSZQy9djv6v9oHH5oWb5taSFdY81soZggrEwecgvDUN7/g3TlkedN3tZTKwGgaA2
+        7J6YLrJV3eCc9EbotCiVC7eAUfNtGgJRZgKDYYSBHJWdqLHpYpOX6rx9kV9GBzewJ86+LQRysCHG+
+        TLvY5HohA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ffpMC-0000SS-Oz; Wed, 18 Jul 2018 16:31:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3E48E20275F37; Wed, 18 Jul 2018 18:31:15 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 18:31:15 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vinayak Menon <vinmenon@codeaurora.org>,
+        Christopher Lameter <cl@linux.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH 08/10] psi: pressure stall information for CPU, memory,
+ and IO
+Message-ID: <20180718163115.GV2494@hirez.programming.kicks-ass.net>
+References: <20180712172942.10094-1-hannes@cmpxchg.org>
+ <20180712172942.10094-9-hannes@cmpxchg.org>
+ <20180718124627.GD2476@hirez.programming.kicks-ass.net>
+ <20180718135633.GA5161@cmpxchg.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718161035.7005-2-brgl@bgdev.pl>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180718135633.GA5161@cmpxchg.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 06:10:31PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Jul 18, 2018 at 09:56:33AM -0400, Johannes Weiner wrote:
+> On Wed, Jul 18, 2018 at 02:46:27PM +0200, Peter Zijlstra wrote:
+
+> > I'm confused by this whole MEMSTALL thing... I thought the idea was to
+> > account the time we were _blocked_ because of memstall, but you seem to
+> > count the time we're _running_ with PF_MEMSTALL.
 > 
-> Initialize the variables with proper values so that we save a few
-> lines of code before we extend this function in the follow-up patches.
+> Under heavy memory pressure, a lot of active CPU time is spent
+> scanning and rotating through the LRU lists, which we do want to
+> capture in the pressure metric. What we really want to know is the
+> time in which CPU potential goes to waste due to a lack of
+> resources. That's the CPU going idle due to a memstall, but it's also
+> a CPU doing *work* which only occurs due to a lack of memory. We want
+> to know about both to judge how productive system and workload are.
+
+Then maybe memstall (esp. the 'stall' part of it) is a bit of a
+misnomer.
+
+> > And esp. the wait_on_page_bit_common caller seems performance sensitive,
+> > and the above function is quite expensive.
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  net/ethernet/eth.c | 11 +++--------
->  1 file changed, 3 insertions(+), 8 deletions(-)
+> Right, but we don't call it on every invocation, only when waiting for
+> the IO to read back a page that was recently deactivated and evicted:
 > 
-> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
-> index ee28440f57c5..da8530879e1e 100644
-> --- a/net/ethernet/eth.c
-> +++ b/net/ethernet/eth.c
-> @@ -527,15 +527,10 @@ unsigned char * __weak arch_get_platform_mac_address(void)
->  
->  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
->  {
-> -	const unsigned char *addr;
-> -	struct device_node *dp;
-> +	struct device_node *dp = dev_is_pci(dev) ?
-> +			pci_device_to_OF_node(to_pci_dev(dev)) : dev->of_node;
-> +	const unsigned char *addr = NULL;
+> 	if (bit_nr == PG_locked &&
+> 	    !PageUptodate(page) && PageWorkingset(page)) {
+> 		if (!PageSwapBacked(page))
+> 			delayacct_thrashing_start();
+> 		psi_memstall_enter(&pflags);
+> 		thrashing = true;
+> 	}
+> 
+> That means the page cache workingset/file active list is thrashing, in
+> which case the IO itself is our biggest concern, not necessarily a few
+> additional cycles before going to sleep to wait on its completion.
 
-Hi Bartosz
-
-You are now in the net subsystem, which has its own set of additional
-coding styles. One of them is reverse Christmas tree.
-
-You might want to read Documentation/networking/netdev-FAQ.txt.
-
-    Andrew
+Ah, right. PageWorkingset() is only true if we (recently) evicted that
+page before, right?
