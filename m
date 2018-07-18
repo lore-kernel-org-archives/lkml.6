@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F5EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44475ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D75D720854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:36:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75D720854
+	by mail.kernel.org (Postfix) with ESMTP id 02E8E20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:38:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02E8E20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbeGRSPb (ORCPT
+        id S1731498AbeGRSR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 14:15:31 -0400
-Received: from mga07.intel.com ([134.134.136.100]:23577 "EHLO mga07.intel.com"
+        Wed, 18 Jul 2018 14:17:26 -0400
+Received: from mga03.intel.com ([134.134.136.65]:34948 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731025AbeGRSPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 14:15:31 -0400
+        id S1731236AbeGRSRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 14:17:25 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 10:36:35 -0700
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 10:38:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,371,1526367600"; 
-   d="scan'208";a="67967477"
+   d="scan'208";a="67968001"
 Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga003.jf.intel.com with ESMTP; 18 Jul 2018 10:36:26 -0700
-Subject: Re: [PATCHv5 02/19] mm: Do not use zero page in encrypted pages
+  by orsmga003.jf.intel.com with ESMTP; 18 Jul 2018 10:38:29 -0700
+Subject: Re: [PATCHv5 03/19] mm/ksm: Do not merge pages with different KeyIDs
 To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Tom Lendacky <thomas.lendacky@amd.com>
 References: <20180717112029.42378-1-kirill.shutemov@linux.intel.com>
- <20180717112029.42378-3-kirill.shutemov@linux.intel.com>
+ <20180717112029.42378-4-kirill.shutemov@linux.intel.com>
 Cc:     Kai Huang <kai.huang@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
@@ -86,12 +86,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <e09c67ab-38a7-5b76-29e6-a45627eec1e5@intel.com>
-Date:   Wed, 18 Jul 2018 10:36:24 -0700
+Message-ID: <a6fc50f2-b0c2-32db-cbef-3de57d5e6b16@intel.com>
+Date:   Wed, 18 Jul 2018 10:38:27 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20180717112029.42378-3-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20180717112029.42378-4-kirill.shutemov@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -101,16 +101,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 07/17/2018 04:20 AM, Kirill A. Shutemov wrote:
-> Zero page is not encrypted and putting it into encrypted VMA produces
-> garbage.
-> 
-> We can map zero page with KeyID-0 into an encrypted VMA, but this would
-> be violation security boundary between encryption domains.
+> Pages encrypted with different encryption keys are not allowed to be
+> merged by KSM. Otherwise it would cross security boundary.
 
-Why?  How is it a violation?
+Let's say I'm using plain AES (not AES-XTS).  I use the same key in two
+keyid slots.  I map a page with the first keyid and another with the
+other keyid.
 
-It only matters if they write secrets.  They can't write secrets to the
-zero page.
-
-Is this only because you accidentally inherited ->vm_page_prot on the
-zero page PTE?
+Won't they have the same cipertext?  Why shouldn't we KSM them?
