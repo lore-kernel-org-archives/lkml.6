@@ -2,77 +2,223 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4174EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE46EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E27C920652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:31:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FDF620652
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:31:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bf+TEUsH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E27C920652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Kss740Fb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E3U3zOYF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FDF620652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731347AbeGROJ0 (ORCPT
+        id S1731485AbeGROJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:09:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38060 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730234AbeGROJ0 (ORCPT
+        Wed, 18 Jul 2018 10:09:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42436 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730234AbeGROJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:09:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=kCgmAgHFAWhPVUCrKwNY/yECUVSsYcM01j4D9rh6L7M=; b=Bf+TEUsHWAxVepGuLvvAncPcd
-        zRJuRzfJe1HC3OYohQaLzvUV+0GQwVEXE/vJ1eYMDOLw6tMxUbeYWPRredHseQ87E3bAjn5XWRaf5
-        Ii6RPvgyPW8Tz2HQt+l6UlHITt2UztLOvP9Ne2Mrq335dNjvPA0qj5c5PEY/LzJ7i+Wgopg+iaNXT
-        SOdsloEd2RsSoyJzBNkxbaa51o6IyRO20EBPBFKVmqH7f4nB81F/krwTtia1rsP72LDUDvhkNYD3K
-        hZa0qByi+aM3ZkvMypOdDCraTMt3ChP2eR4ZBb6Qy7tnXhRrw2zRDmIURM1ihGBJh8izY2SMTkmyS
-        u1xbsl+IA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffmYA-0001ki-DI; Wed, 18 Jul 2018 13:31:26 +0000
-Date:   Wed, 18 Jul 2018 06:31:26 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        NetFilter <netfilter-devel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Varsha Rao <rvarsha016@gmail.com>
-Subject: Re: linux-next: build failure after merge of the ida tree
-Message-ID: <20180718133126.GD4949@bombadil.infradead.org>
-References: <20180718165406.6f262266@canb.auug.org.au>
- <20180718092426.mxdti3jes5jsssta@salvia>
- <20180718131446.GC4949@bombadil.infradead.org>
- <20180718132746.txspsjvw3xxlqtey@salvia>
+        Wed, 18 Jul 2018 10:09:36 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0A354607C6; Wed, 18 Jul 2018 13:31:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531920699;
+        bh=O8qbacYd7wyHTriR5CYEZ5rA4Lva0BrVWMiygXVaW1Y=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Kss740Fb20feINQn2FcPLviGQvYlPXlBLpwsvJ83FYMAggIHP7HzfYxKlc/kwIsQ2
+         idfjMj2AeO8HVRZ4/8drJ2KcjD5JnNU4MAil20UudjAoSTyydJg0PcqJrd17nyiFBD
+         o+gOgP/hFhgkyQM3VxS7CuncJNvQAVme8S7BeYOo=
+Received: from mail-qt0-f170.google.com (mail-qt0-f170.google.com [209.85.216.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 245486078C;
+        Wed, 18 Jul 2018 13:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531920690;
+        bh=O8qbacYd7wyHTriR5CYEZ5rA4Lva0BrVWMiygXVaW1Y=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=E3U3zOYF4O/d+EQlLdSvCbVQdBtGYb+2nUcbFUYrqQYkdV6WFQbma4+5pJLIcHsGV
+         TzaIL/W+uq4plgi0g5Rp/33E8N+SPPxwQVD5FhJQGSrthtdajFPNVwNP522Ysv4pzo
+         B9Yr5v7sYEdNRsQPDHqTWaHDJC3i8BI1tk4HsvE8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 245486078C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qt0-f170.google.com with SMTP id h4-v6so3973006qtj.7;
+        Wed, 18 Jul 2018 06:31:30 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFPE4f9g0DLHURAinBemcmJQp0J3f4M/Y3Y744ffOMdlEYZ4Ow3
+        /9fJoe1SX+o5hEloyO0c4ggD0wrNvx+m8ieFrNg=
+X-Google-Smtp-Source: AAOMgpe2emM36vsxMd8J06FVQ5JQKuMva9Zl6NWryVWjVixgf51IBeRPyUg55dk0VL4cVOvgCHlLJgPonDbu5AmAgWQ=
+X-Received: by 2002:a0c:c489:: with SMTP id u9-v6mr6412035qvi.11.1531920689404;
+ Wed, 18 Jul 2018 06:31:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718132746.txspsjvw3xxlqtey@salvia>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:ac8:f25:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 06:31:28 -0700 (PDT)
+In-Reply-To: <48139f68-5a79-8531-00fa-fbdd787f50f5@arm.com>
+References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
+ <20180708173413.1965-4-vivek.gautam@codeaurora.org> <5179668.PHK6S3sxLu@aspire.rjw.lan>
+ <CAFp+6iGcwdK=wyPf++u3B+ORghuB1YhYmnJLSwvt1efG9H4YeA@mail.gmail.com> <48139f68-5a79-8531-00fa-fbdd787f50f5@arm.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Wed, 18 Jul 2018 19:01:28 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iF3vihGYLVkALmGa4USLcUaUOtpKD0EDC8CALv6Ch6VrQ@mail.gmail.com>
+Message-ID: <CAFp+6iF3vihGYLVkALmGa4USLcUaUOtpKD0EDC8CALv6Ch6VrQ@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] iommu/arm-smmu: Add the device_link between
+ masters and smmu
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+        sboyd@kernel.org, linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        "robh+dt" <robh+dt@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        freedreno <freedreno@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 03:27:46PM +0200, Pablo Neira Ayuso wrote:
-> On Wed, Jul 18, 2018 at 06:14:46AM -0700, Matthew Wilcox wrote:
-> > So Varsha, if you would like to take a look at transforming table->sets
-> > from a LIST_HEAD to an IDR, I think that would be a great use of your
-> > time.
-> 
-> Please, don't do so, we don't need a radix tree datastructure, it's
-> just more complexity.
+On Wed, Jul 18, 2018 at 6:13 PM, Robin Murphy <robin.murphy@arm.com> wrote:
+> On 18/07/18 10:30, Vivek Gautam wrote:
+>>
+>> On Wed, Jul 11, 2018 at 3:23 PM, Rafael J. Wysocki <rjw@rjwysocki.net>
+>> wrote:
+>>>
+>>> On Sunday, July 8, 2018 7:34:12 PM CEST Vivek Gautam wrote:
+>>>>
+>>>> From: Sricharan R <sricharan@codeaurora.org>
+>>>>
+>>>> Finally add the device link between the master device and
+>>>> smmu, so that the smmu gets runtime enabled/disabled only when the
+>>>> master needs it. This is done from add_device callback which gets
+>>>> called once when the master is added to the smmu.
+>>>>
+>>>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>>>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+>>>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+>>>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
+>>>> Cc: Lukas Wunner <lukas@wunner.de>
+>>>> ---
+>>>>
+>>>>   - Change since v11
+>>>>     * Replaced DL_FLAG_AUTOREMOVE flag with DL_FLAG_AUTOREMOVE_SUPPLIER.
+>>>>
+>>>>   drivers/iommu/arm-smmu.c | 12 ++++++++++++
+>>>>   1 file changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+>>>> index 09265e206e2d..916cde4954d2 100644
+>>>> --- a/drivers/iommu/arm-smmu.c
+>>>> +++ b/drivers/iommu/arm-smmu.c
+>>>> @@ -1461,8 +1461,20 @@ static int arm_smmu_add_device(struct device
+>>>> *dev)
+>>>>
+>>>>        iommu_device_link(&smmu->iommu, dev);
+>>>>
+>>>> +     if (pm_runtime_enabled(smmu->dev) &&
+>>>
+>>>
+>>> Why does the creation of the link depend on whether or not runtime PM
+>>> is enabled for the MMU device?
+>>>
+>>> What about system-wide PM and system shutdown?  Are they always
+>>> guaranteed
+>>> to happen in the right order without the link?
+>>
+>>
+>> Hi Robin,
+>>
+>> As Rafael pointed, we should the device link creation should not depend on
+>> runtime PM being enabled or not, as we would also want to guarantee
+>> that system wide PM callbacks are called in the right order for smmu
+>> and clients.
+>>
+>> Does this change of removing the check for pm_runtime_enabled() from here
+>> looks okay to you?
+>
+>
+> FWIW the existing system PM ops make no claim to be perfect, and I wouldn't
+> be at all surprised if it was only by coincidence that my devices happened
+> to put on the relevant lists in the right order to start with. If we no
+> longer need to worry about explicit device_link housekeeping in the SMMU
+> driver, then creating them unconditionally sounds like the sensible thing to
+> do. I'd be inclined to treat failure as non-fatal like we do for the sysfs
+> link, though, since it's another thing that correct SMMU operation doesn't
+> actually depend on (at this point we don't necessarily know if this consumer
+> even has a driver at all).
 
-It's no more complex to use than the list_* macros.
+Thanks. I will then respin the patch taking care of treating failure
+as non-fatal.
 
-> We just wanted to have a simple way to allocate IDs using a bitmap
-> structure in the background without reinventing the wheel.
+>> FYI, as discussed in the first patch [1] of this series, I will add a
+>> system wide
+>> suspend callback - arm_smmu_pm_suspend, that would do clock disable, and
+>> will
+>> add corresponding clock enable calls in arm_smmu_pm_resume().
+>
+>
+> OK, I still don't really understand the finer points of how system PM and
+> runtime PM interact, but if making it robust is just a case of calling the
+> runtime suspend/resume hooks as appropriate from the system ones, that
+> sounds reasonable.
+
+Sure. Thanks.
+
+Best regards
+Vivek
+
+>
+> Robin.
+>
+>>
+>> [1] https://lore.kernel.org/patchwork/patch/960460/
+>>
+>>
+>> Best regards
+>> Vivek
+>>
+>>>
+>>>> +         !device_link_add(dev, smmu->dev,
+>>>> +                     DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_SUPPLIER))
+>>>> {
+>>>> +             dev_err(smmu->dev, "Unable to add link to the consumer
+>>>> %s\n",
+>>>> +                     dev_name(dev));
+>>>> +             ret = -ENODEV;
+>>>> +             goto out_unlink;
+>>>> +     }
+>>>> +
+>>>>        return 0;
+>>>>
+>>>> +out_unlink:
+>>>> +     iommu_device_unlink(&smmu->iommu, dev);
+>>>> +     arm_smmu_master_free_smes(fwspec);
+>>>>   out_cfg_free:
+>>>>        kfree(cfg);
+>>>>   out_free:
+>>>>
+>>>
+>>>
+>>
+>>
+>>
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
