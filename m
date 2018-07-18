@@ -2,117 +2,129 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0EAFECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94420ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3E020673
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:31:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3E020673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cs.cmu.edu
+	by mail.kernel.org (Postfix) with ESMTP id 49D3F20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:32:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="WD+yklOC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49D3F20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731545AbeGRRKg (ORCPT
+        id S1731588AbeGRRKl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 13:10:36 -0400
-Received: from hurricane.elijah.cs.cmu.edu ([128.2.209.191]:45778 "EHLO
-        hurricane.elijah.cs.cmu.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727535AbeGRRKg (ORCPT
+        Wed, 18 Jul 2018 13:10:41 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35793 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731554AbeGRRKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 13:10:36 -0400
-Received: from [127.0.0.1] (helo=cs.cmu.edu)
-        by hurricane.elijah.cs.cmu.edu with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <jaharkes@cs.cmu.edu>)
-        id 1ffpMo-0005cG-Mv; Wed, 18 Jul 2018 12:31:54 -0400
-Date:   Wed, 18 Jul 2018 12:31:53 -0400
-From:   Jan Harkes <jaharkes@cs.cmu.edu>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: Re: [PATCH] [RESEND] coda: stop using 'struct timespec' in user API
-Message-ID: <20180718163153.ogfriudjw7ztwpag@cs.cmu.edu>
-Mail-Followup-To: Arnd Bergmann <arnd@arndb.de>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Deepa Dinamani <deepa.kernel@gmail.com>
-References: <20180718114645.591551-1-arnd@arndb.de>
- <20180718155006.lkoktldllafrfqbf@cs.cmu.edu>
- <CAK8P3a3HYBar1yVCEjxR2VNpPOOx23qM5fCyO-TMmeF780rBiQ@mail.gmail.com>
+        Wed, 18 Jul 2018 13:10:40 -0400
+Received: by mail-io0-f195.google.com with SMTP id q4-v6so4605773iob.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:31:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=I+XZstefw372I4vobdJVu6/m2CQpr2IFrQMfX+PGqgg=;
+        b=WD+yklOCmwQmLnHKmFYJNoHQ3VMNLEYoAi9r3zKWrONCBpKmJE4NaQjXA+M9/osEI9
+         7IRGEPWsWBtjCfMrLtDorHWtYqo3Lq3xb09hnCotpCSXc8PAvHt5/ItaoQvE4i5TVICY
+         nyxNnvlHqpltk17QVT3XF3AtiXU/UGYZR/ZfdgVuveOCYvcRZMT94597hhUZtvRQzbT9
+         KVTO1tjX0tcR8OGpSUZk2KYr+IcMJhRvgKepEXniFuKZNRLjZbvL03elSchzSm5bqzb4
+         cgjv8lVh4tKVsTyzK2bTEV0UzWGnZdnNQFtZ9Lk5MQGuPhtd6/fseUFvzpbT29YaztBw
+         kA/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=I+XZstefw372I4vobdJVu6/m2CQpr2IFrQMfX+PGqgg=;
+        b=lopi6vFU8Bvf2p+kgaDNG3LkFnn4t9Je3iewIefRSIi+c+nR3mc/mTvMjipBwZ8XgS
+         +0xXbDhdp/B2IFa9ybVrO93wlLdzi9Ox7O03xmzEXdx2p7DMu83YZ3hV3nFH1US/YgSO
+         XHIDeSFBSSHnxAggebCIOUTuy2aSVID5cECVfnWkL8BJgWZAusY41eMpLey4vzGsGbEg
+         CnXVat4GBX2zd6WO/+gX6eUUbtDVworxQik2HpfJLCR6Ju+ZFz1FfQrqIA/3WFOIFRRa
+         bFfxLqtZ5BxD9IJq6xQl3/rWgE8YBvrs0ybHTYj9G0eeL1uagmCDEyTEoSLF+aSWRq88
+         PEhg==
+X-Gm-Message-State: AOUpUlGHNjs03O/ipPW87/t2EEA7kJoneALtH8nlVGDRdEwKprGCLFOr
+        R2bdfA5iaxHKGsz12H+fnkb6gcUpZGAlYZ/VbU2Gww==
+X-Google-Smtp-Source: AAOMgpftkyM09gKrdL4HIKSZVr7/BDadkZ9gRIBUvYrOYftaLsZBmuf0yjs/srXf48kwLhMAvY3o2hIIbTGZnG1r6z0=
+X-Received: by 2002:a5e:8d07:: with SMTP id m7-v6mr5461953ioj.258.1531931519153;
+ Wed, 18 Jul 2018 09:31:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3HYBar1yVCEjxR2VNpPOOx23qM5fCyO-TMmeF780rBiQ@mail.gmail.com>
-User-Agent: NeoMutt/20180512
+Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 09:31:58
+ -0700 (PDT)
+In-Reply-To: <20180718162849.GA12477@lunn.ch>
+References: <20180718161035.7005-1-brgl@bgdev.pl> <20180718161035.7005-2-brgl@bgdev.pl>
+ <20180718162849.GA12477@lunn.ch>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Wed, 18 Jul 2018 18:31:58 +0200
+Message-ID: <CAMRc=Mfsty0Yd5X=MkyxzG=_QGwXQbGinrFhO-3tnXcf76gc1A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] net: visually shrink eth_platform_get_mac_address()
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        David Lechner <david@lechnology.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 06:10:29PM +0200, Arnd Bergmann wrote:
-> On Wed, Jul 18, 2018 at 5:50 PM, Jan Harkes <jaharkes@cs.cmu.edu> wrote:
-> > On Wed, Jul 18, 2018 at 01:46:25PM +0200, Arnd Bergmann wrote:
-> >> Unfortunately, this breaks the layout of the coda_vattr structure, so
-> >> we need to redefine that in terms of something that does not change.
-> >> I'm introducing a new 'struct vtimespec' structure here that keeps
-> >> the existing layout, and the same change has to be done in the coda
-> >> user space copy of linux/coda.h before anyone can use that on a 32-bit
-> >> architecture with 64-bit time_t.
-> >
-> > I think the userbase is small enough that we can handle a much simpler
-> > transition to 64-bit timespecs everywhere. In that case the
-> > CODA_KERNEL_VERSION should be updated, which is currently defined in
-> > include/uapi/linux/coda.h as 3. As moving to 64-bit timespecs only
-> > breaks 32-bit systems this allows userspace to catch that case and
-> > refuse to run userspace with a mismatched layout (or handle
-> > translation).
-> 
-> Ok, so to make sure I get this right, you say we can do an
-> incompatible ABI change for coda without causing any problems
-> for existing users?
-> 
-> That would definitely be the easiest approach here. I guess
-> we also just have to be incompatible for 32-bit user space,
-> since it would make 32-bit users have the same ABI as 64-bit
-> ones, right?
-> 
-> I'll have another look at the ABI side then, to see how it can
-> be transitioned.
+2018-07-18 18:28 GMT+02:00 Andrew Lunn <andrew@lunn.ch>:
+> On Wed, Jul 18, 2018 at 06:10:31PM +0200, Bartosz Golaszewski wrote:
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Initialize the variables with proper values so that we save a few
+>> lines of code before we extend this function in the follow-up patches.
+>>
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>> ---
+>>  net/ethernet/eth.c | 11 +++--------
+>>  1 file changed, 3 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
+>> index ee28440f57c5..da8530879e1e 100644
+>> --- a/net/ethernet/eth.c
+>> +++ b/net/ethernet/eth.c
+>> @@ -527,15 +527,10 @@ unsigned char * __weak arch_get_platform_mac_address(void)
+>>
+>>  int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
+>>  {
+>> -     const unsigned char *addr;
+>> -     struct device_node *dp;
+>> +     struct device_node *dp = dev_is_pci(dev) ?
+>> +                     pci_device_to_OF_node(to_pci_dev(dev)) : dev->of_node;
+>> +     const unsigned char *addr = NULL;
+>
+> Hi Bartosz
+>
+> You are now in the net subsystem, which has its own set of additional
+> coding styles. One of them is reverse Christmas tree.
+>
+> You might want to read Documentation/networking/netdev-FAQ.txt.
+>
+>     Andrew
 
-Correct, the first thing a client does after opening the /dev/cfs0
-device is to send a CIOC_KERNEL_VERSION ioctl. In response the Coda
-kernel module returns the current value of CODA_KERNEL_VERSION.
+Hi Andrew,
 
-Right now anything but 3 will make the client complain about version
-mismatch and refuse to start. It is trivial to allow existing 64-bit
-clients to accept both 3 and 4 as valid, and when 32-bit userspace is
-updated to also use 64-bit timespec it can be changed to accept only 4.
+it's still reverse Christmas tree in this patch except that now we're
+taking the length of the variable + initializer into account. I'm not
+sure if this is the right approach though.
 
-> >> > If we only have one code base, it should be fairly straightforward to
-> >> > make it deal with 'unsigned' timestamps consistently, which would
-> >> > let the code work fine until 2106 rather than wrapping around from
-> >> > 2038 to 1902.
-> >
-> > At some point there was a webdav filesystem that used the Coda kernel
-> > apis, but I think they may have moved to FUSE since then so I would not
-> > be surprised if there is only a single code base at this point.
-> 
-> Ok, I found davfs2 at http://dav.sourceforge.net/index.shtml
-> 
-> Ah, so the coda kernel implementation is similar to both fuse and 9pfs
-> in that it can connect to arbitrary user space implementations, but with
-> no known users other than your coda user space and some versions of
-> davfs2?
-
-Correct and since the FUSE api is easier to work with it has seen more
-users. AFAIK, the work on davfs2 was started before FUSE existed.
-
-Jan
+Bart
