@@ -2,127 +2,186 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA538ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530E8ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60EBE2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:35:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b1agXNsj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60EBE2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1542A2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:35:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1542A2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731304AbeGRQN2 (ORCPT
+        id S1731429AbeGRQNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:13:28 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:40551 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731031AbeGRQN1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:13:27 -0400
-Received: by mail-it0-f65.google.com with SMTP id 188-v6so4883808ita.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=He4vNQKX8oC642qSp1p3CYf4pfQMdNTC3BpNRAtzA3Q=;
-        b=b1agXNsj3vOjMJf1hIDaY7rJFTEtc3fwMIpqoC7SiQGf1kWNkGsSx0Wji9fs25hE5+
-         UuQxKAtcq2sVrbUnpFRWegiz6BkLSPtY/P3+aetamsHJgfYM5RDpyXRbvdYcwppmUDCb
-         loESN1bkreIsYS6h79+UpEzTjNVQspvxD8R1M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=He4vNQKX8oC642qSp1p3CYf4pfQMdNTC3BpNRAtzA3Q=;
-        b=JG4BDMsO1lhcQnp7smzUTfL2+YMtH8VvQ7jBM1zboiZ49/U0Fv988Ej8Lp5VtW75+Q
-         uIZ0/hezWvZ4K+eocEzUTUx/4ukk87JH2xVPZ00j5OpVgs8TPQcSk4U9Q1zKZA88qgmo
-         D3/Pp5K7imukD5SHe6ROQQeRCvMbja96N/EEKwDHmedHwCVgrPnuPfUiDOUdP0p/ZXq9
-         ou48AN57/38lJA7mT94t0rvhacGzcPV/rJk3p0YP4IsIJUZMjkeciVYMwnqUbW9TW/fL
-         Mq3WU4QECVTs/Rj4VZ4/DEVpUc6O/Vd8FFuwOfOe9DFS6A4l07Nds6J5C63XEPprnKvs
-         xx6g==
-X-Gm-Message-State: AOUpUlHtapm2GOzDUZFV+JwH9vnpluxaN9Uw3t0eJKrCucqcWLTYkzQv
-        MV9uOXKwjoylfyM8C14jVZjEy6jw7rYBTZWbq4zQtA==
-X-Google-Smtp-Source: AAOMgpfDmegNVT3cfWOeoIWNIXSysYZt0zfG5Iy6WMt9R0T6rsO2QWSoidyfJOtlFAaDKbHArwJbHFmiFHgpDEv+lTU=
-X-Received: by 2002:a24:d7c5:: with SMTP id y188-v6mr2417126itg.50.1531928100360;
- Wed, 18 Jul 2018 08:35:00 -0700 (PDT)
+        Wed, 18 Jul 2018 12:13:51 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40834 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731087AbeGRQNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:13:51 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7133C8C598C6;
+        Wed, 18 Jul 2018 23:35:19 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.42) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.382.0; Wed, 18 Jul 2018
+ 23:35:19 +0800
+Subject: Re: [PATCH] arm64: dts: hikey960: Clean up MMC properties and move to
+ proper file
+To:     Ryan Grachek <ryan@edited.us>
+References: <20180618181008.21831-1-ryan@edited.us>
+CC:     <john.stultz@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Will Deacon" <will.deacon@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5B4F5E30.1080208@hisilicon.com>
+Date:   Wed, 18 Jul 2018 16:35:12 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Received: by 2002:a6b:ac05:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:34:59
- -0700 (PDT)
-In-Reply-To: <CAK8P3a0T0Ku-2GOY8fT38LVy4GpvVSsx=szi0ZNEUq8Z_hZweQ@mail.gmail.com>
-References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com> <CAK8P3a0T0Ku-2GOY8fT38LVy4GpvVSsx=szi0ZNEUq8Z_hZweQ@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Thu, 19 Jul 2018 00:34:59 +0900
-Message-ID: <CAKv+Gu8uD4NNS9SaWdSST7n+984ybTBLhGDpq3k5GG4o1+PMWA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] crypto: add IV generation templates
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>, dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180618181008.21831-1-ryan@edited.us>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.42]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 July 2018 at 19:59, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, Jul 18, 2018 at 9:30 AM, Xiongfeng Wang
-> <wangxiongfeng2@huawei.com> wrote:
->>
->> I tested the performance of software implemented ciphers before and after
->> applying this patchset. The performance didn't change much except for
->> slight regression when writting. The detail information is as follows.
->>
->> The command I used:
->> cryptsetup -y -c aes-xts-plain -s 256 --hash sha256 luksFormat /dev/sdd1
->> cryptsetup -y -c aes-cbc-essiv:sha256 -s 256 --hash sha256 luksFormat /dev/sdd1
->> cryptsetup -y -c aes-cbc-benbi -s 256 --hash sha256 luksFormat /dev/sdd1
->>
->> cryptsetup luksOpen /dev/sdd1 crypt_fun
->> time dd if=/dev/mapper/crypt_fun of=/dev/null bs=1M count=500 iflag=direct
->> time dd if=/dev/zero of=/dev/mapper/crypt_fun bs=1M count=500 oflag=direct
->>
->> Performance comparision:
->> --------------------------------------------------------
->> algorithms      | before applying   |   after applying
->> --------------------------------------------------------
->>                 |  read  | write    |  read  | write
->> --------------------------------------------------------
->> aes-xts-plain   | 145.34 | 145.09   | 145.89 | 144.2
->> --------------------------------------------------------
->> aes-cbc-essiv   | 146.87 | 144.62   | 146.74 | 143.41
->> --------------------------------------------------------
->> aes-cbc-benbi   | 146.03 | 144.74   | 146.77 | 144.46
->> --------------------------------------------------------
->
-> Do you have any estimate of the expected gains for hardware
-> implementations?
->
-> Would it make sense to try out implementing aes-cbc-essiv
-> on the ARMv8 crypto extensions? I see that Ard has done
-> some prior work on aes-ccm in arch/arm64/crypto/aes-ce-ccm-*
-> that (AFAICT) has a similar goal of avoiding overhead by
-> combining the usual operations, so maybe the same can
-> be done here.
->
+Hi Ryan,
 
-I am having trouble understanding what exactly this series aims to achieve.
+On 2018/6/18 19:10, Ryan Grachek wrote:
+> Certain properties should be moved to the board file to reflect
+> the specific properties of the board, and not the SoC. Move these
+> properties to proper location and organize properties in both files.
+> 
+> Signed-off-by: Ryan Grachek <ryan@edited.us>
 
-Calling into the crypto layer fewer times is a nice goal, but a disk
-sector seems like a reasonable granularity for the dm layer to operate
-on, and I don't think any hardware exists that operates on multi
-sector sequences, where it would pay off to amortize the latency of
-invoking the hardware over an entire bio.
+Thanks!
+Applied to the hisilicon dt tree.
 
-So in summary, you need to explain to us why we need this. It is
-really very easy to convince people if your changes make things go
-faster.
+Best Regards,
+Wei
+
+> ---
+>  arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 27 ++++++++++++++++++-----
+>  arch/arm64/boot/dts/hisilicon/hi3660.dtsi         | 27 +++++------------------
+>  2 files changed, 27 insertions(+), 27 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> index abc991619c75..1c2a9a5d0477 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> @@ -602,20 +602,37 @@
+>  };
+>  
+>  &dwmmc1 {
+> +	bus-width = <0x4>;
+> +	cap-sd-highspeed;
+> +	sd-uhs-sdr12;
+> +	sd-uhs-sdr25;
+> +	sd-uhs-sdr50;
+> +	sd-uhs-sdr104;
+> +	disable-wp;
+> +	cd-inverted;
+> +	cd-gpios = <&gpio25 3 0>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sd_pmx_func
+> +		&sd_clk_cfg_func
+> +		&sd_cfg_func>;
+>  	vmmc-supply = <&ldo16>;
+>  	vqmmc-supply = <&ldo9>;
+>  	status = "okay";
+>  };
+>  
+>  &dwmmc2 { /* WIFI */
+> -	broken-cd;
+> -	/* WL_EN */
+> -	vmmc-supply = <&wlan_en>;
+> +	bus-width = <0x4>;
+>  	non-removable;
+> +	broken-cd;
+> +	cap-sd-highspeed;
+>  	cap-power-off-card;
+>  	keep-power-in-suspend;
+> -	#address-cells = <0x1>;
+> -	#size-cells = <0x0>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&sdio_pmx_func
+> +		&sdio_clk_cfg_func
+> +		&sdio_cfg_func>;
+> +	/* WL_EN */
+> +	vmmc-supply = <&wlan_en>;
+>  	status = "ok";
+>  
+>  	wlcore: wlcore@2 {
+> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> index 74c0509f99e9..fe4c9f321b70 100644
+> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> @@ -1114,15 +1114,10 @@
+>  
+>  		/* SD */
+>  		dwmmc1: dwmmc1@ff37f000 {
+> -			#address-cells = <1>;
+> -			#size-cells = <0>;
+> -			cd-inverted;
+>  			compatible = "hisilicon,hi3660-dw-mshc";
+> -			bus-width = <0x4>;
+> -			disable-wp;
+> -			cap-sd-highspeed;
+> -			card-detect-delay = <200>;
+>  			reg = <0x0 0xff37f000 0x0 0x1000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+>  			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&crg_ctrl HI3660_CLK_GATE_SD>,
+>  				<&crg_ctrl HI3660_HCLK_GATE_SD>;
+> @@ -1130,16 +1125,8 @@
+>  			clock-frequency = <3200000>;
+>  			resets = <&crg_rst 0x94 18>;
+>  			reset-names = "reset";
+> -			cd-gpios = <&gpio25 3 0>;
+>  			hisilicon,peripheral-syscon = <&sctrl>;
+> -			pinctrl-names = "default";
+> -			pinctrl-0 = <&sd_pmx_func
+> -				     &sd_clk_cfg_func
+> -				     &sd_cfg_func>;
+> -			sd-uhs-sdr12;
+> -			sd-uhs-sdr25;
+> -			sd-uhs-sdr50;
+> -			sd-uhs-sdr104;
+> +			card-detect-delay = <200>;
+>  			status = "disabled";
+>  		};
+>  
+> @@ -1147,6 +1134,8 @@
+>  		dwmmc2: dwmmc2@ff3ff000 {
+>  			compatible = "hisilicon,hi3660-dw-mshc";
+>  			reg = <0x0 0xff3ff000 0x0 0x1000>;
+> +			#address-cells = <0x1>;
+> +			#size-cells = <0x0>;
+>  			interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>;
+>  			clocks = <&crg_ctrl HI3660_CLK_GATE_SDIO0>,
+>  				 <&crg_ctrl HI3660_HCLK_GATE_SDIO0>;
+> @@ -1154,12 +1143,6 @@
+>  			resets = <&crg_rst 0x94 20>;
+>  			reset-names = "reset";
+>  			card-detect-delay = <200>;
+> -			cap-sd-highspeed;
+> -			keep-power-in-suspend;
+> -			pinctrl-names = "default";
+> -			pinctrl-0 = <&sdio_pmx_func
+> -				     &sdio_clk_cfg_func
+> -				     &sdio_cfg_func>;
+>  			status = "disabled";
+>  		};
+>  
+> 
+
