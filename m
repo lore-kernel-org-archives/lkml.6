@@ -2,237 +2,228 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 913D3ECDFBB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48B1ECDFB8
 	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 304072084E
+	by mail.kernel.org (Postfix) with ESMTP id 7D6CF20850
 	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mZz8tMVl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 304072084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VALrZvzz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6CF20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbeGRUW3 (ORCPT
+        id S1730252AbeGRUWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:22:29 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:39588 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbeGRUW2 (ORCPT
+        Wed, 18 Jul 2018 16:22:33 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36192 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730003AbeGRUWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:22:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
-        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7mXLcHEvxVKPwSf+qxnzujv6CDAExPZ5vAl0WPsUmug=; b=mZz8tMVljUTBi7MELT10EyEve
-        lekGPxD2pU2DR+liPwo14iIMmjlyY8pEQPK91HQEBjZkJgsaU4ghz418+3R7KmChnXkUsQxewsV9s
-        ZVRNfEexN3XxWY0LQOP0CMVKtSlQXW+3s5F9mpaGqJEKgZ1Co0sXaCtToB96sm/0YYmyItlA4Ifoj
-        brzqe1ykrf5ix+rY4H0jNPLY9Aa/rDmmFDPdpOe2NWqPqQazu99ZAsDNLeEtMiEOMm2f0SzhGX275
-        3utANE5A0X6Z2BFxht77Rdxdb8e/1SV3ozz0zlvItT9ZpHSTSTIwK9Jojw2DYYs45e2U/wZx4HSGA
-        VymhYJPTw==;
-Received: from [54.239.6.185] (helo=vpn-10-85-97-114.fra54.corp.amazon.com)
-        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffsLl-001nQo-KE; Wed, 18 Jul 2018 19:43:02 +0000
-Message-ID: <1531942865.3414.35.camel@infradead.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     paulmck@linux.vnet.ibm.com
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>
-In-Reply-To: <20180718163712.GB12945@linux.vnet.ibm.com>
-References: <1531340384.8759.86.camel@infradead.org>
-         <20180711210828.GD3593@linux.vnet.ibm.com>
-         <1531396842.8759.125.camel@infradead.org>
-         <20180712125351.GP3593@linux.vnet.ibm.com>
-         <20180712161704.GA20726@linux.vnet.ibm.com>
-         <20180716154015.GA21419@linux.vnet.ibm.com>
-         <1531815548.19223.23.camel@infradead.org>
-         <20180717125653.GH12945@linux.vnet.ibm.com>
-         <20180718153628.GA24359@linux.vnet.ibm.com>
-         <1531929711.3414.29.camel@infradead.org>
-         <20180718163712.GB12945@linux.vnet.ibm.com>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-SoUW9WE2FHcFsQ6+2KNn"
-Date:   Wed, 18 Jul 2018 21:41:05 +0200
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 18 Jul 2018 16:22:33 -0400
+Received: by mail-it0-f65.google.com with SMTP id j185-v6so6028548ite.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 12:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=gs8VFzCKf8BLvqem/9OK8lkc0ZJ2fY7gqczTHQelo64=;
+        b=VALrZvzzYqEL2YMu0gvCMr72fjYKu97W7ufICWHw4QrnTzSuNQNIGcsALo+DSAW+bC
+         HpSlzc8/5ywg3hsCvdLq8ceY+EMDwFZwIdhRRGTYHlu/QBfaN7Zb34x3SkUUwC5KXE6d
+         snzDYbC160IKkW2qqCmT+L/V3+4SQzOT/4zmw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gs8VFzCKf8BLvqem/9OK8lkc0ZJ2fY7gqczTHQelo64=;
+        b=rL47hG9RqKN1WpXeTe3eZyQXpYLHv80m/DIc16RBGNwrqwKgij3hw9InTISZNmZzLL
+         RlKWNyKGPNszZFNMtE8iOwFeEDsgs+2+BZbjBGrdeESlXlyZdQGRanPER/udlC9/PHN9
+         9EQvGmdUW5JTdsQdT2ju+Iwd04J4QzB0+gwn7QxetFk1nWuaFX1vXAcYvJuWDIRgM0Lu
+         5hzLNkdib3ND8/Iofk/HJu91nKKZgHz5uyW+DNVY9iczsplefk8z7s3JwUeMrPqyL+O3
+         fRFLmRFEnTBcVOdjBhuNVKuz/CIWWD0m94TWhul2sdcTWv3XGAXWH6VIgv9HKWndKNhC
+         Yiig==
+X-Gm-Message-State: AOUpUlGZorQ192j6TMjrWZW21tFBmsYs1Fbf0asEx/40G4FoyINVEm5l
+        PdV6/OpIYp5nu5AwOHk776CVZOg6xNA=
+X-Google-Smtp-Source: AAOMgpdocUn70dYW/3j4EyLq9bc5qmsba7W3PKjOAZQYUMTN3JpUhfR/06P3sUhCl+a0q9zfp0RaEw==
+X-Received: by 2002:a02:879a:: with SMTP id t26-v6mr6746270jai.67.1531942990523;
+        Wed, 18 Jul 2018 12:43:10 -0700 (PDT)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id b125-v6sm1845636itc.37.2018.07.18.12.43.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 18 Jul 2018 12:43:09 -0700 (PDT)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com,
+        Suzuki.Poulose@arm.com
+Subject: [PATCH] coresight: etm_perf: Rework alloc/free methods to avoid lockep warning
+Date:   Wed, 18 Jul 2018 13:43:08 -0600
+Message-Id: <1531942988-20901-1-git-send-email-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When enabling the lockdep mechanic and working with CPU-wide scenarios we
+get the following console output:
 
---=-SoUW9WE2FHcFsQ6+2KNn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[   54.632093] ======================================================
+[   54.638207] WARNING: possible circular locking dependency detected
+[   54.644322] 4.18.0-rc3-00042-g2d39e6356bb7-dirty #309 Not tainted
+[   54.650350] ------------------------------------------------------
+[   54.656464] perf/2862 is trying to acquire lock:
+[   54.661031] 000000007e21d170 (&event->mmap_mutex){+.+.}, at: perf_event_set_output+0x98/0x138
+[   54.669486]
+[   54.669486] but task is already holding lock:
+[   54.675256] 000000001080eb1b (&cpuctx_mutex){+.+.}, at: perf_event_ctx_lock_nested+0xf8/0x1f0
+[   54.683704]
+[   54.683704] which lock already depends on the new lock.
+[   54.683704]
+[   54.691797]
+[   54.691797] the existing dependency chain (in reverse order) is:
+[   54.699201]
+[   54.699201] -> #3 (&cpuctx_mutex){+.+.}:
+[   54.704556]        __mutex_lock+0x70/0x808
+[   54.708608]        mutex_lock_nested+0x1c/0x28
+[   54.713005]        perf_event_init_cpu+0x8c/0xd8
+[   54.717574]        perf_event_init+0x194/0x1d4
+[   54.721971]        start_kernel+0x2b8/0x42c
+[   54.726107]
+[   54.726107] -> #2 (pmus_lock){+.+.}:
+[   54.731114]        __mutex_lock+0x70/0x808
+[   54.735165]        mutex_lock_nested+0x1c/0x28
+[   54.739560]        perf_event_init_cpu+0x30/0xd8
+[   54.744129]        cpuhp_invoke_callback+0x84/0x248
+[   54.748954]        _cpu_up+0xe8/0x1c8
+[   54.752576]        do_cpu_up+0xa8/0xc8
+[   54.756283]        cpu_up+0x10/0x18
+[   54.759731]        smp_init+0xa0/0x114
+[   54.763438]        kernel_init_freeable+0x120/0x288
+[   54.768264]        kernel_init+0x10/0x108
+[   54.772230]        ret_from_fork+0x10/0x18
+[   54.776279]
+[   54.776279] -> #1 (cpu_hotplug_lock.rw_sem){++++}:
+[   54.782492]        cpus_read_lock+0x34/0xb0
+[   54.786631]        etm_setup_aux+0x5c/0x308
+[   54.790769]        rb_alloc_aux+0x1ec/0x300
+[   54.794906]        perf_mmap+0x284/0x610
+[   54.798787]        mmap_region+0x388/0x570
+[   54.802838]        do_mmap+0x344/0x4f8
+[   54.806544]        vm_mmap_pgoff+0xe4/0x110
+[   54.810682]        ksys_mmap_pgoff+0xa8/0x240
+[   54.814992]        sys_mmap+0x18/0x28
+[   54.818613]        el0_svc_naked+0x30/0x34
+[   54.822661]
+[   54.822661] -> #0 (&event->mmap_mutex){+.+.}:
+[   54.828445]        lock_acquire+0x48/0x68
+[   54.832409]        __mutex_lock+0x70/0x808
+[   54.836459]        mutex_lock_nested+0x1c/0x28
+[   54.840855]        perf_event_set_output+0x98/0x138
+[   54.845680]        _perf_ioctl+0x2a0/0x6a0
+[   54.849731]        perf_ioctl+0x3c/0x68
+[   54.853526]        do_vfs_ioctl+0xb8/0xa20
+[   54.857577]        ksys_ioctl+0x80/0xb8
+[   54.861370]        sys_ioctl+0xc/0x18
+[   54.864990]        el0_svc_naked+0x30/0x34
+[   54.869039]
+[   54.869039] other info that might help us debug this:
+[   54.869039]
+[   54.876960] Chain exists of:
+[   54.876960]   &event->mmap_mutex --> pmus_lock --> &cpuctx_mutex
+[   54.876960]
+[   54.887217]  Possible unsafe locking scenario:
+[   54.887217]
+[   54.893073]        CPU0                    CPU1
+[   54.897552]        ----                    ----
+[   54.902030]   lock(&cpuctx_mutex);
+[   54.905396]                                lock(pmus_lock);
+[   54.910911]                                lock(&cpuctx_mutex);
+[   54.916770]   lock(&event->mmap_mutex);
+[   54.920566]
+[   54.920566]  *** DEADLOCK ***
+[   54.920566]
+[   54.926424] 1 lock held by perf/2862:
+[   54.930042]  #0: 000000001080eb1b (&cpuctx_mutex){+.+.}, at: perf_event_ctx_lock_nested+0xf8/0x1f0
 
+This is fixed by working with the cpu_present_mask, avoinding at the same
+the need to use get/put_online_cpus() that triggers lockdep.
 
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+---
+ drivers/hwtracing/coresight/coresight-etm-perf.c | 39 +++++++++++++-----------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-On Wed, 2018-07-18 at 09:37 -0700, Paul E. McKenney wrote:
-> On Wed, Jul 18, 2018 at 06:01:51PM +0200, David Woodhouse wrote:
-> >=20
-> > On Wed, 2018-07-18 at 08:36 -0700, Paul E. McKenney wrote:
-> > >=20
-> > > And I finally did get some near misses from an earlier commit, so we
-> > > should consider your patch to be officially off the hook.
-> >
-> > Yay, I like it when it's not my fault. I'll redo it with the ifdef
-> > CONFIG_NO_HZ_FULL.
->
-> Hey, I didn't say it wasn't your fault, only that it -officially- wasn't
-> your fault.=C2=A0=C2=A0;-)
-
-I can live with being innocent until proven guilty.
-
-> >=20
-> > What should it do for the !CONFIG_NO_HZ_FULL case? The existing call in
-> > guest_enter_irqoff() clearly wasn't actually doing the right thing
-> > anyway, hence the need for the need_resched() patch in $SUBJECT... so
-> > should I just leave it doing nothing in guest_enter_irqoff()?=C2=A0
->
-> One starting point would be the combination of your patch and my
-> patch, with -rcu commit IDs and diff below.=C2=A0=C2=A0But yes, it needs =
-to be
-> !CONFIG_NO_HZ_FULL.=C2=A0=C2=A0And no, I am not at all confident that I a=
-ctually
-> found all the places needing change in the core code, so this needs some
-> serious review both by the KVM guys and the NO_HZ_FULL guys.
-
-Right, that looks fairly much like the version I'd ended up with. So my
-question was...
-
-> --- a/include/linux/context_tracking.h
-> +++ b/include/linux/context_tracking.h
-> @@ -118,12 +118,12 @@ static inline void guest_enter_irqoff(void)
-> =C2=A0	=C2=A0* one time slice). Lets treat guest mode as quiescent state,=
- just like
-> =C2=A0	=C2=A0* we do with user-mode execution.
-> =C2=A0	=C2=A0*/
-
-...if we change this to something like...
-
-#ifdef CONFIG_NO_HZ_FULL
-> +	rcu_kvm_enter();
-#else
-> 	if (!context_tracking_cpu_is_enabled())
-> 		rcu_virt_note_context_switch(smp_processor_id());
-#endif
-
-... do you actually want me to keep the #else case there? It blatantly
-wasn't working anyway for us, perhaps because the condition was false?
-That's why I started fixing need_resched() in the first place, and that
-fix ought to cover whatever this call to rcu_virt_note_context_switch()
-was supposed to be doing?
-
---=-SoUW9WE2FHcFsQ6+2KNn
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTgxOTQxMDVaMC8GCSqG
-SIb3DQEJBDEiBCBeg50LXnGXuxj+YYiW0hzBjAUXJ/rmDXFIkuitxoaMJTCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBABQ8qWbwl28R
-7A3GmkvTroyL9TPs0aQg3eJMmwqDcACMlGy7YJLd4xLHU1+lIiWZxFmF0+CYh7OqdFVD7UATHL7t
-zxy5g6QLO331algIbEWcv0Xi7XRdvSQ9vwOI5sgRSNlvjXFFPGvBfYjoYGtR/NQ7Wdb+H9aVNC24
-k+7wxes5opE74SHMnLToohdkW0adZaVqid7VS96ri/9eh7KG7IFDoGJtf9PfSGIiX/Ydk1aPbM3m
-OFNrUtNxiilhtzouk2IcJpRxao72RujpdgXfnTot9adFCp5U/044hU2GIZ0z/FhRUmmORx8JhSqo
-03pLaWVMtfgR3q99rAG6iqVcE2IAAAAAAAA=
-
-
---=-SoUW9WE2FHcFsQ6+2KNn--
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index 677695635211..16b9c87d9d00 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -108,26 +108,32 @@ static int etm_event_init(struct perf_event *event)
+ static void free_event_data(struct work_struct *work)
+ {
+ 	int cpu;
++	void *snk_config;
+ 	cpumask_t *mask;
+ 	struct etm_event_data *event_data;
+ 	struct coresight_device *sink;
+ 
+ 	event_data = container_of(work, struct etm_event_data, work);
+ 	mask = &event_data->mask;
+-	/*
+-	 * First deal with the sink configuration.  See comment in
+-	 * etm_setup_aux() about why we take the first available path.
+-	 */
+-	if (event_data->snk_config) {
+-		cpu = cpumask_first(mask);
+-		sink = coresight_get_sink(event_data->path[cpu]);
+-		if (sink_ops(sink)->free_buffer)
+-			sink_ops(sink)->free_buffer(event_data->snk_config);
+-	}
++	snk_config = event_data->snk_config;
+ 
+ 	for_each_cpu(cpu, mask) {
+-		if (!(IS_ERR_OR_NULL(event_data->path[cpu])))
+-			coresight_release_path(event_data->path[cpu]);
++		if (IS_ERR_OR_NULL(event_data->path[cpu]))
++			continue;
++
++		/*
++		 * Free sink configuration - there can only be one sink
++		 * per event.
++		 */
++		if (snk_config) {
++			sink = coresight_get_sink(event_data->path[cpu]);
++			if (sink_ops(sink)->free_buffer) {
++				sink_ops(sink)->free_buffer(snk_config);
++				snk_config = NULL;
++			}
++		}
++
++		coresight_release_path(event_data->path[cpu]);
+ 	}
+ 
+ 	kfree(event_data->path);
+@@ -145,16 +151,13 @@ static void *alloc_event_data(int cpu)
+ 	if (!event_data)
+ 		return NULL;
+ 
+-	/* Make sure nothing disappears under us */
+-	get_online_cpus();
+-	size = num_online_cpus();
+-
+ 	mask = &event_data->mask;
++	size = num_present_cpus();
++
+ 	if (cpu != -1)
+ 		cpumask_set_cpu(cpu, mask);
+ 	else
+-		cpumask_copy(mask, cpu_online_mask);
+-	put_online_cpus();
++		cpumask_copy(mask, cpu_present_mask);
+ 
+ 	/*
+ 	 * Each CPU has a single path between source and destination.  As such
+-- 
+2.7.4
 
