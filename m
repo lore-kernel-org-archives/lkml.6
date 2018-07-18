@@ -2,118 +2,107 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEDFECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB490ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E6A2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BC29206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:38:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ska-ac-za.20150623.gappssmtp.com header.i=@ska-ac-za.20150623.gappssmtp.com header.b="YUDJIxse"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E6A2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ska.ac.za
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5/VsobO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC29206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731571AbeGRQQN (ORCPT
+        id S1731324AbeGRQRU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:16:13 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:44716 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730436AbeGRQQM (ORCPT
+        Wed, 18 Jul 2018 12:17:20 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38346 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726409AbeGRQRT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:16:12 -0400
-Received: by mail-ua0-f194.google.com with SMTP id k25-v6so3194429uao.11
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:37:44 -0700 (PDT)
+        Wed, 18 Jul 2018 12:17:19 -0400
+Received: by mail-lf0-f67.google.com with SMTP id a4-v6so3794745lff.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:38:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ska-ac-za.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=GLOsjN8uNrpfP+QBEl9HZf+rMY9k/d825pLbIvoBw9g=;
-        b=YUDJIxse7kGOHryqt7PsBHeGGr+iKtjenk2Ifl7Fe+2kY4YLQMiT/tJnnxbsdn903v
-         qA1+0y6H40Kq7Rtrhig5tz7lpu/2ZfJL/ojzdItPAnZtpstJSG+lkH4hm1flMDtmqqYY
-         JoaeXfhgIk6pvd6OOr1/9SIHx6OkK/cj3JmzX76q0OEs94sA3wNWjjkHMgCLDjpN2Pgo
-         wVxqD0n7R5YsPJs7TpgHaXBMnuWTlEst3Y4IcHP/mfqp6vQX2kt0OHwnmpzVzrlOIVM9
-         oB5t5VYTy2dxOSXlW3Cw1ktMKlQsLHFYzjvijcyll1Y4ITwv6P60qldoL6ltCvYzQmCB
-         Ub2w==
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=ueWWIyAjKZhQcafHSGdLD7CbA/O3QEbJQSjf7T/Ogks=;
+        b=J5/VsobO3YPgfHG7oLIF8PoEwdEVaLhq+tluADlLi3eqCcJtsM2apf4+q3gpVNc2KV
+         xjKKnF3ANtSZGmVSuKO4lmoa2gnGzmlmaXtmoaXBbF6rHGWzLH4177OiveyD3EP+E0Fl
+         Si53txUAO24aRHF4TzYGTY9YUXZX6NLRmCHF7lY2bmAkZJ7Yg+ATD3QLaVZsOEQflyiZ
+         Y3LEDc/unodurL4Xw1m7r+SzPK1HFe6077uQN0xGVu1V5wlxXhqCG611KarBLBR/XL9h
+         800T3xlw/yzGJ2ykuLbNmImXSK7VxBilf+sTcKRWfxw+VBVfTYwOeBL+HnjOnhDzD8o2
+         iN2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=GLOsjN8uNrpfP+QBEl9HZf+rMY9k/d825pLbIvoBw9g=;
-        b=YVKk1ntV78Hnr8mohbr9+dL5zwxvOX6XZzBlYgf4z8rqPhIwkuqU0ZeFas9mcb/Y94
-         TMbbOukJY3VqJbF6edKFtdiJDZuYBDsLQfKyJDLh8Z8Kc8a9z706RrgBYN1BUm9x+Z+W
-         O3quj+W28mihLwkhp7jAAlukqujQxtuJJU0WPzDnx+R97wfG7xyQ4vwEUzIiOwJjO4bQ
-         z6A4YkXaHFSZLdUbBd4v1s+bAhA3wgiYPdwl1OqooLE0EutLRVG2KFM+/fPYgvZ/Wh2F
-         6uD/nM3XxZ86U9vTvMvDtYDBrizPk8jhXvHeD9qSYa/qMxE8UAGAcK33apklVjnp3bcq
-         aNDw==
-X-Gm-Message-State: AOUpUlH98G7tEJmQxcp861ZXkCwirbf52S1Gh5iHn5dT3oYoQ8LQiHoo
-        dudYMqhrE7MaBIH1EopqrwIcyy+mVgkjpoUKoy9lKA==
-X-Google-Smtp-Source: AAOMgpeqEKCDXjMLyvzaJzXBcEdhUaBpe31UHbMg22IlhCTRAJ9BohoxaDF5ScNf0+Zuj9mbxpqPLdWKly+HlDJBVdU=
-X-Received: by 2002:a9f:3861:: with SMTP id q30-v6mr4165956uad.170.1531928263933;
- Wed, 18 Jul 2018 08:37:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=ueWWIyAjKZhQcafHSGdLD7CbA/O3QEbJQSjf7T/Ogks=;
+        b=Cccer1DXhgPw7iXIfygdnPR1qs3xzJN72MkfKhDvx4A1Mm4WJwUy6YUrSxXru1G/vI
+         ipyJ11R8QXFjvm8z1creolm3XvobKT80b57hsgaD+LtOTrLSk27AcPTVuALSNQmrM6Mh
+         ePzp6sJ38CeSGjuKLG62LeJwZTR0MlnMsvWsfDxzK0RXZZbUehYdH8uJRHvsDzk5jxKT
+         Y/R+o76L1gSwDX2NHgHIek+grtw70bIgj/oH069XQZQL5B9HeCSOYKVlCtYDr97l6/1B
+         2a05wzwVOtLCWf/OWHHdfVLX1FlqiySkemTSoXPRTiie4yXsdrgogb/thf9kEO543a//
+         GR3A==
+X-Gm-Message-State: AOUpUlFYunORy1YgAk6RNh1p5bqov1PH316lfw0TdTQdCW50acC7QmAI
+        vKJ4aeV0SrPRrYG2AA5XRkpxmPvOYP+NrQsvxws=
+X-Google-Smtp-Source: AAOMgpc7d2VjIAjfrqlGphlSEOqwyppC7FWeD1tbvh4hUktsyyC4iY+NYbv5v2x7nI31orxLrm3CNHUK/9gb67y3vAw=
+X-Received: by 2002:a19:ea5c:: with SMTP id i89-v6mr4242680lfh.19.1531928329975;
+ Wed, 18 Jul 2018 08:38:49 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:d97:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:37:43 -0700 (PDT)
-In-Reply-To: <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
-References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
- <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
- <20180718104230.GC1431@dhcp22.suse.cz> <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
- <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
-From:   Bruce Merry <bmerry@ska.ac.za>
-Date:   Wed, 18 Jul 2018 17:37:43 +0200
-Message-ID: <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
-Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some machines
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:38:49
+ -0700 (PDT)
+In-Reply-To: <20180718071152.13265-1-const@MakeLinux.com>
+References: <20180718071152.13265-1-const@MakeLinux.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 18 Jul 2018 17:38:49 +0200
+X-Google-Sender-Auth: N4TnyMCHiMsjFV6HhF7DIdDIJgo
+Message-ID: <CAK8P3a3tbv6UM+=59HzE0kqjWLDey6mV+oTQ1exqVX_f6PZV=w@mail.gmail.com>
+Subject: Re: [PATCH] drivers/char/random.c: fix uninitialized value warning
+To:     Constantine Shulyupin <const@makelinux.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 July 2018 at 17:26, Shakeel Butt <shakeelb@google.com> wrote:
-> On Wed, Jul 18, 2018 at 7:29 AM Bruce Merry <bmerry@ska.ac.za> wrote:
-> It seems like you are using cgroup-v1. How many nodes are there in
-> your memcg tree and also how many cpus does the system have?
+On Wed, Jul 18, 2018 at 9:11 AM, Constantine Shulyupin
+<const@makelinux.com> wrote:
+> Local variable t should be initialized by arch_get_random_int.
+> Actually on failure of arch_get_random_int, value is not used.
+> So, just keep the build clean with less warnings.
+>
+> warning:
+> drivers/char/random.c: In function =E2=80=98write_pool.constprop=E2=80=99=
+:
+> drivers/char/random.c:1912:11: warning: =E2=80=98t=E2=80=99 may be used u=
+ninitialized in this function [-Wmaybe-uninitialized]
+>
+> Signed-off-by: Constantine Shulyupin <const@MakeLinux.com>
 
-From my original email: "there are 106 memory.stat files in
-/sys/fs/cgroup/memory." - is that what you mean by the number of
-nodes?
+You need to be much more careful with fixes like this one. As Ted explained=
+,
+the warning was about a real bug here, and adding an incorrect initializati=
+on
+just made it harder to find that bug.
 
-The affected systems all have 8 CPU cores (hyperthreading is disabled).
+There are many cases in which the compiler does have a false-positive or
+a false-negative -Wmaybe-uninitialized warning, but in general you should
+assume that the compiler is correct. If you add a fake initialization becau=
+se
+you think the compiler is wrong, it's best to link to the gcc bugzilla
+describing
+that gcc bug, or open a new bug report if it still happens in the
+latest compiler
+version and hasn't been reported before.
 
-> Please note that memcg_stat_show or reading memory.stat in cgroup-v1
-> is not optimized as cgroup-v2. The function memcg_stat_show() in 4.13
-> does ~17 tree walks and then for ~12 of those tree walks, it goes
-> through all cpus for each node in the memcg tree. In 4.16,
-> a983b5ebee57 ("mm: memcontrol: fix excessive complexity in memory.stat
-> reporting") optimizes aways the cpu traversal at the expense of some
-> accuracy. Next optimization would be to do just one memcg tree
-> traversal similar to cgroup-v2's memory_stat_show().
-
-On most machines it is still fast (1-2ms), and there is no difference
-in the number of CPUs and only very small differences in the number of
-live memory cgroups, so presumably something else is going on.
-
-> The memcg tree does include all zombie memcgs and these zombies does
-> contribute to the memcg_stat_show cost.
-
-That sounds promising. Is there any way to tell how many zombies there
-are, and is there any way to deliberately create zombies? If I can
-produce zombies that might give me a reliable way to reproduce the
-problem, which could then sensibly be tested against newer kernel
-versions.
-
-Thanks
-Bruce
--- 
-Bruce Merry
-Senior Science Processing Developer
-SKA South Africa
+      Arnd
