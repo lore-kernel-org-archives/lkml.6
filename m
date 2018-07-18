@@ -2,125 +2,197 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4919ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:08:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05658ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B22820852
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:08:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A66FE2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 10:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yx9jDsHE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B22820852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IEPSyd9y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A66FE2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730831AbeGRKpW (ORCPT
+        id S1726954AbeGRKtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:45:22 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37255 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726409AbeGRKpW (ORCPT
+        Wed, 18 Jul 2018 06:49:41 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:38387 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726142AbeGRKtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:45:22 -0400
-Received: by mail-wm0-f66.google.com with SMTP id a19-v6so2239909wmb.2;
-        Wed, 18 Jul 2018 03:08:12 -0700 (PDT)
+        Wed, 18 Jul 2018 06:49:41 -0400
+Received: by mail-wm0-f65.google.com with SMTP id 69-v6so2243993wmf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 03:12:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QKZFwRKHnGrDvQJM1KoedSu5AWdJUG+8lhBLL9DzQUA=;
-        b=Yx9jDsHE5t5a0OP5bLVv1pZe0zEv4FFPv30Qv+Thf4+JAW9Y5VefxDBwBW0ZGsRMTg
-         +5ic8rqCSa/C6aiCTiuo3o3rEJZvqr1kKVb0i4kIFe4LiwyLTR+dbH5Wyysr/0q/13qv
-         p2xDBR76t1ziSD7Tmo8437pMXnBczHi71rkBCRT0FnF7qU0UWVS3+5njmW9O4PcUhCaD
-         hAmR/vtAjzOWeVFxo4lfeqkb5YSLX9D5OYf2I5wGBRTtkM5GzGL2/ue3b2+V3H7CI7Yb
-         XwZ0qbXSCZuqE0fuLXpjuZMUZEG6WKu4LOwvlPMkdk4n6hN3mCSxOvj7m6Jb82h693rt
-         dSYw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=imUCsgRDqHoDd4+CkueS+QavmBqEWNumZNHqCcUy4ow=;
+        b=IEPSyd9yX7grDssxetECIbydKk/egxkabtNzxGHryfIz3e5qu2Top+1LpzEL5SwSLG
+         4R1GuD7LNQo4XQZ4g+oDeU1otYAWV8lqP7o291Wf6pZsIXYN1MfZCdkZtMgAYd4Y/htD
+         OSj+r2gwMFx/AWpfYKYTzSd70eMrYZigU9yjI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=QKZFwRKHnGrDvQJM1KoedSu5AWdJUG+8lhBLL9DzQUA=;
-        b=PKuTjUSHpAIILVlde0e5L8MAaMkbMwwiZ+RtlipVrD5g4l0aWtFcjCduaf4eK1J2mU
-         DwZGXpSTdgRet657IOt4FvT2mp95kF/gJQEAbboDk/cpwCh1BI4NHKgo79oq5A5kTbLk
-         TYcPOxbiBSCloCXdYJbF19Kz9Caj93qU59RQnwi2LBrX32PXg6PHHxALOoGzJJn8vr2A
-         57FB7L6fTAu5wU28NS/GKrzu/K2bM1Zu4LZQ9+TGWcv9JCc69/n4ISQrur8Pw3IYqWpC
-         IqaZCRbev9UrUmrhFp6Ql4rwiMgiTsmthMpvIdd4PRURMkdcaaeTui6P3/3/svRuPGpT
-         yoiQ==
-X-Gm-Message-State: AOUpUlGMqNXoMxA6It6Y3dwkMZXgOSABo8lIq8IZ4gC4TEgA9APDJbSe
-        2ntsXDteCoZenlkK76KGzmzjMNyE
-X-Google-Smtp-Source: AAOMgpfP9vNnKzaMr0uQcTIJTzk5FE1onWWDugE15Uto87dnonjgDycQPlxrO0zCaYXGJcZ5yTAHrg==
-X-Received: by 2002:a1c:1748:: with SMTP id 69-v6mr1140112wmx.75.1531908491710;
-        Wed, 18 Jul 2018 03:08:11 -0700 (PDT)
-Received: from 640k.localdomain.com (dynamic-adsl-78-12-156-57.clienti.tiscali.it. [78.12.156.57])
-        by smtp.gmail.com with ESMTPSA id r125-v6sm3595477wmb.27.2018.07.18.03.08.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 03:08:11 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.18-rc6
-Date:   Wed, 18 Jul 2018 12:08:06 +0200
-Message-Id: <1531908486-20665-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=imUCsgRDqHoDd4+CkueS+QavmBqEWNumZNHqCcUy4ow=;
+        b=U4FUNK+ZzC1rs1v9azJ1LMYYzVDAJo/aI5UbcqxuzbR9hbn6jZEDT4kk2gjGDrFVAi
+         MiqBWD+AHXZ0nQy7yEdQtvwD+dfA4dbx/YdOof4XFQvIMyrWAJlDEUR5lwL88qJ+Lr0f
+         29FUhAhIVRutv32yMSpsHc0BYpNTY0LulDVVEW6lF3SJqCRgC7zy/S432Ij2k/mGKbuR
+         Z83+N93vEqCxzxfg3RVSzYBUV4jsjMRAX+lRUb7K1bfxhJ8kur/57TIjurJstQGWT4xl
+         TNFC85OMIgzKLxXwGJGyto6nyUI/Iy9pVTZMpK6jm+GdlWdkO2ZGS5lv6LUDzkn/ueF5
+         6yVQ==
+X-Gm-Message-State: AOUpUlF8lpd0GG3cWt0zLH9FTTdg+7IaWbKlpInoNYFff+kDEewZq1QR
+        gDISBBXnYZi1qJwIInSGmb9vaQ==
+X-Google-Smtp-Source: AAOMgpd2lkcQbxX07JyCrgSeuYJ5y6FF9y+OJV/orK1JHorqXZI6+Nr3+aO+N+OBEpI3arZiL0q8HA==
+X-Received: by 2002:a1c:9a16:: with SMTP id c22-v6mr1252816wme.114.1531908749982;
+        Wed, 18 Jul 2018 03:12:29 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id f23-v6sm1450600wmc.42.2018.07.18.03.12.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 03:12:29 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 11:12:27 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "patches@linaro.org" <patches@linaro.org>
+Subject: Re: [PATCH] backlight: pwm_bl: Fix uninitialized variable
+Message-ID: <20180718101227.shqf54wpt4kdrsj2@holly.lan>
+References: <20180716210241.9457-1-daniel.thompson@linaro.org>
+ <20180718080913.GB4641@dell>
+ <1531902119.16896.13.camel@toradex.com>
+ <20180718095335.GD4641@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180718095335.GD4641@dell>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Wed, Jul 18, 2018 at 10:53:35AM +0100, Lee Jones wrote:
+> On Wed, 18 Jul 2018, Marcel Ziswiler wrote:
+> 
+> > On Wed, 2018-07-18 at 09:09 +0100, Lee Jones wrote:
+> > > On Mon, 16 Jul 2018, Daniel Thompson wrote:
+> > > 
+> > > > Currently, if the DT does not define num-interpolated-steps then
+> > > > num_steps is undefined and the interpolation code will deploy
+> > > > randomly.
+> > > > Fix this.
+> > > > 
+> > > > Fixes: 573fe6d1c25c ("backlight: pwm_bl: Linear interpolation
+> > > > between
+> > > > brightness-levels")
+> > > > Reported-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > > > Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > > > Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > > 
+> > > This line is confusing.  Did you guys author this patch together?
+> > 
+> > Yes, I reported it and we came to a conclusion together.
+> 
+> It sounds like you need to have all of the tags (except this one). :)
+> 
+>  Reported-by:  for reporting the issue
+>  Suggested-by: for suggesting a resolution
+>  Acked-by:     for reviewing it
+>  Tested-by:    for testing it
+> 
+> Signed-off-by usually means you either wrote a significant amount of
+> the diffstat or you were part of the submission path.
 
-The following changes since commit 786b71f5b754273ccef6d9462e52062b3e1f9877:
+He did [I don't object to but wouldn't have used the extra brackets you
+brought up ;-) ].
 
-  Merge tag 'nds32-for-linus-4.17-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/greentime/linux (2018-05-28 05:25:57 -0700)
-
-are available in the git repository at:
-
-
-  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to 3a9706d9e077e4a264a5cf4045da04200b93228f:
-
-  kvmclock: fix nested guest always in tsc_early clocksource (2018-07-18 11:31:29 +0200)
-
-----------------------------------------------------------------
-Miscellaneous bugfixes, plus a small patchlet related to Spectre v2.
-
-----------------------------------------------------------------
-Janakarajan Natarajan (1):
-      x86/kvm/Kconfig: Ensure CRYPTO_DEV_CCP_DD state at minimum matches KVM_AMD
-
-Jim Mattson (1):
-      kvm: nVMX: Restore exit qual for VM-entry failure due to MSR loading
-
-Lan Tianyu (1):
-      KVM/Eventfd: Avoid crash when assign and deassign specific eventfd in parallel.
-
-Liran Alon (1):
-      KVM: VMX: Mark VMXArea with revision_id of physical CPU even when eVMCS enabled
-
-Paolo Bonzini (2):
-      KVM: VMX: support MSR_IA32_ARCH_CAPABILITIES as a feature MSR
-      KVM: irqfd: fix race between EPOLLHUP and irq_bypass_register_consumer
-
-Peng Hao (1):
-      kvmclock: fix nested guest always in tsc_early clocksource
-
-Radim Krčmář (1):
-      x86/kvmclock: set pvti_cpu0_va after enabling kvmclock
-
-Vitaly Kuznetsov (1):
-      x86/kvm/vmx: don't read current->thread.{fs,gs}base of legacy tasks
-
- arch/x86/kernel/kvmclock.c | 12 ++++-----
- arch/x86/kvm/Kconfig       |  2 +-
- arch/x86/kvm/vmx.c         | 61 +++++++++++++++++++++++++++++++---------------
- arch/x86/kvm/x86.c         |  4 ++-
- virt/kvm/eventfd.c         | 17 ++++++++-----
- 5 files changed, 63 insertions(+), 33 deletions(-)
+> 
+> > > My guess is that this line should be dropped and the RB and TB tags
+> > > should remain?  If it was reviewed too, perhaps an AB too?
+> > 
+> > I'm OK either way and do not need any explicit authorship to be
+> > expressed for me.
+> 
+> In this instance I suggest keeping Reported-by and Tested-by.
+> 
+> > > > Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> > > > ---
+> > > >  drivers/video/backlight/pwm_bl.c | 17 ++++++++---------
+> > > >  1 file changed, 8 insertions(+), 9 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/video/backlight/pwm_bl.c
+> > > > b/drivers/video/backlight/pwm_bl.c
+> > > > index 9ee4c1b735b2..e3c22b79fbcd 100644
+> > > > --- a/drivers/video/backlight/pwm_bl.c
+> > > > +++ b/drivers/video/backlight/pwm_bl.c
+> > > > @@ -299,15 +299,14 @@ static int pwm_backlight_parse_dt(struct
+> > > > device *dev,
+> > > >  		 * interpolation between each of the values of
+> > > > brightness levels
+> > > >  		 * and creates a new pre-computed table.
+> > > >  		 */
+> > > > -		of_property_read_u32(node, "num-interpolated-
+> > > > steps",
+> > > > -				     &num_steps);
+> > > > -
+> > > > -		/*
+> > > > -		 * Make sure that there is at least two entries in
+> > > > the
+> > > > -		 * brightness-levels table, otherwise we can't
+> > > > interpolate
+> > > > -		 * between two points.
+> > > > -		 */
+> > > > -		if (num_steps) {
+> > > > +		if ((of_property_read_u32(node, "num-interpolated-
+> > > > steps",
+> > > > +					  &num_steps) == 0) &&
+> > > > num_steps) {
+> > > 
+> > > This is pretty ugly, and isn't it suffering from over-bracketing?  My
+> > > suggestion would be to break out the invocation of
+> > > of_property_read_u32() from the if and test only the result.
+> > > 
+> > > 		of_property_read_u32(node, "num-interpolated-steps", 
+> > > &num_steps);
+> > 
+> > you mean:
+> > 
+> > 		ret = of_property_read_u32(node, "num-interpolated-
+> > steps", &num_steps);
+> > 
+> > > 		if (!ret && num_steps) {
+> > > 
+> > > I haven't checked the underling code, but is it even feasible for
+> > > of_property_read_u32() to not succeed AND for num_steps to be set?
+> > > 
+> > > If not, the check for !ret if superfluous and you can drop it.
+> > 
+> > No, then we are back to the initial issue of num_steps potentially not
+> > being initialised. We really want both of_property_read_u32() to
+> > succeed AND num_steps to actually be set.
+> 
+> I also think num_steps should be pre-initialised.
+> 
+> Then it will only be set if of_property_read_u32() succeeds.
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
