@@ -2,132 +2,158 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC27ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8150ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A8082075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:36:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A8082075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 7ECFB20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:36:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ECFB20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731531AbeGROO1 (ORCPT
+        id S1731654AbeGROOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:14:27 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:11322 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730234AbeGROO1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:14:27 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6IDZdD1028800;
-        Wed, 18 Jul 2018 22:35:39 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Wed, 18 Jul 2018 22:35:39 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6IDZdP7028793
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 18 Jul 2018 22:35:39 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in grab_super
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        v9fs-developer@lists.sourceforge.net,
-        syzbot <syzbot+f425456ea8aa16b40d20@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <0000000000002f5541057143a85e@google.com>
- <eb295f49-78b3-62f5-84a8-221671c84634@I-love.SAKURA.ne.jp>
- <CACT4Y+bWR8s4_Chd33cjZ_qbTDyiciAQfmYP8fDv+r3Ar7X8iw@mail.gmail.com>
- <CACT4Y+bM1tfisT+7=ZChHRZKZkddbWp0kNi5q46EqOYBSptXtg@mail.gmail.com>
- <0adc592b-d4a3-f6da-3c5c-22490f641eb9@i-love.sakura.ne.jp>
- <CACT4Y+YqDFNrdtk+aet9UVBxyvxs+O85YLnMYL3FvoPckBx-Mg@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <fe20c22a-028b-b2a3-7714-c90b7fe51cbf@i-love.sakura.ne.jp>
-Date:   Wed, 18 Jul 2018 22:35:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YqDFNrdtk+aet9UVBxyvxs+O85YLnMYL3FvoPckBx-Mg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 10:14:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38208 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731538AbeGROOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 10:14:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DF910ADC4;
+        Wed, 18 Jul 2018 13:36:28 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v3 4/7] dcache: allocate external names from reclaimable kmalloc caches
+Date:   Wed, 18 Jul 2018 15:36:17 +0200
+Message-Id: <20180718133620.6205-5-vbabka@suse.cz>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180718133620.6205-1-vbabka@suse.cz>
+References: <20180718133620.6205-1-vbabka@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/07/18 22:04, Dmitry Vyukov wrote:
-> On Wed, Jul 18, 2018 at 2:53 PM, Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> On 2018/07/18 20:41, Dmitry Vyukov wrote:
->>> This seems to be related to 9p. After rerunning the log I got:
->>>
->>> root@syzkaller:~# ps afxu | grep syz
->>> root     18253  0.0  0.0      0     0 ttyS0    Zl   10:16   0:00  \_
->>> [syz-executor] <defunct>
->>> root@syzkaller:~# cat /proc/18253/task/*/stack
->>> [<0>] p9_client_rpc+0x3a2/0x1400
->>> [<0>] p9_client_flush+0x134/0x2a0
->>> [<0>] p9_client_rpc+0x122c/0x1400
->>> [<0>] p9_client_create+0xc56/0x16af
->>> [<0>] v9fs_session_init+0x21a/0x1a80
->>> [<0>] v9fs_mount+0x7c/0x900
->>> [<0>] mount_fs+0xae/0x328
->>> [<0>] vfs_kern_mount.part.34+0xdc/0x4e0
->>> [<0>] do_mount+0x581/0x30e0
->>> [<0>] ksys_mount+0x12d/0x140
->>> [<0>] __x64_sys_mount+0xbe/0x150
->>> [<0>] do_syscall_64+0x1b9/0x820
->>> [<0>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
->>> [<0>] 0xffffffffffffffff
->>>
->>> There is a bunch of hangs in 9p, so let's do:
->>>
->>> #syz dup: INFO: task hung in flush_work
->>>
->> Then, is dumping all threads when khungtaskd fires a candidate
->> for CONFIG_DEBUG_AID_FOR_SYZBOT=y path?
-> 
-> Perhaps would be useful. But maybe only tasks that are blocked for
-> more than timeout/2? and/or unkillable tasks? killable tasks are not a
-> problem.
+We can use the newly introduced kmalloc-reclaimable-X caches, to allocate
+external names in dcache, which will take care of the proper accounting
+automatically, and also improve anti-fragmentation page grouping.
 
-TASK_KILLABLE waiters are not reported by khungtaskd, are they?
+This effectively reverts commit f1782c9bc547 ("dcache: account external names
+as indirectly reclaimable memory") and instead passes __GFP_RECLAIMABLE to
+kmalloc(). The accounting thus moves from NR_INDIRECTLY_RECLAIMABLE_BYTES to
+NR_SLAB_RECLAIMABLE, which is also considered in MemAvailable calculation and
+overcommit decisions.
 
-  /* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
-  if (t->state == TASK_UNINTERRUPTIBLE)
-    check_hung_task(t, timeout);
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ fs/dcache.c | 38 +++++++++-----------------------------
+ 1 file changed, 9 insertions(+), 29 deletions(-)
 
-And TASK_KILLABLE waiters can become a problem because
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 0e8e5de3c48a..518c9ed8db8c 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -257,24 +257,10 @@ static void __d_free(struct rcu_head *head)
+ 	kmem_cache_free(dentry_cache, dentry); 
+ }
+ 
+-static void __d_free_external_name(struct rcu_head *head)
+-{
+-	struct external_name *name = container_of(head, struct external_name,
+-						  u.head);
+-
+-	mod_node_page_state(page_pgdat(virt_to_page(name)),
+-			    NR_INDIRECTLY_RECLAIMABLE_BYTES,
+-			    -ksize(name));
+-
+-	kfree(name);
+-}
+-
+ static void __d_free_external(struct rcu_head *head)
+ {
+ 	struct dentry *dentry = container_of(head, struct dentry, d_u.d_rcu);
+-
+-	__d_free_external_name(&external_name(dentry)->u.head);
+-
++	kfree(external_name(dentry));
+ 	kmem_cache_free(dentry_cache, dentry);
+ }
+ 
+@@ -305,7 +291,7 @@ void release_dentry_name_snapshot(struct name_snapshot *name)
+ 		struct external_name *p;
+ 		p = container_of(name->name, struct external_name, name[0]);
+ 		if (unlikely(atomic_dec_and_test(&p->u.count)))
+-			call_rcu(&p->u.head, __d_free_external_name);
++			kfree_rcu(p, u.head);
+ 	}
+ }
+ EXPORT_SYMBOL(release_dentry_name_snapshot);
+@@ -1608,7 +1594,6 @@ EXPORT_SYMBOL(d_invalidate);
+  
+ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ {
+-	struct external_name *ext = NULL;
+ 	struct dentry *dentry;
+ 	char *dname;
+ 	int err;
+@@ -1629,14 +1614,15 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 		dname = dentry->d_iname;
+ 	} else if (name->len > DNAME_INLINE_LEN-1) {
+ 		size_t size = offsetof(struct external_name, name[1]);
+-
+-		ext = kmalloc(size + name->len, GFP_KERNEL_ACCOUNT);
+-		if (!ext) {
++		struct external_name *p = kmalloc(size + name->len,
++						  GFP_KERNEL_ACCOUNT |
++						  __GFP_RECLAIMABLE);
++		if (!p) {
+ 			kmem_cache_free(dentry_cache, dentry); 
+ 			return NULL;
+ 		}
+-		atomic_set(&ext->u.count, 1);
+-		dname = ext->name;
++		atomic_set(&p->u.count, 1);
++		dname = p->name;
+ 	} else  {
+ 		dname = dentry->d_iname;
+ 	}	
+@@ -1675,12 +1661,6 @@ struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 		}
+ 	}
+ 
+-	if (unlikely(ext)) {
+-		pg_data_t *pgdat = page_pgdat(virt_to_page(ext));
+-		mod_node_page_state(pgdat, NR_INDIRECTLY_RECLAIMABLE_BYTES,
+-				    ksize(ext));
+-	}
+-
+ 	this_cpu_inc(nr_dentry);
+ 
+ 	return dentry;
+@@ -2761,7 +2741,7 @@ static void copy_name(struct dentry *dentry, struct dentry *target)
+ 		dentry->d_name.hash_len = target->d_name.hash_len;
+ 	}
+ 	if (old_name && likely(atomic_dec_and_test(&old_name->u.count)))
+-		call_rcu(&old_name->u.head, __d_free_external_name);
++		kfree_rcu(old_name, u.head);
+ }
+ 
+ /*
+-- 
+2.18.0
 
-> 
-> Btw, I see that p9_client_rpc uses wait_event_killable, why wasn't it
-> killed along with the whole process?
-> 
-
-wait_event_killable() would return -ERESTARTSYS if got SIGKILL.
-But if (c->status == Connected) && (type == P9_TFLUSH) is also true,
-it ignores SIGKILL by retrying the loop...
-
-  again:
-    err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
-    if ((err == -ERESTARTSYS) && (c->status == Connected) && (type == P9_TFLUSH)) {
-      sigpending = 1;
-      clear_thread_flag(TIF_SIGPENDING);
-      goto again;
-    }
-
-I wish they don't ignore SIGKILL (by e.g. offloading operations to a kernel thread).
