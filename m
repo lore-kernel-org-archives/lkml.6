@@ -2,111 +2,182 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D14ECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8C9ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1032075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:53:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A1032075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 882182075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:54:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bA6TluEr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 882182075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731648AbeGRD2z (ORCPT
+        id S1731358AbeGRDaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:28:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730571AbeGRD2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:28:54 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0EF2677886;
-        Wed, 18 Jul 2018 02:53:17 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 467322026D68;
-        Wed, 18 Jul 2018 02:52:56 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        robh+dt@kernel.org, dan.j.williams@intel.com,
-        nicolas.pitre@linaro.org, josh@joshtriplett.org,
-        fengguang.wu@intel.com, bp@suse.de, andy.shevchenko@gmail.com
-Cc:     patrik.r.jakobsson@gmail.com, airlied@linux.ie, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        dmitry.torokhov@gmail.com, frowand.list@gmail.com,
-        keith.busch@intel.com, jonathan.derrick@intel.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com, tglx@linutronix.de,
-        brijesh.singh@amd.com, jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, monstr@monstr.eu, davem@davemloft.net,
-        chris@zankel.net, jcmvbkbc@gmail.com, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org
-Subject: [PATCH v7 4/4] kexec_file: Load kernel at top of system RAM if required
-Date:   Wed, 18 Jul 2018 10:49:44 +0800
-Message-Id: <20180718024944.577-5-bhe@redhat.com>
-In-Reply-To: <20180718024944.577-1-bhe@redhat.com>
-References: <20180718024944.577-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 18 Jul 2018 02:53:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 18 Jul 2018 02:53:17 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        Tue, 17 Jul 2018 23:30:02 -0400
+Received: from mail-qk0-f194.google.com ([209.85.220.194]:43314 "EHLO
+        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730731AbeGRDaC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 23:30:02 -0400
+Received: by mail-qk0-f194.google.com with SMTP id z74-v6so1661970qkb.10
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 19:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=JUE43aCGdIvBQ3zJiGYOJqLCeUH9k/YrYqqRjecWfSQ=;
+        b=bA6TluEr/cBsKQJg7YwhKngt98XnMDB0ed2pPyUGzDJm4Tpzwuoq3WYegklvJmZ3+5
+         HrTGSHKT9+P00gtbUDB8/eaQVsd64vmTSEF22a0iG1EmG4jheimux9n0Gz9j1VGHniSA
+         nw44IHZ1emDVZ69YrbDATdHvGRoybz1SrTw8o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=JUE43aCGdIvBQ3zJiGYOJqLCeUH9k/YrYqqRjecWfSQ=;
+        b=kuj9CYm6OgyDUC+eF4XHsV3QZ2xI4WJK8FnPqDsgk3uOnELEhTMcHCjNrBFCehlHF6
+         LKnqoAG4OI3Rdhs0eT0IunB+aGTr1+55v3HmKtgoH6osbioD/zcokW4Kmg5DvBWV63Qp
+         jAkZXCBj+QV0K2k6GU5UbQzqetm0HY8GGMudrD0t710O7C1PY5eHh36Cd6AGWh/d0+hP
+         g8FDXoKtMrrV9jhmWJI6uElfbFDzO9PPpyKDTbAqK+xs71VBaIBfhcJSQXobDNkigtR+
+         esChreEEtrQAPOZ+HGcUnm2JzoitwZWeZHStZEbtRdMkad8h7xFh0et7d1baaTFE0bQO
+         Ik7A==
+X-Gm-Message-State: AOUpUlFRKVgPew29o/OUoB+gg/aTZ+JB+BHMdifL8kfzMlaSH/dRfXIG
+        3tNepUD4mIwcpxGH77pLhNYBWA==
+X-Google-Smtp-Source: AAOMgpfZnblOeqO5JmOG6A8O0HOQcWdp6egY/Z4mgaTx095cklNnve6MyP6X2i+lLc0NZimdFsjZ0g==
+X-Received: by 2002:a37:16c3:: with SMTP id 64-v6mr3876513qkw.381.1531882465181;
+        Tue, 17 Jul 2018 19:54:25 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id e21-v6sm1450716qtc.67.2018.07.17.19.54.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 17 Jul 2018 19:54:24 -0700 (PDT)
+Date:   Tue, 17 Jul 2018 22:54:23 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Adam Borowski <kilobyte@angband.pl>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dave Mielke <Dave@mielke.cc>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        linux-kernel@vger.kernel.org, linux-console@vger.kernel.org
+Subject: Re: [PATCH 1/3] vt: avoid a VLA in the unicode screen scroll
+ function
+In-Reply-To: <20180718014813.ygcbgqxk4yo3ydbl@angband.pl>
+Message-ID: <nycvar.YSQ.7.76.1807172155070.11681@knanqh.ubzr>
+References: <20180718010242.5254-1-nicolas.pitre@linaro.org> <20180718010242.5254-2-nicolas.pitre@linaro.org> <20180718014813.ygcbgqxk4yo3ydbl@angband.pl>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323328-1964054974-1531882464=:11681"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For kexec_file loading, if kexec_buf.top_down is 'true', the memory which
-is used to load kernel/initrd/purgatory is supposed to be allocated from
-top to down. This is what we have been doing all along in the old kexec
-loading interface and the kexec loading is still default setting in some
-distributions. However, the current kexec_file loading interface doesn't
-do like this. The function arch_kexec_walk_mem() it calls ignores checking
-kexec_buf.top_down, but calls walk_system_ram_res() directly to go through
-all resources of System RAM from bottom to up, to try to find memory region
-which can contain the specific kexec buffer, then call locate_mem_hole_callback()
-to allocate memory in that found memory region from top to down. This brings
-confusion especially when KASLR is widely supported , users have to make clear
-why kexec/kdump kernel loading position is different between these two
-interfaces in order to exclude unnecessary noises. Hence these two interfaces
-need be unified on behaviour.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Here add checking if kexec_buf.top_down is 'true' in arch_kexec_walk_mem(),
-if yes, call the newly added walk_system_ram_res_rev() to find memory region
-from top to down to load kernel.
+--8323328-1964054974-1531882464=:11681
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yinghai Lu <yinghai@kernel.org>
-Cc: kexec@lists.infradead.org
----
- kernel/kexec_file.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Wed, 18 Jul 2018, Adam Borowski wrote:
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index c6a3b6851372..75226c1d08ce 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -518,6 +518,8 @@ int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
- 					   IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY,
- 					   crashk_res.start, crashk_res.end,
- 					   kbuf, func);
-+	else if (kbuf->top_down)
-+		return walk_system_ram_res_rev(0, ULONG_MAX, kbuf, func);
- 	else
- 		return walk_system_ram_res(0, ULONG_MAX, kbuf, func);
- }
--- 
-2.13.6
+> On Tue, Jul 17, 2018 at 09:02:40PM -0400, Nicolas Pitre wrote:
+> > The nr argument is typically small: most often nr == 1. However this
+> > could be abused with a very large explicit scroll in a resized screen.
+> > Make the code scroll lines one at a time in all cases to avoid the VLA.
+> > Anything smarter is most likely not warranted here.
+> 
+> Even though nr can be 32767 at most, your new version is O(nr*nr) for no
+> reason.  Instead of O(n) memory or O(n²) time, a variant of the original
+> that copies values one at a time would be shorter and faster.
 
+Well... even though nr _can_ be up to 32766 to be precise, it is most 
+likely to be just 1 in 99.9% of the cases. So in that case, you'll 
+execute the loop only once and the code is currently optimal with O(n).
+
+If nr > 1 then the current cost is O(n*nr) where n is the height of the 
+scroll window i.e. relatively small in practice (typically between 25 
+and 60). There is no point optimizing for 32767 rows as that is rather 
+silly. If we had then the best solution would be a linked list rather 
+than an array.
+
+But still, if nr > 2 that means you need a temporary storage because the 
+destination memory has to be preserved before the source memory can be 
+moved there, and that destination memory content cannot be stored in the 
+vacated source memory until the source content is moved. Copying values 
+one at a time cannot work because the destination memory, the source 
+memory, and the area where the previous content from the destination 
+memory will end up don't overlap most of the time.
+
+That temporary storage was that VLA. We don't want VLAs. So how do we 
+efficiently allocate and deallocate memory for, say, 25 words? Maybe 
+that doesn't have to be efficient because that doesn't happen very often 
+as we said, at which point we can just do it in a loop with a one-line 
+increment instead, as this patch does.
+
+If you still have a more clever way of doing this then please propose it 
+in code form (I'm genuinely curious of what you have in mind). But let's 
+get the baseline working in an obvious "correct" way first.
+
+> > Requested-by: Kees Cook <keescook@chromium.org>
+> > Signed-off-by: Nicolas Pitre <nico@linaro.org>
+> > ---
+> >  drivers/tty/vt/vt.c | 18 ++++++++++--------
+> >  1 file changed, 10 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+> > index 2d14bb195d..03e79f7787 100644
+> > --- a/drivers/tty/vt/vt.c
+> > +++ b/drivers/tty/vt/vt.c
+> > @@ -433,20 +433,22 @@ static void vc_uniscr_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
+> >  
+> >  	if (uniscr) {
+> >  		unsigned int s, d, rescue, clear;
+> > -		char32_t *save[nr];
+> >  
+> >  		s = clear = t;
+> > -		d = t + nr;
+> > -		rescue = b - nr;
+> > +		d = t + 1;
+> > +		rescue = b - 1;
+> >  		if (dir == SM_UP) {
+> >  			swap(s, d);
+> >  			swap(clear, rescue);
+> >  		}
+> > -		memcpy(save, uniscr->lines + rescue, nr * sizeof(*save));
+> > -		memmove(uniscr->lines + d, uniscr->lines + s,
+> > -			(b - t - nr) * sizeof(*uniscr->lines));
+> > -		memcpy(uniscr->lines + clear, save, nr * sizeof(*save));
+> > -		vc_uniscr_clear_lines(vc, clear, nr);
+> > +		while (nr--) {
+> > +			char32_t *tmp;
+> > +			tmp = uniscr->lines[rescue];
+> > +			memmove(uniscr->lines + d, uniscr->lines + s,
+> > +				(b - t - 1) * sizeof(*uniscr->lines));
+> > +			uniscr->lines[clear] = tmp;
+> > +			vc_uniscr_clear_lines(vc, clear, 1);
+> > +		}
+> >  	}
+> >  }
+> 
+> What the function does is rotating an array (slice [t..b) here), by nr if
+> SM_DOWN or by -nr ie (b - t - nr) if SM_UP.  A nice problem that almost every
+> "code interview questions" book includes :)
+> 
+> Please say if you don't have time for such games, I've just refreshed what's
+> a good answer. :þ
+> 
+> 
+> Meow.
+> -- 
+> // If you believe in so-called "intellectual property", please immediately
+> // cease using counterfeit alphabets.  Instead, contact the nearest temple
+> // of Amon, whose priests will provide you with scribal services for all
+> // your writing needs, for Reasonable And Non-Discriminatory prices.
+> 
+--8323328-1964054974-1531882464=:11681--
