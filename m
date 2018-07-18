@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA21ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F800ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD72220850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E1162084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:44:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIh8FsfJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD72220850
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2sj1Oiz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E1162084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbeGRUYJ (ORCPT
+        id S1730906AbeGRUYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:24:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33860 "EHLO mail.kernel.org"
+        Wed, 18 Jul 2018 16:24:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729667AbeGRUYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:24:08 -0400
+        id S1728912AbeGRUYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:24:15 -0400
 Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE9D12084E;
-        Wed, 18 Jul 2018 19:44:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A7BE20850;
+        Wed, 18 Jul 2018 19:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531943086;
-        bh=YUo7/kHOGtfB3qn/rWY+Y/8GchpMynmdIqbaHOGlDmg=;
+        s=default; t=1531943092;
+        bh=yzfMZBNt72oqa5z1kwvv4mNdihmvoBt3oEwPXq+VcVQ=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OIh8FsfJapVBZV5XTcXKYX+Ty5sG/r+FwvhdJIyRPohXGdFVHVf04ygxIM/sxbZeB
-         Ea8Wyl0I3u4GrTBD50lkWf2zg46w6qmHb92FXo0j/9R1wg8nIMFGS0OlVUy6XQphcw
-         s7X4oiF3FcNAXYy+cPcGPsLbyIhTEN5SubOEJC1M=
-Subject: [PATCH v3 4/7] PCI/AER: Remove ERR_FATAL code from ERR_NONFATAL path
+        b=D2sj1OizpMuJwp/TA3nRcyprE2iPM1rmhQazAggdxv/eLeuM1kM/rnVnJgVoeFrgS
+         hPy1KaZ0izEWRIiBAyNk52tsXXlex3jLKjA3RoqThj45TGJoAuPUkOc4pmYTUcIts0
+         KoVfKVUOZjAWer8BRmLCRsp+kahBNoJCYAMOj/5M=
+Subject: [PATCH v3 5/7] PCI/AER: Clear device status bits during ERR_FATAL
+ and ERR_NONFATAL
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Oza Pawandeep <poza@codeaurora.org>
 Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
@@ -48,8 +49,8 @@ Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
         Sinan Kaya <okaya@kernel.org>,
         Timur Tabi <timur@codeaurora.org>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 18 Jul 2018 14:44:44 -0500
-Message-ID: <153194308474.191586.9278078670184747650.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date:   Wed, 18 Jul 2018 14:44:51 -0500
+Message-ID: <153194309124.191586.12413426053649369470.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -63,37 +64,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oza Pawandeep <poza@codeaurora.org>
 
-broadcast_error_message() is only used for ERR_NONFATAL events, when the
-state is always pci_channel_io_normal, so remove the unused alternate path.
+Clear the device status bits while handling both ERR_FATAL and ERR_NONFATAL
+cases.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
-[bhelgaas: changelog]
+[bhelgaas: rename to pci_aer_clear_device_status(), declare internal to PCI
+core instead of exposing it everywhere]
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/pcie/err.c |   11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/pci/pci.h      |    1 +
+ drivers/pci/pcie/aer.c |   15 +++++++++------
+ drivers/pci/pcie/err.c |    2 ++
+ 3 files changed, 12 insertions(+), 6 deletions(-)
 
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 12fd2ac95843..fc4978df7caf 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -454,6 +454,7 @@ static inline int devm_of_pci_get_host_bridge_resources(struct device *dev,
+ 
+ #ifdef CONFIG_PCIEAER
+ void pci_aer_clear_fatal_status(struct pci_dev *dev);
++void pci_aer_clear_device_status(struct pci_dev *dev);
+ #endif
+ 
+ #endif /* DRIVERS_PCI_H */
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index b8972fe85043..dc67f52b002f 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -357,6 +357,14 @@ int pci_disable_pcie_error_reporting(struct pci_dev *dev)
+ }
+ EXPORT_SYMBOL_GPL(pci_disable_pcie_error_reporting);
+ 
++void pci_aer_clear_device_status(struct pci_dev *dev)
++{
++	u16 sta;
++
++	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &sta);
++	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, sta);
++}
++
+ int pci_cleanup_aer_uncorrect_error_status(struct pci_dev *dev)
+ {
+ 	int pos;
+@@ -1356,12 +1364,7 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
+  */
+ static void aer_error_resume(struct pci_dev *dev)
+ {
+-	u16 reg16;
+-
+-	/* Clean up Root device status */
+-	pcie_capability_read_word(dev, PCI_EXP_DEVSTA, &reg16);
+-	pcie_capability_write_word(dev, PCI_EXP_DEVSTA, reg16);
+-
++	pci_aer_clear_device_status(dev);
+ 	pci_cleanup_aer_uncorrect_error_status(dev);
+ }
+ 
 diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index 0539518f9861..638eda5c1d79 100644
+index 638eda5c1d79..fdbcc555860d 100644
 --- a/drivers/pci/pcie/err.c
 +++ b/drivers/pci/pcie/err.c
-@@ -259,15 +259,10 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
- 		/*
- 		 * If the error is reported by an end point, we think this
- 		 * error is related to the upstream link of the end point.
-+		 * The error is non fatal so the bus is ok; just invoke
-+		 * the callback for the function that logged the error.
+@@ -252,6 +252,7 @@ static pci_ers_result_t broadcast_error_message(struct pci_dev *dev,
+ 			dev->error_state = state;
+ 		pci_walk_bus(dev->subordinate, cb, &result_data);
+ 		if (cb == report_resume) {
++			pci_aer_clear_device_status(dev);
+ 			pci_cleanup_aer_uncorrect_error_status(dev);
+ 			dev->error_state = pci_channel_io_normal;
+ 		}
+@@ -312,6 +313,7 @@ void pcie_do_fatal_recovery(struct pci_dev *dev, u32 service)
+ 		 * of the bridge and clear the error status of the bridge.
  		 */
--		if (state == pci_channel_io_normal)
--			/*
--			 * the error is non fatal so the bus is ok, just invoke
--			 * the callback for the function that logged the error.
--			 */
--			cb(dev, &result_data);
--		else
--			pci_walk_bus(dev->bus, cb, &result_data);
-+		cb(dev, &result_data);
+ 		pci_aer_clear_fatal_status(dev);
++		pci_aer_clear_device_status(dev);
  	}
  
- 	return result_data.result;
+ 	if (result == PCI_ERS_RESULT_RECOVERED) {
 
