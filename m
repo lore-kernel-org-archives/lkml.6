@@ -6,86 +6,108 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48559ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40059ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDE1F2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E89DE20852
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="gCOr320H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDE1F2075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="M8aTQ7Rq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E89DE20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731095AbeGRKRY (ORCPT
+        id S1731246AbeGRKSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:17:24 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:33996 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731046AbeGRKRX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:17:23 -0400
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id 0B002B007A1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 11:40:21 +0200 (CEST)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:to:from:from; s=dkim; t=1531906820; x=1532770821; bh=BL
-        qxhPVu4LtyC6/jHt4trzmmoH+QJ4BdUT17yDY9lg8=; b=gCOr320H5LL78Ul/f7
-        /mjujX1zZjHKIhRM4llt/EYqJcrUfibOqJE7ypdOfv1OfIAtAUKq0pjAHNaObjGT
-        UeSa/tTtrp/E74gehCojx6L2ZmkDdAvb90Ervzkb/SrzSkvFTtxyKBah/HD0NIvH
-        wbMeNl8XWVBzlFjWdhxMdNvXk=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id fo-0UyJDS97q for <linux-kernel@vger.kernel.org>;
-        Wed, 18 Jul 2018 11:40:20 +0200 (CEST)
-Received: from localhost.localdomain (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 49FF9B0076D;
-        Wed, 18 Jul 2018 11:40:19 +0200 (CEST)
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Giulio Benetti <giulio.benetti@micronovasrl.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v9 1/4] rtc: ds1307: fix data pointer to m41t0
-Date:   Wed, 18 Jul 2018 11:40:06 +0200
-Message-Id: <20180718094006.105675-4-giulio.benetti@micronovasrl.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180718094006.105675-1-giulio.benetti@micronovasrl.com>
-References: <20180718094006.105675-1-giulio.benetti@micronovasrl.com>
+        Wed, 18 Jul 2018 06:18:25 -0400
+Received: from 8bytes.org ([81.169.241.247]:53472 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726990AbeGRKSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:25 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 9A8E318A; Wed, 18 Jul 2018 11:41:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
+        t=1531906878; bh=NngLWB5Zz/D4kTj1B09ex8GsGe2+fROaYrvmU++hPyM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M8aTQ7RqY/7TZGeKke02i8VLzfX+YOndl2+JAKvc3E32+350LwLRl1RnNP5P8fjMY
+         Gade0nVXHKjwKh89Lg6EsitddeeNOOJobPpk/XPPiPFA3+nVx5SwDTd8Cdr8yKjMoZ
+         Mc8qCcrCKqrRam7Sf27vrf4jO0C1WPKdpHFQWdrywzKV8J1X34/FNQKiX1q6HuhxNO
+         rjnk+y97NB44p97Wn7+rpnajqs7b/zBTXZjoUSahWjwN7lnHgoS2vVeUsEEL8N5t4P
+         qjhDhJXrtm7sDCIFsnMiI1VA4dWHAF6Cir7pgTjsENWrUyc+cRDer3dcF7YxECaYoG
+         MY/ISJBWrXISg==
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
+        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        jroedel@suse.de, joro@8bytes.org
+Subject: [PATCH 01/39] x86/asm-offsets: Move TSS_sp0 and TSS_sp1 to asm-offsets.c
+Date:   Wed, 18 Jul 2018 11:40:38 +0200
+Message-Id: <1531906876-13451-2-git-send-email-joro@8bytes.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-data field points to m41t00, instead it should point to m41t0.
-Driver works correctly because on both cases(m41t0 and m41t00) chip_desc
-are equal.
+From: Joerg Roedel <jroedel@suse.de>
 
-Point to right enum m41t0 instead of m41t00.
+These offsets will be used in 32 bit assembly code as well,
+so make them available for all of x86 code.
 
-Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/rtc/rtc-ds1307.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/asm-offsets.c    | 4 ++++
+ arch/x86/kernel/asm-offsets_64.c | 2 --
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index e9ec4160d7f6..aa4a161bae98 100644
---- a/drivers/rtc/rtc-ds1307.c
-+++ b/drivers/rtc/rtc-ds1307.c
-@@ -299,7 +299,7 @@ static const struct of_device_id ds1307_of_match[] = {
- 	},
- 	{
- 		.compatible = "st,m41t0",
--		.data = (void *)m41t00
-+		.data = (void *)m41t0
- 	},
- 	{
- 		.compatible = "st,m41t00",
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index dcb008c..a1e1628 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -103,4 +103,8 @@ void common(void) {
+ 	OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampoline);
+ 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
+ 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
++
++	/* Offset for sp0 and sp1 into the tss_struct */
++	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
++	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
+ }
+diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offsets_64.c
+index b2dcd16..3b9405e 100644
+--- a/arch/x86/kernel/asm-offsets_64.c
++++ b/arch/x86/kernel/asm-offsets_64.c
+@@ -65,8 +65,6 @@ int main(void)
+ #undef ENTRY
+ 
+ 	OFFSET(TSS_ist, tss_struct, x86_tss.ist);
+-	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
+-	OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
+ 	BLANK();
+ 
+ #ifdef CONFIG_STACKPROTECTOR
 -- 
-2.17.1
+2.7.4
 
