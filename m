@@ -6,146 +6,81 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88356ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E32CECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 492FE2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:31:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 492FE2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3398F20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:36:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3398F20850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730094AbeGRWLG (ORCPT
+        id S1729863AbeGRWQ1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:11:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:40396 "EHLO foss.arm.com"
+        Wed, 18 Jul 2018 18:16:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41431 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726923AbeGRWLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:11:05 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CBC918A;
-        Wed, 18 Jul 2018 14:31:18 -0700 (PDT)
-Received: from [10.37.8.139] (unknown [10.37.8.139])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E2DA3FAA1;
-        Wed, 18 Jul 2018 14:31:17 -0700 (PDT)
-Subject: Re: [PATCH] coresight: etm_perf: Rework alloc/free methods to avoid
- lockep warning
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
-References: <1531942988-20901-1-git-send-email-mathieu.poirier@linaro.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <d648155e-0486-7d7c-5e29-2bda6c536dba@arm.com>
-Date:   Wed, 18 Jul 2018 22:31:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1726923AbeGRWQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 18:16:26 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4A796207AB; Wed, 18 Jul 2018 23:36:37 +0200 (CEST)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id ECA6320766;
+        Wed, 18 Jul 2018 23:36:36 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 23:36:37 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Abhishek Sahu <absahu@codeaurora.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>
+Subject: Re: [PATCH 4/5] mtd: rawnand: qcom: update BBT related flags
+Message-ID: <20180718233637.49a39751@bbrezillon>
+In-Reply-To: <20180718231526.38046099@xps13>
+References: <1530863519-5564-1-git-send-email-absahu@codeaurora.org>
+        <1530863519-5564-5-git-send-email-absahu@codeaurora.org>
+        <20180718231526.38046099@xps13>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1531942988-20901-1-git-send-email-mathieu.poirier@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mathieu,
+On Wed, 18 Jul 2018 23:15:26 +0200
+Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 
-On 07/18/2018 08:43 PM, Mathieu Poirier wrote:
-> When enabling the lockdep mechanic and working with CPU-wide scenarios we
-> get the following console output:
+> Hi Abhishek,
+> 
+> Abhishek Sahu <absahu@codeaurora.org> wrote on Fri,  6 Jul 2018
+> 13:21:58 +0530:
+> 
+> > Remove the NAND_SKIP_BBTSCAN to use RAM based BBT.  
+> 
+> Unless I am understanding it the wrong way, NAND_SKIP_BBTSCAN will skip
+> the scan of the on-chip BBT and will scan every block to construct a
+> RAM, based BBT thanks to the BBM.
+> 
+> So flash based BBT is already unused and removing this flag is a
+> mistake, right?
+
+->scan_bbt() is also taking care of building the in-RAM BBT based on
+BBM when no on-flash BBT is provided, so I think it's the right thing
+to do.
+
+> 
+> > Flash based BBT is not used since bootloaders
+> > doesn't have support for the same.
+> > 
+> > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> > ---  
+> 
+> Thanks,
+> Miquèl
 > 
 
-> This is fixed by working with the cpu_present_mask, avoinding at the same
-> the need to use get/put_online_cpus() that triggers lockdep.
-
-The patch looks correct to me. In fact I have a patch [1], which
-does the same thing and switches to using per-cpu variable for the
-paths.
-
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->   drivers/hwtracing/coresight/coresight-etm-perf.c | 39 +++++++++++++-----------
->   1 file changed, 21 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index 677695635211..16b9c87d9d00 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -108,26 +108,32 @@ static int etm_event_init(struct perf_event *event)
->   static void free_event_data(struct work_struct *work)
->   {
->   	int cpu;
-> +	void *snk_config;
->   	cpumask_t *mask;
->   	struct etm_event_data *event_data;
->   	struct coresight_device *sink;
->   
->   	event_data = container_of(work, struct etm_event_data, work);
->   	mask = &event_data->mask;
-> -	/*
-> -	 * First deal with the sink configuration.  See comment in
-> -	 * etm_setup_aux() about why we take the first available path.
-> -	 */
-> -	if (event_data->snk_config) {
-> -		cpu = cpumask_first(mask);
-> -		sink = coresight_get_sink(event_data->path[cpu]);
-> -		if (sink_ops(sink)->free_buffer)
-> -			sink_ops(sink)->free_buffer(event_data->snk_config);
-> -	}
-> +	snk_config = event_data->snk_config;
->   
->   	for_each_cpu(cpu, mask) {
-> -		if (!(IS_ERR_OR_NULL(event_data->path[cpu])))
-> -			coresight_release_path(event_data->path[cpu]);
-> +		if (IS_ERR_OR_NULL(event_data->path[cpu]))
-> +			continue;
-> +
-> +		/*
-> +		 * Free sink configuration - there can only be one sink
-> +		 * per event.
-> +		 */
-> +		if (snk_config) {
-> +			sink = coresight_get_sink(event_data->path[cpu]);
-> +			if (sink_ops(sink)->free_buffer) {
-> +				sink_ops(sink)->free_buffer(snk_config);
-> +				snk_config = NULL;
-> +			}
-> +		}
-> +
-> +		coresight_release_path(event_data->path[cpu]);
->   	}
-
->   
->   	kfree(event_data->path);
-> @@ -145,16 +151,13 @@ static void *alloc_event_data(int cpu)
->   	if (!event_data)
->   		return NULL;
->   
-> -	/* Make sure nothing disappears under us */
-> -	get_online_cpus();
-> -	size = num_online_cpus();
-> -
->   	mask = &event_data->mask;
-> +	size = num_present_cpus();
-> +
->   	if (cpu != -1)
->   		cpumask_set_cpu(cpu, mask);
->   	else
-> -		cpumask_copy(mask, cpu_online_mask);
-> -	put_online_cpus();
-> +		cpumask_copy(mask, cpu_present_mask);
-
-I think it is safe to use cpu_online_mask outside the
-get/put_online_cpus(). Using present_mask may fail as
-we could fail to create a path for a CPU that is not online.
-
-
-Please could you check if [1] fixes the problem for you ?
-
-[1] 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/591606.html
-
-Cheers
-Suzuki
