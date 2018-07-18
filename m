@@ -2,63 +2,62 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B33DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26510ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EADCE20661
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF8AF20661
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:57:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idMPapN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADCE20661
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KoNrOqAk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF8AF20661
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731171AbeGSAhV (ORCPT
+        id S1730524AbeGSAhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 20:37:21 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:37936 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbeGSAhT (ORCPT
+        Wed, 18 Jul 2018 20:37:13 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44324 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeGSAhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 20:37:19 -0400
-Received: by mail-lf0-f66.google.com with SMTP id a4-v6so4709295lff.5;
-        Wed, 18 Jul 2018 16:56:59 -0700 (PDT)
+        Wed, 18 Jul 2018 20:37:12 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q127-v6so5598466ljq.11;
+        Wed, 18 Jul 2018 16:56:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CE/jxx2sQAbPpsFa3TmZtxhtrPIRLZ2UctIF4wmgTIo=;
-        b=idMPapN1PMb2v3kaVFZwajOJPP3xHfJcUb8WU3xBxgb+nbB6xrDNlzN8y8Px1lWSJx
-         +xpnKFkJLID0cyzWLQg0j5n/JSDIWy5MCZmWgCyAQm5qJpgzRAG/gcjhFzv76h/yawVY
-         er4SSvjYM9V2AQTlxv6VajL6TJRPFNnG7L0yAoriRX1kUN/8o467HD9P+4E1MLFKrtZP
-         +UfzF2TUcK50yK/peWuK9bui82ZoHG95gZRxlpmuvwtRb5ATKnahrT1EUqB3X5WBWlqD
-         o48nQVH1bfOCMP9vN6+RISFx8mxbjnQG4HhE2Lzkwm4mBVFxhK2E81qc8XCDJNEnEEGo
-         3qVg==
+        bh=BycCmm8Gq6/0A/A3AdvDrsfmkVSIr0emCY8Ur1J9Y78=;
+        b=KoNrOqAkK56tdHLli02jtgsoFdXZ5koETC7WXacVnuPtdQ/+oNk7yG6+gqb3obnn3o
+         VxCPvnE418o6Jg2pd02CT2y+5I6ONQkU9cINvIp7jxKK2K3N6gDR26MtcPcN+HExqfRE
+         0Eb1WFUuf7gH4HQw+LssoL7gocsPVoxPnIBxIHU4JorCehpkq3GnIUQNRRSCbaYH4SE1
+         hzKuCApgwWohEeCMyYLmwEmd6G1f5ByyPTpzkV/ra0ao57DzZDXbsdMXyJHNI7p3aJSB
+         A5/IGOePuobIVLqcazQNcKWNkbMnthbVA5tHagCa0xKqKA4kCuuamZNxkgm7f9MHGkRZ
+         ECxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CE/jxx2sQAbPpsFa3TmZtxhtrPIRLZ2UctIF4wmgTIo=;
-        b=T6Jh5Y3jAXE96cpvmURDphVxHLKumsymlQ1SIA0ZeHvgHSyihmhmrudMjwJbKXl90P
-         YMstnjAAXFRoDN2O+6nYVucERq6mGknKZKtGKBpI/fZh9NjX7Mj01PPmAAcEy07UU6l9
-         qYkAmeKUjLT8TVJDBRepgE5nQyXh7+qw30ACzjDNqElcARDCWWNOVYCn7T+D8WEyUH/N
-         LuDHENdR8KxnXHnwXHFOBHnvrKQ5NOnZQ3nZB3WA//xq/svhTlD7/qxWya+J4aROFQZh
-         2tEEX4YE0CBMs0eusT7mDIBwYoeufdIYs8ps+9I3LVIUs0mxIBzJ5rBQ6pxNMLYILoue
-         xlyg==
-X-Gm-Message-State: AOUpUlHZKKABpd+nXzMROTFPoU9KlPEPmfMosAbqkP2giZUftJHkJ8Hg
-        ROKKHcCTf2pv45cl65ZNOlE=
-X-Google-Smtp-Source: AAOMgpcKNid2fOSMPG4hIn05+moSynVjPs/1EOVnUIR+ZtsKh2JJ2UvoeBTuHTgJftkgB41Ewr2dEQ==
-X-Received: by 2002:a19:4e06:: with SMTP id c6-v6mr4970804lfb.30.1531958218420;
-        Wed, 18 Jul 2018 16:56:58 -0700 (PDT)
+        bh=BycCmm8Gq6/0A/A3AdvDrsfmkVSIr0emCY8Ur1J9Y78=;
+        b=g85Ly3nZ2xtxDlHI+3CJuT5Sj3CqNy3pS8tfRj6coiSoeAG28X3DdxVdD9k30C/n42
+         x20WsqR18+aqUyM4kqXNhazRPuMl9vE5nQtrx1u8aBl/OHDapwPTbwwKOGr6nVF/fiiQ
+         0c2JcFlrBoctAwY2wr0mk/EExhOoSh+2hqcKqCt+gtF0OtJ+pEvWQ/7hN/+xYrIZCOtz
+         y8CYXIaiI4diOhDS1xa3q1hyAMo+TxeQa0FUtOI3PE4GbnigQsJSnWnYb2tV/Tu9aaIt
+         wG7aTIYc23e20uPSAkQR6MmM/wWGSH5Ahxa2JtGScFMv57XeudAXP7x/zOyydhc6/i4C
+         JhWg==
+X-Gm-Message-State: AOUpUlEeQkfVeNRXOMfl3DGK83WlFl+pi42Goea5gyqSVQSAbJc6pWF5
+        IEhVk8G9/rSTCzA/qFJlT5I=
+X-Google-Smtp-Source: AAOMgpePfj+3pVjxiIMv2HBi82aJ2vjCr6FGwAwVkOS73Y6sOqSaQCnL75rRTSiJ01KeKFwfOd+pOQ==
+X-Received: by 2002:a2e:59d1:: with SMTP id g78-v6mr6093135ljf.79.1531958212445;
+        Wed, 18 Jul 2018 16:56:52 -0700 (PDT)
 Received: from z50.lan (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm826584ljk.27.2018.07.18.16.56.56
+        by smtp.gmail.com with ESMTPSA id h7-v6sm826584ljk.27.2018.07.18.16.56.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 16:56:57 -0700 (PDT)
+        Wed, 18 Jul 2018 16:56:51 -0700 (PDT)
 From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
 To:     Boris Brezillon <boris.brezillon@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
@@ -77,9 +76,9 @@ Cc:     Tony Lindgren <tony@atomide.com>,
         linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
         Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: [RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
-Date:   Thu, 19 Jul 2018 01:57:08 +0200
-Message-Id: <20180718235710.18242-7-jmkrzyszt@gmail.com>
+Subject: [RFC PATCH 2/8] mtd: rawnand: ams-delta: Write protect device during probe
+Date:   Thu, 19 Jul 2018 01:57:04 +0200
+Message-Id: <20180718235710.18242-3-jmkrzyszt@gmail.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180718235710.18242-1-jmkrzyszt@gmail.com>
 References: <20180718235710.18242-1-jmkrzyszt@gmail.com>
@@ -88,152 +87,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This should make applications utilizing whole banks work faster.
+Initialize NWP GPIO pin low to protect the device from hazard during
+probe.  Release write protection as soon as the device is under
+control.
 
 Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 ---
- drivers/gpio/gpio-omap.c | 88 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 86 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/raw/ams-delta.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index d1afedf4dcbf..e81008678a38 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -77,6 +77,8 @@ struct gpio_bank {
- 	bool workaround_enabled;
+diff --git a/drivers/mtd/nand/raw/ams-delta.c b/drivers/mtd/nand/raw/ams-delta.c
+index 48233d638d2a..6ac38e9cfa1a 100644
+--- a/drivers/mtd/nand/raw/ams-delta.c
++++ b/drivers/mtd/nand/raw/ams-delta.c
+@@ -219,8 +219,8 @@ static int ams_delta_init(struct platform_device *pdev)
  
- 	void (*set_dataout)(struct gpio_bank *bank, unsigned gpio, int enable);
-+	void (*set_dataout_multiple)(struct gpio_bank *bank,
-+				     unsigned long *mask, unsigned long *bits);
- 	int (*get_context_loss_count)(struct device *dev);
+ 	platform_set_drvdata(pdev, priv);
  
- 	struct omap_gpio_reg_offs *regs;
-@@ -161,6 +163,51 @@ static int omap_get_gpio_dataout(struct gpio_bank *bank, int offset)
- 	return (readl_relaxed(reg) & (BIT(offset))) != 0;
- }
+-	/* Set chip enabled, but  */
+-	priv->gpiod_nwp = devm_gpiod_get(&pdev->dev, "nwp", GPIOD_OUT_HIGH);
++	/* Set chip enabled but write protected */
++	priv->gpiod_nwp = devm_gpiod_get(&pdev->dev, "nwp", GPIOD_OUT_LOW);
+ 	if (IS_ERR(priv->gpiod_nwp)) {
+ 		err = PTR_ERR(priv->gpiod_nwp);
+ 		dev_err(&pdev->dev, "NWP GPIO request failed (%d)\n", err);
+@@ -267,6 +267,9 @@ static int ams_delta_init(struct platform_device *pdev)
+ 	if (err)
+ 		goto out_mtd;
  
-+/* set multiple data out values using dedicate set/clear register */
-+static void omap_set_gpio_dataout_reg_multiple(struct gpio_bank *bank,
-+					       unsigned long *mask,
-+					       unsigned long *bits)
-+{
-+	void __iomem *reg = bank->base;
-+	u32 l;
++	/* As soon as the device is found, release write protection */
++	gpiod_set_value(priv->gpiod_nwp, 1);
 +
-+	l = *bits & *mask;
-+	writel_relaxed(l, reg + bank->regs->set_dataout);
-+	bank->context.dataout |= l;
-+
-+	l = ~*bits & *mask;
-+	writel_relaxed(l, reg + bank->regs->clr_dataout);
-+	bank->context.dataout &= ~l;
-+}
-+
-+/* set multiple data out values using mask register */
-+static void omap_set_gpio_dataout_mask_multiple(struct gpio_bank *bank,
-+						unsigned long *mask,
-+						unsigned long *bits)
-+{
-+	void __iomem *reg = bank->base + bank->regs->dataout;
-+	u32 l = (readl_relaxed(reg) & ~*mask) | (*bits & *mask);
-+
-+	writel_relaxed(l, reg);
-+	bank->context.dataout = l;
-+}
-+
-+static unsigned long omap_get_gpio_datain_multiple(struct gpio_bank *bank,
-+					      unsigned long *mask)
-+{
-+	void __iomem *reg = bank->base + bank->regs->datain;
-+
-+	return readl_relaxed(reg) & *mask;
-+}
-+
-+static unsigned long omap_get_gpio_dataout_multiple(struct gpio_bank *bank,
-+					       unsigned long *mask)
-+{
-+	void __iomem *reg = bank->base + bank->regs->dataout;
-+
-+	return readl_relaxed(reg) & *mask;
-+}
-+
- static inline void omap_gpio_rmw(void __iomem *base, u32 reg, u32 mask, bool set)
- {
- 	int l = readl_relaxed(base + reg);
-@@ -968,6 +1015,26 @@ static int omap_gpio_output(struct gpio_chip *chip, unsigned offset, int value)
- 	return 0;
- }
+ 	/* Register the partitions */
+ 	mtd_device_register(mtd, partition_info, ARRAY_SIZE(partition_info));
  
-+static int omap_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
-+				  unsigned long *bits)
-+{
-+	struct gpio_bank *bank = gpiochip_get_data(chip);
-+	void __iomem *reg = bank->base + bank->regs->direction;
-+	unsigned long in = readl_relaxed(reg), l;
-+
-+	*bits = 0;
-+
-+	l = in & *mask;
-+	if (l)
-+		*bits |= omap_get_gpio_datain_multiple(bank, &l);
-+
-+	l = ~in & *mask;
-+	if (l)
-+		*bits |= omap_get_gpio_dataout_multiple(bank, &l);
-+
-+	return 0;
-+}
-+
- static int omap_gpio_debounce(struct gpio_chip *chip, unsigned offset,
- 			      unsigned debounce)
- {
-@@ -1012,6 +1079,17 @@ static void omap_gpio_set(struct gpio_chip *chip, unsigned offset, int value)
- 	raw_spin_unlock_irqrestore(&bank->lock, flags);
- }
+@@ -288,6 +291,9 @@ static int ams_delta_cleanup(struct platform_device *pdev)
+ 	struct mtd_info *mtd = nand_to_mtd(&priv->nand_chip);
+ 	void __iomem *io_base = priv->io_base;
  
-+static void omap_gpio_set_multiple(struct gpio_chip *chip, unsigned long *mask,
-+				   unsigned long *bits)
-+{
-+	struct gpio_bank *bank = gpiochip_get_data(chip);
-+	unsigned long flags;
++	/* Apply write protection */
++	gpiod_set_value(priv->gpiod_nwp, 0);
 +
-+	raw_spin_lock_irqsave(&bank->lock, flags);
-+	bank->set_dataout_multiple(bank, mask, bits);
-+	raw_spin_unlock_irqrestore(&bank->lock, flags);
-+}
-+
- /*---------------------------------------------------------------------*/
+ 	/* Release resources, unregister device */
+ 	nand_release(mtd);
  
- static void omap_gpio_show_rev(struct gpio_bank *bank)
-@@ -1073,9 +1151,11 @@ static int omap_gpio_chip_init(struct gpio_bank *bank, struct irq_chip *irqc)
- 	bank->chip.get_direction = omap_gpio_get_direction;
- 	bank->chip.direction_input = omap_gpio_input;
- 	bank->chip.get = omap_gpio_get;
-+	bank->chip.get_multiple = omap_gpio_get_multiple;
- 	bank->chip.direction_output = omap_gpio_output;
- 	bank->chip.set_config = omap_gpio_set_config;
- 	bank->chip.set = omap_gpio_set;
-+	bank->chip.set_multiple = omap_gpio_set_multiple;
- 	if (bank->is_mpuio) {
- 		bank->chip.label = "mpuio";
- 		if (bank->regs->wkup_en)
-@@ -1209,10 +1289,14 @@ static int omap_gpio_probe(struct platform_device *pdev)
- 				pdata->get_context_loss_count;
- 	}
- 
--	if (bank->regs->set_dataout && bank->regs->clr_dataout)
-+	if (bank->regs->set_dataout && bank->regs->clr_dataout) {
- 		bank->set_dataout = omap_set_gpio_dataout_reg;
--	else
-+		bank->set_dataout_multiple = omap_set_gpio_dataout_reg_multiple;
-+	} else {
- 		bank->set_dataout = omap_set_gpio_dataout_mask;
-+		bank->set_dataout_multiple =
-+				omap_set_gpio_dataout_mask_multiple;
-+	}
- 
- 	raw_spin_lock_init(&bank->lock);
- 	raw_spin_lock_init(&bank->wa_lock);
 -- 
 2.16.4
 
