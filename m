@@ -2,147 +2,262 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A15DECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEF1ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376162084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:39:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376162084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E96152084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 06:39:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TvgrscJT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E96152084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeGRHPU (ORCPT
+        id S1727635AbeGRHPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 03:15:20 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:40683 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeGRHPU (ORCPT
+        Wed, 18 Jul 2018 03:15:44 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45535 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeGRHPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 03:15:20 -0400
-Received: by mail-it0-f69.google.com with SMTP id 136-v6so1659725itw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 23:39:03 -0700 (PDT)
+        Wed, 18 Jul 2018 03:15:44 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 94-v6so1585163ple.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 23:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AeCrjkJ9eVBI9n9XtNtlhRC+3LlBvu2rGhsnbgriaoU=;
+        b=TvgrscJTikcFNkc1leeBR23AOs3RNBJSKP5BsVZimrmjRNFLsNNpuFTDJvald7D0Cq
+         wYDhedYRhsmbwrw9QBZ5DwBBbXDwADed9sFEsyBLXmWVH+cU03LQYMZiaIjyZdwhoDW/
+         GuliKk6He1+fhD/oGZP/X2fvsFnU4TWMK3QAM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=5P38et10lwjAUaIWJKq99/nyNdczctA6MNVQkX7QQX8=;
-        b=q2Ir2hk/PJwSsjihNEDf3V8y0BMf1DkUllx9CxtPleYTrw3TftXkutPwjwhzqIaso8
-         VzovZn/bssXyOiVzusnqAi12vWkHcRtLPBN/S3UGy+yEcnFYmDdRmikr8GFH43iIWl4D
-         7A/0q4zQwtdr4JGuwEIRCPV9N7P7NFhHNgkC8xn6qs4Dy5EvssknOgLxDeF340wmYtlL
-         26xPDEsD5OudknzqBAFoaUGK5E93zf4tlguWOxe2Yck5NWSCWC6QZ8NVpeqKQQi1Jp9I
-         YrtPKLvFyUarqoZRipmslRIFvMqU7hYOjdjb9nZLrPXPsK0Xn47h5KtUMc+Ef1IIe2R5
-         X1cQ==
-X-Gm-Message-State: AOUpUlEgWjkRLWaSf18bOE3kJJiD4y1IhIF98jlRpl61WYvJMFeBWKoZ
-        Jzwiu5/JUOXSx6R+AcgsstVVHs2wF0T/tFWuleNXAbS5AwcD
-X-Google-Smtp-Source: AAOMgpcolXnCDYF7j8ljtJysEtHPMq1BabBi2depJeXeEY7xyou4tOVF1/bJSitPqpGZ4tV3kyIUh3UFFIsNNH2tZ4NdUBm43/bE
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=AeCrjkJ9eVBI9n9XtNtlhRC+3LlBvu2rGhsnbgriaoU=;
+        b=iw4/Uuen18CYTXH7SnQwz3aNqIUuPRS/Nxau/F7O0m4dVjhI1zSm1/nxYL1PCAealb
+         ZpVfAS4AotR6V+cgscwx+i0CCc8Z9gvzBfPu0G8OMbZw6LDQy3F+9ZnjqYRXEZYDQ3Mz
+         s/cDVLadpWEQGqc3zhCJm5rT06JBrdS2qvn1WpgyKuhaSTrF4B+m8Y2Wfe08R/6re/N0
+         RyuaYuxqQldBl89odl14pgYanZJcSpAAKd1yPLiI52rR/NBYTKb9ohqGZHTdnLYhLbAC
+         kYydjzj1Adm4ROhof8JtmRHbo3EgY1xswOPhWw2W8qHMkwB+pbUG13D2okiisXDAtmRR
+         YIlg==
+X-Gm-Message-State: AOUpUlFNZdjGv/OiDvms/dG33FklqZzHF8TKEhUXOLU8pSPdHoZknSt7
+        256GLpqdT76sg96FNEKfZGiiGg==
+X-Google-Smtp-Source: AAOMgpdjbpoaCxKxWBPYUUjyryf5Bg55i0p5kZncm3awVegXnbM2lMxXLt6ABt92pDIHFay+h1u5tQ==
+X-Received: by 2002:a17:902:599b:: with SMTP id p27-v6mr4618883pli.191.1531895966866;
+        Tue, 17 Jul 2018 23:39:26 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id q140-v6sm3989982pgq.11.2018.07.17.23.39.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 23:39:26 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 15:40:42 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     Dave Young <dyoung@redhat.com>
+Cc:     James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH v11 03/15] powerpc, kexec_file: factor out memblock-based
+ arch_kexec_walk_mem()
+Message-ID: <20180718064041.GI11258@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Dave Young <dyoung@redhat.com>, James Morse <james.morse@arm.com>,
+        catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+References: <20180711074203.3019-1-takahiro.akashi@linaro.org>
+ <20180711074203.3019-4-takahiro.akashi@linaro.org>
+ <20180714015223.GA2745@dhcp-128-65.nay.redhat.com>
+ <2a4ec965-5258-5835-3022-8f403a2f6bdd@arm.com>
+ <20180716122412.GA7160@dhcp-128-65.nay.redhat.com>
+ <20180717053104.GB11258@linaro.org>
+ <20180717074923.GA8591@dhcp-128-65.nay.redhat.com>
+ <20180718053818.GF11258@linaro.org>
+ <20180718061350.GA5086@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:5a14:: with SMTP id v20-v6mr438649ita.41.1531895942979;
- Tue, 17 Jul 2018 23:39:02 -0700 (PDT)
-Date:   Tue, 17 Jul 2018 23:39:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083a940057140518a@google.com>
-Subject: WARNING: kmalloc bug in vfs_getxattr_alloc
-From:   syzbot <syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180718061350.GA5086@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Jul 18, 2018 at 02:13:50PM +0800, Dave Young wrote:
+> Hi AKASHI,
+> 
+> On 07/18/18 at 02:38pm, AKASHI Takahiro wrote:
+> > Dave,
+> > 
+> > On Tue, Jul 17, 2018 at 03:49:23PM +0800, Dave Young wrote:
+> > > Hi AKASHI,
+> > > On 07/17/18 at 02:31pm, AKASHI Takahiro wrote:
+> > > > Hi Dave,
+> > > > 
+> > > > On Mon, Jul 16, 2018 at 08:24:12PM +0800, Dave Young wrote:
+> > > > > On 07/16/18 at 12:04pm, James Morse wrote:
+> > > > > > Hi Dave,
+> > > > > > 
+> > > > > > On 14/07/18 02:52, Dave Young wrote:
+> > > > > > > On 07/11/18 at 04:41pm, AKASHI Takahiro wrote:
+> > > > > > >> Memblock list is another source for usable system memory layout.
+> > > > > > >> So powerpc's arch_kexec_walk_mem() is moved to kexec_file.c so that
+> > > > > > >> other memblock-based architectures, particularly arm64, can also utilise
+> > > > > > >> it. A moved function is now renamed to kexec_walk_memblock() and merged
+> > > > > > >> into the existing arch_kexec_walk_mem() for general use, either resource
+> > > > > > >> list or memblock list.
+> > > > > > >>
+> > > > > > >> A consequent function will not work for kdump with memblock list, but
+> > > > > > >> this will be fixed in the next patch.
+> > > > > > 
+> > > > > > >> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+> > > > > > 
+> > > > > > >> @@ -513,6 +563,10 @@ static int locate_mem_hole_callback(struct resource *res, void *arg)
+> > > > > > >>  int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > > > > > >>  			       int (*func)(struct resource *, void *))
+> > > > > > >>  {
+> > > > > > >> +	if (IS_ENABLED(CONFIG_HAVE_MEMBLOCK) &&
+> > > > > > >> +			!IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK))
+> > > > > > >> +		return kexec_walk_memblock(kbuf, func);
+> > > > > > > 
+> > > > > > > AKASHI, I'm not sure if this works on all arches, for example I chekced
+> > > > > > > the .config on my Nokia N900 kernel tree, there is HAVE_MEMBLOCK=y and
+> > > > > > > no CONFIG_ARCH_DISCARD_MEMBLOCK, in 32bit arm code no arch_kexec_walk_mem()
+> > > > > > By doesn't work you mean it's a change in behaviour?
+> > > > > > I think this is fine because 32bit arm doesn't support KEXEC_FILE, (this file is
+> > > > > > kexec_file specific right?).
+> > > > > 
+> > > > > Ah, replied on a train, I forgot this is only for kexec_file, sorry
+> > > > > about that.  Please ignore the comment.
+> > > > > 
+> > > > > But since we have a weak function arch_kexec_walk_mem, adding another
+> > > > > condition branch within this weak function looks not good.
+> > > > > Something like below would be better:
+> > > > 
+> > > > I see your concern here, but
+> > > > 
+> > > > 
+> > > > > int kexec_locate_mem_hole(struct kexec_buf *kbuf)
+> > > > > {
+> > > > >         int ret;
+> > > > > 
+> > > > > 	+ if use memblock
+> > > > > 	+	ret = kexec_walk_memblock()
+> > > > > 	+ else
+> > > > >         	ret = arch_kexec_walk_mem(kbuf, locate_mem_hole_callback);
+> > > > > 
+> > > > >         return ret == 1 ? 0 : -EADDRNOTAVAIL;
+> > > > > }
+> > > > 
+> > > > what if yet another architecture comes to kexec_file and wanna
+> > > > take a third approach? How can it override those functions?
+> > > > Depending on kernel configuration, it might re-define either
+> > > > kexec_walk_memblock() or arch_kexec_walk_mem(). It sounds weird to me.
+> > > 
+> > > I also feel this weird, but it is slightly better because currently no
+> > > user need another overriding requirement, and I feel it is not expected to have in
+> > > the future for the memblock use.
+> > > 
+> > > Rethinking about this issue, we can just remove the weak function and
+> > > just use general function.
+> > 
+> > Do you really want to remove "weak" attribute?
+> > 
+> > > Currently with your patch applied only s390 use arch_kexec_walk_mem like
+> > > below:
+> > > /*
+> > >  * The kernel is loaded to a fixed location. Turn off kexec_locate_mem_hole
+> > >  * and provide kbuf->mem by hand.
+> > >  */
+> > > int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > >                         int (*func)(struct resource *, void *))
+> > > {
+> > >         return 1;
+> > > }
+> > > 
+> > > AFAIK, all other users initialize kbuf->mem as NULL, so we can check
+> > 
+> > As a matter of fact, nobody initializes kbuf->mem before calling
+> > kexec_add_buffer (in turn, kexec_locate_mem_hole()).
+> 
+> Not sure we understand each other..
+> Let's take an example in arch/x86/kernel/kexec-bzimage64.c:
+> bzImage64_load() :
+> 	struct kexec_buf kbuf = { .image = image, .buf_max = ULONG_MAX,
+> 				.top_down = true };
+> 
+> Except the three fields above other members will be initialized as zero
+> when compiling including the kbuf->mem
 
-syzbot found the following crash on:
+Ah, you're right.
+(My armr64 patch doesn't use struct initializer, though.)
 
-HEAD commit:    1dcbe5f2c615 Add linux-next specific files for 20180717
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12158f70400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea5926dddb0db97a
-dashboard link: https://syzkaller.appspot.com/bug?extid=af1504df0807a083dbd9
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=177631c2400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13722bb2400000
+> > 
+> > > kbuf->mem in int kexec_locate_mem_hole:
+> > > 
+> > > if (kbuf->mem)
+> > > 	return 0;
+> > > 
+> > > if use memblock
+> > > 	kexec_walk_memblock
+> > > else
+> > > 	kexec_walk_mem
+> 
+> kexec_walk_resource will be better than kexec_walk_mem
+> 
+> > 
+> > I think that your solution will work for existing architectures
+> > with appropriate patches, but to take your approach, as I said above,
+> > we will have to modify every call site on all kexec_file-capable architectures.
+> > 
+> > If this is what you expect, I will work on it, but I don't think
+> > that it would be a better idea.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
+So you would expect me to modify my own arm64 code as well as s390.
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-WARNING: CPU: 0 PID: 4458 at mm/slab_common.c:1031 kmalloc_slab+0x56/0x70  
-mm/slab_common.c:1031
-Kernel panic - not syncing: panic_on_warn set ...
+-Takahiro AKASHI
 
-CPU: 0 PID: 4458 Comm: syz-executor537 Not tainted  
-4.18.0-rc5-next-20180717+ #9
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x163/0x1ba kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1fc/0x4d0 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:996
-RIP: 0010:kmalloc_slab+0x56/0x70 mm/slab_common.c:1031
-Code: c5 c0 0a d1 88 5d c3 b8 10 00 00 00 48 85 ff 74 f4 83 ef 01 c1 ef 03  
-0f b6 87 e0 09 d1 88 eb d8 31 c0 81 e6 00 02 00 00 75 db <0f> 0b 5d c3 48  
-8b 04 c5 00 0a d1 88 5d c3 66 90 66 2e 0f 1f 84 00
-RSP: 0018:ffff8801ace9f830 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81d0c52d
-RDX: ffffffff81d0c5c4 RSI: 0000000000000000 RDI: 000000002f2e0008
-RBP: ffff8801ace9f830 R08: ffff8801ac920700 R09: fffffbfff125691c
-R10: fffffbfff125691c R11: ffffffff892b48e3 R12: 000000002f2e0008
-R13: 0000000000600040 R14: ffff8801ace9f998 R15: 0000000000600040
-  __do_kmalloc mm/slab.c:3713 [inline]
-  __kmalloc_track_caller+0x21/0x760 mm/slab.c:3733
-  __do_krealloc mm/slab_common.c:1468 [inline]
-  krealloc+0x65/0xb0 mm/slab_common.c:1515
-  vfs_getxattr_alloc+0x274/0x3c0 fs/xattr.c:288
-  cap_inode_getsecurity+0x104/0x820 security/commoncap.c:396
-  security_inode_getsecurity+0xe1/0x130 security/security.c:866
-  xattr_getsecurity fs/xattr.c:243 [inline]
-  vfs_getxattr+0x1db/0x390 fs/xattr.c:331
-  getxattr+0x139/0x2c0 fs/xattr.c:537
-  path_getxattr+0x103/0x1b0 fs/xattr.c:565
-  __do_sys_getxattr fs/xattr.c:577 [inline]
-  __se_sys_getxattr fs/xattr.c:574 [inline]
-  __x64_sys_getxattr+0x9d/0x100 fs/xattr.c:574
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440559
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff684abf58 EFLAGS: 00000217 ORIG_RAX: 00000000000000bf
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 0000000000440559
-RDX: 00000000200002c0 RSI: 0000000020000500 RDI: 00000000200004c0
-RBP: 64663d736e617274 R08: 00007fff684ac0d8 R09: 00007fff684ac0d8
-R10: 0000000000000143 R11: 0000000000000217 R12: 0000000000401de0
-R13: 0000000000401e70 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> > 
+> > Thanks,
+> > -Takahiro AKASHI
+> > 
+> > > > 
+> > > > Thanks,
+> > > > -Takahiro AKASHI
+> > > > 
+> > > > > 
+> > > > > > 
+> > > > > > It only affects architectures with MEMBLOCK and KEXEC_FILE: powerpc, s390 and
+> > > > > > soon arm64. s390 keeps its behaviour because it provides arch_kexec_walk_mem(),
+> > > > > > and powerpc's is copied in here as its generic 'memblock describes my memory'
+> > > > > > stuff. The implementation would be the same on arm64, so we're doing this to
+> > > > > > avoid duplicating otherwise generic arch code. I think 32bit arm should be able
+> > > > > > to use this too if it gets KEXEC_FILE support. (32bit arms' KEXEC already
+> > > > > > depends on MEMBLOCK).
+> > > > > > 
+> > > > > > 
+> > > > > > Thanks,
+> > > > > > 
+> > > > > > James
+> > > > > 
+> > > > > Thanks
+> > > > > Dave
+> > > 
+> > > Thanks
+> > > Dave
+> 
+> Thanks
+> dave
