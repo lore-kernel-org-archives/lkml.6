@@ -6,75 +6,130 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96736ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:00:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4472ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545892084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:00:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545892084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 8A7DA2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:00:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7DA2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbeGRLhn (ORCPT
+        id S1730460AbeGRLiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 07:37:43 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47299 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbeGRLhn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 07:37:43 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id AE42C80578; Wed, 18 Jul 2018 13:00:20 +0200 (CEST)
-Date:   Wed, 18 Jul 2018 13:00:16 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     hannes@cmpxchg.org, cl@linux.com, mingo@redhat.com, jweiner@fb.com,
-        efault@gmx.de, peterz@infradead.org, shakeelb@google.com,
-        surenb@google.com, tj@kernel.org, vinmenon@codeaurora.org,
-        akpm@linux-foundation.org, sfr@canb.auug.org.au,
-        kernel list <linux-kernel@vger.kernel.org>
-Subject: PSI? What is PSI?
-Message-ID: <20180718110016.GA20917@amd>
+        Wed, 18 Jul 2018 07:38:17 -0400
+Received: from foss.arm.com ([217.140.101.70]:60466 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727000AbeGRLiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 07:38:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C599380D;
+        Wed, 18 Jul 2018 04:00:53 -0700 (PDT)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 299B73F318;
+        Wed, 18 Jul 2018 04:00:52 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 12:02:50 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] pci: dwc: pci-dra7xx: Enable errata i870 for both
+ EP and RC mode
+Message-ID: <20180718110250.GA21589@red-moon>
+References: <20180627122919.23926-1-vigneshr@ti.com>
+ <20180627122919.23926-3-vigneshr@ti.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180627122919.23926-3-vigneshr@ti.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 27, 2018 at 05:59:17PM +0530, Vignesh R wrote:
+> Errata i870 is applicable in both EP and RC mode. Therefore rename
+> function dra7xx_pcie_ep_unaligned_memaccess(), that implements errata
+> workaround, to dra7xx_pcie_unaligned_memaccess() and call it from a
+> common place. So, that errata workaround is applied for both modes of
+> operation.
+> 
+> Reported-by: Chris Welch <Chris.Welch@viavisolutions.com>
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>  drivers/pci/controller/dwc/pci-dra7xx.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
+> index 345aab56ce8b..95d9076e3fde 100644
+> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
+> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
+> @@ -542,7 +542,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+>  };
+>  
+>  /*
+> - * dra7xx_pcie_ep_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
+> + * dra7xx_pcie_unaligned_memaccess: workaround for AM572x/AM571x Errata i870
+>   * @dra7xx: the dra7xx device where the workaround should be applied
+>   *
+>   * Access to the PCIe slave port that are not 32-bit aligned will result
+> @@ -552,7 +552,7 @@ static const struct of_device_id of_dra7xx_pcie_match[] = {
+>   *
+>   * To avoid this issue set PCIE_SS1_AXI2OCP_LEGACY_MODE_ENABLE to 1.
+>   */
+> -static int dra7xx_pcie_ep_unaligned_memaccess(struct device *dev)
+> +static int dra7xx_pcie_unaligned_memaccess(struct device *dev)
+>  {
+>  	int ret;
+>  	struct device_node *np = dev->of_node;
+> @@ -695,6 +695,10 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+>  	if (dra7xx->link_gen < 0 || dra7xx->link_gen > 2)
+>  		dra7xx->link_gen = 2;
+>  
+> +	ret = dra7xx_pcie_unaligned_memaccess(dev);
+> +	if (ret)
+> +		dev_err(dev, "WA for Errata i870 not appplied. Update DT\n");
 
---rwEMma7ioTxnRzrJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Vignesh,
 
-Hi!
+Nit: s/appplied/applied
 
-Ok, after reading Kconfig help I get it, but as we have
-/proc/pressure, should we perhaps have CONFIG_PRESSURE and
-Documentation/.../pressure.txt?
+Two questions:
 
-We already have too many TLAs.
+- Current code applies the unaligned_memaccess() workaround for all
+  compatible variants. This is fine for current controllers (since
+  they are all affected), the code path above will have to be
+  reworked if there is any other compatible IP re-using the driver
+  that does not require the workaround.
+- How do you want this series to go upstream ? If it goes via arm-soc,
+  which I think it should, here is my ACK on this patch:
+
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+
+Please let me know if I can drop this series from the PCI patchwork.
 
 Thanks,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Lorenzo
 
---rwEMma7ioTxnRzrJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltPHcAACgkQMOfwapXb+vIACACcC8lC9akQMcTuelp/v7xf6RJd
-f3oAn0gNrLmgrEnhoziP+vABmHTRZinn
-=Nvzw
------END PGP SIGNATURE-----
-
---rwEMma7ioTxnRzrJ--
+> +
+>  	switch (mode) {
+>  	case DW_PCIE_RC_TYPE:
+>  		if (!IS_ENABLED(CONFIG_PCI_DRA7XX_HOST)) {
+> @@ -717,10 +721,6 @@ static int __init dra7xx_pcie_probe(struct platform_device *pdev)
+>  		dra7xx_pcie_writel(dra7xx, PCIECTRL_TI_CONF_DEVICE_TYPE,
+>  				   DEVICE_TYPE_EP);
+>  
+> -		ret = dra7xx_pcie_ep_unaligned_memaccess(dev);
+> -		if (ret)
+> -			goto err_gpio;
+> -
+>  		ret = dra7xx_add_pcie_ep(dra7xx, pdev);
+>  		if (ret < 0)
+>  			goto err_gpio;
+> -- 
+> 2.18.0
+> 
