@@ -2,124 +2,98 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE12ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADD1ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C46F2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:49:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C46F2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 82BD42075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:52:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82BD42075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731429AbeGRO12 (ORCPT
+        id S1729638AbeGROaE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:27:28 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:38956 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731128AbeGRO12 (ORCPT
+        Wed, 18 Jul 2018 10:30:04 -0400
+Received: from gateway20.websitewelcome.com ([192.185.55.25]:20891 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728311AbeGROaE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:27:28 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id CF07423F11;
-        Wed, 18 Jul 2018 09:49:21 -0400 (EDT)
-Date:   Wed, 18 Jul 2018 23:49:20 +1000 (AEST)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joshua Thompson <funaho@jurai.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Meelis Roos <mroos@linux.ee>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Subject: Re: [PATCH 2/3] [v2] m68k: mac: use time64_t in RTC handling
-In-Reply-To: <CAK8P3a0OBVu-o6kFCS=gV83EcH9ba9QYGZBBhB9D8cJrf=8akA@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1807182333150.41@nippy.intranet>
-References: <20180619140229.3615110-1-arnd@arndb.de> <20180619140229.3615110-2-arnd@arndb.de> <CAMuHMdXHUwbD4ZBuQz-xYQO=QdYdPS=j=oLWBet6B7PrGEkT9Q@mail.gmail.com> <alpine.LNX.2.21.1807182201560.41@nippy.intranet>
- <CAK8P3a0OBVu-o6kFCS=gV83EcH9ba9QYGZBBhB9D8cJrf=8akA@mail.gmail.com>
+        Wed, 18 Jul 2018 10:30:04 -0400
+X-Greylist: delayed 1433 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Jul 2018 10:30:03 EDT
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id F1BF9400D2614
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:28:14 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id fmUYfYYeNPvAdfmUrfdd3W; Wed, 18 Jul 2018 08:28:14 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=43124 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ffmUY-000YKo-0q; Wed, 18 Jul 2018 08:27:42 -0500
+Date:   Wed, 18 Jul 2018 08:27:41 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Boris Pismenny <borisp@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Dave Watson <davejwatson@fb.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] tls: Fix copy-paste error in tls_device_reencrypt
+Message-ID: <20180718132741.GA9480@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1ffmUY-000YKo-0q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:43124
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Jul 2018, Arnd Bergmann wrote:
+It seems that the proper structure to use in this particular
+case is *skb_iter* instead of skb.
 
-> Hmm, apparently I forgot to update via_read_time(), that one
-> is indeed bogus and now inconsistent with the other functions.
-> 
-> The change in via_write_time() seems at least consistent wtih what we do 
-> elsewhere, and using __u32 makes this code more portable. (yes, I 
-> realize that 64-bit powermac doesn't use the VIA RTC, but it feels 
-> better to write code portably anyway).
-> 
+Addresses-Coverity-ID: 1471906 ("Copy-paste error")
+Fixes: 4799ac81e52a ("tls: Add rx inline crypto offload")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/tls/tls_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-As for portability, I think you just contradicted yourself. But I take 
-your point about consistency. So I won't object to adopting __u32.
-
-> I'd suggest we do it like below to make it consistent with the
-> rest again, using the 1904..2040 range of dates and no warning
-> for invalid dates.
-> 
-> If you agree, I'll send that as a proper patch.
-> 
-
-Geert may instead wish to fixup or revert the patch he has committed 
-already...
-
->        Arnd
-> 
-> diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
-> index bf8df47a6d09..8335509969f1 100644
-> --- a/arch/m68k/mac/misc.c
-> +++ b/arch/m68k/mac/misc.c
-> @@ -255,12 +255,13 @@ static void via_write_pram(int offset, __u8 data)
->   * is basically any machine with Mac II-style ADB.
->   */
-> 
-> -static long via_read_time(void)
-> +static time64_t via_read_time(void)
->  {
->         union {
->                 __u8 cdata[4];
-> -               long idata;
-> +               __u32 idata;
->         } result, last_result;
-> +       time64_t ret;
-
-ret isn't used.
-
->         int count = 1;
-> 
->         via_pram_command(0x81, &last_result.cdata[3]);
-> @@ -279,12 +280,8 @@ static long via_read_time(void)
->                 via_pram_command(0x89, &result.cdata[1]);
->                 via_pram_command(0x8D, &result.cdata[0]);
-> 
-> -               if (result.idata == last_result.idata) {
-> -                       if (result.idata < RTC_OFFSET)
-> -                               result.idata += 0x100000000ull;
-> -
-> -                       return result.idata - RTC_OFFSET;
-> -               }
-> +               if (result.idata == last_result.idata)
-> +                       return (time64_t(result.idata) - RTC_OFFSET);
-> 
-
-Did you mean to write,
-
-			return (time64_t)result.idata - RTC_OFFSET;
-
-?
-
+diff --git a/net/tls/tls_device.c b/net/tls/tls_device.c
+index 4995d84..1e968d2 100644
+--- a/net/tls/tls_device.c
++++ b/net/tls/tls_device.c
+@@ -615,7 +615,7 @@ static int tls_device_reencrypt(struct sock *sk, struct sk_buff *skb)
+ 			     TLS_CIPHER_AES_GCM_128_TAG_SIZE);
+ 
+ 		if (skb_iter->decrypted)
+-			skb_store_bits(skb, offset, buf, copy);
++			skb_store_bits(skb_iter, offset, buf, copy);
+ 
+ 		offset += copy;
+ 		buf += copy;
 -- 
+2.7.4
+
