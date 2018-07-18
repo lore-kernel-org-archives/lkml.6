@@ -2,176 +2,99 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 694EAECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDEDECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1735C2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67BB22084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:50:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="ZqtWZwwL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1735C2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=megous.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="am6/9YBl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67BB22084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730511AbeGRX0x (ORCPT
+        id S1729230AbeGRXaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 19:26:53 -0400
-Received: from vps.xff.cz ([195.181.215.36]:46866 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727009AbeGRX0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:26:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1531954006; bh=KwbBMOuo6vvvJBoFh/oOb+5t+HNefZoyoCZ0+BvnO7Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZqtWZwwLYNZnBqMfhFiyOcCG1dv4hO2WY9iTtZlFMhAXxxdIGcmdNQlTItuqepmM0
-         faZGgjwJ//iJYcNgBueTtyrg8Zc3L8J8l7aGdj2YP1JC5rfY7QQjfzVwTcUPjX7i36
-         JzgDtaTD9hoXB/2m/a6O/yKGwvMxT1aoUzHhw0yA=
-Date:   Thu, 19 Jul 2018 00:46:45 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, maxime.ripard@bootlin.com, wens@csie.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/3] Input: edt-ft5x06 - Add support for regulator
-Message-ID: <20180718224645.ns7nvqxvqc6huxcz@core>
-Mail-Followup-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>,
-        dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, linux-input@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180718182719.29663-1-mylene.josserand@bootlin.com>
- <20180718182719.29663-2-mylene.josserand@bootlin.com>
+        Wed, 18 Jul 2018 19:30:21 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41508 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeGRXaV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 19:30:21 -0400
+Received: by mail-oi0-f65.google.com with SMTP id k12-v6so11918249oiw.8;
+        Wed, 18 Jul 2018 15:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=0fmy0ROpeCXqpWRgQ0ZOx2DRBArL+edgsAjbl6KBbGc=;
+        b=am6/9YBlVG/lGwCiT/N8qu3LuVesbaQhq0aic9EqbyHKhMHK85/2RUEC8GTq5dHZ/f
+         J7tbcvwvPbSLdCxWAA0d8lTlQbtajDwoVTfKGoq6a0anfV3lg9rIqMIi208pQKOYc79X
+         e4cOQCWy+652zhav5re8Ckko7GXv1te4ObCCsWC8lpnWrczSRT5MTYLKypXBr5RMcZTq
+         5huiY8082HP+cvbz9XdxdoB1xJOAgz9M03cXYk1bC37ch8EZbGXwTvkNrrWZDljw2VVu
+         Mptd/XUh2dxywSvNLzS/sIIzqjBFSPvSACYUcS1I3jGkt59PbF/l44K0OuUafdPGH815
+         V4JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=0fmy0ROpeCXqpWRgQ0ZOx2DRBArL+edgsAjbl6KBbGc=;
+        b=eaSFibgqAfuTDdyG9i4TP2j/r+OEDw8pUJivmcA/97VU4uXBT1YG/FVLonGxEjRKVX
+         AHCGeAPeJeFERrcagz7gcY/gQAXdY6Wp5Xvfshmh7ddA0vlaxcro353cJQrNa78lenwt
+         wf9WWv3VpEE9v4+2ygYuchHmULzjDrxKoZDthZeMMUr2b5FASzwJ+A94sfOXVrQuTi/D
+         DdXsZ+/Cxt4zKNunh2xtg4NJ9fOvHCSw88Qu/TuDlz8vG5U4Uk+y8ejdB6f22dcn81lM
+         spk869g6fqS+f333V48SsvuJwmKnRqlvJnTy2/yjmVf/2tlCSGuFtf3Oi5S06PEb9mKi
+         v+NA==
+X-Gm-Message-State: AOUpUlGsYkEdF3navrDJJTvn8DG1L4YlFehq5e0XrAAHNqsucdXID8F2
+        M0fREolgPA8TboT2DnDtvcjN6MNqmyLiIk1H3cg=
+X-Google-Smtp-Source: AAOMgpdkoGv6KREnjwEOXt5eBbf7qlRIO2zDapcqqxkBcY2heAEqP10cy4D04LK1fwgaCT5mCAAb5N/AoyQUI92o/Co=
+X-Received: by 2002:aca:4886:: with SMTP id v128-v6mr9055505oia.69.1531954216331;
+ Wed, 18 Jul 2018 15:50:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180718182719.29663-2-mylene.josserand@bootlin.com>
-If-You-Cant-Reach-Me-Try: <https://megous.com/mail-form>
+Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 15:50:15
+ -0700 (PDT)
+In-Reply-To: <20180717040651.641-1-andrew.smirnov@gmail.com>
+References: <20180717040651.641-1-andrew.smirnov@gmail.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 18 Jul 2018 19:50:15 -0300
+Message-ID: <CAOMZO5Dp5aTZF0drkD+QSRyX6qGxAe0yeYGUS8-v=FtJwA7=SA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: vf610: Add ZII SSMB SPU3 board
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Mylène,
+Hi Andrey,
 
-On Wed, Jul 18, 2018 at 08:27:17PM +0200, Mylène Josserand wrote:
-> Add the support of regulator to use it as VCC source.
-> 
-> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
-> ---
->  .../bindings/input/touchscreen/edt-ft5x06.txt      |  1 +
->  drivers/input/touchscreen/edt-ft5x06.c             | 29 ++++++++++++++++++++++
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> index 025cf8c9324a..48e975b9c1aa 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.txt
-> @@ -30,6 +30,7 @@ Required properties:
->  Optional properties:
->   - reset-gpios: GPIO specification for the RESET input
->   - wake-gpios:  GPIO specification for the WAKE input
-> + - vcc-supply:  Regulator that supplies the touchscreen
->  
->   - pinctrl-names: should be "default"
->   - pinctrl-0:   a phandle pointing to the pin settings for the
-> diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
-> index 1e18ca0d1b4e..aa94494b06b5 100644
-> --- a/drivers/input/touchscreen/edt-ft5x06.c
-> +++ b/drivers/input/touchscreen/edt-ft5x06.c
-> @@ -39,6 +39,7 @@
->  #include <linux/input/mt.h>
->  #include <linux/input/touchscreen.h>
->  #include <linux/of_device.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #define WORK_REGISTER_THRESHOLD		0x00
->  #define WORK_REGISTER_REPORT_RATE	0x08
-> @@ -91,6 +92,7 @@ struct edt_ft5x06_ts_data {
->  	struct touchscreen_properties prop;
->  	u16 num_x;
->  	u16 num_y;
-> +	struct regulator *vcc;
->  
->  	struct gpio_desc *reset_gpio;
->  	struct gpio_desc *wake_gpio;
-> @@ -991,6 +993,22 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
->  
->  	tsdata->max_support_points = chip_data->max_support_points;
->  
-> +	tsdata->vcc = devm_regulator_get(&client->dev, "vcc");
-> +	if (IS_ERR(tsdata->vcc)) {
-> +		error = PTR_ERR(tsdata->vcc);
-> +		if (error != -EPROBE_DEFER)
-> +			dev_err(&client->dev, "failed to request regulator: %d\n",
-> +				error);
-> +		return error;
-> +	}
+On Tue, Jul 17, 2018 at 1:06 AM, Andrey Smirnov
+<andrew.smirnov@gmail.com> wrote:
+
+> +/dts-v1/;
+> +#include "vf610.dtsi"
 > +
-> +	error = regulator_enable(tsdata->vcc);
-> +	if (error < 0) {
-> +		dev_err(&client->dev, "failed to enable vcc: %d\n",
-> +			error);
-> +		return error;
-> +	}
-> +
->  	tsdata->reset_gpio = devm_gpiod_get_optional(&client->dev,
->  						     "reset", GPIOD_OUT_HIGH);
->  	if (IS_ERR(tsdata->reset_gpio)) {
-> @@ -1120,20 +1138,31 @@ static int edt_ft5x06_ts_remove(struct i2c_client *client)
->  static int __maybe_unused edt_ft5x06_ts_suspend(struct device *dev)
->  {
->  	struct i2c_client *client = to_i2c_client(dev);
-> +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
->  
->  	if (device_may_wakeup(dev))
->  		enable_irq_wake(client->irq);
->  
-> +	regulator_disable(tsdata->vcc);
-> +
+> +/ {
+> +       model = "ZII VF610 SSMB SPU3 Board";
+> +       compatible = "zii,vf610spu3", "zii,vf610dev", "fsl,vf610";
 
-How will the touchscreen wakeup the system with interrupt if you power it off
-on suspend? Perhaps guard this with device_may_wakeup() too? 
+Looks good to me.
 
->  	return 0;
->  }
->  
->  static int __maybe_unused edt_ft5x06_ts_resume(struct device *dev)
->  {
->  	struct i2c_client *client = to_i2c_client(dev);
-> +	struct edt_ft5x06_ts_data *tsdata = i2c_get_clientdata(client);
-> +	int ret;
->  
->  	if (device_may_wakeup(dev))
->  		disable_irq_wake(client->irq);
->  
-> +	ret = regulator_enable(tsdata->vcc);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to enable vcc: %d\n", ret);
-> +		return ret;
-> +	}
-> +
+Just a minor comment: Is " "zii,vf610dev" really needed here?
 
-Ditto.
+Anyway:
 
-Regards,
-  o.
-
->  	return 0;
->  }
->  
-> -- 
-> 2.11.0
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
