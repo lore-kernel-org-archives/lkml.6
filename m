@@ -2,207 +2,133 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11009ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9353ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA5A2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:02:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA5A2075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 9B3FE2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:04:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JNgBs3Jo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3FE2075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbeGROka (ORCPT
+        id S1730469AbeGROma (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:40:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42916 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728311AbeGROk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:40:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 68E74AE9A;
-        Wed, 18 Jul 2018 14:02:19 +0000 (UTC)
-Subject: Re: [PATCH v3 1/3] lib: add crc64 calculation routines
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-        linux-block@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Lyle <mlyle@lyle.org>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180717145525.50852-1-colyli@suse.de>
- <20180717145525.50852-2-colyli@suse.de> <20180717163116.GA75957@gmail.com>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
- xsFNBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
- qvZ2YWpidPjaIxHwu3u9tmLKqS+2vnP0k7PRHXBYbtZEMpy3kCzseNfdrNqwJ54A430BHf2S
- GMVRVENiScsnh4SnaYjFVvB8SrlhTsgVEXEBBma5Ktgq9YSoy5miatWmZvHLFTQgFMabCz/P
- j5/xzykrF6yHo0rHZtwzQzF8rriOplAFCECp/t05+OeHHxjSqSI0P/G79Ll+AJYLRRm9til/
- K6yz/1hX5xMToIkYrshDJDrUc8DjEpISQQPhG19PzaUf3vFpmnSVYprcWfJWsa2wZyyjRFkf
- J51S82WfclafNC6N7eRXedpRpG6udUAYOA1YdtlyQRZa84EJvMzW96iSL1Gf+ZGtRuM3k49H
- 1wiWOjlANiJYSIWyzJjxAd/7Xtiy/s3PRKL9u9y25ftMLFa1IljiDG+mdY7LyAGfvdtIkanr
- iBpX4gWXd7lNQFLDJMfShfu+CTMCdRzCAQ9hIHPmBeZDJxKq721CyBiGAhRxDN+TYiaG/UWT
- 7IB7LL4zJrIe/xQ8HhRO+2NvT89o0LxEFKBGg39yjTMIrjbl2ZxY488+56UV4FclubrG+t16
- r2KrandM7P5RjR+cuHhkKseim50Qsw0B+Eu33Hjry7YCihmGswARAQABzRhDb2x5IExpIDxj
- b2x5bGlAc3VzZS5kZT7CwX8EEwEIACkFAlYX6ZACGyMFCQlmAYAHCwkIBwMCAQYVCAIJCgsE
- FgIDAQIeAQIXgAAKCRDHOQeTa334/CncD/9B97EIjcDOm0TS164bpMlsbZWEm8GQnV6nVzm8
- QsywPRM8S8nqkqX1atTYl/fTdJsasH8mgryUqL0eHBPs5RmJhDk3YgYsTrzbOjMdsdRwv24W
- J5RXdulRag2XDPIhSP7rWsOSh66gljdAp8XQQZD0zFXi4IytoAuLtx8RMjzzKk1iP6uz8MIv
- em7iFu6NYcHd3cmvSPo7CnBVaG0dZ6P2p2gS7ydSWOGsWkNh/XM4ojJaX1ZdCeFR0XLS76Gi
- 6e01DoN2UsqZE/TQu1czYMMA1uM/Es6ZTYgobTrrnNB79ctqgtbBrjME5sOHLX40ccbBI3QB
- Ta4opSp8VqUMXw/yd5ckLPocnkJBTVxuaOfRhpxr6gWeudrkMetMj+39yeklskP7up0JvAUG
- 7/HjjqwWR7xAaZHmZORYsIxJ9ploBb8eSqHHx+7489ZDNLP+WCsAonpKTdJNAzGJClnLFxKS
- DY4cOPs7o4IFBk6dVXJWMqyLGwmMQ51Pq6BID4epaAuuBAL6x7n7NrFPuS68Fn/VaxqMEld9
- L2eCi4cv++1AJyMF3iQKT56I8BjHEuf0wo1tmZ3BgBT19xRsEl7YItixxtYQm66Pb4lSQQmE
- Ep+uQNwaqPpeAU+vkDg/0Q+dhPTsvwx0OAI30HwhuzNA8OIfHBx7dJNm0b0fg5x0pg3LDM7B
- TQRWF+kvARAA2T/tnJeA0RWkmgZrNPFvP7JnOU9gjmIQKMoGZ+9awew45pdmXb6y0Y0fEG59
- EP9i9oBlFXOt6SZ2645V0sdi3wBRNEpX2CCddWhXRfcO0b6lgckIwyaK92dH1rzxMaZTYDL8
- aQ9FNEK1U+XSBk8fYWnXowpf7oNPS6+jD0J/muPqrGkVsIAkh2iLg5B98yNTCV4ql1xSlMyf
- xcseke9q6ojDxx9p38JjLusDlwF2+/rF42c+T6PRiYNjnBHPq6VLSlCRsnkLJwg8VHKiV2Qw
- Yvxp4TwnK2kLqokOxBlriX45Odb2iP61uG2ZAPchDwfawWJ4G8+3EMplLH8bk0/DkpYcYz95
- eGSGRSiIQ2kHmTI/KbpgXxFVMoheilUn4HzUP+T6TEeP6Zhm0aqwABJYa0T2ykJwpBlg6/Mx
- vgIzdSheqx2hYACDu07WfhdvI6uK3i5Lq9DebUBcMMBcMc0TnXix7mYy+3hLXJzZ80pFx3My
- 5FeJEN/r6/+xpuuZkH51aYOiacKVa2w2EHjhZcWfPhhEWOQ2oOCoCmv+HEmV9sf+fipEMfcB
- 8GnJMOYAwrwHWfkPNZ5urUcRGAQYlQ0GWKju97LYE2cq5McpFG0CMvDyPoO1zAwjJz4g53EK
- oH/eikd3L8OMDfEK4AOsUaPMTnNgt1+40zEFMrQs/dDMldUAEQEAAcLBZQQYAQgADwUCVhfp
- LwIbDAUJCWYBgAAKCRDHOQeTa334/PtREACDN8W/pHeHyPW/mTt6MEe/GICG5YdlBW5ft7HY
- Cf6rTz+uLZolGc5SYKuJJ0JC/L2Ifh3BWmwLIOxV868KB3oEfmGszBY+4n/icLyIEAkkthBb
- 2V5sP5KgB3bOg7mSFBxfHi2pyO9K9d+Lr+UkORjCGyV33QFrcN+OQdPDactontnQglB7xm2K
- phGWqxoqepHCqFIulZ3yKGhQhmdpyz0J19Ry6GkxPE85MG/NC98D5+4Yn/V3G+yZpbGsuFhE
- CP26JvdXh1jNCUdU46pEjZwu0GXBIo6r1cb1v+swfYB86NeFUHWtvxamh8i6RBl1FLDhN6xb
- r9f7M++xoADyzPQYQPQUxWK+iG6lz3qVVq5312z/is3fcdyESPNs09DMT43xCCBr9UOMq6dZ
- IC9EsSeMYv4librfuSRqH4R0MuVbVWLJFg/Q7s+nbPb2YjhqIYr51hBDyXpzUDoIz43maIPk
- UmCNKa43mNFktMrwU21J5lVXEwBuTY6JlHOAl0Fgo28X+eTa8fx2Uiz9OVgWe03ebJGIGowe
- XTgqVWJMsKM1tmW+QFmgtczDGRYCZ6OQYpqt0SoTg1yx5MN4RzUtlLka2qLfPiOGUUN3qNJ5
- nP+spvF+s+dHtLjjhy7AL86N01a6S0rwaClVVv0XTucvIntwccIx0CZfUKlfn5BWnB64Ig==
-Message-ID: <e760af24-5607-3bf7-1ed9-fdf81049ec3c@suse.de>
-Date:   Wed, 18 Jul 2018 22:02:09 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 18 Jul 2018 10:42:30 -0400
+Received: from ozlabs.org ([203.11.71.1]:57955 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729333AbeGROm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 10:42:29 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41VzR93FGCz9s3R;
+        Thu, 19 Jul 2018 00:04:21 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531922662;
+        bh=MT9rxquOWO11cXCXLjsvRdA/uMC+h/zuLc3ZO2aEhK4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JNgBs3JokrMeGxxYOeFIdgbekgkKkak460vdcyUXRTxqK6semPoSv4NrheciFQ4Ui
+         jH2cnUhnkamQxOODvZDUVi2qLuwOfesTpgOAAU9nR/fu20SQyLUlT8obtfcZg6hPg8
+         He+zDAClSaaJkoeJu+gsZlIK5mEh4X5WCuLLpIL9W71zwePa3/0JTk9E6PfMMaEpUV
+         ggt12hp/xZL/hdk1p22u/dVXBNd8kGOWAuMIod8xAPghE0gjQxl5hmoNUxgQkN26WQ
+         fhr8h9758dK8ZT/uhYMnlpN8UPMs5vxm5I9UEfCo5lO3idw/BNH9/y/MHJNndfm9da
+         fn1V8q69smw0w==
+Date:   Thu, 19 Jul 2018 00:04:20 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        v9fs-developer@lists.sourceforge.net, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v9fs] Pull request for linux-next
+Message-ID: <20180719000420.537d0290@canb.auug.org.au>
+In-Reply-To: <20180718062920.GA7302@nautica>
+References: <20180718062920.GA7302@nautica>
 MIME-Version: 1.0
-In-Reply-To: <20180717163116.GA75957@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/P6Jf1csb1wfrjc.A8nycrxN"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/18 12:31 AM, Eric Biggers wrote:
-> Hi Coly,
-> 
-> On Tue, Jul 17, 2018 at 10:55:23PM +0800, Coly Li wrote:
->> This patch adds the re-write crc64 calculation routines for Linux kernel.
->> The CRC64 polynomical arithmetic follows ECMA-182 specification, inspired
->> by CRC paper of Dr. Ross N. Williams
->> (see http://www.ross.net/crc/download/crc_v3.txt) and other public domain
->> implementations.
-> 
-> Please also mention who is planned to use this CRC-64 code.  Again, if it's just
-> one user then there's no need for this patchset yet.  If bcachefs is planned to
-> be another user (separate from bcache) then you need to say so.
-> 
->>
->> All the changes work in this way,
->> - When Linux kernel is built, host program lib/gen_crc64table.c will be
->>   compiled to lib/gen_crc64table and executed.
->> - The output of gen_crc64table execution is an array called as lookup
->>   table (a.k.a POLY 0x42f0e1eba9ea369) which contain 256 64bits-long
->>   numbers, this talbe is dumped into header file lib/crc64table.h.
->> - Then the header file is included by lib/crc64.c for normal 64bit crc
->>   calculation.
->> - Function declaration of the crc64 calculation routines is placed in
->>   include/linux/crc64.h
->>
->> Changelog:
->> v3: More fixes for review comments of v2
->>     By review comments from Eric Biggers, current functions naming with
->>     'le' is misleading. Remove 'le' from the crc function names, and use
->>     u64 to replace __le64 in parameters and return values. 
->> v2: Fix reivew comments of v1
->> v1: Initial version.
->>
->> Signed-off-by: Coly Li <colyli@suse.de>
->> Co-developed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Reviewed-by: Hannes Reinecke <hare@suse.de>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
->> Cc: Michael Lyle <mlyle@lyle.org>
->> Cc: Kent Overstreet <kent.overstreet@gmail.com>
->> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Kate Stewart <kstewart@linuxfoundation.org>
->> Cc: Eric Biggers <ebiggers3@gmail.com>
->> ---
->>  include/linux/crc64.h | 13 ++++++++
->>  lib/.gitignore        |  2 ++
->>  lib/Kconfig           |  8 +++++
->>  lib/Makefile          | 11 +++++++
->>  lib/crc64.c           | 71 +++++++++++++++++++++++++++++++++++++++++++
->>  lib/gen_crc64table.c  | 69 +++++++++++++++++++++++++++++++++++++++++
->>  6 files changed, 174 insertions(+)
->>  create mode 100644 include/linux/crc64.h
->>  create mode 100644 lib/crc64.c
->>  create mode 100644 lib/gen_crc64table.c
->>
->> diff --git a/include/linux/crc64.h b/include/linux/crc64.h
->> new file mode 100644
->> index 000000000000..3e87b61cd54f
->> --- /dev/null
->> +++ b/include/linux/crc64.h
->> @@ -0,0 +1,13 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * See lib/crc64.c for the related specification and polynomical arithmetic.
->> + */
->> +#ifndef _LINUX_CRC64_H
->> +#define _LINUX_CRC64_H
->> +
->> +#include <linux/types.h>
->> +
->> +u64 __pure crc64_update(u64 crc, const void *_p, size_t len);
->> +u64 __pure crc64(const void *p, size_t len);
->> +u64 __pure crc64_bch(const void *p, size_t len);
->> +#endif /* _LINUX_CRC64_H */
-> 
-> I still think you should make the API consistent with lib/crc32.c by replacing
-> the three functions with just:
-> 
-> 	u64 __pure crc64_be(u64 crc, const void *p, size_t len);
-> 
-> Your API maps to it as follows:
-> 
-> 	crc64_update(crc, p, len) == crc64_be(crc, p, len)
-> 	crc64(p, len)             == crc64_be(0, p, len)
-> 	crc64_bch(p, len)         == ~crc64_be(~0, p, len)
-> 
-> The "_be" suffix clarifies that it's not using the bit-reversed convention.  We
-> don't want to have to rename everything when someone needs to do CRC-64 using
-> the other convention.  The CRC-64 in the .xz file format, for example, uses the
-> bit-reversed convention.
-> 
-> The other problem with your API (besides it being inconsistent with lib/crc32.c)
-> is that as soon as the caller needs to do something nontrivial, like passing the
-> data in multiple chunks or using different conventions for the initial and final
-> values, then they actually have to use only "crc64_update()" anyway, which is
-> confusing as it makes it sound like there should be a "crc64_init()" and
-> "crc64_final()" to go along with "crc64_update()".
-> 
-> Also, naming CRC conventions after a specific user ("bch") isn't appropriate.
+--Sig_/P6Jf1csb1wfrjc.A8nycrxN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Agree. I will only keep crc64_be() in lib/crc64.c, and move the rested
-back to bcache code with proper names. The change will be in v4 series.
+Hi Dominique,
 
-Thanks.
+On Wed, 18 Jul 2018 08:29:20 +0200 Dominique Martinet <asmadeus@codewreck.o=
+rg> wrote:
+>
+> I'd like to request that you add the following tree to linux-next:
+>=20
+>   git://github.com/martinetd/linux 9p-next
+>=20
+> 9p has seen some renewal of interest recently and I'd like to help take
+> a bit of the burden off Andrew, who suggested getting this included in
+> linux-next here[1].
+>=20
+> This branch contains 9p filesystem & network patches that I have
+> gathered recently after they have been reviewed, and will keep pushing
+> patches there.
+>=20
+>=20
+> I've tried to respect the rules I've found, but please tell me if I
+> missed anything:
+>  - all patches have the author's Signed-off-by tag,
+>  - been posted to the v9fs and linux-kernel lists,
+>  - have been reviewed,
+>  - have been tested (*cough* a bit, I need to improve the process),
+>  - and are destined to the 4.19 merge window
+>=20
+>=20
+> [1] https://sourceforge.net/p/v9fs/mailman/message/36370423/
 
-Coly Li
+All looks good to me. Added from (later) today.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/P6Jf1csb1wfrjc.A8nycrxN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltPSOQACgkQAVBC80lX
+0GzqqQf8CkiIwMUAOopeK+yJvl0XW0HlvBrqk0rEIpDIlH2JrExqYKbHaD5kr1yo
+mIigZ9BScNG0aRMw4zj6epFfnilCZaecShmtcBDvbTEja76yp48fVzUEnjlmzvQS
+fKwOywCwts7/VKaH6XeH3Lzh2Gvuq6Xbb+8XJd+/4M3A2UGN/kIMIpna2+rl85nu
+k1eTKfvrA1o0P2E87ee1htUoFKJE6FwJukfpXZU+7NDl0li1lmcw0VbrL+hIc4XG
+KSYYb3CCWXvQgDtN4jHX8Mh8IJAr89nDAjeHi+T98sJVyRDCoRmB21ELQM9VM/nh
+t1Q9uiQvw1ETJQ+SRXWAyWDt4l23Hw==
+=KgqM
+-----END PGP SIGNATURE-----
+
+--Sig_/P6Jf1csb1wfrjc.A8nycrxN--
