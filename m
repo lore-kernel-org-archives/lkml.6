@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 219A2ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C49ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D29B720850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9FAE2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="XU8rkkF8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D29B720850
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="qfqxZP6Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9FAE2084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730862AbeGRTAE (ORCPT
+        id S1731001AbeGRTAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:00:04 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:42310 "EHLO
+        Wed, 18 Jul 2018 15:00:07 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:43014 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730279AbeGRTAD (ORCPT
+        with ESMTP id S1730279AbeGRTAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:00:03 -0400
+        Wed, 18 Jul 2018 15:00:06 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -37,12 +37,12 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         Paul Cercueil <paul@crapouillou.net>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org
-Subject: [PATCH v2 10/17] dmaengine: dma-jz4780: Add missing residue DTC mask
-Date:   Wed, 18 Jul 2018 20:20:16 +0200
-Message-Id: <20180718182023.8182-11-paul@crapouillou.net>
+Subject: [PATCH v2 12/17] dmaengine: dma-jz4780: Set DTCn register explicitly
+Date:   Wed, 18 Jul 2018 20:20:18 +0200
+Message-Id: <20180718182023.8182-13-paul@crapouillou.net>
 In-Reply-To: <20180718182023.8182-1-paul@crapouillou.net>
 References: <20180718182023.8182-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938056; bh=SACEdm727cXCr3e38elj5C305w3s4RWfi53FGTR6fSc=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=XU8rkkF8Ew4+1mc3GKxp+SxR4Vu4IW9rnZye8hey9UcQIru7TzJUEybukNGW9cPw3teZRiqbywMqtDAUQ7k68OF/FeItbecJ02JqAm/T8pUCZk6pEedJUJ+saEHm18DpNu+hfwGEDowZhtUHlt/Zvq0/wEnYC39AJYBkPY3AGhI=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938058; bh=jFX5EDK+g+3dPbj76T77dswfQ2u0wskPmtmghK9zTmg=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=qfqxZP6QsJ38+Dy1pdXWb09uUXWk1vanWmRorUUIcUMxaOML8zHC1WrEYy5GvRrtXYZZMdbZCPGtaKRIGbwNDH1XGFPJOxlKRSHbelal6BPBUrFYh5s4agkdIGkJ1V2q9wrJCO4OpG6iiEuAXgmd5x6Oi5Y+zOCaNoyFhoxUEV8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,34 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Daniel Silsby <dansilsby@gmail.com>
 
-The 'dtc' word in jz DMA descriptors contains two fields: The
-lowest 24 bits are the transfer count, and upper 8 bits are the DOA
-offset to next descriptor. The upper 8 bits are now correctly masked
-off when computing residue in jz4780_dma_desc_residue(). Note that
-reads of the DTCn hardware reg are automatically masked this way.
+Normally, we wouldn't set the channel transfer count register directly
+when using descriptor-driven transfers. However, there is no harm in
+doing so, and it allows jz4780_dma_desc_residue() to report the correct
+residue of an ongoing transfer, no matter when it is called.
 
 Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 ---
- drivers/dma/dma-jz4780.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/dma/dma-jz4780.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
  v2: No change
 
 diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 3c9d3952e23a..fa926de082ba 100644
+index cc2a86844db4..78849131c81d 100644
 --- a/drivers/dma/dma-jz4780.c
 +++ b/drivers/dma/dma-jz4780.c
-@@ -614,7 +614,8 @@ static size_t jz4780_dma_desc_residue(struct jz4780_dma_chan *jzchan,
- 	residue = 0;
+@@ -530,6 +530,15 @@ static void jz4780_dma_begin(struct jz4780_dma_chan *jzchan)
+ 	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DRT,
+ 			      jzchan->transfer_type);
  
- 	for (i = next_sg; i < desc->count; i++)
--		residue += desc->desc[i].dtc << jzchan->transfer_shift;
-+		residue += (desc->desc[i].dtc & 0xffffff) <<
-+			jzchan->transfer_shift;
- 
- 	if (next_sg != 0) {
- 		count = jz4780_dma_chn_readl(jzdma, jzchan->id,
++	/*
++	 * Set the transfer count. This is redundant for a descriptor-driven
++	 * transfer. However, there can be a delay between the transfer start
++	 * time and when DTCn reg contains the new transfer count. Setting
++	 * it explicitly ensures residue is computed correctly at all times.
++	 */
++	jz4780_dma_chn_writel(jzdma, jzchan->id, JZ_DMA_REG_DTC,
++				jzchan->desc->desc[jzchan->curr_hwdesc].dtc);
++
+ 	/* Write descriptor address and initiate descriptor fetch. */
+ 	desc_phys = jzchan->desc->desc_phys +
+ 		    (jzchan->curr_hwdesc * sizeof(*jzchan->desc->desc));
 -- 
 2.11.0
 
