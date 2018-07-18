@@ -2,194 +2,75 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB9EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D93FFECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE542075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:11:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE542075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 91EA020850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:13:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91EA020850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730521AbeGRNtq (ORCPT
+        id S1730882AbeGRNv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:49:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46048 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726258AbeGRNtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:49:46 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C0DBC400E9BA;
-        Wed, 18 Jul 2018 13:11:52 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 864B92026D69;
-        Wed, 18 Jul 2018 13:11:52 +0000 (UTC)
-Date:   Wed, 18 Jul 2018 09:11:52 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        Milan Broz <gmazyland@gmail.com>
-Cc:     agk@redhat.com, herbert@gondor.apana.org.au, dm-devel@redhat.com,
-        broonie@kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        jonathan.cameron@huawei.com
-Subject: Re: [PATCH 4/5] crypto: Add IV generation templates
-Message-ID: <20180718131152.GA25685@redhat.com>
-References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
- <1531899055-29362-5-git-send-email-wangxiongfeng2@huawei.com>
- <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 13:11:52 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 13:11:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+        Wed, 18 Jul 2018 09:51:26 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:47708 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726181AbeGRNv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 09:51:26 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C7E91A002D;
+        Wed, 18 Jul 2018 15:13:32 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 50E111A0012;
+        Wed, 18 Jul 2018 15:13:32 +0200 (CEST)
+Received: from fsr-ub1464-019.ea.freescale.net (fsr-ub1464-019.ea.freescale.net [10.171.81.207])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 76BA5205E1;
+        Wed, 18 Jul 2018 15:13:31 +0200 (CEST)
+From:   Camelia Groza <camelia.groza@nxp.com>
+To:     andrew@lunn.ch, f.fainelli@gmail.com, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Camelia Groza <camelia.groza@nxp.com>
+Subject: [PATCH] net: phy: use generic clause 45 autonegotiation done
+Date:   Wed, 18 Jul 2018 16:12:15 +0300
+Message-Id: <1531919535-20269-1-git-send-email-camelia.groza@nxp.com>
+X-Mailer: git-send-email 1.9.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18 2018 at  4:16am -0400,
-Milan Broz <gmazyland@gmail.com> wrote:
+Only Clause 22 PHYs can use genphy_aneg_done(). Use
+genphy_c45_aneg_done() for PHYs that implement Clause 45 without
+the Clause 22 register set.
 
-> On 18/07/18 09:30, Xiongfeng Wang wrote:
-> > Currently, the IV generation algorithms are implemented in dm-crypt.c.
-> > This patch implement these algorithms as template ciphers, so that
-> > dm-crypt layer can be simplified, and also these algorithms can be
-> > implemented in hardware for performance.
-> > 
-> > Synchronous crypto requests to encrypt/decrypt a sector are processed
-> > sequentially. Asynchronous requests if processed in paralled, are freed
-> > in the async callback.
-> 
-> So we are here again and moving INTERNAL dm-crypt functionality into
-> cryptoapi.
-> 
-> The TCW,LMK  IVs generator make sense only for dm-crypt 
-> for compatible old disk encryption mappings.
-> 
-> I strongly disagree to move this outside of dm-crypt.
-> 
-> Sorry, the last discussion was that it remains inside dm-crypt
-> and it will be only registered through crypto API.
-> 
-> And this for all files:
-> 
-> > + * Copyright (C) 2018, Linaro
-> 
-> It is NOT YOUR code! Please keep copyright and authors as in dm-crypt.
-> 
-> Milan
-> 
-> > 
-> > Interface to the crypto layer - include/crypto/geniv.h
-> > 
-> > This patch is based on the patchset originally started by
-> > Binoy Jayan <binoy.jayan@linaro.org>
-> > ( crypto: Add IV generation algorithms
-> > https://patchwork.kernel.org/patch/9803469/ )
-> > 
-> > Signed-off-by: Binoy Jayan <binoy.jayan@linaro.org>
-> > Signed-off-by: Xiongfeng Wang <wangxiongfeng2@linaro.org>
-> > ---
-> >  crypto/Kconfig         |    7 +
-> >  crypto/Makefile        |    1 +
-> >  crypto/geniv.c         | 2240 ++++++++++++++++++++++++++++++++++++++++++++++++
-> >  include/crypto/geniv.h |   47 +
-> >  4 files changed, 2295 insertions(+)
-> >  create mode 100644 crypto/geniv.c
-> >  create mode 100644 include/crypto/geniv.h
-> > 
-> > diff --git a/crypto/Kconfig b/crypto/Kconfig
-> > index f3e40ac..98f025a 100644
-> > --- a/crypto/Kconfig
-> > +++ b/crypto/Kconfig
-> > @@ -257,6 +257,13 @@ config CRYPTO_GLUE_HELPER_X86
-> >  config CRYPTO_ENGINE
-> >  	tristate
-> >  
-> > +config CRYPTO_GENIV
-> > +	tristate "IV Generator Template"
-> > +	select CRYPTO_AEAD
-> > +	select CRYPTO_BLKCIPHER
-> > +	help
-> > +	  Support for IV generator template, so that dm-crypt can rely on it.
-> > +
-> >  comment "Authenticated Encryption with Associated Data"
-> >  
-> >  config CRYPTO_CCM
-> > diff --git a/crypto/Makefile b/crypto/Makefile
-> > index 6d1d40e..1077d2f 100644
-> > --- a/crypto/Makefile
-> > +++ b/crypto/Makefile
-> > @@ -23,6 +23,7 @@ crypto_blkcipher-y += skcipher.o
-> >  obj-$(CONFIG_CRYPTO_BLKCIPHER2) += crypto_blkcipher.o
-> >  obj-$(CONFIG_CRYPTO_SEQIV) += seqiv.o
-> >  obj-$(CONFIG_CRYPTO_ECHAINIV) += echainiv.o
-> > +obj-$(CONFIG_CRYPTO_GENIV) += geniv.o
-> >  
-> >  crypto_hash-y += ahash.o
-> >  crypto_hash-y += shash.o
-> > diff --git a/crypto/geniv.c b/crypto/geniv.c
-> > new file mode 100644
-> > index 0000000..55d1212
-> > --- /dev/null
-> > +++ b/crypto/geniv.c
-> > @@ -0,0 +1,2240 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * geniv.c - crypto template for generating IV
-> > + *
-> > + * Copyright (C) 2018, Linaro
-> > + *
-> > + * This file adds a crypto template to generate IV, so the dm-crypt can rely
-> > + * on it and remove the existing generating IV code.
-> > + */
-> > +
-> > +#include <linux/completion.h>
-> > +#include <linux/err.h>
-> > +#include <linux/module.h>
-> > +#include <linux/init.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/key.h>
-> > +#include <linux/bio.h>
-> > +#include <linux/blkdev.h>
-> > +#include <linux/mempool.h>
-> > +#include <linux/slab.h>
-> > +#include <linux/crypto.h>
-> > +#include <linux/atomic.h>
-> > +#include <linux/scatterlist.h>
-> > +#include <linux/ctype.h>
-> > +#include <asm/page.h>
-> > +#include <asm/unaligned.h>
-> > +#include <crypto/hash.h>
-> > +#include <crypto/md5.h>
-> > +#include <crypto/algapi.h>
-> > +#include <crypto/skcipher.h>
-> > +#include <crypto/aead.h>
-> > +#include <crypto/authenc.h>
-> > +#include <crypto/geniv.h>
-> > +#include <crypto/internal/aead.h>
-> > +#include <crypto/internal/skcipher.h>
-> > +#include <linux/rtnetlink.h> /* for struct rtattr and RTA macros only */
-> > +#include <keys/user-type.h>
-> > +#include <linux/backing-dev.h>
-> > +#include <linux/device-mapper.h>
-> > +#include <linux/log2.h>
-> > +
-> > +#define DM_MSG_PREFIX		"crypt"
+This change follows the model of phy_restart_aneg() which
+differentiates between the two implementations in a similar way.
 
-I agree with Milan, the code should remain where it currently is.  If
-you want to plumb in generic access to it fine.  But crypto/geniv.c has
-_no_ business defining DM_MSG_PREFIX.
+Fixes: 41408ad519f7 ("net: phy: avoid genphy_aneg_done() for PHYs without clause 22 support")
+Signed-off-by: Camelia Groza <camelia.groza@nxp.com>
+---
+ drivers/net/phy/phy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-And I'm sure there are other things that have no place in generic crypto
-code.
+diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+index 537297d..4fcc703 100644
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@ -151,7 +151,7 @@ int phy_aneg_done(struct phy_device *phydev)
+ 	 * implement Clause 22 registers
+ 	 */
+ 	if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
+-		return -EINVAL;
++		return genphy_c45_aneg_done(phydev);
+ 
+ 	return genphy_aneg_done(phydev);
+ }
+-- 
+1.9.1
 
-Mike
