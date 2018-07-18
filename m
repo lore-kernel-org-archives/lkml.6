@@ -2,361 +2,137 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EE0ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2174ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB4C42075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:11:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y7jIhJMx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4C42075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5367E2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5367E2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731175AbeGRMtR (ORCPT
+        id S1730234AbeGRMwb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:49:17 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36031 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726830AbeGRMtR (ORCPT
+        Wed, 18 Jul 2018 08:52:31 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:43788 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726953AbeGRMwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:49:17 -0400
-Received: by mail-pg1-f196.google.com with SMTP id m19-v6so1920485pgv.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 05:11:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=by+PYjmKNUNjfWicp/nv8FLMVAaOidusx9j1KC4ku2I=;
-        b=Y7jIhJMxOgNWADwp585k6TmLOw5CqHlWg/7/iixaY+tN2rEDafjz0bpHVOllzV8z5T
-         BKHQMptH83PIxP91DwoDYiZoN79zdgG1Kn7FyH3Wz7CXdJAeMLAL4EZfhOXbd1bXixl/
-         KE77dpv9LcfEwVjcGx6Z1xXNF9ZwT6azfjqrg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=by+PYjmKNUNjfWicp/nv8FLMVAaOidusx9j1KC4ku2I=;
-        b=K+7aFl7UVDzMHOw5npoPKOHgbPbihIP9XlxBygkBf/dVdJAXxYtRlM2GZwd+1r1FmB
-         Jqm9bm79rncTyfPjNhjbBfxAcoOyo6oIqVrOqawL9j7/VpY1mXOE/4L2lLubBERn1ze1
-         K3GhdR2Ib1OfEPexQ4ClTsIPZeG1PX9cy9UxcSrm69VvSAGLzkkI9hHCZxRNXxhBSbbl
-         /Hv2fMi6gr9tvlkL2ocuCurQsfOwsYhAfc4x+T4sQMHwzDZQo72Tim3naLpP0kuVBYRu
-         FlP1E1CLuQWqR+w6Z1YlCGfBd6ACld+gddKSQr/INiWzJ2MbXfmu8mATFOu6FJJFKTQU
-         hWFA==
-X-Gm-Message-State: AOUpUlE9IeTJpEqp7/hLmLPMI/kPlm8Srx9nWpVGE5q9T0LLGpXE5tdz
-        2WBcCR/x7sbXJYLoaK1Q7Aw0
-X-Google-Smtp-Source: AAOMgpepuakxasm8hEPPHSpJJcp2szzQFZVj5ULQgSql3IqBz6+1fNjUiYKYXa9bse8lIDWEneERGQ==
-X-Received: by 2002:a63:231a:: with SMTP id j26-v6mr5531194pgj.138.1531915898819;
-        Wed, 18 Jul 2018 05:11:38 -0700 (PDT)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm13474294pfm.97.2018.07.18.05.11.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 05:11:38 -0700 (PDT)
-Date:   Wed, 18 Jul 2018 17:41:30 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     andy.gross@linaro.org
-Cc:     linus.walleij@linaro.org, bjorn.andersson@linaro.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        todor.tomov@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] dts: qcom: db820c: Add gpio-line-names property
-Message-ID: <20180718121130.GA16683@mani>
-References: <20180418134601.8502-1-manivannan.sadhasivam@linaro.org>
- <20180418134601.8502-2-manivannan.sadhasivam@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180418134601.8502-2-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 18 Jul 2018 08:52:31 -0400
+Received: from [192.168.0.117] (188.146.100.122.nat.umts.dynamic.t-mobile.pl [188.146.100.122])
+        by mail.holtmann.org (Postfix) with ESMTPSA id E36D3CF2B8;
+        Wed, 18 Jul 2018 14:21:44 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH v5 4/7] Bluetooth: Add new quirk for non-persistent setup
+ settings
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1531757114.8953.12.camel@mtkswgap22>
+Date:   Wed, 18 Jul 2018 14:14:49 +0200
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        robh+dt@kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <E05CD0A8-B820-4900-970D-57F71E8E5583@holtmann.org>
+References: <cover.1531150733.git.sean.wang@mediatek.com>
+ <4b188c8a508340598dda233f6d49a16c9ac8784e.1531150733.git.sean.wang@mediatek.com>
+ <2825B722-E75C-4A3C-8110-879205E46C0E@holtmann.org>
+ <1531638169.3955.5.camel@mtkswgap22>
+ <6571C864-B2EC-4806-BC5D-F531792737F6@holtmann.org>
+ <1531757114.8953.12.camel@mtkswgap22>
+To:     Sean Wang <sean.wang@mediatek.com>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 18, 2018 at 07:16:01PM +0530, Manivannan Sadhasivam wrote:
-> Add gpio-line-names property for Dragonboard820c based on APQ8096 SoC.
-> There are 4 gpio-controllers present on this board, including the
-> APQ8096 SoC, PM8994 (GPIO and MPP) and PMI8994 (GPIO).
-> 
-> Lines names are derived from 96Boards CE Specification 1.0, Appendix
-> "Expansion Connector Signal Description". Line names for PMI8994 MPP
-> pins are not added due to the absence of the gpio-controller support.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hi Sean,
 
-Hi Andy,
-
-Any update on this patch? We have got 3 reviews so far...
-
-Thanks,
-Mani
-
-> ---
->  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 239 +++++++++++++++++++++++++++
->  1 file changed, 239 insertions(+)
+>>>>> Add a new quirk HCI_QUIRK_NON_PERSISTENT_SETUP allowing that a quirk that
+>>>>> runs setup() after every open() and not just after the first open().
+>>>>> 
+>>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+>>>>> ---
+>>>>> include/net/bluetooth/hci.h | 9 +++++++++
+>>>>> net/bluetooth/hci_core.c    | 3 ++-
+>>>>> 2 files changed, 11 insertions(+), 1 deletion(-)
+>>>>> 
+>>>>> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+>>>>> index 73e48be..d3ec5b2a8 100644
+>>>>> --- a/include/net/bluetooth/hci.h
+>>>>> +++ b/include/net/bluetooth/hci.h
+>>>>> @@ -183,6 +183,15 @@ enum {
+>>>>> 	 * during the hdev->setup vendor callback.
+>>>>> 	 */
+>>>>> 	HCI_QUIRK_NON_PERSISTENT_DIAG,
+>>>>> +
+>>>>> +	/* When this quirk is set, setup() would be run after every
+>>>>> +	 * open() and not just after the first open().
+>>>>> +	 *
+>>>>> +	 * This quirk can be set before hci_register_dev is called or
+>>>>> +	 * during the hdev->setup vendor callback.
+>>>>> +	 *
+>>>>> +	 */
+>>>>> +	HCI_QUIRK_NON_PERSISTENT_SETUP,
+>>>>> };
+>>>>> 
+>>>>> /* HCI device flags */
+>>>>> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+>>>>> index f5c21004..0111280 100644
+>>>>> --- a/net/bluetooth/hci_core.c
+>>>>> +++ b/net/bluetooth/hci_core.c
+>>>>> @@ -1396,7 +1396,8 @@ static int hci_dev_do_open(struct hci_dev *hdev)
+>>>>> 	atomic_set(&hdev->cmd_cnt, 1);
+>>>>> 	set_bit(HCI_INIT, &hdev->flags);
+>>>>> 
+>>>>> -	if (hci_dev_test_flag(hdev, HCI_SETUP)) {
+>>>>> +	if (hci_dev_test_flag(hdev, HCI_SETUP) ||
+>>>>> +	    test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
+>>>>> 		hci_sock_dev_event(hdev, HCI_DEV_SETUP);
+>>>> 
+>>>> can you include the extract of btmon on how the HCI_DEV_SETUP event shows up in the traces? I remember that I asked about something like that.
+>>>> 
+>>>> Regards
+>>>> 
+>>>> Marcel
+>>>> 
+>>> 
+>>> No, I cannot see any event about HCI_DEV_SETUP in btmon trace, the trace I posted as below is doing some rounds of power off and then on
+>> 
+>> it will result in this:
+>> 
+>>        case HCI_DEV_SETUP:
+>>                if (hdev->manufacturer == 0xffff)
+>>                        return NULL;
+>> 
+>>        case HCI_DEV_UP:
+>>                skb = bt_skb_alloc(HCI_MON_INDEX_INFO_SIZE, GFP_ATOMIC);
+>> 
+>> So we will see extra index info events, but I assume that is just fine this we also see them on DEV_UP. They also do not hurt as long as not magically the manufacturer information changes.
+>> 
+>> I do wonder though if this quirk is set, then hdev->manufacturer needs to be reset and allow hdev->setup() to reset it. This goes with a log of other information as well. Maybe just a look if there are no races here.
+>> 
+>> Regards
+>> 
+>> Marcel
+>> 
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> index 1c8f1b86472d..473530527e27 100644
-> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-> @@ -19,6 +19,33 @@
->  #include <dt-bindings/input/input.h>
->  #include <dt-bindings/gpio/gpio.h>
->  
-> +/*
-> + * GPIO name legend: proper name = the GPIO line is used as GPIO
-> + *         NC      = not connected (pin out but not routed from the chip to
-> + *                   anything the board)
-> + *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
-> + *         LSEC    = Low Speed External Connector
-> + *         P HSEC  = Primary High Speed External Connector
-> + *         S HSEC  = Secondary High Speed External Connector
-> + *         J14     = Camera Connector
-> + *         TP      = Test Points
-> + *
-> + * Line names are taken from the schematic "DragonBoard 820c",
-> + * drawing no: LM25-P2751-1
-> + *
-> + * For the lines routed to the external connectors the
-> + * lines are named after the 96Boards CE Specification 1.0,
-> + * Appendix "Expansion Connector Signal Description".
-> + *
-> + * When the 96Board naming of a line and the schematic name of
-> + * the same line are in conflict, the 96Board specification
-> + * takes precedence, which means that the external UART on the
-> + * LSEC is named UART0 while the schematic and SoC names this
-> + * UART3. This is only for the informational lines i.e. "[FOO]",
-> + * the GPIO named lines "GPIO-A" thru "GPIO-L" are the only
-> + * ones actually used for GPIO.
-> + */
-> +
->  / {
->  	aliases {
->  		serial0 = &blsp2_uart1;
-> @@ -90,6 +117,218 @@
->  			status = "okay";
->  		};
->  
-> +		pinctrl@1010000 {
-> +			gpio-line-names =
-> +				"[SPI0_DOUT]", /* GPIO_0, BLSP1_SPI_MOSI, LSEC pin 14 */
-> +				"[SPI0_DIN]", /* GPIO_1, BLSP1_SPI_MISO, LSEC pin 10 */
-> +				"[SPI0_CS]", /* GPIO_2, BLSP1_SPI_CS_N, LSEC pin 12 */
-> +				"[SPI0_SCLK]", /* GPIO_3, BLSP1_SPI_CLK, LSEC pin 8 */
-> +				"[UART1_TxD]", /* GPIO_4, BLSP8_UART_TX, LSEC pin 11 */
-> +				"[UART1_RxD]", /* GPIO_5, BLSP8_UART_RX, LSEC pin 13 */
-> +				"[I2C1_SDA]", /* GPIO_6, BLSP8_I2C_SDA, LSEC pin 21 */
-> +				"[I2C1_SCL]", /* GPIO_7, BLSP8_I2C_SCL, LSEC pin 19 */
-> +				"GPIO-H", /* GPIO_8, LCD0_RESET_N, LSEC pin 30 */
-> +				"TP93", /* GPIO_9 */
-> +				"GPIO-G", /* GPIO_10, MDP_VSYNC_P, LSEC pin 29 */
-> +				"[MDP_VSYNC_S]", /* GPIO_11, S HSEC pin 55 */
-> +				"NC", /* GPIO_12 */
-> +				"[CSI0_MCLK]", /* GPIO_13, CAM_MCLK0, P HSEC pin 15 */
-> +				"[CAM_MCLK1]", /* GPIO_14, J14 pin 11 */
-> +				"[CSI1_MCLK]", /* GPIO_15, CAM_MCLK2, P HSEC pin 17 */
-> +				"TP99", /* GPIO_16 */
-> +				"[I2C2_SDA]", /* GPIO_17, CCI_I2C_SDA0, P HSEC pin 34 */
-> +				"[I2C2_SCL]", /* GPIO_18, CCI_I2C_SCL0, P HSEC pin 32 */
-> +				"[CCI_I2C_SDA1]", /* GPIO_19, S HSEC pin 38 */
-> +				"[CCI_I2C_SCL1]", /* GPIO_20, S HSEC pin 36 */
-> +				"FLASH_STROBE_EN", /* GPIO_21, S HSEC pin 5 */
-> +				"FLASH_STROBE_TRIG", /* GPIO_22, S HSEC pin 1 */
-> +				"GPIO-K", /* GPIO_23, CAM2_RST_N, LSEC pin 33 */
-> +				"GPIO-D", /* GPIO_24, LSEC pin 26 */
-> +				"GPIO-I", /* GPIO_25, CAM0_RST_N, LSEC pin 31 */
-> +				"GPIO-J", /* GPIO_26, CAM0_STANDBY_N, LSEC pin 32 */
-> +				"BLSP6_I2C_SDA", /* GPIO_27 */
-> +				"BLSP6_I2C_SCL", /* GPIO_28 */
-> +				"GPIO-B", /* GPIO_29, TS0_RESET_N, LSEC pin 24 */
-> +				"GPIO30", /* GPIO_30, S HSEC pin 4 */
-> +				"HDMI_CEC", /* GPIO_31 */
-> +				"HDMI_DDC_CLOCK", /* GPIO_32 */
-> +				"HDMI_DDC_DATA", /* GPIO_33 */
-> +				"HDMI_HOT_PLUG_DETECT", /* GPIO_34 */
-> +				"PCIE0_RST_N", /* GPIO_35 */
-> +				"PCIE0_CLKREQ_N", /* GPIO_36 */
-> +				"PCIE0_WAKE", /* GPIO_37 */
-> +				"SD_CARD_DET_N", /* GPIO_38 */
-> +				"TSIF1_SYNC", /* GPIO_39, S HSEC pin 48 */
-> +				"W_DISABLE_N", /* GPIO_40 */
-> +				"[BLSP9_UART_TX]", /* GPIO_41 */
-> +				"[BLSP9_UART_RX]", /* GPIO_42 */
-> +				"[BLSP2_UART_CTS_N]", /* GPIO_43 */
-> +				"[BLSP2_UART_RFR_N]", /* GPIO_44 */
-> +				"[BLSP3_UART_TX]", /* GPIO_45 */
-> +				"[BLSP3_UART_RX]", /* GPIO_46 */
-> +				"[I2C0_SDA]", /* GPIO_47, LS_I2C0_SDA, LSEC pin 17 */
-> +				"[I2C0_SCL]", /* GPIO_48, LS_I2C0_SCL, LSEC pin 15 */
-> +				"[UART0_TxD]", /* GPIO_49, BLSP9_UART_TX, LSEC pin 5 */
-> +				"[UART0_RxD]", /* GPIO_50, BLSP9_UART_RX, LSEC pin 7 */
-> +				"[UART0_CTS]", /* GPIO_51, BLSP9_UART_CTS_N, LSEC pin 3 */
-> +				"[UART0_RTS]", /* GPIO_52, BLSP9_UART_RFR_N, LSEC pin 9 */
-> +				"[CODEC_INT1_N]", /* GPIO_53 */
-> +				"[CODEC_INT2_N]", /* GPIO_54 */
-> +				"[BLSP7_I2C_SDA]", /* GPIO_55 */
-> +				"[BLSP7_I2C_SCL]", /* GPIO_56 */
-> +				"MI2S_MCLK", /* GPIO_57, S HSEC pin 3 */
-> +				"[PCM_CLK]", /* GPIO_58, QUA_MI2S_SCK, LSEC pin 18 */
-> +				"[PCM_FS]", /* GPIO_59, QUA_MI2S_WS, LSEC pin 16 */
-> +				"[PCM_DO]", /* GPIO_60, QUA_MI2S_DATA0, LSEC pin 20 */
-> +				"[PCM_DI]", /* GPIO_61, QUA_MI2S_DATA1, LSEC pin 22 */
-> +				"GPIO-E", /* GPIO_62, LSEC pin 27 */
-> +				"TP87", /* GPIO_63 */
-> +				"[CODEC_RST_N]", /* GPIO_64 */
-> +				"[PCM1_CLK]", /* GPIO_65 */
-> +				"[PCM1_SYNC]", /* GPIO_66 */
-> +				"[PCM1_DIN]", /* GPIO_67 */
-> +				"[PCM1_DOUT]", /* GPIO_68 */
-> +				"AUDIO_REF_CLK", /* GPIO_69 */
-> +				"SLIMBUS_CLK", /* GPIO_70 */
-> +				"SLIMBUS_DATA0", /* GPIO_71 */
-> +				"SLIMBUS_DATA1", /* GPIO_72 */
-> +				"NC", /* GPIO_73 */
-> +				"NC", /* GPIO_74 */
-> +				"NC", /* GPIO_75 */
-> +				"NC", /* GPIO_76 */
-> +				"TP94", /* GPIO_77 */
-> +				"NC", /* GPIO_78 */
-> +				"TP95", /* GPIO_79 */
-> +				"GPIO-A", /* GPIO_80, MEMS_RESET_N, LSEC pin 23 */
-> +				"TP88", /* GPIO_81 */
-> +				"TP89", /* GPIO_82 */
-> +				"TP90", /* GPIO_83 */
-> +				"TP91", /* GPIO_84 */
-> +				"[SD_DAT0]", /* GPIO_85, BLSP12_SPI_MOSI, P HSEC pin 1 */
-> +				"[SD_CMD]", /* GPIO_86, BLSP12_SPI_MISO, P HSEC pin 11 */
-> +				"[SD_DAT3]", /* GPIO_87, BLSP12_SPI_CS_N, P HSEC pin 7 */
-> +				"[SD_SCLK]", /* GPIO_88, BLSP12_SPI_CLK, P HSEC pin 9 */
-> +				"TSIF1_CLK", /* GPIO_89, S HSEC pin 42 */
-> +				"TSIF1_EN", /* GPIO_90, S HSEC pin 46 */
-> +				"TSIF1_DATA", /* GPIO_91, S HSEC pin 44 */
-> +				"NC", /* GPIO_92 */
-> +				"TSIF2_CLK", /* GPIO_93, S HSEC pin 52 */
-> +				"TSIF2_EN", /* GPIO_94, S HSEC pin 56 */
-> +				"TSIF2_DATA", /* GPIO_95, S HSEC pin 54 */
-> +				"TSIF2_SYNC", /* GPIO_96, S HSEC pin 58 */
-> +				"NC", /* GPIO_97 */
-> +				"CAM1_STANDBY_N", /* GPIO_98 */
-> +				"NC", /* GPIO_99 */
-> +				"NC", /* GPIO_100 */
-> +				"[LCD1_RESET_N]", /* GPIO_101, S HSEC pin 51 */
-> +				"BOOT_CONFIG1", /* GPIO_102 */
-> +				"USB_HUB_RESET", /* GPIO_103 */
-> +				"CAM1_RST_N", /* GPIO_104 */
-> +				"NC", /* GPIO_105 */
-> +				"NC", /* GPIO_106 */
-> +				"NC", /* GPIO_107 */
-> +				"NC", /* GPIO_108 */
-> +				"NC", /* GPIO_109 */
-> +				"NC", /* GPIO_110 */
-> +				"NC", /* GPIO_111 */
-> +				"NC", /* GPIO_112 */
-> +				"PMI8994_BUA", /* GPIO_113 */
-> +				"PCIE2_RST_N", /* GPIO_114 */
-> +				"PCIE2_CLKREQ_N", /* GPIO_115 */
-> +				"PCIE2_WAKE", /* GPIO_116 */
-> +				"SSC_IRQ_0", /* GPIO_117 */
-> +				"SSC_IRQ_1", /* GPIO_118 */
-> +				"SSC_IRQ_2", /* GPIO_119 */
-> +				"NC", /* GPIO_120 */
-> +				"GPIO121", /* GPIO_121, S HSEC pin 2 */
-> +				"NC", /* GPIO_122 */
-> +				"SSC_IRQ_6", /* GPIO_123 */
-> +				"SSC_IRQ_7", /* GPIO_124 */
-> +				"GPIO-C", /* GPIO_125, TS_INT0, LSEC pin 25 */
-> +				"BOOT_CONFIG5", /* GPIO_126 */
-> +				"NC", /* GPIO_127 */
-> +				"NC", /* GPIO_128 */
-> +				"BOOT_CONFIG7", /* GPIO_129 */
-> +				"PCIE1_RST_N", /* GPIO_130 */
-> +				"PCIE1_CLKREQ_N", /* GPIO_131 */
-> +				"PCIE1_WAKE", /* GPIO_132 */
-> +				"GPIO-L", /* GPIO_133, CAM2_STANDBY_N, LSEC pin 34 */
-> +				"NC", /* GPIO_134 */
-> +				"NC", /* GPIO_135 */
-> +				"BOOT_CONFIG8", /* GPIO_136 */
-> +				"NC", /* GPIO_137 */
-> +				"NC", /* GPIO_138 */
-> +				"GPS_SSBI2", /* GPIO_139 */
-> +				"GPS_SSBI1", /* GPIO_140 */
-> +				"NC", /* GPIO_141 */
-> +				"NC", /* GPIO_142 */
-> +				"NC", /* GPIO_143 */
-> +				"BOOT_CONFIG6", /* GPIO_144 */
-> +				"NC", /* GPIO_145 */
-> +				"NC", /* GPIO_146 */
-> +				"NC", /* GPIO_147 */
-> +				"NC", /* GPIO_148 */
-> +				"NC"; /* GPIO_149 */
-> +		};
-> +
-> +		qcom,spmi@400f000 {
-> +			pmic@0 {
-> +				gpios@c000 {
-> +					gpio-line-names =
-> +						"NC",
-> +						"KEY_VOLP_N",
-> +						"NC",
-> +						"BL1_PWM",
-> +						"GPIO-F", /* BL0_PWM, LSEC pin 28 */
-> +						"BL1_EN",
-> +						"NC",
-> +						"WLAN_EN",
-> +						"NC",
-> +						"NC",
-> +						"NC",
-> +						"NC",
-> +						"NC",
-> +						"NC",
-> +						"DIVCLK1",
-> +						"DIVCLK2",
-> +						"DIVCLK3",
-> +						"DIVCLK4",
-> +						"BT_EN",
-> +						"PMIC_SLB",
-> +						"PMIC_BUA",
-> +						"USB_VBUS_DET";
-> +				};
-> +
-> +				mpps@a000 {
-> +					gpio-line-names =
-> +						"VDDPX_BIAS",
-> +						"WIFI_LED",
-> +						"NC",
-> +						"BT_LED",
-> +						"PM_MPP05",
-> +						"PM_MPP06",
-> +						"PM_MPP07",
-> +						"NC";
-> +				};
-> +			};
-> +
-> +			pmic@2 {
-> +				gpios@c000 {
-> +					gpio-line-names =
-> +						"NC",
-> +						"SPKR_AMP_EN1",
-> +						"SPKR_AMP_EN2",
-> +						"TP61",
-> +						"NC",
-> +						"USB2_VBUS_DET",
-> +						"NC",
-> +						"NC",
-> +						"NC",
-> +						"NC";
-> +				};
-> +			};
-> +		};
-> +
->  		phy@34000 {
->  			status = "okay";
->  		};
-> -- 
-> 2.14.1
+> I didn't set a value to hdev->manufacture.
 > 
+> Should I set it in hdev->setup() ? MediaTek is 0x46 according to [1].
+
+it is generally useful so that it gets reported out in btmon and thus it can assign the correct vendor specific decoder. However you better set hdev->manufacturer = 70 in the probe() routine before calling hci_register_dev. You have a dedicated driver and thus will always know it.
+
+The core tries to figure this out at some point, but then you are missing btmon decoding for the earlier messages. See btusb.c and how other drivers set it early on.
+
+Regards
+
+Marcel
+
