@@ -6,155 +6,199 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A45ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57B6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 503A02075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87FBB20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 14:09:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="p3vMFosM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503A02075C
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="NJfVCJ9l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87FBB20854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730902AbeGROr7 (ORCPT
+        id S1731023AbeGROsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:47:59 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:43392 "EHLO
+        Wed, 18 Jul 2018 10:48:01 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:43434 "EHLO
         mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730256AbeGROr7 (ORCPT
+        with ESMTP id S1730256AbeGROsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:47:59 -0400
+        Wed, 18 Jul 2018 10:48:01 -0400
 Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id E898EB007A1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 16:09:52 +0200 (CEST)
+        by mail.micronovasrl.com (Postfix) with ESMTP id CD809B007EC
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 16:09:53 +0200 (CEST)
 Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)" header.d=micronovasrl.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
          h=references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:to:from:from; s=dkim; t=1531922992; x=1532786993; bh=WS
-        d/9wvzx+t7T41QY3yKInolV8cyC+RL5+TKQjyvhRo=; b=p3vMFosMzRLO9oI2RA
-        u4ky8dIVxP/WXzy/CCYCT2RL1Z/xwJ7ug32oO9RVBggHiHSlZTJdqK26GL8/E4Fr
-        wKvHfGTy3jkdJHuxInRmuyg/VJROx3ozl+DzAidpLrTL2dIT/r9PnARXw1kOawF6
-        hcMphN8omw9JNsKX0+NL/DhIY=
+        :subject:to:from:from; s=dkim; t=1531922993; x=1532786994; bh=9t
+        KtD20rKZKjRTisFuPebs2UZaqqkD1i1pvZ/82XCyU=; b=NJfVCJ9lhrwBq7HqcA
+        MMzRTZ+T+Y+6CfI2dZDo5FXQuc7MhzXf2T0Yl56FvxzdOqVYUpVqBbCeDho/b/tb
+        F+R6/Wbuaiu8FyKtNv9wHgFTAx6X0WCUIjYc1eA/ylyY9Z6D/ucKSmSEQf3Hzk8a
+        dHMQP0yJXf6MFIqQdrD5iBr3A=
 X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
 Received: from mail.micronovasrl.com ([127.0.0.1])
         by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id HbGJzU_xww-2 for <linux-kernel@vger.kernel.org>;
-        Wed, 18 Jul 2018 16:09:52 +0200 (CEST)
+        with ESMTP id qSs2zGeP1jPx for <linux-kernel@vger.kernel.org>;
+        Wed, 18 Jul 2018 16:09:53 +0200 (CEST)
 Received: from localhost.localdomain (62-11-51-166.dialup.tiscali.it [62.11.51.166])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id BAF3EB00049;
-        Wed, 18 Jul 2018 16:09:49 +0200 (CEST)
+        by mail.micronovasrl.com (Postfix) with ESMTPSA id C369CB00758;
+        Wed, 18 Jul 2018 16:09:50 +0200 (CEST)
 From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
 To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     Giulio Benetti <giulio.benetti@micronovasrl.com>,
         Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v10 2/4] rtc: ds1307: support m41t11 variant
-Date:   Wed, 18 Jul 2018 16:09:43 +0200
-Message-Id: <20180718140946.115093-1-giulio.benetti@micronovasrl.com>
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v10 3/4] rtc: ds1307: add offset sysfs for mt41txx chips.
+Date:   Wed, 18 Jul 2018 16:09:44 +0200
+Message-Id: <20180718140946.115093-2-giulio.benetti@micronovasrl.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAHp75VcaALb8fYJExnZ=Ye=GcNHc3aPXgFihVK+rAu_a1A01Sg@mail.gmail.com>
+In-Reply-To: <20180718140946.115093-1-giulio.benetti@micronovasrl.com>
 References: <CAHp75VcaALb8fYJExnZ=Ye=GcNHc3aPXgFihVK+rAu_a1A01Sg@mail.gmail.com>
+ <20180718140946.115093-1-giulio.benetti@micronovasrl.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The m41t11 variant is very similar to the already supported m41t00 and
-m41t0, but it has also 56 bytes of NVRAM.
+m41txx chips can hold a calibration value to get correct clock bias.
 
-Add it to driver taking into account NVRAM section.
+Add offset handling (ranging between -63ppm and 126ppm) via sysfs.
 
 Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
 ---
- .../devicetree/bindings/rtc/rtc-ds1307.txt         |  1 +
- drivers/rtc/rtc-ds1307.c                           | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+ drivers/rtc/rtc-ds1307.c | 77 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
-index d28d6e7f6ae8..ce6469c1a516 100644
---- a/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
-+++ b/Documentation/devicetree/bindings/rtc/rtc-ds1307.txt
-@@ -13,6 +13,7 @@ Required properties:
- 	"maxim,ds3231",
- 	"st,m41t0",
- 	"st,m41t00",
-+	"st,m41t11",
- 	"microchip,mcp7940x",
- 	"microchip,mcp7941x",
- 	"pericom,pt7c4338",
 diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-index aa4a161bae98..0162a600ff1b 100644
+index 0162a600ff1b..c6d871456f25 100644
 --- a/drivers/rtc/rtc-ds1307.c
 +++ b/drivers/rtc/rtc-ds1307.c
-@@ -44,6 +44,7 @@ enum ds_type {
- 	ds_3231,
- 	m41t0,
- 	m41t00,
-+	m41t11,
- 	mcp794xx,
- 	rx_8025,
- 	rx_8130,
-@@ -227,6 +228,11 @@ static const struct chip_desc chips[last_ds_type] = {
+@@ -114,6 +114,20 @@ enum ds_type {
+ #	define RX8025_BIT_VDET		0x40
+ #	define RX8025_BIT_XST		0x20
+ 
++#define M41TXX_REG_CONTROL	0x07
++#	define M41TXX_BIT_OUT		BIT(7)
++#	define M41TXX_BIT_FT		BIT(6)
++#	define M41TXX_BIT_CALIB_SIGN	BIT(5)
++#	define M41TXX_M_CALIBRATION	GENMASK(4, 0)
++
++/* negative offset step is -2.034ppm */
++#define M41TXX_NEG_OFFSET_STEP_PPB	2034
++/* positive offset step is +4.068ppm */
++#define M41TXX_POS_OFFSET_STEP_PPB	4068
++/* Min and max values supported with 'offset' interface by M41TXX */
++#define M41TXX_MIN_OFFSET	((-31) * M41TXX_NEG_OFFSET_STEP_PPB)
++#define M41TXX_MAX_OFFSET	((31) * M41TXX_POS_OFFSET_STEP_PPB)
++
+ struct ds1307 {
+ 	enum ds_type		type;
+ 	unsigned long		flags;
+@@ -146,6 +160,9 @@ struct chip_desc {
+ 
+ static int ds1307_get_time(struct device *dev, struct rtc_time *t);
+ static int ds1307_set_time(struct device *dev, struct rtc_time *t);
++static int ds1337_read_alarm(struct device *dev, struct rtc_wkalrm *t);
++static int ds1337_set_alarm(struct device *dev, struct rtc_wkalrm *t);
++static int ds1307_alarm_irq_enable(struct device *dev, unsigned int enabled);
+ static u8 do_trickle_setup_ds1339(struct ds1307 *, u32 ohms, bool diode);
+ static irqreturn_t rx8130_irq(int irq, void *dev_id);
+ static int rx8130_read_alarm(struct device *dev, struct rtc_wkalrm *t);
+@@ -155,6 +172,8 @@ static irqreturn_t mcp794xx_irq(int irq, void *dev_id);
+ static int mcp794xx_read_alarm(struct device *dev, struct rtc_wkalrm *t);
+ static int mcp794xx_set_alarm(struct device *dev, struct rtc_wkalrm *t);
+ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled);
++static int m41txx_rtc_read_offset(struct device *dev, long *offset);
++static int m41txx_rtc_set_offset(struct device *dev, long offset);
+ 
+ static const struct rtc_class_ops rx8130_rtc_ops = {
+ 	.read_time      = ds1307_get_time,
+@@ -172,6 +191,16 @@ static const struct rtc_class_ops mcp794xx_rtc_ops = {
+ 	.alarm_irq_enable = mcp794xx_alarm_irq_enable,
+ };
+ 
++static const struct rtc_class_ops m41txx_rtc_ops = {
++	.read_time      = ds1307_get_time,
++	.set_time       = ds1307_set_time,
++	.read_alarm	= ds1337_read_alarm,
++	.set_alarm	= ds1337_set_alarm,
++	.alarm_irq_enable = ds1307_alarm_irq_enable,
++	.read_offset	= m41txx_rtc_read_offset,
++	.set_offset	= m41txx_rtc_set_offset,
++};
++
+ static const struct chip_desc chips[last_ds_type] = {
+ 	[ds_1307] = {
+ 		.nvram_offset	= 8,
+@@ -228,10 +257,17 @@ static const struct chip_desc chips[last_ds_type] = {
  		.irq_handler = rx8130_irq,
  		.rtc_ops = &rx8130_rtc_ops,
  	},
-+	[m41t11] = {
-+		/* this is battery backed SRAM */
-+		.nvram_offset	= 8,
-+		.nvram_size	= 56,
++	[m41t0] = {
++		.rtc_ops	= &m41txx_rtc_ops,
 +	},
++	[m41t00] = {
++		.rtc_ops	= &m41txx_rtc_ops,
++	},
+ 	[m41t11] = {
+ 		/* this is battery backed SRAM */
+ 		.nvram_offset	= 8,
+ 		.nvram_size	= 56,
++		.rtc_ops	= &m41txx_rtc_ops,
+ 	},
  	[mcp794xx] = {
  		.alarm		= 1,
- 		/* this is battery backed SRAM */
-@@ -249,6 +255,7 @@ static const struct i2c_device_id ds1307_id[] = {
- 	{ "ds3231", ds_3231 },
- 	{ "m41t0", m41t0 },
- 	{ "m41t00", m41t00 },
-+	{ "m41t11", m41t11 },
- 	{ "mcp7940x", mcp794xx },
- 	{ "mcp7941x", mcp794xx },
- 	{ "pt7c4338", ds_1307 },
-@@ -305,6 +312,10 @@ static const struct of_device_id ds1307_of_match[] = {
- 		.compatible = "st,m41t00",
- 		.data = (void *)m41t00
- 	},
-+	{
-+		.compatible = "st,m41t11",
-+		.data = (void *)m41t11
-+	},
- 	{
- 		.compatible = "microchip,mcp7940x",
- 		.data = (void *)mcp794xx
-@@ -347,6 +358,7 @@ static const struct acpi_device_id ds1307_acpi_ids[] = {
- 	{ .id = "DS3231", .driver_data = ds_3231 },
- 	{ .id = "M41T0", .driver_data = m41t0 },
- 	{ .id = "M41T00", .driver_data = m41t00 },
-+	{ .id = "M41T11", .driver_data = m41t11 },
- 	{ .id = "MCP7940X", .driver_data = mcp794xx },
- 	{ .id = "MCP7941X", .driver_data = mcp794xx },
- 	{ .id = "PT7C4338", .driver_data = ds_1307 },
-@@ -1576,6 +1588,7 @@ static int ds1307_probe(struct i2c_client *client,
- 	case ds_1307:
- 	case m41t0:
- 	case m41t00:
-+	case m41t11:
- 		/* clock halted?  turn it on, so clock can tick. */
- 		if (tmp & DS1307_BIT_CH) {
- 			regmap_write(ds1307->regmap, DS1307_REG_SECS, 0);
-@@ -1641,6 +1654,7 @@ static int ds1307_probe(struct i2c_client *client,
- 	case ds_1340:
- 	case m41t0:
- 	case m41t00:
-+	case m41t11:
- 		/*
- 		 * NOTE: ignores century bits; fix before deploying
- 		 * systems that will run through year 2100.
+@@ -973,6 +1009,47 @@ static int mcp794xx_alarm_irq_enable(struct device *dev, unsigned int enabled)
+ 				  enabled ? MCP794XX_BIT_ALM0_EN : 0);
+ }
+ 
++static int m41txx_rtc_read_offset(struct device *dev, long *offset)
++{
++	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	unsigned int ctrl_reg;
++	u8 val;
++
++	regmap_read(ds1307->regmap, M41TXX_REG_CONTROL, &ctrl_reg);
++
++	val = ctrl_reg & M41TXX_M_CALIBRATION;
++
++	/* check if positive */
++	if (ctrl_reg & M41TXX_BIT_CALIB_SIGN)
++		*offset = (val * M41TXX_POS_OFFSET_STEP_PPB);
++	else
++		*offset = -(val * M41TXX_NEG_OFFSET_STEP_PPB);
++
++	return 0;
++}
++
++static int m41txx_rtc_set_offset(struct device *dev, long offset)
++{
++	struct ds1307 *ds1307 = dev_get_drvdata(dev);
++	unsigned int ctrl_reg;
++
++	if ((offset < M41TXX_MIN_OFFSET) || (offset > M41TXX_MAX_OFFSET))
++		return -ERANGE;
++
++	if (offset >= 0) {
++		ctrl_reg = DIV_ROUND_CLOSEST(offset,
++					     M41TXX_POS_OFFSET_STEP_PPB);
++		ctrl_reg |= M41TXX_BIT_CALIB_SIGN;
++	} else {
++		ctrl_reg = DIV_ROUND_CLOSEST(abs(offset),
++					     M41TXX_NEG_OFFSET_STEP_PPB);
++	}
++
++	return regmap_update_bits(ds1307->regmap, M41TXX_REG_CONTROL,
++				  M41TXX_M_CALIBRATION | M41TXX_BIT_CALIB_SIGN,
++				  ctrl_reg);
++}
++
+ /*----------------------------------------------------------------------*/
+ 
+ static int ds1307_nvram_read(void *priv, unsigned int offset, void *val,
 -- 
 2.17.1
 
