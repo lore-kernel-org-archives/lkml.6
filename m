@@ -2,99 +2,154 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5227ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B2DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 946AF2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:43:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ska-ac-za.20150623.gappssmtp.com header.i=@ska-ac-za.20150623.gappssmtp.com header.b="PVU+yO40"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946AF2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ska.ac.za
+	by mail.kernel.org (Postfix) with ESMTP id 366592075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:49:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 366592075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbeGRTXI (ORCPT
+        id S1729281AbeGRT3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:23:08 -0400
-Received: from mail-ua0-f181.google.com ([209.85.217.181]:40179 "EHLO
-        mail-ua0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726158AbeGRTXI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:23:08 -0400
-Received: by mail-ua0-f181.google.com with SMTP id p22-v6so3570341uao.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 11:43:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ska-ac-za.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Zox/LxPuy1Wwd5olaW7xrHv+qdgkRg9m4UimavprYLg=;
-        b=PVU+yO40LPebBgldyuAAqa0O+lUer82GUVvlh0D3hECLptnXEmUqpcGx5+eaLQrIqw
-         zdyEcNNDXQWNXJ+w/+XLps/hNWO9wTex7XC03uMvUFmtaXB/2SVa/b283d5WcjMhy50K
-         kCut3OuXkGicR9HEUiVGx4+zThGaGCm5/Y4OSPzjaPLqYgwAXTs+Ktb++vQK8xW1EX4/
-         shDPGrrgYoLVYr0ytOx/Qt4W1+RT7UVRFtcYT4Ap2vNAU2flaFA5uQaouLTOhZGV9frO
-         VaLppW4onJYw9+/1n84iK7QlPo279wjwrmPOtTKopVru4M3zSVKAxADVxDIjwVPzjaYf
-         r5NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Zox/LxPuy1Wwd5olaW7xrHv+qdgkRg9m4UimavprYLg=;
-        b=jCOATHmcJWHgqtSGrB1Zqgl2wY8SwAYNVB43vbaPL3StGOA5wWgAPr/DJaztSO0qhH
-         MscdxjTDNtdWRBF+AG7q/4thCUDTLeYnPwmY+LqylFyBIT63XlBTUhPbtwDqwV3Rvp6c
-         g1OLN46grKkj9kfZW36g8tOvuSiC6dPZkEJ8+ri4XMfNe1Iu/GRp9Heopz9zupFLK1OO
-         nVEy5TDzaea8FG/2nO5gT7DRqDtFyeH38NGH4uXaOnOX0I5S85i/gwV/skV09lgv9aDP
-         NWAaanExqVNhDXPecSD/0UbaBGCyoungYqPD/Rpmfd3rRUcEGxf2meLX3CUmG/o0cBzU
-         xtRg==
-X-Gm-Message-State: AOUpUlESwIV42m67UGhfhk2Ggjvk39VZknVT6JuveC3XC+w87MzVKHSX
-        2HBmR4nLJv7RDSTFG9Q+hH2LFSrci+fOKNwliPEwGw==
-X-Google-Smtp-Source: AAOMgpe7GY8VaOFon8+Bto24HzM2PzvRQ/yjwCw0OKU9zQGB7xZ9W9De7BFCT5NUFavrVmMnVEp/QsRVVpv5Rqq+Nc8=
-X-Received: by 2002:ab0:210b:: with SMTP id d11-v6mr4676120ual.108.1531939436403;
- Wed, 18 Jul 2018 11:43:56 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:d97:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 11:43:55 -0700 (PDT)
-In-Reply-To: <CALvZod77dzc2qxQ4=Xc8P-Yup7fks37Nron0WHV_-q9PyoDaBg@mail.gmail.com>
-References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
- <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
- <20180718104230.GC1431@dhcp22.suse.cz> <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
- <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
- <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
- <CALvZod4ag02N6QPwRQCYv663hj05Z6vtrK8=XEE6uWHQCL4yRw@mail.gmail.com>
- <CAOm-9arxtTwNxXzmb8nN+N_UtjiuH0XkpkVPFHpi3EOYXvZYVA@mail.gmail.com>
- <CALvZod5UsYzNs_FJqy2U4HiZ+SdKzKZtzdK1OYcV7v_91kqn8A@mail.gmail.com>
- <CAOm-9aocfOOFODdGn2Gz236_PKaff++6S0U0bTj9eOPnRwM-_w@mail.gmail.com> <CALvZod77dzc2qxQ4=Xc8P-Yup7fks37Nron0WHV_-q9PyoDaBg@mail.gmail.com>
-From:   Bruce Merry <bmerry@ska.ac.za>
-Date:   Wed, 18 Jul 2018 20:43:55 +0200
-Message-ID: <CAOm-9apU_qYR+nmRur-hdPneuv_Y8v2f_Rub6Tsxc98+AuSiZg@mail.gmail.com>
-Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some machines
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 18 Jul 2018 15:29:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58458 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728038AbeGRT3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 15:29:05 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4CFA1401CC41;
+        Wed, 18 Jul 2018 18:49:52 +0000 (UTC)
+Received: from hp-dl360pgen8-07.khw.lab.eng.bos.redhat.com (hp-dl360pgen8-07.khw.lab.eng.bos.redhat.com [10.16.184.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B51B52026D69;
+        Wed, 18 Jul 2018 18:49:51 +0000 (UTC)
+From:   Jarod Wilson <jarod@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Jarod Wilson <jarod@redhat.com>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        Mahesh Bandewar <maheshb@google.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH net] bonding: set default miimon value for non-arp modes if not set
+Date:   Wed, 18 Jul 2018 14:49:36 -0400
+Message-Id: <20180718184936.16037-1-jarod@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 18:49:52 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 18:49:52 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jarod@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 July 2018 at 20:13, Shakeel Butt <shakeelb@google.com> wrote:
-> On Wed, Jul 18, 2018 at 10:58 AM Bruce Merry <bmerry@ska.ac.za> wrote:
-> Yes, if there is no memory pressure such memory can stay around.
->
-> On your production machine, before deleting memory containers, you can
-> try force_empty to reclaim such memory from them. See if that helps.
+For some time now, if you load the bonding driver and configure bond
+parameters via sysfs using minimal config options, such as specifying
+nothing but the mode, relying on defaults for everything else, modes
+that cannot use arp monitoring (802.3ad, balance-tlb, balance-alb) all
+wind up with both arp_interval=0 (as it should be) and miimon=0, which
+means the miimon monitor thread never actually runs. This is particularly
+problematic for 802.3ad.
 
-Thanks. At the moment the cgroups are all managed by systemd and
-docker, but I'll keep that in mind while experimenting.
+For example, from an LNST recipe I've set up:
 
-Bruce
+$ modprobe bonding max_bonds=0"
+$ echo "+t_bond0" > /sys/class/net/bonding_masters"
+$ ip link set t_bond0 down"
+$ echo "802.3ad" > /sys/class/net/t_bond0/bonding/mode"
+$ ip link set ens1f1 down"
+$ echo "+ens1f1" > /sys/class/net/t_bond0/bonding/slaves"
+$ ip link set ens1f0 down"
+$ echo "+ens1f0" > /sys/class/net/t_bond0/bonding/slaves"
+$ ethtool -i t_bond0"
+$ ip link set ens1f1 up"
+$ ip link set ens1f0 up"
+$ ip link set t_bond0 up"
+$ ip addr add 192.168.9.1/24 dev t_bond0"
+$ ip addr add 2002::1/64 dev t_bond0"
+
+This bond comes up okay, but things look slightly suspect in
+/proc/net/bonding/t_bond0 output:
+
+$ grep -i mii /proc/net/bonding/t_bond0
+MII Status: up
+MII Polling Interval (ms): 0
+MII Status: up
+MII Status: up
+
+Now, pull a cable on one of the ports in the bond, then reconnect it, and
+you'll see:
+
+Slave Interface: ens1f0
+MII Status: down
+Speed: 1000 Mbps
+Duplex: full
+
+I believe this became a major issue as of commit 4d2c0cda0744, which for
+802.3ad bonds, sets slave->link = BOND_LINK_DOWN, with a comment about
+relying on link monitoring via miimon to set it correctly, but since the
+miimon work queue never runs, the link just stays marked down.
+
+If we simply tweak bond_option_mode_set() slightly, we can check for the
+non-arp modes having no miimon value set, and insert BOND_DEFAULT_MIIMON,
+which gets things back in full working order. This problem exists as far
+back as 4.14, and might be worth fixing in all stable trees since, though
+the work-around is to simply specify an miimon value yourself.
+
+Reported-by: Bob Ball <ball@umich.edu>
+CC: Jay Vosburgh <j.vosburgh@gmail.com>
+CC: Veaceslav Falico <vfalico@gmail.com>
+CC: Andy Gospodarek <andy@greyhouse.net>
+CC: Mahesh Bandewar <maheshb@google.com>
+CC: David S. Miller <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+CC: stable@vger.kernel.org
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+---
+ drivers/net/bonding/bond_options.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+index 98663c50ded0..4d5d01cb8141 100644
+--- a/drivers/net/bonding/bond_options.c
++++ b/drivers/net/bonding/bond_options.c
+@@ -743,15 +743,20 @@ const struct bond_option *bond_opt_get(unsigned int option)
+ static int bond_option_mode_set(struct bonding *bond,
+ 				const struct bond_opt_value *newval)
+ {
+-	if (!bond_mode_uses_arp(newval->value) && bond->params.arp_interval) {
+-		netdev_dbg(bond->dev, "%s mode is incompatible with arp monitoring, start mii monitoring\n",
+-			   newval->string);
+-		/* disable arp monitoring */
+-		bond->params.arp_interval = 0;
+-		/* set miimon to default value */
+-		bond->params.miimon = BOND_DEFAULT_MIIMON;
+-		netdev_dbg(bond->dev, "Setting MII monitoring interval to %d\n",
+-			   bond->params.miimon);
++	if (!bond_mode_uses_arp(newval->value)) {
++		if (bond->params.arp_interval) {
++			netdev_dbg(bond->dev, "%s mode is incompatible with arp monitoring, start mii monitoring\n",
++				   newval->string);
++			/* disable arp monitoring */
++			bond->params.arp_interval = 0;
++		}
++
++		if (!bond->params.miimon) {
++			/* set miimon to default value */
++			bond->params.miimon = BOND_DEFAULT_MIIMON;
++			netdev_dbg(bond->dev, "Setting MII monitoring interval to %d\n",
++				   bond->params.miimon);
++		}
+ 	}
+ 
+ 	if (newval->value == BOND_MODE_ALB)
 -- 
-Bruce Merry
-Senior Science Processing Developer
-SKA South Africa
+2.16.1
+
