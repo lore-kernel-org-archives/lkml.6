@@ -2,147 +2,108 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2105FECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C6FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1CCF2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:02:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CCF2075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 20DF42075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:04:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uHkF5aCv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20DF42075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731537AbeGRCiI (ORCPT
+        id S1731452AbeGRCkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:38:08 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53057 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731194AbeGRCiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:38:08 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9CDCDDFCCEA60;
-        Wed, 18 Jul 2018 10:02:38 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.382.0; Wed, 18 Jul 2018
- 10:02:32 +0800
-From:   Yunlong Song <yunlong.song@huawei.com>
-To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] f2fs: issue discard align to section in LFS mode
-Date:   Wed, 18 Jul 2018 10:02:27 +0800
-Message-ID: <1531879347-102427-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
-References: <1531836275-94933-1-git-send-email-yunlong.song@huawei.com>
+        Tue, 17 Jul 2018 22:40:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:49965 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730774AbeGRCkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 22:40:00 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41VgSc3z96z9s21;
+        Wed, 18 Jul 2018 12:04:32 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531879472;
+        bh=wAUwF66QqRjuOgoOvvvoX72ZGCjqLCNTvTQx2kq/t8A=;
+        h=Date:From:To:Cc:Subject:From;
+        b=uHkF5aCvXc0fSjiA3wHRsVoWRcdya77Ci/9iHbXQtckTOJ5EcpqdHqfQTtC7zhkN9
+         wgUYz9epuAehb9x9eTcxT7g3nFcu8PhC+WSp7aoTaPln3hWgCG3fjgb7+lUgbtSHZu
+         IAnN1qTr1+Y60GEiZbiTu8OPHE8Mdt4pkhFNd9tAxagR3NX8p6XHaj0MpY0WPA0cTj
+         dCBwfVaOiHXkx7UgPvwyr54ZUr+rOMLSRbtI0d9GBZe4zTFoLrQAPqFyerhd19+4Zr
+         knRyGHNDbTNf/5sjYqNZmNs8BhUuKHse1xzmdy4Bkox7BaQpyP+nMB7s3boKTmJQA6
+         WFqrVDSsL2oMg==
+Date:   Wed, 18 Jul 2018 12:04:31 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the ipvs-next tree with the
+ netfilter-next tree
+Message-ID: <20180718120431.68189264@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/s5py6xYsqSWVfpA8CYdG42t"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the case when sbi->segs_per_sec > 1 with lfs mode, take
-section:segment = 5 for example, if the section prefree_map is
-...previous section | current section (1 1 0 1 1) | next section...,
-then the start = x, end = x + 1, after start = start_segno +
-sbi->segs_per_sec, start = x + 5, then it will skip x + 3 and x + 4, but
-their bitmap is still set, which will cause duplicated
-f2fs_issue_discard of this same section in the next write_checkpoint:
+--Sig_/s5py6xYsqSWVfpA8CYdG42t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
-then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
-write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0,
-prefree of NO.2 is cleared, and no discard issued
+Hi Simon,
 
-round 2: rm data block NO.0, NO.1, NO.3, NO.4
-all invalid, but prefree bit of NO.2 is set and cleared in round 1, then
-prefree_map: 1 1 0 1 1
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no
-valid blocks of this section, so discard issued, but this time prefree
-bit of NO.3 and NO.4 is skipped due to start = start_segno + sbi->segs_per_sec;
+Today's linux-next merge of the ipvs-next tree got conflicts in:
 
-round 3:
-write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 ->
-0 0 0 0 0, no valid blocks of this section, so discard issued,
-this time prefree bit of NO.3 and NO.4 is cleared, but the discard of
-this section is sent again...
+  net/ipv6/netfilter/Kconfig
+  net/netfilter/Kconfig
+  net/netfilter/Makefile
 
-To fix this problem, we can align the start and end value to section
-boundary for fstrim and real-time discard operation, and decide to issue
-discard only when the whole section is invalid, which can issue discard
-aligned to section size as much as possible and avoid redundant discard.
+caused by commits
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/segment.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+66c524acfb51 netfilter: conntrack: remove l3proto abstraction
+5a733aa21d2f netfilter: conntrack: remove get_l4proto indirection from l3 p=
+rotocol trackers
+e33ae98088b4 netfilter: Kconfig: Make NETFILTER_XT_MATCH_SOCKET select NF_S=
+OCKET_IPV4/6
+35bf1ccecaaa netfilter: Kconfig: Change IPv6 select dependencies
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index cfff7cf..c25e2eb 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -1710,6 +1710,7 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 	unsigned int start = 0, end = -1;
- 	unsigned int secno, start_segno;
- 	bool force = (cpc->reason & CP_DISCARD);
-+	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
- 
- 	mutex_lock(&dirty_i->seglist_lock);
- 
-@@ -1721,14 +1722,19 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
- 		end = find_next_zero_bit(prefree_map, MAIN_SEGS(sbi),
- 								start + 1);
- 
--		for (i = start; i < end; i++)
--			clear_bit(i, prefree_map);
--
--		dirty_i->nr_dirty[PRE] -= end - start;
--
- 		if (!test_opt(sbi, DISCARD))
- 			continue;
- 
-+		if (need_align) {
-+			start = rounddown(start, sbi->segs_per_sec);
-+			end = roundup(end, sbi->segs_per_sec);
-+		}
-+
-+		for (i = start; i < end; i++) {
-+			if (test_and_clear_bit(i, prefree_map))
-+				dirty_i->nr_dirty[PRE]--;
-+		}
-+
- 		if (force && start >= cpc->trim_start &&
- 					(end - 1) <= cpc->trim_end)
- 				continue;
-@@ -2511,6 +2517,7 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	struct discard_policy dpolicy;
- 	unsigned long long trimmed = 0;
- 	int err = 0;
-+	bool need_align = test_opt(sbi, LFS) && sbi->segs_per_sec > 1;
- 
- 	if (start >= MAX_BLKADDR(sbi) || range->len < sbi->blocksize)
- 		return -EINVAL;
-@@ -2528,6 +2535,10 @@ int f2fs_trim_fs(struct f2fs_sb_info *sbi, struct fstrim_range *range)
- 	start_segno = (start <= MAIN_BLKADDR(sbi)) ? 0 : GET_SEGNO(sbi, start);
- 	end_segno = (end >= MAX_BLKADDR(sbi)) ? MAIN_SEGS(sbi) - 1 :
- 						GET_SEGNO(sbi, end);
-+	if (need_align) {
-+		start_segno = rounddown(start_segno, sbi->segs_per_sec);
-+		end_segno = roundup(end_segno + 1, sbi->segs_per_sec) - 1;
-+	}
- 
- 	cpc.reason = CP_DISCARD;
- 	cpc.trim_minlen = max_t(__u64, 1, F2FS_BYTES_TO_BLK(range->minlen));
--- 
-1.8.5.2
+which appear as different commits in the the netfilter-next tree (along
+with further changes to these files there).
 
+I fixed it up (I used the netfilter-net tree versions of these files) and
+can carry the fix as necessary. Please clean up your tree wrt the
+netfilter-next tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/s5py6xYsqSWVfpA8CYdG42t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltOoC8ACgkQAVBC80lX
+0GzRGgf/Ta8owGnIo1sVmxDMkWaCn24X0i20Jn/gCu3H1VkYL8W/q5eibxFgqU7W
+CLXbpDpreMsjy3Jf5lO5+thtrhHPmvIvvkBiuuWfjcM17pPcdtHT+yfySU/iQHzG
+tSSyjD5gtve1vbiM7RG6DdeQruz+Pu0ZNlXx17q8aLPPQScoOz26FFaiaRGTOAJs
+VaM85Lzs2PiDmytNqVPcxzBpA9YRXoHmjZF2Vk93xRj+hGmIdLoEOS7/Ll4KVD+U
+0zRyIFONOwYBBpiN8LMoGX5JR97ghkNrY4r9arGB2GqSDqZBFEjtHa3fhBZ7UDgS
+zeSQLAlkzaWFVBWwwqrckBz8zH2aAg==
+=n4ju
+-----END PGP SIGNATURE-----
+
+--Sig_/s5py6xYsqSWVfpA8CYdG42t--
