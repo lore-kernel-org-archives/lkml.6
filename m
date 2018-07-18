@@ -2,82 +2,101 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F8DECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62341ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE242075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:15:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE242075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id F0B962075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 20:16:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fElTP1A8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B962075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbeGRUyw (ORCPT
+        id S1730621AbeGRU4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:54:52 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40010 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730839AbeGRUyv (ORCPT
+        Wed, 18 Jul 2018 16:56:00 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42904 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729973AbeGRU4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:54:51 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1ffsr0-0004Yw-Dx; Wed, 18 Jul 2018 20:15:18 +0000
-Date:   Wed, 18 Jul 2018 21:15:18 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] call_with_creds()
-Message-ID: <20180718201518.GX30522@ZenIV.linux.org.uk>
-References: <20180718132955.2bf185b7@canb.auug.org.au>
- <CAOssrKf60FHqgG6pB5zOP7iV-qdHdDUODdG7SVpoNh3Pipo=6w@mail.gmail.com>
- <CAOssrKdqnsPSipweUCers6d2AgJX2aVGQUs1pd7cB79GoSJH1Q@mail.gmail.com>
- <20180718124340.GS30522@ZenIV.linux.org.uk>
- <CAOssrKcS+kwK+S1aojhbW_4p8FJLPaafBDqDu89d=F14wT-0rw@mail.gmail.com>
- <20180718181252.GU30522@ZenIV.linux.org.uk>
- <CA+55aFxh62Yttq-W2Cr_YQQ5tAL1xjijjnaz1-zdZNqZPQFM0g@mail.gmail.com>
- <20180718194637.GV30522@ZenIV.linux.org.uk>
- <CA+55aFydd9ji2eJSNVK7Fjpziehvm6fO3b1eTeUAn0L1tk3GmQ@mail.gmail.com>
- <20180718200411.GW30522@ZenIV.linux.org.uk>
+        Wed, 18 Jul 2018 16:56:00 -0400
+Received: by mail-pg1-f195.google.com with SMTP id y4-v6so2490196pgp.9
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 13:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=HKWPKp4OhQNPtuUh2A4lTKaE+Px7CtP8hYAARoUwSkI=;
+        b=fElTP1A8Vg0Ke8cqdtPeLKorGfytM2ioy8KBSzqwP82D4Op4P68SbglP68DpofctzV
+         IMPBBnfF9O5ZT+UJw64SLeD8fipSif5kYks6F8dlCT7iM8XztEeXCdydsglOO0+NEbl5
+         AP4VZZiLalWpxQeFS5sIbLpn/4c8PjRoBv0IKdGC7Yl4dhv7hFuZiufAdMMEJKee1aqC
+         +FlZ0n8iocoM4sq8S0LlpFPw7bbjLEJjgpirKSDAvsWUB0GOIMatlMVPemZ6PZMamCQH
+         9GbucyutVxCgOvU8p4qNDhw1DBJH7NUcmrswZ4+acPNJh/aYmABwb3qR63Mx8ssSgxZ6
+         Tt8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=HKWPKp4OhQNPtuUh2A4lTKaE+Px7CtP8hYAARoUwSkI=;
+        b=QVg1OfZKpq9J0AG3wDSwwGsX5hJiuN4zSPt0ImXCCnrTYrf8bxPGE59L0EYFpl3zRf
+         kdp4rrH7aCRfzsR9U69TYWGVOqU0ipEprOKIYhRtCL0YR99AaFzg/WKlxyoW4GCR8Igq
+         TEBFrlImrKzwXKDj2c8flg5AYJ3OcYDv3JNpFiPzs+svjFKiH31ZRtgAc+W9NgPbSDR9
+         C0ryS9phRkbV80SGly8X+OZtkVHSAl1rq9OlZcx8LoWwoaaIX3pS3hztKk/NsForUzvr
+         siEzJN2lK1A3AMsu86moNBBqhYkwOQNTHsuqRsI6H4o2eg12LMtjEG7JXRR2ZbaYkGYF
+         s6og==
+X-Gm-Message-State: AOUpUlEBGoNUScnxvznVhtthI2dzF+9tm8aWcib7LJBfNJJ2+XfRGPZN
+        4Zk9CcyHKOuhsa+2/wywXpzv4+1GVos=
+X-Google-Smtp-Source: AAOMgpe6g9KAN0d+u5DuK50zBJPPx6XER2pNfGh2df4kXSZovhfpSwGRnOQ7tuYrYHOCQx8J3lQm/w==
+X-Received: by 2002:a63:e452:: with SMTP id i18-v6mr7023038pgk.185.1531944989786;
+        Wed, 18 Jul 2018 13:16:29 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id r19-v6sm21085410pgg.39.2018.07.18.13.16.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 13:16:28 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 13:16:28 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Baoquan He <bhe@redhat.com>
+cc:     mhocko@kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] mm/page_alloc: Deprecate kernelcore=nn and
+ movable_core=
+In-Reply-To: <20180717233100.GH1724@MiWiFi-R3L-srv>
+Message-ID: <alpine.DEB.2.21.1807181314230.49359@chino.kir.corp.google.com>
+References: <20180717131837.18411-1-bhe@redhat.com> <alpine.DEB.2.21.1807171344320.12251@chino.kir.corp.google.com> <20180717233100.GH1724@MiWiFi-R3L-srv>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718200411.GW30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 09:04:11PM +0100, Al Viro wrote:
-> On Wed, Jul 18, 2018 at 12:53:48PM -0700, Linus Torvalds wrote:
-> > On Wed, Jul 18, 2018 at 12:46 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > Huh?  Nevermind ->write(), what about open()?
-> > 
-> > What about open?
-> > 
-> > At open time, file->f_cred is the same as current_cred().
-> 
-> int cachefiles_write_page(struct fscache_storage *op, struct page *page)
-> {
-> ...
->         file = dentry_open(&path, O_RDWR | O_LARGEFILE, cache->cache_cred);
-> 
-> 
-> int ecryptfs_privileged_open(struct file **lower_file,
->                              struct dentry *lower_dentry,
->                              struct vfsmount *lower_mnt,
->                              const struct cred *cred)
-> ...
->         (*lower_file) = dentry_open(&req.path, flags, cred);
+On Wed, 18 Jul 2018, Baoquan He wrote:
 
-Actually, scratch that one - in this case it is current_cred() (whether that's
-the right value or not).
+> > > We can still use 'kernelcore=mirror' or 'movable_node' for the usage
+> > > of hotplug and movable zone. If somebody shows up with a valid usecase
+> > > we can reconsider.
+> > > 
+> > 
+> > We actively use kernelcore=n%, I had recently added support for the option 
+> > in the first place in 4.17.  It's certainly not deprecated.
+> 
+> Thanks for telling. Just for curiosity, could you tell the scenario you
+> are using kernelcore=n%? Since it evenly spread movable area on nodes,
+> we may not be able to physically hot unplug/plug RAM.
+> 
 
-cachefile_write_page() case is for real, AFAICS.
+To evenly distribute ZONE_MOVABLE over a set of nodes regardless of the 
+many memory capacities of systems that we have where individual command 
+lines cannot be tuned.  But you want to deprecate kernelcore=nn, not just 
+the percent version, so I assume that's not the answer you're looking for. 
+We do not enable CONFIG_MEMORY_HOTPLUG so this deprecation would break our 
+userspace such that we cannot use ZONE_MOVABLE.
