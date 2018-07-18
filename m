@@ -2,87 +2,109 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E91ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:22:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7334ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A746E20856
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:22:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="JTzXHNSP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A746E20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=foxmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6734920850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:23:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6734920850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731059AbeGRQAk (ORCPT
+        id S1731204AbeGRQCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:00:40 -0400
-Received: from smtpbg65.qq.com ([103.7.28.233]:60371 "EHLO smtpbg65.qq.com"
+        Wed, 18 Jul 2018 12:02:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57897 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730383AbeGRQAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:00:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1531927328;
-        bh=qBIJT70L53W2TP0L9Rv0a8wrkIYbCvJ2iETSpv9Au9I=;
-        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding;
-        b=JTzXHNSPimgsuoTcPeIMuBhLSDiSEUFMQGhO7f54jaBFd08pBWi/2zzGtdm1tcepB
-         k8R77Q/xTRu6xsgWQ04TNXXheq4bFBCnV9/dVA8/6VINTXvUTShrQ4GtuhSavta54Z
-         qGiBYU8gvJktEpYefQrcoapB//Fh1MQ9eyfpgeoE=
-X-QQ-mid: esmtp7t1531927327tyj5db33s
-Received: from myserver.localdomain (unknown [115.171.112.219])
-        by esmtp4.qq.com (ESMTP) with 
-        id ; Wed, 18 Jul 2018 23:22:06 +0800 (CST)
-X-QQ-SSF: B0000000000000F0FM300F00000000V
-X-QQ-FEAT: RckgDqrZPfAY9DZwEY0qbXZ++mpbM4kRTnSCIqvlobLT5fOda0T0TOhcE8WSN
-        c+R+ONTbMXg3JoEkgi/oosPX8chQue9na65y65fuf2XWW1lJF28R5RtQ3jPAiF5GB2csmLG
-        tXAb8AGHX9KB1WERsCeZLZNNubVnXeiAUgs1JYllnYRzrC7GhY8PEHQZ+Eok5k/XW/EzNKy
-        2ehxalpeSCv/hzWqLv9QpZXHs1p7UIH7/jrO0lGijQqjZ1hEZqUYRxwcKh2okUSScyNJrzB
-        T85PkAXwblNW3c7lEcDNf/g7hjhtMCYgfJnA==
-X-QQ-GoodBg: 0
-From:   elicec <elicec@foxmail.com>
-To:     sre@kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     elicec <elicec@foxmail.com>
-Subject: [PATCH] power:ds2782:Fix description error
-Date:   Wed, 18 Jul 2018 15:20:33 +0000
-Message-Id: <20180718152033.5880-1-elicec@foxmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730735AbeGRQCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:02:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CADA3207E8; Wed, 18 Jul 2018 17:23:41 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A0A6820766;
+        Wed, 18 Jul 2018 17:23:41 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 17:23:41 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2] drm/sun4i: sun4i: Introduce a quirk for lowest plane
+ alpha support
+Message-ID: <20180718152341.zr32w5cjtpfec4xe@flea>
+References: <20180718092948.15334-1-paul.kocialkowski@bootlin.com>
+ <76279f0a265bfbe509074fcff3156a437e7091dd.camel@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtp:foxmail.com:bgforeign:bgforeign3
-X-QQ-Bgrelay: 1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wflxnniappgthqoh"
+Content-Disposition: inline
+In-Reply-To: <76279f0a265bfbe509074fcff3156a437e7091dd.camel@bootlin.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After add support for ds2786 battery gas gauge，the description
-didn't update. fix it.
 
-Signed-off-by: elicec <elicec@foxmail.com>
----
- drivers/power/supply/ds2782_battery.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--wflxnniappgthqoh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/power/supply/ds2782_battery.c b/drivers/power/supply/ds2782_battery.c
-index a1b7e0592245..924e99d1e69e 100644
---- a/drivers/power/supply/ds2782_battery.c
-+++ b/drivers/power/supply/ds2782_battery.c
-@@ -471,5 +471,5 @@ static struct i2c_driver ds278x_battery_driver = {
- module_i2c_driver(ds278x_battery_driver);
- 
- MODULE_AUTHOR("Ryan Mallon");
--MODULE_DESCRIPTION("Maxim/Dallas DS2782 Stand-Alone Fuel Gauage IC driver");
-+MODULE_DESCRIPTION("Maxim/Dallas DS2782/DS2786 Stand-Alone Fuel Gauage IC driver");
- MODULE_LICENSE("GPL");
--- 
-2.17.1
+On Wed, Jul 18, 2018 at 11:35:23AM +0200, Paul Kocialkowski wrote:
+> On Wed, 2018-07-18 at 11:29 +0200, Paul Kocialkowski wrote:
+> > Not all sunxi platforms with the first version of the Display Engine
+> > support an alpha component on the plane with the lowest z position
+> > (as in: lowest z-pos), that gets blended with the background color.
+> >=20
+> > In particular, the A13 is known to have this limitation. However, it was
+> > recently discovered that the A20 and A33 are capable of having alpha on
+> > their lowest plane.
+> >=20
+> > Thus, this introduces a specific quirk to indicate such support,
+> > per-platform. Since this was not tested on sun4i and sun6i platforms, a
+> > conservative approach is kept and this feature is not supported.
+>=20
+> Woops, I forgot to include PATCH 1/2 from v1, which did not change.
+>=20
+> Would it be preferable for me to send v2 again (and maybe call it v3)
+> for convenience?
+
+Yeah, resend it, and call it v2 resend (explaining why a resend was
+needed).
+
+Maxime
 
 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--wflxnniappgthqoh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltPW3wACgkQ0rTAlCFN
+r3RhMQ//WHLtA5QpRkA+v3plxZ36kfQoi0vDYSymF8DbL4PRNle1LaVTEgV1co8S
+1+Hyr2Y4CsE4zQ3aZXUsbkurXTFeXSW1d9zk2083a1qB71159BDtfBNTZ4mhBz0q
+hFNBolQPT8TdRVqN2EBZ29l0ZoKYmfm6630A4P2yTctv5rtc1lPTgLHCwpRjYm9N
+OO3TljS49zLv9S0bqQdl4CMAHBXtw6WK9500DyaFQH0xJ06cq2y5Gc+0OPjwn5Cy
+25Sa5TlOQRZA9vR8IPP7cjgQ+Trdu4cEECGM3UahiWXl4Jd2IarnLWLQWPg0zqJN
+DAB3YmCoyRcnA8Mp61Gr8YE/PmdO4MT0hrI1KfpHZvpel5Lf4ofhGPKpV4UqU86X
+nsJAtmGIYa4EegpLZVxvcnzcKW2IHe7etX4f6OBGPJNdtf1jF5F44+BspdLd8fAD
+1KjXHV6KWyRS0Wi7/1cQFMYkcWWRZAt4PgNqRmiwjyIyju0jsi6k6PlJ7670JDSw
+e3l+yL4p9Q/MlZTqirjvSzaaekMNqUWoJ2hLXTT/45+Z21pbx7W1huBQJC1uWGho
+paL9epELu+2PNxTwqCTu5/bRAdaeVNGc2Bz5qBc3d6FLJSIHFG5093WfvhclJU+u
+/tnUHUVCrqNqiKcwhSrYY4t7gxE5RoBm28et89WPrqz0bHGCTHI=
+=8SKu
+-----END PGP SIGNATURE-----
+
+--wflxnniappgthqoh--
