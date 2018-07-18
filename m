@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 810E6ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B70ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:45:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 323E020854
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 019A82084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:45:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0CbnkeZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 323E020854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7g25xee"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 019A82084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730966AbeGRUYW (ORCPT
+        id S1731037AbeGRUY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:24:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34030 "EHLO mail.kernel.org"
+        Wed, 18 Jul 2018 16:24:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728912AbeGRUYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:24:21 -0400
+        id S1727009AbeGRUY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:24:28 -0400
 Received: from localhost (unknown [69.71.4.100])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE3C82084E;
-        Wed, 18 Jul 2018 19:44:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A669F20850;
+        Wed, 18 Jul 2018 19:45:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531943099;
-        bh=c10G4CsHwEp3HNS8snXQ8KYHQeIMXDd2fKdx878Sj7g=;
+        s=default; t=1531943105;
+        bh=QK/WYYzr9tMS7ubEvjx7MfzXGJgeo6U7TFaH3kcs40E=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=h0CbnkeZDSjGthpz+YC2i4CC1QtHzUgRtlJm/jLK5oJtmoxkMjcUBEZiI4R1NgiAU
-         uEVVTnERrMs6elcORZA/v72HK1y1yOyDPxBz8t2Fw89L41HElxpRgbsrVC7iqLl+sC
-         oMVKfs4iMc4R0/ULjsRedyXxt42i0oB62hD+IGxc=
-Subject: [PATCH v3 6/7] PCI/AER: Clear device status bits during ERR_COR
- handling
+        b=N7g25xeeXgfOzRoY6QvP5GBnghd9sJxpunoY+sTdIRDmbizHPhvzzWGKx8FyFIPkq
+         b4kP/1wafKL0s0vfUQVdTUM/tTxZO0xpRF421v/lVlNtcUHdeeRj5XEbpnCpbJa8A1
+         VgTywYmjjS8aY6gUJ4vAlmNu2v+k3kIfFjp0WuPc=
+Subject: [PATCH v3 7/7] PCI/portdrv: Remove
+ pcie_portdrv_err_handler.slot_reset
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Oza Pawandeep <poza@codeaurora.org>
 Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
@@ -49,8 +49,8 @@ Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
         Sinan Kaya <okaya@kernel.org>,
         Timur Tabi <timur@codeaurora.org>, linux-pci@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Wed, 18 Jul 2018 14:44:57 -0500
-Message-ID: <153194309786.191586.2771045363400479470.stgit@bhelgaas-glaptop.roam.corp.google.com>
+Date:   Wed, 18 Jul 2018 14:45:04 -0500
+Message-ID: <153194310441.191586.1465977925038330272.stgit@bhelgaas-glaptop.roam.corp.google.com>
 In-Reply-To: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
 References: <153194245964.191586.14782253252654776509.stgit@bhelgaas-glaptop.roam.corp.google.com>
 User-Agent: StGit/0.18
@@ -64,25 +64,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oza Pawandeep <poza@codeaurora.org>
 
-In case of correctable error, the Correctable Error Detected bit in the
-Device Status register is set.  Clear it after handling the error.
+The pci_error_handlers.slot_reset() callback is only used for non-bridge
+devices (see broadcast_error_message()).  Since portdrv only binds to
+bridges, we don't need pcie_portdrv_slot_reset(), so remove it.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+[bhelgaas: changelog, remove pcie_portdrv_slot_reset() completely]
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/pcie/aer.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/pci/pcie/portdrv_pci.c |   25 -------------------------
+ 1 file changed, 25 deletions(-)
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index dc67f52b002f..2accfd7a4c9d 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -827,6 +827,7 @@ static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
- 		if (pos)
- 			pci_write_config_dword(dev, pos + PCI_ERR_COR_STATUS,
- 					info->status);
-+		pci_aer_clear_device_status(dev);
- 	} else if (info->severity == AER_NONFATAL)
- 		pcie_do_nonfatal_recovery(dev);
- 	else if (info->severity == AER_FATAL)
+diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
+index 973f1b80a038..b78840f54a9b 100644
+--- a/drivers/pci/pcie/portdrv_pci.c
++++ b/drivers/pci/pcie/portdrv_pci.c
+@@ -42,17 +42,6 @@ __setup("pcie_ports=", pcie_port_setup);
+ 
+ /* global data */
+ 
+-static int pcie_portdrv_restore_config(struct pci_dev *dev)
+-{
+-	int retval;
+-
+-	retval = pci_enable_device(dev);
+-	if (retval)
+-		return retval;
+-	pci_set_master(dev);
+-	return 0;
+-}
+-
+ #ifdef CONFIG_PM
+ static int pcie_port_runtime_suspend(struct device *dev)
+ {
+@@ -160,19 +149,6 @@ static pci_ers_result_t pcie_portdrv_mmio_enabled(struct pci_dev *dev)
+ 	return PCI_ERS_RESULT_RECOVERED;
+ }
+ 
+-static pci_ers_result_t pcie_portdrv_slot_reset(struct pci_dev *dev)
+-{
+-	/* If fatal, restore cfg space for possible link reset at upstream */
+-	if (dev->error_state == pci_channel_io_frozen) {
+-		dev->state_saved = true;
+-		pci_restore_state(dev);
+-		pcie_portdrv_restore_config(dev);
+-		pci_enable_pcie_error_reporting(dev);
+-	}
+-
+-	return PCI_ERS_RESULT_RECOVERED;
+-}
+-
+ static int resume_iter(struct device *device, void *data)
+ {
+ 	struct pcie_device *pcie_device;
+@@ -208,7 +184,6 @@ static const struct pci_device_id port_pci_ids[] = { {
+ static const struct pci_error_handlers pcie_portdrv_err_handler = {
+ 	.error_detected = pcie_portdrv_error_detected,
+ 	.mmio_enabled = pcie_portdrv_mmio_enabled,
+-	.slot_reset = pcie_portdrv_slot_reset,
+ 	.resume = pcie_portdrv_err_resume,
+ };
+ 
 
