@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813EDECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2E2ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3579820850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76ED82084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 18:21:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="bMy1duDP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3579820850
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="kEbwZduh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76ED82084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731054AbeGRTAI (ORCPT
+        id S1731139AbeGRTAK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 15:00:08 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:43356 "EHLO
+        Wed, 18 Jul 2018 15:00:10 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:43014 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730810AbeGRTAI (ORCPT
+        with ESMTP id S1731031AbeGRTAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 15:00:08 -0400
+        Wed, 18 Jul 2018 15:00:09 -0400
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -37,52 +37,46 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         Paul Cercueil <paul@crapouillou.net>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mips@linux-mips.org
-Subject: [PATCH v2 13/17] dmaengine: dma-jz4780: Further residue status fix
-Date:   Wed, 18 Jul 2018 20:20:19 +0200
-Message-Id: <20180718182023.8182-14-paul@crapouillou.net>
+Subject: [PATCH v2 15/17] MIPS: JZ4780: DTS: Update DMA node to match driver changes
+Date:   Wed, 18 Jul 2018 20:20:21 +0200
+Message-Id: <20180718182023.8182-16-paul@crapouillou.net>
 In-Reply-To: <20180718182023.8182-1-paul@crapouillou.net>
 References: <20180718182023.8182-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938060; bh=wLtygciA8kesCct7e/GjoIaL5q5d2hxkrc9IVMEKpJU=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=bMy1duDPsmfp1EUXgdduwxtBlliTDpQqHKeT9aQ+Im40am95G8XWegjaBP+DPZ4ByoeKG2AGvoLW8yNmwL0AmQwKBd+lU+JcSX869majNDMUq8+5JBZKOlqKFVzi2X/sRL0ozFRkf56ICQDrZ9uLXVWea6ulLOyXa3v0bcCmKxc=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531938062; bh=Cpu4+FXv4H5DlfyW497VR7CSr79FQPC5zXApkMxm6iA=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=kEbwZduhPtlsjQDHQ1TZ7Bn0HOnn4rx0BtOrUSr8+qNt9FwpXKkhc7s/xwXHgZqZdn2CZYUXkWhuRF+G6Zuy3Yib8rYptP+7iEJ4j5I3fwpaWnr9I9Z+9mz6bNlXzcslL4Xf6oaRpgRee+rgNc3fg7re/4r1cie02tGhNs34gyw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Silsby <dansilsby@gmail.com>
+The driver now accepts two memory resources, the first one for the
+channel-specific registers, the second one for the controller-specific
+registers.
 
-Func jz4780_dma_desc_residue() expects the index to the next hw
-descriptor as its last parameter. Caller func jz4780_dma_tx_status(),
-however, applied modulus before passing it. When the current hw
-descriptor was last in the list, the index passed became zero.
+Note that older devicetrees, without this commit, will still work with
+the jz4780-dma driver.
 
-The resulting excess of reported residue especially caused problems
-with cyclic DMA transfer clients, i.e. ALSA AIC audio output, which
-rely on this for determining current DMA location within buffer.
-
-Combined with the recent and related residue-reporting fixes, spurious
-ALSA audio underruns on jz4770 hardware are now fixed.
-
-Signed-off-by: Daniel Silsby <dansilsby@gmail.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Tested-by: Mathieu Malaterre <malat@debian.org>
 ---
- drivers/dma/dma-jz4780.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/boot/dts/ingenic/jz4780.dtsi | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- v2: No change
+ v2: Update info about devicetree ABI compatibility in commit message
 
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index 78849131c81d..b9db539a5b34 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -651,7 +651,7 @@ static enum dma_status jz4780_dma_tx_status(struct dma_chan *chan,
- 					to_jz4780_dma_desc(vdesc), 0);
- 	} else if (cookie == jzchan->desc->vdesc.tx.cookie) {
- 		txstate->residue = jz4780_dma_desc_residue(jzchan, jzchan->desc,
--			  (jzchan->curr_hwdesc + 1) % jzchan->desc->count);
-+					jzchan->curr_hwdesc + 1);
- 	} else
- 		txstate->residue = 0;
+diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+index aa4e8f75ff5d..ad3b1f827cf5 100644
+--- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+@@ -247,7 +247,8 @@
  
+ 	dma: dma@13420000 {
+ 		compatible = "ingenic,jz4780-dma";
+-		reg = <0x13420000 0x10000>;
++		reg = <0x13420000 0x400
++		       0x13421000 0x40>;
+ 		#dma-cells = <2>;
+ 
+ 		interrupt-parent = <&intc>;
 -- 
 2.11.0
 
