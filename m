@@ -2,236 +2,100 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D586ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00820ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA2C2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:34:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA2C2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
+	by mail.kernel.org (Postfix) with ESMTP id BA0372075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:34:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA0372075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731642AbeGRQMk (ORCPT
+        id S1731650AbeGRQM7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:12:40 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9648 "EHLO huawei.com"
+        Wed, 18 Jul 2018 12:12:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56638 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731144AbeGRQMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:12:39 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 123539CAF4EF4;
-        Wed, 18 Jul 2018 23:33:56 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.42) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.382.0; Wed, 18 Jul 2018
- 23:33:54 +0800
-Subject: Re: [PATCH v2] arm64: hikey960: update idle-states
-To:     Vincent Guittot <vincent.guittot@linaro.org>, <robh+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1531298086-8375-1-git-send-email-vincent.guittot@linaro.org>
-CC:     <leo.yan@linaro.org>, <daniel.lezcano@linaro.org>
-From:   Wei Xu <xuwei5@hisilicon.com>
-Message-ID: <5B4F5DDC.1060802@hisilicon.com>
-Date:   Wed, 18 Jul 2018 16:33:48 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+        id S1730987AbeGRQM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:12:59 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 45CFC7DAC2;
+        Wed, 18 Jul 2018 15:34:32 +0000 (UTC)
+Received: from flask (unknown [10.43.2.80])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7B41F2026D69;
+        Wed, 18 Jul 2018 15:34:30 +0000 (UTC)
+Received: by flask (sSMTP sendmail emulation); Wed, 18 Jul 2018 17:34:29 +0200
+Date:   Wed, 18 Jul 2018 17:34:29 +0200
+From:   Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To:     KarimAllah Ahmed <karahmed@amazon.de>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v5 1/2] KVM: Switch 'requests' to be 64-bit (explicitly)
+Message-ID: <20180718153429.GC6348@flask>
+References: <1531214840-24686-1-git-send-email-karahmed@amazon.de>
 MIME-Version: 1.0
-In-Reply-To: <1531298086-8375-1-git-send-email-vincent.guittot@linaro.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.42]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531214840-24686-1-git-send-email-karahmed@amazon.de>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 15:34:32 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 18 Jul 2018 15:34:32 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rkrcmar@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vincent,
+2018-07-10 11:27+0200, KarimAllah Ahmed:
+> Switch 'requests' to be explicitly 64-bit and update BUILD_BUG_ON check to
+> use the size of "requests" instead of the hard-coded '32'.
+> 
+> That gives us a bit more room again for arch-specific requests as we
+> already ran out of space for x86 due to the hard-coded check.
+> 
+> The only exception here is ARM32 as it is still 32-bits.
 
-On 2018/7/11 9:34, Vincent Guittot wrote:
-> Update entry/exit latency and residency time of hikey960 to use more
-> realistic figures based on unitary tests done on the platform.
-> 
-> The complete results (in us) :
->                   big cluster
->                   cluster  CPU
-> max entry latency     800  400
-> max exit latency     2900  550
-> residency  903Mhz    5000 1500
-> residency 2363Mhz       0 1500
-> 
->                   little cluster
->                   cluster  CPU
-> max entry latency     500  400
-> max exit latency     1600  650
-> residency  533Mhz    8000 4500
-> residency 1844Mhz       0 1500
-> 
-> We can see that the residency time depends of the running OPP which is not
-> handled for now. Then we also have to take into account the constraint of
-> a residency time shorter than the tick to get full advantage of idle loop
-> reordering(tick is stopped if idle duration is higher than tick period).
-> Finally the selected residency value are :
->                  big cluster
->                   cluster  CPU
-> residency            3700 1500
-> 
->                   little cluster
->                   cluster  CPU
-> residency            3500 1500
-> 
-> A simple test with a task waking up every 11.111ms shows improvement:
-> - 5% a lowest OPP
-> - 22% at highest OPP
-> 
-> The period has been chosen:
-> - to be shorter than old cluster residency time and longer than new
-> residency time of cluster off C-state
-> - to prevent any sync with tick (4ms) when running tests that can add
-> some variances between tests
-> 
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+What do you mean?
 
-Thanks!
-Applied to the hisilicon dt tree.
+I think we're just going to slow down kvm_request_pending() on 32 bit
+architectures.
 
-Best Regards,
-Wei
-
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Reviewed-by: Jim Mattson <jmattson@google.com>
+> Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
 > ---
->  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 45 ++++++++++++++++++-------------
->  1 file changed, 27 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> index 421d454..890d23e 100644
-> --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-> @@ -61,7 +61,7 @@
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-> +			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
->  			capacity-dmips-mhz = <592>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
->  			operating-points-v2 = <&cluster0_opp>;
-> @@ -75,7 +75,7 @@
->  			reg = <0x0 0x1>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-> +			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
->  			capacity-dmips-mhz = <592>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
->  			operating-points-v2 = <&cluster0_opp>;
-> @@ -87,7 +87,7 @@
->  			reg = <0x0 0x2>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-> +			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
->  			capacity-dmips-mhz = <592>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
->  			operating-points-v2 = <&cluster0_opp>;
-> @@ -99,7 +99,7 @@
->  			reg = <0x0 0x3>;
->  			enable-method = "psci";
->  			next-level-cache = <&A53_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-> +			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
->  			capacity-dmips-mhz = <592>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
->  			operating-points-v2 = <&cluster0_opp>;
-> @@ -111,7 +111,7 @@
->  			reg = <0x0 0x100>;
->  			enable-method = "psci";
->  			next-level-cache = <&A73_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-> +			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
->  			capacity-dmips-mhz = <1024>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
->  			operating-points-v2 = <&cluster1_opp>;
-> @@ -125,7 +125,7 @@
->  			reg = <0x0 0x101>;
->  			enable-method = "psci";
->  			next-level-cache = <&A73_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-> +			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
->  			capacity-dmips-mhz = <1024>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
->  			operating-points-v2 = <&cluster1_opp>;
-> @@ -137,7 +137,7 @@
->  			reg = <0x0 0x102>;
->  			enable-method = "psci";
->  			next-level-cache = <&A73_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-> +			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
->  			capacity-dmips-mhz = <1024>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
->  			operating-points-v2 = <&cluster1_opp>;
-> @@ -149,7 +149,7 @@
->  			reg = <0x0 0x103>;
->  			enable-method = "psci";
->  			next-level-cache = <&A73_L2>;
-> -			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-> +			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
->  			capacity-dmips-mhz = <1024>;
->  			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
->  			operating-points-v2 = <&cluster1_opp>;
-> @@ -158,31 +158,40 @@
->  		idle-states {
->  			entry-method = "psci";
->  
-> -			CPU_SLEEP: cpu-sleep {
-> +			CPU_SLEEP_0: cpu-sleep-0 {
->  				compatible = "arm,idle-state";
->  				local-timer-stop;
->  				arm,psci-suspend-param = <0x0010000>;
-> -				entry-latency-us = <40>;
-> -				exit-latency-us = <70>;
-> -				min-residency-us = <3000>;
-> +				entry-latency-us = <400>;
-> +				exit-latency-us = <650>;
-> +				min-residency-us = <1500>;
->  			};
-> -
->  			CLUSTER_SLEEP_0: cluster-sleep-0 {
->  				compatible = "arm,idle-state";
->  				local-timer-stop;
->  				arm,psci-suspend-param = <0x1010000>;
->  				entry-latency-us = <500>;
-> -				exit-latency-us = <5000>;
-> -				min-residency-us = <20000>;
-> +				exit-latency-us = <1600>;
-> +				min-residency-us = <3500>;
-> +			};
-> +
-> +
-> +			CPU_SLEEP_1: cpu-sleep-1 {
-> +				compatible = "arm,idle-state";
-> +				local-timer-stop;
-> +				arm,psci-suspend-param = <0x0010000>;
-> +				entry-latency-us = <400>;
-> +				exit-latency-us = <550>;
-> +				min-residency-us = <1500>;
->  			};
->  
->  			CLUSTER_SLEEP_1: cluster-sleep-1 {
->  				compatible = "arm,idle-state";
->  				local-timer-stop;
->  				arm,psci-suspend-param = <0x1010000>;
-> -				entry-latency-us = <1000>;
-> -				exit-latency-us = <5000>;
-> -				min-residency-us = <20000>;
-> +				entry-latency-us = <800>;
-> +				exit-latency-us = <2900>;
-> +				min-residency-us = <3500>;
->  			};
->  		};
->  
-> 
+> v1 -> v2:
+> - Use FIELD_SIZEOF
+> ---
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> @@ -130,7 +130,7 @@ static inline bool is_error_page(struct page *page)
+>  #define KVM_REQUEST_ARCH_BASE     8
 
+Now that the base is easily moveable, we could also lower it to 4 and
+get few more arch flags.
+
+Bumping requests to 64 bits is probably inevitable and this patch looks
+good.
+
+In v4, you have proposed the bitmap-array solution that would easily
+allow more than 64 requests -- was the problem that possible
+implementations of kvm_request_pending were not as efficient for current
+amount of requests?
+
+Thanks.
+
+>  #define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
+> -	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
+> +	BUILD_BUG_ON((unsigned)(nr) >= (FIELD_SIZEOF(struct kvm_vcpu, requests) * 8) - KVM_REQUEST_ARCH_BASE); \
+>  	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
+>  })
+>  #define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
