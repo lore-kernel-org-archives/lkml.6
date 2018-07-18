@@ -2,120 +2,166 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD3BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CC9ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C652075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C652075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 60FCC2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60FCC2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731891AbeGRQ4F convert rfc822-to-8bit (ORCPT
+        id S1731474AbeGRQzL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:56:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54378 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731325AbeGRQ4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:56:04 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50B6A401EF07;
-        Wed, 18 Jul 2018 16:17:25 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 55C382026D69;
-        Wed, 18 Jul 2018 16:17:24 +0000 (UTC)
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-To:     Michal Hocko <mhocko@kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin,C)" <wangkai86@huawei.com>
-References: <1531330947.3260.13.camel@HansenPartnership.com>
- <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
- <1531336913.3260.18.camel@HansenPartnership.com>
- <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
- <1531411494.18255.6.camel@HansenPartnership.com>
- <20180712164932.GA3475@bombadil.infradead.org>
- <1531416080.18255.8.camel@HansenPartnership.com>
- <CA+55aFzfQz7c8pcMfLDaRNReNF2HaKJGoWpgB6caQjNAyjg-hA@mail.gmail.com>
- <1531425435.18255.17.camel@HansenPartnership.com>
- <20180713003614.GW2234@dastard> <20180716090901.GG17280@dhcp22.suse.cz>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <caf309f5-2844-6546-e545-6ae56ad7d022@redhat.com>
-Date:   Wed, 18 Jul 2018 12:17:24 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 18 Jul 2018 12:55:11 -0400
+Received: from mga14.intel.com ([192.55.52.115]:3828 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731282AbeGRQzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:55:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 09:16:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,370,1526367600"; 
+   d="scan'208";a="67947007"
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by orsmga003.jf.intel.com with ESMTP; 18 Jul 2018 09:16:30 -0700
+From:   richard.gong@linux.intel.com
+To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, atull@kernel.org, mdf@kernel.org,
+        arnd@arndb.de, corbet@lwn.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
+        richard.gong@intel.com
+Subject: [PATCHv7 0/9] Add Intel Stratix10 FPGA manager and service layer 
+Date:   Wed, 18 Jul 2018 11:18:35 -0500
+Message-Id: <1531930724-22061-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180716090901.GG17280@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 16:17:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 16:17:25 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/16/2018 05:09 AM, Michal Hocko wrote:
-> On Fri 13-07-18 10:36:14, Dave Chinner wrote:
-> [...]
->> By limiting the number of negative dentries in this case, internal
->> slab fragmentation is reduced such that reclaim cost never gets out
->> of control. While it appears to "fix" the symptoms, it doesn't
->> address the underlying problem. It is a partial solution at best but
->> at worst it's another opaque knob that nobody knows how or when to
->> tune.
-> Would it help to put all the negative dentries into its own slab cache?
->
->> Very few microbenchmarks expose this internal slab fragmentation
->> problem because they either don't run long enough, don't create
->> memory pressure, or don't have access patterns that mix long and
->> short term slab objects together in a way that causes slab
->> fragmentation. Run some cold cache directory traversals (git
->> status?) at the same time you are creating negative dentries so you
->> create pinned partial pages in the slab cache and see how the
->> behaviour changes....
-> Agreed! Slab fragmentation is a real problem we are seeing for quite
-> some time. We should try to address it rather than paper over it with
-> weird knobs.
+From: Richard Gong <richard.gong@intel.com>
 
-I am aware that you don't like the limit knob that control how many
-negative dentries are allowed as a percentage of total system memory. I
-got comments in the past about doing some kind of auto-tuning. How about
-consolidating the 2 knobs that I currently have in the patchset into a
-single one with 3 possible values, like:
+This is the 7th submission of Intel stratix10 service layer patches. This
+submission includes one additional patch for supporting remote status update,
+the second Stratix10 service layer client. Intel Stratix10 FPGA manager,
+which is 1st Stratix10 service layer client, is included in this submission. 
 
-0 - no limiting
-1 - set soft limit to "a constant + 4 x max # of positive dentries" and
-warn if exceeded
-2 - same limit but kill excess negative dentries after use.
+Stratix10 service layer patches have been reviewed internally by Alan Tull
+and other colleagues at Intel.
 
-Does that kind of knob make more sense to you?
+Some features of the Intel Stratix10 SoC require a level of privilege
+higher than the kernel is granted. Such secure features include
+FPGA programming. In terms of the ARMv8 architecture, the kernel runs
+at Exception Level 1 (EL1), access to the features requires
+Exception Level 3 (EL3).
 
-Cheers,
-Longman
+The Intel Stratix10 service layer provides an in kernel API for drivers to
+request access to the secure features. The requests are queued and
+processed one by one. ARM’s SMCCC is used to pass the execution of the
+requests on to a secure monitor (EL3).
 
+Later the Intel Stratix10 service layer driver will be extended to provide
+services for QSPI, Crypto and warm reset.
+
+v2: add patches for FPGA manager, FPGA manager binding, dts and defconfig
+    remove intel-service subdirectory and intel-service.h, move intel-smc.h
+    and intel-service.c to driver/misc subdirectory
+    remove global variables
+    change service layer driver be 'default n'
+    correct SPDX markers
+    add timeout for do..while() loop
+    add kernel-doc for the functions and structs, correct multiline comments
+    replace kfifo_in/kfifo_out with kfifo_in_spinlocked/kfifo_out_spinlocked
+    rename struct intel_svc_data (at client header) to intel_svc_client_msg
+    rename struct intel_svc_private_mem to intel_svc_data
+    other corrections/changes from Intel internal code reviews
+v3: change all exported functions with "intel_svc_" as the prefix
+    increase timeout values for claiming back submitted buffer(s)
+    rename struct intel_command_reconfig_payload to
+    struct intel_svc_command_reconfig_payload
+    add pr_err() to provide the error return value
+    change to put fpga_mgr node under firmware/svc node
+    change to FPGA manager to align the update of service client APIs, and the
+    update of fpga_mgr device node
+    Other corrections/changes
+v4: s/intel/stratix10/ on some variables, structs, functions, and file names
+    intel-service.c -> stratix10-svc.c
+    intel-smc.h -> stratix10-smc.h
+    intel-service-client.h -> stratix10-svc-client.h
+    remove non-kernel-doc formatting
+    s/fpga-mgr@0/fpga-mgr/ to remove unit_address at fpga_mgr node
+    add Rob's Reviewed-by
+    add Richard's signed-off-by
+v5: add a new API statix10_svc_done() which is called by service client
+    when client request is completed or error occurs during request
+    process. Which allows service layer to free its resources.
+    remove dummy client from service layer client header and service layer
+    source file.
+    add Rob's Reviewed-by
+    add a new file stratix10-svc.rst and add that to driver-api/index.rst
+    kernel-doc fixes
+v6: replace kthread_create_on_cpu() with kthread_create_on_node()
+    extend stratix_svc_send() to support service client which doesn't use
+    memory allocated by service layer
+    add S10_RECONFIG_TIMEOUT
+    rename s/S10_BUF_TIMEOUT/S10_BUFFER_TIMEOUT/
+    fix service layer and FPGA manager Klocwork errors
+v7: add remote status update client support
+    s/pr_debug/dev_dbg, s/dev_info/dev_dbg
+    add unlock buffer if s10_svc_send_msg() fails
+    add release channel if fpga_mgr_create() fails
+    handle invalid pointer at svc if the client passed an invalid name
+
+Alan Tull (3):
+  dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
+  arm64: dts: stratix10: add fpga manager and region
+  fpga: add intel stratix10 soc fpga manager driver
+
+Richard Gong (6):
+  dt-bindings, firmware: add Intel Stratix10 service layer binding
+  arm64: dts: stratix10: add stratix10 service driver binding to base
+    dtsi
+  misc: add Intel Stratix10 service layer driver
+  defconfig: enable fpga and service layer
+  Documentation: driver-api: add stratix10 service layer
+  misc: add remote status update client support
+
+ .../bindings/firmware/intel,stratix10-svc.txt      |   57 ++
+ .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt |   17 +
+ Documentation/driver-api/index.rst                 |    1 +
+ Documentation/driver-api/stratix10-svc.rst         |   32 +
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |   33 +
+ arch/arm64/configs/defconfig                       |    7 +
+ drivers/fpga/Kconfig                               |    6 +
+ drivers/fpga/Makefile                              |    1 +
+ drivers/fpga/stratix10-soc.c                       |  558 ++++++++++
+ drivers/misc/Kconfig                               |   12 +
+ drivers/misc/Makefile                              |    1 +
+ drivers/misc/stratix10-smc.h                       |  313 ++++++
+ drivers/misc/stratix10-svc.c                       | 1067 ++++++++++++++++++++
+ include/linux/stratix10-svc-client.h               |  217 ++++
+ 14 files changed, 2322 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+ create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
+ create mode 100644 Documentation/driver-api/stratix10-svc.rst
+ create mode 100644 drivers/fpga/stratix10-soc.c
+ create mode 100644 drivers/misc/stratix10-smc.h
+ create mode 100644 drivers/misc/stratix10-svc.c
+ create mode 100644 include/linux/stratix10-svc-client.h
+
+-- 
+2.7.4
 
