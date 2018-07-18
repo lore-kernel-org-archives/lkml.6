@@ -2,186 +2,250 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9ACECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E04ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0055B2064D
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:12:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0055B2064D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id E7E2E2064D
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:12:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E2E2064D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730955AbeGRPuT (ORCPT
+        id S1731087AbeGRPud (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:50:19 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36301 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730651AbeGRPuT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:50:19 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s14-v6so3289183wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 08:11:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yiTp/QPwxlU6Kfz9q14e/0xmHpkGJGdDCL629dIVa/0=;
-        b=ATvBFbXBA2yGLbNPGKxDNqpdhEa/o/R7JS9UiYw/PnAu9dMZkGAI09HSOIL81DvZhU
-         k2jX9VM9agDwdDlyYzh61yvuwhj1B0agdkU5D+F+vVhaSFwQyBQhARaykX+NJ76I4d9f
-         A200rLdK7UbSnm8jvJ7+OfxZFg1yYLbYAhSPjIxbo9CY9ZB0+FhAFvnllWj6b8Qhc2yZ
-         tKJdtcSKbxiuXzXRX8nIXHcWEG3z7AFmOMpVTGlgoEbvlGzqEFEXXmSxoQwEoiO3/Fsg
-         o/EGEsKPj5Hq7KVx76H57nUPQGpUJiHfYTd5aqJSkhTRFBgzc1/oBEAynlwZqKuq9Dhp
-         kacA==
-X-Gm-Message-State: AOUpUlElN5jYe9tK6p5Tvkh40sMGmp9nxuW4IO1OMDaAcpLKCya/ARij
-        7PUFP5Ktq9j9ATJyHkTV5Xc=
-X-Google-Smtp-Source: AAOMgpc311EbtiJc8/mmfJJTmz5FbJFdrqo/i3pnPNLk/oLVJBaZ4EpICa3wHBNggBdLPLcLZbHp5g==
-X-Received: by 2002:a1c:b6d6:: with SMTP id g205-v6mr2010950wmf.17.1531926716332;
-        Wed, 18 Jul 2018 08:11:56 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id 14-v6sm6187958wmg.0.2018.07.18.08.11.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 08:11:55 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 042CA1240EB; Wed, 18 Jul 2018 17:11:54 +0200 (CEST)
-Date:   Wed, 18 Jul 2018 17:11:54 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, pasha.tatashin@oracle.com,
-        vbabka@suse.cz, iamjoonsoo.kim@lge.com, aaron.lu@intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH 2/3] mm/page_alloc: Refactor free_area_init_core
-Message-ID: <20180718151154.GA2875@techadventures.net>
-References: <20180718124722.9872-1-osalvador@techadventures.net>
- <20180718124722.9872-3-osalvador@techadventures.net>
- <20180718133647.GD7193@dhcp22.suse.cz>
- <20180718141226.GA2588@techadventures.net>
+        Wed, 18 Jul 2018 11:50:33 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:33763 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726409AbeGRPud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:50:33 -0400
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 1068A2012BA068;
+        Wed, 18 Jul 2018 17:12:10 +0200 (CEST)
+Subject: Re: NULL pointer dereference in msi_set_mask_bit
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Hiraku Toyooka <hiraku.toyooka@cybertrust.co.jp>,
+        Zou Cao <cao.zou@windriver.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <b9bd8405-64b6-2bea-f5ce-d3ab4d82452a@molgen.mpg.de>
+ <20180718140636.GD128988@bhelgaas-glaptop.roam.corp.google.com>
+ <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de>
+From:   Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
+Message-ID: <6339fdef-a335-b833-4022-23725fd86d9e@molgen.mpg.de>
+Date:   Wed, 18 Jul 2018 17:12:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718141226.GA2588@techadventures.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <alpine.DEB.2.21.1807181646280.1568@nanos.tec.linutronix.de>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030003000901010503020802"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 04:12:26PM +0200, Oscar Salvador wrote:
-> On Wed, Jul 18, 2018 at 03:36:47PM +0200, Michal Hocko wrote:
-> > I really do not like this if node is offline than only perform half of
-> > the function. This will generate more mess in the future. Why don't you
-> > simply. If we can split out this code into logical units then let's do
-> > that but no, please do not make random ifs for hotplug code paths.
-> > Sooner or later somebody will simply don't know what is needed and what
-> > is not.
-> 
-> Yes, you are right.
-> I gave it another thought and it was not a really good idea.
-> Although I think the code from free_area_init_core can be simplified.
-> 
-> I will try to come up with something that makes more sense.
+This is a cryptographically signed message in MIME format.
 
-I guess we could so something like:
+--------------ms030003000901010503020802
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 8a73305f7c55..70fe4c80643f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6237,6 +6237,40 @@ static void pgdat_init_kcompactd(struct pglist_data *pgdat)
- static void pgdat_init_kcompactd(struct pglist_data *pgdat) {}
- #endif
- 
-+static unsigned long calc_remaining_pages(enum zone_type type, unsigned long freesize,
-+								unsigned long size)
-+{
-+	unsigned long memmap_pages = calc_memmap_size(size, freesize);
-+
-+	if(!is_highmem_idx(type)) {
-+		if (freesize >= memmap_pages) {
-+			freesize -= memmap_pages;
-+			if (memmap_pages)
-+				printk(KERN_DEBUG
-+					"  %s zone: %lu pages used for memmap\n",
-+					zone_names[type], memmap_pages);
-+		} else
-+			pr_warn("  %s zone: %lu pages exceeds freesize %lu\n",
-+				zone_names[type], memmap_pages, freesize);
-+	}
-+
-+	/* Account for reserved pages */
-+	if (type == 0 && freesize > dma_reserve) {
-+		freesize -= dma_reserve;
-+		printk(KERN_DEBUG "  %s zone: %lu pages reserved\n",
-+		zone_names[0], dma_reserve);
-+	}
-+
-+	if (!is_highmem_idx(type))
-+		nr_kernel_pages += freesize;
-+	/* Charge for highmem memmap if there are enough kernel pages */
-+	else if (nr_kernel_pages > memmap_pages * 2)
-+		nr_kernel_pages -= memmap_pages;
-+	nr_all_pages += freesize;
-+
-+	return freesize;
-+}
-+
- /*
-  * Set up the zone data structures:
-  *   - mark all pages reserved
-@@ -6267,43 +6301,12 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
- 
- 	for (j = 0; j < MAX_NR_ZONES; j++) {
- 		struct zone *zone = pgdat->node_zones + j;
--		unsigned long size, freesize, memmap_pages;
-+		unsigned long size = zone->spanned_pages;
-+		unsigned long freesize = zone->present_pages;
- 		unsigned long zone_start_pfn = zone->zone_start_pfn;
- 
--		size = zone->spanned_pages;
--		freesize = zone->present_pages;
--
--		/*
--		 * Adjust freesize so that it accounts for how much memory
--		 * is used by this zone for memmap. This affects the watermark
--		 * and per-cpu initialisations
--		 */
--		memmap_pages = calc_memmap_size(size, freesize);
--		if (!is_highmem_idx(j)) {
--			if (freesize >= memmap_pages) {
--				freesize -= memmap_pages;
--				if (memmap_pages)
--					printk(KERN_DEBUG
--					       "  %s zone: %lu pages used for memmap\n",
--					       zone_names[j], memmap_pages);
--			} else
--				pr_warn("  %s zone: %lu pages exceeds freesize %lu\n",
--					zone_names[j], memmap_pages, freesize);
--		}
--
--		/* Account for reserved pages */
--		if (j == 0 && freesize > dma_reserve) {
--			freesize -= dma_reserve;
--			printk(KERN_DEBUG "  %s zone: %lu pages reserved\n",
--					zone_names[0], dma_reserve);
--		}
--
--		if (!is_highmem_idx(j))
--			nr_kernel_pages += freesize;
--		/* Charge for highmem memmap if there are enough kernel pages */
--		else if (nr_kernel_pages > memmap_pages * 2)
--			nr_kernel_pages -= memmap_pages;
--		nr_all_pages += freesize;
-+		if (freesize)
-+
+Dear Thomas, dear Bjorn,
 
- 
-So we just do the calculations with the pages (nr_kernel_pages, nr_all_pages, memmap_pages, etc...) 
-if freesize is not 0.
-Otherwise it does not make sense to do it (AFAICS).
--- 
-Oscar Salvador
-SUSE L3
+
+Thank you for your quick responses.
+
+
+On 07/18/18 17:02, Thomas Gleixner wrote:
+> On Wed, 18 Jul 2018, Bjorn Helgaas wrote:
+>> [+cc Marc, Thomas]
+>=20
+> Uurgh. That's definitely what I need right now ... :)
+>=20
+>> On Wed, Jul 18, 2018 at 03:28:15PM +0200, Paul Menzel wrote:
+>>>
+>>> 93.885: [   23.020572] BUG: unable to handle kernel NULL pointer dere=
+ference at 000000000000003c
+>>> 93.885: [   23.029011] PGD 0 P4D 0=20
+>>> 93.885: [   23.031670] Oops: 0000 [#1] SMP NOPTI
+>>> 93.885: [   23.035455] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.18=
+=2E0-rc5+ #1
+>>> 93.885: [   23.042079] Hardware name: MSI MS-7A37/B350M MORTAR (MS-7A=
+37), BIOS 1.G1 05/17/2018
+>>> 93.886: [   23.049868] RIP: 0010:msi_set_mask_bit+0xe/0x70
+>=20
+>>> 93.913: [   23.049868] Code: 00 53 48 89 fb e8 12 f8 ff ff 48 89 df 5=
+b e9 c9 fe ff ff 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 53 48 8b 47 10=
+ 48 8b 58 10 <f6> 43 3c 01 74 3c 8b 15 2e 85 21 01 31 c0 85 d2 75 25 8b 4=
+3 38 48
+>=20
+>   f6 43 3c 01          	testb  $0x1,0x3c(%rbx)
+>=20
+> That's:
+>=20
+> 	if (desc->msi_attrib.is_msix)
+
+Is there a tool to translate that?
+
+>>> 93.957: [   23.049880] RSP: 0018:ffff9e8e5e803f78 EFLAGS: 00010046
+>>> 93.957: [   23.049881] RAX: ffff9e8e45919000 RBX: 0000000000000000 RC=
+X: 0000000000000000
+>>> 93.958: [   23.049882] RDX: ffff9e8e45919000 RSI: 0000000000000001 RD=
+I: ffff9e8e45919098
+>>> 93.958: [   23.049882] RBP: ffff9e8e45919098 R08: 0000000000000000 R0=
+9: 0000000000000000
+>>> 93.958: [   23.049882] R10: 0000000000000000 R11: 0000000000000000 R1=
+2: ffff9e8e45919000
+>>> 93.958: [   23.049883] R13: 0000000000000027 R14: 0000000000000000 R1=
+5: 0000000000000000
+>>> 93.959: [   23.049884] FS:  0000000000000000(0000) GS:ffff9e8e5e80000=
+0(0000) knlGS:0000000000000000
+>>> 93.959: [   23.049884] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050=
+033
+>>> 93.959: [   23.049885] CR2: 000000000000003c CR3: 00000003fc5a4000 CR=
+4: 00000000003406f0
+>>> 93.959: [   23.049885] Call Trace:
+>>> 93.959: [   23.049887]  <IRQ>
+>>> 93.960: [   23.049889]  __irq_move_irq+0x3c/0x70
+>>> 93.960: [   23.049892]  apic_ack_irq+0x2b/0x30
+>>> 93.960: [   23.049893]  handle_edge_irq+0x7d/0x1d0
+>>> 93.960: [   23.049895]  handle_irq+0x1f/0x30
+>>> 93.960: [   23.049898]  do_IRQ+0x41/0xc0
+>>> 93.960: [   23.049899]  common_interrupt+0xf/0xf
+>>> 93.961: [   23.049900]  </IRQ>
+>=20
+> and desc comes from irq_data->common->msi_desc
+>=20
+> I have no idea how that can happen for an MSI interrupt.
+>=20
+> Paul, is this reproducible?
+
+No, unfortunately not. I only hit this once, since I attached the serial
+console.
+
+But I found others having the same(?) problem [1][2].
+
+
+Kind regards,
+
+Paul
+
+
+[1]: https://lkml.org/lkml/2018/1/16/122
+     "[PATCH 0/1] PCI/MSI: add NULL check before use of msi_desc"
+[2]: https://marc.info/?l=3Dlinux-kernel&m=3D151321815226439&w=3D2
+     "[PATCH] PCI: designware: add a check of msi_desc in irqchip"
+
+
+--------------ms030003000901010503020802
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODA3MTgxNTEyMDlaMC8GCSqGSIb3DQEJBDEiBCA1Lu1L2QV54YYUnyUk
+CphlONOjcNiu38Yuh6tFKYb2KjBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAFrW
+UqVinmQY3rdLw61yjmuTNaYw7OPDZO7OqyK63MvB1mzRWliBb7yl287hqFRo8IYKkuWhAFvC
+PVx3kmRDVtefuJNdjRx62Hk10b3fad/tRhaz7PkJUsteI/iuhR6YNTkqDSYfNoAz2LYNLZpL
+NkxzsT+tF9+XPSOpXmVwEjCfKRY8cZFJTK+hAk0/k7/ZPdqtxtxvbw3d+XNwBwc/bx3iHqXZ
+4tF3nS1uFdQkNJ7cLywiXO1Jmo2uzuRaLursQEsvUYuxpFGJFzXbBcJzP2LeMMBWGbeinCVx
+pmhBVhO/8yF1eHkH/ESrafHyHtg7OPnjZBSSSPkG4AdrThthdEgAAAAAAAA=
+--------------ms030003000901010503020802--
