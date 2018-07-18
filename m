@@ -2,239 +2,86 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 169ADECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7665EECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA1B32075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1B32075A
+	by mail.kernel.org (Postfix) with ESMTP id 25ADC2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:12:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25ADC2075A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730659AbeGRVuL (ORCPT
+        id S1729706AbeGRVwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:50:11 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:35688 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730451AbeGRVuL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:50:11 -0400
-Received: by mail-qt0-f193.google.com with SMTP id a5-v6so5399028qtp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:10:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=JYOf584Ydg8gijpMp6qHyZQQNvlyScAA4CitiUdr5Zo=;
-        b=Dp+2Cumq9vo96QMge3iGeUCJjBD3LNsDw5ZD1CtNJEMMjKN84V+PemcpdELy/lbAqd
-         4yh8oMMoWm1H3ioLkqr8BYttK6A0GHoLQZOh18oUS3j6P6TUxl6gibBmUAipzIloDQ9w
-         pnlURN3Y024U6ccxNaFgabLLjwFYQ/SYTDOW8PIwObxm/EQIofb5OrngLQnuLsiKPOX1
-         EpLErUHMxnM4t/IelZRyYSOc6/oMQMH6rg7XXA/+ov2LUghROvyBOJyWxRYNqx7oQdRB
-         eBFCDVxud2xvZa21vdpEXx8HrpRmwUmocBjmFt7N470015clPuUsXw6XpIY3vG0/2s4F
-         1Nig==
-X-Gm-Message-State: AOUpUlHDbCjRNfl+a1j8BZUaMpU7BYABu5dlUKzBw7sf0qIbl/XLw0ca
-        bfJ/kjYbqZ086rhsBVuJqteMuQ==
-X-Google-Smtp-Source: AAOMgpf/xAuzyFz6H0tuX4cNMeoZhOEuFZ0ESMy9azzLtFVumP/bsWIcoyyw+wQgKXpUepXhZPvJuw==
-X-Received: by 2002:aed:3534:: with SMTP id a49-v6mr6960492qte.244.1531948227972;
-        Wed, 18 Jul 2018 14:10:27 -0700 (PDT)
-Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0])
-        by smtp.gmail.com with ESMTPSA id k3-v6sm4143463qta.37.2018.07.18.14.10.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Jul 2018 14:10:26 -0700 (PDT)
-From:   Laura Abbott <labbott@redhat.com>
-To:     Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 2/2] arm64: Clear the stack
-Date:   Wed, 18 Jul 2018 14:10:13 -0700
-Message-Id: <20180718211013.14512-3-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180718211013.14512-1-labbott@redhat.com>
-References: <20180718211013.14512-1-labbott@redhat.com>
+        Wed, 18 Jul 2018 17:52:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60680 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726998AbeGRVwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 17:52:00 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 50E43400E9BA;
+        Wed, 18 Jul 2018 21:12:17 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C42512156893;
+        Wed, 18 Jul 2018 21:12:15 +0000 (UTC)
+Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
+ on cgroup v2 root
+Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
+        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
+        Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>
+References: <1529825440-9574-1-git-send-email-longman@redhat.com>
+ <1529825440-9574-8-git-send-email-longman@redhat.com>
+ <20180702165322.GI533219@devbig577.frc2.facebook.com>
+ <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
+ <20180703155823.GS533219@devbig577.frc2.facebook.com>
+ <4cf9924e-7b97-187f-a1f5-853a45165abb@redhat.com>
+ <151fc655-7e29-f060-789e-ee6c5c23d132@redhat.com>
+ <a1eb4971-ff23-6fd8-d75b-112d63f0aee9@redhat.com>
+ <20180718153139.GQ72677@devbig577.frc2.facebook.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <7bd3b825-354d-a467-8f93-ee5da6b9941c@redhat.com>
+Date:   Wed, 18 Jul 2018 17:12:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
+MIME-Version: 1.0
+In-Reply-To: <20180718153139.GQ72677@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 21:12:17 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 21:12:17 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/18/2018 11:31 AM, Tejun Heo wrote:
+> On Wed, Jul 18, 2018 at 11:21:18AM -0400, Waiman Long wrote:
+>> What do you think about this patch?
+>>
+>> Are there any other issues you have with this patchset?
+> Looks good to me.  If others are okay with it, I think we're all good.
+>
+> Thanks.
+>
+Peter,
 
-Implementation of stackleak based heavily on the x86 version
+Do you have any major issues with this cpuset patchset as it stands today?
 
-Signed-off-by: Laura Abbott <labbott@redhat.com>
----
-Since last time: Minor style cleanups. Re-wrote check_alloca to
-correctly handle all stack types. While doing that, I also realized
-current_top_of_stack was incorrect so I fixed that as well.
----
- arch/arm64/Kconfig                    |  1 +
- arch/arm64/include/asm/processor.h    | 17 ++++++++++++++
- arch/arm64/kernel/entry.S             |  7 ++++++
- arch/arm64/kernel/process.c           | 32 +++++++++++++++++++++++++++
- arch/arm64/kvm/hyp/Makefile           |  3 ++-
- drivers/firmware/efi/libstub/Makefile |  3 ++-
- include/linux/stackleak.h             |  1 +
- 7 files changed, 62 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 42c090cf0292..216d36a49ab5 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -96,6 +96,7 @@ config ARM64
- 	select HAVE_ARCH_MMAP_RND_BITS
- 	select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
- 	select HAVE_ARCH_SECCOMP_FILTER
-+	select HAVE_ARCH_STACKLEAK
- 	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
- 	select HAVE_ARCH_TRACEHOOK
- 	select HAVE_ARCH_TRANSPARENT_HUGEPAGE
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index a73ae1e49200..4f3062ee22c6 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -266,5 +266,22 @@ extern void __init minsigstksz_setup(void);
- #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
- #define SVE_GET_VL()	sve_get_current_vl()
- 
-+/*
-+ * For CONFIG_STACKLEAK
-+ *
-+ * These need to be macros because otherwise we get stuck in a nightmare
-+ * of header definitions for the use of task_stack_page.
-+ */
-+
-+#define current_top_of_stack()		\
-+({					\
-+	unsigned long _low = 0;		\
-+	unsigned long _high = 0;	\
-+					\
-+	current_stack_type(current, current_stack_pointer, &_low, &_high); \
-+	_high;	\
-+})
-+#define on_thread_stack()	(on_task_stack(current, current_stack_pointer, NULL, NULL))
-+
- #endif /* __ASSEMBLY__ */
- #endif /* __ASM_PROCESSOR_H */
-diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 28ad8799406f..67d12016063d 100644
---- a/arch/arm64/kernel/entry.S
-+++ b/arch/arm64/kernel/entry.S
-@@ -431,6 +431,11 @@ tsk	.req	x28		// current thread_info
- 
- 	.text
- 
-+	.macro	stackleak_erase
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+	bl	stackleak_erase
-+#endif
-+	.endm
- /*
-  * Exception vectors.
-  */
-@@ -910,6 +915,7 @@ ret_fast_syscall:
- 	and	x2, x1, #_TIF_WORK_MASK
- 	cbnz	x2, work_pending
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ret_fast_syscall_trace:
- 	enable_daif
-@@ -936,6 +942,7 @@ ret_to_user:
- 	cbnz	x2, work_pending
- finish_ret_to_user:
- 	enable_step_tsk x1, x2
-+	stackleak_erase
- 	kernel_exit 0
- ENDPROC(ret_to_user)
- 
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index e10bc363f533..904defa36689 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -493,3 +493,35 @@ void arch_setup_new_exec(void)
- {
- 	current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
- }
-+
-+#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-+void __used stackleak_check_alloca(unsigned long size)
-+{
-+	unsigned long stack_left;
-+	enum stack_type type;
-+	unsigned long current_sp = current_stack_pointer;
-+	unsigned long low, high;
-+
-+	type = current_stack_type(current, current_sp, &low, &high);
-+	BUG_ON(type == STACK_TYPE_UNKNOWN);
-+
-+	stack_left = current_sp - low;
-+
-+	if (size >= stack_left) {
-+		/*
-+		 * Kernel stack depth overflow is detected, let's report that.
-+		 * If CONFIG_VMAP_STACK is enabled, we can safely use BUG().
-+		 * If CONFIG_VMAP_STACK is disabled, BUG() handling can corrupt
-+		 * the neighbour memory. CONFIG_SCHED_STACK_END_CHECK calls
-+		 * panic() in a similar situation, so let's do the same if that
-+		 * option is on. Otherwise just use BUG() and hope for the best.
-+		 */
-+#if !defined(CONFIG_VMAP_STACK) && defined(CONFIG_SCHED_STACK_END_CHECK)
-+		panic("alloca() over the kernel stack boundary\n");
-+#else
-+		BUG();
-+#endif
-+	}
-+}
-+EXPORT_SYMBOL(stackleak_check_alloca);
-+#endif
-diff --git a/arch/arm64/kvm/hyp/Makefile b/arch/arm64/kvm/hyp/Makefile
-index 4313f7475333..2fabc2dc1966 100644
---- a/arch/arm64/kvm/hyp/Makefile
-+++ b/arch/arm64/kvm/hyp/Makefile
-@@ -3,7 +3,8 @@
- # Makefile for Kernel-based Virtual Machine module, HYP part
- #
- 
--ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING
-+ccflags-y += -fno-stack-protector -DDISABLE_BRANCH_PROFILING \
-+		$(DISABLE_STACKLEAK_PLUGIN)
- 
- KVM=../../../../virt/kvm
- 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index a34e9290a699..25dd2a14560d 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
- KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
- 				   -D__NO_FORTIFY \
- 				   $(call cc-option,-ffreestanding) \
--				   $(call cc-option,-fno-stack-protector)
-+				   $(call cc-option,-fno-stack-protector) \
-+				   $(DISABLE_STACKLEAK_PLUGIN)
- 
- GCOV_PROFILE			:= n
- KASAN_SANITIZE			:= n
-diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
-index b911b973d328..08420ec6b7c3 100644
---- a/include/linux/stackleak.h
-+++ b/include/linux/stackleak.h
-@@ -5,6 +5,7 @@
- #include <linux/sched.h>
- #include <linux/sched/task_stack.h>
- 
-+#include <asm/stacktrace.h>
- /*
-  * Check that the poison value points to the unused hole in the
-  * virtual memory map for your platform.
--- 
-2.17.1
+Thanks,
+Longman
 
