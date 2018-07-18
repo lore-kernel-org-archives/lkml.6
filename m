@@ -2,86 +2,75 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 960E7ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AD1ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315642075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315642075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id AA86C2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:56:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA86C2075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731481AbeGRDcQ (ORCPT
+        id S1731594AbeGRDcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 23:32:16 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43660 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731109AbeGRDcP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 23:32:15 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1ffcdp-0006wB-23; Wed, 18 Jul 2018 02:56:37 +0000
-Date:   Wed, 18 Jul 2018 03:56:37 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: vfs / overlayfs conflict resolution for linux-next
-Message-ID: <20180718025636.GA26175@ZenIV.linux.org.uk>
-References: <20180711021136.GN30522@ZenIV.linux.org.uk>
- <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
- <CA+55aFxc7M9g+jqVnMHAsK350Ty1tQ9AghuJhBug+FPA6=XQrw@mail.gmail.com>
- <20180711152555.GR30522@ZenIV.linux.org.uk>
- <20180711161540.GS30522@ZenIV.linux.org.uk>
- <20180712124326.GA19272@ZenIV.linux.org.uk>
- <CA+55aFwyOHvwV4qkmM1kRYQ+4brWbLSHaXE8GPV41u5Sj-AG4Q@mail.gmail.com>
- <20180712155337.GU30522@ZenIV.linux.org.uk>
+        Tue, 17 Jul 2018 23:32:31 -0400
+Received: from mga11.intel.com ([192.55.52.93]:1919 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731304AbeGRDcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Jul 2018 23:32:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jul 2018 19:56:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,368,1526367600"; 
+   d="scan'208";a="73246076"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Jul 2018 19:56:53 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Shaohua Li" <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v2 0/7] swap: THP optimizing refactoring
+References: <20180717005556.29758-1-ying.huang@intel.com>
+        <20180717151715.rbxvofb6yf5toy47@ca-dmjordan1.us.oracle.com>
+Date:   Wed, 18 Jul 2018 10:56:52 +0800
+In-Reply-To: <20180717151715.rbxvofb6yf5toy47@ca-dmjordan1.us.oracle.com>
+        (Daniel Jordan's message of "Tue, 17 Jul 2018 08:17:16 -0700")
+Message-ID: <87fu0hgsjv.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712155337.GU30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 04:53:37PM +0100, Al Viro wrote:
-> On Thu, Jul 12, 2018 at 08:05:26AM -0700, Linus Torvalds wrote:
-> > On Thu, Jul 12, 2018 at 5:43 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > A question regarding the customs in such situations - are previous
-> > > Reviewed-by/Acked-by normally kept across rebases like that?
-> > 
-> > Yeah, unless there were big changes, keep the reviewed/acked-by lines.
-> > 
-> > Otherwise you'd never be able to handle different people giving
-> > slightly different feedback about separate issues.
-> 
-> OK...  Miklos, I've pushed #ovl-candidate, with equivalent of the beginning
-> of your branch.  I'm *not* saying that I've no remaining issues
-> with your series - this is just how I'd prefer to resolve that group
-> of conflicts.
-> 
-> Everything past "vfs: simplify dentry_open()" could live on top of that
-> one, or its equivalent.
-> 
-> I'm going to put #work-open3 into -next, let's figure out what to do with
-> the conflicts; what I can promise is never-rebased status for #for-ovl
-> (the beginning of #work-open3 merged into #ovl-candidate).
+Daniel Jordan <daniel.m.jordan@oracle.com> writes:
 
-... and now it even builds.  Said that, I would really like to hear something
-from you - I can duplicate the entire overlayfs-next and merge it into
-my #for-next and ask Steven to use that instead of your tree, but I very
-much dislike going over your head like that.
+> On Tue, Jul 17, 2018 at 08:55:49AM +0800, Huang, Ying wrote:
+>> This patchset is based on 2018-07-13 head of mmotm tree.
+>
+> Looks good.
+>
+> Still think patch 7 would be easier to review if split into two logical
+> changes.  Either way, though.
+>
+> For the series,
+> Reviewed-by: Daniel Jordan <daniel.m.jordan@oracle.com>
 
-I realize that you'd been away for a while and probably are digging yourself
-from under the piles of mail, but it's getting late in the cycle and I want
-to get #for-next into reasonably sane shape.  Please, look through that
-thing and respond.
+Thanks a lot for your review!
+
+Best Regards,
+Huang, Ying
