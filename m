@@ -2,123 +2,109 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB863ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5C5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 963272075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:47:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47F672075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 17:48:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oxdh+Soe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963272075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="d58hx9Jf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47F672075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731569AbeGRS0u (ORCPT
+        id S1731598AbeGRS1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 14:26:50 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48154 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730487AbeGRS0u (ORCPT
+        Wed, 18 Jul 2018 14:27:51 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36669 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729619AbeGRS1v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 14:26:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7TbVlsQamTYkxHMvYsMyk13grD9wAqAb0kNgvbFkptE=; b=oxdh+SoeT+o5rkYVno0zGOsLt
-        5dZP0q+hXdFDoZdpgTVf7F3CuGPn2AY6ihiRy3oodDteEzfsEriB+Qac8685t2a7ynbzKzXw+aYBY
-        cY+n5E21V4afl+7NIzU55wBYJPOxReFM6qKSYz0smSMk62JNJXl2QV9CBRxnFwqtq7D9A=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffqYE-00041B-4S; Wed, 18 Jul 2018 17:47:46 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ffqYD-00010i-HG; Wed, 18 Jul 2018 18:47:45 +0100
-Date:   Wed, 18 Jul 2018 18:47:45 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Milan Broz <gmazyland@gmail.com>
-Cc:     Xiongfeng Wang <wangxiongfeng2@huawei.com>, agk@redhat.com,
-        snitzer@redhat.com, herbert@gondor.apana.org.au,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        jonathan.cameron@huawei.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH 4/5] crypto: Add IV generation templates
-Message-ID: <20180718174745.GC20360@sirena.org.uk>
-References: <1531899055-29362-1-git-send-email-wangxiongfeng2@huawei.com>
- <1531899055-29362-5-git-send-email-wangxiongfeng2@huawei.com>
- <b6eaf471-7279-ca4f-bb7c-d25df8db2419@gmail.com>
- <20180718164625.GA20360@sirena.org.uk>
- <82248c13-42fe-b598-0cd7-68e5db0b51be@gmail.com>
+        Wed, 18 Jul 2018 14:27:51 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s14-v6so3756975wmc.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 10:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PZYeckDqVnvjTR9erNTdqy4HhRKO22TXccYXwYJJf2U=;
+        b=d58hx9JfVwPhppsDGlzMzDWtrr/xxCRUY+AkN27Z35eiVzW6mBxAqgySBJGRJZDaHk
+         JPlBZh9MMCHTdOOtTj+reQh96Xm+tsiNfuWbSNCLAu5kwRdN76qKHOZLOcaaeIVXLQUV
+         8vrk9I5qdfJnTQm6nhLAO4Xs41CSvIRx2Ov8OaohxwZq91ry+tKGQPNMdWBQ002sZwbi
+         sEc+Ue+PxQZ171cQ7uadGT+ZaZPjepfZLDlDx3TRUGCzBeSGgkkGH7gkweJXu4FK5gFr
+         xhCjfQ9pKNFdgGidLXGV/aYnPU6MHjAxKxPnj3V8yZJIIWGzQ7N3tcGxGO2sQCQDvGpE
+         YEcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PZYeckDqVnvjTR9erNTdqy4HhRKO22TXccYXwYJJf2U=;
+        b=pm+lwrlbTVHCi4+rTPb5pFbOqdzo1q6M07mDa/BLwYcj94gmPZ2wo+QTnsdTaNSeJM
+         7i9MXKYYSoPNYjIQbA28u2rwyrccDPL88m5VspEYyANpQtyaA7/HGi4V4ay/VdITrQYr
+         hCfWePt6Ho0eKP1+WM25FhqYOzgTy2iEieJEH5fs52cMqrcamgWQAckMSqxuk7p3qxTu
+         qazLK9t3vtzvKcNs7p2WLhbBx/dku8qirpon9wyBhh8mXWAuMnK0s9hZdOWdXP3Lha+Y
+         rymNeOmYXrOtxq4u20yuJsUoIhyfkpmjHn+Oours+nUhcEyQlwr4Il7Wq2ApG83iFIKh
+         Z2tQ==
+X-Gm-Message-State: AOUpUlGUO6HESL8ginw9uaUm4fIDEO0Ot+RdVKi+3kUTwjDYWNq+kHNb
+        nPxuixvZNjuRsIJ6enst0XQzyUtjwezX4LuIUtR/0g==
+X-Google-Smtp-Source: AAOMgpdBYtvIYkyKZRlBtuOZwhBvakGMLHykE70t4hAgF6UH1YLrq5Z23TOsK34mIrWvYOLXpkA8ee4EqqkTdjJT+x0=
+X-Received: by 2002:a1c:8b81:: with SMTP id n123-v6mr2171420wmd.142.1531936130614;
+ Wed, 18 Jul 2018 10:48:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
-Content-Disposition: inline
-In-Reply-To: <82248c13-42fe-b598-0cd7-68e5db0b51be@gmail.com>
-X-Cookie: Marriage, n.:
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <CAOm-9arwY3VLUx5189JAR9J7B=Miad9nQjjet_VNdT3i+J+5FA@mail.gmail.com>
+ <20180717212307.d6803a3b0bbfeb32479c1e26@linux-foundation.org>
+ <20180718104230.GC1431@dhcp22.suse.cz> <CAOm-9aqeKZ7+Jvhc5DxEEzbk4T0iQx8gZ=O1vy6YXnbOkncFsg@mail.gmail.com>
+ <CALvZod7_vPwqyLBxiecZtREEeY4hioCGnZWVhQx9wVdM8CFcog@mail.gmail.com>
+ <CAOm-9aprLokqi6awMvi0NbkriZBpmvnBA81QhOoHnK7ZEA96fw@mail.gmail.com>
+ <CALvZod4ag02N6QPwRQCYv663hj05Z6vtrK8=XEE6uWHQCL4yRw@mail.gmail.com> <CAOm-9arxtTwNxXzmb8nN+N_UtjiuH0XkpkVPFHpi3EOYXvZYVA@mail.gmail.com>
+In-Reply-To: <CAOm-9arxtTwNxXzmb8nN+N_UtjiuH0XkpkVPFHpi3EOYXvZYVA@mail.gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 18 Jul 2018 10:48:38 -0700
+Message-ID: <CALvZod5UsYzNs_FJqy2U4HiZ+SdKzKZtzdK1OYcV7v_91kqn8A@mail.gmail.com>
+Subject: Re: Showing /sys/fs/cgroup/memory/memory.stat very slow on some machines
+To:     bmerry@ska.ac.za
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 18, 2018 at 10:40 AM Bruce Merry <bmerry@ska.ac.za> wrote:
+>
+> On 18 July 2018 at 17:49, Shakeel Butt <shakeelb@google.com> wrote:
+> > On Wed, Jul 18, 2018 at 8:37 AM Bruce Merry <bmerry@ska.ac.za> wrote:
+> >> That sounds promising. Is there any way to tell how many zombies there
+> >> are, and is there any way to deliberately create zombies? If I can
+> >> produce zombies that might give me a reliable way to reproduce the
+> >> problem, which could then sensibly be tested against newer kernel
+> >> versions.
+> >>
+> >
+> > Yes, very easy to produce zombies, though I don't think kernel
+> > provides any way to tell how many zombies exist on the system.
+> >
+> > To create a zombie, first create a memcg node, enter that memcg,
+> > create a tmpfs file of few KiBs, exit the memcg and rmdir the memcg.
+> > That memcg will be a zombie until you delete that tmpfs file.
+>
+> Thanks, that makes sense. I'll see if I can reproduce the issue. Do
+> you expect the same thing to happen with normal (non-tmpfs) files that
+> are sitting in the page cache, and/or dentries?
+>
 
---da4uJneut+ArUgXk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Normal files and their dentries can get reclaimed while tmpfs will
+stick and even if the data of tmpfs goes to swap, the kmem related to
+tmpfs files will remain in memory.
 
-On Wed, Jul 18, 2018 at 07:17:45PM +0200, Milan Broz wrote:
-
-> I think the last iteration was this patch
-> https://lore.kernel.org/lkml/1498106510-19793-2-git-send-email-binoy.jayan@linaro.org/
-
-Thanks!  I'd got v5 but v6 went AWOL for some reason :(
-
-> 2) If the reason is performance, please provide numbers with the patch.
-> What I see now is that the performance is almost the same. So why you are doing it?
-> Any real hw that benefits from it?
-
-The main focus was performance with accelerators, currently we can't use
-ESSIV acceleration which is implemented by some hardware.  Xiongfeng, we
-probably need to discuss offline before sharing any actual numbers for
-the hardware accelerated case since people can be sensitive about how
-those are shared.  Software only benchmarks are only really relevant in
-showing that this won't harm existing users.
-
-Some of the relevant systems are somewhat CPU constrained so even if the
-I/O performance remains fairly consistent with the accelerators in play
-it can still be a win if it frees up a useful amount of CPU for other
-purposes.  That'd mean CPU usage is probably interesting to benchmark
-also though I don't know that the systems Xiongfeng has access to are
-particularly good models there.
-
-> I added 4k sector support in dmcrypt and IMO this helps much more than
-> some hw IV accelerations (AFAIK is is already used in some mainframe
-> accelerators this way because of performance).
-
-Right, that does help too (and an out of tree variation of this was one
-of the original sources of this work).
-
---da4uJneut+ArUgXk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltPfUAACgkQJNaLcl1U
-h9B8qgf+LfQM8Qe1bjGgClEG98e6vLvtPzUtMpCCpORZ79FiFTdVXzv+Bw0lhg2F
-OrNDPjeY0tFbjUqr4LcwVFMFgt/wdfiiwqDB9Kho5SinTHSjS+fagqEA5hgFCLOF
-7gKLxNbfK029N9sjcxq991bE58pLbXsV1GZrhO/KE3laja5uvY+lyb9EoNCU3/L0
-d2L1GdJ9dm3Kue8uFNuAfnWEekBrUa2oyxV1JCFAD9AhDADXeXkpxtWH3RZMru8P
-mU+hHoYtOZ/AZOfWMn1sM2N6mjuGfWJWBNuWpc21PxAj7IyJJ7hEEeoXEshhC/OE
-hFdYPmNkjcsBO8tcM7IS1Yr788xbXg==
-=z8lU
------END PGP SIGNATURE-----
-
---da4uJneut+ArUgXk--
+Shakeel
