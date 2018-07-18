@@ -2,123 +2,98 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4305ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F307ECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6425B2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D6C92075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 00:49:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C31HiFon"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6425B2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mBWEcuER"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6C92075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbeGRBWi (ORCPT
+        id S1731542AbeGRBYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 21:22:38 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:45416 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730043AbeGRBWh (ORCPT
+        Tue, 17 Jul 2018 21:24:25 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:35363 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731114AbeGRBYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 21:22:37 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 94-v6so1191253ple.12;
-        Tue, 17 Jul 2018 17:47:27 -0700 (PDT)
+        Tue, 17 Jul 2018 21:24:25 -0400
+Received: by mail-it0-f66.google.com with SMTP id q20-v6so1800721ith.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Jul 2018 17:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RqJusamQIL7japm3Kmcrl0lH6/aiRAPCWoDSN4NNiGQ=;
-        b=C31HiFonyGr7EeRX8YopLTvlvpT9oLlEpigN0Ai0jqCx56XL5HdEKhAjADw70xGJdl
-         QQRhIWy9ssGzFrjAsbaYlDJoQQ41qbmXcnfozFR1D2rpv5/F5L+8vvDfcmpBzQuynbjK
-         zc7SlONbcb+O6wRPaogk8aB13VBgAAan0qAI7iYX9Ejgz7hrY/3etHaRTqvmf6hRyTIb
-         WuvKidhR7rN1IlNQmNvCf1QZf12vNc+Zgs0/fpKdqmfH/DwbG6Fu7Qy18xlApdYwGmuj
-         qhuqgjb9TQrbBtGHkYEkaAXw7kUTiN0UXF1UI707GZ006L3CkOaCSsbk8WXYkb20rfk+
-         maXw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=bM3W6AOZgZW+t4m8CxthwGZ3FkiPNgsBFi6fJY73FEA=;
+        b=mBWEcuERx7wVUcoKDycSakTczwWv14gimgR/jmIDHQYVBtJcWcOZTfAqXen2iGwc2W
+         /OEeJMg5KUmf0ElcTr0rij7SgduLQ3bK3is2Lkac6Q5Bmsyjpxw8gTDvzE0BZt3ufhDq
+         SwKydMhTRAj3XEi/WA3Lz0unqyQCU4kyIgd0g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RqJusamQIL7japm3Kmcrl0lH6/aiRAPCWoDSN4NNiGQ=;
-        b=IVYmK1jqJJezSTec/cZ54/jRU/zwzW8GYvDKHPwKnNqxT0X0u+sW5HbkxuGF6o2i2k
-         ZJ+YHVjldj/TOb4kGKnO4z3AHf05hPV0w6cpUwK9BCmLLGGTSY5akTBHEEA2STsbxKnf
-         hg8t05qpFikhusYuYQNE8+R1N2PD8Fmy+4gIkV4mr1VM8zHtmAMUKyP603ZHq2A/+egd
-         0bXOPmXFvbNPstya2XIQbaxn91epC0e/tahX8BiPV7Uni2CQTeaGi5399vJyOxHo/OsR
-         d43xwa3aOt1QWyoOzeJ4tyLGu37+5JFV0uCte/UPoDOC7eAJJtIE7UMHmiNOT8hkNjgq
-         0/BQ==
-X-Gm-Message-State: AOUpUlHRrVT9RvDvAtMlwI/7mvHs1VUVy4kKxj+ldh2//jIGCM5P1dje
-        xVX27DE0RK2vUr4FPTn9Z/o=
-X-Google-Smtp-Source: AAOMgpdF3QqoW7tCLk1zJwi0AMfLhIbMYkhB17BQ9YT7w9kg3cC1apgTALX3McDqVsiluF7Y3jR/Og==
-X-Received: by 2002:a17:902:bd93:: with SMTP id q19-v6mr3684132pls.238.1531874846984;
-        Tue, 17 Jul 2018 17:47:26 -0700 (PDT)
-Received: from 192-168-1-101.tpgi.com.com ([61.68.123.183])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm9190775pfm.97.2018.07.17.17.47.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Jul 2018 17:47:25 -0700 (PDT)
-From:   Jon Maxwell <jmaxwell37@gmail.com>
-To:     davem@davemloft.net
-Cc:     edumazet@google.com, eric.dumazet@gmail.com, ncardwell@google.com,
-        David.Laight@aculab.com, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmaxwell@redhat.com
-Subject: tcp: Add tcp_clamp_rto_to_user_timeout() helper to improve accuracy
-Date:   Wed, 18 Jul 2018 10:46:39 +1000
-Message-Id: <20180718004639.30154-4-jmaxwell37@gmail.com>
-X-Mailer: git-send-email 2.13.6
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=bM3W6AOZgZW+t4m8CxthwGZ3FkiPNgsBFi6fJY73FEA=;
+        b=Va5xamJo4xblh14JxVcIRmFu2z3zwbk3IFY122lCmfQpYTS8IfMtXwp6pQlAWQ+5fR
+         EdfkDNq2+pyu1P9RHG7YwM8v9kc9fSgdTrabg6KFH54AuEr39IgFS69ml1SDX7ierv16
+         UzHBQxt3nAKhiRrNaJJNE5SDvOzZDIfkDQUWVNVTkQlzAsB+RVAaHSLe0IL/pgzFxY0Q
+         Miq60duCltHuHVjAuk2jLONt+unyQSbC0YXACONddjeM07trcJMJBkWc7bW+Z1msIkoG
+         nbWXdYPO93mhiTpXToLSelphgf47tkrPMz66O+nIa1dc+LwDLri80KIFsBC16z5nfKWO
+         e9ng==
+X-Gm-Message-State: AOUpUlF0FR/AxdiNRBQtiEHFAaASkX91Go/khJi97iyPVR7ZR30wLNYn
+        UvILOCls/leXm0zcxqTAyZfE8u52HQg=
+X-Google-Smtp-Source: AAOMgpeNzhMZ4HQBLhTGORfibmWcLBJSqBAa9dX1xIFv4TGrrYdNQo/hZMtnT4objtTDdbjgbbyMoA==
+X-Received: by 2002:a24:f949:: with SMTP id l70-v6mr331071ith.66.1531874953500;
+        Tue, 17 Jul 2018 17:49:13 -0700 (PDT)
+Received: from djkurtz2.bld.corp.google.com ([2620:15c:183:0:1cfd:61a5:7215:5f9c])
+        by smtp.gmail.com with ESMTPSA id z71-v6sm3275425ioz.34.2018.07.17.17.49.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Jul 2018 17:49:13 -0700 (PDT)
+From:   Daniel Kurtz <djkurtz@chromium.org>
+Cc:     Dylan Reid <dgreid@chromium.org>,
+        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org (open list:VOLTAGE AND CURRENT REGULATOR
+        FRAMEWORK)
+Subject: [PATCH 1/2] regulator: allow drivers in modules to register fixed regulators
+Date:   Tue, 17 Jul 2018 18:49:08 -0600
+Message-Id: <20180718004909.213735-2-djkurtz@chromium.org>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+In-Reply-To: <20180718004909.213735-1-djkurtz@chromium.org>
+References: <20180718004909.213735-1-djkurtz@chromium.org>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create the tcp_clamp_rto_to_user_timeout() helper routine. To calculate
-the correct rto, so that the TCP_USER_TIMEOUT socket option is more 
-accurate. Taking suggestions and feedback into account from 
-Eric Dumazet, Neal Cardwell and David Laight. Due to the 1st commit we 
-can avoid the msecs_to_jiffies() and jiffies_to_msecs() dance.
+Sound machine drivers tend to live in modules. Sometimes such a machine
+driver needs to register a fixed regulator to provide to a codec.
 
-Signed-off-by: Jon Maxwell <jmaxwell37@gmail.com>
+Export regulator_register_always_on() such that this is possible.
+
+Change-Id: I2906f96df278b5fa65d40d3a777bf6d3d91841d2
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- net/ipv4/tcp_timer.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/regulator/fixed-helper.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-index d212f183dd2d..a242f8874629 100644
---- a/net/ipv4/tcp_timer.c
-+++ b/net/ipv4/tcp_timer.c
-@@ -36,6 +36,21 @@ u32 tcp_retransmit_stamp(const struct sock *sk)
- 	return start_ts;
+diff --git a/drivers/regulator/fixed-helper.c b/drivers/regulator/fixed-helper.c
+index 777fac6fb4cb0a..f53fbda043f525 100644
+--- a/drivers/regulator/fixed-helper.c
++++ b/drivers/regulator/fixed-helper.c
+@@ -60,3 +60,4 @@ struct platform_device *regulator_register_always_on(int id, const char *name,
+ 
+ 	return &data->pdev;
  }
- 
-+static u32 tcp_clamp_rto_to_user_timeout(const struct sock *sk)
-+{
-+	struct inet_connection_sock *icsk = inet_csk(sk);
-+	u32 elapsed, start_ts;
-+
-+	start_ts = tcp_retransmit_stamp(sk);
-+	if (!icsk->icsk_user_timeout || !start_ts)
-+		return icsk->icsk_rto;
-+	elapsed = tcp_time_stamp(tcp_sk(sk)) - start_ts;
-+	if (elapsed >= icsk->icsk_user_timeout)
-+		return 1; /* user timeout has passed; fire ASAP */
-+	else
-+		return min_t(u32, icsk->icsk_rto, msecs_to_jiffies(icsk->icsk_user_timeout - elapsed));
-+}
-+
- /**
-  *  tcp_write_err() - close socket and save error info
-  *  @sk:  The socket the error has appeared on.
-@@ -544,7 +559,8 @@ void tcp_retransmit_timer(struct sock *sk)
- 		/* Use normal (exponential) backoff */
- 		icsk->icsk_rto = min(icsk->icsk_rto << 1, TCP_RTO_MAX);
- 	}
--	inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS, icsk->icsk_rto, TCP_RTO_MAX);
-+	inet_csk_reset_xmit_timer(sk, ICSK_TIME_RETRANS,
-+				  tcp_clamp_rto_to_user_timeout(sk), TCP_RTO_MAX);
- 	if (retransmits_timed_out(sk, net->ipv4.sysctl_tcp_retries1 + 1, 0))
- 		__sk_dst_reset(sk);
- 
++EXPORT_SYMBOL_GPL(regulator_register_always_on);
 -- 
-2.13.6
+2.18.0.203.gfac676dfb9-goog
 
