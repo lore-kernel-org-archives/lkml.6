@@ -2,77 +2,110 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C3FECDFB4
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E03FECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 02:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFF32075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:58:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFF32075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AF95D2075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:59:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="azdtECHC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF95D2075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731524AbeGRCdm (ORCPT
+        id S1731456AbeGRCfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:33:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43198 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731232AbeGRCdl (ORCPT
+        Tue, 17 Jul 2018 22:35:21 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:35552 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730873AbeGRCfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:33:41 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1A66BD1;
-        Wed, 18 Jul 2018 01:58:16 +0000 (UTC)
-Date:   Tue, 17 Jul 2018 18:58:15 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>, tgraf@suug.ch,
-        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] lib/rhashtable: consider param->min_size when setting
- initial table size
-Message-Id: <20180717185815.20e5662318274aadcf9a9357@linux-foundation.org>
-In-Reply-To: <20180717223057.7wdtjwbusxfqpvur@linux-r8p5>
-References: <20180714062516.30433-1-dave@stgolabs.net>
-        <20180716000046.yscgnpr256qhm2qg@gondor.apana.org.au>
-        <20180717223057.7wdtjwbusxfqpvur@linux-r8p5>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Jul 2018 22:35:21 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6I1xtuq156686;
+        Wed, 18 Jul 2018 01:59:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=3K7dODvDLZCT6t5t0vDDX/QTnGD7urDieh1YXC0n6UY=;
+ b=azdtECHCGwQP6pxt4Q3FS3T4CS3+0DqQT+h2cJ0Qq0UPfeQp2bM8E75PH2ohcrg4o4ve
+ 3G5mGRht7uC7sqC0IiIYqsbZEe93OpKyTThlRMhkDzCxUbZwSgmhJOmA8KnsylUuZ0Qb
+ 7FKPYM0Gdjc0qBS9JogwSrvIUBK8EoaLgwadYJa/nSA+HNE+gy2dU4h9iZ/SR+ukeWsC
+ nS1EutFyKPe+8nI7I9wEWrFadRh9+8uR09FPsKdGY/9dC0HysfttfaHW9R0uhyrqoPLh
+ MHNNGCiVCVVfKho/1js3I20ow4m3hQyP3e+lGkG5hl/bDUOJm6E5GsRxk5hmevlLkBjz yw== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2k7a3tb2xv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 01:59:55 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6I1xq5r009133
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 01:59:52 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6I1xqRj004580;
+        Wed, 18 Jul 2018 01:59:52 GMT
+Received: from mail-oi0-f48.google.com (/209.85.218.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Jul 2018 18:59:52 -0700
+Received: by mail-oi0-f48.google.com with SMTP id s198-v6so5775591oih.11;
+        Tue, 17 Jul 2018 18:59:51 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHdQcA1wPMyH08RzVs+2939MPSP4zS9Ij1483P1YfdhPKNUfiMM
+        x9skTEJazb4uUaaDAJ3EOkDbsaPyCxkds3VUcA4=
+X-Google-Smtp-Source: AAOMgpcgvGulxLG8gSKKbjIYOlMgfaA5/Q+2ji8sce/sp+jTPH0sC6xqgZXJdw7h2AqXMabRc2erb53HiGeB8/EDdo0=
+X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr4591566oia.229.1531879191321;
+ Tue, 17 Jul 2018 18:59:51 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
+ <20180712000419.5165-8-pasha.tatashin@oracle.com> <93178b98-8464-ae36-3536-0baa639b3467@oracle.com>
+In-Reply-To: <93178b98-8464-ae36-3536-0baa639b3467@oracle.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Tue, 17 Jul 2018 21:59:15 -0400
+X-Gmail-Original-Message-ID: <CAGM2rea50hAAa2L2_zPYgY6-08eTMWVRjoP_KAZpRg21TEd11Q@mail.gmail.com>
+Message-ID: <CAGM2rea50hAAa2L2_zPYgY6-08eTMWVRjoP_KAZpRg21TEd11Q@mail.gmail.com>
+Subject: Re: [PATCH v13 07/18] x86/xen/time: output xen sched_clock time from 0
+To:     boris.ostrovsky@oracle.com
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
+        feng.tang@intel.com, Petr Mladek <pmladek@suse.com>,
+        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
+        jgross@suse.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8957 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=670
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807180021
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Jul 2018 15:30:57 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
+> > +static u64 xen_sched_clock(void)
+> > +{
+> > +     return xen_clocksource_read() - xen_sched_clock_offset;
+> > +}
+>
+>
+> Should other invocations of xen_clocksource_read() also be offset?
+>
 
-> On Mon, 16 Jul 2018, Herbert Xu wrote:
-> 
-> >On Fri, Jul 13, 2018 at 11:25:16PM -0700, Davidlohr Bueso wrote:
-> >> rhashtable_init() currently does not take into account the user-passed
-> >> min_size parameter unless param->nelem_hint is set as well. As such,
-> >> the default size (number of buckets) will always be HASH_DEFAULT_SIZE
-> >> even if the smallest allowed size is larger than that. Remediate this
-> >> by unconditionally calling into rounded_hashtable_size() and handling
-> >> things accordingly.
-> >>
-> >> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-> >
-> >Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
-> >
-> >Normally these patches go through netdev so could you please resend
-> >it with my ack to netdev@vger.kernel.org?
-> 
-> So I've done the resend, but at least would think that routing the
-> patch through Andrew would work best as he picked up the rhashtable
-> changes regarding ipc and this touches the same call.
-> 
+I do not believe so. Look in arch/x86/kernel/kvmclock.c
+kvm_clock_get_cycles() is not normalized for instance. We need to
+normalize kvm_sched_clock_read() and xen_sched_clock(), because it is
+used by printk() as a sched_clock() prefix. So not to be confusing we
+print time starting from 0, but the other instances where
+xen_clocksource_read()  is used do not need that.
 
-Either approach works.
-
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-
+Thank you,
+Pavel
