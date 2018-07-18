@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC30ECDFB8
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCC1ECDFBC
 	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E6E20856
+	by mail.kernel.org (Postfix) with ESMTP id A3C0120854
 	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:42:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E6E20856
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C0120854
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731191AbeGRQUq (ORCPT
+        id S1731258AbeGRQUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 18 Jul 2018 12:20:46 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:58821 "EHLO
+Received: from Galois.linutronix.de ([146.0.238.70]:58824 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730663AbeGRQUp (ORCPT
+        with ESMTP id S1731088AbeGRQUq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:20:45 -0400
+        Wed, 18 Jul 2018 12:20:46 -0400
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1ffoaj-0000sh-7B; Wed, 18 Jul 2018 17:42:13 +0200
+        id 1ffoak-0000sh-KC; Wed, 18 Jul 2018 17:42:14 +0200
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 1/2] irqchip/gic-v3-its: Make its_lock a raw_spin_lock_t
-Date:   Wed, 18 Jul 2018 17:42:04 +0200
-Message-Id: <20180718154205.13704-2-bigeasy@linutronix.de>
+Subject: [PATCH 2/2] irqchip/gic-v3-its: Move ITS' ->pend_page allocation into an early CPU up callback
+Date:   Wed, 18 Jul 2018 17:42:05 +0200
+Message-Id: <20180718154205.13704-3-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180718154205.13704-1-bigeasy@linutronix.de>
 References: <20180718154205.13704-1-bigeasy@linutronix.de>
@@ -46,93 +46,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The its_lock lock is held while a new device is added to the list and
-during setup while the CPU is booted. Even on -RT the CPU-bootup is
-performed with disabled interrupts.
-
-Make its_lock a raw_spin_lock_t.
+The AP-GIC-starting callback allocates memory for the ->pend_page while
+the CPU is started during boot-up. This callback is invoked on the
+target CPU with disabled interrupts.
+This does not work on -RT because memory allocations are not possible
+with disabled interrupts.
+Move the memory allocation to an earlier hotplug step which is invoked
+with enabled interrupts on the boot CPU.
 
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c | 60 ++++++++++++++++++++++----------
+ 1 file changed, 41 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
 its.c
-index d7842d312d3e..a616043d25ee 100644
+index a616043d25ee..acc3d44c356d 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -160,7 +160,7 @@ static struct {
- } vpe_proxy;
+@@ -171,6 +171,7 @@ static DEFINE_RAW_SPINLOCK(vmovp_lock);
+ static DEFINE_IDA(its_vpeid_ida);
 =20
- static LIST_HEAD(its_nodes);
--static DEFINE_SPINLOCK(its_lock);
-+static DEFINE_RAW_SPINLOCK(its_lock);
- static struct rdists *gic_rdists;
- static struct irq_domain *its_parent;
+ #define gic_data_rdist()		(raw_cpu_ptr(gic_rdists->rdist))
++#define gic_data_rdist_cpu(cpu)		(per_cpu_ptr(gic_rdists->rdist, cpu))
+ #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+ #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
 =20
-@@ -1997,12 +1997,12 @@ static void its_cpu_init_collections(void)
- {
- 	struct its_node *its;
-=20
--	spin_lock(&its_lock);
-+	raw_spin_lock(&its_lock);
-=20
- 	list_for_each_entry(its, &its_nodes, entry)
- 		its_cpu_init_collection(its);
-=20
--	spin_unlock(&its_lock);
-+	raw_spin_unlock(&its_lock);
- }
-=20
- static struct its_device *its_find_device(struct its_node *its, u32 dev_id)
-@@ -3070,7 +3070,7 @@ static int its_save_disable(void)
- 	struct its_node *its;
- 	int err =3D 0;
-=20
--	spin_lock(&its_lock);
-+	raw_spin_lock(&its_lock);
- 	list_for_each_entry(its, &its_nodes, entry) {
- 		void __iomem *base;
-=20
-@@ -3102,7 +3102,7 @@ static int its_save_disable(void)
- 			writel_relaxed(its->ctlr_save, base + GITS_CTLR);
- 		}
- 	}
--	spin_unlock(&its_lock);
-+	raw_spin_unlock(&its_lock);
-=20
- 	return err;
- }
-@@ -3112,7 +3112,7 @@ static void its_restore_enable(void)
- 	struct its_node *its;
- 	int ret;
-=20
--	spin_lock(&its_lock);
-+	raw_spin_lock(&its_lock);
- 	list_for_each_entry(its, &its_nodes, entry) {
- 		void __iomem *base;
- 		int i;
-@@ -3164,7 +3164,7 @@ static void its_restore_enable(void)
- 		    GITS_TYPER_HCC(gic_read_typer(base + GITS_TYPER)))
- 			its_cpu_init_collection(its);
- 	}
--	spin_unlock(&its_lock);
-+	raw_spin_unlock(&its_lock);
- }
-=20
- static struct syscore_ops its_syscore_ops =3D {
-@@ -3398,9 +3398,9 @@ static int __init its_probe_one(struct resource *res,
- 	if (err)
- 		goto out_free_tables;
-=20
--	spin_lock(&its_lock);
-+	raw_spin_lock(&its_lock);
- 	list_add(&its->entry, &its_nodes);
--	spin_unlock(&its_lock);
-+	raw_spin_unlock(&its_lock);
-=20
+@@ -1853,15 +1854,17 @@ static int its_alloc_collections(struct its_node *i=
+ts)
  	return 0;
+ }
+=20
+-static struct page *its_allocate_pending_table(gfp_t gfp_flags)
++static struct page *its_allocate_pending_table(unsigned int cpu)
+ {
+ 	struct page *pend_page;
++	unsigned int order;
+ 	/*
+ 	 * The pending pages have to be at least 64kB aligned,
+ 	 * hence the 'max(LPI_PENDBASE_SZ, SZ_64K)' below.
+ 	 */
+-	pend_page =3D alloc_pages(gfp_flags | __GFP_ZERO,
+-				get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
++	order =3D get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K));
++	pend_page =3D alloc_pages_node(cpu_to_node(cpu), GFP_KERNEL | __GFP_ZERO,
++				     order);
+ 	if (!pend_page)
+ 		return NULL;
+=20
+@@ -1877,6 +1880,28 @@ static void its_free_pending_table(struct page *pt)
+ 		   get_order(max_t(u32, LPI_PENDBASE_SZ, SZ_64K)));
+ }
+=20
++static int its_alloc_pend_page(unsigned int cpu)
++{
++	struct page *pend_page;
++	phys_addr_t paddr;
++
++	pend_page =3D gic_data_rdist_cpu(cpu)->pend_page;
++	if (pend_page)
++		return 0;
++
++	pend_page =3D its_allocate_pending_table(cpu);
++	if (!pend_page) {
++		pr_err("Failed to allocate PENDBASE for CPU%d\n",
++		       smp_processor_id());
++		return -ENOMEM;
++	}
++
++	paddr =3D page_to_phys(pend_page);
++	pr_info("CPU%d: using LPI pending table @%pa\n", cpu, &paddr);
++	gic_data_rdist_cpu(cpu)->pend_page =3D pend_page;
++	return 0;
++}
++
+ static void its_cpu_init_lpis(void)
+ {
+ 	void __iomem *rbase =3D gic_data_rdist_rd_base();
+@@ -1885,21 +1910,8 @@ static void its_cpu_init_lpis(void)
+=20
+ 	/* If we didn't allocate the pending table yet, do it now */
+ 	pend_page =3D gic_data_rdist()->pend_page;
+-	if (!pend_page) {
+-		phys_addr_t paddr;
+-
+-		pend_page =3D its_allocate_pending_table(GFP_NOWAIT);
+-		if (!pend_page) {
+-			pr_err("Failed to allocate PENDBASE for CPU%d\n",
+-			       smp_processor_id());
+-			return;
+-		}
+-
+-		paddr =3D page_to_phys(pend_page);
+-		pr_info("CPU%d: using LPI pending table @%pa\n",
+-			smp_processor_id(), &paddr);
+-		gic_data_rdist()->pend_page =3D pend_page;
+-	}
++	if (WARN_ON(!pend_page))
++		return;
+=20
+ 	/* set PROPBASE */
+ 	val =3D (page_to_phys(gic_rdists->prop_page) |
+@@ -2732,7 +2744,7 @@ static int its_vpe_init(struct its_vpe *vpe)
+ 		return vpe_id;
+=20
+ 	/* Allocate VPT */
+-	vpt_page =3D its_allocate_pending_table(GFP_KERNEL);
++	vpt_page =3D its_allocate_pending_table(raw_smp_processor_id());
+ 	if (!vpt_page) {
+ 		its_vpe_id_free(vpe_id);
+ 		return -ENOMEM;
+@@ -3706,6 +3718,16 @@ int __init its_init(struct fwnode_handle *handle, st=
+ruct rdists *rdists,
+ 	if (err)
+ 		return err;
+=20
++	err =3D cpuhp_setup_state(CPUHP_BP_PREPARE_DYN, "irqchip/arm/gicv3:prepar=
+e",
++				its_alloc_pend_page, NULL);
++	if (err < 0) {
++		pr_warn("ITS: Can't register CPU-hoplug callback.\n");
++		return err;
++	}
++	err =3D its_alloc_pend_page(smp_processor_id());
++	if (err < 0)
++		return err;
++
+ 	list_for_each_entry(its, &its_nodes, entry)
+ 		has_v4 |=3D its->is_v4;
 =20
 --=20
 2.18.0
