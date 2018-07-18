@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A9ECECDFB9
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5304DECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEBD2208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC532075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:41:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="rAWiD1Uc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEBD2208B2
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="Qu51K4O8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC532075A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731729AbeGRKSi (ORCPT
+        id S1731764AbeGRKSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:18:38 -0400
-Received: from 8bytes.org ([81.169.241.247]:54024 "EHLO theia.8bytes.org"
+        Wed, 18 Jul 2018 06:18:40 -0400
+Received: from 8bytes.org ([81.169.241.247]:54196 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731088AbeGRKSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 06:18:36 -0400
+        id S1731692AbeGRKSj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:18:39 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 202FD889; Wed, 18 Jul 2018 11:41:21 +0200 (CEST)
+        id B5B3FAA3; Wed, 18 Jul 2018 11:41:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906882; bh=rgVeffvhNFRkOo6nEkJpgtDI1kRbfcMiZvXjhHYSbFQ=;
+        t=1531906883; bh=PFTcFHATf/euI89FyiCX6ghifaBmqhDD9QfrXtzXoJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rAWiD1UcvtefUlQpKgaW3kkKYX95WVFcog+UnOuaWGKRrZtqX6cCHb/NVtRgi6/2y
-         vJ8pta0W/mMSqv2vv8JpHLPIughd3vcg7NCpp+RDfm6VR+EecGHGBdMyahhDLJoUnT
-         QGciV83KLef6+1WYPx0Znsdh95z+rFGY8LX5+vZECnrAKkvqjO/lNMw1ryuvg05ZUp
-         G8Ky/xApvVjB6E/euhORZNM9gVi02Tj5w34NijI2X18PITjxOw0wB7wcpjNyaKt9V3
-         UbFNLlV2a37GOHpxhy8IOuveSBtl8572uh0/ykLSGPuoI0TBzmYIkVLwxpeUAtKc9x
-         TNcl8xLMOk3oA==
+        b=Qu51K4O8Sborqb/86q2MTFZgWs+I5VF/mXWK++dxnkR5qpKzY/fvzzAf8DNRrZVK6
+         0dN+xmEPB9LoEmY1LDW2ObjWiP946aAtBaWMZhvWbyO9rAU3RWrR2HIRoECGlTZ/UU
+         Dn4uagMlAwO5mb1I7ccHS9IQBPw908aP5mnZy0WXFdWdlea4xRs/QdGY7gGuBR5jGU
+         okFBYff/sNSkBycZr4XIlNjndO5I1W8/xQqONbGmjKSJiaV983dmNOkAbkdrbZpPFt
+         KzhboHhWcdiOL+H1YkVTedIwND4WAoY01yT6S3tOMeglOdGX2JM4qG85s1v6pWTmaI
+         MZoIfOyMc5Zhw==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 17/39] x86/pgtable/32: Allocate 8k page-tables when PTI is enabled
-Date:   Wed, 18 Jul 2018 11:40:54 +0200
-Message-Id: <1531906876-13451-18-git-send-email-joro@8bytes.org>
+Subject: [PATCH 21/39] x86/mm/pae: Populate valid user PGD entries
+Date:   Wed, 18 Jul 2018 11:40:58 +0200
+Message-Id: <1531906876-13451-22-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,95 +72,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Allocate a kernel and a user page-table root when PTI is
-enabled. Also allocate a full page per root for PAE because
-otherwise the bit to flip in cr3 to switch between them
-would be non-constant, which creates a lot of hassle.
-Keep that for a later optimization.
+Generic page-table code populates all non-leaf entries with
+_KERNPG_TABLE bits set. This is fine for all paging modes
+except PAE.
+
+In PAE mode only a subset of the bits is allowed to be set.
+Make sure we only set allowed bits by masking out the
+reserved bits.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/kernel/head_32.S | 20 +++++++++++++++-----
- arch/x86/mm/pgtable.c     |  5 +++--
- 2 files changed, 18 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/pgtable_types.h | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/head_32.S b/arch/x86/kernel/head_32.S
-index abe6df1..30f9cb2 100644
---- a/arch/x86/kernel/head_32.S
-+++ b/arch/x86/kernel/head_32.S
-@@ -512,11 +512,18 @@ ENTRY(initial_code)
- ENTRY(setup_once_ref)
- 	.long setup_once
+diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
+index 99fff85..b64acb0 100644
+--- a/arch/x86/include/asm/pgtable_types.h
++++ b/arch/x86/include/asm/pgtable_types.h
+@@ -50,6 +50,7 @@
+ #define _PAGE_GLOBAL	(_AT(pteval_t, 1) << _PAGE_BIT_GLOBAL)
+ #define _PAGE_SOFTW1	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW1)
+ #define _PAGE_SOFTW2	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW2)
++#define _PAGE_SOFTW3	(_AT(pteval_t, 1) << _PAGE_BIT_SOFTW3)
+ #define _PAGE_PAT	(_AT(pteval_t, 1) << _PAGE_BIT_PAT)
+ #define _PAGE_PAT_LARGE (_AT(pteval_t, 1) << _PAGE_BIT_PAT_LARGE)
+ #define _PAGE_SPECIAL	(_AT(pteval_t, 1) << _PAGE_BIT_SPECIAL)
+@@ -266,14 +267,37 @@ typedef struct pgprot { pgprotval_t pgprot; } pgprot_t;
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+#define	PGD_ALIGN	(2 * PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	1024
+ typedef struct { pgdval_t pgd; } pgd_t;
+ 
++#ifdef CONFIG_X86_PAE
++
++/*
++ * PHYSICAL_PAGE_MASK might be non-constant when SME is compiled in, so we can't
++ * use it here.
++ */
++
++#define PGD_PAE_PAGE_MASK	((signed long)PAGE_MASK)
++#define PGD_PAE_PHYS_MASK	(((1ULL << __PHYSICAL_MASK_SHIFT)-1) & PGD_PAE_PAGE_MASK)
++
++/*
++ * PAE allows Base Address, P, PWT, PCD and AVL bits to be set in PGD entries.
++ * All other bits are Reserved MBZ
++ */
++#define PGD_ALLOWED_BITS	(PGD_PAE_PHYS_MASK | _PAGE_PRESENT | \
++				 _PAGE_PWT | _PAGE_PCD | \
++				 _PAGE_SOFTW1 | _PAGE_SOFTW2 | _PAGE_SOFTW3)
++
 +#else
-+#define	PGD_ALIGN	(PAGE_SIZE)
-+#define PTI_USER_PGD_FILL	0
++/* No need to mask any bits for !PAE */
++#define PGD_ALLOWED_BITS	(~0ULL)
 +#endif
- /*
-  * BSS section
-  */
- __PAGE_ALIGNED_BSS
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- #ifdef CONFIG_X86_PAE
- .globl initial_pg_pmd
- initial_pg_pmd:
-@@ -526,14 +533,17 @@ initial_pg_pmd:
- initial_page_table:
- 	.fill 1024,4,0
- #endif
-+	.align PGD_ALIGN
- initial_pg_fixmap:
- 	.fill 1024,4,0
--.globl empty_zero_page
--empty_zero_page:
--	.fill 4096,1,0
- .globl swapper_pg_dir
-+	.align PGD_ALIGN
- swapper_pg_dir:
- 	.fill 1024,4,0
-+	.fill PTI_USER_PGD_FILL,4,0
-+.globl empty_zero_page
-+empty_zero_page:
-+	.fill 4096,1,0
- EXPORT_SYMBOL(empty_zero_page)
- 
- /*
-@@ -542,7 +552,7 @@ EXPORT_SYMBOL(empty_zero_page)
- #ifdef CONFIG_X86_PAE
- __PAGE_ALIGNED_DATA
- 	/* Page-aligned for the benefit of paravirt? */
--	.align PAGE_SIZE
-+	.align PGD_ALIGN
- ENTRY(initial_page_table)
- 	.long	pa(initial_pg_pmd+PGD_IDENT_ATTR),0	/* low identity map */
- # if KPMDS == 3
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 47b5951..db6fb77 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -343,7 +343,8 @@ static inline pgd_t *_pgd_alloc(void)
- 	 * We allocate one page for pgd.
- 	 */
- 	if (!SHARED_KERNEL_PMD)
--		return (pgd_t *)__get_free_page(PGALLOC_GFP);
-+		return (pgd_t *)__get_free_pages(PGALLOC_GFP,
-+						 PGD_ALLOCATION_ORDER);
- 
- 	/*
- 	 * Now PAE kernel is not running as a Xen domain. We can allocate
-@@ -355,7 +356,7 @@ static inline pgd_t *_pgd_alloc(void)
- static inline void _pgd_free(pgd_t *pgd)
++
+ static inline pgd_t native_make_pgd(pgdval_t val)
  {
- 	if (!SHARED_KERNEL_PMD)
--		free_page((unsigned long)pgd);
-+		free_pages((unsigned long)pgd, PGD_ALLOCATION_ORDER);
- 	else
- 		kmem_cache_free(pgd_cache, pgd);
+-	return (pgd_t) { val };
++	return (pgd_t) { val & PGD_ALLOWED_BITS };
  }
+ 
+ static inline pgdval_t native_pgd_val(pgd_t pgd)
+ {
+-	return pgd.pgd;
++	return pgd.pgd & PGD_ALLOWED_BITS;
+ }
+ 
+ static inline pgdval_t pgd_flags(pgd_t pgd)
 -- 
 2.7.4
 
