@@ -2,606 +2,269 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D0FECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DACBECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8756E20673
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:34:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8756E20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 480EC20673
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:34:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 480EC20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731661AbeGRRNX (ORCPT
+        id S1731677AbeGRRNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 13:13:23 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60113 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730862AbeGRRNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 13:13:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 09:34:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,371,1526367600"; 
-   d="scan'208";a="73429807"
-Received: from sandybridge-desktop.sh.intel.com ([10.239.160.116])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Jul 2018 09:34:35 -0700
-From:   Chen Yu <yu.c.chen@intel.com>
-To:     linux-pm@vger.kernel.org
-Cc:     Rui Zhang <rui.zhang@intel.com>,
-        "Gu, Kookoo" <kookoo.gu@intel.com>, Chen Yu <yu.c.chen@intel.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Denis Kenzior <denkenz@gmail.com>,
-        "Lee, Chun-Yi" <jlee@suse.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4][RFC v2] tools: create power/crypto utility
-Date:   Thu, 19 Jul 2018 00:40:25 +0800
-Message-Id: <c8111d5e1749e100e6244970a4ceca8e758421a5.1531924968.git.yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531924968.git.yu.c.chen@intel.com>
-References: <cover.1531924968.git.yu.c.chen@intel.com>
+        Wed, 18 Jul 2018 13:13:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36540 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731323AbeGRRNf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 13:13:35 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6IGSbAl091867
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 12:34:52 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ka7jbmq3g-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 12:34:51 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 18 Jul 2018 12:34:51 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 12:34:48 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6IGYlLq15597976
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 16:34:47 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D59FB2065;
+        Wed, 18 Jul 2018 12:34:38 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D07AB205F;
+        Wed, 18 Jul 2018 12:34:38 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jul 2018 12:34:38 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C2DB016C3E27; Wed, 18 Jul 2018 09:37:12 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 09:37:12 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1531340384.8759.86.camel@infradead.org>
+ <20180711210828.GD3593@linux.vnet.ibm.com>
+ <1531396842.8759.125.camel@infradead.org>
+ <20180712125351.GP3593@linux.vnet.ibm.com>
+ <20180712161704.GA20726@linux.vnet.ibm.com>
+ <20180716154015.GA21419@linux.vnet.ibm.com>
+ <1531815548.19223.23.camel@infradead.org>
+ <20180717125653.GH12945@linux.vnet.ibm.com>
+ <20180718153628.GA24359@linux.vnet.ibm.com>
+ <1531929711.3414.29.camel@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531929711.3414.29.camel@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071816-0064-0000-0000-0000032C4C36
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009387; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062646; UDB=6.00545617; IPR=6.00840499;
+ MB=3.00022187; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-18 16:34:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071816-0065-0000-0000-000039FC4BC9
+Message-Id: <20180718163712.GB12945@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807180183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-crypto_hibernate is a user-space utility to generate
-512bits key and pass it to the kernel via ioctl
-for hibernation encryption.(We can also add the key
-into kernel via keyctl if necessary.)
+On Wed, Jul 18, 2018 at 06:01:51PM +0200, David Woodhouse wrote:
+> On Wed, 2018-07-18 at 08:36 -0700, Paul E. McKenney wrote:
+> > And I finally did get some near misses from an earlier commit, so we
+> > should consider your patch to be officially off the hook.
+> 
+> Yay, I like it when it's not my fault. I'll redo it with the ifdef
+> CONFIG_NO_HZ_FULL.
 
-The key derivation is based on a simplified implementation
-of PBKDF2[1] in e2fsprogs - both the key length and the hash
-bytes are the same - 512bits. crypto_hibernate will firstly
-read the salt from kernel and probe the user for passphrase,
-then uses the salt of passphrase to generate a 512bits key
-based on PBKDF2.
+Hey, I didn't say it wasn't your fault, only that it -officially- wasn't
+your fault.  ;-)
 
-Usage:
-1. install the kernel module:
-   modprobe crypto_hibernation
-2. run this tool to generate the key from
-   user provided passphrase (salt has been read from kernel).
-3. launch the hibernation process, the kernel
-   uses the key in step 2 to encrypt the
-   hibernation snapshot.
-4. resume the system and the initrd will
-   launch cryto_hibernate to read previous salt
-   from kernel and probe the user passphrase
-   and generate the same key.
-5. kernel uses this key to decrypt the hibernation
-   snapshot and restore to previous system.
+> What should it do for the !CONFIG_NO_HZ_FULL case? The existing call in
+> guest_enter_irqoff() clearly wasn't actually doing the right thing
+> anyway, hence the need for the need_resched() patch in $SUBJECT... so
+> should I just leave it doing nothing in guest_enter_irqoff()? 
 
-[1] https://www.ietf.org/rfc/rfc2898.txt (5.2 PBKDF2)
+One starting point would be the combination of your patch and my
+patch, with -rcu commit IDs and diff below.  But yes, it needs to be
+!CONFIG_NO_HZ_FULL.  And no, I am not at all confident that I actually
+found all the places needing change in the core code, so this needs some
+serious review both by the KVM guys and the NO_HZ_FULL guys.
 
-Suggested-by: "Theodore Ts'o" <tytso@mit.edu>
-Suggested-by: Eric Biggers <ebiggers3@gmail.com>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Eric Biggers <ebiggers3@gmail.com>
-Cc: Stephan Mueller <smueller@chronox.de>
-Cc: Denis Kenzior <denkenz@gmail.com>
-Cc: "Lee, Chun-Yi" <jlee@suse.com>
-Cc: linux-pm@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
----
- tools/power/crypto/Makefile           |  24 ++
- tools/power/crypto/crypto_hibernate.c | 462 ++++++++++++++++++++++++++++++++++
- 2 files changed, 486 insertions(+)
- create mode 100644 tools/power/crypto/Makefile
- create mode 100644 tools/power/crypto/crypto_hibernate.c
+And some serious testing.  But you knew that already.  ;-)
 
-diff --git a/tools/power/crypto/Makefile b/tools/power/crypto/Makefile
-new file mode 100644
-index 0000000..3544e64
---- /dev/null
-+++ b/tools/power/crypto/Makefile
-@@ -0,0 +1,24 @@
-+# SPDX-License-Identifier: GPL-2.0
-+CC		= $(CROSS_COMPILE)gcc
-+BUILD_OUTPUT	:= $(CURDIR)
-+PREFIX		?= /usr
-+DESTDIR		?=
-+
-+ifeq ("$(origin O)", "command line")
-+	BUILD_OUTPUT := $(O)
-+endif
-+
-+crypto_hibernate : crypto_hibernate.c
-+CFLAGS +=	-Wall
-+
-+%: %.c
-+	@mkdir -p $(BUILD_OUTPUT)
-+	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@
-+
-+.PHONY : clean
-+clean :
-+	@rm -f $(BUILD_OUTPUT)/crypto_hibernate
-+
-+install : crypto_hibernate
-+	install -d  $(DESTDIR)$(PREFIX)/bin
-+	install $(BUILD_OUTPUT)/crypto_hibernate $(DESTDIR)$(PREFIX)/bin/crypto_hibernate
-diff --git a/tools/power/crypto/crypto_hibernate.c b/tools/power/crypto/crypto_hibernate.c
-new file mode 100644
-index 0000000..10de295
---- /dev/null
-+++ b/tools/power/crypto/crypto_hibernate.c
-@@ -0,0 +1,462 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * The key based derived function algorithm for hibernation
-+ * (copied from e2fsprogs)
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+57e3b96d012a kvm/x86: Inform RCU of quiescent state when entering guest mode
+f437e330a720 kvm: Inform RCU of quiescent state when entering guest mode
+
+------------------------------------------------------------------------
+
+diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
+index d05609ad329d..8d2a9d3073ad 100644
+--- a/include/linux/context_tracking.h
++++ b/include/linux/context_tracking.h
+@@ -118,12 +118,12 @@ static inline void guest_enter_irqoff(void)
+ 	 * one time slice). Lets treat guest mode as quiescent state, just like
+ 	 * we do with user-mode execution.
+ 	 */
+-	if (!context_tracking_cpu_is_enabled())
+-		rcu_virt_note_context_switch(smp_processor_id());
++	rcu_kvm_enter();
+ }
+ 
+ static inline void guest_exit_irqoff(void)
+ {
++	rcu_kvm_exit();
+ 	if (context_tracking_is_enabled())
+ 		__context_tracking_exit(CONTEXT_GUEST);
+ 
+@@ -143,12 +143,13 @@ static inline void guest_enter_irqoff(void)
+ 	 */
+ 	vtime_account_system(current);
+ 	current->flags |= PF_VCPU;
+-	rcu_virt_note_context_switch(smp_processor_id());
++	rcu_kvm_enter();
+ }
+ 
+ static inline void guest_exit_irqoff(void)
+ {
+ 	/* Flush the guest cputime we spent on the guest */
++	rcu_kvm_exit();
+ 	vtime_account_system(current);
+ 	current->flags &= ~PF_VCPU;
+ }
+diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
+index 7fa4fb9e899e..a7aa5b3cfb81 100644
+--- a/include/linux/rcutiny.h
++++ b/include/linux/rcutiny.h
+@@ -81,10 +81,11 @@ static inline int rcu_needs_cpu(u64 basemono, u64 *nextevt)
+  * Take advantage of the fact that there is only one CPU, which
+  * allows us to ignore virtualization-based context switches.
+  */
+-static inline void rcu_virt_note_context_switch(int cpu) { }
+ static inline void rcu_cpu_stall_reset(void) { }
+ static inline void rcu_idle_enter(void) { }
+ static inline void rcu_idle_exit(void) { }
++static inline void rcu_kvm_enter(void) { }
++static inline void rcu_kvm_exit(void) { }
+ static inline void rcu_irq_enter(void) { }
+ static inline void rcu_irq_exit_irqson(void) { }
+ static inline void rcu_irq_enter_irqson(void) { }
+diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+index 7f83179177d1..62b61e579bb4 100644
+--- a/include/linux/rcutree.h
++++ b/include/linux/rcutree.h
+@@ -34,17 +34,6 @@ void rcu_softirq_qs(void);
+ void rcu_note_context_switch(bool preempt);
+ int rcu_needs_cpu(u64 basem, u64 *nextevt);
+ void rcu_cpu_stall_reset(void);
+-
+-/*
+- * Note a virtualization-based context switch.  This is simply a
+- * wrapper around rcu_note_context_switch(), which allows TINY_RCU
+- * to save a few bytes. The caller must have disabled interrupts.
+- */
+-static inline void rcu_virt_note_context_switch(int cpu)
+-{
+-	rcu_note_context_switch(false);
+-}
+-
+ void synchronize_rcu_expedited(void);
+ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func);
+ 
+@@ -55,6 +44,8 @@ void cond_synchronize_rcu(unsigned long oldstate);
+ 
+ void rcu_idle_enter(void);
+ void rcu_idle_exit(void);
++void rcu_kvm_enter(void);
++void rcu_kvm_exit(void);
+ void rcu_irq_enter(void);
+ void rcu_irq_exit(void);
+ void rcu_irq_enter_irqson(void);
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 8674ef151d50..cb182b7b0d9a 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -583,6 +583,24 @@ void rcu_idle_enter(void)
+ 	rcu_eqs_enter(false);
+ }
+ 
++/**
++ * rcu_kvm_enter - inform RCU that current CPU is entering a guest OS
 + *
-+ * Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
-+ * Copyright (C) 2018 Theodore Ts'o <tytso@mit.edu>
-+ * Copyright (C) 2018 Yu Chen <yu.c.chen@intel.com>
++ * Enter guest-OS mode, in other words, -leave- the mode in which RCU
++ * read-side critical sections can occur.  (Though RCU read-side critical
++ * sections can occur in irq handlers from guest OSes, a possibility
++ * handled by irq_enter() and irq_exit().)
 + *
-+ * The key derivation is based on a simplified implementation
-+ * of PBKDF2 in e2fsprogs - both the key length and the hash
-+ * bytes are the same - 512bits. crypto_hibernate will firstly
-+ * reads the salt from kernel and probe the user for passphrase,
-+ * then uses them to generate a 512bits key by SHA512 hash and PBKDF2.
-+ *
-+ * A typical usage:
-+ * 1. install the kernel module:
-+ *    modprobe crypto_hibernation
-+ * 2. run this tool to generate the key from
-+ *    user provided passphrase. (salt is read from kernel)
-+ * 3. launch the hibernation process, the kernel
-+ *    uses the key from step 2 to encrypt the
-+ *    hibernation snapshot.
-+ * 4. resume the system and the initrd will
-+ *    launch cryto_hibernate to read previous salt
-+ *    from kernel and then probe the user passphrase
-+ *    and finally generate the same key.
-+ * 5. kernel uses this key to decrypt the hibernation
-+ *    snapshot.
-+ *
-+ * %Begin-Header%
-+ * This file may be redistributed under the terms of the GNU Library
-+ * General Public License, version 2.
-+ * %End-Header%
++ * If you add or remove a call to rcu_kvm_enter(), be sure to test with
++ * CONFIG_RCU_EQS_DEBUG=y.
 + */
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <stdarg.h>
-+#include <string.h>
-+#include <stdbool.h>
-+#include <assert.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <sys/syscall.h>
-+#include <sys/ioctl.h>
-+#include <ctype.h>
-+#include <errno.h>
-+#include <getopt.h>
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <termios.h>
++void rcu_kvm_enter(void)
++{
++	lockdep_assert_irqs_disabled();
++	rcu_eqs_enter(true);
++}
++EXPORT_SYMBOL_GPL(rcu_kvm_enter);
 +
-+#if HAVE_SYS_TYPES_H
-+#include <sys/types.h>
-+#endif
-+
-+#define PBKDF2_ITERATIONS          0xFFFF
-+#define SHA512_BLOCKSIZE 128
-+#define SHA512_LENGTH 64
-+#define HIBERNATE_MAX_SALT_BYTES 16
-+#define HIBERNATE_MAX_KEY_BYTES SHA512_LENGTH
-+#define MAX_PASSPHRASE_SIZE	1024
-+
-+/*
-+ * Add more encryption algorithm here, but need
-+ * to add corresponding support in kernel too.
+ #ifdef CONFIG_NO_HZ_FULL
+ /**
+  * rcu_user_enter - inform RCU that we are resuming userspace.
+@@ -747,6 +765,22 @@ void rcu_idle_exit(void)
+ 	local_irq_restore(flags);
+ }
+ 
++/**
++ * rcu_kvm_exit - inform RCU that current CPU is leaving a guest OS
++ *
++ * Exit guest-OS mode, in other words, -enter- the mode in which RCU
++ * read-side critical sections can occur.
++ *
++ * If you add or remove a call to rcu_kvm_exit(), be sure to test with
++ * CONFIG_RCU_EQS_DEBUG=y.
 + */
-+#define HIBERNATE_ENCRYPTION_MODE_AES_256_XTS 1
-+
-+/* Same structure as kernel */
-+struct hibernation_crypto_keys {
-+	char derived_key[HIBERNATE_MAX_KEY_BYTES];
-+	char salt[HIBERNATE_MAX_SALT_BYTES];
-+	int	contents_encryption_mode;
-+	int user_key_valid;
-+};
-+
-+struct hibernation_crypto_keys hib_keys;
-+
-+static char *get_key_ptr(void)
++void rcu_kvm_exit(void)
 +{
-+	return hib_keys.derived_key;
++	lockdep_assert_irqs_disabled();
++	rcu_eqs_exit(true);
 +}
++EXPORT_SYMBOL_GPL(rcu_kvm_exit);
 +
-+static char *get_salt_ptr(void)
-+{
-+	return hib_keys.salt;
-+}
-+
-+static const unsigned int K[64] = {
-+	0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL, 0x3956c25bUL,
-+	0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL, 0xd807aa98UL, 0x12835b01UL,
-+	0x243185beUL, 0x550c7dc3UL, 0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL,
-+	0xc19bf174UL, 0xe49b69c1UL, 0xefbe4786UL, 0x0fc19dc6UL, 0x240ca1ccUL,
-+	0x2de92c6fUL, 0x4a7484aaUL, 0x5cb0a9dcUL, 0x76f988daUL, 0x983e5152UL,
-+	0xa831c66dUL, 0xb00327c8UL, 0xbf597fc7UL, 0xc6e00bf3UL, 0xd5a79147UL,
-+	0x06ca6351UL, 0x14292967UL, 0x27b70a85UL, 0x2e1b2138UL, 0x4d2c6dfcUL,
-+	0x53380d13UL, 0x650a7354UL, 0x766a0abbUL, 0x81c2c92eUL, 0x92722c85UL,
-+	0xa2bfe8a1UL, 0xa81a664bUL, 0xc24b8b70UL, 0xc76c51a3UL, 0xd192e819UL,
-+	0xd6990624UL, 0xf40e3585UL, 0x106aa070UL, 0x19a4c116UL, 0x1e376c08UL,
-+	0x2748774cUL, 0x34b0bcb5UL, 0x391c0cb3UL, 0x4ed8aa4aUL, 0x5b9cca4fUL,
-+	0x682e6ff3UL, 0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
-+	0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL
-+};
-+
-+/* Various logical functions */
-+#define Ch(x, y, z)       (z ^ (x & (y ^ z)))
-+#define Maj(x, y, z)      (((x | y) & z) | (x & y))
-+#define S(x, n)         RORc((x), (n))
-+#define R(x, n)         (((x)&0xFFFFFFFFUL)>>(n))
-+#define Sigma0(x)       (S(x, 2) ^ S(x, 13) ^ S(x, 22))
-+#define Sigma1(x)       (S(x, 6) ^ S(x, 11) ^ S(x, 25))
-+#define Gamma0(x)       (S(x, 7) ^ S(x, 18) ^ R(x, 3))
-+#define Gamma1(x)       (S(x, 17) ^ S(x, 19) ^ R(x, 10))
-+#define RORc(x, y) \
-+	(((((unsigned int)(x)&0xFFFFFFFFUL)>>(unsigned int)((y)&31)) |\
-+	((unsigned int)(x)<<(unsigned int)(32-((y)&31)))) & 0xFFFFFFFFUL)
-+
-+#define RND(a, b, c, d, e, f, g, h, i)	\
-+	do { \
-+		t0 = h + Sigma1(e) + Ch(e, f, g) + K[i] + W[i];	\
-+		t1 = Sigma0(a) + Maj(a, b, c); \
-+		d += t0; \
-+		h  = t0 + t1; \
-+	} while (0)
-+
-+#define STORE64H(x, y) \
-+	do { \
-+		(y)[0] = (unsigned char)(((x)>>56)&255);\
-+		(y)[1] = (unsigned char)(((x)>>48)&255);\
-+		(y)[2] = (unsigned char)(((x)>>40)&255);\
-+		(y)[3] = (unsigned char)(((x)>>32)&255);\
-+		(y)[4] = (unsigned char)(((x)>>24)&255);\
-+		(y)[5] = (unsigned char)(((x)>>16)&255);\
-+		(y)[6] = (unsigned char)(((x)>>8)&255);\
-+		(y)[7] = (unsigned char)((x)&255); \
-+	} while (0)
-+
-+#define STORE32H(x, y) \
-+	do { \
-+		(y)[0] = (unsigned char)(((x)>>24)&255);\
-+		(y)[1] = (unsigned char)(((x)>>16)&255);\
-+		(y)[2] = (unsigned char)(((x)>>8)&255);\
-+		(y)[3] = (unsigned char)((x)&255); \
-+	} while (0)
-+
-+#define LOAD32H(x, y) \
-+		(x = ((unsigned int)((y)[0] & 255)<<24) |\
-+			((unsigned int)((y)[1] & 255)<<16) |\
-+			((unsigned int)((y)[2] & 255)<<8) |\
-+			((unsigned int)((y)[3] & 255)))
-+
-+struct sha512_state {
-+	unsigned long long length;
-+	unsigned int state[8], curlen;
-+	unsigned char buf[64];
-+};
-+
-+/* This is a highly simplified version from libtomcrypt */
-+struct hash_state {
-+	struct sha512_state sha512;
-+};
-+
-+static void sha512_compress(struct hash_state *md,
-+		const unsigned char *buf)
-+{
-+	unsigned int S[8], W[64], t0, t1;
-+	unsigned int t;
-+	int i;
-+
-+	/* copy state into S */
-+	for (i = 0; i < 8; i++)
-+		S[i] = md->sha512.state[i];
-+
-+	/* copy the state into 512-bits into W[0..15] */
-+	for (i = 0; i < 16; i++)
-+		LOAD32H(W[i], buf + (4*i));
-+
-+	/* fill W[16..63] */
-+	for (i = 16; i < 64; i++)
-+		W[i] = Gamma1(W[i - 2]) + W[i - 7] +
-+			Gamma0(W[i - 15]) + W[i - 16];
-+
-+	/* Compress */
-+	for (i = 0; i < 64; ++i) {
-+		RND(S[0], S[1], S[2], S[3], S[4], S[5], S[6], S[7], i);
-+		t = S[7]; S[7] = S[6]; S[6] = S[5]; S[5] = S[4];
-+		S[4] = S[3]; S[3] = S[2]; S[2] = S[1]; S[1] = S[0]; S[0] = t;
-+	}
-+
-+	/* feedback */
-+	for (i = 0; i < 8; i++)
-+		md->sha512.state[i] = md->sha512.state[i] + S[i];
-+}
-+
-+static void sha512_init(struct hash_state *md)
-+{
-+	md->sha512.curlen = 0;
-+	md->sha512.length = 0;
-+	md->sha512.state[0] = 0x6A09E667UL;
-+	md->sha512.state[1] = 0xBB67AE85UL;
-+	md->sha512.state[2] = 0x3C6EF372UL;
-+	md->sha512.state[3] = 0xA54FF53AUL;
-+	md->sha512.state[4] = 0x510E527FUL;
-+	md->sha512.state[5] = 0x9B05688CUL;
-+	md->sha512.state[6] = 0x1F83D9ABUL;
-+	md->sha512.state[7] = 0x5BE0CD19UL;
-+}
-+
-+#define MIN(x, y) (((x) < (y))?(x):(y))
-+
-+static void sha512_process(struct hash_state *md,
-+		const unsigned char *in, unsigned long inlen)
-+{
-+	unsigned long n;
-+
-+	while (inlen > 0) {
-+		if (md->sha512.curlen == 0 && inlen >= SHA512_BLOCKSIZE) {
-+			sha512_compress(md, in);
-+			md->sha512.length += SHA512_BLOCKSIZE * 8;
-+			in += SHA512_BLOCKSIZE;
-+			inlen -= SHA512_BLOCKSIZE;
-+		} else {
-+			n = MIN(inlen, (SHA512_BLOCKSIZE - md->sha512.curlen));
-+			memcpy(md->sha512.buf + md->sha512.curlen,
-+					in, (size_t)n);
-+			md->sha512.curlen += n;
-+			in += n;
-+			inlen -= n;
-+			if (md->sha512.curlen == SHA512_BLOCKSIZE) {
-+				sha512_compress(md, md->sha512.buf);
-+				md->sha512.length += 8*SHA512_BLOCKSIZE;
-+				md->sha512.curlen = 0;
-+			}
-+		}
-+	}
-+}
-+
-+static void sha512_done(struct hash_state *md, unsigned char *out)
-+{
-+	int i;
-+
-+	/* increase the length of the message */
-+	md->sha512.length += md->sha512.curlen * 8;
-+
-+	/* append the '1' bit */
-+	md->sha512.buf[md->sha512.curlen++] = (unsigned char)0x80;
-+
-+	/* if the length is currently above 56 bytes we append zeros
-+	 * then compress.  Then we can fall back to padding zeros and length
-+	 * encoding like normal.
-+	 */
-+	if (md->sha512.curlen > 56) {
-+		while (md->sha512.curlen < 64)
-+			md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
-+
-+		sha512_compress(md, md->sha512.buf);
-+		md->sha512.curlen = 0;
-+	}
-+
-+	/* pad upto 56 bytes of zeroes */
-+	while (md->sha512.curlen < 56)
-+		md->sha512.buf[md->sha512.curlen++] = (unsigned char)0;
-+
-+	/* store length */
-+	STORE64H(md->sha512.length, md->sha512.buf+56);
-+	sha512_compress(md, md->sha512.buf);
-+
-+	/* copy output */
-+	for (i = 0; i < 8; i++)
-+		STORE32H(md->sha512.state[i], out+(4*i));
-+}
-+
-+static void start_sha512(const unsigned char *in, unsigned long in_size,
-+		   unsigned char out[SHA512_LENGTH])
-+{
-+	struct hash_state md;
-+
-+	sha512_init(&md);
-+	sha512_process(&md, in, in_size);
-+	sha512_done(&md, out);
-+}
-+
-+static void pbkdf2_sha512(const char *passphrase, const char *salt,
-+			  unsigned int count,
-+			  char *derived_key)
-+{
-+	size_t passphrase_size = strlen(passphrase);
-+	unsigned char buf[SHA512_LENGTH + MAX_PASSPHRASE_SIZE] = {0};
-+	unsigned char tempbuf[SHA512_LENGTH] = {0};
-+	char final[SHA512_LENGTH] = {0};
-+	unsigned char saltbuf[HIBERNATE_MAX_SALT_BYTES +
-+		MAX_PASSPHRASE_SIZE] = {0};
-+	int actual_buf_len = SHA512_LENGTH + passphrase_size;
-+	int actual_saltbuf_len = HIBERNATE_MAX_SALT_BYTES + passphrase_size;
-+	unsigned int x, y;
-+	unsigned int *final_u32 = (unsigned int *)final;
-+	unsigned int *temp_u32 = (unsigned int *)tempbuf;
-+
-+	memcpy(saltbuf, salt, HIBERNATE_MAX_SALT_BYTES);
-+	memcpy(&saltbuf[HIBERNATE_MAX_SALT_BYTES], passphrase, passphrase_size);
-+	memcpy(&buf[SHA512_LENGTH], passphrase, passphrase_size);
-+
-+	for (x = 0; x < count; ++x) {
-+		if (x == 0) {
-+			start_sha512(saltbuf, actual_saltbuf_len, tempbuf);
-+		} else {
-+			/*
-+			 * buf: [previous hash || passphrase]
-+			 */
-+			memcpy(buf, tempbuf, SHA512_LENGTH);
-+			start_sha512(buf, actual_buf_len, tempbuf);
-+		}
-+		for (y = 0; y < (sizeof(final) / sizeof(*final_u32)); ++y)
-+			final_u32[y] = final_u32[y] ^ temp_u32[y];
-+	}
-+	memcpy(derived_key, final, HIBERNATE_MAX_KEY_BYTES);
-+}
-+
-+#define HIBERNATE_SALT_READ		_IOW('C', 0x18, int)
-+#define HIBERNATE_KEY_WRITE		_IOW('C', 0x19, int)
-+
-+static int disable_echo(struct termios *saved_settings)
-+{
-+	struct termios current_settings;
-+	int rc = 0;
-+
-+	rc = tcgetattr(0, &current_settings);
-+	if (rc)
-+		return rc;
-+	*saved_settings = current_settings;
-+	current_settings.c_lflag &= ~ECHO;
-+	rc = tcsetattr(0, TCSANOW, &current_settings);
-+
-+	return rc;
-+}
-+
-+static void get_passphrase(char *passphrase, int len)
-+{
-+	char *p;
-+	struct termios current_settings;
-+
-+	assert(len > 0);
-+	disable_echo(&current_settings);
-+	p = fgets(passphrase, len, stdin);
-+	tcsetattr(0, TCSANOW, &current_settings);
-+	printf("\n");
-+	if (!p) {
-+		printf("Aborting.\n");
-+		exit(1);
-+	}
-+	p = strrchr(passphrase, '\n');
-+	if (!p)
-+		p = passphrase + len - 1;
-+	*p = '\0';
-+}
-+
-+#define CRYPTO_FILE	"/dev/crypto_hibernate"
-+
-+static int write_keys(void)
-+{
-+	int fd, ret;
-+
-+	fd = open(CRYPTO_FILE, O_RDWR);
-+	if (fd < 0) {
-+		printf("Cannot open device file...\n");
-+		return -ENODEV;
-+	}
-+	/* Choose xts(aes) encryption for now */
-+	hib_keys.contents_encryption_mode =
-+		HIBERNATE_ENCRYPTION_MODE_AES_256_XTS;
-+
-+	ret = ioctl(fd, HIBERNATE_KEY_WRITE, &hib_keys);
-+	if (ret) {
-+		printf("ioctl write key failed with return val (%d)\n", ret);
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int read_salt(void)
-+{
-+	int fd, ret;
-+
-+	fd = open(CRYPTO_FILE, O_RDWR);
-+	if (fd < 0) {
-+		printf("Cannot open device file...\n");
-+		return -ENODEV;
-+	}
-+	ret = ioctl(fd, HIBERNATE_SALT_READ, get_salt_ptr());
-+	if (ret) {
-+		printf("ioctl read salt failed with return val (%d)\n", ret);
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int key_derive_from_passphrase(const char *pass)
-+{
-+	/* Need to get salt from
-+	 * kernel first.
-+	 */
-+	if (read_salt())
-+		exit(1);
-+	/*
-+	 * Derive key by using passphrase and salt,
-+	 * and store the derived key in key buffer.
-+	 * Then pass this key to the kernel.
-+	 */
-+	pbkdf2_sha512(pass, get_salt_ptr(), PBKDF2_ITERATIONS, get_key_ptr());
-+	if (write_keys())
-+		exit(1);
-+
-+	return 0;
-+}
-+
-+void help(void)
-+{
-+	printf(
-+	"Usage: crypto_hibernate [OPTIONS]\n"
-+	"-p	passphrase [or probed from user if not given]\n");
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int opt, option_index = 0, has_passphrase = 0;
-+	char in_passphrase[MAX_PASSPHRASE_SIZE];
-+
-+	while ((opt = getopt_long_only(argc, argv, "+p:h",
-+				NULL, &option_index)) != -1) {
-+		switch (opt) {
-+		case 'p':
-+			{
-+				char *p = optarg;
-+
-+				if (strlen(p) >= MAX_PASSPHRASE_SIZE) {
-+					printf("Max length:%d bytes.\n",
-+						MAX_PASSPHRASE_SIZE-1);
-+					exit(1);
-+				}
-+				strcpy(in_passphrase, p);
-+				has_passphrase = 1;
-+			}
-+			break;
-+		case 'h':
-+		default:
-+			help();
-+			exit(1);
-+		}
-+	}
-+
-+	/* No passphrase specified, probe from user... */
-+	if (!has_passphrase) {
-+		printf("Enter passphrase (echo disabled): ");
-+		get_passphrase(in_passphrase, sizeof(in_passphrase));
-+	}
-+
-+	if (key_derive_from_passphrase(in_passphrase))
-+		exit(1);
-+
-+	return 0;
-+}
--- 
-2.7.4
+ #ifdef CONFIG_NO_HZ_FULL
+ /**
+  * rcu_user_exit - inform RCU that we are exiting userspace.
 
