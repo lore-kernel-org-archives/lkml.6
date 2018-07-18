@@ -2,97 +2,162 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9CBECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2159BECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C97592084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:54:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE23D20850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:54:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Vrk6HP3C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C97592084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nM9YM+mg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE23D20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbeGRUdZ (ORCPT
+        id S1730732AbeGRUd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:33:25 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42509 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728929AbeGRUdZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:33:25 -0400
-Received: by mail-io0-f195.google.com with SMTP id g11-v6so5110624ioq.9;
-        Wed, 18 Jul 2018 12:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7jTwVJWmOtG306vPmr/OQPAflF/Q71AHRaadUeFy1eE=;
-        b=Vrk6HP3CateMjvCZQwgwFaydOS82hB4Q2YPCfuncFeP2q9/rxRazQx/gyVpH8JihwY
-         4OW5begxuaIP78tM/fnuIp7Mbj8z+G/0xy7rL5LXMJIRm/A45JSRS8/2MK9y8M3UuIKk
-         obiHOZ25tSJR84tLbECH5SylJH0+HEmFxBplA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7jTwVJWmOtG306vPmr/OQPAflF/Q71AHRaadUeFy1eE=;
-        b=QEqmMrVzK5LgSY8AKgtA4H6H1cwKjyFkUUEDX/u87DomVL3s2qTXhyfq8dApXtWQpC
-         GXpxCDY63NNDG4q2bNnCZK0PuVICR5pCBcAgl1sF56avaG70z3sx+jMScKhs/SGeIPwO
-         D7ymAL2nlzJNSLPgChWDY7sHa7HaZsRR1/CreFlzuuV11Ghl61whNdt8cwPcIras6ZCs
-         BB8dWO6K/oxJXWl0I2vTV8WDsUUvgVL1HuEy4/GM0tgmkPYiPsavPiRfD+MyBTbHZImZ
-         fN1dTsMhTloTkAw/l+IVlDjdp6ozqztYfONUUY0jRbcUW6tpmf9TED+wJNAZIBeckIhv
-         ugUQ==
-X-Gm-Message-State: AOUpUlH5LgavbVJgDLSQaGRrYeSa+eQghG7XIeWYi9kIfqn74YasBuxa
-        2rDsrCGJEHB4OBB7CbC+JmzSFPzLxrCPzC9TJInWQw==
-X-Google-Smtp-Source: AA+uWPxsHY0tH40FeMxWaJ6or7iLLo5Ve5C1WUd+NGYVbUWooqqKWUVUsW0uVPJTaqX17/Z23cZPLTGmll6WNYvqZx8=
-X-Received: by 2002:a6b:7a05:: with SMTP id h5-v6mr6461996iom.238.1531943639459;
- Wed, 18 Jul 2018 12:53:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <CA+55aFwyOHvwV4qkmM1kRYQ+4brWbLSHaXE8GPV41u5Sj-AG4Q@mail.gmail.com>
- <20180712155337.GU30522@ZenIV.linux.org.uk> <20180718025636.GA26175@ZenIV.linux.org.uk>
- <20180718132955.2bf185b7@canb.auug.org.au> <CAOssrKf60FHqgG6pB5zOP7iV-qdHdDUODdG7SVpoNh3Pipo=6w@mail.gmail.com>
- <CAOssrKdqnsPSipweUCers6d2AgJX2aVGQUs1pd7cB79GoSJH1Q@mail.gmail.com>
- <20180718124340.GS30522@ZenIV.linux.org.uk> <CAOssrKcS+kwK+S1aojhbW_4p8FJLPaafBDqDu89d=F14wT-0rw@mail.gmail.com>
- <20180718181252.GU30522@ZenIV.linux.org.uk> <CA+55aFxh62Yttq-W2Cr_YQQ5tAL1xjijjnaz1-zdZNqZPQFM0g@mail.gmail.com>
- <20180718194637.GV30522@ZenIV.linux.org.uk>
-In-Reply-To: <20180718194637.GV30522@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 18 Jul 2018 12:53:48 -0700
-Message-ID: <CA+55aFydd9ji2eJSNVK7Fjpziehvm6fO3b1eTeUAn0L1tk3GmQ@mail.gmail.com>
-Subject: Re: [RFC] call_with_creds()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 18 Jul 2018 16:33:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36730 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729262AbeGRUd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:33:56 -0400
+Received: from localhost.localdomain (xdsl-188-155-58-14.adslplus.ch [188.155.58.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3B172084E;
+        Wed, 18 Jul 2018 19:54:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531943670;
+        bh=2y8PzIfIY9CDQGh7og5ZfK9czo7/NDDq+/TkTPiMSKM=;
+        h=From:To:Subject:Date:From;
+        b=nM9YM+mgNaAhB6OaBvVsV/Qdaqe416a8DqG+niSzV3COsl2XQRAeI9a9h7vpdlokg
+         6RLwTRrFbKfTT+dC9Px5xw7Gdd6CAPJYBqK8F4u5iYaZEohhlhr57hrJCxifqkif01
+         cyC3g/e044gtSiRK5fNME5NExseyR/EjcUrfcGG0=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Andi Shyti <andi@etezian.org>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: exynos5: Describe the hardware variant for readability
+Date:   Wed, 18 Jul 2018 21:54:04 +0200
+Message-Id: <20180718195404.5095-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 12:46 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Huh?  Nevermind ->write(), what about open()?
+The driver supports multiple hardware variants of Exynos I2C controller
+which differ in FIFO depth, handling of interrupts and bus recovery in
+HSI2C_MASTER_ST_LOSE state.
 
-What about open?
+The difference in variant was a single bit set for Exynos7 variants and
+implicit lack of this bit for other variants.
 
-At open time, file->f_cred is the same as current_cred().
+Make each variant explicit which also fixes the GCC warning about
+documentation:
 
-So yes, open uses current cred. What's the problem?
+    drivers/i2c/busses/i2c-exynos5.c:223: warning: Function parameter or member 'hw' not described in 'exynos_hsi2c_variant'
 
-Now, if you then use a tasklet or some other thread to do the open,
-then obviously that is no longer true. But then the problem is that
-you're doing the open() itself in the wrong context, and that has
-nothing to do with any general issue, and everything to do with "you
-changed to another context without pulling all the context data with
-you - you're buggy". Doing some kind of "call_with_creds()" isn't the
-solultion - it's just part of the whole thing (what about user
-accounting etc? If you switch to another thread to do the work, you
-have way more issues than just creds).
+No change in functionality.
 
-              Linus
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/i2c/busses/i2c-exynos5.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index de82ad8ff534..c1ce2299a76e 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -176,7 +176,10 @@
+ 
+ #define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(100))
+ 
+-#define HSI2C_EXYNOS7	BIT(0)
++enum i2c_type_exynos {
++	I2C_TYPE_EXYNOS5,
++	I2C_TYPE_EXYNOS7,
++};
+ 
+ struct exynos5_i2c {
+ 	struct i2c_adapter	adap;
+@@ -212,27 +215,30 @@ struct exynos5_i2c {
+ /**
+  * struct exynos_hsi2c_variant - platform specific HSI2C driver data
+  * @fifo_depth: the fifo depth supported by the HSI2C module
++ * @hw: the hardware variant of Exynos I2C controller
+  *
+  * Specifies platform specific configuration of HSI2C module.
+  * Note: A structure for driver specific platform data is used for future
+  * expansion of its usage.
+  */
+ struct exynos_hsi2c_variant {
+-	unsigned int	fifo_depth;
+-	unsigned int	hw;
++	unsigned int		fifo_depth;
++	enum i2c_type_exynos	hw;
+ };
+ 
+ static const struct exynos_hsi2c_variant exynos5250_hsi2c_data = {
+ 	.fifo_depth	= 64,
++	.hw		= I2C_TYPE_EXYNOS5,
+ };
+ 
+ static const struct exynos_hsi2c_variant exynos5260_hsi2c_data = {
+ 	.fifo_depth	= 16,
++	.hw		= I2C_TYPE_EXYNOS5,
+ };
+ 
+ static const struct exynos_hsi2c_variant exynos7_hsi2c_data = {
+ 	.fifo_depth	= 16,
+-	.hw		= HSI2C_EXYNOS7,
++	.hw		= I2C_TYPE_EXYNOS7,
+ };
+ 
+ static const struct of_device_id exynos5_i2c_match[] = {
+@@ -300,7 +306,7 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, bool hs_timings)
+ 	 */
+ 	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
+ 	temp = clkin / op_clk - 8 - t_ftl_cycle;
+-	if (i2c->variant->hw != HSI2C_EXYNOS7)
++	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
+ 		temp -= t_ftl_cycle;
+ 	div = temp / 512;
+ 	clk_cycle = temp / (div + 1) - 2;
+@@ -424,7 +430,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+ 	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
+ 
+ 	/* handle interrupt related to the transfer status */
+-	if (i2c->variant->hw == HSI2C_EXYNOS7) {
++	if (i2c->variant->hw == I2C_TYPE_EXYNOS7) {
+ 		if (int_status & HSI2C_INT_TRANS_DONE) {
+ 			i2c->trans_done = 1;
+ 			i2c->state = 0;
+@@ -571,7 +577,7 @@ static void exynos5_i2c_bus_check(struct exynos5_i2c *i2c)
+ {
+ 	unsigned long timeout;
+ 
+-	if (i2c->variant->hw != HSI2C_EXYNOS7)
++	if (i2c->variant->hw != I2C_TYPE_EXYNOS7)
+ 		return;
+ 
+ 	/*
+@@ -612,7 +618,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ 	unsigned long flags;
+ 	unsigned short trig_lvl;
+ 
+-	if (i2c->variant->hw == HSI2C_EXYNOS7)
++	if (i2c->variant->hw == I2C_TYPE_EXYNOS7)
+ 		int_en |= HSI2C_INT_I2C_TRANS;
+ 	else
+ 		int_en |= HSI2C_INT_I2C;
+-- 
+2.14.1
+
