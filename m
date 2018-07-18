@@ -2,92 +2,102 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B670ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72369ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07A32075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:21:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KnFlGWsh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07A32075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 18C632075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:23:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C632075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbeGRN71 (ORCPT
+        id S1731175AbeGROA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 09:59:27 -0400
-Received: from ozlabs.org ([203.11.71.1]:33665 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729324AbeGRN71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 09:59:27 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41VyTk4TGhz9s3R;
-        Wed, 18 Jul 2018 23:21:30 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531920091;
-        bh=IB/oGBa6N6HE7IEJuO/1rvsAx+SN36KHv0zAwkEOAsM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KnFlGWshmYrTcQK49MqoIuAcaKD2qHEtpkKb6dM1kCeCL7SdrCTC+RL8m3VsVnHTo
-         KDuPyaec7yhYSWya95seoVWQeoivTN3bvoGNwwsBg6K+K44VpbhNFJU6+Pz5aixkjA
-         PReh2p63JMzWvehizqu/owiepj6C3wDbFPwSwTelH8TB0dU1kglBNZKeK2xLixtjyp
-         QX9B4AT/QfL5el+/By7jhLrWXMqckaycxI/imC6ABDyImzixiOUO9Kl3E1XrLugV4W
-         qQ4l5MN5GN/wGCzwVxCVzsQ6j2CGjPkEQc0yfiBVZH91HQjGY8c263y7hIxKFN5olq
-         cArG2jF5wlkGA==
-Date:   Wed, 18 Jul 2018 23:21:23 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: Signed-off-by missing for commits in the vfs tree
-Message-ID: <20180718232123.06511414@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/0Qtrx1P_uO9oac+/ucCOoGE"; protocol="application/pgp-signature"
+        Wed, 18 Jul 2018 10:00:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37986 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730245AbeGROA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 10:00:58 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6IDJ1TY071119
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:23:02 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ka5mvjd9n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:23:02 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ubraun@linux.ibm.com>;
+        Wed, 18 Jul 2018 14:23:01 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 14:22:57 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6IDMuKX39518314
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 13:22:56 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ABA68A4059;
+        Wed, 18 Jul 2018 16:23:13 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 61F37A404D;
+        Wed, 18 Jul 2018 16:23:13 +0100 (BST)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 18 Jul 2018 16:23:13 +0100 (BST)
+From:   Ursula Braun <ubraun@linux.ibm.com>
+To:     davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-s390@vger.kernel.org,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        raspl@linux.ibm.com, linux-kernel@vger.kernel.org
+Subject: [PATCH net 0/3] net/smc: fixes 2018-07-18
+Date:   Wed, 18 Jul 2018 15:22:48 +0200
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 18071813-0028-0000-0000-000002DD1B82
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071813-0029-0000-0000-00002394E4C8
+Message-Id: <20180718132251.7222-1-ubraun@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-18_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=637 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807180150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/0Qtrx1P_uO9oac+/ucCOoGE
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Ursula Braun <ursula.braun@linux.ibm.com>
 
-Hi Al,
+Dave,
 
-Commits
+here are small fixes for SMC: The first patch speeds up unidirectional
+traffic, the second patch increases security, and the third patch
+fixes a problem for fallback cases.
 
-  a8dc7ffc48c6 ("vfs: syscall: Add open_tree(2) to reference or clone a mou=
-nt")
-  13d2b3d505c2 ("teach move_mount(2) to work with OPEN_TREE_CLONE")
+Thanks, Ursula
 
-are missing a Signed-off-by from their committer.
+Karsten Graul (1):
+  net/smc: reset recv timeout after clc handshake
 
---=20
-Cheers,
-Stephen Rothwell
+Ursula Braun (2):
+  net/smc: optimize consumer cursor updates
+  net/smc: add error handling for get_user()
 
---Sig_/0Qtrx1P_uO9oac+/ucCOoGE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+ net/smc/af_smc.c  |  3 ++-
+ net/smc/smc_clc.c |  3 ++-
+ net/smc/smc_tx.c  | 12 ++++++++++--
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.16.4
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltPPtMACgkQAVBC80lX
-0Gx44wf9GyE/+LqrLEiV+G3j7l7I5dQ7gsBRrg4ybDeZ9KCFdGvXIsfQvfCG4MWg
-ypT2Eq7B4Y+B/akIFo7M/syyUsHhDrkEuDcbDn03Zc6rl517jQaqDjgrsm2tzddV
-IgkT0RW6EqQYcau5xHiSgpFyd/S1p8QRg9mmj1m5Ke8ET/AQVCLVAJ28TNfHUej6
-ZRO1VK/X4IWtBsQJg+E4tr5b/70UNwwNnIZ4Sa1MTGZajYvd7PsB4mGLobyvMTjw
-lxqddzcmRkmTA6whH6OjfcPR8sdcmwUHFLL+vy9aNMECBIzMf/tCNAJn5vkJf07A
-8svJI58NcCtEAB/rbRIuWlh1LZslzg==
-=axEE
------END PGP SIGNATURE-----
-
---Sig_/0Qtrx1P_uO9oac+/ucCOoGE--
