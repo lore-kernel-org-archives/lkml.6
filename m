@@ -2,132 +2,361 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C03ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20EE0ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC8862075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:11:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8862075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id BB4C42075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 12:11:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y7jIhJMx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4C42075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbeGRMsp convert rfc822-to-8bit (ORCPT
+        id S1731175AbeGRMtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:48:45 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:33980 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730213AbeGRMsp (ORCPT
+        Wed, 18 Jul 2018 08:49:17 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36031 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbeGRMtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:48:45 -0400
-Received: from [192.168.0.117] (188.146.100.122.nat.umts.dynamic.t-mobile.pl [188.146.100.122])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 741C9CF2BA;
-        Wed, 18 Jul 2018 14:17:59 +0200 (CEST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [PATCH] Bluetooth: Use lock_sock_nested in bt_accept_enqueue
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20180717114112.857-1-pp@emlix.com>
-Date:   Wed, 18 Jul 2018 14:11:04 +0200
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <9843EAA5-912F-408F-8ED2-D033376B1A10@holtmann.org>
-References: <20180717114112.857-1-pp@emlix.com>
-To:     Philipp Puschmann <pp@emlix.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+        Wed, 18 Jul 2018 08:49:17 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m19-v6so1920485pgv.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 05:11:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=by+PYjmKNUNjfWicp/nv8FLMVAaOidusx9j1KC4ku2I=;
+        b=Y7jIhJMxOgNWADwp585k6TmLOw5CqHlWg/7/iixaY+tN2rEDafjz0bpHVOllzV8z5T
+         BKHQMptH83PIxP91DwoDYiZoN79zdgG1Kn7FyH3Wz7CXdJAeMLAL4EZfhOXbd1bXixl/
+         KE77dpv9LcfEwVjcGx6Z1xXNF9ZwT6azfjqrg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=by+PYjmKNUNjfWicp/nv8FLMVAaOidusx9j1KC4ku2I=;
+        b=K+7aFl7UVDzMHOw5npoPKOHgbPbihIP9XlxBygkBf/dVdJAXxYtRlM2GZwd+1r1FmB
+         Jqm9bm79rncTyfPjNhjbBfxAcoOyo6oIqVrOqawL9j7/VpY1mXOE/4L2lLubBERn1ze1
+         K3GhdR2Ib1OfEPexQ4ClTsIPZeG1PX9cy9UxcSrm69VvSAGLzkkI9hHCZxRNXxhBSbbl
+         /Hv2fMi6gr9tvlkL2ocuCurQsfOwsYhAfc4x+T4sQMHwzDZQo72Tim3naLpP0kuVBYRu
+         FlP1E1CLuQWqR+w6Z1YlCGfBd6ACld+gddKSQr/INiWzJ2MbXfmu8mATFOu6FJJFKTQU
+         hWFA==
+X-Gm-Message-State: AOUpUlE9IeTJpEqp7/hLmLPMI/kPlm8Srx9nWpVGE5q9T0LLGpXE5tdz
+        2WBcCR/x7sbXJYLoaK1Q7Aw0
+X-Google-Smtp-Source: AAOMgpepuakxasm8hEPPHSpJJcp2szzQFZVj5ULQgSql3IqBz6+1fNjUiYKYXa9bse8lIDWEneERGQ==
+X-Received: by 2002:a63:231a:: with SMTP id j26-v6mr5531194pgj.138.1531915898819;
+        Wed, 18 Jul 2018 05:11:38 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id b62-v6sm13474294pfm.97.2018.07.18.05.11.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Jul 2018 05:11:38 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 17:41:30 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     andy.gross@linaro.org
+Cc:     linus.walleij@linaro.org, bjorn.andersson@linaro.org,
+        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
+        todor.tomov@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] dts: qcom: db820c: Add gpio-line-names property
+Message-ID: <20180718121130.GA16683@mani>
+References: <20180418134601.8502-1-manivannan.sadhasivam@linaro.org>
+ <20180418134601.8502-2-manivannan.sadhasivam@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418134601.8502-2-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+On Wed, Apr 18, 2018 at 07:16:01PM +0530, Manivannan Sadhasivam wrote:
+> Add gpio-line-names property for Dragonboard820c based on APQ8096 SoC.
+> There are 4 gpio-controllers present on this board, including the
+> APQ8096 SoC, PM8994 (GPIO and MPP) and PMI8994 (GPIO).
+> 
+> Lines names are derived from 96Boards CE Specification 1.0, Appendix
+> "Expansion Connector Signal Description". Line names for PMI8994 MPP
+> pins are not added due to the absence of the gpio-controller support.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-> Fixes this warning that was provoked by a pairing:
-> 
-> [60258.016221] WARNING: possible recursive locking detected
-> [60258.021558] 4.15.0-RD1812-BSP #1 Tainted: G           O
-> [60258.027146] --------------------------------------------
-> [60258.032464] kworker/u5:0/70 is trying to acquire lock:
-> [60258.037609]  (sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP){+.+.}, at: [<87759073>] bt_accept_enqueue+0x3c/0x74
-> [60258.046863]
-> [60258.046863] but task is already holding lock:
-> [60258.052704]  (sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP){+.+.}, at: [<d22d7106>] l2cap_sock_new_connection_cb+0x1c/0x88
-> [60258.062905]
-> [60258.062905] other info that might help us debug this:
-> [60258.069441]  Possible unsafe locking scenario:
-> [60258.069441]
-> [60258.075368]        CPU0
-> [60258.077821]        ----
-> [60258.080272]   lock(sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP);
-> [60258.085510]   lock(sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP);
-> [60258.090748]
-> [60258.090748]  *** DEADLOCK ***
-> [60258.090748]
-> [60258.096676]  May be due to missing lock nesting notation
-> [60258.096676]
-> [60258.103472] 5 locks held by kworker/u5:0/70:
-> [60258.107747]  #0:  ((wq_completion)%shdev->name#2){+.+.}, at: [<9460d092>] process_one_work+0x130/0x4fc
-> [60258.117263]  #1:  ((work_completion)(&hdev->rx_work)){+.+.}, at: [<9460d092>] process_one_work+0x130/0x4fc
-> [60258.126942]  #2:  (&conn->chan_lock){+.+.}, at: [<7877c8c3>] l2cap_connect+0x80/0x4f8
-> [60258.134806]  #3:  (&chan->lock/2){+.+.}, at: [<2e16c724>] l2cap_connect+0x8c/0x4f8
-> [60258.142410]  #4:  (sk_lock-AF_BLUETOOTH-BTPROTO_L2CAP){+.+.}, at: [<d22d7106>] l2cap_sock_new_connection_cb+0x1c/0x88
-> [60258.153043]
-> [60258.153043] stack backtrace:
-> [60258.157413] CPU: 1 PID: 70 Comm: kworker/u5:0 Tainted: G           O     4.15.0-RD1812-BSP #1
-> [60258.165945] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-> [60258.172485] Workqueue: hci0 hci_rx_work
-> [60258.176331] Backtrace:
-> [60258.178797] [<8010c9fc>] (dump_backtrace) from [<8010ccbc>] (show_stack+0x18/0x1c)
-> [60258.186379]  r7:80e55fe4 r6:80e55fe4 r5:20050093 r4:00000000
-> [60258.192058] [<8010cca4>] (show_stack) from [<809864e8>] (dump_stack+0xb0/0xdc)
-> [60258.199301] [<80986438>] (dump_stack) from [<8016ecc8>] (__lock_acquire+0xffc/0x11d4)
-> [60258.207144]  r9:5e2bb019 r8:630f974c r7:ba8a5940 r6:ba8a5ed8 r5:815b5220 r4:80fa081c
-> [60258.214901] [<8016dccc>] (__lock_acquire) from [<8016f620>] (lock_acquire+0x78/0x98)
-> [60258.222655]  r10:00000040 r9:00000040 r8:808729f0 r7:00000001 r6:00000000 r5:60050013
-> [60258.230491]  r4:00000000
-> [60258.233045] [<8016f5a8>] (lock_acquire) from [<806ee974>] (lock_sock_nested+0x64/0x88)
-> [60258.240970]  r7:00000000 r6:b796e870 r5:00000001 r4:b796e800
-> [60258.246643] [<806ee910>] (lock_sock_nested) from [<808729f0>] (bt_accept_enqueue+0x3c/0x74)
-> [60258.255004]  r8:00000001 r7:ba7d3c00 r6:ba7d3ea4 r5:ba7d2000 r4:b796e800
-> [60258.261717] [<808729b4>] (bt_accept_enqueue) from [<808aa39c>] (l2cap_sock_new_connection_cb+0x68/0x88)
-> [60258.271117]  r5:b796e800 r4:ba7d2000
-> [60258.274708] [<808aa334>] (l2cap_sock_new_connection_cb) from [<808a294c>] (l2cap_connect+0x190/0x4f8)
-> [60258.283933]  r5:00000001 r4:ba6dce00
-> [60258.287524] [<808a27bc>] (l2cap_connect) from [<808a4a14>] (l2cap_recv_frame+0x744/0x2cf8)
-> [60258.295800]  r10:ba6dcf24 r9:00000004 r8:b78d8014 r7:00000004 r6:bb05d000 r5:00000004
-> [60258.303635]  r4:bb05d008
-> [60258.306183] [<808a42d0>] (l2cap_recv_frame) from [<808a7808>] (l2cap_recv_acldata+0x210/0x214)
-> [60258.314805]  r10:b78e7800 r9:bb05d960 r8:00000001 r7:bb05d000 r6:0000000c r5:b7957a80
-> [60258.322641]  r4:ba6dce00
-> [60258.325188] [<808a75f8>] (l2cap_recv_acldata) from [<8087630c>] (hci_rx_work+0x35c/0x4e8)
-> [60258.333374]  r6:80e5743c r5:bb05d7c8 r4:b7957a80
-> [60258.338004] [<80875fb0>] (hci_rx_work) from [<8013dc7c>] (process_one_work+0x1a4/0x4fc)
-> [60258.346018]  r10:00000001 r9:00000000 r8:baabfef8 r7:ba997500 r6:baaba800 r5:baaa5d00
-> [60258.353853]  r4:bb05d7c8
-> [60258.356401] [<8013dad8>] (process_one_work) from [<8013e028>] (worker_thread+0x54/0x5cc)
-> [60258.364503]  r10:baabe038 r9:baaba834 r8:80e05900 r7:00000088 r6:baaa5d18 r5:baaba800
-> [60258.372338]  r4:baaa5d00
-> [60258.374888] [<8013dfd4>] (worker_thread) from [<801448f8>] (kthread+0x134/0x160)
-> [60258.382295]  r10:ba8310b8 r9:bb07dbfc r8:8013dfd4 r7:baaa5d00 r6:00000000 r5:baaa8ac0
-> [60258.390130]  r4:ba831080
-> [60258.392682] [<801447c4>] (kthread) from [<801080b4>] (ret_from_fork+0x14/0x20)
-> [60258.399915]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:801447c4
-> [60258.407751]  r4:baaa8ac0 r3:baabe000
-> 
-> Signed-off-by: Philipp Puschmann <pp@emlix.com>
+Hi Andy,
+
+Any update on this patch? We have got 3 reviews so far...
+
+Thanks,
+Mani
+
 > ---
-> net/bluetooth/af_bluetooth.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
-
-patch has been applied to bluetooth-next tree.
-
-Regards
-
-Marcel
-
+>  arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 239 +++++++++++++++++++++++++++
+>  1 file changed, 239 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> index 1c8f1b86472d..473530527e27 100644
+> --- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
+> @@ -19,6 +19,33 @@
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/gpio/gpio.h>
+>  
+> +/*
+> + * GPIO name legend: proper name = the GPIO line is used as GPIO
+> + *         NC      = not connected (pin out but not routed from the chip to
+> + *                   anything the board)
+> + *         "[PER]" = pin is muxed for [peripheral] (not GPIO)
+> + *         LSEC    = Low Speed External Connector
+> + *         P HSEC  = Primary High Speed External Connector
+> + *         S HSEC  = Secondary High Speed External Connector
+> + *         J14     = Camera Connector
+> + *         TP      = Test Points
+> + *
+> + * Line names are taken from the schematic "DragonBoard 820c",
+> + * drawing no: LM25-P2751-1
+> + *
+> + * For the lines routed to the external connectors the
+> + * lines are named after the 96Boards CE Specification 1.0,
+> + * Appendix "Expansion Connector Signal Description".
+> + *
+> + * When the 96Board naming of a line and the schematic name of
+> + * the same line are in conflict, the 96Board specification
+> + * takes precedence, which means that the external UART on the
+> + * LSEC is named UART0 while the schematic and SoC names this
+> + * UART3. This is only for the informational lines i.e. "[FOO]",
+> + * the GPIO named lines "GPIO-A" thru "GPIO-L" are the only
+> + * ones actually used for GPIO.
+> + */
+> +
+>  / {
+>  	aliases {
+>  		serial0 = &blsp2_uart1;
+> @@ -90,6 +117,218 @@
+>  			status = "okay";
+>  		};
+>  
+> +		pinctrl@1010000 {
+> +			gpio-line-names =
+> +				"[SPI0_DOUT]", /* GPIO_0, BLSP1_SPI_MOSI, LSEC pin 14 */
+> +				"[SPI0_DIN]", /* GPIO_1, BLSP1_SPI_MISO, LSEC pin 10 */
+> +				"[SPI0_CS]", /* GPIO_2, BLSP1_SPI_CS_N, LSEC pin 12 */
+> +				"[SPI0_SCLK]", /* GPIO_3, BLSP1_SPI_CLK, LSEC pin 8 */
+> +				"[UART1_TxD]", /* GPIO_4, BLSP8_UART_TX, LSEC pin 11 */
+> +				"[UART1_RxD]", /* GPIO_5, BLSP8_UART_RX, LSEC pin 13 */
+> +				"[I2C1_SDA]", /* GPIO_6, BLSP8_I2C_SDA, LSEC pin 21 */
+> +				"[I2C1_SCL]", /* GPIO_7, BLSP8_I2C_SCL, LSEC pin 19 */
+> +				"GPIO-H", /* GPIO_8, LCD0_RESET_N, LSEC pin 30 */
+> +				"TP93", /* GPIO_9 */
+> +				"GPIO-G", /* GPIO_10, MDP_VSYNC_P, LSEC pin 29 */
+> +				"[MDP_VSYNC_S]", /* GPIO_11, S HSEC pin 55 */
+> +				"NC", /* GPIO_12 */
+> +				"[CSI0_MCLK]", /* GPIO_13, CAM_MCLK0, P HSEC pin 15 */
+> +				"[CAM_MCLK1]", /* GPIO_14, J14 pin 11 */
+> +				"[CSI1_MCLK]", /* GPIO_15, CAM_MCLK2, P HSEC pin 17 */
+> +				"TP99", /* GPIO_16 */
+> +				"[I2C2_SDA]", /* GPIO_17, CCI_I2C_SDA0, P HSEC pin 34 */
+> +				"[I2C2_SCL]", /* GPIO_18, CCI_I2C_SCL0, P HSEC pin 32 */
+> +				"[CCI_I2C_SDA1]", /* GPIO_19, S HSEC pin 38 */
+> +				"[CCI_I2C_SCL1]", /* GPIO_20, S HSEC pin 36 */
+> +				"FLASH_STROBE_EN", /* GPIO_21, S HSEC pin 5 */
+> +				"FLASH_STROBE_TRIG", /* GPIO_22, S HSEC pin 1 */
+> +				"GPIO-K", /* GPIO_23, CAM2_RST_N, LSEC pin 33 */
+> +				"GPIO-D", /* GPIO_24, LSEC pin 26 */
+> +				"GPIO-I", /* GPIO_25, CAM0_RST_N, LSEC pin 31 */
+> +				"GPIO-J", /* GPIO_26, CAM0_STANDBY_N, LSEC pin 32 */
+> +				"BLSP6_I2C_SDA", /* GPIO_27 */
+> +				"BLSP6_I2C_SCL", /* GPIO_28 */
+> +				"GPIO-B", /* GPIO_29, TS0_RESET_N, LSEC pin 24 */
+> +				"GPIO30", /* GPIO_30, S HSEC pin 4 */
+> +				"HDMI_CEC", /* GPIO_31 */
+> +				"HDMI_DDC_CLOCK", /* GPIO_32 */
+> +				"HDMI_DDC_DATA", /* GPIO_33 */
+> +				"HDMI_HOT_PLUG_DETECT", /* GPIO_34 */
+> +				"PCIE0_RST_N", /* GPIO_35 */
+> +				"PCIE0_CLKREQ_N", /* GPIO_36 */
+> +				"PCIE0_WAKE", /* GPIO_37 */
+> +				"SD_CARD_DET_N", /* GPIO_38 */
+> +				"TSIF1_SYNC", /* GPIO_39, S HSEC pin 48 */
+> +				"W_DISABLE_N", /* GPIO_40 */
+> +				"[BLSP9_UART_TX]", /* GPIO_41 */
+> +				"[BLSP9_UART_RX]", /* GPIO_42 */
+> +				"[BLSP2_UART_CTS_N]", /* GPIO_43 */
+> +				"[BLSP2_UART_RFR_N]", /* GPIO_44 */
+> +				"[BLSP3_UART_TX]", /* GPIO_45 */
+> +				"[BLSP3_UART_RX]", /* GPIO_46 */
+> +				"[I2C0_SDA]", /* GPIO_47, LS_I2C0_SDA, LSEC pin 17 */
+> +				"[I2C0_SCL]", /* GPIO_48, LS_I2C0_SCL, LSEC pin 15 */
+> +				"[UART0_TxD]", /* GPIO_49, BLSP9_UART_TX, LSEC pin 5 */
+> +				"[UART0_RxD]", /* GPIO_50, BLSP9_UART_RX, LSEC pin 7 */
+> +				"[UART0_CTS]", /* GPIO_51, BLSP9_UART_CTS_N, LSEC pin 3 */
+> +				"[UART0_RTS]", /* GPIO_52, BLSP9_UART_RFR_N, LSEC pin 9 */
+> +				"[CODEC_INT1_N]", /* GPIO_53 */
+> +				"[CODEC_INT2_N]", /* GPIO_54 */
+> +				"[BLSP7_I2C_SDA]", /* GPIO_55 */
+> +				"[BLSP7_I2C_SCL]", /* GPIO_56 */
+> +				"MI2S_MCLK", /* GPIO_57, S HSEC pin 3 */
+> +				"[PCM_CLK]", /* GPIO_58, QUA_MI2S_SCK, LSEC pin 18 */
+> +				"[PCM_FS]", /* GPIO_59, QUA_MI2S_WS, LSEC pin 16 */
+> +				"[PCM_DO]", /* GPIO_60, QUA_MI2S_DATA0, LSEC pin 20 */
+> +				"[PCM_DI]", /* GPIO_61, QUA_MI2S_DATA1, LSEC pin 22 */
+> +				"GPIO-E", /* GPIO_62, LSEC pin 27 */
+> +				"TP87", /* GPIO_63 */
+> +				"[CODEC_RST_N]", /* GPIO_64 */
+> +				"[PCM1_CLK]", /* GPIO_65 */
+> +				"[PCM1_SYNC]", /* GPIO_66 */
+> +				"[PCM1_DIN]", /* GPIO_67 */
+> +				"[PCM1_DOUT]", /* GPIO_68 */
+> +				"AUDIO_REF_CLK", /* GPIO_69 */
+> +				"SLIMBUS_CLK", /* GPIO_70 */
+> +				"SLIMBUS_DATA0", /* GPIO_71 */
+> +				"SLIMBUS_DATA1", /* GPIO_72 */
+> +				"NC", /* GPIO_73 */
+> +				"NC", /* GPIO_74 */
+> +				"NC", /* GPIO_75 */
+> +				"NC", /* GPIO_76 */
+> +				"TP94", /* GPIO_77 */
+> +				"NC", /* GPIO_78 */
+> +				"TP95", /* GPIO_79 */
+> +				"GPIO-A", /* GPIO_80, MEMS_RESET_N, LSEC pin 23 */
+> +				"TP88", /* GPIO_81 */
+> +				"TP89", /* GPIO_82 */
+> +				"TP90", /* GPIO_83 */
+> +				"TP91", /* GPIO_84 */
+> +				"[SD_DAT0]", /* GPIO_85, BLSP12_SPI_MOSI, P HSEC pin 1 */
+> +				"[SD_CMD]", /* GPIO_86, BLSP12_SPI_MISO, P HSEC pin 11 */
+> +				"[SD_DAT3]", /* GPIO_87, BLSP12_SPI_CS_N, P HSEC pin 7 */
+> +				"[SD_SCLK]", /* GPIO_88, BLSP12_SPI_CLK, P HSEC pin 9 */
+> +				"TSIF1_CLK", /* GPIO_89, S HSEC pin 42 */
+> +				"TSIF1_EN", /* GPIO_90, S HSEC pin 46 */
+> +				"TSIF1_DATA", /* GPIO_91, S HSEC pin 44 */
+> +				"NC", /* GPIO_92 */
+> +				"TSIF2_CLK", /* GPIO_93, S HSEC pin 52 */
+> +				"TSIF2_EN", /* GPIO_94, S HSEC pin 56 */
+> +				"TSIF2_DATA", /* GPIO_95, S HSEC pin 54 */
+> +				"TSIF2_SYNC", /* GPIO_96, S HSEC pin 58 */
+> +				"NC", /* GPIO_97 */
+> +				"CAM1_STANDBY_N", /* GPIO_98 */
+> +				"NC", /* GPIO_99 */
+> +				"NC", /* GPIO_100 */
+> +				"[LCD1_RESET_N]", /* GPIO_101, S HSEC pin 51 */
+> +				"BOOT_CONFIG1", /* GPIO_102 */
+> +				"USB_HUB_RESET", /* GPIO_103 */
+> +				"CAM1_RST_N", /* GPIO_104 */
+> +				"NC", /* GPIO_105 */
+> +				"NC", /* GPIO_106 */
+> +				"NC", /* GPIO_107 */
+> +				"NC", /* GPIO_108 */
+> +				"NC", /* GPIO_109 */
+> +				"NC", /* GPIO_110 */
+> +				"NC", /* GPIO_111 */
+> +				"NC", /* GPIO_112 */
+> +				"PMI8994_BUA", /* GPIO_113 */
+> +				"PCIE2_RST_N", /* GPIO_114 */
+> +				"PCIE2_CLKREQ_N", /* GPIO_115 */
+> +				"PCIE2_WAKE", /* GPIO_116 */
+> +				"SSC_IRQ_0", /* GPIO_117 */
+> +				"SSC_IRQ_1", /* GPIO_118 */
+> +				"SSC_IRQ_2", /* GPIO_119 */
+> +				"NC", /* GPIO_120 */
+> +				"GPIO121", /* GPIO_121, S HSEC pin 2 */
+> +				"NC", /* GPIO_122 */
+> +				"SSC_IRQ_6", /* GPIO_123 */
+> +				"SSC_IRQ_7", /* GPIO_124 */
+> +				"GPIO-C", /* GPIO_125, TS_INT0, LSEC pin 25 */
+> +				"BOOT_CONFIG5", /* GPIO_126 */
+> +				"NC", /* GPIO_127 */
+> +				"NC", /* GPIO_128 */
+> +				"BOOT_CONFIG7", /* GPIO_129 */
+> +				"PCIE1_RST_N", /* GPIO_130 */
+> +				"PCIE1_CLKREQ_N", /* GPIO_131 */
+> +				"PCIE1_WAKE", /* GPIO_132 */
+> +				"GPIO-L", /* GPIO_133, CAM2_STANDBY_N, LSEC pin 34 */
+> +				"NC", /* GPIO_134 */
+> +				"NC", /* GPIO_135 */
+> +				"BOOT_CONFIG8", /* GPIO_136 */
+> +				"NC", /* GPIO_137 */
+> +				"NC", /* GPIO_138 */
+> +				"GPS_SSBI2", /* GPIO_139 */
+> +				"GPS_SSBI1", /* GPIO_140 */
+> +				"NC", /* GPIO_141 */
+> +				"NC", /* GPIO_142 */
+> +				"NC", /* GPIO_143 */
+> +				"BOOT_CONFIG6", /* GPIO_144 */
+> +				"NC", /* GPIO_145 */
+> +				"NC", /* GPIO_146 */
+> +				"NC", /* GPIO_147 */
+> +				"NC", /* GPIO_148 */
+> +				"NC"; /* GPIO_149 */
+> +		};
+> +
+> +		qcom,spmi@400f000 {
+> +			pmic@0 {
+> +				gpios@c000 {
+> +					gpio-line-names =
+> +						"NC",
+> +						"KEY_VOLP_N",
+> +						"NC",
+> +						"BL1_PWM",
+> +						"GPIO-F", /* BL0_PWM, LSEC pin 28 */
+> +						"BL1_EN",
+> +						"NC",
+> +						"WLAN_EN",
+> +						"NC",
+> +						"NC",
+> +						"NC",
+> +						"NC",
+> +						"NC",
+> +						"NC",
+> +						"DIVCLK1",
+> +						"DIVCLK2",
+> +						"DIVCLK3",
+> +						"DIVCLK4",
+> +						"BT_EN",
+> +						"PMIC_SLB",
+> +						"PMIC_BUA",
+> +						"USB_VBUS_DET";
+> +				};
+> +
+> +				mpps@a000 {
+> +					gpio-line-names =
+> +						"VDDPX_BIAS",
+> +						"WIFI_LED",
+> +						"NC",
+> +						"BT_LED",
+> +						"PM_MPP05",
+> +						"PM_MPP06",
+> +						"PM_MPP07",
+> +						"NC";
+> +				};
+> +			};
+> +
+> +			pmic@2 {
+> +				gpios@c000 {
+> +					gpio-line-names =
+> +						"NC",
+> +						"SPKR_AMP_EN1",
+> +						"SPKR_AMP_EN2",
+> +						"TP61",
+> +						"NC",
+> +						"USB2_VBUS_DET",
+> +						"NC",
+> +						"NC",
+> +						"NC",
+> +						"NC";
+> +				};
+> +			};
+> +		};
+> +
+>  		phy@34000 {
+>  			status = "okay";
+>  		};
+> -- 
+> 2.14.1
+> 
