@@ -6,126 +6,139 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A6E2ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667E4ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCDE2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:55:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCDE2075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BD8D2075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:55:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD8D2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbeGRKcK (ORCPT
+        id S1730897AbeGRKc1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 06:32:10 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:33950 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726064AbeGRKcK (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 18 Jul 2018 06:32:10 -0400
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 18 Jul 2018 11:35:01 +0200
-Received: from suselix (nwb-a10-snat.microfocus.com [10.120.13.202])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Wed, 18 Jul 2018 10:34:49 +0100
-Date:   Wed, 18 Jul 2018 11:34:47 +0200
-From:   Andreas Herrmann <aherrmann@suse.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] cpufreq: pcc-cpufreq: Disable dynamic scaling on
- many-CPU systems
-Message-ID: <20180718093447.p6iog3bgpyxyj2w5@suselix>
-References: <20180717065048.74mmgk4t5utjaa6a@suselix>
- <306375154.NhdH6AhdAd@aspire.rjw.lan>
- <5423012.ZZnfdYddaT@aspire.rjw.lan>
- <20180717201323.6rwb4yklq46cmtom@suselix>
- <20180718082352.GQ2494@hirez.programming.kicks-ass.net>
+        Wed, 18 Jul 2018 06:32:27 -0400
+Received: from mga05.intel.com ([192.55.52.43]:22368 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726064AbeGRKc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 06:32:27 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 02:55:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,369,1526367600"; 
+   d="scan'208";a="65556826"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Jul 2018 02:55:14 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 3C9FE203A8; Wed, 18 Jul 2018 12:55:14 +0300 (EEST)
+Date:   Wed, 18 Jul 2018 12:55:14 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Yong <yong.deng@magewell.com>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v10 2/2] media: V3s: Add support for Allwinner CSI.
+Message-ID: <20180718095513.4cm77g2iuilvfmd6@paasikivi.fi.intel.com>
+References: <1525417745-37964-1-git-send-email-yong.deng@magewell.com>
+ <20180626110821.wkal6fcnoncsze6y@valkosipuli.retiisi.org.uk>
+ <20180705154802.03604f156709be11892b19c0@magewell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180718082352.GQ2494@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180705154802.03604f156709be11892b19c0@magewell.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 10:23:52AM +0200, Peter Zijlstra wrote:
-> On Tue, Jul 17, 2018 at 10:13:23PM +0200, Andreas Herrmann wrote:
-> > On Tue, Jul 17, 2018 at 06:14:58PM +0200, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > 
-> > > The firmware interface used by the pcc-cpufreq driver is
-> > > fundamentally not scalable and using it for dynamic CPU performance
-> > > scaling on systems with many CPUs leads to degraded performance.
-> > > 
-> > > For this reason, disable dynamic CPU performance scaling on systems
-> > > with pcc-cpufreq where the number of CPUs present at the driver init
-> > > time is greater than 4.  Also make the driver print corresponding
-> > > complaints to the kernel log.
-> > > 
-> > > Reported-by: Andreas Herrmann <aherrmann@suse.com>
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > > 
-> > > -> v2: Rework the messages printed in the problematic case.
+Hi Yong,
+
+On Thu, Jul 05, 2018 at 03:48:02PM +0800, Yong wrote:
+> > > +
+> > > +/* -----------------------------------------------------------------------------
+> > > + * Media Operations
+> > > + */
+> > > +static int sun6i_video_formats_init(struct sun6i_video *video,
+> > > +				    const struct media_pad *remote)
+> > > +{
+> > > +	struct v4l2_subdev_mbus_code_enum mbus_code = { 0 };
+> > > +	struct sun6i_csi *csi = video->csi;
+> > > +	struct v4l2_format format;
+> > > +	struct v4l2_subdev *subdev;
+> > > +	u32 pad;
+> > > +	const u32 *pixformats;
+> > > +	int pixformat_count = 0;
+> > > +	u32 subdev_codes[32]; /* subdev format codes, 32 should be enough */
+> > > +	int codes_count = 0;
+> > > +	int num_fmts = 0;
+> > > +	int i, j;
+> > > +
+> > > +	pad = remote->index;
+> > > +	subdev = media_entity_to_v4l2_subdev(remote->entity);
+> > > +	if (subdev == NULL)
+> > > +		return -ENXIO;
+> > > +
+> > > +	/* Get supported pixformats of CSI */
+> > > +	pixformat_count = sun6i_csi_get_supported_pixformats(csi, &pixformats);
+> > > +	if (pixformat_count <= 0)
+> > > +		return -ENXIO;
+> > > +
+> > > +	/* Get subdev formats codes */
+> > > +	mbus_code.pad = pad;
+> > > +	mbus_code.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+> > > +	while (!v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL,
+> > > +				 &mbus_code)) {
 > > 
-> > I've tested this patch. Effect is as expected: driver loads but use of
-> > ondemand governor is not allowed. Sample output:
-> > 
-> > [   40.757519] pcc-cpufreq: (v1.10.00) driver loaded with frequency limits: 1200 MHz, 2800 MHz
-> > [   40.831705] pcc_cpufreq_init: Too many CPUs, dynamic performance scaling disabled
-> > [   40.898353] pcc_cpufreq_init: Try to enable a different scaling driver through BIOS settings
+> > The formats supported by the external sub-device may depend on horizontal
+> > and vertical flipping. You shouldn't assume any particular configuration
+> > here: instead, bridge drivers generally just need to make sure the formats
+> > match in link validation when streaming is started. At least the CSI-2
+> > receiver driver and the DMA engine driver (video device) should check the
+> > configuration is valid. See e.g. the IPU3 driver:
+> > drivers/media/pci/intel/ipu3/ipu3-cio2.c .
 > 
-> BTW, Andreas, is that BIOS option available through the normal BIOS
-> settings, or it is in the "secret" BIOS menu that HP has? If it is in
-> the "secret" one (^A IIRC) then we might want to explicitly mention
-> that.
+> Can mbus_code be added dynamically ?
+> The code here only enum the mbus code and get the possible supported
+> pairs of pixformat and mbus by SoC. Not try to check if the formats
+> (width height ...) is valid or not. The formats validation will be 
+> in link validation when streaming is started as per your advise. 
 
-The relevant options are not in a secret section (so far I was not
-even aware of a secret section). But on those systems some stuff is
-available via iLO interface (browser) and some only via "BIOS/Platform
-Configuration (RBSU)". The iLO interface has a couple of options that
-are only visible with an advanced ILO license.
+The formats that can be enumerated from the sensor here are those settable
+using SUBDEV_S_FMT. The enumeration will change on raw sensors if you use
+the flipping controls. As the bridge driver implements MC as well as subdev
+APIs, generally the sensor configuration is out of scope of this driver
+since it's directly configured from the user space.
 
-The options affecting Linux cpufreq subsystem are
+Just check that the pipeline is valid before starting streaming in your
+driver.
 
-(a) available only via "BIOS/Platform Configuration (RBSU)"
+-- 
+Kind regards,
 
-  [Power Management]->
-    [Advanced Power Options]->
-      [Collaborative Power Control] == "enabled" | "disabled"
-
- If set to "disabled": No cpufreq driver will load and platform is
- solely responsible for CPU frequency adaptions (whatever that means).
-
-(b) available via "BIOS/Platform Configuration (RBSU)" and iLO interface
-
-  [Power Management]->
-    [Power Regulator] == "Dynamic Power Savings Mode" | "OS Control Mode" |
-                         "Static Low Power Mode" | "Static High Performance Mode"
-
- "Dynamic Power Savings Mode" allows pcc-cpufreq to load and "OS
- Control Mode" allows intel-pstate to be loaded. We now change it such
- that also with "Dynamic Power Savings Mode" intel-pstate is loaded
- (if available; if not, pcc-cpufreq will still be loaded but it now
- emits a warning and disallows use of ondemand governor if too many
- CPUs are in use).
-
- AFAIK the other (static) modes have no real meaning when
- "Collaborative Power Control" is enabled because as soon as a cpufreq
- driver is loaded frequency will be adapted by OS. I can't remember
- which one (pcc-cpufreq or intel-pstate) would be loaded, I've just
- tried it once or twice.
-
-Note that the above is valid for a DL580 Gen8 with Intel CPUs. It
-might be slightly different on Gen9/Gen10 and/or other models. Ie. for
-models based on AMD CPUs we just have added a new warning in
-pcc-cpufreq and disabled use of ondemand governor when the system has
-more than 4 CPUs.
-
-
-Andreas
+Sakari Ailus
+sakari.ailus@linux.intel.com
