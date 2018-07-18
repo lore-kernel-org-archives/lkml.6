@@ -3,85 +3,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7665EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:12:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BECFFECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25ADC2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:12:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25ADC2075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 748672084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:15:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 748672084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbeGRVwB (ORCPT
+        id S1729180AbeGRVzZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:52:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60680 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726998AbeGRVwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:52:00 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 50E43400E9BA;
-        Wed, 18 Jul 2018 21:12:17 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C42512156893;
-        Wed, 18 Jul 2018 21:12:15 +0000 (UTC)
-Subject: Re: [PATCH v11 7/9] cpuset: Expose cpus.effective and mems.effective
- on cgroup v2 root
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1529825440-9574-1-git-send-email-longman@redhat.com>
- <1529825440-9574-8-git-send-email-longman@redhat.com>
- <20180702165322.GI533219@devbig577.frc2.facebook.com>
- <bc59aa0a-70fd-583f-452d-9a947757cb69@redhat.com>
- <20180703155823.GS533219@devbig577.frc2.facebook.com>
- <4cf9924e-7b97-187f-a1f5-853a45165abb@redhat.com>
- <151fc655-7e29-f060-789e-ee6c5c23d132@redhat.com>
- <a1eb4971-ff23-6fd8-d75b-112d63f0aee9@redhat.com>
- <20180718153139.GQ72677@devbig577.frc2.facebook.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <7bd3b825-354d-a467-8f93-ee5da6b9941c@redhat.com>
-Date:   Wed, 18 Jul 2018 17:12:15 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Wed, 18 Jul 2018 17:55:25 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40719 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726968AbeGRVzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 17:55:25 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1B489207AB; Wed, 18 Jul 2018 23:15:40 +0200 (CEST)
+Received: from xps13 (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5977C20731;
+        Wed, 18 Jul 2018 23:15:27 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 23:15:26 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Abhishek Sahu <absahu@codeaurora.org>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>
+Subject: Re: [PATCH 4/5] mtd: rawnand: qcom: update BBT related flags
+Message-ID: <20180718231526.38046099@xps13>
+In-Reply-To: <1530863519-5564-5-git-send-email-absahu@codeaurora.org>
+References: <1530863519-5564-1-git-send-email-absahu@codeaurora.org>
+        <1530863519-5564-5-git-send-email-absahu@codeaurora.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180718153139.GQ72677@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 21:12:17 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 18 Jul 2018 21:12:17 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/18/2018 11:31 AM, Tejun Heo wrote:
-> On Wed, Jul 18, 2018 at 11:21:18AM -0400, Waiman Long wrote:
->> What do you think about this patch?
->>
->> Are there any other issues you have with this patchset?
-> Looks good to me.  If others are okay with it, I think we're all good.
->
-> Thanks.
->
-Peter,
+Hi Abhishek,
 
-Do you have any major issues with this cpuset patchset as it stands today?
+Abhishek Sahu <absahu@codeaurora.org> wrote on Fri,  6 Jul 2018
+13:21:58 +0530:
+
+> Remove the NAND_SKIP_BBTSCAN to use RAM based BBT.
+
+Unless I am understanding it the wrong way, NAND_SKIP_BBTSCAN will skip
+the scan of the on-chip BBT and will scan every block to construct a
+RAM, based BBT thanks to the BBM.
+
+So flash based BBT is already unused and removing this flag is a
+mistake, right?
+
+> Flash based BBT is not used since bootloaders
+> doesn't have support for the same.
+> 
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
 
 Thanks,
-Longman
+Miquèl
 
