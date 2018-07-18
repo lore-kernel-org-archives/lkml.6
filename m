@@ -2,138 +2,172 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 593A8ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5A5ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D7DA2075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:39:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D7DA2075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F4832075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:42:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RZEl1589"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F4832075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730382AbeGRXTr (ORCPT
+        id S1730252AbeGRXWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 19:19:47 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.209]:19071 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728304AbeGRXTr (ORCPT
+        Wed, 18 Jul 2018 19:22:06 -0400
+Received: from mail-it0-f73.google.com ([209.85.214.73]:41761 "EHLO
+        mail-it0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729235AbeGRXWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:19:47 -0400
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id C372E3DBA2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 17:39:43 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id fv6cf1VchPvAdfv6hf6WmI; Wed, 18 Jul 2018 17:39:43 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=44684 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ffv6b-000wbU-Mz; Wed, 18 Jul 2018 17:39:33 -0500
-Subject: Re: [PATCH] ptp: fix missing break in switch
-To:     David Miller <davem@davemloft.net>
-Cc:     stefan.sorensen@spectralink.com, richardcochran@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180718011733.GA27872@embeddedor.com>
- <20180719.072608.944784986385146557.davem@davemloft.net>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <6fdb4c2b-8d64-a436-a4ad-68f75d60eac6@embeddedor.com>
-Date:   Wed, 18 Jul 2018 17:39:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 18 Jul 2018 19:22:06 -0400
+Received: by mail-it0-f73.google.com with SMTP id h26-v6so3968265itj.6
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:message-id:subject:from:to:cc;
+        bh=/SXidF8hAXshqkiFbGoLk/sQ+aaGc8icFptsQuMCA0M=;
+        b=RZEl1589f3jm9MF2c55+cO06KecxJbXsgUBYOrJJvwzZe86uXsDri3nu5F0jIGcJtj
+         bRpwH0LgJaj+L9D4kzrDELKzojKi/z1xSWOK/abERUtktG/vudlekDhF8koqjbcOjrOG
+         RupHib+v5XQHT2aihzCTF8QzkRi/bUvb57uRyuwrpkY7liKJaQSPORtVVnvbfaZAMwCx
+         oL9AjQHyv3oWUC4Ho6JUAsWKpbSVGmvGR6wT5V34V0LTMh1VMQSUjRNWxbaUGBOxBovU
+         tZO+TZ4hJME/EdH3D4i+PFN4eCbvMe2MxDVGhpBns/VP7bqjbb9a9iKBIhR34JG6qcBU
+         NIwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
+        bh=/SXidF8hAXshqkiFbGoLk/sQ+aaGc8icFptsQuMCA0M=;
+        b=Tc/rtL7tVquACrpAoqJi4JQ39Rd6Kue+1JpW/yUYik9GA8YrX6G8RTxHmgpIe4BVlm
+         YaON1Jkx5eXmkR7j+Fme507DTGRGx+i55xgnJqacLMcjbIdmLW2GPJPKrsixHC+5YJWg
+         GdGOBAIpO6YQDGHaZtRPJtvIAL4OEXk00vnKqyWpaJ5yzZxe+lYy0c9HkVFm0BD/aMF0
+         eX0kpQ/EBr/y/8/gMpnG83CYnEkZcWOk4bL6uIMpitqZNlfegbWiZQOSH6LptmVZpdfw
+         802+3WYSyJzweh0MeCe4yPUOa9dtS3W/dA9KKQ+c6q5C98gFg7QHBPbX0Kw11sOyaC+o
+         AGHg==
+X-Gm-Message-State: AOUpUlFRJJH9nKW027dc1Wph5e97J4+17dOvXQJgqgnJ6Lqu+OClj7jC
+        AORxAkCONhtUyZh8G6bxgiaZfzFvmVlS9KLVqhSMrNfwfX1fAigXD3xjUGImk+Bk1jCVgKd8bN+
+        ungvRkG2yLmAWLdY7IBtM/GJsQF3KFRWGl9wAAJmVrtAFZyMa5XooA6vJISC9l7aMvgu779gCya
+        MBrw==
+X-Google-Smtp-Source: AAOMgpdIADJI/bybvx3upZiku+PoLAJaquzlQVNK2mOTZqwEPAmces+hnc01ZfqlwVx2ufbSI63tAAexDZ/5t+M=
 MIME-Version: 1.0
-In-Reply-To: <20180719.072608.944784986385146557.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1ffv6b-000wbU-Mz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:44684
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Received: by 2002:a24:1f46:: with SMTP id d67-v6mr1906148itd.49.1531953722265;
+ Wed, 18 Jul 2018 15:42:02 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 15:41:59 -0700
+Message-Id: <20180718224159.18236-1-astrachan@google.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+Subject: [PATCH] x86: vdso: Use $LD instead of $CC to link
+From:   Alistair Strachan <astrachan@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The vdso{32,64}.so can fail to link with CC=clang when clang tries to
+find a suitable GCC toolchain to link these libraries with.
 
+/usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
+  access beyond end of merged section (782)
 
-On 07/18/2018 05:26 PM, David Miller wrote:
-> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-> Date: Tue, 17 Jul 2018 20:17:33 -0500
-> 
->> It seems that a *break* is missing in order to avoid falling through
->> to the default case. Otherwise, checking *chan* makes no sense.
->>
->> Fixes: 72df7a7244c0 ("ptp: Allow reassigning calibration pin function")
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Applied and queued up for -stable, thank you.
-> 
+This happens because the host environment leaked into the cross
+compiler environment due to the way clang searches for suitable GCC
+toolchains.
 
-Great. Glad to help. :)
+Clang is a retargetable compiler, and each invocation of it must
+provide --target=<something> --gcc-toolchain=<something> to allow it
+to find the correct binutils for cross compilation. These flags had
+been added to KBUILD_CFLAGS, but the vdso code uses CC and not
+KBUILD_CFLAGS (for various reasons) which breaks clang's ability to
+find the correct linker when cross compiling.
 
-Thanks
---
-Gustavo
+Most of the time this goes unnoticed because the host linker is new
+enough to work anyway, or is incompatible and skipped, but this cannot
+be reliably assumed.
+
+This change alters the vdso makefile to just use LD directly, which
+bypasses clang and thus the searching problem. The makefile will just
+use ${CROSS_COMPILE}ld instead, which is always what we want. This
+matches the method used to link vmlinux.
+
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: x86@kernel.org
+Cc: kernel-team@android.com
+Cc: joel@joelfernandes.com
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+---
+Supersedes "x86: vdso: Fix leaky vdso link with CC=clang"
+ arch/x86/entry/vdso/Makefile | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 1943aebadede..896a55204386 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -48,10 +48,8 @@ targets += $(vdso_img_sodbg)
+ 
+ export CPPFLAGS_vdso.lds += -P -C
+ 
+-VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+-			-Wl,--no-undefined \
+-			-Wl,-z,max-page-size=4096 -Wl,-z,common-page-size=4096 \
+-			$(DISABLE_LTO)
++VDSO_LDFLAGS_vdso.lds = -m elf_x86_64 -soname linux-vdso.so.1 --no-undefined \
++			-z max-page-size=4096 -z common-page-size=4096
+ 
+ $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
+ 	$(call if_changed,vdso)
+@@ -97,10 +95,8 @@ CFLAGS_REMOVE_vvar.o = -pg
+ #
+ 
+ CPPFLAGS_vdsox32.lds = $(CPPFLAGS_vdso.lds)
+-VDSO_LDFLAGS_vdsox32.lds = -Wl,-m,elf32_x86_64 \
+-			   -Wl,-soname=linux-vdso.so.1 \
+-			   -Wl,-z,max-page-size=4096 \
+-			   -Wl,-z,common-page-size=4096
++VDSO_LDFLAGS_vdsox32.lds = -m elf32_x86_64 -soname linux-vdso.so.1 \
++			   -z max-page-size=4096 -z common-page-size=4096
+ 
+ # 64-bit objects to re-brand as x32
+ vobjs64-for-x32 := $(filter-out $(vobjs-nox32),$(vobjs-y))
+@@ -128,7 +124,7 @@ $(obj)/vdsox32.so.dbg: $(src)/vdsox32.lds $(vobjx32s) FORCE
+ 	$(call if_changed,vdso)
+ 
+ CPPFLAGS_vdso32.lds = $(CPPFLAGS_vdso.lds)
+-VDSO_LDFLAGS_vdso32.lds = -m32 -Wl,-m,elf_i386 -Wl,-soname=linux-gate.so.1
++VDSO_LDFLAGS_vdso32.lds = -m elf_i386 -soname linux-gate.so.1
+ 
+ targets += vdso32/vdso32.lds
+ targets += vdso32/note.o vdso32/system_call.o vdso32/sigreturn.o
+@@ -162,13 +158,13 @@ $(obj)/vdso32.so.dbg: FORCE \
+ # The DSO images are built using a special linker script.
+ #
+ quiet_cmd_vdso = VDSO    $@
+-      cmd_vdso = $(CC) -nostdlib -o $@ \
++      cmd_vdso = $(LD) -nostdlib -o $@ \
+ 		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
+-		       -Wl,-T,$(filter %.lds,$^) $(filter %.o,$^) && \
++		       -T $(filter %.lds,$^) $(filter %.o,$^) && \
+ 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
+ 
+-VDSO_LDFLAGS = -fPIC -shared $(call cc-ldoption, -Wl$(comma)--hash-style=both) \
+-	$(call cc-ldoption, -Wl$(comma)--build-id) -Wl,-Bsymbolic $(LTO_CFLAGS)
++VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
++	$(call ld-option, --build-id) -Bsymbolic
+ GCOV_PROFILE := n
+ 
+ #
