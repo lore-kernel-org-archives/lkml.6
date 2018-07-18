@@ -2,132 +2,135 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6535ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13647ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A176220850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:12:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="kE9HkCU2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A176220850
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id B1FCE2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:16:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1FCE2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731824AbeGRQvK (ORCPT
+        id S1731340AbeGRQyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:51:10 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54615 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731535AbeGRQtV (ORCPT
+        Wed, 18 Jul 2018 12:54:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48588 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730987AbeGRQyx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:49:21 -0400
-Received: by mail-wm0-f67.google.com with SMTP id c14-v6so3350375wmb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 09:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5nw1HQAmv4GwhqMuUaC5yDqQkngaK0CYak4ZYQ4kb7k=;
-        b=kE9HkCU2i2Zo9sm8D1hIwFs780xiRBBKt598nH9OeB0bbn1rSrfPXgsJ0zJkH/dVt0
-         pUsHG4sMy3Ye0vsLsKrhF6/z+kqqxIFhUpqIBkHqlEQQzJA6X7uilonoR2mQXqSBz4OO
-         bdCbXliMU46bbir8A86dc/zMLupcV8EoCnmhXOQXKb4rGtC+2lml7B01mbwxMbQpyFTZ
-         Gd+b3hu7Xht5SsmACFJHQ7kPkwTwrwSCAAev0SUNV357vD+faWt0c+TCzsjr38WlKqfP
-         AdrBFOBxc2w/8q6PCT64q+tY/b/u3TLv34TFxLR75jXfeuEXPeXjNNA8koLu59Xn02oo
-         bY2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5nw1HQAmv4GwhqMuUaC5yDqQkngaK0CYak4ZYQ4kb7k=;
-        b=HxCXOp0Jr/Rt1ln8iZRFBv/dE11k7VcvvEp0DkoqcyAYqR58Bh1K1V/74ryCG1tx3l
-         WF5kOtcUppS/F+s7ZvNawilERO/bLX9VUFfZ2NJqbU36i3SWJoTJWoLRMiFUcJidgwQt
-         L/1n1GfZ3Ut4EhPzi6jFFHiFYPJwZ5sePv/bLxXJLdJ49aO6yH4qIeAowXO4O7024L+Z
-         jCe0UULrD6wzpjfdvCqlebwWRd3HsHAF8cFRAQgWvZOgng6AUJfFk/l9gbQjJUlD6Xzt
-         DLw+/7XjHuOHZ5oG6I3ZuKQJSMpFgJzfIUjCVjDmWIr6xWuhHPbHtIOUraRQ9NK/B38+
-         xHdQ==
-X-Gm-Message-State: AOUpUlFkFO4HZ/vCjSbLtT6B2wqSFuuuRdOm1MtKUBxxKCbiFvQ5ca3M
-        5DVguaiQZjn/osRt+BNmKjsdvQ==
-X-Google-Smtp-Source: AAOMgpcqx/s4hF9Qf7YbLyIV28plr/vySEY4KZ3blOpbVwFRzDm/VgvAxsktM83/X59ApovtSEcXcQ==
-X-Received: by 2002:a1c:1802:: with SMTP id 2-v6mr1928894wmy.81.1531930244957;
-        Wed, 18 Jul 2018 09:10:44 -0700 (PDT)
-Received: from brgl-bgdev.home ([2a01:cb1d:af:5b00:e837:b8d5:48c1:571b])
-        by smtp.gmail.com with ESMTPSA id v185-v6sm2847803wme.30.2018.07.18.09.10.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 09:10:44 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 2/5] net: add an info message to eth_platform_get_mac_address()
-Date:   Wed, 18 Jul 2018 18:10:32 +0200
-Message-Id: <20180718161035.7005-3-brgl@bgdev.pl>
+        Wed, 18 Jul 2018 12:54:53 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6IGEsQB049306
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 12:16:15 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ka73ydadt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 12:16:15 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <muriloo@linux.ibm.com>;
+        Wed, 18 Jul 2018 12:16:14 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 12:16:09 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6IGG9vd1180102
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Jul 2018 16:16:09 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B56D6AE05C;
+        Wed, 18 Jul 2018 12:15:32 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 94CD0AE064;
+        Wed, 18 Jul 2018 12:15:28 -0400 (EDT)
+Received: from kermit-br-ibm-com.ibmmodules.com (unknown [9.80.83.190])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jul 2018 12:15:28 -0400 (EDT)
+From:   Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        Bharata B Rao <bharata@linux.vnet.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc/prom_init: remove linux,stdout-package property
+Date:   Wed, 18 Jul 2018 13:15:44 -0300
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180718161035.7005-1-brgl@bgdev.pl>
-References: <20180718161035.7005-1-brgl@bgdev.pl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18071816-0052-0000-0000-000003103EC8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009387; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062639; UDB=6.00545614; IPR=6.00840494;
+ MB=3.00022186; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-18 16:16:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071816-0053-0000-0000-00005D68B14F
+Message-Id: <20180718161544.12134-1-muriloo@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807180180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+This property was added in 2004 and the only use of it, which was already inside
+`#if 0`, was removed a month later.
 
-Many drivers that read the MAC address from EEPROM or MTD emit a log
-message when they succeed. Since this function is meant to be reused
-in those drivers instead of reimplementing the same operation
-everywhere, add an info message when we successfully read the MAC
-address.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
 ---
- net/ethernet/eth.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/powerpc/kernel/prom_init.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
-index da8530879e1e..2a2173324d9e 100644
---- a/net/ethernet/eth.c
-+++ b/net/ethernet/eth.c
-@@ -530,15 +530,24 @@ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
- 	struct device_node *dp = dev_is_pci(dev) ?
- 			pci_device_to_OF_node(to_pci_dev(dev)) : dev->of_node;
- 	const unsigned char *addr = NULL;
-+	const char *from = NULL;
+v1..v2:
+- Move github.com links to this section so they can still end up in the mail
+  archive.
+- Remove Fixes: tag from commit message.
+- Add Link: tag here.
+- Link to v1: https://lkml.kernel.org/r/20180712171904.18971-1-muriloo@linux.ibm.com
+
+This property was added in 2004 by
+
+    https://github.com/mpe/linux-fullhistory/commit/689fe5072fe9a0dec914bfa4fa60aed1e54563e6
+
+and the only use of it, which was already inside `#if 0`, was removed a month
+later by
+
+    https://github.com/mpe/linux-fullhistory/commit/1fbe5a6d90f6cd4ea610737ef488719d1a875de7
+
+Link: https://github.com/linuxppc/linux/issues/125
+
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index 5425dd3d6a9f..c45fb463c9e5 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -2102,8 +2102,6 @@ static void __init prom_init_stdout(void)
+ 	stdout_node = call_prom("instance-to-package", 1, 1, prom.stdout);
+ 	if (stdout_node != PROM_ERROR) {
+ 		val = cpu_to_be32(stdout_node);
+-		prom_setprop(prom.chosen, "/chosen", "linux,stdout-package",
+-			     &val, sizeof(val));
  
--	if (dp)
-+	if (dp) {
- 		addr = of_get_mac_address(dp);
--	if (!addr)
-+		if (addr)
-+			from = "device tree";
-+	}
-+
-+	if (!addr) {
- 		addr = arch_get_platform_mac_address();
-+		if (addr)
-+			from = "arch callback";
-+	}
- 
- 	if (!addr)
- 		return -ENODEV;
- 
-+	dev_info(dev, "read MAC address from %s\n", from);
- 	ether_addr_copy(mac_addr, addr);
- 	return 0;
- }
+ 		/* If it's a display, note it */
+ 		memset(type, 0, sizeof(type));
 -- 
 2.17.1
 
