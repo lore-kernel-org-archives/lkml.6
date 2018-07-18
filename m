@@ -2,116 +2,77 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4829ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C3FECDFB4
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504CD20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:56:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ekzgw0SR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504CD20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FFF32075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 01:58:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFF32075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731305AbeGRCb5 (ORCPT
+        id S1731524AbeGRCdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 17 Jul 2018 22:31:57 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36394 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730652AbeGRCb5 (ORCPT
+        Tue, 17 Jul 2018 22:33:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43198 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731232AbeGRCdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Jul 2018 22:31:57 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h9-v6so2989416wro.3;
-        Tue, 17 Jul 2018 18:56:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=PnDw31A9Hbg5t8Jo45hF4qWH7MyD8W52/QQSX4gzbdo=;
-        b=Ekzgw0SREg2LhRbn/cPNA/6Z/2m+G2ANbxfA4a5E4N/tmI86l1NgWciixd/DFCFEdA
-         8/YHgyrD/ODaj4EVqJU6x4E05UFDob7phjNMkneRLNMdGv0/H87t2aZ7eUGFPd3gYErl
-         z0+HcQ7pP4HlUYcpR/0Iq23gVlgKf1DRbJGXKf06Fi/KV5oKZ30QPz6l4JiSL8OHJ8yN
-         0cWGQi2C3DliddZyk+zGu2EqJEu46ogBvNmSNlVs/0atdK73uGGzx2w6psj4Rcnyg0g5
-         oFOh254l9QZuS1ySjgLwCNGZj4cfZXHUHqvlj0NfaTTjVR53ozjOenIa1JDL5Y7SK1ZK
-         +8lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=PnDw31A9Hbg5t8Jo45hF4qWH7MyD8W52/QQSX4gzbdo=;
-        b=hlN9SjSeVDK9FdzNKtA4Td2RXVHndU7ivJZTGE8T2mADUFGQNjJvxKYkoNLLZgzHSx
-         ducKDUTi4KQfNj+I4mhO3RhBP/+Vqjc9p2NT9cAAz/8x6d+Rw3679qulibBiAxdg+fg9
-         90frxNyjniCpak5pl2Ew6+w7oo8sme4gwuL337piNEbx1amJ9KX5aGJ4ZMYSJ6uHTkL8
-         neoEmk9t5W7synfSwLTrumYMj3VLfuCYF0ArI2C7dSRhAOADiemnCR176VjoYxDxfWSR
-         Sw6aOtFMUAu4Rw6AGu1H30n47BkPn0DcuPuCoq9lqiKEaiEfPxZun+a6YehlfYAuMaRc
-         bJJQ==
-X-Gm-Message-State: AOUpUlEe5l8/sZBEZ77JUj5fiPQFS9XJEMBUP+kNGRwmhgGz8zblaeUB
-        6e1+F1EoJ7iO+jchA2YDWkpHQtpkcIYJz1hZvXs=
-X-Google-Smtp-Source: AAOMgpe8jnKVNY0QkZpDlZnCpcNZonPmxq4SrxeQ5IMygwJFZcAVtJJKSG0c4w0RiijjfyUxc7lS67+BzdmTV0Ic6HI=
-X-Received: by 2002:adf:8004:: with SMTP id 4-v6mr3011098wrk.130.1531878991774;
- Tue, 17 Jul 2018 18:56:31 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:8a8a:0:0:0:0:0 with HTTP; Tue, 17 Jul 2018 18:55:51
- -0700 (PDT)
-In-Reply-To: <5aafc511-15a1-da3c-19f8-cc8b658f9c3d@gmail.com>
-References: <20180718004639.30154-1-jmaxwell37@gmail.com> <5aafc511-15a1-da3c-19f8-cc8b658f9c3d@gmail.com>
-From:   Jonathan Maxwell <jmaxwell37@gmail.com>
-Date:   Wed, 18 Jul 2018 11:55:51 +1000
-Message-ID: <CAGHK07D_XCpU6V6oJ2rhR1=rX5P6t8ZhTMT7GEAyrBXoc=hbcQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/3] tcp: improve setsockopt() TCP_USER_TIMEOUT accuracy
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        David Laight <David.Laight@aculab.com>,
-        kuznet <kuznet@ms2.inr.ac.ru>,
-        yoshfuji <yoshfuji@linux-ipv6.org>,
-        Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jon Maxwell <jmaxwell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Jul 2018 22:33:41 -0400
+Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1A66BD1;
+        Wed, 18 Jul 2018 01:58:16 +0000 (UTC)
+Date:   Tue, 17 Jul 2018 18:58:15 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>, tgraf@suug.ch,
+        linux-kernel@vger.kernel.org, Davidlohr Bueso <dbueso@suse.de>,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] lib/rhashtable: consider param->min_size when setting
+ initial table size
+Message-Id: <20180717185815.20e5662318274aadcf9a9357@linux-foundation.org>
+In-Reply-To: <20180717223057.7wdtjwbusxfqpvur@linux-r8p5>
+References: <20180714062516.30433-1-dave@stgolabs.net>
+        <20180716000046.yscgnpr256qhm2qg@gondor.apana.org.au>
+        <20180717223057.7wdtjwbusxfqpvur@linux-r8p5>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After committing the patches in my net-next git branch I used git send-mail:
+On Tue, 17 Jul 2018 15:30:57 -0700 Davidlohr Bueso <dave@stgolabs.net> wrote:
 
-git send-email --identity=XXX --cover-letter --annotate origin
---compose --signoff
+> On Mon, 16 Jul 2018, Herbert Xu wrote:
+> 
+> >On Fri, Jul 13, 2018 at 11:25:16PM -0700, Davidlohr Bueso wrote:
+> >> rhashtable_init() currently does not take into account the user-passed
+> >> min_size parameter unless param->nelem_hint is set as well. As such,
+> >> the default size (number of buckets) will always be HASH_DEFAULT_SIZE
+> >> even if the smallest allowed size is larger than that. Remediate this
+> >> by unconditionally calling into rounded_hashtable_size() and handling
+> >> things accordingly.
+> >>
+> >> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+> >
+> >Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+> >
+> >Normally these patches go through netdev so could you please resend
+> >it with my ack to netdev@vger.kernel.org?
+> 
+> So I've done the resend, but at least would think that routing the
+> patch through Andrew would work best as he picked up the rhashtable
+> changes regarding ipc and this touches the same call.
+> 
 
-and manually updated it based on an example of yours:
+Either approach works.
 
-https://lwn.net/Articles/706491/
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
 
-I can see the 3 patches that I just submitted on:
-
-https://patchwork.ozlabs.org/project/netdev/list/
-
-Flagged as under review by DaveM.
-
-On Wed, Jul 18, 2018 at 11:20 AM, Eric Dumazet <eric.dumazet@gmail.com> wrote:
->
->
-> On 07/17/2018 05:46 PM, Jon Maxwell wrote:
->> Based on:
->>
->> https://patchwork.kernel.org/patch/10516195/
->>
->
-> I must confess I am lost with your submissions.
->
-> Patchwork is also lost ( https://patchwork.ozlabs.org/project/netdev/list/ )
->
-> Are you really using git format-patch ?
->
-> Normally all the patches should have a common [PATCH Vx net-next] string
->
-> git format-patch -o ../output --cover-letter --subject-prefix "PATCH V3 net-next" HEAD~3
->
->
