@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5D0ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2127ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBF3D2075C
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C9822075C
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 09:44:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="m3BesEpS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF3D2075C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="DmUcK+RE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C9822075C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732045AbeGRKV1 (ORCPT
+        id S1732030AbeGRKV1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 18 Jul 2018 06:21:27 -0400
-Received: from 8bytes.org ([81.169.241.247]:53936 "EHLO theia.8bytes.org"
+Received: from 8bytes.org ([81.169.241.247]:54024 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731493AbeGRKSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731408AbeGRKSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Jul 2018 06:18:32 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 554DC22C; Wed, 18 Jul 2018 11:41:19 +0200 (CEST)
+        id C1B91325; Wed, 18 Jul 2018 11:41:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531906880; bh=PTu4A8dCdvabnKrbq64uXB5v9LyeDwlVwgA1GxOhvvg=;
+        t=1531906880; bh=H6+XRgYKsec5YHvORG8P0AsgnpOKwYcNQ0i+yAmS8p0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m3BesEpShkxVjMuNeIcxVW3PIDVbwks7md9pVjt90p9ZO0b17l7pYjaH4JiYqKiVw
-         0x93z9j+kvRBI8AIJZ/mKrhOyUXXr0JpOiWf1DWk8unL+itZpckUC45f/ltg5L4NJE
-         kvrH+GBhI/YMOqpvVRpxT0GD9tcJJ6qT8VeTtN2bh/iD6XDB2Gx7SAGhVeQvFoFn4G
-         Q0AXnSc+ZBcENSlsJ4FmYcs1iDNoF8+yblEnQ5qxIdL7KiyeVMyC2ctxhwP7Okn/0w
-         fNtaISaFYaMz2VUHXFuobl5Cgf92waqB0kkZelwAGmrote2pzzMm9tkEqP796S/mu0
-         jO4nahp+UuSSA==
+        b=DmUcK+RESwdsJ5tJVU4OT1FBremhqtEbuYdLsOMdPfmHRqOoUG8Mat8n2m/po2KzA
+         i7CSJApCa+a9z8n/qTF+rlumAKIL8BAMoEJBfyFqg8EsX5QWhkekrU5K0JS2QnOimQ
+         23X+TRKntTJoupsonkGRPKXrGa6PJqikILBQ+iKiJ5lNFKGS9rpWCdC1leybyvYSBJ
+         x0dDP4NoF5jR5xEjRfNqNSU8Ky0epMkNqhhLoh9UaqaOD5OqJ3MxJgh8bxD2YmDX8N
+         zqx6pqpLq5M2GZBF2DrfApMNKJu8vdn7dop3YioKFVtE1kF1QZOChfeNe1jLNoB885
+         IJCnJ98Sy04KA==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 08/39] x86/entry/32: Leave the kernel via trampoline stack
-Date:   Wed, 18 Jul 2018 11:40:45 +0200
-Message-Id: <1531906876-13451-9-git-send-email-joro@8bytes.org>
+Subject: [PATCH 15/39] x86/pgtable: Rename pti_set_user_pgd to pti_set_user_pgtbl
+Date:   Wed, 18 Jul 2018 11:40:52 +0200
+Message-Id: <1531906876-13451-16-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531906876-13451-1-git-send-email-joro@8bytes.org>
 References: <1531906876-13451-1-git-send-email-joro@8bytes.org>
@@ -72,135 +72,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Switch back to the trampoline stack before returning to
-userspace.
+With the way page-table folding is implemented on 32 bit, we
+are not only setting PGDs with this functions, but also PUDs
+and even PMDs. Give the function a more generic name to
+reflect that.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 79 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 77 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable_64.h | 12 ++++++------
+ arch/x86/mm/pti.c                 |  2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index fea49ec..a905e62 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -343,6 +343,60 @@
- .endm
+diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
+index 3c5385f..9406c4f 100644
+--- a/arch/x86/include/asm/pgtable_64.h
++++ b/arch/x86/include/asm/pgtable_64.h
+@@ -196,21 +196,21 @@ static inline bool pgdp_maps_userspace(void *__ptr)
+ }
+ 
+ #ifdef CONFIG_PAGE_TABLE_ISOLATION
+-pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd);
++pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd);
  
  /*
-+ * Switch back from the kernel stack to the entry stack.
-+ *
-+ * The %esp register must point to pt_regs on the task stack. It will
-+ * first calculate the size of the stack-frame to copy, depending on
-+ * whether we return to VM86 mode or not. With that it uses 'rep movsl'
-+ * to copy the contents of the stack over to the entry stack.
-+ *
-+ * We must be very careful here, as we can't trust the contents of the
-+ * task-stack once we switched to the entry-stack. When an NMI happens
-+ * while on the entry-stack, the NMI handler will switch back to the top
-+ * of the task stack, overwriting our stack-frame we are about to copy.
-+ * Therefore we switch the stack only after everything is copied over.
-+ */
-+.macro SWITCH_TO_ENTRY_STACK
-+
-+	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-+
-+	/* Bytes to copy */
-+	movl	$PTREGS_SIZE, %ecx
-+
-+#ifdef CONFIG_VM86
-+	testl	$(X86_EFLAGS_VM), PT_EFLAGS(%esp)
-+	jz	.Lcopy_pt_regs_\@
-+
-+	/* Additional 4 registers to copy when returning to VM86 mode */
-+	addl    $(4 * 4), %ecx
-+
-+.Lcopy_pt_regs_\@:
-+#endif
-+
-+	/* Initialize source and destination for movsl */
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
-+	subl	%ecx, %edi
-+	movl	%esp, %esi
-+
-+	/* Save future stack pointer in %ebx */
-+	movl	%edi, %ebx
-+
-+	/* Copy over the stack-frame */
-+	shrl	$2, %ecx
-+	cld
-+	rep movsl
-+
-+	/*
-+	 * Switch to entry-stack - needs to happen after everything is
-+	 * copied because the NMI handler will overwrite the task-stack
-+	 * when on entry-stack
-+	 */
-+	movl	%ebx, %esp
-+
-+.Lend_\@:
-+.endm
-+
-+/*
-  * %eax: prev task
-  * %edx: next task
+  * Take a PGD location (pgdp) and a pgd value that needs to be set there.
+  * Populates the user and returns the resulting PGD that must be set in
+  * the kernel copy of the page tables.
   */
-@@ -581,25 +635,45 @@ ENTRY(entry_SYSENTER_32)
+-static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+ {
+ 	if (!static_cpu_has(X86_FEATURE_PTI))
+ 		return pgd;
+-	return __pti_set_user_pgd(pgdp, pgd);
++	return __pti_set_user_pgtbl(pgdp, pgd);
+ }
+ #else
+-static inline pgd_t pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
++static inline pgd_t pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+ {
+ 	return pgd;
+ }
+@@ -226,7 +226,7 @@ static inline void native_set_p4d(p4d_t *p4dp, p4d_t p4d)
+ 	}
  
- /* Opportunistic SYSEXIT */
- 	TRACE_IRQS_ON			/* User mode traces as IRQs on. */
-+
-+	/*
-+	 * Setup entry stack - we keep the pointer in %eax and do the
-+	 * switch after almost all user-state is restored.
-+	 */
-+
-+	/* Load entry stack pointer and allocate frame for eflags/eax */
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %eax
-+	subl	$(2*4), %eax
-+
-+	/* Copy eflags and eax to entry stack */
-+	movl	PT_EFLAGS(%esp), %edi
-+	movl	PT_EAX(%esp), %esi
-+	movl	%edi, (%eax)
-+	movl	%esi, 4(%eax)
-+
-+	/* Restore user registers and segments */
- 	movl	PT_EIP(%esp), %edx	/* pt_regs->ip */
- 	movl	PT_OLDESP(%esp), %ecx	/* pt_regs->sp */
- 1:	mov	PT_FS(%esp), %fs
- 	PTGS_TO_GS
-+
- 	popl	%ebx			/* pt_regs->bx */
- 	addl	$2*4, %esp		/* skip pt_regs->cx and pt_regs->dx */
- 	popl	%esi			/* pt_regs->si */
- 	popl	%edi			/* pt_regs->di */
- 	popl	%ebp			/* pt_regs->bp */
--	popl	%eax			/* pt_regs->ax */
-+
-+	/* Switch to entry stack */
-+	movl	%eax, %esp
+ 	pgd = native_make_pgd(native_p4d_val(p4d));
+-	pgd = pti_set_user_pgd((pgd_t *)p4dp, pgd);
++	pgd = pti_set_user_pgtbl((pgd_t *)p4dp, pgd);
+ 	*p4dp = native_make_p4d(native_pgd_val(pgd));
+ }
  
+@@ -237,7 +237,7 @@ static inline void native_p4d_clear(p4d_t *p4d)
+ 
+ static inline void native_set_pgd(pgd_t *pgdp, pgd_t pgd)
+ {
+-	*pgdp = pti_set_user_pgd(pgdp, pgd);
++	*pgdp = pti_set_user_pgtbl(pgdp, pgd);
+ }
+ 
+ static inline void native_pgd_clear(pgd_t *pgd)
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 4d418e7..f512222 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -117,7 +117,7 @@ void __init pti_check_boottime_disable(void)
+ 	setup_force_cpu_cap(X86_FEATURE_PTI);
+ }
+ 
+-pgd_t __pti_set_user_pgd(pgd_t *pgdp, pgd_t pgd)
++pgd_t __pti_set_user_pgtbl(pgd_t *pgdp, pgd_t pgd)
+ {
  	/*
- 	 * Restore all flags except IF. (We restore IF separately because
- 	 * STI gives a one-instruction window in which we won't be interrupted,
- 	 * whereas POPF does not.)
- 	 */
--	addl	$PT_EFLAGS-PT_DS, %esp	/* point esp at pt_regs->flags */
- 	btrl	$X86_EFLAGS_IF_BIT, (%esp)
- 	popfl
-+	popl	%eax
- 
- 	/*
- 	 * Return back to the vDSO, which will pop ecx and edx.
-@@ -668,6 +742,7 @@ ENTRY(entry_INT80_32)
- 
- restore_all:
- 	TRACE_IRQS_IRET
-+	SWITCH_TO_ENTRY_STACK
- .Lrestore_all_notrace:
- 	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
+ 	 * Changes to the high (kernel) portion of the kernelmode page
 -- 
 2.7.4
 
