@@ -2,108 +2,123 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB4EECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0557ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7535720850
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:14:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJsEnwpH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7535720850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6426320850
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 15:15:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6426320850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731221AbeGRPwn (ORCPT
+        id S1731236AbeGRPyF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 11:52:43 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45955 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731154AbeGRPwn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 11:52:43 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c4-v6so5047251wrs.12;
-        Wed, 18 Jul 2018 08:14:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=v9b4OM9embvafK7QSVNlISE3DfCT+Qb/+rVechN0YeM=;
-        b=NJsEnwpHqUAU9OanU3Hh5o5aGhxTFp5ebQWSjrqQ3rJyrzI8GmeV7J6Z3K+i/ktpWQ
-         U9a32tP1CNkJGkrOrEZz0gQ3ASxFCJKsZ3+57OBGeqclE9yhrxnYUBs12eneWYdDkPDY
-         CsUzbEEH5Tfm/fjkQ6tCGglpyC83LeNtQ/+AxGccFmpYi8QniXJV4OhAEX0NIWDDNTvH
-         keabTAiIr+nOGSH16BeH3N2fft2nsuB83ak2T/I1GzHL02Uq/IwbO2xo19C7SAm8XmLt
-         KSUwlaeKmIiXsSIzY5Ec2wiNwsFiTYqT9ES7jDW9HEBr//jABG4WLLWO2hzZGyR1+alF
-         Vduw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=v9b4OM9embvafK7QSVNlISE3DfCT+Qb/+rVechN0YeM=;
-        b=hN4xe/YdJVFJ8y8dMOjEMlPGBh3tqVF4v0PjQ+8Fh8Z/r+RhJ1RHr7z4aYP/YPfHg4
-         24HOOy6fT/Rih/8/3rZAO2+PT+ozeZkyWneByHQGJTEBEU8WJUtrx5wYb1huoXEOV1IQ
-         pOTAe0hTjpmU70N4Os2cG/IN0e8cIZuA2p0EFE60I9kb02vF6XFzH4MnUXUQOHVdEg9G
-         DqgYZ+sCBTFGK2XMW9mtjE9FpIyVeZ+LZV4Z5XfwcdzmdtNOzkDxbLBg+wncSw2GDO8T
-         78MHBYVA6vGg/qtuTLA4yrIm4ChAsDuA+y3BVL+yFNnwCczhhh0RoikzRC3fKk4tX8/U
-         0uRA==
-X-Gm-Message-State: AOUpUlFyX+6hhcqhq9M98DwTTJRArk5g5jr3HMuT7LF4nglYE4TiGC3C
-        uepKgCypXNpIbbNwjblnnp0hdi+ElwOk+A9RZ/o=
-X-Google-Smtp-Source: AAOMgpeQjySxovZsFQ1WLFpmkQ8j+dfDEmnOQspmgo5nYS74HESv27mwE8zhBnmt6N7YGrcAjZavcU+caggSTBvaXzI=
-X-Received: by 2002:adf:9b11:: with SMTP id b17-v6mr4745613wrc.119.1531926860645;
- Wed, 18 Jul 2018 08:14:20 -0700 (PDT)
+        Wed, 18 Jul 2018 11:54:05 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730998AbeGRPyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 11:54:05 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C045401EF07;
+        Wed, 18 Jul 2018 15:15:42 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 273A9111E402;
+        Wed, 18 Jul 2018 15:15:41 +0000 (UTC)
+Subject: Re: [PATCH v2] locking/rwsem: Take read lock immediate if queue empty
+ with no writer
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-kernel@vger.kernel.org, Mark Ray <mark.ray@hpe.com>,
+        Joe Mario <jmario@redhat.com>,
+        Scott Norton <scott.norton@hpe.com>
+References: <1531506653-5244-1-git-send-email-longman@redhat.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <cba9a488-76bd-6aa4-a9cf-2fe9f6da8e00@redhat.com>
+Date:   Wed, 18 Jul 2018 11:15:40 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:adf:9784:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 08:14:20
- -0700 (PDT)
-In-Reply-To: <20180718015154.GE3489@thunk.org>
-References: <20180718014344.1309-1-tytso@mit.edu> <20180718015154.GE3489@thunk.org>
-From:   Sandy Harris <sandyinchina@gmail.com>
-Date:   Wed, 18 Jul 2018 11:14:20 -0400
-Message-ID: <CACXcFmk7D5t9yg9VxhKZgMvqK-LmFF0d7Dh9A3hsoGTfzzeM8A@mail.gmail.com>
-Subject: Re: [PATCH] random: add a config option to trust the CPU's hwrng
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        labbott@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531506653-5244-1-git-send-email-longman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 15:15:42 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 18 Jul 2018 15:15:42 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 17, 2018 at 9:51 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-
-> On Tue, Jul 17, 2018 at 09:43:44PM -0400, Theodore Ts'o wrote:
->> This gives the user building their own kernel (or a Linux
->> distribution) the option of deciding whether or not to trust the CPU's
->> hardware random number generator (e.g., RDRAND for x86 CPU's) as being
->> correctly implemented and not having a back door introduced (perhaps
->> courtesy of a Nation State's law enforcement or intelligence
->> agencies).
->>
->> This will prevent getrandom(2) from blocking, if there is a
->> willingness to trust the CPU manufacturer.
->>
->> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+On 07/13/2018 02:30 PM, Waiman Long wrote:
+> It was discovered that a constant stream of readers might cause the
+> count to go negative most of the time after an initial trigger by a
+> writer even if no writer was present afterward. As a result, most of the
+> readers would have to go through the slowpath reducing their performance.
 >
-> Note, I had meant to tag this with an RFC.  I'm not sure I really want
-> to push this to Linus yet.  If you have an opinion, let me know.
+> To avoid that from happening, an additional check is added to detect
+> the special case that the reader in the critical section is the only
+> one in the wait queue and no writer is present. When that happens, it
+> can just have the lock and return immediately without further action.
+> Other incoming readers won't see a waiter is present and be forced
+> into the slowpath.
+>
+> The additional code is in the slowpath and so should not have an impact
+> on rwsem performance. However, in the special case listed above, it may
+> greatly improve performance.
+>
+> The issue was found in a customer site where they had an application
+> that pounded on the pread64 syscalls heavily on an XFS filesystem. The
+> application was run in a recent 4-socket boxes with a lot of CPUs. They
+> saw significant spinlock contention in the rwsem_down_read_failed() call.
+> With this patch applied, the system CPU usage went from 85% to 57%,
+> and the spinlock contention in the pread64 syscalls was gone.
+>
+> v2: Add customer testing results and remove wording that may cause
+>     confusion.
+>
+> Signed-off-by: Waiman Long <longman@redhat.com>
+> ---
+>  kernel/locking/rwsem-xadd.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+> index 3064c50..bf0570e 100644
+> --- a/kernel/locking/rwsem-xadd.c
+> +++ b/kernel/locking/rwsem-xadd.c
+> @@ -233,8 +233,19 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+>  	waiter.type = RWSEM_WAITING_FOR_READ;
+>  
+>  	raw_spin_lock_irq(&sem->wait_lock);
+> -	if (list_empty(&sem->wait_list))
+> +	if (list_empty(&sem->wait_list)) {
+> +		/*
+> +		 * In the unlikely event that the task is the only one in
+> +		 * the wait queue and a writer isn't present, it can have
+> +		 * the lock and return immediately without going through
+> +		 * the remaining slowpath code.
+> +		 */
+> +		if (unlikely(atomic_long_read(&sem->count) >= 0)) {
+> +			raw_spin_unlock_irq(&sem->wait_lock);
+> +			return sem;
+> +		}
+>  		adjustment += RWSEM_WAITING_BIAS;
+> +	}
+>  	list_add_tail(&waiter.list, &sem->wait_list);
+>  
+>  	/* we're now waiting on the lock, but no longer actively locking */
 
-I had something like this in patches I suggested as RFC a couple of
-years back. Those patches were rejected for other reasons, quite
-likely valid ones.
+Ping!
 
-My version was not binary like this:
+Any comment on this one?
 
->> +config RANDOM_TRUST_CPU
->> +       bool "Trust the CPU manufacturer to initialize Linux's CRNG"
+Cheers,
+Longman
 
-Instead, I had a compile-time option to choose a number 0-32
-for how much entropy to assume a 32-bit value from the HWRNG
-contains. Default was something less than 32. I debated values
-in the 24-30 range, don't recall what I chose & don't think it
-Matters hugely.
-
-Is that a better approach than the binary choice?
