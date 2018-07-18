@@ -2,166 +2,97 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CC9ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1679ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60FCC2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:17:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60FCC2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 80BF82075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 16:20:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="f16n0w2/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80BF82075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731474AbeGRQzL (ORCPT
+        id S1731325AbeGRQ6j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 12:55:11 -0400
-Received: from mga14.intel.com ([192.55.52.115]:3828 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731282AbeGRQzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 12:55:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jul 2018 09:16:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,370,1526367600"; 
-   d="scan'208";a="67947007"
-Received: from marshy.an.intel.com ([10.122.105.159])
-  by orsmga003.jf.intel.com with ESMTP; 18 Jul 2018 09:16:30 -0700
-From:   richard.gong@linux.intel.com
-To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, atull@kernel.org, mdf@kernel.org,
-        arnd@arndb.de, corbet@lwn.net
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
-        linux-doc@vger.kernel.org, yves.vandervennet@linux.intel.com,
-        richard.gong@intel.com
-Subject: [PATCHv7 0/9] Add Intel Stratix10 FPGA manager and service layer 
-Date:   Wed, 18 Jul 2018 11:18:35 -0500
-Message-Id: <1531930724-22061-1-git-send-email-richard.gong@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 18 Jul 2018 12:58:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36882 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730110AbeGRQ6j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 12:58:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8aHzsSXrGGr+5xdQy9q7aeiPxVuQ0YjIec6iZn4AWG0=; b=f16n0w2/Ynlw6OF1saludT12F
+        m9sy6MQDMCKWxguE82TkU6lc31SnNs086xmbY1CRkqpXsD2zHt+/7sa70n8IKCHBNi3DIHFsyiQTf
+        hgKG15WsdDHQAwjd5pDOZzSDH5bGfoi3I1OlxAa7kof/eopDJJKhgZNwmWzcv0669T5H8+Wf6DZq3
+        s6eiPE9KNkQptP/inP1lkvCCPQ2DMmkRHgTl3YHM77ESH0yzw0Jnx0+F+wXdePGDHFAxb4bjWcPom
+        jvQCXdb/hVtpcT0zyHVCPWZIbmhwNwvMJTntFKJ08sK7GbCn9h393JnfG81YXMf2NW/RH6ICSa1WN
+        gm0HfAN8w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ffpBE-0002R5-43; Wed, 18 Jul 2018 16:19:56 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 69C1B20277352; Wed, 18 Jul 2018 18:19:54 +0200 (CEST)
+Date:   Wed, 18 Jul 2018 18:19:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+        mingo@kernel.org, songliubraving@fb.com, hpa@zytor.com,
+        tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:x86/mm] x86/mm/tlb: Only send page table free TLB flush to
+ lazy TLB CPUs
+Message-ID: <20180718161954.GU2494@hirez.programming.kicks-ass.net>
+References: <20180716190337.26133-6-riel@surriel.com>
+ <tip-64482aafe55fc7e84d0741c356f8176ee7bde357@git.kernel.org>
+ <20180717113906.GV2476@hirez.programming.kicks-ass.net>
+ <1F8BDD25-864D-4105-B872-2109AA417454@surriel.com>
+ <24AA4367-22A1-450E-8F6A-3CBF39518384@surriel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24AA4367-22A1-450E-8F6A-3CBF39518384@surriel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Gong <richard.gong@intel.com>
+On Wed, Jul 18, 2018 at 11:50:33AM -0400, Rik van Riel wrote:
+> > On Jul 18, 2018, at 11:42 AM, Rik van Riel <riel@surriel.com> wrote:
+> >> On Jul 17, 2018, at 7:39 AM, Peter Zijlstra <peterz@infradead.org <mailto:peterz@infradead.org>> wrote:
 
-This is the 7th submission of Intel stratix10 service layer patches. This
-submission includes one additional patch for supporting remote status update,
-the second Stratix10 service layer client. Intel Stratix10 FPGA manager,
-which is 1st Stratix10 service layer client, is included in this submission. 
+> >> Also, was there a reason to re-implement on_each_cpu_cond() ? (which btw
+> >> also wants that __cpumask_set_bit fix).
+> > 
+> > I did not use on_each_cpu_cond() because I had no idea it
+> > existed.  A quick grep suggests very few users of that function :)
 
-Stratix10 service layer patches have been reviewed internally by Alan Tull
-and other colleagues at Intel.
+Yeah, only reason I know it existed was because I helped write it or
+something like that :-)
 
-Some features of the Intel Stratix10 SoC require a level of privilege
-higher than the kernel is granted. Such secure features include
-FPGA programming. In terms of the ARMv8 architecture, the kernel runs
-at Exception Level 1 (EL1), access to the features requires
-Exception Level 3 (EL3).
+> > I'll make sure things are done the right way.
+> > 
+> OK, looking at it some more, I think open coding may be faster in
+> case of the TLB shootdown code, because that way we only iterate
+> over the CPUs in the mm_cpumask, instead of iterating over every
+> single online CPU in the system, and calling the helper function for
+> every CPU, like on_each_cpu_cond() does.
+> 
+> However, the difference in overhead might be small enough that
+> we might not notice. Preferences?
 
-The Intel Stratix10 service layer provides an in kernel API for drivers to
-request access to the secure features. The requests are queued and
-processed one by one. ARM’s SMCCC is used to pass the execution of the
-requests on to a secure monitor (EL3).
+Yeah, so the difference is the case where the mask allocation fails; in
+that case we're under severe memory pressure and performance sucks
+anyway, right?
 
-Later the Intel Stratix10 service layer driver will be extended to provide
-services for QSPI, Crypto and warm reset.
-
-v2: add patches for FPGA manager, FPGA manager binding, dts and defconfig
-    remove intel-service subdirectory and intel-service.h, move intel-smc.h
-    and intel-service.c to driver/misc subdirectory
-    remove global variables
-    change service layer driver be 'default n'
-    correct SPDX markers
-    add timeout for do..while() loop
-    add kernel-doc for the functions and structs, correct multiline comments
-    replace kfifo_in/kfifo_out with kfifo_in_spinlocked/kfifo_out_spinlocked
-    rename struct intel_svc_data (at client header) to intel_svc_client_msg
-    rename struct intel_svc_private_mem to intel_svc_data
-    other corrections/changes from Intel internal code reviews
-v3: change all exported functions with "intel_svc_" as the prefix
-    increase timeout values for claiming back submitted buffer(s)
-    rename struct intel_command_reconfig_payload to
-    struct intel_svc_command_reconfig_payload
-    add pr_err() to provide the error return value
-    change to put fpga_mgr node under firmware/svc node
-    change to FPGA manager to align the update of service client APIs, and the
-    update of fpga_mgr device node
-    Other corrections/changes
-v4: s/intel/stratix10/ on some variables, structs, functions, and file names
-    intel-service.c -> stratix10-svc.c
-    intel-smc.h -> stratix10-smc.h
-    intel-service-client.h -> stratix10-svc-client.h
-    remove non-kernel-doc formatting
-    s/fpga-mgr@0/fpga-mgr/ to remove unit_address at fpga_mgr node
-    add Rob's Reviewed-by
-    add Richard's signed-off-by
-v5: add a new API statix10_svc_done() which is called by service client
-    when client request is completed or error occurs during request
-    process. Which allows service layer to free its resources.
-    remove dummy client from service layer client header and service layer
-    source file.
-    add Rob's Reviewed-by
-    add a new file stratix10-svc.rst and add that to driver-api/index.rst
-    kernel-doc fixes
-v6: replace kthread_create_on_cpu() with kthread_create_on_node()
-    extend stratix_svc_send() to support service client which doesn't use
-    memory allocated by service layer
-    add S10_RECONFIG_TIMEOUT
-    rename s/S10_BUF_TIMEOUT/S10_BUFFER_TIMEOUT/
-    fix service layer and FPGA manager Klocwork errors
-v7: add remote status update client support
-    s/pr_debug/dev_dbg, s/dev_info/dev_dbg
-    add unlock buffer if s10_svc_send_msg() fails
-    add release channel if fpga_mgr_create() fails
-    handle invalid pointer at svc if the client passed an invalid name
-
-Alan Tull (3):
-  dt-bindings: fpga: add Stratix10 SoC FPGA manager binding
-  arm64: dts: stratix10: add fpga manager and region
-  fpga: add intel stratix10 soc fpga manager driver
-
-Richard Gong (6):
-  dt-bindings, firmware: add Intel Stratix10 service layer binding
-  arm64: dts: stratix10: add stratix10 service driver binding to base
-    dtsi
-  misc: add Intel Stratix10 service layer driver
-  defconfig: enable fpga and service layer
-  Documentation: driver-api: add stratix10 service layer
-  misc: add remote status update client support
-
- .../bindings/firmware/intel,stratix10-svc.txt      |   57 ++
- .../bindings/fpga/intel-stratix10-soc-fpga-mgr.txt |   17 +
- Documentation/driver-api/index.rst                 |    1 +
- Documentation/driver-api/stratix10-svc.rst         |   32 +
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi  |   33 +
- arch/arm64/configs/defconfig                       |    7 +
- drivers/fpga/Kconfig                               |    6 +
- drivers/fpga/Makefile                              |    1 +
- drivers/fpga/stratix10-soc.c                       |  558 ++++++++++
- drivers/misc/Kconfig                               |   12 +
- drivers/misc/Makefile                              |    1 +
- drivers/misc/stratix10-smc.h                       |  313 ++++++
- drivers/misc/stratix10-svc.c                       | 1067 ++++++++++++++++++++
- include/linux/stratix10-svc-client.h               |  217 ++++
- 14 files changed, 2322 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
- create mode 100644 Documentation/devicetree/bindings/fpga/intel-stratix10-soc-fpga-mgr.txt
- create mode 100644 Documentation/driver-api/stratix10-svc.rst
- create mode 100644 drivers/fpga/stratix10-soc.c
- create mode 100644 drivers/misc/stratix10-smc.h
- create mode 100644 drivers/misc/stratix10-svc.c
- create mode 100644 include/linux/stratix10-svc-client.h
-
--- 
-2.7.4
-
+In which case using on_each_cpu_cond() seems the simpler option.
