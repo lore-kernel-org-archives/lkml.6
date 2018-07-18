@@ -2,99 +2,140 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F832ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE4DECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E719C2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF0FF2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 22:13:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tjoqmM6j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E719C2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="BtS6iqp+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF0FF2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730058AbeGRWxU (ORCPT
+        id S1730635AbeGRWxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 18:53:20 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34823 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeGRWxU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 18:53:20 -0400
-Received: by mail-wm0-f66.google.com with SMTP id y22-v6so4367072wma.0;
-        Wed, 18 Jul 2018 15:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3V4P/LgKgdeVy0WLivz6K6yPWy/b8rTPXD9U/YPFALM=;
-        b=tjoqmM6jErcLyxklWPBeNSOjfPIuHCtiIMGLDDMoQG04r4JBUqBxdKxgpRqzOT2Dp3
-         YaNERLBtDrNKEEF7bT2S4NW1xgIE4mZFTvmww5McV4jtxcKVqK/hAhym5Hyk0Mo/GJpC
-         QU8ZEOHSxgxWWrzG2nWA6G/EyUwM1OdWkMEWNZwQmxrQ0zuLAJDBwqKhA1IwhkJAgaNm
-         YUFA8hO4aP/iaSSza7ubrmRyRxq7UyKeuJs7JBCODUMaqwQ90x9EQfv/WN3W1cHQ8hCH
-         +4oGT4dN47cV4EuYnYsLfRg2745cbTAZ81A6oaoA4nJ5B9w5l9dFcBm1O/ePkcu+Yr02
-         jntQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3V4P/LgKgdeVy0WLivz6K6yPWy/b8rTPXD9U/YPFALM=;
-        b=mnKQlmG74CUmFHnOqtVTNYWc0NhxHRFOip02Yi5QPLxz7v8c1qKEldyKkgj5JGzlJ7
-         IZL7/Cz0Oq60OVjK7b8VW0Q9TNVtarO14U3LX0jezhojTiPfOWqIVQLUxdlAKeNef9po
-         qwMJ3KQTUUcgD7+irhZYfpaThK585H12R1p3//0URoJx4ex7GfQyhyL+F4n+AJRNfppW
-         +w7Q0mqh8KSs99bKvcD1SUt4ecsGxQtKF9S1oUPEXKYxIikI6z+BkeC7MJ3NBOwxpxT3
-         7Xja9BsIaQiEeYy6r5RB7u8RLGiq7uku0CkOuxQQdCJpcHQssmfUNo/fCth79QXuOHR2
-         NHvw==
-X-Gm-Message-State: AOUpUlGblcTl/wiQ//wWkhWWseRNjYZlMMcy+ZejxZ26xuyWQs00Agj6
-        IwZA4PC40N7QB0yWr4oZocHwweDkFM2+GiOjPiG1Ww==
-X-Google-Smtp-Source: AAOMgpd3IWuo8ZMF6yARYcB+Yv8GlWHU3fIqmvTRxpxiIA/H4NsgOndSH9h2A0ebBqHbdMkIwKHsYMJYalDiXqgskxM=
-X-Received: by 2002:a1c:149:: with SMTP id 70-v6mr2756505wmb.2.1531952001782;
- Wed, 18 Jul 2018 15:13:21 -0700 (PDT)
+        Wed, 18 Jul 2018 18:53:42 -0400
+Received: from vern.gendns.com ([206.190.152.46]:50178 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729221AbeGRWxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 18:53:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=t7TOdW9/9RnDn+X8C4kXOUgmadIzrPP1j6MNZAqDCGA=; b=BtS6iqp+ZYzKdjlTuQlDuyz48l
+        SPjYunX0WzbBG3c1HDOu68GlirBw+WFX2hvwgbrgRhJOiKALsl4xsTW6FPAfmzww1S0eGKsBPftD2
+        JqPdzTk9OmYk9Ubxt8p4GJkxH5QOokS1LD+m4qNYj6nZ7dGws57rtMttpuubQWrKZbPyTUTDkxy+4
+        vyHAAX9tzrNmOLjrQozrEyU1uDgy4OalLNLdeHXU/ypYX5oeY7Y3y1uwbkmORsvZZUkVbFYfFZ8KM
+        GIDmi2ZyMSUwpBLOuDCBBUiUp/5A+kqMv0C05cnrkPcs/JGKjCbJjWVIhUU0yUr9q8/uYzBSqcIEP
+        TZjUtiAg==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:58658 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1ffuha-000tTb-JV; Wed, 18 Jul 2018 18:13:42 -0400
+Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     Baolin Wang <baolin.wang@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com>
+ <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
+ <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
+ <20180714212033.GA31950@amd> <00fa2693-9308-8d74-0124-04066a76c35a@gmail.com>
+ <20180714222924.GA2776@amd> <20180714223907.GB2776@amd>
+ <1138f834-e805-6076-bb5b-aa1fdc1f2606@gmail.com>
+ <2c3a8911-150a-9b25-2a66-a9432047f96b@lechnology.com>
+ <68996338-a902-2b57-0bb9-df274a496b06@gmail.com> <20180718075637.GA10279@amd>
+ <913151e4-c19f-9a22-697c-52a9fb48cb32@gmail.com>
+ <0e0cd8f7-dc73-6733-65f2-9a14506b0f0e@gmail.com>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <ffc9cf0e-7159-e91b-477e-253246210200@lechnology.com>
+Date:   Wed, 18 Jul 2018 17:13:41 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180711132233.42301-1-icenowy@aosc.io> <20180711132233.42301-2-icenowy@aosc.io>
-In-Reply-To: <20180711132233.42301-2-icenowy@aosc.io>
-From:   Julian Calaby <julian.calaby@gmail.com>
-Date:   Thu, 19 Jul 2018 08:13:08 +1000
-Message-ID: <CAGRGNgUpLpvDcJPWXw2chcWNhvbrDkc99RwDbpzGGoNJf2ORYQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH 1/2] ARM: sun8i: h3: enable HDMI output on
- Banana Pi M2 Zero
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        "Mailing List, Arm" <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0e0cd8f7-dc73-6733-65f2-9a14506b0f0e@gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Icenowy,
+On 07/18/2018 02:22 PM, Jacek Anaszewski wrote:
+> On 07/18/2018 08:54 PM, Jacek Anaszewski wrote:
+>> On 07/18/2018 09:56 AM, Pavel Machek wrote:
+>>> Hi!
+>>>
+>>>>>>>> I believe I meant "changing patterns from kernel in response to events
+>>>>>>>> is probably overkill"... or something like that.
+>>>>>>>
+>>>>>>> Anyway -- to clean up the confusion -- I'd like to see
+>>>>>>>
+>>>>>>> echo pattern > trigger
+>>>>>>> echo "1 2 3 4 5 6 7 8" > somewhere
+>>>>>>
+>>>>>> s/somewhere/pattern/
+>>>>>>
+>>>>>> pattern trigger should create "pattern" file similarly how ledtrig-timer
+>>>>>> creates delay_{on|off} files.
+>>>
+>>> Yes, that sounds reasonable. v5 still says
+>>>
+>>> +               Writing non-empty string to this file will activate the pattern,
+>>> +               and empty string will disable the pattern.
+>>>
+>>> I'd deactivate the pattern by simply writing something else to the
+>>> trigger file.
+>>
+>> Please keep in mind that this is ABI documentation for the pattern file
+>> to be exposed by LED core, and not by the pattern trigger, that, as we
+>> agreed, will be implemented later. In this case, I'd go for
+> 
+> Gosh, I got completely distracted by the recent discussion about
+> pattern synchronization.
+> 
+> So, to recap, we need to decide if we are taking Baolin's solution
+> or we're opting for implementing pattern trigger.
 
-On Wed, Jul 11, 2018 at 11:25 PM Icenowy Zheng <icenowy@aosc.io> wrote:
->
-> Banana Pi M2 Zero board has a miniHDMI port connected to the HDMI
-> controller of Allwinner H3 SoC.
->
-> Enable the HDMI output in Banana Pi M2 Zero device tree.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+I think we should take Baolin's solution.
 
-This is identical to the patch I'd cooked up to do this, so this is:
+> 
+> If we choose the latter, then we will also need some software
+> pattern engine in the trigger, to be applied as a software pattern
+> fallback for the devices without hardware pattern support.
+> It will certainly delay the contribution process, provided that Baolin
+> would find time for this work at all.
+> 
+> I'd just take v5 based solution for now (with improved semantics
+> of disabling pattern - in this case my reasoning from the message
+> I'm replying to is still valid),
+> 
+>> "echo 0 > brightness" as a command disabling pattern. The same operation
+>> disables triggers, so later transition to using pattern trigger will be
+>> seamless for userspace.
+>>
+> 
 
-Tested-by: Julian Calaby <julian.calaby@gmail.com>
-
-Thanks,
-
--- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
