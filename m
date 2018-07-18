@@ -2,122 +2,104 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6C5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2587BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30742075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA2CA2075E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 23:01:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="Z7SF3rPQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30742075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="NCzHHoU5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA2CA2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729832AbeGRXjU (ORCPT
+        id S1730432AbeGRXmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 19:39:20 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:44224 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbeGRXjU (ORCPT
+        Wed, 18 Jul 2018 19:42:02 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:17015 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726998AbeGRXmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 19:39:20 -0400
-Received: by mail-pl0-f68.google.com with SMTP id m16-v6so2683596pls.11
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 15:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=puGNKRsOXkoHQ9ds45nPp7QSAjYJXFwGCuaji0Ojm3E=;
-        b=Z7SF3rPQ4If5dZMRhFiLeelm43qr3VGM+/nRQ66BVea2XMGeyFKdAD7fxrm+kS3mJ/
-         g+mGzXgZH9isnyIStt+MMdrnJSjwrRne1jNl4TSQPACNwkR+Cxfg2GjsPTpGNr9W+sc5
-         2EfOAoGAKf366nZZGZp+7PJkm10TFH05sG21IIugaKezL4vSMgIq4mOfo8wKDY6X/O4O
-         cNG/aGtid8DjiMot3T7SS+xr9iJSmcVx/4gz0RUknexAwljslIPIoAmLsAiAVf/4AyMA
-         YKzZeVDExNqiWhzJVhzx6xwk9Uz5Jo/SX5r3rXaUSPbH6lUcYGSvC8jWcogGhinFNCZ3
-         x1VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=puGNKRsOXkoHQ9ds45nPp7QSAjYJXFwGCuaji0Ojm3E=;
-        b=VgGj5OORi7t2e1SUzslEk53ooDLWvpPKTvn8nwVSU0+FPhJdRGgrvyal1ugpzKpBO0
-         uLstDAhrA16h+VYppr61zJUG/O72N+rcf393W43e8nxxhCcR+sOk5eUIwbXRJNhY7XJA
-         ROS2GiMwxlXvRgr69Mrohh1orgIWDFSjdI3hmKT/3vwdDXSlBQiiKvbduZKWEfsQP9fz
-         1jSdNLIKUHRI5KgGHmJDKnW/f4O0eIArrOxY9eqfgv/jZcKgyFLOcBgiqa/rVCMK1jyC
-         IxsBLQ11jo/NxYmMzgGfD2GZc3re3qKhDX/1hbr9HdRM55lLJUVMO7QobO781QzLVuqS
-         ++1Q==
-X-Gm-Message-State: AOUpUlFTTu4Us+hN0PV6Q5oqa1I085XKmW1vWjXUuRldEs4hMJ7XAqCn
-        m81rWuV4PwDi4TSsMZoqbGkmH6Yhhg0=
-X-Google-Smtp-Source: AAOMgpfAINobzfZj7i34F5XCRF5IkOwVCVUvMkjrlq8drquIWCCPBwAjHD3Vxmza+slL0rv+3sdqEg==
-X-Received: by 2002:a17:902:48c8:: with SMTP id u8-v6mr7737779plh.152.1531954753354;
-        Wed, 18 Jul 2018 15:59:13 -0700 (PDT)
-Received: from vader.hsd1.wa.comcast.net ([2601:602:8800:a9a9:e6a7:a0ff:fe0b:c9a8])
-        by smtp.gmail.com with ESMTPSA id s16-v6sm6377946pfm.114.2018.07.18.15.59.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 15:59:12 -0700 (PDT)
-From:   Omar Sandoval <osandov@osandov.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        James Morse <james.morse@arm.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: [PATCH v3 0/8] /proc/kcore improvements
-Date:   Wed, 18 Jul 2018 15:58:40 -0700
-Message-Id: <cover.1531953780.git.osandov@fb.com>
-X-Mailer: git-send-email 2.18.0
+        Wed, 18 Jul 2018 19:42:02 -0400
+Received: from mail-vk0-f42.google.com (mail-vk0-f42.google.com [209.85.213.42]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w6IN1lVP010614
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 08:01:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w6IN1lVP010614
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1531954908;
+        bh=sXP+TQq+NWEMQB+JgGbUi0bOGJ3unBwu3IqWultRY4k=;
+        h=From:Date:Subject:To:Cc:From;
+        b=NCzHHoU5WlEXxSLH+pTUPYcRI1Y6QzDy4g4UDI8qbqq892AlkzfHKyBBJBfma1KEx
+         HgUqUKH1I2PQQe6Jga3NIuH1ru0U5Ozae06JvF+JdO3NTAeIvpiVF2APQ8j/eY7oF7
+         y6GtpGGSJ1pz0EvzKzWGLBD6DKFF55VlnXxKQbEUMe0MVFIlqXAiwSkblA3jvpJJSu
+         0S3dHnmTppV/wKwiKmaUzul/ZBYNOr+N1kv7lBKGz3kVGIRA6Td2SPnQmjGq8zO2Gi
+         d8wkyJCjmMXotJu2epnGQahZqJmHE7tEn+nUBzyL3vrRqXHDkZcHOisxsDUSNMseDR
+         pUSTuH73OBkpQ==
+X-Nifty-SrcIP: [209.85.213.42]
+Received: by mail-vk0-f42.google.com with SMTP id o82-v6so1576692vko.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 16:01:48 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHfziuw8AEl6ul2+UhwiJgduI4qXefT7dPPpAL6ctQa69R69Hbm
+        DmBm/6MSj7b37ddT211TguZsBn2z8+eFCvNF/o0=
+X-Google-Smtp-Source: AAOMgpfSQLQS+FeFJvD62noXIBuA8gHsN1zbc878gHXdGCBUj9/+D6XdDIjgvFCXizgsC8LtDEJsI5xfCv84KWW1mbA=
+X-Received: by 2002:a1f:a945:: with SMTP id s66-v6mr4820966vke.54.1531954907303;
+ Wed, 18 Jul 2018 16:01:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 16:01:06
+ -0700 (PDT)
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 19 Jul 2018 08:01:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASA08wMtQaEfZy66u-EubV7X-u+z6KcTrtq_yXzWyzPvw@mail.gmail.com>
+Message-ID: <CAK7LNASA08wMtQaEfZy66u-EubV7X-u+z6KcTrtq_yXzWyzPvw@mail.gmail.com>
+Subject: [GIT PULL 1/3] ARM: dts: uniphier: UniPhier DT updates for v4.19
+To:     arm-soc <arm@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+Hi Arnd, Olof,
 
-Hi,
-
-This series makes a few improvements to /proc/kcore. Patches 1, 2, and 3
-are prep patches. Patch 4 is a fix/cleanup. Patch 5 is another prep
-patch. Patches 6 and 7 are optimizations to ->read(). Patch 8 adds
-vmcoreinfo to /proc/kcore.
-
-Again, based on v4.18-rc4 + James' patch in the mm tree, and tested with
-crash and readelf.
+Please pull UniPhier DT (32bit) updates for the v4.19 MW.
 
 Thanks!
 
-Changes from v2:
 
-- Add __init to kclist_add() as per Andrew
-- Got rid of conversion of kcore_need_update from int to atomic_t and
-  just used xchg() instead of atomic_cmpxchg() (split out into a new
-  patch instead of combining it with the rwlock -> rwsem conversion)
-- Add comment about the increase in file size to patch 8
 
-Changes from v1:
+The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 
-- Rebased onto v4.18-rc4 + James' patch
-  (https://patchwork.kernel.org/patch/10519739/) in the mm tree
-- Fix spurious sparse warning (see the report and response in
-  https://patchwork.kernel.org/patch/10512431/)
+  Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
 
-Omar Sandoval (8):
-  proc/kcore: don't grab lock for kclist_add()
-  proc/kcore: don't grab lock for memory hotplug notifier
-  proc/kcore: replace kclist_lock rwlock with rwsem
-  proc/kcore: fix memory hotplug vs multiple opens race
-  proc/kcore: hold lock during read
-  proc/kcore: clean up ELF header generation
-  proc/kcore: optimize multiple page reads
-  proc/kcore: add vmcoreinfo note to /proc/kcore
+are available in the git repository at:
 
- fs/proc/Kconfig            |   1 +
- fs/proc/kcore.c            | 534 +++++++++++++++++--------------------
- include/linux/crash_core.h |   2 +
- include/linux/kcore.h      |   2 +-
- kernel/crash_core.c        |   4 +-
- 5 files changed, 251 insertions(+), 292 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+tags/uniphier-dt-v4.19
+
+for you to fetch changes up to 38dc27c85e642cd6229f3a4b2c85128501852158:
+
+  ARM: dts: uniphier: Add missing cooling device properties for CPUs
+(2018-07-19 06:42:16 +0900)
+
+----------------------------------------------------------------
+UniPhier ARM SoC DT updates for v4.19
+
+- Add missing #cooling-cells properties
+
+----------------------------------------------------------------
+Viresh Kumar (1):
+      ARM: dts: uniphier: Add missing cooling device properties for CPUs
+
+ arch/arm/boot/dts/uniphier-pxs2.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
+
 
 -- 
-2.18.0
-
+Best Regards
+Masahiro Yamada
