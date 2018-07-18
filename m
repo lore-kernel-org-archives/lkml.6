@@ -2,162 +2,138 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E802ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A27ECDFBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3904120652
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3904120652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id F03A62075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 13:34:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V/WIr3dA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F03A62075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731170AbeGROLd (ORCPT
+        id S1731213AbeGROMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 10:11:33 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:14322 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726990AbeGROLd (ORCPT
+        Wed, 18 Jul 2018 10:12:14 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44018 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726990AbeGROMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 10:11:33 -0400
-X-UUID: c34cae72afa14a1a91fa2ccffa541892-20180718
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2097678855; Wed, 18 Jul 2018 21:33:22 +0800
-Received: from MTKMBS06N2.mediatek.inc (172.21.101.130) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 18 Jul 2018 21:33:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 18 Jul 2018 21:33:20 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 18 Jul 2018 21:33:20 +0800
-Message-ID: <1531920800.8953.151.camel@mtkswgap22>
-Subject: Re: [PATCH v5 4/7] Bluetooth: Add new quirk for non-persistent
- setup settings
-From:   Sean Wang <sean.wang@mediatek.com>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
-        <robh+dt@kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 18 Jul 2018 21:33:20 +0800
-In-Reply-To: <E05CD0A8-B820-4900-970D-57F71E8E5583@holtmann.org>
-References: <cover.1531150733.git.sean.wang@mediatek.com>
-         <4b188c8a508340598dda233f6d49a16c9ac8784e.1531150733.git.sean.wang@mediatek.com>
-         <2825B722-E75C-4A3C-8110-879205E46C0E@holtmann.org>
-         <1531638169.3955.5.camel@mtkswgap22>
-         <6571C864-B2EC-4806-BC5D-F531792737F6@holtmann.org>
-         <1531757114.8953.12.camel@mtkswgap22>
-         <E05CD0A8-B820-4900-970D-57F71E8E5583@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Jul 2018 10:12:14 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6IDYF8Y060506;
+        Wed, 18 Jul 2018 13:34:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=dZRph/gIfUB3wE6mu78uooo1qdPlKxJFMgbM64jynd4=;
+ b=V/WIr3dAodU0YTzqfRxP91Jd/8oYpFNrdqKmpd90u3ZJeiOhp9FdZki13adMWblA7nhQ
+ QhEMjcNPSLrhoj/3dTCdIBP8DeML8RxIjFr0CO+HhP2fc5RMydJYiKBqMi5hmYpfKgwD
+ tgKDSVjS/MndZ3VAa8z4O+m5AdhsaWL1pruFwfpzAXo9wIiAe9KmLB2WFAIBF9BwZerT
+ NyQdCHu3RflO47fFZh7Ly3hiBwinhmS1ikycLtZYN2qyQ7yOHtRR6Af1+UaiUA7O1VQ+
+ FxBzuKPmMwzNrhHVSXfoANFprbXP/E8MQ8Al+4UoRQTRDIckDQb2bPLcvo3rMaIVFGr7 xg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2k9ykc1mte-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 13:34:15 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6IDYDsm006232
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Jul 2018 13:34:13 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6IDYCD9024356;
+        Wed, 18 Jul 2018 13:34:12 GMT
+Received: from mail-oi0-f42.google.com (/209.85.218.42)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Jul 2018 06:34:12 -0700
+Received: by mail-oi0-f42.google.com with SMTP id d189-v6so8787491oib.6;
+        Wed, 18 Jul 2018 06:34:12 -0700 (PDT)
+X-Gm-Message-State: AOUpUlEWeCriqMeeFTsLUyLwsLwXkuMcFthGD9dSXgaVpMDI7L1y9owf
+        +p2GiUCq6J1+Ej5NCAL7/IbqkVSy4imfpOhpFQ0=
+X-Google-Smtp-Source: AAOMgpc9gp3TOdNpjsDd2F+CNK2KabwKGwClOVWDGGPnsn+FJEovnKV1M9+6g32wTIowS/75Q8Tpl07vMrn1Hw+5D80=
+X-Received: by 2002:a54:4f88:: with SMTP id g8-v6mr6787446oiy.191.1531920852183;
+ Wed, 18 Jul 2018 06:34:12 -0700 (PDT)
 MIME-Version: 1.0
-X-MTK:  N
+References: <20180718022211.6259-1-pasha.tatashin@oracle.com>
+ <20180718022211.6259-9-pasha.tatashin@oracle.com> <ddda16df-cca6-8b9d-6f66-6ff5ecc21a03@redhat.com>
+In-Reply-To: <ddda16df-cca6-8b9d-6f66-6ff5ecc21a03@redhat.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Wed, 18 Jul 2018 09:33:36 -0400
+X-Gmail-Original-Message-ID: <CAGM2reY_uf2C2ox4kEmTSuSDm1PbXazTYHuT4shYiZ3WK3vTdQ@mail.gmail.com>
+Message-ID: <CAGM2reY_uf2C2ox4kEmTSuSDm1PbXazTYHuT4shYiZ3WK3vTdQ@mail.gmail.com>
+Subject: Re: [PATCH v14 08/25] x86/kvmclock: Avoid TSC recalibration
+To:     pbonzini@redhat.com
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, sboyd@codeaurora.org,
+        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
+        feng.tang@intel.com, Petr Mladek <pmladek@suse.com>,
+        gnomes@lxorguk.ukuu.org.uk, linux-s390@vger.kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8957 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807180153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-18 at 14:14 +0200, Marcel Holtmann wrote:
-> Hi Sean,
-> 
-> >>>>> Add a new quirk HCI_QUIRK_NON_PERSISTENT_SETUP allowing that a quirk that
-> >>>>> runs setup() after every open() and not just after the first open().
-> >>>>> 
-> >>>>> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> >>>>> ---
-> >>>>> include/net/bluetooth/hci.h | 9 +++++++++
-> >>>>> net/bluetooth/hci_core.c    | 3 ++-
-> >>>>> 2 files changed, 11 insertions(+), 1 deletion(-)
-> >>>>> 
-> >>>>> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
-> >>>>> index 73e48be..d3ec5b2a8 100644
-> >>>>> --- a/include/net/bluetooth/hci.h
-> >>>>> +++ b/include/net/bluetooth/hci.h
-> >>>>> @@ -183,6 +183,15 @@ enum {
-> >>>>> 	 * during the hdev->setup vendor callback.
-> >>>>> 	 */
-> >>>>> 	HCI_QUIRK_NON_PERSISTENT_DIAG,
-> >>>>> +
-> >>>>> +	/* When this quirk is set, setup() would be run after every
-> >>>>> +	 * open() and not just after the first open().
-> >>>>> +	 *
-> >>>>> +	 * This quirk can be set before hci_register_dev is called or
-> >>>>> +	 * during the hdev->setup vendor callback.
-> >>>>> +	 *
-> >>>>> +	 */
-> >>>>> +	HCI_QUIRK_NON_PERSISTENT_SETUP,
-> >>>>> };
-> >>>>> 
-> >>>>> /* HCI device flags */
-> >>>>> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> >>>>> index f5c21004..0111280 100644
-> >>>>> --- a/net/bluetooth/hci_core.c
-> >>>>> +++ b/net/bluetooth/hci_core.c
-> >>>>> @@ -1396,7 +1396,8 @@ static int hci_dev_do_open(struct hci_dev *hdev)
-> >>>>> 	atomic_set(&hdev->cmd_cnt, 1);
-> >>>>> 	set_bit(HCI_INIT, &hdev->flags);
-> >>>>> 
-> >>>>> -	if (hci_dev_test_flag(hdev, HCI_SETUP)) {
-> >>>>> +	if (hci_dev_test_flag(hdev, HCI_SETUP) ||
-> >>>>> +	    test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
-> >>>>> 		hci_sock_dev_event(hdev, HCI_DEV_SETUP);
-> >>>> 
-> >>>> can you include the extract of btmon on how the HCI_DEV_SETUP event shows up in the traces? I remember that I asked about something like that.
-> >>>> 
-> >>>> Regards
-> >>>> 
-> >>>> Marcel
-> >>>> 
-> >>> 
-> >>> No, I cannot see any event about HCI_DEV_SETUP in btmon trace, the trace I posted as below is doing some rounds of power off and then on
-> >> 
-> >> it will result in this:
-> >> 
-> >>        case HCI_DEV_SETUP:
-> >>                if (hdev->manufacturer == 0xffff)
-> >>                        return NULL;
-> >> 
-> >>        case HCI_DEV_UP:
-> >>                skb = bt_skb_alloc(HCI_MON_INDEX_INFO_SIZE, GFP_ATOMIC);
-> >> 
-> >> So we will see extra index info events, but I assume that is just fine this we also see them on DEV_UP. They also do not hurt as long as not magically the manufacturer information changes.
-> >> 
-> >> I do wonder though if this quirk is set, then hdev->manufacturer needs to be reset and allow hdev->setup() to reset it. This goes with a log of other information as well. Maybe just a look if there are no races here.
-> >> 
-> >> Regards
-> >> 
-> >> Marcel
-> >> 
-> > 
-> > I didn't set a value to hdev->manufacture.
-> > 
-> > Should I set it in hdev->setup() ? MediaTek is 0x46 according to [1].
-> 
-> it is generally useful so that it gets reported out in btmon and thus it can assign the correct vendor specific decoder. However you better set hdev->manufacturer = 70 in the probe() routine before calling hci_register_dev. You have a dedicated driver and thus will always know it.
-> 
-> The core tries to figure this out at some point, but then you are missing btmon decoding for the earlier messages. See btusb.c and how other drivers set it early on.
-> 
+Thank you Paolo for letting me know. I will remove this patch from the
+series, or it can be removed by whomever adds the series.
 
-thank for the point up, I will set hdev->manufacturer as 70 in probe
-routine before calling hci_register_dev in the next version.
-
-> Regards
-> 
-> Marcel
-> 
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
-
+Thank you,
+Pavel
+On Wed, Jul 18, 2018 at 7:14 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 18/07/2018 04:21, Pavel Tatashin wrote:
+> > From: Peter Zijlstra <peterz@infradead.org>
+> >
+> > If the host gives us a TSC rate, assume it is good and don't try and
+> > recalibrate things against virtual timer hardware.
+> >
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> > ---
+> >  arch/x86/kernel/kvmclock.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+> > index ed170171fe49..da0ede8ac8f6 100644
+> > --- a/arch/x86/kernel/kvmclock.c
+> > +++ b/arch/x86/kernel/kvmclock.c
+> > @@ -141,7 +141,16 @@ static inline void kvm_sched_clock_init(bool stable)
+> >   */
+> >  static unsigned long kvm_get_tsc_khz(void)
+> >  {
+> > -     return pvclock_tsc_khz(this_cpu_pvti());
+> > +     unsigned long tsc_khz = pvclock_tsc_khz(this_cpu_pvti());
+> > +
+> > +     /*
+> > +      * TSC frequency is reported by the host; calibration against (virtual)
+> > +      * HPET/PM-timer in a guest is dodgy and pointless since the host
+> > +      * already did it for us where required.
+> > +      */
+> > +     setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
+> > +
+> > +     return tsc_khz;
+> >  }
+> >
+> >  static void kvm_get_preset_lpj(void)
+> >
+>
+> This patch (really a similar one) has just been sent to Linus.
+>
+> Paolo
