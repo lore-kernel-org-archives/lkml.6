@@ -2,145 +2,96 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFA4ECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109AAECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8672075A
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+le/n6b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8672075A
+	by mail.kernel.org (Postfix) with ESMTP id B79572075A
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 21:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B79572075A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbeGRVt6 (ORCPT
+        id S1730403AbeGRVuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 17:49:58 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40913 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeGRVt6 (ORCPT
+        Wed, 18 Jul 2018 17:50:05 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:38016 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbeGRVuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 17:49:58 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z13-v6so4207179wma.5;
-        Wed, 18 Jul 2018 14:10:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:openpgp:autocrypt:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2m6PcbCBII0gfP0WfVMQlfKrHwq3IqseGAR3Fiwiaq8=;
-        b=S+le/n6bUgYuwzP36ffn57WUdXlH3xrNTN4l8xfDXuz8239cQPfudNosrFQKXFDL6l
-         Vyb5SRCuzWz4WTKQ+QUVsYO8BRT9Sy5Zam4sgcmLbtCIHsM9oyNPdXHiwPEh/BxDlvox
-         /YgGuanz6TtuzBNSM//FpSsvHfudC6vKuXiTDjZsmxto+1TfYz/pkok9RI8wD5/I1w81
-         kt6qpsvgnnR7jR9tEac8/NB+ad3Zwt51hkr4V19IjxcqEUgtVqi3/idkwZTMB/CXhzcZ
-         dVqKkdTGDk3O82RCnZm+AoV3AmXPeBZAwnaCSSOLEOKSdfZ1z5kYXm4jDR45nPgyd3RH
-         IMQA==
+        Wed, 18 Jul 2018 17:50:05 -0400
+Received: by mail-qt0-f195.google.com with SMTP id y19-v6so5387910qto.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 14:10:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2m6PcbCBII0gfP0WfVMQlfKrHwq3IqseGAR3Fiwiaq8=;
-        b=pMCuTF0PXrO+BEtd6rGi23TJpZ1FfaNrd2Ib5QhYM2smuqvymy7W8RsbZyHI/Ku2Yl
-         64mBdOtRW71sGajGTWmtkK5zW+y9TcWpZnikd7CBEO52ij23O+UgZ6G1nwT+cHgih0r5
-         URtDKpkHwHi+ztkmvnXTvvdgXyfBq/PLOUBwqoId8ekc/O9qlz6tOWrzBHQa+SewVGfz
-         E8SlhqXKnDReepbAq0QEpAmA+EsViAe6V22IGDayw7i1qLPqTIyNn1CbZ/RzlBl+f0WU
-         my9l6gYFzp1/3ZMFpZGdvrx9GzYNlkWxsYg2lW5lTUfFTsYaPWqtlklsBMmRXYamgi51
-         z8ew==
-X-Gm-Message-State: AOUpUlGi0ffocFLRvk98y3VWWS//KiNZeLSEJTf6vvgkNvp0qieqXuik
-        gcOjXfigmyDU953xCDFfrQE=
-X-Google-Smtp-Source: AAOMgpdFXGseMpESBODgRLEhBwUGbR6ygadVWyS3R0bBpOtbWcKVBcf3zVnuuAPWWcYWMxPEurJHhg==
-X-Received: by 2002:a1c:e708:: with SMTP id e8-v6mr2613611wmh.134.1531948213491;
-        Wed, 18 Jul 2018 14:10:13 -0700 (PDT)
-Received: from [192.168.10.150] (dynamic-adsl-78-12-156-57.clienti.tiscali.it. [78.12.156.57])
-        by smtp.googlemail.com with ESMTPSA id l16-v6sm2247446wme.36.2018.07.18.14.10.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Jul 2018 14:10:12 -0700 (PDT)
-Subject: Re: [PATCH v5 2/2] kvm: nVMX: Introduce KVM_CAP_NESTED_STATE
-To:     Jim Mattson <jmattson@google.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <1531214840-24686-1-git-send-email-karahmed@amazon.de>
- <1531214840-24686-2-git-send-email-karahmed@amazon.de>
- <20180718175545.GA11749@flask>
- <CALMp9eSv0ax6owRV78Xo9gw1T=_29_wg4LqbhNJP6+Hd_EU1Og@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-Message-ID: <8653119f-0ac4-7937-225b-16ef0977528b@redhat.com>
-Date:   Wed, 18 Jul 2018 23:10:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CALMp9eSv0ax6owRV78Xo9gw1T=_29_wg4LqbhNJP6+Hd_EU1Og@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to;
+        bh=4v4689d6VSRmJPYPTZQMx7VROhH9CjwpkvL47blReT8=;
+        b=cabVnHbkyBmfvUPc4gg60rprQhIwCiFyjSp22sldJGBo8JT8y01uanw3iYuKMU6Zxd
+         TeZBUrnLu+xtoVj5b0KRbhGplCwBmbflqrr6VdpgbkkKNgh48oRMBwj4jWGR7Q1i8Gij
+         wFhQqrgrunex5lzfA4ooEGFfqsqnHDjoBQXc7+2shmYFmphj4kRx6HKOf1++KkZF2Els
+         QqvD37sfNwp1C38DCqAbxyg3dzFEEi/xKo4s+sKe3PobyNPijtV6xRdStzOPm9WJnGNK
+         RFkMOtj6cYD/eNMo9v2/HKy+B0DikNGkhbLDRVEprrgoF75oyuqOoeTqCduBJQjSwgHn
+         KrWQ==
+X-Gm-Message-State: AOUpUlFvKoXuGAIo9c+/J0DaJ2G8EJvgpPZJEfTL8o8VzZ3TxgLex6zU
+        0uRsVuovsi4Dcxynp3nNT+mKm23Wlk0=
+X-Google-Smtp-Source: AAOMgpcZoqThdgxCkTL/75HwY7WiQjkFLfCGnlAX4jkeV1Y8WYuSYFXsksgB9CfeHU7/viYkerj9mQ==
+X-Received: by 2002:ac8:2e2f:: with SMTP id r44-v6mr7144347qta.357.1531948222888;
+        Wed, 18 Jul 2018 14:10:22 -0700 (PDT)
+Received: from labbott-redhat.redhat.com ([2601:602:9802:a8dc:4eb2:6dae:ab32:e5b0])
+        by smtp.gmail.com with ESMTPSA id k3-v6sm4143463qta.37.2018.07.18.14.10.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 18 Jul 2018 14:10:21 -0700 (PDT)
+From:   Laura Abbott <labbott@redhat.com>
+To:     Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: [PATCH 0/2] Stackleak for arm64
+Date:   Wed, 18 Jul 2018 14:10:11 -0700
+Message-Id: <20180718211013.14512-1-labbott@redhat.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <1531341400-12077-1-git-send-email-alex.popov@linux.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/07/2018 20:03, Jim Mattson wrote:
-> On Wed, Jul 18, 2018 at 10:55 AM, Radim Krčmář <rkrcmar@redhat.com> wrote:
-> 
->>> +     vmx->nested.nested_run_pending = 1;
->> This is not necessary.  We're only copying state and do not add anything
->> that would be lost on a nested VM exit without prior VM entry.
-> If nested_run_pending is blindly set on restore, then prepare_vmcs02
-> will do the wrong thing. For example, if there was an injected event
-> in the vmcs12, it will get injected again, even if the vCPU has been
-> in L2 for some time.
-> 
-> The value of nested_run_pending should always come from the saved VMX
-> state (a few lines above).
-> 
+Hi,
 
-Yep, and there are a couple other things that need adjustment.  Stay
-tuned...
+This is the new version of stackleak for arm64 to go with v14 of the
+series for x86. I have a cover letter and few more cc's to go along with
+some of the prep work.
 
-Paolo
+I also apologize for terrible versioning on these series. Usually I try
+to just reply to the top level patch with this addition and not actually
+put a version on it. I negelcted to do that last time but as mentioned
+this is inteded to go with v14.
+
+Laura Abbott (2):
+  arm64: Introduce current_stack_type
+  arm64: Clear the stack
+
+ arch/arm64/Kconfig                    |  1 +
+ arch/arm64/include/asm/processor.h    | 17 +++++
+ arch/arm64/include/asm/sdei.h         |  8 ++-
+ arch/arm64/include/asm/stacktrace.h   | 94 ++++++++++++++++++++++-----
+ arch/arm64/kernel/entry.S             |  7 ++
+ arch/arm64/kernel/process.c           | 32 +++++++++
+ arch/arm64/kernel/ptrace.c            |  2 +-
+ arch/arm64/kernel/sdei.c              | 21 +++++-
+ arch/arm64/kvm/hyp/Makefile           |  3 +-
+ drivers/firmware/efi/libstub/Makefile |  3 +-
+ include/linux/stackleak.h             |  1 +
+ 11 files changed, 165 insertions(+), 24 deletions(-)
+
+-- 
+2.17.1
+
