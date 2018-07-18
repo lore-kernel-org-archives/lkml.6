@@ -2,159 +2,217 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7803AECDFBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5FBECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35A402084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:46:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A402084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 1FBE02084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 19:48:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dYoKUmQQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FBE02084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730316AbeGRU0F (ORCPT
+        id S1730096AbeGRU1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 16:26:05 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39272 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeGRU0F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 16:26:05 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1ffsPF-0003pr-Bl; Wed, 18 Jul 2018 19:46:37 +0000
-Date:   Wed, 18 Jul 2018 20:46:37 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] call_with_creds()
-Message-ID: <20180718194637.GV30522@ZenIV.linux.org.uk>
-References: <CA+55aFwyOHvwV4qkmM1kRYQ+4brWbLSHaXE8GPV41u5Sj-AG4Q@mail.gmail.com>
- <20180712155337.GU30522@ZenIV.linux.org.uk>
- <20180718025636.GA26175@ZenIV.linux.org.uk>
- <20180718132955.2bf185b7@canb.auug.org.au>
- <CAOssrKf60FHqgG6pB5zOP7iV-qdHdDUODdG7SVpoNh3Pipo=6w@mail.gmail.com>
- <CAOssrKdqnsPSipweUCers6d2AgJX2aVGQUs1pd7cB79GoSJH1Q@mail.gmail.com>
- <20180718124340.GS30522@ZenIV.linux.org.uk>
- <CAOssrKcS+kwK+S1aojhbW_4p8FJLPaafBDqDu89d=F14wT-0rw@mail.gmail.com>
- <20180718181252.GU30522@ZenIV.linux.org.uk>
- <CA+55aFxh62Yttq-W2Cr_YQQ5tAL1xjijjnaz1-zdZNqZPQFM0g@mail.gmail.com>
+        Wed, 18 Jul 2018 16:27:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728929AbeGRU1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Jul 2018 16:27:30 -0400
+Received: from mail-yw0-f174.google.com (mail-yw0-f174.google.com [209.85.161.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FB542084E;
+        Wed, 18 Jul 2018 19:48:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531943286;
+        bh=wfBQ+XBa2tQ8Oi4OD2R1KFRyyV5yXdfsnPZL1RhcgVo=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=dYoKUmQQztBrf5dOJoJknTQzHwcW6S7bzFjnVZEPnIveAAS1qzneYuo6p3t6sAjOs
+         SG3Xbys7xDpGJiuh1wlGQFz/yXHXJHMUaTKmM/6iRq/+UAP0Bxm0ckfETJCppZnYKG
+         NWf2QtrW3GpoSpvQyjxE3yRP9pIif2vDBDjESB98=
+Received: by mail-yw0-f174.google.com with SMTP id j68-v6so2181579ywg.1;
+        Wed, 18 Jul 2018 12:48:06 -0700 (PDT)
+X-Gm-Message-State: AOUpUlErhY62nEWLmKOLtXCTdUHBFyvPc3yW59DQfQ0dvevVRn4OOBs6
+        hxqQQGdGBOLtN34HHFqui2rqyYdlxg/JZ+8Bsnw=
+X-Google-Smtp-Source: AAOMgpcEr3tuSQxS5OaOcSjXeo2ws9X+rpdR9IMbR11iHd6qvrRSYzGDCsAEmAnRBUnT0fGABZp+hV0D/rk5ffflzwI=
+X-Received: by 2002:a81:94c5:: with SMTP id l188-v6mr3682691ywg.463.1531943285314;
+ Wed, 18 Jul 2018 12:48:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxh62Yttq-W2Cr_YQQ5tAL1xjijjnaz1-zdZNqZPQFM0g@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 12:47:24
+ -0700 (PDT)
+In-Reply-To: <2419388.jt6midSiEu@pcbe13614>
+References: <4617134.5euanDEBgJ@pcbe13614> <1569671.PEFH9RgftX@pcbe13614>
+ <CANk1AXSmDWb=up_xDwvSg1SLS0iv6spcpcv42fSpM7+=Cy06wQ@mail.gmail.com> <2419388.jt6midSiEu@pcbe13614>
+From:   Alan Tull <atull@kernel.org>
+Date:   Wed, 18 Jul 2018 14:47:24 -0500
+X-Gmail-Original-Message-ID: <CANk1AXSd7V03w=uPuo+HiibxmD9_JwaTZyx4uRJ_OfXB4o-_Cw@mail.gmail.com>
+Message-ID: <CANk1AXSd7V03w=uPuo+HiibxmD9_JwaTZyx4uRJ_OfXB4o-_Cw@mail.gmail.com>
+Subject: Re: fpga: fpga_mgr_get() buggy ?
+To:     federico.vaga@cern.ch
+Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 11:19:18AM -0700, Linus Torvalds wrote:
-> On Wed, Jul 18, 2018 at 11:13 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > Linus, David - do you have any objections to the above?
-> 
-> I damn well do.
-> 
-> I explained earlier why it's wrong and fragile, and why it can just
-> cause the *reverse* security problem if you do it wrong. So now you
-> take a subtle bug, and make it even more subtle, and encourage people
-> to do this known-broken model of using creds at IO time.
-> 
-> No.
-> 
-> Some debugging option to just clear current->creds entirely and catch
-> mis-uses, sure. But saying "we have shit buggy garbage in random write
-> functions, so we'll just paper over it"? No.
+On Thu, Jun 28, 2018 at 2:50 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
+> On Wednesday, 27 June 2018 23:23:07 CEST Alan Tull wrote:
+>> On Wed, Jun 27, 2018 at 4:25 AM, Federico Vaga
+> <federico.vaga@cern.ch> wrote:
+>> > Hi Alan,
+>> >
+>> > On Tuesday, 26 June 2018 23:00:46 CEST Alan Tull wrote:
+>> >> On Fri, Jun 22, 2018 at 2:53 AM, Federico Vaga
+>> >> <federico.vaga@cern.ch> wrote:
+>> >>
+>> >> Hi Federico,
+>> >>
+>> >> >> > What is buggy is the function fpga_mgr_get().
+>> >> >> > That patch has been done to allow multiple FPGA manager
+>> >> >> > instances
+>> >> >> > to be linked to the same device (PCI it says). But function
+>> >> >> > fpga_mgr_get() will return only the first found: what about
+>> >> >> > the
+>> >> >> > others?
 
-Huh?  Nevermind ->write(), what about open()?  Here's a specific question
-Miklos brought when I suggested to get rid of that override:
-/*
- * These allocate and release file read/write context information.
- */
-int nfs_open(struct inode *inode, struct file *filp)
-{
-        struct nfs_open_context *ctx;
+Looking at this further, no code change is needed in the FPGA API to
+support multiple managers.  A FPGA manager driver is a self-contained
+platform driver.  The PCI driver for a board that contains multiple
+FPGAs should create a platform device for each manager and save each
+of those devs in its pdata.
 
-        ctx = alloc_nfs_open_context(file_dentry(filp), filp->f_mode, filp);
+>> >> >> > Then, all load kernel-doc comments says:
+>> >> >> >
+>> >> >> > "This code assumes the caller got the mgr pointer from
+>> >> >> > of_fpga_mgr_get() or fpga_mgr_get()"
+>> >> >> >
+>> >> >> > but that function does not allow me to get, for instance,
+>> >> >> > the
+>> >> >> > second FPGA manager on my card.
 
-struct nfs_open_context *alloc_nfs_open_context(struct dentry *dentry,
-                                                fmode_t f_mode,
-                                                struct file *filp)
-{
-        struct nfs_open_context *ctx;
-        struct rpc_cred *cred = rpc_lookup_cred();
+fpga_mgr_get() will do what you want if your PCI driver creates a
+platform device per FPGA manager as mentioned above.
 
-struct rpc_cred *rpc_lookup_cred(void)
-{
-        return rpcauth_lookupcred(&generic_auth, 0);
+>> >> >> > Since, thanks to this patch I'm actually the creator of the
+>> >> >> > fpga_manager structure,  I do not need to use fpga_mgr_get()
+>> >> >> > to
+>> >> >> > retrieve that data structure.
 
-struct rpc_cred *
-rpcauth_lookupcred(struct rpc_auth *auth, int flags)
-{
-        struct auth_cred acred;
-        struct rpc_cred *ret;
-        const struct cred *cred = current_cred();
+The creator of the FPGA mgr structure is the low level FPGA manager
+driver, not the PCIe driver.
 
-How should we bring the cred passed to do_dentry_open() where open() has been
-called to rpcauth_lookupcred() where we end up looking for rpc_cred by what
-should've been the cred passed to do_dentry_open() and is, instead, current_cred()?
+>> >> >> > Despite this, I believe we still need to increment the
+>> >> >> > module
+>> >> >> > reference counter (which is done by fpga_mgr_get()).
 
-We can pass filp->f_cred to rpc_lookup_cred() variant that gets it as an explicit
-argument and feed it down to rpcauth_lookupcred() variant that does the same.
-We can basically ignore the ->f_cred here.  Or we can get current_cred() equal
-to ->f_cred for the duration of open().
+This is only done in the probe function of a FPGA region driver.
 
-I'd probably prefer the first variant, but the last part of the question Miklos
-asked
-> Okay, so ->open() is a file op, and file ops should use file->f_cred,
-> but how are we going to enforce this?
-is not trivial - how do we find the places where that kind of thing happens and
-what do we do in the meanwhile?  I don't see any quick answers - any suggestions
-would be very welcome.  It's not just direct current_cred() callers; that stuff
-gets called deep in call chains.  And lifting it all the way up means a lot of
-methods that need to get an explicit struct cred * argument.  Are you OK with
-going in that direction?
+>> >> >> >
+>> >> >> > We can fix this function by just replacing the argument from
+>> >> >> > 'device' to 'fpga_manager' (the one returned by create() ).
+>> >> >>
+>> >> >> At first thought, that's what I'd want.
+>> >> >>
+>> >> >> > Alternatively, we
+>> >> >> > can add an 'owner' field in "struct fpga_manager_ops" and
+>> >> >> > 'get'
+>> >> >> > it
+>> >> >> > when we use it. Or again, just an 'owner' argument in the
+>> >> >> > create()
+>> >> >> > function.
+>> >> >>
+>> >> >> It seems like we shouldn't have to do that.
+>> >> >
+>> >> > Why?
+>> >>
+>> >> OK yes, I agree; the kernel has a lot of examples of doing this.
+>> >>
+>> >> I'll have to play with it, I'll probably add the owner arg to the
+>> >> create function, add owner to struct fpga_manager, and save.
+>> >
+>> > I have two though about this.
+>> >
+>> > 1. file_operation like approach. The onwer is associated to the
+>> > FPGA manager operation. Whenever the FPGA manager wants to use an
+>> > operation it get/put the module owner of these operations
+>> > (because this is what we need to protect). With this the user is
+>> > not directly involved, read it as less code, less things to care
+>> > about. And probably there is no need for fpga_manager_get().
+>>
+>> How does try_module_get fit into this scheme?  I think this proposal
+>> #1 is missing the point of what the reference count increment is
+>> meant to do.  Or am I misunderstanding?  How does that keep the
+>> module from being unloaded 1/3 way through programming a FPGA?
+>> IIUC you are saying that the reference count would be incremented
+>> before doing the manager ops .write_init, then decremented again
+>> afterwards, incremented before each call to .write, decremented
+>> afterwards, then the same for .write_complete.
+>
+> I'm not saying to do module_get/put just around the mops->XXX(): it's
+> too much. Just where you have this comment:
+>
+> "This code assumes the caller got the mgr pointer from
+> of_fpga_mgr_get() or fpga_mgr_get()"
+>
+> Because, currently, it's here where we do module_get()
 
-I'm honestly not sure - it's not an attempt to maneuver you into changing your
-policy re ->write().  Do we care about ->f_cred at all and if we do, how do we
-get it consistent across the filesystems?  I'd buy "it's a weird and obscure thing"
-for overlayfs, but that example is on NFS...
+No it's not.
 
-We definitely do have bugs in that area - consider e.g.
-static int ecryptfs_threadfn(void *ignored)
-{
-        set_freezable();
-        while (1)  {
-                struct ecryptfs_open_req *req;
+fpga_mgr_get() or of_fpga_mgr_get() is called when the region is
+created such as in of-fpga-region's probe.  That way, as long as the
+region exists, the manager won't be unloaded.  If someone wants to
+start unloading modules, they need to unload higher level ones first,
+so they'll have to unload the region before mgr.
 
-                wait_event_freezable(
-                        ecryptfs_kthread_ctl.wait,
-                        (!list_empty(&ecryptfs_kthread_ctl.req_list)
-                         || kthread_should_stop()));
-                mutex_lock(&ecryptfs_kthread_ctl.mux);
-                if (ecryptfs_kthread_ctl.flags & ECRYPTFS_KTHREAD_ZOMBIE) {
-                        mutex_unlock(&ecryptfs_kthread_ctl.mux);
-                        goto out;
-                }
-                while (!list_empty(&ecryptfs_kthread_ctl.req_list)) {
-                        req = list_first_entry(&ecryptfs_kthread_ctl.req_list,
-                                               struct ecryptfs_open_req,
-                                               kthread_ctl_list);
-                        list_del(&req->kthread_ctl_list);
-                        *req->lower_file = dentry_open(&req->path,
-                                (O_RDWR | O_LARGEFILE), current_cred());
-                        complete(&req->done);
-                }
-                mutex_unlock(&ecryptfs_kthread_ctl.mux);
-        }
-out:
-        return 0;
-}
+>
+> Most mops are invoked within a set of static functions which are
+> called only by few exported functions. I'm suggesting to do
+> module_get/put in those exported function at the beginning (get) and
+> and the end (put) because we know that within these functions, here
+> and there, we will use mops which are owned by a different module.
+> We do not want the module owner of the mops to disappear while someone
+> is doing fpga_mgr_load(). For example, inside fpga_mgr_load() we use
+> most of the mops, so we 'get' the module at the beginning and 'put' it
+> at the end. The same for fpga_region_program_fpga().
 
-It's a kernel thread, so current_cred() looks bogus...
+If we do it the way you are suggesting, then someone can unload the
+manager module without unloading the region.  The region code will be
+in for a nasty surprise when programming is attempted.
+
+> Like this we do not have to ask users to do fpga_mgr_get()/put().
+
+The only user who has to do this is a region's probe function.
+
+I'm assuming that only fpga_region is using fpga_mgr_load() and
+anybody who is creating a region uses fpga_region_program_fpga().
+That's what I want to encourage anyway.  I should probably move
+fpga_mgr_load to a private header.
+
+>
+> <Parenthesis>
+> fpga_region_program_fpga() does not do (today) fpga_mgr_get() because
+> it assumes, but it is not enforced, that both fpga_region and fpga_mgr
+> are child of the same device.
+
+fpga_region_program_fpga() doesn't do fpga_mgr_get() becuase
+fpga_mgr_get() happens when the fpga_region probes.  The assumption I
+am making is that nobody other than a region is calling
+fpga_manager_load().  I should create a fpga_private.h and move
+fpga_manager_load() out of fpga-mgr.h to make that official.
+
+> Probably this is true 99.99% of the
+> time.
+> Let me open in parallel another point: why fpga_region is not a child
+> of fpga_manager?
+
+FPGA regions are children of FPGA bridges.
+
+Alan
