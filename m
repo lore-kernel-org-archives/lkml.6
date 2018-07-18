@@ -2,592 +2,164 @@ Return-Path: <SRS0=35zj=KC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754B5ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0911ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15EF9206B7
-	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:49:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ox6/x3Sv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15EF9206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 8121F206B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 18 Jul 2018 11:50:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8121F206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbeGRM07 (ORCPT
+        id S1729325AbeGRM2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 08:26:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730774AbeGRM07 (ORCPT
+        Wed, 18 Jul 2018 08:28:08 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:45381 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbeGRM2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 08:26:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=a8V9YsEltDDWFkBpOCUV27MGL2yKz38/13DzVMVEbJk=; b=ox6/x3SvyjdN2a+bTBR4DEgkY
-        RXQEKCQprhkEMvAXdAqmraxt8X9t1IHIcyZCBNrCOLv5CkVHAKImNBVxVxyhA01oJi+AwD9+hbHCx
-        aFe5BYVic0GK7/CUwlldfrdlSp6ACig42eNGPN75pVRz2HepTbM5BuymCEduX0g7POkpN+3yDxrbS
-        wZcIvaVcLt69SCtWZk8yIkisbUQnyjAqqmT6QjmczgyNn0wMsLby67/vCFEQsWYgz9PXKkGV9qd/r
-        1O04Ic0Wfv4ilAhmYybn2sjoNWaiYTsEOqj8ZWgdW8QS+kLhqIS4iRlDKOg7zXhxzdkJ9B9iZQzUx
-        pe+yMIf5A==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ffkxF-0001Ro-Ic; Wed, 18 Jul 2018 11:49:13 +0000
-Date:   Wed, 18 Jul 2018 04:49:13 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Greg Kurz <groug@kaod.org>, v9fs-developer@lists.sourceforge.net,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] 9p: Use a slab for allocating requests
-Message-ID: <20180718114913.GA4949@bombadil.infradead.org>
-References: <20180711210225.19730-1-willy@infradead.org>
- <20180711210225.19730-6-willy@infradead.org>
- <20180718100554.GA21781@nautica>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180718100554.GA21781@nautica>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 18 Jul 2018 08:28:08 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MUjoe-1fY6V828xY-00YAUg; Wed, 18 Jul 2018 13:50:22 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     akpm@linux-foundation.org, Evgeniy Dushistov <dushistov@mail.ru>
+Cc:     viro@zeniv.linux.org.uk, y2038@lists.linaro.org,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        David Windsor <dave@nullcore.net>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] [RESEND] ufs: use ktime_get_real_seconds for sb and cg timestamps
+Date:   Wed, 18 Jul 2018 13:49:24 +0200
+Message-Id: <20180718115017.742609-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:uzKXm1YigPEMvmdjHlAyGCUK5yH9uK2elhy5sLfEGSW6oMXuGv7
+ NED5zFxCWkbLOAbWUCE+4sIHOVuGY/y3Wr3lbvCzIKiX6Q1HBcQu94NcuYJjDu0fXPdgBg3
+ hPC0dn/zyq7lMUGBQBsQxm3wFrUNcOR36iKycDn0KHVZasgQvN+F9hScsyJ6F8pHB/mFxso
+ O74XPLbK/mx20+SlodhDw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WE5naEZegOY=:aWCsXwLuHdd44LJvqwk7ml
+ M34TTDLnmeed8ldeN1YEEUTAohHGG4K8LvA101QFKfxWr8p8qx/DhfYHWffrBM7eTZKPYlaHn
+ mTWt3VI8uMC+hNci9JLKPd0cosQuk1au5ZizNE3SL3fLJB8fAsNBzZJZP7pdo5vma36Z9ZYsx
+ JX3habK0fYs2bcSRFUPu+qqnCsUGv3VZX5VigXye4sQyMbzYSudgqCMwTuAyM0JauPJh7I2Vi
+ VYSyxctxOJ+ZUj9ucgsPQhAGQuxJfRFDDAnSR8z6fXpSuT5Cz4hKFxJm9ImcJEDaypIl4ObYC
+ ES6JXtbHRE9rYsKloD0Tf1oOAM1UtFK24kOeynSRdqIP9/a0Ezy00l2zghLPS4gafBaz2BhOZ
+ 15t2D0Nr3Bhr0feA47U1qEEiP3jaStvoTfkSgrj80TE5PjmZ4i33NUUXfIVqbBymCQ47dISkn
+ NwNcGDs3QPKEkh7KebfEQax+Oa51gNK7YHH+XH0u52qsx+CD9YuJMugh6DSGxnrjJ4xeEBnso
+ Gjln/rdy/LIxw7UMtAEoNVc+SFlgrym0YTdzAz4GK5ryYexHymDVUw3GB1BjDxA1eu+jamuAh
+ TieHrNdd+V3z4wh9ozMkE1Xru5O90OPEpUuyH4vcZes18hx7/HEzNoYI+3ypaBzgSDXMXk81Y
+ h1l+m4M7e05bBUPtupahjzugTiGA5v2xiEbZ5dc5egPYK5RNTwClY+5kg3903wzqX4dY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 12:05:54PM +0200, Dominique Martinet wrote:
-> +Cc Greg, I could use your opinion on this if you have a moment.
-> 
-> Matthew Wilcox wrote on Wed, Jul 11, 2018:
-> > Replace the custom batch allocation with a slab.  Use an IDR to store
-> > pointers to the active requests instead of an array.  We don't try to
-> > handle P9_NOTAG specially; the IDR will happily shrink all the way back
-> > once the TVERSION call has completed.
-> 
-> Sorry for coming back to this patch now, I just noticed something that's
-> actually probably a fairly big hit on performance...
-> 
-> While the slab is just as good as the array for the request itself, this
-> makes every single request allocate "fcalls" everytime instead of
-> reusing a cached allocation.
-> The default msize is 8k and these allocs probably are fairly efficient,
-> but some transports like RDMA allow to increase this to up to 1MB... And
-> doing this kind of allocation twice for every packet is going to be very
-> slow.
-> (not that hogging megabytes of memory was a great practice either!)
-> 
-> 
-> One thing is that the buffers are all going to be the same size for a
-> given client (.... except virtio zc buffers, I wonder what I'm missing
-> or why that didn't blow up before?)
-> Err, that aside I was going to ask if we couldn't find a way to keep a
-> pool of these somehow.
-> Ideally putting them in another slab so they could be reclaimed if
-> necessary, but the size could vary from one client to another, can we
-> create a kmem_cache object per client? the KMEM_CACHE macro is not very
-> flexible so I don't think that is encouraged... :)
-> 
-> 
-> It's a shame because I really like that patch, I'll try to find time to
-> run some light benchmark with varying msizes eventually but I'm not sure
-> when I'll find time for that... Hopefully before the 4.19 merge window!
+get_seconds() is deprecated because of the 32-bit overflow and will
+be removed. All callers in ufs also truncate to a 32-bit number, so
+nothing changes during the conversion, but this should be harmless as the
+superblock and cylinder group timestamps are not visible to user space,
+except for checking the fs-dirty state, wich works fine across the
+overflow.
 
-I must admit to having not looked at the fcall aspect of this.  kmalloc
-is implemented in terms of slab, so it's not going to be much slower than
-using a dedicatd slab (a few instructions to figure out which slab cache
-to use).
+This moves the call to get_seconds() into a new inline function, with
+a comment explaining the constraints, while converting it to
+ktime_get_real_seconds().
 
-What would help is splitting the p9_fcall struct from the alloc_size.
-kmalloc is pretty effective at allocating power-of-two sized structures,
-and 8k + 32 bytes is approximately the worst case scenario.  I'd do this
-by embedding the p9_fcall into the p9_req_t and only allocating the
-msize, like this:
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Originally sent on June 19, got an Ack but nobody picked up the
+patch.
+---
+ fs/ufs/balloc.c |  4 ++--
+ fs/ufs/ialloc.c |  2 +-
+ fs/ufs/super.c  |  4 ++--
+ fs/ufs/util.h   | 14 ++++++++++++++
+ 4 files changed, 19 insertions(+), 5 deletions(-)
 
-(I only converted client.c to the new embedded fcall way; all the
-transports also need massaging)
-
-Regardless of whether any of the other patches go in, this patch is
-worth having; it's really wasting slab allocator memory.
-
-diff --git a/include/net/9p/client.h b/include/net/9p/client.h
-index a4dc42c53d18..4b4ac1362ad5 100644
---- a/include/net/9p/client.h
-+++ b/include/net/9p/client.h
-@@ -95,8 +95,8 @@ struct p9_req_t {
- 	int status;
- 	int t_err;
- 	wait_queue_head_t wq;
--	struct p9_fcall *tc;
--	struct p9_fcall *rc;
-+	struct p9_fcall tc;
-+	struct p9_fcall rc;
- 	void *aux;
- 	struct list_head req_list;
- };
-diff --git a/net/9p/client.c b/net/9p/client.c
-index ecf5dd269f4c..058dfbebdaa2 100644
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -230,15 +230,13 @@ static int parse_opts(char *opts, struct p9_client *clnt)
- 	return ret;
- }
+diff --git a/fs/ufs/balloc.c b/fs/ufs/balloc.c
+index e727ee07dbe4..075d3d9114c8 100644
+--- a/fs/ufs/balloc.c
++++ b/fs/ufs/balloc.c
+@@ -547,7 +547,7 @@ static u64 ufs_add_fragments(struct inode *inode, u64 fragment,
+ 	/*
+ 	 * Block can be extended
+ 	 */
+-	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
++	ucg->cg_time = ufs_get_seconds(sb);
+ 	for (i = newcount; i < (uspi->s_fpb - fragoff); i++)
+ 		if (ubh_isclr (UCPI_UBH(ucpi), ucpi->c_freeoff, fragno + i))
+ 			break;
+@@ -639,7 +639,7 @@ static u64 ufs_alloc_fragments(struct inode *inode, unsigned cgno,
+ 	if (!ufs_cg_chkmagic(sb, ucg)) 
+ 		ufs_panic (sb, "ufs_alloc_fragments",
+ 			"internal error, bad magic number on cg %u", cgno);
+-	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
++	ucg->cg_time = ufs_get_seconds(sb);
  
--static struct p9_fcall *p9_fcall_alloc(int alloc_msize)
-+static int p9_fcall_alloc(struct p9_fcall *fc, int alloc_msize)
- {
--	struct p9_fcall *fc;
--	fc = kmalloc(sizeof(struct p9_fcall) + alloc_msize, GFP_NOFS);
--	if (!fc)
--		return NULL;
-+	fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
-+	if (!fc->sdata)
-+		return -ENOMEM;
- 	fc->capacity = alloc_msize;
--	fc->sdata = (char *) fc + sizeof(struct p9_fcall);
--	return fc;
-+	return 0;
- }
+ 	if (count == uspi->s_fpb) {
+ 		result = ufs_alloccg_block (inode, ucpi, goal, err);
+diff --git a/fs/ufs/ialloc.c b/fs/ufs/ialloc.c
+index e1ef0f0a1353..c678fff2a04d 100644
+--- a/fs/ufs/ialloc.c
++++ b/fs/ufs/ialloc.c
+@@ -89,7 +89,7 @@ void ufs_free_inode (struct inode * inode)
+ 	if (!ufs_cg_chkmagic(sb, ucg))
+ 		ufs_panic (sb, "ufs_free_fragments", "internal error, bad cg magic number");
  
- static struct kmem_cache *p9_req_cache;
-@@ -262,13 +260,13 @@ p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
- 	if (!req)
- 		return NULL;
+-	ucg->cg_time = cpu_to_fs32(sb, get_seconds());
++	ucg->cg_time = ufs_get_seconds(sb);
  
--	req->tc = p9_fcall_alloc(alloc_msize);
--	req->rc = p9_fcall_alloc(alloc_msize);
--	if (!req->tc || !req->rc)
-+	if (p9_fcall_alloc(&req->tc, alloc_msize))
-+		goto free;
-+	if (p9_fcall_alloc(&req->rc, alloc_msize))
- 		goto free;
+ 	is_directory = S_ISDIR(inode->i_mode);
  
--	p9pdu_reset(req->tc);
--	p9pdu_reset(req->rc);
-+	p9pdu_reset(&req->tc);
-+	p9pdu_reset(&req->rc);
- 	req->status = REQ_STATUS_ALLOC;
- 	init_waitqueue_head(&req->wq);
- 	INIT_LIST_HEAD(&req->req_list);
-@@ -280,7 +278,7 @@ p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
- 				GFP_NOWAIT);
+diff --git a/fs/ufs/super.c b/fs/ufs/super.c
+index 96a20a76e3c4..f48a5b802221 100644
+--- a/fs/ufs/super.c
++++ b/fs/ufs/super.c
+@@ -698,7 +698,7 @@ static int ufs_sync_fs(struct super_block *sb, int wait)
+ 	usb1 = ubh_get_usb_first(uspi);
+ 	usb3 = ubh_get_usb_third(uspi);
+ 
+-	usb1->fs_time = cpu_to_fs32(sb, get_seconds());
++	usb1->fs_time = ufs_get_seconds(sb);
+ 	if ((flags & UFS_ST_MASK) == UFS_ST_SUN  ||
+ 	    (flags & UFS_ST_MASK) == UFS_ST_SUNOS ||
+ 	    (flags & UFS_ST_MASK) == UFS_ST_SUNx86)
+@@ -1344,7 +1344,7 @@ static int ufs_remount (struct super_block *sb, int *mount_flags,
+ 	 */
+ 	if (*mount_flags & SB_RDONLY) {
+ 		ufs_put_super_internal(sb);
+-		usb1->fs_time = cpu_to_fs32(sb, get_seconds());
++		usb1->fs_time = ufs_get_seconds(sb);
+ 		if ((flags & UFS_ST_MASK) == UFS_ST_SUN
+ 		  || (flags & UFS_ST_MASK) == UFS_ST_SUNOS
+ 		  || (flags & UFS_ST_MASK) == UFS_ST_SUNx86) 
+diff --git a/fs/ufs/util.h b/fs/ufs/util.h
+index 1907be6d5808..1fd3011ea623 100644
+--- a/fs/ufs/util.h
++++ b/fs/ufs/util.h
+@@ -590,3 +590,17 @@ static inline int ufs_is_data_ptr_zero(struct ufs_sb_private_info *uspi,
  	else
- 		tag = idr_alloc(&c->reqs, req, 0, P9_NOTAG, GFP_NOWAIT);
--	req->tc->tag = tag;
-+	req->tc.tag = tag;
- 	spin_unlock_irq(&c->lock);
- 	idr_preload_end();
- 	if (tag < 0)
-@@ -289,8 +287,8 @@ p9_tag_alloc(struct p9_client *c, int8_t type, unsigned int max_size)
- 	return req;
- 
- free:
--	kfree(req->tc);
--	kfree(req->rc);
-+	kfree(req->tc.sdata);
-+	kfree(req->rc.sdata);
- 	kmem_cache_free(p9_req_cache, req);
- 	return ERR_PTR(-ENOMEM);
+ 		return *(__fs32 *)p == 0;
  }
-@@ -329,14 +327,14 @@ EXPORT_SYMBOL(p9_tag_lookup);
- static void p9_free_req(struct p9_client *c, struct p9_req_t *r)
- {
- 	unsigned long flags;
--	u16 tag = r->tc->tag;
-+	u16 tag = r->tc.tag;
- 
- 	p9_debug(P9_DEBUG_MUX, "clnt %p req %p tag: %d\n", c, r, tag);
- 	spin_lock_irqsave(&c->lock, flags);
- 	idr_remove(&c->reqs, tag);
- 	spin_unlock_irqrestore(&c->lock, flags);
--	kfree(r->tc);
--	kfree(r->rc);
-+	kfree(r->tc.sdata);
-+	kfree(r->rc.sdata);
- 	kmem_cache_free(p9_req_cache, r);
- }
- 
-@@ -368,7 +366,7 @@ static void p9_tag_cleanup(struct p9_client *c)
-  */
- void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status)
- {
--	p9_debug(P9_DEBUG_MUX, " tag %d\n", req->tc->tag);
-+	p9_debug(P9_DEBUG_MUX, " tag %d\n", req->tc.tag);
- 
- 	/*
- 	 * This barrier is needed to make sure any change made to req before
-@@ -378,7 +376,7 @@ void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status)
- 	req->status = status;
- 
- 	wake_up(&req->wq);
--	p9_debug(P9_DEBUG_MUX, "wakeup: %d\n", req->tc->tag);
-+	p9_debug(P9_DEBUG_MUX, "wakeup: %d\n", req->tc.tag);
- }
- EXPORT_SYMBOL(p9_client_cb);
- 
-@@ -448,12 +446,12 @@ static int p9_check_errors(struct p9_client *c, struct p9_req_t *req)
- 	int err;
- 	int ecode;
- 
--	err = p9_parse_header(req->rc, NULL, &type, NULL, 0);
-+	err = p9_parse_header(&req->rc, NULL, &type, NULL, 0);
- 	/*
- 	 * dump the response from server
- 	 * This should be after check errors which poplulate pdu_fcall.
- 	 */
--	trace_9p_protocol_dump(c, req->rc);
-+	trace_9p_protocol_dump(c, &req->rc);
- 	if (err) {
- 		p9_debug(P9_DEBUG_ERROR, "couldn't parse header %d\n", err);
- 		return err;
-@@ -463,7 +461,7 @@ static int p9_check_errors(struct p9_client *c, struct p9_req_t *req)
- 
- 	if (!p9_is_proto_dotl(c)) {
- 		char *ename;
--		err = p9pdu_readf(req->rc, c->proto_version, "s?d",
-+		err = p9pdu_readf(&req->rc, c->proto_version, "s?d",
- 				  &ename, &ecode);
- 		if (err)
- 			goto out_err;
-@@ -479,7 +477,7 @@ static int p9_check_errors(struct p9_client *c, struct p9_req_t *req)
- 		}
- 		kfree(ename);
- 	} else {
--		err = p9pdu_readf(req->rc, c->proto_version, "d", &ecode);
-+		err = p9pdu_readf(&req->rc, c->proto_version, "d", &ecode);
- 		err = -ecode;
- 
- 		p9_debug(P9_DEBUG_9P, "<<< RLERROR (%d)\n", -ecode);
-@@ -513,12 +511,12 @@ static int p9_check_zc_errors(struct p9_client *c, struct p9_req_t *req,
- 	int8_t type;
- 	char *ename = NULL;
- 
--	err = p9_parse_header(req->rc, NULL, &type, NULL, 0);
-+	err = p9_parse_header(&req->rc, NULL, &type, NULL, 0);
- 	/*
- 	 * dump the response from server
- 	 * This should be after parse_header which poplulate pdu_fcall.
- 	 */
--	trace_9p_protocol_dump(c, req->rc);
-+	trace_9p_protocol_dump(c, &req->rc);
- 	if (err) {
- 		p9_debug(P9_DEBUG_ERROR, "couldn't parse header %d\n", err);
- 		return err;
-@@ -533,13 +531,13 @@ static int p9_check_zc_errors(struct p9_client *c, struct p9_req_t *req,
- 		/* 7 = header size for RERROR; */
- 		int inline_len = in_hdrlen - 7;
- 
--		len =  req->rc->size - req->rc->offset;
-+		len = req->rc.size - req->rc.offset;
- 		if (len > (P9_ZC_HDR_SZ - 7)) {
- 			err = -EFAULT;
- 			goto out_err;
- 		}
- 
--		ename = &req->rc->sdata[req->rc->offset];
-+		ename = &req->rc.sdata[req->rc.offset];
- 		if (len > inline_len) {
- 			/* We have error in external buffer */
- 			if (!copy_from_iter_full(ename + inline_len,
-@@ -549,7 +547,7 @@ static int p9_check_zc_errors(struct p9_client *c, struct p9_req_t *req,
- 			}
- 		}
- 		ename = NULL;
--		err = p9pdu_readf(req->rc, c->proto_version, "s?d",
-+		err = p9pdu_readf(&req->rc, c->proto_version, "s?d",
- 				  &ename, &ecode);
- 		if (err)
- 			goto out_err;
-@@ -565,7 +563,7 @@ static int p9_check_zc_errors(struct p9_client *c, struct p9_req_t *req,
- 		}
- 		kfree(ename);
- 	} else {
--		err = p9pdu_readf(req->rc, c->proto_version, "d", &ecode);
-+		err = p9pdu_readf(&req->rc, c->proto_version, "d", &ecode);
- 		err = -ecode;
- 
- 		p9_debug(P9_DEBUG_9P, "<<< RLERROR (%d)\n", -ecode);
-@@ -598,7 +596,7 @@ static int p9_client_flush(struct p9_client *c, struct p9_req_t *oldreq)
- 	int16_t oldtag;
- 	int err;
- 
--	err = p9_parse_header(oldreq->tc, NULL, NULL, &oldtag, 1);
-+	err = p9_parse_header(&oldreq->tc, NULL, NULL, &oldtag, 1);
- 	if (err)
- 		return err;
- 
-@@ -642,12 +640,12 @@ static struct p9_req_t *p9_client_prepare_req(struct p9_client *c,
- 		return req;
- 
- 	/* marshall the data */
--	p9pdu_prepare(req->tc, req->tc->tag, type);
--	err = p9pdu_vwritef(req->tc, c->proto_version, fmt, ap);
-+	p9pdu_prepare(&req->tc, req->tc.tag, type);
-+	err = p9pdu_vwritef(&req->tc, c->proto_version, fmt, ap);
- 	if (err)
- 		goto reterr;
--	p9pdu_finalize(c, req->tc);
--	trace_9p_client_req(c, type, req->tc->tag);
-+	p9pdu_finalize(c, &req->tc);
-+	trace_9p_client_req(c, type, req->tc.tag);
- 	return req;
- reterr:
- 	p9_free_req(c, req);
-@@ -732,7 +730,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
- 		goto reterr;
- 
- 	err = p9_check_errors(c, req);
--	trace_9p_client_res(c, type, req->rc->tag, err);
-+	trace_9p_client_res(c, type, req->rc.tag, err);
- 	if (!err)
- 		return req;
- reterr:
-@@ -814,7 +812,7 @@ static struct p9_req_t *p9_client_zc_rpc(struct p9_client *c, int8_t type,
- 		goto reterr;
- 
- 	err = p9_check_zc_errors(c, req, uidata, in_hdrlen);
--	trace_9p_client_res(c, type, req->rc->tag, err);
-+	trace_9p_client_res(c, type, req->rc.tag, err);
- 	if (!err)
- 		return req;
- reterr:
-@@ -897,10 +895,10 @@ static int p9_client_version(struct p9_client *c)
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	err = p9pdu_readf(req->rc, c->proto_version, "ds", &msize, &version);
-+	err = p9pdu_readf(&req->rc, c->proto_version, "ds", &msize, &version);
- 	if (err) {
- 		p9_debug(P9_DEBUG_9P, "version error %d\n", err);
--		trace_9p_protocol_dump(c, req->rc);
-+		trace_9p_protocol_dump(c, &req->rc);
- 		goto error;
- 	}
- 
-@@ -1049,9 +1047,9 @@ struct p9_fid *p9_client_attach(struct p9_client *clnt, struct p9_fid *afid,
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "Q", &qid);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "Q", &qid);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		p9_free_req(clnt, req);
- 		goto error;
- 	}
-@@ -1106,9 +1104,9 @@ struct p9_fid *p9_client_walk(struct p9_fid *oldfid, uint16_t nwname,
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "R", &nwqids, &wqids);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "R", &nwqids, &wqids);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		p9_free_req(clnt, req);
- 		goto clunk_fid;
- 	}
-@@ -1173,9 +1171,9 @@ int p9_client_open(struct p9_fid *fid, int mode)
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "Qd", &qid, &iounit);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "Qd", &qid, &iounit);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto free_and_error;
- 	}
- 
-@@ -1217,9 +1215,9 @@ int p9_client_create_dotl(struct p9_fid *ofid, const char *name, u32 flags, u32
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "Qd", qid, &iounit);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "Qd", qid, &iounit);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto free_and_error;
- 	}
- 
-@@ -1262,9 +1260,9 @@ int p9_client_fcreate(struct p9_fid *fid, const char *name, u32 perm, int mode,
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "Qd", &qid, &iounit);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "Qd", &qid, &iounit);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto free_and_error;
- 	}
- 
-@@ -1301,9 +1299,9 @@ int p9_client_symlink(struct p9_fid *dfid, const char *name,
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "Q", qid);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "Q", qid);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto free_and_error;
- 	}
- 
-@@ -1499,10 +1497,10 @@ p9_client_read(struct p9_fid *fid, u64 offset, struct iov_iter *to, int *err)
- 			break;
- 		}
- 
--		*err = p9pdu_readf(req->rc, clnt->proto_version,
-+		*err = p9pdu_readf(&req->rc, clnt->proto_version,
- 				   "D", &count, &dataptr);
- 		if (*err) {
--			trace_9p_protocol_dump(clnt, req->rc);
-+			trace_9p_protocol_dump(clnt, &req->rc);
- 			p9_free_req(clnt, req);
- 			break;
- 		}
-@@ -1572,9 +1570,9 @@ p9_client_write(struct p9_fid *fid, u64 offset, struct iov_iter *from, int *err)
- 			break;
- 		}
- 
--		*err = p9pdu_readf(req->rc, clnt->proto_version, "d", &count);
-+		*err = p9pdu_readf(&req->rc, clnt->proto_version, "d", &count);
- 		if (*err) {
--			trace_9p_protocol_dump(clnt, req->rc);
-+			trace_9p_protocol_dump(clnt, &req->rc);
- 			p9_free_req(clnt, req);
- 			break;
- 		}
-@@ -1616,9 +1614,9 @@ struct p9_wstat *p9_client_stat(struct p9_fid *fid)
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "wS", &ignored, ret);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "wS", &ignored, ret);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		p9_free_req(clnt, req);
- 		goto error;
- 	}
-@@ -1669,9 +1667,9 @@ struct p9_stat_dotl *p9_client_getattr_dotl(struct p9_fid *fid,
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "A", ret);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "A", ret);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		p9_free_req(clnt, req);
- 		goto error;
- 	}
-@@ -1821,11 +1819,11 @@ int p9_client_statfs(struct p9_fid *fid, struct p9_rstatfs *sb)
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "ddqqqqqqd", &sb->type,
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "ddqqqqqqd", &sb->type,
- 		&sb->bsize, &sb->blocks, &sb->bfree, &sb->bavail,
- 		&sb->files, &sb->ffree, &sb->fsid, &sb->namelen);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		p9_free_req(clnt, req);
- 		goto error;
- 	}
-@@ -1929,9 +1927,9 @@ struct p9_fid *p9_client_xattrwalk(struct p9_fid *file_fid,
- 		err = PTR_ERR(req);
- 		goto error;
- 	}
--	err = p9pdu_readf(req->rc, clnt->proto_version, "q", attr_size);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "q", attr_size);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		p9_free_req(clnt, req);
- 		goto clunk_fid;
- 	}
-@@ -2017,9 +2015,9 @@ int p9_client_readdir(struct p9_fid *fid, char *data, u32 count, u64 offset)
- 		goto error;
- 	}
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "D", &count, &dataptr);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "D", &count, &dataptr);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto free_and_error;
- 	}
- 	if (rsize < count) {
-@@ -2058,9 +2056,9 @@ int p9_client_mknod_dotl(struct p9_fid *fid, const char *name, int mode,
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "Q", qid);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "Q", qid);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto error;
- 	}
- 	p9_debug(P9_DEBUG_9P, "<<< RMKNOD qid %x.%llx.%x\n", qid->type,
-@@ -2089,9 +2087,9 @@ int p9_client_mkdir_dotl(struct p9_fid *fid, const char *name, int mode,
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "Q", qid);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "Q", qid);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto error;
- 	}
- 	p9_debug(P9_DEBUG_9P, "<<< RMKDIR qid %x.%llx.%x\n", qid->type,
-@@ -2124,9 +2122,9 @@ int p9_client_lock_dotl(struct p9_fid *fid, struct p9_flock *flock, u8 *status)
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "b", status);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "b", status);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto error;
- 	}
- 	p9_debug(P9_DEBUG_9P, "<<< RLOCK status %i\n", *status);
-@@ -2155,11 +2153,11 @@ int p9_client_getlock_dotl(struct p9_fid *fid, struct p9_getlock *glock)
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "bqqds", &glock->type,
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "bqqds", &glock->type,
- 			&glock->start, &glock->length, &glock->proc_id,
- 			&glock->client_id);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto error;
- 	}
- 	p9_debug(P9_DEBUG_9P, "<<< RGETLOCK type %i start %lld length %lld "
-@@ -2185,9 +2183,9 @@ int p9_client_readlink(struct p9_fid *fid, char **target)
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	err = p9pdu_readf(req->rc, clnt->proto_version, "s", target);
-+	err = p9pdu_readf(&req->rc, clnt->proto_version, "s", target);
- 	if (err) {
--		trace_9p_protocol_dump(clnt, req->rc);
-+		trace_9p_protocol_dump(clnt, &req->rc);
- 		goto error;
- 	}
- 	p9_debug(P9_DEBUG_9P, "<<< RREADLINK target %s\n", *target);
++
++static inline __fs32 ufs_get_seconds(struct super_block *sbp)
++{
++	time64_t now = ktime_get_real_seconds();
++
++	/* Signed 32-bit interpretation wraps around in 2038, which
++	 * happens in ufs1 inode stamps but not ufs2 using 64-bits
++	 * stamps. For superblock and blockgroup, let's assume
++	 * unsigned 32-bit stamps, which are good until y2106.
++	 * Wrap around rather than clamp here to make the dirty
++	 * file system detection work in the superblock stamp.
++	 */
++	return cpu_to_fs32(sbp, lower_32_bits(now));
++}
+-- 
+2.9.0
+
