@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFF0ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4503ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60FC42084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:31:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60FC42084C
+	by mail.kernel.org (Postfix) with ESMTP id 6E43020671
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:31:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E43020671
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbeGSXQd (ORCPT
+        id S1731364AbeGSXRD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:16:33 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57239 "EHLO
+        Thu, 19 Jul 2018 19:17:03 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:44623 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730315AbeGSXQd (ORCPT
+        with ESMTP id S1730369AbeGSXRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:16:33 -0400
+        Thu, 19 Jul 2018 19:17:03 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMVHrT2439532
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMVlTV2439590
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 15:31:17 -0700
+        Thu, 19 Jul 2018 15:31:47 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMVHlx2439529;
-        Thu, 19 Jul 2018 15:31:17 -0700
-Date:   Thu, 19 Jul 2018 15:31:17 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMVlhd2439587;
+        Thu, 19 Jul 2018 15:31:47 -0700
+Date:   Thu, 19 Jul 2018 15:31:47 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Pavel Tatashin <tipbot@zytor.com>
-Message-ID: <tip-cf7a63ef4e0203f6f33284c69e8188d91422de83@git.kernel.org>
-Cc:     pasha.tatashin@oracle.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, mingo@kernel.org
-Reply-To: pasha.tatashin@oracle.com, mingo@kernel.org, hpa@zytor.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20180719205545.16512-20-pasha.tatashin@oracle.com>
-References: <20180719205545.16512-20-pasha.tatashin@oracle.com>
+Message-ID: <tip-e2a9ca29b5edc89da2fddeae30e1070b272395c5@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, pasha.tatashin@oracle.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com,
+          pasha.tatashin@oracle.com, mingo@kernel.org, tglx@linutronix.de
+In-Reply-To: <20180719205545.16512-21-pasha.tatashin@oracle.com>
+References: <20180719205545.16512-21-pasha.tatashin@oracle.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/tsc: Calibrate tsc only once
-Git-Commit-ID: cf7a63ef4e0203f6f33284c69e8188d91422de83
+Subject: [tip:x86/timers] x86/tsc: Initialize cyc2ns when tsc frequency is
+ determined
+Git-Commit-ID: e2a9ca29b5edc89da2fddeae30e1070b272395c5
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,25 +57,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cf7a63ef4e0203f6f33284c69e8188d91422de83
-Gitweb:     https://git.kernel.org/tip/cf7a63ef4e0203f6f33284c69e8188d91422de83
+Commit-ID:  e2a9ca29b5edc89da2fddeae30e1070b272395c5
+Gitweb:     https://git.kernel.org/tip/e2a9ca29b5edc89da2fddeae30e1070b272395c5
 Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
-AuthorDate: Thu, 19 Jul 2018 16:55:38 -0400
+AuthorDate: Thu, 19 Jul 2018 16:55:39 -0400
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 20 Jul 2018 00:02:42 +0200
 
-x86/tsc: Calibrate tsc only once
+x86/tsc: Initialize cyc2ns when tsc frequency is determined
 
-During boot tsc is calibrated twice: once in tsc_early_delay_calibrate(),
-and the second time in tsc_init().
+cyc2ns converts tsc to nanoseconds, and it is handled in a per-cpu data
+structure.
 
-Rename tsc_early_delay_calibrate() to tsc_early_init(), and rework it so
-the calibration is done only early, and make tsc_init() to use the values
-already determined in tsc_early_init().
+Currently, the setup code for c2ns data for every possible CPU goes through
+the same sequence of calculations as for the boot CPU, but is based on the
+same tsc frequency as the boot CPU, and thus this is not necessary.
 
-Sometimes it is not possible to determine tsc early, as the subsystem that
-is required is not yet initialized, in such case try again later in
-tsc_init().
+Initialize the boot cpu when tsc frequency is determined. Copy the
+calculated data from the boot CPU to the other CPUs in tsc_init().
+
+In addition do the following:
+
+ - Remove unnecessary zeroing of c2ns data by removing cyc2ns_data_init()
+
+ - Split set_cyc2ns_scale() into two functions, so set_cyc2ns_scale() can be
+   called when system is up, and wraps around __set_cyc2ns_scale() that can
+   be called directly when system is booting but avoids saving restoring
+   IRQs and going and waking up from idle.
 
 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
@@ -97,169 +106,153 @@ Cc: linux-s390@vger.kernel.org
 Cc: boris.ostrovsky@oracle.com
 Cc: jgross@suse.com
 Cc: pbonzini@redhat.com
-Link: https://lkml.kernel.org/r/20180719205545.16512-20-pasha.tatashin@oracle.com
+Link: https://lkml.kernel.org/r/20180719205545.16512-21-pasha.tatashin@oracle.com
 
 ---
- arch/x86/include/asm/tsc.h |  2 +-
- arch/x86/kernel/setup.c    |  2 +-
- arch/x86/kernel/tsc.c      | 87 +++++++++++++++++++++++++---------------------
- 3 files changed, 49 insertions(+), 42 deletions(-)
+ arch/x86/kernel/tsc.c | 94 +++++++++++++++++++++++++++++----------------------
+ 1 file changed, 53 insertions(+), 41 deletions(-)
 
-diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
-index 2701d221583a..c4368ff73652 100644
---- a/arch/x86/include/asm/tsc.h
-+++ b/arch/x86/include/asm/tsc.h
-@@ -33,7 +33,7 @@ static inline cycles_t get_cycles(void)
- extern struct system_counterval_t convert_art_to_tsc(u64 art);
- extern struct system_counterval_t convert_art_ns_to_tsc(u64 art_ns);
- 
--extern void tsc_early_delay_calibrate(void);
-+extern void tsc_early_init(void);
- extern void tsc_init(void);
- extern void mark_tsc_unstable(char *reason);
- extern int unsynchronized_tsc(void);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 7490de925a81..5d32c55aeb8b 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1014,6 +1014,7 @@ void __init setup_arch(char **cmdline_p)
- 	 */
- 	init_hypervisor_platform();
- 
-+	tsc_early_init();
- 	x86_init.resources.probe_roms();
- 
- 	/* after parse_early_param, so could debug it */
-@@ -1199,7 +1200,6 @@ void __init setup_arch(char **cmdline_p)
- 
- 	memblock_find_dma_reserve();
- 
--	tsc_early_delay_calibrate();
- 	if (!early_xdbc_setup_hardware())
- 		early_xdbc_register_console();
- 
 diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 186395041725..4cab2236169e 100644
+index 4cab2236169e..7ea0718a4c75 100644
 --- a/arch/x86/kernel/tsc.c
 +++ b/arch/x86/kernel/tsc.c
-@@ -33,6 +33,8 @@ EXPORT_SYMBOL(cpu_khz);
- unsigned int __read_mostly tsc_khz;
- EXPORT_SYMBOL(tsc_khz);
- 
-+#define KHZ	1000
-+
- /*
-  * TSC can be unstable due to cpufreq or due to unsynced TSCs
+@@ -103,23 +103,6 @@ void cyc2ns_read_end(void)
+  *                      -johnstul@us.ibm.com "math is hard, lets go shopping!"
   */
-@@ -1335,34 +1337,10 @@ unreg:
-  */
- device_initcall(init_tsc_clocksource);
  
--void __init tsc_early_delay_calibrate(void)
+-static void cyc2ns_data_init(struct cyc2ns_data *data)
 -{
--	unsigned long lpj;
--
--	if (!boot_cpu_has(X86_FEATURE_TSC))
--		return;
--
--	cpu_khz = x86_platform.calibrate_cpu();
--	tsc_khz = x86_platform.calibrate_tsc();
--
--	tsc_khz = tsc_khz ? : cpu_khz;
--	if (!tsc_khz)
--		return;
--
--	lpj = tsc_khz * 1000;
--	do_div(lpj, HZ);
--	loops_per_jiffy = lpj;
+-	data->cyc2ns_mul = 0;
+-	data->cyc2ns_shift = 0;
+-	data->cyc2ns_offset = 0;
 -}
 -
--void __init tsc_init(void)
-+static bool __init determine_cpu_tsc_frequencies(void)
- {
--	u64 lpj, cyc;
--	int cpu;
+-static void __init cyc2ns_init(int cpu)
+-{
+-	struct cyc2ns *c2n = &per_cpu(cyc2ns, cpu);
 -
--	if (!boot_cpu_has(X86_FEATURE_TSC)) {
--		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
--		return;
--	}
-+	/* Make sure that cpu and tsc are not already calibrated */
-+	WARN_ON(cpu_khz || tsc_khz);
+-	cyc2ns_data_init(&c2n->data[0]);
+-	cyc2ns_data_init(&c2n->data[1]);
+-
+-	seqcount_init(&c2n->seq);
+-}
+-
+ static inline unsigned long long cycles_2_ns(unsigned long long cyc)
+ {
+ 	struct cyc2ns_data data;
+@@ -135,18 +118,11 @@ static inline unsigned long long cycles_2_ns(unsigned long long cyc)
+ 	return ns;
+ }
  
- 	cpu_khz = x86_platform.calibrate_cpu();
- 	tsc_khz = x86_platform.calibrate_tsc();
-@@ -1377,20 +1355,52 @@ void __init tsc_init(void)
- 	else if (abs(cpu_khz - tsc_khz) * 10 > tsc_khz)
- 		cpu_khz = tsc_khz;
+-static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
++static void __set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
+ {
+ 	unsigned long long ns_now;
+ 	struct cyc2ns_data data;
+ 	struct cyc2ns *c2n;
+-	unsigned long flags;
+-
+-	local_irq_save(flags);
+-	sched_clock_idle_sleep_event();
+-
+-	if (!khz)
+-		goto done;
  
--	if (!tsc_khz) {
--		mark_tsc_unstable("could not calculate TSC khz");
--		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
--		return;
--	}
-+	if (tsc_khz == 0)
-+		return false;
+ 	ns_now = cycles_2_ns(tsc_now);
  
- 	pr_info("Detected %lu.%03lu MHz processor\n",
--		(unsigned long)cpu_khz / 1000,
--		(unsigned long)cpu_khz % 1000);
-+		(unsigned long)cpu_khz / KHZ,
-+		(unsigned long)cpu_khz % KHZ);
- 
- 	if (cpu_khz != tsc_khz) {
- 		pr_info("Detected %lu.%03lu MHz TSC",
--			(unsigned long)tsc_khz / 1000,
--			(unsigned long)tsc_khz % 1000);
-+			(unsigned long)tsc_khz / KHZ,
-+			(unsigned long)tsc_khz % KHZ);
-+	}
-+	return true;
+@@ -178,12 +154,55 @@ static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_
+ 	c2n->data[0] = data;
+ 	raw_write_seqcount_latch(&c2n->seq);
+ 	c2n->data[1] = data;
 +}
 +
-+static unsigned long __init get_loops_per_jiffy(void)
++static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
 +{
-+	unsigned long lpj = tsc_khz * KHZ;
++	unsigned long flags;
 +
-+	do_div(lpj, HZ);
-+	return lpj;
++	local_irq_save(flags);
++	sched_clock_idle_sleep_event();
++
++	if (khz)
++		__set_cyc2ns_scale(khz, cpu, tsc_now);
+ 
+-done:
+ 	sched_clock_idle_wakeup_event();
+ 	local_irq_restore(flags);
+ }
+ 
++/*
++ * Initialize cyc2ns for boot cpu
++ */
++static void __init cyc2ns_init_boot_cpu(void)
++{
++	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
++
++	seqcount_init(&c2n->seq);
++	__set_cyc2ns_scale(tsc_khz, smp_processor_id(), rdtsc());
 +}
 +
-+void __init tsc_early_init(void)
++/*
++ * Secondary CPUs do not run through cyc2ns_init(), so set up
++ * all the scale factors for all CPUs, assuming the same
++ * speed as the bootup CPU. (cpufreq notifiers will fix this
++ * up if their speed diverges)
++ */
++static void __init cyc2ns_init_secondary_cpus(void)
 +{
-+	if (!boot_cpu_has(X86_FEATURE_TSC))
-+		return;
-+	if (!determine_cpu_tsc_frequencies())
-+		return;
-+	loops_per_jiffy = get_loops_per_jiffy();
-+}
++	unsigned int cpu, this_cpu = smp_processor_id();
++	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
++	struct cyc2ns_data *data = c2n->data;
 +
-+void __init tsc_init(void)
-+{
-+	if (!boot_cpu_has(X86_FEATURE_TSC)) {
-+		setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
-+		return;
-+	}
-+
-+	if (!tsc_khz) {
-+		/* We failed to determine frequencies earlier, try again */
-+		if (!determine_cpu_tsc_frequencies()) {
-+			mark_tsc_unstable("could not calculate TSC khz");
-+			setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
-+			return;
++	for_each_possible_cpu(cpu) {
++		if (cpu != this_cpu) {
++			seqcount_init(&c2n->seq);
++			c2n = per_cpu_ptr(&cyc2ns, cpu);
++			c2n->data[0] = data[0];
++			c2n->data[1] = data[1];
 +		}
++	}
++}
++
+ /*
+  * Scheduler clock - returns current time in nanosec units.
+  */
+@@ -1385,6 +1404,10 @@ void __init tsc_early_init(void)
+ 	if (!determine_cpu_tsc_frequencies())
+ 		return;
+ 	loops_per_jiffy = get_loops_per_jiffy();
++
++	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
++	tsc_store_and_check_tsc_adjust(true);
++	cyc2ns_init_boot_cpu();
+ }
+ 
+ void __init tsc_init(void)
+@@ -1401,23 +1424,12 @@ void __init tsc_init(void)
+ 			setup_clear_cpu_cap(X86_FEATURE_TSC_DEADLINE_TIMER);
+ 			return;
+ 		}
++		/* Sanitize TSC ADJUST before cyc2ns gets initialized */
++		tsc_store_and_check_tsc_adjust(true);
++		cyc2ns_init_boot_cpu();
  	}
  
- 	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
-@@ -1413,10 +1423,7 @@ void __init tsc_init(void)
- 	if (!no_sched_irq_time)
- 		enable_sched_clock_irqtime();
- 
--	lpj = ((u64)tsc_khz * 1000);
--	do_div(lpj, HZ);
--	lpj_fine = lpj;
+-	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
+-	tsc_store_and_check_tsc_adjust(true);
 -
-+	lpj_fine = get_loops_per_jiffy();
- 	use_tsc_delay();
+-	/*
+-	 * Secondary CPUs do not run through tsc_init(), so set up
+-	 * all the scale factors for all CPUs, assuming the same
+-	 * speed as the bootup CPU. (cpufreq notifiers will fix this
+-	 * up if their speed diverges)
+-	 */
+-	cyc = rdtsc();
+-	for_each_possible_cpu(cpu) {
+-		cyc2ns_init(cpu);
+-		set_cyc2ns_scale(tsc_khz, cpu, cyc);
+-	}
+-
++	cyc2ns_init_secondary_cpus();
+ 	static_branch_enable(&__use_tsc);
  
- 	check_system_tsc_reliable();
+ 	if (!no_sched_irq_time)
