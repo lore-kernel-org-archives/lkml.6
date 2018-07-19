@@ -2,94 +2,140 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB06BECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF12BC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90BD82084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90BD82084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B03B2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:11:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B03B2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbeGSPxE (ORCPT
+        id S1731822AbeGSPzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 11:53:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41901 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731126AbeGSPxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 11:53:04 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 068FF20728; Thu, 19 Jul 2018 17:09:27 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D2D39206EE;
-        Thu, 19 Jul 2018 17:09:16 +0200 (CEST)
-Date:   Thu, 19 Jul 2018 17:09:17 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH RESEND v2 1/2] drm/sun4i: sun4i: Register quirks with the
- backend structure
-Message-ID: <20180719150917.mzybrbbosjt2i2hm@flea>
-References: <20180719080838.31598-1-paul.kocialkowski@bootlin.com>
+        Thu, 19 Jul 2018 11:55:02 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:33356 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731645AbeGSPzC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 11:55:02 -0400
+Received: from p4fea5a5a.dip0.t-ipconnect.de ([79.234.90.90] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fgAaG-0001gR-AG; Thu, 19 Jul 2018 17:11:12 +0200
+Date:   Thu, 19 Jul 2018 17:11:11 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Tian, Baofeng" <baofeng.tian@intel.com>
+cc:     "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Debug: Add cpu registers dump in case of kernel panic
+In-Reply-To: <EEBA739CCF11FE49B73E1FB4690F5EE649E2A6D0@SHSMSX101.ccr.corp.intel.com>
+Message-ID: <alpine.DEB.2.21.1807191703390.1693@nanos.tec.linutronix.de>
+References: <0038B620BAC72941BCBF48AEB892976C02CBD787@SHSMSX101.ccr.corp.intel.com> <EEBA739CCF11FE49B73E1FB4690F5EE649E2A6D0@SHSMSX101.ccr.corp.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tshq54eml6ozdys7"
-Content-Disposition: inline
-In-Reply-To: <20180719080838.31598-1-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180622
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 9 Jul 2018, Tian, Baofeng wrote:
 
---tshq54eml6ozdys7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: "Tian, Baofeng" <baofeng.tian@intel.com>
+> Subject: [PATCH] Debug: Add cpu registers dump in case of kernel panic
+> 
+> When kernel panic, the value of cpu registers are needed for analyzing, through whole ramdump to restore the crash point.
+>
 
-On Thu, Jul 19, 2018 at 10:08:37AM +0200, Paul Kocialkowski wrote:
-> In prevision for introducing a new quirk that will be used at atomic
-> plane check time, register the quirks structure with the backend
-> structure. This way, it can easily be grabbed where needed.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Please use proper line breaks at around 78 characters.
 
-Applied both, thanks
+> We store CPU registers to RAM before cpu stopped, then get them with whole ram dump after warm reset.Those registers are used in analysis of dumped RAM image.
+>
 
-Maxime
+This is explaining what the patch does but not really why. And it does not
+explain the scope of what is stored and why that would be helpful.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Signed-off-by: Baofeng, Tian <baofeng.tian@intel.com>
+> Signed-off-by: Emmanuel Berthier <emmanuel.berthier@intel.com>
 
---tshq54eml6ozdys7
-Content-Type: application/pgp-signature; name="signature.asc"
+This SOB chain is wrong. How is Emmmanuel involved here? He's even cc'ed on this.
 
------BEGIN PGP SIGNATURE-----
+> ---
+>  arch/x86/kernel/smp.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c index 5c574df..484831d 100644
+> --- a/arch/x86/kernel/smp.c
+> +++ b/arch/x86/kernel/smp.c
+> @@ -117,6 +117,20 @@
+>  static atomic_t stopping_cpu = ATOMIC_INIT(-1);  static bool smp_no_nmi_ipi = false;
+>  
+> +static DEFINE_PER_CPU(struct pt_regs, cpu_regs);
+> +
+> +/* Store regs of this CPU for RAM dump decoding help */ static inline 
+> +void store_regs(struct pt_regs *regs) {
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltQqZwACgkQ0rTAlCFN
-r3RA8Q//aMADqIU4LuR+MGK7dbx2gHT1w2fUzlVStQEt1tUHIph79DYO1y9ntBYQ
-L02sFDVUCf/P/ZYK8Bob/lO7Cs27ww+JhhHU9Tpmq4kYdvMh8pRSqi2gaTtwV0xa
-GSVzPP61dbrxomAX4KaZ6hCmf11K0mWEZaWvhyoyensa7e1YgpVaA8Y2R+mSiNC/
-Rh750spU9WSNZdxopHcGHop/gaYgkEnzeLqDci/rWvZQu6+zH8Dh6NwUWTLIbBYW
-7g/Nb7+9CcBoJb+tRCYtZf+TAj1H/Fu43cXok8yOtubpEq1ckFTxLDdyKJiXCvV+
-asSb00qryW+sdDMK6BRF8hdjtLlvQvpb/h4RolXuc4RKlwfmpDugPdDLR841LG+M
-wc3SSTl5EWWoWl6bDbLt6a1g8vO140vZSyhyPSRKWGa3HttX2SUYIbYQ85tFLBmC
-19NyFcB7isDoanD4y6lhL0JqojwjZDxKT1MlNdIZIY4fGJtCe5CU3n4l1jTQ0/9L
-WI2LNRFpJbGD2G7zwgeeXFaPEz1RgCNG8S8rqnewTM1H/O4YNyyP+D92ErIG3qx8
-gSMqH+dPHyHnk4BqgiNUzvEibRU6chfV+gQCMLCMQ0Ooi3onNlb7ZT1N6sY/lYuU
-aEKgETzaRW3XNjJU6Yho635SVi+PCbfu3LHrhhF/cuMoFiVv3iQ=
-=IWV8
------END PGP SIGNATURE-----
+That's surely not kernel coding style.
 
---tshq54eml6ozdys7--
+> +	struct pt_regs *print_regs;
+
+print_regs ? There is nothing printed here.
+
+> +
+> +	print_regs = &get_cpu_var(cpu_regs);
+> +	crash_setup_regs(print_regs, regs);
+> +
+> +	/* Flush CPU cache */
+> +	wbinvd();
+> +}
+> +
+>  /*
+>   * this function sends a 'reschedule' IPI to another CPU.
+>   * it goes straight through and wastes no time serializing @@ -163,6 +177,7 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+>  	if (raw_smp_processor_id() == atomic_read(&stopping_cpu))
+>  		return NMI_HANDLED;
+>  
+> +	store_regs(regs);
+>  	cpu_emergency_vmxoff();
+>  	stop_this_cpu(NULL);
+>  
+> @@ -173,9 +188,10 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+>   * this function calls the 'stop' function on all other CPUs in the system.
+>   */
+>  
+> -asmlinkage __visible void smp_reboot_interrupt(void)
+> +__visible void smp_reboot_interrupt(struct pt_regs *regs)
+>  {
+>  	ipi_entering_ack_irq();
+> +	store_regs(regs);
+>  	cpu_emergency_vmxoff();
+>  	stop_this_cpu(NULL);
+>  	irq_exit();
+> @@ -247,6 +263,7 @@ static void native_stop_other_cpus(int wait)
+>  	}
+>  
+>  finish:
+> +	store_regs(NULL);
+
+How is storing regs _AFTER_ doing a lots of work helpful?
+
+>  	local_irq_save(flags);
+>  	disable_local_APIC();
+>  	mcheck_cpu_clear(this_cpu_ptr(&cpu_info));
+
+I'm still not seeing how all that is helpful, so I'm waiting for a new
+version with proper explanations.
+
+Thanks,
+
+	tglx
