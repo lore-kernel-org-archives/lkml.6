@@ -2,125 +2,129 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 646D2ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53BDFECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0AA20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:07:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="NEFJMDPS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0AA20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	by mail.kernel.org (Postfix) with ESMTP id 160F920693
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:08:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160F920693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730358AbeGSItC (ORCPT
+        id S1731445AbeGSIuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 04:49:02 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43511 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727528AbeGSItC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 04:49:02 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r13-v6so6422503ljg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 01:07:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ygSA0TisS1G9yDz0tiDVeJGinlDq21hTl6agLHlX5Fk=;
-        b=NEFJMDPShLPuXndEYWYWJ5HTiG4EMoG/o6Rohaus6oRguuoiqqKRTGF5O5pWK/zoLF
-         DrbAuhydw7TTKWDfVK4uhluOYftAwQMwWJ+f61amMBYkftd6WxAr73+8IJyl5of0P2K6
-         RSilifL/MOZQKGq/h2ZjzS5IjQAF7FTE2feKgFUui3qUMQ0aQ5ZIlVboW4FIGiM/5T5K
-         KFsugZbdQdmrJwxMZNzqYjeyTuO0aw5SBAG6Fu0tCaNy4jZtbLLIpE1jlTLbUML7G5iM
-         wuYFJoS/cBl0TB5uqDMAvfYWCfBkpJWBKNcKfYn3QdTRqxFNFGTwZWRrbqzQ8JCt+ljm
-         a6xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ygSA0TisS1G9yDz0tiDVeJGinlDq21hTl6agLHlX5Fk=;
-        b=pVG5q5cCbSjQor5INYQZzeA4fKRiFH6oPgpLdLH1DfMxzsyBF2Pog1icsfpp/cToT4
-         lOenBrLJ1F00Hg4oloTzE0Lmfs0SnUTGfX9geBaM/y/pZZFdhq3qhE+vcNUQ3cx9iDZ8
-         V7qb4j8P2aM33sNtIz9JaklHnVU+COmwhG+NtiWfCotaf6HJMfcAQZfJInyg86kb0q7f
-         gparcuvtMZJ/gJqZK683QBF2lB69kX6C6ZjGOGXXJPK2GikfIatdoeGOQeDrXA639i9v
-         Xu+yQyvhR15K32YRZFUUioU70j+fITZXiZHwsopHVV6zUFrrNDiAUta8oRbAVOwy1Osc
-         m74A==
-X-Gm-Message-State: AOUpUlHlCmj36cj+cktcG8l5nPq5D3Yno7a5io2YSNyEUdLi2H5LYLEi
-        CxwLTzyH4XJ+JEATiHCu/eCE6Q==
-X-Google-Smtp-Source: AAOMgpdQPgH91GP5mPyyFGWJplFK2ldUGq5XFaLqt+wTk+RpRfroBJCS3IZTwTx86D19/sZ1274wpw==
-X-Received: by 2002:a2e:6c07:: with SMTP id h7-v6mr6684856ljc.81.1531987625446;
-        Thu, 19 Jul 2018 01:07:05 -0700 (PDT)
-Received: from [192.168.0.126] ([31.173.87.106])
-        by smtp.gmail.com with ESMTPSA id b87-v6sm859884lfh.33.2018.07.19.01.07.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 01:07:04 -0700 (PDT)
-Subject: Re: [PATCH v2 16/17] MIPS: JZ4770: DTS: Add DMA nodes
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-References: <20180718182023.8182-1-paul@crapouillou.net>
- <20180718182023.8182-17-paul@crapouillou.net>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <b25df80b-2314-8ed1-6fdf-5bb9b49ec994@cogentembedded.com>
-Date:   Thu, 19 Jul 2018 11:06:57 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 04:50:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56794 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730565AbeGSIuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 04:50:04 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ADD0BADB9;
+        Thu, 19 Jul 2018 08:08:06 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 10:08:05 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mahesh Jagannath Salgaonkar <mahesh@linux.vnet.ibm.com>
+Cc:     linuxppc-dev <linuxppc-dev@ozlabs.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Hari Bathini <hbathini@linux.vnet.ibm.com>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Ananth Narayan <ananth@in.ibm.com>, kernelfans@gmail.com
+Subject: Re: [RFC PATCH v6 0/4] powerpc/fadump: Improvements and fixes for
+ firmware-assisted dump.
+Message-ID: <20180719080805.GM7193@dhcp22.suse.cz>
+References: <153172096333.29252.4376707071382727345.stgit@jupiter.in.ibm.com>
+ <20180716082646.GF17280@dhcp22.suse.cz>
+ <cb5fc554-7fa3-1356-c304-ae8c27a0c70c@linux.vnet.ibm.com>
+ <20180717115232.GF7193@dhcp22.suse.cz>
+ <b2c316b9-520e-0a31-3ebd-d3ade50c3783@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180718182023.8182-17-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2c316b9-520e-0a31-3ebd-d3ade50c3783@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/18/2018 9:20 PM, Paul Cercueil wrote:
-
-> Add the two devicetree nodes for the two DMA cores of the JZ4770 SoC,
-> disabled by default, as currently there are no clients for the DMA
-> driver (until the MMC driver and/or others get a devicetree node).
+On Wed 18-07-18 21:52:17, Mahesh Jagannath Salgaonkar wrote:
+> On 07/17/2018 05:22 PM, Michal Hocko wrote:
+> > On Tue 17-07-18 16:58:10, Mahesh Jagannath Salgaonkar wrote:
+> >> On 07/16/2018 01:56 PM, Michal Hocko wrote:
+> >>> On Mon 16-07-18 11:32:56, Mahesh J Salgaonkar wrote:
+> >>>> One of the primary issues with Firmware Assisted Dump (fadump) on Power
+> >>>> is that it needs a large amount of memory to be reserved. This reserved
+> >>>> memory is used for saving the contents of old crashed kernel's memory before
+> >>>> fadump capture kernel uses old kernel's memory area to boot. However, This
+> >>>> reserved memory area stays unused until system crash and isn't available
+> >>>> for production kernel to use.
+> >>>
+> >>> How much memory are we talking about. Regular kernel dump process needs
+> >>> some reserved memory as well. Why that is not a big problem?
+> >>
+> >> We reserve around 5% of total system RAM. On large systems with
+> >> TeraBytes of memory, this reservation can be quite significant.
+> >>
+> >> The regular kernel dump uses the kexec method to boot into capture
+> >> kernel and it can control the parameters that are being passed to
+> >> capture kernel. This allows a capability to strip down the parameters
+> >> that can help lowering down the memory requirement for capture kernel to
+> >> boot. This allows regular kdump to reserve less memory to start with.
+> >>
+> >> Where as fadump depends on power firmware (pHyp) to load the capture
+> >> kernel after full reset and boots like a regular kernel. It needs same
+> >> amount of memory to boot as the production kernel. On large systems
+> >> production kernel needs significant amount of memory to boot. Hence
+> >> fadump needs to reserve enough memory for capture kernel to boot
+> >> successfully and execute dump capturing operations. By default fadump
+> >> reserves 5% of total system RAM and in most cases this has worked
+> >> flawlessly on variety of system configurations. Optionally,
+> >> 'crashkernel=X' can also be used to specify more fine-tuned memory size
+> >> for reservation.
+> > 
+> > So why do we even care about fadump when regular kexec provides
+> > (presumably) same functionality with a smaller memory footprint? Or is
+> > there any reason why kexec doesn't work well on ppc?
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Mathieu Malaterre <malat@debian.org>
-> ---
->   arch/mips/boot/dts/ingenic/jz4770.dtsi | 30 ++++++++++++++++++++++++++++++
->   1 file changed, 30 insertions(+)
+> Kexec based kdump is loaded by crashing kernel. When OS crashes, the
+> system is in an inconsistent state, especially the devices. In some
+> cases, a rogue DMA or ill-behaving device drivers can cause the kdump
+> capture to fail.
 > 
->   v2: No change
-> 
-> diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-> index 7c2804f3f5f1..fda17beeb08b 100644
-> --- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
-> +++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-> @@ -196,6 +196,36 @@
->   		status = "disabled";
->   	};
->   
-> +	dmac0: jz4770-dma@13420000 {
+> On power platform, fadump solves these issues by taking help from power
+> firmware, to fully-reset the system, load the fresh copy of same kernel
+> to capture the dump with PCI and I/O devices reinitialized, making it
+> more reliable.
 
-	dmac0: dma-controller@13420000 {
+Thanks for the clarification.
 
-[...]
+> Fadump does full system reset, booting system through the regular boot
+> options i.e the dump capture kernel is booted in the same fashion and
+> doesn't have specialized kernel command line option. This implies, we
+> need to give more memory for the system boot. Since the new kernel boots
+> from the same memory location as crashed kernel, we reserve 5% of memory
+> where power firmware moves the crashed kernel's memory content. This
+> reserved memory is completely removed from the available memory. For
+> large memory systems like 64TB systems, this account to ~ 3TB, which is
+> a significant chunk of memory production kernel is deprived of. Hence,
+> this patch adds an improvement to exiting fadump feature to make the
+> reserved memory available to system for use, using zone movable.
 
-> +	dmac1: jz4770-dma@13420100 {
-
-	dmac1: dma-controller@13420100 {
-
-[...]
-
-MBR, Sergei
+Is the 5% a reasonable estimate or more a ballpark number? I find it a
+bit strange to require 3TB of memory to boot a kernel just to dump the
+crashed kernel image. Shouldn't you rather look into this estimate than
+spreading ZONE_MOVABLE abuse? Larger systems need more memory to dump
+even with the regular kexec kdump but I have never seen any to use more
+than 1G or something like that.
+-- 
+Michal Hocko
+SUSE Labs
