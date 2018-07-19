@@ -2,119 +2,130 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A3BECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:09:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D97BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087BD2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:09:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="u4bzKrkB";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nd5+02+k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087BD2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id C92062084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 03:12:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C92062084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730897AbeGSDt5 (ORCPT
+        id S1730770AbeGSDwy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 18 Jul 2018 23:49:57 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:34028 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729914AbeGSDt4 (ORCPT
+        Wed, 18 Jul 2018 23:52:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59452 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729914AbeGSDwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Jul 2018 23:49:56 -0400
-Received: by mail-yw0-f194.google.com with SMTP id j68-v6so2546042ywg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 20:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=b1LlaExhQmTbHhova/So0g4CsrX8o5btqhpHn3O5iCo=;
-        b=u4bzKrkBM9yKwvbHX1F5XgvXIHwxlsxMQQhFDY/DcY/jqBsSFLqfCoGByzusUnH/qQ
-         D9q855LIhFoMDty4k25CqlU8utf/pzGSWCkWLxkVcaUNWvBN09kQqwU/h4/80Qg8jkmn
-         262VT0LhwFKAt+AXAG10w0IkaGNAhk35hWTZWEzjguvPLlmizwtFOFEjThi4pEoHwjfh
-         FDRoS4rHZUKpWNjNCbLhbXoF5qQs22fKsLT1Tic61aCEBLxDemjVmwsBntDa8dknOdVL
-         jV3ZtqPVMerWp5GaVF/kcXX4QpUvuu3Ue1UyCYv5TMIsdI9qFaLwO6zM2hFten+R1kJz
-         I4Jw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=b1LlaExhQmTbHhova/So0g4CsrX8o5btqhpHn3O5iCo=;
-        b=Nd5+02+kU8yVu0e9O/XgJDAgvYiBE939pU0uvNeM073hvAiMpXVlr5xFZqdYUa5C6C
-         BCqeERtlsDVhP45ZWT3qBSd2mmIbpej03pTwc7Wq+HVMEqF7Eu63hELAQk3l7gAYjne3
-         anwoeNor6IxZL6elBmd6oSvQkAWGj/umGy6BU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=b1LlaExhQmTbHhova/So0g4CsrX8o5btqhpHn3O5iCo=;
-        b=IzVLmGHDUvwJ0aQ6JmzdfxTHmPS/lrr/lfHDEz/RgC0Airt+n9zEfeTDVauLq28jAR
-         ScBSmuHOpAG2VIILqcXR55vbN3QtDWT2Fgu55RBIixcbmSEhAebUx6X/jnBwtxJ9iRlQ
-         1Iqi5Z9qo9pGIxVlLe3rzizlJ+Ek+6yu54U/zssozhcX+QNsTvgeQ1mY65OGM3eY6hX/
-         HNSqmcRB7OHHsCTI2ZqTUAYH3aqd4u5gQU9s9bFF2hTmZBNvElmt0uDa6zKFMrZmaNd/
-         OY6byvc3EpwDhDQRC+i0HAJqYV4bVQpsGegjnWrHRBia/aplZxpdYmlp7S7HXnUrgOIc
-         OqCg==
-X-Gm-Message-State: AOUpUlFREXvZwCVKn4hwKSa7Zgk1LH0rcmRky68l8iXzInVknTfnBOk3
-        5dd3UXlEOeKh5zZ0sy2ERMDv4kQYX7Hd/s8dygDcSw==
-X-Google-Smtp-Source: AAOMgpfsOSTfJRHBFt2D9gSuixjflwno4dKKC7VWhOPSzScNJzGjbjqTp+IzJflpw43WIv0uEuo1jO1U42qYiN1nxoM=
-X-Received: by 2002:a81:8742:: with SMTP id x63-v6mr4358223ywf.129.1531969742882;
- Wed, 18 Jul 2018 20:09:02 -0700 (PDT)
+        Wed, 18 Jul 2018 23:52:54 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6J39NFD050615
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 23:11:59 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2kab29q7t6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Jul 2018 23:11:59 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 18 Jul 2018 23:11:58 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 18 Jul 2018 23:11:54 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6J3BrFd65142972
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Jul 2018 03:11:53 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F558B2064;
+        Wed, 18 Jul 2018 23:11:43 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F1C3B205F;
+        Wed, 18 Jul 2018 23:11:43 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.233.56])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 18 Jul 2018 23:11:43 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id C217816CA21C; Wed, 18 Jul 2018 20:11:52 -0700 (PDT)
+Date:   Wed, 18 Jul 2018 20:11:52 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1531168538.26547.5.camel@infradead.org>
+ <20180709204248.GF3593@linux.vnet.ibm.com>
+ <1531169145.26547.8.camel@infradead.org>
+ <20180709210532.GH3593@linux.vnet.ibm.com>
+ <20180709220823.GA18045@linux.vnet.ibm.com>
+ <1531319025.8759.57.camel@infradead.org>
+ <20180711144303.GQ3593@linux.vnet.ibm.com>
+ <20180711164952.GA29994@linux.vnet.ibm.com>
+ <e21c6d7666bfbad1e1c8295559a6ddc7e4110105.camel@infradead.org>
+ <20180719003205.GB5595@lerouge>
 MIME-Version: 1.0
-Received: by 2002:a25:6602:0:0:0:0:0 with HTTP; Wed, 18 Jul 2018 20:09:01
- -0700 (PDT)
-In-Reply-To: <B278D0F7-71B6-4F3D-B625-D8B0298CE5B4@linaro.org>
-References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
- <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au> <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
- <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au> <CAGXu5jLR0zJ6b9axJuG_uvttNShNcN3rhQKGVjW37qPd9saY-Q@mail.gmail.com>
- <20180713052029.cfo24bsr5swtbdja@gondor.apana.org.au> <CAGXu5jLG4gE44z9cXL3-D1bjbZB1RgTnTsb3PWhU7B3NdRrwVg@mail.gmail.com>
- <CAK8P3a3nk4-EewKTXcLENTb86r1+bJz_WrkJoJt+D1uTwcpxPA@mail.gmail.com>
- <CAGXu5j+Q_jc_f9VybyoJqmV7_Q-3hqnC-pOubfNsi7uyAROVrQ@mail.gmail.com>
- <CAK8P3a3Dh+g=v++BMCtmmiOSnVu4CEUgss0U7BZS_K45aTddqg@mail.gmail.com>
- <CAKv+Gu-cOV6uo6MpLxr9uQSTT-ku_wn9+D7CC4+3maJtvcaGoA@mail.gmail.com>
- <CAKv+Gu8e9sm42NKwQvQzD33JTHSaEY2q7sm0W0065dDz_rzSaA@mail.gmail.com>
- <CAGXu5jLuWfZFTs390c3WSAReLrQ6_KOOvr0FYjXhUQ5h5b8xWA@mail.gmail.com> <B278D0F7-71B6-4F3D-B625-D8B0298CE5B4@linaro.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 18 Jul 2018 20:09:01 -0700
-X-Google-Sender-Auth: Jb07nI_MAyxN0675tQ_gRAzh3Rc
-Message-ID: <CAGXu5jJyyi1FvT9PytMkU_rPeSqMSHR7asjn8ykShZGGRPPRDg@mail.gmail.com>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180719003205.GB5595@lerouge>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071903-0040-0000-0000-00000451051F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009389; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01062857; UDB=6.00545745; IPR=6.00840710;
+ MB=3.00022196; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-19 03:11:56
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071903-0041-0000-0000-00000857316E
+Message-Id: <20180719031152.GR12945@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-19_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807190031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 18, 2018 at 7:55 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> I have only build tested it, so if you make sure that it does not break anything, please go ahead.
+On Thu, Jul 19, 2018 at 02:32:06AM +0200, Frederic Weisbecker wrote:
+> On Wed, Jul 11, 2018 at 06:03:42PM +0100, David Woodhouse wrote:
+> > On Wed, 2018-07-11 at 09:49 -0700, Paul E. McKenney wrote:
+> > > And here is an updated v4.15 patch with Marius's Reported-by and David's
+> > > fix to my lost exclamation point.
+> > 
+> > Thanks. Are you sending the original version of that to Linus? It'd be
+> > useful to have the commit ID so that we can watch for it landing, and
+> > chase this one up to Greg.
+> > 
+> > As discussed on IRC, this patch reduces synchronize_sched() latency for
+> > us from ~4600s to ~160ms, which is nice.
+> > 
+> > However, it isn't going to be sufficient in the NO_HZ_FULL case. For
+> > that you want a patch like the one below, which happily reduces the
+> > latency in our (!NO_HZ_FULL) case still further to ~40ms.
+> 
+> That is interesting. As I replied to Paul, we are already calling
+> rcu_user_enter/exit() on guest_enter/exit_irqsoff(). So I'm wondering why
+> you're seeing such an optimization by repeating those calls.
+> 
+> Perhaps the rcu_user_* somehow aren't actually called from
+> __context_tracking_enter()...? Some bug in context tracking?
+> Otherwise it's a curious side effect.
 
-I can give it a spin; what's the best way? Is CONFIG_CRYPTO_MANAGER=y
-sufficient?
+David is working with v4.15.  Is this maybe something that has changed
+since then?
 
--Kees
+							Thanx, Paul
 
--- 
-Kees Cook
-Pixel Security
