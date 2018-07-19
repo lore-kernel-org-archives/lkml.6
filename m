@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
 	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F6C9C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1477ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4809E20671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 994712084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 09:20:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LdZCIziM";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pj4v8C05"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4809E20671
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XJhQGFZm";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="btXUG1jB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 994712084C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731108AbeGSKCi (ORCPT
+        id S1731267AbeGSKCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 06:02:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40562 "EHLO
+        Thu, 19 Jul 2018 06:02:39 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40602 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727430AbeGSKCi (ORCPT
+        with ESMTP id S1726519AbeGSKCi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 19 Jul 2018 06:02:38 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 25B3C6071B; Thu, 19 Jul 2018 09:20:03 +0000 (UTC)
+        id D100760B10; Thu, 19 Jul 2018 09:20:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
         s=default; t=1531992024;
-        bh=XLJyImN6HsL8J+INRUOtX1wGx2KZNW/xmGDVOIPeEUc=;
+        bh=OYwO4O5rh9WnYpi/3ZUQMm8Dx9PKKJlPkbG76fpXTe0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LdZCIziMSdSscqvduVPagNE+2yZRYnAnzu9J6guNpOyCRMiIzyNKnVrMt7QSK+Ar7
-         fqXJkq5qQ1oayhTlINLOCEcq0uLHpvr4Wo0vVtqFlQqARP5RmW/RmDG31plFdulKvc
-         lau1oD1FMX2J8LurSUsT3HoRvCvHyyXCtKr+DXKQ=
+        b=XJhQGFZmMYvuFrcl8mAs97tF3ezunF9wTdXxiB6ih9E8EJDSDvTEzKZZ+81aholfI
+         faEw2Lx6MYZLCeATa1hG4VZqfqtcQHA7VMVTiNw6M0K6zQox08xsMYxAzgGEpgxAH1
+         oh9AZ65sNJeforR2S14TRHuailDLQZAvR+wgC05c=
 Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BA3B26078C;
-        Thu, 19 Jul 2018 09:19:58 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3A2A460BDD;
+        Thu, 19 Jul 2018 09:20:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531992002;
-        bh=XLJyImN6HsL8J+INRUOtX1wGx2KZNW/xmGDVOIPeEUc=;
+        s=default; t=1531992010;
+        bh=OYwO4O5rh9WnYpi/3ZUQMm8Dx9PKKJlPkbG76fpXTe0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pj4v8C05TLssmzwRfryj+023a90xQWrc6ab3IvO3s5zskeqgmo6Dc5Z2NW0jQXSK4
-         i9H0A8D1GrYulOgHEnldOPb09EdumpwtnWNUd/GhwDYVW2umR9LOV2x0xlAVlJPQrj
-         1IN+JexxZDmCvRNw1mherlapDYLrg86rR0iVRruY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA3B26078C
+        b=btXUG1jBZk+DO3G7sRrjoaC2nn+utyFyIXmrimzaPxzR7qmtDcYxSdOZuV4j0Wr9Z
+         2csqFy5V9VqsLhSnI4wBuQ7phfYNHBuPX3lIW7rM2hWyF5AAgiDMgs4x0LZLsdBCiH
+         gHVPgeAT/NMNIX8mNesx2S25jKiYoHjpr5ax8Dzo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A2A460BDD
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
 From:   Raju P L S S S N <rplsssn@codeaurora.org>
@@ -59,9 +59,9 @@ Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org,
         evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
         ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH 4/6] drivers: qcom: rpmh-rsc: clear active mode configuration for waketcs
-Date:   Thu, 19 Jul 2018 14:49:33 +0530
-Message-Id: <1531991975-23665-5-git-send-email-rplsssn@codeaurora.org>
+Subject: [PATCH 6/6] drivers: qcom: rpmh: write PDC data
+Date:   Thu, 19 Jul 2018 14:49:35 +0530
+Message-Id: <1531991975-23665-7-git-send-email-rplsssn@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1531991975-23665-1-git-send-email-rplsssn@codeaurora.org>
 References: <1531991975-23665-1-git-send-email-rplsssn@codeaurora.org>
@@ -70,131 +70,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+From: Lina Iyer <ilina@codeaurora.org>
 
-For RSCs that have sleep & wake TCS but no dedicated active TCS, wake
-TCS can be re-purposed to send active requests. Once the active requests
-are sent and response is received, the active mode configuration needs
-to be cleared so that controller can use wake TCS for sending wake
-requests in 'solver' state while executing low power modes.
+In addition to requests that are send to the remote processor, the
+controller may allow certain data to be written to the controller for
+use in specific cases like wakeup value when entering idle states.
+Allow a pass through to write PDC data.
 
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
 ---
- drivers/soc/qcom/rpmh-rsc.c | 77 +++++++++++++++++++++++++++++++--------------
- 1 file changed, 54 insertions(+), 23 deletions(-)
+ drivers/soc/qcom/rpmh.c | 28 ++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h |  6 ++++++
+ 2 files changed, 34 insertions(+)
 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index e513c3c..8eff7cf 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -199,6 +199,42 @@ static const struct tcs_request *get_req_from_tcs(struct rsc_drv *drv,
- 	return NULL;
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index 0d276fd..f81488b 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -472,6 +472,34 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
  }
+ EXPORT_SYMBOL(rpmh_write_batch);
  
-+static void __tcs_trigger(struct rsc_drv *drv, int tcs_id, bool trigger)
++/**
++ * rpmh_write_pdc_data: Write PDC data to the controller
++ *
++ * @dev: the device making the request
++ * @cmd: The payload data
++ * @n: The number of elements in payload
++ *
++ * Write PDC data to the controller. The messages are always sent async.
++ *
++ * May be called from atomic contexts.
++ */
++int rpmh_write_pdc_data(const struct device *dev,
++			const struct tcs_cmd *cmd, u32 n)
 +{
-+	u32 enable;
++	DEFINE_RPMH_MSG_ONSTACK(dev, 0, NULL, rpm_msg);
++	struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
 +
-+	/*
-+	 * HW req: Clear the DRV_CONTROL and enable TCS again
-+	 * While clearing ensure that the AMC mode trigger is cleared
-+	 * and then the mode enable is cleared.
-+	 */
-+	enable = read_tcs_reg(drv, RSC_DRV_CONTROL, tcs_id, 0);
-+	enable &= ~TCS_AMC_MODE_TRIGGER;
-+	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
-+	enable &= ~TCS_AMC_MODE_ENABLE;
-+	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
++	if (!n || n > MAX_RPMH_PAYLOAD)
++		return -EINVAL;
 +
-+	if (trigger) {
-+		/* Enable the AMC mode on the TCS and then trigger the TCS */
-+		enable = TCS_AMC_MODE_ENABLE;
-+		write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
-+		enable |= TCS_AMC_MODE_TRIGGER;
-+		write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
-+	}
++	memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
++	rpm_msg.msg.num_cmds = n;
++	rpm_msg.msg.wait_for_compl = false;
++
++	return rpmh_rsc_write_pdc_data(ctrlr_to_drv(ctrlr), &rpm_msg.msg);
 +}
++EXPORT_SYMBOL(rpmh_write_pdc_data);
 +
-+static inline void enable_tcs_irq(struct rsc_drv *drv, int tcs_id, bool enable)
-+{
-+	u32 data;
-+
-+	data = read_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, 0);
-+	if (enable)
-+		data |= BIT(tcs_id);
-+	else
-+		data &= ~BIT(tcs_id);
-+	write_tcs_reg(drv, RSC_DRV_IRQ_ENABLE, 0, data);
-+}
-+
- /**
-  * tcs_tx_done: TX Done interrupt handler
-  */
-@@ -235,6 +271,21 @@ static irqreturn_t tcs_tx_done(int irq, void *p)
- 		}
- 
- 		trace_rpmh_tx_done(drv, i, req, err);
-+
-+		/*
-+		 * if wake tcs was re-purposed for sending active
-+		 * votes, clear AMC trigger & enable modes and
-+		 * disable interrupt for this TCS
-+		 */
-+		if (!drv->tcs[ACTIVE_TCS].num_tcs) {
-+			__tcs_trigger(drv, i, false);
-+			/*
-+			 * Disable interrupt for this TCS to avoid being
-+			 * spammed with interrupts coming when the solver
-+			 * sends its wake votes.
-+			 */
-+			enable_tcs_irq(drv, i, false);
-+		}
- skip:
- 		/* Reclaim the TCS */
- 		write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, i, 0);
-@@ -282,28 +333,6 @@ static void __tcs_buffer_write(struct rsc_drv *drv, int tcs_id, int cmd_id,
- 	write_tcs_reg(drv, RSC_DRV_CMD_ENABLE, tcs_id, cmd_enable);
- }
- 
--static void __tcs_trigger(struct rsc_drv *drv, int tcs_id)
--{
--	u32 enable;
--
--	/*
--	 * HW req: Clear the DRV_CONTROL and enable TCS again
--	 * While clearing ensure that the AMC mode trigger is cleared
--	 * and then the mode enable is cleared.
--	 */
--	enable = read_tcs_reg(drv, RSC_DRV_CONTROL, tcs_id, 0);
--	enable &= ~TCS_AMC_MODE_TRIGGER;
--	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
--	enable &= ~TCS_AMC_MODE_ENABLE;
--	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
--
--	/* Enable the AMC mode on the TCS and then trigger the TCS */
--	enable = TCS_AMC_MODE_ENABLE;
--	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
--	enable |= TCS_AMC_MODE_TRIGGER;
--	write_tcs_reg_sync(drv, RSC_DRV_CONTROL, tcs_id, enable);
--}
--
- static int check_for_req_inflight(struct rsc_drv *drv, struct tcs_group *tcs,
- 				  const struct tcs_request *msg)
+ static int is_req_valid(struct cache_req *req)
  {
-@@ -374,10 +403,12 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
+ 	return (req->sleep_val != UINT_MAX &&
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index 018788d..d5e736e 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -28,6 +28,9 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
  
- 	tcs->req[tcs_id - tcs->offset] = msg;
- 	set_bit(tcs_id, drv->tcs_in_use);
-+	if (msg->state == RPMH_ACTIVE_ONLY_STATE && tcs->type != ACTIVE_TCS)
-+		enable_tcs_irq(drv, tcs_id, true);
- 	spin_unlock(&drv->lock);
+ int rpmh_mode_solver_set(const struct device *dev, bool enable);
  
- 	__tcs_buffer_write(drv, tcs_id, 0, msg);
--	__tcs_trigger(drv, tcs_id);
-+	__tcs_trigger(drv, tcs_id, true);
++int rpmh_write_pdc_data(const struct device *dev,
++			const struct tcs_cmd *cmd, u32 n);
++
+ #else
  
- done_write:
- 	spin_unlock_irqrestore(&tcs->lock, flags);
+ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+@@ -56,6 +59,9 @@ static inline int rpmh_ctrlr_idle(const struct device *dev)
+ static inline int rpmh_mode_solver_set(const struct device *dev, bool enable)
+ { return -ENODEV; }
+ 
++static inline int rpmh_write_pdc_data(const struct device *dev,
++				      const struct tcs_cmd *cmd, u32 n)
++{ return -ENODEV; }
+ #endif /* CONFIG_QCOM_RPMH */
+ 
+ #endif /* __SOC_QCOM_RPMH_H__ */
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
 
