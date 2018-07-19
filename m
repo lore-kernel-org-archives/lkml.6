@@ -6,57 +6,58 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05934ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:22:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2ECEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7C5C20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:22:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7C5C20673
+	by mail.kernel.org (Postfix) with ESMTP id 8B83920673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:22:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B83920673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731254AbeGTAH1 (ORCPT
+        id S1731282AbeGTAHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:07:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:59529 "EHLO
+        Thu, 19 Jul 2018 20:07:51 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34099 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727743AbeGTAH0 (ORCPT
+        with ESMTP id S1727743AbeGTAHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:07:26 -0400
+        Thu, 19 Jul 2018 20:07:51 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNL0Z72451024
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNLULn2451213
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:21:00 -0700
+        Thu, 19 Jul 2018 16:21:30 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNL0iI2451017;
-        Thu, 19 Jul 2018 16:21:00 -0700
-Date:   Thu, 19 Jul 2018 16:21:00 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNLUiN2451210;
+        Thu, 19 Jul 2018 16:21:30 -0700
+Date:   Thu, 19 Jul 2018 16:21:30 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-8e676ced31e9d1448d3ffc4159586a259cc67f30@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, will.deacon@arm.com, hpa@zytor.com,
-        jgross@suse.com, aarcange@redhat.com, luto@kernel.org,
-        dvlasenk@redhat.com, jpoimboe@redhat.com, mingo@kernel.org,
-        dhgutteridge@sympatico.ca, brgerst@gmail.com, eduval@amazon.com,
-        llong@redhat.com, David.Laight@aculab.com, tglx@linutronix.de,
-        bp@alien8.de, pavel@ucw.cz, gregkh@linuxfoundation.org,
-        jroedel@suse.de, jkosina@suse.cz, peterz@infradead.org,
-        dave.hansen@intel.com, torvalds@linux-foundation.org,
-        boris.ostrovsky@oracle.com
-Reply-To: will.deacon@arm.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          jgross@suse.com, aarcange@redhat.com, luto@kernel.org,
-          dvlasenk@redhat.com, jpoimboe@redhat.com, mingo@kernel.org,
-          dhgutteridge@sympatico.ca, brgerst@gmail.com, eduval@amazon.com,
-          llong@redhat.com, David.Laight@aculab.com, tglx@linutronix.de,
-          bp@alien8.de, jroedel@suse.de, pavel@ucw.cz,
-          gregkh@linuxfoundation.org, jkosina@suse.cz,
-          peterz@infradead.org, dave.hansen@intel.com,
-          boris.ostrovsky@oracle.com, torvalds@linux-foundation.org
-In-Reply-To: <1531906876-13451-6-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-6-git-send-email-joro@8bytes.org>
+Message-ID: <tip-0d2eb73b29996684d5bbb72f85c74b47b4c359f7@git.kernel.org>
+Cc:     dave.hansen@intel.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, eduval@amazon.com, bp@alien8.de,
+        mingo@kernel.org, tglx@linutronix.de, dvlasenk@redhat.com,
+        jpoimboe@redhat.com, torvalds@linux-foundation.org, hpa@zytor.com,
+        will.deacon@arm.com, aarcange@redhat.com, llong@redhat.com,
+        jgross@suse.com, David.Laight@aculab.com,
+        dhgutteridge@sympatico.ca, jroedel@suse.de,
+        gregkh@linuxfoundation.org, brgerst@gmail.com, jkosina@suse.cz,
+        luto@kernel.org, pavel@ucw.cz, boris.ostrovsky@oracle.com
+Reply-To: brgerst@gmail.com, jroedel@suse.de, gregkh@linuxfoundation.org,
+          luto@kernel.org, pavel@ucw.cz, boris.ostrovsky@oracle.com,
+          jkosina@suse.cz, llong@redhat.com, jgross@suse.com,
+          dhgutteridge@sympatico.ca, David.Laight@aculab.com,
+          dvlasenk@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+          will.deacon@arm.com, aarcange@redhat.com,
+          torvalds@linux-foundation.org, hpa@zytor.com,
+          jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+          peterz@infradead.org, dave.hansen@intel.com, bp@alien8.de,
+          eduval@amazon.com
+In-Reply-To: <1531906876-13451-7-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-7-git-send-email-joro@8bytes.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/32: Unshare NMI return path
-Git-Commit-ID: 8e676ced31e9d1448d3ffc4159586a259cc67f30
+Subject: [tip:x86/pti] x86/entry/32: Split off return-to-kernel path
+Git-Commit-ID: 0d2eb73b29996684d5bbb72f85c74b47b4c359f7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -70,18 +71,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8e676ced31e9d1448d3ffc4159586a259cc67f30
-Gitweb:     https://git.kernel.org/tip/8e676ced31e9d1448d3ffc4159586a259cc67f30
+Commit-ID:  0d2eb73b29996684d5bbb72f85c74b47b4c359f7
+Gitweb:     https://git.kernel.org/tip/0d2eb73b29996684d5bbb72f85c74b47b4c359f7
 Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:40:42 +0200
+AuthorDate: Wed, 18 Jul 2018 11:40:43 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 01:11:36 +0200
+CommitDate: Fri, 20 Jul 2018 01:11:37 +0200
 
-x86/entry/32: Unshare NMI return path
+x86/entry/32: Split off return-to-kernel path
 
-NMI will no longer use most of the shared return path, because NMI needs
-special handling when the CR3 switches for PTI are added. Prepare for that
-change.
+Use a separate return path when returning to the kernel.
+
+This allows to put the PTI cr3-switch and the switch to the entry-stack
+into the return-to-user path without further checking.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -111,35 +113,46 @@ Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Waiman Long <llong@redhat.com>
 Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
 Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-6-git-send-email-joro@8bytes.org
+Link: https://lkml.kernel.org/r/1531906876-13451-7-git-send-email-joro@8bytes.org
 
 ---
- arch/x86/entry/entry_32.S | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/x86/entry/entry_32.S | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index ef7d65315e8e..43641310b6e3 100644
+index 43641310b6e3..7251c4f3e99e 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -1017,7 +1017,7 @@ ENTRY(nmi)
+@@ -65,7 +65,7 @@
+ # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
+ #else
+ # define preempt_stop(clobbers)
+-# define resume_kernel		restore_all
++# define resume_kernel		restore_all_kernel
+ #endif
  
- 	/* Not on SYSENTER stack. */
- 	call	do_nmi
--	jmp	.Lrestore_all_notrace
-+	jmp	.Lnmi_return
+ .macro TRACE_IRQS_IRET
+@@ -399,9 +399,9 @@ ENTRY(resume_kernel)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ .Lneed_resched:
+ 	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	restore_all
++	jnz	restore_all_kernel
+ 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+-	jz	restore_all
++	jz	restore_all_kernel
+ 	call	preempt_schedule_irq
+ 	jmp	.Lneed_resched
+ END(resume_kernel)
+@@ -606,6 +606,11 @@ restore_all:
+ 	 */
+ 	INTERRUPT_RETURN
  
- .Lnmi_from_sysenter_stack:
- 	/*
-@@ -1028,7 +1028,11 @@ ENTRY(nmi)
- 	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
- 	call	do_nmi
- 	movl	%ebx, %esp
--	jmp	.Lrestore_all_notrace
-+
-+.Lnmi_return:
-+	CHECK_AND_APPLY_ESPFIX
++restore_all_kernel:
++	TRACE_IRQS_IRET
 +	RESTORE_REGS 4
 +	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
- .Lnmi_espfix_stack:
++
+ .section .fixup, "ax"
+ ENTRY(iret_exc	)
+ 	pushl	$0				# no error code
