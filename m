@@ -6,46 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1159AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA13BECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B169620673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B169620673
+	by mail.kernel.org (Postfix) with ESMTP id 62CDD20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:34:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CDD20673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731492AbeGSXT0 (ORCPT
+        id S1731546AbeGSXTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:19:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:58321 "EHLO
+        Thu, 19 Jul 2018 19:19:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46063 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731065AbeGSXT0 (ORCPT
+        with ESMTP id S1731090AbeGSXTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:19:26 -0400
+        Thu, 19 Jul 2018 19:19:45 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMXtKj2439926
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMYS292439952
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 15:33:55 -0700
+        Thu, 19 Jul 2018 15:34:28 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMXtst2439922;
-        Thu, 19 Jul 2018 15:33:55 -0700
-Date:   Thu, 19 Jul 2018 15:33:55 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMYScP2439949;
+        Thu, 19 Jul 2018 15:34:28 -0700
+Date:   Thu, 19 Jul 2018 15:34:28 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Pavel Tatashin <tipbot@zytor.com>
-Message-ID: <tip-46457ea464f5341d1f9dad8dd213805d45f7f117@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@kernel.org, pasha.tatashin@oracle.com,
-        hpa@zytor.com
-Reply-To: linux-kernel@vger.kernel.org, peterz@infradead.org,
-          tglx@linutronix.de, pasha.tatashin@oracle.com, hpa@zytor.com,
-          mingo@kernel.org
-In-Reply-To: <20180719205545.16512-25-pasha.tatashin@oracle.com>
-References: <20180719205545.16512-25-pasha.tatashin@oracle.com>
+Message-ID: <tip-03821f451d2d2d7599061244734245be139014ea@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, pasha.tatashin@oracle.com
+Reply-To: tglx@linutronix.de, hpa@zytor.com, pasha.tatashin@oracle.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org
+In-Reply-To: <20180719205545.16512-26-pasha.tatashin@oracle.com>
+References: <20180719205545.16512-26-pasha.tatashin@oracle.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] sched/clock: Use static key for
- sched_clock_running
-Git-Commit-ID: 46457ea464f5341d1f9dad8dd213805d45f7f117
+Subject: [tip:x86/timers] x86/tsc: Split native_calibrate_cpu() into early
+ and late parts
+Git-Commit-ID: 03821f451d2d2d7599061244734245be139014ea
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,22 +57,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  46457ea464f5341d1f9dad8dd213805d45f7f117
-Gitweb:     https://git.kernel.org/tip/46457ea464f5341d1f9dad8dd213805d45f7f117
+Commit-ID:  03821f451d2d2d7599061244734245be139014ea
+Gitweb:     https://git.kernel.org/tip/03821f451d2d2d7599061244734245be139014ea
 Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
-AuthorDate: Thu, 19 Jul 2018 16:55:43 -0400
+AuthorDate: Thu, 19 Jul 2018 16:55:44 -0400
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 00:02:43 +0200
+CommitDate: Fri, 20 Jul 2018 00:02:44 +0200
 
-sched/clock: Use static key for sched_clock_running
+x86/tsc: Split native_calibrate_cpu() into early and late parts
 
-sched_clock_running may be read every time sched_clock_cpu() is called.
-Yet, this variable is updated only twice during boot, and never changes
-again, therefore it is better to make it a static key.
+During early boot TSC and CPU frequency can be calibrated using MSR, CPUID,
+and quick PIT calibration methods. The other methods PIT/HPET/PMTIMER are
+available only after ACPI is initialized.
+
+Split native_calibrate_cpu() into early and late parts so they can be
+called separately during early and late tsc calibration.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
 Cc: steven.sistare@oracle.com
 Cc: daniel.m.jordan@oracle.com
 Cc: linux@armlinux.org.uk
@@ -84,6 +84,7 @@ Cc: john.stultz@linaro.org
 Cc: sboyd@codeaurora.org
 Cc: hpa@zytor.com
 Cc: douly.fnst@cn.fujitsu.com
+Cc: peterz@infradead.org
 Cc: prarit@redhat.com
 Cc: feng.tang@intel.com
 Cc: pmladek@suse.com
@@ -92,97 +93,100 @@ Cc: linux-s390@vger.kernel.org
 Cc: boris.ostrovsky@oracle.com
 Cc: jgross@suse.com
 Cc: pbonzini@redhat.com
-Link: https://lkml.kernel.org/r/20180719205545.16512-25-pasha.tatashin@oracle.com
+Link: https://lkml.kernel.org/r/20180719205545.16512-26-pasha.tatashin@oracle.com
 
 ---
- kernel/sched/clock.c | 16 ++++++++--------
- kernel/sched/debug.c |  2 --
- 2 files changed, 8 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/tsc.h |  1 +
+ arch/x86/kernel/tsc.c      | 54 ++++++++++++++++++++++++++++++----------------
+ 2 files changed, 37 insertions(+), 18 deletions(-)
 
-diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-index 422cd63f8f17..c5c47ad3f386 100644
---- a/kernel/sched/clock.c
-+++ b/kernel/sched/clock.c
-@@ -67,7 +67,7 @@ unsigned long long __weak sched_clock(void)
- }
- EXPORT_SYMBOL_GPL(sched_clock);
+diff --git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
+index c4368ff73652..88140e4f2292 100644
+--- a/arch/x86/include/asm/tsc.h
++++ b/arch/x86/include/asm/tsc.h
+@@ -40,6 +40,7 @@ extern int unsynchronized_tsc(void);
+ extern int check_tsc_unstable(void);
+ extern void mark_tsc_async_resets(char *reason);
+ extern unsigned long native_calibrate_cpu(void);
++extern unsigned long native_calibrate_cpu_early(void);
+ extern unsigned long native_calibrate_tsc(void);
+ extern unsigned long long native_sched_clock_from_tsc(u64 tsc);
  
--__read_mostly int sched_clock_running;
-+static DEFINE_STATIC_KEY_FALSE(sched_clock_running);
- 
- #ifdef CONFIG_HAVE_UNSTABLE_SCHED_CLOCK
- /*
-@@ -191,7 +191,7 @@ void clear_sched_clock_stable(void)
- 
- 	smp_mb(); /* matches sched_clock_init_late() */
- 
--	if (sched_clock_running == 2)
-+	if (static_key_count(&sched_clock_running.key) == 2)
- 		__clear_sched_clock_stable();
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 9277ae9b68b3..60586779b02c 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -680,30 +680,17 @@ static unsigned long cpu_khz_from_cpuid(void)
+ 	return eax_base_mhz * 1000;
  }
  
-@@ -215,7 +215,7 @@ void __init sched_clock_init(void)
- 	__sched_clock_gtod_offset();
- 	local_irq_restore(flags);
- 
--	sched_clock_running = 1;
-+	static_branch_inc(&sched_clock_running);
- 
- 	/* Now that sched_clock_running is set adjust scd */
- 	local_irq_save(flags);
-@@ -228,7 +228,7 @@ void __init sched_clock_init(void)
+-/**
+- * native_calibrate_cpu - calibrate the cpu on boot
++/*
++ * calibrate cpu using pit, hpet, and ptimer methods. They are available
++ * later in boot after acpi is initialized.
   */
- static int __init sched_clock_init_late(void)
+-unsigned long native_calibrate_cpu(void)
++static unsigned long pit_hpet_ptimer_calibrate_cpu(void)
  {
--	sched_clock_running = 2;
-+	static_branch_inc(&sched_clock_running);
- 	/*
- 	 * Ensure that it is impossible to not do a static_key update.
- 	 *
-@@ -373,7 +373,7 @@ u64 sched_clock_cpu(int cpu)
- 	if (sched_clock_stable())
- 		return sched_clock() + __sched_clock_offset;
+ 	u64 tsc1, tsc2, delta, ref1, ref2;
+ 	unsigned long tsc_pit_min = ULONG_MAX, tsc_ref_min = ULONG_MAX;
+-	unsigned long flags, latch, ms, fast_calibrate;
++	unsigned long flags, latch, ms;
+ 	int hpet = is_hpet_enabled(), i, loopmin;
  
--	if (unlikely(!sched_clock_running))
-+	if (!static_branch_unlikely(&sched_clock_running))
- 		return sched_clock();
- 
- 	preempt_disable_notrace();
-@@ -396,7 +396,7 @@ void sched_clock_tick(void)
- 	if (sched_clock_stable())
- 		return;
- 
--	if (unlikely(!sched_clock_running))
-+	if (!static_branch_unlikely(&sched_clock_running))
- 		return;
- 
- 	lockdep_assert_irqs_disabled();
-@@ -455,13 +455,13 @@ EXPORT_SYMBOL_GPL(sched_clock_idle_wakeup_event);
- 
- void __init sched_clock_init(void)
- {
--	sched_clock_running = 1;
-+	static_branch_inc(&sched_clock_running);
- 	generic_sched_clock_init();
- }
- 
- u64 sched_clock_cpu(int cpu)
- {
--	if (unlikely(!sched_clock_running))
-+	if (!static_branch_unlikely(&sched_clock_running))
- 		return 0;
- 
- 	return sched_clock();
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index e593b4118578..b0212f489a33 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -623,8 +623,6 @@ void print_dl_rq(struct seq_file *m, int cpu, struct dl_rq *dl_rq)
- #undef PU
- }
- 
--extern __read_mostly int sched_clock_running;
+-	fast_calibrate = cpu_khz_from_cpuid();
+-	if (fast_calibrate)
+-		return fast_calibrate;
 -
- static void print_cpu(struct seq_file *m, int cpu)
+-	fast_calibrate = cpu_khz_from_msr();
+-	if (fast_calibrate)
+-		return fast_calibrate;
+-
+-	local_irq_save(flags);
+-	fast_calibrate = quick_pit_calibrate();
+-	local_irq_restore(flags);
+-	if (fast_calibrate)
+-		return fast_calibrate;
+-
+ 	/*
+ 	 * Run 5 calibration loops to get the lowest frequency value
+ 	 * (the best estimate). We use two different calibration modes
+@@ -846,6 +833,37 @@ unsigned long native_calibrate_cpu(void)
+ 	return tsc_pit_min;
+ }
+ 
++/**
++ * native_calibrate_cpu_early - can calibrate the cpu early in boot
++ */
++unsigned long native_calibrate_cpu_early(void)
++{
++	unsigned long flags, fast_calibrate = cpu_khz_from_cpuid();
++
++	if (!fast_calibrate)
++		fast_calibrate = cpu_khz_from_msr();
++	if (!fast_calibrate) {
++		local_irq_save(flags);
++		fast_calibrate = quick_pit_calibrate();
++		local_irq_restore(flags);
++	}
++	return fast_calibrate;
++}
++
++
++/**
++ * native_calibrate_cpu - calibrate the cpu
++ */
++unsigned long native_calibrate_cpu(void)
++{
++	unsigned long tsc_freq = native_calibrate_cpu_early();
++
++	if (!tsc_freq)
++		tsc_freq = pit_hpet_ptimer_calibrate_cpu();
++
++	return tsc_freq;
++}
++
+ void recalibrate_cpu_khz(void)
  {
- 	struct rq *rq = cpu_rq(cpu);
+ #ifndef CONFIG_SMP
