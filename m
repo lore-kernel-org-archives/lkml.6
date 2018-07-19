@@ -6,58 +6,57 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC57ECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2315ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B6C20673
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:24:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B6C20673
+	by mail.kernel.org (Postfix) with ESMTP id 9B38A20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 23:25:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B38A20673
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbeGTAJ5 (ORCPT
+        id S1731225AbeGTAKc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 20:09:57 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:46283 "EHLO
+        Thu, 19 Jul 2018 20:10:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:53007 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbeGTAJ5 (ORCPT
+        with ESMTP id S1727771AbeGTAKc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 20:09:57 -0400
+        Thu, 19 Jul 2018 20:10:32 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNNZkT2451390
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JNO8RR2453017
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 16:23:35 -0700
+        Thu, 19 Jul 2018 16:24:08 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNNZtE2451387;
-        Thu, 19 Jul 2018 16:23:35 -0700
-Date:   Thu, 19 Jul 2018 16:23:35 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JNO7MI2453014;
+        Thu, 19 Jul 2018 16:24:07 -0700
+Date:   Thu, 19 Jul 2018 16:24:07 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Joerg Roedel <tipbot@zytor.com>
-Message-ID: <tip-b92a165df17ee6e616e43107730f06bf6ecf5d8d@git.kernel.org>
-Cc:     luto@kernel.org, dave.hansen@intel.com, aarcange@redhat.com,
-        llong@redhat.com, peterz@infradead.org, eduval@amazon.com,
-        brgerst@gmail.com, mingo@kernel.org, tglx@linutronix.de,
-        dvlasenk@redhat.com, linux-kernel@vger.kernel.org, jroedel@suse.de,
-        bp@alien8.de, dhgutteridge@sympatico.ca, David.Laight@aculab.com,
-        jkosina@suse.cz, pavel@ucw.cz, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, boris.ostrovsky@oracle.com,
-        will.deacon@arm.com, jpoimboe@redhat.com, hpa@zytor.com,
-        jgross@suse.com
-Reply-To: jkosina@suse.cz, David.Laight@aculab.com,
-          dhgutteridge@sympatico.ca, jgross@suse.com, hpa@zytor.com,
-          jpoimboe@redhat.com, will.deacon@arm.com,
-          boris.ostrovsky@oracle.com, gregkh@linuxfoundation.org,
-          torvalds@linux-foundation.org, pavel@ucw.cz, dvlasenk@redhat.com,
-          tglx@linutronix.de, mingo@kernel.org, brgerst@gmail.com,
-          eduval@amazon.com, peterz@infradead.org, aarcange@redhat.com,
-          llong@redhat.com, dave.hansen@intel.com, luto@kernel.org,
-          jroedel@suse.de, bp@alien8.de, linux-kernel@vger.kernel.org
-In-Reply-To: <1531906876-13451-11-git-send-email-joro@8bytes.org>
-References: <1531906876-13451-11-git-send-email-joro@8bytes.org>
+Message-ID: <tip-929b44eb5739bf11d4a9bce85d7346bd955fc24d@git.kernel.org>
+Cc:     David.Laight@aculab.com, jroedel@suse.de, jpoimboe@redhat.com,
+        jkosina@suse.cz, luto@kernel.org, pavel@ucw.cz, mingo@kernel.org,
+        bp@alien8.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+        boris.ostrovsky@oracle.com, brgerst@gmail.com, dvlasenk@redhat.com,
+        tglx@linutronix.de, aarcange@redhat.com, eduval@amazon.com,
+        peterz@infradead.org, dhgutteridge@sympatico.ca,
+        gregkh@linuxfoundation.org, will.deacon@arm.com, llong@redhat.com,
+        dave.hansen@intel.com, jgross@suse.com,
+        torvalds@linux-foundation.org
+Reply-To: eduval@amazon.com, peterz@infradead.org, aarcange@redhat.com,
+          gregkh@linuxfoundation.org, will.deacon@arm.com,
+          llong@redhat.com, dave.hansen@intel.com, jgross@suse.com,
+          torvalds@linux-foundation.org, dhgutteridge@sympatico.ca,
+          jpoimboe@redhat.com, jkosina@suse.cz, luto@kernel.org,
+          David.Laight@aculab.com, jroedel@suse.de, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, boris.ostrovsky@oracle.com,
+          dvlasenk@redhat.com, brgerst@gmail.com, tglx@linutronix.de,
+          mingo@kernel.org, pavel@ucw.cz, bp@alien8.de
+In-Reply-To: <1531906876-13451-12-git-send-email-joro@8bytes.org>
+References: <1531906876-13451-12-git-send-email-joro@8bytes.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/pti] x86/entry/32: Handle Entry from Kernel-Mode on
- Entry-Stack
-Git-Commit-ID: b92a165df17ee6e616e43107730f06bf6ecf5d8d
+Subject: [tip:x86/pti] x86/entry/32: Simplify debug entry point
+Git-Commit-ID: 929b44eb5739bf11d4a9bce85d7346bd955fc24d
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -71,36 +70,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b92a165df17ee6e616e43107730f06bf6ecf5d8d
-Gitweb:     https://git.kernel.org/tip/b92a165df17ee6e616e43107730f06bf6ecf5d8d
+Commit-ID:  929b44eb5739bf11d4a9bce85d7346bd955fc24d
+Gitweb:     https://git.kernel.org/tip/929b44eb5739bf11d4a9bce85d7346bd955fc24d
 Author:     Joerg Roedel <jroedel@suse.de>
-AuthorDate: Wed, 18 Jul 2018 11:40:47 +0200
+AuthorDate: Wed, 18 Jul 2018 11:40:48 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Fri, 20 Jul 2018 01:11:38 +0200
+CommitDate: Fri, 20 Jul 2018 01:11:39 +0200
 
-x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
+x86/entry/32: Simplify debug entry point
 
-It is possible that the kernel is entered from kernel-mode and on the
-entry-stack. The most common way this happens is when an exception is
-triggered while loading the user-space segment registers on the
-kernel-to-userspace exit path.
+The common exception entry code now handles the entry-from-sysenter stack
+situation and makes sure to leave with the same stack as it entered the
+kernel.
 
-The segment loading needs to be done after the entry-stack switch, because
-the stack-switch needs kernel %fs for per_cpu access.
-
-When this happens, make sure to leave the kernel with the entry-stack
-again, so that the interrupted code-path runs on the right stack when
-switching to the user-cr3.
-
-Detect this condition on kernel-entry by checking CS.RPL and %esp, and if
-it happens, copy over the complete content of the entry stack to the
-task-stack.  This needs to be done because once the exception handler is
-entereed, the task might be scheduled out or even migrated to a different
-CPU, so this cannot rely on the entry-stack contents. Leave a marker in the
-stack-frame to detect this condition on the exit path.
-
-On the exit path the copy is reversed, copy all of the remaining task-stack
-back to the entry-stack and switch to it.
+So there is no need anymore for the special handling in the debug entry
+code.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -130,172 +114,58 @@ Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Waiman Long <llong@redhat.com>
 Cc: "David H . Gutteridge" <dhgutteridge@sympatico.ca>
 Cc: joro@8bytes.org
-Link: https://lkml.kernel.org/r/1531906876-13451-11-git-send-email-joro@8bytes.org
+Link: https://lkml.kernel.org/r/1531906876-13451-12-git-send-email-joro@8bytes.org
 
 ---
- arch/x86/entry/entry_32.S | 116 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 115 insertions(+), 1 deletion(-)
+ arch/x86/entry/entry_32.S | 35 +++--------------------------------
+ 1 file changed, 3 insertions(+), 32 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 763592596727..9d6eceba0461 100644
+index 9d6eceba0461..dbf7d619dcd6 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -294,6 +294,9 @@
-  * copied there. So allocate the stack-frame on the task-stack and
-  * switch to it before we do any copying.
-  */
-+
-+#define CS_FROM_ENTRY_STACK	(1 << 31)
-+
- .macro SWITCH_TO_KERNEL_STACK
+@@ -1226,41 +1226,12 @@ END(common_exception)
  
- 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-@@ -316,6 +319,16 @@
- 	/* Load top of task-stack into %edi */
- 	movl	TSS_entry2task_stack(%edi), %edi
- 
-+	/*
-+	 * Clear unused upper bits of the dword containing the word-sized CS
-+	 * slot in pt_regs in case hardware didn't clear it for us.
-+	 */
-+	andl	$(0x0000ffff), PT_CS(%esp)
-+
-+	/* Special case - entry from kernel mode via entry stack */
-+	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
-+	jz	.Lentry_from_kernel_\@
-+
- 	/* Bytes to copy */
- 	movl	$PTREGS_SIZE, %ecx
- 
-@@ -329,8 +342,8 @@
+ ENTRY(debug)
+ 	/*
+-	 * #DB can happen at the first instruction of
+-	 * entry_SYSENTER_32 or in Xen's SYSENTER prologue.  If this
+-	 * happens, then we will be running on a very small stack.  We
+-	 * need to detect this condition and switch to the thread
+-	 * stack before calling any C code at all.
+-	 *
+-	 * If you edit this code, keep in mind that NMIs can happen in here.
++	 * Entry from sysenter is now handled in common_exception
  	 */
- 	addl	$(4 * 4), %ecx
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
+-
+-	SAVE_ALL
+-	ENCODE_FRAME_POINTER
+-	xorl	%edx, %edx			# error code 0
+-	movl	%esp, %eax			# pt_regs pointer
+-
+-	/* Are we currently on the SYSENTER stack? */
+-	movl	PER_CPU_VAR(cpu_entry_area), %ecx
+-	addl	$CPU_ENTRY_AREA_entry_stack + SIZEOF_entry_stack, %ecx
+-	subl	%eax, %ecx	/* ecx = (end of entry_stack) - esp */
+-	cmpl	$SIZEOF_entry_stack, %ecx
+-	jb	.Ldebug_from_sysenter_stack
+-
+-	TRACE_IRQS_OFF
+-	call	do_debug
+-	jmp	ret_from_exception
+-
+-.Ldebug_from_sysenter_stack:
+-	/* We're on the SYSENTER stack.  Switch off. */
+-	movl	%esp, %ebx
+-	movl	PER_CPU_VAR(cpu_current_top_of_stack), %esp
+-	TRACE_IRQS_OFF
+-	call	do_debug
+-	movl	%ebx, %esp
+-	jmp	ret_from_exception
++	pushl	$do_debug
++	jmp	common_exception
+ END(debug)
  
--.Lcopy_pt_regs_\@:
- #endif
-+.Lcopy_pt_regs_\@:
- 
- 	/* Allocate frame on task-stack */
- 	subl	%ecx, %edi
-@@ -346,6 +359,56 @@
- 	cld
- 	rep movsl
- 
-+	jmp .Lend_\@
-+
-+.Lentry_from_kernel_\@:
-+
-+	/*
-+	 * This handles the case when we enter the kernel from
-+	 * kernel-mode and %esp points to the entry-stack. When this
-+	 * happens we need to switch to the task-stack to run C code,
-+	 * but switch back to the entry-stack again when we approach
-+	 * iret and return to the interrupted code-path. This usually
-+	 * happens when we hit an exception while restoring user-space
-+	 * segment registers on the way back to user-space.
-+	 *
-+	 * When we switch to the task-stack here, we can't trust the
-+	 * contents of the entry-stack anymore, as the exception handler
-+	 * might be scheduled out or moved to another CPU. Therefore we
-+	 * copy the complete entry-stack to the task-stack and set a
-+	 * marker in the iret-frame (bit 31 of the CS dword) to detect
-+	 * what we've done on the iret path.
-+	 *
-+	 * On the iret path we copy everything back and switch to the
-+	 * entry-stack, so that the interrupted kernel code-path
-+	 * continues on the same stack it was interrupted with.
-+	 *
-+	 * Be aware that an NMI can happen anytime in this code.
-+	 *
-+	 * %esi: Entry-Stack pointer (same as %esp)
-+	 * %edi: Top of the task stack
-+	 */
-+
-+	/* Calculate number of bytes on the entry stack in %ecx */
-+	movl	%esi, %ecx
-+
-+	/* %ecx to the top of entry-stack */
-+	andl	$(MASK_entry_stack), %ecx
-+	addl	$(SIZEOF_entry_stack), %ecx
-+
-+	/* Number of bytes on the entry stack to %ecx */
-+	sub	%esi, %ecx
-+
-+	/* Mark stackframe as coming from entry stack */
-+	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+
-+	/*
-+	 * %esi and %edi are unchanged, %ecx contains the number of
-+	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
-+	 * the stack-frame on task-stack and copy everything over
-+	 */
-+	jmp .Lcopy_pt_regs_\@
-+
- .Lend_\@:
- .endm
- 
-@@ -403,6 +466,56 @@
- .Lend_\@:
- .endm
- 
-+/*
-+ * This macro handles the case when we return to kernel-mode on the iret
-+ * path and have to switch back to the entry stack.
-+ *
-+ * See the comments below the .Lentry_from_kernel_\@ label in the
-+ * SWITCH_TO_KERNEL_STACK macro for more details.
-+ */
-+.macro PARANOID_EXIT_TO_KERNEL_MODE
-+
-+	/*
-+	 * Test if we entered the kernel with the entry-stack. Most
-+	 * likely we did not, because this code only runs on the
-+	 * return-to-kernel path.
-+	 */
-+	testl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+	jz	.Lend_\@
-+
-+	/* Unlikely slow-path */
-+
-+	/* Clear marker from stack-frame */
-+	andl	$(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
-+
-+	/* Copy the remaining task-stack contents to entry-stack */
-+	movl	%esp, %esi
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
-+
-+	/* Bytes on the task-stack to ecx */
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp1), %ecx
-+	subl	%esi, %ecx
-+
-+	/* Allocate stack-frame on entry-stack */
-+	subl	%ecx, %edi
-+
-+	/*
-+	 * Save future stack-pointer, we must not switch until the
-+	 * copy is done, otherwise the NMI handler could destroy the
-+	 * contents of the task-stack we are about to copy.
-+	 */
-+	movl	%edi, %ebx
-+
-+	/* Do the copy */
-+	shrl	$2, %ecx
-+	cld
-+	rep movsl
-+
-+	/* Safe to switch to entry-stack now */
-+	movl	%ebx, %esp
-+
-+.Lend_\@:
-+.endm
  /*
-  * %eax: prev task
-  * %edx: next task
-@@ -764,6 +877,7 @@ restore_all:
- 
- restore_all_kernel:
- 	TRACE_IRQS_IRET
-+	PARANOID_EXIT_TO_KERNEL_MODE
- 	RESTORE_REGS 4
- 	jmp	.Lirq_return
- 
