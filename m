@@ -6,69 +6,116 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAD3C468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3EAC468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FBE120856
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:51:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FBE120856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id 9E1E72084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:52:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1E72084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731964AbeGSQfg (ORCPT
+        id S1731977AbeGSQgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:35:36 -0400
-Received: from www62.your-server.de ([213.133.104.62]:50218 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730899AbeGSQfg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:35:36 -0400
-Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fgBDS-0003Qn-F3; Thu, 19 Jul 2018 17:51:42 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fgBDS-000PpR-9u; Thu, 19 Jul 2018 17:51:42 +0200
-Subject: Re: [PATCH v2 bpf-next] bpfilter: Fix mismatch in function argument
- types
-To:     Martin KaFai Lau <kafai@fb.com>, YueHaibing <yuehaibing@huawei.com>
-Cc:     ast@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20180719075659.9800-1-yuehaibing@huawei.com>
- <20180719154817.ycwupljsx4ghkhom@kafai-mbp.dhcp.thefacebook.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <9c9f981b-7d1e-1bb2-6771-727fc762c7c5@iogearbox.net>
-Date:   Thu, 19 Jul 2018 17:51:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 19 Jul 2018 12:36:20 -0400
+Received: from mga06.intel.com ([134.134.136.31]:28092 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727575AbeGSQgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:36:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 08:52:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,375,1526367600"; 
+   d="scan'208";a="57808984"
+Received: from mldahl-mobl2.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.254.107.75])
+  by orsmga007.jf.intel.com with ESMTP; 19 Jul 2018 08:52:33 -0700
+Subject: [PATCH] tpm: add support for partial reads
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Thu, 19 Jul 2018 08:52:32 -0700
+Message-ID: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <20180719154817.ycwupljsx4ghkhom@kafai-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24763/Thu Jul 19 10:39:52 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/19/2018 05:48 PM, Martin KaFai Lau wrote:
-> On Thu, Jul 19, 2018 at 03:56:59PM +0800, YueHaibing wrote:
->> Fix following warning:
->> net/ipv4/bpfilter/sockopt.c:28:5: error: symbol 'bpfilter_ip_set_sockopt' redeclared with different type
->> net/ipv4/bpfilter/sockopt.c:34:5: error: symbol 'bpfilter_ip_get_sockopt' redeclared with different type
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> LGTM.  Missing a Fixes tag though.
-> 
-> Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
-> Acked-by: Martin KaFai Lau <kafai@fb.com>
+Currently to read a response from the TPM device an application needs
+provide "big enough" buffer for the whole response and read it in one go.
+The application doesn't know how big the response it beforehand so it
+always needs to maintain a 4K buffer and read the max (4K).
+In case if the user of the TSS library doesn't provide big enough buffer
+the TCTI spec says that the library should set the required size and return
+TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the application could
+allocate a bigger buffer and call receive again.
+To make it possible in the TSS library this requires being able to do
+partial reads from the driver.
+The library would read the header first to get the actual size of the
+response from the header and then read the rest of the response.
+This patch adds support for partial reads.
 
-(Should go to -net tree.)
+The usecase is implemented in this TSS commit:
+https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
 
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ drivers/char/tpm/tpm-dev-common.c |   32 +++++++++++++++++++++++---------
+ 1 file changed, 23 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 3f2089f75c30..f5b614984dbc 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -99,20 +99,34 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 	ssize_t ret_size = 0;
+ 	int rc;
+ 
+-	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->timeout_work);
+ 	mutex_lock(&priv->buffer_mutex);
+ 
+ 	if (priv->data_pending) {
+-		ret_size = min_t(ssize_t, size, priv->data_pending);
+-		if (ret_size > 0) {
+-			rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-			memset(priv->data_buffer, 0, priv->data_pending);
+-			if (rc)
+-				ret_size = -EFAULT;
++		ret_size = min_t(ssize_t, size + *off, priv->data_pending);
++		if (ret_size <= 0) {
++			ret_size = 0;
++			priv->data_pending = 0;
++			*off = 0;
++			goto out;
+ 		}
+ 
+-		priv->data_pending = 0;
++		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
++		if (rc) {
++			memset(priv->data_buffer, 0, priv->data_pending);
++			ret_size = -EFAULT;
++			priv->data_pending = 0;
++			*off = 0;
++		} else {
++			memset(priv->data_buffer + *off, 0, ret_size);
++			priv->data_pending -= ret_size;
++			*off += ret_size;
++		}
++	}
++out:
++	if (!priv->data_pending) {
++		del_singleshot_timer_sync(&priv->user_read_timer);
++		flush_work(&priv->timeout_work);
++		*off = 0;
+ 	}
+ 
+ 	mutex_unlock(&priv->buffer_mutex);
+
