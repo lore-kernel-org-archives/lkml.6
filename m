@@ -2,235 +2,328 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E52ABC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65383C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8228B20661
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:46:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V+0WfAj5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8228B20661
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 045EE2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 15:49:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045EE2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731866AbeGSQac (ORCPT
+        id S1731889AbeGSQcz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 12:30:32 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:33863 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731570AbeGSQac (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 12:30:32 -0400
-Received: by mail-oi0-f65.google.com with SMTP id 13-v6so15860103ois.1;
-        Thu, 19 Jul 2018 08:46:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OvumWTtxn2XMugUW0CE141REBO4t5geQsXiJFiPMp0o=;
-        b=V+0WfAj5dz08QbvjiwUQVqCGpF5eFS7s4k1qI+v1om5DfV/daqyh16dPGkv6Zt8Ut8
-         RLoSskvMU+yzDeOgAZoi/9Ns8sOJIoFgAq3kUugv6WzLQ3wh6w6BPw8h/xEWz6buF/WC
-         /bMsoGKPhTrIamxhM5nrW6+c/hgIjwIorp0oPAJCd9Szf2VoGjqfs/dgSYki1FCxe0dG
-         v/25D9Logm9Lx7o/h1yFLouzrClhPDIoP296j7k/QMh0iP9PiTh/fm72SbDhXmRFQ4XL
-         5O37fZ32IaQPfllIozaAb8vvtNGLO5forz2CRQItfKPdBdDwi0+uH7Vt2gT3aD+I/3Mu
-         IK0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OvumWTtxn2XMugUW0CE141REBO4t5geQsXiJFiPMp0o=;
-        b=QRJAQHHy8rUSR50hmcEtHrH3I/BZhYh/DSeVqxM9Hees+UmIrLg/7YU1EzEprsY3GJ
-         /zMfzBkx0OZMwYKcJ9CiDPi1OitISuXbTKhLnmltAnB3+dMuAEm8jD+W9Kt6kEkfa3E7
-         +v970lRqv9DANBrnb76hunU+/ukrflthgeBlhV8vjBLtemEtflB7o3zEz1ReKIqPQJXK
-         iaU+8BTL9ZThkqAgRT63vHFkG+M+crS8dJVTyJFakzoPZzZy04zoDz5kbgHMBJVAwQm0
-         LZFx5Wxmto9PM4vgXm8bQgtU+KVEvv83gqBA2QmhRyIIXQVAyGmmYc+Y2XTzIWTsEXvT
-         qTBA==
-X-Gm-Message-State: AOUpUlHo5yElPvtemUyN/0XoBXZ/qhhGZcBmkwpkB7oHTJYUpBsab5U4
-        pCxmsIF7qRlu2D8TyuZEnWM=
-X-Google-Smtp-Source: AAOMgpeHFGSckz3hV7u2MiSy0uby0Gzd5AElDOIh7XiSLfhgNIazujO88aVtqKkeTnoC9tR1VoLcww==
-X-Received: by 2002:aca:3357:: with SMTP id z84-v6mr12191882oiz.49.1532015205677;
-        Thu, 19 Jul 2018 08:46:45 -0700 (PDT)
-Received: from nuclearis2-1.gtech (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id w204-v6sm11866974oif.2.2018.07.19.08.46.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 08:46:44 -0700 (PDT)
-From:   "Alex G." <mr.nuke.me@gmail.com>
-Subject: Re: [PATCH v3] PCI: Check for PCIe downtraining conditions
-To:     Bjorn Helgaas <helgaas@kernel.org>, Alex_Gagniuc@Dellteam.com
-Cc:     bhelgaas@google.com, Austin.Bolen@dell.com, Shyam.Iyer@dell.com,
-        keith.busch@intel.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jeffrey.t.kirsher@intel.com,
-        ariel.elior@cavium.com, michael.chan@broadcom.com,
-        ganeshgr@chelsio.com, tariqt@mellanox.com,
-        jakub.kicinski@netronome.com, talgi@mellanox.com,
-        airlied@gmail.com, alexander.deucher@amd.com,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>
-References: <20180604155523.14906-1-mr.nuke.me@gmail.com>
- <20180716211706.GB12391@bhelgaas-glaptop.roam.corp.google.com>
- <97a70a71e1034bafbcabc6c4e23577c0@ausx13mps321.AMER.DELL.COM>
- <20180718215359.GG128988@bhelgaas-glaptop.roam.corp.google.com>
-Message-ID: <8baf16fb-7e7c-ec59-19ef-a709e164dc94@gmail.com>
-Date:   Thu, 19 Jul 2018 10:46:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 19 Jul 2018 12:32:55 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34118 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730521AbeGSQcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 12:32:54 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6460C407447D;
+        Thu, 19 Jul 2018 15:49:06 +0000 (UTC)
+Received: from doriath (ovpn-116-197.phx2.redhat.com [10.3.116.197])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D3FE2026D6B;
+        Thu, 19 Jul 2018 15:49:00 +0000 (UTC)
+Date:   Thu, 19 Jul 2018 11:48:59 -0400
+From:   Luiz Capitulino <lcapitulino@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
+        Pankaj Gupta <pagupta@redhat.com>, kwolf@redhat.com,
+        haozhong zhang <haozhong.zhang@intel.com>, jack@suse.cz,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        kvm@vger.kernel.org, riel@surriel.com, linux-nvdimm@ml01.01.org,
+        ross zwisler <ross.zwisler@intel.com>,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        hch@infradead.org, imammedo@redhat.com, mst@redhat.com,
+        niteshnarayanlal@hotmail.com, pbonzini@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, nilal@redhat.com
+Subject: Re: [Qemu-devel] [RFC v3] qemu: Add virtio pmem device
+Message-ID: <20180719114859.29348ed4@doriath>
+In-Reply-To: <b6ef19f3-7f16-5427-bfed-f352a76e48b7@redhat.com>
+References: <20180713075232.9575-1-pagupta@redhat.com>
+        <20180713075232.9575-4-pagupta@redhat.com>
+        <20180718085529.133a0a22@doriath>
+        <367397176.52317488.1531979293251.JavaMail.zimbra@redhat.com>
+        <20180719121635.GA28107@stefanha-x1.localdomain>
+        <b6ef19f3-7f16-5427-bfed-f352a76e48b7@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180718215359.GG128988@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 15:49:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 19 Jul 2018 15:49:06 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lcapitulino@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 19 Jul 2018 15:58:20 +0200
+David Hildenbrand <david@redhat.com> wrote:
 
+> On 19.07.2018 14:16, Stefan Hajnoczi wrote:
+> > On Thu, Jul 19, 2018 at 01:48:13AM -0400, Pankaj Gupta wrote:  
+> >>  
+> >>>  
+> >>>>  This patch adds virtio-pmem Qemu device.
+> >>>>
+> >>>>  This device presents memory address range information to guest
+> >>>>  which is backed by file backend type. It acts like persistent
+> >>>>  memory device for KVM guest. Guest can perform read and persistent
+> >>>>  write operations on this memory range with the help of DAX capable
+> >>>>  filesystem.
+> >>>>
+> >>>>  Persistent guest writes are assured with the help of virtio based
+> >>>>  flushing interface. When guest userspace space performs fsync on
+> >>>>  file fd on pmem device, a flush command is send to Qemu over VIRTIO
+> >>>>  and host side flush/sync is done on backing image file.
+> >>>>
+> >>>> Changes from RFC v2:
+> >>>> - Use aio_worker() to avoid Qemu from hanging with blocking fsync
+> >>>>   call - Stefan
+> >>>> - Use virtio_st*_p() for endianess - Stefan
+> >>>> - Correct indentation in qapi/misc.json - Eric
+> >>>>
+> >>>> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> >>>> ---
+> >>>>  hw/virtio/Makefile.objs                     |   3 +
+> >>>>  hw/virtio/virtio-pci.c                      |  44 +++++
+> >>>>  hw/virtio/virtio-pci.h                      |  14 ++
+> >>>>  hw/virtio/virtio-pmem.c                     | 241
+> >>>>  ++++++++++++++++++++++++++++
+> >>>>  include/hw/pci/pci.h                        |   1 +
+> >>>>  include/hw/virtio/virtio-pmem.h             |  42 +++++
+> >>>>  include/standard-headers/linux/virtio_ids.h |   1 +
+> >>>>  qapi/misc.json                              |  26 ++-
+> >>>>  8 files changed, 371 insertions(+), 1 deletion(-)
+> >>>>  create mode 100644 hw/virtio/virtio-pmem.c
+> >>>>  create mode 100644 include/hw/virtio/virtio-pmem.h
+> >>>>
+> >>>> diff --git a/hw/virtio/Makefile.objs b/hw/virtio/Makefile.objs
+> >>>> index 1b2799cfd8..7f914d45d0 100644
+> >>>> --- a/hw/virtio/Makefile.objs
+> >>>> +++ b/hw/virtio/Makefile.objs
+> >>>> @@ -10,6 +10,9 @@ obj-$(CONFIG_VIRTIO_CRYPTO) += virtio-crypto.o
+> >>>>  obj-$(call land,$(CONFIG_VIRTIO_CRYPTO),$(CONFIG_VIRTIO_PCI)) +=
+> >>>>  virtio-crypto-pci.o
+> >>>>  
+> >>>>  obj-$(CONFIG_LINUX) += vhost.o vhost-backend.o vhost-user.o
+> >>>> +ifeq ($(CONFIG_MEM_HOTPLUG),y)
+> >>>> +obj-$(CONFIG_LINUX) += virtio-pmem.o
+> >>>> +endif
+> >>>>  obj-$(CONFIG_VHOST_VSOCK) += vhost-vsock.o
+> >>>>  endif
+> >>>>  
+> >>>> diff --git a/hw/virtio/virtio-pci.c b/hw/virtio/virtio-pci.c
+> >>>> index 3a01fe90f0..93d3fc05c7 100644
+> >>>> --- a/hw/virtio/virtio-pci.c
+> >>>> +++ b/hw/virtio/virtio-pci.c
+> >>>> @@ -2521,6 +2521,49 @@ static const TypeInfo virtio_rng_pci_info = {
+> >>>>      .class_init    = virtio_rng_pci_class_init,
+> >>>>  };
+> >>>>  
+> >>>> +/* virtio-pmem-pci */
+> >>>> +
+> >>>> +static void virtio_pmem_pci_realize(VirtIOPCIProxy *vpci_dev, Error
+> >>>> **errp)
+> >>>> +{
+> >>>> +    VirtIOPMEMPCI *vpmem = VIRTIO_PMEM_PCI(vpci_dev);
+> >>>> +    DeviceState *vdev = DEVICE(&vpmem->vdev);
+> >>>> +
+> >>>> +    qdev_set_parent_bus(vdev, BUS(&vpci_dev->bus));
+> >>>> +    object_property_set_bool(OBJECT(vdev), true, "realized", errp);
+> >>>> +}
+> >>>> +
+> >>>> +static void virtio_pmem_pci_class_init(ObjectClass *klass, void *data)
+> >>>> +{
+> >>>> +    DeviceClass *dc = DEVICE_CLASS(klass);
+> >>>> +    VirtioPCIClass *k = VIRTIO_PCI_CLASS(klass);
+> >>>> +    PCIDeviceClass *pcidev_k = PCI_DEVICE_CLASS(klass);
+> >>>> +    k->realize = virtio_pmem_pci_realize;
+> >>>> +    set_bit(DEVICE_CATEGORY_MISC, dc->categories);
+> >>>> +    pcidev_k->vendor_id = PCI_VENDOR_ID_REDHAT_QUMRANET;
+> >>>> +    pcidev_k->device_id = PCI_DEVICE_ID_VIRTIO_PMEM;
+> >>>> +    pcidev_k->revision = VIRTIO_PCI_ABI_VERSION;
+> >>>> +    pcidev_k->class_id = PCI_CLASS_OTHERS;
+> >>>> +}
+> >>>> +
+> >>>> +static void virtio_pmem_pci_instance_init(Object *obj)
+> >>>> +{
+> >>>> +    VirtIOPMEMPCI *dev = VIRTIO_PMEM_PCI(obj);
+> >>>> +
+> >>>> +    virtio_instance_init_common(obj, &dev->vdev, sizeof(dev->vdev),
+> >>>> +                                TYPE_VIRTIO_PMEM);
+> >>>> +    object_property_add_alias(obj, "memdev", OBJECT(&dev->vdev), "memdev",
+> >>>> +                              &error_abort);
+> >>>> +}
+> >>>> +
+> >>>> +static const TypeInfo virtio_pmem_pci_info = {
+> >>>> +    .name          = TYPE_VIRTIO_PMEM_PCI,
+> >>>> +    .parent        = TYPE_VIRTIO_PCI,
+> >>>> +    .instance_size = sizeof(VirtIOPMEMPCI),
+> >>>> +    .instance_init = virtio_pmem_pci_instance_init,
+> >>>> +    .class_init    = virtio_pmem_pci_class_init,
+> >>>> +};
+> >>>> +
+> >>>> +
+> >>>>  /* virtio-input-pci */
+> >>>>  
+> >>>>  static Property virtio_input_pci_properties[] = {
+> >>>> @@ -2714,6 +2757,7 @@ static void virtio_pci_register_types(void)
+> >>>>      type_register_static(&virtio_balloon_pci_info);
+> >>>>      type_register_static(&virtio_serial_pci_info);
+> >>>>      type_register_static(&virtio_net_pci_info);
+> >>>> +    type_register_static(&virtio_pmem_pci_info);
+> >>>>  #ifdef CONFIG_VHOST_SCSI
+> >>>>      type_register_static(&vhost_scsi_pci_info);
+> >>>>  #endif
+> >>>> diff --git a/hw/virtio/virtio-pci.h b/hw/virtio/virtio-pci.h
+> >>>> index 813082b0d7..fe74fcad3f 100644
+> >>>> --- a/hw/virtio/virtio-pci.h
+> >>>> +++ b/hw/virtio/virtio-pci.h
+> >>>> @@ -19,6 +19,7 @@
+> >>>>  #include "hw/virtio/virtio-blk.h"
+> >>>>  #include "hw/virtio/virtio-net.h"
+> >>>>  #include "hw/virtio/virtio-rng.h"
+> >>>> +#include "hw/virtio/virtio-pmem.h"
+> >>>>  #include "hw/virtio/virtio-serial.h"
+> >>>>  #include "hw/virtio/virtio-scsi.h"
+> >>>>  #include "hw/virtio/virtio-balloon.h"
+> >>>> @@ -57,6 +58,7 @@ typedef struct VirtIOInputHostPCI VirtIOInputHostPCI;
+> >>>>  typedef struct VirtIOGPUPCI VirtIOGPUPCI;
+> >>>>  typedef struct VHostVSockPCI VHostVSockPCI;
+> >>>>  typedef struct VirtIOCryptoPCI VirtIOCryptoPCI;
+> >>>> +typedef struct VirtIOPMEMPCI VirtIOPMEMPCI;
+> >>>>  
+> >>>>  /* virtio-pci-bus */
+> >>>>  
+> >>>> @@ -274,6 +276,18 @@ struct VirtIOBlkPCI {
+> >>>>      VirtIOBlock vdev;
+> >>>>  };
+> >>>>  
+> >>>> +/*
+> >>>> + * virtio-pmem-pci: This extends VirtioPCIProxy.
+> >>>> + */
+> >>>> +#define TYPE_VIRTIO_PMEM_PCI "virtio-pmem-pci"
+> >>>> +#define VIRTIO_PMEM_PCI(obj) \
+> >>>> +        OBJECT_CHECK(VirtIOPMEMPCI, (obj), TYPE_VIRTIO_PMEM_PCI)
+> >>>> +
+> >>>> +struct VirtIOPMEMPCI {
+> >>>> +    VirtIOPCIProxy parent_obj;
+> >>>> +    VirtIOPMEM vdev;
+> >>>> +};
+> >>>> +
+> >>>>  /*
+> >>>>   * virtio-balloon-pci: This extends VirtioPCIProxy.
+> >>>>   */
+> >>>> diff --git a/hw/virtio/virtio-pmem.c b/hw/virtio/virtio-pmem.c
+> >>>> new file mode 100644
+> >>>> index 0000000000..08c96d7e80
+> >>>> --- /dev/null
+> >>>> +++ b/hw/virtio/virtio-pmem.c
+> >>>> @@ -0,0 +1,241 @@
+> >>>> +/*
+> >>>> + * Virtio pmem device
+> >>>> + *
+> >>>> + * Copyright (C) 2018 Red Hat, Inc.
+> >>>> + * Copyright (C) 2018 Pankaj Gupta <pagupta@redhat.com>
+> >>>> + *
+> >>>> + * This work is licensed under the terms of the GNU GPL, version 2.
+> >>>> + * See the COPYING file in the top-level directory.
+> >>>> + *
+> >>>> + */
+> >>>> +
+> >>>> +#include "qemu/osdep.h"
+> >>>> +#include "qapi/error.h"
+> >>>> +#include "qemu-common.h"
+> >>>> +#include "qemu/error-report.h"
+> >>>> +#include "hw/virtio/virtio-access.h"
+> >>>> +#include "hw/virtio/virtio-pmem.h"
+> >>>> +#include "hw/mem/memory-device.h"
+> >>>> +#include "block/aio.h"
+> >>>> +#include "block/thread-pool.h"
+> >>>> +
+> >>>> +typedef struct VirtIOPMEMresp {
+> >>>> +    int ret;
+> >>>> +} VirtIOPMEMResp;
+> >>>> +
+> >>>> +typedef struct VirtIODeviceRequest {
+> >>>> +    VirtQueueElement elem;
+> >>>> +    int fd;
+> >>>> +    VirtIOPMEM *pmem;
+> >>>> +    VirtIOPMEMResp resp;
+> >>>> +} VirtIODeviceRequest;
+> >>>> +
+> >>>> +static int worker_cb(void *opaque)
+> >>>> +{
+> >>>> +    VirtIODeviceRequest *req = opaque;
+> >>>> +    int err = 0;
+> >>>> +
+> >>>> +    /* flush raw backing image */
+> >>>> +    err = fsync(req->fd);
+> >>>> +    if (err != 0) {
+> >>>> +        err = errno;
+> >>>> +    }
+> >>>> +    req->resp.ret = err;  
+> >>>
+> >>> Host question: are you returning the guest errno code to the host?  
+> >>
+> >> No. I am returning error code from the host in-case of host fsync
+> >> failure, otherwise returning zero.  
+> > 
+> > I think that's what Luiz meant.  errno constants are not portable
+> > between operating systems and architectures.  Therefore they cannot be
+> > used in external interfaces in software that expects to communicate with
+> > other systems.
+> > 
+> > It will be necessary to define specific constants for virtio-pmem
+> > instead of passing errno from the host to guest.
+> >   
+> 
+> In general, I wonder if we should report errors at all or rather *kill*
+> the guest. That might sound harsh, but think about the following scenario:
 
-On 07/18/2018 04:53 PM, Bjorn Helgaas wrote:
-> [+cc Mike (hfi1)]
-> 
-> On Mon, Jul 16, 2018 at 10:28:35PM +0000, Alex_Gagniuc@Dellteam.com wrote:
->> On 7/16/2018 4:17 PM, Bjorn Helgaas wrote:
->>>> ...
->>>> The easiest way to detect this is with pcie_print_link_status(),
->>>> since the bottleneck is usually the link that is downtrained. It's not
->>>> a perfect solution, but it works extremely well in most cases.
->>>
->>> This is an interesting idea.  I have two concerns:
->>>
->>> Some drivers already do this on their own, and we probably don't want
->>> duplicate output for those devices.  In most cases (ixgbe and mlx* are
->>> exceptions), the drivers do this unconditionally so we *could* remove
->>> it from the driver if we add it to the core.  The dmesg order would
->>> change, and the message wouldn't be associated with the driver as it
->>> now is.
->>
->> Oh, there are only 8 users of that. Even I could patch up the drivers to
->> remove the call, assuming we reach agreement about this change.
->>
->>> Also, I think some of the GPU devices might come up at a lower speed,
->>> then download firmware, then reset the device so it comes up at a
->>> higher speed.  I think this patch will make us complain about about
->>> the low initial speed, which might confuse users.
->>
->> I spoke to one of the PCIe spec writers. It's allowable for a device to
->> downtrain speed or width. It would also be extremely dumb to downtrain
->> with the intent to re-train at a higher speed later, but it's possible
->> devices do dumb stuff like that. That's why it's an informational
->> message, instead of a warning.
-> 
-> FWIW, here's some of the discussion related to hfi1 from [1]:
-> 
->    > Btw, why is the driver configuring the PCIe link speed?  Isn't
->    > this something we should be handling in the PCI core?
-> 
->    The device comes out of reset at the 5GT/s speed. The driver
->    downloads device firmware, programs PCIe registers, and co-ordinates
->    the transition to 8GT/s.
-> 
->    This recipe is device specific and is therefore implemented in the
->    hfi1 driver built on top of PCI core functions and macros.
-> 
-> Also several DRM drivers seem to do this (see ),
-> si_pcie_gen3_enable()); from [2]:
-> 
->    My understanding was that some platfoms only bring up the link in gen 1
->    mode for compatibility reasons.
-> 
-> [1] https://lkml.kernel.org/r/32E1700B9017364D9B60AED9960492BC627FF54C@fmsmsx120.amr.corp.intel.com
-> [2] https://lkml.kernel.org/r/BN6PR12MB1809BD30AA5B890C054F9832F7B50@BN6PR12MB1809.namprd12.prod.outlook.com
+I almost sure that I read in the nvdimm spec that real hardware will
+cause a memory error on sync or read/write error. If we truly want
+to emulate this, then I guess QEMU should be able to inject a memory
+error for the entire region instead of returning the fsync() error
+to the guest.
 
-Downtraining a link "for compatibility reasons" is one of those dumb 
-things that devices do. I'm SURPRISED AMD HW does it, although it is 
-perfectly permissible by PCIe spec.
+> fsync() fails due to some block that cannot e.g. be written (e.g.
+> network connection failed). What happens if our guest tries to
+> read/write that mmaped block? (e.g. network connection failed).
 
->> Another case: Some devices (lower-end GPUs) use silicon (and marketing)
->> that advertises x16, but they're only routed for x8. I'm okay with
->> seeing an informational message in this case. In fact, I didn't know
->> that my Quadro card for three years is only wired for x8 until I was
->> testing this patch.
-> 
-> Yeah, it's probably OK.  I don't want bug reports from people who
-> think something's broken when it's really just a hardware limitation
-> of their system.  But hopefully the message is not alarming.
+I think it gets a SIGBUS? Btw, I think that QEMU already has the
+machinery to turn a SIGBUS into an memory error in the guest.
 
-It looks fairly innocent:
+> I assume we'll get a signal an get killed? So we are trying to optimize
+> one special case (fsync()) although every read/write is prone to kill
+> the guest. And as soon as the guest will try to access the block that
+> made fsync fail, we will crash the guest either way.
 
-[    0.749415] pci 0000:18:00.0: 4.000 Gb/s available PCIe bandwidth, 
-limited by 5 GT/s x1 link at 0000:17:03.0 (capable of 15.752 Gb/s with 8 
-GT/s x2 link)
+I think you have a point.
 
->>> So I'm not sure whether it's better to do this in the core for all
->>> devices, or if we should just add it to the high-performance drivers
->>> that really care.
->>
->> You're thinking "do I really need that bandwidth" because I'm using a
->> function called "_bandwidth_". The point of the change is very far from
->> that: it is to help in system troubleshooting by detecting downtraining
->> conditions.
 > 
-> I'm not sure what you think I'm thinking :)  My question is whether
-> it's worthwhile to print this extra information for *every* PCIe
-> device, given that your use case is the tiny percentage of broken
-> systems.
+> I assume the main problem is that we are trying to take a file (with all
+> the errors that can happen during read/write/fsync) and make it look
+> like memory (dax). On ordinary block access, we can forward errors, but
+> not if it's memory (maybe using MCE, but it's complicated and
+> architecture specific).
+> 
+> So I wonder if we should rather assume that our backend file is placed
+> on some stable storage that cannot easily fail.
+> 
+> (we might have the same problem with NVDIMM right now, at least the
+> memory reading/writing part)
+> 
+> It's complicated and I am not a block level expert :)
+> 
+> > Stefan
+> >   
+> 
+> 
 
-I think this information is a lot more useful than a bunch of other info 
-that's printed. Is "type 00 class 0x088000" more valuable? What about 
-"reg 0x20: [mem 0x9d950000-0x9d95ffff 64bit pref]", which is also 
-available under /proc/iomem for those curious?
-
-> If we only printed the info in the "bw_avail < bw_cap" case, i.e.,
-> when the device is capable of more than it's getting, that would make
-> a lot of sense to me.  The normal case line is more questionable.  I
-> think the reason that's there is because the network drivers are very
-> performance sensitive and like to see that info all the time.
-
-I agree that can be an acceptable compromise.
-
-> Maybe we need something like this:
-> 
->    pcie_print_link_status(struct pci_dev *dev, int verbose)
->    {
->      ...
->      if (bw_avail >= bw_cap) {
->        if (verbose)
->          pci_info(dev, "... available PCIe bandwidth ...");
->      } else
->        pci_info(dev, "... available PCIe bandwidth, limited by ...");
->    }
-> 
-> So the core could print only the potential problems with:
-> 
->    pcie_print_link_status(dev, 0);
-> 
-> and drivers that really care even if there's no problem could do:
-> 
->    pcie_print_link_status(dev, 1);
-
-Sounds good. I'll try to push out updated PATCH early next week.
-
->>>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
->> [snip]
->>>> +	/* Look from the device up to avoid downstream ports with no devices. */
->>>> +	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
->>>> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
->>>> +	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
->>>> +		return;
->>>
->>> Do we care about Upstream Ports here?
->>
->> YES! Switches. e.g. an x16 switch with 4x downstream ports could
->> downtrain at 8x and 4x, and we'd never catch it.
-> 
-> OK, I think I see your point: if the upstream port *could* do 16x but
-> only trains to 4x, and two endpoints below it are both capable of 4x,
-> the endpoints *think* they're happy but in fact they have to share 4x
-> when they could use more.
-> 
-> Bjorn
-> 
