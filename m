@@ -2,132 +2,112 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE3EECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17442ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B73202084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:00:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="FPbcvHwY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B73202084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id BA74E2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:01:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA74E2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731556AbeGSVpH (ORCPT
+        id S1730913AbeGSVqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 17:45:07 -0400
-Received: from mail-eopbgr710125.outbound.protection.outlook.com ([40.107.71.125]:39360
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730301AbeGSVpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 17:45:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TRG/NLrqO9GCsA77xjAnZEU5S3Xd+0Vx94Cx4AsKVEQ=;
- b=FPbcvHwYo0fXw04uZ2mqYJIlFbQRjGw8NJmyoiadY32OZnqC1+FfbvPQRE6srWG6xP8vG/9mhemG9/YkDxE7D3VV9fOBOaztO+JguebOgc45ZT3007ASdBGS6xz8cp7XKVTu3ngB1KXxbYqhHsANvpZurIB9XR8wLQkCjcdPeSY=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-Received: from localhost (4.16.204.77) by
- BN7PR08MB4930.namprd08.prod.outlook.com (2603:10b6:408:28::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.16; Thu, 19 Jul 2018 21:00:10 +0000
-Date:   Thu, 19 Jul 2018 14:00:07 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     Maciej Rozycki <Maciej.Rozycki@mips.com>
-Cc:     James Hogan <jhogan@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] MIPS: Add FP_MODE regset support
-Message-ID: <20180719210007.u3ddehsxb573avli@pburton-laptop>
-References: <alpine.DEB.2.00.1805111326000.10896@tp.orcam.me.uk>
+        Thu, 19 Jul 2018 17:46:16 -0400
+Received: from mga11.intel.com ([192.55.52.93]:3671 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727523AbeGSVqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Jul 2018 17:46:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Jul 2018 14:01:24 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,375,1526367600"; 
+   d="scan'208";a="68323023"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.153])
+  by orsmga003.jf.intel.com with ESMTP; 19 Jul 2018 14:01:16 -0700
+Subject: Re: [PATCH] tpm: add support for partial reads
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <153201555276.20155.1352499992826895966.stgit@tstruk-mobl1.jf.intel.com>
+ <1532020750.5396.4.camel@HansenPartnership.com>
+ <421c4b75-9e9d-7045-adad-797fd112898a@intel.com>
+ <1532026030.3198.2.camel@HansenPartnership.com>
+ <e8c17a40-7e5e-61e9-7088-32817766b614@intel.com>
+ <1532029979.3198.4.camel@HansenPartnership.com>
+ <0b9f0bb5-6620-0499-6680-5ec595167f23@intel.com>
+ <1532032049.3061.1.camel@HansenPartnership.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <0e9d3267-b9f4-2f56-9470-36931ae8f685@intel.com>
+Date:   Thu, 19 Jul 2018 14:01:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.00.1805111326000.10896@tp.orcam.me.uk>
-User-Agent: NeoMutt/20180622
-X-Originating-IP: [4.16.204.77]
-X-ClientProxiedBy: BYAPR07CA0055.namprd07.prod.outlook.com
- (2603:10b6:a03:60::32) To BN7PR08MB4930.namprd08.prod.outlook.com
- (2603:10b6:408:28::16)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5b322a4b-c0da-4443-24c1-08d5edba9dae
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR08MB4930;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4930;3:g+MmnmFKMFsv2gsHLyxCgOcX/Cbvm2hRV9y7SSFFLhbzdpxLbcC7Km/0hFBoj7/rdeoGWUQyyIi+49EYZRlEioE9TKvYYveefV9zTIsw/x2QBcKNL30/OfOiE3XLQSr/iJScA43MlfULJ8a2jEvo4cwzba0TAkoUDC4/jAC2YcmZtQNs/ZnVoL4W4HzdfEo/HRs5yWEHWmUlLxkcshgCZR6au/33kW4x6qiu+hXL+RyEYTTbmM6LoSLz7i5EDL+X;25:kDB0ncImqHLDlU8JZvT8F72L60YD+I0pkvF/0RAHmUSdVxRm5PaIIH2oXjQ1o4G1h/7wGMON0yz7RQwvwP5GVdwogjM5NGxIqPu5ZKvnqL8H68bIss0X618SZ1B2gM+/pi/k8QacFaBnTjH3/zir9gAazrRio7QwDpPUCUzK07R8XE+UXrSJ9weLooPT4t7GUsFjJVcKzzmaDSt6W/IPL7niZTqManuetBOUP9tH73D+tNIq3UZ35S/r9EP7Hz6+CXJrxhuDvAGBbDuBlK69FbXWtNBsFKof33Qe99erj9Ujtjc+rPqgZAi/H4TtvL3FLSuB/tsrkvrDNyVXOb49mQ==;31:RZsTL+qSI0fGd9/cYfE3OEUG10VecDLuqOx1fW38txRNi9y3dJKtEqQcEEzzwwLqsFOxA8z2R1YrK3jYe0v6BBlYDFHYVf3KSN2VwVLuKM3TyXIB51OznMZ07Gw84BsZcp7egUuOa9H+rohaqGbm7Yy7OJCimar4wwj30dRzJOgNXQoIzt4xFqpX6nMxJfbt9kEt+BDFfFFBbZF/Fq9rVlORiO5Ym/LFS9tAWFVr1gY=
-X-MS-TrafficTypeDiagnostic: BN7PR08MB4930:
-X-LD-Processed: 463607d3-1db3-40a0-8a29-970c56230104,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4930;20:+JegTNtmqMXSb0lUUfO6fVec0N8NzBPS1oIbhV75wEYozWFSwhWLLRMmdtU7RvG8A711yKjXohh74hCFucW/7pyVBsxblUsvcv7hd3LIjB6w+6/ul7iqlxY9IWfYVeu9vPkCftA+AKPlKYSZpQWkwz/7LEgrhBYbimLKC7xTExLOKm1or0N32Ps7vQLbYhJe2oGLgUUnPSUJ40IljYCX8EGyfnQuJlKmY+luh/vuGuoq1FhF897PkonWHzstXEiz;4:3AKTvgR7SUIExZAvU8buPFpd8CUXUKyicDx5+A8axE2iedtSxo37TdEXdDdcs6bF0E1P93+o+S02GWNJbaz5ac6XUi1r/ssltvVAwzCOIJJniNC6xuAWw6HQrQlNNWdbM2GVf4R/wv6HAvgPykYWfu6rB/L/DptepjnehjppLqo7QgwBUvbQWte+/wm1b/tCApr5Ey72wzc2gFVmEACXaAgJNQFR4N7h3uzOz/EyRvaOXkEZ0I/uhzIXJs2pryjI0a+UNHAb3pbwE0Z6AjATxg==
-X-Microsoft-Antispam-PRVS: <BN7PR08MB4930F1DCD8416FD81E765E6AC1520@BN7PR08MB4930.namprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(93006095)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(6043046)(6072148)(201708071742011)(7699016);SRVR:BN7PR08MB4930;BCL:0;PCL:0;RULEID:;SRVR:BN7PR08MB4930;
-X-Forefront-PRVS: 0738AF4208
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(7916004)(396003)(376002)(346002)(136003)(39840400004)(366004)(199004)(189003)(6666003)(5660300001)(68736007)(6636002)(2906002)(50466002)(33716001)(81166006)(53936002)(81156014)(76506005)(97736004)(6246003)(8676002)(47776003)(8936002)(66066001)(305945005)(7736002)(25786009)(6862004)(106356001)(105586002)(4326008)(6116002)(42882007)(229853002)(316002)(446003)(11346002)(6486002)(76176011)(16586007)(6306002)(16526019)(9686003)(58126008)(52116002)(54906003)(44832011)(26005)(386003)(33896004)(486006)(23726003)(3846002)(956004)(6496006)(476003)(1076002)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:BN7PR08MB4930;H:localhost;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR08MB4930;23:0aX/sm1hx9E8qisonmFwyW0wQObEJWkq59aBRhkS/?=
- =?us-ascii?Q?KBfRyCm4ljpyEhJ0FEd5ovV5FxAmSRdxD+mzh8n47TVaFKO/8BQuViF6ZHXj?=
- =?us-ascii?Q?5LEzZlE3C5dUojpfYcRnAHyhJL0WKl6RPqmdiKnExFtqiHOo5t5epquCbebh?=
- =?us-ascii?Q?cs0cazA/2AsXo1ZHfRGTmCo07lvbvouGqlW6gbzmSDGUkLWZX43qnn6nqycD?=
- =?us-ascii?Q?suLp+bWRPhaV7zKcW7h93ZpgGruPB6QfmHKWuIxEilRYWusuQuVauHta8l9g?=
- =?us-ascii?Q?bRsosf8n1wcmxMQ54PIPPSxobCikrcjOjLth6mQmUd4lk2ANPMG6otrwKpxG?=
- =?us-ascii?Q?JPvPato7kJfLTPshmRnRIWlB5rp6oFSn/eUMp99ytKTjsvwO+YgdzgDCiZiq?=
- =?us-ascii?Q?Ng4DX23b3QD4uhKBj0J2YlqGnN0btHxFfgq8roVud5/TOjhpePieff/vIOK+?=
- =?us-ascii?Q?Z9uz+WbDtXQ3me4E5FZZ8H6h7IG+wcUxp64mNhIuw+Xuo/1ZdfSJ+/Id846S?=
- =?us-ascii?Q?kZMU7A4aJTlgKRXlr/xpwiMrcxraeDxYj3m5VZJDOfT4j4ooS8xhtQg2QGVI?=
- =?us-ascii?Q?4udXOW7QzEoHBX8Vu5b6Oz8TIMD7zvbhJcTpU4lsWXhSVXps7TygGEEh1LEx?=
- =?us-ascii?Q?osu3CRQHPx6D+YQKccUQPzcMjoWZGc+qZeOnWjwp6KRNcw8kpugQvenmsPBe?=
- =?us-ascii?Q?3USlAcr7b3s/7tMXvCvB4y9eSsztv0Y5Bl7FRw009beC8K3YcHAujusDvFtF?=
- =?us-ascii?Q?qqfOC8jfRpNvuswwjJgLbroee6ITmWNXnjC164OgkXSvCFlpYp/3ba5ik8fU?=
- =?us-ascii?Q?dDam69yinUIqAsf9IlQN58QU+cV0ihRIVdLBEtnZoiFE9ZitkOH+c0X2icp/?=
- =?us-ascii?Q?ndrBz5O/GoGmWxqPWG+rC8nifW4X/CIIJPhvcF0i6qsPvMDBJSb/YRGcvqTS?=
- =?us-ascii?Q?R9nM6RdzTLif//+JYZ/47tr0CDZTLH7lND0BdxmMBNM+CgIsOl/Rb1vKzVfq?=
- =?us-ascii?Q?MJ4RHsMdgP6h36RUV175ta2tdqSKMmRwAaRXFE0pss2H484uAH6b1KtpuLYP?=
- =?us-ascii?Q?rsElLnBwlGmU9HN2l0jNP7jMMnLbceZlAnW2p7X+/gc0HtdTyb05OfZEtDij?=
- =?us-ascii?Q?qd+lzro7ZQNXIsjc0+XnFn1EuvfCEccte5o2kqzEncxKDQt3rcXvBo+9MlaG?=
- =?us-ascii?Q?fWtyWRAr9CfOo57FfkA0oj2OEH//9YB5kwQRRCL0a9sxhbeqmqfO5PlEgXrd?=
- =?us-ascii?Q?CRWOic8NYuM84FsKpNIH13K3Nh10+heWG2bwlArI5Ac+hjwoKbHiTsFPmKKe?=
- =?us-ascii?Q?UN5AkXdUdMcpl7ga5onfcLK8Z2mbLIshuM+yVGKNgUC?=
-X-Microsoft-Antispam-Message-Info: LtzcbS3OO9+gO7E1Z2punCR629crlRaOR7W5JGdHMK0JQ9pbZe2uqQWORF2LaTF6tWZ1wbpGiTgl7l5qz/8s/z53/iyg9uyo3xIluHAaFAGUSuMHuE/2elBDs3GfsFvgC6GdTjt+uJsXUJkTuL+c2GqUJLPQL4Yg2fovJoTLlo/a4LUlECbHwPZZsW7Xso9EvmQvFcVwmApIzdwvcey/V9+KtLj3s3Bm+PmgatM5NoHdcUOKVNRi2R0spOs5aqnJxeMm0NKjUUXKoUAXpG/lLlTZ39kU+ykm824eDR6YUu/EcCXZBaTJwaPT8j8Q0e8dC7zmjmW5W85LbUvCwZVAnf59t9egwDn5b3B+YQpMNAo=
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR08MB4930;6:dkYPHaRJBx2r4l1DHlrG+zRa9smU7WOtRvfkXOKvJKeO8hxkwaDAKMZn5iJlANsEl0saEM/wSyAD+ihbfq8J4FWGDCnpu9jnt9I3pMMkdfqnFrU2JesHZmwQK8wbZXlxnFnhXPUdHvlJkDfrigLQwuIVU0m5DvC1U/ukoEVatXWx3VJnZhFAPX9Ey7GNtTd3fvThEuk8enqanUsBZTn8veRx4KqkHBmqcHb8C+koZpbdmzVlCoMDBBc8CpJqXGUc2AYeMaY/e4iNMbhAqkjVScWLilnX6MkOxTMUmBfKceYrBDcm5XqThcDhe36IG4veGzRR5+aPt3dDEvWktRkThkSdZA7xN20vmT+PiV4FDQUqanNEvRyAlPhntof61ohBonVDsXM649kCF6sCnOq30qQC7CZqY0pq3TwCbLFJgUrY742RuT3Jn8pi4GJFgDdv6E3OWi9lnMKq1o7ksopSvA==;5:EhCU0A565kivcKWzQvmhZbKV344/PDMPvh4mDNWrgCHw4DuJUIPB30gLA+1h0R/U2XLYI8dxrCX1b4ai98F1ecH50SKgb7zJTDdEEDzojVPnPbyP9pbvbi38eUKs/aAjWqHx+2TqkZIaN1smdiWDPtichKVDXPCtCiZdo8rFxw0=;7:Qa9tpP6vc7c/PewhP0GzoEXdBX2Im4R1nctfMSnjzbpuA/4x2w97l2YYGLSdXfRm8QRZWMpoxpA7jFqzY6wJX9Nnf4k7jTkhr4IkNTqg6qZKnjidv3ztPW18OBnidVVvMeWewWR4EbAKQ10H/W1SHp94KJbK2n2IKWN+9tQNrJjXT2ehaI0Ay+/wxP6LnfC9FMOVdLrfX5J+WgHBFpYYk8ONH0PlxOfCo56U3fDeqmRTyPB0nMz+MW9b74aM1fTc
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2018 21:00:10.6366 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b322a4b-c0da-4443-24c1-08d5edba9dae
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB4930
+In-Reply-To: <1532032049.3061.1.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maciej,
-
-On Tue, May 15, 2018 at 03:40:18PM -0700, Maciej Rozycki wrote:
-> Define an NT_MIPS_FP_MODE core file note and implement a corresponding 
-> regset holding the state handled by PR_SET_FP_MODE and PR_GET_FP_MODE 
-> prctl(2) requests.  This lets debug software correctly interpret the 
-> contents of floating-point general registers both in live debugging and 
-> in core files, and also switch floating-point modes of a live process.
+On 07/19/2018 01:27 PM, James Bottomley wrote:
+> On Thu, 2018-07-19 at 13:12 -0700, Tadeusz Struk wrote:
+>> On 07/19/2018 12:52 PM, James Bottomley wrote:
+>>> The ABI break is the error case as I outlined above.  We can't
+>>> assume everyone uses the current interface without getting an error
+>>> and one error and your hosed is a nasty failure case to change the
+>>> interface to. 
+>>
+>> Well, if there is a broken application out there that doesn't work
+>> today it will not work after this change neither.
 > 
-> Signed-off-by: Maciej W. Rozycki <macro@mips.com>
-> ---
-> NB due to patch conflicts this change relies on the DSP ASE regset series 
-> <https://patchwork.kernel.org/patch/10402171/> to be applied first.
-> ---
->  arch/mips/kernel/ptrace.c |   63 ++++++++++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/elf.h  |    1 
->  2 files changed, 64 insertions(+)
+> It doesn't have to be broken ... it could be using EFAULT to probe the
+> buffer size for instance.  That's the point of not breaking the ABI:
+> you don't second guess what applications are doing.
+> 
 
-Thanks - applied to mips-next for 4.19, though with NT_MIPS_FP_MODE
-changed to 0x801.
+Looking at the existing implementation again:
+https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/tree/drivers/char/tpm/tpm-dev-common.c?h=next-tpm#n56
 
-Paul
+EFAULT is returned only if the copy_to_user() fails.
+So today, if an application wants read 1 byte of a response, and provides
+1 byte buffer for it, then only 1 byte of the response will be copied,
+no error code will be returned, and the rest of the response will be gone.
+I don't really see how and why would anyone use EFAULT err to probe for
+the buffer size. That would really be a broken application.
+
+Thanks,
+-- 
+Tadeusz
