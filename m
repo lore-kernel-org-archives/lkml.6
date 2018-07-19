@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA3AECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D14AECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E6A20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C215A2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 20:57:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="z2K6bZ8n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E6A20862
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mT1lh7vk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C215A2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731246AbeGSVmO (ORCPT
+        id S1731304AbeGSVmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 17:42:14 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:51052 "EHLO
+        Thu, 19 Jul 2018 17:42:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:51078 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731069AbeGSVmO (ORCPT
+        with ESMTP id S1730628AbeGSVmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 17:42:14 -0400
+        Thu, 19 Jul 2018 17:42:16 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JKsoa8156924;
-        Thu, 19 Jul 2018 20:56:36 GMT
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6JKsdnF156901;
+        Thu, 19 Jul 2018 20:56:31 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=o3x3pCNDg0OIK/EZ7Q6NbKtW+08Dt29Tx5w0Oewg4jo=;
- b=z2K6bZ8nNvgIwSeip1rF4m61foj0wdPnVkA741OuKH4fDHEP9qMKlCfhHKRAjaUfDfQm
- 6ito93TgduMy88KTYq4c9n7OBBXekYo6PQBIIFVCpk7Yb9g1HX+fVxnJfPp1oAWmGaEY
- t6+2oE/eUxE9suDg6YKYqL4V1Cq/+4lojKw8FGOeKLcDOlV6LXri1ZzSjHS/xBZj7M/Z
- VVRsRXFSyvn79u/axtNG3tLYHwtVkswC0gDMJ4N/PCzGG9aRqWp9SxFIchQuEtBvvN+J
- Jrh9kBCAOVYd3bVs9eEyk82K5y9l5DfzxFLG77zHR23xEcEIyJMhHUMur8kCQMm+E3Sk Dg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2k9yjx8uux-1
+ bh=PvvRFnKNuUxrKTf0X0mQiwHoDIj6deGguQ/JTqZ2pgY=;
+ b=mT1lh7vkCMbWl5eVQfoEV6XH4Kpi/DfidZ3q05dbyUuxk6y7BY1UEFNbr1DX16JGB/Le
+ cCyJmFqUBCKRyqAwIfy5aj1HK5rRfRqyZExZYOyrPCqFmtQVXLhbiVFYJUodxSvZRv3j
+ 6ZMNXsikIOg4qji5NdE42XQ/g29U6kCw7FkhGPHkIdWf1x/HIell0Z29DloLgOsIDAGp
+ 7dwC0mj1yELA3Bc4U/66cKcspulHNdpUSR8txDMLblwakzQR7iwqCpQXGOq3ogkefDlC
+ 68N8p1484t2BEM7bzhQ9zQxQHnHtCqFqRLrLnXjQOvUWcO2FCL/tmdsmt9HTGsOMZLz0 yg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2k9yjx8uur-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:35 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuZBV010506
+        Thu, 19 Jul 2018 20:56:31 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuTsg001091
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Jul 2018 20:56:35 GMT
+        Thu, 19 Jul 2018 20:56:30 GMT
 Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuY5o003721;
-        Thu, 19 Jul 2018 20:56:34 GMT
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6JKuSJN027488;
+        Thu, 19 Jul 2018 20:56:28 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Jul 2018 20:56:34 +0000
+        with ESMTP ; Thu, 19 Jul 2018 20:56:28 +0000
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,14 +61,14 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com, pbonzini@redhat.com
-Subject: [PATCH v15 12/26] x86/xen/time: initialize pv xen time in init_hypervisor_platform
-Date:   Thu, 19 Jul 2018 16:55:31 -0400
-Message-Id: <20180719205545.16512-13-pasha.tatashin@oracle.com>
+Subject: [PATCH v15 09/26] x86: initialize static branching early
+Date:   Thu, 19 Jul 2018 16:55:28 -0400
+Message-Id: <20180719205545.16512-10-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180719205545.16512-1-pasha.tatashin@oracle.com>
 References: <20180719205545.16512-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8959 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1806210000 definitions=main-1807190218
@@ -77,211 +77,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In every hypervisor except for xen pv time ops are initialized in
-init_hypervisor_platform().
+static branching is useful to hot-patch branches that are used in hot
+path, but are infrequently changed.
 
-Xen PV domains initialize time ops in x86_init.paging.pagetable_init(),
-by calling xen_setup_shared_info() which is a poor design, as time is
-needed prior to memory allocator.
+x86 clock framework is one example that uses static branches to setup
+the best clock during boot and never change it again.
 
-xen_setup_shared_info() is called from two places: during boot, and
-after suspend. Split the content of xen_setup_shared_info() into
-three places:
+Since we plan to enable clock early, we need static branching
+functionality early as well.
 
-1. add the clock relavent data into new xen pv init_platform vector, and
-   set clock ops in there.
+static branching requires patching nop instructions, thus, we need
+arch_init_ideal_nops() to be called prior to jump_label_init()
 
-2. move xen_setup_vcpu_info_placement() to new xen_pv_guest_late_init()
-   call.
-
-3. Re-initializing parts of shared info copy to xen_pv_post_suspend() to
-   be symmetric to xen_pv_pre_suspend
+Here we do all the necessary steps to call arch_init_ideal_nops
+after early_cpu_init().
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Reviewed-by: Borislav Petkov <bp@suse.de>
 ---
- arch/x86/xen/enlighten_pv.c | 51 +++++++++++++++++--------------------
- arch/x86/xen/mmu_pv.c       |  6 ++---
- arch/x86/xen/suspend_pv.c   |  5 ++--
- arch/x86/xen/time.c         |  7 +++--
- arch/x86/xen/xen-ops.h      |  6 ++---
- 5 files changed, 34 insertions(+), 41 deletions(-)
+ arch/x86/kernel/cpu/amd.c    | 13 +++++++-----
+ arch/x86/kernel/cpu/common.c | 38 +++++++++++++++++++-----------------
+ arch/x86/kernel/setup.c      |  4 ++--
+ 3 files changed, 30 insertions(+), 25 deletions(-)
 
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 439a94bf89ad..105a57d73701 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -119,6 +119,27 @@ static void __init xen_banner(void)
- 	       version >> 16, version & 0xffff, extra.extraversion,
- 	       xen_feature(XENFEAT_mmu_pt_update_preserve_ad) ? " (preserve-AD)" : "");
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 38915fbfae73..b732438c1a1e 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -232,8 +232,6 @@ static void init_amd_k7(struct cpuinfo_x86 *c)
+ 		}
+ 	}
+ 
+-	set_cpu_cap(c, X86_FEATURE_K7);
+-
+ 	/* calling is from identify_secondary_cpu() ? */
+ 	if (!c->cpu_index)
+ 		return;
+@@ -617,6 +615,14 @@ static void early_init_amd(struct cpuinfo_x86 *c)
+ 
+ 	early_init_amd_mc(c);
+ 
++#ifdef CONFIG_X86_32
++	if (c->x86 == 6)
++		set_cpu_cap(c, X86_FEATURE_K7);
++#endif
++
++	if (c->x86 >= 0xf)
++		set_cpu_cap(c, X86_FEATURE_K8);
++
+ 	rdmsr_safe(MSR_AMD64_PATCH_LEVEL, &c->microcode, &dummy);
+ 
+ 	/*
+@@ -863,9 +869,6 @@ static void init_amd(struct cpuinfo_x86 *c)
+ 
+ 	init_amd_cacheinfo(c);
+ 
+-	if (c->x86 >= 0xf)
+-		set_cpu_cap(c, X86_FEATURE_K8);
+-
+ 	if (cpu_has(c, X86_FEATURE_XMM2)) {
+ 		unsigned long long val;
+ 		int ret;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3efd20e..71281ac43b15 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1015,6 +1015,24 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
  }
-+
-+static void __init xen_pv_init_platform(void)
+ 
++/*
++ * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
++ * unfortunately, that's not true in practice because of early VIA
++ * chips and (more importantly) broken virtualizers that are not easy
++ * to detect. In the latter case it doesn't even *fail* reliably, so
++ * probing for it doesn't even work. Disable it completely on 32-bit
++ * unless we can find a reliable way to detect all the broken cases.
++ * Enable it explicitly on 64-bit for non-constant inputs of cpu_has().
++ */
++static void detect_nopl(struct cpuinfo_x86 *c)
 +{
-+	set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
-+	HYPERVISOR_shared_info = (void *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
-+
-+	/* xen clock uses per-cpu vcpu_info, need to init it for boot cpu */
-+	xen_vcpu_info_reset(0);
-+
-+	/* pvclock is in shared info area */
-+	xen_init_time_ops();
-+}
-+
-+static void __init xen_pv_guest_late_init(void)
-+{
-+#ifndef CONFIG_SMP
-+	/* Setup shared vcpu info for non-smp configurations */
-+	xen_setup_vcpu_info_placement();
++#ifdef CONFIG_X86_32
++	clear_cpu_cap(c, X86_FEATURE_NOPL);
++#else
++	set_cpu_cap(c, X86_FEATURE_NOPL);
 +#endif
 +}
 +
- /* Check if running on Xen version (major, minor) or later */
- bool
- xen_running_on_version_or_later(unsigned int major, unsigned int minor)
-@@ -947,34 +968,8 @@ static void xen_write_msr(unsigned int msr, unsigned low, unsigned high)
- 	xen_write_msr_safe(msr, low, high);
+ /*
+  * Do minimum CPU detection early.
+  * Fields really needed: vendor, cpuid_level, family, model, mask,
+@@ -1089,6 +1107,8 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	 */
+ 	if (!pgtable_l5_enabled())
+ 		setup_clear_cpu_cap(X86_FEATURE_LA57);
++
++	detect_nopl(c);
  }
  
--void xen_setup_shared_info(void)
+ void __init early_cpu_init(void)
+@@ -1124,24 +1144,6 @@ void __init early_cpu_init(void)
+ 	early_identify_cpu(&boot_cpu_data);
+ }
+ 
+-/*
+- * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
+- * unfortunately, that's not true in practice because of early VIA
+- * chips and (more importantly) broken virtualizers that are not easy
+- * to detect. In the latter case it doesn't even *fail* reliably, so
+- * probing for it doesn't even work. Disable it completely on 32-bit
+- * unless we can find a reliable way to detect all the broken cases.
+- * Enable it explicitly on 64-bit for non-constant inputs of cpu_has().
+- */
+-static void detect_nopl(struct cpuinfo_x86 *c)
 -{
--	set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
--
--	HYPERVISOR_shared_info =
--		(struct shared_info *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
--
--	xen_setup_mfn_list_list();
--
--	if (system_state == SYSTEM_BOOTING) {
--#ifndef CONFIG_SMP
--		/*
--		 * In UP this is as good a place as any to set up shared info.
--		 * Limit this to boot only, at restore vcpu setup is done via
--		 * xen_vcpu_restore().
--		 */
--		xen_setup_vcpu_info_placement();
+-#ifdef CONFIG_X86_32
+-	clear_cpu_cap(c, X86_FEATURE_NOPL);
+-#else
+-	set_cpu_cap(c, X86_FEATURE_NOPL);
 -#endif
--		/*
--		 * Now that shared info is set up we can start using routines
--		 * that point to pvclock area.
--		 */
--		xen_init_time_ops();
--	}
 -}
 -
- /* This is called once we have the cpu_possible_mask */
--void __ref xen_setup_vcpu_info_placement(void)
-+void __init xen_setup_vcpu_info_placement(void)
+ static void detect_null_seg_behavior(struct cpuinfo_x86 *c)
  {
- 	int cpu;
+ #ifdef CONFIG_X86_64
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index da1dbd99cb6e..7490de925a81 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -866,6 +866,8 @@ void __init setup_arch(char **cmdline_p)
  
-@@ -1228,6 +1223,8 @@ asmlinkage __visible void __init xen_start_kernel(void)
- 	x86_init.irqs.intr_mode_init	= x86_init_noop;
- 	x86_init.oem.arch_setup = xen_arch_setup;
- 	x86_init.oem.banner = xen_banner;
-+	x86_init.hyper.init_platform = xen_pv_init_platform;
-+	x86_init.hyper.guest_late_init = xen_pv_guest_late_init;
+ 	idt_setup_early_traps();
+ 	early_cpu_init();
++	arch_init_ideal_nops();
++	jump_label_init();
+ 	early_ioremap_init();
  
- 	/*
- 	 * Set up some pagetable state before starting to set any ptes.
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 2c30cabfda90..52206ad81e4b 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1230,8 +1230,7 @@ static void __init xen_pagetable_p2m_free(void)
- 	 * We roundup to the PMD, which means that if anybody at this stage is
- 	 * using the __ka address of xen_start_info or
- 	 * xen_start_info->shared_info they are in going to crash. Fortunatly
--	 * we have already revectored in xen_setup_kernel_pagetable and in
--	 * xen_setup_shared_info.
-+	 * we have already revectored in xen_setup_kernel_pagetable.
- 	 */
- 	size = roundup(size, PMD_SIZE);
+ 	setup_olpc_ofw_pgd();
+@@ -1268,8 +1270,6 @@ void __init setup_arch(char **cmdline_p)
  
-@@ -1292,8 +1291,7 @@ static void __init xen_pagetable_init(void)
+ 	mcheck_init();
  
- 	/* Remap memory freed due to conflicts with E820 map */
- 	xen_remap_memory();
+-	arch_init_ideal_nops();
 -
--	xen_setup_shared_info();
-+	xen_setup_mfn_list_list();
- }
- static void xen_write_cr2(unsigned long cr2)
- {
-diff --git a/arch/x86/xen/suspend_pv.c b/arch/x86/xen/suspend_pv.c
-index a2e0f110af56..8303b58c79a9 100644
---- a/arch/x86/xen/suspend_pv.c
-+++ b/arch/x86/xen/suspend_pv.c
-@@ -27,8 +27,9 @@ void xen_pv_pre_suspend(void)
- void xen_pv_post_suspend(int suspend_cancelled)
- {
- 	xen_build_mfn_list_list();
--
--	xen_setup_shared_info();
-+	set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
-+	HYPERVISOR_shared_info = (void *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
-+	xen_setup_mfn_list_list();
+ 	register_refined_jiffies(CLOCK_TICK_RATE);
  
- 	if (suspend_cancelled) {
- 		xen_start_info->store_mfn =
-diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
-index e0f1bcf01d63..53bb7a8d10b5 100644
---- a/arch/x86/xen/time.c
-+++ b/arch/x86/xen/time.c
-@@ -40,7 +40,7 @@ static unsigned long xen_tsc_khz(void)
- 	return pvclock_tsc_khz(info);
- }
- 
--u64 xen_clocksource_read(void)
-+static u64 xen_clocksource_read(void)
- {
-         struct pvclock_vcpu_time_info *src;
- 	u64 ret;
-@@ -503,7 +503,7 @@ static void __init xen_time_init(void)
- 		pvclock_gtod_register_notifier(&xen_pvclock_gtod_notifier);
- }
- 
--void __ref xen_init_time_ops(void)
-+void __init xen_init_time_ops(void)
- {
- 	pv_time_ops = xen_time_ops;
- 
-@@ -542,8 +542,7 @@ void __init xen_hvm_init_time_ops(void)
- 		return;
- 
- 	if (!xen_feature(XENFEAT_hvm_safe_pvclock)) {
--		printk(KERN_INFO "Xen doesn't support pvclock on HVM,"
--				"disable pv timer\n");
-+		pr_info("Xen doesn't support pvclock on HVM, disable pv timer");
- 		return;
- 	}
- 
-diff --git a/arch/x86/xen/xen-ops.h b/arch/x86/xen/xen-ops.h
-index 3b34745d0a52..e78684597f57 100644
---- a/arch/x86/xen/xen-ops.h
-+++ b/arch/x86/xen/xen-ops.h
-@@ -31,7 +31,6 @@ extern struct shared_info xen_dummy_shared_info;
- extern struct shared_info *HYPERVISOR_shared_info;
- 
- void xen_setup_mfn_list_list(void);
--void xen_setup_shared_info(void);
- void xen_build_mfn_list_list(void);
- void xen_setup_machphys_mapping(void);
- void xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn);
-@@ -68,12 +67,11 @@ void xen_init_irq_ops(void);
- void xen_setup_timer(int cpu);
- void xen_setup_runstate_info(int cpu);
- void xen_teardown_timer(int cpu);
--u64 xen_clocksource_read(void);
- void xen_setup_cpu_clockevents(void);
- void xen_save_time_memory_area(void);
- void xen_restore_time_memory_area(void);
--void __ref xen_init_time_ops(void);
--void __init xen_hvm_init_time_ops(void);
-+void xen_init_time_ops(void);
-+void xen_hvm_init_time_ops(void);
- 
- irqreturn_t xen_debug_interrupt(int irq, void *dev_id);
- 
+ #ifdef CONFIG_EFI
 -- 
 2.18.0
 
