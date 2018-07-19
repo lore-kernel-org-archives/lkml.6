@@ -2,122 +2,160 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372D4ECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F638ECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB7DA20684
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3158B2084E
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 21:25:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="YReHMyrR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7DA20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JNWv0M3V";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JNWv0M3V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3158B2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbeGSWJe (ORCPT
+        id S1730913AbeGSWK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 18:09:34 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:39079 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727609AbeGSWJe (ORCPT
+        Thu, 19 Jul 2018 18:10:26 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57816 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727609AbeGSWK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 18:09:34 -0400
-Received: by mail-it0-f68.google.com with SMTP id g141-v6so9554889ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 14:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nIydwmEJRfC1iY/XxQZdQgFy5RjeAHvX3a9Q7CJ/gJ4=;
-        b=YReHMyrR+KUiZrWpwDl3fZ8wnmmz8V9jRsR+s0c6IeonnDLwEOX6LEvDJQpWJLs3vb
-         EXHnwYHuKRFE7IXjuPbVA6TuVQvkqCsr9m7b9fyHH+ZCUmMclVoqPzu+AVMhNinNBa46
-         /XGWov8Y2h/83pwDZ88HdooKp/t1RGwhiBTnAC2IZQA3F5WMr86tiBMylAcY8K98UEWJ
-         rDlHn5oQo4D7K6GgtET2uyUpy6S+/sLZdU2orN+AoWklPR9/x2SX0N6eqPLCVNKQNFeg
-         RxTjUYkptMXYGpV6hRSjebHoq1tii+AcLmQM+YEoBFodlBfPwf197SCK7ZXpeWYvEOTo
-         qpiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nIydwmEJRfC1iY/XxQZdQgFy5RjeAHvX3a9Q7CJ/gJ4=;
-        b=MB/PrC8w47JGJeHmKiwO9byDUm2BKBiXChZ/qVk9i3SLl6777Xzon4BHXMatxFXT2D
-         jgnAXa06O3x4CThbEApzTjdAoky7VR3bpWsO2O2opEef7W3jl2MiXbrWFzOk2pBDzsAK
-         qk1Uli97U+GSsjs+pGIfHKSVFSYwRmv2WocahdEAM3bpLDO7cEyfXVeXJRZr7eGGf3tt
-         SvCDgs7BDsmrp3s59mTzJ+lC5UaEFPQlh2y7947cVMz1t9NmQrBFc78L1CocfYhh6UXz
-         6zG2EH8bxKyW0yjlHpUvq2zKvvtDbI3SgeyB9PyqL+PE4dqMgB0pES4sXkIIfhmb3yhp
-         d5uQ==
-X-Gm-Message-State: AOUpUlEyJBhqSPiUcx8uiiYiEicpwyWxquSGb5hKxE4cGnMEL3/7q0Wb
-        ScSeO1ku3/JMr8pXa1yQ5iUL0KeHqOT58sQP8dL66A==
-X-Google-Smtp-Source: AAOMgpdQfiEqJgsRcjU4etuJ8XO3o1enRzwykB0aueHSgD4vQ0NjALvbLu43m70+Q2C0RyDUe/rW0a7w2JCwW5AS8tY=
-X-Received: by 2002:a24:5e0b:: with SMTP id h11-v6mr7030199itb.80.1532035477764;
- Thu, 19 Jul 2018 14:24:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a5e:9402:0:0:0:0:0 with HTTP; Thu, 19 Jul 2018 14:24:37
- -0700 (PDT)
-In-Reply-To: <20180719174728.GK6920@n2100.armlinux.org.uk>
-References: <20180718161035.7005-1-brgl@bgdev.pl> <20180718161035.7005-5-brgl@bgdev.pl>
- <20180719174728.GK6920@n2100.armlinux.org.uk>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 19 Jul 2018 23:24:37 +0200
-Message-ID: <CAMRc=MfYp8Q4KNUMhLqf5jgd+C-_bWnfHworTbaCj0CZgRqMeA@mail.gmail.com>
-Subject: Re: [PATCH 4/5] net: add support for nvmem to eth_platform_get_mac_address()
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>, netdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 19 Jul 2018 18:10:26 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id CB8D860791; Thu, 19 Jul 2018 21:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532035528;
+        bh=TG/ONVQvV8iZq/Tli8p/7DC6ZVQR9sreW0mUflm+k5A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JNWv0M3VijwzNXW6ewme2G7c8mi6bw8AuJjk1NKajbZImj1npzpFz9jnFZhCl8hf4
+         B1A6IUvdRYAVee65XfJd/BRFqxaU4HB8F469FG3tMLAmyoP6+/6w7bnP5ot55ATybn
+         JF0vpUDEfnx0eeDH0Lb6DHTn+x3kpL47v9sDvGXo=
+Received: from rishabhb-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rishabhb@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1F2A4602B3;
+        Thu, 19 Jul 2018 21:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1532035528;
+        bh=TG/ONVQvV8iZq/Tli8p/7DC6ZVQR9sreW0mUflm+k5A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JNWv0M3VijwzNXW6ewme2G7c8mi6bw8AuJjk1NKajbZImj1npzpFz9jnFZhCl8hf4
+         B1A6IUvdRYAVee65XfJd/BRFqxaU4HB8F469FG3tMLAmyoP6+/6w7bnP5ot55ATybn
+         JF0vpUDEfnx0eeDH0Lb6DHTn+x3kpL47v9sDvGXo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1F2A4602B3
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rishabhb@codeaurora.org
+From:   Rishabh Bhatnagar <rishabhb@codeaurora.org>
+To:     gregkh@linuxfoundation.org, mcgrof@kernel.org
+Cc:     linux-kernel@vger.kernel.org, ckadabi@codeaurora.org,
+        tsoni@codeaurora.org, Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Vikram Mulukutla <markivx@codeaurora.org>
+Subject: [PATCH] firmware: Avoid caching firmware when FW_OPT_NOCACHE is set
+Date:   Thu, 19 Jul 2018 14:25:21 -0700
+Message-Id: <1532035521-7917-1-git-send-email-rishabhb@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-19 19:47 GMT+02:00 Russell King - ARM Linux <linux@armlinux.org.uk>:
-> On Wed, Jul 18, 2018 at 06:10:34PM +0200, Bartosz Golaszewski wrote:
->> @@ -544,6 +548,31 @@ int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
->>                       from = "arch callback";
->>       }
->>
->> +     if (!addr) {
->> +             nvmem = nvmem_cell_get(dev, "mac-address");
->> +             if (IS_ERR(nvmem) && PTR_ERR(nvmem) == -EPROBE_DEFER)
->
-> This is way too verbose.  To quote Al Viro from earlier today:
->
-> <viro> sigh...
-> <viro>         if (IS_ERR(link) && PTR_ERR(link) == -EEXIST)
-> <viro> what the hell is wrong with if (link == ERR_PTR(-EEXIST))?
->
-> I wonder why so many people haven't heard of pointer comparison... ;)
->
-> IS_ERR(ERR_PTR(-EPROBE_DEFER)) is always true - if it wasn't, then
-> we'd be in for problems.
->
-> So, if you're asserting that nvmem is ERR_PTR(-EPROBE_DEFER) then
-> there's no need to do the IS_ERR(nvmem) must also be true.  Hence, a
-> simple pointer comparison is sufficient:
->
->                 if (nvmem == ERR_PTR(-EPROBE_DEFER))
->                         return -EPROBE_DEFER;
->
+When calling request_firmware_into_buf(), we pass the FW_OPT_NOCACHE
+flag with the intent of skipping the caching mechanism of the
+firmware loader. Unfortunately, that doesn't work, because
+alloc_lookup_fw_priv() isn't told to _not_ add the struct
+firmware_buf to the firmware cache (fwc) list. So when we call
+request_firmware_into_buf() the second time, we find the buffer in
+the cache and return it immediately without reloading.
 
-Hi Russell,
+This may break users of request_firmware_into_buf that are expecting
+a fresh copy of the firmware to be reloaded into memory. The existing
+copy may either be modified by drivers, remote processors or even
+freed. Fix fw_lookup_and_allocate_buf to not add to the fwc list
+if FW_OPT_NOCACHE is set, and also don't do the lookup in the list.
 
-this issue is gone now in v3 but thanks for the example - I somehow
-never thought about it.
+Fixes: 0e742e9271 ("firmware: provide infrastructure to make fw caching optional")
 
-Bart
+Signed-off-by: Vikram Mulukutla <markivx@codeaurora.org>
+Signed-off-by: Rishabh Bhatnagar <rishabhb@codeaurora.org>
+---
+ drivers/base/firmware_loader/main.c | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 2e0c37a..db9038c0 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -210,21 +210,24 @@ static struct fw_priv *__lookup_fw_priv(const char *fw_name)
+ static int alloc_lookup_fw_priv(const char *fw_name,
+ 				struct firmware_cache *fwc,
+ 				struct fw_priv **fw_priv, void *dbuf,
+-				size_t size)
++				size_t size, enum fw_opt opt_flags)
+ {
+ 	struct fw_priv *tmp;
+ 
+ 	spin_lock(&fwc->lock);
+-	tmp = __lookup_fw_priv(fw_name);
+-	if (tmp) {
+-		kref_get(&tmp->ref);
+-		spin_unlock(&fwc->lock);
+-		*fw_priv = tmp;
+-		pr_debug("batched request - sharing the same struct fw_priv and lookup for multiple requests\n");
+-		return 1;
++	if (!(opt_flags & FW_OPT_NOCACHE)) {
++		tmp = __lookup_fw_priv(fw_name);
++		if (tmp) {
++			kref_get(&tmp->ref);
++			spin_unlock(&fwc->lock);
++			*fw_priv = tmp;
++			pr_debug("batched request - sharing the same struct fw_priv and lookup for multiple requests\n");
++			return 1;
++		}
+ 	}
++
+ 	tmp = __allocate_fw_priv(fw_name, fwc, dbuf, size);
+-	if (tmp)
++	if (tmp && !(opt_flags & FW_OPT_NOCACHE))
+ 		list_add(&tmp->list, &fwc->head);
+ 	spin_unlock(&fwc->lock);
+ 
+@@ -500,7 +503,8 @@ int assign_fw(struct firmware *fw, struct device *device,
+  */
+ static int
+ _request_firmware_prepare(struct firmware **firmware_p, const char *name,
+-			  struct device *device, void *dbuf, size_t size)
++			  struct device *device, void *dbuf, size_t size,
++			  enum fw_opt opt_flags)
+ {
+ 	struct firmware *firmware;
+ 	struct fw_priv *fw_priv;
+@@ -518,7 +522,8 @@ int assign_fw(struct firmware *fw, struct device *device,
+ 		return 0; /* assigned */
+ 	}
+ 
+-	ret = alloc_lookup_fw_priv(name, &fw_cache, &fw_priv, dbuf, size);
++	ret = alloc_lookup_fw_priv(name, &fw_cache, &fw_priv, dbuf, size,
++				  opt_flags);
+ 
+ 	/*
+ 	 * bind with 'priv' now to avoid warning in failure path
+@@ -578,7 +583,8 @@ static void fw_abort_batch_reqs(struct firmware *fw)
+ 		goto out;
+ 	}
+ 
+-	ret = _request_firmware_prepare(&fw, name, device, buf, size);
++	ret = _request_firmware_prepare(&fw, name, device, buf, size,
++					opt_flags);
+ 	if (ret <= 0) /* error or already assigned */
+ 		goto out;
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
