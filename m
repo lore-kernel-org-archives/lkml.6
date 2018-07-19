@@ -2,121 +2,172 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A48DC468C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028DEECDE5F
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:21:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 515DC206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:21:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Amx8MJT+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 515DC206B7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id A2B36206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 08:21:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B36206B7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731462AbeGSJCc (ORCPT
+        id S1731633AbeGSJDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 05:02:32 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44810 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731046AbeGSJCb (ORCPT
+        Thu, 19 Jul 2018 05:03:05 -0400
+Received: from mo-csw-fb1114.securemx.jp ([210.130.202.173]:55898 "EHLO
+        mo-csw-fb.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730782AbeGSJDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 05:02:31 -0400
-Received: by mail-wr1-f65.google.com with SMTP id r16-v6so7108824wrt.11
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 01:20:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=4g4nfG4m1OzdchswEO7R+ZYaZi/kfpnI9ADiubMWl8Y=;
-        b=Amx8MJT+5nEgP9xOvPbdT0osakqARL75F42jimkpp5mpdtjn2YdKAdUFqTgI/kq506
-         +RITgEc2GhOTc8T+Lx6Nr1xZOMaGjFYpVZaUsS8MSuOIAvBy80L/ilJizZCGRmp3LvSz
-         Mbg8vXJPsCf74//M2InhK17tgAyqS//U7sgAI6g7tPkd4H3BfeoSAEd0yrXeTeP+BTsa
-         YZ6kRM13gfwi81EjJlngRExldE5JlaWm3AsojLfRG8d2diHCxuXko14fDnDJHMZBSX9E
-         Q6hbWPxD/h5zJv4tKyhce9jmkuuM9O30GBiozDyCaG7eH/WMe/aokup0CCLzlzF9X1qU
-         CLGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4g4nfG4m1OzdchswEO7R+ZYaZi/kfpnI9ADiubMWl8Y=;
-        b=JfCEXPOYOs8oce2bBrcerHLVwGKdL3rA631Vd+6ElGPyVCnycSOMVAxmP2N1GL0yqj
-         ffVmnCzP4+EL3EG5EtH7+GKQ1oiyPZRTkT4D0G05KgNjd6JiGHM+OHixQSO5Hf8GGaMl
-         tvZj8XbNRxZTSWCxr8PTLzqMD+CtZ7/ZaXnNPonHmxW1VK/Oc9SQJBijN3F7wHrgYfY2
-         1wnveQvHhVd3p0Ol2pGGvV5kPoXRr+ICeT0CAn1v0lDtY710B319M8xxcOYnQ83vsiRK
-         7sFto9zf3VHjaXgZklJ0KEvNL1TVt10YGFCSyH/59McPlywwq+lqMfjBR5OKAZ8b56LF
-         QrXQ==
-X-Gm-Message-State: AOUpUlE5NPNVRdu4Ke66wBvQfk/ji2um+h/h30IZ0a+8zS0tjC1wqrvq
-        W6KDjGQYm74AR84Xn9IBeeNdeQ==
-X-Google-Smtp-Source: AAOMgpc4Avsy6YUnEry/rn3bidWA9oPkn/PjP+aghKdmR5Zp5nGld5XGWGG7+Ghj/1nR5dOyEfFLiA==
-X-Received: by 2002:adf:e34d:: with SMTP id n13-v6mr7032614wrj.158.1531988432033;
-        Thu, 19 Jul 2018 01:20:32 -0700 (PDT)
-Received: from brgl-bgdev.baylibre.local (AStLambert-681-1-40-185.w90-86.abo.wanadoo.fr. [90.86.159.185])
-        by smtp.gmail.com with ESMTPSA id h43-v6sm1716338wrh.1.2018.07.19.01.20.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Jul 2018 01:20:31 -0700 (PDT)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>, Rob Herring <robh@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        David Lechner <david@lechnology.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PATCH v2 0/3] net: extend eth_platform_get_mac_address()
-Date:   Thu, 19 Jul 2018 10:20:25 +0200
-Message-Id: <20180719082028.26116-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.1
+        Thu, 19 Jul 2018 05:03:05 -0400
+X-Greylist: delayed 1579 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Jul 2018 05:03:04 EDT
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1114) id w6J7ssxJ019392; Thu, 19 Jul 2018 16:54:54 +0900
+Received: by mo-csw.securemx.jp (mx-mo-csw1115) id w6J7rqd1002458; Thu, 19 Jul 2018 16:53:52 +0900
+X-Iguazu-Qid: 2wGqn6MRsnkY7o0I42
+X-Iguazu-QSIG: v=1; s=0; t=1531986831; q=2wGqn6MRsnkY7o0I42; m=pwvJqZr1q1PY6Kd6C4RFcbT7nYqT4yx0nTVmV03Gxic=
+Received: from imx2.toshiba.co.jp (imx2.toshiba.co.jp [106.186.93.51])
+        by relay.securemx.jp (mx-mr1111) id w6J7rmLl021236;
+        Thu, 19 Jul 2018 16:53:48 +0900
+Received: from hop001.toshiba.co.jp ([133.199.164.63])
+        by imx2.toshiba.co.jp  with ESMTP id w6J7rmPI020850;
+        Thu, 19 Jul 2018 16:53:48 +0900 (JST)
+Content-Transfer-Encoding: 7bit
+From:   KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+To:     boris.brezillon@bootlin.com, miquel.raynal@bootlin.com,
+        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        yoshitake.kobayashi@toshiba.co.jp
+Subject: [PATCH v5] mtd: nand: toshiba: Add support for Toshiba Memory BENAND (Built-in ECC NAND)
+Date:   Thu, 19 Jul 2018 16:53:33 +0900
+X-TSB-HOP: ON
+Message-Id: <1531986813-18701-1-git-send-email-yoshitake.kobayashi@toshiba.co.jp>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a follow-up to a series I posted a while ago the goal of which
-was to replace the at24 platform data with device properties. To do so
-we need to somehow remove reading the MAC address from relevant board
-files.
+From: yoshitake.kobayashi@toshiba.co.jp
 
-In my patches I used nvmem and MTD to read the MAC address from within
-the davinci emac driver. It was suggested that we generalize it further
-but since MTD doesn't support nvmem yet, the best we can do is to move
-this code over to net core code.
+This patch is a patch to support TOSHIBA MEMORY CORPORATION BENAND
+memory devices.  Check the status of the built-in ECC with the Read
+Status command without using the vendor specific command.  The Read
+Status command only knows whether there was bitflips above the
+threshold and can not get accurate bitflips.  For now, I set
+max_bitflips mtd->bitflip_threshold.
 
-The following patches modify the eth_platform_get_mac_address()
-function which seems to be the best candidate for this code.
+Signed-off-by: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+---
+ drivers/mtd/nand/raw/nand_toshiba.c | 84 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
 
-The first patch calls is_valid_ether_addr() on the read address so
-that we're sure it's correct.
-
-The last two patches add nvmem and MTD support to the function. In
-order to stay compatible with existing users, nvmem and MTD will be
-tried last - after device tree and arch-specific callback.
-
-If this series gets accepted I will modify my previous patches to
-use it instead of handcoding the same operations in davinci_emac.
-
-v1 -> v2:
-- dropped patches 1 & 2
-- improved the MAC address verification and fixed a potential buffer
-  overflow in patch 2/3
-
-Bartosz Golaszewski (3):
-  net: fortify eth_platform_get_mac_address()
-  net: add support for nvmem to eth_platform_get_mac_address()
-  net: add MTD support to eth_platform_get_mac_address()
-
- net/ethernet/eth.c | 47 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/mtd/nand/raw/nand_toshiba.c b/drivers/mtd/nand/raw/nand_toshiba.c
+index ab43f02..6cec923 100644
+--- a/drivers/mtd/nand/raw/nand_toshiba.c
++++ b/drivers/mtd/nand/raw/nand_toshiba.c
+@@ -17,6 +17,86 @@
+ 
+ #include <linux/mtd/rawnand.h>
+ 
++/* Recommended to rewrite for BENAND */
++#define TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED	BIT(3)
++
++static int toshiba_nand_benand_eccstatus(struct mtd_info *mtd,
++					 struct nand_chip *chip)
++{
++	int ret;
++	unsigned int max_bitflips = 0;
++	u8 status;
++
++	/* Check Status */
++	ret = nand_status_op(chip, &status);
++	if (ret)
++		return ret;
++
++	if (status & NAND_STATUS_FAIL) {
++		/* uncorrected */
++		mtd->ecc_stats.failed++;
++	} else if (status & TOSHIBA_NAND_STATUS_REWRITE_RECOMMENDED) {
++		/* corrected */
++		max_bitflips = mtd->bitflip_threshold;
++		mtd->ecc_stats.corrected += max_bitflips;
++	}
++
++	return max_bitflips;
++}
++
++static int
++toshiba_nand_read_page_benand(struct mtd_info *mtd,
++			      struct nand_chip *chip, uint8_t *buf,
++			      int oob_required, int page)
++{
++	int ret;
++
++	ret = nand_read_page_raw(mtd, chip, buf, oob_required, page);
++	if (ret)
++		return ret;
++
++	return toshiba_nand_benand_eccstatus(mtd, chip);
++}
++
++static int
++toshiba_nand_read_subpage_benand(struct mtd_info *mtd,
++				 struct nand_chip *chip, uint32_t data_offs,
++				 uint32_t readlen, uint8_t *bufpoi, int page)
++{
++	int ret;
++
++	ret = nand_read_page_op(chip, page, data_offs,
++				bufpoi + data_offs, readlen);
++	if (ret)
++		return ret;
++
++	return toshiba_nand_benand_eccstatus(mtd, chip);
++}
++
++static void toshiba_nand_benand_init(struct nand_chip *chip)
++{
++	struct mtd_info *mtd = nand_to_mtd(chip);
++
++	/*
++	 * On BENAND, the entire OOB region can be used by the MTD user.
++	 * The calculated ECC bytes are stored into other isolated
++	 * area which is not accessible to users.
++	 * This is why chip->ecc.bytes = 0.
++	 */
++	chip->ecc.bytes = 0;
++	chip->ecc.size = 512;
++	chip->ecc.strength = 8;
++	chip->ecc.read_page = toshiba_nand_read_page_benand;
++	chip->ecc.read_subpage = toshiba_nand_read_subpage_benand;
++	chip->ecc.write_page = nand_write_page_raw;
++	chip->ecc.read_page_raw = nand_read_page_raw;
++	chip->ecc.write_page_raw = nand_write_page_raw;
++
++	chip->options |= NAND_SUBPAGE_READ;
++
++	mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
++}
++
+ static void toshiba_nand_decode_id(struct nand_chip *chip)
+ {
+ 	struct mtd_info *mtd = nand_to_mtd(chip);
+@@ -68,6 +148,10 @@ static int toshiba_nand_init(struct nand_chip *chip)
+ 	if (nand_is_slc(chip))
+ 		chip->bbt_options |= NAND_BBT_SCAN2NDPAGE;
+ 
++	if (nand_is_slc(chip) && (chip->id.data[4] & 0x80) /* BENAND */ &&
++	    (chip->ecc.mode == NAND_ECC_ON_DIE))
++		toshiba_nand_benand_init(chip);
++
+ 	return 0;
+ }
+ 
 -- 
-2.17.1
+2.7.4
+
 
