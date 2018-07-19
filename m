@@ -2,160 +2,394 @@ Return-Path: <SRS0=/F/O=KD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,UPPERCASE_75_100,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F03CECDE5F
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA56C468C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:25:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0799720856
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:23:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AYVALAM1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0799720856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F99C20661
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 16:25:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F99C20661
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731991AbeGSRHS (ORCPT
+        id S1731930AbeGSRJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 13:07:18 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40593 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727575AbeGSRHS (ORCPT
+        Thu, 19 Jul 2018 13:09:19 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:37504 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731105AbeGSRJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 13:07:18 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z13-v6so7012910wma.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Jul 2018 09:23:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eBoiAf+fwwTWl+wiFp1yO3mt7hvFDEp3X8YtzX7kZP0=;
-        b=AYVALAM1T0pbUtNSDPlYcIIu3Banr3Wr6fsxxrrZR5Z0HyCn4h2o7wnzhVHr0PZZia
-         iW0IyRnrkuIQZgQHeJk7qnxSPNRPgL8LhwpYv/lyQitQt33A9IEOtfzlZIQKafAaKKn8
-         +HDOM9YG5nP5Eo99YFwWr33tZ+b3kJ7ONZkbvO1no1r/ioUcIUMU0FTiYbIVp269aMRX
-         9IzxX1BMj73Pz+LO4oblsZLrP5UDjae7X9ajKWobRUxGADIGligITIPKcfvAQz9K9ygI
-         qK5W41HeW9CF0smBfA60bIRhflnyeIqys6j0XAA/IyKFz/OaZptPyElYKD6rsrOp6sW8
-         qluQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eBoiAf+fwwTWl+wiFp1yO3mt7hvFDEp3X8YtzX7kZP0=;
-        b=NvASMvTgaHOsdG0pH3YOT599J0N0bBSJnV3RmQbOKE8oxQxV0NtmMJFCEfJ4mWcIv/
-         tpH1NKs+SJkvNn8Ja4/QxOgUYVX76Ttgc07HgwrucAQeCLs3KNMpz/uShBml7FTcm4uc
-         XTDlO1VHGi75T9xOl56J0tUhSQTKAvFBGYLdhcHNTHIG0MrfiIfgcnTNzAuAj8U49z+M
-         0QZ1F1AghhYmBX5d++CXqUJGWDUD2ABMoKsprFdtbJf9buvLguQ2WLhYuhWaPD4c2OB0
-         uKukkn6JbMXST6XBHPa/iN2J11tftkkurDJU1CedE7Wh60OhxPtU7s4OWy7ptpUja2j6
-         2Arg==
-X-Gm-Message-State: AOUpUlGup4dW9QyufSS/bV+3FLzyFyS4CC5lMJmNqk3Uw/D24hGZlOlA
-        wpE0hP1LzGBRBZao4hcukHQzDdxF1AVycL7ePRBIfg==
-X-Google-Smtp-Source: AAOMgpeHuITw1hAk4ClEGrGCcwsmrhblssy3vKNtEnvO7utuMgtFXrog3I8/GOOzpFN3AHZIJd6MaXjLkr3tzYeQlmQ=
-X-Received: by 2002:a1c:9a15:: with SMTP id c21-v6mr4990459wme.112.1532017401874;
- Thu, 19 Jul 2018 09:23:21 -0700 (PDT)
+        Thu, 19 Jul 2018 13:09:18 -0400
+X-UUID: 5446467daa8c4444b64b17698ed14515-20180720
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 434466451; Fri, 20 Jul 2018 00:25:16 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Fri, 20 Jul 2018 00:25:14 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Fri, 20 Jul 2018 00:25:14 +0800
+From:   <sean.wang@mediatek.com>
+To:     <matthias.bgg@gmail.com>, <linux@armlinux.org.uk>
+CC:     <khilman@baylibre.com>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
+Subject: [PATCH] ARM: defconfig: add mediatek_v7_defconfig
+Date:   Fri, 20 Jul 2018 00:25:12 +0800
+Message-ID: <507c4d569cb8493d10d0ae0f6bd34b8c1dc551e8.1532017154.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-References: <1531994807-25639-1-git-send-email-jing.xia@unisoc.com> <20180719104345.GV7193@dhcp22.suse.cz>
-In-Reply-To: <20180719104345.GV7193@dhcp22.suse.cz>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 19 Jul 2018 09:23:10 -0700
-Message-ID: <CALvZod55Ku7U3soLtuYY_HL2_mMp5+OT-hngdZkPRGN9xm1a9Q@mail.gmail.com>
-Subject: Re: [PATCH] mm: memcg: fix use after free in mem_cgroup_iter()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     jing.xia.mail@gmail.com, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        chunyan.zhang@unisoc.com, Cgroups <cgroups@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 19, 2018 at 3:43 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> [CC Andrew]
->
-> On Thu 19-07-18 18:06:47, Jing Xia wrote:
-> > It was reported that a kernel crash happened in mem_cgroup_iter(),
-> > which can be triggered if the legacy cgroup-v1 non-hierarchical
-> > mode is used.
-> >
-> > Unable to handle kernel paging request at virtual address 6b6b6b6b6b6b8f
-> > ......
-> > Call trace:
-> >   mem_cgroup_iter+0x2e0/0x6d4
-> >   shrink_zone+0x8c/0x324
-> >   balance_pgdat+0x450/0x640
-> >   kswapd+0x130/0x4b8
-> >   kthread+0xe8/0xfc
-> >   ret_from_fork+0x10/0x20
-> >
-> >   mem_cgroup_iter():
-> >       ......
-> >       if (css_tryget(css))    <-- crash here
-> >           break;
-> >       ......
-> >
-> > The crashing reason is that mem_cgroup_iter() uses the memcg object
-> > whose pointer is stored in iter->position, which has been freed before
-> > and filled with POISON_FREE(0x6b).
-> >
-> > And the root cause of the use-after-free issue is that
-> > invalidate_reclaim_iterators() fails to reset the value of
-> > iter->position to NULL when the css of the memcg is released in non-
-> > hierarchical mode.
->
-> Well, spotted!
->
-> I suspect
-> Fixes: 6df38689e0e9 ("mm: memcontrol: fix possible memcg leak due to interrupted reclaim")
->
-> but maybe it goes further into past. I also suggest
-> Cc: stable
->
-> even though the non-hierarchical mode is strongly discouraged.
+From: Sean Wang <sean.wang@mediatek.com>
 
-Why not set root_mem_cgroup's use_hierarchy to true by default on
-init? If someone wants non-hierarchical mode, they can explicitly set
-it to false.
+Adding one defconfig of our own for the MediaTek ARMv7 SoCs to have one a
+bit more tailor-made and stripped-down version of defconfig that just
+supports the superset of existing DT based MediaTek platform and drivers.
+Which also can help to extend new MediaTek plaforms and drivers
+afterwards.
 
-> A lack of
-> reports for 3 years is encouraging that not many people really use this
-> mode.
->
-> > Signed-off-by: Jing Xia <jing.xia.mail@gmail.com>
->
-> Acked-by: Michal Hocko <mhocko@suse.com>
->
-> Thanks!
-> > ---
-> >  mm/memcontrol.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index e6f0d5e..8c0280b 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -850,7 +850,7 @@ static void invalidate_reclaim_iterators(struct mem_cgroup *dead_memcg)
-> >       int nid;
-> >       int i;
-> >
-> > -     while ((memcg = parent_mem_cgroup(memcg))) {
-> > +     for (; memcg; memcg = parent_mem_cgroup(memcg)) {
-> >               for_each_node(nid) {
-> >                       mz = mem_cgroup_nodeinfo(memcg, nid);
-> >                       for (i = 0; i <= DEF_PRIORITY; i++) {
-> > --
-> > 1.9.1
->
-> --
-> Michal Hocko
-> SUSE Labs
-> --
-> To unsubscribe from this list: send the line "unsubscribe cgroups" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ arch/arm/configs/mediatek_v7_defconfig | 319 +++++++++++++++++++++++++++++++++
+ 1 file changed, 319 insertions(+)
+ create mode 100644 arch/arm/configs/mediatek_v7_defconfig
+
+diff --git a/arch/arm/configs/mediatek_v7_defconfig b/arch/arm/configs/mediatek_v7_defconfig
+new file mode 100644
+index 0000000..e20720c
+--- /dev/null
++++ b/arch/arm/configs/mediatek_v7_defconfig
+@@ -0,0 +1,319 @@
++CONFIG_COMPILE_TEST=y
++CONFIG_SYSVIPC=y
++CONFIG_NO_HZ=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_CGROUPS=y
++CONFIG_NAMESPACES=y
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_KALLSYMS_ALL=y
++CONFIG_EMBEDDED=y
++CONFIG_PERF_EVENTS=y
++CONFIG_MODULES=y
++CONFIG_MODULE_FORCE_LOAD=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_PARTITION_ADVANCED=y
++CONFIG_CMDLINE_PARTITION=y
++CONFIG_ARCH_MEDIATEK=y
++# CONFIG_MACH_MT2701 is not set
++# CONFIG_MACH_MT6589 is not set
++# CONFIG_MACH_MT6592 is not set
++# CONFIG_MACH_MT8127 is not set
++# CONFIG_MACH_MT8135 is not set
++# CONFIG_ARM_THUMB is not set
++CONFIG_ARM_THUMBEE=y
++CONFIG_PL310_ERRATA_588369=y
++CONFIG_PL310_ERRATA_727915=y
++CONFIG_PL310_ERRATA_753970=y
++CONFIG_PL310_ERRATA_769419=y
++CONFIG_ARM_ERRATA_720789=y
++CONFIG_ARM_ERRATA_754322=y
++CONFIG_ARM_ERRATA_754327=y
++CONFIG_ARM_ERRATA_764369=y
++CONFIG_ARM_ERRATA_775420=y
++CONFIG_ARM_ERRATA_798181=y
++CONFIG_PCI=y
++CONFIG_PCIE_MEDIATEK=y
++CONFIG_SMP=y
++CONFIG_HAVE_ARM_ARCH_TIMER=y
++CONFIG_NR_CPUS=16
++CONFIG_HIGHMEM=y
++CONFIG_CMA=y
++CONFIG_FORCE_MAX_ZONEORDER=12
++CONFIG_ARM_APPENDED_DTB=y
++CONFIG_KEXEC=y
++CONFIG_CPU_FREQ=y
++CONFIG_CPU_FREQ_STAT=y
++CONFIG_CPU_FREQ_DEFAULT_GOV_USERSPACE=y
++CONFIG_CPU_FREQ_GOV_PERFORMANCE=y
++CONFIG_CPU_FREQ_GOV_POWERSAVE=y
++CONFIG_CPU_FREQ_GOV_ONDEMAND=y
++CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
++CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
++CONFIG_ARM_MEDIATEK_CPUFREQ=y
++CONFIG_VFP=y
++CONFIG_NEON=y
++CONFIG_KERNEL_MODE_NEON=y
++CONFIG_PM_AUTOSLEEP=y
++CONFIG_PM_DEBUG=y
++CONFIG_PM_ADVANCED_DEBUG=y
++CONFIG_APM_EMULATION=y
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_INET=y
++CONFIG_IP_PNP=y
++CONFIG_IP_PNP_DHCP=y
++CONFIG_IP_PNP_BOOTP=y
++CONFIG_IP_PNP_RARP=y
++CONFIG_IPV6_ROUTER_PREF=y
++CONFIG_IPV6_OPTIMISTIC_DAD=y
++CONFIG_INET6_AH=m
++CONFIG_INET6_ESP=m
++CONFIG_INET6_IPCOMP=m
++CONFIG_IPV6_MIP6=m
++CONFIG_IPV6_TUNNEL=m
++CONFIG_IPV6_MULTIPLE_TABLES=y
++CONFIG_BRIDGE=y
++CONFIG_BRIDGE_VLAN_FILTERING=y
++CONFIG_NET_DSA=y
++CONFIG_VLAN_8021Q=y
++CONFIG_NETLINK_DIAG=y
++CONFIG_BT=y
++CONFIG_BT_HCIBTUSB=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
++CONFIG_DMA_CMA=y
++CONFIG_CMA_SIZE_MBYTES=64
++CONFIG_ARM_CCI400_PMU=y
++CONFIG_MTD=y
++CONFIG_MTD_NAND=y
++CONFIG_MTD_NAND_MTK=y
++CONFIG_MTD_SPI_NOR=y
++CONFIG_MTD_MT81xx_NOR=y
++CONFIG_OF_OVERLAY=y
++CONFIG_BLK_DEV_LOOP=y
++CONFIG_SRAM=y
++CONFIG_EEPROM_93CX6=y
++CONFIG_IDE=y
++CONFIG_BLK_DEV_SD=y
++CONFIG_ATA=y
++CONFIG_SATA_AHCI=y
++CONFIG_NETDEVICES=y
++CONFIG_NET_DSA_MT7530=y
++# CONFIG_NET_VENDOR_3COM is not set
++# CONFIG_NET_VENDOR_ADAPTEC is not set
++# CONFIG_NET_VENDOR_AGERE is not set
++# CONFIG_NET_VENDOR_ALACRITECH is not set
++# CONFIG_NET_VENDOR_ALTEON is not set
++# CONFIG_NET_VENDOR_AMAZON is not set
++# CONFIG_NET_VENDOR_AMD is not set
++# CONFIG_NET_VENDOR_AQUANTIA is not set
++# CONFIG_NET_VENDOR_ARC is not set
++# CONFIG_NET_VENDOR_ATHEROS is not set
++# CONFIG_NET_CADENCE is not set
++# CONFIG_NET_VENDOR_BROADCOM is not set
++# CONFIG_NET_VENDOR_BROCADE is not set
++# CONFIG_NET_VENDOR_CAVIUM is not set
++# CONFIG_NET_VENDOR_CHELSIO is not set
++# CONFIG_NET_VENDOR_CIRRUS is not set
++# CONFIG_NET_VENDOR_CISCO is not set
++# CONFIG_NET_VENDOR_DEC is not set
++# CONFIG_NET_VENDOR_DLINK is not set
++# CONFIG_NET_VENDOR_EMULEX is not set
++# CONFIG_NET_VENDOR_EZCHIP is not set
++# CONFIG_NET_VENDOR_EXAR is not set
++# CONFIG_NET_VENDOR_FARADAY is not set
++# CONFIG_NET_VENDOR_HISILICON is not set
++# CONFIG_NET_VENDOR_HP is not set
++# CONFIG_NET_VENDOR_HUAWEI is not set
++# CONFIG_NET_VENDOR_INTEL is not set
++# CONFIG_NET_VENDOR_MARVELL is not set
++CONFIG_NET_VENDOR_MEDIATEK=y
++CONFIG_NET_MEDIATEK_SOC=y
++# CONFIG_NET_VENDOR_MELLANOX is not set
++# CONFIG_NET_VENDOR_MICREL is not set
++# CONFIG_NET_VENDOR_MICROCHIP is not set
++# CONFIG_NET_VENDOR_MYRI is not set
++# CONFIG_NET_VENDOR_NATSEMI is not set
++# CONFIG_NET_VENDOR_NETRONOME is not set
++# CONFIG_NET_VENDOR_NVIDIA is not set
++# CONFIG_NET_VENDOR_OKI is not set
++# CONFIG_NET_PACKET_ENGINE is not set
++# CONFIG_NET_VENDOR_QLOGIC is not set
++# CONFIG_NET_VENDOR_QUALCOMM is not set
++# CONFIG_NET_VENDOR_REALTEK is not set
++# CONFIG_NET_VENDOR_RENESAS is not set
++# CONFIG_NET_VENDOR_RDC is not set
++# CONFIG_NET_VENDOR_ROCKER is not set
++# CONFIG_NET_VENDOR_SAMSUNG is not set
++# CONFIG_NET_VENDOR_SEEQ is not set
++# CONFIG_NET_VENDOR_SILAN is not set
++# CONFIG_NET_VENDOR_SIS is not set
++# CONFIG_NET_VENDOR_SOLARFLARE is not set
++# CONFIG_NET_VENDOR_SMSC is not set
++# CONFIG_NET_VENDOR_STMICRO is not set
++# CONFIG_NET_VENDOR_SUN is not set
++# CONFIG_NET_VENDOR_TEHUTI is not set
++# CONFIG_NET_VENDOR_TI is not set
++# CONFIG_NET_VENDOR_VIA is not set
++# CONFIG_NET_VENDOR_WIZNET is not set
++# CONFIG_NET_VENDOR_SYNOPSYS is not set
++CONFIG_ICPLUS_PHY=y
++CONFIG_USB_USBNET=y
++# CONFIG_USB_NET_CDCETHER is not set
++# CONFIG_USB_NET_CDC_NCM is not set
++# CONFIG_USB_NET_NET1080 is not set
++# CONFIG_USB_NET_CDC_SUBSET is not set
++# CONFIG_USB_NET_ZAURUS is not set
++CONFIG_INPUT_EVDEV=y
++CONFIG_INPUT_EVBUG=y
++CONFIG_KEYBOARD_GPIO=y
++CONFIG_KEYBOARD_GPIO_POLLED=y
++CONFIG_KEYBOARD_MATRIX=y
++CONFIG_KEYBOARD_SAMSUNG=y
++CONFIG_MOUSE_PS2_ELANTECH=y
++CONFIG_MOUSE_PS2_SENTELIC=y
++CONFIG_INPUT_TOUCHSCREEN=y
++# CONFIG_SERIO_SERPORT is not set
++CONFIG_VT_HW_CONSOLE_BINDING=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++# CONFIG_SERIAL_8250_PCI is not set
++CONFIG_SERIAL_8250_NR_UARTS=5
++CONFIG_SERIAL_8250_RUNTIME_UARTS=5
++CONFIG_SERIAL_8250_MT6577=y
++CONFIG_SERIAL_OF_PLATFORM=y
++CONFIG_HW_RANDOM=y
++CONFIG_I2C=y
++CONFIG_I2C_MT65XX=y
++CONFIG_SPI=y
++CONFIG_SPI_DEBUG=y
++CONFIG_SPI_MT65XX=y
++CONFIG_SPI_SPIDEV=y
++CONFIG_PINCTRL_MT2701=y
++CONFIG_PINCTRL_MT8135=y
++CONFIG_PINCTRL_MT8127=y
++CONFIG_PINCTRL_MT7622=y
++CONFIG_PINCTRL_MT8173=y
++CONFIG_DEBUG_GPIO=y
++CONFIG_GPIO_SYSFS=y
++CONFIG_POWER_RESET=y
++# CONFIG_HWMON is not set
++CONFIG_THERMAL=y
++CONFIG_THERMAL_WRITABLE_TRIPS=y
++CONFIG_THERMAL_GOV_FAIR_SHARE=y
++CONFIG_THERMAL_GOV_BANG_BANG=y
++CONFIG_THERMAL_GOV_USER_SPACE=y
++CONFIG_THERMAL_GOV_POWER_ALLOCATOR=y
++CONFIG_CPU_THERMAL=y
++CONFIG_THERMAL_EMULATION=y
++CONFIG_WATCHDOG=y
++CONFIG_MEDIATEK_WATCHDOG=y
++CONFIG_MFD_MT6397=y
++# CONFIG_ABX500_CORE is not set
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_FIXED_VOLTAGE=y
++CONFIG_REGULATOR_MT6323=y
++CONFIG_RC_DEVICES=y
++CONFIG_IR_MTK=y
++CONFIG_MEDIA_SUPPORT=y
++CONFIG_SOUND=y
++CONFIG_SND=y
++CONFIG_SND_SOC=y
++CONFIG_SND_SOC_MT2701=y
++CONFIG_SND_SOC_MT2701_WM8960=y
++CONFIG_USB=y
++CONFIG_USB_XHCI_HCD=y
++CONFIG_USB_XHCI_MTK=y
++CONFIG_USB_STORAGE=y
++CONFIG_NOP_USB_XCEIV=y
++CONFIG_USB_GPIO_VBUS=y
++CONFIG_USB_GADGET=y
++CONFIG_USB_CONFIGFS=y
++CONFIG_USB_CONFIGFS_SERIAL=y
++CONFIG_USB_CONFIGFS_ACM=y
++CONFIG_USB_CONFIGFS_OBEX=y
++CONFIG_USB_CONFIGFS_NCM=y
++CONFIG_USB_CONFIGFS_ECM=y
++CONFIG_USB_CONFIGFS_ECM_SUBSET=y
++CONFIG_USB_CONFIGFS_RNDIS=y
++CONFIG_USB_CONFIGFS_EEM=y
++CONFIG_USB_CONFIGFS_MASS_STORAGE=y
++CONFIG_MMC=y
++CONFIG_MMC_MTK=y
++CONFIG_NEW_LEDS=y
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_MT6323=y
++CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_PCA963X=y
++CONFIG_LEDS_TRIGGERS=y
++CONFIG_LEDS_TRIGGER_TIMER=y
++CONFIG_LEDS_TRIGGER_ONESHOT=y
++CONFIG_LEDS_TRIGGER_HEARTBEAT=y
++CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
++CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_MT6397=y
++CONFIG_DMADEVICES=y
++CONFIG_MTK_HSDMA=y
++CONFIG_DMATEST=y
++CONFIG_COMMON_CLK_MT2701_MMSYS=y
++CONFIG_COMMON_CLK_MT2701_IMGSYS=y
++CONFIG_COMMON_CLK_MT2701_VDECSYS=y
++CONFIG_COMMON_CLK_MT2701_HIFSYS=y
++CONFIG_COMMON_CLK_MT2701_ETHSYS=y
++CONFIG_COMMON_CLK_MT2701_BDPSYS=y
++CONFIG_COMMON_CLK_MT7622_ETHSYS=y
++CONFIG_COMMON_CLK_MT7622_HIFSYS=y
++CONFIG_COMMON_CLK_MT7622_AUDSYS=y
++CONFIG_ARM_TIMER_SP804=y
++CONFIG_MTK_IOMMU_V1=y
++CONFIG_MTK_PMIC_WRAP=y
++CONFIG_PM_DEVFREQ=y
++CONFIG_DEVFREQ_GOV_USERSPACE=y
++CONFIG_IIO=y
++CONFIG_MEDIATEK_MT6577_AUXADC=y
++CONFIG_PWM=y
++CONFIG_PWM_MEDIATEK=y
++CONFIG_PHY_MTK_TPHY=y
++CONFIG_MTK_EFUSE=y
++CONFIG_EXT4_FS=y
++CONFIG_AUTOFS4_FS=y
++CONFIG_FUSE_FS=m
++CONFIG_MSDOS_FS=m
++CONFIG_VFAT_FS=m
++CONFIG_NTFS_FS=m
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_PSTORE=y
++CONFIG_PSTORE_CONSOLE=y
++CONFIG_PSTORE_PMSG=y
++CONFIG_PSTORE_RAM=y
++CONFIG_NLS_CODEPAGE_437=m
++CONFIG_NLS_ISO8859_1=m
++CONFIG_NLS_UTF8=y
++CONFIG_PRINTK_TIME=y
++CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
++CONFIG_DEBUG_FS=y
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_DETECT_HUNG_TASK=y
++# CONFIG_SCHED_DEBUG is not set
++# CONFIG_DEBUG_BUGVERBOSE is not set
++# CONFIG_FTRACE is not set
++CONFIG_MEMTEST=y
++CONFIG_DEBUG_LL=y
++CONFIG_DEBUG_UART_PHYS=0x11004000
++CONFIG_DEBUG_UART_VIRT=0xf1004000
++CONFIG_EARLY_PRINTK=y
++# CONFIG_CRYPTO_MANAGER_DISABLE_TESTS is not set
++CONFIG_CRYPTO_AUTHENC=y
++CONFIG_CRYPTO_CCM=y
++CONFIG_CRYPTO_GCM=y
++CONFIG_CRYPTO_ECHAINIV=y
++CONFIG_CRYPTO_CBC=y
++CONFIG_CRYPTO_MD5=y
++CONFIG_CRYPTO_ARC4=y
++CONFIG_CRYPTO_DES=y
++CONFIG_CRYPTO_LZO=y
++CONFIG_CRYPTO_DEV_MEDIATEK=y
++CONFIG_CRC_CCITT=m
++CONFIG_CRC_ITU_T=m
+-- 
+2.7.4
+
