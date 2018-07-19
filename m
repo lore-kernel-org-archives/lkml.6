@@ -6,44 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 187FBECDFB8
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309B6ECDFB8
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD0E720671
-	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:28:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD0E720671
+	by mail.kernel.org (Postfix) with ESMTP id D6BF1205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 19 Jul 2018 22:28:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BF1205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731446AbeGSXN2 (ORCPT
+        id S1731323AbeGSXOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 19 Jul 2018 19:13:28 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:43521 "EHLO
+        Thu, 19 Jul 2018 19:14:06 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48747 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbeGSXN2 (ORCPT
+        with ESMTP id S1727772AbeGSXOG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Jul 2018 19:13:28 -0400
+        Thu, 19 Jul 2018 19:14:06 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMSD972439185
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6JMSi4X2439211
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 19 Jul 2018 15:28:13 -0700
+        Thu, 19 Jul 2018 15:28:44 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMSD2R2439182;
-        Thu, 19 Jul 2018 15:28:13 -0700
-Date:   Thu, 19 Jul 2018 15:28:13 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6JMSioZ2439208;
+        Thu, 19 Jul 2018 15:28:44 -0700
+Date:   Thu, 19 Jul 2018 15:28:44 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Pavel Tatashin <tipbot@zytor.com>
-Message-ID: <tip-38669ba205d178d2d38bfd194a196d65a44d5af2@git.kernel.org>
-Cc:     hpa@zytor.com, pasha.tatashin@oracle.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, pasha.tatashin@oracle.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <20180719205545.16512-14-pasha.tatashin@oracle.com>
-References: <20180719205545.16512-14-pasha.tatashin@oracle.com>
+Message-ID: <tip-be2e0e4257678408b0ab00ea9e743b9094e393e8@git.kernel.org>
+Cc:     schwidefsky@de.ibm.com, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, pasha.tatashin@oracle.com,
+        tglx@linutronix.de
+Reply-To: mingo@kernel.org, tglx@linutronix.de, pasha.tatashin@oracle.com,
+          linux-kernel@vger.kernel.org, schwidefsky@de.ibm.com,
+          hpa@zytor.com
+In-Reply-To: <20180719205545.16512-15-pasha.tatashin@oracle.com>
+References: <20180719205545.16512-15-pasha.tatashin@oracle.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/timers] x86/xen/time: Output xen sched_clock time from 0
-Git-Commit-ID: 38669ba205d178d2d38bfd194a196d65a44d5af2
+Subject: [tip:x86/timers] s390/time: Add
+ read_persistent_wall_and_boot_offset()
+Git-Commit-ID: be2e0e4257678408b0ab00ea9e743b9094e393e8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,27 +59,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  38669ba205d178d2d38bfd194a196d65a44d5af2
-Gitweb:     https://git.kernel.org/tip/38669ba205d178d2d38bfd194a196d65a44d5af2
+Commit-ID:  be2e0e4257678408b0ab00ea9e743b9094e393e8
+Gitweb:     https://git.kernel.org/tip/be2e0e4257678408b0ab00ea9e743b9094e393e8
 Author:     Pavel Tatashin <pasha.tatashin@oracle.com>
-AuthorDate: Thu, 19 Jul 2018 16:55:32 -0400
+AuthorDate: Thu, 19 Jul 2018 16:55:33 -0400
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Fri, 20 Jul 2018 00:02:40 +0200
 
-x86/xen/time: Output xen sched_clock time from 0
+s390/time: Add read_persistent_wall_and_boot_offset()
 
-It is expected for sched_clock() to output data from 0, when system boots.
-
-Add an offset xen_sched_clock_offset (similarly how it is done in other
-hypervisors i.e. kvm_sched_clock_offset) to count sched_clock() from 0,
-when time is first initialized.
+read_persistent_wall_and_boot_offset() will replace read_boot_clock64()
+because on some architectures it is more convenient to read both sources
+as one may depend on the other. For s390, implementation is the same
+as read_boot_clock64() but also calling and returning value of
+read_persistent_clock64()
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Cc: steven.sistare@oracle.com
 Cc: daniel.m.jordan@oracle.com
 Cc: linux@armlinux.org.uk
-Cc: schwidefsky@de.ibm.com
 Cc: heiko.carstens@de.ibm.com
 Cc: john.stultz@linaro.org
 Cc: sboyd@codeaurora.org
@@ -92,59 +94,38 @@ Cc: linux-s390@vger.kernel.org
 Cc: boris.ostrovsky@oracle.com
 Cc: jgross@suse.com
 Cc: pbonzini@redhat.com
-Link: https://lkml.kernel.org/r/20180719205545.16512-14-pasha.tatashin@oracle.com
+Link: https://lkml.kernel.org/r/20180719205545.16512-15-pasha.tatashin@oracle.com
 
 ---
- arch/x86/xen/time.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/s390/kernel/time.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
-index 53bb7a8d10b5..c84f1e039d84 100644
---- a/arch/x86/xen/time.c
-+++ b/arch/x86/xen/time.c
-@@ -31,6 +31,8 @@
- /* Xen may fire a timer up to this many ns early */
- #define TIMER_SLOP	100000
- 
-+static u64 xen_sched_clock_offset __read_mostly;
-+
- /* Get the TSC speed from Xen */
- static unsigned long xen_tsc_khz(void)
- {
-@@ -57,6 +59,11 @@ static u64 xen_clocksource_get_cycles(struct clocksource *cs)
- 	return xen_clocksource_read();
+diff --git a/arch/s390/kernel/time.c b/arch/s390/kernel/time.c
+index cf561160ea88..d1f5447d5687 100644
+--- a/arch/s390/kernel/time.c
++++ b/arch/s390/kernel/time.c
+@@ -221,6 +221,24 @@ void read_persistent_clock64(struct timespec64 *ts)
+ 	ext_to_timespec64(clk, ts);
  }
  
-+static u64 xen_sched_clock(void)
++void __init read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
++						 struct timespec64 *boot_offset)
 +{
-+	return xen_clocksource_read() - xen_sched_clock_offset;
++	unsigned char clk[STORE_CLOCK_EXT_SIZE];
++	struct timespec64 boot_time;
++	__u64 delta;
++
++	delta = initial_leap_seconds + TOD_UNIX_EPOCH;
++	memcpy(clk, tod_clock_base, STORE_CLOCK_EXT_SIZE);
++	*(__u64 *)&clk[1] -= delta;
++	if (*(__u64 *)&clk[1] > delta)
++		clk[0]--;
++	ext_to_timespec64(clk, &boot_time);
++
++	read_persistent_clock64(wall_time);
++	*boot_offset = timespec64_sub(*wall_time, boot_time);
 +}
 +
- static void xen_read_wallclock(struct timespec64 *ts)
+ void read_boot_clock64(struct timespec64 *ts)
  {
- 	struct shared_info *s = HYPERVISOR_shared_info;
-@@ -367,7 +374,7 @@ void xen_timer_resume(void)
- }
- 
- static const struct pv_time_ops xen_time_ops __initconst = {
--	.sched_clock = xen_clocksource_read,
-+	.sched_clock = xen_sched_clock,
- 	.steal_clock = xen_steal_clock,
- };
- 
-@@ -505,6 +512,7 @@ static void __init xen_time_init(void)
- 
- void __init xen_init_time_ops(void)
- {
-+	xen_sched_clock_offset = xen_clocksource_read();
- 	pv_time_ops = xen_time_ops;
- 
- 	x86_init.timers.timer_init = xen_time_init;
-@@ -546,6 +554,7 @@ void __init xen_hvm_init_time_ops(void)
- 		return;
- 	}
- 
-+	xen_sched_clock_offset = xen_clocksource_read();
- 	pv_time_ops = xen_time_ops;
- 	x86_init.timers.setup_percpu_clockev = xen_time_init;
- 	x86_cpuinit.setup_percpu_clockev = xen_hvm_setup_cpu_clockevents;
+ 	unsigned char clk[STORE_CLOCK_EXT_SIZE];
